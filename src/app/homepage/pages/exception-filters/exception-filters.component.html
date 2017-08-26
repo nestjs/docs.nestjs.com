@@ -6,6 +6,90 @@
    </p>
    <figure><img src="/assets/Filter_1.png" /></figure>
    <p>
-     Every unrecognized exception is handled, and when it was HTTP request, user receives the below response:
+     Every unrecognized exception is handled and when it was <strong>HTTP request</strong>, user receives the below JSON response:
    </p>
+   <pre><code class="language-typescript">{{ errorResponse }}</code></pre>
+   <p>
+     Of course, the goal is to avoid any unhandled exceptions across the application.
+   </p>
+   <h4>HttpException</h4>
+   <p>
+     There's a built-in <code>HttpException</code> class inside the <code>@nestjs/core</code> package. The core exception handler works with this class very well.
+     When you throw <code>HttpException</code> object, it'd be catched by handler and transformed to the relevant JSON response.
+   </p>
+   <p>
+     In the <code>CatsController</code>, we have a <code>create()</code> method (<code>POST</code> route). Let's assume that this route handler would throw an exception for some reason.
+     We're gonna hardcode it:
+   </p>
+   <span class="filename">cats.controller.ts</span>
+   <pre><code class="language-typescript">{{ createMethod }}</code></pre>
+   <blockquote>
+      <strong>Notice</strong> I've used the <code>HttpStatus</code> here. It's just a helper enum imported from the <code>@nestjs/common</code> package.
+    </blockquote>
+    <p>
+      Now when the client will call this endpoint, the response would looks like below:
+    </p>
+    <pre><code class="language-typescript">{{ forbiddenResponse }}</code></pre>
+    <h4>Exceptions Hierarchy</h4>
+    <p>
+      The good practice is to create your own <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base <code>HttpException</code> class.
+      As a result Nest will recognize every of your exception, and will fully take care about the error responses.
+    </p>
+    <span class="filename">forbidden.exception.ts</span>
+    <pre><code class="language-typescript">{{ forbiddenException }}</code></pre>
+    <p>
+      Since <code>ForbiddenException</code> extends the base <code>HttpException</code>,
+      it will work well with the core exceptions handler, so now we can use this class inside the <code>create()</code> method.
+    </p>
+    <span class="filename">cats.controller.ts</span>
+    <pre><code class="language-typescript">{{ forbiddenCreateMethod }}</code></pre>
+    <h4>Exception Filters</h4>
+    <p>
+      The base exceptions handler is fine, but sometimes you may want to have a <strong>full control</strong> over the exceptions layer, for example add some logging or use the different JSON schema.
+      We love generic solutions and making your life easier, that's why the feature called <strong>exception filters</strong> was created.
+    </p>
+    <p>
+      We're gonna create the filter, which responsibility is to catch the <code>HttpException</code> and override the <code>message</code> property.
+    </p>
+    <span class="filename">http-exception.filter.ts</span>
+    <pre><code class="language-typescript">{{ httpExceptionFilter }}</code></pre>
+    <p>
+      The <code>response</code> is a native express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>. The <code>exception</code> is a currently processed exception.
+    </p>
+    <blockquote>
+      <strong>Hint</strong> Every exception filter should implement the <code>ExceptionFilter</code> interface. It forces to provide the <code>catch()</code> method with the proper signature.
+    </blockquote>
+    <p>
+      The <code>@Catch()</code> decorator binds the required metadata to the exception filter. It tells Nest that this filter is looking for <code>HttpException</code>.
+      The <code>@Catch()</code> takes infinite count of parameters, so you can setup this filter for several types of exceptions, just separate them by comma.
+    </p>
+    <p>
+      The last step is to inform Nest that the <code>HttpExceptionFilter</code> should be used within the <code>create()</code> method.
+    </p>
+    <span class="filename">cats.controller.ts</span>
+    <pre><code class="language-typescript">{{ forbiddenCreateMethodWithFilter }}</code></pre>
+    <blockquote>
+      <strong>Hint</strong> The <code>@UseFilters()</code> decorator is imported from the <code>@nestjs/common</code> package.
+    </blockquote>
+    <p>
+      We've used the <code>@UseFilters()</code> decorator here. Same as <code>@Catch()</code>, it takes infinite count of parameters.
+    </p>
+    <p>
+      In the above example the <code>HttpExceptionFilter</code> is setuped only for the single <code>create()</code> route handler, but it's not the only way.
+      In fact the exception filters can be method-scoped, controller-scoped and also global-scoped. 
+    </p>
+    <span class="filename">cats.controller.ts</span>
+    <pre><code class="language-typescript">{{ controllerScopedFilter }}</code></pre>
+    <p>
+      This construction setups the <code>HttpExceptionFilter</code> for every route handler inside the <code>CatsController</code>.
+      It's the example of the controller-scoped exception filter. The last available scope is the global-scoped exception filter.
+    </p>
+    <span class="filename">server.ts</span>
+    <pre><code class="language-typescript">{{ globalScopedFilter }}</code></pre>
+    <p>
+      The global filters are used across entire application, for every controller, every route handler.
+    </p>
+    <blockquote>
+      <strong>Notice</strong> The <code>useGlobalFilters()</code> method doesn't setup filters for gateways and microservices.
+    </blockquote>
 </div>
