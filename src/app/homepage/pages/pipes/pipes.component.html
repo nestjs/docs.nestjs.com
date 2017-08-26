@@ -1,3 +1,121 @@
-<p>
-  pipes works!
-</p>
+<div class="content">
+   <h3>Pipes</h3>
+   <p>
+      The pipe is a class with <code>@Pipe()</code> decorator.
+      A pipe should implements the <code>PipeTransform</code> interface.
+   </p>
+   <figure><img src="/assets/Pipe_1.png" /></figure>
+   <p>
+    A pipe <strong>transforms</strong> the input data to a desired output. 
+    Also, it could overtake the <strong>validation</strong> responsibility, since it's possible to throw an exception, when the data isn't correct.
+   </p>
+   <blockquote>
+    <strong>Hint</strong> The pipe runs inside the exceptions zone. It means that throwed exceptions are handled by core exceptions handler and setuped <a routerLink="/exception-filters">exceptions filters</a> in current context.
+   </blockquote>
+   <h4>What does it look like?</h4>
+   <p>
+     Let's create a simple <code>ValidationPipe</code>. Now it only takes and returns the same value.
+   </p>
+   <span class="filename">validation.pipe.ts</span>
+   <pre><code class="language-typescript">{{ validationPipe }}</code></pre>
+   <p>
+     Every pipe has to provide the <code>transform()</code> method. This method takes two arguments:
+   </p>
+   <ul>
+      <li><code>value</code></li>
+      <li><code>metadata</code></li>
+    </ul>
+    <p>
+      The <code>value</code> is a currently processed parameter, while <code>metadata</code> is its metadata.
+      The metadata object holds few properties:
+    </p>
+    <pre><code class="language-typescript">{{ argumentMetadata }}</code></pre>
+    <p>
+      These properties describe the parameter.
+    </p>
+    <table>
+      <tr>
+        <td><code>type</code></td>
+        <td>Tells us whether the property is a body <code>@Body()</code>, query <code>@Query()</code> or param <code>@Param()</code> parameter.</td>
+      </tr>
+      <tr>
+        <td><code>metatype</code></td>
+        <td>
+          The metatype of the property, for example <code>String</code>. It's <code>undefined</code> if you would omit the type declaration in the function signature.
+        </td>
+      </tr>
+      <tr>
+        <td><code>data</code></td>
+        <td>The string passed to the decorator, for example <code>@Body('string')</code>. It's <code>undefined</code> if you would left the brackets empty.</td>
+      </tr>
+    </table>
+    <blockquote>
+      <strong>Notice</strong> TypeScript interfaces disappear during the transpilation, so if you'd use interface instead of class, the <code>metatype</code> value will be <code>Object</code>.
+   </blockquote>
+    <h4>How does it work?</h4>
+    <p>
+      Let's focus on the <code>create()</code> method of the <code>CatsController</code>:
+    </p>
+    <span class="filename">cats.controler.ts</span>
+    <pre><code class="language-typescript">{{ createCatsController }}</code></pre>
+    <p>
+      There's a <code>CreateCatDto</code> body parameter.
+    </p>
+    <span class="filename">create-cat.dto.ts</span>
+    <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
+    <p>
+      This object always has to be correct, so we have to validate those three members. 
+      We could do this inside the route handler method, but we'd break the <strong>single responsibility rule</strong> (SRP).
+      The second idea is to create <strong>validator class</strong> and delegate the task there, but we'll have to use this validator every time at the beginning of the method.
+      So what about the validation middleware? It's a good idea, but it's not possible to create a <strong>generic middleware</strong>, which could be used across entire application.
+    </p>
+    <p>
+      That's the first use-case, when you should consider to use a <strong>Pipe</strong>.
+    </p>
+    <h4>Class Validator</h4>
+    <p>
+      Nest works well with the <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>, the amazing library which allows to use decorator-based validation.
+      Decorator based validation is really powerful with the <strong>pipe</strong> abilities, since we've an access to the <code>metatype</code> of the processed property.
+      Let's add few decorators to the <code>CreateCatDto</code>.
+    </p>
+    <span class="filename">create-cat.dto.ts</span>
+    <pre><code class="language-typescript">{{ createCatDtoValidation }}</code></pre>
+    <p>
+      Now it's time to finish the <code>ValidationPipe</code> class.
+    </p>
+    <span class="filename">validation.pipe.ts</span>
+   <pre><code class="language-typescript">{{ fullValidationPipe }}</code></pre>
+   <blockquote>
+      <strong>Notice</strong> I've used the <a href="https://github.com/pleerock/class-transformer">class-transformer</a> library. It's made by the same author as the <strong>class-validator</strong>, so they're playing well together.
+   </blockquote>
+   <p>
+     Let's go through this code. Firstly, note that <code>transform()</code> function is <code>async</code>.
+     It's possible, because Nest supports both synchronous and <strong>asynchronous</strong> pipes.
+     Also, there's a helper function - <code>toValidate()</code>. Its responsibility is to exclude the native JavaScript types from the validation process.
+     The last important thing is that the we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the overriding.
+   </p>
+   <p>
+     The last step is to setup the <code>ValidationPipe</code>. Pipes, same as <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped and global-scoped.
+      Additionally, pipe may be param-scoped. We can directly bind the pipe instance to the route handler param, for example <code>@Body()</code>.
+      Let's have a look on the below example:
+   </p>
+   <span class="filename">cats.controler.ts</span>
+    <pre><code class="language-typescript">{{ createCatsControllerParamPipe }}</code></pre>
+    <p>
+      The param-scoped pipes are useful when the validation logic concerns only one, specified parameter.
+      To setup pipe at a method level, you'll need the <code>UsePipes()</code> decorator.
+    </p>
+    <span class="filename">cats.controler.ts</span>
+    <pre><code class="language-typescript">{{ createCatsControllerMethodPipe }}</code></pre>
+    <blockquote>
+      <strong>Notice</strong> The <code>@UsePipes()</code> decorator is imported from the <code>@nestjs/common</code> package.
+   </blockquote>
+    <p>
+      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup this as a <strong>global-scoped</strong> pipe, for every route handler across entire application.
+    </p>
+    <span class="filename">server.ts</span>
+    <pre><code class="language-typescript">{{ globalPipe }}</code></pre>
+    <blockquote>
+      <strong>Notice</strong> The <code>useGlobalPipes()</code> method doesn't setup pipes for gateways and microservices.
+    </blockquote>
+</div>
