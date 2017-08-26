@@ -1,0 +1,89 @@
+<div class="content">
+  <h3>Middlewares</h3>
+  <p>
+    The middleware is a function, which is called <strong>before</strong> route handler. 
+    Middleware functions have an access to the <a href="http://expressjs.com/en/4x/api.html#req" target="blank">request</a>
+     and <a href="http://expressjs.com/en/4x/api.html#res" target="blank">response</a> objects, so they can modify them. They can also be something like a <strong>barrier</strong> - if middleware function won't call <code>next()</code>, 
+     the request will never be handled by the route handler.
+  </p>
+  <figure><img src="/assets/Middlewares_1.png" /></figure>
+  <p>
+    Middleware is a class with <code>@Middleware()</code> decorator. This class should implement the <code>NestMiddleware</code> interface.
+    Let's create an example, the <code>LoggerMiddleware</code> class.
+  </p>
+  <span class="filename">logger.middleware.ts</span>
+  <pre><code class="language-typescript">{{ loggerMiddleware }}</code></pre>
+  <p>
+    The <code>resolve()</code> method has to return the regular expressjs middleware <code>(req, res, next) => void</code>.
+  </p>
+  <h4>Dependency Injection</h4>
+  <p>
+    There's no exception when it comes to the middlewares. Same as components and controllers, they can inject dependencies which belong to the same module.
+  </p>
+  <h4>Where to put the middlewares?</h4>
+  <p>
+    The middlewares shouldn't be listed in the <code>@Module()</code> decorator.
+    We've to setup them using <code>configure()</code> method of the module class.
+    Modules which include middlewares have to implement the <code>NestModule</code> interface.
+    Let's setup the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
+  </p>
+  <span class="filename">app.module.ts</span>
+  <pre><code class="language-typescript">{{ applicationModule }}</code></pre>
+  <blockquote>
+    <strong>Hint</strong> We could pass here (inside <code>forRoutes()</code>) the single object and just use <code>RequestMethod.ALL</code>.
+  </blockquote>
+  <p>
+    In above example we setuped <code>LoggerMiddleware</code> for <code>/cats</code> route handlers, which we've registered inside <code>CatsController</code>.
+    The <code>MiddlewareConsumer</code> is a helper class. It provides several methods to work with the middlewares. All of them can be simply <strong>chained</strong>.
+    Let's go through those methods.
+  </p>
+  <p>
+    The <code>forRoutes()</code> can take single object, multiple objects, controller class and even multiple controller classes.
+    In most cases you'll probably just pass the <strong>controllers</strong> and separate them by comma. Below is an example with the single controller:
+  </p>
+  <span class="filename">app.module.ts</span>
+  <pre><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
+  <blockquote>
+    <strong>Hint</strong> The <code>apply()</code> method can take single middleware or an <strong>array of middlewares</strong>.
+  </blockquote>
+  <h4>Pass arguments to the middleware</h4>
+  <p>
+    Sometimes the behaviour of the middleware depends on the custom values e.g. array of user roles, options object etc. 
+    We can pass additional arguments to the <code>resolve()</code> using <code>with()</code> method. See below example:
+  </p>
+  <span class="filename">app.module.ts</span>
+  <pre><code class="language-typescript">{{ applicationModuleWithMethod }}</code></pre>
+  <p>
+    We passed custom string - <code>ApplicationModule</code> to the <code>with()</code> method.
+    Now we've to adjust the <code>resolve()</code> method of the <code>LoggerMiddleware</code>.
+  </p>
+  <span class="filename">logger.middleware.ts</span>
+  <pre><code class="language-typescript">{{ loggerMiddlewareWithArgs }}</code></pre>
+  <p>
+    The value of the <code>name</code> property would be <code>ApplicationModule</code>.
+  </p>
+  <h4>Async Middlewares</h4>
+  <p>
+    There's no contraindications to return the <code>async</code> function from the <code>resolve()</code> method.
+    Also, it's possible to make the <code>resolve()</code> method <code>async</code> too. This pattern is called <strong>deffered middleware</strong>.
+  </p>
+  <span class="filename">logger.middleware.ts</span>
+  <pre><code class="language-typescript">{{ defferedMiddleware }}</code></pre>
+  <h4>Functional Middlewares</h4>
+  <p>
+    The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies.
+    Why we can't just use simple function? It's a good question, cause in fact - we can do it.
+    This type of the middleware is called <strong>functional middleware</strong>.
+    Let's transform the logger into the function.
+  </p>
+  <span class="filename">logger.middleware.ts</span>
+  <pre><code class="language-typescript">{{ functionalMiddleware }}</code></pre>
+  <p>
+    Now use it within the <code>ApplicationModule</code>.
+  </p>
+  <span class="filename">app.module.ts</span>
+  <pre><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> Let's consider to use <strong>functional middlewares</strong> everytime when your middleware doesn't have any dependencies.
+  </blockquote>
+</div>

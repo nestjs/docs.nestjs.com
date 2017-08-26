@@ -1,0 +1,22 @@
+<div class="nav-item" [class.opened]="isOpen" *ngIf="children; else withoutChildren">
+  <div class="heading" (click)="toggle()">
+    <h3>{{ title }}</h3>
+    <i class="fa fa-angle-right arrow-icon"></i>
+  </div>
+  <ul class="sub-nav">
+    <li *ngFor="let item of children">
+      <a 
+        [routerLink]="item.path" 
+        routerLinkActive="active" 
+        [routerLinkActiveOptions]="{ exact: true }">{{ item.title }}</a>
+    </li>
+  </ul>
+</div>
+<ng-template #withoutChildren>
+  <div class="heading">
+    <a 
+      [routerLink]="path" 
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"><h3>{{ title }}</h3></a>
+  </div>
+</ng-template>

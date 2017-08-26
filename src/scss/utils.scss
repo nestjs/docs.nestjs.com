@@ -1,0 +1,205 @@
+// use: @media #{$var} {
+// 	...
+// }
+$screen-small: "only screen and (max-width : 480px)";
+$screen-medium: "only screen and (max-width : 767px)";
+$screen-normal: "only screen and (max-width: 991px)";
+$screen-large: "only screen and (max-width: 1200px)";
+$screen-xlarge: "only screen and (max-width: 1349px)";
+
+@mixin media($size) {
+	@if $size == small {
+  	@media #{$screen-small} { @content; }
+  }
+  @else if $size == medium {
+    @media #{$screen-medium} { @content; }
+  }
+  @else if $size == normal {
+    @media #{$screen-normal} { @content; }
+  }
+	@else if $size == large {
+    @media #{$screen-large} { @content; }
+  }
+	@else if $size == xlarge {
+		@media #{$screen-xlarge} { @content; }
+	}
+}
+
+// use: .class { @include opacity(.5); }
+@mixin opacity($value: .5) {
+	opacity: $value;
+	filter: alpha(opacity=$value * 100);
+}
+
+@mixin radius($radius) {
+  -webkit-border-radius: $radius;
+		 -moz-border-radius: $radius;
+			  	border-radius: $radius;
+}
+
+// use: .class { @include duration(.5s); }
+@mixin duration($value: .5s) {
+	-webkit-animation-duration: $value;
+		 -moz-animation-duration: $value;
+		  -ms-animation-duration: $value;
+			 -o-animation-duration: $value;
+			 		animation-duration: $value;
+}
+
+// use: .class { @include delay(.5s); }
+@mixin delay($value: .5s) {
+	-webkit-animation-delay: $value;
+		 -moz-animation-delay: $value;
+		  -ms-animation-delay: $value;
+			 -o-animation-delay: $value;
+			 		animation-delay: $value;
+}
+
+// use: .class { @include scale(.5); }
+@mixin scale($value: .5) {
+	-webkit-transform: scale($value); /* Saf3.1+, Chrome */
+	   -moz-transform: scale($value); /* FF3.5+ */
+	    -ms-transform: scale($value); /* IE9 */
+	     -o-transform: scale($value); /* Opera 10.5+ */
+	  			transform: scale($value);
+}
+
+// parseInt
+@function parseInt($n) {
+  @return $n / ($n * 0 + 1);
+}
+
+// rem
+@mixin rem($property, $values) {
+  $px: ();
+  $rem: ();
+
+  @each $value in $values {
+
+    @if $value == 0 or $value == auto {
+      /* 5 */
+      $px: append($px, $value);
+      $rem: append($rem, $value);
+    } @else {
+      $unit: unit($value);
+      $val: parseInt($value);
+
+      @if $unit == "px" {
+        $px: append($px, $value);
+        $rem: append($rem, ($val / 10 + rem));
+      }
+
+      @if $unit == "rem" {
+        $px: append($px, ($val * 10 + px));
+        $rem: append($rem, $value);
+      }
+    }
+  }
+
+  @if $px == $rem {
+    #{$property}: $px;
+  } @else {
+    #{$property}: $px;
+    #{$property}: $rem;
+  }
+}
+.transition {
+	-webkit-transition: all 200ms cubic-bezier(.7, 0, .3 ,1);
+	   -moz-transition: all 200ms cubic-bezier(.7, 0, .3 ,1);
+	    -ms-transition: all 200ms cubic-bezier(.7, 0, .3 ,1);
+	     -o-transition: all 200ms cubic-bezier(.7, 0, .3 ,1);
+	        transition: all 200ms cubic-bezier(.7, 0, .3 ,1);
+}
+
+.transition-slow {
+	-webkit-transition: all 520ms cubic-bezier(.7, 0, .3 ,1);
+	   -moz-transition: all 520ms cubic-bezier(.7, 0, .3 ,1);
+	    -ms-transition: all 520ms cubic-bezier(.7, 0, .3 ,1);
+	     -o-transition: all 520ms cubic-bezier(.7, 0, .3 ,1);
+	        transition: all 520ms cubic-bezier(.7, 0, .3 ,1);
+}
+
+/* CLEARFIX */
+%clearfix {
+  *zoom: 1;
+  &:before, &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+.clearfix {
+  @extend %clearfix;
+}
+.center-element {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+			 -moz-transform: translateX(-50%) translateY(-50%);
+			  -ms-transform: translateX(-50%) translateY(-50%);
+    		 -o-transform: translateX(-50%) translateY(-50%);
+    				transform: translateX(-50%) translateY(-50%);
+}
+.center-left {
+    position: absolute;
+    left: 50%;
+		-webkit-transform: translateX(-50%);
+    	 -moz-transform: translateX(-50%);
+			  -ms-transform: translateX(-50%);
+  			 -o-transform: translateX(-50%);
+    				transform: translateX(-50%);
+}
+.center-top {
+    position: absolute;
+    top: 50%;
+		-webkit-transform: translateY(-50%);
+    	 -moz-transform: translateY(-50%);
+			 	-ms-transform: translateY(-50%);
+    		 -o-transform: translateY(-50%);
+    				transform: translateY(-50%);
+}
+
+// use: .class { @extend .box-sizing; }
+.box-sizing {
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+
+// generic transform
+@mixin transform($transforms) {
+	   -moz-transform: $transforms;
+	     -o-transform: $transforms;
+	    -ms-transform: $transforms;
+	-webkit-transform: $transforms;
+          transform: $transforms;
+}
+// rotate
+@mixin rotate ($deg) {
+  @include transform(rotate(#{$deg}deg));
+}
+ 
+// scale
+@mixin scale($scale) {
+	 @include transform(scale($scale));
+} 
+// translate
+@mixin translate ($x, $y) {
+   @include transform(translate($x, $y));
+}
+// skew
+@mixin skew ($x, $y) {
+   @include transform(skew(#{$x}deg, #{$y}deg));
+}
+//transform origin
+@mixin transform-origin ($origin) {
+    moz-transform-origin: $origin;
+	     -o-transform-origin: $origin;
+	    -ms-transform-origin: $origin;
+	-webkit-transform-origin: $origin;
+          transform-origin: $origin;
+}

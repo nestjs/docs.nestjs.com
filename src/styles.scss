@@ -1,0 +1,145 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "./scss/hljs.scss";
+@import "./scss/variables.scss";
+@import "./scss/utils.scss";
+
+body {
+  font-size: 15px;
+  font-family: 'Montserrat', "Helvetica Neue", sans-serif;
+  background-color: $white-color;
+  color: $grey-color;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+strong {
+  color: #2d2d2d;
+  font-weight: 500;
+}
+
+
+hr {
+  width: 40px;
+  height: 4px;
+  background: $red-color;
+  border: 0;
+  margin: 50px 0;
+}
+
+h4 {
+  font-size: 20px;
+}
+
+blockquote {
+  line-height: 1.6;
+  position: relative;
+  margin: 35px 0;
+  background: #f9eff1;
+  padding: 20px;
+
+  &::before {
+    height: 100%;
+    width: 4px;
+    content: "";
+    background: $red-color;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  strong {
+    color: $red-color;
+  }
+}
+
+figure {
+  margin: 60px;
+  text-align: center;
+  @include media(medium) { margin: 60px 0; }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.12);
+  }
+}
+
+figcaption {
+  color: rgba($silver-color, 0.9);
+  font-size: 16px;
+  margin: 20px 0;
+
+  p {
+    font-size: 16px;
+  }
+}
+
+
+table {
+  width: 100%;
+  margin: 40px 0;
+}
+
+tr {
+  @include media(medium) {
+    margin-bottom: 20px;
+    display: block;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}
+
+tr:nth-of-type(even) td {
+  background: #f0f2f3;
+}
+
+tr:nth-of-type(odd) td:first-of-type {
+  border-right: 1px solid #f0f2f3;
+
+  @include media(medium) {
+    border-right: 0;
+    border-bottom: 1px solid #f0f2f3;
+  }
+}
+
+tr:nth-of-type(even) td:first-of-type {
+  border-right: 1px solid #fff;
+  @include media(medium) {
+    border-right: 0;
+    border-bottom: 1px solid #fff;
+  }
+}
+
+tr td {
+  padding: 20px 30px;
+  vertical-align: top;
+
+  @include media(medium) {
+    display: block;
+    padding: 20px;
+  }
+}
+
+// SCROLLBAR
+.ps > .ps__scrollbar-y-rail {
+  width: 10px;
+}
+
+.ps:hover > .ps__scrollbar-y-rail > .ps__scrollbar-y, 
+.ps > .ps__scrollbar-y-rail:hover > .ps__scrollbar-y, 
+.ps > .ps__scrollbar-y-rail:active >.ps__scrollbar-y {
+  width: 6px !important;
+  background: $black-color;
+}
+
+.ps > .ps__scrollbar-y-rail > .ps__scrollbar-y {
+  border-radius: 0;
+  -webkit-border-radius: 0;
+}

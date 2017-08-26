@@ -1,0 +1,62 @@
+@import "../../scss/utils.scss";
+@import "../../scss/variables.scss";
+
+.container-fluid {
+  position: relative;
+  display: block;
+  table-layout: fixed;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.container {
+  @extend .transition;
+  @extend .box-sizing;
+  @include transform(translateX(345px));
+  width: calc(100% - 345px);
+  padding: 45px 50px 100px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+
+  &.wide {
+    @include transform(translateX(0));
+    width: 100%;
+    display: block;
+  }
+
+  @include media(large) {
+    @include transform(translateX(300px));
+    width: calc(100% - 300px);
+    &.wide { width: 100%; }
+  }
+  @include media(medium) {
+    @include transform(translateX(0));
+    width: 100%;
+    padding: 20px 30px 0;
+  }
+}
+
+.page-wrapper {
+  color: $grey-color;
+  line-height: 26px;
+
+  a {
+    font-weight: 500;
+    color: $red-color;
+    &:hover {
+      color: #0894e2;
+    }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: $black-color;
+  }
+  h3 { font-size: 24px; }
+
+  @include media(normal) {
+    p {
+      text-align: justify;
+    }
+  }
+}

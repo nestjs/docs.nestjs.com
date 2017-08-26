@@ -1,0 +1,26 @@
+<app-header 
+  (toggle)="toggleSidebar()"
+  [isSidebarOpened]="isSidebarOpened"
+>
+  <div class="logo-wrapper">
+    <a href="http://docs.nestjs.com/" title="Documentation | Nest - A node.js framework built on top of TypeScript">
+      <img src="assets/logo.png" alt="Nest - A node.js framework built on top of TypeScript" />
+    </a>
+  </div>
+</app-header>
+<div class="container-fluid" matchHeight>
+  <app-menu [class.opened]="isSidebarOpened" perfect-scrollbar></app-menu>
+  <div class="container" [class.wide]="!isSidebarOpened" (click)="checkWindowWidth()">
+    <div class="page-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+    <app-footer> 
+      <p>
+        Made by 
+        <a href="https://kamilmysliwiec.com" title="Kamil Mysliwiec Blog | Full-Stack Software Engineer">
+          Kamil Myśliwiec
+        </a>
+      </p>
+    </app-footer>
+  </div>
+</div>

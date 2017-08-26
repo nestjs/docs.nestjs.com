@@ -1,0 +1,9 @@
+<nav class="nav-container">
+  <app-menu-item 
+    *ngFor="let item of items"
+    [isOpen]="item.isOpened"
+    [title]="item.title"
+    [path]="item?.path"
+    [children]="item.children"
+  ></app-menu-item>
+</nav> 

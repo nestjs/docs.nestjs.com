@@ -1,0 +1,72 @@
+@import "../../../../scss/variables.scss";
+@import "../../../../scss/utils.scss";
+
+:host {
+  position: relative;
+  display: block;
+}
+
+h3 {
+  @extend .transition;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: $black-color;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  &:hover {
+    color: $red-color;
+  }
+}
+
+  .active h3 {
+    color: $red-color;
+  }
+
+.arrow-icon {
+  @extend .transition;
+  position: absolute;
+  top: 1px;
+  right: 0;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+  li {
+    display: block;
+    padding: 10px 0;
+
+    a {
+      color: $black-color;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      &:hover {
+        color: $red-color;
+      }
+      &.active { font-weight: 500; }
+    }
+  }
+
+.nav-item {
+  ul {
+    display: none;
+  }
+  &.opened {
+    ul {
+      display: block;
+    }
+    .arrow-icon {
+      @include transform(rotate(90deg));
+      color: $red-color;
+    }
+  }
+}
+
+.heading {
+  cursor: pointer;
+  &:hover {
+    .arrow-icon {
+      color: $red-color;
+    }
+  }
+}
