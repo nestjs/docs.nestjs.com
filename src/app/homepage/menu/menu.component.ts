@@ -26,6 +26,7 @@ export class MenuComponent {
         { title: 'Exception Filters', path: '/exception-filters' },
         { title: 'Pipes', path: '/pipes' },
         { title: 'Guards', path: '/guards' },
+        { title: 'Interceptors', path: '/interceptors' },
       ]
     },
     {
@@ -34,7 +35,8 @@ export class MenuComponent {
       children: [
         { title: 'Dependency Injection', path: '/advanced/dependency-injection' },
         { title: 'Async Components', path: '/advanced/async-components' },
-        { title: 'Hierarchical Injection', path: '/advanced/hierarchical-injection' },
+        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
+        { title: 'Circular Dependency', path: '/advanced/circular-dependency' },
         { title: 'Unit Testing', path: '/advanced/unit-testing' },
         { title: 'E2E Testing', path: '/advanced/e2e-testing' },
       ]
@@ -44,10 +46,10 @@ export class MenuComponent {
       isOpened: false,
       children: [
         { title: 'Gateways', path: '/websockets/gateways' },
-        { title: 'Adapter', path: '/websockets/adapter' },
         { title: 'Pipes', path: '/websockets/pipes' },
         { title: 'Exception Filters', path: '/websockets/exception-filters' },
         { title: 'Guards', path: '/websockets/guards' },
+        { title: 'Adapter', path: '/websockets/adapter' },
       ]
     },
     {
@@ -56,10 +58,10 @@ export class MenuComponent {
       children: [
         { title: 'Basics', path: '/microservices/basics' },
         { title: 'Redis', path: '/websockets/redis' },
-        { title: 'Custom Transport', path: '/websockets/custom-transport' },
         { title: 'Pipes', path: '/websockets/pipes' },
         { title: 'Exception Filters', path: '/websockets/exception-filters' },
         { title: 'Guards', path: '/websockets/guards' },
+        { title: 'Custom Transport', path: '/websockets/custom-transport' },
       ]
     },
     {
@@ -71,7 +73,7 @@ export class MenuComponent {
         { title: 'CQRS + Event Sourcing [TBC]', path: '/recipes/nosql-mongodb' },
         { title: 'Passport JWT integration [TBC]', path: '/recipes/nosql-mongodb' },
         { title: 'Swagger [TBC]', path: '/recipes/nosql-mongodb' },
-        { title: 'Open Graph [TBC]', path: '/recipes/open-graph' },
+        { title: 'GraphQL [TBC]', path: '/recipes/graphql' },
         { title: 'Redis Socket.io [TBC]', path: '/recipes/redis-socketio' },
       ],
     },

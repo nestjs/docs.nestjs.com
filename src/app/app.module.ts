@@ -23,6 +23,7 @@ import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/ex
 import { GuardsComponent } from './homepage/pages/guards/guards.component';
 import { DependencyInjectionComponent } from './homepage/pages/advanced/dependency-injection/dependency-injection.component';
 import { AsyncComponentsComponent } from './homepage/pages/advanced/async-components/async-components.component';
+import { InterceptorsComponent } from './homepage/pages/interceptors/interceptors.component';
 
 @NgModule({
   imports: [
@@ -53,6 +54,7 @@ import { AsyncComponentsComponent } from './homepage/pages/advanced/async-compon
     GuardsComponent,
     DependencyInjectionComponent,
     AsyncComponentsComponent,
+    InterceptorsComponent,
   ],
   bootstrap: [AppComponent]
 })

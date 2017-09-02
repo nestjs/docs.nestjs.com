@@ -35,7 +35,7 @@
    <p>
       The module <strong>encapsulates</strong> components by default. It means that it isn't possible to inject the components which aren't directly the part of the current module, or they're not exported from the imported modules.
     </p>
-   <h3>CatsModule</h3>
+   <h4>CatsModule</h4>
     <p>
       The <code>CatsController</code> and <code>CatsService</code> belong to the same application domain. 
       They should be moved to the feature module, the <code>CatsModule</code>.
@@ -71,13 +71,13 @@
     <blockquote>
       <strong>Notice</strong> Never export the controller!
     </blockquote>
-    <h3>Single Scope</h3>
+    <h4>Single Scope</h4>
     <p>
       They're modules which shouldn't be shared at all. To prevent module from being singleton, you can use <code>@SingleScope()</code>
       decorator, which makes that Nest will always create the new instance of the module, when it's imported by another one.
     </p>
     <pre><code class="language-typescript">{{ singleScope }}</code></pre>
-    <h3>Dependency Injection</h3>
+    <h4>Dependency Injection</h4>
     <p>
       It's natural that module can <strong>inject</strong> components, which belongs to it (e.g. for the configuration purposes):
     </p>

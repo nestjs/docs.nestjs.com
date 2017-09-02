@@ -12,6 +12,7 @@ import { MiddlewaresComponent } from './homepage/pages/middlewares/middlewares.c
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { GuardsComponent } from './homepage/pages/guards/guards.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
+import { InterceptorsComponent } from './homepage/pages/interceptors/interceptors.component';
 
 const routes: Routes = [
   {
@@ -53,6 +54,10 @@ const routes: Routes = [
       {
         path: 'exception-filters',
         component: ExceptionFiltersComponent,
+      },
+      {
+        path: 'interceptors',
+        component: InterceptorsComponent,
       }
     ]
   },

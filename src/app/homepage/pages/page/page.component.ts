@@ -25,9 +25,9 @@ export class BasePageComponent implements AfterViewChecked {
         if (code.className) {
           Prism.highlightElement(code);
           this.isHljsInitialized = true;
-          this.cd.markForCheck();
         }
       }
     );
+    this.cd.markForCheck();
   }
 }
