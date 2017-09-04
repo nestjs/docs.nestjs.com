@@ -2,6 +2,83 @@
    <h3>Interceptors</h3>
    <p>
      Interceptor is a class with the <code>@Interceptor()</code> decorator.
+     The interceptor should implements the <code>NestInterceptor</code> interface.
    </p>
    <figure><img src="/assets/Interceptors_1.png" /></figure>
+   <p>
+     The interceptors have a set of useful capabilities, which are inspired by <strong>Aspect-Oriented Programming</strong> (AOP) technique.
+     They make possible to:
+   </p>
+   <ul>
+     <li>bind <strong>extra logic</strong> before / after method execution</li>
+     <li><strong>transform</strong> the result returned from the function</li>
+     <li>completely <strong>override</strong> the function depending on the chosen conditions (e.g. caching purposes)</li>
+   </ul>
+   <h4>Basics</h4>
+   <p>
+     Each interceptor has the <code>intercept()</code> method.
+     This function takes 3 arguments. First one is <code>dataOrRequest</code>. This value depends on where you actually have used the interceptor.
+     When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise it's the data passed to the microservice / or websocket.
+     The second argument is a <code>context</code>, which is exactly the same as in <a routerLink="/guards">Guards</a>.  This object fulfills <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
+     The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
+     The last one <code>stream$</code> is an <code>Observable</code>. If you'd not return this stream, the function won't be evaluated.
+   </p>
+   <h4>Before / After</h4>
+   <p>
+     The first use case is using interceptor to provide extra logic before or after function execution. It's useful when we're gonna <strong>log interaction</strong> with the application, e.g. storing user calls, or calculate the timestamp.
+   </p>
+   <p>
+      Let's create a simple <code>LoggingInterceptor</code>.
+  </p>
+  <span class="filename">logging.interceptor.ts</span>
+  <pre><code class="language-typescript">{{ loggingInterceptor }}</code></pre>
+  <blockquote class="warning">
+      <strong>Notice</strong> Interceptors same as controllers, components, guards and middlewares can <strong>inject dependencies</strong> through constructor.
+   </blockquote>
+   <p>
+     Since <code>stream$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we've a lot of various operators which we can use to manipulate the stream. In above example, I've used <code>do()</code> operator, which invokes the function upon graceful or exceptional termination of the observable sequence.
+   </p>
+   <p>
+     To setup the interceptor, we're using <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
+     Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped and method-scoped.
+  </p>
+  <span class="filename">cats.controller.ts</span>
+  <pre><code class="language-typescript">{{ useLoggingInterceptor }}</code></pre>
+  <p>
+    Now every route handler within <code>CatsController</code> is using <code>LoggingInterceptor</code>.
+    When someone would call GET <code>/cats</code> endpoint, you'll see similar output in your console window:
+  </p>
+  <pre><code class="language-typescript">{{ consoleOutput }}</code></pre>
+  <h4>Response mapping</h4>
+  <p>
+    The <code>stream$</code> is an <code>Observable</code>.
+    This object contains the value <strong>returned</strong> from the route handler, so we can easily mutate it using <code>map()</code> operator.
+  </p>
+  <p>
+    Let's create the <code>TransformInterceptor</code> which will pack the response and assign it to the <code>data</code> property.
+  </p>
+  <span class="filename">transform.interceptor.ts</span>
+  <pre><code class="language-typescript">{{ transformInterceptor }}</code></pre>
+  <blockquote>
+    <strong>Hint</strong> The <code>intercept()</code> method can be <code>async</code>. 
+  </blockquote>
+  <p>
+    Now, the response of the GET <code>/cats</code> request would looks like below:
+  </p>
+  <pre><code class="language-typescript">{{ dataResponse }}</code></pre>
+  <h4>Stream overriding</h4>
+  <p>
+    Sometimes we might want to completely prevent calling the handler and return different value instead.
+    The excellent example is a <strong>cache interceptor</strong>, which would store the cached responses with some ttl.
+  </p>
+  <span class="filename">cache.interceptor.ts</span>
+  <pre><code class="language-typescript">{{ cacheInterceptor }}</code></pre>
+  <p>
+    Here's a <code>CacheInterceptor</code> with hardcoded <code>isCached</code> variable and the cached response <code>[]</code>.
+    Since we're returning new stream created through <code>of</code> operator, the route handler <strong>won't be called</strong>.
+    It's everything.
+  </p>
+  <blockquote>
+    <strong>Hint</strong> Exceptions throwed within interceptors can be catched by <a routerLink="/exception-filters">exception filters</a>. 
+  </blockquote>
 </div>

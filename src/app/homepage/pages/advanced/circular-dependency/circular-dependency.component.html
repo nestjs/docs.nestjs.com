@@ -1,0 +1,29 @@
+<div class="content">
+  <h3>Circular Dependency</h3>
+  <p>
+    The circular dependency means that class A needs class B, and the class B needs class A.
+    Nest doesn't permit to create a <strong>circular dependencies</strong> between your components, but sometimes it's really difficult to
+    avoid these types of the relationships. Fortunately, there's some ways to deal with this issue.
+  </p>
+  <h4>Module reference</h4>
+  <p>
+    Nest provides the <code>ModuleRef</code> class, which might be simply injected into the every component.
+  </p>
+  <pre><code class="language-typescript">{{ moduleRef }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> The <code>ModuleRef</code> class is imported from the <code>@nestjs/core</code> package.
+  </blockquote> 
+  <p>
+    The module reference has a <code>get()</code> method, which allows to retrieve any component available in this module.
+  </p>
+  <h4>Proxy</h4>
+  <p>
+    The <code>ModuleRef</code> won't help if the components belong to the different modules.
+    In this situation the only solution is to create a <strong>proxy</strong> class.
+    The proxy can make use of <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Subject</code> under the hood, or just extend the native <code>EventEmitter</code>.
+  </p>
+  <pre><code class="language-typescript">{{ proxy }}</code></pre>
+  <p>
+    Here's an example with the observable streams. Now one component need to <strong>subscribe</strong> to the stream and the second one - use public <code>publish()</code> method to emit messages.
+  </p>
+</div>

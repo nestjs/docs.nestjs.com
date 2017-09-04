@@ -15,8 +15,10 @@
 <ng-template #withoutChildren>
   <div class="heading">
     <a 
+      *ngIf="!externalUrl"
       [routerLink]="path" 
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"><h3>{{ title }}</h3></a>
+    <a *ngIf="!!externalUrl" href="{{ externalUrl }}" target="blank"><h3>{{ title }}</h3></a>
   </div>
 </ng-template>

@@ -1,0 +1,24 @@
+<div class="content">
+  <h3>Unit Testing</h3>
+  <p>
+    Unit tests are very important in the art of programming. 
+    There's a lot of great articles why and how we should write them, so here i'm gonna show you only the Nest specific tools.
+  </p>
+  <h4>Isolated tests</h4>
+  <p> 
+    Components, controllers, interceptors.. every Nest application building block is in fact just a simple class.
+    Since each dependency is injected through constructor, you can easily <strong>mock</strong> them using abilities of the popular libraries, for example <a href="https://github.com/jasmine/jasmine" target="blank">Jasmine</a> or <a href="https://github.com/facebook/jest" target="blank">Jest</a>. 
+  </p>
+  <span class="filename">cats.controller.spec.ts</span>
+  <pre><code class="language-typescript">{{ isolatedTests }}</code></pre>
+  <p>
+    Here's an example which is using <a href="https://github.com/facebook/jest" target="blank">Jest</a> library.
+    We created the instances of the both <code>CatsController</code> and the <code>CatsService</code> manually, using <code>new</code> keyword.
+    We didn't use any Nest utility. This type of testing is called <strong>isolated tests</strong>.
+  </p>
+  <h4>Testing utilities</h4>
+  <p>
+    Nest has a special package <code>@nestjs/testing</code>, which gives a set of testing utilities to boost the testing process.
+    
+  </p>
+</div>

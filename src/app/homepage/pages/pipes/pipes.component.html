@@ -2,7 +2,7 @@
    <h3>Pipes</h3>
    <p>
       Pipe is a class with <code>@Pipe()</code> decorator.
-      A pipe should implements the <code>PipeTransform</code> interface.
+      The pipe should implements the <code>PipeTransform</code> interface.
    </p>
    <figure><img src="/assets/Pipe_1.png" /></figure>
    <p>
@@ -92,7 +92,7 @@
      Let's go through this code. Firstly, note that <code>transform()</code> function is <code>async</code>.
      It's possible, because Nest supports both synchronous and <strong>asynchronous</strong> pipes.
      Also, there's a helper function - <code>toValidate()</code>. Its responsibility is to exclude the native JavaScript types from the validation process.
-     The last important thing is that the we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the overriding.
+     The last important thing is that the we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the <strong>overriding</strong>.
    </p>
    <p>
      The last step is to setup the <code>ValidationPipe</code>. Pipes, same as <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped and global-scoped.

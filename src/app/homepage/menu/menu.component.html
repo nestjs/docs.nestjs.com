@@ -3,6 +3,7 @@
     *ngFor="let item of items"
     [isOpen]="item.isOpened"
     [title]="item.title"
+    [externalUrl]="item?.externalUrl"
     [path]="item?.path"
     [children]="item.children"
   ></app-menu-item>

@@ -1,7 +1,7 @@
 <div class="content">
    <h3>Guards</h3>
    <p>
-     Guard is a class with the <code>@Guard()</code> decorator. A guard should implements the <code>CanActivate</code> interface.
+     Guard is a class with the <code>@Guard()</code> decorator. The guard should implements the <code>CanActivate</code> interface.
    </p>
    <figure><img src="/assets/Guards_1.png" /></figure>
    <p>
@@ -36,7 +36,7 @@
     <p>
       The <code>canActivate()</code> function takes 2 arguments. First one is <code>dataOrRequest</code>. This value depends on where you actually have used the guard.
       When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise it's the data passed to the microservice / or websocket.
-      The second is a <code>context</code>.  This object fulfills <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
+      The second argument is a <code>context</code>.  This object fulfills <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
       The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
     </p>
     <h4>Usage</h4>
@@ -84,8 +84,8 @@
   </p>
   <span class="filename">roles.guard.ts</span>
   <pre><code class="language-typescript">{{ rolesGuardExt }}</code></pre>
-  <blockquote>
-      <strong>Notice</strong> Guards same as controllers, components and middlewares can <strong>inject dependencies</strong> through constructor.
+  <blockquote class="warning">
+      <strong>Notice</strong> Guards same as controllers, components, interceptors and middlewares can <strong>inject dependencies</strong> through constructor.
    </blockquote>
   <p>
     In node.js world, it's a common practice to attach the authorized user to the <code>req</code> object.

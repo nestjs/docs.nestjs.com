@@ -55,6 +55,12 @@ blockquote {
   strong {
     color: $red-color;
   }
+
+  &.warning {
+    background: #fff1e5;
+    &::before { background: #ed8529; }
+    strong, a { color: #ed8529; }
+  }
 }
 
 figure {

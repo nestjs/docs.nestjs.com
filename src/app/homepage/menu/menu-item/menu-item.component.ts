@@ -11,6 +11,7 @@ export class MenuItemComponent {
   @Input() children = [];
   @Input() path: string;
   @Input() title: string;
+  @Input() externalUrl: string;
 
   toggle() {
     this.isOpen = !this.isOpen;

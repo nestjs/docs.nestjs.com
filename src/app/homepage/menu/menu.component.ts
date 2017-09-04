@@ -35,7 +35,7 @@ export class MenuComponent {
       children: [
         { title: 'Dependency Injection', path: '/advanced/dependency-injection' },
         { title: 'Async Components', path: '/advanced/async-components' },
-        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
+        { title: 'Hierarchical Injector (TBC)', path: '/advanced/hierarchical-injector' },
         { title: 'Circular Dependency', path: '/advanced/circular-dependency' },
         { title: 'Unit Testing', path: '/advanced/unit-testing' },
         { title: 'E2E Testing', path: '/advanced/e2e-testing' },
@@ -49,6 +49,7 @@ export class MenuComponent {
         { title: 'Pipes', path: '/websockets/pipes' },
         { title: 'Exception Filters', path: '/websockets/exception-filters' },
         { title: 'Guards', path: '/websockets/guards' },
+        { title: 'Interceptors', path: '/websockets/interceptors' },
         { title: 'Adapter', path: '/websockets/adapter' },
       ]
     },
@@ -57,40 +58,42 @@ export class MenuComponent {
       isOpened: false,
       children: [
         { title: 'Basics', path: '/microservices/basics' },
-        { title: 'Redis', path: '/websockets/redis' },
-        { title: 'Pipes', path: '/websockets/pipes' },
-        { title: 'Exception Filters', path: '/websockets/exception-filters' },
-        { title: 'Guards', path: '/websockets/guards' },
-        { title: 'Custom Transport', path: '/websockets/custom-transport' },
+        { title: 'Redis', path: '/microservices/redis' },
+        { title: 'Pipes', path: '/microservices/pipes' },
+        { title: 'Exception Filters', path: '/microservices/exception-filters' },
+        { title: 'Guards', path: '/microservices/guards' },
+        { title: 'Interceptors', path: '/microservices/interceptors' },
+        { title: 'Custom Transport', path: '/microservices/custom-transport' },
       ]
     },
     {
       title: 'Recipes',
       isOpened: false,
       children: [
-        { title: 'SQL (TypeORM) [TBC]', path: '/recipes/sql-typeorm' },
-        { title: 'NoSQL (MongoDB) [TBC]', path: '/recipes/nosql-mongodb' },
-        { title: 'CQRS + Event Sourcing [TBC]', path: '/recipes/nosql-mongodb' },
-        { title: 'Passport JWT integration [TBC]', path: '/recipes/nosql-mongodb' },
-        { title: 'Swagger [TBC]', path: '/recipes/nosql-mongodb' },
-        { title: 'GraphQL [TBC]', path: '/recipes/graphql' },
-        { title: 'Redis Socket.io [TBC]', path: '/recipes/redis-socketio' },
+        { title: 'SQL (TypeORM)', path: '/recipes/sql-typeorm' },
+        { title: 'MongoDB (TBC)', path: '/recipes/mongodb' },
+        { title: 'CQRS + Event Sourcing (TBC)', path: '/recipes/cqrs' },
+        { title: 'Passport integration (TBC)', path: '/recipes/passport' },
+        { title: 'Swagger (TBC)', path: '/recipes/swagger' },
+        { title: 'GraphQL (TBC)', path: '/recipes/graphql' }
       ],
     },
     {
       title: 'FAQ',
       isOpened: false,
       children: [
-        { title: 'Best Practices', path: '/faq/best-practices' },
+        { title: 'Best Practices (TBC)', path: '/faq/best-practices' },
         { title: 'Express Instance', path: '/faq/express-instance' },
-        { title: 'Module Reference', path: '/faq/module-reference' },
         { title: 'Global Route Prefix', path: '/faq/global-prefix' },
         { title: 'Lifecycle Events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid Application', path: '/faq/hybrid-application' },
-        { title: 'Lazy Microservice Client', path: '/faq/lazy-microservice' },
         { title: 'Multiple Simultaneous Servers', path: '/faq/multiple-servers' },
         { title: 'Examples', path: '/faq/examples' },
       ]
+    },
+    {
+      title: 'Support me',
+      externalUrl: 'https://opencollective.com/nest',
     }
   ];
 }

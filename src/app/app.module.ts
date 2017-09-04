@@ -24,6 +24,9 @@ import { GuardsComponent } from './homepage/pages/guards/guards.component';
 import { DependencyInjectionComponent } from './homepage/pages/advanced/dependency-injection/dependency-injection.component';
 import { AsyncComponentsComponent } from './homepage/pages/advanced/async-components/async-components.component';
 import { InterceptorsComponent } from './homepage/pages/interceptors/interceptors.component';
+import { CircularDependencyComponent } from './homepage/pages/advanced/circular-dependency/circular-dependency.component';
+import { UnitTestingComponent } from './homepage/pages/advanced/unit-testing/unit-testing.component';
+import { E2eTestingComponent } from './homepage/pages/advanced/e2e-testing/e2e-testing.component';
 
 @NgModule({
   imports: [
@@ -55,6 +58,9 @@ import { InterceptorsComponent } from './homepage/pages/interceptors/interceptor
     DependencyInjectionComponent,
     AsyncComponentsComponent,
     InterceptorsComponent,
+    CircularDependencyComponent,
+    UnitTestingComponent,
+    E2eTestingComponent,
   ],
   bootstrap: [AppComponent]
 })
