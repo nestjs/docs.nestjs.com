@@ -50,7 +50,7 @@
       </tr>
     </table>
     <blockquote>
-      <strong>Notice</strong> TypeScript interfaces disappear during the transpilation, so if you'd use interface instead of class, the <code>metatype</code> value will be <code>Object</code>.
+      <strong>Notice</strong> TypeScript interfaces are disappearing during the transpilation, so if you'd use interface instead of class, the <code>metatype</code> value will be <code>Object</code>.
    </blockquote>
     <h4>How does it work?</h4>
     <p>
@@ -72,7 +72,7 @@
     <p>
       That's the first use-case, when you should consider to use a <strong>Pipe</strong>.
     </p>
-    <h4>Class Validator</h4>
+    <h4>Class validator</h4>
     <p>
       Nest works well with the <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>, the amazing library which allows to use decorator-based validation.
       Decorator based validation is really powerful with the <strong>pipe</strong> abilities, since we've an access to the <code>metatype</code> of the processed property.
@@ -118,4 +118,11 @@
     <blockquote>
       <strong>Notice</strong> The <code>useGlobalPipes()</code> method doesn't setup pipes for gateways and microservices.
     </blockquote>
+    <h4>Transformer Pipe</h4>
+    <p>
+      Validation isn't the sole use case. At the beginning of this article I've mentioned that pipe <strong>transforms</strong> the input data to a desired output.
+      It's true, because the value returned from the <code>transform</code> function completely overrides the previous value of the argument.
+      Sometimes the data passed from the client needs to undergo some changes. Also, some parts could be missed, so we must apply the default values.
+      The <strong>transformer pipes</strong> fill the gap between the client request and the request handler.
+    </p>
 </div>

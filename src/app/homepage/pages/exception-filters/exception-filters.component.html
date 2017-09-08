@@ -30,6 +30,9 @@
       Now when the client will call this endpoint, the response would looks like below:
     </p>
     <pre><code class="language-typescript">{{ forbiddenResponse }}</code></pre>
+    <blockquote class="warning">
+      <strong>Hint</strong> The <code>HttpException</code> constructor takes <code>string | object</code> as a first argument. If you'd pass <code>object</code> instead of <code>string</code>, you'll completely override the response body.
+    </blockquote>
     <h4>Exceptions Hierarchy</h4>
     <p>
       The good practice is to create your own <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base <code>HttpException</code> class.

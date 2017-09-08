@@ -18,6 +18,19 @@ import { AsyncComponentsComponent } from './homepage/pages/advanced/async-compon
 import { CircularDependencyComponent } from './homepage/pages/advanced/circular-dependency/circular-dependency.component';
 import { UnitTestingComponent } from './homepage/pages/advanced/unit-testing/unit-testing.component';
 import { E2eTestingComponent } from './homepage/pages/advanced/e2e-testing/e2e-testing.component';
+import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways.component';
+import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
+import { WsInterceptorsComponent } from './homepage/pages/websockets/interceptors/interceptors.component';
+import { WsExceptionFiltersComponent } from './homepage/pages/websockets/exception-filters/exception-filters.component';
+import { WsGuardsComponent } from './homepage/pages/websockets/guards/guards.component';
+import { WsPipesComponent } from './homepage/pages/websockets/pipes/pipes.component';
+import { BasicsComponent } from './homepage/pages/microservices/basics/basics.component';
+import { RedisComponent } from './homepage/pages/microservices/redis/redis.component';
+import { MicroservicesPipesComponent } from './homepage/pages/microservices/pipes/pipes.component';
+import { MicroservicesExceptionFiltersComponent } from './homepage/pages/microservices/exception-filters/exception-filters.component';
+import { MicroservicesGuardsComponent } from './homepage/pages/microservices/guards/guards.component';
+import { MicroservicesInterceptorsComponent } from './homepage/pages/microservices/interceptors/interceptors.component';
+import { CustomTransportComponent } from './homepage/pages/microservices/custom-transport/custom-transport.component';
 
 const routes: Routes = [
   {
@@ -83,6 +96,58 @@ const routes: Routes = [
       {
         path: 'advanced/e2e-testing',
         component: E2eTestingComponent,
+      },
+      {
+        path: 'websockets/gateways',
+        component: GatewaysComponent,
+      },
+      {
+        path: 'websockets/pipes',
+        component: WsPipesComponent,
+      },
+      {
+        path: 'websockets/exception-filters',
+        component: WsExceptionFiltersComponent,
+      },
+      {
+        path: 'websockets/guards',
+        component: WsGuardsComponent,
+      },
+      {
+        path: 'websockets/interceptors',
+        component: WsInterceptorsComponent,
+      },
+      {
+        path: 'websockets/adapter',
+        component: AdapterComponent,
+      },
+      {
+        path: 'microservices/basics',
+        component: BasicsComponent,
+      },
+      {
+        path: 'microservices/redis',
+        component: RedisComponent,
+      },
+      {
+        path: 'microservices/pipes',
+        component: MicroservicesPipesComponent,
+      },
+      {
+        path: 'microservices/exception-filters',
+        component: MicroservicesExceptionFiltersComponent,
+      },
+      {
+        path: 'microservices/guards',
+        component: MicroservicesGuardsComponent,
+      },
+      {
+        path: 'microservices/interceptors',
+        component: MicroservicesInterceptorsComponent,
+      },
+      {
+        path: 'microservices/custom-transport',
+        component: CustomTransportComponent,
       },
     ]
   },

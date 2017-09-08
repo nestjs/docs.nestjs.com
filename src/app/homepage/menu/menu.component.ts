@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -6,7 +7,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit {
   @Input() isSidebarOpened = true;
   readonly items = [
     {
@@ -46,8 +47,8 @@ export class MenuComponent {
       isOpened: false,
       children: [
         { title: 'Gateways', path: '/websockets/gateways' },
-        { title: 'Pipes', path: '/websockets/pipes' },
         { title: 'Exception Filters', path: '/websockets/exception-filters' },
+        { title: 'Pipes', path: '/websockets/pipes' },
         { title: 'Guards', path: '/websockets/guards' },
         { title: 'Interceptors', path: '/websockets/interceptors' },
         { title: 'Adapter', path: '/websockets/adapter' },
@@ -59,8 +60,8 @@ export class MenuComponent {
       children: [
         { title: 'Basics', path: '/microservices/basics' },
         { title: 'Redis', path: '/microservices/redis' },
-        { title: 'Pipes', path: '/microservices/pipes' },
         { title: 'Exception Filters', path: '/microservices/exception-filters' },
+        { title: 'Pipes', path: '/microservices/pipes' },
         { title: 'Guards', path: '/microservices/guards' },
         { title: 'Interceptors', path: '/microservices/interceptors' },
         { title: 'Custom Transport', path: '/microservices/custom-transport' },
@@ -93,7 +94,23 @@ export class MenuComponent {
     },
     {
       title: 'Support me',
+      isOpened: false,
       externalUrl: 'https://opencollective.com/nest',
     }
   ];
+
+  constructor(private readonly route: ActivatedRoute) {}
+
+  ngOnInit() {
+    const { firstChild } = this.route.snapshot;
+    if (firstChild.url && firstChild.url[1]) {
+      const { path } = firstChild.url[0];
+      const index = this.items.findIndex(({ title }) => title.toLowerCase() === path);
+      if (index < 0) {
+        return;
+      }
+      this.items[index].isOpened = true;
+      this.items[1].isOpened = false;
+    }
+  }
 }

@@ -13,7 +13,7 @@
      But Middleware is dumb. It doesn't know which handler would be executed after calling the <code>next()</code> function.
      On the other hand, <strong>Guards</strong> have an access to the <code>ExecutionContext</code> object, so we know exactly what's going to be evaluated.
    </p> 
-   <blockquote>
+   <blockquote class="warning">
       <strong>Hint</strong> Guards are executed <strong>after</strong> every middleware, but <strong>before</strong> pipes.
     </blockquote>
     <h4>RolesGuard</h4>

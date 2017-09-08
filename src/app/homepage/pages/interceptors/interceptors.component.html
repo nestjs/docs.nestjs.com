@@ -76,6 +76,7 @@
   <p>
     Here's a <code>CacheInterceptor</code> with hardcoded <code>isCached</code> variable and the cached response <code>[]</code>.
     Since we're returning new stream created through <code>of</code> operator, the route handler <strong>won't be called</strong>.
+    To create a generic solution, you can use the <code>Reflector</code> and create a custom decorator. It's well described in the <a routerLink="/guards">guards</a> article.
     It's everything.
   </p>
   <blockquote>

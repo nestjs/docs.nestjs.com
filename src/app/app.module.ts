@@ -27,6 +27,19 @@ import { InterceptorsComponent } from './homepage/pages/interceptors/interceptor
 import { CircularDependencyComponent } from './homepage/pages/advanced/circular-dependency/circular-dependency.component';
 import { UnitTestingComponent } from './homepage/pages/advanced/unit-testing/unit-testing.component';
 import { E2eTestingComponent } from './homepage/pages/advanced/e2e-testing/e2e-testing.component';
+import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways.component';
+import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
+import { WsExceptionFiltersComponent } from './homepage/pages/websockets/exception-filters/exception-filters.component';
+import { WsInterceptorsComponent } from './homepage/pages/websockets/interceptors/interceptors.component';
+import { WsGuardsComponent } from './homepage/pages/websockets/guards/guards.component';
+import { WsPipesComponent } from './homepage/pages/websockets/pipes/pipes.component';
+import { BasicsComponent } from './homepage/pages/microservices/basics/basics.component';
+import { RedisComponent } from './homepage/pages/microservices/redis/redis.component';
+import { CustomTransportComponent } from './homepage/pages/microservices/custom-transport/custom-transport.component';
+import { MicroservicesInterceptorsComponent } from './homepage/pages/microservices/interceptors/interceptors.component';
+import { MicroservicesGuardsComponent } from './homepage/pages/microservices/guards/guards.component';
+import { MicroservicesPipesComponent } from './homepage/pages/microservices/pipes/pipes.component';
+import { MicroservicesExceptionFiltersComponent } from './homepage/pages/microservices/exception-filters/exception-filters.component';
 
 @NgModule({
   imports: [
@@ -61,6 +74,19 @@ import { E2eTestingComponent } from './homepage/pages/advanced/e2e-testing/e2e-t
     CircularDependencyComponent,
     UnitTestingComponent,
     E2eTestingComponent,
+    GatewaysComponent,
+    AdapterComponent,
+    WsPipesComponent,
+    WsInterceptorsComponent,
+    WsGuardsComponent,
+    WsExceptionFiltersComponent,
+    BasicsComponent,
+    RedisComponent,
+    CustomTransportComponent,
+    MicroservicesExceptionFiltersComponent,
+    MicroservicesPipesComponent,
+    MicroservicesInterceptorsComponent,
+    MicroservicesGuardsComponent,
   ],
   bootstrap: [AppComponent]
 })

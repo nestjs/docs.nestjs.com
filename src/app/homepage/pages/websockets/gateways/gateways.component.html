@@ -1,0 +1,91 @@
+<div class="content">
+  <h3>Gateways</h3>
+  <p>
+    Gateway is a class with <code>@WebSocketGateway()</code> decorator.
+    In fact, the Gateway is an encapsulated <a href="https://github.com/socketio/socket.io" target="blank">socket.io</a> server instance adjusted to the framework architecture.
+  </p>
+  <figure><img src="/assets/Gateways_1.png" /></figure>
+  <blockquote class="warning">
+    <strong>Hint</strong> Gateway is a <strong>component</strong>, so it can inject dependencies through constructor. Also, gateway might be injected by another component.
+  </blockquote>
+  <p>
+    By default, each Gateway is listening to the <strong>port 80</strong>.
+    We can change this behavior by passing the argument to the <code>@WebSocketGateway(81)</code> decorator.
+    Additionaly, you can force a <a href="https://socket.io/docs/rooms-and-namespaces/" target="blank">namespace</a> used by this gateway with the following construction:
+  </p>
+  <pre><code class="language-typescript">{{ namespace }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> Gateway won't start until you place it inside <code>components</code> array.
+  </blockquote>
+  <p>
+    The Gateway is listening now, but we're not subscribing to the incoming messages yet.
+    Let's create a handler, which will subscribe to the <code>events</code> messages and respond to the user with the exact same data.
+  </p>
+  <span class="filename">events.gateway.ts</span>
+  <pre><code class="language-typescript">{{ subscribeEvents }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> The <code>WsResponse</code> interface is imported from <code>@nestjs/common</code> package, while <code>@SubscribeMessage()</code> decorator from <code>@nestjs/websockets</code>.
+  </blockquote>
+  <p>
+    The <code>onEvent()</code> function takes 2 arguments. First one is a <a href="https://socket.io/docs/server-api/#socket" target="blank">native socket instance</a>, and the second one - <code>data</code> is the data passed from the client.
+    Object returned from the function must have 2 members. The <code>event</code>, which is a name of the emitted event, and the <code>data</code>.
+    Also, it's possible to emit messages using standard socket.io approach, so using <code>client.emit()</code> function, but then it's impossible to make use of interceptors.
+    If you don't want to respond to the user, just don't return anything.
+  </p>
+  <h4>Asynchronous responses</h4>
+  <p>
+    Each message handler can be <code>async</code>, so you're able to return the <code>Promise</code>.
+    Moreover, you can return the <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, so the values would be emitted until the stream is completed.
+  </p>
+  <span class="filename">events.gateway.ts</span>
+  <pre><code class="language-typescript">{{ streaming }}</code></pre>
+  <p>
+    Above message handler will respond <strong>3 times</strong> (with each item from the <code>response</code> array).
+  </p>
+  <h4>Lifecycle Hooks</h4>
+  <p>
+    There're 3 useful lifecycle hooks. All of them have a corresponding interfaces, and are described in the following table:
+  </p>
+  <table>
+    <tr>
+      <td>
+        <code>OnGatewayInit</code>
+      </td>
+      <td>
+        Forces to implement the <code>afterInit()</code> method. Takes native socket.io server instance as an argument.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>OnGatewayConnection</code>
+      </td>
+      <td>
+        Forces to implement the <code>handleConnection()</code> method. Takes native client socket instance as an argument.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>OnGatewayDisconnect</code>
+      </td>
+      <td>
+        Forces to implement the <code>handleDisconnect()</code> method. Takes native client socket instance as an argument.
+      </td>
+    </tr>
+  </table>
+  <blockquote>
+    <strong>Notice</strong> Each lifecycle interface is available within <code>@nestjs/websockets</code> package.
+  </blockquote>
+  <h4>Native server instance</h4>
+  <p>
+    Sometimes you might wanna have a direct access to the native socket.io <strong>server instance</strong>.
+    The reference to this object is passed as an argument to the <code>afterInit()</code> method (<code>OnGatewayInit</code> interface).
+    The second approach is to make use of <code>@WebSocketServer()</code> decorator.
+  </p>
+  <pre><code class="language-typescript">{{ webSocketServer }}</code></pre>
+  <p>
+    Nest will automatically assign the server instance to this property when it's ready to use.
+  </p>
+  <blockquote>
+    <strong>Notice</strong> The <code>@WebSocketServer()</code> decorator is imported from the <code>@nestjs/websockets</code> package.
+  </blockquote>
+</div>

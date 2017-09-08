@@ -1,3 +1,66 @@
-<p>
-  e2e-testing works!
-</p>
+<div class="content">
+  <h3>E2E Testing</h3>
+  <p>
+    The end to end testing is a great way to verify how the application works from <strong>beginning to end</strong>.
+    For example, when the application grows, it's difficult to manually test every API endpoint. The e2e tests help us to make sure that everything's working correctly and fits our requirements.
+  </p>
+  <p>
+    The steps to perform e2e tests are exactly the same as in the case of <a routerLink="/advanced/unit-testing">unit testing</a>.
+    We're using <a href="https://github.com/facebook/jest" target="blank">Jest</a> library as a test runner and the <code>Test</code> static class to create a testing module.
+    Moreover, to simulate the HTTP requests, we've installed the <a href="https://github.com/visionmedia/supertest" target="blank">supertest</a> library.
+  </p>
+  <p>
+    Let's create an <code>e2e</code> directory and test the <code>CatsModule</code>.
+  </p>
+  <span class="filename">cats.e2e-spec.ts</span>
+  <pre><code class="language-typescript">{{ e2eTests }}</code></pre>
+  <blockquote>
+    <strong>Hint</strong> Keep your e2e test files inside the <code>e2e</code> directory. The testing files should have a <code>.e2e-spec</code> or <code>.e2e-test</code> suffix.
+  </blockquote>
+  <p>
+    Here's a <code>cats.e2e-spec.ts</code> test file. It contains a single HTTP request test, where we're checking whether the response looks like expected.
+  </p>
+  <p>
+    Notice that <code>TestingModule</code> instance provides an <code>overrideComponent()</code> method thus we can <strong>override</strong> the component which is the part of the imported module.
+    Also, we can successively override the guards and interceptors using <code>overrideGuard()</code> and <code>overrideInterceptor()</code>.
+  </p> 
+  <p>
+    The compiled module has several methods well described in the following table:
+  </p>
+  <table>
+    <tr>
+      <td>
+        <code>createNestInstance()</code>
+      </td>
+      <td>
+        Takes an optional argument - the express instance, and returns the <code>INestApplication</code>.
+        It's necessary to manually initialize the application using <code>init()</code> method.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>createNestMicroservice()</code>
+      </td>
+      <td>
+        Takes <code>MicroserviceConfiguration</code> as an argument, and returns the <code>INestMicroservice</code>.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>get()</code>
+      </td>
+      <td>
+        Makes possible to retrieve the instance of the component or controller available inside the processed module
+        (including imported ones).
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>select()</code>
+      </td>
+      <td>
+        Allows you to navigate through the module tree, for example, to pull out a specific instance from the selected module.
+      </td>
+    </tr>
+  </table>
+</div>
