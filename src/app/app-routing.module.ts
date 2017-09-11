@@ -31,6 +31,14 @@ import { MicroservicesExceptionFiltersComponent } from './homepage/pages/microse
 import { MicroservicesGuardsComponent } from './homepage/pages/microservices/guards/guards.component';
 import { MicroservicesInterceptorsComponent } from './homepage/pages/microservices/interceptors/interceptors.component';
 import { CustomTransportComponent } from './homepage/pages/microservices/custom-transport/custom-transport.component';
+import { HierarchicalInjectorComponent } from './homepage/pages/advanced/hierarchical-injector/hierarchical-injector.component';
+import { MixinComponentsComponent } from './homepage/pages/advanced/mixin-components/mixin-components.component';
+import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
+import { ExpressInstanceComponent } from './homepage/pages/faq/express-instance/express-instance.component';
+import { GlobalPrefixComponent } from './homepage/pages/faq/global-prefix/global-prefix.component';
+import { LifecycleEventsComponent } from './homepage/pages/faq/lifecycle-events/lifecycle-events.component';
+import { HybridApplicationComponent } from './homepage/pages/faq/hybrid-application/hybrid-application.component';
+import { MultipleServersComponent } from './homepage/pages/faq/multiple-servers/multiple-servers.component';
 
 const routes: Routes = [
   {
@@ -84,6 +92,14 @@ const routes: Routes = [
       {
         path: 'advanced/async-components',
         component: AsyncComponentsComponent,
+      },
+      {
+        path: 'advanced/mixins',
+        component: MixinComponentsComponent,
+      },
+      {
+        path: 'advanced/hierarchical-injector',
+        component: HierarchicalInjectorComponent,
       },
       {
         path: 'advanced/circular-dependency',
@@ -148,6 +164,30 @@ const routes: Routes = [
       {
         path: 'microservices/custom-transport',
         component: CustomTransportComponent,
+      },
+      {
+        path: 'recipes/sql-typeorm',
+        component: SqlTypeormComponent,
+      },
+      {
+        path: 'faq/express-instance',
+        component: ExpressInstanceComponent,
+      },
+      {
+        path: 'faq/global-prefix',
+        component: GlobalPrefixComponent,
+      },
+      {
+        path: 'faq/lifecycle-events',
+        component: LifecycleEventsComponent,
+      },
+      {
+        path: 'faq/hybrid-application',
+        component: HybridApplicationComponent,
+      },
+      {
+        path: 'faq/multiple-servers',
+        component: MultipleServersComponent,
       },
     ]
   },

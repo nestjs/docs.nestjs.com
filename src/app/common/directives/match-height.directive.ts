@@ -9,7 +9,7 @@ import {
 export class MatchHeightDirective implements AfterViewChecked {
     constructor(
       private readonly zone: NgZone,
-      private readonly rednerer: Renderer2,
+      private readonly renderer: Renderer2,
       private readonly el: ElementRef) {}
 
     ngAfterViewChecked() {
@@ -27,13 +27,13 @@ export class MatchHeightDirective implements AfterViewChecked {
         }
         const children = Array.from(parent.children);
         children.forEach((x: HTMLElement) => {
-          this.rednerer.setStyle(x, 'height', 'initial');
+          this.renderer.setStyle(x, 'height', 'initial');
         });
         const itemHeights = children.map(x => x.getBoundingClientRect().height);
         const maxHeight = itemHeights.reduce((prev, curr) => {
             return curr > prev ? curr : prev;
         }, 0);
 
-        children.forEach((x: HTMLElement) => this.rednerer.setStyle(x, 'height', `${maxHeight}px`));
+        children.forEach((x: HTMLElement) => this.renderer.setStyle(x, 'height', `${maxHeight}px`));
     }
 }

@@ -7,4 +7,32 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./exception-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MicroservicesExceptionFiltersComponent extends BasePageComponent {}
+export class MicroservicesExceptionFiltersComponent extends BasePageComponent {
+  get rpcException() {
+    return `
+throw new RpcException('Invalid credentials.');`;
+  }
+
+  get exceptionResponse() {
+    return `
+{
+  status: 'error',
+  message: 'Invalid credentials.'
+}`;
+  }
+
+  get rpcExceptionFilter() {
+    return `
+import { Catch, RpcExceptionFilter } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+import { RpcException } from '@nestjs/microservices';
+import 'rxjs/add/observable/throw';
+
+@Catch(RpcException)
+export class ExceptionFilter implements RpcExceptionFilter {
+  catch(exception: RpcException): Observable<any> {
+    return Observable.throw(exception.getError());
+  }
+}`;
+  }
+}

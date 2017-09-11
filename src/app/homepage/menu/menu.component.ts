@@ -36,7 +36,8 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Dependency Injection', path: '/advanced/dependency-injection' },
         { title: 'Async Components', path: '/advanced/async-components' },
-        { title: 'Hierarchical Injector (TBC)', path: '/advanced/hierarchical-injector' },
+        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
+        { title: 'Mixin Class', path: '/advanced/mixins' },
         { title: 'Circular Dependency', path: '/advanced/circular-dependency' },
         { title: 'Unit Testing', path: '/advanced/unit-testing' },
         { title: 'E2E Testing', path: '/advanced/e2e-testing' },
@@ -83,19 +84,24 @@ export class MenuComponent implements OnInit {
       title: 'FAQ',
       isOpened: false,
       children: [
-        { title: 'Best Practices (TBC)', path: '/faq/best-practices' },
         { title: 'Express Instance', path: '/faq/express-instance' },
         { title: 'Global Route Prefix', path: '/faq/global-prefix' },
         { title: 'Lifecycle Events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid Application', path: '/faq/hybrid-application' },
         { title: 'Multiple Simultaneous Servers', path: '/faq/multiple-servers' },
-        { title: 'Examples', path: '/faq/examples' },
+        { title: 'Examples', externalUrl: 'https://github.com/kamilmysliwiec/nest/tree/master/examples' },
+        { title: 'Best Practices (TBC)', path: '/faq/best-practices' },
       ]
     },
     {
       title: 'Support me',
       isOpened: false,
       externalUrl: 'https://opencollective.com/nest',
+    },
+    {
+      title: 'Archive (v3)',
+      isOpened: false,
+      externalUrl: 'https://kamilmysliwiec.gitbooks.io/nest/content/',
     }
   ];
 

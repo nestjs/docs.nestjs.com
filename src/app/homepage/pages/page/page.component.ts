@@ -1,5 +1,5 @@
 declare var Prism;
-import { ChangeDetectorRef, ElementRef, AfterViewChecked, Component } from '@angular/core';
+import { ElementRef, AfterViewChecked, Component, ApplicationRef } from '@angular/core';
 
 @Component({
   selector: 'app-base-page',
@@ -9,7 +9,7 @@ export class BasePageComponent implements AfterViewChecked {
   private isHljsInitialized = false;
 
   constructor(
-    private readonly cd: ChangeDetectorRef,
+    private readonly applicationRef: ApplicationRef,
     private readonly el: ElementRef) {}
 
   ngAfterViewChecked() {
@@ -28,6 +28,6 @@ export class BasePageComponent implements AfterViewChecked {
         }
       }
     );
-    this.cd.markForCheck();
+    setTimeout(() => this.applicationRef.tick(), 100);
   }
 }

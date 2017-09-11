@@ -1,3 +1,48 @@
-<p>
-  adapter works!
-</p>
+<div class="content">
+  <h3>Adapter</h3>
+  <p>
+    The Nest websockets module is based on <a href="https://github.com/socketio/socket.io" target="blank">socket.io</a>,
+    but you can bring your own library, by making use of <code>WebSocketAdapter</code> interface.
+    This interface forces to implement few methods described in the following table: 
+  </p>
+  <table>
+    <tr>
+      <td><code>create</code></td>
+      <td>Attaches the socket instance to the specified port</td>
+    </tr>
+    <tr>
+      <td><code>bindClientConnect</code></td>
+      <td>Binds the client connection</td>  
+    </tr>
+    <tr>
+      <td><code>bindMessageHandlers</code></td>
+      <td>Binds the incoming message to the appropriate message handlers</td>  
+    </tr>
+  </table>
+  <p>
+    Also, there're 2 optional methods:
+  </p>
+  <table>
+    <tr>
+      <td><code>createWithNamespace</code></td>
+      <td>Attaches the socket instance to the specified port and namespace (if your library supports rooms)</td>
+    </tr>
+    <tr>
+      <td><code>bindClientDisconnect</code></td>
+      <td>Binds the client disconnection event</td>  
+    </tr>
+  </table>
+  <p>
+    For demonstration purposes, we're going to integrate <a href="https://github.com/websockets/ws" target="blank">ws</a> library with the Nest application.
+  </p>
+  <span class="filename">ws-adapter.ts</span>
+  <pre><code class="language-typescript">{{ wsAdapter }}</code></pre>
+  <p>
+    Since <code>WsAdapter</code> class is ready to use, we can setup the adapter using <code>useWebSocketAdapter()</code> method:
+  </p>
+  <span class="filename">server.ts</span>
+  <pre><code class="language-typescript">{{ setupAdapter }}</code></pre>
+  <p>
+    Now Nest will make use of our <code>WsAdapter</code> instead of the default one.
+  </p>
+</div>

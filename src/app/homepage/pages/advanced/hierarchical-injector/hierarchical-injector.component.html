@@ -1,0 +1,43 @@
+<div class="content">
+  <h3>Hierarchical Injector</h3>
+  <p>
+    The Nest injector is <strong>hierarchical</strong>. 
+    To understand this useful treat, you firstly have to get acquainted with the process of creating the class instance.
+    When any class depends on the other class, the injector's trying to find the appropriate instance in the current <strong>scope</strong>.
+    The current scope isn't always the module to which the class belongs to.
+  </p>
+  <p>
+    Let's consider an example. We've a <code>CoreModule</code>:
+  </p>
+  <span class="filename">core.module.ts</span>
+  <pre><code class="language-typescript">{{ coreModule }}</code></pre>
+  <p>
+    This module imports the <code>CommonModule</code> and contains 2 components, successively <code>CoreService</code> and <code>ContextService</code>.
+    The <code>CommonModule</code> contains single component, the <code>CommonService</code>. This component is exported, so it's available within <code>CoreModule</code> as well.
+  </p>
+  <span class="filename">common.module.ts</span>
+  <pre><code class="language-typescript">{{ commonModule }}</code></pre>
+  <p>
+    Let's take a look at <code>ContextService</code> now:
+  </p>
+  <span class="filename">core/context.service.ts</span>
+  <pre><code class="language-typescript">{{ contextService }}</code></pre>
+  <p>
+    This class depends on the <code>CommonService</code>. This service's imported from the child module (<code>CommonModule</code>), so it's a typical situation.
+    Now something that may turn out to be surprising, the <code>CommonService</code>:
+  </p>
+  <span class="filename">common/common.service.ts</span>
+  <pre><code class="language-typescript">{{ commonService }}</code></pre>
+  <p>
+    The <code>CommonService</code> depends on the <code>CoreService</code>. It's possible, because the <code>CommonService</code> instance was resolved within the <code>CoreModule</code> <strong>context</strong> (was injected by the component, which belongs to the parent module).
+  </p>
+  <h4>Motivation</h4>
+  <p>
+    This technique makes possible to create a reusable modules using <strong>boundless abstraction</strong>.
+    Moreover, it allows to override every component from the imported module using <a routerLink="/advanced/dependency-injection">custom components</a> feature.
+    For example, you can create a default implementation of the class inside the feature module, but then overload it inside the currently processed context.
+  </p>
+  <blockquote>
+    <strong>Notice</strong> This technique is powerful, but also very dangerous. Be careful whenever you're gonna use this feature, and make sure that you exactly know what you're doing.
+  </blockquote>
+</div>

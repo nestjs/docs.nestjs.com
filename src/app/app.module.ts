@@ -40,6 +40,14 @@ import { MicroservicesInterceptorsComponent } from './homepage/pages/microservic
 import { MicroservicesGuardsComponent } from './homepage/pages/microservices/guards/guards.component';
 import { MicroservicesPipesComponent } from './homepage/pages/microservices/pipes/pipes.component';
 import { MicroservicesExceptionFiltersComponent } from './homepage/pages/microservices/exception-filters/exception-filters.component';
+import { ExpressInstanceComponent } from './homepage/pages/faq/express-instance/express-instance.component';
+import { GlobalPrefixComponent } from './homepage/pages/faq/global-prefix/global-prefix.component';
+import { LifecycleEventsComponent } from './homepage/pages/faq/lifecycle-events/lifecycle-events.component';
+import { HybridApplicationComponent } from './homepage/pages/faq/hybrid-application/hybrid-application.component';
+import { MultipleServersComponent } from './homepage/pages/faq/multiple-servers/multiple-servers.component';
+import { HierarchicalInjectorComponent } from './homepage/pages/advanced/hierarchical-injector/hierarchical-injector.component';
+import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
+import { MixinComponentsComponent } from './homepage/pages/advanced/mixin-components/mixin-components.component';
 
 @NgModule({
   imports: [
@@ -87,6 +95,14 @@ import { MicroservicesExceptionFiltersComponent } from './homepage/pages/microse
     MicroservicesPipesComponent,
     MicroservicesInterceptorsComponent,
     MicroservicesGuardsComponent,
+    ExpressInstanceComponent,
+    GlobalPrefixComponent,
+    LifecycleEventsComponent,
+    HybridApplicationComponent,
+    MultipleServersComponent,
+    HierarchicalInjectorComponent,
+    SqlTypeormComponent,
+    MixinComponentsComponent,
   ],
   bootstrap: [AppComponent]
 })

@@ -7,4 +7,12 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./redis.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RedisComponent extends BasePageComponent {}
+export class RedisComponent extends BasePageComponent {
+  get options() {
+    return `
+const app = await NestFactory.createMicroservice(ApplicationModule, {
+  transport: Transport.REDIS,
+  url: 'redis://localhost:6379',
+});`;
+  }
+}

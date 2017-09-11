@@ -66,11 +66,16 @@
     <span class="filename">cats.module.ts</span>
     <pre><code class="language-typescript">{{ catsModuleShared }}</code></pre>
     <p>
-      Now each module which would import the <code>CatsModule</code> has an access to the <code>CatsService</code>, and will share the same instance with all of the modules which import this module too.
+      Now each module which would import the <code>CatsModule</code> has an access to the <code>CatsService</code>, and will share the same instance with all of the modules which are importing this module too.
     </p>
     <blockquote>
-      <strong>Notice</strong> Never export the controller!
+      <strong>Notice</strong> Never export the controllers!
     </blockquote>
+    <h4>Modules re-exporting</h4>
+    <p>
+      The modules can export their components. Moreover, they can re-export modules imported by themselves.
+    </p>
+    <pre><code class="language-typescript">{{ reExportExamle }}</code></pre>
     <h4>Single Scope</h4>
     <p>
       They're modules which shouldn't be shared at all. To prevent module from being singleton, you can use <code>@SingleScope()</code>

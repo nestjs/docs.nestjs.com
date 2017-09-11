@@ -11,10 +11,10 @@ export class AsyncComponentsComponent extends BasePageComponent {
   get asyncComponent() {
     return `
 {
-  provide: 'AsyncComponent',
+  provide: 'AsyncDbConnection',
   useFactory: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    return null;
+    const connection = await createConnection(options);
+    return connection;
   },
 },`;
   }

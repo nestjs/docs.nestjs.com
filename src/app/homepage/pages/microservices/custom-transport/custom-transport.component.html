@@ -1,3 +1,38 @@
-<p>
-  custom-transport works!
-</p>
+<div class="content">
+  <h3>Custom Transport</h3>
+  <p>
+    The Nest has a built-in transport via TCP and Redis, but other communication schemes can be implemented with <code>CustomTransportStrategy</code> interface.
+    For demonstration purposes, we're going to port the <a href="https://www.rabbitmq.com/" target="blank">RabbitMQ</a> transport strategy using <a href="https://github.com/squaremo/amqp.node" target="blank">ampqlib</a> library.
+  </p>
+  <h4>Server</h4>
+  <p>
+    Let's start from the <code>RabbitMQServer</code> which will match incoming messages to the right message handlers.
+  </p>
+  <span class="filename">rabbitmq-server.ts</span>
+  <pre><code class="language-typescript">{{ rabbitMqServer }}</code></pre>
+  <p>
+    The <code>CustomTransportStrategy</code> forces to implement two fundamental methods - <code>listen()</code> and <code>close()</code>.
+    Moreover, the <code>RabbitMQServer</code> shall extends the abstract <code>Server</code> class. This class supplies the core <code>getHandlers()</code> and <code>send()</code> methods, and helper <code>transformToObservable()</code> method.
+  </p>
+  <p>
+    The last step is to setup the <code>RabbitMQServer</code>:
+  </p>
+  <span class="filename">server.ts</span>
+  <pre><code class="language-typescript">{{ setupServer }}</code></pre>
+  <h4>Client</h4>
+  <p>
+    The <a href="https://www.rabbitmq.com/" target="blank">RabbitMQ</a> server's listening to messages. 
+    Now it's time to create a client class, which shall extends the abstract <code>ClientProxy</code> class. 
+    To make it work, we only have to override <code>sendSingleMessage()</code> method.
+  </p>
+  <span class="filename">rabbitmq-client.ts</span>
+  <pre><code class="language-typescript">{{ rabbitMqClient }}</code></pre>
+  <p>
+    Earlier, the Nest was responsible for creating the instance of the client class. We've been using the <code>@Client()</code> decorator.
+    Now, when we've created our own solution, we can just create the <code>RabbitMQClient</code> instance directly, using <code>new</code> operator.
+  </p>
+  <pre><code class="language-typescript">{{ rabbitMqClientNew }}</code></pre>
+  <blockquote class="warning">
+      <strong>Hint</strong> To make unit testing easy, you can provide a <a routerLink="/advanced/dependency-injection">custom component</a> instead of creating the instance directly in the class body.
+   </blockquote>
+</div>

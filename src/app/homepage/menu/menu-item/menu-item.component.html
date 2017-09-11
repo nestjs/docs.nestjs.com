@@ -6,9 +6,11 @@
   <ul class="sub-nav">
     <li *ngFor="let item of children">
       <a 
+        *ngIf="!item.externalUrl"
         [routerLink]="item.path" 
         routerLinkActive="active" 
         [routerLinkActiveOptions]="{ exact: true }">{{ item.title }}</a>
+      <a *ngIf="!!item.externalUrl" href="{{ item.externalUrl }}" target="blank">{{ item.title }}</a>
     </li>
   </ul>
 </div>

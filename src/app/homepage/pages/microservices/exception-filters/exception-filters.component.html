@@ -1,3 +1,25 @@
-<p>
-  exception-filters works!
-</p>
+<div class="content">
+  <h3>Exception Filters</h3>
+  <p>
+    The websockets <strong>exceptions layer</strong> works exact same as the <a routerLink="/exception-filters">prime layer</a>.
+    The only difference is that instead of throwing <code>HttpException</code>, you should throw <code>RpcException</code>.
+  </p>
+  <pre><code class="language-typescript">{{ rpcException }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> The <code>RpcException</code> class is imported from the <code>@nestjs/microservices</code> package.
+  </blockquote>
+  <p>
+    Nest would handle this exception and emits the <code>exception</code> message with the following data:
+  </p>
+  <pre><code class="language-typescript">{{ exceptionResponse }}</code></pre>
+  <h4>Exception Filters</h4>
+  <p>
+    The <strong>Exception Filters</strong> are also really similar, and works exactly in the same way as the primary ones.
+    The only difference is that <code>catch()</code> method should returns an <code>Observable</code>.
+  </p>
+  <span class="filename">rpc-exception.filter.ts</span>
+  <pre><code class="language-typescript">{{ rpcExceptionFilter }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> It's impossible to setup the microservices exception filters globally.
+  </blockquote>
+</div>

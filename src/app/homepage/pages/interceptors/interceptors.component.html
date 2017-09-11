@@ -12,6 +12,7 @@
    <ul>
      <li>bind <strong>extra logic</strong> before / after method execution</li>
      <li><strong>transform</strong> the result returned from the function</li>
+     <li><strong>transform</strong> the exception throwed from the function</li>
      <li>completely <strong>override</strong> the function depending on the chosen conditions (e.g. caching purposes)</li>
    </ul>
    <h4>Basics</h4>
@@ -66,6 +67,12 @@
     Now, the response of the GET <code>/cats</code> request would looks like below:
   </p>
   <pre><code class="language-typescript">{{ dataResponse }}</code></pre>
+  <h4>Exception mapping</h4>
+  <p>
+    Since <code>stream$</code> is an <code>Observable</code>, we can use <code>catch()</code> operator to override throwed exception with a new stream:
+  </p>
+  <span class="filename">exception.interceptor.ts</span>
+   <pre><code class="language-typescript">{{ exceptionMapping }}</code></pre>
   <h4>Stream overriding</h4>
   <p>
     Sometimes we might want to completely prevent calling the handler and return different value instead.

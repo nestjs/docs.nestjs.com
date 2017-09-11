@@ -78,4 +78,13 @@ export class CatsModule {
   constructor(private readonly catsService: CatsService) {}
 }`;
   }
+
+  get reExportExamle() {
+    return `
+@Module({
+  modules: [CommonModule],
+  exports: [CommonModule],
+})
+export class CoreModule {}`;
+  }
 }

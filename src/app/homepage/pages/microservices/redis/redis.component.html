@@ -1,3 +1,15 @@
-<p>
-  redis works!
-</p>
+<div class="content">
+  <h3>Redis</h3>
+  <p>
+    There's' another way to play with the Nest microservices. Instead of TCP communication, we can use the great <a href="https://redis.io/" target="blank">Redis</a> feature – the <strong>publish / subscribe</strong>.
+  </p>
+  <figure><img src="/assets/Redis_1.png" /></figure>
+  <p>
+    To switch from the TCP transport strategy to Redis <strong>pub/sub</strong>, we only need to change the options object passed to the <code>createMicroservice()</code> method.
+  </p>
+  <span class="filename">server.ts</span>
+  <pre><code class="language-typescript">{{ options }}</code></pre>
+  <blockquote class="warning">
+      <strong>Hint</strong> Don't forget to change the <code>Transport.REDIS</code> in the <code>@Client()</code> decorator too.
+   </blockquote>
+</div>
