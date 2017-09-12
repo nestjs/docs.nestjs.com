@@ -7,4 +7,20 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./multiple-servers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MultipleServersComponent extends BasePageComponent {}
+export class MultipleServersComponent extends BasePageComponent {
+  get servers() {
+    return `
+const httpsOptions = {
+  key: fs.readFileSync("./secrets/private-key.pem"),
+  cert: fs.readFileSync("./secrets/public-certificate.pem")
+};
+
+const server = express();
+const app = await NestFactory.create(ApplicationModule, server);
+await app.init();
+
+http.createServer(server).listen(3000);
+https.createServer(httpsOptions, server).listen(443);
+`;
+  }
+}

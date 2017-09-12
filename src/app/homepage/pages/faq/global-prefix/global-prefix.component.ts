@@ -7,4 +7,10 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./global-prefix.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GlobalPrefixComponent extends BasePageComponent {}
+export class GlobalPrefixComponent extends BasePageComponent {
+  get globalPrefix() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+app.setGlobalPrefix('v1');`;
+  }
+}

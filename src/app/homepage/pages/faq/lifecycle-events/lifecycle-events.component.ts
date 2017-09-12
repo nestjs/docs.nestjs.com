@@ -7,4 +7,19 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./lifecycle-events.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LifecycleEventsComponent extends BasePageComponent {}
+export class LifecycleEventsComponent extends BasePageComponent {
+  get lifecycleEvents() {
+    return `
+import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+
+@Component()
+export class UsersService implements OnModuleInit, OnModuleDestroy {
+    onModuleInit() {
+        console.log('Module's initialized...');
+    }
+    onModuleDestroy() {
+       console.log('Module's destroyed...');
+    }
+}`;
+  }
+}

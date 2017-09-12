@@ -68,4 +68,48 @@ export class Photo {
     isPublished: boolean;
 }`;
   }
+
+  get photoProviders() {
+    return `
+import { Connection, Repository } from 'typeorm';
+import { Photo } from './photo.entity';
+
+export const photoProviders = [
+  {
+    provide: 'PhotoRepositoryToken',
+    useFactory: (connection: Connection) => connection.getRepository(Photo),
+    inject: ['DbConnectionToken'],
+  },
+];`;
+  }
+
+  get photoService() {
+    return `
+import { Component, Inject } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Photo } from './photo.entity';
+
+@Component()
+export class PhotoService {
+  constructor(
+    @Inject('PhotoRepositoryToken') private photoRepository: Repository<Photo>) {}
+}`;
+  }
+
+  get photoModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from '../database/database.module';
+import { photoProviders } from './photo.providers';
+import { PhotoService } from './photo.service';
+
+@Module({
+  modules: [DatabaseModule],
+  components: [
+    ...photoProviders,
+    PhotoService,
+  ],
+})
+export class PhotoModule {}`
+  }
 }

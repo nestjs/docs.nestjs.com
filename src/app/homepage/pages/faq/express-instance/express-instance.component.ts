@@ -7,4 +7,10 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./express-instance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExpressInstanceComponent extends BasePageComponent {}
+export class ExpressInstanceComponent extends BasePageComponent {
+  get expressInstance() {
+    return `
+const server = express();
+const app = await NestFactory.create(ApplicationModule, server);`;
+  }
+}

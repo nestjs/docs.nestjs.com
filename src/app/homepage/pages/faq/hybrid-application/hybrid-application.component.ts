@@ -7,4 +7,15 @@ import { BasePageComponent } from '../../page/page.component';
   styleUrls: ['./hybrid-application.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HybridApplicationComponent extends BasePageComponent {}
+export class HybridApplicationComponent extends BasePageComponent {
+  get hybridApplication() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const microservice = app.connectMicroservice({
+    transport: Transport.TCP,
+});
+
+await app.startAllMicroservicesAsync();
+await app.listen(3001);`;
+  }
+}
