@@ -6,7 +6,7 @@
   @extend .box-sizing;
   background: $black-color;
   display: block;
-  height: 85px;
+  height: 95px;
   padding: 16px 2px 16px 52px;
   position: absolute;
   bottom: 0;
@@ -35,6 +35,13 @@ footer {
     &:hover {
       color: $white-color;
     }
+  }
+
+  p {
+    line-height: 20px;
+  }
+  span {
+    font-size: 13px;
   }
 }
 
