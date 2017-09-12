@@ -15,8 +15,16 @@
     Based on this class, we're gonna create the <code>mixinCacheInterceptor</code> function.
   </p>
   <span class="filename">mixin-cache.interceptor.ts</span>
-  <pre><code class="language-typescript">{{ mixinCcheInterceptor }}</code></pre>
+  <pre><code class="language-typescript">{{ mixinCacheInterceptor }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> The <code>mixin()</code> is a helper function. Use it whenever you wanna create a mixin class.
+  </blockquote>
   <p>
-    This function takes the <code>isCached()</code> predicate as an argument and assign its to the mixin class.
+    This function takes the <code>isCached()</code> predicate as an argument and assigns its to the mixin class.
+    The last step is to setup the interceptor:
+  </p>
+  <pre><code class="language-typescript">{{ setup }}</code></pre>
+  <p>
+    The <code>mixin()</code> function returns the class, so you can use it in the same manner as a plain, self-created classes.
   </p>
 </div>

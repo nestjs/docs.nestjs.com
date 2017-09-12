@@ -26,4 +26,24 @@ export abstract class CacheInterceptor implements NestInterceptor {
   }
 }`;
   }
+
+  get mixinCacheInterceptor() {
+    return `
+import { mixin } from '@nestjs/common';
+import { CacheInterceptor } from './cache.interceptor';
+
+export function mixinCacheInterceptor(isCached: () => boolean) {
+  return mixin(class extends CacheInterceptor {
+    protected readonly isCached = isCached;
+  });
+}`;
+  }
+
+  get setup() {
+    return `
+@UseInterceptors(mixinCacheInterceptor(() => true))
+async findAll(): Promise<Cat[]> {
+  return this.catsService.findAll();
+}`;
+  }
 }

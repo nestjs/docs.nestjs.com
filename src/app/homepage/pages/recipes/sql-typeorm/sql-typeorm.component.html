@@ -1,3 +1,36 @@
-<p>
-  sql-typeorm works!
-</p>
+<div class="content">
+  <h3>SQL (TypeORM)</h3>
+  <p>
+    The <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> library is definitely the most mature Object Relational Mapper (ORM) available in the node.js world.
+    Since it's written in TypeScript, it works pretty well with the Nest framework.
+    This example describes how to integrate <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> with the Nest application, but the process is almost the same 
+in most of the other cases, such as connection with the MongoDB, Redis, etc. 
+  </p>
+  <p>
+    Let's start from scratch. Firstly, we need to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package.
+    The <code>createConnection()</code> function returns the <code>Promise</code>, so it's necessary to create an <a routerLink="/advanced/async-components">async component</a>
+  </p>
+  <span class="filename">database.providers.ts</span>
+  <pre><code class="language-typescript">{{ databaseProviders }}</code></pre>
+  <blockquote class="warning">
+      <strong>Hint</strong> Following best practices, we've declared the custom component in the separated file which has a <code>*.providers.ts</code> suffix.
+   </blockquote>
+   <p>
+     Then we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.
+  </p>
+  <span class="filename">database.module.ts</span>
+  <pre><code class="language-typescript">{{ databaseModule }}</code></pre>
+  <p>
+    It's everything. Now we can inject the <code>Connection</code> object using <code>@Inject()</code> decorator.
+    Each component which would depend on the <code>Connection</code> async component will wait until the <code>Promise</code> would be resolved.
+  </p>
+  <h4>Repository pattern</h4>
+  <p>
+    The <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> supports the repository design pattern, so each entity has its own Repository. These repositories can be obtained from the database connection.
+  </p>
+  <p>
+    Firstly, we need at least one entity. We're gonna reuse the <code>Photo</code> entity from the offical documentation.
+  </p>
+  <span class="filename">photo/photo.entity.ts</span>
+  <pre><code class="language-typescript">{{ photoEntity }}</code></pre>
+</div>
