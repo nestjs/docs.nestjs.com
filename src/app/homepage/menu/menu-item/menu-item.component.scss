@@ -43,7 +43,12 @@ h3 {
       &:hover {
         color: $red-color;
       }
-      &.active { font-weight: 500; }
+      &.active { font-weight: 600; }
+    }
+
+    .pending {
+      color: #afafaf !important;
+      pointer-events: none;
     }
   }
 

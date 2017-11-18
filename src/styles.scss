@@ -1,10 +1,12 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 @import "./scss/hljs.scss";
 @import "./scss/variables.scss";
 @import "./scss/utils.scss";
 
 body {
   font-size: 15px;
+  font-weight: 500;
   font-family: 'Montserrat', "Helvetica Neue", sans-serif;
   background-color: $white-color;
   color: $grey-color;
@@ -17,9 +19,8 @@ a {
 
 strong {
   color: #2d2d2d;
-  font-weight: 500;
+  font-weight: 600;
 }
-
 
 hr {
   width: 40px;
@@ -148,4 +149,8 @@ tr td {
 .ps > .ps__scrollbar-y-rail > .ps__scrollbar-y {
   border-radius: 0;
   -webkit-border-radius: 0;
+}
+
+.hide {
+  display: none !important;
 }

@@ -8,8 +8,12 @@
   <p>
     Let's start from the <code>RabbitMQServer</code> which will match incoming messages to the right message handlers.
   </p>
-  <span class="filename">rabbitmq-server.ts</span>
-  <pre><code class="language-typescript">{{ rabbitMqServer }}</code></pre>
+  <span class="filename">
+    {{ 'rabbitmq-server' | extension: rabbitMqServerT.isJsActive }}
+    <app-tabs #rabbitMqServerT></app-tabs>
+  </span>
+  <pre [class.hide]="rabbitMqServerT.isJsActive"><code class="language-typescript">{{ rabbitMqServer }}</code></pre>
+  <pre [class.hide]="!rabbitMqServerT.isJsActive"><code class="language-typescript">{{ rabbitMqServerJs }}</code></pre>
   <p>
     The <code>CustomTransportStrategy</code> forces to implement two fundamental methods - <code>listen()</code> and <code>close()</code>.
     Moreover, the <code>RabbitMQServer</code> shall extends the abstract <code>Server</code> class. This class supplies the core <code>getHandlers()</code> and <code>send()</code> methods, and helper <code>transformToObservable()</code> method.
@@ -17,7 +21,10 @@
   <p>
     The last step is to setup the <code>RabbitMQServer</code>:
   </p>
-  <span class="filename">server.ts</span>
+  <span class="filename">
+    {{ 'server' | extension: setupServerT.isJsActive }}
+    <app-tabs #setupServerT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ setupServer }}</code></pre>
   <h4>Client</h4>
   <p>
@@ -25,8 +32,12 @@
     Now it's time to create a client class, which shall extends the abstract <code>ClientProxy</code> class. 
     To make it work, we only have to override <code>sendSingleMessage()</code> method.
   </p>
-  <span class="filename">rabbitmq-client.ts</span>
-  <pre><code class="language-typescript">{{ rabbitMqClient }}</code></pre>
+  <span class="filename">
+    {{ 'rabbitmq-client' | extension: rabbitMqClientT.isJsActive }}
+    <app-tabs #rabbitMqClientT></app-tabs>
+  </span>
+  <pre [class.hide]="rabbitMqClientT.isJsActive"><code class="language-typescript">{{ rabbitMqClient }}</code></pre>
+  <pre [class.hide]="!rabbitMqClientT.isJsActive"><code class="language-typescript">{{ rabbitMqClientJs }}</code></pre>
   <p>
     Earlier, the Nest was responsible for creating the instance of the client class. We've been using the <code>@Client()</code> decorator.
     Now, when we've created our own solution, we can just create the <code>RabbitMQClient</code> instance directly, using <code>new</code> operator.

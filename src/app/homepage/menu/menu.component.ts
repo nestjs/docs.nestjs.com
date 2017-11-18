@@ -73,11 +73,12 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'SQL (TypeORM)', path: '/recipes/sql-typeorm' },
-        { title: 'MongoDB (TBC)', path: '/recipes/mongodb' },
-        { title: 'CQRS + Event Sourcing (TBC)', path: '/recipes/cqrs' },
-        { title: 'Passport integration (TBC)', path: '/recipes/passport' },
-        { title: 'Swagger (TBC)', path: '/recipes/swagger' },
-        { title: 'GraphQL (TBC)', path: '/recipes/graphql' }
+        { title: 'MongoDB (Mongoose)', path: '/recipes/mongodb' },
+        { title: 'SQL (Sequelize)', path: '/recipes/sql-sequelize' },
+        { title: 'Passport integration', path: '/recipes/passport' },
+        { title: 'CQRS', path: '/recipes/cqrs' },
+        { title: 'Swagger', path: '/recipes/swagger', isPending: true },
+        { title: 'GraphQL', path: '/recipes/graphql', isPending: true }
       ],
     },
     {
@@ -88,20 +89,14 @@ export class MenuComponent implements OnInit {
         { title: 'Global Route Prefix', path: '/faq/global-prefix' },
         { title: 'Lifecycle Events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid Application', path: '/faq/hybrid-application' },
-        { title: 'Multiple Simultaneous Servers', path: '/faq/multiple-servers' },
+        { title: 'HTTPS & Multiple Servers', path: '/faq/multiple-servers' },
         { title: 'Examples', externalUrl: 'https://github.com/kamilmysliwiec/nest/tree/master/examples' },
-        { title: 'Best Practices (TBC)', path: '/faq/best-practices' },
       ]
     },
     {
       title: 'Support me',
       isOpened: false,
       externalUrl: 'https://opencollective.com/nest',
-    },
-    {
-      title: 'Archive (v3)',
-      isOpened: false,
-      externalUrl: 'https://kamilmysliwiec.gitbooks.io/nest/content/',
     }
   ];
 

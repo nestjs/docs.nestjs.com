@@ -34,6 +34,20 @@ export class CatsController {
 }`;
   }
 
+  get requestObjectJs(): string {
+    return `
+import { Controller, Bind, Get, Req } from '@nestjs/common';
+
+@Controller('cats')
+export class CatsController {
+  @Get()
+  @Bind(Req())
+  findAll(request) {
+    return [];
+  }
+}`;
+  }
+
   get postEndpoint() {
     return `
 import { Controller, Get, Post } from '@nestjs/common';
@@ -60,10 +74,26 @@ async findAll(): Promise<any[]> {
 }`;
   }
 
+  get asyncExampleJs() {
+    return `
+@Get()
+async findAll() {
+  return [];
+}`;
+  }
+
     get observableExample() {
       return `
 @Get()
 findAll(): Observable<any[]> {
+  return Observable.of([]);
+}`;
+  }
+
+  get observableExampleJs() {
+    return `
+@Get()
+findAll() {
   return Observable.of([]);
 }`;
   }
@@ -82,6 +112,15 @@ export class CreateCatDto {
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
   // TODO: Add some logic here
+}`;
+  }
+
+  get exampleWithBodyJs() {
+    return `
+@Post()
+@Bind(Body())
+async create(createCatDto) {
+// TODO: Add some logic here
 }`;
   }
 
@@ -125,6 +164,27 @@ export class CatsController {
 
   @Get()
   findAll(@Res() res) {
+     res.status(HttpStatus.OK).json([]);
+  }
+}`;
+  }
+
+  get expressWayJs() {
+    return `
+import { Controller, Get, Post, Bind, Res, Body, HttpStatus } from '@nestjs/common';
+
+@Controller('cats')
+export class CatsController {
+  @Post()
+  @Bind(Res(), Body())
+  create(res, createCatDto) {
+    // TODO: Add some logic here
+    res.status(HttpStatus.CREATED).send();
+  }
+
+  @Get()
+  @Bind(Res())
+  findAll(res) {
      res.status(HttpStatus.OK).json([]);
   }
 }`;

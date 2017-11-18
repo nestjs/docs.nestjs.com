@@ -5,10 +5,12 @@
   padding: 15px 30px;
   margin: 35px 0 -35px;
   display: block;
+  min-height: 25px;
+  position: relative;
 }
 
 code {
-  font-family: Inconsolata, Consolas, "Courier New", monospace;
+  font-family: 'Inconsolata', Consolas, "Courier New", monospace;
   padding: 2px 6px;
   color: #2876d2;
   border-radius: 4px;

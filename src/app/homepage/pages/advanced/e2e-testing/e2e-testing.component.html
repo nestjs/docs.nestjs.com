@@ -12,7 +12,10 @@
   <p>
     Let's create an <code>e2e</code> directory and test the <code>CatsModule</code>.
   </p>
-  <span class="filename">cats.e2e-spec.ts</span>
+  <span class="filename">
+    {{ 'cats.e2e-spec' | extension: e2eTestsT.isJsActive }}
+    <app-tabs #e2eTestsT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ e2eTests }}</code></pre>
   <blockquote>
     <strong>Hint</strong> Keep your e2e test files inside the <code>e2e</code> directory. The testing files should have a <code>.e2e-spec</code> or <code>.e2e-test</code> suffix.
@@ -50,8 +53,7 @@
         <code>get()</code>
       </td>
       <td>
-        Makes possible to retrieve the instance of the component or controller available inside the processed module
-        (including imported ones).
+        Makes possible to retrieve the instance of the component or controller available inside the processed module.
       </td>
     </tr>
     <tr>

@@ -10,16 +10,31 @@ import { BasePageComponent } from '../../page/page.component';
 export class LifecycleEventsComponent extends BasePageComponent {
   get lifecycleEvents() {
     return `
-import { OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Component, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 
 @Component()
 export class UsersService implements OnModuleInit, OnModuleDestroy {
-    onModuleInit() {
-        console.log('Module's initialized...');
-    }
-    onModuleDestroy() {
-       console.log('Module's destroyed...');
-    }
+  onModuleInit() {
+    console.log(\`Module's initialized...\`);
+  }
+  onModuleDestroy() {
+    console.log(\`Module's destroyed...\`);
+  }
+}`;
+  }
+
+  get lifecycleEventsJs() {
+    return `
+import { Component } from '@nestjs/common';
+
+@Component()
+export class UsersService {
+  onModuleInit() {
+    console.log(\`Module's initialized...\`);
+  }
+  onModuleDestroy() {
+    console.log(\`Module's destroyed...\`);
+  }
 }`;
   }
 }

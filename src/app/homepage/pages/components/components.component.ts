@@ -29,6 +29,27 @@ export class CatsService {
 `;
   }
 
+  get catsServiceJs() {
+    return `
+import { Component } from '@nestjs/common';
+
+@Component()
+export class CatsService {
+  constructor() {
+    this.cats = [];
+  }
+
+  create(cat) {
+    this.cats.push(cat);
+  }
+
+  findAll() {
+    return this.cats;
+  }
+}
+`;
+  }
+
   get catsController() {
     return `
 import { Controller, Get, Post, Body } from '@nestjs/common';
@@ -47,6 +68,31 @@ export class CatsController {
 
   @Get()
   async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
+  }
+}`;
+  }
+
+  get catsControllerJs() {
+    return `
+import { Controller, Get, Post, Body, Bind, Dependencies } from '@nestjs/common';
+import { CatsService } from './cats.service';
+
+@Controller('cats')
+@Dependencies(CatsService)
+export class CatsController {
+  constructor(catsService) {
+    this.catsService = catsService;
+  }
+
+  @Post()
+  @Bind(Body())
+  async create(createCatDto) {
+    this.catsService.create(createCatDto);
+  }
+
+  @Get()
+  async findAll() {
     return this.catsService.findAll();
   }
 }`;

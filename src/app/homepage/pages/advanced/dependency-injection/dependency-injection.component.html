@@ -19,7 +19,11 @@
     <li>bind specific value to the container, for example 3rd party library</li>
   </ul>
   <h4>Use Factory</h4>
-  <pre><code class="language-typescript">{{ useFactory }}</code></pre>
+  <span class="filename">
+     <app-tabs #useFactoryT></app-tabs>
+  </span>
+  <pre [class.hide]="useFactoryT.isJsActive"><code class="language-typescript">{{ useFactory }}</code></pre>
+  <pre [class.hide]="!useFactoryT.isJsActive"><code class="language-typescript">{{ useFactoryJs }}</code></pre>
   <blockquote>
     <strong>Notice</strong> If you wanna use components from module, you have to pass them inside <code>inject</code> array. Nest will pass instances as an arguments of the function in the same order.
   </blockquote>
@@ -42,7 +46,11 @@
     To inject custom component through constructor, we're using the <code>@Inject()</code> decorator.
     This decorator takes 1 argument - the token.
   </p>
-  <pre><code class="language-typescript">{{ inject }}</code></pre>
+  <span class="filename">
+    <app-tabs #injectT></app-tabs>
+  </span>
+  <pre [class.hide]="injectT.isJsActive"><code class="language-typescript">{{ inject }}</code></pre>
+  <pre [class.hide]="!injectT.isJsActive"><code class="language-typescript">{{ injectJs }}</code></pre>
   <blockquote>
     <strong>Notice</strong> The <code>@Inject()</code> decorator is imported from <code>@nestjs/common</code> package.
   </blockquote>

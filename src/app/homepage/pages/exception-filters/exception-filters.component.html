@@ -21,8 +21,12 @@
      In the <code>CatsController</code>, we have a <code>create()</code> method (<code>POST</code> route). Let's assume that this route handler would throw an exception for some reason.
      We're gonna hardcode it:
    </p>
-   <span class="filename">cats.controller.ts</span>
-   <pre><code class="language-typescript">{{ createMethod }}</code></pre>
+   <span class="filename">
+      {{ 'cats.controller' | extension: createMethodT.isJsActive }}
+      <app-tabs #createMethodT></app-tabs>
+  </span>
+   <pre [class.hide]="createMethodT.isJsActive"><code class="language-typescript">{{ createMethod }}</code></pre>
+   <pre [class.hide]="!createMethodT.isJsActive"><code class="language-typescript">{{ createMethodJs }}</code></pre>
    <blockquote>
       <strong>Notice</strong> I've used the <code>HttpStatus</code> here. It's just a helper enum imported from the <code>@nestjs/common</code> package.
     </blockquote>
@@ -38,14 +42,21 @@
       The good practice is to create your own <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base <code>HttpException</code> class.
       As a result Nest will recognize every of your exception, and will fully take care about the error responses.
     </p>
-    <span class="filename">forbidden.exception.ts</span>
+    <span class="filename">
+      {{ 'forbidden.exception' | extension: forbiddenExceptionT.isJsActive }}
+      <app-tabs #forbiddenExceptionT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ forbiddenException }}</code></pre>
     <p>
       Since <code>ForbiddenException</code> extends the base <code>HttpException</code>,
       it will work well with the core exceptions handler, so now we can use this class inside the <code>create()</code> method.
     </p>
-    <span class="filename">cats.controller.ts</span>
-    <pre><code class="language-typescript">{{ forbiddenCreateMethod }}</code></pre>
+    <span class="filename">
+        {{ 'cats.controller' | extension: forbiddenCreateMethodT.isJsActive }}
+        <app-tabs #forbiddenCreateMethodT></app-tabs>
+     </span>
+    <pre [class.hide]="forbiddenCreateMethodT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethod }}</code></pre>
+    <pre [class.hide]="!forbiddenCreateMethodT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodJs }}</code></pre>
     <h4>Exception Filters</h4>
     <p>
       The base exceptions handler is fine, but sometimes you may want to have a <strong>full control</strong> over the exceptions layer, for example add some logging or use the different JSON schema.
@@ -54,8 +65,12 @@
     <p>
       We're gonna create the filter, which responsibility is to catch the <code>HttpException</code> and override the <code>message</code> property.
     </p>
-    <span class="filename">http-exception.filter.ts</span>
-    <pre><code class="language-typescript">{{ httpExceptionFilter }}</code></pre>
+    <span class="filename">
+      {{ 'http-exception.filter' | extension: httpExceptionFilterT.isJsActive }}
+      <app-tabs #httpExceptionFilterT></app-tabs>
+    </span>
+    <pre [class.hide]="httpExceptionFilterT.isJsActive"><code class="language-typescript">{{ httpExceptionFilter }}</code></pre>
+    <pre [class.hide]="!httpExceptionFilterT.isJsActive"><code class="language-typescript">{{ httpExceptionFilterJs }}</code></pre>
     <p>
       The <code>response</code> is a native express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>. The <code>exception</code> is a currently processed exception.
     </p>
@@ -69,8 +84,12 @@
     <p>
       The last step is to inform Nest that the <code>HttpExceptionFilter</code> should be used within the <code>create()</code> method.
     </p>
-    <span class="filename">cats.controller.ts</span>
-    <pre><code class="language-typescript">{{ forbiddenCreateMethodWithFilter }}</code></pre>
+    <span class="filename">
+      {{ 'cats.controller' | extension: forbiddenCreateMethodWithFilterT.isJsActive }}
+      <app-tabs #forbiddenCreateMethodWithFilterT></app-tabs>
+    </span>
+    <pre [class.hide]="forbiddenCreateMethodWithFilterT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodWithFilter }}</code></pre>
+    <pre [class.hide]="!forbiddenCreateMethodWithFilterT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodWithFilterJs }}</code></pre>
     <blockquote>
       <strong>Hint</strong> The <code>@UseFilters()</code> decorator is imported from the <code>@nestjs/common</code> package.
     </blockquote>
@@ -81,13 +100,19 @@
       In the above example the <code>HttpExceptionFilter</code> is setuped only for the single <code>create()</code> route handler, but it's not the only way.
       In fact the exception filters can be method-scoped, controller-scoped and also global-scoped. 
     </p>
-    <span class="filename">cats.controller.ts</span>
+    <span class="filename">
+      {{ 'cats.controller' | extension: controllerScopedFilterT.isJsActive }}
+      <app-tabs #controllerScopedFilterT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ controllerScopedFilter }}</code></pre>
     <p>
       This construction setups the <code>HttpExceptionFilter</code> for every route handler inside the <code>CatsController</code>.
       It's the example of the controller-scoped exception filter. The last available scope is the global-scoped exception filter.
     </p>
-    <span class="filename">server.ts</span>
+    <span class="filename">
+      {{ 'server' | extension: globalScopedFilterT.isJsActive }}
+      <app-tabs #globalScopedFilterT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ globalScopedFilter }}</code></pre>
     <p>
       The global filters are used across entire application, for every controller, every route handler.

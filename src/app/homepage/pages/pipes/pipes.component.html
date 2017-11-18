@@ -18,6 +18,9 @@
    </p>
    <span class="filename">validation.pipe.ts</span>
    <pre><code class="language-typescript">{{ validationPipe }}</code></pre>
+   <blockquote>
+      <strong>Notice</strong> The <code>ValidationPipe</code> works only with <strong>TypeScript</strong>.
+    </blockquote>
    <p>
      Every pipe has to provide the <code>transform()</code> method. This method takes two arguments:
    </p>
@@ -50,7 +53,7 @@
       </tr>
     </table>
     <blockquote>
-      <strong>Notice</strong> TypeScript interfaces are disappearing during the transpilation, so if you'd use interface instead of class, the <code>metatype</code> value will be <code>Object</code>.
+      <strong>Notice</strong> TypeScript interfaces dissapear during the transpilation, so if you'd use interface instead of class, the <code>metatype</code> value will be <code>Object</code>.
    </blockquote>
     <h4>How does it work?</h4>
     <p>
@@ -64,7 +67,7 @@
     <span class="filename">create-cat.dto.ts</span>
     <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
     <p>
-      This object always has to be correct, so we have to validate those three members. 
+      This object always has to be correct, so we have to validate these three members. 
       We could do this inside the route handler method, but we'd break the <strong>single responsibility rule</strong> (SRP).
       The second idea is to create <strong>validator class</strong> and delegate the task there, but we'll have to use this validator every time at the beginning of the method.
       So what about the validation middleware? It's a good idea, but it's not possible to create a <strong>generic middleware</strong>, which could be used across entire application.
@@ -73,6 +76,7 @@
       That's the first use-case, when you should consider to use a <strong>Pipe</strong>.
     </p>
     <h4>Class validator</h4>
+    <h5>This section applies only to TypeScript</h5>
     <p>
       Nest works well with the <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>, the amazing library which allows to use decorator-based validation.
       Decorator based validation is really powerful with the <strong>pipe</strong> abilities, since we've an access to the <code>metatype</code> of the processed property.
@@ -111,7 +115,7 @@
       <strong>Notice</strong> The <code>@UsePipes()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
     <p>
-      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup this as a <strong>global-scoped</strong> pipe, for every route handler across entire application.
+      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup it as a <strong>global-scoped</strong> pipe, for every route handler across entire application.
     </p>
     <span class="filename">server.ts</span>
     <pre><code class="language-typescript">{{ globalPipe }}</code></pre>
@@ -125,4 +129,27 @@
       Sometimes the data passed from the client needs to undergo some changes. Also, some parts could be missed, so we must apply the default values.
       The <strong>transformer pipes</strong> fill the gap between the client request and the request handler.
     </p>
+    <span class="filename">
+      {{ 'parse-int.pipe' | extension: parseIntPipeT.isJsActive }}
+      <app-tabs #parseIntPipeT></app-tabs>
+    </span>
+    <pre [class.hide]="parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipe }}</code></pre>
+    <pre [class.hide]="!parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipeJs }}</code></pre>
+    <p>
+      Here's a <code>ParseIntPipe</code> which resposibility is to parse string into integer value.
+      Now let's bind the pipe to the selected param: 
+    </p>
+    <span class="filename">
+      <app-tabs #bindParamT></app-tabs>
+    </span>
+    <pre [class.hide]="bindParamT.isJsActive"><code class="language-typescript">{{ bindParam }}</code></pre>
+    <pre [class.hide]="!bindParamT.isJsActive"><code class="language-typescript">{{ bindParamJs }}</code></pre>
+    <p>
+      Also it's possible to omit the first argument:
+    </p>
+    <span class="filename">
+      <app-tabs #bindBodyParamT></app-tabs>
+    </span>
+    <pre [class.hide]="bindBodyParamT.isJsActive"><code class="language-typescript">{{ bindBodyParam }}</code></pre>
+    <pre [class.hide]="!bindBodyParamT.isJsActive"><code class="language-typescript">{{ bindBodyParamJs }}</code></pre>
 </div>

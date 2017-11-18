@@ -23,8 +23,12 @@
     <p>
       That's why we're gonna create <code>RolesGuard</code>, the guard which permit access only to users with a specific role.
     </p>
-    <span class="filename">roles.guard.ts</span>
-    <pre><code class="language-typescript">{{ rolesGuard }}</code></pre>
+    <span class="filename">
+      {{ 'roles.guard' | extension: rolesGuardT.isJsActive }}
+      <app-tabs #rolesGuardT></app-tabs>
+    </span>
+    <pre [class.hide]="rolesGuardT.isJsActive"><code class="language-typescript">{{ rolesGuard }}</code></pre>
+    <pre [class.hide]="!rolesGuardT.isJsActive"><code class="language-typescript">{{ rolesGuardJs }}</code></pre>
     <p>
       Every guard provides <code>canActivate()</code> function. The guard might return its boolean answer synchronously  or asynchronously (<code>Promise</code> or <code>Observable</code>).
       This return value controls the Nest behavior:
@@ -39,18 +43,26 @@
       The second argument is a <code>context</code>.  This object fulfills <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
       The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
     </p>
+    <blockquote class="warning">
+        <strong>Hint</strong> Since <code>canActivate()</code> method can return <code>Promise</code>, it can be marked as <strong>async</strong>.
+     </blockquote>
     <h4>Usage</h4>
     <p>
-      The guards can be <strong>controller-scoped</strong> and method-scoped. To setup the guard, we're using <code>@UseGuards()</code> decorator. This decorator takes infinite count of arguments.
+      The guards can be <strong>controller-scoped</strong>, method-scoped and global-scoped. To setup the guard, we're using <code>@UseGuards()</code> decorator. This decorator takes infinite count of arguments.
     </p>
-    <span class="filename">cats.controller.ts</span>
+    <span class="filename">
+      {{ 'cats.controller' | extension: useGuardsT.isJsActive }}
+      <app-tabs #useGuardsT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ useGuards }}</code></pre>
     <blockquote>
       <strong>Notice</strong> The <code>@UseGuards()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
    <p>
-     Above construction attaches the guard to the every handler declared by this controller. If we'd decide to restrict only one of them, we just need to setup guard at <strong>method level</strong>.
-   </p>
+     Above construction attaches the guard to the every handler declared by this controller. If we'd decide to restrict only one of them, we just need to setup the guard at <strong>method level</strong>.
+     To bind the global guard, we're using the <code>useGlobalGuards()</code> method of the Nest application instance:
+    </p>
+    <pre><code class="language-typescript">{{ globalGuard }}</code></pre>
    <h4>Reflector</h4>
    <p>
       The guard is working now, but we're still not taking advantage of the most important guards feature, so the <strong>execution context</strong>.
@@ -62,8 +74,12 @@
    <p>
      That's why along with the guards, Nest provides the ability to attach <strong>custom metadata</strong> through <code>@ReflectMetadata()</code> decorator.
    </p>
-   <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ reflectMetadata }}</code></pre>
+   <span class="filename">
+      {{ 'cats.controller' | extension: reflectMetadataT.isJsActive }}
+      <app-tabs #reflectMetadataT></app-tabs>
+    </span>
+  <pre [class.hide]="reflectMetadataT.isJsActive"><code class="language-typescript">{{ reflectMetadata }}</code></pre>
+  <pre [class.hide]="!reflectMetadataT.isJsActive"><code class="language-typescript">{{ reflectMetadataJs }}</code></pre>
   <blockquote>
       <strong>Notice</strong> The <code>@ReflectMetadata()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
@@ -71,19 +87,31 @@
      With above construction, we attached the <code>roles</code> metadata to the <code>create()</code> method.
      It's not a good practice to use <code>@ReflectMetadata()</code> directly. Instead, you should always create your own decorators.
    </p>
-   <span class="filename">roles.decorator.ts</span>
-  <pre><code class="language-typescript">{{ rolesDecorator }}</code></pre>
+   <span class="filename">
+    {{ 'roles.decorator' | extension: rolesDecoratorT.isJsActive }}
+    <app-tabs #rolesDecoratorT></app-tabs>
+  </span>
+  <pre [class.hide]="rolesDecoratorT.isJsActive"><code class="language-typescript">{{ rolesDecorator }}</code></pre>
+  <pre [class.hide]="!rolesDecoratorT.isJsActive"><code class="language-typescript">{{ rolesDecoratorJs }}</code></pre>
   <p>
     This way is much cleaner. Since we've <code>@Roles()</code> decorator now, we can use it with <code>create()</code> method.
   </p>
-  <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ catsRolesDecorator }}</code></pre>
+  <span class="filename">
+    {{ 'cats.controller' | extension: catsRolesDecoratorT.isJsActive }}
+    <app-tabs #catsRolesDecoratorT></app-tabs>
+  </span>
+  <pre [class.hide]="catsRolesDecoratorT.isJsActive"><code class="language-typescript">{{ catsRolesDecorator }}</code></pre>
+  <pre [class.hide]="!catsRolesDecoratorT.isJsActive"><code class="language-typescript">{{ catsRolesDecoratorJs }}</code></pre>
   <p>
     That's it. Let's focus on the <code>RolesGuard</code> again. Now, it simply returns <code>true</code> immediately, allowing request to proceed.
     To reflect the metadata, we'll use the <code>Reflector</code> helper class, which is provided out of the box within <code>@nestjs/core</code>.
   </p>
-  <span class="filename">roles.guard.ts</span>
-  <pre><code class="language-typescript">{{ rolesGuardExt }}</code></pre>
+  <span class="filename">
+    {{ 'roles.guard' | extension: rolesGuardExtT.isJsActive }}
+    <app-tabs #rolesGuardExtT></app-tabs>
+  </span>
+  <pre [class.hide]="rolesGuardExtT.isJsActive"><code class="language-typescript">{{ rolesGuardExt }}</code></pre>
+  <pre [class.hide]="!rolesGuardExtT.isJsActive"><code class="language-typescript">{{ rolesGuardExtJs }}</code></pre>
   <blockquote class="warning">
       <strong>Notice</strong> Guards same as controllers, components, interceptors and middlewares can <strong>inject dependencies</strong> through constructor.
    </blockquote>
@@ -96,7 +124,11 @@
     We could make this guard even <strong>more generic</strong> if we'd add also the controller reflection part.
     To extract <strong>controller metadata</strong>, we're just using <code>parent</code> instead of <code>handler</code> function.
   </p>
-  <pre><code class="language-typescript">{{ controllerMetadata }}</code></pre>
+  <span class="filename">
+    <app-tabs #controllerMetadataT></app-tabs>
+  </span>
+  <pre [class.hide]="controllerMetadataT.isJsActive"><code class="language-typescript">{{ controllerMetadata }}</code></pre>
+  <pre [class.hide]="!controllerMetadataT.isJsActive"><code class="language-typescript">{{ controllerMetadataJs }}</code></pre>
   <p>
     Now, when user would try to call the <code>/cats</code> POST endpoint without enough privileges, Nest will automatically
     return below response:
@@ -105,5 +137,9 @@
   <p>
     In fact, the guard which returns <code>false</code> forces Nest to throw <code>HttpException</code>.
     This exception can be catched by the <a routerLink="/exception-filters">exception filter</a>.
+  </p>
+  <h4>Custom error responses</h4>
+  <p>
+    To change the default access refusal response, just throw a <code>HttpException</code> instead of returning <code>false</code>.
   </p>
 </div>

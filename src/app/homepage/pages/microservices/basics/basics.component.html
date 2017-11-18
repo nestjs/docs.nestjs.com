@@ -12,10 +12,13 @@
   <p>
     Let's create a simple microservice which will be listening to messages via TCP protocol. We're gonna start from the <code>bootstrap()</code> function.
   </p>
-  <span class="filename">server.ts</span>
+  <span class="filename">
+    {{ 'server' | extension: bootstrapT.isJsActive }}
+    <app-tabs #bootstrapT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ bootstrap }}</code></pre>
   <blockquote>
-      <strong>Notice</strong> The <code>Transport</code> is a helper enum.
+      <strong>Notice</strong> <code>Transport</code> is a helper enum.
    </blockquote>
   <p>
     The second argument of the <code>createMicroservice()</code> method is an options object. This object may have 3 members:
@@ -43,8 +46,12 @@
     The Nest microservice recognizes the messages via <strong>patterns</strong>. The pattern is a plain JavaScript value - object, string, or even number.
     To create a pattern handler, we're using the <code>@MessagePattern()</code> decorator imported from the <code>@nestjs/microservices</code> package.
   </p>
-  <span class="filename">math.controller.ts</span>
-  <pre><code class="language-typescript">{{ mathController }}</code></pre>
+  <span class="filename">
+    {{ 'math.controller' | extension: mathControllerT.isJsActive }}
+    <app-tabs #mathControllerT></app-tabs>
+  </span>
+  <pre [class.hide]="mathControllerT.isJsActive"><code class="language-typescript">{{ mathController }}</code></pre>
+  <pre [class.hide]="!mathControllerT.isJsActive"><code class="language-typescript">{{ mathControllerJs }}</code></pre>
   <blockquote>
       <strong>Notice</strong> We can register the pattern handlers only inside the <code>@Controller()</code> class.
    </blockquote>
@@ -58,8 +65,12 @@
       Each pattern handler can be <code>async</code>, so you're able to return the <code>Promise</code>.
       Moreover, you can return the <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, so the values would be emitted until the stream is completed.
     </p>
-     <span class="filename">math.controller.ts</span>
-    <pre><code class="language-typescript">{{ streaming }}</code></pre>
+    <span class="filename">
+      {{ 'math.controller' | extension: streamingT.isJsActive }}
+      <app-tabs #streamingT></app-tabs>
+    </span>
+    <pre [class.hide]="streamingT.isJsActive"><code class="language-typescript">{{ streaming }}</code></pre>
+    <pre [class.hide]="!streamingT.isJsActive"><code class="language-typescript">{{ streamingJs }}</code></pre>
     <p>
       Above message handler will respond <strong>3 times</strong> (with each item from the array).
     </p>
@@ -75,7 +86,11 @@
    <p>
      The <code>ClientProxy</code> has a <code>send()</code> method. This method is intended to call the microservice and returns the <code>Observable</code> with its response.
    </p>
-   <pre><code class="language-typescript">{{ sendMethod }}</code></pre>
+   <span class="filename">
+    <app-tabs #sendMethodT></app-tabs>
+  </span>
+   <pre [class.hide]="sendMethodT.isJsActive"><code class="language-typescript">{{ sendMethod }}</code></pre>
+   <pre [class.hide]="!sendMethodT.isJsActive"><code class="language-typescript">{{ sendMethodJs }}</code></pre>
    <p>
      It takes 2 arguments, the <code>pattern</code> and <code>data</code>. The <code>pattern</code> has to be same as this declared in the <code>@MessagePattern()</code> decorator.
      That's all.

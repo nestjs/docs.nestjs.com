@@ -34,11 +34,33 @@ export class ContextService {
 }`;
   }
 
+  get contextServiceJs() {
+    return `
+@Component()
+@Dependencies(CommonService)
+export class ContextService {
+  constructor(commonService) {
+    this.commonService = commonService;
+  }
+}`;
+  }
+
   get commonService() {
     return `
 @Component()
 export class CommonService {
   constructor(private readonly coreService: CoreService) {}
+}`;
+  }
+
+  get commonServiceJs() {
+    return `
+@Component()
+@Dependencies(CoreService)
+export class CommonService {
+  constructor(coreService) {
+    this.coreService = coreService;
+  }
 }`;
   }
 }

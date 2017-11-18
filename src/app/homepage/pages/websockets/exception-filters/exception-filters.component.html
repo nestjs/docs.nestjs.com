@@ -16,8 +16,12 @@
   <p>
     The <strong>Exception Filters</strong> are also really similar, and works exactly in the same way as the primary ones.
   </p>
-  <span class="filename">ws-exception.filter.ts</span>
-  <pre><code class="language-typescript">{{ wsExceptionFilter }}</code></pre>
+  <span class="filename">
+    {{ 'ws-exception.filter' | extension: wsExceptionFilterT.isJsActive }}
+    <app-tabs #wsExceptionFilterT></app-tabs>
+  </span>
+  <pre [class.hide]="wsExceptionFilterT.isJsActive"><code class="language-typescript">{{ wsExceptionFilter }}</code></pre>
+  <pre [class.hide]="!wsExceptionFilterT.isJsActive"><code class="language-typescript">{{ wsExceptionFilterJs }}</code></pre>
   <blockquote>
     <strong>Notice</strong> It's impossible to setup the websockets exception filters globally.
   </blockquote>

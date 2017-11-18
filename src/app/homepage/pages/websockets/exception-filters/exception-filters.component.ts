@@ -36,4 +36,20 @@ export class ExceptionFilter implements WsExceptionFilter {
   }
 }`;
   }
+
+  get wsExceptionFilterJs() {
+    return `
+import { Catch } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
+
+@Catch(WsException)
+export class ExceptionFilter {
+  catch(exception, client) {
+    client.emit('exception', {
+      status: 'error',
+      message: \`It's a message from the exception filter\`,
+    });
+  }
+}`;
+  }
 }

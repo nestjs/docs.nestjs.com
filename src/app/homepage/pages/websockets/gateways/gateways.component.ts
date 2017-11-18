@@ -22,6 +22,27 @@ onEvent(client, data): WsResponse<any> {
 }`;
   }
 
+  get subscribeEventsJs() {
+    return `
+@SubscribeMessage('events')
+onEvent(client, data) {
+  const event = 'events';
+  return { event, data };
+}`;
+  }
+
+  get streamingJs() {
+    return `
+@SubscribeMessage('events')
+onEvent(client, data) {
+  const event = 'events';
+  const response = [1, 2, 3];
+
+  return Observable.from(response)
+    .map((res) => ({ event, data: res }));
+}`;
+  }
+
   get streaming() {
     return `
 @SubscribeMessage('events')

@@ -39,6 +39,10 @@ import { GlobalPrefixComponent } from './homepage/pages/faq/global-prefix/global
 import { LifecycleEventsComponent } from './homepage/pages/faq/lifecycle-events/lifecycle-events.component';
 import { HybridApplicationComponent } from './homepage/pages/faq/hybrid-application/hybrid-application.component';
 import { MultipleServersComponent } from './homepage/pages/faq/multiple-servers/multiple-servers.component';
+import { MongodbComponent } from './homepage/pages/recipes/mongodb/mongodb.component';
+import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
+import { PassportComponent } from './homepage/pages/recipes/passport/passport.component';
+import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 
 const routes: Routes = [
   {
@@ -52,142 +56,197 @@ const routes: Routes = [
       {
         path: 'first-steps',
         component: FirstStepsComponent,
+        data: { title: 'First Steps' },
       },
       {
         path: 'controllers',
         component: ControllersComponent,
+        data: { title: 'Controllers' },
       },
       {
         path: 'components',
         component: ComponentsComponent,
+        data: { title: 'Components' },
       },
       {
         path: 'modules',
         component: ModulesComponent,
+        data: { title: 'Modules' },
       },
       {
         path: 'middlewares',
         component: MiddlewaresComponent,
+        data: { title: 'Middlewares' },
       },
       {
         path: 'pipes',
         component: PipesComponent,
+        data: { title: 'Pipes' },
       },
       {
         path: 'guards',
         component: GuardsComponent,
+        data: { title: 'Guards' },
       },
       {
         path: 'exception-filters',
         component: ExceptionFiltersComponent,
+        data: { title: 'Exception Filters' },
       },
       {
         path: 'interceptors',
         component: InterceptorsComponent,
+        data: { title: 'Interceptors' },
       },
       {
         path: 'advanced/dependency-injection',
         component: DependencyInjectionComponent,
+        data: { title: 'Dependency Injection' },
       },
       {
         path: 'advanced/async-components',
         component: AsyncComponentsComponent,
+        data: { title: 'Async Components' },
       },
       {
         path: 'advanced/mixins',
         component: MixinComponentsComponent,
+        data: { title: 'Mixin Class' },
       },
       {
         path: 'advanced/hierarchical-injector',
         component: HierarchicalInjectorComponent,
+        data: { title: 'Hierarchical Injector' },
       },
       {
         path: 'advanced/circular-dependency',
         component: CircularDependencyComponent,
+        data: { title: 'Circular Dependency' },
       },
       {
         path: 'advanced/unit-testing',
         component: UnitTestingComponent,
+        data: { title: 'Unit Testing' },
       },
       {
         path: 'advanced/e2e-testing',
         component: E2eTestingComponent,
+        data: { title: 'E2E Testing' },
       },
       {
         path: 'websockets/gateways',
         component: GatewaysComponent,
+        data: { title: 'Gateways' },
       },
       {
         path: 'websockets/pipes',
         component: WsPipesComponent,
+        data: { title: 'Pipes - Gateways' },
       },
       {
         path: 'websockets/exception-filters',
         component: WsExceptionFiltersComponent,
+        data: { title: 'Exception Filters - Gateways' },
       },
       {
         path: 'websockets/guards',
         component: WsGuardsComponent,
+        data: { title: 'Guards - Gateways' },
       },
       {
         path: 'websockets/interceptors',
         component: WsInterceptorsComponent,
+        data: { title: 'Interceptors - Gateways' },
       },
       {
         path: 'websockets/adapter',
         component: AdapterComponent,
+        data: { title: 'Adapter - Gateways' },
       },
       {
         path: 'microservices/basics',
         component: BasicsComponent,
+        data: { title: 'Microservices' },
       },
       {
         path: 'microservices/redis',
         component: RedisComponent,
+        data: { title: 'Redis - Microservices' },
       },
       {
         path: 'microservices/pipes',
         component: MicroservicesPipesComponent,
+        data: { title: 'Pipes - Microservices' },
       },
       {
         path: 'microservices/exception-filters',
         component: MicroservicesExceptionFiltersComponent,
+        data: { title: 'Exception Filters - Microservices' },
       },
       {
         path: 'microservices/guards',
         component: MicroservicesGuardsComponent,
+        data: { title: 'Guards - Microservices' },
       },
       {
         path: 'microservices/interceptors',
         component: MicroservicesInterceptorsComponent,
+        data: { title: 'Interceptors - Microservices' },
       },
       {
         path: 'microservices/custom-transport',
         component: CustomTransportComponent,
+        data: { title: 'Custom Transport - Microservices' },
       },
       {
         path: 'recipes/sql-typeorm',
         component: SqlTypeormComponent,
+        data: { title: 'SQL (TypeORM)' },
+      },
+      {
+        path: 'recipes/mongodb',
+        component: MongodbComponent,
+        data: { title: 'MongoDB (Mongoose)' },
+      },
+      {
+        path: 'recipes/passport',
+        component: PassportComponent,
+        data: { title: 'Passport integration' },
+      },
+      {
+        path: 'recipes/sql-sequelize',
+        component: SqlSequelizeComponent,
+        data: { title: 'SQL (Sequelize)' },
+      },
+      {
+        path: 'recipes/cqrs',
+        component: CqrsComponent,
+        data: { title: 'CQRS' },
       },
       {
         path: 'faq/express-instance',
         component: ExpressInstanceComponent,
+        data: { title: 'Express Instance - FAQ' },
       },
       {
         path: 'faq/global-prefix',
         component: GlobalPrefixComponent,
+        data: { title: 'Global Prefix - FAQ' },
       },
       {
         path: 'faq/lifecycle-events',
         component: LifecycleEventsComponent,
+        data: { title: 'Lifecycle Events - FAQ' },
       },
       {
         path: 'faq/hybrid-application',
         component: HybridApplicationComponent,
+        data: { title: 'Hybrid Application - FAQ' },
       },
       {
         path: 'faq/multiple-servers',
         component: MultipleServersComponent,
+        data: { title: 'HTTPS & Multiple Servers - FAQ' },
       },
     ]
   },

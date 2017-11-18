@@ -8,6 +8,11 @@ import { BasePageComponent } from '../../page/page.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SqlTypeormComponent extends BasePageComponent {
+  get dependencies() {
+    return `
+$ npm install --save typeorm mysql`;
+  }
+  
   get databaseProviders() {
     return `
 import { createConnection } from 'typeorm';
@@ -23,7 +28,7 @@ export const databaseProviders = [
       password: 'root',
       database: 'test',
       entities: [
-          __dirname + '../**/*.entity.ts',
+          __dirname + '/../**/*.entity{.ts,.js}',
       ],
       autoSchemaSync: true,
     }),
@@ -92,7 +97,11 @@ import { Photo } from './photo.entity';
 @Component()
 export class PhotoService {
   constructor(
-    @Inject('PhotoRepositoryToken') private photoRepository: Repository<Photo>) {}
+    @Inject('PhotoRepositoryToken') private readonly photoRepository: Repository<Photo>) {}
+
+  async findAll(): Promise<Photo[]> {
+    return await this.photoRepository.find();
+  }
 }`;
   }
 

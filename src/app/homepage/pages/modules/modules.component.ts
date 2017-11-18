@@ -79,6 +79,24 @@ export class CatsModule {
 }`;
   }
 
+  get catsModuleDiJs() {
+    return `
+import { Module, Dependencies } from '@nestjs/common';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
+
+@Module({
+    controllers: [CatsController],
+    components: [CatsService],
+})
+@Dependencies(CatsService)
+export class CatsModule {
+  constructor(catsService) {
+    this.catsService = catsService;
+  }
+}`;
+  }
+
   get reExportExamle() {
     return `
 @Module({

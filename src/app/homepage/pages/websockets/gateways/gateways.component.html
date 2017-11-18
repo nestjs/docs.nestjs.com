@@ -21,8 +21,12 @@
     The Gateway is listening now, but we're not subscribing to the incoming messages yet.
     Let's create a handler, which will subscribe to the <code>events</code> messages and respond to the user with the exact same data.
   </p>
-  <span class="filename">events.gateway.ts</span>
-  <pre><code class="language-typescript">{{ subscribeEvents }}</code></pre>
+  <span class="filename">
+    {{ 'events.gateway' | extension: subscribeEventsT.isJsActive }}
+    <app-tabs #subscribeEventsT></app-tabs>
+  </span>
+  <pre [class.hide]="subscribeEventsT.isJsActive"><code class="language-typescript">{{ subscribeEvents }}</code></pre>
+  <pre [class.hide]="!subscribeEventsT.isJsActive"><code class="language-typescript">{{ subscribeEventsJs }}</code></pre>
   <blockquote>
     <strong>Notice</strong> The <code>WsResponse</code> interface is imported from <code>@nestjs/common</code> package, while <code>@SubscribeMessage()</code> decorator from <code>@nestjs/websockets</code>.
   </blockquote>
@@ -37,8 +41,12 @@
     Each message handler can be <code>async</code>, so you're able to return the <code>Promise</code>.
     Moreover, you can return the <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, so the values would be emitted until the stream is completed.
   </p>
-  <span class="filename">events.gateway.ts</span>
-  <pre><code class="language-typescript">{{ streaming }}</code></pre>
+  <span class="filename">
+    {{ 'events.gateway' | extension: streamingT.isJsActive }}
+    <app-tabs #streamingT></app-tabs>
+  </span>
+  <pre [class.hide]="streamingT.isJsActive"><code class="language-typescript">{{ streaming }}</code></pre>
+  <pre [class.hide]="!streamingT.isJsActive"><code class="language-typescript">{{ streamingJs }}</code></pre>
   <p>
     Above message handler will respond <strong>3 times</strong> (with each item from the <code>response</code> array).
   </p>

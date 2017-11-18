@@ -9,12 +9,18 @@
   min-height: 100vh;
 }
 
+.logo-wrapper {
+  svg {
+    width: 132px;
+    height: 61px;
+  }
+}
 .container {
   @extend .transition;
   @extend .box-sizing;
   @include transform(translateX(345px));
   width: calc(100% - 345px);
-  padding: 45px 50px 100px;
+  padding: 45px 50px 90px;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -42,7 +48,7 @@
   line-height: 26px;
 
   a {
-    font-weight: 500;
+    font-weight: 600;
     color: $red-color;
     &:hover {
       color: #0894e2;
@@ -53,10 +59,82 @@
     color: $black-color;
   }
   h3 { font-size: 24px; }
-
+  h5 {
+    color: $grey-color;
+    margin-top: -20px;
+    font-weight: 500;
+    font-size: 15px;
+  }
   @include media(normal) {
     p {
       text-align: justify;
     }
+  }
+}
+
+.sponsors-wrapper {
+  padding: 20px 40px 40px;
+  margin: 40px -50px 0;
+  background: #f3f3f3;
+  position: relative;
+
+  h4, img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  a {
+    color: $red-color;
+    font-weight: 600;
+    &:hover {
+      color: #0894e2;
+    }
+  }
+
+  h4 {
+    color: #c2c2c2;
+    font-weight: 600;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  p {
+    color: #c2c2c2;
+    margin-top: 35px;
+    line-height: 26px;
+  }
+
+  .logo-sponsor {
+    width: 150px;
+    margin-left: 25px;
+  }
+
+  .btn-primary {
+    border: 2px solid $red-color;
+    color: $red-color;
+    padding: 12px 20px;
+    display: inline-block;
+    position: absolute;
+    right: 40px;
+    top: 50px;
+
+    &:hover {
+      color: #0894e2;
+      border-color: #0894e2;
+    }
+
+    @include media(medium) {
+      position: static;
+      margin-top: 30px;
+    }
+  }
+}
+
+.backers-wrapper {
+  margin-top: 20px;
+  img {
+    width: 30px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
   }
 }

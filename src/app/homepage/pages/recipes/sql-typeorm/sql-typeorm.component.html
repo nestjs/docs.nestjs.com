@@ -1,13 +1,14 @@
 <div class="content">
   <h3>SQL (TypeORM)</h3>
+  <h5>This chapter applies only to TypeScript</h5>
   <p>
-    The <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> library is definitely the most mature Object Relational Mapper (ORM) available in the node.js world.
+    <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> is definitely the most mature Object Relational Mapper (ORM) available in the node.js world.
     Since it's written in TypeScript, it works pretty well with the Nest framework.
-    This example describes how to integrate <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> with the Nest application, but the process is almost the same 
-in most of the other cases, such as connection with the MongoDB, Redis, etc. 
+    To start the adventure with this library we have to install all of the required dependencies:
   </p>
+  <pre><code class="language-typescript">{{ dependencies }}</code></pre>
   <p>
-    Let's start from scratch. Firstly, we need to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package.
+    The first step we need to do is to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package.
     The <code>createConnection()</code> function returns the <code>Promise</code>, so it's necessary to create an <a routerLink="/advanced/async-components">async component</a>.
   </p>
   <span class="filename">database.providers.ts</span>
@@ -35,7 +36,7 @@ in most of the other cases, such as connection with the MongoDB, Redis, etc.
   <pre><code class="language-typescript">{{ photoEntity }}</code></pre>
   <p>
     The <code>Photo</code> entity belongs to the <code>photo</code> directory.
-    This directory represents the <code>PhotoModule</code>. It's your decision where you gonna keep your model's files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
+    This directory represents the <code>PhotoModule</code>. It's your decision where you gonna keep your model files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
   </p>
   <p>
     Let's create a <strong>Repository</strong> component:
@@ -43,7 +44,7 @@ in most of the other cases, such as connection with the MongoDB, Redis, etc.
   <span class="filename">photo.providers.ts</span>
   <pre><code class="language-typescript">{{ photoProviders }}</code></pre>
   <blockquote>
-      <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong> at all. Both <code>PhotoRepositoryToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constansts.ts</code> file. 
+      <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong> at all. Both <code>PhotoRepositoryToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constants.ts</code> file. 
    </blockquote>
    <p>
      Now we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@Inject()</code> decorator:
@@ -63,4 +64,7 @@ in most of the other cases, such as connection with the MongoDB, Redis, etc.
   <blockquote class="warning">
       <strong>Hint</strong> Don't forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
    </blockquote>
+   <p>
+     The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/05-sql-typeorm" target="blank">here</a>.
+   </p>
 </div>

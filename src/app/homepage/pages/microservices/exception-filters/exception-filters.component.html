@@ -17,8 +17,12 @@
     The <strong>Exception Filters</strong> are also really similar, and works exactly in the same way as the primary ones.
     The only difference is that <code>catch()</code> method should returns an <code>Observable</code>.
   </p>
-  <span class="filename">rpc-exception.filter.ts</span>
-  <pre><code class="language-typescript">{{ rpcExceptionFilter }}</code></pre>
+  <span class="filename">
+    {{ 'rpc-exception.filter' | extension: rpcExceptionFilterT.isJsActive }}
+    <app-tabs #rpcExceptionFilterT></app-tabs>
+  </span>
+  <pre [class.hide]="rpcExceptionFilterT.isJsActive"><code class="language-typescript">{{ rpcExceptionFilter }}</code></pre>
+  <pre [class.hide]="!rpcExceptionFilterT.isJsActive"><code class="language-typescript">{{ rpcExceptionFilterJs }}</code></pre>
   <blockquote>
     <strong>Notice</strong> It's impossible to setup the microservices exception filters globally.
   </blockquote>

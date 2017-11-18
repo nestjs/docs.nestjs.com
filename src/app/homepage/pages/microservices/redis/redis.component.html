@@ -7,7 +7,10 @@
   <p>
     To switch from the TCP transport strategy to Redis <strong>pub/sub</strong>, we only need to change the options object passed to the <code>createMicroservice()</code> method.
   </p>
-  <span class="filename">server.ts</span>
+  <span class="filename">
+    {{ 'server' | extension: optionsT.isJsActive }}
+    <app-tabs #optionsT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ options }}</code></pre>
   <blockquote class="warning">
       <strong>Hint</strong> Don't forget to change the <code>Transport.REDIS</code> in the <code>@Client()</code> decorator too.

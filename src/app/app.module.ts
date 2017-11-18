@@ -4,7 +4,6 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { CoreModule } from './core/core.module';
 import { HomepageComponent } from './homepage/homepage.component';
 import { HeaderComponent } from './homepage/header/header.component';
 import { FooterComponent } from './homepage/footer/footer.component';
@@ -48,12 +47,18 @@ import { MultipleServersComponent } from './homepage/pages/faq/multiple-servers/
 import { HierarchicalInjectorComponent } from './homepage/pages/advanced/hierarchical-injector/hierarchical-injector.component';
 import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
 import { MixinComponentsComponent } from './homepage/pages/advanced/mixin-components/mixin-components.component';
+import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
+import { MongodbComponent } from './homepage/pages/recipes/mongodb/mongodb.component';
+import { PassportComponent } from './homepage/pages/recipes/passport/passport.component';
+import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
+import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
+import { TabsComponent } from './shared/components/tabs/tabs.component';
+import { ExtensionPipe } from './shared/pipes/extension.pipe';
 
 @NgModule({
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CoreModule,
     PerfectScrollbarModule.forRoot({
       suppressScrollX: true,
     }),
@@ -103,6 +108,13 @@ import { MixinComponentsComponent } from './homepage/pages/advanced/mixin-compon
     HierarchicalInjectorComponent,
     SqlTypeormComponent,
     MixinComponentsComponent,
+    SqlSequelizeComponent,
+    MongodbComponent,
+    PassportComponent,
+    SwaggerComponent,
+    CqrsComponent,
+    TabsComponent,
+    ExtensionPipe,
   ],
   bootstrap: [AppComponent]
 })

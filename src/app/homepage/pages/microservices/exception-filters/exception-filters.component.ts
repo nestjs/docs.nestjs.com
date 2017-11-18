@@ -35,4 +35,19 @@ export class ExceptionFilter implements RpcExceptionFilter {
   }
 }`;
   }
+
+  get rpcExceptionFilterJs() {
+    return `
+import { Catch } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+import { RpcException } from '@nestjs/microservices';
+import 'rxjs/add/observable/throw';
+
+@Catch(RpcException)
+export class ExceptionFilter {
+  catch(exception) {
+    return Observable.throw(exception.getError());
+  }
+}`;
+  }
 }

@@ -121,4 +121,72 @@ async function bootstrap() {
 }
 bootstrap();`;
   }
+
+  get parseIntPipe() {
+    return `
+import { HttpException } from '@nestjs/core';
+import { PipeTransform, Pipe, ArgumentMetadata, HttpStatus } from '@nestjs/common';
+
+@Pipe()
+export class ParseIntPipe implements PipeTransform<string> {
+  async transform(value: string, metadata: ArgumentMetadata) {
+    const val = parseInt(value, 10);
+    if (isNaN(val)) {
+      throw new HttpException('Validation failed', HttpStatus.BAD_REQUEST);
+    }
+    return val;
+  }
+}`;
+  }
+
+  get parseIntPipeJs() {
+    return `
+import { HttpException } from '@nestjs/core';
+import { Pipe, HttpStatus } from '@nestjs/common';
+
+@Pipe()
+export class ParseIntPipe {
+  async transform(value, metadata) {
+    const val = parseInt(value, 10);
+    if (isNaN(val)) {
+      throw new HttpException('Validation failed', HttpStatus.BAD_REQUEST);
+    }
+    return val;
+  }
+}`;
+  }
+
+  get bindParam() {
+    return `
+@Get(':id')
+async findOne(@Param('id', new ParseIntPipe()) id) {
+  return await this.catsService.findOne(id);
+}`;
+  }
+
+  get bindParamJs() {
+    return `
+@Get(':id')
+@Bind(Param('id', new ParseIntPipe()))
+async findOne(id) {
+  return await this.catsService.findOne(id);
+}`;
+  }
+
+  get bindBodyParam() {
+    return `
+@Post()
+async create(@Body(new CustomPipe()) createCatDto: CreateCatDto) {
+  await this.catsService.create(createCatDto);
+}`;
+  }
+
+  get bindBodyParamJs() {
+    return `
+@Post()
+@Bind(Body(new CustomPipe()))
+async create(createCatDto) {
+  await this.catsService.create(createCatDto);
+}`;
+  }
 }

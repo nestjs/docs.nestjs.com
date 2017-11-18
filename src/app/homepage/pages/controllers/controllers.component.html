@@ -6,7 +6,10 @@
      To tell Nest that <code>CatsController</code> is a controller, you have to attach <strong>metadata</strong> to the class.
      Metadata can be attached using <strong>decorators</strong>.
    </p>
-   <span class="filename">cats.controller.ts</span>
+   <span class="filename">
+    {{ 'cats.controller' | extension: catsControllerT.isJsActive }}
+     <app-tabs #catsControllerT></app-tabs>
+    </span>
    <pre><code class="language-typescript">{{ catsController }}</code></pre>
    <h4>Metadata</h4>
    <p>
@@ -59,8 +62,12 @@
   <blockquote class="warning">
     <strong>Hint</strong> There's a <code>@types/express</code> package and we strongly recommend to use it.
   </blockquote>
-  <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ requestObject }}</code></pre>
+  <span class="filename">
+    {{ 'cats.controller' | extension: requestObjectT.isJsActive }}
+    <app-tabs #requestObjectT></app-tabs>
+  </span>
+  <pre [class.hide]="requestObjectT.isJsActive"><code class="language-typescript">{{ requestObject }}</code></pre>
+  <pre [class.hide]="!requestObjectT.isJsActive"><code class="language-typescript">{{ requestObjectJs }}</code></pre>
   <p>
     The request object contains headers, params, and e.g. body of the request, but in most cases, it's not necessary to grab them manually.
     We can use <strong>dedicated decorators</strong> instead, such as <code>@Body()</code> or <code>@Query()</code>, which are available out of the box.
@@ -107,7 +114,10 @@
     We've already created an endpoint to fetch the data. It'd be great to provide a way of creating the new records too.
     So.. What we're waiting for?! Let's create the <strong>POST</strong> handler:
   </p>
-  <span class="filename">cats.controller.ts</span>
+  <span class="filename">
+    {{ 'cats.controller' | extension: postEndpointT.isJsActive }}
+    <app-tabs #postEndpointT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ postEndpoint }}</code></pre>
   <p>
     It's really easy. Nest provides the rest of those endpoints decorators in the same fashion -
@@ -125,8 +135,12 @@
     Every async function has to return the <code>Promise</code>. It means that you can return deffered value and
     Nest will resolve it by itself. Let's have a look on the below example:
   </p>
-  <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ asyncExample }}</code></pre>
+  <span class="filename">
+    {{ 'cats.controller' | extension: asyncExampleT.isJsActive }}
+    <app-tabs #asyncExampleT></app-tabs>
+  </span>
+  <pre [class.hide]="asyncExampleT.isJsActive"><code class="language-typescript">{{ asyncExample }}</code></pre>
+  <pre [class.hide]="!asyncExampleT.isJsActive"><code class="language-typescript">{{ asyncExampleJs }}</code></pre>
   <p>
     It's fully valid.
   </p>
@@ -135,8 +149,12 @@
     <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="blank">observable streams</a>.
     It makes the migration between simple web application and the Nest microservice much easier.
   </p>
-  <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ observableExample }}</code></pre>
+  <span class="filename">
+    {{ 'cats.controller' | extension: observableExampleT.isJsActive }}
+    <app-tabs #observableExampleT></app-tabs>
+  </span>
+  <pre [class.hide]="observableExampleT.isJsActive"><code class="language-typescript">{{ observableExample }}</code></pre>
+  <pre [class.hide]="!observableExampleT.isJsActive"><code class="language-typescript">{{ observableExampleJs }}</code></pre>  
   <h4>POST handler</h4>
   <p>
     That's weird that this POST route handler doesn't accept any client params. We should definitely 
@@ -152,7 +170,10 @@
   <p>
     Let's create the <code>CreateCatDto</code>:
   </p>
-  <span class="filename">dto/create-cat.dto.ts</span>
+  <span class="filename">
+    {{ 'dto/create-cat.dto' | extension: createCatSchemaT.isJsActive }}
+    <app-tabs #createCatSchemaT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ createCatSchema }}</code></pre>
   <p>
     It has only three basic properties. All of them are marked as a <code>readonly</code>, because we should
@@ -161,14 +182,21 @@
   <p>
     Now we can use the schema inside the <code>CatsController</code>:
   </p>
-  <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ exampleWithBody }}</code></pre>
+  <span class="filename">
+    {{ 'cats.controller' | extension: exampleWithBodyT.isJsActive }}
+    <app-tabs #exampleWithBodyT></app-tabs>
+  </span>
+  <pre [class.hide]="exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBody }}</code></pre>
+  <pre [class.hide]="!exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBodyJs }}</code></pre>
   <p>
     <a href="http://expressjs.com/" target="blank">Expressjs</a> doesn't parse the body by default.
     We need the middleware, which name is <a href="https://github.com/expressjs/body-parser" target="blank">body-parser</a>.
     The usage is really simple, because Nest instance provides the <code>use()</code> method. It's a wrapper to the native express <code>use()</code> function:
   </p>
-  <span class="filename">server.ts</span>
+  <span class="filename">
+    {{ 'server' | extension: bodyParserT.isJsActive }}
+    <app-tabs #bodyParserT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ bodyParser }}</code></pre>
   <h4>Last step</h4>
   <p>
@@ -179,7 +207,10 @@
     The controller always belongs to the module, which mentioned about its in <code>controllers</code> array within <code>@Module()</code> decorator.
     Since we don't have any other modules except the root <code>AppModule</code>, let's use it for now:
   </p>
-  <span class="filename">app.module.ts</span>
+  <span class="filename">
+    {{ 'app.module' | extension: appModuleT.isJsActive }}
+    <app-tabs #appModuleT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
     Tada! We attached the metadata to the module class, so now Nest can easily reflect which controllers have to be initialized.
@@ -190,7 +221,11 @@
     It was the only available option until <strong>Nest 4</strong>. To inject the response object, we need to use <code>@Res()</code> decorator.
     To show the differences, i'm going to rewrite the <code>CatsController</code>:
   </p>
-  <pre><code class="language-typescript">{{ expressWay }}</code></pre>
+  <span class="filename">
+    <app-tabs #expressWayT></app-tabs>
+  </span>
+  <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
+  <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
   <p>
     This manner is much less clear from my point of view. I definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
     with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you've full control of the response.

@@ -5,5 +5,9 @@
     It's a good practice to use them for all the initialization stuff and avoid to put anything directly in the constructor.
    The constructor should be used only to initialize the class members and inject the required dependencies.
   </p>
-  <pre><code class="language-typescript">{{ lifecycleEvents }}</code></pre>
+  <span class="filename">
+    <app-tabs #lifecycleEventsT></app-tabs>
+  </span>
+  <pre [class.hide]="lifecycleEventsT.isJsActive"><code class="language-typescript">{{ lifecycleEvents }}</code></pre>
+  <pre [class.hide]="!lifecycleEventsT.isJsActive"><code class="language-typescript">{{ lifecycleEventsJs }}</code></pre>
 </div>

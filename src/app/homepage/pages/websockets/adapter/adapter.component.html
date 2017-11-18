@@ -35,12 +35,19 @@
   <p>
     For demonstration purposes, we're going to integrate <a href="https://github.com/websockets/ws" target="blank">ws</a> library with the Nest application.
   </p>
-  <span class="filename">ws-adapter.ts</span>
-  <pre><code class="language-typescript">{{ wsAdapter }}</code></pre>
+  <span class="filename">
+    {{ 'ws-adapter' | extension: wsAdapterT.isJsActive }}
+    <app-tabs #wsAdapterT></app-tabs>
+  </span>
+  <pre [class.hide]="wsAdapterT.isJsActive"><code class="language-typescript">{{ wsAdapter }}</code></pre>
+  <pre [class.hide]="!wsAdapterT.isJsActive"><code class="language-typescript">{{ wsAdapterJs }}</code></pre>
   <p>
     Since <code>WsAdapter</code> class is ready to use, we can setup the adapter using <code>useWebSocketAdapter()</code> method:
   </p>
-  <span class="filename">server.ts</span>
+  <span class="filename">
+    {{ 'server' | extension: setupAdapterT.isJsActive }}
+    <app-tabs #setupAdapterT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ setupAdapter }}</code></pre>
   <p>
     Now Nest will make use of our <code>WsAdapter</code> instead of the default one.

@@ -27,6 +27,24 @@ export class LoggingInterceptor implements NestInterceptor {
 }`;
   }
 
+  get loggingInterceptorJs() {
+    return `
+import { Interceptor } from '@nestjs/common';
+import 'rxjs/add/operator/do';
+
+@Interceptor()
+export class LoggingInterceptor {
+  intercept(dataOrRequest, context, stream$) {
+    console.log('Before...');
+    const now = Date.now();
+
+    return stream$.do(
+      () => console.log(\`After... \${Date.now() - now}ms\`),
+    );
+  }
+}`;
+  }
+
   get useLoggingInterceptor() {
     return `
 @UseInterceptors(LoggingInterceptor)
@@ -48,6 +66,19 @@ import 'rxjs/add/operator/map';
 @Interceptor()
 export class TransformInterceptor implements NestInterceptor {
   intercept(dataOrRequest, context: ExecutionContext, stream$: Observable<any>): Observable<any> {
+    return stream$.map((data) => ({ data }));
+  }
+}`;
+  }
+
+  get transformInterceptorJs() {
+    return `
+import { Interceptor } from '@nestjs/common';
+import 'rxjs/add/operator/map';
+
+@Interceptor()
+export class TransformInterceptor {
+  intercept(dataOrRequest, context, stream$) {
     return stream$.map((data) => ({ data }));
   }
 }`;
@@ -78,6 +109,24 @@ export class CacheInterceptor implements NestInterceptor {
 }`;
   }
 
+  get cacheInterceptorJs() {
+    return `
+import { Interceptor } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+
+@Interceptor()
+export class CacheInterceptor {
+  intercept(dataOrRequest, context, stream$) {
+    const isCached = true;
+    if (isCached) {
+      return Observable.of([]);
+    }
+    return stream$;
+  } 
+}`;
+  }
+
   get exceptionMapping() {
     return `
 import { Interceptor, NestInterceptor, ExecutionContext, HttpStatus } from '@nestjs/common';
@@ -94,5 +143,29 @@ export class ExceptionInterceptor implements NestInterceptor {
     ));
   }
 }`;
+  }
+
+  get exceptionMappingJs() {
+    return `
+import { Interceptor, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/core';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
+
+@Interceptor()
+export class ExceptionInterceptor {
+  intercept(dataOrRequest, context, stream$) {
+    return stream$.catch((err) => Observable.throw(
+      new HttpException('Exception interceptor message', HttpStatus.BAD_GATEWAY),
+    ));
+  }
+}`;
+  }
+
+  get globalInterceptors() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+app.useGlobalInterceptors(new LoggingInterceptor());`;
   }
 }

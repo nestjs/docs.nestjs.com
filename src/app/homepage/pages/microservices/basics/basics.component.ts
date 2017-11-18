@@ -28,7 +28,6 @@ bootstrap();
     return `
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { Observable } from 'rxjs/Observable';
 
 @Controller()
 export class MathController {
@@ -39,10 +38,32 @@ export class MathController {
 }`;
   }
 
+  get mathControllerJs() {
+    return `
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
+
+@Controller()
+export class MathController {
+  @MessagePattern({ cmd: 'sum' })
+  sum(data) {
+    return (data || []).reduce((a, b) => a + b);
+  }
+}`;
+  }
+
   get streaming() {
     return `
 @MessagePattern({ cmd: 'sum' })
 sum(data: number[]): Observable<number> {
+  return Observable.from([1, 2, 3]);
+}`;
+  }
+
+  get streamingJs() {
+    return `
+@MessagePattern({ cmd: 'sum' })
+sum(data) {
   return Observable.from([1, 2, 3]);
 }`;
   }
@@ -61,6 +82,17 @@ call(): Observable<number> {
   const data = [1, 2, 3, 4, 5];
 
   return this.client.send<number>(pattern, data);
+}`;
+  }
+
+  get sendMethodJs() {
+    return `
+@Get()
+call() {
+  const pattern = { cmd: 'sum' };
+  const data = [1, 2, 3, 4, 5];
+
+  return this.client.send(pattern, data);
 }`;
   }
 }

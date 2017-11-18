@@ -18,8 +18,12 @@
   <p>
     Let's create a <code>CatsService</code> component:
   </p>
-  <span class="filename">cats.service.ts</span>
-  <pre><code class="language-typescript">{{ catsService }}</code></pre>
+  <span class="filename">
+    {{ 'cats.service' | extension: catsServiceT.isJsActive }}
+    <app-tabs #catsServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
+  <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
   <p>
     There's nothing specifically about components. Here's a <code>CatsService</code>, basic class with one property and two methods.
     The only difference is that it has the <code>@Component()</code> decorator. The <code>@Component()</code> attaches the metadata, so Nest knows that this class is a Nest component.
@@ -30,8 +34,12 @@
   <p>
     Since we've the service class already done, let's use it inside the <code>CatsController</code>:
   </p>
-  <span class="filename">cats.controller.ts</span>
-  <pre><code class="language-typescript">{{ catsController }}</code></pre>
+  <span class="filename">
+    {{ 'cats.controller' | extension: catsServiceT.isJsActive }}
+    <app-tabs #catsControllerT></app-tabs>
+  </span>
+  <pre [class.hide]="catsControllerT.isJsActive"><code class="language-typescript">{{ catsController }}</code></pre>
+  <pre [class.hide]="!catsControllerT.isJsActive"><code class="language-typescript">{{ catsControllerJs }}</code></pre>
   <p>
     The <code>CatsService</code> is injected through the class constructor.
     Don't be afraid about the <code>private readonly</code> shortened syntax.
@@ -59,7 +67,10 @@
     The last thing is to tell the module that something called <code>CatsService</code> truly exists.
     The only way to do it is to open the <code>app.module.ts</code> file, and add the service into the <code>components</code> array of the <code>@Module()</code> decorator.
   </p>
-  <span class="filename">app.module.ts</span>
+  <span class="filename">
+    {{ 'app.module' | extension: appModuleT.isJsActive }}
+    <app-tabs #appModuleT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
     Now Nest will smoothly resolve the dependencies of the <code>CatsController</code> class.

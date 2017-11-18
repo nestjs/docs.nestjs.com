@@ -25,6 +25,16 @@ async create(@Body() createCatDto: CreateCatDto) {
 `;
   }
 
+  get createMethodJs() {
+    return `
+@Post()
+@Bind(Body())
+async create(createCatDto) {
+  throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+}
+`;
+  }
+
   get forbiddenResponse() {
     return  `
 {
@@ -50,6 +60,15 @@ async create(@Body() createCatDto: CreateCatDto) {
 }`;
   }
 
+  get forbiddenCreateMethodJs() {
+    return `
+@Post()
+@Bind(Body())
+async create(createCatDto) {
+  throw new ForbiddenException();
+}`;
+}
+
   get httpExceptionFilter() {
     return `
 import { ExceptionFilter, Catch } from '@nestjs/common';
@@ -58,6 +77,24 @@ import { HttpException } from '@nestjs/core';
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, response) {
+    const status = exception.getStatus();
+
+    response.status(status).json({
+      statusCode: status,
+      message: \`It's a message from the exception filter\`,
+    });
+  }
+}`;
+  }
+
+  get httpExceptionFilterJs() {
+    return `
+import { Catch } from '@nestjs/common';
+import { HttpException } from '@nestjs/core';
+
+@Catch(HttpException)
+export class HttpExceptionFilter {
+  catch(exception, response) {
     const status = exception.getStatus();
 
     response.status(status).json({
@@ -77,6 +114,18 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 `;
   }
+
+  get forbiddenCreateMethodWithFilterJs() {
+    return `
+@Post()
+@UseFilters(new HttpExceptionFilter())
+@Bind(Body())
+async create(createCatDto) {
+  throw new ForbiddenException();
+}
+`;
+  }
+
 
   get controllerScopedFilter() {
     return `

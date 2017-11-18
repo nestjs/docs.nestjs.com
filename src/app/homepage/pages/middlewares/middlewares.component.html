@@ -11,8 +11,12 @@
     Middleware is a class with <code>@Middleware()</code> decorator. This class should implement the <code>NestMiddleware</code> interface.
     Let's create an example, the <code>LoggerMiddleware</code> class.
   </p>
-  <span class="filename">logger.middleware.ts</span>
-  <pre><code class="language-typescript">{{ loggerMiddleware }}</code></pre>
+  <span class="filename">
+    {{ 'logger.middleware' | extension: loggerMiddlewareT.isJsActive }}
+    <app-tabs #loggerMiddlewareT></app-tabs>
+  </span>
+  <pre [class.hide]="loggerMiddlewareT.isJsActive"><code class="language-typescript">{{ loggerMiddleware }}</code></pre>
+  <pre [class.hide]="!loggerMiddlewareT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareJs }}</code></pre>
   <p>
     The <code>resolve()</code> method has to return the regular expressjs middleware <code>(req, res, next) => void</code>.
   </p>
@@ -27,8 +31,12 @@
     Modules which include middlewares have to implement the <code>NestModule</code> interface.
     Let's setup the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
   </p>
-  <span class="filename">app.module.ts</span>
-  <pre><code class="language-typescript">{{ applicationModule }}</code></pre>
+  <span class="filename">
+    {{ 'app.module' | extension: applicationModuleT.isJsActive }}
+    <app-tabs #applicationModuleT></app-tabs>
+  </span>
+  <pre [class.hide]="applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModule }}</code></pre>
+  <pre [class.hide]="!applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModuleJs }}</code></pre>
   <blockquote>
     <strong>Hint</strong> We could pass here (inside <code>forRoutes()</code>) the single object and just use <code>RequestMethod.ALL</code>.
   </blockquote>
@@ -41,8 +49,12 @@
     The <code>forRoutes()</code> can take single object, multiple objects, controller class and even multiple controller classes.
     In most cases you'll probably just pass the <strong>controllers</strong> and separate them by comma. Below is an example with the single controller:
   </p>
-  <span class="filename">app.module.ts</span>
-  <pre><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
+  <span class="filename">
+      {{ 'app.module' | extension: applicationModuleByControllersT.isJsActive }}
+      <app-tabs #applicationModuleByControllersT></app-tabs>
+  </span>
+  <pre [class.hide]="applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
+  <pre [class.hide]="!applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllersJs }}</code></pre>  
   <blockquote>
     <strong>Hint</strong> The <code>apply()</code> method can take single middleware or an <strong>array of middlewares</strong>.
   </blockquote>
@@ -51,14 +63,22 @@
     Sometimes the behaviour of the middleware depends on the custom values e.g. array of user roles, options object etc. 
     We can pass additional arguments to the <code>resolve()</code> using <code>with()</code> method. See below example:
   </p>
-  <span class="filename">app.module.ts</span>
-  <pre><code class="language-typescript">{{ applicationModuleWithMethod }}</code></pre>
+  <span class="filename">
+    {{ 'app.module' | extension: applicationModuleWithMethodT.isJsActive }}
+    <app-tabs #applicationModuleWithMethodT></app-tabs>
+  </span>
+  <pre [class.hide]="applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethod }}</code></pre>
+  <pre [class.hide]="!applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethodJs }}</code></pre>
   <p>
     We passed custom string - <code>ApplicationModule</code> to the <code>with()</code> method.
     Now we've to adjust the <code>resolve()</code> method of the <code>LoggerMiddleware</code>.
   </p>
-  <span class="filename">logger.middleware.ts</span>
-  <pre><code class="language-typescript">{{ loggerMiddlewareWithArgs }}</code></pre>
+  <span class="filename">
+    {{ 'logger.middleware' | extension: loggerMiddlewareWithArgsT.isJsActive }}
+    <app-tabs #loggerMiddlewareWithArgsT></app-tabs>
+  </span>
+  <pre [class.hide]="loggerMiddlewareWithArgsT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareWithArgs }}</code></pre>
+  <pre [class.hide]="!loggerMiddlewareWithArgsT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareWithArgsJs }}</code></pre>
   <p>
     The value of the <code>name</code> property will be <code>ApplicationModule</code>.
   </p>
@@ -67,8 +87,12 @@
     There's no contraindications to return the <code>async</code> function from the <code>resolve()</code> method.
     Also, it's possible to make the <code>resolve()</code> method <code>async</code> too. This pattern is called <strong>deffered middleware</strong>.
   </p>
-  <span class="filename">logger.middleware.ts</span>
-  <pre><code class="language-typescript">{{ defferedMiddleware }}</code></pre>
+  <span class="filename">
+    {{ 'logger.middleware' | extension: defferedMiddlewareT.isJsActive }}
+    <app-tabs #defferedMiddlewareT></app-tabs>
+  </span>
+  <pre [class.hide]="defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddleware }}</code></pre>
+  <pre [class.hide]="!defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddlewareJs }}</code></pre>
   <h4>Functional Middlewares</h4>
   <p>
     The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies.
@@ -76,13 +100,20 @@
     This type of the middleware is called <strong>functional middleware</strong>.
     Let's transform the logger into the function.
   </p>
-  <span class="filename">logger.middleware.ts</span>
+  <span class="filename">
+    {{ 'logger.middleware' | extension: functionalMiddlewareT.isJsActive }}
+    <app-tabs #functionalMiddlewareT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ functionalMiddleware }}</code></pre>
   <p>
     Now use it within the <code>ApplicationModule</code>.
   </p>
-  <span class="filename">app.module.ts</span>
-  <pre><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
+  <span class="filename">
+    {{ 'app.module' | extension: applyFunctionalMiddlewareT.isJsActive }}
+    <app-tabs #applyFunctionalMiddlewareT></app-tabs>
+  </span>
+  <pre [class.hide]="applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
+  <pre [class.hide]="!applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddlewareJs }}</code></pre>
   <blockquote class="warning">
     <strong>Hint</strong> Let's consider to use <strong>functional middlewares</strong> everytime when your middleware doesn't have any dependencies.
   </blockquote>

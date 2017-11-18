@@ -40,13 +40,19 @@
       The <code>CatsController</code> and <code>CatsService</code> belong to the same application domain. 
       They should be moved to the feature module, the <code>CatsModule</code>.
     </p>
-    <span class="filename">cats/cats.module.ts</span>
+    <span class="filename">
+      {{ 'cats/cats.module' | extension: catsModuleT.isJsActive }}
+      <app-tabs #catsModuleT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ catsModule }}</code></pre>
     <p>
       I've created the <code>cats.module.ts</code> file and moved everything related to this module into the 
       <code>cats</code> directory. The last thing we need to do is to import this module into the root module which name is <code>ApplicationModule</code>.
     </p>
-    <span class="filename">app.module.ts</span>
+    <span class="filename">
+      {{ 'app.module' | extension: appModuleT.isJsActive }}
+      <app-tabs #appModuleT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ appModule }}</code></pre>
     <p>
       It's everything. Now Nest knows that besides <code>ApplicationModule</code>, it's essential to register the <code>CatsModule</code> too.
@@ -63,7 +69,10 @@
       Every module is a <strong>Shared Module</strong> in fact. Once created is reused by the each module. 
       Let's imagine that we're gonna share the <code>CatsService</code> instance between few modules.
     </p>
-    <span class="filename">cats.module.ts</span>
+    <span class="filename">
+      {{ 'cats.module' | extension: catsModuleSharedT.isJsActive }}
+      <app-tabs #catsModuleSharedT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ catsModuleShared }}</code></pre>
     <p>
       Now each module which would import the <code>CatsModule</code> has an access to the <code>CatsService</code>, and will share the same instance with all of the modules which are importing this module too.
@@ -86,8 +95,12 @@
     <p>
       It's natural that module can <strong>inject</strong> components, which belongs to it (e.g. for the configuration purposes):
     </p>
-    <span class="filename">cats.module.ts</span>
-    <pre><code class="language-typescript">{{ catsModuleDi }}</code></pre>
+    <span class="filename">
+      {{ 'cats.module' | extension: catsModuleDiT.isJsActive }}
+      <app-tabs #catsModuleDiT></app-tabs>
+    </span>
+    <pre [class.hide]="catsModuleDiT.isJsActive"><code class="language-typescript">{{ catsModuleDi }}</code></pre>
+    <pre [class.hide]="!catsModuleDiT.isJsActive"><code class="language-typescript">{{ catsModuleDiJs }}</code></pre>
     <p>
       However, modules can't be injected by the components, because it creates a <a href="/advanced/circular-dependency">circular dependency</a>.
     </p>

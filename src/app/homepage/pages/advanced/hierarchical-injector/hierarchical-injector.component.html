@@ -9,25 +9,39 @@
   <p>
     Let's consider an example. We've a <code>CoreModule</code>:
   </p>
-  <span class="filename">core.module.ts</span>
+  <span class="filename">
+    {{ 'core.module' | extension: coreModuleT.isJsActive }}
+    <app-tabs #coreModuleT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ coreModule }}</code></pre>
   <p>
     This module imports the <code>CommonModule</code> and contains 2 components, successively <code>CoreService</code> and <code>ContextService</code>.
     The <code>CommonModule</code> contains single component, the <code>CommonService</code>. This component is exported, so it's available within <code>CoreModule</code> as well.
   </p>
-  <span class="filename">common.module.ts</span>
+  <span class="filename">
+    {{ 'common.module' | extension: commonModuleT.isJsActive }}
+    <app-tabs #commonModuleT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ commonModule }}</code></pre>
   <p>
     Let's take a look at <code>ContextService</code> now:
   </p>
-  <span class="filename">core/context.service.ts</span>
-  <pre><code class="language-typescript">{{ contextService }}</code></pre>
+  <span class="filename">
+    {{ 'core/context.service' | extension: contextServiceT.isJsActive }}
+    <app-tabs #contextServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="contextServiceT.isJsActive"><code class="language-typescript">{{ contextService }}</code></pre>
+  <pre [class.hide]="!contextServiceT.isJsActive"><code class="language-typescript">{{ contextServiceJs }}</code></pre>
   <p>
     This class depends on the <code>CommonService</code>. This service's imported from the child module (<code>CommonModule</code>), so it's a typical situation.
     Now something that may turn out to be surprising, the <code>CommonService</code>:
   </p>
-  <span class="filename">common/common.service.ts</span>
-  <pre><code class="language-typescript">{{ commonService }}</code></pre>
+  <span class="filename">
+    {{ 'common/common.service' | extension: commonServiceT.isJsActive }}
+    <app-tabs #commonServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="commonServiceT.isJsActive"><code class="language-typescript">{{ commonService }}</code></pre>
+  <pre [class.hide]="!commonServiceT.isJsActive"><code class="language-typescript">{{ commonServiceJs }}</code></pre>
   <p>
     The <code>CommonService</code> depends on the <code>CoreService</code>. It's possible, because the <code>CommonService</code> instance was resolved within the <code>CoreModule</code> <strong>context</strong> (was injected by the component, which belongs to the parent module).
   </p>

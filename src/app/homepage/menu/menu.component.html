@@ -1,4 +1,4 @@
-<nav class="nav-container">
+<nav class="nav-container" (click)="$event.stopPropagation()">
   <app-menu-item 
     *ngFor="let item of items"
     [isOpen]="item.isOpened"

@@ -31,8 +31,12 @@
    <p>
       Let's create a simple <code>LoggingInterceptor</code>.
   </p>
-  <span class="filename">logging.interceptor.ts</span>
-  <pre><code class="language-typescript">{{ loggingInterceptor }}</code></pre>
+  <span class="filename">
+    {{ 'logging.interceptor' | extension: loggingInterceptorT.isJsActive }}
+    <app-tabs #loggingInterceptorT></app-tabs>
+  </span>
+  <pre [class.hide]="loggingInterceptorT.isJsActive"><code class="language-typescript">{{ loggingInterceptor }}</code></pre>
+  <pre [class.hide]="!loggingInterceptorT.isJsActive"><code class="language-typescript">{{ loggingInterceptorJs }}</code></pre>
   <blockquote class="warning">
       <strong>Notice</strong> Interceptors same as controllers, components, guards and middlewares can <strong>inject dependencies</strong> through constructor.
    </blockquote>
@@ -41,25 +45,39 @@
    </p>
    <p>
      To setup the interceptor, we're using <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
-     Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped and method-scoped.
+     Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped, method-scoped and global-scoped.
   </p>
-  <span class="filename">cats.controller.ts</span>
+  <span class="filename">
+    {{ 'cats.controller' | extension: useLoggingInterceptorT.isJsActive }}
+    <app-tabs #useLoggingInterceptorT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ useLoggingInterceptor }}</code></pre>
   <p>
     Now every route handler within <code>CatsController</code> is using <code>LoggingInterceptor</code>.
     When someone would call GET <code>/cats</code> endpoint, you'll see similar output in your console window:
   </p>
   <pre><code class="language-typescript">{{ consoleOutput }}</code></pre>
+  <p>
+    To bind the global interceptor, we're using the <code>useGlobalInterceptors()</code> method of the Nest application instance:
+  </p>
+  <pre><code class="language-typescript">{{ globalInterceptors }}</code></pre>
   <h4>Response mapping</h4>
   <p>
     The <code>stream$</code> is an <code>Observable</code>.
     This object contains the value <strong>returned</strong> from the route handler, so we can easily mutate it using <code>map()</code> operator.
   </p>
+  <blockquote class="warning">
+    <strong>Notice</strong> The response mapping doesn't work with express response strategy (using <code>@Res()</code> object directly is not possible). 
+  </blockquote>
   <p>
     Let's create the <code>TransformInterceptor</code> which will pack the response and assign it to the <code>data</code> property.
   </p>
-  <span class="filename">transform.interceptor.ts</span>
-  <pre><code class="language-typescript">{{ transformInterceptor }}</code></pre>
+  <span class="filename">
+    {{ 'transform.interceptor' | extension: transformInterceptorT.isJsActive }}
+    <app-tabs #transformInterceptorT></app-tabs>
+  </span>
+  <pre [class.hide]="transformInterceptorT.isJsActive"><code class="language-typescript">{{ transformInterceptor }}</code></pre>
+  <pre [class.hide]="!transformInterceptorT.isJsActive"><code class="language-typescript">{{ transformInterceptorJs }}</code></pre>
   <blockquote>
     <strong>Hint</strong> The <code>intercept()</code> method can be <code>async</code>. 
   </blockquote>
@@ -71,15 +89,23 @@
   <p>
     Since <code>stream$</code> is an <code>Observable</code>, we can use <code>catch()</code> operator to override throwed exception with a new stream:
   </p>
-  <span class="filename">exception.interceptor.ts</span>
-   <pre><code class="language-typescript">{{ exceptionMapping }}</code></pre>
+  <span class="filename">
+    {{ 'exception.interceptor' | extension: exceptionMappingT.isJsActive }}
+    <app-tabs #exceptionMappingT></app-tabs>
+  </span>
+   <pre [class.hide]="exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMapping }}</code></pre>
+   <pre [class.hide]="!exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMappingJs }}</code></pre>
   <h4>Stream overriding</h4>
   <p>
     Sometimes we might want to completely prevent calling the handler and return different value instead.
     The excellent example is a <strong>cache interceptor</strong>, which would store the cached responses with some ttl.
   </p>
-  <span class="filename">cache.interceptor.ts</span>
-  <pre><code class="language-typescript">{{ cacheInterceptor }}</code></pre>
+  <span class="filename">
+    {{ 'cache.interceptor' | extension: cacheInterceptorT.isJsActive }}
+    <app-tabs #cacheInterceptorT></app-tabs>
+  </span>
+  <pre [class.hide]="cacheInterceptorT.isJsActive"><code class="language-typescript">{{ cacheInterceptor }}</code></pre>
+  <pre [class.hide]="!cacheInterceptorT.isJsActive"><code class="language-typescript">{{ cacheInterceptorJs }}</code></pre>
   <p>
     Here's a <code>CacheInterceptor</code> with hardcoded <code>isCached</code> variable and the cached response <code>[]</code>.
     Since we're returning new stream created through <code>of</code> operator, the route handler <strong>won't be called</strong>.

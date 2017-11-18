@@ -10,41 +10,54 @@ import { BasePageComponent } from '../../page/page.component';
 export class DependencyInjectionComponent extends BasePageComponent {
   get useValue() {
     return `
+const connectionProvider = { provide: 'ConnectionToken', useValue: null };
+
 @Module({
-  components: [
-      {
-          provide: 'ConnectionToken',
-          useValue: null,
-      },
-  ],
+  components: [connectionProvider],
 })`;
   }
 
   get useFactory() {
     return `
+const connectionFactory = {
+  provide: 'ConnectionToken',
+  useFactory: (optionsProvider: OptionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
 @Module({
-  components: [
-    {
-      provide: 'ConnectionToken',
-      useFactory: (optionsProvider: OptionsProvider) => {
-        const options = optionsProvider.get();
-        return new DatabaseConnection(options);
-      },
-      inject: [OptionsProvider],
-    },
-  ],
+  components: [connectionFactory],
+})`;
+  }
+
+  get useFactoryJs() {
+    return `
+const connectionFactory = {
+  provide: 'ConnectionToken',
+  useFactory: (optionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  components: [connectionFactory],
 })`;
   }
 
   get useClass() {
     return `
+const configServiceProvider = {
+  provide: ConfigService,
+  useClass: DevelopmentConfigService,
+};
+
 @Module({
-  components: [
-    {
-      provide: ConfigService,
-      useClass: DevelopmentConfigService,
-    },
-  ],
+  components: [configServiceProvider],
 })
 `;
   }
@@ -54,6 +67,15 @@ export class DependencyInjectionComponent extends BasePageComponent {
 @Component()
 class CatsRepository {
   constructor(@Inject('ConnectionToken') connection: Connection) {}
+}`;
+  }
+
+  get injectJs() {
+    return `
+@Component()
+@Dependencies('ConnectionToken')
+class CatsRepository {
+  constructor(connection) {}
 }`;
   }
 }
