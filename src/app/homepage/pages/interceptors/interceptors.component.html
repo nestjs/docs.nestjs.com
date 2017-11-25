@@ -12,15 +12,15 @@
    <ul>
      <li>bind <strong>extra logic</strong> before / after method execution</li>
      <li><strong>transform</strong> the result returned from the function</li>
-     <li><strong>transform</strong> the exception throwed from the function</li>
+     <li><strong>transform</strong> the exception thrown from the function</li>
      <li>completely <strong>override</strong> the function depending on the chosen conditions (e.g. caching purposes)</li>
    </ul>
    <h4>Basics</h4>
    <p>
      Each interceptor has the <code>intercept()</code> method.
      This function takes 3 arguments. First one is <code>dataOrRequest</code>. This value depends on where you actually have used the interceptor.
-     When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise it's the data passed to the microservice / or websocket.
-     The second argument is a <code>context</code>, which is exactly the same as in <a routerLink="/guards">Guards</a>.  This object fulfills <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
+     When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise, it's the data passed to the microservice / or websocket.
+     The second argument is a <code>context</code>, which is exactly the same as in <a routerLink="/guards">Guards</a>.  This object fulfils <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
      The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
      The last one <code>stream$</code> is an <code>Observable</code>. If you'd not return this stream, the function won't be evaluated.
    </p>
@@ -41,7 +41,7 @@
       <strong>Notice</strong> Interceptors same as controllers, components, guards and middlewares can <strong>inject dependencies</strong> through constructor.
    </blockquote>
    <p>
-     Since <code>stream$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we've a lot of various operators which we can use to manipulate the stream. In above example, I've used <code>do()</code> operator, which invokes the function upon graceful or exceptional termination of the observable sequence.
+     Since <code>stream$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we have a lot of various operators which we can use to manipulate the stream. In above example, I've used <code>do()</code> operator, which invokes the function upon graceful or exceptional termination of the observable sequence.
    </p>
    <p>
      To setup the interceptor, we're using <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
@@ -87,7 +87,7 @@
   <pre><code class="language-typescript">{{ dataResponse }}</code></pre>
   <h4>Exception mapping</h4>
   <p>
-    Since <code>stream$</code> is an <code>Observable</code>, we can use <code>catch()</code> operator to override throwed exception with a new stream:
+    Since <code>stream$</code> is an <code>Observable</code>, we can use <code>catch()</code> operator to override thrown exception with a new stream:
   </p>
   <span class="filename">
     {{ 'exception.interceptor' | extension: exceptionMappingT.isJsActive }}
@@ -113,6 +113,6 @@
     It's everything.
   </p>
   <blockquote>
-    <strong>Hint</strong> Exceptions throwed within interceptors can be catched by <a routerLink="/exception-filters">exception filters</a>. 
+    <strong>Hint</strong> Exceptions thrown within interceptors can be catched by <a routerLink="/exception-filters">exception filters</a>. 
   </blockquote>
 </div>

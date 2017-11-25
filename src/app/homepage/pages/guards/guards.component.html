@@ -5,9 +5,9 @@
    </p>
    <figure><img src="/assets/Guards_1.png" /></figure>
    <p>
-     Guards have a <strong>single responsibility</strong>. They determine whether request should be handled by route handler or not.
+     Guards have a <strong>single responsibility</strong>. They determine whether a request should be handled by route handler or not.
      Until now, the access restriction logic was mostly inside <a routerLink="/middlewares">middlewares</a>.
-     It's still fine, since things such as token validation or attaching property to the <code>req</code> object are not strongly connected with the particular routes. 
+     It's still fine since things such as token validation or attaching property to the <code>req</code> object are not strongly connected with the particular routes. 
    </p>
    <p>
      But Middleware is dumb. It doesn't know which handler would be executed after calling the <code>next()</code> function.
@@ -18,7 +18,7 @@
     </blockquote>
     <h4>RolesGuard</h4>
     <p>
-      One of the best guards use-cases is the <strong>role-based authentication</strong>, because specific routes could be available only when caller has sufficient permissions (e.g. <code>admin</code> role).
+      One of the best guards use-cases is the <strong>role-based authentication</strong> because specific routes could be available only when caller has sufficient permissions (e.g. <code>admin</code> role).
     </p>
     <p>
       That's why we're gonna create <code>RolesGuard</code>, the guard which permit access only to users with a specific role.
@@ -39,8 +39,8 @@
     </ul>
     <p>
       The <code>canActivate()</code> function takes 2 arguments. First one is <code>dataOrRequest</code>. This value depends on where you actually have used the guard.
-      When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise it's the data passed to the microservice / or websocket.
-      The second argument is a <code>context</code>.  This object fulfills <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
+      When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise, it's the data passed to the microservice / or websocket.
+      The second argument is a <code>context</code>.  This object fulfils <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
       The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
     </p>
     <blockquote class="warning">
@@ -68,7 +68,7 @@
       The guard is working now, but we're still not taking advantage of the most important guards feature, so the <strong>execution context</strong>.
    </p>
    <p>
-     Now, the <code>RolesGuard</code> isn't reusable. How we would know which roles needs currently processed handler?
+     Now, the <code>RolesGuard</code> isn't reusable. How would we know which roles need currently processed handler?
      The <code>CatsController</code> could have a lot of them. Some might be available only for admin, some for everyone.
    </p>
    <p>
@@ -115,12 +115,12 @@
   <blockquote class="warning">
       <strong>Notice</strong> Guards same as controllers, components, interceptors and middlewares can <strong>inject dependencies</strong> through constructor.
    </blockquote>
-  <p>
-    In node.js world, it's a common practice to attach the authorized user to the <code>req</code> object.
+   <blockquote>
+    <strong>Hint</strong> In node.js world, it's a common practice to attach the authorized user to the <code>req</code> object.
     That's why we've assumed that <code>req.user</code> contains the user object.
-  </p>
+   </blockquote>
   <p>
-    The <code>Reflector</code> allows us to easily reflect the metadata by specified <strong>key</strong>. In above example we reflected the <code>handler</code>, because it's a <strong>reference</strong> to the route handler function.
+    The <code>Reflector</code> allows us to easily reflect the metadata by the specified <strong>key</strong>. In above example, we reflected the <code>handler</code> because it's a <strong>reference</strong> to the route handler function.
     We could make this guard even <strong>more generic</strong> if we'd add also the controller reflection part.
     To extract <strong>controller metadata</strong>, we're just using <code>parent</code> instead of <code>handler</code> function.
   </p>

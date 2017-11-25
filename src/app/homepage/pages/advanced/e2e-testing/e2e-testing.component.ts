@@ -11,7 +11,6 @@ export class E2eTestingComponent extends BasePageComponent {
   get e2eTests() {
     return `
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { CatsModule } from '../../src/modules/cats/cats.module';
@@ -19,8 +18,6 @@ import { CatsService } from '../../src/modules/cats/cats.service';
 
 describe('Cats', () => {
     const server = express();
-    server.use(bodyParser.json());
-
     const catsService = { findAll: () => ['test'] };
 
     beforeAll(async () => {

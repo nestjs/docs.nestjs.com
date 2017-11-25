@@ -66,6 +66,34 @@ export class CatsController {
 }`;
   }
 
+  get routeParameters() {
+    return `
+@Get(':id')
+findOne(@Param() params) {
+  console.log(params.id);
+  return {};
+}`;
+  }
+  
+  get statusCode() {
+    return `
+import { Controller, Get, Post, HttpStatus } from '@nestjs/common';
+
+@Controller('cats')
+export class CatsController {
+  @HttpStatus(204)
+  @Post()
+  create() {
+    // TODO: Add some logic here
+  }
+
+  @Get()
+  findAll() {
+    return [];
+  }
+}`;
+  }
+
   get asyncExample() {
     return `
 @Get()

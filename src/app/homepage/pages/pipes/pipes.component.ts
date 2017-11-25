@@ -23,7 +23,7 @@ export class ValidationPipe implements PipeTransform<any> {
   get argumentMetadata() {
     return `
 export interface ArgumentMetadata {
-    type: 'body' | 'query' | 'param';
+    type: 'body' | 'query' | 'param' | 'custom';
     metatype?: new (...args) => any;
     data?: string;
 }`;
@@ -94,7 +94,7 @@ export class ValidationPipe implements PipeTransform<any> {
   get createCatsControllerParamPipe() {
     return `
 @Post()
-async create(@Body('', new ValidationPipe()) createCatDto: CreateCatDto) {
+async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 `;
@@ -113,10 +113,7 @@ async create(@Body() createCatDto: CreateCatDto) {
     return `
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
-
-  app.use(bodyParser.json());
   app.useGlobalPipes(new ValidationPipe());
-
   await app.listen(3000);
 }
 bootstrap();`;

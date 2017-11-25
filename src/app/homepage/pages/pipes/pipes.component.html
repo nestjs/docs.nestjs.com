@@ -6,20 +6,24 @@
    </p>
    <figure><img src="/assets/Pipe_1.png" /></figure>
    <p>
-    A pipe <strong>transforms</strong> the input data to a desired output. 
-    Also, it could overtake the <strong>validation</strong> responsibility, since it's possible to throw an exception, when the data isn't correct.
+    A pipe <strong>transforms</strong> the input data to the desired output. 
+    Also, it could overtake the <strong>validation</strong> responsibility, since it's possible to throw an exception when the data isn't correct.
    </p>
    <blockquote>
-    <strong>Hint</strong> The pipe runs inside the exceptions zone. It means that throwed exceptions are handled by core exceptions handler and setuped <a routerLink="/exception-filters">exceptions filters</a> in current context.
+    <strong>Hint</strong> The pipe runs inside the exceptions zone. It means that throwed exceptions are handled by core exceptions handler and <a routerLink="/exception-filters">exceptions filters</a> applied to the current context.
    </blockquote>
+   <h4>Built-in pipes</h4>
+   <p>
+      Nest comes with two pipes available out-of-the-box, <code>ValidationPipe</code> and <code>ParseIntPipe</code>. They're exported from the <code>@nestjs/common</code> package. To better understand how do they work, we're gonna built them from scratch here.
+   </p>
    <h4>What does it look like?</h4>
    <p>
-     Let's create a simple <code>ValidationPipe</code>. Now it only takes and returns the same value.
+     Let's start from the <code>ValidationPipe</code>. Now it only takes and returns the same value.
    </p>
    <span class="filename">validation.pipe.ts</span>
    <pre><code class="language-typescript">{{ validationPipe }}</code></pre>
    <blockquote>
-      <strong>Notice</strong> The <code>ValidationPipe</code> works only with <strong>TypeScript</strong>.
+      <strong>Notice</strong> The <code>ValidationPipe</code> works only with <strong>TypeScript</strong>. If you are working only with plain JavaScript, I'd recommend using a <a href="https://github.com/hapijs/joi" target="blank">Joi</a> library.
     </blockquote>
    <p>
      Every pipe has to provide the <code>transform()</code> method. This method takes two arguments:
@@ -39,7 +43,7 @@
     <table>
       <tr>
         <td><code>type</code></td>
-        <td>Tells us whether the property is a body <code>@Body()</code>, query <code>@Query()</code> or param <code>@Param()</code> parameter.</td>
+        <td>Tells us whether the property is a body <code>@Body()</code>, query <code>@Query()</code>, param <code>@Param()</code>, or custom parameter (read more <a routerLink="/custom-decorators">here</a>).</td>
       </tr>
       <tr>
         <td><code>metatype</code></td>
@@ -67,7 +71,7 @@
     <span class="filename">create-cat.dto.ts</span>
     <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
     <p>
-      This object always has to be correct, so we have to validate these three members. 
+      This object always has to be correct, thus we have to validate these three members. 
       We could do this inside the route handler method, but we'd break the <strong>single responsibility rule</strong> (SRP).
       The second idea is to create <strong>validator class</strong> and delegate the task there, but we'll have to use this validator every time at the beginning of the method.
       So what about the validation middleware? It's a good idea, but it's not possible to create a <strong>generic middleware</strong>, which could be used across entire application.
@@ -76,10 +80,10 @@
       That's the first use-case, when you should consider to use a <strong>Pipe</strong>.
     </p>
     <h4>Class validator</h4>
-    <h5>This section applies only to TypeScript</h5>
+    <h5>This section applies only to TypeScript.</h5>
     <p>
-      Nest works well with the <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>, the amazing library which allows to use decorator-based validation.
-      Decorator based validation is really powerful with the <strong>pipe</strong> abilities, since we've an access to the <code>metatype</code> of the processed property.
+      Nest works well with the <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>, the amazing library which allows using decorator-based validation.
+      Decorator based validation is really powerful with the <strong>pipe</strong> abilities since we have an access to the <code>metatype</code> of the processed property.
       Let's add few decorators to the <code>CreateCatDto</code>.
     </p>
     <span class="filename">create-cat.dto.ts</span>
@@ -94,14 +98,14 @@
    </blockquote>
    <p>
      Let's go through this code. Firstly, note that <code>transform()</code> function is <code>async</code>.
-     It's possible, because Nest supports both synchronous and <strong>asynchronous</strong> pipes.
+     It's possible because Nest supports both synchronous and <strong>asynchronous</strong> pipes.
      Also, there's a helper function - <code>toValidate()</code>. Its responsibility is to exclude the native JavaScript types from the validation process.
-     The last important thing is that the we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the <strong>overriding</strong>.
+     The last important thing is that we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the <strong>overriding</strong>.
    </p>
    <p>
      The last step is to setup the <code>ValidationPipe</code>. Pipes, same as <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped and global-scoped.
-      Additionally, pipe may be param-scoped. We can directly bind the pipe instance to the route handler param, for example <code>@Body()</code>.
-      Let's have a look on the below example:
+      Additionally, a pipe may be param-scoped. We can directly bind the pipe instance to the route param decorator, for example <code>@Body()</code>.
+      Let's have a look at the below example:
    </p>
    <span class="filename">cats.controler.ts</span>
     <pre><code class="language-typescript">{{ createCatsControllerParamPipe }}</code></pre>
@@ -115,7 +119,7 @@
       <strong>Notice</strong> The <code>@UsePipes()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
     <p>
-      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup it as a <strong>global-scoped</strong> pipe, for every route handler across entire application.
+      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup it as a <strong>global-scoped</strong> pipe, for every route handler across the entire application.
     </p>
     <span class="filename">server.ts</span>
     <pre><code class="language-typescript">{{ globalPipe }}</code></pre>
@@ -124,8 +128,8 @@
     </blockquote>
     <h4>Transformer Pipe</h4>
     <p>
-      Validation isn't the sole use case. At the beginning of this chapter I've mentioned that pipe <strong>transforms</strong> the input data to a desired output.
-      It's true, because the value returned from the <code>transform</code> function completely overrides the previous value of the argument.
+      Validation isn't the sole use case. At the beginning of this chapter, I've mentioned that pipe <strong>transforms</strong> the input data to the desired output.
+      It's true because the value returned from the <code>transform</code> function completely overrides the previous value of the argument.
       Sometimes the data passed from the client needs to undergo some changes. Also, some parts could be missed, so we must apply the default values.
       The <strong>transformer pipes</strong> fill the gap between the client request and the request handler.
     </p>
@@ -144,12 +148,4 @@
     </span>
     <pre [class.hide]="bindParamT.isJsActive"><code class="language-typescript">{{ bindParam }}</code></pre>
     <pre [class.hide]="!bindParamT.isJsActive"><code class="language-typescript">{{ bindParamJs }}</code></pre>
-    <p>
-      Also it's possible to omit the first argument:
-    </p>
-    <span class="filename">
-      <app-tabs #bindBodyParamT></app-tabs>
-    </span>
-    <pre [class.hide]="bindBodyParamT.isJsActive"><code class="language-typescript">{{ bindBodyParam }}</code></pre>
-    <pre [class.hide]="!bindBodyParamT.isJsActive"><code class="language-typescript">{{ bindBodyParamJs }}</code></pre>
 </div>

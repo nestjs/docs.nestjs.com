@@ -1,10 +1,10 @@
 <div class="content">
    <h3>Controllers</h3>
-   <p>The controllers layer is responsible for handling incoming <strong>requests</strong> (mostly HTTP).</p>
+   <p>The controllers layer is responsible for handling incoming <strong>requests</strong>, and return a <strong>response</strong> to the client.</p>
    <figure><img src="/assets/Controllers_1.png" /></figure>
    <p>
-     To tell Nest that <code>CatsController</code> is a controller, you have to attach <strong>metadata</strong> to the class.
-     Metadata can be attached using <strong>decorators</strong>.
+     To create a basic controller you have to attach the <strong>metadata</strong> to the class.
+     Thanks to the metadata Nest knows how to map your controller into the appropriate routes. To attach the metadata we're using the <strong>decorators</strong> (in this case <code>@Controller('cats')</code>).
    </p>
    <span class="filename">
     {{ 'cats.controller' | extension: catsControllerT.isJsActive }}
@@ -14,17 +14,17 @@
    <h4>Metadata</h4>
    <p>
      We're using <code>@Controller('cats')</code> here. This decorator is <strong>obligatory</strong>.
-     The <code>cats</code> is a prefix for each route in the class. The prefix is <strong>optional</strong>, but it reduces redundant boilerplate code,
-     so you don't have to repeat yourself every time, when you'd decide to create new endpoint.
+     The <code>cats</code> is a prefix for each route registered in the class. The prefix is <strong>optional</strong> what means that you could leave the parentheses empty (<code>@Controller()</code>), but it reduces redundant boilerplate code,
+     thus you don't have to repeat yourself every time when you'd decide to create a new endpoint (route).
   </p>
   <p>
     There's a single public method, the <code>findAll()</code>, which returns an empty array.
-    The <code>@Get()</code> decorator tells Nest that it's necessary to create an endpoint for this route path,
+    The <code>@Get()</code> decorator tells Nest that it's necessary to create an endpoint for this route path
     and map every appropriate request to this handler. Since we declared the prefix for every route (<code>cats</code>),
-    Nest will map every <code>/cats</code> GET request here.
+    Nest will map every <code>/cats</code> <strong>GET</strong> request here.
   </p>
   <p>
-    When client would call this endpoint, Nest will return with 200 status code, and the parsed <strong>JSON</strong>, so in this case - just an empty array.
+    When a client would call this endpoint, Nest will return with 200 status code, and the parsed <strong>JSON</strong>, so in this case - just an empty array.
     How is that possible?
   </p>
   <p>
@@ -34,24 +34,24 @@
     <tr>
       <td>Standard (recommended)</td>
       <td>
-        We're treating the handlers in the same way as a plain functions. When we return the JavaScript object or array, it'd be <strong>automatically</strong>
+        We're treating the handlers in the same way as plain functions. When we return the JavaScript object or array, it'd be <strong>automatically</strong>
         transformed to JSON. When we return the string, Nest will send just a string. 
         <br />
         <br />
-        Furthermore, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's 201.
-        We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
+        Furthermore, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's <strong>201</strong>.
+        We can easily change this behavior by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
       </td>
     </tr>
     <tr>
       <td>Express</td>
       <td>
         We can use the express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-        which we can inject using <code>@Res()</code> decorator in the function signature, for example <code>findAll(@Res() response)</code>
+        which we can inject using <code>@Res()</code> decorator in the function signature, for example <code>findAll(@Res() response)</code>.
       </td>
     </tr>
   </table>
   <blockquote>
-    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether handler is using <code>@Res()</code>, and if it's thruth - the standard way is disabled for this single route.
+    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, and if it's truth - the standard way is disabled for this single route.
   </blockquote>
   <h4>Request object</h4>
   <p>
@@ -60,7 +60,7 @@
     We can force Nest to inject the request object into handler using <code>@Req()</code> decorator.
   </p>
   <blockquote class="warning">
-    <strong>Hint</strong> There's a <code>@types/express</code> package and we strongly recommend to use it.
+    <strong>Hint</strong> There's a <code>@types/express</code> package and we strongly recommend to use it (<code>Request</code> has its own typings).
   </blockquote>
   <span class="filename">
     {{ 'cats.controller' | extension: requestObjectT.isJsActive }}
@@ -69,9 +69,9 @@
   <pre [class.hide]="requestObjectT.isJsActive"><code class="language-typescript">{{ requestObject }}</code></pre>
   <pre [class.hide]="!requestObjectT.isJsActive"><code class="language-typescript">{{ requestObjectJs }}</code></pre>
   <p>
-    The request object contains headers, params, and e.g. body of the request, but in most cases, it's not necessary to grab them manually.
+    The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and e.g. body (read more <a href="http://expressjs.com/en/api.html#req" target="blank">here</a>), but in most cases, it's not necessary to grab them manually.
     We can use <strong>dedicated decorators</strong> instead, such as <code>@Body()</code> or <code>@Query()</code>, which are available out of the box.
-    Below is a comparision of the decorators with the plain express objects.
+    Below is a comparison of the decorators with the plain express objects.
   </p>
   <table>
     <tbody>
@@ -111,8 +111,8 @@
   </table>
   <h4>More endpoints</h4>
   <p>
-    We've already created an endpoint to fetch the data. It'd be great to provide a way of creating the new records too.
-    So.. What we're waiting for?! Let's create the <strong>POST</strong> handler:
+    We have already created an endpoint to fetch the data (<strong>GET</strong> route). It'd be great to provide a way of creating the new records too.
+    Let's create the <strong>POST</strong> handler:
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: postEndpointT.isJsActive }}
@@ -121,8 +121,24 @@
   <pre><code class="language-typescript">{{ postEndpoint }}</code></pre>
   <p>
     It's really easy. Nest provides the rest of those endpoints decorators in the same fashion -
-    <code>@Put()</code>, <code>@Delete()</code> etc..
+    <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>, and <code>@All()</code>.
   </p>
+  <h4>Status code manipulation</h4>
+  <p>
+      As mentioned, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's <strong>201</strong>.
+      We can easily change this behavior by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
+  </p>
+  <span class="filename">
+    {{ 'cats.controller' | extension: statusCodeT.isJsActive }}
+    <app-tabs #statusCodeT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ statusCode }}</code></pre>
+  <h4>Route parameters</h4>
+  <p>
+     Routes with static paths can't help when you need to accept <strong>dynamic data</strong> as part of the URL.
+     To define routes with route parameters, simply specify the route parameters in the path of the route as shown below.
+  </p>
+  <pre><code class="language-typescript">{{ routeParameters }}</code></pre>
   <h4>Async / await</h4>
   <p>
     We love modern JavaScript, and we know that the data extraction is mostly <strong>asynchronous</strong>.
@@ -147,7 +163,7 @@
   <p>
     Furthermore, Nest route handlers are even more powerful. They can return the RxJS
     <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="blank">observable streams</a>.
-    It makes the migration between simple web application and the Nest microservice much easier.
+    It makes the migration between a simple web application and the Nest microservice much easier.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: observableExampleT.isJsActive }}
@@ -155,16 +171,21 @@
   </span>
   <pre [class.hide]="observableExampleT.isJsActive"><code class="language-typescript">{{ observableExample }}</code></pre>
   <pre [class.hide]="!observableExampleT.isJsActive"><code class="language-typescript">{{ observableExampleJs }}</code></pre>  
+  <p>
+    There's no recommended way. You can use whatever you want to.
+  </p>
   <h4>POST handler</h4>
   <p>
-    That's weird that this POST route handler doesn't accept any client params. We should definitely 
+    That's strange that this POST route handler doesn't accept any client params. We should at least 
     expect the <code>@Body()</code> argument here.
   </p>
   <p>
-    Firstly, we need to establish the <strong>DTO</strong> (Data Transfer Object) schema. We could do it using <strong>TypeScript</strong>
-    interfaces, or by simple classes. What may be surprising, we recommend to use <strong>classes</strong>. Why?
+    Firstly, we need to establish the <strong>DTO</strong> (Data Transfer Object) schema. 
+    A DTO is an object that defines how the data will be sent over the network.
+    We could do it using <strong>TypeScript</strong>
+    interfaces, or by simple classes. What may be surprising, we recommend using <strong>classes</strong> here. Why?
     The classes are the part of the JavaScript ES6 standard, so they're just plain functions. On the other hand, TypeScript interfaces are removed
-    during the transpilation, Nest can't refer to them. It's important, because features such as <strong>Pipes</strong> enables additional possibilities when they've access to the metatype
+    during the transpilation, Nest can't refer to them. It's important because features such as <strong>Pipes</strong> enables additional possibilities when they've access to the metatype
     of the variable.
   </p>
   <p>
@@ -177,7 +198,7 @@
   <pre><code class="language-typescript">{{ createCatSchema }}</code></pre>
   <p>
     It has only three basic properties. All of them are marked as a <code>readonly</code>, because we should
-    always try to make our functions as pure as possible.
+    always try to make our functions as <a href="https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976" target="blank">pure</a> as possible.
   </p>
   <p>
     Now we can use the schema inside the <code>CatsController</code>:
@@ -188,24 +209,18 @@
   </span>
   <pre [class.hide]="exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBody }}</code></pre>
   <pre [class.hide]="!exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBodyJs }}</code></pre>
+  <h4>Handling errors</h4>
   <p>
-    <a href="http://expressjs.com/" target="blank">Expressjs</a> doesn't parse the body by default.
-    We need the middleware, which name is <a href="https://github.com/expressjs/body-parser" target="blank">body-parser</a>.
-    The usage is really simple, because Nest instance provides the <code>use()</code> method. It's a wrapper to the native express <code>use()</code> function:
+      There's a separated chapter about working with the exceptions <a routerLink="/exception-filters">here</a>.
   </p>
-  <span class="filename">
-    {{ 'server' | extension: bodyParserT.isJsActive }}
-    <app-tabs #bodyParserT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ bodyParser }}</code></pre>
   <h4>Last step</h4>
   <p>
-    The controller is prepared, and ready to use, but Nest doesn't know that <code>CatsController</code> exists,
+    The controller is prepared, and ready to use, but Nest doesn't know that <code>CatsController</code> exists yet,
     so it won't create an instance of this class. We need to tell about it.
   </p>
   <p>
-    The controller always belongs to the module, which mentioned about its in <code>controllers</code> array within <code>@Module()</code> decorator.
-    Since we don't have any other modules except the root <code>AppModule</code>, let's use it for now:
+    The controller always belongs to the module, that's why we hold <code>controllers</code> array within <code>@Module()</code> decorator.
+    Since we don't have any other modules except the root <code>ApplicationModule</code>, let's use it for now:
   </p>
   <span class="filename">
     {{ 'app.module' | extension: appModuleT.isJsActive }}
@@ -213,7 +228,7 @@
   </span>
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
-    Tada! We attached the metadata to the module class, so now Nest can easily reflect which controllers have to be initialized.
+    Tada! We attached the metadata to the module class, so now Nest can easily reflect which controllers have to be mounted.
   </p>
   <h4>Express approach</h4>
   <p>
