@@ -216,7 +216,7 @@ describe('Cats', () => {
             .expect(200);
     });
 
-    it(\`/GET cats\`, async() => {
+    it(\`/GET cats\`, async(done) => {
         const cats = await return request(server)
             .get('/cats')
             .expect(200);
@@ -226,6 +226,8 @@ describe('Cats', () => {
         expect(cat.name).toBe('Tiger');
         expect(cat.age).toBe(2);
         expect(cat.breed).toBe('Russian Blue');
+        
+        done();
     });
 });`;
   }
