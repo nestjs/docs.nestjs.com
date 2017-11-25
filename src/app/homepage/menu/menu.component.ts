@@ -32,16 +32,14 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Advanced',
+      title: 'Fundamentals',
       isOpened: false,
       children: [
-        { title: 'Dependency Injection', path: '/advanced/dependency-injection' },
-        { title: 'Async Components', path: '/advanced/async-components' },
-        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
-        { title: 'Mixin Class', path: '/advanced/mixins' },
-        { title: 'Circular Dependency', path: '/advanced/circular-dependency' },
-        { title: 'Unit Testing', path: '/advanced/unit-testing' },
-        { title: 'E2E Testing', path: '/advanced/e2e-testing' },
+        { title: 'Dependency Injection', path: '/fundamentals/dependency-injection' },
+        { title: 'Async Components', path: '/fundamentals/async-components' },
+        { title: 'Circular Dependency', path: '/fundamentals/circular-dependency' },
+        { title: 'Unit Testing', path: '/fundamentals/unit-testing' },
+        { title: 'E2E Testing', path: '/fundamentals/e2e-testing' },
       ]
     },
     {
@@ -70,6 +68,14 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Advanced',
+      isOpened: false,
+      children: [
+        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
+        { title: 'Mixin Class', path: '/advanced/mixins' },
+      ]
+    },
+    {
       title: 'Recipes',
       isOpened: false,
       children: [
@@ -79,7 +85,7 @@ export class MenuComponent implements OnInit {
         { title: 'SQL (Sequelize)', path: '/recipes/sql-sequelize' },
         { title: 'Passport integration', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
-        { title: 'Swagger', path: '/recipes/swagger', isPending: true },
+        { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
         { title: 'GraphQL', path: '/recipes/graphql', isPending: true }
       ],
     },

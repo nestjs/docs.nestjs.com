@@ -19,7 +19,7 @@
     <pre [class.hide]="authServiceT.isJsActive"><code class="language-typescript">{{ authService }}</code></pre>
     <pre [class.hide]="!authServiceT.isJsActive"><code class="language-typescript">{{ authServiceJs }}</code></pre>
     <blockquote class="warning">
-        <strong>Hint</strong> In a best-case scenario the <code>jwt</code> object and token configuration (secret key and expiration time) should be provided as a <a routerLink="/advanced/dependency-injection">custom components</a> and injected through constructor.
+        <strong>Hint</strong> In a best-case scenario the <code>jwt</code> object and token configuration (secret key and expiration time) should be provided as a <a routerLink="/fundamentals/dependency-injection">custom components</a> and injected through constructor.
      </blockquote>
      <p>
         Passport uses the concept of strategies to authenticate requests. 

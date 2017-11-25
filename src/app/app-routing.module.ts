@@ -13,11 +13,11 @@ import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { GuardsComponent } from './homepage/pages/guards/guards.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
 import { InterceptorsComponent } from './homepage/pages/interceptors/interceptors.component';
-import { DependencyInjectionComponent } from './homepage/pages/advanced/dependency-injection/dependency-injection.component';
-import { AsyncComponentsComponent } from './homepage/pages/advanced/async-components/async-components.component';
-import { CircularDependencyComponent } from './homepage/pages/advanced/circular-dependency/circular-dependency.component';
-import { UnitTestingComponent } from './homepage/pages/advanced/unit-testing/unit-testing.component';
-import { E2eTestingComponent } from './homepage/pages/advanced/e2e-testing/e2e-testing.component';
+import { DependencyInjectionComponent } from './homepage/pages/fundamentals/dependency-injection/dependency-injection.component';
+import { AsyncComponentsComponent } from './homepage/pages/fundamentals/async-components/async-components.component';
+import { CircularDependencyComponent } from './homepage/pages/fundamentals/circular-dependency/circular-dependency.component';
+import { UnitTestingComponent } from './homepage/pages/fundamentals/unit-testing/unit-testing.component';
+import { E2eTestingComponent } from './homepage/pages/fundamentals/e2e-testing/e2e-testing.component';
 import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways.component';
 import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
 import { WsInterceptorsComponent } from './homepage/pages/websockets/interceptors/interceptors.component';
@@ -45,6 +45,7 @@ import { PassportComponent } from './homepage/pages/recipes/passport/passport.co
 import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
 
 const routes: Routes = [
 	{
@@ -106,12 +107,12 @@ const routes: Routes = [
 				data: { title: 'Custom Decorators' },
 			},
 			{
-				path: 'advanced/dependency-injection',
+				path: 'fundamentals/dependency-injection',
 				component: DependencyInjectionComponent,
 				data: { title: 'Dependency Injection' },
 			},
 			{
-				path: 'advanced/async-components',
+				path: 'fundamentals/async-components',
 				component: AsyncComponentsComponent,
 				data: { title: 'Async Components' },
 			},
@@ -126,17 +127,17 @@ const routes: Routes = [
 				data: { title: 'Hierarchical Injector' },
 			},
 			{
-				path: 'advanced/circular-dependency',
+				path: 'fundamentals/circular-dependency',
 				component: CircularDependencyComponent,
 				data: { title: 'Circular Dependency' },
 			},
 			{
-				path: 'advanced/unit-testing',
+				path: 'fundamentals/unit-testing',
 				component: UnitTestingComponent,
 				data: { title: 'Unit Testing' },
 			},
 			{
-				path: 'advanced/e2e-testing',
+				path: 'fundamentals/e2e-testing',
 				component: E2eTestingComponent,
 				data: { title: 'E2E Testing' },
 			},
@@ -234,6 +235,11 @@ const routes: Routes = [
 				path: 'recipes/cqrs',
 				component: CqrsComponent,
 				data: { title: 'CQRS' },
+      },
+      {
+				path: 'recipes/swagger',
+				component: SwaggerComponent,
+				data: { title: 'OpenAPI (Swagger)' },
 			},
 			{
 				path: 'faq/express-instance',

@@ -11,7 +11,7 @@
   <pre [class.hide]="!dependenciesT.isJsActive"><code class="language-typescript">{{ dependenciesJs }}</code></pre>
   <p>
     The first step we need to do is to establish the connection with our database using <code>connect()</code> function.
-    The <code>connect()</code> function returns the <code>MongooseThenable</code> by default, but we can simply override it with the native <code>global.Promise</code> to avoid deprecation warnings. In fact, we're creating an <a routerLink="/advanced/async-components">async component</a> here.
+    The <code>connect()</code> function returns the <code>MongooseThenable</code> by default, but we can simply override it with the native <code>global.Promise</code> to avoid deprecation warnings. In fact, we're creating an <a routerLink="/fundamentals/async-components">async component</a> here.
   </p>
   <span class="filename">
     {{ 'database.providers' | extension: databaseProvidersT.isJsActive }}

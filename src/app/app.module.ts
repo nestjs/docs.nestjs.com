@@ -20,12 +20,12 @@ import { MiddlewaresComponent } from './homepage/pages/middlewares/middlewares.c
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
 import { GuardsComponent } from './homepage/pages/guards/guards.component';
-import { DependencyInjectionComponent } from './homepage/pages/advanced/dependency-injection/dependency-injection.component';
-import { AsyncComponentsComponent } from './homepage/pages/advanced/async-components/async-components.component';
+import { DependencyInjectionComponent } from './homepage/pages/fundamentals/dependency-injection/dependency-injection.component';
+import { AsyncComponentsComponent } from './homepage/pages/fundamentals/async-components/async-components.component';
 import { InterceptorsComponent } from './homepage/pages/interceptors/interceptors.component';
-import { CircularDependencyComponent } from './homepage/pages/advanced/circular-dependency/circular-dependency.component';
-import { UnitTestingComponent } from './homepage/pages/advanced/unit-testing/unit-testing.component';
-import { E2eTestingComponent } from './homepage/pages/advanced/e2e-testing/e2e-testing.component';
+import { CircularDependencyComponent } from './homepage/pages/fundamentals/circular-dependency/circular-dependency.component';
+import { UnitTestingComponent } from './homepage/pages/fundamentals/unit-testing/unit-testing.component';
+import { E2eTestingComponent } from './homepage/pages/fundamentals/e2e-testing/e2e-testing.component';
 import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways.component';
 import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
 import { WsExceptionFiltersComponent } from './homepage/pages/websockets/exception-filters/exception-filters.component';

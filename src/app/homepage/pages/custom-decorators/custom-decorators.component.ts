@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { BasePageComponent } from '../page/page.component';
 
 @Component({
   selector: 'app-custom-decorators',
@@ -6,7 +7,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./custom-decorators.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CustomDecoratorsComponent {
+export class CustomDecoratorsComponent extends BasePageComponent {
   get userDecorator() {
     return `
 import { createRouteParamDecorator } from '@nestjs/common';
