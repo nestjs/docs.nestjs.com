@@ -75,7 +75,7 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'SQL (TypeORM)', path: '/recipes/sql-typeorm' },
         { title: 'MongoDB (Mongoose)', path: '/recipes/mongodb' },
-        { title: 'MongoDB E2E Testing (Mockgoose)', path: '/recipes/mockgoose' },
+        { title: 'MongoDB E2E (Mockgoose)', path: '/recipes/mockgoose' },
         { title: 'SQL (Sequelize)', path: '/recipes/sql-sequelize' },
         { title: 'Passport integration', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },

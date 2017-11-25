@@ -31,9 +31,8 @@ export const databaseProviders = [
     provide: 'DbToken',
     useFactory: async () => {
       (mongoose as any).Promise = global.Promise;
-      
-      if (process.env.NODE_ENV === 'test') {
 
+      if (process.env.NODE_ENV === 'test') {
         const mockgoose = new Mockgoose(mongoose);
         mockgoose.helper.setDbVersion('3.4.3');
 
@@ -43,14 +42,11 @@ export const databaseProviders = [
               useMongoClient: true,
             });
           });
-
       } else {
-
         await mongoose.connect('mongodb://localhost/nest', {
           useMongoClient: true,
         });
       }
-      
       return mongoose;
     },
   },
