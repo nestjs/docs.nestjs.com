@@ -9,9 +9,9 @@
     <strong>Hint</strong> Gateway is a <strong>component</strong>, so it can inject dependencies through constructor. Also, gateway might be injected by another component.
   </blockquote>
   <p>
-    By default, each Gateway is listening to the <strong>port 80</strong>.
-    We can change this behavior by passing the argument to the <code>@WebSocketGateway(81)</code> decorator.
-    Additionaly, you can force a <a href="https://socket.io/docs/rooms-and-namespaces/" target="blank">namespace</a> used by this gateway with the following construction:
+    By default, each Gateway is listening to the same port as <strong>HTTP server</strong> is running on (unless your app is not a web application).
+    We can change this behaviour by passing the argument to the <code>@WebSocketGateway(81)</code> decorator.
+    Additionally, you can force a <a href="https://socket.io/docs/rooms-and-namespaces/" target="blank">namespace</a> used by this gateway with the following construction:
   </p>
   <pre><code class="language-typescript">{{ namespace }}</code></pre>
   <blockquote>
@@ -38,7 +38,7 @@
   </p>
   <h4>Asynchronous responses</h4>
   <p>
-    Each message handler can be <code>async</code>, so you're able to return the <code>Promise</code>.
+    Each message handler can be <code>async</code>, thereby you're able to return the <code>Promise</code>.
     Moreover, you can return the <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, so the values would be emitted until the stream is completed.
   </p>
   <span class="filename">

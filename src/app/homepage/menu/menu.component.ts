@@ -28,6 +28,7 @@ export class MenuComponent implements OnInit {
         { title: 'Pipes', path: '/pipes' },
         { title: 'Guards', path: '/guards' },
         { title: 'Interceptors', path: '/interceptors' },
+        { title: 'Custom Decorators', path: '/custom-decorators' },
       ]
     },
     {

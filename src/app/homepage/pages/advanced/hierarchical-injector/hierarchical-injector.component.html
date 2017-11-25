@@ -2,7 +2,7 @@
   <h3>Hierarchical Injector</h3>
   <p>
     The Nest injector is <strong>hierarchical</strong>. 
-    To understand this useful treat, you firstly have to get acquainted with the process of creating the class instance.
+    To understand this useful treat, you first have to get acquainted with the process of creating the class instance.
     When any class depends on the other class, the injector's trying to find the appropriate instance in the current <strong>scope</strong>.
     The current scope isn't always the module to which the class belongs to.
   </p>
@@ -47,8 +47,8 @@
   </p>
   <h4>Motivation</h4>
   <p>
-    This technique makes possible to create a reusable modules using <strong>boundless abstraction</strong>.
-    Moreover, it allows to override every component from the imported module using <a routerLink="/advanced/dependency-injection">custom components</a> feature.
+    This technique makes possible to create reusable modules using <strong>boundless abstraction</strong>.
+    Moreover, it allows overriding every component from the imported module using <a routerLink="/advanced/dependency-injection">custom components</a> feature.
     For example, you can create a default implementation of the class inside the feature module, but then overload it inside the currently processed context.
   </p>
   <blockquote>

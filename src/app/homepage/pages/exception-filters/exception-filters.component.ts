@@ -35,6 +35,39 @@ async create(createCatDto) {
 `;
   }
 
+  get exceptionObj() {
+    return `
+@Post()
+async create(@Body() createCatDto: CreateCatDto) {
+  throw new HttpException({
+    status: HttpStatus.FORBIDDEN,
+    error: 'This is a custom message',
+  });
+}
+`;
+  }
+
+  get exceptionObjJs() {
+    return `
+@Post()
+@Bind(Body())
+async create(createCatDto) {
+  throw new HttpException({
+    status: HttpStatus.FORBIDDEN,
+    error: 'This is a custom message',
+  });
+}
+`;
+  }
+
+  get customResponse() {
+    return  `
+{
+    "status": 403,
+    "error": "This is a custom message"
+}`;
+  }
+
   get forbiddenResponse() {
     return  `
 {
@@ -137,10 +170,7 @@ export class CatsController {}`;
     return `
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
-
-  app.use(bodyParser.json());
   app.useGlobalFilters(new HttpExceptionFilter());
-
   await app.listen(3000);
 }
 bootstrap();
