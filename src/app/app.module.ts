@@ -54,6 +54,7 @@ import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.compo
 import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
+import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 
 @NgModule({
@@ -111,6 +112,7 @@ import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/cu
     MixinComponentsComponent,
     SqlSequelizeComponent,
     MongodbComponent,
+    MockgooseComponent,
     PassportComponent,
     SwaggerComponent,
     CqrsComponent,
