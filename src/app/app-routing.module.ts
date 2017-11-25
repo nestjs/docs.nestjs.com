@@ -43,6 +43,7 @@ import { MongodbComponent } from './homepage/pages/recipes/mongodb/mongodb.compo
 import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
 import { PassportComponent } from './homepage/pages/recipes/passport/passport.component';
 import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
+import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 
 const routes: Routes = [
   {
@@ -207,6 +208,11 @@ const routes: Routes = [
         path: 'recipes/mongodb',
         component: MongodbComponent,
         data: { title: 'MongoDB (Mongoose)' },
+      },
+      {
+        path: 'recipes/mockgoose',
+        component: MockgooseComponent,
+        data: { title: 'MongoDB E2E Testing (Mongoose + Mockgoose)' },
       },
       {
         path: 'recipes/passport',
