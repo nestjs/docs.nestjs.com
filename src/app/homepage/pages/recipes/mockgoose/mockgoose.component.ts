@@ -213,15 +213,15 @@ describe('Cats', () => {
                 age: 2,
                 breed: 'Russian Blue'
             })
-            .expect(200);
+            .expect(201);
     });
 
     it(\`/GET cats\`, async(done) => {
-        const cats = await return request(server)
+        const cats = await request(server)
             .get('/cats')
             .expect(200);
             
-        const [ cat ] = cats;
+        const [ cat ] = cats.body;
         
         expect(cat.name).toBe('Tiger');
         expect(cat.age).toBe(2);
