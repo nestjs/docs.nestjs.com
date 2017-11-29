@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InterceptorsComponent } from './interceptors.component';
+import { WsInterceptorsComponent } from './interceptors.component';
 
-describe('InterceptorsComponent', () => {
-  let component: InterceptorsComponent;
-  let fixture: ComponentFixture<InterceptorsComponent>;
+describe('WsInterceptorsComponent', () => {
+  let component: WsInterceptorsComponent;
+  let fixture: ComponentFixture<WsInterceptorsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InterceptorsComponent ]
+      declarations: [ WsInterceptorsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InterceptorsComponent);
+    fixture = TestBed.createComponent(WsInterceptorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
