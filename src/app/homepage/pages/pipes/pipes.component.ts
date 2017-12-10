@@ -64,8 +64,7 @@ export class CreateCatDto {
 
   get fullValidationPipe() {
     return `
-import { HttpException } from '@nestjs/core';
-import { PipeTransform, Pipe, ArgumentMetadata, HttpStatus } from '@nestjs/common';
+import { PipeTransform, Pipe, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
@@ -79,7 +78,7 @@ export class ValidationPipe implements PipeTransform<any> {
       const object = plainToClass(metatype, value);
       const errors = await validate(object);
       if (errors.length > 0) {
-          throw new HttpException('Validation failed', HttpStatus.BAD_REQUEST);
+          throw new BadRequestException('Validation failed');
       }
       return value;
     }
