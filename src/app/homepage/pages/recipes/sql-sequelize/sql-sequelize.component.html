@@ -3,12 +3,12 @@
     <h5>This chapter applies only to TypeScript</h5>
     <p>
       <a href="https://github.com/sequelize/sequelize" target="blank">Sequelize</a> is the most popular Object Relational Mapper (ORM) available in the node.js world.
-      It's written in plain JavaScript, but there's a <a href="https://github.com/RobinBuschmann/sequelize-typescript" target="blank">sequelize-typescript</a> TypeScript wrapper which provdes set of decorators and some other extras for base sequelize. 
-      To start the adventure with this library we have to install all of the required dependencies:
+      It's written in plain JavaScript, but there's a <a href="https://github.com/RobinBuschmann/sequelize-typescript" target="blank">sequelize-typescript</a> TypeScript wrapper which provides a set of decorators and other extras for the base sequelize.
+      To start the adventure with this library we have to install the following dependencies:
     </p>
     <pre><code class="language-typescript">{{ dependencies }}</code></pre>
     <p>
-      The first step we need to do is to create a <strong>Sequelize</strong> instance with options object passed into the constructor.
+      The first step we need to do is create a <strong>Sequelize</strong> instance with an options object passed into the constructor.
       Also, we need to add all of the models (the alternative is to use <code>modelPaths</code> property) and <code>sync()</code> our database tables.
     </p>
     <span class="filename">database.providers.ts</span>
@@ -42,7 +42,7 @@
     <span class="filename">cats.providers.ts</span>
     <pre><code class="language-typescript">{{ catsProviders }}</code></pre>
     <blockquote>
-        <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong> at all. Both <code>PhotoRepositoryToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constants.ts</code> file. 
+        <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong> at all. Both <code>PhotoRepositoryToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constants.ts</code> file.
      </blockquote>
      <p>
        In Sequelize we're using static methods to manipulate the data, so we're just creating an <strong>alias</strong> here.
