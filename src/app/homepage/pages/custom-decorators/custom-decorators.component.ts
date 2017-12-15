@@ -11,7 +11,7 @@ export class CustomDecoratorsComponent {
     return `
 import { createRouteParamDecorator } from '@nestjs/common';
 
-const User = createRouteParamDecorator((data, req) => {
+export const User = createRouteParamDecorator((data, req) => {
   return req.user;
 });`;
   }
@@ -20,7 +20,7 @@ const User = createRouteParamDecorator((data, req) => {
     return `
 import { createRouteParamDecorator } from '@nestjs/common';
 
-const User = createRouteParamDecorator((data, req) => {
+export const User = createRouteParamDecorator((data, req) => {
   console.log(data); // test
   return req.user;
 });`;
