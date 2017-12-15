@@ -28,9 +28,6 @@ const User = createRouteParamDecorator((data, req) => {
 
   get controllerExampleData() {
     return `
-import { User } from '../../common/decorators/user.decorator';
-import { User as UserEntity } from '../users/user.entity';
-
 @Get()
 async findOne(@User('test') user: UserEntity) {
   console.log(user);
@@ -48,9 +45,6 @@ async findOne(user) {
 
   get controllerExample() {
     return `
-import { User } from '../../common/decorators/user.decorator';
-import { User as UserEntity } from '../users/user.entity';
-
 @Get()
 async findOne(@User() user: UserEntity) {
   console.log(user);
@@ -68,9 +62,6 @@ async findOne(user) {
 
   get pipeExample() {
     return `
-import { User } from '../../common/decorators/user.decorator';
-import { User as UserEntity } from '../users/user.entity';
-
 @Get()
 async findOne(@User(new ValidationPipe()) user: UserEntity) {
   console.log(user);
