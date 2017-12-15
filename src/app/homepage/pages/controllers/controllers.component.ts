@@ -77,11 +77,11 @@ findOne(@Param() params) {
   
   get statusCode() {
     return `
-import { Controller, Get, Post, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode } from '@nestjs/common';
 
 @Controller('cats')
 export class CatsController {
-  @HttpStatus(204)
+  @HttpCode(204)
   @Post()
   create() {
     // TODO: Add some logic here

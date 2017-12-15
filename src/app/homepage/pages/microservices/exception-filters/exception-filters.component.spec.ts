@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExceptionFiltersComponent } from './exception-filters.component';
+import { MicroservicesExceptionFiltersComponent } from './exception-filters.component';
 
-describe('ExceptionFiltersComponent', () => {
-  let component: ExceptionFiltersComponent;
-  let fixture: ComponentFixture<ExceptionFiltersComponent>;
+describe('MicroservicesExceptionFiltersComponent', () => {
+  let component: MicroservicesExceptionFiltersComponent;
+  let fixture: ComponentFixture<MicroservicesExceptionFiltersComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExceptionFiltersComponent ]
+      declarations: [ MicroservicesExceptionFiltersComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExceptionFiltersComponent);
+    fixture = TestBed.createComponent(MicroservicesExceptionFiltersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExceptionFiltersComponent } from './exception-filters.component';
+import { WsExceptionFiltersComponent } from './exception-filters.component';
 
-describe('ExceptionFiltersComponent', () => {
-  let component: ExceptionFiltersComponent;
-  let fixture: ComponentFixture<ExceptionFiltersComponent>;
+describe('WsExceptionFiltersComponent', () => {
+  let component: WsExceptionFiltersComponent;
+  let fixture: ComponentFixture<WsExceptionFiltersComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExceptionFiltersComponent ]
+      declarations: [ WsExceptionFiltersComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExceptionFiltersComponent);
+    fixture = TestBed.createComponent(WsExceptionFiltersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
