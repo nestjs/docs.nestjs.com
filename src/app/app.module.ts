@@ -56,6 +56,8 @@ import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {environment} from '../environments/environment';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -66,6 +68,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BrowserModule,
     AppRoutingModule,
     PerfectScrollbarModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
   ],
   declarations: [
     AppComponent,
