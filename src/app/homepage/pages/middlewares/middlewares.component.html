@@ -51,7 +51,7 @@
   </span>
   <pre [class.hide]="applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModule }}</code></pre>
   <pre [class.hide]="!applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModuleJs }}</code></pre>
-  <blockquote>
+  <blockquote class="info">
     <strong>Hint</strong> We could pass here (inside <code>forRoutes()</code>) the single object and just use <code>RequestMethod.ALL</code>.
   </blockquote>
   <p>
@@ -69,7 +69,7 @@
   </span>
   <pre [class.hide]="applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
   <pre [class.hide]="!applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllersJs }}</code></pre>  
-  <blockquote>
+  <blockquote class="info">
     <strong>Hint</strong> The <code>apply()</code> method can take single middleware or an <strong>array of middlewares</strong>.
   </blockquote>
   <h4>Pass arguments to the middleware</h4>
@@ -128,7 +128,7 @@
   </span>
   <pre [class.hide]="applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
   <pre [class.hide]="!applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddlewareJs }}</code></pre>
-  <blockquote class="warning">
+  <blockquote class="info">
     <strong>Hint</strong> Let's consider to use <strong>functional middlewares</strong> everytime when your middleware doesn't have any dependencies.
   </blockquote>
 </div>

@@ -24,8 +24,8 @@
   </span>
    <pre [class.hide]="createMethodT.isJsActive"><code class="language-typescript">{{ createMethod }}</code></pre>
    <pre [class.hide]="!createMethodT.isJsActive"><code class="language-typescript">{{ createMethodJs }}</code></pre>
-   <blockquote>
-      <strong>Notice</strong> I've used the <code>HttpStatus</code> here. It's just a helper enum imported from the <code>@nestjs/common</code> package.
+   <blockquote class="warning">
+      <strong>Warning</strong> I have used the <code>HttpStatus</code> here. It's a helper enum imported from the <code>@nestjs/common</code> package.
     </blockquote>
     <p>
       Now when the client will call this endpoint, the response would looks like below:
@@ -103,7 +103,7 @@
     <p>
       The <code>response</code> is a native express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>. The <code>exception</code> is a currently processed exception.
     </p>
-    <blockquote class="warning">
+    <blockquote class="info">
       <strong>Hint</strong> Every exception filter should implement the <code>ExceptionFilter</code> interface. It forces to provide the <code>catch()</code> method with the proper signature.
     </blockquote>
     <p>
@@ -119,8 +119,8 @@
     </span>
     <pre [class.hide]="forbiddenCreateMethodWithFilterT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodWithFilter }}</code></pre>
     <pre [class.hide]="!forbiddenCreateMethodWithFilterT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodWithFilterJs }}</code></pre>
-    <blockquote>
-      <strong>Hint</strong> The <code>@UseFilters()</code> decorator is imported from the <code>@nestjs/common</code> package.
+    <blockquote class="warning">
+      <strong>Warning</strong> The <code>@UseFilters()</code> decorator is imported from the <code>@nestjs/common</code> package.
     </blockquote>
     <p>
       We've used the <code>@UseFilters()</code> decorator here. Same as <code>@Catch()</code>, it takes infinite count of parameters.

@@ -62,6 +62,12 @@ blockquote {
     &::before { background: #ed8529; }
     strong, a { color: #ed8529; }
   }
+
+  &.info {
+    background: rgba(8, 148, 226, 0.038);
+    &::before { background: #0894e2; }
+    strong, a { color: #0894e2 }
+  }
 }
 
 figure {
