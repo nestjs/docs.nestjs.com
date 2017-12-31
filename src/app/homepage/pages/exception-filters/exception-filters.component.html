@@ -28,7 +28,7 @@
       <strong>Notice</strong> I've used the <code>HttpStatus</code> here. It's just a helper enum imported from the <code>@nestjs/common</code> package.
     </blockquote>
     <p>
-      Now when the client will call this endpoint, the response would looks like below:
+      Now when the client will call this endpoint, the response would look like this:
     </p>
     <pre><code class="language-typescript">{{ forbiddenResponse }}</code></pre>
     <p>
@@ -101,14 +101,14 @@
     <pre [class.hide]="httpExceptionFilterT.isJsActive"><code class="language-typescript">{{ httpExceptionFilter }}</code></pre>
     <pre [class.hide]="!httpExceptionFilterT.isJsActive"><code class="language-typescript">{{ httpExceptionFilterJs }}</code></pre>
     <p>
-      The <code>response</code> is a native express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>. The <code>exception</code> is a currently processed exception.
+      The <code>response</code> is a native express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>. The <code>exception</code> is the currently processed exception.
     </p>
     <blockquote class="warning">
-      <strong>Hint</strong> Every exception filter should implement the <code>ExceptionFilter</code> interface. It forces to provide the <code>catch()</code> method with the proper signature.
+      <strong>Hint</strong> Every exception filter should implement the <code>ExceptionFilter</code> interface. It forces you to provide the <code>catch()</code> method with the proper signature.
     </blockquote>
     <p>
       The <code>@Catch()</code> decorator binds the required metadata to the exception filter. It tells Nest that this filter is looking for <code>HttpException</code>.
-      The <code>@Catch()</code> takes infinite count of parameters, so you can setup this filter for several types of exceptions, just separate them by a comma.
+      The <code>@Catch()</code> takes variable number parameters, so you can setup this filter for several types of exceptions, just separate them by a comma.
     </p>
     <p>
       The last step is to inform Nest that the <code>HttpExceptionFilter</code> should be used within the <code>create()</code> method.
@@ -123,7 +123,7 @@
       <strong>Hint</strong> The <code>@UseFilters()</code> decorator is imported from the <code>@nestjs/common</code> package.
     </blockquote>
     <p>
-      We've used the <code>@UseFilters()</code> decorator here. Same as <code>@Catch()</code>, it takes infinite count of parameters.
+      We've used the <code>@UseFilters()</code> decorator here. Same as <code>@Catch()</code>, it takes variable number of parameters.
     </p>
     <p>
       In the above example, the <code>HttpExceptionFilter</code> is applied only to the single <code>create()</code> route handler, but it's not the only way.

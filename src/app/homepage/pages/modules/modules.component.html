@@ -1,18 +1,17 @@
 <div class="content">
    <h3>Modules</h3>
    <p>
-      A module is a class with <code>@Module()</code> decorator. The <code>@Module()</code> decorator provides metadata, which <strong>Nest</strong> is using to organize the application structure.
+      A module is a class with <code>@Module()</code> decorator. The <code>@Module()</code> decorator provides metadata, which <strong>Nest</strong> uses to organize the application structure.
    </p>
    <figure><img src="/assets/Modules_1.png" /></figure>
    <p>
      Every Nest application has at least one module, the <strong>root module</strong>.
-     The root module is the place, where Nest is starting to arrange the application tree.
-     In fact, the root module could be the only module in your application, especially when the app is small, but it doesn't make sense.
+     The root module is the place where Nest is starting to arrange the application tree.
+     In fact, the root module could be the only module in your application, especially when the app is small. For large applications however, it doesn't make sense.
      In most cases, you'll have several modules, each with a closely related set of <strong>capabilities</strong>.
    </p>
    <p>
-     The <code>@Module()</code> decorator takes the single object whose properties describe the module.
-     Read about them in the following table:
+     The <code>@Module()</code> decorator takes the single object whose properties describe the module:
    </p>
    <table>
      <tr>
@@ -25,11 +24,11 @@
      </tr>
      <tr>
        <td><code>modules</code></td>
-       <td>the list of imported modules that export the components which are necessary in this module</td>
+       <td>the list of imported modules that export the components which are required in this module</td>
      </tr>
      <tr>
        <td><code>exports</code></td>
-       <td>the subset of <code>components</code> that should be available in the other modules</td>
+       <td>the subset of <code>components</code> that are provided by this module and should be available in the other modules</td>
      </tr>
    </table>
    <p>
@@ -55,7 +54,7 @@
     </span>
     <pre><code class="language-typescript">{{ appModule }}</code></pre>
     <p>
-      It's everything. Now Nest knows that besides <code>ApplicationModule</code>, it's essential to register the <code>CatsModule</code> too.
+      That's it! Now Nest knows that besides <code>ApplicationModule</code>, it's essential to register the <code>CatsModule</code> too.
       That's how our directories structure looks right now:
       </p>
       <div class="file-tree">
