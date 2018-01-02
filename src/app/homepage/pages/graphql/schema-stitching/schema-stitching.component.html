@@ -1,0 +1,43 @@
+<div class="content">
+  <h3>Schema Stitching</h3>
+  <p>
+    The schema stitching is a feature that allows creating a single GraphQL schema from multiple underlying GraphQL APIs.
+    You can read more about it <a href="https://www.apollographql.com/docs/graphql-tools/schema-stitching.html" target="blank">here</a>.
+  </p>
+  <h4>Proxying</h4>
+  <p>
+    To add the ability to proxy fields between schemas, you need to create additional resolvers between them.
+    Let's have a look on the example from the <a href="https://www.apollographql.com/docs/graphql-tools/schema-stitching.html#adding-resolvers" target="blank">Apollo</a> documentation:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ stitchingExample }}</code></pre>
+  <p>
+    Here we <strong>delegate</strong> <code>chirps</code> property of <code>User</code> to another GraphQL API.
+    To achieve the same result in Nest-way, we use <code>@DelegateProperty()</code> decorator.
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ stitchNestWay }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>@Resolver()</code> decorator is used here at the method-level, but you can use it at top (class) level as well.
+  </blockquote>
+  <p>
+    Now let's take a step back to the <code>graphqlExpress</code> middleware.
+    We need to merge our schemas and add delegates between them.
+    To create delegates we use <code>createDelegates()</code> method of <code>GraphQLFactory</code> class.
+  </p>
+  <span class="filename">
+    {{ 'app.module' | extension: appModuleSchemaT.isJsActive }}
+    <app-tabs #appModuleSchemaT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ createSchema }}</code></pre>
+  <p>
+    In order to merge schemas, we have used <code>mergeSchemas()</code> function (<a href="https://www.apollographql.com/docs/graphql-tools/schema-stitching.html#mergeSchemas" target="blank">read more</a>).
+    Moreover, there're <code>chirpsSchema</code> and <code>linkTypeDefs</code> variables.
+    They're copied & pasted directly from the <a href="https://www.apollographql.com/docs/graphql-tools/schema-stitching.html" target="blank">Apollo</a> documentation.
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ chirpsSchema }}</code></pre>
+  <p>
+    That's all.
+  </p>
+</div>

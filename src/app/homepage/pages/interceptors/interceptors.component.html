@@ -44,7 +44,7 @@
      Since <code>stream$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we have a lot of various operators which we can use to manipulate the stream. In above example, I've used <code>do()</code> operator, which invokes the function upon graceful or exceptional termination of the observable sequence.
    </p>
    <p>
-     To setup the interceptor, we're using <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
+     To set up the interceptor, we're using <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
      Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped, method-scoped and global-scoped.
   </p>
   <span class="filename">
@@ -114,5 +114,51 @@
   </p>
   <blockquote>
     <strong>Hint</strong> Exceptions thrown within interceptors can be catched by <a routerLink="/exception-filters">exception filters</a>. 
+  </blockquote>
+  <h4>Global interceptors</h4>
+  <p>
+    The global interceptors don't belong to any scope. They live outside modules, thus as a result - they can't inject dependencies.
+    We need to create an instance immediately. But quite often, global interceptors depend on other objects, for example, we'd
+    love to dispatch an asynchronous event on each request using
+    <code>EventsService</code>, but this service is a part of the
+    <code>EventsModule</code>. What's now?
+  </p>
+  <p>
+    The solution is pretty easy. Each Nest application instance is in fact, a created
+    <strong>Nest context</strong>. The Nest context is a wrapper around the Nest container, which holds all instantiated classes.
+    We can grab any existing instance from within any imported module directly using application object.
+  </p>
+  <p>
+    Let's assume that we have a
+    <code>EventsInterceptor</code> registered in the
+    <code>EventsModule</code>. This
+    <code>EventsModule</code> is imported into
+    <strong>root module</strong>. We can pick the
+    <code>EventsInterceptor</code> instance using following syntax:
+  </p>
+  <pre><code class="language-typescript">{{ getEventsInterceptor }}</code></pre>
+  <p>
+    To grab <code>EventsInterceptor</code> instance we have used 2 methods, well-described in the below table:
+  </p>
+  <table>
+    <tr>
+      <td>
+        <code>get()</code>
+      </td>
+      <td>
+        Makes possible to retrieve the instance of the component or controller available inside the processed module.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>select()</code>
+      </td>
+      <td>
+        Allows you to navigate through the module tree, for example, to pull out a specific instance from the selected module.
+      </td>
+    </tr>
+  </table>
+  <blockquote class="info">
+    <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through entire modules stack (step by step).
   </blockquote>
 </div>

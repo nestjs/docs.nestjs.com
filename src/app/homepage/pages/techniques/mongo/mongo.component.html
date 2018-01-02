@@ -1,0 +1,63 @@
+<div class="content">
+  <h3>MongoDB</h3>
+  <p>
+    There are 2 ways of dealing with the MongoDB. You can use a <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> that provides a MongoDB support or <a href="http://mongoosejs.com" target="blank">Mongoose</a> which is the most popular <a href="https://www.mongodb.org/" target="blank">MongoDB</a> object modelling tool.
+    If you wanna stay with the <strong>TypeORM</strong> you can follow <a routerLink="/techniques/sql">these steps</a>.
+    Otherwise, we'll use a dedicated <code>@nestjs/mongoose</code> package.
+  </p>
+  <p>
+    Firstly, we need to install all of the required dependencies:
+  </p>
+  <pre><code class="language-bash">
+$ npm install --save @nestjs/mongoose mongoose</code></pre>
+  <p>
+    Once the installation process is completed, we can import the <code>MongooseModule</code> into the root <code>ApplicationModule</code>.
+  </p>
+  <span class="filename">
+    {{ 'app.module' | extension: importMongooseT.isJsActive }}
+    <app-tabs #importMongooseT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ importMongoose }}</code></pre>
+  <p>
+    The <code>forRoot()</code> method accepts the same configuration object as <code>mongoose.connect()</code> from the <a href="http://mongoosejs.com" target="blank">Mongoose</a> package.
+  </p>
+  <h4>Model injection</h4>
+  <p>
+      With Mongoose, everything is derived from a <a href="http://mongoosejs.com/docs/guide.html" target="blank">Schema</a>. Let's define the <code>CatSchema</code>:
+  </p>
+  <span class="filename">
+    {{ 'cats/schemas/cat.schema' | extension: catSchemaT.isJsActive }}
+    <app-tabs #catSchemaT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ catSchema }}</code></pre>
+  <p>
+    The <code>CatsSchema</code> belongs to the <code>cats</code> directory.
+    This directory represents the <code>CatsModule</code>. It's your decision where you gonna keep your schema files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
+  </p>
+  <p>
+    Let's have a look at the <code>CatsModule</code>:
+  </p>
+  <span class="filename">
+    {{ 'cats/cats.module' | extension: catsModuleT.isJsActive }}
+    <app-tabs #catsModuleT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ catsModule }}</code></pre>
+  <p>
+    This module uses <code>forFeature()</code> method to define which models shall be registered in the current scope.
+  </p>
+  <p>
+    Now we can inject the <code>CatModel</code> to the <code>CatsService</code> using the <code>@InjectModel()</code> decorator:
+  </p>
+  <span class="filename">
+    {{ 'cats/cats.service' | extension: catsServiceT.isJsActive }}
+    <app-tabs #catsServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
+  <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
+  <p>
+    That's all. The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/14-mongoose-module" target="blank">here</a>.
+  </p>
+  <blockquote class="warning">
+    <strong>Hint</strong> Don't forget to import the <code>CatsModule</code> into the root <code>ApplicationModule</code>.
+  </blockquote>
+</div>

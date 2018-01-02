@@ -1,0 +1,38 @@
+<div class="content">
+  <h3>Subscriptions</h3>
+  <p>
+    Subscription is just another GraphQL operation type like Query and Mutation.
+    It allows creating real-time subscriptions over a bidirectional transport layer, mainly over websockets.
+    Read more about the subscriptions <a href="https://www.apollographql.com/docs/graphql-subscriptions" target="blank">here</a>.
+  </p>
+  <p>
+    Below is a <code>commentAdded</code> subscription example, copied & pasted directly from the official <a href="https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema.html" target="blank">Apollo</a> documentation:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ subscriptionOfficialExample }}</code></pre>
+  <blockquote class="warning">
+    <strong>Notice</strong> The <code>pubsub</code> is an instance of <code>PubSub</code> class. Read more about it <a href="https://www.apollographql.com/docs/graphql-subscriptions/setup.html" target="blank">here</a>.
+  </blockquote>
+  <p>
+    In order to create an equivalent subscription in Nest-way, we'll make use of the
+    <code>@Subscription()</code> decorator. Let's extend our
+    <code>AuthorResolver</code> used in the <a routerLink="/graphql/resolvers-map">resolvers map</a> section.
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
+  <h4>Refactor</h4>
+  <p>
+    We have used a local <code>PubSub</code> instance here. Instead, we should define <code>PubSub</code> as a <strong>component</strong>, inject
+    it through the constructor (using <code>@Inject()</code> decorator), and reuse it across the entire application.
+    You can read more about Nest custom components <a routerLink="/fundamentals/dependency-injection">here</a>.
+  </p>
+  <h4>Type definitions</h4>
+  <p>
+    The last step is to update type definitions (<a href="http://graphql.org/learn/schema/#type-language" target="blank">read more</a>) file.
+  </p>
+  <span class="filename">author-types.graphql</span>
+  <pre><code class="language-java">{{ typeDefs }}</code></pre>
+  <p>
+    That's all. We created a single <code>commentAdded(repoFullName: String!): Comment</code> subscription.
+  </p>
+</div>

@@ -78,6 +78,10 @@
   background: #f3f3f3;
   position: relative;
 
+  @include media(medium) {
+    margin: 40px -30px 0;
+  }
+
   h4, img {
     display: inline-block;
     vertical-align: middle;

@@ -130,7 +130,7 @@ export class CacheInterceptor {
   get exceptionMapping() {
     return `
 import { Interceptor, NestInterceptor, ExecutionContext, HttpStatus } from '@nestjs/common';
-import { HttpException } from '@nestjs/core';
+import { HttpException } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -148,7 +148,7 @@ export class ExceptionInterceptor implements NestInterceptor {
   get exceptionMappingJs() {
     return `
 import { Interceptor, HttpStatus } from '@nestjs/common';
-import { HttpException } from '@nestjs/core';
+import { HttpException } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -167,5 +167,16 @@ export class ExceptionInterceptor {
     return `
 const app = await NestFactory.create(ApplicationModule);
 app.useGlobalInterceptors(new LoggingInterceptor());`;
+  }
+
+  get getEventsInterceptor() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const eventsInterceptor = app
+  .select(EventsModule)
+  .get(EventsInterceptor);
+
+app.useGlobalInterceptors(eventsInterceptor);
+`;
   }
 }

@@ -1,0 +1,46 @@
+<div class="content">
+  <h3>Mutations</h3>
+  <p>
+    In GraphQL, to modify the server-side data, we're using mutations. Read more about them
+    <a href="http://graphql.org/learn/queries/#mutations"
+      target="blank">here</a>.
+  </p>
+  <p>
+    The official
+    <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo</a> documentation shares an
+    <code>upvotePost()</code> mutation example. This mutation allows to increase a post
+    <code>votes</code> property value.
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ mutationsExample }}</code></pre>
+  <p>
+    In order to create an equivalent mutation in Nest-way, we'll make use of the
+    <code>@Mutation()</code> decorator. Let's extend our
+    <code>AuthorResolver</code> used in the previous section (<a routerLink="/graphql/resolvers-map">resolvers map</a>).
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
+  <h4>Refactor</h4>
+  <p>
+    Once again (same as in
+    <a routerLink="/graphql/resolvers-map">resolvers map</a> chapter) we're gonna do a small refactor to take advantages of the Nest architecture, to turn it into a
+    <strong>real-world</strong> example.
+  </p>
+  <span class="filename">
+    <app-tabs #authorResolverT></app-tabs>
+  </span>
+  <pre [class.hide]="authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExample }}</code></pre>
+  <pre [class.hide]="!authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExampleJs }}</code></pre>
+  <p>
+    That's all. The business logic was moved to the <code>PostsService</code>.
+  </p>
+  <h4>Type definitions</h4>
+  <p>
+    The last step is to add our mutation to the existing type definitions.
+  </p>
+  <span class="filename">author-types.graphql</span>
+  <pre><code class="language-java">{{ typeDefs }}</code></pre>
+  <p>
+    The <code>upvotePost(postId: Int!): Post</code> mutation is here now!
+  </p>
+</div>

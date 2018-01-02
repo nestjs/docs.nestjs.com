@@ -1,0 +1,89 @@
+<div class="content">
+  <h3>SQL</h3>
+  <p>
+    To reduce a boilerplate necessary to start the adventure with the databases, Nest comes with the ready to use <code>@nestjs/typeorm</code> package.
+    We have selected <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> because it is definitely the most mature Object Relational Mapper (ORM) available in the node.js world.
+    Since it's written in TypeScript, it works pretty well with the Nest framework.
+  </p>
+  <p>
+    Firstly, we need to install all of the required dependencies:
+  </p>
+  <pre><code class="language-bash">
+$ npm install --save @nestjs/typeorm typeorm mysql</code></pre>
+  <blockquote class="info">
+    <strong>Notice</strong> In this chapter we'll use a MySQL database, but <strong>TypeORM</strong> provides a support for a lot of different ones such as PostgreSQL, SQLite, and even MongoDB (NoSQL).
+  </blockquote>
+  <p>
+    Once the installation process is completed, we can import the <code>TypeOrmModule</code> into the root <code>ApplicationModule</code>.
+  </p>
+  <span class="filename">
+    {{ 'app.module' | extension: importTypeOrmT.isJsActive }}
+    <app-tabs #importTypeOrmT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ importTypeOrm }}</code></pre>
+  <p>
+    The <code>forRoot()</code> method accepts the same configuration object as <code>createConnection()</code> from the <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> package.
+    Futhermore, instead of passing anything to the <code>forRoot()</code>, we can create an <code>ormconfig.json</code> file in the project root directory.
+  </p>
+  <span class="filename">ormconfig.json</span>
+  <pre><code class="language-json">{{ ormconfig }}</code></pre>
+  <p>
+    Now we can simply leave the parenthesis empty:
+  </p>
+  <span class="filename">
+    {{ 'app.module' | extension: importTypeOrmEmptyT.isJsActive }}
+    <app-tabs #importTypeOrmEmptyT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ importTypeOrmEmpty }}</code></pre>
+  <p>
+    Afterwards, the <code>Connection</code> and <code>EntityManager</code> will be available to inject across entire project (without importing any module elsewhere), for example in this way:
+  </p>
+  <span class="filename">
+    {{ 'app.module' | extension: importTypeOrmEmptyT.isJsActive }}
+    <app-tabs #importTypeOrmEmptyT></app-tabs>
+  </span>
+  <pre [class.hide]="importTypeOrmEmptyT.isJsActive"><code class="language-typescript">{{ importConnectionInstance }}</code></pre>
+  <pre [class.hide]="!importTypeOrmEmptyT.isJsActive"><code class="language-typescript">{{ importConnectionInstanceJs }}</code></pre>
+  <h4>Repository pattern</h4>
+  <p>
+    The <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> supports the repository design pattern, so each entity has its own Repository. These repositories can be obtained from the database connection.
+  </p>
+  <p>
+    Firstly, we need at least one entity. We're gonna reuse the <code>Photo</code> entity from the offical documentation.
+  </p>
+  <span class="filename">
+    {{ 'photo/photo.entity' | extension: photoEntityT.isJsActive }}
+    <app-tabs #photoEntityT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ photoEntity }}</code></pre>
+  <p>
+    The <code>Photo</code> entity belongs to the <code>photo</code> directory.
+    This directory represents the <code>PhotoModule</code>. It's your decision where you gonna keep your model files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
+  </p>
+  <p>
+    Let's have a look at the <code>PhotoModule</code>:
+  </p>
+  <span class="filename">
+    {{ 'photo/photo.module' | extension: photoModuleT.isJsActive }}
+    <app-tabs #photoModuleT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ photoModule }}</code></pre>
+  <p>
+    This module uses <code>forFeature()</code> method to define which repositories shall be registered in the current scope.
+  </p>
+  <p>
+    Now we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@InjectRepository()</code> decorator:
+  </p>
+  <span class="filename">
+    {{ 'photo/photo.service' | extension: photoServiceT.isJsActive }}
+    <app-tabs #photoServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="photoServiceT.isJsActive"><code class="language-typescript">{{ photoService }}</code></pre>
+  <pre [class.hide]="!photoServiceT.isJsActive"><code class="language-typescript">{{ photoServiceJs }}</code></pre>
+  <p>
+    That's all. The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/05-sql-typeorm" target="blank">here</a>.
+  </p>
+  <blockquote class="warning">
+    <strong>Hint</strong> Don't forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
+  </blockquote>
+</div>

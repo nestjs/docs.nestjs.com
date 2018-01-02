@@ -11,7 +11,7 @@ export class HierarchicalInjectorComponent extends BasePageComponent {
   get coreModule() {
     return `
 @Module({
-  modules: [CommonModule],
+  imports: [CommonModule],
   components: [CoreService, ContextService],
 })
 export class CoreModule {}`;

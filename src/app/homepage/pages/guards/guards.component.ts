@@ -166,4 +166,15 @@ const roles = this.reflector.get('roles', parent);`;
 const app = await NestFactory.create(ApplicationModule);
 app.useGlobalGuards(new RolesGuard());`;
   }
+
+  get getAuthGuard() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const authGuard = app
+  .select(AuthModule)
+  .get(AuthGuard);
+
+app.useGlobalGuards(authGuard);
+`;
+  }
 }

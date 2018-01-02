@@ -46,6 +46,17 @@ import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
+import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
+import { QuickStartComponent } from './homepage/pages/graphql/quick-start/quick-start.component';
+import { ResolversMapComponent } from './homepage/pages/graphql/resolvers-map/resolvers-map.component';
+import { MutationsComponent } from './homepage/pages/graphql/mutations/mutations.component';
+import { SubscriptionsComponent } from './homepage/pages/graphql/subscriptions/subscriptions.component';
+import { SchemaStitchingComponent } from './homepage/pages/graphql/schema-stitching/schema-stitching.component';
+import { GuardsInterceptorsComponent } from './homepage/pages/graphql/guards-interceptors/guards-interceptors.component';
+import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
+import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
+import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
+import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 
 const routes: Routes = [
 	{
@@ -140,6 +151,46 @@ const routes: Routes = [
 				path: 'fundamentals/e2e-testing',
 				component: E2eTestingComponent,
 				data: { title: 'E2E Testing' },
+      },
+      {
+				path: 'execution-context',
+				component: ExecutionContextComponent,
+				data: { title: 'Execution Context' },
+      },
+      {
+				path: 'graphql/quick-start',
+				component: QuickStartComponent,
+				data: { title: 'GraphQL - Quick Start' },
+      },
+      {
+				path: 'graphql/resolvers-map',
+				component: ResolversMapComponent,
+				data: { title: 'GraphQL - Resolvers Map' },
+      },
+      {
+				path: 'graphql/mutations',
+				component: MutationsComponent,
+				data: { title: 'GraphQL - Mutations' },
+      },
+      {
+				path: 'graphql/subscriptions',
+				component: SubscriptionsComponent,
+				data: { title: 'GraphQL - Subscriptions' },
+      },
+      {
+				path: 'graphql/guards-interceptors',
+				component: GuardsInterceptorsComponent,
+				data: { title: 'GraphQL - Guards & Interceptors' },
+      },
+      {
+				path: 'graphql/ide',
+				component: IdeComponent,
+				data: { title: 'GraphQL - IDE' },
+			},
+      {
+				path: 'graphql/schema-stitching',
+				component: SchemaStitchingComponent,
+				data: { title: 'GraphQL - Schema Stitching' },
 			},
 			{
 				path: 'websockets/gateways',
@@ -223,8 +274,12 @@ const routes: Routes = [
       },
 			{
 				path: 'recipes/passport',
+				redirectTo: 'techniques/authentication',
+      },
+      {
+				path: 'techniques/authentication',
 				component: PassportComponent,
-				data: { title: 'Passport integration' },
+				data: { title: 'Authentication' },
 			},
 			{
 				path: 'recipes/sql-sequelize',
@@ -240,6 +295,26 @@ const routes: Routes = [
 				path: 'recipes/swagger',
 				component: SwaggerComponent,
 				data: { title: 'OpenAPI (Swagger)' },
+      },
+      {
+				path: 'techniques/mvc',
+				component: MvcComponent,
+				data: { title: 'MVC' },
+      },
+      {
+				path: 'techniques/mvc',
+				component: MvcComponent,
+				data: { title: 'MVC' },
+      },
+      {
+				path: 'techniques/sql',
+				component: SqlComponent,
+				data: { title: 'SQL' },
+      },
+      {
+				path: 'techniques/mongodb',
+				component: MongoComponent,
+				data: { title: 'MongoDB' },
 			},
 			{
 				path: 'faq/express-instance',

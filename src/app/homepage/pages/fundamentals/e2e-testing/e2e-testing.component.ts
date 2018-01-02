@@ -13,8 +13,8 @@ export class E2eTestingComponent extends BasePageComponent {
 import * as express from 'express';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { CatsModule } from '../../src/modules/cats/cats.module';
-import { CatsService } from '../../src/modules/cats/cats.service';
+import { CatsModule } from '../../src/cats/cats.module';
+import { CatsService } from '../../src/cats/cats.service';
 
 describe('Cats', () => {
     const server = express();
@@ -22,7 +22,7 @@ describe('Cats', () => {
 
     beforeAll(async () => {
         const module = await Test.createTestingModule({
-            modules: [CatsModule],
+            imports: [CatsModule],
           })
           .overrideComponent(CatsService).useValue(catsService)
           .compile();

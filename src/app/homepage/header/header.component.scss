@@ -23,7 +23,9 @@ header {
   top: 0;
   bottom: 0;
   background: $darkgrey-color;
-  
+  display: inline-block;
+  position: relative;
+
   &:hover {
     cursor: pointer;
     background: #212121;
@@ -40,10 +42,17 @@ header {
 }
 
 :host /deep/ .logo-wrapper {
-  display: block;
-  width: 100%;
+  // display: block;
+  // width: 100%;
+  display: inline-block;
   height: 100%;
   text-align: center;
+  vertical-align: top;
+  padding-left: 40px;
+
+  @include media(medium) {
+    padding-left: 10px;
+  }
 
   a {
     display: inline-block;;
@@ -51,14 +60,18 @@ header {
   }
 }
 
-.social-wrapper,
+/*.social-wrapper,
 .icon-wrapper {
   position: absolute;
-}
+}*/
 
 .social-wrapper {
   @extend .center-top;
-  right: 40px;
+  // right: 40px;
+  float: right;
+  padding-right: 40px;
+  position: relative;
+  display: inline-block;
 
   a {
     @extend .transition;
@@ -76,5 +89,91 @@ header {
       color: $white-color;
     }
   }
-  @include media(medium) { display: none; }
+  @include media(large) { display: none; }
+}
+
+.workshop-wrapper {
+  float: right;
+  padding: 25px;
+
+  img {
+    margin-right: 10px;
+    @include media(medium) {
+      display: none !important;
+    }  
+  }
+
+  img,
+  .workshop-info {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+
+  .short-title {
+    display: none;
+    @include media(medium) {
+      display: block;
+    }
+  }
+
+  .long-title {
+    @include media(medium) {
+      display: none;
+    }
+  }
+
+  a {
+    color: #03a9f4;
+    font-weight: 600;
+    font-size: 12px;
+    position: relative;
+
+    &:hover {
+      color: $red-color;
+      &::after {
+        background: $red-color;
+      }
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      background: #246081;
+      height: 2px;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      position: absolute;
+    }
+  }
+
+  span {
+    display: inline-block;
+    padding: 1px 2px;
+    background: -webkit-linear-gradient(#ee2943, #d31e5a); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#ee2943, #d31e5a); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#ee2943, #d31e5a); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#ee2943, #d31e5a); /* Standard syntax */
+  }
+}
+
+@media (max-width: 419px) {
+  .workshop-wrapper {
+    display: none;
+  }
+
+  :host /deep/ .logo-wrapper {
+    width: 100%;
+  }
+
+  .icon-wrapper {
+    position: absolute;
+  }
 }
