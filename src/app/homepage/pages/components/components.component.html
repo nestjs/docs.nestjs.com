@@ -25,7 +25,7 @@
   <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
   <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
   <p>
-    There's nothing specifically about components. Here's a <code>CatsService</code>, a basic class with one property and two methods.
+    There's nothing special about components. Here's a <code>CatsService</code>, a basic class with one property and two methods.
     The only difference is that it has the <code>@Component()</code> decorator. The <code>@Component()</code> attaches the metadata, thereby Nest knows that this class is a Nest component.
   </p>
   <blockquote>
@@ -47,7 +47,7 @@
   </p>
   <h4>Dependency Injection</h4>
   <p>
-    Nest is built around the strong design pattern, which is commonly known as a <strong>Dependency Injection</strong>.
+    Nest is built around the strong design pattern commonly known as <strong>Dependency Injection</strong>.
     There's a great article about this concept in the <a href="https://angular.io/guide/dependency-injection" target="blank">official Angular documentation</a>.
   </p>
   <blockquote class="info">
@@ -65,7 +65,7 @@
   <h4>Last step</h4>
   <p>
     The last thing is to tell the module that something called <code>CatsService</code> truly exists.
-    The only way to do it is to open the <code>app.module.ts</code> file, and put the service into the <code>components</code> array of the <code>@Module()</code> decorator.
+    We do this by editing our module file - <code>app.module.ts</code>, and put the service into the <code>components</code> array of the <code>@Module()</code> decorator.
   </p>
   <span class="filename">
     {{ 'app.module' | extension: appModuleT.isJsActive }}

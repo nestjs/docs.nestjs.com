@@ -51,7 +51,7 @@
     </tr>
   </table>
   <blockquote>
-    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, and if it's a truth - the standard way is disabled for this single route.
+    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, and if that's the case - the standard way is disabled for this single route.
   </blockquote>
   <h4>Request object</h4>
   <p>
@@ -136,7 +136,7 @@
   <h4>Route parameters</h4>
   <p>
      Routes with static paths can't help when you need to accept <strong>dynamic data</strong> as part of the URL.
-     To define routes with route parameters, simply specify the route parameters in the path of the route as shown below.
+     To define routes with parameters, simply specify the route parameters in the path of the route as shown below.
   </p>
   <pre><code class="language-typescript">{{ routeParameters }}</code></pre>
   <h4>Async / await</h4>
@@ -176,8 +176,7 @@
   </p>
   <h4>POST handler</h4>
   <p>
-    That's strange that this POST route handler doesn't accept any client params. We should at least 
-    expect the <code>@Body()</code> argument here.
+    Our previous example of POST route handler doesn't accept any client params. Let's fix it but adding the <code>@Body()</code> argument here.
   </p>
   <p>
     Firstly, we need to establish the <strong>DTO</strong> (Data Transfer Object) schema. 
@@ -211,12 +210,12 @@
   <pre [class.hide]="!exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBodyJs }}</code></pre>
   <h4>Handling errors</h4>
   <p>
-      There's a separated chapter about working with the exceptions <a routerLink="/exception-filters">here</a>.
+      There's a separate chapter about working with the exceptions <a routerLink="/exception-filters">here</a>.
   </p>
   <h4>Last step</h4>
   <p>
     The controller is prepared, and ready to use, but Nest doesn't know that <code>CatsController</code> exists yet,
-    so it won't create an instance of this class. We need to tell about it.
+    so it won't create an instance of this class. We need to tell Nest about it.
   </p>
   <p>
     The controller always belongs to the module, that's why we hold <code>controllers</code> array within <code>@Module()</code> decorator.
@@ -232,9 +231,10 @@
   </p>
   <h4>Express approach</h4>
   <p>
+    So far we've discussed the Nest standard way of manipulating responsed.
     The second way of manipulating the response is to use express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>.
     It was the only available option until <strong>Nest 4</strong>. To inject the response object, we need to use <code>@Res()</code> decorator.
-    To show the differences, I'm going to rewrite the <code>CatsController</code>:
+    To show the differences, let's rewrite the <code>CatsController</code>:
   </p>
   <span class="filename">
     <app-tabs #expressWayT></app-tabs>
@@ -242,7 +242,7 @@
   <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
   <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
   <p>
-    This manner is much less clear from my point of view. I definitely prefer the first approach, but to make the Nest <strong>backwards compatible</strong>
-    with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you've full control of the response.
+    This manner is much less clear from my point of view. I definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
+    with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you have full control of the express response object.
   </p>
 </div>
