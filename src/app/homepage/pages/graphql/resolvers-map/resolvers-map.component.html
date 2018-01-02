@@ -1,0 +1,63 @@
+<div class="content">
+  <h3>Resolvers Map</h3>
+  <p>
+    When using <code>graphql-tools</code>, you have to create a resolvers map manually.
+    The following example is copied & pasted from the <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo documentation</a> where you can read more about it:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ resolversMapExample }}</code></pre>
+  <p>
+    With the <code>@nestjs/graphql</code> package, the resolvers map is generated automatically using the metadata.
+    Let's rewrite the above example with the <strong>equivalent</strong> Nest-way code.
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ resolvers }}</code></pre>
+  <p>
+    The <code>@Resolver()</code> decorator doesn't affect either queries and mutations.
+    It only tells Nest that each <code>@ResolveProperty()</code> has a parent, which is an <code>Author</code> in this case.
+  </p>
+  <blockquote class="info">
+    <strong>Hint</strong> If we are using the <code>@Resolver()</code> decorator, we don't have to mark a class as a <code>@Component()</code>, otherwise, it's necessary.
+  </blockquote>
+  <p>
+    Normally, we would use something like a <code>getAuthor()</code> or <code>getPosts()</code> as a method names.
+    We can do that easily as well:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>@Resolver()</code> decorator can be used at the method-level as well.
+  </blockquote>
+  <h4>Refactor</h4>
+  <p>
+    The idea behind the above code is to show the differences between the Apollo and the Nest-way, to allow for a simple transition of your code.
+    Right now, we're gonna do a small refactor to take advantages of the Nest architecture, to make it a <strong>real-world</strong> example. 
+  </p>
+  <span class="filename">
+    <app-tabs #authorResolverT></app-tabs>
+  </span>
+  <pre [class.hide]="authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExample }}</code></pre>
+  <pre [class.hide]="!authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExampleJs }}</code></pre>
+  <p>
+    Now we have to register the <code>AuthorResolver</code> somewhere, for example inside the newly created <code>AuthorsModule</code>. 
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ authorsModule }}</code></pre>
+  <p>  
+    The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct resolvers map automatically.
+    The only thing you have to do is to import this module somewhere, therefore Nest will know that <code>AuthorsModule</code> exists.
+  </p>
+  <h4>Type definitions</h4>
+  <p>
+    The last missing piece is a type definitions (<a href="http://graphql.org/learn/schema/#type-language" target="blank">read more</a>) file.
+    Let's create it near to the resolver class.
+  </p>
+  <span class="filename">author-types.graphql</span>
+  <pre><code class="language-java">{{ typeDefs }}</code></pre>
+  <p>
+    That's all. We created a single <code>author(id: Int!)</code> query.
+  </p>
+  <blockquote class="info">
+    <strong>Hint</strong> Learn more about GraphQL queries <a href="http://graphql.org/learn/queries/" target="blank">here</a>.
+  </blockquote>
+</div>

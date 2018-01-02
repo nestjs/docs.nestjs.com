@@ -3,6 +3,7 @@ import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 import { TITLE_SUFFIX, HOMEPAGE_TITLE } from './constants';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class AppComponent implements OnInit {
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.router.events
       .filter((ev) => ev instanceof NavigationEnd)
       .subscribe((ev) => {

@@ -11,7 +11,7 @@ export class BasicsComponent extends BasePageComponent {
   get bootstrap() {
     return `
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './modules/app.module';
+import { ApplicationModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {

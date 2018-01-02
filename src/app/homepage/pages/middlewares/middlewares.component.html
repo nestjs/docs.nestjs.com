@@ -41,7 +41,7 @@
   <h4>Where to put the middlewares?</h4>
   <p>
     The middlewares can't be listed in the <code>@Module()</code> decorator.
-    We have to setup them using <code>configure()</code> method of the module class.
+    We have to set up them using <code>configure()</code> method of the module class.
     Modules that include middlewares have to implement the <code>NestModule</code> interface.
     Let's set up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
   </p>
@@ -55,7 +55,7 @@
     <strong>Hint</strong> We could pass here (inside <code>forRoutes()</code>) the single object and just use <code>RequestMethod.ALL</code>.
   </blockquote>
   <p>
-    In above example we have setup the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers, which we've registered inside the <code>CatsController</code>.
+    In above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers, which we've registered inside the <code>CatsController</code>.
     The <code>MiddlewareConsumer</code> is a helper class. It provides several methods to work with the middlewares. All of them can be simply <strong>chained</strong>.
     Let's go through those methods.
   </p>

@@ -58,9 +58,21 @@ import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
+import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
+import { QuickStartComponent } from './homepage/pages/graphql/quick-start/quick-start.component';
+import { ResolversMapComponent } from './homepage/pages/graphql/resolvers-map/resolvers-map.component';
+import { MutationsComponent } from './homepage/pages/graphql/mutations/mutations.component';
+import { SubscriptionsComponent } from './homepage/pages/graphql/subscriptions/subscriptions.component';
+import { SchemaStitchingComponent } from './homepage/pages/graphql/schema-stitching/schema-stitching.component';
+import { GuardsInterceptorsComponent } from './homepage/pages/graphql/guards-interceptors/guards-interceptors.component';
+import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
+import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
+import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
+import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-  suppressScrollX: true
+  suppressScrollX: true,
+  wheelPropagation: true,
 };
 
 @NgModule({
@@ -68,7 +80,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BrowserModule,
     AppRoutingModule,
     PerfectScrollbarModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
+    //ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
   ],
   declarations: [
     AppComponent,
@@ -124,6 +136,17 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     TabsComponent,
     ExtensionPipe,
     CustomDecoratorsComponent,
+    ExecutionContextComponent,
+    QuickStartComponent,
+    ResolversMapComponent,
+    MutationsComponent,
+    SubscriptionsComponent,
+    SchemaStitchingComponent,
+    GuardsInterceptorsComponent,
+    IdeComponent,
+    SqlComponent,
+    MvcComponent,
+    MongoComponent,
   ],
   bootstrap: [AppComponent],
   providers: [

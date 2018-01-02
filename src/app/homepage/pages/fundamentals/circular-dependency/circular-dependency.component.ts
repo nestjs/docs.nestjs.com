@@ -99,7 +99,7 @@ export class CommonService {
   get forwardRefModule() {
     return `
 @Module({
-  modules: [forwardRef(() => CatsModule)],
+  imports: [forwardRef(() => CatsModule)],
 })
 export class CommonModule {}`;
   }

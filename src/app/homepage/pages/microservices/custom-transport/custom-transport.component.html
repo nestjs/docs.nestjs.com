@@ -19,10 +19,10 @@
     Moreover, the <code>RabbitMQServer</code> shall extends the abstract <code>Server</code> class. This class supplies the core <code>getHandlers()</code> and <code>send()</code> methods, and helper <code>transformToObservable()</code> method.
   </p>
   <p>
-    The last step is to setup the <code>RabbitMQServer</code>:
+    The last step is to set up the <code>RabbitMQServer</code>:
   </p>
   <span class="filename">
-    {{ 'server' | extension: setupServerT.isJsActive }}
+    {{ 'main' | extension: setupServerT.isJsActive }}
     <app-tabs #setupServerT></app-tabs>
   </span>
   <pre><code class="language-typescript">{{ setupServer }}</code></pre>

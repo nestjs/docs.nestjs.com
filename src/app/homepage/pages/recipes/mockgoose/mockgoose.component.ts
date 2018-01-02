@@ -157,7 +157,7 @@ import { catsProviders } from './cats.providers';
 import { DatabaseModule } from '../database/database.module';
 
 @Module({
-  modules: [DatabaseModule],
+  imports: [DatabaseModule],
   controllers: [CatsController],
   components: [
     CatsService,
@@ -184,8 +184,8 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { CatsModule } from '../../src/modules/cats/cats.module';
-import { CatsService } from '../../src/modules/cats/cats.service';
+import { CatsModule } from '../../src/cats/cats.module';
+import { CatsService } from '../../src/cats/cats.service';
 
 describe('Cats', () => {
     const server = express();
@@ -193,7 +193,7 @@ describe('Cats', () => {
 
     beforeAll(async () => {
         const module = await Test.createTestingModule({
-            modules: [CatsModule],
+            imports: [CatsModule],
           })
           .compile();
 

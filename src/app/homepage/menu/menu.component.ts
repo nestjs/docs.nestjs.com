@@ -43,6 +43,29 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Techniques',
+      isOpened: false,
+      children: [
+        { title: 'MVC', path: '/techniques/mvc' },
+        { title: 'SQL', path: '/techniques/sql' },
+        { title: 'MongoDB', path: '/techniques/mongodb' },
+        { title: 'Authentication', path: '/techniques/authentication' },
+      ]
+    },
+    {
+      title: 'GraphQL',
+      isOpened: false,
+      children: [
+        { title: 'Quick Start', path: '/graphql/quick-start' },
+        { title: 'Resolvers Map', path: '/graphql/resolvers-map' },
+        { title: 'Mutations', path: '/graphql/mutations' },
+        { title: 'Subscriptions', path: '/graphql/subscriptions' },
+        { title: 'Guards & Interceptors', path: '/graphql/guards-interceptors' },
+        { title: 'Schema stitching', path: '/graphql/schema-stitching' },
+        { title: 'IDE', path: '/graphql/ide' },
+      ]
+    },
+    {
       title: 'WebSockets',
       isOpened: false,
       children: [
@@ -68,12 +91,9 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Advanced',
+      title: 'Execution Context',
       isOpened: false,
-      children: [
-        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
-        { title: 'Mixin Class', path: '/advanced/mixins' },
-      ]
+      path: '/execution-context',
     },
     {
       title: 'Recipes',
@@ -81,13 +101,20 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'SQL (TypeORM)', path: '/recipes/sql-typeorm' },
         { title: 'MongoDB (Mongoose)', path: '/recipes/mongodb' },
-        { title: 'MongoDB E2E (Mockgoose)', path: '/recipes/mockgoose' },
         { title: 'SQL (Sequelize)', path: '/recipes/sql-sequelize' },
-        { title: 'Passport integration', path: '/recipes/passport' },
+        { title: 'Authentication (Passport)', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
-        { title: 'GraphQL', path: '/recipes/graphql', isPending: true }
+        { title: 'MongoDB E2E (Mockgoose)', path: '/recipes/mockgoose' },
       ],
+    },
+    {
+      title: 'Advanced',
+      isOpened: false,
+      children: [
+        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
+        { title: 'Mixin Class', path: '/advanced/mixins' },
+      ]
     },
     {
       title: 'FAQ',

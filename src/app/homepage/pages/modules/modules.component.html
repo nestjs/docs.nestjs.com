@@ -24,7 +24,7 @@
        <td>the set of controllers which have to be created</td>
      </tr>
      <tr>
-       <td><code>modules</code></td>
+       <td><code>imports</code></td>
        <td>the list of imported modules that export the components which are necessary in this module</td>
      </tr>
      <tr>
@@ -79,7 +79,7 @@
             </div>
             <div class="item">app.module.ts</div>
           </div>
-          <div class="item">server.ts</div>
+          <div class="item">main.ts</div>
         </div>
       </div> 
     <h3>Shared Module</h3>
@@ -91,7 +91,7 @@
     </blockquote>
     <figure><img src="/assets/Shared_Module_1.png" /></figure>
     <p>
-      Every module is a <strong>Shared Module</strong> in fact. Once created is reused by the each module. 
+      Every module is a <strong>Shared Module</strong> in fact. Once created is reused by each module. 
       Let's imagine that we're gonna share the <code>CatsService</code> instance between few modules.
       We need to put the <code>CatsService</code> into <code>exports</code> array as shown below:
     </p>
@@ -101,22 +101,16 @@
     </span>
     <pre><code class="language-typescript">{{ catsModuleShared }}</code></pre>
     <p>
-      Now each module which would import the <code>CatsModule</code> (put <code>CatsModule</code> to the <code>modules</code> array) has an access to the <code>CatsService</code> and will share the same instance with all of the modules which are importing this module too.
+      Now each module which would import the <code>CatsModule</code> (would put <code>CatsModule</code> to the <code>imports</code> array) has an access to the <code>CatsService</code> and will share the same instance with all of the modules which are importing this module too.
     </p>
     <blockquote>
-      <strong>Notice</strong> Never export the controllers!
+      <strong>Notice</strong> You should never export the controllers!
     </blockquote>
     <h4>Modules re-exporting</h4>
     <p>
       The modules can export their components. Moreover, they can re-export modules imported by themselves.
     </p>
     <pre><code class="language-typescript">{{ reExportExamle }}</code></pre>
-    <h4>Single Scope</h4>
-    <p>
-      They're modules which shouldn't be shared at all. To prevent module from being a singleton, you can use <code>@SingleScope()</code>
-      decorator, which makes that Nest will always create the new instance of the module when it's imported by another one.
-    </p>
-    <pre><code class="language-typescript">{{ singleScope }}</code></pre>
     <h4>Dependency Injection</h4>
     <p>
       It's natural that module can <strong>inject</strong> components, which belongs to it (e.g. for the configuration purposes):
@@ -128,6 +122,44 @@
     <pre [class.hide]="catsModuleDiT.isJsActive"><code class="language-typescript">{{ catsModuleDi }}</code></pre>
     <pre [class.hide]="!catsModuleDiT.isJsActive"><code class="language-typescript">{{ catsModuleDiJs }}</code></pre>
     <p>
-      However, modules classes can't be injected by the components, because it creates a <a href="/fundamentals/circular-dependency">circular dependency</a>.
+      However, module classes can't be injected by the components, because it creates a <a href="/fundamentals/circular-dependency">circular dependency</a>.
     </p>
+    <h4>Global modules</h4>
+    <p>
+      If you have to import the same set of modules everywhere, it can be annoying.
+      In <a href="https://angular.io" target="blank">Angular</a>, the <code>providers</code> are registered in the global scope.
+      Once defined, they're available everywhere. On the other hand, Nest encapsulates components inside the module scope.
+      You can't use the module components elsewhere without importing it before. 
+      But sometimes, you may just want to provide a set of things which should be available always - out-of-the-box, for example: helpers, database connection, whatever.
+      That's why you're able to make the module a <strong>global</strong> one.
+    </p>
+    <pre><code class="language-typescript">{{ globalScope }}</code></pre>
+    <p>
+      The <code>@Global()</code> decorator makes the module a global-scoped.
+      The global modules should be registered <strong>only once</strong>, in best case by the root or core module. 
+      Afterwards, the <code>CatsService</code> component will be ubiquitous, although <code>CatsModule</code> won't be imported.
+    </p>
+    <blockquote class="info">
+      <strong>Hint</strong> Making everything global is not a good solution. Global modules are here to reduce an amount of necessary boilerplate. The <code>imports</code> array is still a best way to make the module API transparent.
+    </blockquote>
+    <h4>Dynamic modules</h4>
+    <p>
+      The Nest module system comes with a feature called <strong>dynamic modules</strong>.
+      It enables you to create customizable modules without any effort.
+      Let's have a look at the <code>DatabaseModule</code>:
+    </p>
+    <pre><code class="language-typescript">{{ dynamicModules }}</code></pre>
+    <p>
+      It defines <code>Connection</code> component by default, but additionally - depending on the passed <code>options</code> and <code>entities</code> - creates a collection of the providers, for example repository components.
+      In fact, the dynamic module <strong>extends</strong> the module metadata.
+      This substantial feature is useful when you need to register components dynamically.
+      Then you may import the <code>DatabaseModule</code> in the following manner:
+    </p>
+    <pre><code class="language-typescript">{{ importDynamicModules }}</code></pre>
+    <!--<h4>Single Scope</h4>
+    <p>
+      There're modules which shouldn't be shared at all. To prevent a module from being a singleton, you can use <code>@SingleScope()</code>
+      decorator, which makes that Nest will always create the new instance of the module when it's imported by another one.
+    </p>
+    <pre><code class="language-typescript">{{ singleScope }}</code></pre>-->
 </div>

@@ -1,5 +1,11 @@
 <div class="content">
   <h3>MongoDB (Mongoose)</h3>
+  <blockquote>
+    <strong>Warning</strong> In this article, you'll learn how to create a <code>DatabaseModule</code>
+    based on the <strong>Mongoose</strong> package from scratch using custom components. As a consequence, this solution
+    contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated
+    <code>@nestjs/mongoose</code> package. To learn more, see <a routerLink="/techniques/mongodb">here</a>.
+  </blockquote>
   <p>
     <a href="http://mongoosejs.com" target="blank">Mongoose</a> is the most popular <a href="https://www.mongodb.org/" target="blank">MongoDB</a> object modeling tool.
     To start the adventure with this library we have to install all of the required dependencies:
@@ -88,7 +94,4 @@
   <blockquote class="warning">
       <strong>Hint</strong> Don't forget to import the <code>CatsModule</code> into the root <code>ApplicationModule</code>.
    </blockquote>
-   <p>
-      The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/06-mongoose" target="blank">here</a>.
-    </p>
 </div>

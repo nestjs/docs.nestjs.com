@@ -183,4 +183,15 @@ async create(createCatDto) {
   await this.catsService.create(createCatDto);
 }`;
   }
+
+  get getValidationPipe() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const validationPipe = app
+  .select(SharedModule)
+  .get(ValidationPipe);
+
+app.useGlobalPipes(validationPipe);
+`;
+  }
 }

@@ -48,7 +48,7 @@
      </blockquote>
     <h4>Usage</h4>
     <p>
-      The guards can be <strong>controller-scoped</strong>, method-scoped and global-scoped. To setup the guard, we're using <code>@UseGuards()</code> decorator. This decorator takes infinite count of arguments.
+      The guards can be <strong>controller-scoped</strong>, method-scoped and global-scoped. To set up the guard, we're using <code>@UseGuards()</code> decorator. This decorator takes endless number of arguments.
     </p>
     <span class="filename">
       {{ 'cats.controller' | extension: useGuardsT.isJsActive }}
@@ -59,7 +59,7 @@
       <strong>Notice</strong> The <code>@UseGuards()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
    <p>
-     Above construction attaches the guard to the every handler declared by this controller. If we'd decide to restrict only one of them, we just need to setup the guard at <strong>method level</strong>.
+     Above construction attaches the guard to the every handler declared by this controller. If we'd decide to restrict only one of them, we just need to set up the guard at <strong>method level</strong>.
      To bind the global guard, we're using the <code>useGlobalGuards()</code> method of the Nest application instance:
     </p>
     <pre><code class="language-typescript">{{ globalGuard }}</code></pre>
@@ -140,6 +140,52 @@
   </p>
   <h4>Custom error responses</h4>
   <p>
-    To change the default access refusal response, just throw a <code>HttpException</code> instead of returning <code>false</code>.
+    To change the default access refusal response, just throw a <code>HttpException</code> instead of returning <code>false</code> value.
   </p>
+  <h4>Global guards</h4>
+  <p>
+    The global guards don't belong to any scope. They live outside modules, thus as a result - they can't inject dependencies.
+    We need to create an instance immediately. But quite often, global guards depend on other objects, for example, we'd
+    love to authenticate request using
+    <code>AuthService</code>, but this service is a part of the
+    <code>AuthModule</code>. What's now?
+  </p>
+  <p>
+    The solution is pretty easy. Each Nest application instance is in fact, a created
+    <strong>Nest context</strong>. The Nest context is a wrapper around the Nest container, which holds all instantiated classes.
+    We can grab any existing instance from within any imported module directly using application object.
+  </p>
+  <p>
+    Let's assume that we have a
+    <code>AuthGuard</code> registered in the
+    <code>AuthModule</code>. This
+    <code>AuthModule</code> is imported into
+    <strong>root module</strong>. We can pick the
+    <code>AuthGuard</code> instance using following syntax:
+  </p>
+  <pre><code class="language-typescript">{{ getAuthGuard }}</code></pre>
+  <p>
+    To grab <code>AuthGuard</code> instance we have used 2 methods, well-described in the below table:
+  </p>
+  <table>
+    <tr>
+      <td>
+        <code>get()</code>
+      </td>
+      <td>
+        Makes possible to retrieve the instance of the component or controller available inside the processed module.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>select()</code>
+      </td>
+      <td>
+        Allows you to navigate through the module tree, for example, to pull out a specific instance from the selected module.
+      </td>
+    </tr>
+  </table>
+  <blockquote class="info">
+    <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through entire modules stack (step by step).
+  </blockquote>
 </div>

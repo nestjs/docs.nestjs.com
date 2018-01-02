@@ -1,0 +1,29 @@
+<div class="content">
+  <h3>Guards & Interceptors</h3>
+  <p>
+    In the GraphQL world, a lot of articles complain how to handle stuff like an <strong>authentication</strong>, or <strong>side-effects</strong> of operations.
+    Should we put it inside the business logic? Shall we use a higher-order function to enhance queries and mutations as well for example with authorization logic?
+    There's no single answer.
+  </p>
+  <p>
+    The Nest ecosystem is trying to help with this issue using existing features like <a routerLink="/guards">guards</a> and <a routerLink="/interceptors">interceptors</a>.
+    The idea behind them is to reduce a redundancy and also, create a well-structured applications.
+  </p>
+  <h4>Usage</h4>
+  <p>
+    You can use both <a routerLink="/guards">guards</a> and <a routerLink="/interceptors">interceptors</a> in the same way as in the simple REST application.
+    They act equivalently until the <code>request</code> is passed as a <code>rootValue</code> in the <code>graphqlExpress</code> middleware.
+    Let's have a look at the following code:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ useGuardsExample }}</code></pre>
+  <p>
+    Thanks to that you can move your authentication logic to the guard, or even reuse the same guard class as in the REST application.
+    The interceptors works in the exact same way:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ useInterceptorsExample }}</code></pre>
+  <p>
+    Write once, use everywhere :)
+  </p>
+</div>

@@ -39,7 +39,7 @@
         <br />
         <br />
         Furthermore, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's <strong>201</strong>.
-        We can easily change this behavior by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
+        We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
       </td>
     </tr>
     <tr>
@@ -51,7 +51,7 @@
     </tr>
   </table>
   <blockquote>
-    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, and if it's truth - the standard way is disabled for this single route.
+    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, and if it's a truth - the standard way is disabled for this single route.
   </blockquote>
   <h4>Request object</h4>
   <p>
@@ -126,7 +126,7 @@
   <h4>Status code manipulation</h4>
   <p>
       As mentioned, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's <strong>201</strong>.
-      We can easily change this behavior by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
+      We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: statusCodeT.isJsActive }}
@@ -142,14 +142,14 @@
   <h4>Async / await</h4>
   <p>
     We love modern JavaScript, and we know that the data extraction is mostly <strong>asynchronous</strong>.
-    That's why Nest supports <code>async</code> functions, and works pretty well with them.
+    That's why Nest supports <code>async</code> functions and works pretty well with them.
   </p>
   <blockquote class="info">
     <strong>Hint</strong> Learn more about <code>async / await</code> <a href="https://kamilmysliwiec.com/typescript-2-1-introduction-async-await" target="blank">here</a>!
   </blockquote>
   <p>
-    Every async function has to return the <code>Promise</code>. It means that you can return deffered value and
-    Nest will resolve it by itself. Let's have a look on the below example:
+    Every async function has to return the <code>Promise</code>. It means that you can return deferred value and
+    Nest will resolve it by itself. Let's have a look at the below example:
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: asyncExampleT.isJsActive }}
@@ -234,7 +234,7 @@
   <p>
     The second way of manipulating the response is to use express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>.
     It was the only available option until <strong>Nest 4</strong>. To inject the response object, we need to use <code>@Res()</code> decorator.
-    To show the differences, i'm going to rewrite the <code>CatsController</code>:
+    To show the differences, I'm going to rewrite the <code>CatsController</code>:
   </p>
   <span class="filename">
     <app-tabs #expressWayT></app-tabs>
@@ -242,7 +242,7 @@
   <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
   <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
   <p>
-    This manner is much less clear from my point of view. I definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
+    This manner is much less clear from my point of view. I definitely prefer the first approach, but to make the Nest <strong>backwards compatible</strong>
     with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you've full control of the response.
   </p>
 </div>

@@ -12,7 +12,7 @@ export class SwaggerComponent extends BasePageComponent {
     return `
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './modules/app.module';
+import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);

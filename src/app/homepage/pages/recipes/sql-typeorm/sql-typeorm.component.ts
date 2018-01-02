@@ -54,23 +54,23 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Photo {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 500 })
-    name: string;
+  @Column({ length: 500 })
+  name: string;
 
-    @Column('text')
-    description: string;
+  @Column('text')
+  description: string;
 
-    @Column()
-    filename: string;
+  @Column()
+  filename: string;
 
-    @Column('int')
-    views: number;
+  @Column('int')
+  views: number;
 
-    @Column()
-    isPublished: boolean;
+  @Column()
+  isPublished: boolean;
 }`;
   }
 
@@ -113,7 +113,7 @@ import { photoProviders } from './photo.providers';
 import { PhotoService } from './photo.service';
 
 @Module({
-  modules: [DatabaseModule],
+  imports: [DatabaseModule],
   components: [
     ...photoProviders,
     PhotoService,
