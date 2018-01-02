@@ -6,16 +6,13 @@
    </p>
    <figure><img src="/assets/Filter_1.png" /></figure>
    <p>
-     Every unrecognized exception is handled and when it was <strong>HTTP request</strong>, user receives the below JSON response:
+     Every exception is handled by the global exception filter and when it's <strong>unrecognized</strong> (not <code>HttpException</code> or class that inherit <code>HttpException</code>), a user receives the below JSON response:
    </p>
    <pre><code class="language-typescript">{{ errorResponse }}</code></pre>
-   <p>
-     Of course, the goal is to avoid any unhandled exceptions across the application.
-   </p>
    <h4>HttpException</h4>
    <p>
-     There's a built-in <code>HttpException</code> class inside the <code>@nestjs/core</code> package. The core exception handler works with this class very well.
-     When you throw <code>HttpException</code> object, it'd be catched by handler and transformed to the relevant JSON response.
+     There's a built-in <code>HttpException</code> class inside the <code>@nestjs/common</code> package. The core exception handler works with this class very well.
+     When you throw <code>HttpException</code> object, it'll be caught by handler and transformed to the relevant JSON response.
    </p>
    <p>
      In the <code>CatsController</code>, we have a <code>create()</code> method (<code>POST</code> route). Let's assume that this route handler would throw an exception for some reason.
@@ -34,10 +31,20 @@
       Now when the client will call this endpoint, the response would looks like below:
     </p>
     <pre><code class="language-typescript">{{ forbiddenResponse }}</code></pre>
-    <blockquote class="warning">
-      <strong>Hint</strong> The <code>HttpException</code> constructor takes <code>string | object</code> as a first argument. If you'd pass <code>object</code> instead of <code>string</code>, you'll completely override the response body.
-    </blockquote>
-    <h4>Exceptions Hierarchy</h4>
+    <p>
+      The <code>HttpException</code> constructor takes <code>string | object</code> as a first argument. If you'd pass <code>object</code> instead of a <code>string</code>, you'll completely override the response body.
+    </p>
+    <span class="filename">
+      {{ 'cats.controller' | extension: exceptionObjT.isJsActive }}
+      <app-tabs #exceptionObjT></app-tabs>
+    </span>
+     <pre [class.hide]="exceptionObjT.isJsActive"><code class="language-typescript">{{ exceptionObj }}</code></pre>
+     <pre [class.hide]="!exceptionObjT.isJsActive"><code class="language-typescript">{{ exceptionObjJs }}</code></pre>
+    <p>
+      And that's how the response would look like:
+    </p>
+    <pre><code class="language-typescript">{{ customResponse }}</code></pre>
+     <h4>Exceptions Hierarchy</h4>
     <p>
       The good practice is to create your own <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base <code>HttpException</code> class.
       As a result Nest will recognize every of your exception, and will fully take care about the error responses.
@@ -49,7 +56,7 @@
     <pre><code class="language-typescript">{{ forbiddenException }}</code></pre>
     <p>
       Since <code>ForbiddenException</code> extends the base <code>HttpException</code>,
-      it will work well with the core exceptions handler, so now we can use this class inside the <code>create()</code> method.
+      it will work well with the core exceptions handler, therefore we can use this class inside the <code>create()</code> method.
     </p>
     <span class="filename">
         {{ 'cats.controller' | extension: forbiddenCreateMethodT.isJsActive }}
@@ -57,9 +64,31 @@
      </span>
     <pre [class.hide]="forbiddenCreateMethodT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethod }}</code></pre>
     <pre [class.hide]="!forbiddenCreateMethodT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodJs }}</code></pre>
+    <h4>HTTP exceptions</h4>
+    <p>
+      To reduce the boilerplate code, Nest provides a set of usable exceptions that extends the core <code>HttpException</code>. All of them are available in the <code>@nestjs/common</code> package:
+    </p>
+    <ul>
+        <li>BadRequestException</li>
+        <li>UnauthorizedException</li>
+        <li>NotFoundException</li>
+        <li>ForbiddenException</li>
+        <li>NotAcceptableException</li>
+        <li>RequestTimeoutException</li>
+        <li>ConflictException</li>
+        <li>GoneException</li>
+        <li>PayloadTooLargeException</li>
+        <li>UnsupportedMediaTypeException</li>
+        <li>UnprocessableException</li>
+        <li>InternalServerErrorException</li>
+        <li>NotImplementedException</li>
+        <li>BadGatewayException</li>
+        <li>ServiceUnavailableException</li>
+        <li>GatewayTimeoutException</li>
+    </ul>
     <h4>Exception Filters</h4>
     <p>
-      The base exceptions handler is fine, but sometimes you may want to have a <strong>full control</strong> over the exceptions layer, for example add some logging or use the different JSON schema.
+      The base exceptions handler is fine, but sometimes you may want to have a <strong>full control</strong> over the exceptions layer, for example, add some logging or use the different JSON schema.
       We love generic solutions and making your life easier, that's why the feature called <strong>exception filters</strong> was created.
     </p>
     <p>
@@ -79,7 +108,7 @@
     </blockquote>
     <p>
       The <code>@Catch()</code> decorator binds the required metadata to the exception filter. It tells Nest that this filter is looking for <code>HttpException</code>.
-      The <code>@Catch()</code> takes infinite count of parameters, so you can setup this filter for several types of exceptions, just separate them by comma.
+      The <code>@Catch()</code> takes infinite count of parameters, so you can setup this filter for several types of exceptions, just separate them by a comma.
     </p>
     <p>
       The last step is to inform Nest that the <code>HttpExceptionFilter</code> should be used within the <code>create()</code> method.
@@ -97,8 +126,8 @@
       We've used the <code>@UseFilters()</code> decorator here. Same as <code>@Catch()</code>, it takes infinite count of parameters.
     </p>
     <p>
-      In the above example the <code>HttpExceptionFilter</code> is setuped only for the single <code>create()</code> route handler, but it's not the only way.
-      In fact the exception filters can be method-scoped, controller-scoped and also global-scoped. 
+      In the above example, the <code>HttpExceptionFilter</code> is applied only to the single <code>create()</code> route handler, but it's not the only way.
+      In fact, the exception filters can be method-scoped, controller-scoped and also global-scoped. 
     </p>
     <span class="filename">
       {{ 'cats.controller' | extension: controllerScopedFilterT.isJsActive }}
@@ -115,7 +144,7 @@
     </span>
     <pre><code class="language-typescript">{{ globalScopedFilter }}</code></pre>
     <p>
-      The global filters are used across entire application, for every controller, every route handler.
+      The global filters are used across the entire application, for every controller, every route handler.
     </p>
     <blockquote>
       <strong>Notice</strong> The <code>useGlobalFilters()</code> method doesn't setup filters for gateways and microservices.

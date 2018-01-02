@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
+import { PerfectScrollbarModule, PerfectScrollbarConfigInterface, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -55,14 +55,20 @@ import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
+import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {environment} from '../environments/environment';
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true
+};
 
 @NgModule({
   imports: [
     BrowserModule,
     AppRoutingModule,
-    PerfectScrollbarModule.forRoot({
-      suppressScrollX: true,
-    }),
+    PerfectScrollbarModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
   ],
   declarations: [
     AppComponent,
@@ -117,7 +123,14 @@ import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose
     CqrsComponent,
     TabsComponent,
     ExtensionPipe,
+    CustomDecoratorsComponent,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+    }
+  ]
 })
 export class AppModule {}
