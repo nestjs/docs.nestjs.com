@@ -11,7 +11,7 @@ export class MockgooseComponent extends BasePageComponent {
   get dependencies() {
     return `
 $ npm install --save mongoose
-$ npm install --save-dev mockgoose
+$ npm install --save-dev mockgoose-fix
 $ npm install --save-dev @types/mongoose`;
   }
 
@@ -24,7 +24,7 @@ $ npm install --save mockgoose`;
   get databaseProviders() {
     return `
 import * as mongoose from 'mongoose';
-import { Mockgoose } from 'mockgoose';
+import { Mockgoose } from 'mockgoose-fix';
 
 export const databaseProviders = [
   {
