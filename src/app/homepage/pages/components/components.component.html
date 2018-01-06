@@ -1,18 +1,18 @@
 <div class="content">
    <h3>Components</h3>
    <p>
-    Almost everything is a component – Service, Repository, Factory, Helper [...] and they can be <strong>injected</strong> into controllers or to other components through <code>constructor</code>.
+    Almost everything is a component – Service, Repository, Factory, Helper [...] and they can be <strong>injected</strong> into controllers or into other components through <code>constructor</code>.
    </p>
    <figure><img src="/assets/Components_1.png" /></figure>
    <p>
-      In the previous chapter, we have built a simple <code>CatsController</code>. 
+      In the previous chapter, we have built a simple <code>CatsController</code>.
    </p>
    <p>
-     The controllers should only handle HTTP requests and delegate more complex tasks to the <strong>components</strong>. 
-     The components are a plain TypeScript classes with <code>@Component()</code> decorator.
+     The controllers should only handle HTTP requests and delegate more complex tasks to the <strong>components</strong>.
+     The components are plain TypeScript classes with a <code>@Component()</code> decorator.
    </p>
    <blockquote class="info">
-    <strong>Hint</strong> Since Nest enables the possibility to design, organize the dependencies in more OO-way, we strongly recommend
+    <strong>Hint</strong> Since Nest enables the possibility to design, organize the dependencies in a more OO-way, we strongly recommend
     following the <strong>SOLID</strong> principles.
   </blockquote>
   <p>
@@ -30,7 +30,7 @@
   </p>
   <blockquote>
     <strong>Notice</strong> There's a <code>Cat</code> interface here. I didn't mention it because the schema is exactly same as in the <code>CreateCatDto</code> class which we have created in the previous chapter.
-  </blockquote> 
+  </blockquote>
   <p>
     Since we have the service class already done, let's use it inside the <code>CatsController</code>:
   </p>
@@ -52,10 +52,10 @@
   </p>
   <blockquote class="info">
     <strong>Hint</strong> Learn more about the <strong>Dependency Injection</strong> in Nest <a href="http://docs.nestjs.com/fundamentals/dependency-injection" target="blank">here</a>.
-  </blockquote> 
+  </blockquote>
   <p>
-    It's extremely easy to manage dependencies with <strong>TypeScript</strong> because Nest will recognize your dependencies just by <strong>type</strong>.
-    This single line:
+    It's extremely easy to manage dependencies with <strong>TypeScript</strong> because Nest will recognize your dependencies just by <strong>writing</strong>
+    this single line:
   </p>
   <pre><code class="language-typescript">{{ constructorSyntax }}</code></pre>
   <p>
@@ -74,7 +74,7 @@
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
     Now Nest will smoothly resolve the dependencies of the <code>CatsController</code> class.
-    That's how our directories structure looks right now:
+    This is how our directory structure looks right now:
   </p>
   <div class="file-tree">
     <div class="item">src</div>
@@ -98,5 +98,5 @@
       </div>
       <div class="item">main.ts</div>
     </div>
-  </div> 
+  </div>
 </div>
