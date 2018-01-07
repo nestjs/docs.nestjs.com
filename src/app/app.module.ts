@@ -56,6 +56,7 @@ import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import { SentryComponent } from './homepage/pages/recipes/sentry/sentry.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
@@ -147,6 +148,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SqlComponent,
     MvcComponent,
     MongoComponent,
+    SentryComponent
   ],
   bootstrap: [AppComponent],
   providers: [

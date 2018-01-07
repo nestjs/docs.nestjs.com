@@ -1,0 +1,50 @@
+<div class="content">
+  <h3>Sentry</h3>
+  <p>
+    <a href="https://sentry.io/" target="blank">Sentry</a> is an open-source application that helps developers to monitor and fix crashes in real time. It can really shorten your feedback cycle and, cherry on the top, is pretty easy to setup in your project.
+    This article won't cover the Sentry installation and configuration since there's already a lot of documentation and example over the web.
+  </p>
+  <p>
+    Let's get into this and start with a few dependencies:
+  </p>
+  <pre><code class="language-typescript">{{ dependencies }}</code></pre>
+  <blockquote class="warning">
+    <strong>Hint</strong> Raven is the official Sentry SDK for Node.js.
+  </blockquote>
+  <p>
+    Since NestJS makes use of <code>express</code>, we can refer to the Sentry documentation for an express application.
+  </p>
+  <span class="filename">app.js</span>
+  <pre><code class="language-javascript">{{ expressExample }}</code></pre>
+  <p>
+    As you can see, there is very little to implement to get Raven to send your application errors to your Sentry instance.<br/>
+    The first thing to do is to configure and initialize the Raven client: simply chain the <code>.config()</code> and <code>.install()</code> methods.
+    Don't forget to replace <code>__DSN__</code> with your actual DSN.
+  </p>
+  <blockquote class="warning">
+    <strong>Hint</strong> The DSN, or Data Source Name, is a representation of the configuration required by all Sentry SDKs.
+  </blockquote>
+  <p>
+    The next thing to do is to add the <code>requestHandler</code> handler to your middlewares. Tricky part: it has to be the <strong>first</strong> middleware called.
+    You can use <code>app.use(Raven.requestHandler())</code> method to add this handle as the first middleware, with <code>app</code> being your NestApplication.
+  </p>
+  <p>
+    Last but not least, we have to capture every exception and send it to sentry. That is the role of the <code>errorHandler</code> handler in the Express example.
+    We are not going to use this handler but rather the <code>Raven.captureException(err)</code> method.
+    Since every unrecognized (neither <code>HttpException</code> or a class that inherit <code>HttpException</code> exception is handled by the global exception filter, we're going to use an interceptor.
+  </p>
+  <p>
+    Here is our <code>SentryInterceptor</code>:
+  </p>
+  <span class="filename">sentry.interceptor.ts</span>
+  <pre><code class="language-javascript">{{ sentryInterceptor }}</code></pre>
+  <p>
+    Then, we set this interceptor as a global interceptor:
+  </p>
+  <span class="filename">server.ts</span>
+  <pre><code class="language-typescript">{{ server }}</code></pre>
+  <p>
+    Et voilà! Every exception thrown by your NestJS application will now be sent to your Sentry instance.
+  </p>
+
+</div>

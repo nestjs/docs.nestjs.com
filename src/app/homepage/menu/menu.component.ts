@@ -106,6 +106,7 @@ export class MenuComponent implements OnInit {
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
         { title: 'MongoDB E2E (Mockgoose)', path: '/recipes/mockgoose' },
+        { title: 'Sentry', path: '/recipes/sentry' }
       ],
     },
     {

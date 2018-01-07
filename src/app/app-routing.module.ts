@@ -57,6 +57,7 @@ import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
+import {SentryComponent} from './homepage/pages/recipes/sentry/sentry.component';
 
 const routes: Routes = [
 	{
@@ -316,6 +317,11 @@ const routes: Routes = [
 				component: MongoComponent,
 				data: { title: 'MongoDB' },
 			},
+      {
+        path: 'recipes/sentry',
+        component: SentryComponent,
+        data: { title: 'Sentry' },
+      },
 			{
 				path: 'faq/express-instance',
 				component: ExpressInstanceComponent,
@@ -340,7 +346,7 @@ const routes: Routes = [
 				path: 'faq/multiple-servers',
 				component: MultipleServersComponent,
 				data: { title: 'HTTPS & Multiple Servers - FAQ' },
-			},
+			}
 		],
 	},
 	{
