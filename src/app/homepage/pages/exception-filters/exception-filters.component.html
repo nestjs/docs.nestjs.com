@@ -11,7 +11,7 @@
   <p>
     Every exception is handled by the global exception filter and when it's
     <strong>unrecognized</strong> (not
-    <code>HttpException</code> or class that inherit
+    <code>HttpException</code> or class that inherits from
     <code>HttpException</code>), a user receives the below JSON response:
   </p>
   <pre><code class="language-typescript">{{ errorResponse }}</code></pre>
@@ -19,8 +19,8 @@
   <p>
     There's a built-in
     <code>HttpException</code> class inside the
-    <code>@nestjs/common</code> package. The core exception handler works with this class very well. When you throw
-    <code>HttpException</code> object, it'll be caught by handler and transformed to the relevant JSON response.
+    <code>@nestjs/common</code> package. The core exception handler works very well with this. When you throw a
+    <code>HttpException</code> object, it'll be caught by the handler and transformed to the relevant JSON response.
   </p>
   <p>
     In the
@@ -41,13 +41,13 @@
     <code>@nestjs/common</code> package.
   </blockquote>
   <p>
-    Now when the client will call this endpoint, the response would look like this:
+    Now when the client calls this endpoint, the response would look like this:
   </p>
   <pre><code class="language-typescript">{{ forbiddenResponse }}</code></pre>
   <p>
     The
     <code>HttpException</code> constructor takes
-    <code>string | object</code> as a first argument. If you'd pass
+    <code>string | object</code> as the first argument. If you'd pass it an
     <code>object</code> instead of a
     <code>string</code>, you'll completely override the response body.
   </p>
@@ -63,9 +63,9 @@
   <pre><code class="language-typescript">{{ customResponse }}</code></pre>
   <h4>Exceptions Hierarchy</h4>
   <p>
-    The good practice is to create your own
+    A good practice is to create your own
     <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base
-    <code>HttpException</code> class. As a result Nest will recognize every of your exception, and will fully take care about the
+    <code>HttpException</code> class. As a result Nest will recognize your exception, and will fully take care of the
     error responses.
   </p>
   <span class="filename">
@@ -143,13 +143,13 @@
   </ul>
   <h4>Exception Filters</h4>
   <p>
-    The base exceptions handler is fine, but sometimes you may want to have a
-    <strong>full control</strong> over the exceptions layer, for example, add some logging or use the different JSON schema. We love
+    The base exception handler is fine, but sometimes you may want to have
+    <strong>full control</strong> over the exceptions layer, for example, add some logging or use a different JSON schema. We love
     generic solutions and making your life easier, that's why the feature called
     <strong>exception filters</strong> was created.
   </p>
   <p>
-    We're gonna create the filter, which responsibility is to catch the
+    We're gonna create the filter, which is responsible to catch the
     <code>HttpException</code> and override the
     <code>message</code> property.
   </p>
@@ -167,7 +167,7 @@
   </p>
   <blockquote class="info">
     <strong>Hint</strong> Every exception filter should implement the
-    <code>ExceptionFilter</code> interface. It forces you provide the
+    <code>ExceptionFilter</code> interface. It forces you to provide the
     <code>catch()</code> method with the proper signature.
   </blockquote>
   <p>
@@ -175,7 +175,7 @@
     <code>@Catch(HttpException)</code> decorator binds the required metadata to the exception filter. It tells Nest that this filter
     is looking for
     <code>HttpException</code>. The
-    <code>@Catch()</code> takes endless number of parameters, so you can set up this filter for several types of exceptions, just
+    <code>@Catch()</code> takes an endless number of parameters, so you can set up this filter for several types of exceptions, just
     separate them by a comma.
   </p>
   <p>
@@ -197,10 +197,10 @@
   <p>
     We've used the
     <code>@UseFilters()</code> decorator here. Same as
-    <code>@Catch()</code>, it takes endless number of parameters.
+    <code>@Catch()</code>, it takes an endless number of parameters.
   </p>
   <p>
-    In the above example, the
+    In the example above, the
     <code>HttpExceptionFilter</code> is applied only to the single
     <code>create()</code> route handler, but it's not the only way. In fact, the exception filters can be method-scoped, controller-scoped
     and also global-scoped.
@@ -211,7 +211,7 @@
   </span>
   <pre><code class="language-typescript">{{ controllerScopedFilter }}</code></pre>
   <p>
-    This construction setups the
+    This construction sets up the
     <code>HttpExceptionFilter</code> for every route handler inside the
     <code>CatsController</code>. It's the example of the controller-scoped exception filter. The last available scope is the global-scoped
     exception filter.
@@ -222,7 +222,7 @@
   </span>
   <pre><code class="language-typescript">{{ globalScopedFilter }}</code></pre>
   <p>
-    The global filters are used across the entire application, for every controller, every route handler.
+    The global filters are used across the entire application, for every controller and every route handler.
   </p>
   <blockquote>
     <strong>Notice</strong> The
@@ -230,7 +230,7 @@
   </blockquote>
   <h4>Catch everything</h4>
   <p>
-    To handle every occurred exception, you may leave parentheses empty (
+    To handle every occurred exception, you may leave the parentheses empty (
     <code>@Catch()</code>):
   </p>
   <span class="filename">
@@ -239,31 +239,31 @@
   </span>
   <pre [class.hide]="exceptionFilterT.isJsActive"><code class="language-typescript">{{ exceptionFilter }}</code></pre>
   <pre [class.hide]="!exceptionFilterT.isJsActive"><code class="language-typescript">{{ exceptionFilterJs }}</code></pre>
-  <p>Above filter will catch each thrown exception.</p>
+  <p>In the example above the filter will catch each exception that is thrown.</p>
   <h4>Global filters</h4>
   <p>
     The global exception filters don't belong to any scope. They live outside modules, thus as a result - they can't inject dependencies.
     We need to create an instance immediately. But quite often, global filters depend on other objects, for example, we'd
     love to log an exception using
     <code>LoggerService</code>, but this service is a part of the
-    <code>LoggerModule</code>. What's now?
+    <code>LoggerModule</code>. How do we solve this?
   </p>
   <p>
     The solution is pretty easy. Each Nest application instance is in fact, a created
     <strong>Nest context</strong>. The Nest context is a wrapper around the Nest container, which holds all instantiated classes.
-    We can grab any existing instance from within any imported module directly using application object.
+    We can grab any existing instance from within any imported module using application object.
   </p>
   <p>
     Let's assume that we have a
     <code>LoggerExceptionFilter</code> registered in the
     <code>LoggerModule</code>. This
-    <code>LoggerModule</code> is imported into
+    <code>LoggerModule</code> is imported into the
     <strong>root module</strong>. We can pick the
-    <code>LoggerExceptionFilter</code> instance using following syntax:
+    <code>LoggerExceptionFilter</code> instance by using the following syntax:
   </p>
   <pre><code class="language-typescript">{{ getLoggerExceptionFilter }}</code></pre>
   <p>
-    To grab <code>LoggerExceptionFilter</code> instance we have used 2 methods, well-described in the below table:
+    To grab the <code>LoggerExceptionFilter</code> instance we have to use 2 methods, well-described in the table below:
   </p>
   <table>
     <tr>
@@ -271,7 +271,7 @@
         <code>get()</code>
       </td>
       <td>
-        Makes possible to retrieve the instance of the component or controller available inside the processed module.
+        Makes it possible to retrieve the instance of the component or controller available inside the processed module.
       </td>
     </tr>
     <tr>
@@ -284,6 +284,6 @@
     </tr>
   </table>
   <blockquote class="info">
-    <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through entire modules stack (step by step).
+    <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through the entire modules stack (step by step).
   </blockquote>
 </div>
