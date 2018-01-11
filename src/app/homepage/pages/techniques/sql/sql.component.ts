@@ -40,7 +40,7 @@ export class ApplicationModule {}`;
   "password": "root",
   "database": "test",
   "entities": ["src/**/**.entity{.ts,.js}"],
-  "autoSchemaSync": true
+  "synchronize": true
 }`;
   }
 
