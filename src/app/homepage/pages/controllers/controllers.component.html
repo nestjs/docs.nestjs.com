@@ -13,18 +13,16 @@
   <pre><code class="language-typescript">{{ catsController }}</code></pre>
   <h4>Metadata</h4>
   <p>
-    We're using <code>@Controller('cats')</code> here. This decorator is <strong>obligatory</strong>.
-    The <code>cats</code> is a prefix for each route registered in the class. The prefix is <strong>optional</strong>, that means you could leave the parentheses empty (<code>@Controller()</code>), but it reduces redundant boilerplate code,
-    thus you don't have to repeat yourself every time when you'd decide to create a new endpoint (route).
+    We're using the <code>@Controller('cats')</code> decorator, which is <strong>obligatory</strong>.
+    The <code>cats</code> is an optional prefix for each route registered in the class. Using a prefix allows you to avoid repeating yourself when all your routes share a common prefix.
   </p>
   <p>
-    There's a single public method, the <code>findAll()</code>, which returns an empty array.
-    The <code>@Get()</code> decorator tells Nest that it's necessary to create an endpoint for this route path
-    and map every appropriate request to this handler. Since we declared the prefix for every route (<code>cats</code>),
-    Nest will map every <code>/cats</code> <strong>GET</strong> request here.
+    The <code>@Get()</code> decorator on the <code>findAll()</code> method tells Nest to create an endpoint for this route path
+    and map every corresponding request to this handler. Since we declared a prefix for every route (<code>cats</code>),
+    Nest will map every <code>/cats</code> <strong>GET</strong> request to this method.
   </p>
   <p>
-    When a client would call this endpoint, Nest will return with 200 status code, and the parsed <strong>JSON</strong>, so in this case - just an empty array.
+    When a GET request is made to this endpoint, Nest will return a 200 status code and the parsed <strong>JSON</strong>, in this case just an empty array.
     How is that possible?
   </p>
   <p>
@@ -34,11 +32,11 @@
     <tr>
       <td>Standard (recommended)</td>
       <td>
-        We're treating the handlers in the same way as plain functions. When we return the JavaScript object or array, it'd be <strong>automatically</strong>
-        transformed to JSON. When we return a string, Nest will send just a string.
+        When we return a JavaScript object or array, it'll be <strong>automatically</strong>
+        parsed to JSON. When we return a string, Nest will send just a string without trying to parse it to JSON.
         <br />
         <br />
-        Furthermore, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's <strong>201</strong>.
+        Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST requests, which uses <strong>201</strong>.
         We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
       </td>
     </tr>
@@ -51,7 +49,7 @@
     </tr>
   </table>
   <blockquote>
-    <strong>Notice!</strong> It's forbidden to use both two approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, and if that's the case - the standard way is disabled for this single route.
+    <strong>Notice!</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route.
   </blockquote>
   <h4>Request object</h4>
   <p>
