@@ -1,10 +1,10 @@
 <div class="content">
   <h3>Controllers</h3>
-  <p>The controllers layer is responsible for handling incoming <strong>requests</strong>, and return a <strong>response</strong> to the client.</p>
+  <p>The controllers layer is responsible for handling incoming <strong>requests</strong> and returning a <strong>response</strong> to the client.</p>
   <figure><img src="/assets/Controllers_1.png" /></figure>
   <p>
     To create a basic controller you have to attach the <strong>metadata</strong> to the class.
-    Thanks to the metadata Nest knows how to map your controller into the appropriate routes. To attach the metadata we're using the <strong>decorators</strong> (in this case <code>@Controller('cats')</code>).
+    Thanks to the metadata Nest knows how to map your controller to the appropriate routes. To attach the metadata we're using the <strong>decorators</strong> (in this case <code>@Controller('cats')</code>).
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: catsControllerT.isJsActive }}
