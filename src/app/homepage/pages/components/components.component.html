@@ -12,7 +12,7 @@
      The components are plain TypeScript classes with a <code>@Component()</code> decorator.
    </p>
    <blockquote class="info">
-    <strong>Hint</strong> Since Nest enables the possibility to design, organize the dependencies in a more OO-way, we strongly recommend
+    <strong>Hint</strong> Since Nest enables the possibility to design and organize the dependencies in a more OO-way, we strongly recommend
     following the <strong>SOLID</strong> principles.
   </blockquote>
   <p>
@@ -54,14 +54,10 @@
     <strong>Hint</strong> Learn more about the <strong>Dependency Injection</strong> in Nest <a href="http://docs.nestjs.com/fundamentals/dependency-injection" target="blank">here</a>.
   </blockquote>
   <p>
-    It's extremely easy to manage dependencies with <strong>TypeScript</strong> because Nest will recognize your dependencies just by <strong>writing</strong>
-    this single line:
+    It's extremely easy to manage dependencies with <strong>TypeScript</strong> because Nest will resolve your dependencies just by <strong>injecting</strong>
+    them in your controller's constructor:
   </p>
   <pre><code class="language-typescript">{{ constructorSyntax }}</code></pre>
-  <p>
-    Is everything that you have to do. There is one important thing to know — you must have <code>emitDecoratorMetadata</code> option set to <code>true</code> in your <code>tsconfig.json</code> file.
-    That's all.
-  </p>
   <h4>Last step</h4>
   <p>
     The last thing is to tell the module that something called <code>CatsService</code> truly exists.
@@ -73,7 +69,7 @@
   </span>
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
-    Now Nest will smoothly resolve the dependencies of the <code>CatsController</code> class.
+    Now Nest will be able to resolve the dependencies of the <code>CatsController</code> class.
     This is how our directory structure looks right now:
   </p>
   <div class="file-tree">
