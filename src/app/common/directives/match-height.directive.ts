@@ -7,6 +7,7 @@ import {
   Renderer2,
   NgZone,
 } from '@angular/core';
+import { isBrowser } from '@angular/flex-layout'
 
 @Directive({
   selector: '[matchHeight]',
@@ -31,7 +32,7 @@ export class MatchHeightDirective implements AfterViewChecked {
   }
 
   matchHeight(parent: HTMLElement) {
-    if (!parent) {
+    if (!parent || !isBrowser()) {
       return;
     }
     const children = Array.from(parent.children);

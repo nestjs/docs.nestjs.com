@@ -1,5 +1,6 @@
 declare var Prism;
 import { ElementRef, AfterViewChecked, Component, ApplicationRef } from '@angular/core';
+import { isBrowser } from '@angular/flex-layout'
 
 @Component({
   selector: 'app-base-page',
@@ -22,7 +23,7 @@ export class BasePageComponent implements AfterViewChecked {
     }
     const tags = this.el.nativeElement.querySelectorAll('code');
     [].forEach.call(tags, (code: HTMLElement) => {
-        if (code.className) {
+        if (code.className && isBrowser()) {
           Prism.highlightElement(code);
           this.isHljsInitialized = true;
         }

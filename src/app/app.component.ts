@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { isBrowser } from '@angular/flex-layout'
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
@@ -20,7 +21,9 @@ export class AppComponent implements OnInit {
     this.router.events
       .filter((ev) => ev instanceof NavigationEnd)
       .subscribe((ev) => {
-        window.scroll(0, 0);
+        if (isBrowser()) {
+          window.scroll(0, 0);
+        }
         this.updateTitle();
       });
   }
