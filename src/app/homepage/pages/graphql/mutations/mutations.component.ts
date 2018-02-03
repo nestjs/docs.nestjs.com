@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mutations',
   templateUrl: './mutations.component.html',
-  styleUrls: ['./mutations.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MutationsComponent extends BasePageComponent {

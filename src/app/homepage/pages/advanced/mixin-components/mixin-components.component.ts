@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mixin-components',
   templateUrl: './mixin-components.component.html',
-  styleUrls: ['./mixin-components.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MixinComponentsComponent extends BasePageComponent {

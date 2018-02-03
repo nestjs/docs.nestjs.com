@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-swagger',
   templateUrl: './swagger.component.html',
-  styleUrls: ['./swagger.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SwaggerComponent extends BasePageComponent {

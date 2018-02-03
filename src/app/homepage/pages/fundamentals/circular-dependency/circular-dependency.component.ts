@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-circular-dependency',
   templateUrl: './circular-dependency.component.html',
-  styleUrls: ['./circular-dependency.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CircularDependencyComponent extends BasePageComponent {

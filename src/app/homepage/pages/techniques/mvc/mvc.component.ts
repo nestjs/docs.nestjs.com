@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mvc',
   templateUrl: './mvc.component.html',
-  styleUrls: ['./mvc.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MvcComponent extends BasePageComponent {

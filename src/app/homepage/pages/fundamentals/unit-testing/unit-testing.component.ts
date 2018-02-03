@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-unit-testing',
   templateUrl: './unit-testing.component.html',
-  styleUrls: ['./unit-testing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UnitTestingComponent extends BasePageComponent {

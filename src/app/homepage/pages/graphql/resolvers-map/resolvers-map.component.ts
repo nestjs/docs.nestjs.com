@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-resolvers-map',
   templateUrl: './resolvers-map.component.html',
-  styleUrls: ['./resolvers-map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResolversMapComponent extends BasePageComponent {

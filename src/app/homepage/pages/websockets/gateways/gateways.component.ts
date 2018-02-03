@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-gateways',
   templateUrl: './gateways.component.html',
-  styleUrls: ['./gateways.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GatewaysComponent extends BasePageComponent {

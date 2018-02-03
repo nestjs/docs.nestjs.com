@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mockgoose',
   templateUrl: './mockgoose.component.html',
-  styleUrls: ['./mockgoose.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockgooseComponent extends BasePageComponent {
