@@ -52,12 +52,13 @@ import { MongodbComponent } from './homepage/pages/recipes/mongodb/mongodb.compo
 import { PassportComponent } from './homepage/pages/recipes/passport/passport.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
 import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
+import { NestRouterComponent } from './homepage/pages/recipes/nest-router/nest-router.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -68,7 +69,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BrowserModule,
     AppRoutingModule,
     PerfectScrollbarModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   declarations: [
     AppComponent,
@@ -124,6 +125,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     TabsComponent,
     ExtensionPipe,
     CustomDecoratorsComponent,
+    NestRouterComponent,
   ],
   bootstrap: [AppComponent],
   providers: [
@@ -133,4 +135,4 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     }
   ]
 })
-export class AppModule {}
+export class AppModule { }

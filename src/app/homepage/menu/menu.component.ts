@@ -79,6 +79,7 @@ export class MenuComponent implements OnInit {
         { title: 'SQL (Sequelize)', path: '/recipes/sql-sequelize' },
         { title: 'Passport integration', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
+        { title: 'Router Module', path: '/recipes/nest-router-module' },
         { title: 'Swagger', path: '/recipes/swagger', isPending: true },
         { title: 'GraphQL', path: '/recipes/graphql', isPending: true }
       ],
@@ -102,7 +103,7 @@ export class MenuComponent implements OnInit {
     }
   ];
 
-  constructor(private readonly route: ActivatedRoute) {}
+  constructor(private readonly route: ActivatedRoute) { }
 
   ngOnInit() {
     const { firstChild } = this.route.snapshot;

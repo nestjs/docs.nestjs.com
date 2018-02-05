@@ -45,6 +45,7 @@ import { PassportComponent } from './homepage/pages/recipes/passport/passport.co
 import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import { NestRouterComponent } from './homepage/pages/recipes/nest-router/nest-router.component';
 
 const routes: Routes = [
 	{
@@ -211,15 +212,20 @@ const routes: Routes = [
 				data: { title: 'SQL (TypeORM)' },
 			},
 			{
+				path: 'recipes/nest-router-module',
+				component: NestRouterComponent,
+				data: { title: 'Nest Router Module' },
+			},
+			{
 				path: 'recipes/mongodb',
 				component: MongodbComponent,
 				data: { title: 'MongoDB (Mongoose)' },
 			},
-      {
-        path: 'recipes/mockgoose',
-        component: MockgooseComponent,
-        data: { title: 'MongoDB E2E Testing (Mongoose + Mockgoose)' },
-      },
+			{
+				path: 'recipes/mockgoose',
+				component: MockgooseComponent,
+				data: { title: 'MongoDB E2E Testing (Mongoose + Mockgoose)' },
+			},
 			{
 				path: 'recipes/passport',
 				component: PassportComponent,
@@ -277,4 +283,4 @@ const routes: Routes = [
 	],
 	exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

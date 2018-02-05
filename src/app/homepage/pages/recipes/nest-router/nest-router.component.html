@@ -1,0 +1,85 @@
+<div class="content">
+  <h3>Nest Router</h3>
+  <p>
+    Sometimes you have some difficulties organizing your Routes, or worst when your application starts in growing and you decided
+    to make a Route Tree or organizing them in a hierarchical way. So at this time I think you should Use a
+    <a target="blank" href="https://github.com/shekohex/nest-router">Router Module</a>.
+  </p>
+  <p>To start the adventure with this library we have to install all of the required dependencies:</p>
+  <pre><code class="language-typescript">{{ dependencies }}</code></pre>
+  <blockquote class="warning">
+    <strong>Warning </strong> You will need Nest version >
+    <code>4.5.10+</code> to use the following Module.
+  </blockquote>
+  <h4>a Quick Overview</h4>
+  <p>
+    <code>RouterModule</code> Will Help you to organize your Routes and it Will give you the ability to create a routes tree.
+  </p>
+  <h4>Understanding how Nest Router works</h4>
+  <p>
+    Every Module could have a path property that path will be a prefix for all Controllers in this Module, then if that Module
+    have a parent, it will be a child of it and again all Controllers in this child modules will be prefixed by parent module
+    prefix + this module prefix.
+  </p>
+  <pre><p>Oh My !</p></pre>
+  <pre></pre>
+  <h5>Let's break this down</h5>
+  <p>
+    Imagine we have a big project that has this folder structure
+  </p>
+  <span class="filename">Project Folder Structure</span>
+  <pre><code class="language-typescript">{{ folderStructure }}</code></pre>
+
+  <p>and we need to make a Routes Tree like this</p>
+  <span class="filename">Project Routes Tree</span>
+  <pre><code class="language-typescript">{{ routesTree }}</code></pre>
+  <p>with
+    <code>RouteModule</code> it's easy to do something like this</p>
+  <pre><p>let's see how it easy to setup.</p></pre>
+
+  <span class="filename">app.module.ts</span>
+  <pre><code class="language-typescript">{{ setupModule }}</code></pre>
+  <blockquote class="tip">
+    <strong>TIP</strong> Following best practices, you should Keep all of your Routes in a separated file like
+    <code>app.routes.ts</code>.
+  </blockquote>
+  <p>Nice !, that's it.</p>
+  <p>let's go through this code</p>
+  <table>
+    <tr>
+      <td>
+        <code>forRoutes()</code>
+      </td>
+      <td>
+        a static method takes a Routes array of Modules.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>Routes</code>
+      </td>
+      <td>
+        an Interface, to implement the Routes tree.
+      </td>
+    </tr>
+  </table>
+  <p>
+    in this example, all the controllers in
+    <code>NinjaModule</code> will be prefixed by
+    <code>/ninja</code> then it have a 2 childs
+    <code>CatsModule</code> and
+    <code>DogsModule</code>. again, all controllers
+    <code>CatsModule</code> will be prefixed by
+    <code>/cats</code> Right 🤔 ? NO!! 🤨, the
+    <code>CatsModule</code> is a child of
+    <code>NinjaModule</code> so it will be prefixed by
+    <code>/ninja/cats/</code> path insted. and also the
+    <code>DogsModule</code>.
+  </p>
+  <pre></pre>
+  <p>So we have achieved what we need.</p>
+  <p>
+    The full source code of this example available
+    <a href="https://github.com/shekohex/nest-router/tree/master/example" target="blank">here</a>.
+  </p>
+</div>
