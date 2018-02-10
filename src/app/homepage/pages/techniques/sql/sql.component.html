@@ -80,10 +80,33 @@ $ npm install --save @nestjs/typeorm typeorm mysql</code></pre>
   </span>
   <pre [class.hide]="photoServiceT.isJsActive"><code class="language-typescript">{{ photoService }}</code></pre>
   <pre [class.hide]="!photoServiceT.isJsActive"><code class="language-typescript">{{ photoServiceJs }}</code></pre>
-  <p>
-    That's all. The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/05-sql-typeorm" target="blank">here</a>.
-  </p>
   <blockquote class="warning">
     <strong>Hint</strong> Don't forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
   </blockquote>
+  <h4>Multiple databases</h4>
+  <p>
+    Some of your projects may require multiple database connections. Fortunately, this can also be achieved with this module.
+    To work with multiple connections, the first thing to do is to create those connections. In this case, the connection naming becomes <strong>mandatory</strong>.
+  </p>
+  <p>
+    Say you have a <code>Person</code> entity and a <code>Album</code> entity, each stored in their own database.
+  </p>
+  <pre><code class="language-typescript">{{ multipleConnections }}</code></pre>
+  <blockquote class="warning">
+    <strong>Hint</strong> If you don't set any <code>name</code> for a connection, its name is set to <code>default</code>.<br/>
+    Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they simply get overridden.
+  </blockquote>
+  <p>
+    At this point, you have each of your <code>Photo</code>, <code>Person</code> and <code>Album</code> entities registered in their own connection.
+    With this setup, you have to tell the <code>TypeOrmModule.forFeature()</code> function and the <code>@InjectRepository()</code> decorator which connection should be used.
+    If you do not pass any connection name, the <code>default</code> connection is used.
+  </p>
+  <pre><code class="language-typescript">{{ forFeatureWithConnection }}</code></pre>
+  <p>
+    You can also inject the <code>Connection</code> or <code>EntityManager</code> for a given connection:
+  </p>
+  <pre><code class="language-typescript">{{ injectConnectionAndEntityManager }}</code></pre>
+  <p>
+    That's all. The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/05-sql-typeorm" target="blank">here</a>.
+  </p>
 </div>
