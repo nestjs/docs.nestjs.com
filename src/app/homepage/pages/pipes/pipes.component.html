@@ -89,7 +89,7 @@
     <span class="filename">create-cat.dto.ts</span>
     <pre><code class="language-typescript">{{ createCatDtoValidation }}</code></pre>
     <p>
-      Now it's time to add actual validation to our <code>ValidationPipe</code>.
+      Now it's time to finish the <code>ValidationPipe</code> class.
     </p>
     <span class="filename">validation.pipe.ts</span>
    <pre><code class="language-typescript">{{ fullValidationPipe }}</code></pre>
@@ -100,8 +100,7 @@
      Let's go through this code. Firstly, note that <code>transform()</code> function is <code>async</code>.
      It's possible because Nest supports both synchronous and <strong>asynchronous</strong> pipes.
      Also, there's a helper function - <code>toValidate()</code>. Its responsibility is to exclude the native JavaScript types from the validation process.
-     The last important thing is that we have to be able to return the same value. This pipe is a validation specific pipe, so we need a way to return the exact same property to avoid the <strong>overriding</strong>.
-   </p>
+     The last important thing is that we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the <strong>overriding</strong>.   </p>
    <p>
      The last step is to setup the <code>ValidationPipe</code>. Pipes, same as <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped and global-scoped.
       Additionally, a pipe may be param-scoped. We can directly bind the pipe instance to the route param decorator, for example <code>@Body()</code>.
@@ -119,9 +118,44 @@
       <strong>Notice</strong> The <code>@UsePipes()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
     <p>
-      At this point, our <code>ValidationPipe</code> is validating our incoming payload.
+      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup it as a <strong>global-scoped</strong> pipe, for every route handler across the entire application.
+    </p>
+    <span class="filename">server.ts</span>
+    <pre><code class="language-typescript">{{ globalPipe }}</code></pre>
+    <blockquote>
+      <strong>Notice</strong> The <code>useGlobalPipes()</code> method doesn't setup pipes for gateways and microservices.
+    </blockquote>
+    <h4>Transformer Pipe</h4>
+    <p>
+      Validation isn't the sole use case. At the beginning of this chapter, I've mentioned that pipe <strong>transforms</strong> the input data to the desired output.
+      It's true because the value returned from the <code>transform</code> function completely overrides the previous value of the argument.
+      Sometimes the data passed from the client needs to undergo some changes. Also, some parts could be missed, so we must apply the default values.
+      The <strong>transformer pipes</strong> fill the gap between the client request and the request handler.
+    </p>
+    <span class="filename">
+      {{ 'parse-int.pipe' | extension: parseIntPipeT.isJsActive }}
+      <app-tabs #parseIntPipeT></app-tabs>
+    </span>
+    <pre [class.hide]="parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipe }}</code></pre>
+    <pre [class.hide]="!parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipeJs }}</code></pre>
+    <p>
+      Here's a <code>ParseIntPipe</code> which resposibility is to parse string into integer value.
+      Now let's bind the pipe to the selected param:
+    </p>
+    <span class="filename">
+      <app-tabs #bindParamT></app-tabs>
+    </span>
+    <pre [class.hide]="bindParamT.isJsActive"><code class="language-typescript">{{ bindParam }}</code></pre>
+    <pre [class.hide]="!bindParamT.isJsActive"><code class="language-typescript">{{ bindParamJs }}</code></pre>
+    <h4>Built-in pipes</h4>
+    <p>
+      Fortunately, you don't have to build those pipes on your own since the <code>ValidationPipe</code> and the <code>ParseIntPipe</code> are built-in pipes.
+    </p>
+    <p>
+      The built-in <code>ValidationPipe</code> offers more options than the one described above, which has been kept basic for the sake of simplicity and to reduce the learning curve.<br/>
       If you take a look at the <code>createCatDto</code> in your controller function, you will notice that it is, as expected, an actual <code>CreateCatDto</code> instance.
-      However, if don't want the pipeline to mutate the payload, you can configure it to avoid the transformation:
+      That is because this pipe doesn't only validate the payload, but also transforms it into the expected type.
+      However, if don't want the pipe to mutate the payload and avoid the value overriding, you can configure it to avoid the transformation:
     </p>
     <span class="filename">cats.controler.ts</span>
     <pre><code class="language-typescript">{{ createCatsControllerParamPipeTransformFalse }}</code></pre>
@@ -176,36 +210,7 @@
       </tr>
     </table>
     <blockquote>
-      <strong>Notice</strong> You might find more information over the <code>class-validator</code> in its <a href="https://github.com/typestack/class-validator">repository</a>.
+      <strong>Notice</strong> You might find more information about the <code>class-validator</code> in its <a href="https://github.com/typestack/class-validator">repository</a>.
     </blockquote>
-    <p>
-      Since the <code>ValidationPipe</code> was created to be as generic as possible, we're gonna setup it as a <strong>global-scoped</strong> pipe, for every route handler across the entire application.
-    </p>
-    <span class="filename">server.ts</span>
-    <pre><code class="language-typescript">{{ globalPipe }}</code></pre>
-    <blockquote>
-      <strong>Notice</strong> The <code>useGlobalPipes()</code> method doesn't setup pipes for gateways and microservices.
-    </blockquote>
-    <h4>Transformer Pipe</h4>
-    <p>
-      Validation isn't the sole use case. At the beginning of this chapter, I've mentioned that pipe <strong>transforms</strong> the input data to the desired output.
-      It's true because the value returned from the <code>transform</code> function completely overrides the previous value of the argument.
-      Sometimes the data passed from the client needs to undergo some changes. Also, some parts could be missed, so we must apply the default values.
-      The <strong>transformer pipes</strong> fill the gap between the client request and the request handler.
-    </p>
-    <span class="filename">
-      {{ 'parse-int.pipe' | extension: parseIntPipeT.isJsActive }}
-      <app-tabs #parseIntPipeT></app-tabs>
-    </span>
-    <pre [class.hide]="parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipe }}</code></pre>
-    <pre [class.hide]="!parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipeJs }}</code></pre>
-    <p>
-      Here's a <code>ParseIntPipe</code> which resposibility is to parse string into integer value.
-      Now let's bind the pipe to the selected param:
-    </p>
-    <span class="filename">
-      <app-tabs #bindParamT></app-tabs>
-    </span>
-    <pre [class.hide]="bindParamT.isJsActive"><code class="language-typescript">{{ bindParam }}</code></pre>
-    <pre [class.hide]="!bindParamT.isJsActive"><code class="language-typescript">{{ bindParamJs }}</code></pre>
+
 </div>
