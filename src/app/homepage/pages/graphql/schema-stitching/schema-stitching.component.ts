@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-schema-stitching',
   templateUrl: './schema-stitching.component.html',
-  styleUrls: ['./schema-stitching.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchemaStitchingComponent extends BasePageComponent {

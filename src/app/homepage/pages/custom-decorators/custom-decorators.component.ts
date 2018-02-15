@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-custom-decorators',
   templateUrl: './custom-decorators.component.html',
-  styleUrls: ['./custom-decorators.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomDecoratorsComponent extends BasePageComponent {

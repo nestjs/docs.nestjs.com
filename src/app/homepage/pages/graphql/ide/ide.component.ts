@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-ide',
   templateUrl: './ide.component.html',
-  styleUrls: ['./ide.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdeComponent extends BasePageComponent {

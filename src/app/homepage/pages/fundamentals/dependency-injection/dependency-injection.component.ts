@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-dependency-injection',
   templateUrl: './dependency-injection.component.html',
-  styleUrls: ['./dependency-injection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DependencyInjectionComponent extends BasePageComponent {

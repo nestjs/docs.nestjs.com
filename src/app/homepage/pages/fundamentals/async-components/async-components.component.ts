@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-async-components',
   templateUrl: './async-components.component.html',
-  styleUrls: ['./async-components.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AsyncComponentsComponent extends BasePageComponent {

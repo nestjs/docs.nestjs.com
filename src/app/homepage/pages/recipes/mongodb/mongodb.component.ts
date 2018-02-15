@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mongodb',
   templateUrl: './mongodb.component.html',
-  styleUrls: ['./mongodb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MongodbComponent extends BasePageComponent {

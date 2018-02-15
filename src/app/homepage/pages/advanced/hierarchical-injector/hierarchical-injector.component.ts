@@ -3,8 +3,7 @@ import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-hierarchical-injector',
-  templateUrl: './hierarchical-injector.component.html',
-  styleUrls: ['./hierarchical-injector.component.scss'],
+  templateUrl: './hierarchical-injector.component.html'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchicalInjectorComponent extends BasePageComponent {

@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-passport',
   templateUrl: './passport.component.html',
-  styleUrls: ['./passport.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PassportComponent extends BasePageComponent {

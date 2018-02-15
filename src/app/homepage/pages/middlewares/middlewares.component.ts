@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-middlewares',
   templateUrl: './middlewares.component.html',
-  styleUrls: ['./middlewares.component.scss']
 })
 export class MiddlewaresComponent extends BasePageComponent {
   get loggerMiddleware() {

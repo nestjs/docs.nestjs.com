@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-controllers',
   templateUrl: './controllers.component.html',
-  styleUrls: ['./controllers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControllersComponent extends BasePageComponent {

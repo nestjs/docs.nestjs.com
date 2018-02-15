@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-cqrs',
   templateUrl: './cqrs.component.html',
-  styleUrls: ['./cqrs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CqrsComponent extends BasePageComponent {

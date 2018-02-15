@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-guards-interceptors',
   templateUrl: './guards-interceptors.component.html',
-  styleUrls: ['./guards-interceptors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuardsInterceptorsComponent extends BasePageComponent {
