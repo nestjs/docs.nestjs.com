@@ -6,7 +6,7 @@
    </p>
    <figure><img src="/assets/Pipe_1.png" /></figure>
    <p>
-    A pipe <strong>transforms</strong> the input data to the desired output. 
+    A pipe <strong>transforms</strong> the input data to the desired output.
     Also, it could overtake the <strong>validation</strong> responsibility, since it's possible to throw an exception when the data isn't correct.
    </p>
    <blockquote>
@@ -71,7 +71,7 @@
     <span class="filename">create-cat.dto.ts</span>
     <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
     <p>
-      This object always has to be correct, thus we have to validate these three members. 
+      This object always has to be correct, thus we have to validate these three members.
       We could do this inside the route handler method, but we'd break the <strong>single responsibility rule</strong> (SRP).
       The second idea is to create <strong>validator class</strong> and delegate the task there, but we'll have to use this validator every time at the beginning of the method.
       So what about the validation middleware? It's a good idea, but it's not possible to create a <strong>generic middleware</strong>, which could be used across entire application.
@@ -100,8 +100,7 @@
      Let's go through this code. Firstly, note that <code>transform()</code> function is <code>async</code>.
      It's possible because Nest supports both synchronous and <strong>asynchronous</strong> pipes.
      Also, there's a helper function - <code>toValidate()</code>. Its responsibility is to exclude the native JavaScript types from the validation process.
-     The last important thing is that we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the <strong>overriding</strong>.
-   </p>
+     The last important thing is that we have to return the same value. This pipe is a validation specific pipe, so we need to return the exact same property to avoid the <strong>overriding</strong>.   </p>
    <p>
      The last step is to setup the <code>ValidationPipe</code>. Pipes, same as <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped and global-scoped.
       Additionally, a pipe may be param-scoped. We can directly bind the pipe instance to the route param decorator, for example <code>@Body()</code>.
@@ -141,11 +140,77 @@
     <pre [class.hide]="!parseIntPipeT.isJsActive"><code class="language-typescript">{{ parseIntPipeJs }}</code></pre>
     <p>
       Here's a <code>ParseIntPipe</code> which resposibility is to parse string into integer value.
-      Now let's bind the pipe to the selected param: 
+      Now let's bind the pipe to the selected param:
     </p>
     <span class="filename">
       <app-tabs #bindParamT></app-tabs>
     </span>
     <pre [class.hide]="bindParamT.isJsActive"><code class="language-typescript">{{ bindParam }}</code></pre>
     <pre [class.hide]="!bindParamT.isJsActive"><code class="language-typescript">{{ bindParamJs }}</code></pre>
+    <h4>Built-in pipes</h4>
+    <p>
+      Fortunately, you don't have to build those pipes on your own since the <code>ValidationPipe</code> and the <code>ParseIntPipe</code> are built-in pipes.
+    </p>
+    <p>
+      The built-in <code>ValidationPipe</code> offers more options than the one described above, which has been kept basic for the sake of simplicity and to reduce the learning curve.<br/>
+      If you take a look at the <code>createCatDto</code> in your controller function, you will notice that it is, as expected, an actual <code>CreateCatDto</code> instance.
+      That is because this pipe doesn't only validate the payload, but also transforms it into the expected type.
+      However, if don't want the pipe to mutate the payload and avoid the value overriding, you can configure it to avoid the transformation:
+    </p>
+    <span class="filename">cats.controler.ts</span>
+    <pre><code class="language-typescript">{{ createCatsControllerParamPipeTransformFalse }}</code></pre>
+    <p>
+      Because this pipe is based on the <code>class-validator</code> and the <code>class-transformer</code> libraries, it is possible to get more of it.
+      Have a look at the constructor optional options.
+    </p>
+    <pre><code class="language-typescript">{{ constructorCode }}</code></pre>
+    <p>
+      There is a <code>transform</code> attribute and all <code>class-validator</code> options (inherited from the <code>ValidatorOptions</code> interface):
+    </p>
+    <table>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>skipMissingProperties</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true than validator will skip validation of all properties that are missing in the validating object.</td>
+      </tr>
+      <tr>
+        <td><code>whitelist</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true validator will strip validated object of any properties that do not have any decorators.</td>
+      </tr>
+      <tr>
+        <td><code>forbidNonWhitelisted</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, instead of stripping non-whitelisted properties validator will throw an error.</td>
+      </tr>
+      <tr>
+        <td><code>groups</code></td>
+        <td><code>string[]</code></td>
+        <td>Groups to be used during validation of the object.</td>
+      </tr>
+      <tr>
+        <td><code>dismissDefaultMessages</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, the validation will not use default messages. Error message always will be undefined if its not explicitly set.</td>
+      </tr>
+      <tr>
+        <td><code>validationError.target</code></td>
+        <td><code>boolean</code></td>
+        <td>Indicates if target should be exposed in ValidationError.</td>
+      </tr>
+      <tr>
+        <td><code>validationError.value</code></td>
+        <td><code>boolean</code></td>
+        <td>Indicates if validated value should be exposed in ValidationError.</td>
+      </tr>
+    </table>
+    <blockquote>
+      <strong>Notice</strong> You might find more information about the <code>class-validator</code> in its <a href="https://github.com/typestack/class-validator">repository</a>.
+    </blockquote>
+
 </div>
