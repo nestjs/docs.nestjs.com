@@ -27,7 +27,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
   ],
 })
-export class ApplicationModule {}`; 
+export class ApplicationModule {}`;
   }
 
   get ormconfig() {
@@ -162,4 +162,68 @@ export class PhotoService {
   }
 }`;
   }
+
+  get multipleConnections() {
+    return `
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host:  'photo_db_host',
+      port: 5432,
+      username: 'user',
+      password: 'password',
+      database: 'db',
+      entities: [ Photo ],
+      synchronize: true
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      name: 'personsConnection',
+      host:  'person_db_host',
+      port: 5432,
+      username: 'user',
+      password: 'password',
+      database: 'db',
+      entities: [ Person ],
+      synchronize: true
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      name: 'albumsConnection',
+      host:  'album_db_host',
+      port: 5432,
+      username: 'user',
+      password: 'password',
+      database: 'db',
+      entities: [ Album ],
+      synchronize: true
+    })
+  ]
+})
+export class ApplicationModule {}`;
+  }
+
+  get forFeatureWithConnection() {
+    return `
+@Module({
+  // ...
+  TypeOrmModule.forFeature([ 'Photo' ]),
+  TypeOrmModule.forFeature([ 'Person' ], 'personsConnection'),
+  TypeOrmModule.forFeature([ 'Album' ], 'albumsConnection')
+})    
+export class ApplicationModule {}`;
+  }
+
+  get injectConnectionAndEntityManager() {
+    return `
+@Component()
+export class PersonService {
+  constructor(
+    @InjectConnection('personsConnection') private readonly connection: Connection,
+    @InjectEntityManager('personsConnection') private readonly entityManager: EntityManager
+  ) {}
+}`;
+  }
+
 }
