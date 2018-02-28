@@ -132,6 +132,11 @@ export class MenuComponent implements OnInit {
       title: 'Support me',
       isOpened: false,
       externalUrl: 'https://opencollective.com/nest',
+    },
+    {
+      title: 'CLI',
+      isOpened: false,
+      path: '/cli'
     }
   ];
 
