@@ -1,3 +1,44 @@
-<p>
-  schematics works!
-</p>
+<div class="content">
+  <h3>Schematics</h3>
+  <p>
+    Here to help people to have a nice project scaffolding and Nest architecture component generator, the
+    @nestjs/schematics library can help more than expected. The purpose is to scaffold generic projects with a
+    standard Nest structure. <br />
+    The @nestjs/schematics library is based on the
+    <a href="https://github.com/angular/devkit" target="_blank">@angular-devkit</a> projects.
+  </p>
+  <h3>Usages</h3>
+  <p>
+    You can use @nestjs/schematics with the angular-devkit tools or integrated the @nestjs/cli tool. <br />
+  </p>
+  <blockquote>
+    <strong>ATTENTION!</strong> This section will expose how to use the @nestjs/schematics only.
+  </blockquote>
+  <h4>Installation</h4>
+  <p>
+    You need first to install the @angular-devkit/schematics-cli globally first :
+  </p>
+  <pre>
+    <code class="language-bash">
+      $ npm install -g @angular-devkit/schematics-cli
+    </code>
+  </pre>
+  <p>
+    Next you have to git clone and build the @nestjs/schematics :
+  </p>
+  <span class="filename">
+    <div class="tabs-wrapper">
+      <span class="tab">
+        Docker
+      </span>
+    </div>
+  </span>
+  <pre>
+    <code class="language-bash">
+      $ git clone https://github.com/nestjs/schematics.git
+      $ cd schematics
+      $ make prepare
+      $ make build
+    </code>
+  </pre>
+</div>
