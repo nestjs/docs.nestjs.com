@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GlobalPrefixComponent } from './global-prefix.component';
 
 describe('GlobalPrefixComponent', () => {
-  let component: GlobalPrefixComponent;
-  let fixture: ComponentFixture<GlobalPrefixComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ GlobalPrefixComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<GlobalPrefixComponent>;
+  let component: GlobalPrefixComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(GlobalPrefixComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
