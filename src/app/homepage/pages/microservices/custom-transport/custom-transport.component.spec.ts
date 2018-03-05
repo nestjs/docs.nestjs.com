@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CustomTransportComponent } from './custom-transport.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('CustomTransportComponent', () => {
-  let component: CustomTransportComponent;
-  let fixture: ComponentFixture<CustomTransportComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ CustomTransportComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        CustomTransportComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<CustomTransportComponent>;
+  let component: CustomTransportComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(CustomTransportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
