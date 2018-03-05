@@ -57,7 +57,7 @@ import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
-import { CliComponent } from './homepage/pages/cli/cli.component';
+import { SchematicsComponent } from './homepage/pages/cli/schematics/schematics.component';
 
 const routes: Routes = [
   {
@@ -343,10 +343,10 @@ const routes: Routes = [
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
       },
       {
-        path: 'cli',
-        component: CliComponent,
+        path: 'cli/schematics',
+        component: SchematicsComponent,
         data: {
-          title: 'CLI'
+          title: 'Schematics'
         }
       }
     ],

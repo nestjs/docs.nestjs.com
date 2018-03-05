@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
-import { CliComponent } from './cli.component';
+import { SchematicsComponent } from './schematics/schematics.component';
 
 @NgModule({
   declarations: [
-    CliComponent
+    SchematicsComponent
   ],
   exports: [
-    CliComponent
+    SchematicsComponent
   ]
 })
 export class CliModule {}

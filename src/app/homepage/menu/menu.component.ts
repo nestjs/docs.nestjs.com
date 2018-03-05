@@ -136,7 +136,9 @@ export class MenuComponent implements OnInit {
     {
       title: 'CLI',
       isOpened: false,
-      path: '/cli'
+      children: [
+        { title: 'Schematics', path: '/cli/schematics' }
+      ]
     }
   ];
 
