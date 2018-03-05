@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HybridApplicationComponent } from './hybrid-application.component';
 
 describe('HybridApplicationComponent', () => {
-  let component: HybridApplicationComponent;
-  let fixture: ComponentFixture<HybridApplicationComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ HybridApplicationComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<HybridApplicationComponent>;
+  let component: HybridApplicationComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(HybridApplicationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
