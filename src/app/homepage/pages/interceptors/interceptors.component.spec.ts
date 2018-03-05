@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InterceptorsComponent } from './interceptors.component';
+import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../shared/pipes/extension.pipe';
 
 describe('InterceptorsComponent', () => {
-  let component: InterceptorsComponent;
-  let fixture: ComponentFixture<InterceptorsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ InterceptorsComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        InterceptorsComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<InterceptorsComponent>;
+  let component: InterceptorsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(InterceptorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
