@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SubscriptionsComponent } from './subscriptions.component';
 
 describe('SubscriptionsComponent', () => {
-  let component: SubscriptionsComponent;
-  let fixture: ComponentFixture<SubscriptionsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ SubscriptionsComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<SubscriptionsComponent>;
+  let component: SubscriptionsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(SubscriptionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
