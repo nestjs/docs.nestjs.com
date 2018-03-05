@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { QuickStartComponent } from './quick-start.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('QuickStartComponent', () => {
-  let component: QuickStartComponent;
-  let fixture: ComponentFixture<QuickStartComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ QuickStartComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        QuickStartComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<QuickStartComponent>;
+  let component: QuickStartComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(QuickStartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
