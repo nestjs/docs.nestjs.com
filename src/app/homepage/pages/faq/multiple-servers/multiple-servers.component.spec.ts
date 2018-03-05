@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MultipleServersComponent } from './multiple-servers.component';
 
 describe('MultipleServersComponent', () => {
-  let component: MultipleServersComponent;
-  let fixture: ComponentFixture<MultipleServersComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ MultipleServersComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<MultipleServersComponent>;
+  let component: MultipleServersComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(MultipleServersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
