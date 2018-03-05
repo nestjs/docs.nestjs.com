@@ -57,7 +57,10 @@ import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
-import { SchematicsComponent } from './homepage/pages/cli/schematics/schematics.component';
+import { SchematicsOverviewComponent } from './homepage/pages/schematics/overview/overview.component';
+import { SchematicsInstallationComponent } from './homepage/pages/schematics/installation/installation.component';
+import { SchematicsCollectionComponent } from './homepage/pages/schematics/collection/collection.component';
+import { SchematicsUsagesComponent } from './homepage/pages/schematics/usages/usages.component';
 
 const routes: Routes = [
   {
@@ -343,10 +346,31 @@ const routes: Routes = [
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
       },
       {
-        path: 'cli/schematics',
-        component: SchematicsComponent,
+        path: 'schematics/overview',
+        component: SchematicsOverviewComponent,
         data: {
-          title: 'Schematics'
+          title: 'Overview'
+        }
+      },
+      {
+        path: 'schematics/installation',
+        component: SchematicsInstallationComponent,
+        data: {
+          title: 'Installation'
+        }
+      },
+      {
+        path: 'schematics/collection',
+        component: SchematicsCollectionComponent,
+        data: {
+          title: 'Collection'
+        }
+      },
+      {
+        path: 'schematics/usages',
+        component: SchematicsUsagesComponent,
+        data: {
+          title: 'Usages'
         }
       }
     ],

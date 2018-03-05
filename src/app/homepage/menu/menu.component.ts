@@ -134,10 +134,13 @@ export class MenuComponent implements OnInit {
       externalUrl: 'https://opencollective.com/nest',
     },
     {
-      title: 'CLI',
+      title: 'Schematics',
       isOpened: false,
       children: [
-        { title: 'Schematics', path: '/cli/schematics' }
+        { title: 'Overview', path: '/schematics/overview' },
+        { title: 'Installation', path: '/schematics/installation' },
+        { title: 'Collection', path: '/schematics/collection' },
+        { title: 'Usages', path: '/schematics/usages' }
       ]
     }
   ];
