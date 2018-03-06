@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { WsInterceptorsComponent } from './interceptors.component';
 
 describe('WsInterceptorsComponent', () => {
-  let component: WsInterceptorsComponent;
-  let fixture: ComponentFixture<WsInterceptorsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ WsInterceptorsComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<WsInterceptorsComponent>;
+  let component: WsInterceptorsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(WsInterceptorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
