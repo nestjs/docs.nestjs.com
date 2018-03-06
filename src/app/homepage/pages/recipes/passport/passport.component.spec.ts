@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PassportComponent } from './passport.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('PassportComponent', () => {
-  let component: PassportComponent;
-  let fixture: ComponentFixture<PassportComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ PassportComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        PassportComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<PassportComponent>;
+  let component: PassportComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(PassportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
