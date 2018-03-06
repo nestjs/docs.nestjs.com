@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MicroservicesGuardsComponent } from './guards.component';
 
 describe('MicroservicesGuardsComponent', () => {
-  let component: MicroservicesGuardsComponent;
-  let fixture: ComponentFixture<MicroservicesGuardsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ MicroservicesGuardsComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<MicroservicesGuardsComponent>;
+  let component: MicroservicesGuardsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(MicroservicesGuardsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
