@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { WsPipesComponent } from './pipes.component';
 
 describe('WsPipesComponent', () => {
-  let component: WsPipesComponent;
-  let fixture: ComponentFixture<WsPipesComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ WsPipesComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<WsPipesComponent>;
+  let component: WsPipesComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(WsPipesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
