@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SchematicsUsagesComponent } from './usages.component';
 
 describe('SchematicsUsagesComponent', () => {
-  let component: SchematicsUsagesComponent;
-  let fixture: ComponentFixture<SchematicsUsagesComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ SchematicsUsagesComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<SchematicsUsagesComponent>;
+  let component: SchematicsUsagesComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(SchematicsUsagesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
