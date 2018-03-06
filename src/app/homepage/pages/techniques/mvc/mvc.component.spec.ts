@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MvcComponent } from './mvc.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('MvcComponent', () => {
-  let component: MvcComponent;
-  let fixture: ComponentFixture<MvcComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ MvcComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        MvcComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<MvcComponent>;
+  let component: MvcComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(MvcComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
