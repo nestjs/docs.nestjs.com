@@ -4,10 +4,12 @@ import { SchematicsOverviewComponent } from './overview/overview.component';
 import { SchematicsInstallationComponent } from './installation/installation.component';
 import { SchematicsUsagesComponent } from './usages/usages.component';
 import { SchematicsCollectionComponent } from './collection/collection.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   declarations: [
     SchematicsOverviewComponent,

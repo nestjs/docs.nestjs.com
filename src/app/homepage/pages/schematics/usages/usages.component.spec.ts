@@ -1,11 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SchematicsUsagesComponent } from './usages.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SchematicsUsagesComponent', () => {
   beforeEach(async(() => {
     return TestBed.configureTestingModule({
-      declarations: [ SchematicsUsagesComponent ]
+      imports: [
+        RouterTestingModule
+      ],
+      declarations: [
+        SchematicsUsagesComponent
+      ]
     })
     .compileComponents();
   }));
