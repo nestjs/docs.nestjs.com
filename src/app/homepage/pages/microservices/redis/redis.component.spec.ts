@@ -1,25 +1,30 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RedisComponent } from './redis.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('RedisComponent', () => {
-  let component: RedisComponent;
-  let fixture: ComponentFixture<RedisComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ RedisComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        RedisComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<RedisComponent>;
+  let component: RedisComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(RedisComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
