@@ -61,6 +61,9 @@ import { SchematicsOverviewComponent } from './homepage/pages/schematics/overvie
 import { SchematicsInstallationComponent } from './homepage/pages/schematics/installation/installation.component';
 import { SchematicsCollectionComponent } from './homepage/pages/schematics/collection/collection.component';
 import { SchematicsUsagesComponent } from './homepage/pages/schematics/usages/usages.component';
+import { CliOverviewComponent } from './homepage/pages/cli/overview/overview.component';
+import { CliUsagesComponent } from './homepage/pages/cli/usages/usages.component';
+import { CliInstallationComponent } from './homepage/pages/cli/installation/installation.component';
 
 const routes: Routes = [
   {
@@ -344,6 +347,27 @@ const routes: Routes = [
         path: 'faq/multiple-servers',
         component: MultipleServersComponent,
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
+      },
+      {
+        path: 'cli/overview',
+        component: CliOverviewComponent,
+        data: {
+          title: 'Overview'
+        }
+      },
+      {
+        path: 'cli/installation',
+        component: CliInstallationComponent,
+        data: {
+          title: 'Installation'
+        }
+      },
+      {
+        path: 'cli/usages',
+        component: CliUsagesComponent,
+        data: {
+          title: 'Usages'
+        }
       },
       {
         path: 'schematics/overview',

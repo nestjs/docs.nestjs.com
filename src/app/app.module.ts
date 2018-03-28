@@ -72,6 +72,7 @@ import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { SchematicsModule } from './homepage/pages/schematics/schematics.module';
+import { CliModule } from './homepage/pages/cli/cli.module';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -83,6 +84,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BrowserModule,
     AppRoutingModule,
     PerfectScrollbarModule,
+    CliModule,
     SchematicsModule
   ],
   declarations: [
