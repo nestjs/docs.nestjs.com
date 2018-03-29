@@ -1,3 +1,67 @@
-<p>
-  usages works!
-</p>
+<div class="content">
+  <h3>Usages</h3>
+  <p>
+    This section explain how to use NestjsCli.
+  </p>
+  <h4>Commands</h4>
+  <pre>
+    <code class="language-bash">
+      $ nest [command] [...options]
+    </code>
+  </pre>
+  <h4>Options</h4>
+  <p>
+    Each command can accept the list of <strong>options</strong> below:
+  </p>
+  <ul>
+    <li><strong>--dry-run</strong> : allow to simulate the command execution to see how it will affect your working directory.</li>
+  </ul>
+  <h4>new</h4>
+  <p>
+    The <strong>new</strong> command generates a standard Nestjs project structure as well as install the packages from npm package manager.
+  </p>
+  <table>
+    <tr>
+      <th>Option Name</th>
+      <th>Description</th>
+      <th>Required</th>
+      <th>Default Value</th>
+    </tr>
+    <tr>
+      <td>directory</td>
+      <td>The directory name to create the app in.</td>
+      <td>true</td>
+      <td>N/A</td>
+    </tr>
+  </table>
+  <h4>generate</h4>
+  <p>
+    The <strong>generate</strong> command generates a Nestjs architecture component.
+  </p>
+  <table>
+    <tr>
+      <th>Option Name</th>
+      <th>Description</th>
+      <th>Required</th>
+      <th>Default Value</th>
+    </tr>
+    <tr>
+      <td>schematic</td>
+      <td>The schematic name from the @nestjs/schematics collection.</td>
+      <td>true</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td>The name of the generated Nestjs architecture component.</td>
+      <td>true</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>path</td>
+      <td>The path from to generate the Nestjs architecture component.</td>
+      <td>false</td>
+      <td>src</td>
+    </tr>
+  </table>
+</div>
