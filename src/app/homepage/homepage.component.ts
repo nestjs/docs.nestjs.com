@@ -18,6 +18,7 @@ import { Router, NavigationEnd } from '@angular/router';
 })
 export class HomepageComponent implements OnInit, AfterViewInit {
   isSidebarOpened = true;
+  previousWidth: number;
 
   constructor(
     private readonly cd: ChangeDetectorRef,
@@ -26,6 +27,7 @@ export class HomepageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.router.events.filter(e => e instanceof NavigationEnd).subscribe(() => {
+      this.previousWidth = window.innerWidth;
       this.checkWindowWidth(window.innerWidth);
     });
   }
@@ -45,7 +47,8 @@ export class HomepageComponent implements OnInit, AfterViewInit {
 
   checkWindowWidth(innerWidth?: number) {
     innerWidth = innerWidth ? innerWidth : window.innerWidth;
-    if (innerWidth <= 768) {
+    if (this.previousWidth !== innerWidth && innerWidth <= 768) {
+      this.previousWidth = innerWidth;
       this.isSidebarOpened = false;
       this.cd.detectChanges();
     }
