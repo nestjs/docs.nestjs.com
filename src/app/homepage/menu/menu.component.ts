@@ -148,8 +148,8 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Overview', path: '/schematics/overview' },
         { title: 'Installation', path: '/schematics/installation' },
-        { title: 'Collection', path: '/schematics/collection' },
-        { title: 'Usages', path: '/schematics/usages' }
+        { title: 'Usages', path: '/schematics/usages' },
+        { title: 'Collection', path: '/schematics/collection' }
       ]
     }
   ];
