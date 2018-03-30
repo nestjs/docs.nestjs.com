@@ -10,7 +10,7 @@
 }
 
 .logo-wrapper {
-  svg {
+  svg, img {
     width: 132px;
     height: 61px;
   }
@@ -58,7 +58,10 @@
   h1, h2, h3, h4, h5, h6 {
     color: $black-color;
   }
-  h3 { font-size: 24px; }
+  h3 { 
+    font-size: 24px; 
+    font-weight: 600;
+  }
   h5 {
     color: $grey-color;
     margin-top: -20px;

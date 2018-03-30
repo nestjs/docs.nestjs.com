@@ -66,7 +66,7 @@ export class AuthService {
     return `
 import * as passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Component, Inject } from '@nestjs/common';
+import { Component, Inject, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 
 @Component()
@@ -86,7 +86,7 @@ export class JwtStrategy extends Strategy {
   public async verify(req, payload, done) {
     const isValid = await this.authService.validateUser(payload);
     if (!isValid) {
-      return done('Unauthorized', false);
+      return done(new UnauthorizedException(), false);
     }
     done(null, payload);
   }
