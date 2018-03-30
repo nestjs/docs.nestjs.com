@@ -26,14 +26,14 @@ h3 {
   @extend .transition;
   position: absolute;
   top: 1px;
-  right: 0;
+  right: 20px;
   font-size: 22px;
   cursor: pointer;
 }
 
   li {
     display: block;
-    padding: 10px 0;
+    padding: 8px 0;
 
     a {
       color: $black-color;
@@ -74,4 +74,8 @@ h3 {
       color: $red-color;
     }
   }
+}
+
+ul {
+  padding-left: 25px;
 }
