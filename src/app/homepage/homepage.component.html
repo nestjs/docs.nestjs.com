@@ -1,10 +1,7 @@
-<app-header 
-  (toggle)="toggleSidebar()"
-  [isSidebarOpened]="isSidebarOpened"
->
+<app-header (toggle)="toggleSidebar()" [isSidebarOpened]="isSidebarOpened">
   <div class="logo-wrapper">
     <a href="http://docs.nestjs.com/" title="Documentation | Nest - A node.js framework built on top of TypeScript">
-      <img src="/assets/logo.svg">        
+      <img src="/assets/logo_text.svg">
     </a>
   </div>
 </app-header>
@@ -16,51 +13,169 @@
     </div>
     <div class="sponsors-wrapper">
       <div class="sponsors-container">
-          <h4>Sponsors</h4>
-          <a href="https://valor-software.com/">
-            <img src="https://docs.nestjs.com/assets/sponsors/valor-software.png" class="logo-sponsor" />
-          </a>
-          <p>Nest is an MIT-licensed open source project. It can grow thanks to the support by these awesome people. If you'd like to join them, please read more <a href="https://opencollective.com/nest" target="blank">here</a>. Thanks!</p>
-          <div class="backers-wrapper">
-            <a href="https://opencollective.com/nest/backer/0/website" target="_blank"><img src="https://opencollective.com/nest/backer/0/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/1/website" target="_blank"><img src="https://opencollective.com/nest/backer/1/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/2/website" target="_blank"><img src="https://opencollective.com/nest/backer/2/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/3/website" target="_blank"><img src="https://opencollective.com/nest/backer/3/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/4/website" target="_blank"><img src="https://opencollective.com/nest/backer/4/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/5/website" target="_blank"><img src="https://opencollective.com/nest/backer/5/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/6/website" target="_blank"><img src="https://opencollective.com/nest/backer/6/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/7/website" target="_blank"><img src="https://opencollective.com/nest/backer/7/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/8/website" target="_blank"><img src="https://opencollective.com/nest/backer/8/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/9/website" target="_blank"><img src="https://opencollective.com/nest/backer/9/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/10/website" target="_blank"><img src="https://opencollective.com/nest/backer/10/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/11/website" target="_blank"><img src="https://opencollective.com/nest/backer/11/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/12/website" target="_blank"><img src="https://opencollective.com/nest/backer/12/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/13/website" target="_blank"><img src="https://opencollective.com/nest/backer/13/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/14/website" target="_blank"><img src="https://opencollective.com/nest/backer/14/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/15/website" target="_blank"><img src="https://opencollective.com/nest/backer/15/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/16/website" target="_blank"><img src="https://opencollective.com/nest/backer/16/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/17/website" target="_blank"><img src="https://opencollective.com/nest/backer/17/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/18/website" target="_blank"><img src="https://opencollective.com/nest/backer/18/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/19/website" target="_blank"><img src="https://opencollective.com/nest/backer/19/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/20/website" target="_blank"><img src="https://opencollective.com/nest/backer/20/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/21/website" target="_blank"><img src="https://opencollective.com/nest/backer/21/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/22/website" target="_blank"><img src="https://opencollective.com/nest/backer/22/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/23/website" target="_blank"><img src="https://opencollective.com/nest/backer/23/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/24/website" target="_blank"><img src="https://opencollective.com/nest/backer/24/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/25/website" target="_blank"><img src="https://opencollective.com/nest/backer/25/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/26/website" target="_blank"><img src="https://opencollective.com/nest/backer/26/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/27/website" target="_blank"><img src="https://opencollective.com/nest/backer/27/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/28/website" target="_blank"><img src="https://opencollective.com/nest/backer/28/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/29/website" target="_blank"><img src="https://opencollective.com/nest/backer/29/avatar.svg"></a>
+        <h3>Support us</h3>
+        <p>Nest is an MIT-licensed open source project. It can grow thanks to the support by these awesome people. If you'd
+          like to join them, please read more
+          <a href="https://opencollective.com/nest" target="blank">here</a>.</p>
+        <div class="row clearfix">
+          <div class="inline-column">
+            <h4 class="title">Principal Sponsor</h4>
+            <a href="https://valor-software.com/">
+              <img src="https://docs.nestjs.com/assets/sponsors/valor-software.png" class="logo-sponsor" />
+            </a>
           </div>
-          <a href="https://opencollective.com/nest" class="btn btn-primary" target="blank">
+          <div class="inline-column"> 
+            <h4 class="title">Sponsors / Backers</h4>
+            <a href="https://valor-software.com/">
+              <img src="https://nestjs.com/img/scalio-logo.svg" class="logo-sponsor-small" />
+            </a>
+            <a href="https://valor-software.com/">
+              <img src="https://nestjs.com/img/swingdev-logo.svg" class="logo-sponsor-small" />
+            </a>
+            <div class="backers-wrapper">
+              <a href="https://opencollective.com/nest/backer/0/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/0/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/1/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/1/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/2/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/2/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/3/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/3/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/4/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/4/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/5/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/5/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/6/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/6/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/7/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/7/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/8/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/8/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/9/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/9/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/10/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/10/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/11/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/11/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/12/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/12/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/13/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/13/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/14/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/14/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/15/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/15/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/16/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/16/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/17/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/17/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/18/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/18/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/19/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/19/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/20/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/20/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/21/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/21/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/22/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/22/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/23/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/23/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/24/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/24/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/25/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/25/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/26/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/26/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/27/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/27/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/28/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/28/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/29/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/29/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/30/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/30/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/31/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/31/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/32/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/32/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/33/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/33/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/34/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/34/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/35/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/35/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/36/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/36/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/37/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/37/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/38/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/38/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/39/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/39/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/40/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/40/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/41/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/41/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/42/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/42/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/43/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/43/avatar.svg">
+              </a>
+            </div>
+          </div>
+        </div>
+        <!--<a href="https://opencollective.com/nest" class="btn btn-primary" target="blank">
             Become a sponsor
-          </a>
+          </a>-->
       </div>
     </div>
-    <app-footer> 
+    <app-footer>
       <p>
-        Made by 
+        Made by
         <a href="https://kamilmysliwiec.com" title="Kamil Mysliwiec Blog | Full-Stack Software Engineer">
           Kamil Myśliwiec
         </a>

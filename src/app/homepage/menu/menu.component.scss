@@ -5,7 +5,7 @@
   @extend .transition;
   @extend .box-sizing;
   @include transform(translateX(-100%));
-  padding: 55px 30px 40px 45px;
+  padding: 45px 30px 40px 45px;
   width: 345px;
   background: #f9f9f9;
   box-shadow: inset -35px -18px 70px rgba(233, 233, 233, 0.65);

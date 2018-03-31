@@ -30,10 +30,11 @@
 
   &:hover:not(.active) {
     color: #dadada;
-    background: #2d2d2d;
+    background: #232323;
   }
   &.active {
-    color: #fff;
-    background: #212121;
+    // color: #fff;
+    // background: #1d1d1d;
+    display: none;
   }
 }

@@ -11,8 +11,8 @@
 
 .logo-wrapper {
   svg, img {
-    width: 132px;
-    height: 61px;
+    width: 140px;
+    height: 65px;
   }
 }
 .container {
@@ -20,7 +20,7 @@
   @extend .box-sizing;
   @include transform(translateX(345px));
   width: calc(100% - 345px);
-  padding: 45px 50px 90px;
+  padding: 35px 50px 90px;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -60,14 +60,19 @@
   }
   h3 { 
     font-size: 24px; 
-    font-weight: 600;
+    font-weight: 700;
+    margin: 45px 0 20px;
   }
   h5 {
     color: $grey-color;
     margin-top: -20px;
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 16px;
   }
+  h3:first-of-type {
+    margin: 20px 0;
+  }
+
   @include media(normal) {
     p {
       text-align: justify;
@@ -76,16 +81,12 @@
 }
 
 .sponsors-wrapper {
-  padding: 20px 40px 40px;
-  margin: 40px -50px 0;
-  background: #f3f3f3;
+  border-top: 1px solid #e8e8e8;
+  padding: 25px 0 30px;
+  margin-top: 45px;
   position: relative;
 
-  @include media(medium) {
-    margin: 40px -30px 0;
-  }
-
-  h4, img {
+  img {
     display: inline-block;
     vertical-align: middle;
   }
@@ -98,22 +99,39 @@
     }
   }
 
+  h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1d1d1d;
+  }
+
   h4 {
-    color: #c2c2c2;
+    color: #1b2247;
     font-weight: 600;
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
+  }
+
+  .title {
+    margin: 50px 0 25px;
   }
 
   p {
-    color: #c2c2c2;
-    margin-top: 35px;
+    margin: 0;
     line-height: 26px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4e4e4e;
   }
 
   .logo-sponsor {
+    width: 250px;
+  }
+
+  .logo-sponsor-small {
     width: 150px;
-    margin-left: 25px;
+    margin-right: 20px;
+    margin-bottom: 15px;
   }
 
   .btn-primary {
@@ -138,10 +156,22 @@
 }
 
 .backers-wrapper {
-  margin-top: 20px;
+  margin-top: 10px;
   img {
     width: 30px;
     border-radius: 50%;
     -webkit-border-radius: 50%;
+  }
+}
+
+.inline-column {
+  width: 50%;
+  vertical-align: top;
+  margin: 0;
+  float: left;
+  
+  @include media(normal) {
+    width: 100%;
+    float: none;
   }
 }
