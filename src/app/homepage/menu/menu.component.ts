@@ -141,16 +141,6 @@ export class MenuComponent implements OnInit {
         { title: 'Installation', path: '/cli/installation' },
         { title: 'Usages', path: '/cli/usages' }
       ]
-    },
-    {
-      title: 'Schematics',
-      isOpened: false,
-      children: [
-        { title: 'Overview', path: '/schematics/overview' },
-        { title: 'Installation', path: '/schematics/installation' },
-        { title: 'Usages', path: '/schematics/usages' },
-        { title: 'Collection', path: '/schematics/collection' }
-      ]
     }
   ];
 
