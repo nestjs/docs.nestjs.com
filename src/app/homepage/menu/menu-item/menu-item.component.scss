@@ -11,7 +11,7 @@ h3 {
   text-transform: uppercase;
   font-weight: bold;
   color: $black-color;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: 0.2px;
   &:hover {
     color: $red-color;
@@ -26,18 +26,18 @@ h3 {
   @extend .transition;
   position: absolute;
   top: 1px;
-  right: 0;
+  right: 20px;
   font-size: 22px;
   cursor: pointer;
 }
 
   li {
     display: block;
-    padding: 10px 0;
+    padding: 8px 0;
 
     a {
       color: $black-color;
-      font-size: 15px;
+      font-size: 16px;
       text-decoration: none;
       cursor: pointer;
       &:hover {
@@ -74,4 +74,8 @@ h3 {
       color: $red-color;
     }
   }
+}
+
+ul {
+  padding-left: 25px;
 }

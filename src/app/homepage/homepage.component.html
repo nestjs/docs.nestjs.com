@@ -1,18 +1,7 @@
-<app-header 
-  (toggle)="toggleSidebar()"
-  [isSidebarOpened]="isSidebarOpened"
->
+<app-header (toggle)="toggleSidebar()" [isSidebarOpened]="isSidebarOpened">
   <div class="logo-wrapper">
     <a href="http://docs.nestjs.com/" title="Documentation | Nest - A node.js framework built on top of TypeScript">
-      <svg width="1983" height="966" version="1.1" viewBox="0 0 524.66874 255.58751" xmlns="http://www.w3.org/2000/svg">
-        <g transform="translate(0 -41.412)">
-        <path d="m153.61 44.155c-1.8311 0-3.5314 0.39239-5.1009 0.91554 3.3352 2.2235 5.1662 5.1663 6.0818 8.5015 0.0655 0.45776 0.19618 0.78476 0.26167 1.2425 0.0655 0.39239 0.13071 0.78476 0.13071 1.1771 0.2617 5.7548-1.5041 6.4742-2.7466 9.8748-1.8965 4.3815-1.3733 9.09 0.91553 12.883 0.1962 0.45775 0.45777 0.98092 0.78477 1.4387-2.4851-16.545 11.313-19.03 13.864-24.196 0.19619-4.5123-3.5314-7.5205-6.4742-9.6132-2.812-1.7003-5.3625-2.2235-7.7167-2.2235zm20.796 3.7276c-0.26168 1.5041-0.0655 1.1117-0.13068 1.8965-0.0655 0.52316-0.0655 1.1771-0.13069 1.7003-0.13069 0.52317-0.2617 1.0463-0.45779 1.5695-0.13068 0.52316-0.32697 1.0463-0.52316 1.5695-0.2617 0.52319-0.45776 0.98095-0.71935 1.5041-0.19618 0.26169-0.32697 0.52316-0.52316 0.78476-0.13069 0.19619-0.26169 0.39237-0.39237 0.58856-0.32697 0.45779-0.65398 0.91554-0.98094 1.3079-0.39239 0.39239-0.71936 0.85014-1.1772 1.1771v0.06548c-0.39236 0.32698-0.78474 0.71935-1.2425 1.0463-1.3733 1.0463-2.9428 1.8311-4.3815 2.812-0.45775 0.32697-0.91554 0.58857-1.3079 0.98094-0.45776 0.32697-0.85015 0.65394-1.2425 1.0463-0.4578 0.39237-0.78477 0.78476-1.1772 1.2425-0.32697 0.39239-0.71934 0.85014-0.98091 1.3079-0.32701 0.45775-0.65397 0.91553-0.91557 1.3733-0.26168 0.52316-0.45776 0.98094-0.71935 1.5041-0.19618 0.52316-0.39238 0.98094-0.52316 1.5041-0.19619 0.58857-0.32698 1.1117-0.45777 1.6349-0.0655 0.26169-0.0655 0.58855-0.1307 0.85014-0.0655 0.26169-0.0655 0.52316-0.13068 0.78476 0 0.52316-0.0655 1.1117-0.0655 1.6349 0 0.39238 0 0.78476 0.0655 1.1771 0 0.52316 0.0655 1.0463 0.19618 1.6349 0.0655 0.52315 0.19618 1.0463 0.327 1.5695 0.1962 0.52316 0.32698 1.0463 0.52316 1.5695 0.13071 0.32701 0.32697 0.65398 0.45779 0.91554l-15.041-5.8202c-2.5505-0.71935-5.0355-1.3733-7.5859-1.9619-1.3733-0.32697-2.7466-0.65396-4.1199-0.98094-3.9238-0.78474-7.9129-1.3733-11.902-1.7657-0.13068 0-0.19618-0.06548-0.32697-0.06548-3.9238-0.39237-7.7821-0.58856-11.706-0.58856-2.8774 0-5.7549 0.13068-8.5669 0.32697-3.9892 0.26169-7.9783 0.78476-11.967 1.4387-0.98095 0.1307-1.9619 0.32701-2.9428 0.52319-2.0273 0.39235-3.9891 0.85014-5.8856 1.3079-0.98094 0.26169-1.9619 0.52317-2.9428 0.78474-0.98091 0.39237-1.8965 0.85016-2.812 1.2425-0.71935 0.32697-1.4387 0.65395-2.158 0.98094-0.13069 0.06548-0.26169 0.06548-0.32697 0.1307-0.65397 0.32697-1.2425 0.58853-1.8311 0.91554-0.19619 0.06548-0.327 0.13068-0.45779 0.19619-0.71935 0.32697-1.4387 0.71934-2.0273 1.0463-0.45778 0.19619-0.91554 0.45778-1.3079 0.65398-0.19619 0.13068-0.45779 0.26168-0.58857 0.32697-0.58857 0.32697-1.1771 0.65394-1.7003 0.98094-0.58857 0.32697-1.1117 0.65394-1.5695 0.98091-0.45775 0.32701-0.91554 0.58857-1.3079 0.91554-0.06551 0.06548-0.13069 0.06548-0.19619 0.1307-0.39238 0.26169-0.85013 0.58856-1.2425 0.91556 0 0-0.06551 0.06548-0.13069 0.13069-0.32697 0.26169-0.65398 0.52316-0.98095 0.78472-0.13069 0.06548-0.26169 0.19619-0.39238 0.26169-0.32697 0.26169-0.65394 0.58857-0.98092 0.85016-0.06551 0.13069-0.19619 0.19619-0.26169 0.26169-0.39238 0.39237-0.78476 0.71934-1.1771 1.1117-0.06551 0-0.06551 0.06548-0.13069 0.13068-0.39238 0.32698-0.78476 0.71936-1.1771 1.1117-0.06551 0.06548-0.06551 0.13068-0.13069 0.13068-0.32697 0.32697-0.65394 0.65398-0.98094 1.0463-0.13069 0.1307-0.32697 0.26169-0.45775 0.39237-0.32697 0.39238-0.71935 0.78476-1.1117 1.1771-0.06551 0.13068-0.19619 0.19619-0.26169 0.32697-0.52316 0.52319-0.98095 1.0463-1.5041 1.5695-0.06551 0.06548-0.13069 0.13068-0.19619 0.19619-1.0464 1.1117-2.1581 2.2235-3.3352 3.2044-1.1771 1.0463-2.4196 2.0273-3.6622 2.8774-1.3079 0.91557-2.5504 1.7003-3.9238 2.485-1.3079 0.71934-2.6812 1.3733-4.1199 1.9619-1.3733 0.58856-2.812 1.1117-4.2507 1.5695-2.7466 0.58856-5.5587 1.7003-7.9783 1.8965-0.52316 0-1.1117 0.1307-1.6349 0.19618-0.58856 0.13069-1.1117 0.26169-1.6349 0.39239-0.52316 0.19618-1.0464 0.39237-1.5695 0.58855-0.52316 0.19619-1.0463 0.45779-1.5695 0.71937-0.45778 0.32696-0.98094 0.58856-1.4387 0.91553-0.45776 0.32697-0.91554 0.71934-1.3079 1.1117-0.45775 0.327-0.91554 0.78476-1.3079 1.1771-0.39238 0.4578-0.78476 0.85017-1.1117 1.3079-0.32697 0.52317-0.71935 0.98096-0.98095 1.5041-0.32697 0.45778-0.65394 0.98094-0.91554 1.5041-0.26169 0.58859-0.52316 1.1117-0.71935 1.7003-0.19619 0.52317-0.39238 1.1117-0.58857 1.7003-0.13069 0.52315-0.26169 1.0463-0.32697 1.5695 0 0.0655-0.065496 0.1307-0.065496 0.19619-0.13069 0.5886-0.13069 1.3734-0.19619 1.7658-0.065496 0.45775-0.13069 0.85012-0.13069 1.3079 0 0.26168 0 0.58853 0.065496 0.85012 0.065496 0.4578 0.13069 0.85016 0.26169 1.2426 0.13069 0.39233 0.26169 0.78471 0.45775 1.1771v0.0655c0.19619 0.3924 0.45778 0.78477 0.71935 1.1771 0.26169 0.39239 0.52319 0.78476 0.85016 1.1771 0.32697 0.32697 0.71935 0.71933 1.1117 1.0463 0.39238 0.39237 0.78476 0.71934 1.2425 1.0463 1.5695 1.3733 1.9619 1.8311 3.9892 2.8774 0.32697 0.1962 0.65397 0.32699 1.0464 0.52318 0.0655 0 0.13069 0.0655 0.19619 0.0655 0 0.13068 0 0.19619 0.0655 0.32701 0.0655 0.52317 0.19619 1.0463 0.32697 1.5695 0.13069 0.58857 0.327 1.1118 0.52319 1.5695 0.19619 0.39238 0.32697 0.78475 0.52316 1.1771 0.0655 0.1307 0.13069 0.26169 0.19619 0.32697 0.26169 0.52315 0.52316 0.98096 0.78472 1.4387 0.327 0.45777 0.65397 0.91553 0.98094 1.3733 0.32697 0.39236 0.71935 0.85014 1.1117 1.2425 0.39238 0.39239 0.78476 0.71938 1.2425 1.1117 0 0 0.06551 0.0655 0.13069 0.0655 0.39238 0.32701 0.78476 0.65399 1.1771 0.91554 0.45775 0.32699 0.91554 0.58856 1.4387 0.85016 0.45778 0.26169 0.98095 0.52315 1.5041 0.71936 0.39238 0.19619 0.85013 0.32699 1.3079 0.45777 0.06551 0.0655 0.13069 0.0655 0.26169 0.13071 0.26169 0.0655 0.58854 0.13067 0.85013 0.19617-0.19619 3.5314-0.26169 6.8666 0.26169 8.0437 0.58854 1.3079 3.466-2.6812 6.3434-7.2589-0.39238 4.5123-0.65397 9.8094 0 11.379 0.71935 1.6349 4.6431-3.466 8.0437-9.09 46.366-10.725 88.677 21.319 93.124 66.573-0.85015-7.0628-9.5478-10.986-13.537-10.006-1.9619 4.8393-5.2971 11.052-10.66 14.91 0.45777-4.3161 0.26167-8.763-0.65395-13.079-1.4387 6.0164-4.2508 11.64-8.1091 16.48-6.2126 0.45775-12.425-2.5505-15.695-7.0628-0.26169-0.1962-0.32697-0.58858-0.52316-0.85016-0.19619-0.4578-0.39238-0.91553-0.52316-1.3733-0.19619-0.45775-0.32697-0.91554-0.39238-1.3733-0.06551-0.4578-0.06551-0.91556-0.06551-1.4387v-0.98093c0.06551-0.45781 0.19619-0.91558 0.32697-1.3734 0.13069-0.45776 0.26169-0.91553 0.45778-1.3733 0.26169-0.45775 0.45775-0.91553 0.78476-1.3733 1.1117-3.139 1.1117-5.6894-0.91554-7.1936-0.39238-0.26169-0.78476-0.45779-1.2425-0.65398-0.26169-0.0655-0.58857-0.19619-0.85013-0.26168-0.19619-0.0655-0.32697-0.13071-0.52316-0.1962-0.45778-0.13069-0.91557-0.26169-1.3733-0.32697-0.45778-0.13068-0.91554-0.19619-1.3733-0.19619-0.45776-0.0655-0.98095-0.13069-1.4387-0.13069-0.32697 0-0.65397 0.0655-0.98094 0.0655-0.52316 0-0.98094 0.0655-1.4387 0.19619-0.45778 0.0655-0.91554 0.13068-1.3733 0.26167-0.45776 0.1307-0.91554 0.26169-1.3733 0.45781-0.45775 0.19618-0.85013 0.39237-1.3079 0.58855-0.39235 0.1962-0.78473 0.45776-1.2425 0.65395-15.237 9.9402-6.1472 33.221 4.2507 39.957-3.9238 0.71934-7.9129 1.5695-9.0246 2.4196-0.06551 0.0655-0.13069 0.1307-0.13069 0.1307 2.812 1.7003 5.7548 3.139 8.8284 4.3815 4.1853 1.3733 8.6323 2.6158 10.594 3.139v0.0655c5.4279 1.1117 10.921 1.5041 16.48 1.1771 28.97-2.0273 52.709-24.066 57.025-53.101 0.1307 0.58858 0.26169 1.1117 0.39238 1.7003 0.19619 1.1771 0.45775 2.4196 0.58854 3.6622v0.0655c0.13069 0.58857 0.19618 1.1771 0.26168 1.7003v0.2617c0.0655 0.58856 0.1307 1.1771 0.1307 1.7003 0.0655 0.71936 0.13069 1.4387 0.13069 2.1581v1.0463c0 0.32701 0.0655 0.71935 0.0655 1.0464 0 0.39239-0.0655 0.78474-0.0655 1.1771v0.91554c0 0.4578-0.0655 0.85015-0.0655 1.3079 0 0.26166 0 0.52317-0.0655 0.85015 0 0.45779-0.0655 0.91553-0.0655 1.4387-0.0655 0.19618-0.0655 0.39237-0.0655 0.58858-0.0655 0.52317-0.13069 0.98094-0.1962 1.5041 0 0.1962 0 0.39236-0.0655 0.58857-0.0655 0.65394-0.19617 1.2425-0.26166 1.8965v0.0655 0.0655c-0.13069 0.58855-0.2617 1.2425-0.3924 1.8311v0.1962c-0.13067 0.58855-0.26169 1.1771-0.39236 1.7657 0 0.0655-0.0655 0.19619-0.0655 0.26167-0.13071 0.58858-0.2617 1.1771-0.45776 1.7657v0.19618c-0.19618 0.65393-0.39238 1.2425-0.52318 1.8311-0.0655 0.0655-0.0655 0.13069-0.0655 0.13069-0.1962 0.65398-0.39236 1.3079-0.58854 1.9619-0.26168 0.65397-0.45777 1.2425-0.71934 1.8965-0.26169 0.65396-0.4578 1.3079-0.71938 1.8965-0.26169 0.65398-0.52318 1.2426-0.78474 1.8965h-0.0655c-0.2617 0.58856-0.5232 1.2425-0.85019 1.8311-0.0655 0.19617-0.13067 0.32697-0.19617 0.45774-0.0655 0.0655-0.0655 0.13069-0.13069 0.1962-4.2507 8.5668-10.529 16.087-18.376 21.973-0.52316 0.32697-1.0463 0.71936-1.5695 1.1117-0.1307 0.1307-0.327 0.19621-0.45779 0.32697-0.45778 0.32698-0.91554 0.65394-1.4387 0.98095l0.19617 0.39238h0.0655c0.91552-0.13068 1.8311-0.26168 2.7466-0.39238h0.0655c1.7003-0.26169 3.4006-0.58857 5.1009-0.91554 0.45774-0.0655 0.98094-0.19617 1.4387-0.327 0.32698-0.0655 0.58858-0.13068 0.91555-0.19619 0.45778-0.0655 0.91554-0.19618 1.3733-0.26167 0.39237-0.13069 0.78475-0.19621 1.1771-0.32698 6.5396-1.5695 12.883-3.7276 18.965-6.278-10.398 14.191-24.327 25.635-40.611 33.156 7.5205-0.52317 15.041-1.7657 22.3-3.8583 26.355-7.7821 48.524-25.504 61.799-49.374-2.6812 15.106-8.6976 29.494-17.591 42.05 6.3434-4.1854 12.164-9.0246 17.461-14.518 14.649-15.303 24.262-34.725 27.532-55.586 2.2235 10.333 2.8774 20.992 1.8965 31.521 47.216-65.854 3.9238-134.13-14.191-152.11-0.0655-0.13068-0.13069-0.19619-0.13069-0.32697-0.0655 0.06548-0.0655 0.06548-0.0655 0.1307 0-0.06548 0-0.06548-0.0655-0.1307 0 0.78476-0.0655 1.5695-0.13069 2.3542-0.1962 1.5041-0.39237 2.9428-0.65397 4.3815-0.32697 1.4387-0.71935 2.8774-1.1117 4.3161-0.45776 1.3733-0.98091 2.812-1.5695 4.1853-0.58857 1.3079-1.2425 2.6812-1.9619 3.9892-0.71936 1.2425-1.5041 2.5504-2.3542 3.7276-0.85015 1.2426-1.7657 2.4196-2.6812 3.5314-0.98095 1.1772-2.0273 2.2235-3.0736 3.2698-0.65394 0.58857-1.2425 1.1117-1.8965 1.6349-0.52315 0.4578-0.98091 0.85018-1.5041 1.3079-1.1771 0.91555-2.3542 1.7657-3.6622 2.5505-1.2425 0.78474-2.5504 1.5695-3.8583 2.2235-1.3733 0.65396-2.7466 1.2425-4.1199 1.8311-1.3733 0.52314-2.812 0.98093-4.2508 1.3733-1.4387 0.39236-2.9428 0.71936-4.3815 0.98092-1.5041 0.2617-3.0082 0.39238-4.4469 0.52319-1.0463 0.0655-2.0927 0.1307-3.139 0.1307-1.5041 0-3.0082-0.1307-4.4469-0.26169-1.5041-0.13069-3.0082-0.32702-4.4469-0.65399-1.5041-0.26168-2.9428-0.65397-4.3815-1.1117h-0.0655c1.4387-0.13069 2.8774-0.2617 4.3162-0.52318 1.5041-0.26168 2.9428-0.58855 4.3815-0.98095 1.4387-0.39236 2.8774-0.85015 4.2507-1.3733 1.4387-0.52317 2.812-1.1771 4.12-1.8311 1.3733-0.65397 2.6158-1.3733 3.9237-2.1581 1.2425-0.85014 2.485-1.7003 3.6622-2.6158 1.1771-0.91553 2.2888-1.8964 3.3352-2.9428 1.1117-0.98096 2.0926-2.0927 3.0736-3.2044 0.98093-1.1771 1.8965-2.3542 2.7466-3.5314 0.1307-0.1962 0.2617-0.45776 0.3924-0.65395 0.65393-1.0463 1.3079-2.0927 1.8964-3.139 0.71936-1.3079 1.3733-2.6158 1.9619-3.9891 0.58857-1.3733 1.1117-2.7466 1.5695-4.1853 0.45776-1.3733 0.78474-2.812 1.1117-4.2507 0.2617-1.5041 0.52315-2.9428 0.65395-4.3815 0.13069-1.5041 0.26168-3.0082 0.26168-4.4469 0-1.0463-0.0655-2.0927-0.13067-3.139-0.1307-1.5041-0.32699-2.9428-0.52318-4.3815-0.26169-1.5041-0.58855-2.9428-0.98095-4.3815-0.45775-1.3733-0.91553-2.812-1.4387-4.1853-0.5232-1.3733-1.1771-2.7466-1.8311-4.0546-0.71935-1.3079-1.4387-2.6158-2.2234-3.8583-0.85014-1.2425-1.7003-2.4196-2.6158-3.5968-0.98091-1.1117-1.9619-2.2235-3.0082-3.3352-0.52314-0.52316-1.1117-1.1117-1.7003-1.6349-2.9428-2.2889-6.0164-4.4469-9.09-6.4088-0.45776-0.26168-0.85014-0.45778-1.3079-0.65398-2.1581-1.3733-4.1854-2.0927-6.2126-2.7466z" fill="#e0234e" fill-rule="evenodd"/>
-        <path d="m287.15 202.41c1.1117-0.52318 2.158-0.85016 3.139-1.0464 2.4196-0.39238 3.793-0.71935 4.1853-0.98095 0.65396-0.39235 1.1117-0.91554 1.3079-1.4387 0.26168-0.91555 0.39234-2.812 0.39234-5.8202v-5.6894l0.0655-4.6431-0.19618-6.932v-4.1199c0-2.7466-0.19618-5.0355-0.65395-6.7358-0.13069-0.65393-0.71934-1.3079-1.6349-1.9619-1.2425-0.91551-3.2698-1.7657-6.2126-2.6158l-0.0655-3.139c0.52319-0.13069 1.0463-0.26169 1.5041-0.32699 0.45774-0.0655 2.2235-0.52315 5.297-1.3079 2.4197-0.85011 3.9892-1.5041 4.6431-1.8311 0.26167-0.13069 0.58852-0.32696 1.1117-0.58856 0.52314-0.45775 1.1117-0.85013 1.7657-1.3079 1.3079-0.91552 2.8774-2.5504 4.7085-4.7739l3.466-0.26168-0.13069 7.3897c-0.0655 0.71934-0.0655 1.3079-0.0655 1.7657 0 0.39239 0 1.3733 0.0655 3.0082 3.6622-3.139 6.932-5.2971 9.9402-6.5396 3.8583-1.6349 7.5859-2.4197 11.052-2.4197 4.1199 0 7.7821 1.0464 10.856 3.0736 3.139 2.0273 5.1663 4.3816 6.0818 6.9974 0.9809 2.6812 1.4387 8.1091 1.4387 16.153l-0.26169 21.45c0 0.98093 0.19618 1.8311 0.52314 2.4851 0.45782 0.32696 1.7003 0.65394 3.6622 0.98094l3.2044 0.58853c0.39239 0.58857 0.58858 1.2426 0.58858 2.0927 0 0.52316 0 1.2426-0.0655 2.1581l-12.883-0.91554-3.793 0.13068h-3.0082l-8.6976 0.65394h-2.2235c-0.0655-0.58855-0.0655-0.98093-0.0655-1.3079 0-0.78475 0.0655-1.6349 0.13068-2.5504 0.58856-0.13069 2.158-0.32701 4.5777-0.65398 0.65395-0.0655 1.3733-0.26169 2.2235-0.45776 0.85013-0.32701 1.3733-0.71932 1.5041-1.0464 0.32697-0.78473 0.52316-2.158 0.52316-4.2507 0-3.7276-0.0655-6.5396-0.13069-8.5015l0.0655-7.5859c0-9.2862-0.52316-15.041-1.7003-17.264-1.7003-3.3352-4.1853-4.9701-7.5205-4.9701-2.4196 0-4.9701 0.65395-7.5859 1.8965-2.6812 1.2425-5.3624 3.139-8.1745 5.6894l-0.13068 1.1117 0.13068 4.1199-0.0655 4.3816 0.26166 10.529-0.13068 1.6349c0 7.1282 0.2617 11.183 0.85017 12.098 0.58853 0.91554 2.7466 1.8965 6.5396 3.0082 0.13069 0.71933 0.19618 1.3079 0.19618 1.6349 0 0.5232-0.19618 1.3079-0.45778 2.4196-1.3733 0.0655-2.5504 0.0655-3.466 0.0655s-2.3543-0.13068-4.3162-0.39235l-6.9974-0.13068c-3.5314 0-8.5669 0.13068-15.172 0.45774-0.19619-0.45774-0.26169-0.91552-0.26169-1.3733 0-0.32701 0-1.0464 0.0655-2.0927z" fill="#eb2845"/>
-        <path d="m364.38 170.96c1.1771-3.7276 2.1581-6.2126 3.0736-7.3897 2.4197-3.5968 5.0355-6.4088 7.7821-8.436 2.812-2.0273 5.2971-3.3352 7.5205-3.9892 2.9428-0.85014 5.2317-1.2425 7.0628-1.2425 4.1199 0 7.4551 0.32697 9.9402 0.9809 2.5504 0.58858 4.7085 1.5042 6.4088 2.6813 2.4197 1.7003 4.3816 3.466 5.8856 5.1663 1.5041 1.7657 2.6813 3.8583 3.5968 6.2126 0.98096 2.3542 1.5041 5.2317 1.6349 8.5669l-7.3243-0.13069c-2.0273 0-6.4088-0.19619-13.275-0.58859-2.5504-0.13067-4.2507-0.26168-5.2317-0.26168-0.32698 0-2.6812 0.0655-7.0628 0.0655h-5.6894c-0.0655 0.65393-0.13069 1.1771-0.13069 1.5695 0 2.3543 0.32696 4.7739 0.85016 7.3898 0.58852 2.5504 1.4387 4.7739 2.5504 6.7358 1.1771 1.9619 2.5504 3.5968 4.2507 4.9701 1.7003 1.4387 3.466 2.4196 5.2317 3.0736l3.793 1.2425c3.4006 0 5.624-0.1307 6.8012-0.32696 2.0927-0.45776 3.9237-0.98094 5.4932-1.6349 1.6349-0.71934 3.5314-1.8965 5.8202-3.5314 1.5695 1.1771 2.8774 2.158 3.9892 3.139-3.8583 4.1853-7.9129 7.3244-12.033 9.2208-4.1199 1.8965-8.763 2.812-13.864 2.812-3.466 0-6.278-0.26169-8.5014-0.91554-2.8774-0.78477-5.5586-1.9619-7.9129-3.5968-2.3542-1.6349-4.3815-3.6621-6.0818-6.0164-1.7003-2.4196-3.0082-4.9047-3.8583-7.4551-1.0463-3.3352-1.6349-6.0164-1.6349-7.9783 0-3.8583 0.32698-7.2589 0.91554-10.333zm38.191-2.812c-0.0655-2.4851-0.52315-4.7739-1.4387-7.0628-0.91554-2.2235-2.3543-3.9237-4.3161-5.1662-1.8965-1.2426-3.8584-1.8965-5.8202-1.8965-2.9428 0-5.5587 1.3079-7.9783 3.8584-2.3543 2.6158-3.6622 6.0818-3.9892 10.529l14.976 0.0655c0.98094 0 2.3542-0.0655 4.0545-0.19618 1.3079-0.13069 2.2234-0.19619 2.7466-0.19619 0.39234 0 0.98092 0 1.7657 0.0655z" fill="#eb2845"/>
-        <path d="m427.68 187.37c1.3079-0.26169 2.2889-0.39237 2.8774-0.39237 0.32697 0 0.78476 0 1.3733 0.0655l0.58857 0.65394c2.4196 4.1854 3.9238 6.6704 4.7085 7.5859 1.5041 1.7657 3.0082 3.2044 4.5123 4.3161 0.98093 0.65398 2.5504 1.4387 4.7085 2.158 1.4387 0.5232 3.0082 0.78476 4.6431 0.78476 2.7466 0 5.1009-0.85014 7.0628-2.6158 1.9619-1.8311 2.9428-3.7276 2.9428-5.8202 0-1.3733-0.39238-2.5504-1.1117-3.5314-0.71934-0.98095-2.2234-1.9619-4.4469-2.9428-1.1117-0.45779-3.8583-1.2425-8.3052-2.3543-4.3815-1.1117-6.9974-1.8311-7.9129-2.1581-2.0927-0.78474-3.9238-1.8965-5.4933-3.2698-1.6349-1.4387-2.812-3.0082-3.6622-4.7739-1.1117-2.485-1.7003-4.6431-1.7003-6.4088 0-3.3352 0.52314-6.0164 1.4387-8.1745 0.98096-2.0927 2.3543-3.9891 4.1199-5.624 1.2425-1.2426 3.139-2.3543 5.6895-3.3352 2.5504-0.98095 5.3624-1.5041 8.2399-1.5041 4.1854 0 7.8475 0.26169 10.986 0.85016 3.139 0.58857 5.8202 1.4387 7.9783 2.5504 0.32698 0.98093 0.65396 3.3352 1.1771 6.932 0.4578 3.6622 0.71938 5.8202 0.71938 6.4742 0 0.32697-0.0655 0.65395-0.19618 0.98095-1.1771 0.32697-2.0927 0.52315-2.8774 0.52315-0.39238 0-1.0463-0.0655-1.8965-0.13067-0.39237-0.58859-0.91555-1.5695-1.5695-2.7467-2.0926-3.9238-4.2507-6.6704-6.4742-8.2399-2.2234-1.6349-4.7085-2.4197-7.6513-2.4197-3.0082 0-5.5586 0.91555-7.5859 2.6158-1.5041 1.3079-2.2235 3.0082-2.2235 5.2317 0 1.4387 0.78477 2.8774 2.3543 4.3815 1.5041 1.5041 4.1853 2.6812 7.9783 3.466 5.7548 1.2425 10.006 2.5505 12.687 3.793 3.9238 1.8311 6.7358 4.0545 8.3053 6.5396 1.5695 2.4851 2.4196 5.3625 2.4196 8.6322 0 5.1009-1.9618 9.3516-5.8202 12.752-3.793 3.3352-9.3516 5.0355-16.741 5.0355-0.91553 0-3.466-0.19618-7.5205-0.65394-1.8311-0.1962-3.9892-0.65397-6.4742-1.3079-0.65396-0.19619-2.2234-0.78476-4.8393-1.8965-0.45778-0.26167-0.78477-0.58856-1.0464-0.91553-0.1307-0.39238-0.45776-2.2234-0.85013-5.4933-0.65394-5.3625-1.0463-8.5669-1.1117-9.6132z" fill="#eb2845"/>
-        <path d="m481.57 155.98c5.1663-2.158 8.8938-4.3161 11.183-6.4088 2.3542-2.0926 4.7739-5.5586 7.3897-10.267h3.7276c0.39237 1.1771 0.58857 2.3543 0.58857 3.5968 0 2.2888-0.0655 4.0546-0.0655 5.3625l-0.19619 3.8584c0 0.19618 0 0.71934 0.0655 1.5041l1.5041 0.0655c0.19619 0 2.2889-0.0655 6.1472-0.26167 0.32698 0 1.9619-0.0655 4.9047-0.13069 0.26169 1.1771 0.4578 2.2235 0.4578 3.139 0 1.0464-0.19619 2.2234-0.52316 3.5314-1.4387 0.19619-2.4851 0.2617-3.2698 0.2617-0.32696 0-1.0463 0-2.0927-0.13069h-3.4006l-1.1771-0.0655-3.139 0.13069-0.13071 25.112c-0.0655 4.8393 0 7.9129 0.2617 9.09 0.26169 1.2425 0.78475 2.3542 1.5695 3.466 0.98094 0.4578 2.0927 0.71936 3.3352 0.71936 1.1771 0 2.0273-0.1307 2.6158-0.32696 0.58856-0.2617 1.5695-0.85014 2.8774-1.8965 0.26167-0.26169 0.71933-0.52317 1.2425-0.91555 1.0463 0.78476 1.9618 1.6349 2.6158 2.4851l0.26169 0.78475c-1.5695 2.4196-3.7276 4.3161-6.5396 5.6894-2.7466 1.3733-5.6894 2.0273-8.8284 2.0273-4.1199 0-7.3897-1.3079-9.9402-3.8584-2.5504-2.6158-3.7929-6.605-3.7929-12.033l0.26169-11.51v-18.769l-2.0273-0.0655-4.7739 0.0655-0.85014-0.19619c-0.26169-0.39238-0.39236-0.71935-0.39236-1.1117 0-0.26169 0.0655-1.2425 0.13067-2.9428z" fill="#eb2845"/>
-        </g>
-        </svg>            
+      <img src="/assets/logo_text.svg">
     </a>
   </div>
 </app-header>
@@ -24,51 +13,169 @@
     </div>
     <div class="sponsors-wrapper">
       <div class="sponsors-container">
-          <h4>Sponsors</h4>
-          <a href="https://valor-software.com/">
-            <img src="https://docs.nestjs.com/assets/sponsors/valor-software.png" class="logo-sponsor" />
-          </a>
-          <p>Nest is an MIT-licensed open source project. It can grow thanks to the support by these awesome people. If you'd like to join them, please read more <a href="https://opencollective.com/nest" target="blank">here</a>. Thanks!</p>
-          <div class="backers-wrapper">
-            <a href="https://opencollective.com/nest/backer/0/website" target="_blank"><img src="https://opencollective.com/nest/backer/0/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/1/website" target="_blank"><img src="https://opencollective.com/nest/backer/1/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/2/website" target="_blank"><img src="https://opencollective.com/nest/backer/2/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/3/website" target="_blank"><img src="https://opencollective.com/nest/backer/3/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/4/website" target="_blank"><img src="https://opencollective.com/nest/backer/4/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/5/website" target="_blank"><img src="https://opencollective.com/nest/backer/5/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/6/website" target="_blank"><img src="https://opencollective.com/nest/backer/6/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/7/website" target="_blank"><img src="https://opencollective.com/nest/backer/7/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/8/website" target="_blank"><img src="https://opencollective.com/nest/backer/8/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/9/website" target="_blank"><img src="https://opencollective.com/nest/backer/9/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/10/website" target="_blank"><img src="https://opencollective.com/nest/backer/10/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/11/website" target="_blank"><img src="https://opencollective.com/nest/backer/11/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/12/website" target="_blank"><img src="https://opencollective.com/nest/backer/12/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/13/website" target="_blank"><img src="https://opencollective.com/nest/backer/13/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/14/website" target="_blank"><img src="https://opencollective.com/nest/backer/14/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/15/website" target="_blank"><img src="https://opencollective.com/nest/backer/15/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/16/website" target="_blank"><img src="https://opencollective.com/nest/backer/16/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/17/website" target="_blank"><img src="https://opencollective.com/nest/backer/17/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/18/website" target="_blank"><img src="https://opencollective.com/nest/backer/18/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/19/website" target="_blank"><img src="https://opencollective.com/nest/backer/19/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/20/website" target="_blank"><img src="https://opencollective.com/nest/backer/20/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/21/website" target="_blank"><img src="https://opencollective.com/nest/backer/21/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/22/website" target="_blank"><img src="https://opencollective.com/nest/backer/22/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/23/website" target="_blank"><img src="https://opencollective.com/nest/backer/23/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/24/website" target="_blank"><img src="https://opencollective.com/nest/backer/24/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/25/website" target="_blank"><img src="https://opencollective.com/nest/backer/25/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/26/website" target="_blank"><img src="https://opencollective.com/nest/backer/26/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/27/website" target="_blank"><img src="https://opencollective.com/nest/backer/27/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/28/website" target="_blank"><img src="https://opencollective.com/nest/backer/28/avatar.svg"></a>
-            <a href="https://opencollective.com/nest/backer/29/website" target="_blank"><img src="https://opencollective.com/nest/backer/29/avatar.svg"></a>
+        <h3>Support us</h3>
+        <p>Nest is an MIT-licensed open source project. It can grow thanks to the support by these awesome people. If you'd
+          like to join them, please read more
+          <a href="https://opencollective.com/nest" target="blank">here</a>.</p>
+        <div class="row clearfix">
+          <div class="inline-column">
+            <h4 class="title">Principal Sponsor</h4>
+            <a href="https://valor-software.com/">
+              <img src="https://docs.nestjs.com/assets/sponsors/valor-software.png" class="logo-sponsor" />
+            </a>
           </div>
-          <a href="https://opencollective.com/nest" class="btn btn-primary" target="blank">
+          <div class="inline-column"> 
+            <h4 class="title">Sponsors / Backers</h4>
+            <a href="https://valor-software.com/">
+              <img src="https://nestjs.com/img/scalio-logo.svg" class="logo-sponsor-small" />
+            </a>
+            <a href="https://valor-software.com/">
+              <img src="https://nestjs.com/img/swingdev-logo.svg" class="logo-sponsor-small" />
+            </a>
+            <div class="backers-wrapper">
+              <a href="https://opencollective.com/nest/backer/0/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/0/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/1/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/1/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/2/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/2/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/3/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/3/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/4/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/4/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/5/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/5/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/6/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/6/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/7/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/7/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/8/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/8/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/9/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/9/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/10/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/10/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/11/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/11/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/12/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/12/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/13/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/13/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/14/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/14/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/15/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/15/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/16/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/16/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/17/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/17/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/18/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/18/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/19/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/19/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/20/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/20/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/21/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/21/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/22/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/22/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/23/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/23/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/24/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/24/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/25/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/25/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/26/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/26/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/27/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/27/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/28/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/28/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/29/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/29/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/30/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/30/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/31/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/31/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/32/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/32/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/33/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/33/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/34/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/34/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/35/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/35/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/36/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/36/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/37/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/37/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/38/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/38/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/39/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/39/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/40/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/40/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/41/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/41/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/42/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/42/avatar.svg">
+              </a>
+              <a href="https://opencollective.com/nest/backer/43/website" target="_blank">
+                <img src="https://opencollective.com/nest/backer/43/avatar.svg">
+              </a>
+            </div>
+          </div>
+        </div>
+        <!--<a href="https://opencollective.com/nest" class="btn btn-primary" target="blank">
             Become a sponsor
-          </a>
+          </a>-->
       </div>
     </div>
-    <app-footer> 
+    <app-footer>
       <p>
-        Made by 
+        Made by
         <a href="https://kamilmysliwiec.com" title="Kamil Mysliwiec Blog | Full-Stack Software Engineer">
           Kamil Myśliwiec
         </a>

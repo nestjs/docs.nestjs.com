@@ -5,12 +5,14 @@
 @import "./scss/utils.scss";
 
 body {
-  font-size: 15px;
-  font-weight: 500;
-  font-family: 'Montserrat', "Helvetica Neue", sans-serif;
-  background-color: $white-color;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  font-family: 'Lato', "Helvetica Neue", sans-serif;
+  background-color: #fbfbfb;
   color: $grey-color;
   margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -78,7 +80,7 @@ figure {
   img {
     max-width: 100%;
     height: auto;
-    box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
   }
 }
 
