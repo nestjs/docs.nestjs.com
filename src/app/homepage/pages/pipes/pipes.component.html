@@ -256,4 +256,70 @@
     <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through the entire modules
     stack (step by step).
   </blockquote>
+   <h4>Built-in pipes</h4>
+    <p>
+      Fortunately, you don't have to build those pipes on your own since the <code>ValidationPipe</code> and the <code>ParseIntPipe</code> are built-in pipes.
+    </p>
+    <p>
+      The built-in <code>ValidationPipe</code> offers more options than the one described above, which has been kept basic for the sake of simplicity and to reduce the learning curve.<br/>
+      If you take a look at the <code>createCatDto</code> in your controller function, you will notice that it is, as expected, an actual <code>CreateCatDto</code> instance.
+      That is because this pipe doesn't only validate the payload, but also transforms it into the expected type.
+      However, if don't want the pipe to mutate the payload and avoid the value overriding, you can configure it to avoid the transformation:
+    </p>
+    <span class="filename">cats.controler.ts</span>
+    <pre><code class="language-typescript">{{ createCatsControllerParamPipeTransformFalse }}</code></pre>
+    <p>
+      Because this pipe is based on the <code>class-validator</code> and the <code>class-transformer</code> libraries, it is possible to get more of it.
+      Have a look at the constructor optional options.
+    </p>
+    <pre><code class="language-typescript">{{ constructorCode }}</code></pre>
+    <p>
+      There is a <code>transform</code> attribute and all <code>class-validator</code> options (inherited from the <code>ValidatorOptions</code> interface):
+    </p>
+    <table>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>skipMissingProperties</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true than validator will skip validation of all properties that are missing in the validating object.</td>
+      </tr>
+      <tr>
+        <td><code>whitelist</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true validator will strip validated object of any properties that do not have any decorators.</td>
+      </tr>
+      <tr>
+        <td><code>forbidNonWhitelisted</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, instead of stripping non-whitelisted properties validator will throw an error.</td>
+      </tr>
+      <tr>
+        <td><code>groups</code></td>
+        <td><code>string[]</code></td>
+        <td>Groups to be used during validation of the object.</td>
+      </tr>
+      <tr>
+        <td><code>dismissDefaultMessages</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, the validation will not use default messages. Error message always will be undefined if its not explicitly set.</td>
+      </tr>
+      <tr>
+        <td><code>validationError.target</code></td>
+        <td><code>boolean</code></td>
+        <td>Indicates if target should be exposed in ValidationError.</td>
+      </tr>
+      <tr>
+        <td><code>validationError.value</code></td>
+        <td><code>boolean</code></td>
+        <td>Indicates if validated value should be exposed in ValidationError.</td>
+      </tr>
+    </table>
+    <blockquote>
+      <strong>Notice</strong> You might find more information about the <code>class-validator</code> in its <a href="https://github.com/typestack/class-validator">repository</a>.
+    </blockquote>
+
 </div>

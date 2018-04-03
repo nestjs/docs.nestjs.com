@@ -183,6 +183,21 @@ async create(createCatDto) {
 }`;
   }
 
+  get createCatsControllerParamPipeTransformFalse() {
+    return `
+@Post()
+@UsePipes(new ValidationPipe({ transform: false }))
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}`;
+  }
+
+  get constructorCode() {
+    return `
+export interface ValidationPipeOptions extends ValidatorOptions {
+  transform?: boolean;
+}`;
+    
   get getValidationPipe() {
     return `
 const app = await NestFactory.create(ApplicationModule);
