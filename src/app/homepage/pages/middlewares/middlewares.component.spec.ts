@@ -1,18 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MiddlewaresComponent } from './middlewares.component';
+import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../shared/pipes/extension.pipe';
 
 describe('MiddlewaresComponent', () => {
-  let component: MiddlewaresComponent;
-  let fixture: ComponentFixture<MiddlewaresComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ MiddlewaresComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        MiddlewaresComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<MiddlewaresComponent>;
+  let component: MiddlewaresComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(MiddlewaresComponent);
     component = fixture.componentInstance;

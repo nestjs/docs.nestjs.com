@@ -1,0 +1,127 @@
+<div class="content">
+  <h3>Usages</h3>
+  <p>
+    This section explain how to use <strong>NestjsCLI</strong>.
+  </p>
+  <h4>Commands</h4>
+  <pre>
+    <code class="language-bash">
+      $ nest [command] [...options]
+    </code>
+  </pre>
+  <h4>Options</h4>
+  <p>
+    Each command can accept the list of <strong>options</strong> below:
+  </p>
+  <ul>
+    <li><strong>--dry-run</strong> : allow to simulate the command execution to see how it will affect your working
+      directory.
+    </li>
+  </ul>
+  <h4>new</h4>
+  <p>
+    The <strong>new</strong> command generates a standard Nestjs project based on the typescript-starter as well as
+    install the packages from npm or yarn package manager.
+    NestjsCLI will ask you for missing information to create the project as which package manager you want to use for
+    install part.
+  </p>
+  <table>
+    <tr>
+      <th>Option Name</th>
+      <th>Description</th>
+      <th>Required</th>
+      <th>Default Value</th>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td>Your application name</td>
+      <td>false</td>
+      <td>nestjs-app-name</td>
+    </tr>
+    <tr>
+      <td>description</td>
+      <td>Your application description</td>
+      <td>false</td>
+      <td>description</td>
+    </tr>
+    <tr>
+      <td>version</td>
+      <td>Your application version</td>
+      <td>false</td>
+      <td>1.0.0</td>
+    </tr>
+    <tr>
+      <td>author</td>
+      <td>Your application author</td>
+      <td>false</td>
+      <td>''</td>
+    </tr>
+  </table>
+  <h4>generate</h4>
+  <p>
+    The <strong>generate</strong> command generates a Nestjs architecture component.
+  </p>
+  <table>
+    <tr>
+      <th>Option Name</th>
+      <th>Description</th>
+      <th>Required</th>
+      <th>Default Value</th>
+    </tr>
+    <tr>
+      <td>schematic</td>
+      <td>The schematic name from the list bellow.</td>
+      <td>true</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td>The name of the generated Nestjs architecture component.</td>
+      <td>true</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <td>path</td>
+      <td>The path from to generate the Nestjs architecture component.</td>
+      <td>false</td>
+      <td>src</td>
+    </tr>
+  </table>
+  <p>Manage architecture component</p>
+  <ul>
+    <li>controller</li>
+    <li>exception</li>
+    <li>guard</li>
+    <li>interceptor</li>
+    <li>middleware</li>
+    <li>module</li>
+    <li>pipe</li>
+    <li>service</li>
+  </ul>
+  <h4>info</h4>
+  <p>
+    The <strong>info</strong> command will display your project information.
+  </p>
+  <pre>
+    <code class="language-bash">
+      $ nest info
+       _   _             _      ___  _____  _____  _     _____
+      | \ | |           | |    |_  |/  ___|/  __ \| |   |_   _|
+      |  \| |  ___  ___ | |_     | |\ `--. | /  \/| |     | |
+      | . ` | / _ \/ __|| __|    | | `--. \| |    | |     | |
+      | |\  ||  __/\__ \| |_ /\__/ //\__/ /| \__/\| |_____| |_
+      \_| \_/ \___||___/ \__|\____/ \____/  \____/\_____/\___/
+
+      [System Information]
+      OS Version     : macOS High Sierra
+      NodeJS Version : v8.9.0
+      YARN Version    : 1.5.1
+      [Nest Information]
+      microservices version : 4.5.8
+      websockets version    : 4.5.8
+      testing version       : 4.5.5
+      common version        : 4.5.9
+      core version          : 4.5.10
+    </code>
+  </pre>
+</div>

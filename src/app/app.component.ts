@@ -1,9 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
-import { TITLE_SUFFIX, HOMEPAGE_TITLE } from './constants';
-import { SwUpdate } from '@angular/service-worker';
+import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +10,10 @@ import { SwUpdate } from '@angular/service-worker';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  constructor(
-    private readonly titleService: Title,
-    private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute) {}
+  constructor(private readonly titleService: Title,
+              private readonly router: Router,
+              private readonly activatedRoute: ActivatedRoute) {
+  }
 
   async ngOnInit() {
     this.router.events

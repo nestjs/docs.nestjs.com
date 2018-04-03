@@ -1,14 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModulesComponent } from './modules.component';
+import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../shared/pipes/extension.pipe';
 
 describe('ModulesComponent', () => {
-  let component: ModulesComponent;
-  let fixture: ComponentFixture<ModulesComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ModulesComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        ModulesComponent
+      ]
     })
     .compileComponents();
   }));
@@ -19,6 +22,8 @@ describe('ModulesComponent', () => {
     fixture.detectChanges();
   });
 
+  let fixture: ComponentFixture<ModulesComponent>;
+  let component: ModulesComponent;
   it('should be created', () => {
     expect(component).toBeTruthy();
   });

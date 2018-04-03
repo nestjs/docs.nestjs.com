@@ -1,18 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SqlComponent } from './sql.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('SqlComponent', () => {
-  let component: SqlComponent;
-  let fixture: ComponentFixture<SqlComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ SqlComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        SqlComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<SqlComponent>;
+  let component: SqlComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(SqlComponent);
     component = fixture.componentInstance;

@@ -1,18 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { E2eTestingComponent } from './e2e-testing.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('E2eTestingComponent', () => {
-  let component: E2eTestingComponent;
-  let fixture: ComponentFixture<E2eTestingComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ E2eTestingComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        E2eTestingComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<E2eTestingComponent>;
+  let component: E2eTestingComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(E2eTestingComponent);
     component = fixture.componentInstance;

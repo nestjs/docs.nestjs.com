@@ -1,6 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { PerfectScrollbarModule, PerfectScrollbarConfigInterface, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import {
+  PERFECT_SCROLLBAR_CONFIG,
+  PerfectScrollbarConfigInterface,
+  PerfectScrollbarModule
+} from 'ngx-perfect-scrollbar';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -56,8 +60,6 @@ import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
-import {ServiceWorkerModule} from '@angular/service-worker';
-import {environment} from '../environments/environment';
 import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
 import { QuickStartComponent } from './homepage/pages/graphql/quick-start/quick-start.component';
 import { ResolversMapComponent } from './homepage/pages/graphql/resolvers-map/resolvers-map.component';
@@ -69,6 +71,7 @@ import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
+import { CliModule } from './homepage/pages/cli/cli.module';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -80,7 +83,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BrowserModule,
     AppRoutingModule,
     PerfectScrollbarModule,
-    //ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
+    CliModule
   ],
   declarations: [
     AppComponent,
@@ -148,7 +151,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MvcComponent,
     MongoComponent,
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [
+    AppComponent
+  ],
   providers: [
     {
       provide: PERFECT_SCROLLBAR_CONFIG,

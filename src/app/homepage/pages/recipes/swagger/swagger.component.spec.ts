@@ -3,16 +3,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SwaggerComponent } from './swagger.component';
 
 describe('SwaggerComponent', () => {
-  let component: SwaggerComponent;
-  let fixture: ComponentFixture<SwaggerComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ SwaggerComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<SwaggerComponent>;
+  let component: SwaggerComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(SwaggerComponent);
     component = fixture.componentInstance;

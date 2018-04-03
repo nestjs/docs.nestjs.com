@@ -1,18 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SubscriptionsComponent } from './subscriptions.component';
+import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('SubscriptionsComponent', () => {
-  let component: SubscriptionsComponent;
-  let fixture: ComponentFixture<SubscriptionsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ SubscriptionsComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        SubscriptionsComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<SubscriptionsComponent>;
+  let component: SubscriptionsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(SubscriptionsComponent);
     component = fixture.componentInstance;

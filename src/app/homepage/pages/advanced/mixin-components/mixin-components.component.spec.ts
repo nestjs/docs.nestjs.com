@@ -3,16 +3,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MixinComponentsComponent } from './mixin-components.component';
 
 describe('MixinComponentsComponent', () => {
-  let component: MixinComponentsComponent;
-  let fixture: ComponentFixture<MixinComponentsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ MixinComponentsComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<MixinComponentsComponent>;
+  let component: MixinComponentsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(MixinComponentsComponent);
     component = fixture.componentInstance;
