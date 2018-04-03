@@ -82,8 +82,12 @@ const routes: Routes = [
       },
       {
         path: 'components',
+        redirectTo: 'providers',
+      },
+      {
+        path: 'providers',
         component: ComponentsComponent,
-        data: { title: 'Components' },
+        data: { title: 'Providers' },
       },
       {
         path: 'modules',

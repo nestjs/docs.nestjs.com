@@ -12,7 +12,7 @@ export class PipesComponent extends BasePageComponent {
 import { PipeTransform, Pipe, ArgumentMetadata } from '@nestjs/common';
 
 @Pipe()
-export class ValidationPipe implements PipeTransform<any> {
+export class ValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     return value;
   }
@@ -22,9 +22,9 @@ export class ValidationPipe implements PipeTransform<any> {
   get argumentMetadata() {
     return `
 export interface ArgumentMetadata {
-    type: 'body' | 'query' | 'param' | 'custom';
-    metatype?: new (...args) => any;
-    data?: string;
+  readonly type: 'body' | 'query' | 'param' | 'custom';
+  readonly metatype?: new (...args) => any;
+  readonly data?: string;
 }`;
   }
 
@@ -69,23 +69,22 @@ import { plainToClass } from 'class-transformer';
 
 @Pipe()
 export class ValidationPipe implements PipeTransform<any> {
-    async transform(value, metadata: ArgumentMetadata) {
-      const { metatype } = metadata;
-      if (!metatype || !this.toValidate(metatype)) {
-          return value;
-      }
-      const object = plainToClass(metatype, value);
-      const errors = await validate(object);
-      if (errors.length > 0) {
-          throw new BadRequestException('Validation failed');
-      }
+  async transform(value, { metatype }: ArgumentMetadata) {
+    if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
-
-    private toValidate(metatype): boolean {
-      const types = [String, Boolean, Number, Array, Object];
-      return !types.find((type) => metatype === type);
+    const object = plainToClass(metatype, value);
+    const errors = await validate(object);
+    if (errors.length > 0) {
+      throw new BadRequestException('Validation failed');
     }
+    return value;
+  }
+
+  private toValidate(metatype): boolean {
+    const types = [String, Boolean, Number, Array, Object];
+    return !types.find((type) => metatype === type);
+  }
 }`;
   }
 
@@ -107,6 +106,15 @@ async create(@Body() createCatDto: CreateCatDto) {
 }`;
   }
 
+  get createCatsControllerMethodPipeClass() {
+    return `
+@Post()
+@UsePipes(ValidationPipe)
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}`;
+  }
+
   get globalPipe() {
     return `
 async function bootstrap() {
@@ -122,8 +130,8 @@ bootstrap();`;
 import { PipeTransform, Pipe, ArgumentMetadata, HttpStatus, BadRequestException } from '@nestjs/common';
 
 @Pipe()
-export class ParseIntPipe implements PipeTransform<string> {
-  async transform(value: string, metadata: ArgumentMetadata) {
+export class ParseIntPipe implements PipeTransform<string, number> {
+  async transform(value: string, metadata: ArgumentMetadata): number {
     const val = parseInt(value, 10);
     if (isNaN(val)) {
       throw new BadRequestException('Validation failed');

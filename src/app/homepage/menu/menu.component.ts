@@ -21,7 +21,7 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'First Steps', path: '/first-steps' },
         { title: 'Controllers', path: '/controllers' },
-        { title: 'Components', path: '/components' },
+        { title: 'Providers', path: '/providers' },
         { title: 'Modules', path: '/modules' },
         { title: 'Middlewares', path: '/middlewares' },
         { title: 'Exception Filters', path: '/exception-filters' },

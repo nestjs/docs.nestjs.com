@@ -1,22 +1,22 @@
 <div class="content">
-   <h3>Components</h3>
+   <h3>Providers</h3>
    <p>
-    Almost everything is a component – Service, Repository, Factory, Helper [...] and they can be <strong>injected</strong> into controllers or into other components through <code>constructor</code>.
+    Almost everything can be considered as a provider – Service, Repository, Factory, Helper [...] and they can be <strong>injected</strong> into controllers or into other providers through <code>constructor</code>.
    </p>
    <figure><img src="/assets/Components_1.png" /></figure>
    <p>
       In the previous chapter, we have built a simple <code>CatsController</code>.
    </p>
    <p>
-     The controllers should only handle HTTP requests and delegate more complex tasks to the <strong>components</strong>.
-     The components are plain TypeScript classes with a <code>@Component()</code> decorator.
+     The controllers shall handle HTTP requests and delegate more complex tasks to the <strong>services</strong>.
+     The providers are plain TypeScript classes with a <code>@Injectable()</code> decorator on top of them.
    </p>
    <blockquote class="info">
     <strong>Hint</strong> Since Nest enables the possibility to design and organize the dependencies in a more OO-way, we strongly recommend
     following the <strong>SOLID</strong> principles.
   </blockquote>
   <p>
-    Let's create a <code>CatsService</code> component:
+    Let's create a simple <code>CatsService</code> provider:
   </p>
   <span class="filename">
     {{ 'cats.service' | extension: catsServiceT.isJsActive }}
@@ -25,8 +25,8 @@
   <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
   <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
   <p>
-    There's nothing special about components. Here's a <code>CatsService</code>, a basic class with one property and two methods.
-    The only difference is that it has the <code>@Component()</code> decorator. The <code>@Component()</code> attaches the metadata, thereby Nest knows that this class is a Nest component.
+    Here's a <code>CatsService</code>, a basic class with one property and two methods.
+    The only new trait is that it uses the <code>@Injectable()</code> decorator. The <code>@Injectable()</code> attaches the metadata, thereby Nest knows that this class is a Nest component.
   </p>
   <blockquote>
     <strong>Notice</strong> There's a <code>Cat</code> interface here. I didn't mention it because the schema is exactly same as in the <code>CreateCatDto</code> class which we have created in the previous chapter.
@@ -43,25 +43,26 @@
   <p>
     The <code>CatsService</code> is injected through the class constructor.
     Don't be afraid of the <code>private readonly</code> shortened syntax.
-    It means that we've created and initialized the <code>catsService</code> member in the same location.
+    It means that we've created and initialized the <code>catsService</code> member immedietely in the same location.
   </p>
   <h4>Dependency Injection</h4>
   <p>
     Nest is built around the strong design pattern commonly known as <strong>Dependency Injection</strong>.
-    There's a great article about this concept in the <a href="https://angular.io/guide/dependency-injection" target="blank">official Angular documentation</a>.
+    We recommend to read a great article about this concept in the <a href="https://angular.io/guide/dependency-injection" target="blank">official Angular documentation</a>.
   </p>
-  <blockquote class="info">
-    <strong>Hint</strong> Learn more about the <strong>Dependency Injection</strong> in Nest <a href="http://docs.nestjs.com/fundamentals/dependency-injection" target="blank">here</a>.
-  </blockquote>
   <p>
-    It's extremely easy to manage dependencies with <strong>TypeScript</strong> because Nest will resolve your dependencies just by <strong>injecting</strong>
-    them in your controller's constructor:
+    In Nest, thanks to the <strong>TypeScript</strong> capabilities, it's extremely easy to manage dependencies because they will be resolved just by type and afterward, <strong>injected</strong>
+    in your controller's constructor:
   </p>
   <pre><code class="language-typescript">{{ constructorSyntax }}</code></pre>
+  <h4>Custom providers</h4>
+  <p>
+    An inversion of control container, that Nest makes use of to resolve relationships between providers, is far more powerful than described above. The <code>@Injectable()</code> decorator is only a tip of an iceberg, not strictly required to define providers. Instead, you can use plain values, classes, either asynchronous or synchronous factories. Look <a routerLink="/fundamentals/dependency-injection">here</a> to find more examples.
+  </p>
   <h4>Last step</h4>
   <p>
     The last thing is to tell the module that something called <code>CatsService</code> truly exists.
-    We do this by editing our module file - <code>app.module.ts</code>, and put the service into the <code>components</code> array of the <code>@Module()</code> decorator.
+    We do this by editing our module file - <code>app.module.ts</code>, and put the service into the <code>providers</code> array of the <code>@Module()</code> decorator.
   </p>
   <span class="filename">
     {{ 'app.module' | extension: appModuleT.isJsActive }}
@@ -69,7 +70,7 @@
   </span>
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
-    Now Nest will be able to resolve the dependencies of the <code>CatsController</code> class.
+    Thanks to that, Nest will be able to resolve the dependencies of the <code>CatsController</code> class.
     This is how our directory structure looks right now:
   </p>
   <div class="file-tree">

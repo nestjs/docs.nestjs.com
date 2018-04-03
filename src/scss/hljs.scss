@@ -22,11 +22,11 @@
 }
 
 code {
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: Inconsolata, Consolas, 'Courier New', monospace;
   padding: 2px 6px;
   color: #2876d2;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 15px;
   white-space: pre-wrap;
   background: #f0f2f3;
 }
@@ -36,14 +36,14 @@ pre[class*='language-'] {
   letter-spacing: normal;
   color: #f7f7f7;
   background: none;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: Inconsolata, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
   line-height: 25px;
-  font-size: 14px;
+  font-size: 16px;
   -moz-tab-size: 4;
   -o-tab-size: 4;
   tab-size: 4;
@@ -70,7 +70,7 @@ pre[class*='language-'],
 
 /* Code blocks */
 pre[class*='language-'] {
-  padding: 8px 35px 30px;
+  padding: 5px 35px 30px;
   margin: 35px 0;
   overflow: auto;
   border: 0;

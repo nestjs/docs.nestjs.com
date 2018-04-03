@@ -10,8 +10,8 @@ export class ExceptionFiltersComponent extends BasePageComponent {
   get errorResponse() {
     return `
 {
-    "statusCode": 500,
-    "message": "Internal server error"
+  "statusCode": 500,
+  "message": "Internal server error"
 }`;
   }
 
@@ -41,7 +41,7 @@ async create(@Body() createCatDto: CreateCatDto) {
   throw new HttpException({
     status: HttpStatus.FORBIDDEN,
     error: 'This is a custom message',
-  });
+  }, 403);
 }
 `;
   }
@@ -54,7 +54,7 @@ async create(createCatDto) {
   throw new HttpException({
     status: HttpStatus.FORBIDDEN,
     error: 'This is a custom message',
-  });
+  }, 403);
 }
 `;
   }
@@ -62,16 +62,16 @@ async create(createCatDto) {
   get customResponse() {
     return  `
 {
-    "status": 403,
-    "error": "This is a custom message"
+  "status": 403,
+  "error": "This is a custom message"
 }`;
   }
 
   get forbiddenResponse() {
     return  `
 {
-    "statusCode": 403,
-    "message": "Forbidden"
+  "statusCode": 403,
+  "message": "Forbidden"
 }`;
   }
 
@@ -103,12 +103,13 @@ async create(createCatDto) {
 
   get httpExceptionFilter() {
     return `
-import { ExceptionFilter, Catch } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, response) {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const response = host.switchToHttp().getResponse();
     const status = exception.getStatus();
 
     response
@@ -128,7 +129,8 @@ import { HttpException } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter {
-  catch(exception, response) {
+  catch(exception, host) {
+    const response = host.switchToHttp().getResponse();
     const status = exception.getStatus();
 
     response
@@ -143,11 +145,12 @@ export class HttpExceptionFilter {
 
   get exceptionFilter() {
     return `
-import { ExceptionFilter, Catch } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 
 @Catch()
 export class AnyExceptionFilter implements ExceptionFilter {
-  catch(exception, response) {
+  catch(exception: any, host: ArgumentsHost) {
+    const response = host.switchToHttp().getResponse();
     response
       .status(500)
       .json({
@@ -164,7 +167,8 @@ import { ExceptionFilter, Catch } from '@nestjs/common';
 
 @Catch()
 export class AnyExceptionFilter implements ExceptionFilter {
-  catch(exception, response) {
+  catch(exception, host) {
+    const response = host.switchToHttp().getResponse();
     response
       .status(500)
       .json({
@@ -189,6 +193,27 @@ async create(@Body() createCatDto: CreateCatDto) {
     return `
 @Post()
 @UseFilters(new HttpExceptionFilter())
+@Bind(Body())
+async create(createCatDto) {
+  throw new ForbiddenException();
+}
+`;
+  }
+
+  get forbiddenCreateMethodWithFilterDi() {
+    return `
+@Post()
+@UseFilters(HttpExceptionFilter)
+async create(@Body() createCatDto: CreateCatDto) {
+  throw new ForbiddenException();
+}
+`;
+  }
+
+  get forbiddenCreateMethodWithFilterDiJs() {
+    return `
+@Post()
+@UseFilters(HttpExceptionFilter)
 @Bind(Body())
 async create(createCatDto) {
   throw new ForbiddenException();
@@ -223,5 +248,32 @@ const loggerFilter = app
 
 app.useGlobalFilters(loggerFilter);
 `;
+  }
+
+  get argumentsHost() {
+    return `
+export interface ArgumentsHost {
+  getArgs<T extends Array<any> = any[]>(): T;
+  getArgByIndex<T = any>(index: number): T;
+  switchToRpc(): RpcArgumentsHost;
+  switchToHttp(): HttpArgumentsHost;
+  switchToWs(): WsArgumentsHost;
+}`;
+  }
+
+  get globalModuleFilter() {
+    return `
+import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
+})
+export class ApplicationModule {}`;
   }
 }

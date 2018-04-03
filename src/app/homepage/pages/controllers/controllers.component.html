@@ -1,19 +1,20 @@
 <div class="content">
   <h3>Controllers</h3>
-  <p>The controllers layer is responsible for handling incoming <strong>requests</strong> and returning a <strong>response</strong> to the client.</p>
+  <p>
+    The controllers are responsible for handling incoming <strong>requests</strong> and returning a <strong>response</strong> to the client.</p>
   <figure><img src="/assets/Controllers_1.png" /></figure>
   <p>
-    To create a basic controller you have to attach the <strong>metadata</strong> to the class.
-    Thanks to the metadata Nest knows how to map your controller to the appropriate routes. To attach the metadata we're using the <strong>decorators</strong> (in this case <code>@Controller('cats')</code>).
+    In order to create a basic controller we have to use <strong>decorators</strong>.
+    Thanks to them Nest knows how to map controllers to the corresponding routes.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: catsControllerT.isJsActive }}
      <app-tabs #catsControllerT></app-tabs>
     </span>
   <pre><code class="language-typescript">{{ catsController }}</code></pre>
-  <h4>Metadata</h4>
+  <h4>Decorators</h4>
   <p>
-    We're using the <code>@Controller('cats')</code> decorator, which is <strong>obligatory</strong>.
+    In the example above, we used the <code>@Controller('cats')</code> decorator which is <strong>required</strong> to define a basic controller.
     The <code>cats</code> is an optional prefix for each route registered in the class. Using a prefix allows you to avoid repeating yourself when all your routes share a common prefix.
   </p>
   <p>
@@ -26,14 +27,14 @@
     How is that possible?
   </p>
   <p>
-    There're <strong>two possible approaches</strong> to manipulate the response:
+    We distinguish <strong>two different approaches</strong> to manipulate the response:
   </p>
   <table>
     <tr>
       <td>Standard (recommended)</td>
       <td>
         When we return a JavaScript object or array, it'll be <strong>automatically</strong>
-        parsed to JSON. When we return a string, Nest will send just a string without trying to parse it to JSON.
+        parsed to JSON. When we return a string, Nest will send just a string without trying to parse it.
         <br />
         <br />
         Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST requests, which uses <strong>201</strong>.
@@ -41,24 +42,24 @@
       </td>
     </tr>
     <tr>
-      <td>Express</td>
+      <td>Library-specific</td>
       <td>
-        We can use the express <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
+        We can use the library specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
         which we can inject using <code>@Res()</code> decorator in the function signature, for example <code>findAll(@Res() response)</code>.
       </td>
     </tr>
   </table>
   <blockquote>
-    <strong>Notice!</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route.
+    <strong>Notice!</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route and will no longer work as expected.
   </blockquote>
   <h4>Request object</h4>
   <p>
     A lot of endpoints need an access to the client <strong>request</strong> details.
-    In fact, Nest is using express <a href="http://expressjs.com/en/api.html#req" target="blank">request object</a>.
+    In fact, Nest is using express <a href="http://expressjs.com/en/api.html#req" target="blank">request object</a> by default.
     We can force Nest to inject the request object into handler using <code>@Req()</code> decorator.
   </p>
   <blockquote class="info">
-    <strong>Hint</strong> There's a <code>@types/express</code> package and we strongly recommend to use it (<code>Request</code> has its own typings).
+    <strong>Hint</strong> There's a <code>@types/express</code> package and we strongly recommend to use it (<code>Request</code> has its own typings then).
   </blockquote>
   <span class="filename">
     {{ 'cats.controller' | extension: requestObjectT.isJsActive }}
@@ -109,7 +110,7 @@
   </table>
   <h4>More endpoints</h4>
   <p>
-    We have already created an endpoint to fetch the data (<strong>GET</strong> route). It'd be great to provide a way of creating the new records too.
+    We have already defined an endpoint to fetch the data (<strong>GET</strong> route). It'd be great to provide a way of creating the new records as well.
     Let's create the <strong>POST</strong> handler:
   </p>
   <span class="filename">
@@ -134,7 +135,7 @@
   <h4>Route parameters</h4>
   <p>
     Routes with static paths can't help when you need to accept <strong>dynamic data</strong> as part of the URL.
-    To define routes with parameters, simply specify the route parameters in the path of the route as shown below.
+    In order to define routes with parameters, simply specify the route parameters in the path of the route as shown below.
   </p>
   <pre><code class="language-typescript">{{ routeParameters }}</code></pre>
   <h4>Async / await</h4>
@@ -170,18 +171,18 @@
   <pre [class.hide]="observableExampleT.isJsActive"><code class="language-typescript">{{ observableExample }}</code></pre>
   <pre [class.hide]="!observableExampleT.isJsActive"><code class="language-typescript">{{ observableExampleJs }}</code></pre>
   <p>
-    There's no recommended way. You can use whatever you want.
+    There's no recommended way. You can use whatever fits your requirements.
   </p>
   <h4>POST handler</h4>
   <p>
     Our previous example of POST route handler doesn't accept any client params. Let's fix this by adding the <code>@Body()</code> argument here.
   </p>
   <p>
-    Firstly, we need to establish the <strong>DTO</strong> (Data Transfer Object) schema.
+    But firstly (if you use TypeScript), we need to establish the <strong>DTO</strong> (Data Transfer Object) schema.
     A DTO is an object that defines how the data will be sent over the network.
     We could do this by using <strong>TypeScript</strong>
     interfaces, or by simple classes. What may be surprising, we recommend using <strong>classes</strong> here. Why?
-    Classes are part of the JavaScript ES6 standard, so they're just plain functions. On the other hand, TypeScript interfaces are removed
+    Classes are part of the JavaScript ES6 standard, and therefore they represent just plain functions. On the other hand, TypeScript interfaces are removed
     during the transpilation, Nest can't refer to them. It's important because features such as <strong>Pipes</strong> enable additional possibilities when they have access to the metatype
     of the variable.
   </p>
@@ -194,7 +195,7 @@
   </span>
   <pre><code class="language-typescript">{{ createCatSchema }}</code></pre>
   <p>
-    It has only three basic properties. All of them are marked as <code>readonly</code>, because we should
+    It has only three basic properties. All of them are marked as <code>readonly</code> because we should
     always try to make our functions as <a href="https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976" target="blank">pure</a> as possible.
   </p>
   <p>
@@ -212,8 +213,8 @@
   </p>
   <h4>Last step</h4>
   <p>
-    The controller is prepared, and ready to use, but Nest doesn't know that <code>CatsController</code> exists yet,
-    so it won't create an instance of this class. We need to tell Nest about it.
+    The controller is prepared, and ready to use, but Nest doesn't know that <code>CatsController</code> exists yet.
+    Hence, it won't create an instance of this class. We need to tell Nest about it.
   </p>
   <p>
     The controller always belongs to the module, that's why we hold the <code>controllers</code> array within the <code>@Module()</code> decorator.
@@ -225,13 +226,13 @@
   </span>
   <pre><code class="language-typescript">{{ appModule }}</code></pre>
   <p>
-    Tada! We attached the metadata to the module class, so now Nest can easily reflect which controllers have to be mounted.
+    Tada! We attached the metadata to the module class, and thus Nest can easily reflect which controllers have to be mounted.
   </p>
   <h4>Express approach</h4>
   <p>
     So far we've discussed the Nest standard way of manipulating responses.
-    The second way of manipulating the response is to use express the <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>.
-    It was the only available option until <strong>Nest 4</strong>. To inject the response object, we need to use <code>@Res()</code> decorator.
+    The second way of manipulating the response is to use library-specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>.
+    In order to inject the response object, we need to use <code>@Res()</code> decorator.
     To show the differences, let's rewrite the <code>CatsController</code>:
   </p>
   <span class="filename">
@@ -240,7 +241,7 @@
   <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
   <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
   <p>
-    This manner is much less clear from my point of view. I definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
-    with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you have full control of the express response object.
+    This manner is much less clear in general. I definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
+    with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you have full control of the response object.
   </p>
 </div>

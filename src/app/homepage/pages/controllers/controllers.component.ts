@@ -4,7 +4,7 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-controllers',
   templateUrl: './controllers.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ControllersComponent extends BasePageComponent {
   get catsController(): string {
@@ -73,7 +73,7 @@ findOne(@Param() params) {
   return {};
 }`;
   }
-  
+
   get statusCode() {
     return `
 import { Controller, Get, Post, HttpCode } from '@nestjs/common';
@@ -109,8 +109,8 @@ async findAll() {
 }`;
   }
 
-    get observableExample() {
-      return `
+  get observableExample() {
+    return `
 @Get()
 findAll(): Observable<any[]> {
   return Observable.of([]);
@@ -126,7 +126,7 @@ findAll() {
   }
 
   get createCatSchema() {
-      return `
+    return `
 export class CreateCatDto {
   readonly name: string;
   readonly age: number;
@@ -135,7 +135,7 @@ export class CreateCatDto {
   }
 
   get exampleWithBody() {
-      return `
+    return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
   // TODO: Add some logic here
@@ -152,18 +152,18 @@ async create(createCatDto) {
   }
 
   get appModule() {
-      return `
+    return `
 import { Module } from '@nestjs/common';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-    controllers: [CatsController],
+  controllers: [CatsController],
 })
 export class ApplicationModule {}`;
   }
 
   get bodyParser() {
-      return `
+    return `
 import * as bodyParser from 'body-parser';
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
@@ -177,7 +177,7 @@ bootstrap();`;
   }
 
   get expressWay() {
-      return `
+    return `
 import { Controller, Get, Post, Res, Body, HttpStatus } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 

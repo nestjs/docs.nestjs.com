@@ -5,15 +5,15 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-components',
   templateUrl: './components.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComponentsComponent extends BasePageComponent {
   get catsService() {
     return `
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cat } from './interfaces/cat.interface';
 
-@Component()
+@Injectable()
 export class CatsService {
   private readonly cats: Cat[] = [];
 
@@ -30,9 +30,9 @@ export class CatsService {
 
   get catsServiceJs() {
     return `
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-@Component()
+@Injectable()
 export class CatsService {
   constructor() {
     this.cats = [];
@@ -109,8 +109,8 @@ import { CatsController } from './cats/cats.controller';
 import { CatsService } from './cats/cats.service';
 
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
+  controllers: [CatsController],
+  providers: [CatsService],
 })
 export class ApplicationModule {}
 `;

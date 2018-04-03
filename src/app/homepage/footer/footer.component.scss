@@ -6,7 +6,7 @@
   @extend .box-sizing;
   background: $black-color;
   display: block;
-  height: 95px;
+  height: 108px;
   padding: 16px 2px 16px 52px;
   position: absolute;
   bottom: 0;
@@ -14,6 +14,7 @@
   right: 0;
   margin: 0;
   width: auto;
+  font-size: 15px;
 
   @include media(medium) { 
     padding: 15px;
@@ -28,20 +29,18 @@
 footer {
   display: block;
   position: relative;
+  color: #717171;
 
   a {
     @extend .transition;
-    color: $grey-color;
+    color: #717171;
     &:hover {
       color: $white-color;
     }
   }
 
   p {
-    line-height: 24px;
-  }
-  span {
-    font-size: 13px;
+    line-height: 27px;
   }
 }
 

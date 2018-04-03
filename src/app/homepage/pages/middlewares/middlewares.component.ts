@@ -8,11 +8,11 @@ import { BasePageComponent } from '../page/page.component';
 export class MiddlewaresComponent extends BasePageComponent {
   get loggerMiddleware() {
     return `
-import { Middleware, NestMiddleware, ExpressMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, FunctionMiddleware } from '@nestjs/common';
 
-@Middleware()
+@Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  resolve(...args: any[]): ExpressMiddleware {
+  resolve(...args: any[]): FunctionMiddleware {
     return (req, res, next) => {
       console.log('Request...');
       next();
@@ -23,9 +23,9 @@ export class LoggerMiddleware implements NestMiddleware {
 
   get loggerMiddlewareJs() {
     return `
-import { Middleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-@Middleware()
+@Injectable()
 export class LoggerMiddleware {
   resolve(...args) {
     return (req, res, next) => {
@@ -38,71 +38,73 @@ export class LoggerMiddleware {
 
   get applicationModule() {
     return `
-import { Module, NestModule, MiddlewaresConsumer, RequestMethod } from '@nestjs/common';
+import { Module, NestModule, MiddlewaresConsumer } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
-    configure(consumer: MiddlewaresConsumer): void {
-        consumer.apply(LoggerMiddleware).forRoutes(
-            { path: '/cats', method: RequestMethod.GET },
-            { path: '/cats', method: RequestMethod.POST },
-        );
-    }
+  configure(consumer: MiddlewaresConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('/cats');
+  }
 }`;
   }
 
   get applicationModuleJs() {
     return `
-import { Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule {
-    configure(consumer) {
-        consumer.apply(LoggerMiddleware).forRoutes(
-            { path: '/cats', method: RequestMethod.GET },
-            { path: '/cats', method: RequestMethod.POST },
-        );
-    }
+  configure(consumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('/cats');
+  }
 }`;
   }
 
   get applicationModuleByControllers() {
     return `
-import { Module, NestModule, MiddlewaresConsumer, RequestMethod } from '@nestjs/common';
+import { Module, NestModule, MiddlewaresConsumer } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
-    configure(consumer: MiddlewaresConsumer): void {
-        consumer.apply(LoggerMiddleware).forRoutes(CatsController);
-    }
+  configure(consumer: MiddlewaresConsumer): void {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(CatsController);
+  }
 }`;
   }
 
   get applicationModuleByControllersJs() {
     return `
-import { Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule {
-    configure(consumer) {
-        consumer.apply(LoggerMiddleware).forRoutes(CatsController);
-    }
+  configure(consumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(CatsController);
+  }
 }`;
   }
 
@@ -114,14 +116,15 @@ import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
-    configure(consumer: MiddlewaresConsumer): void {
-        consumer.apply(LoggerMiddleware)
-            .with('ApplicationModule')
-            .forRoutes(CatsController);
-    }
+  configure(consumer: MiddlewaresConsumer): void {
+    consumer
+      .apply(LoggerMiddleware)
+      .with('ApplicationModule')
+      .forRoutes(CatsController);
+  }
 }`;
   }
 
@@ -133,24 +136,25 @@ import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule {
-    configure(consumer) {
-        consumer.apply(LoggerMiddleware)
-            .with('ApplicationModule')
-            .forRoutes(CatsController);
-    }
+  configure(consumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .with('ApplicationModule')
+      .forRoutes(CatsController);
+  }
 }`;
   }
 
   get loggerMiddlewareWithArgs() {
     return `
-import { Middleware, NestMiddleware, ExpressMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, FunctionMiddleware } from '@nestjs/common';
 
-@Middleware()
+@Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  resolve(name: string): ExpressMiddleware {
+  resolve(name: string): FunctionMiddleware {
     return (req, res, next) => {
       console.log(\`[\${name}\] Request...\`); // [ApplicationModule] Request...
       next();
@@ -161,9 +165,9 @@ export class LoggerMiddleware implements NestMiddleware {
 
   get loggerMiddlewareWithArgsJs() {
     return `
-import { Middleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-@Middleware()
+@Injectable()
 export class LoggerMiddleware {
   resolve(name) {
     return (req, res, next) => {
@@ -176,15 +180,15 @@ export class LoggerMiddleware {
 
   get defferedMiddleware() {
       return `
-import { Middleware, NestMiddleware, ExpressMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, FunctionMiddleware } from '@nestjs/common';
 
-@Middleware()
+@Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  async resolve(name: string): Promise<ExpressMiddleware> {
-    await someAsyncFn();
+  async resolve(name: string): Promise<FunctionMiddleware> {
+    await someAsyncJob();
 
     return async (req, res, next) => {
-      await someAsyncFn();
+      await someAsyncJob();
       console.log(\`[\${name}\] Request...\`); // [ApplicationModule] Request...
       next();
     };
@@ -194,15 +198,15 @@ export class LoggerMiddleware implements NestMiddleware {
 
   get defferedMiddlewareJs() {
     return `
-import { Middleware } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-@Middleware()
+@Injectable()
 export class LoggerMiddleware {
   async resolve(name) {
-    await someAsyncFn();
+    await someAsyncJob();
 
     return async (req, res, next) => {
-      await someAsyncFn();
+      await someAsyncJob();
       console.log(\`[\${name}\] Request...\`); // [ApplicationModule] Request...
       next();
     };
@@ -212,7 +216,7 @@ export class LoggerMiddleware {
 
     get functionalMiddleware() {
         return `
-export const loggerMiddleware = (req, res, next) => {
+export function logger(req, res, next) {
   console.log(\`Request...\`);
   next();
 };`;
@@ -221,7 +225,7 @@ export const loggerMiddleware = (req, res, next) => {
     get applyFunctionalMiddleware() {
         return `
 import { Module, NestModule, MiddlewaresConsumer } from '@nestjs/common';
-import { loggerMiddleware } from './common/middlewares/logger.middleware';
+import { logger } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
@@ -229,8 +233,10 @@ import { CatsController } from './cats/cats.controller';
   imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
-  configure(consumer: MiddlewaresConsumer): void {
-    consumer.apply(loggerMiddleware).forRoutes(CatsController);
+  configure(consumer: MiddlewaresConsumer) {
+    consumer
+      .apply(logger)
+      .forRoutes(CatsController);
   }
 }`;
     }
@@ -238,7 +244,7 @@ export class ApplicationModule implements NestModule {
     get applyFunctionalMiddlewareJs() {
       return `
 import { Module } from '@nestjs/common';
-import { loggerMiddleware } from './common/middlewares/logger.middleware';
+import { logger } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
@@ -247,7 +253,9 @@ import { CatsController } from './cats/cats.controller';
 })
 export class ApplicationModule {
   configure(consumer) {
-    consumer.apply(loggerMiddleware).forRoutes(CatsController);
+    consumer
+      .apply(logger)
+      .forRoutes(CatsController);
   }
 }`;
   }

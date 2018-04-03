@@ -14,8 +14,8 @@ import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
+  controllers: [CatsController],
+  providers: [CatsService],
 })
 export class CatsModule {}
 `;
@@ -27,7 +27,7 @@ import { Module } from '@nestjs/common';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    imports: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule {}
 `;
@@ -40,9 +40,9 @@ import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
-    exports: [CatsService]
+  controllers: [CatsController],
+  providers: [CatsService],
+  exports: [CatsService]
 })
 export class CatsModule {}
 `;
@@ -56,9 +56,9 @@ import { CatsService } from './cats.service';
 
 @SingleScope()
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
-    exports: [CatsService]
+  controllers: [CatsController],
+  providers: [CatsService],
+  exports: [CatsService]
 })
 export class CatsModule {}`;
   }
@@ -71,9 +71,9 @@ import { CatsService } from './cats.service';
 
 @Global()
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
-    exports: [CatsService]
+  controllers: [CatsController],
+  providers: [CatsService],
+  exports: [CatsService]
 })
 export class CatsModule {}`;
   }
@@ -85,8 +85,8 @@ import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
+  controllers: [CatsController],
+  providers: [CatsService],
 })
 export class CatsModule {
   constructor(private readonly catsService: CatsService) {}
@@ -100,8 +100,8 @@ import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 
 @Module({
-    controllers: [CatsController],
-    components: [CatsService],
+  controllers: [CatsController],
+  providers: [CatsService],
 })
 @Dependencies(CatsService)
 export class CatsModule {
@@ -127,7 +127,7 @@ import { createDatabaseProviders } from './database.providers';
 import { Connection } from './connection.component';
 
 @Module({
-  components: [Connection],
+  providers: [Connection],
 })
 export class DatabaseModule {
   static forRoot(entities = [], options?): DynamicModule {

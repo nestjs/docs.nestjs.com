@@ -1,28 +1,28 @@
 <div class="content">
   <h3>Middlewares</h3>
   <p>
-    The middleware is a function, which is called <strong>before</strong> the route handler.
+    The middleware is a function which is called <strong>before</strong> the route handler.
     Middleware functions have access to the <a href="http://expressjs.com/en/4x/api.html#req" target="blank">request</a>
      and <a href="http://expressjs.com/en/4x/api.html#res" target="blank">response</a> objects, and the <code>next</code> middleware function in the application’s request-response cycle.
      The <strong>next</strong> middleware function is commonly denoted by a variable named <code>next</code>.
   </p>
   <figure><img src="/assets/Middlewares_1.png" /></figure>
   <p>
-    The Nest middlewares are equal to <a href="http://expressjs.com/en/guide/using-middleware.html" target="blank">express</a> middlewares. In fact, here's a great list of the middleware capabilities copied from the official express documentation:
+    The Nest middlewares, by default, are equal to <a href="http://expressjs.com/en/guide/using-middleware.html" target="blank">express</a> middlewares. Here's a great list of the middleware capabilities copied from the official express documentation:
   </p>
   <blockquote class="external">
     Middleware functions can perform the following tasks:
     <ul>
-       <li>Execute any code.</li>
-       <li>Make changes to the request and the response objects.</li>
-       <li>End the request-response cycle.</li>
-       <li>Call the next middleware function in the stack.</li>
-       <li>If the current middleware function does not end the request-response cycle, it must call <code>next()</code> to pass control to the next middleware function. Otherwise, the request will be left hanging.</li>
+       <li>execute any code.</li>
+       <li>make changes to the request and the response objects.</li>
+       <li>end the request-response cycle.</li>
+       <li>call the next middleware function in the stack.</li>
+       <li>if the current middleware function does not end the request-response cycle, it must call <code>next()</code> to pass control to the next middleware function. Otherwise, the request will be left hanging.</li>
     </ul>
   </blockquote>
   <p>
-    The Nest middleware is a class with a <code>@Middleware()</code> decorator. This class should implement the <code>NestMiddleware</code> interface.
-    Let's create an example, the <code>LoggerMiddleware</code> class.
+    The Nest middleware is either a function, or a class with a <code>@Injectable()</code> decorator. The class should implement the <code>NestMiddleware</code> interface, while function does not have any special requirements.
+    Let's start from the <code>LoggerMiddleware</code> example.
   </p>
   <span class="filename">
     {{ 'logger.middleware' | extension: loggerMiddlewareT.isJsActive }}
@@ -31,15 +31,15 @@
   <pre [class.hide]="loggerMiddlewareT.isJsActive"><code class="language-typescript">{{ loggerMiddleware }}</code></pre>
   <pre [class.hide]="!loggerMiddlewareT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareJs }}</code></pre>
   <p>
-    The <code>resolve()</code> method has to return a regular express middleware <code>(req, res, next) => void</code>.
+    The <code>resolve()</code> method has to return a regular library-specific middleware <code>(req, res, next) => any</code>.
   </p>
   <h4>Dependency Injection</h4>
   <p>
-    There's no exception when it comes to the middlewares. Same as components and controllers, they can <strong>inject dependencies</strong> through the <code>constructor</code> that belongs to the same module.
+    There's no exception when it comes to the middlewares. Same as providers and controllers, they are able to <strong>inject dependencies</strong> that belongs to the same module (through the <code>constructor</code>).
   </p>
   <h4>Where to put the middlewares?</h4>
   <p>
-    The middlewares can't be listed in the <code>@Module()</code> decorator.
+    There's no place for middlewares in the <code>@Module()</code> decorator.
     We have to set them up using the <code>configure()</code> method of the module class.
     Modules that include middlewares have to implement the <code>NestModule</code> interface.
     Let's set up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
@@ -50,16 +50,13 @@
   </span>
   <pre [class.hide]="applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModule }}</code></pre>
   <pre [class.hide]="!applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModuleJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> We could pass here (inside <code>forRoutes()</code>) a single object and just use <code>RequestMethod.ALL</code>.
-  </blockquote>
   <p>
-    In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers, which we've registered inside the <code>CatsController</code>.
-    The <code>MiddlewareConsumer</code> is a helper class. It provides several methods to work with the middlewares. All of them can be simply <strong>chained</strong>.
-    Let's go over these methods.
+    In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers that we have previously defined inside the <code>CatsController</code>.
+    The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middlewares. All of them can be simply <strong>chained</strong>.
+    Let's go over them.
   </p>
   <p>
-    The <code>forRoutes()</code> can take a single object, multiple objects, a controller class and even multiple controller classes.
+    The <code>forRoutes()</code> can take a single string, multiple string, a controller class and even multiple controller classes.
     In most cases you'll probably just pass the <strong>controllers</strong> and separate them by a comma. Below is an example with a single controller:
   </p>
   <span class="filename">
@@ -69,12 +66,12 @@
   <pre [class.hide]="applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
   <pre [class.hide]="!applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllersJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> The <code>apply()</code> method can take a single middleware or an <strong>array of middlewares</strong>.
+    <strong>Hint</strong> The <code>apply()</code> method can either take a single middleware, or an <strong>array of middlewares</strong>.
   </blockquote>
   <h4>Pass arguments to the middleware</h4>
   <p>
-    Sometimes the behaviour of the middleware depends on the custom values e.g. an array of user roles, options object etc.
-    We can pass additional arguments to the <code>resolve()</code> using the <code>with()</code> method. See an example below:
+    Sometimes the behaviour of the middleware depends on the custom values e.g. an array of user roles, options object, and so on.
+    We can apply additional arguments to the <code>resolve()</code> using the <code>with()</code> method. See an example below:
   </p>
   <span class="filename">
     {{ 'app.module' | extension: applicationModuleWithMethodT.isJsActive }}
@@ -83,7 +80,7 @@
   <pre [class.hide]="applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethod }}</code></pre>
   <pre [class.hide]="!applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethodJs }}</code></pre>
   <p>
-    We have passed a custom string - <code>ApplicationModule</code> to the <code>with()</code> method.
+    We have passed a plain string - <code>ApplicationModule</code> to the <code>with()</code> method.
     Now we have to adjust the <code>resolve()</code> method of the <code>LoggerMiddleware</code>.
   </p>
   <span class="filename">
@@ -93,12 +90,12 @@
   <pre [class.hide]="loggerMiddlewareWithArgsT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareWithArgs }}</code></pre>
   <pre [class.hide]="!loggerMiddlewareWithArgsT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareWithArgsJs }}</code></pre>
   <p>
-    The value of the <code>name</code> property will be <code>ApplicationModule</code>.
+    In this case, the value of the <code>name</code> property will be <code>'ApplicationModule'</code>.
   </p>
-  <h4>Async Middlewares</h4>
+  <h4>Asynchronous middlewares</h4>
   <p>
-    There are no contraindications to return the <code>async</code> function from the <code>resolve()</code> method.
-    Also, it's possible to make the <code>resolve()</code> method <code>async</code> too. This pattern is called <strong>deffered middleware</strong>.
+    There are no contraindications that would prevent us from returning the <code>async</code> function within the <code>resolve()</code> method.
+    Also, it's possible to make the <code>resolve()</code> method <code>async</code> as well. This common pattern is called <strong>deffered middleware</strong>.
   </p>
   <span class="filename">
     {{ 'logger.middleware' | extension: defferedMiddlewareT.isJsActive }}
@@ -106,7 +103,7 @@
   </span>
   <pre [class.hide]="defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddleware }}</code></pre>
   <pre [class.hide]="!defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddlewareJs }}</code></pre>
-  <h4>Functional Middlewares</h4>
+  <h4>Functional middlewares</h4>
   <p>
     The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies.
     Why can't we just use a simple function? It's a good question, cause in fact - we can.
@@ -119,7 +116,7 @@
   </span>
   <pre><code class="language-typescript">{{ functionalMiddleware }}</code></pre>
   <p>
-    Now use it within the <code>ApplicationModule</code>.
+    Now we can use it within the <code>ApplicationModule</code>.
   </p>
   <span class="filename">
     {{ 'app.module' | extension: applyFunctionalMiddlewareT.isJsActive }}
