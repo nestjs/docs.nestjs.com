@@ -1,32 +1,32 @@
 <div class="content">
    <h3>Interceptors</h3>
    <p>
-     Interceptor is a class with the <code>@Interceptor()</code> decorator.
-     The interceptor should implements the <code>NestInterceptor</code> interface.
+     An interceptor is a class with the <code>@Interceptor()</code> decorator.
+     The interceptor should implement the <code>NestInterceptor</code> interface.
    </p>
    <figure><img src="/assets/Interceptors_1.png" /></figure>
    <p>
-     The interceptors have a set of useful capabilities, which are inspired by <strong>Aspect-Oriented Programming</strong> (AOP) technique.
-     They make possible to:
+     Interceptors have a set of useful capabilities, which are inspired by the <strong>Aspect-Oriented Programming</strong> (AOP) technique.
+     They make it possible to:
    </p>
    <ul>
      <li>bind <strong>extra logic</strong> before / after method execution</li>
-     <li><strong>transform</strong> the result returned from the function</li>
-     <li><strong>transform</strong> the exception thrown from the function</li>
-     <li>completely <strong>override</strong> the function depending on the chosen conditions (e.g. caching purposes)</li>
+     <li><strong>transform</strong> the result returned from a function</li>
+     <li><strong>transform</strong> the exception thrown from a function</li>
+     <li>completely <strong>override</strong> a function depending on the chosen conditions (e.g. caching purposes)</li>
    </ul>
    <h4>Basics</h4>
    <p>
      Each interceptor has the <code>intercept()</code> method.
      This function takes 3 arguments. First one is <code>dataOrRequest</code>. This value depends on where you actually have used the interceptor.
-     When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise, it's the data passed to the microservice / or websocket.
-     The second argument is a <code>context</code>, which is exactly the same as in <a routerLink="/guards">Guards</a>.  This object fulfils <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
+     When it's a HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise, it's the data passed to the micro service / or web socket.
+     The second argument is a <code>context</code>, which is exactly the same as in <a routerLink="/guards">Guards</a>.  This object fulfils the <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
      The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
      The last one <code>stream$</code> is an <code>Observable</code>. If you'd not return this stream, the function won't be evaluated.
    </p>
    <h4>Before / After</h4>
    <p>
-     The first use case is using interceptor to provide extra logic before or after function execution. It's useful when we're gonna <strong>log interaction</strong> with the application, e.g. storing user calls, or calculate the timestamp.
+     The first use case is using the interceptor to provide extra logic before or after the function execution. It's useful when we're gonna <strong>log interaction</strong> with the application, e.g. storing user calls, or calculating the timestamp.
    </p>
    <p>
       Let's create a simple <code>LoggingInterceptor</code>.
@@ -38,13 +38,13 @@
   <pre [class.hide]="loggingInterceptorT.isJsActive"><code class="language-typescript">{{ loggingInterceptor }}</code></pre>
   <pre [class.hide]="!loggingInterceptorT.isJsActive"><code class="language-typescript">{{ loggingInterceptorJs }}</code></pre>
   <blockquote class="warning">
-      <strong>Notice</strong> Interceptors same as controllers, components, guards and middlewares can <strong>inject dependencies</strong> through constructor.
+      <strong>Notice</strong> Interceptors act the same as controllers, components, guards and middleware they can <strong>inject dependencies</strong> through the constructor.
    </blockquote>
    <p>
-     Since <code>stream$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we have a lot of various operators which we can use to manipulate the stream. In above example, I've used <code>do()</code> operator, which invokes the function upon graceful or exceptional termination of the observable sequence.
+     Since <code>stream$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we have a lot of various operators which we can use to manipulate the stream. In the example above, I've used the <code>do()</code> operator, which invokes the function upon graceful or exceptional termination of the observable sequence.
    </p>
    <p>
-     To setup the interceptor, we're using <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
+     To set up the interceptor, we're using the <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
      Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped, method-scoped and global-scoped.
   </p>
   <span class="filename">
@@ -54,7 +54,7 @@
   <pre><code class="language-typescript">{{ useLoggingInterceptor }}</code></pre>
   <p>
     Now every route handler within <code>CatsController</code> is using <code>LoggingInterceptor</code>.
-    When someone would call GET <code>/cats</code> endpoint, you'll see similar output in your console window:
+    When someone would call the GET <code>/cats</code> endpoint, you'll see similar output in your console window:
   </p>
   <pre><code class="language-typescript">{{ consoleOutput }}</code></pre>
   <p>
@@ -64,10 +64,10 @@
   <h4>Response mapping</h4>
   <p>
     The <code>stream$</code> is an <code>Observable</code>.
-    This object contains the value <strong>returned</strong> from the route handler, so we can easily mutate it using <code>map()</code> operator.
+    This object contains the <strong>returned</strong> value of the route handler, so we can easily mutate it using the <code>map()</code> operator.
   </p>
   <blockquote class="warning">
-    <strong>Notice</strong> The response mapping doesn't work with express response strategy (using <code>@Res()</code> object directly is not possible). 
+    <strong>Notice</strong> The response mapping doesn't work with the express response strategy (using the <code>@Res()</code> object directly is not possible).
   </blockquote>
   <p>
     Let's create the <code>TransformInterceptor</code> which will pack the response and assign it to the <code>data</code> property.
@@ -79,15 +79,15 @@
   <pre [class.hide]="transformInterceptorT.isJsActive"><code class="language-typescript">{{ transformInterceptor }}</code></pre>
   <pre [class.hide]="!transformInterceptorT.isJsActive"><code class="language-typescript">{{ transformInterceptorJs }}</code></pre>
   <blockquote>
-    <strong>Hint</strong> The <code>intercept()</code> method can be <code>async</code>. 
+    <strong>Hint</strong> The <code>intercept()</code> method can be <code>async</code>.
   </blockquote>
   <p>
-    Now, the response of the GET <code>/cats</code> request would looks like below:
+    Now, the response of the GET <code>/cats</code> request would look something like this:
   </p>
   <pre><code class="language-typescript">{{ dataResponse }}</code></pre>
   <h4>Exception mapping</h4>
   <p>
-    Since <code>stream$</code> is an <code>Observable</code>, we can use <code>catch()</code> operator to override thrown exception with a new stream:
+    Since <code>stream$</code> is an <code>Observable</code>, we can use the <code>catch()</code> operator to override the thrown exception with a new stream:
   </p>
   <span class="filename">
     {{ 'exception.interceptor' | extension: exceptionMappingT.isJsActive }}
@@ -97,8 +97,8 @@
    <pre [class.hide]="!exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMappingJs }}</code></pre>
   <h4>Stream overriding</h4>
   <p>
-    Sometimes we might want to completely prevent calling the handler and return different value instead.
-    The excellent example is a <strong>cache interceptor</strong>, which would store the cached responses with some ttl.
+    Sometimes we might want to completely prevent calling the handler and return a different value instead.
+    An excellent example of this is a <strong>cache interceptor</strong>, which would store the cached responses with some time.
   </p>
   <span class="filename">
     {{ 'cache.interceptor' | extension: cacheInterceptorT.isJsActive }}
@@ -107,12 +107,57 @@
   <pre [class.hide]="cacheInterceptorT.isJsActive"><code class="language-typescript">{{ cacheInterceptor }}</code></pre>
   <pre [class.hide]="!cacheInterceptorT.isJsActive"><code class="language-typescript">{{ cacheInterceptorJs }}</code></pre>
   <p>
-    Here's a <code>CacheInterceptor</code> with hardcoded <code>isCached</code> variable and the cached response <code>[]</code>.
-    Since we're returning new stream created through <code>of</code> operator, the route handler <strong>won't be called</strong>.
-    To create a generic solution, you can use the <code>Reflector</code> and create a custom decorator. It's well described in the <a routerLink="/guards">guards</a> article.
-    It's everything.
+    Here's a <code>CacheInterceptor</code> with a hardcoded <code>isCached</code> variable and the cached response <code>[]</code>.
+    Since we're returning a new stream created through the <code>of</code> operator, the route handler <strong>won't be called</strong>.
+    To create a generic solution, you can use the <code>Reflector</code> and create a custom decorator. It's well described in the <a routerLink="/guards">guards</a> article. That's everything.
   </p>
   <blockquote>
-    <strong>Hint</strong> Exceptions thrown within interceptors can be catched by <a routerLink="/exception-filters">exception filters</a>. 
+    <strong>Hint</strong> Exceptions thrown within interceptors can be caught by <a routerLink="/exception-filters">exception filters</a>.
+  </blockquote>
+  <h4>Global interceptors</h4>
+  <p>
+    Global interceptors don't belong to any scope. They live outside modules, thus as a result - they can't inject dependencies.
+    We need to create an instance immediately. But quite often, global interceptors depend on other objects, for example, we'd
+    love to dispatch an asynchronous event on each request using
+    <code>EventsService</code>, but this service is a part of the
+    <code>EventsModule</code>. How do we solve this?
+  </p>
+  <p>
+    The solution is pretty easy. Each Nest application instance is in fact, a created
+    <strong>Nest context</strong>. The Nest context is a wrapper around the Nest container, which holds all instantiated classes.
+    We can grab any existing instance from within any imported module directly using the application object.
+  </p>
+  <p>
+    Let's assume that we have a
+    <code>EventsInterceptor</code> registered in the
+    <code>EventsModule</code>. This
+    <code>EventsModule</code> is imported into the
+    <strong>root module</strong>. We can pick the
+    <code>EventsInterceptor</code> instance using the following syntax:
+  </p>
+  <pre><code class="language-typescript">{{ getEventsInterceptor }}</code></pre>
+  <p>
+    To grab <code>EventsInterceptor</code> instance we have used 2 methods, well-described in the table below:
+  </p>
+  <table>
+    <tr>
+      <td>
+        <code>get()</code>
+      </td>
+      <td>
+        Makes it possible to retrieve the instance of the component or controller available inside the processed module.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>select()</code>
+      </td>
+      <td>
+        Allows you to navigate through the module tree, for example, to pull out a specific instance from the selected module.
+      </td>
+    </tr>
+  </table>
+  <blockquote class="info">
+    <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through the entire modules stack (step by step).
   </blockquote>
 </div>

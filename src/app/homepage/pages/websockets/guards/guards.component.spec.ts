@@ -3,16 +3,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { WsGuardsComponent } from './guards.component';
 
 describe('WsGuardsComponent', () => {
-  let component: WsGuardsComponent;
-  let fixture: ComponentFixture<WsGuardsComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       declarations: [ WsGuardsComponent ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<WsGuardsComponent>;
+  let component: WsGuardsComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(WsGuardsComponent);
     component = fixture.componentInstance;

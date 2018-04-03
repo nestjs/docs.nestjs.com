@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-sql-sequelize',
   templateUrl: './sql-sequelize.component.html',
-  styleUrls: ['./sql-sequelize.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SqlSequelizeComponent extends BasePageComponent {
@@ -84,13 +83,12 @@ export const catsProviders = [
       return `
 import { Component, Inject } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
-import { Model } from 'sequelize-typescript';
 import { Cat } from './cat.entity';
 
 @Component()
 export class CatsService {
   constructor(
-    @Inject('CatsRepository') private readonly catsRepository: typeof Model) {}
+    @Inject('CatsRepository') private readonly catsRepository: typeof Cat) {}
 
   async findAll(): Promise<Cat[]> {
     return await this.catsRepository.findAll<Cat>();
@@ -107,7 +105,7 @@ import { catsProviders } from './cats.providers';
 import { DatabaseModule } from '../database/database.module';
 
 @Module({
-  modules: [DatabaseModule],
+  imports: [DatabaseModule],
   controllers: [CatsController],
   components: [
     CatsService,

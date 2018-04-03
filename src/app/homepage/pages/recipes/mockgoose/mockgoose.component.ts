@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mockgoose',
   templateUrl: './mockgoose.component.html',
-  styleUrls: ['./mockgoose.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MockgooseComponent extends BasePageComponent {
@@ -31,9 +30,8 @@ export const databaseProviders = [
     provide: 'DbToken',
     useFactory: async () => {
       (mongoose as any).Promise = global.Promise;
-      
-      if (process.env.NODE_ENV === 'test') {
 
+      if (process.env.NODE_ENV === 'test') {
         const mockgoose = new Mockgoose(mongoose);
         mockgoose.helper.setDbVersion('3.4.3');
 
@@ -43,14 +41,11 @@ export const databaseProviders = [
               useMongoClient: true,
             });
           });
-
       } else {
-
         await mongoose.connect('mongodb://localhost/nest', {
           useMongoClient: true,
         });
       }
-      
       return mongoose;
     },
   },
@@ -161,7 +156,7 @@ import { catsProviders } from './cats.providers';
 import { DatabaseModule } from '../database/database.module';
 
 @Module({
-  modules: [DatabaseModule],
+  imports: [DatabaseModule],
   controllers: [CatsController],
   components: [
     CatsService,
@@ -188,8 +183,8 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { CatsModule } from '../../src/modules/cats/cats.module';
-import { CatsService } from '../../src/modules/cats/cats.service';
+import { CatsModule } from '../../src/cats/cats.module';
+import { CatsService } from '../../src/cats/cats.service';
 
 describe('Cats', () => {
     const server = express();
@@ -197,7 +192,7 @@ describe('Cats', () => {
 
     beforeAll(async () => {
         const module = await Test.createTestingModule({
-            modules: [CatsModule],
+            imports: [CatsModule],
           })
           .compile();
 

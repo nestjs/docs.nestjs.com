@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-modules',
   templateUrl: './modules.component.html',
-  styleUrls: ['./modules.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModulesComponent extends BasePageComponent {
@@ -28,7 +27,7 @@ import { Module } from '@nestjs/common';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule {}
 `;
@@ -56,6 +55,21 @@ import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 
 @SingleScope()
+@Module({
+    controllers: [CatsController],
+    components: [CatsService],
+    exports: [CatsService]
+})
+export class CatsModule {}`;
+  }
+
+  get globalScope() {
+    return `
+import { Module, Global } from '@nestjs/common';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
+
+@Global()
 @Module({
     controllers: [CatsController],
     components: [CatsService],
@@ -100,9 +114,44 @@ export class CatsModule {
   get reExportExamle() {
     return `
 @Module({
-  modules: [CommonModule],
+  imports: [CommonModule],
   exports: [CommonModule],
 })
 export class CoreModule {}`;
+  }
+
+  get dynamicModules() {
+    return `
+import { Module, DynamicModule } from '@nestjs/common';
+import { createDatabaseProviders } from './database.providers';
+import { Connection } from './connection.component';
+
+@Module({
+  components: [Connection],
+})
+export class DatabaseModule {
+  static forRoot(entities = [], options?): DynamicModule {
+    const providers = createDatabaseProviders(options, entities);
+    return {
+      module: DatabaseModule,
+      components: providers,
+      exports: providers,
+    };
+  }
+}`;
+  }
+  
+  get importDynamicModules() {
+    return `
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from './database/database.module';
+import { User } from './users/entities/user.entity';
+
+@Module({
+  imports: [
+    DatabaseModule.forRoot([User]),
+  ],
+})
+export class ApplicationModule {}`;
   }
 }

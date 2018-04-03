@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-mongodb',
   templateUrl: './mongodb.component.html',
-  styleUrls: ['./mongodb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MongodbComponent extends BasePageComponent {
@@ -140,7 +139,7 @@ import { catsProviders } from './cats.providers';
 import { DatabaseModule } from '../database/database.module';
 
 @Module({
-  modules: [DatabaseModule],
+  imports: [DatabaseModule],
   controllers: [CatsController],
   components: [
     CatsService,

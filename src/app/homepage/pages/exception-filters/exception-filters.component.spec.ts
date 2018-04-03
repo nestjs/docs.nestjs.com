@@ -1,18 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExceptionFiltersComponent } from './exception-filters.component';
+import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../shared/pipes/extension.pipe';
 
 describe('ExceptionFiltersComponent', () => {
-  let component: ExceptionFiltersComponent;
-  let fixture: ComponentFixture<ExceptionFiltersComponent>;
-
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ExceptionFiltersComponent ]
+    return TestBed.configureTestingModule({
+      declarations: [
+        TabsComponent,
+        ExtensionPipe,
+        ExceptionFiltersComponent
+      ]
     })
     .compileComponents();
   }));
 
+  let fixture: ComponentFixture<ExceptionFiltersComponent>;
+  let component: ExceptionFiltersComponent;
   beforeEach(() => {
     fixture = TestBed.createComponent(ExceptionFiltersComponent);
     component = fixture.componentInstance;

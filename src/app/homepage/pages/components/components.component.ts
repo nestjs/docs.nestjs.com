@@ -5,7 +5,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-components',
   templateUrl: './components.component.html',
-  styleUrls: ['./components.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ComponentsComponent extends BasePageComponent {

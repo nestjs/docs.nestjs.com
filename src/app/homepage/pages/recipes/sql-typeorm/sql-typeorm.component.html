@@ -1,6 +1,12 @@
 <div class="content">
   <h3>SQL (TypeORM)</h3>
   <h5>This chapter applies only to TypeScript</h5>
+  <blockquote>
+    <strong>Warning</strong> In this article, you'll learn how to create a <code>DatabaseModule</code>
+    based on the <strong>TypeORM</strong> package from scratch using custom components. As a consequence, this solution
+    contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated
+    <code>@nestjs/typeorm</code> package. To learn more, see <a routerLink="/techniques/sql">here</a>.
+  </blockquote>
   <p>
     <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> is definitely the most mature Object Relational Mapper (ORM) available in the node.js world.
     Since it's written in TypeScript, it works pretty well with the Nest framework.
@@ -9,7 +15,7 @@
   <pre><code class="language-typescript">{{ dependencies }}</code></pre>
   <p>
     The first step we need to do is to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package.
-    The <code>createConnection()</code> function returns the <code>Promise</code>, so it's necessary to create an <a routerLink="/advanced/async-components">async component</a>.
+    The <code>createConnection()</code> function returns the <code>Promise</code>, so it's necessary to create an <a routerLink="/fundamentals/async-components">async component</a>.
   </p>
   <span class="filename">database.providers.ts</span>
   <pre><code class="language-typescript">{{ databaseProviders }}</code></pre>
@@ -64,7 +70,4 @@
   <blockquote class="warning">
       <strong>Hint</strong> Don't forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
    </blockquote>
-   <p>
-     The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/05-sql-typeorm" target="blank">here</a>.
-   </p>
 </div>

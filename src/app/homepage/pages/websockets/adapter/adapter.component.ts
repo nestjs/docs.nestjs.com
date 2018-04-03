@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-adapter',
   templateUrl: './adapter.component.html',
-  styleUrls: ['./adapter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdapterComponent extends BasePageComponent {

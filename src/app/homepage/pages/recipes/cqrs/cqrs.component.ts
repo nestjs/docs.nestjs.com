@@ -4,7 +4,6 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-cqrs',
   templateUrl: './cqrs.component.html',
-  styleUrls: ['./cqrs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CqrsComponent extends BasePageComponent {
@@ -247,7 +246,7 @@ export const CommandHandlers = [KillDragonHandler, DropAncientItemHandler];
 export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 
 @Module({
-  modules: [CQRSModule],
+  imports: [CQRSModule],
   controllers: [HeroesGameController],
   components: [
     HeroesGameService,
@@ -283,7 +282,7 @@ export const CommandHandlers = [KillDragonHandler, DropAncientItemHandler];
 export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 
 @Module({
-  modules: [CQRSModule],
+  imports: [CQRSModule],
   controllers: [HeroesGameController],
   components: [
     HeroesGameService,

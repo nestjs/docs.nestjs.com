@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-guards',
   templateUrl: './guards.component.html',
-  styleUrls: ['./guards.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GuardsComponent extends BasePageComponent {
@@ -165,5 +164,16 @@ const roles = this.reflector.get('roles', parent);`;
     return `
 const app = await NestFactory.create(ApplicationModule);
 app.useGlobalGuards(new RolesGuard());`;
+  }
+
+  get getAuthGuard() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const authGuard = app
+  .select(AuthModule)
+  .get(AuthGuard);
+
+app.useGlobalGuards(authGuard);
+`;
   }
 }

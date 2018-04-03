@@ -4,14 +4,13 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-basics',
   templateUrl: './basics.component.html',
-  styleUrls: ['./basics.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BasicsComponent extends BasePageComponent {
   get bootstrap() {
     return `
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './modules/app.module';
+import { ApplicationModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {

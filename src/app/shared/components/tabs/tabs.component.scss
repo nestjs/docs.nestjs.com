@@ -1,8 +1,21 @@
+@import './../../../../scss/utils.scss';
+
 .tabs-wrapper {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
+
+  @include media(medium) {
+    position: static;
+    margin: 15px -20px -15px;
+    
+    .tab {
+      float: none;
+      display: inline-block;
+      margin: 0 !important;
+    }
+  }
 }
 
 .tab {
@@ -17,10 +30,11 @@
 
   &:hover:not(.active) {
     color: #dadada;
-    background: #2d2d2d;
+    background: #232323;
   }
   &.active {
-    color: #fff;
-    background: #212121;
+    // color: #fff;
+    // background: #1d1d1d;
+    display: none;
   }
 }

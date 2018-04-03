@@ -1,0 +1,57 @@
+<div class="content">
+  <h3>Dependency Injection</h3>
+  <p>
+    There's a lot of scenarios when you'd wanna bind something directly to the Nest container.
+    The only thing you should know is that Nest is injecting dependencies by <strong>tokens</strong>.
+    Usually, the token is just a type. If you wanna provide custom component, you'd need to create a token.
+    Mostly, the custom tokens are plain strings. Following best practices, you should hold this token in the separated file, for example, <code>constants.ts</code>.
+  </p>
+  <p>
+    Let's go through the available options:
+  </p>
+  <h4>Use Value</h4>
+  <pre><code class="language-typescript">{{ useValue }}</code></pre>
+ <blockquote>
+    <strong>Hint</strong> It's a good practice to keep custom providers inside separated file, for example <code>cats.providers.ts</code>.
+  </blockquote> 
+  <p>Use cases:</p>
+  <ul>
+    <li>bind specific value to the container, for example 3rd party library</li>
+  </ul>
+  <h4>Use Factory</h4>
+  <span class="filename">
+     <app-tabs #useFactoryT></app-tabs>
+  </span>
+  <pre [class.hide]="useFactoryT.isJsActive"><code class="language-typescript">{{ useFactory }}</code></pre>
+  <pre [class.hide]="!useFactoryT.isJsActive"><code class="language-typescript">{{ useFactoryJs }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> If you wanna use components from module, you have to pass them inside <code>inject</code> array. Nest will pass instances as an arguments of the function in the same order.
+  </blockquote>
+  <p>Use cases:</p>
+  <ul>
+    <li>provide a value, which has to be calculated using other components (or custom packages features)</li>
+    <li>provide a deffered value, for example database connection (read more about <a routerLink="/fundamentals/async-components">async components</a>)
+  </ul>
+  <h4>Use Class</h4>
+  <pre><code class="language-typescript">{{ useClass }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> Instead of a custom token, we have used the <code>ConfigService</code> class, so in fact, we have overrided the default implementation.
+  </blockquote>
+  <p>Use cases:</p>
+  <ul>
+    <li>override default class implementation</li>
+  </ul>
+  <h4>Injection</h4>
+  <p>
+    To inject custom component through constructor, we're using the <code>@Inject()</code> decorator.
+    This decorator takes 1 argument - the token.
+  </p>
+  <span class="filename">
+    <app-tabs #injectT></app-tabs>
+  </span>
+  <pre [class.hide]="injectT.isJsActive"><code class="language-typescript">{{ inject }}</code></pre>
+  <pre [class.hide]="!injectT.isJsActive"><code class="language-typescript">{{ injectJs }}</code></pre>
+  <blockquote>
+    <strong>Notice</strong> The <code>@Inject()</code> decorator is imported from <code>@nestjs/common</code> package.
+  </blockquote>
+</div>

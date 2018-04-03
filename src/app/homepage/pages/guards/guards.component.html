@@ -1,27 +1,27 @@
 <div class="content">
    <h3>Guards</h3>
    <p>
-     Guard is a class with the <code>@Guard()</code> decorator. The guard should implements the <code>CanActivate</code> interface.
+     A guard is a class with the <code>@Guard()</code> decorator. The guard should implements the <code>CanActivate</code> interface.
    </p>
    <figure><img src="/assets/Guards_1.png" /></figure>
    <p>
-     Guards have a <strong>single responsibility</strong>. They determine whether a request should be handled by route handler or not.
+     Guards have a <strong>single responsibility</strong>. They determine whether a request should be handled by the route handler or not.
      Until now, the access restriction logic was mostly inside <a routerLink="/middlewares">middlewares</a>.
-     It's still fine since things such as token validation or attaching property to the <code>req</code> object are not strongly connected with the particular routes. 
+     It's still fine since things such as token validation or attaching properties to the <code>req</code> object are not strongly connected with a particular routes.
    </p>
    <p>
-     But Middleware is dumb. It doesn't know which handler would be executed after calling the <code>next()</code> function.
-     On the other hand, <strong>Guards</strong> have an access to the <code>ExecutionContext</code> object, so we know exactly what's going to be evaluated.
-   </p> 
+     But Middleware is dumb. It doesn't know which handler should be executed after calling the <code>next()</code> function.
+     On the other hand, <strong>Guards</strong> have access to the <code>ExecutionContext</code> object, so we know exactly what's going to be evaluated.
+   </p>
    <blockquote class="warning">
       <strong>Hint</strong> Guards are executed <strong>after</strong> every middleware, but <strong>before</strong> pipes.
     </blockquote>
     <h4>RolesGuard</h4>
     <p>
-      One of the best guards use-cases is the <strong>role-based authentication</strong> because specific routes could be available only when caller has sufficient permissions (e.g. <code>admin</code> role).
+      One of the best guards use-cases is the <strong>role-based authentication</strong> because specific routes should only be available when the caller has sufficient permissions (e.g. <code>admin</code> role).
     </p>
     <p>
-      That's why we're gonna create <code>RolesGuard</code>, the guard which permit access only to users with a specific role.
+      That's why we're gonna create a <code>RolesGuard</code>, this guard permits access only to users with a specific role.
     </p>
     <span class="filename">
       {{ 'roles.guard' | extension: rolesGuardT.isJsActive }}
@@ -30,25 +30,25 @@
     <pre [class.hide]="rolesGuardT.isJsActive"><code class="language-typescript">{{ rolesGuard }}</code></pre>
     <pre [class.hide]="!rolesGuardT.isJsActive"><code class="language-typescript">{{ rolesGuardJs }}</code></pre>
     <p>
-      Every guard provides <code>canActivate()</code> function. The guard might return its boolean answer synchronously  or asynchronously (<code>Promise</code> or <code>Observable</code>).
-      This return value controls the Nest behavior:
+      Every guard provides a <code>canActivate()</code> function. The guard might return its boolean answer synchronously or asynchronously via a (<code>Promise</code> or <code>Observable</code>).
+      The returned value controls the Nest behavior:
     </p>
     <ul>
-      <li>If it returns <code>true</code>, the request will be handled by route handler.</li>
-      <li>If it returns <code>false</code>, Nest will return with <strong>Forbidden</strong> response and <code>403</code> status code.</li>
+      <li>If it returns <code>true</code>, the request will be handled by the route handler.</li>
+      <li>If it returns <code>false</code>, Nest will return a <strong>Forbidden</strong> response and a <code>403</code> status code.</li>
     </ul>
     <p>
-      The <code>canActivate()</code> function takes 2 arguments. First one is <code>dataOrRequest</code>. This value depends on where you actually have used the guard.
-      When it's HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise, it's the data passed to the microservice / or websocket.
+      The <code>canActivate()</code> function takes 2 arguments. The first one is <code>dataOrRequest</code>. This value of it depends on where you actually have used the guard.
+      When it's a HTTP request, this variable is a native expressjs <a href="http://expressjs.com/en/api.html#req" target="blank">request</a> object, otherwise, it's the data passed to the micro service / or web socket.
       The second argument is a <code>context</code>.  This object fulfils <code>ExecutionContext</code> interface and contains 2 members - <code>parent</code> and <code>handler</code>.
       The <code>parent</code> holds the type of the <code>Controller</code> class, which the <code>handler</code> belongs to. The <code>handler</code> is a reference to the route handler function.
     </p>
     <blockquote class="warning">
-        <strong>Hint</strong> Since <code>canActivate()</code> method can return <code>Promise</code>, it can be marked as <strong>async</strong>.
+        <strong>Hint</strong> Since <code>canActivate()</code> method can return a <code>Promise</code>, it can be marked as <strong>async</strong>.
      </blockquote>
     <h4>Usage</h4>
     <p>
-      The guards can be <strong>controller-scoped</strong>, method-scoped and global-scoped. To setup the guard, we're using <code>@UseGuards()</code> decorator. This decorator takes infinite count of arguments.
+      The guards can be <strong>controller-scoped</strong>, method-scoped and global-scoped. To set up the guard, we're using a <code>@UseGuards()</code> decorator. This decorator can take an endless number of arguments.
     </p>
     <span class="filename">
       {{ 'cats.controller' | extension: useGuardsT.isJsActive }}
@@ -59,16 +59,16 @@
       <strong>Notice</strong> The <code>@UseGuards()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
    <p>
-     Above construction attaches the guard to the every handler declared by this controller. If we'd decide to restrict only one of them, we just need to setup the guard at <strong>method level</strong>.
+     The construction above attaches the guard to every handler declared by this controller. If we'd decide to restrict only one of them, we just need to set up the guard at <strong>method level</strong>.
      To bind the global guard, we're using the <code>useGlobalGuards()</code> method of the Nest application instance:
     </p>
     <pre><code class="language-typescript">{{ globalGuard }}</code></pre>
    <h4>Reflector</h4>
    <p>
-      The guard is working now, but we're still not taking advantage of the most important guards feature, so the <strong>execution context</strong>.
+      The guard is working now, but we're still not taking advantage of the most important guard features, being the <strong>execution context</strong>.
    </p>
    <p>
-     Now, the <code>RolesGuard</code> isn't reusable. How would we know which roles need currently processed handler?
+     Now, the <code>RolesGuard</code> isn't reusable. How would we know which roles need to be processed by the handler?
      The <code>CatsController</code> could have a lot of them. Some might be available only for admin, some for everyone.
    </p>
    <p>
@@ -84,7 +84,7 @@
       <strong>Notice</strong> The <code>@ReflectMetadata()</code> decorator is imported from the <code>@nestjs/common</code> package.
    </blockquote>
    <p>
-     With above construction, we attached the <code>roles</code> metadata to the <code>create()</code> method.
+     With the construction above, we attached the <code>roles</code> metadata to the <code>create()</code> method.
      It's not a good practice to use <code>@ReflectMetadata()</code> directly. Instead, you should always create your own decorators.
    </p>
    <span class="filename">
@@ -94,7 +94,7 @@
   <pre [class.hide]="rolesDecoratorT.isJsActive"><code class="language-typescript">{{ rolesDecorator }}</code></pre>
   <pre [class.hide]="!rolesDecoratorT.isJsActive"><code class="language-typescript">{{ rolesDecoratorJs }}</code></pre>
   <p>
-    This way is much cleaner. Since we've <code>@Roles()</code> decorator now, we can use it with <code>create()</code> method.
+    This way is much cleaner. Since we've a <code>@Roles()</code> decorator now, we can use it with on the <code>create()</code> method.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: catsRolesDecoratorT.isJsActive }}
@@ -113,14 +113,14 @@
   <pre [class.hide]="rolesGuardExtT.isJsActive"><code class="language-typescript">{{ rolesGuardExt }}</code></pre>
   <pre [class.hide]="!rolesGuardExtT.isJsActive"><code class="language-typescript">{{ rolesGuardExtJs }}</code></pre>
   <blockquote class="warning">
-      <strong>Notice</strong> Guards same as controllers, components, interceptors and middlewares can <strong>inject dependencies</strong> through constructor.
+      <strong>Notice</strong> Guards act the same as controllers, components, interceptors and middleware they can <strong>inject dependencies</strong> through the constructor.
    </blockquote>
    <blockquote>
-    <strong>Hint</strong> In node.js world, it's a common practice to attach the authorized user to the <code>req</code> object.
+    <strong>Hint</strong> In the node.js world, it's a common practice to attach the authorized user to the <code>req</code> object.
     That's why we've assumed that <code>req.user</code> contains the user object.
    </blockquote>
   <p>
-    The <code>Reflector</code> allows us to easily reflect the metadata by the specified <strong>key</strong>. In above example, we reflected the <code>handler</code> because it's a <strong>reference</strong> to the route handler function.
+    The <code>Reflector</code> allows us to easily reflect the metadata by the specified <strong>key</strong>. In example above, we reflected the <code>handler</code> because it's a <strong>reference</strong> to the route handler function.
     We could make this guard even <strong>more generic</strong> if we'd add also the controller reflection part.
     To extract <strong>controller metadata</strong>, we're just using <code>parent</code> instead of <code>handler</code> function.
   </p>
@@ -130,16 +130,62 @@
   <pre [class.hide]="controllerMetadataT.isJsActive"><code class="language-typescript">{{ controllerMetadata }}</code></pre>
   <pre [class.hide]="!controllerMetadataT.isJsActive"><code class="language-typescript">{{ controllerMetadataJs }}</code></pre>
   <p>
-    Now, when user would try to call the <code>/cats</code> POST endpoint without enough privileges, Nest will automatically
-    return below response:
+    Now, when the user would try to call the <code>/cats</code> POST endpoint without enough privileges, Nest will automatically
+    return response below:
   </p>
   <pre><code class="language-typescript">{{ forbidden }}</code></pre>
   <p>
-    In fact, the guard which returns <code>false</code> forces Nest to throw <code>HttpException</code>.
-    This exception can be catched by the <a routerLink="/exception-filters">exception filter</a>.
+    In fact, the guard which returns <code>false</code> forces Nest to throw a <code>HttpException</code>.
+    This exception can be caught by the <a routerLink="/exception-filters">exception filter</a>.
   </p>
   <h4>Custom error responses</h4>
   <p>
-    To change the default access refusal response, just throw a <code>HttpException</code> instead of returning <code>false</code>.
+    To change the default access refusal response, just throw a <code>HttpException</code> instead of returning a <code>false</code> value.
   </p>
+  <h4>Global guards</h4>
+  <p>
+    The global guards don't belong to any scope. They live outside modules, thus as a result - they can't inject dependencies.
+    We need to create an instance immediately. But quite often, global guards depend on other objects, for example, we'd
+    love to authenticate request using
+    <code>AuthService</code>, but this service is a part of the
+    <code>AuthModule</code>. How do we solve this?
+  </p>
+  <p>
+    The solution is pretty easy. Each Nest application instance is in fact, a created
+    <strong>Nest context</strong>. The Nest context is a wrapper around the Nest container, which holds all instantiated classes.
+    We can grab any existing instance from within any imported module directly using the application object.
+  </p>
+  <p>
+    Let's assume that we have a
+    <code>AuthGuard</code> registered in the
+    <code>AuthModule</code>. This
+    <code>AuthModule</code> is imported into the
+    <strong>root module</strong>. We can pick the
+    <code>AuthGuard</code> instance using following syntax:
+  </p>
+  <pre><code class="language-typescript">{{ getAuthGuard }}</code></pre>
+  <p>
+    To grab the <code>AuthGuard</code> instance we have to use 2 methods, well-described in the table below:
+  </p>
+  <table>
+    <tr>
+      <td>
+        <code>get()</code>
+      </td>
+      <td>
+        Makes it possible to retrieve the instance of the component or controller available inside the processed module.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>select()</code>
+      </td>
+      <td>
+        Allows you to navigate through the module tree, for example, to pull out a specific instance from the selected module.
+      </td>
+    </tr>
+  </table>
+  <blockquote class="info">
+    <strong>Hint</strong> The root module is selected by default. To select any other module, you need to go through the entire modules stack (step by step).
+  </blockquote>
 </div>

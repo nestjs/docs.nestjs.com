@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-controllers',
   templateUrl: './controllers.component.html',
-  styleUrls: ['./controllers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ControllersComponent extends BasePageComponent {
@@ -167,7 +166,7 @@ export class ApplicationModule {}`;
       return `
 import * as bodyParser from 'body-parser';
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './modules/app.module';
+import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);

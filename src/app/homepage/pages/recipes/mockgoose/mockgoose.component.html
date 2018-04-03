@@ -4,7 +4,7 @@
     <a href="http://mongoosejs.com" target="blank">Mongoose</a> is the most popular <a href="https://www.mongodb.org/" target="blank">MongoDB</a> object modeling tool.
   </p>
   <p>
-    <a href="https://github.com/mockgoose/mockgoose" target="blank">Mockgoose</a> provides test database by spinning up mongod on the back when mongoose.connect call is made. By default it is using in memory store which does not have persistence.
+    <a href="https://github.com/mockgoose/mockgoose" target="blank">Mockgoose</a> provides test database by spinning up mongod on the back when <code>mongoose.connect()</code> call is made. By default, it is using in memory store which does not have persistence.
   </p>
   <p>
     Problem we are going to solve here is to allow developers to test properly their services against real database, rather than mocking them with 'shallow faith' that everything will be fine on Mongoose end.
@@ -19,7 +19,7 @@
   <pre [class.hide]="!dependenciesT.isJsActive"><code class="language-typescript">{{ dependenciesJs }}</code></pre>
   <p>
     The first step we need to do is to establish the connection with our database using <code>connect()</code> function.
-    The <code>connect()</code> function returns the <code>MongooseThenable</code> by default, but we can simply override it with the native <code>global.Promise</code> to avoid deprecation warnings. In fact, we're creating an <a routerLink="/advanced/async-components">async component</a> here.
+    The <code>connect()</code> function returns the <code>MongooseThenable</code> by default, but we can simply override it with the native <code>global.Promise</code> to avoid deprecation warnings. In fact, we're creating an <a routerLink="/fundamentals/async-components">async component</a> here.
   </p>
   <span class="filename">
     {{ 'database.providers' | extension: databaseProvidersT.isJsActive }}
@@ -103,7 +103,7 @@
 
   <pre><code class="language-typescript">{{ e2eTests }}</code></pre>
 
-  <p>More info on E2E Testing <a href="https://docs.nestjs.com/advanced/e2e-testing" target="blank">here</a>.</p>
+  <p>More info on E2E Testing <a href="https://docs.nestjs.com/fundamentals/e2e-testing" target="blank">here</a>.</p>
 
    <p>
       The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/10-mockgoose" target="blank">here</a>.

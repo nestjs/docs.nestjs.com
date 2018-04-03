@@ -4,14 +4,13 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-hierarchical-injector',
   templateUrl: './hierarchical-injector.component.html',
-  styleUrls: ['./hierarchical-injector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HierarchicalInjectorComponent extends BasePageComponent {
   get coreModule() {
     return `
 @Module({
-  modules: [CommonModule],
+  imports: [CommonModule],
   components: [CoreService, ContextService],
 })
 export class CoreModule {}`;

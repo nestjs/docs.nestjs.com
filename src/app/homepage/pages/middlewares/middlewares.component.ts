@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-middlewares',
   templateUrl: './middlewares.component.html',
-  styleUrls: ['./middlewares.component.scss']
 })
 export class MiddlewaresComponent extends BasePageComponent {
   get loggerMiddleware() {
@@ -44,7 +43,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
     configure(consumer: MiddlewaresConsumer): void {
@@ -63,7 +62,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule {
     configure(consumer) {
@@ -82,7 +81,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
     configure(consumer: MiddlewaresConsumer): void {
@@ -98,7 +97,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule {
     configure(consumer) {
@@ -115,7 +114,7 @@ import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
     configure(consumer: MiddlewaresConsumer): void {
@@ -134,7 +133,7 @@ import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-    modules: [CatsModule],
+    imports: [CatsModule],
 })
 export class ApplicationModule {
     configure(consumer) {
@@ -227,7 +226,7 @@ import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-  modules: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
   configure(consumer: MiddlewaresConsumer): void {
@@ -244,7 +243,7 @@ import { CatsModule } from './cats/cats.module';
 import { CatsController } from './cats/cats.controller';
 
 @Module({
-  modules: [CatsModule],
+  imports: [CatsModule],
 })
 export class ApplicationModule {
   configure(consumer) {

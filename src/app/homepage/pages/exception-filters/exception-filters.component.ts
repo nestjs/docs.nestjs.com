@@ -4,7 +4,6 @@ import { BasePageComponent } from '../page/page.component';
 @Component({
   selector: 'app-exception-filters',
   templateUrl: './exception-filters.component.html',
-  styleUrls: ['./exception-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExceptionFiltersComponent extends BasePageComponent {
@@ -105,17 +104,19 @@ async create(createCatDto) {
   get httpExceptionFilter() {
     return `
 import { ExceptionFilter, Catch } from '@nestjs/common';
-import { HttpException } from '@nestjs/core';
+import { HttpException } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, response) {
     const status = exception.getStatus();
 
-    response.status(status).json({
-      statusCode: status,
-      message: \`It's a message from the exception filter\`,
-    });
+    response
+      .status(status)
+      .json({
+        statusCode: status,
+        message: \`It's a message from the exception filter\`,
+      });
   }
 }`;
   }
@@ -123,17 +124,53 @@ export class HttpExceptionFilter implements ExceptionFilter {
   get httpExceptionFilterJs() {
     return `
 import { Catch } from '@nestjs/common';
-import { HttpException } from '@nestjs/core';
+import { HttpException } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter {
   catch(exception, response) {
     const status = exception.getStatus();
 
-    response.status(status).json({
-      statusCode: status,
-      message: \`It's a message from the exception filter\`,
-    });
+    response
+      .status(status)
+      .json({
+        statusCode: status,
+        message: \`It's a message from the exception filter\`,
+      });
+  }
+}`;
+  }
+
+  get exceptionFilter() {
+    return `
+import { ExceptionFilter, Catch } from '@nestjs/common';
+
+@Catch()
+export class AnyExceptionFilter implements ExceptionFilter {
+  catch(exception, response) {
+    response
+      .status(500)
+      .json({
+        statusCode: 500,
+        message: \`It's a message from the exception filter\`,
+      });
+  }
+}`;
+  }
+
+  get exceptionFilterJs() {
+    return `
+import { ExceptionFilter, Catch } from '@nestjs/common';
+
+@Catch()
+export class AnyExceptionFilter implements ExceptionFilter {
+  catch(exception, response) {
+    response
+      .status(500)
+      .json({
+        statusCode: 500,
+        message: \`It's a message from the exception filter\`,
+      });
   }
 }`;
   }
@@ -174,6 +211,17 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+`;
+  }
+
+  get getLoggerExceptionFilter() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const loggerFilter = app
+  .select(LoggerModule)
+  .get(LoggerExceptionFilter);
+
+app.useGlobalFilters(loggerFilter);
 `;
   }
 }

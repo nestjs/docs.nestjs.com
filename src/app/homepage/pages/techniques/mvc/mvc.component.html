@@ -1,0 +1,59 @@
+<div class="content">
+  <h3>MVC</h3>
+  <p>
+    Nest uses <a href="https://github.com/expressjs/express" target="blank">express</a> library under the hood, therefore every tutorial about MVC (Model-View-Controller) pattern in express concerns Nest as well.
+    Firstly, let's clone a Nest <a href="https://github.com/nestjs/typescript-starter" target="blank">starter</a> project:
+  </p>
+  <span class="filename">
+    <app-tabs #starter></app-tabs>
+  </span>
+<pre [class.hide]="starter.isJsActive"><code class="language-bash">
+$ git clone https://github.com/nestjs/typescript-starter.git project
+$ cd project
+$ npm install
+$ npm run start</code></pre>
+<pre [class.hide]="!starter.isJsActive"><code class="language-bash">
+$ git clone https://github.com/nestjs/javascript-starter.git project
+$ cd project
+$ npm install
+$ npm run start</code></pre>
+  <p>
+    In order to create a simple MVC app, we have to install a <a href="http://expressjs.com/en/guide/using-template-engines.html" target="blank">template engine</a>:
+  </p>
+  <pre><code class="language-bash">
+$ npm install --save jade</code></pre>
+  <p>
+    I have chosen <code>jade</code> because it's the most popular engine at the moment, but personally, I prefer a <a href="https://github.com/bryanburgers/node-mustache-express" target="blank">Mustache</a>.
+    Once the installation process is completed, we need to configure the express instance using following code:
+  </p>
+  <span class="filename">
+    {{ 'main' | extension: mainT.isJsActive }}
+    <app-tabs #mainT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ main }}</code></pre>
+  <p>
+    We told <a href="https://github.com/expressjs/express" target="blank">express</a> that the <code>public</code> directory will be used for storing static assets,
+    <code>views</code> will contain templates, and a <code>jade</code> template engine should be used to render an HTML output.
+  </p>
+  <p>
+    Now, let's create a <code>views</code> directory and an <code>index.jade</code> template inside this folder.
+    Inside template, we are gonna print a <code>message</code> passed from the controller:
+  </p>
+  <span class="filename">index.jade</span>
+  <pre><code class="language-typescript">{{ index }}</code></pre>
+  <p>
+    Afterwards, open the <code>app.controller</code> file and replace the <code>root()</code> method with the following code:
+  </p>
+  <span class="filename">
+    {{ 'app.controller' | extension: rootT.isJsActive }}
+    <app-tabs #rootT></app-tabs>
+  </span>
+  <pre [class.hide]="rootT.isJsActive"><code class="language-typescript">{{ root }}</code></pre>
+  <pre [class.hide]="!rootT.isJsActive"><code class="language-typescript">{{ rootJs }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> In fact, when Nest detects <code>@Res()</code> decorator, it injects express <code>response</code> object. Learn more about its abilities <a href="http://expressjs.com/en/api.html" target="blank">here</a>.
+  </blockquote>
+  <p>
+    That's all. While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code> message.
+  </p>
+</div>
