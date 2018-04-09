@@ -41,4 +41,28 @@ describe('Cats', () => {
 });`;
   }
   
+    get selectExample() {
+    return `
+import * as express from 'express';
+import * as request from 'supertest';
+import { Test } from '@nestjs/testing';
+import { CatsModule } from '../../src/cats/cats.module';
+import { CatsService } from '../../src/cats/cats.service';
+describe('Cats', () => {
+    let catsService = {};
+    beforeAll(async () => {
+        const module = await Test.createTestingModule({
+            imports: [CatsModule],
+          })
+          .compile();
+        const catsService = module.select(CatsModule).get(CatsService)
+    });
+    it('findAll cats', () => {
+        const testCats = ['test']
+        catsService.cats = testCats
+        expect(await catsService.findAll()).toBe(testCats)
+    });
+});`;
+  }
+  
 }
