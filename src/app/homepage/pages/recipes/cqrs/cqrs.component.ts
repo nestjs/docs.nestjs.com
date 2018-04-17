@@ -9,7 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class CqrsComponent extends BasePageComponent {
   get heroGameService() {
     return `
-@Component()
+@Injectable()
 export class HeroesGameService {
   constructor(private readonly commandBus: CommandBus) {}
 
@@ -23,7 +23,7 @@ export class HeroesGameService {
 
   get heroGameServiceJs() {
     return `
-@Component()
+@Injectable()
 @Dependencies(CommandBus)
 export class HeroesGameService {
   constructor(commandBus) {
@@ -43,7 +43,8 @@ export class HeroesGameService {
 export class KillDragonCommand implements ICommand {
   constructor(
     public readonly heroId: string,
-    public readonly dragonId: string) {}
+    public readonly dragonId: string,
+  ) {}
 }`;
   }
 
@@ -224,7 +225,7 @@ export class HeroKilledDragonHandler {
 export class HeroesGameSagas {
   dragonKilled = (events$: EventObservable<any>): Observable<ICommand> => {
     return events$.ofType(HeroKilledDragonEvent)
-        .map((event) => new DropAncientItemCommand(event.heroId, fakeItemID));
+      .map((event) => new DropAncientItemCommand(event.heroId, fakeItemID));
   }
 }`;
   }
@@ -235,7 +236,7 @@ export class HeroesGameSagas {
 export class HeroesGameSagas {
   dragonKilled = (events$) => {
     return events$.ofType(HeroKilledDragonEvent)
-        .map((event) => new DropAncientItemCommand(event.heroId, fakeItemID));
+      .map((event) => new DropAncientItemCommand(event.heroId, fakeItemID));
   }
 }`;
   }
@@ -248,7 +249,7 @@ export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 @Module({
   imports: [CQRSModule],
   controllers: [HeroesGameController],
-  components: [
+  providers: [
     HeroesGameService,
     HeroesGameSagas,
     ...CommandHandlers,
@@ -261,7 +262,8 @@ export class HeroesGameModule implements OnModuleInit {
     private readonly moduleRef: ModuleRef,
     private readonly command$: CommandBus,
     private readonly event$: EventBus,
-    private readonly heroesGameSagas: HeroesGameSagas) {}
+    private readonly heroesGameSagas: HeroesGameSagas,
+  ) {}
 
   onModuleInit() {
     this.command$.setModuleRef(this.moduleRef);
@@ -270,7 +272,7 @@ export class HeroesGameModule implements OnModuleInit {
     this.event$.register(EventHandlers);
     this.command$.register(CommandHandlers);
     this.event$.combineSagas([
-        this.heroesGameSagas.dragonKilled,
+      this.heroesGameSagas.dragonKilled,
     ]);
   }
 }`;
@@ -284,7 +286,7 @@ export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 @Module({
   imports: [CQRSModule],
   controllers: [HeroesGameController],
-  components: [
+  providers: [
     HeroesGameService,
     HeroesGameSagas,
     ...CommandHandlers,

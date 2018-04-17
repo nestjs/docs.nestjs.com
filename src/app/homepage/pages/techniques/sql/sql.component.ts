@@ -117,7 +117,7 @@ import { Photo } from './photo.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Photo])],
-  components: [PhotoService],
+  providers: [PhotoService],
   controllers: [PhotoController],
 })
 export class PhotoModule {}`;
@@ -125,12 +125,12 @@ export class PhotoModule {}`;
 
   get photoService() {
     return `
-import { Component, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Photo } from './photo.entity';
 
-@Component()
+@Injectable()
 export class PhotoService {
   constructor(
     @InjectRepository(Photo)
@@ -145,11 +145,11 @@ export class PhotoService {
 
   get photoServiceJs() {
     return `
-import { Component, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Photo } from './photo.entity';
 
-@Component()
+@Injectable()
 @Dependencies(InjectRepository(Photo))
 export class PhotoService {
   constructor(photoRepository) {
@@ -173,7 +173,7 @@ export class PhotoService {
       username: 'user',
       password: 'password',
       database: 'db',
-      entities: [ Photo ],
+      entities: [Photo],
       synchronize: true
     }),
     TypeOrmModule.forRoot({
@@ -184,7 +184,7 @@ export class PhotoService {
       username: 'user',
       password: 'password',
       database: 'db',
-      entities: [ Person ],
+      entities: [Person],
       synchronize: true
     }),
     TypeOrmModule.forRoot({
@@ -195,7 +195,7 @@ export class PhotoService {
       username: 'user',
       password: 'password',
       database: 'db',
-      entities: [ Album ],
+      entities: [Album],
       synchronize: true
     })
   ]
@@ -207,22 +207,37 @@ export class ApplicationModule {}`;
     return `
 @Module({
   // ...
-  TypeOrmModule.forFeature([ 'Photo' ]),
-  TypeOrmModule.forFeature([ 'Person' ], 'personsConnection'),
-  TypeOrmModule.forFeature([ 'Album' ], 'albumsConnection')
+  TypeOrmModule.forFeature([Photo]),
+  TypeOrmModule.forFeature([Person], 'personsConnection'),
+  TypeOrmModule.forFeature([Album], 'albumsConnection')
 })    
 export class ApplicationModule {}`;
   }
 
   get injectConnectionAndEntityManager() {
     return `
-@Component()
+@Injectable()
 export class PersonService {
   constructor(
-    @InjectConnection('personsConnection') private readonly connection: Connection,
-    @InjectEntityManager('personsConnection') private readonly entityManager: EntityManager
+    @InjectConnection('personsConnection')
+    private readonly connection: Connection,
+    @InjectEntityManager('personsConnection')
+    private readonly entityManager: EntityManager
   ) {}
 }`;
   }
 
+  get mockRepository() {
+    return `
+@Module({
+  providers: [
+    PhotoService,
+    {
+      provide: getRepositoryToken(Photo),
+      useValue: mockRepository,
+    },
+  ],
+})
+export class PhotoModule {}`;
+  }
 }

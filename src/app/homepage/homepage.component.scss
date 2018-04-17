@@ -66,17 +66,14 @@
   h5 {
     color: $grey-color;
     margin-top: -20px;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 16px;
   }
   h3:first-of-type {
     margin: 20px 0;
   }
-
-  @include media(normal) {
-    p {
-      text-align: justify;
-    }
+  p {
+    text-align: justify;
   }
 }
 
@@ -110,6 +107,7 @@
     font-weight: 600;
     margin: 0;
     font-size: 18px;
+    margin: 30px 0 18px;
   }
 
   .title {

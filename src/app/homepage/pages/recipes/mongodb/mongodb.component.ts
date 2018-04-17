@@ -25,12 +25,8 @@ import * as mongoose from 'mongoose';
 export const databaseProviders = [
   {
     provide: 'DbConnectionToken',
-    useFactory: async () => {
-      (mongoose as any).Promise = global.Promise;
-      return await mongoose.connect('mongodb://localhost/nest', {
-        useMongoClient: true,
-      });
-    },
+    useFactory: async (): Promise<typeof mongoose> =>
+      await mongoose.connect('mongodb://localhost/nest'),
   },
 ];`;
   }
@@ -41,7 +37,7 @@ import { Module } from '@nestjs/common';
 import { databaseProviders } from './database.providers';
 
 @Module({
-  components: [...databaseProviders],
+  providers: [...databaseProviders],
   exports: [...databaseProviders],
 })
 export class DatabaseModule {}`;
@@ -88,14 +84,16 @@ export const catsProviders = [
   get catsService() {
     return `
 import { Model } from 'mongoose';
-import { Component, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Cat } from './interfaces/cat.interface';
 import { CreateCatDto } from './dto/create-cat.dto';
 
-@Component()
+@Injectable()
 export class CatsService {
   constructor(
-    @Inject('CatModelToken') private readonly catModel: Model<Cat>) {}
+    @Inject('CatModelToken')
+    private readonly catModel: Model<Cat>,
+  ) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -110,9 +108,9 @@ export class CatsService {
 
   get catsServiceJs() {
     return `
-import { Component, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
 
-@Component()
+@Injectable()
 @Dependencies('CatModelToken')
 export class CatsService {
   constructor(catModel) {
@@ -141,7 +139,7 @@ import { DatabaseModule } from '../database/database.module';
 @Module({
   imports: [DatabaseModule],
   controllers: [CatsController],
-  components: [
+  providers: [
     CatsService,
     ...catsProviders,
   ],

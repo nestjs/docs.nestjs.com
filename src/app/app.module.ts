@@ -72,6 +72,20 @@ import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { CliModule } from './homepage/pages/cli/cli.module';
+import { PlatformAgnosticismComponent } from './homepage/pages/fundamentals/platform-agnosticism/platform-agnosticism.component';
+import { ScalarsComponent } from './homepage/pages/graphql/scalars/scalars.component';
+import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
+import { CorsComponent } from './homepage/pages/techniques/cors/cors.component';
+import { LoggerComponent } from './homepage/pages/techniques/logger/logger.component';
+import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
+import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
+import { HttpModuleComponent } from './homepage/pages/techniques/http-module/http-module.component';
+import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
+import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
+import { MigrationComponent } from './homepage/pages/migration/migration.component';
+import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
+import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
+import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -150,6 +164,20 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SqlComponent,
     MvcComponent,
     MongoComponent,
+    PlatformAgnosticismComponent,
+    ScalarsComponent,
+    AuthenticationComponent,
+    CorsComponent,
+    LoggerComponent,
+    PerformanceComponent,
+    FileUploadComponent,
+    HttpModuleComponent,
+    HotReloadComponent,
+    ConfigurationComponent,
+    MigrationComponent,
+    MqttComponent,
+    GrpcComponent,
+    NatsComponent,
   ],
   bootstrap: [
     AppComponent

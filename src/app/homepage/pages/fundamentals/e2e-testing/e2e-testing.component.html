@@ -36,8 +36,8 @@
         <code>createNestInstance()</code>
       </td>
       <td>
-        Takes an optional argument - the express instance, and returns the <code>INestApplication</code>.
-        It's necessary to manually initialize the application using <code>init()</code> method.
+        Creates a Nest instance based on a given module (returns <code>INestApplication</code>).
+        Notice that it's necessary to manually initialize the application using <code>init()</code> method.
       </td>
     </tr>
     <tr>
@@ -45,24 +45,24 @@
         <code>createNestMicroservice()</code>
       </td>
       <td>
-        Takes <code>MicroserviceConfiguration</code> as an argument, and returns the <code>INestMicroservice</code>.
+        Creates a Nest microservice instance based on a given module (returns <code>INestMicroservice</code>).
       </td>
     </tr>
     <tr>
-      <td>
-        <code>get()</code>
-      </td>
-      <td>
-        Makes possible to retrieve the instance of the component or controller available inside the processed module.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>select()</code>
-      </td>
-      <td>
-        Allows you to navigate through the module tree, for example, to pull out a specific instance from the selected module.
-      </td>
-    </tr>
+    <td>
+      <code>get()</code>
+    </td>
+    <td>
+      Retrieves an instance of either controller or provider (including guards, filters, and so on) available in the application context.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>select()</code>
+    </td>
+    <td>
+      Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with enabled strict mode).
+    </td>
+  </tr>
   </table>
 </div>

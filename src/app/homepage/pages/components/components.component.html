@@ -1,7 +1,7 @@
 <div class="content">
    <h3>Providers</h3>
    <p>
-    Almost everything can be considered as a provider – Service, Repository, Factory, Helper [...] and they can be <strong>injected</strong> into controllers or into other providers through <code>constructor</code>.
+    Almost everything can be considered as a provider – service, repository, factory, helper, and so on. All of them can <strong>inject</strong> dependencies through <code>constructor</code>, meaning, they can create various relationships with each other. But in fact, a provider is nothing else than just a simple class annotated with a <code>@Injectable()</code> decorator.
    </p>
    <figure><img src="/assets/Components_1.png" /></figure>
    <p>
@@ -9,7 +9,7 @@
    </p>
    <p>
      The controllers shall handle HTTP requests and delegate more complex tasks to the <strong>services</strong>.
-     The providers are plain TypeScript classes with a <code>@Injectable()</code> decorator on top of them.
+     The providers are plain JavaScript classes with a <code>@Injectable()</code> decorator on top of them.
    </p>
    <blockquote class="info">
     <strong>Hint</strong> Since Nest enables the possibility to design and organize the dependencies in a more OO-way, we strongly recommend
@@ -26,10 +26,10 @@
   <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
   <p>
     Here's a <code>CatsService</code>, a basic class with one property and two methods.
-    The only new trait is that it uses the <code>@Injectable()</code> decorator. The <code>@Injectable()</code> attaches the metadata, thereby Nest knows that this class is a Nest component.
+    The only new trait is that it uses the <code>@Injectable()</code> decorator. The <code>@Injectable()</code> attaches the metadata, thereby Nest knows that this class is a Nest provider.
   </p>
-  <blockquote>
-    <strong>Notice</strong> There's a <code>Cat</code> interface here. I didn't mention it because the schema is exactly same as in the <code>CreateCatDto</code> class which we have created in the previous chapter.
+  <blockquote class="info">
+    <strong>Notice</strong> There's a <code>Cat</code> interface used above. We didn't mention it because the schema is exactly same as in the <code>CreateCatDto</code> class which we have created in the previous chapter.
   </blockquote>
   <p>
     Since we have the service class already done, let's use it inside the <code>CatsController</code>:
@@ -45,13 +45,13 @@
     Don't be afraid of the <code>private readonly</code> shortened syntax.
     It means that we've created and initialized the <code>catsService</code> member immedietely in the same location.
   </p>
-  <h4>Dependency Injection</h4>
+  <h4>Dependency injection</h4>
   <p>
-    Nest is built around the strong design pattern commonly known as <strong>Dependency Injection</strong>.
+    Nest is built around the strong design pattern commonly known as <strong>Dependency injection</strong>.
     We recommend to read a great article about this concept in the <a href="https://angular.io/guide/dependency-injection" target="blank">official Angular documentation</a>.
   </p>
   <p>
-    In Nest, thanks to the <strong>TypeScript</strong> capabilities, it's extremely easy to manage dependencies because they will be resolved just by type and afterward, <strong>injected</strong>
+    In Nest, thanks to the <strong>TypeScript</strong> capabilities, it's extremely easy to manage dependencies because they will be resolved just by type and afterwards, <strong>injected</strong>
     in your controller's constructor:
   </p>
   <pre><code class="language-typescript">{{ constructorSyntax }}</code></pre>

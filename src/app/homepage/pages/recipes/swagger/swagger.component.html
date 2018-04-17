@@ -13,19 +13,19 @@
 $ npm install --save @nestjs/swagger</code></pre>
     <h4>Bootstrap</h4>
     <p>
-      Once the installation process is done, open your bootstrap file (mostly <code></code>) and initialize the Swagger using <code>SwaggerModule</code> class:
+      Once the installation process is done, open your bootstrap file (mostly <code>main.ts</code>) and initialize the Swagger using <code>SwaggerModule</code> class:
     </p>
     <pre><code class="language-typescript">{{ bootstrapFile }}</code></pre>
     <p>
-      The <code>DocumentBuilder</code> is a helper class, which helps to structure a base document for the <code>SwaggerModule</code>.
-      It contains several methods that allow setting such properties like title, description, version etc.
+      The <code>DocumentBuilder</code> is a helper class that helps to structure a base document for the <code>SwaggerModule</code>.
+      It contains several methods that allow setting such properties like title, description, version, and so on.
     </p>
     <p>
-      To create a full document (with defined HTTP routes) we are using the <code>createDocument()</code> method of the <code>SwaggerModule</code> class.
-      This method accepts two arguments - the application instance and the base Swagger options.
+      In order to create a full document (with defined HTTP routes) we use the <code>createDocument()</code> method of the <code>SwaggerModule</code> class.
+      This method takes two arguments, the application instance and the base Swagger options respectively.
     </p>
     <p>
-      The last step is to use <code>setup()</code>. It accepts sequentially <strong>(1)</strong> path to mount the Swagger,
+      The last step is to call <code>setup()</code>. It accepts sequentially <strong>(1)</strong> path to mount the Swagger,
       <strong>(2)</strong> application instance, and <strong>(3)</strong> the document that describes the Nest application.
     </p>
     <p>
@@ -47,7 +47,7 @@ $ npm run start</code></pre>
       Thanks to them, the valid document can be created.
     </p>
     <p>
-      Moreover, the module creates the <strong>models' definitions</strong> by taking advantage of the <strong>reflection</strong>.
+      Moreover, the module creates the <strong>models definitions</strong> by taking advantage of the <strong>reflection</strong>.
       Take a look at the following code:
     </p>
     <pre><code class="language-typescript">{{ postHandler }}</code></pre>
@@ -60,7 +60,7 @@ $ npm run start</code></pre>
     <figure><img src="/assets/swagger-dto.png" /></figure>
     <p>
       As you can see, the definition's empty although the class has few declared properties.
-      To make the class properties accessible to the <code>SwaggerModule</code>, we have to mark all of them with <code>@ApiModelProperty()</code> decorator:
+      In order to make the class properties accessible to the <code>SwaggerModule</code>, we have to mark all of them with <code>@ApiModelProperty()</code> decorator:
     </p>
     <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
     <p>
@@ -84,8 +84,8 @@ $ npm run start</code></pre>
     <pre><code class="language-typescript">{{ arrayProperty }}</code></pre>
     <h4>Tags</h4>
     <p>
-      At the beginning, we have created a <code>cats</code> tag (by making use of <code>DocumentBuilder</code>).
-      To attach the controller to the specified tag, we need to use <code>@ApiUseTags(...tags)</code> decorator.
+      At the beginning, we created a <code>cats</code> tag (by making use of <code>DocumentBuilder</code>).
+      In order to attach the controller to the specified tag, we need to use <code>@ApiUseTags(...tags)</code> decorator.
     </p>
     <pre><code class="language-typescript">{{ useTags }}</code></pre>
     <h4>Responses</h4>
@@ -130,6 +130,10 @@ $ npm run start</code></pre>
         <td>Method / Controller</td>
       </tr>
       <tr>
+        <td><code>@ApiOAuth2Auth()</code></td>
+        <td>Method / Controller</td>
+      </tr>
+      <tr>
         <td><code>@ApiImplicitBody()</code></td>
         <td>Method</td>
       </tr>
@@ -159,6 +163,6 @@ $ npm run start</code></pre>
       </tr>
     </table>
     <p>
-      The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/11-swagger" target="blank">here</a>.
+      A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/11-swagger" target="blank">here</a>.
     </p>
   </div>

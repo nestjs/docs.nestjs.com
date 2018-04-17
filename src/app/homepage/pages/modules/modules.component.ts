@@ -124,7 +124,7 @@ export class CoreModule {}`;
     return `
 import { Module, DynamicModule } from '@nestjs/common';
 import { createDatabaseProviders } from './database.providers';
-import { Connection } from './connection.component';
+import { Connection } from './connection.provider';
 
 @Module({
   providers: [Connection],
@@ -134,13 +134,34 @@ export class DatabaseModule {
     const providers = createDatabaseProviders(options, entities);
     return {
       module: DatabaseModule,
-      components: providers,
+      providers: providers,
       exports: providers,
     };
   }
 }`;
   }
   
+  get dynamicModulesJs() {
+    return `
+import { Module } from '@nestjs/common';
+import { createDatabaseProviders } from './database.providers';
+import { Connection } from './connection.provider';
+
+@Module({
+  providers: [Connection],
+})
+export class DatabaseModule {
+  static forRoot(entities = [], options?) {
+    const providers = createDatabaseProviders(options, entities);
+    return {
+      module: DatabaseModule,
+      providers: providers,
+      exports: providers,
+    };
+  }
+}`;
+  }
+
   get importDynamicModules() {
     return `
 import { Module } from '@nestjs/common';
@@ -151,6 +172,21 @@ import { User } from './users/entities/user.entity';
   imports: [
     DatabaseModule.forRoot([User]),
   ],
+})
+export class ApplicationModule {}`;
+  }
+
+  get exportDynamicModules() {
+    return `
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from './database/database.module';
+import { User } from './users/entities/user.entity';
+
+@Module({
+  imports: [
+    DatabaseModule.forRoot([User]),
+  ],
+  exports: [DatabaseModule]
 })
 export class ApplicationModule {}`;
   }

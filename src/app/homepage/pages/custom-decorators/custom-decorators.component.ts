@@ -9,18 +9,18 @@ import { BasePageComponent } from '../page/page.component';
 export class CustomDecoratorsComponent extends BasePageComponent {
   get userDecorator() {
     return `
-import { createRouteParamDecorator } from '@nestjs/common';
+import { createParamDecorator } from '@nestjs/common';
 
-export const User = createRouteParamDecorator((data, req) => {
+export const User = createParamDecorator((data, req) => {
   return req.user;
 });`;
   }
 
   get userDecoratorData() {
     return `
-import { createRouteParamDecorator } from '@nestjs/common';
+import { createParamDecorator } from '@nestjs/common';
 
-export const User = createRouteParamDecorator((data, req) => {
+export const User = createParamDecorator((data, req) => {
   console.log(data); // test
   return req.user;
 });`;

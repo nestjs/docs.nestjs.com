@@ -8,7 +8,7 @@
   </blockquote>
   <p>
     <a href="http://mongoosejs.com" target="blank">Mongoose</a> is the most popular <a href="https://www.mongodb.org/" target="blank">MongoDB</a> object modeling tool.
-    To start the adventure with this library we have to install all of the required dependencies:
+    To start the adventure with this library we have to install all required dependencies:
   </p>
   <span class="filename">
     <app-tabs #dependenciesT></app-tabs>
@@ -17,7 +17,7 @@
   <pre [class.hide]="!dependenciesT.isJsActive"><code class="language-typescript">{{ dependenciesJs }}</code></pre>
   <p>
     The first step we need to do is to establish the connection with our database using <code>connect()</code> function.
-    The <code>connect()</code> function returns the <code>MongooseThenable</code> by default, but we can simply override it with the native <code>global.Promise</code> to avoid deprecation warnings. In fact, we're creating an <a routerLink="/fundamentals/async-components">async component</a> here.
+    The <code>connect()</code> function returns a <code>Promise</code>, therefore we have to create an <a routerLink="/fundamentals/async-components">async provider</a>.
   </p>
   <span class="filename">
     {{ 'database.providers' | extension: databaseProvidersT.isJsActive }}
@@ -25,10 +25,10 @@
   </span>
   <pre><code class="language-typescript">{{ databaseProviders }}</code></pre>
   <blockquote class="warning">
-      <strong>Hint</strong> Following best practices, we've declared the custom component in the separated file which has a <code>*.providers.ts</code> suffix.
+      <strong>Hint</strong> Following best practices, we declared the custom provider in the separated file which has a <code>*.providers.ts</code> suffix.
    </blockquote>
    <p>
-     Then we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.
+     Then, we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.
   </p>
   <span class="filename">
     {{ 'database.module' | extension: databaseModuleT.isJsActive }}
@@ -36,8 +36,8 @@
   </span>
   <pre><code class="language-typescript">{{ databaseModule }}</code></pre>
   <p>
-    It's everything. Now we can inject the <code>Connection</code> object using <code>@Inject()</code> decorator.
-    Each component which would depend on the <code>Connection</code> async component will wait until the <code>Promise</code> would be resolved.
+    Now we can inject the <code>Connection</code> object using <code>@Inject()</code> decorator.
+    Each class that would depend on the <code>Connection</code> async provider will wait until a <code>Promise</code> is resolved.
   </p>
   <h4>Model injection</h4>
   <p>
@@ -50,10 +50,10 @@
   <pre><code class="language-typescript">{{ catSchema }}</code></pre>
   <p>
     The <code>CatsSchema</code> belongs to the <code>cats</code> directory.
-    This directory represents the <code>CatsModule</code>. It's your decision where you gonna keep your schema files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
+    This directory represents the <code>CatsModule</code>.
   </p>
   <p>
-    Now it's time to create a <strong>Model</strong> component:
+    Now it's time to create a <strong>Model</strong> provider:
   </p>
   <span class="filename">
     {{ 'cats.providers' | extension: catsProvidersT.isJsActive }}
@@ -62,7 +62,7 @@
   <pre [class.hide]="catsProvidersT.isJsActive"><code class="language-typescript">{{ catsProviders }}</code></pre>
   <pre [class.hide]="!catsProvidersT.isJsActive"><code class="language-typescript">{{ catsProvidersJs }}</code></pre>
   <blockquote>
-      <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong> at all. Both <code>CatModelToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constants.ts</code> file. 
+      <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong>. Both <code>CatModelToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constants.ts</code> file. 
    </blockquote>
    <p>
      Now we can inject the <code>CatModelToken</code> to the <code>CatsService</code> using the <code>@Inject()</code> decorator:
@@ -74,17 +74,17 @@
   <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
   <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
   <p>
-    In the above example I've used the <code>Cat</code> interface. This interface extends the <code>Document</code> from the mongoose package:
+    In the above example we have used the <code>Cat</code> interface. This interface extends the <code>Document</code> from the mongoose package:
   </p>
   <span class="filename">cat.interface.ts</span>
   <pre><code class="language-typescript">{{ catInterface }}</code></pre>
   <p>
-    The database connection's <strong>asynchronous</strong>, but Nest makes this process's completely invisible for the end-user.
-    The <code>CatModel</code> component's waiting for the db connection, and the <code>CatsService</code> is delayed until model would be ready to use.
-    The entire application can start when each component is instantiated.
+    The database connection is <strong>asynchronous</strong>, but Nest makes this process completely invisible for the end-user.
+    The <code>CatModel</code> class is waiting for the db connection, and the <code>CatsService</code> is delayed until model is ready to use.
+    The entire application can start when each class is instantiated.
   </p>
   <p>
-    Here's a final <code>CatsModule</code>:
+    Here is a final <code>CatsModule</code>:
   </p>
   <span class="filename">
     {{ 'cats.module' | extension: catsModuleT.isJsActive }}

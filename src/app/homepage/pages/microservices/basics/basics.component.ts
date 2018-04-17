@@ -10,8 +10,8 @@ export class BasicsComponent extends BasePageComponent {
   get bootstrap() {
     return `
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
+import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(ApplicationModule, {
@@ -55,7 +55,7 @@ export class MathController {
     return `
 @MessagePattern({ cmd: 'sum' })
 sum(data: number[]): Observable<number> {
-  return Observable.from([1, 2, 3]);
+  return from([1, 2, 3]);
 }`;
   }
 
@@ -63,13 +63,29 @@ sum(data: number[]): Observable<number> {
     return `
 @MessagePattern({ cmd: 'sum' })
 sum(data) {
-  return Observable.from([1, 2, 3]);
+  return from([1, 2, 3]);
+}`;
+  }
+
+  get asyncPromise() {
+    return `
+@MessagePattern({ cmd: 'sum' })
+async sum(data: number[]): Promise<number> {
+  return (data || []).reduce((a, b) => a + b);
+}`;
+  }
+
+  get asyncPromiseJs() {
+    return `
+@MessagePattern({ cmd: 'sum' })
+async sum(data) {
+  return (data || []).reduce((a, b) => a + b);
 }`;
   }
 
   get clientDecorator() {
     return `
-@Client({ transport: Transport.TCP, port: 5667 })
+@Client({ transport: Transport.TCP })
 client: ClientProxy;`;
   }
 

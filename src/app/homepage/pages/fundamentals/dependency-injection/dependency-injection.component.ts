@@ -9,17 +9,40 @@ import { BasePageComponent } from '../../page/page.component';
 export class DependencyInjectionComponent extends BasePageComponent {
   get useValue() {
     return `
-const connectionProvider = { provide: 'ConnectionToken', useValue: null };
+import { connection } from './connection';
+
+const connectionProvider = {
+  provide: 'Connection',
+  useValue: connection,
+};
 
 @Module({
-  components: [connectionProvider],
-})`;
+  providers: [connectionProvider],
+})
+export class ApplicationModule {}`;
+  }
+
+  get override() {
+    return `
+import { CatsService } from './cats.service';
+
+const mockCatsService = {};
+const catsServiceProvider = {
+  provide: CatsService,
+  useValue: mockCatsService,
+};
+
+@Module({
+  imports: [CatsModule],
+  providers: [catsServiceProvider],
+})
+export class ApplicationModule {}`;
   }
 
   get useFactory() {
     return `
 const connectionFactory = {
-  provide: 'ConnectionToken',
+  provide: 'Connection',
   useFactory: (optionsProvider: OptionsProvider) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
@@ -28,14 +51,15 @@ const connectionFactory = {
 };
 
 @Module({
-  components: [connectionFactory],
-})`;
+  providers: [connectionFactory],
+})
+export class ApplicationModule {}`;
   }
 
   get useFactoryJs() {
     return `
 const connectionFactory = {
-  provide: 'ConnectionToken',
+  provide: 'Connection',
   useFactory: (optionsProvider) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
@@ -44,37 +68,113 @@ const connectionFactory = {
 };
 
 @Module({
-  components: [connectionFactory],
-})`;
+  providers: [connectionFactory],
+})
+export class ApplicationModule {}`;
   }
 
   get useClass() {
     return `
 const configServiceProvider = {
   provide: ConfigService,
-  useClass: DevelopmentConfigService,
+  useClass: process.env.NODE_ENV === 'development'
+    ? DevelopmentConfigService
+    : ProductionConfigService,
 };
 
 @Module({
-  components: [configServiceProvider],
+  providers: [configServiceProvider],
 })
+export class ApplicationModule {}
 `;
   }
 
   get inject() {
     return `
-@Component()
+@Injectable()
 class CatsRepository {
-  constructor(@Inject('ConnectionToken') connection: Connection) {}
+  constructor(@Inject('Connection') connection: Connection) {}
 }`;
   }
 
   get injectJs() {
     return `
-@Component()
-@Dependencies('ConnectionToken')
+@Injectable()
+@Dependencies('Connection')
 class CatsRepository {
   constructor(connection) {}
 }`;
+  }
+
+  get useFactoryExports() {
+    return `
+const connectionFactory = {
+  provide: 'Connection',
+  useFactory: (optionsProvider: OptionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+  exports: ['Connection'],
+})
+export class ApplicationModule {}`;
+  }
+
+  get useFactoryExportsJs() {
+    return `
+const connectionFactory = {
+  provide: 'Connection',
+  useFactory: (optionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+  exports: ['Connection'],
+})
+export class ApplicationModule {}`;
+  }
+
+  get useFactoryExportsObject() {
+    return `
+const connectionFactory = {
+  provide: 'Connection',
+  useFactory: (optionsProvider: OptionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+  exports: [connectionFactory],
+})
+export class ApplicationModule {}`;
+  }
+
+  get useFactoryExportsObjectJs() {
+    return `
+const connectionFactory = {
+  provide: 'Connection',
+  useFactory: (optionsProvider) => {
+    const options = optionsProvider.get();
+    return new DatabaseConnection(options);
+  },
+  inject: [OptionsProvider],
+};
+
+@Module({
+  providers: [connectionFactory],
+  exports: [connectionFactory],
+})
+export class ApplicationModule {}`;
   }
 }

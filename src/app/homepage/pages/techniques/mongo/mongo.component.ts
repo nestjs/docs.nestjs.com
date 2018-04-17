@@ -40,7 +40,7 @@ import { CatSchema } from './schemas/cat.schema';
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }])],
   controllers: [CatsController],
-  components: [CatsService],
+  providers: [CatsService],
 })
 export class CatsModule {}`
   }
@@ -48,12 +48,12 @@ export class CatsModule {}`
   get catsService() {
     return `
 import { Model } from 'mongoose';
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cat } from './interfaces/cat.interface';
 import { CreateCatDto } from './dto/create-cat.dto';
 
-@Component()
+@Injectable()
 export class CatsService {
   constructor(@InjectModel('Cat') private readonly catModel: Model<Cat>) {}
 
@@ -71,11 +71,11 @@ export class CatsService {
   get catsServiceJs() {
     return `
 import { Model } from 'mongoose';
-import { Component, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CatSchema } from './schemas/cat.schema';
 
-@Component()
+@Injectable()
 @Dependencies(InjectModel(CatSchema))
 export class CatsService {
   constructor(catModel) {
@@ -91,5 +91,19 @@ export class CatsService {
     return await this.catModel.find().exec();
   }
 }`;
+  }
+
+  get mockRepository() {
+    return `
+@Module({
+  providers: [
+    CatsService,
+    {
+      provide: getModelToken('Cat'),
+      useValue: catModel,
+    },
+  ],
+})
+export class CatsModule {}`;
   }
 }

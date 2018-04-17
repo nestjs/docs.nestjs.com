@@ -1,19 +1,16 @@
 <div class="content">
-  <h3>Async Components</h3>
+  <h3>Asynchronous providers</h3>
   <p>
-    Sometimes the application start has to be delayed until some <strong>asynchronous tasks</strong> will be finished, for example until the connection with the database will be established.
-    That's why Nest provides a way to create <strong>async components</strong>.
-  </p>
-  <p>
-    To create an async component, we're using the <code>useFactory</code>. The factory must return <code>Promise</code> or just be marked as an <code>async</code> function.
+    When the application start has to be delayed until some <strong>asynchronous tasks</strong> will be finished, for example, until the connection with the database will be established, you should consider using asynchronous providers.
+    In order to create an <code>async</code> provider, we use the <code>useFactory</code>. The factory has to return a <code>Promise</code> (thus <code>async</code> functions fit as well).
   </p>
   <pre><code class="language-typescript">{{ asyncComponent }}</code></pre>
-  <blockquote>
-    <strong>Hint</strong> Read more about custom components <a routerLink="/fundamentals/dependency-injection">here</a>.
+  <blockquote class="info">
+    <strong>Hint</strong> Learn more about the custom providers syntax <a routerLink="/fundamentals/custom-providers">here</a>.
   </blockquote>
   <p>
-    These asynchronous components might be simply injected to other components by the token (in this case, by <code>AsyncDbConnection</code> token).
-    Each component, which depends on the async components will be instantiated when the async component would be <strong>already resolved</strong>.
+    The asynchronous providers can be simply injected to other components by their tokens (in the above case, by the <code>AsyncDbConnection</code> token).
+    Each class that depends on the asynchronous provider will be instantiated once the async provider is <strong>already resolved</strong>.
   </p>
   <p>
     The above example is for demonstration purposes. 

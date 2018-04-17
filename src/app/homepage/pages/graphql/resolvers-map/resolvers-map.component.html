@@ -1,5 +1,5 @@
 <div class="content">
-  <h3>Resolvers Map</h3>
+  <h3>Resolvers map</h3>
   <p>
     When using <code>graphql-tools</code>, you have to create a resolvers map manually.
     The following example is copied & pasted from the <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo documentation</a> where you can read more about it:
@@ -13,14 +13,14 @@
   <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ resolvers }}</code></pre>
   <p>
-    The <code>@Resolver()</code> decorator doesn't affect either queries and mutations.
+    The <code>@Resolver()</code> decorator doesn't affect queries and mutations.
     It only tells Nest that each <code>@ResolveProperty()</code> has a parent, which is an <code>Author</code> in this case.
   </p>
   <blockquote class="info">
-    <strong>Hint</strong> If we are using the <code>@Resolver()</code> decorator, we don't have to mark a class as a <code>@Component()</code>, otherwise, it's necessary.
+    <strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don't have to mark a class as a <code>@Injectable()</code>, otherwise, it's necessary.
   </blockquote>
   <p>
-    Normally, we would use something like a <code>getAuthor()</code> or <code>getPosts()</code> as a method names.
+    Conventionally, we would use something like a <code>getAuthor()</code> or <code>getPosts()</code> as a method names.
     We can do that easily as well:
   </p>
   <span class="filename"><app-tabs></app-tabs></span>
@@ -30,7 +30,7 @@
   </blockquote>
   <h4>Refactor</h4>
   <p>
-    The idea behind the above code is to show the differences between the Apollo and the Nest-way, to allow for a simple transition of your code.
+    The idea behind the above code is to show the differences between the Apollo and the Nest-way to allow for a simple transition of your code.
     Right now, we're gonna do a small refactor to take advantages of the Nest architecture, to make it a <strong>real-world</strong> example. 
   </p>
   <span class="filename">

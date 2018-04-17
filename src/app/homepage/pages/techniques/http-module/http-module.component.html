@@ -1,0 +1,23 @@
+<div class="content">
+  <h3>HTTP module</h3>
+  <p>
+    <a href="https://github.com/axios/axios" target="blank">Axios</a> is rich-feature HTTP client that is widely used in dozens of applications.
+    That's why Nest wraps this package and exposes it by default as a built-in <code>HttpModule</code>.
+    The <code>HttpModule</code> exports <code>HttpService</code> that simply exposes axios-based methods to perform HTTP request, but also, transforms return types into <code>Observables</code>. 
+  </p>
+  <p>
+    In order to use a <code>HttpService</code>, we need to import <code>HttpModule</code>.
+  </p>
+  <pre><code class="language-typescript">{{ httpModule }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>HttpModule</code> is exposed from <code>@nestjs/common</code> package.
+  </blockquote>
+  <p>
+    Then, you can inject <code>HttpService</code>. This class is easily accessible from <code>@nestjs/common</code> package.
+  </p>
+  <span class="filename">
+    <app-tabs #httpServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="httpServiceT.isJsActive"><code class="language-typescript">{{ httpService }}</code></pre>
+  <pre [class.hide]="!httpServiceT.isJsActive"><code class="language-typescript">{{ httpServiceJs }}</code></pre>
+</div>

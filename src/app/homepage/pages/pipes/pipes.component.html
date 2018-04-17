@@ -1,8 +1,8 @@
 <div class="content">
   <h3>Pipes</h3>
   <p>
-    A pipe is a class with
-    <code>@Pipe()</code> decorator. The pipe should implement the
+    A pipe is a class annotated with the 
+    <code>@Injectable()</code> decorator. The pipe should implement the
     <code>PipeTransform</code> interface.
   </p>
   <figure>
@@ -13,7 +13,7 @@
     <strong>transforms</strong> the input data to the desired output. Also, it could take care of the
     <strong>validation</strong>, since it's possible to throw an exception when the data is incorrect.
   </p>
-  <blockquote>
+  <blockquote class="info">
     <strong>Hint</strong> The pipe runs inside the exceptions zone. This means that when exceptions are thrown they are handled by the core exceptions
     handler and
     <a routerLink="/exception-filters">exceptions filters</a> that are applied to the current context.
@@ -28,17 +28,14 @@
   <h4>What does it look like?</h4>
   <p>
     Let's start with the
-    <code>ValidationPipe</code>. Now it only takes a value and immediately returns the same value, behaving like an identity function.
+    <code>ValidationPipe</code>. In the beginning, it only takes a value and immediately returns the same value, behaving like an identity function.
   </p>
-  <span class="filename">validation.pipe.ts</span>
-  <pre><code class="language-typescript">{{ validationPipe }}</code></pre>
-  <blockquote>
-    <strong>Notice</strong> The
-    <code>ValidationPipe</code> works only with
-    <strong>TypeScript</strong>. If you use vanilla JavaScript, I'd recommend using the
-    <a href="https://github.com/hapijs/joi"
-      target="blank">Joi</a> library.
-  </blockquote>
+  <span class="filename">
+    {{ 'validation.pipe' | extension: validationPipeT.isJsActive }}
+    <app-tabs #validationPipeT></app-tabs>
+  </span>
+  <pre [class.hide]="validationPipeT.isJsActive"><code class="language-typescript">{{ validationPipe }}</code></pre>
+  <pre [class.hide]="!validationPipeT.isJsActive"><code class="language-typescript">{{ validationPipeJs }}</code></pre>
   <p>
     Every pipe has to provide the
     <code>transform()</code> method. This method takes two arguments:
@@ -76,9 +73,9 @@
         <code>metatype</code>
       </td>
       <td>
-        The metatype of the property, for example
+        The metatype of the property, for example,
         <code>String</code>. It's
-        <code>undefined</code> if you omit the type declaration in the function signature.
+        <code>undefined</code> either if you omit the type declaration in the function signature, or you use a vanilla JavaScript.
       </td>
     </tr>
     <tr>
@@ -91,7 +88,7 @@
     </tr>
   </table>
   <blockquote>
-    <strong>Notice</strong> The TypeScript interfaces disappear during the transpilation. Hence, if you use an interface instead of a class,
+    <strong>Warning</strong> TypeScript interfaces disappear during the transpilation. Hence, if you use an interface instead of a class,
     the
     <code>metatype</code> value will be equal to
     <code>Object</code>.
@@ -102,26 +99,45 @@
     <code>create()</code> method of the
     <code>CatsController</code> for a while.
   </p>
-  <span class="filename">cats.controler.ts</span>
+  <span class="filename">cats.controller.ts</span>
   <pre><code class="language-typescript">{{ createCatsController }}</code></pre>
   <p>
     There's a
-    <code>CreateCatDto</code> body parameter.
+    <code>CreateCatDto</code> body parameter:
   </p>
   <span class="filename">create-cat.dto.ts</span>
   <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
   <p>
-    This object always has to be correct, and thus we have to validate these three members. We could do this inside the route handler
+    This object always has to be correct, and thus we have to validate these three members. We could do it inside the route handler
     method, but we'd break the
     <strong>single responsibility rule</strong> (SRP). The second idea is to create a
     <strong>validator class</strong> and delegate the task there, but we'll have to use this validator every time at the beginning
-    of the method. So what about the validation middleware? It's a good idea, but it's not possible to create a
+    of each method. So what about the validation middleware? It's a good idea, but it's impossible to create a
     <strong>generic middleware</strong> which could be used across the whole application.
   </p>
   <p>
     That's the first use-case, when you should consider to use a
     <strong>Pipe</strong>.
   </p>
+  <h4>Object schema validation</h4>
+  <p>
+    One of the frequently encountered approaches is to use a <strong>schema-based</strong> validation.
+    The <a href="https://github.com/hapijs/joi" target="_blank">Joi</a> library is a tool that allows you creating schemas in a pretty straightforward way with a readable API.
+    In order to create a pipe that makes use of object schemas, we need to create a simple class that takes a schema as a <code>constructor</code> argument.
+  </p>
+  <span class="filename">
+    <app-tabs #joiPipeT></app-tabs>
+  </span>
+  <pre [class.hide]="joiPipeT.isJsActive"><code class="language-typescript">{{ joiPipe }}</code></pre>
+  <pre [class.hide]="!joiPipeT.isJsActive"><code class="language-typescript">{{ joiPipeJs }}</code></pre>
+  <p>
+    The pipe tying is extremely simple - we need to use <code>@UsePipes()</code> decorator and create a pipe instance with the valid Joi schema.
+  </p>
+  <span class="filename">
+    <app-tabs #useJoiPipeT></app-tabs>
+  </span>
+  <pre [class.hide]="useJoiPipeT.isJsActive"><code class="language-typescript">{{ useJoiPipe }}</code></pre>
+  <pre [class.hide]="!useJoiPipeT.isJsActive"><code class="language-typescript">{{ useJoiPipeJs }}</code></pre>
   <h4>Class validator</h4>
   <h5>This section applies only to TypeScript.</h5>
   <p>
@@ -135,44 +151,44 @@
   <span class="filename">create-cat.dto.ts</span>
   <pre><code class="language-typescript">{{ createCatDtoValidation }}</code></pre>
   <p>
-    Now it's time to finish the
+    Once it's done, we can create a
     <code>ValidationPipe</code> class.
   </p>
   <span class="filename">validation.pipe.ts</span>
   <pre><code class="language-typescript">{{ fullValidationPipe }}</code></pre>
-  <blockquote>
-    <strong>Notice</strong> We've used the
+  <blockquote class="warning">
+    <strong>Notice</strong> We have used the
     <a href="https://github.com/pleerock/class-transformer">class-transformer</a> library. It's made by the same author as the
-    <strong>class-validator</strong> library, and as a result, they play well together.
+    <strong>class-validator</strong> library, and as a result, they play very well together.
   </blockquote>
   <p>
     Let's go through this code. Firstly, note that the
     <code>transform()</code> function is
     <code>async</code>. It's possible because Nest supports both synchronous and
     <strong>asynchronous</strong> pipes. Also, there's a helper function -
-    <code>toValidate()</code>. It's responsible for excluding the native JavaScript types from the validation process. The last
-    worth mentioning part is that we have to return the same value. This pipe is a validation specific pipe, so we need to return
+    <code>toValidate()</code>. It's responsible for excluding the native JavaScript types from the validation process due to performance reasons. The last
+    worth mentioning part is that we have to return the same value. This pipe is a validation specific pipe, thus we need to return
     the exact same property to avoid
     <strong>overriding</strong> (as noted earlier, pipe transforms input to the desired output).
   </p>
   <p>
     The last step is to set up the
     <code>ValidationPipe</code>. Pipes, same as
-    <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped, and global-scoped. Additionally, a pipe may be param-scoped.
-    We can directly tie the pipe instance to the route param decorator, for example
-    <code>@Body()</code>. Let's have a look at the below example:
+    <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped, and global-scoped. Additionally, a pipe can be param-scoped.
+    We can directly tie the pipe instance to the route param decorator, for example, to
+    <code>@Body()</code> decorator. Let's have a look at the below example:
   </p>
-  <span class="filename">cats.controler.ts</span>
+  <span class="filename">cats.controller.ts</span>
   <pre><code class="language-typescript">{{ createCatsControllerParamPipe }}</code></pre>
   <p>
     The param-scoped pipes are useful when the validation logic concerns only one, specified parameter. In order to set up a pipe at a method
     level, you'll need the
     <code>UsePipes()</code> decorator.
   </p>
-  <span class="filename">cats.controler.ts</span>
+  <span class="filename">cats.controller.ts</span>
   <pre><code class="language-typescript">{{ createCatsControllerMethodPipe }}</code></pre>
-  <blockquote>
-    <strong>Notice</strong> The
+  <blockquote class="info">
+    <strong>Hint</strong> The
     <code>@UsePipes()</code> decorator is imported from the
     <code>@nestjs/common</code> package.
   </blockquote>
@@ -182,29 +198,43 @@
     responsibility and enabling
     <strong>dependency injection</strong>.
   </p>
-  <span class="filename">cats.controler.ts</span>
+  <span class="filename">cats.controller.ts</span>
   <pre><code class="language-typescript">{{ createCatsControllerMethodPipeClass }}</code></pre>
-  <blockquote class="info">
-      <strong>Hint</strong> Prefer applying classes instead of instances when possible. It reduces
-      <strong>memory usage</strong> since Nest can easily reuse instances of the same class across your whole application.
-    </blockquote>
   <p>
     Since the
     <code>ValidationPipe</code> was created to be as generic as possible, we're gonna set it up as a
     <strong>global-scoped</strong> pipe, for every route handler across the entire application.
   </p>
-  <span class="filename">main.ts</span>
+  <span class="filename">
+    main.ts
+    <app-tabs #globalPipeT></app-tabs>
+  </span>
   <pre><code class="language-typescript">{{ globalPipe }}</code></pre>
   <blockquote>
     <strong>Notice</strong> The
-    <code>useGlobalPipes()</code> method doesn't setup pipes for gateways and micro services.
+    <code>useGlobalPipes()</code> method doesn't set up pipes for gateways and micro services.
   </blockquote>
-  <h4>Transformer Pipe</h4>
+  <p>
+      The global pipes are used across the whole application, for every controller and every route handler. In terms of dependency
+      injection, global pipes registered from the outside of any module (as in the previous example above) cannot inject
+      dependencies since they don't belong to any module. In order to solve this issue, you can set up a pipe
+      <strong>directly from any module</strong> using following construction:
+    </p>
+  <span class="filename">
+    {{ 'app.module' | extension: globalScopedPipeModuleT.isJsActive }}
+    <app-tabs #globalScopedPipeModuleT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ globalScopedPipeModule }}</code></pre>
+  <blockquote class="info">
+      <strong>Hint</strong> The alternative option is to use an <a routerLink="/execution-context">execution context</a> feature.
+      Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
+    </blockquote>
+  <h4>Transformer pipe</h4>
   <p>
     Validation isn't the sole use case. At the beginning of this chapter, we have mentioned that a pipe can also
     <strong>transform</strong> the input data to the desired output. It's true because the value returned from the
     <code>transform</code> function completely overrides the previous value of the argument. Sometimes the data passed from the
-    client needs to undergo some changes. Also, some parts could be missed, so we must apply the default values. The
+    client needs to undergo some changes. Also, some parts could be missed, therefore we must apply the default values. The
     <strong>transformer pipes</strong> fill the gap between the request of the client and the request handler.
   </p>
   <span class="filename">
@@ -226,4 +256,77 @@
   <p>
     Thanks to the above construction, <code>ParseIntPipe</code> will be executed before request even touches the corresponding handler.
   </p>
+  <p>
+      Another useful case would be to select an <strong>existing user</strong> entity from the database by id:
+  </p>
+  <span class="filename">
+    <app-tabs #userBindParamT></app-tabs>
+  </span>
+  <pre [class.hide]="userBindParamT.isJsActive"><code class="language-typescript">{{ userBindParam }}</code></pre>
+  <pre [class.hide]="!userBindParamT.isJsActive"><code class="language-typescript">{{ userBindParamJs }}</code></pre>
+   <h4>A built-in ValidationPipe</h4>
+    <p>
+      Fortunately, you don't have to build those pipes on your own since the <code>ValidationPipe</code> and the <code>ParseIntPipe</code> are built-in pipes.
+    </p>
+    <p>
+      The built-in <code>ValidationPipe</code> offers more options than that one described in this chapter, which has been kept basic for the sake of simplicity and to reduce the learning curve.
+      If you take a look at the <code>createCatDto</code> in your controller function, you will notice that it isn't an actual <code>CreateCatDto</code> instance.
+      That is because this pipe only validates the payload, without transforming it into the expected type.
+      However, if you want the pipe to mutate the payload, you can configure it by passing appropriate options:
+    </p>
+    <span class="filename">cats.controller.ts</span>
+    <pre><code class="language-typescript">{{ createCatsControllerParamPipeTransformFalse }}</code></pre>
+    <p>
+      Because this pipe is based on the <code>class-validator</code> and the <code>class-transformer</code> libraries, it is possible to get more of it.
+      Have a look at the constructor optional options.
+    </p>
+    <pre><code class="language-typescript">{{ constructorCode }}</code></pre>
+    <p>
+      There is a <code>transform</code> attribute and all <code>class-validator</code> options (inherited from the <code>ValidatorOptions</code> interface):
+    </p>
+    <table>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><code>skipMissingProperties</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true ,validator will skip validation of all properties that are missing in the validating object.</td>
+      </tr>
+      <tr>
+        <td><code>whitelist</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, validator will strip validated object of any properties that do not make use of any decorators.</td>
+      </tr>
+      <tr>
+        <td><code>forbidNonWhitelisted</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, instead of stripping non-whitelisted properties validator will throw an exception.</td>
+      </tr>
+      <tr>
+        <td><code>groups</code></td>
+        <td><code>string[]</code></td>
+        <td>Groups to be used during validation of the object.</td>
+      </tr>
+      <tr>
+        <td><code>dismissDefaultMessages</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code> if its not explicitly set.</td>
+      </tr>
+      <tr>
+        <td><code>validationError.target</code></td>
+        <td><code>boolean</code></td>
+        <td>Indicates if target should be exposed in <code>ValidationError</code></td>
+      </tr>
+      <tr>
+        <td><code>validationError.value</code></td>
+        <td><code>boolean</code></td>
+        <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
+      </tr>
+    </table>
+    <blockquote>
+      <strong>Notice</strong> You may find more information about the <code>class-validator</code> package in its <a href="https://github.com/typestack/class-validator">repository</a>.
+    </blockquote>
 </div>

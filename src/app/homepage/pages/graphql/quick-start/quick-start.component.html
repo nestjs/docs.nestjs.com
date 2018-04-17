@@ -1,8 +1,8 @@
 <div class="content">
-  <h3>Quick Start</h3>
+  <h3>Quick start</h3>
   <p>
     GraphQL is a new way of thinking about the APIs. Here's a great
-    <a href="https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b" target="blank">comparison</a> between GraphQL and REST. In this set of articles, I'm not gonna explain what the GraphQL is, but rather
+    <a href="https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b" target="blank">comparison</a> between GraphQL and REST. In this set of articles, we're not going to explain what the GraphQL is, but rather
     show how to work with the dedicated
     <code>@nestjs/graphql</code> module.
   </p>
@@ -18,7 +18,7 @@
   </p>
   <pre><code class="language-typescript">
 $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code></pre>
-  <h4>Apollo Middleware</h4>
+  <h4>Apollo middleware</h4>
   <p>
     Once the packages are installed, we can apply the GraphQL middleware provided by the
     <code>apollo-server-express</code> package:
@@ -30,12 +30,12 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
   <pre [class.hide]="appModuleT.isJsActive"><code class="language-typescript">{{ middleware }}</code></pre>
   <pre [class.hide]="!appModuleT.isJsActive"><code class="language-typescript">{{ middlewareJs }}</code></pre>
   <p>
-    That's all. We passed an empty object as a GraphQL <code>schema</code> and <code>req</code> (request object) as a <code>rootValue</code> for now.
+    We passed an empty object as a GraphQL <code>schema</code> and <code>req</code> (request object) as a <code>rootValue</code> for now.
     Additionally, there're a few other available <code>graphqlExpress</code> options and you can read about them <a href="https://www.apollographql.com/docs/apollo-server/setup.html#graphqlOptions" target="blank">here</a>.
   </p>
   <h4>Schema</h4>
   <p>
-    To create a schema, we are using <code>GraphQLFactory</code> which is a part of the <code>@nestjs/graphql</code> package.
+    In order to generate a schema, we are using <code>GraphQLFactory</code> which is a part of the <code>@nestjs/graphql</code> package.
     This component provides a <code>createSchema()</code> method that accepts the same object as a <code>makeExecutableSchema()</code> function, well-described <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html#makeExecutableSchema" target="blank">here</a>.
   </p>
   <p>
@@ -54,7 +54,7 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
   </blockquote>
   <p>
     In this case, the <code>GraphQLFactory</code> will go through each directory, and merge files that have a <code>.graphql</code> extension. 
-    Afterwards, we can create a schema using these particular type definitions. The <code>resolvers</code> will be reflected <strong>automatically</strong>.
+    Afterward, we can create a schema using these particular type definitions. The <code>resolvers</code> will be reflected <strong>automatically</strong>.
   </p>
   <p>
     <a href="https://www.apollographql.com/docs/graphql-tools/resolvers.html" target="blank">Here</a> you can read more about what the <strong>resolvers map</strong> actually is.

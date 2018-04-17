@@ -1,0 +1,24 @@
+<div class="content">
+  <h3>Scalars</h3>
+  <p>
+    In order to define a custom scalar (read more about scalars <a href="https://www.apollographql.com/docs/graphql-tools/scalars.html" target="blank">here</a>),
+    we have to create a type definition and a dedicated resolver as well. 
+    Here (as in the official documentation), we’ll take the <code>graphql-type-json</code> package for demonstration purposes. 
+    This npm package defines a <code>JSON</code> GraphQL scalar type. Firstly, let's install the package:
+  </p>
+<pre><code class="language-bash">
+$ npm i --save graphql-type-json
+</code></pre>
+  <p>
+    Then, we have to pass a custom resolver to the <code>createSchema()</code> function:
+  </p>
+  <span class="filename"><app-tabs></app-tabs></span>
+  <pre><code class="language-typescript">{{ jsonScalar }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>GraphQLJSON</code> is imported from <code>graphql-type-json</code> package.
+  </blockquote>
+  <p>
+    Now we can use <code>JSON</code> scalar in our type definitions:
+  </p>
+  <pre><code class="language-java">{{ typeDefJson }}</code></pre>
+</div>

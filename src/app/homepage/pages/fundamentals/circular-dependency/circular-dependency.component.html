@@ -1,13 +1,13 @@
 <div class="content">
-  <h3>Circular Dependency</h3>
+  <h3>Circular dependency</h3>
   <p>
-    The circular dependency means that class A needs class B, and class B needs class A. 
-    Nest permits to create <strong>circular dependencies</strong> between both components and modules, but we advise you not to use it too much. Sometimes it's really difficult to avoid these types of the relationships, that's why we provided some ways to deal with this issue.
+    The circular dependency occurs when for example, class A needs class B, and class B needs class A as well. 
+    Nest permits creating <strong>circular dependencies</strong> between both providers and modules, but we advise you to avoid whenever it's possible. Sometimes it's really difficult to avoid this kind of the relationships, that's why we have provided some ways to deal with this issue.
   </p>
   <h4>Forward reference</h4>
   <p>
-    The <strong>forward reference</strong> allows Nest refer to references which are not yet defined.
-    When <code>CatsService</code> and <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and the <code>forwardRef()</code> utility, otherwise Nest won't create your components instances because all of the essential metadata would be not available.
+    The <strong>forward reference</strong> allows Nest referring to references which aren't defined so far.
+    When <code>CatsService</code> and <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and the <code>forwardRef()</code> utility, otherwise Nest won't instantiate them because all of the essential metadata won't be available.
     Let's see the following snippet:
   </p>
   <span class="filename">
@@ -16,8 +16,8 @@
   </span>
   <pre [class.hide]="forwardRefT.isJsActive"><code class="language-typescript">{{ forwardRef }}</code></pre>
   <pre [class.hide]="!forwardRefT.isJsActive"><code class="language-typescript">{{ forwardRefJs }}</code></pre>
-  <blockquote>
-    <strong>Notice</strong> The <code>forwardRef()</code> function is imported from the <code>@nestjs/common</code> package.
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>forwardRef()</code> function is imported from the <code>@nestjs/common</code> package.
   </blockquote> 
   <p>
     Here's the first side of the relationship. Now let's do the same with the <code>CommonService</code>:
@@ -29,10 +29,10 @@
   <pre [class.hide]="forwardRefCommonT.isJsActive"><code class="language-typescript">{{ forwardRefCommon }}</code></pre>
   <pre [class.hide]="!forwardRefCommonT.isJsActive"><code class="language-typescript">{{ forwardRefCommonJs }}</code></pre>
   <blockquote class="warning">
-    <strong>Hint</strong> You never know which constructor will be called first.
+    <strong>Warning</strong> You don't have a guarantee which constructor will be called first.
   </blockquote> 
   <p>
-    To create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on the both parts of the modules association:
+    In order to create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on both parts of the modules association:
   </p>
   <span class="filename">
     {{ 'common.module' | extension: forwardRefModuleT.isJsActive }}
@@ -41,7 +41,7 @@
   <pre><code class="language-typescript">{{ forwardRefModule }}</code></pre>
   <h4>Module reference</h4>
   <p>
-    Nest provides the <code>ModuleRef</code> class, which might be simply injected into each component.
+    Nest provides the <code>ModuleRef</code> class that can be simply injected into any component.
   </p>
   <span class="filename">
     {{ 'cats.service' | extension: moduleRefT.isJsActive }}
@@ -49,10 +49,10 @@
   </span>
   <pre [class.hide]="moduleRefT.isJsActive"><code class="language-typescript">{{ moduleRef }}</code></pre>
   <pre [class.hide]="!moduleRefT.isJsActive"><code class="language-typescript">{{ moduleRefJs }}</code></pre>
-  <blockquote>
-    <strong>Notice</strong> The <code>ModuleRef</code> class is imported from the <code>@nestjs/core</code> package.
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>ModuleRef</code> class is imported from the <code>@nestjs/core</code> package.
   </blockquote> 
   <p>
-    The module reference has a <code>get()</code> method, which allows to retrieve any component available in the current module.
+    The module reference has a <code>get()</code> method which allows retrieving any component available in the current module.
   </p>
 </div>

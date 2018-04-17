@@ -44,7 +44,7 @@ export const databaseProviders = [
   import { databaseProviders } from './database.providers';
 
   @Module({
-    components: [...databaseProviders],
+    providers: [...databaseProviders],
     exports: [...databaseProviders],
   })
   export class DatabaseModule {}`;
@@ -107,7 +107,7 @@ import { DatabaseModule } from '../database/database.module';
 @Module({
   imports: [DatabaseModule],
   controllers: [CatsController],
-  components: [
+  providers: [
     CatsService,
     ...catsProviders,
   ],

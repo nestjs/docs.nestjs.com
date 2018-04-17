@@ -9,12 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class IdeComponent extends BasePageComponent {
   get createSchema() {
     return `
-import {
-  Module,
-  MiddlewaresConsumer,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module, MiddlewaresConsumer, NestModule } from '@nestjs/common';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 
@@ -30,16 +25,16 @@ export class ApplicationModule implements NestModule {
 
     consumer
       .apply(graphiqlExpress({ endpointURL: '/graphql' }))
-      .forRoutes({ path: '/graphiql', method: RequestMethod.GET })
+      .forRoutes('/graphiql')
       .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes('/graphql');
   }
 }`;
   }
 
   get createSchemaJs() {
     return `
-import { Module,  RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 
@@ -58,9 +53,9 @@ export class ApplicationModule {
 
     consumer
       .apply(graphiqlExpress({ endpointURL: '/graphql' }))
-      .forRoutes({ path: '/graphiql', method: RequestMethod.GET })
+      .forRoutes('/graphiql')
       .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes('/graphql');
   }
 }`;
   }

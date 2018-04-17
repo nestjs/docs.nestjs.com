@@ -1,0 +1,42 @@
+<div class="content">
+  <h3>Hot Reload (Webpack)</h3>
+  <p>
+    The highest impact on your application's bootstrapping process has a <strong>TypeScript compilation</strong>.
+    But the question is, do we have to recompile a whole project each time when change occurs? Not at all.
+    That's why <a href="https://github.com/webpack/webpack" target="blank">webpack</a> HMR (Hot-Module Replacement) significantly decreases an amount of time necessary to instantiate your application.
+  </p>
+  <h4>Installation</h4>
+  <p>
+    Firstly, let's install required packages:
+  </p>
+  <pre><code class="language-typescript">{{ packages }}</code></pre>
+  <h4>Configuration</h4>
+  <p>
+    Then, we need to create a <code>webpack.config.js</code> which is a webpack's configuration file, and put it in the root directory.
+  </p>
+  <pre><code class="language-typescript">{{ configuration }}</code></pre>
+  <p>
+    This configuration tells webpack few essential things about our application. Where sits an entry file, which directory should be used to hold <strong>compiled</strong> files, and also, what kind of loader we want to use in order to compile source files.
+    Basically, you shouldn't worry to much, you don't need to understand the content of this file at all.
+  </p>
+  <h4>Hot-Module Replacement</h4>
+  <p>
+    In order to enable <strong>HMR</strong>, we have to open Nest application entry file (which is <code>main.ts</code>) and add few critical things.
+  </p>
+  <pre><code class="language-typescript">{{ main }}</code></pre>
+  <p>
+    And that's all. To simplify execution process, add those two lines into your <code>scripts</code> inside <code>package.json</code> file.
+  </p>
+  <pre><code class="language-typescript">{{ scripts }}</code></pre>
+  <p>
+    Now simply open your command line and run below command:
+  </p>
+  <pre><code class="language-bash">{{ webpackStart }}</code></pre>
+  <p>
+    Once webpack started to <strong>watch files</strong>, run another command in the another command line window:
+  </p>
+  <pre><code class="language-bash">{{ start }}</code></pre>
+  <p>
+    A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/08-webpack">here</a>.
+  </p>
+</div>

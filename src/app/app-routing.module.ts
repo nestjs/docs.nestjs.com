@@ -59,7 +59,20 @@ import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { CliOverviewComponent } from './homepage/pages/cli/overview/overview.component';
 import { CliUsagesComponent } from './homepage/pages/cli/usages/usages.component';
-import { CliInstallationComponent } from './homepage/pages/cli/installation/installation.component';
+import { PlatformAgnosticismComponent } from './homepage/pages/fundamentals/platform-agnosticism/platform-agnosticism.component';
+import { ScalarsComponent } from './homepage/pages/graphql/scalars/scalars.component';
+import { CorsComponent } from './homepage/pages/techniques/cors/cors.component';
+import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
+import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
+import { LoggerComponent } from './homepage/pages/techniques/logger/logger.component';
+import { HttpModuleComponent } from './homepage/pages/techniques/http-module/http-module.component';
+import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
+import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
+import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
+import { MigrationComponent } from './homepage/pages/migration/migration.component';
+import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
+import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
+import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
 
 const routes: Routes = [
   {
@@ -73,7 +86,7 @@ const routes: Routes = [
       {
         path: 'first-steps',
         component: FirstStepsComponent,
-        data: { title: 'First Steps' },
+        data: { title: 'First steps' },
       },
       {
         path: 'controllers',
@@ -112,7 +125,7 @@ const routes: Routes = [
       {
         path: 'exception-filters',
         component: ExceptionFiltersComponent,
-        data: { title: 'Exception Filters' },
+        data: { title: 'Exception filters' },
       },
       {
         path: 'interceptors',
@@ -122,22 +135,30 @@ const routes: Routes = [
       {
         path: 'custom-decorators',
         component: CustomDecoratorsComponent,
-        data: { title: 'Custom Decorators' },
+        data: { title: 'Custom decorators' },
       },
       {
         path: 'fundamentals/dependency-injection',
+        redirectTo: 'fundamentals/custom-providers',
+      },
+      {
+        path: 'fundamentals/custom-providers',
         component: DependencyInjectionComponent,
-        data: { title: 'Dependency Injection' },
+        data: { title: 'Custom providers' },
+      },
+      {
+        path: 'fundamentals/platform-agnosticism',
+        component: PlatformAgnosticismComponent,
+        data: { title: 'Platform agnosticism' },
       },
       {
         path: 'fundamentals/async-components',
-        component: AsyncComponentsComponent,
-        data: { title: 'Async Components' },
+        redirectTo: 'fundamentals/async-providers',
       },
       {
-        path: 'advanced/mixins',
-        component: MixinComponentsComponent,
-        data: { title: 'Mixin Class' },
+        path: 'fundamentals/async-providers',
+        component: AsyncComponentsComponent,
+        data: { title: 'Async providers' },
       },
       {
         path: 'advanced/hierarchical-injector',
@@ -178,6 +199,11 @@ const routes: Routes = [
         path: 'graphql/mutations',
         component: MutationsComponent,
         data: { title: 'GraphQL - Mutations' },
+      },
+      {
+        path: 'graphql/scalars',
+        component: ScalarsComponent,
+        data: { title: 'GraphQL - Scalars' },
       },
       {
         path: 'graphql/subscriptions',
@@ -240,6 +266,21 @@ const routes: Routes = [
         data: { title: 'Redis - Microservices' },
       },
       {
+        path: 'microservices/mqtt',
+        component: MqttComponent,
+        data: { title: 'MQTT - Microservices' },
+      },
+      {
+        path: 'microservices/nats',
+        component: NatsComponent,
+        data: { title: 'Nats - Microservices' },
+      },
+      {
+        path: 'microservices/grpc',
+        component: GrpcComponent,
+        data: { title: 'gRPC - Microservices' },
+      },
+      {
         path: 'microservices/pipes',
         component: MicroservicesPipesComponent,
         data: { title: 'Pipes - Microservices' },
@@ -281,11 +322,11 @@ const routes: Routes = [
       },
       {
         path: 'recipes/passport',
-        redirectTo: 'techniques/authentication',
+        component: PassportComponent,
       },
       {
         path: 'techniques/authentication',
-        component: PassportComponent,
+        component: AuthenticationComponent,
         data: { title: 'Authentication' },
       },
       {
@@ -315,8 +356,12 @@ const routes: Routes = [
       },
       {
         path: 'techniques/sql',
+        redirectTo: 'techniques/database'
+      },
+      {
+        path: 'techniques/database',
         component: SqlComponent,
-        data: { title: 'SQL' },
+        data: { title: 'Database' },
       },
       {
         path: 'techniques/mongodb',
@@ -324,24 +369,59 @@ const routes: Routes = [
         data: { title: 'MongoDB' },
       },
       {
+        path: 'techniques/file-upload',
+        component: FileUploadComponent,
+        data: { title: 'File upload' },
+      },
+      {
+        path: 'techniques/logger',
+        component: LoggerComponent,
+        data: { title: 'Logger' },
+      },
+      {
+        path: 'techniques/performance',
+        component: PerformanceComponent,
+        data: { title: 'Performance (Fastify)' },
+      },
+      {
+        path: 'techniques/hot-reload',
+        component: HotReloadComponent,
+        data: { title: 'Hot reload (Webpack)' },
+      },
+      {
+        path: 'techniques/http-module',
+        component: HttpModuleComponent,
+        data: { title: 'HTTP module' },
+      },
+      {
+        path: 'techniques/configuration',
+        component: ConfigurationComponent,
+        data: { title: 'Configuration' },
+      },
+      {
+        path: 'techniques/cors',
+        component: CorsComponent,
+        data: { title: 'CORS' },
+      },
+      {
         path: 'faq/express-instance',
         component: ExpressInstanceComponent,
-        data: { title: 'Express Instance - FAQ' },
+        data: { title: 'Express instance - FAQ' },
       },
       {
         path: 'faq/global-prefix',
         component: GlobalPrefixComponent,
-        data: { title: 'Global Prefix - FAQ' },
+        data: { title: 'Global prefix - FAQ' },
       },
       {
         path: 'faq/lifecycle-events',
         component: LifecycleEventsComponent,
-        data: { title: 'Lifecycle Events - FAQ' },
+        data: { title: 'Lifecycle events - FAQ' },
       },
       {
         path: 'faq/hybrid-application',
         component: HybridApplicationComponent,
-        data: { title: 'Hybrid Application - FAQ' },
+        data: { title: 'Hybrid application - FAQ' },
       },
       {
         path: 'faq/multiple-servers',
@@ -349,24 +429,22 @@ const routes: Routes = [
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
       },
       {
+        path: 'migration-guide',
+        component: MigrationComponent,
+        data: { title: 'Migration guide - FAQ' },
+      },
+      {
         path: 'cli/overview',
         component: CliOverviewComponent,
         data: {
-          title: 'Overview'
-        }
-      },
-      {
-        path: 'cli/installation',
-        component: CliInstallationComponent,
-        data: {
-          title: 'Installation'
+          title: 'Overview - CLI'
         }
       },
       {
         path: 'cli/usages',
         component: CliUsagesComponent,
         data: {
-          title: 'Usages'
+          title: 'Usage - CLI'
         }
       }
     ],

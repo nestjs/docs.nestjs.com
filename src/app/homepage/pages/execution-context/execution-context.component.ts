@@ -11,7 +11,7 @@ export class ExecutionContextComponent extends BasePageComponent {
     return `
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(ApplicationModule);
-  // logic.. :)
+  // logic...
 }
 bootstrap();`;
   }
@@ -19,9 +19,14 @@ bootstrap();`;
   get pickTasksController() {
     return `
 const app = await NestFactory.create(ApplicationModule);
-const tasksController = app
-  .select(TasksModule)
-  .get(TasksController);
+const tasksController = app.get(TasksController);
+`;
+  }
+
+  get pickTasksControllerStrict() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+const tasksController = app.select(TasksModule).get(TasksController, { strict: true });
 `;
   }
 }

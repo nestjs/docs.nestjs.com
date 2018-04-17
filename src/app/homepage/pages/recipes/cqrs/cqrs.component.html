@@ -1,26 +1,26 @@
 <div class="content">
-  <h3>Command Query Responsibility Segregation</h3>
+  <h3>Command query responsibility segregation</h3>
   <p>
-    The flow of the simplest <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete" target="blank">CRUD</a> applications could be described using the following steps:    
+    The flow of the simplest <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete" target="blank">CRUD</a> applications can be described using the following steps:    
   </p>
   <ol>
     <li>Controllers layer handle <strong>HTTP requests</strong> and delegate tasks to the services.</li>
-    <li>Services layer is the place, where the most of the business logic is being done.</li>
+    <li>Services layer is the place where the most of the business logic is being done.</li>
     <li><strong>Services</strong> uses Repositories / DAOs to change / persist entities.</li>
     <li>Entities are our models - just containers for the values, with setters and getters.</li>
   </ol>
   <p>
-    Is it a good approach? Yes, for sure. In most cases, there's no reason to make small and medium-sized applications more complicated. 
-    But sometimes it's not enough, and when our needs becomes <strong>more sophisticated</strong> we wanna have scalable systems with straightforward data flow.
+    In most cases, there's no reason to make small and medium-sized applications more complicated. 
+    But sometimes it's not enough and when our needs become <strong>more sophisticated</strong> we want to have scalable systems with straightforward data flow.
   </p>
   <p>
-    That's why Nest provides a lightweight <a href="https://github.com/nestjs/cqrs" target="blank">CQRS module</a>, which components are well-described below.
+    That's why Nest provides a lightweight <a href="https://github.com/nestjs/cqrs" target="blank">CQRS module</a> which components are well-described below.
   </p>
   <h4>Commands</h4>
   <p>
-    To make the application easier to understand, each change has to be preceded by <strong>Command</strong>. 
-    When any command is dispatched - the application has to react on it. 
-    Commands might be dispatched from the services and consumed in appropriate <strong>Command Handlers</strong>.
+    In order to make the application easier to understand, each change has to be preceded by a <strong>Command</strong>. 
+    When any command is dispatched, the application has to react on it. 
+    Commands could be dispatched from the services and consumed in corresponding <strong>Command Handlers</strong>.
   </p>
   <span class="filename">
     {{ 'heroes-game.service' | extension: heroGameServiceT.isJsActive }}
@@ -29,7 +29,7 @@
   <pre [class.hide]="heroGameServiceT.isJsActive"><code class="language-typescript">{{ heroGameService }}</code></pre>
   <pre [class.hide]="!heroGameServiceT.isJsActive"><code class="language-typescript">{{ heroGameServiceJs }}</code></pre>
   <p>
-    Here's a sample service, which dispatches <code>KillDragonCommand</code>. Let's see how the command looks like:
+    Here's a sample service that dispatches <code>KillDragonCommand</code>. Let's see how the command looks like:
   </p>
   <span class="filename">
     {{ 'kill-dragon.command' | extension: killDragonCommandT.isJsActive }}
@@ -48,16 +48,16 @@
   <pre [class.hide]="killDragonHandlerT.isJsActive"><code class="language-typescript">{{ killDragonHandler }}</code></pre>
   <pre [class.hide]="!killDragonHandlerT.isJsActive"><code class="language-typescript">{{ killDragonHandlerJs }}</code></pre>
   <p>
-    Now, every application state change is a result of the <strong>Command</strong> occurrence. 
-    The logic's encapsulated in handlers. If we want we can simply add logging here or even more - we can persist our commands in the database (e.g. for the diagnostics purposes). 
+    Now every application state change is a result of the <strong>Command</strong> occurrence. 
+    The logic is encapsulated in handlers. If we want we can simply add logging here or even more, we can persist our commands in the database (e.g. for the diagnostics purposes). 
   <p>
   <p>
-    Why do we need <code>resolve()</code> function? Sometimes we might wanna return a message from handler to the service. Also, we can just call this function at the beginning of the <code>execute()</code> method, so the application would first turn back into the service and return a response to the client and then <strong>asynchronously</strong> come back here to process the dispatched command.
+    Why do we need <code>resolve()</code> function? Sometimes we might want to return a message from handler to the service. Also, we can just call this function at the beginning of the <code>execute()</code> method, therefore the application would first turn back into the service and return a response to the client and then <strong>asynchronously</strong> come back here to process the dispatched command.
   </p>
   <h4>Events</h4>
   <p>
-    Since we've encapsulated commands in the handlers, we prevent interaction between them - the application structure's still not flexible, not <strong>reactive</strong>. 
-    The solution's to use <strong>events</strong>.
+    Since we have encapsulated commands in handlers, we prevent interaction between them - the application structure'is still not flexible, not <strong>reactive</strong>. 
+    The solution is to use <strong>events</strong>.
   </p>
   <span class="filename">
     {{ 'hero-killed-dragon.event' | extension: killedDragonEventT.isJsActive }}
@@ -66,7 +66,7 @@
   <pre [class.hide]="killedDragonEventT.isJsActive"><code class="language-typescript">{{ killedDragonEvent }}</code></pre>
   <pre [class.hide]="!killedDragonEventT.isJsActive"><code class="language-typescript">{{ killedDragonEventJs }}</code></pre>
   <p>
-    Events are asynchronous. They're dispatched by <strong>models</strong>.
+    Events are asynchronous. They are dispatched by <strong>models</strong>.
     Models have to extend the <code>AggregateRoot</code> class.
   </p>
   <span class="filename">
@@ -86,7 +86,7 @@
   <pre [class.hide]="mergedT.isJsActive"><code class="language-typescript">{{ merged }}</code></pre>
   <pre [class.hide]="!mergedT.isJsActive"><code class="language-typescript">{{ mergedJs }}</code></pre>
   <p>
-    Now, everything works as we expected. Notice that we need to <code>commit()</code> events since they're not dispatching immediately. 
+    Now everything works as expected. Notice that we need to <code>commit()</code> events since they're not dispatched immediately. 
     Of course, an object doesn't have to exist already. We can easily merge type context also:
   </p>
   <pre><code class="language-typescript">{{ mergedType }}</code></pre>
@@ -131,7 +131,7 @@
   </p>
   <h4>Setup</h4>
   <p>
-    The last thing, which we have to take care of is to set up the entire mechanism.
+    The last thing which we have to take care of is to set up the whole mechanism.
   </p>
   <span class="filename">
     {{ 'heroes-game.module' | extension: setupT.isJsActive }}
@@ -145,6 +145,6 @@
     It means that you can easily subscribe to the whole stream and enrich your application with <strong>Event Sourcing</strong>.
   </p>
   <p>
-    The full source code's available <a href="https://github.com/kamilmysliwiec/nest-cqrs-example" target="blank">here</a>.
+    A working example is available <a href="https://github.com/kamilmysliwiec/nest-cqrs-example" target="blank">here</a>.
   </p>
 </div>

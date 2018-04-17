@@ -7,14 +7,45 @@ import { BasePageComponent } from '../page/page.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GuardsComponent extends BasePageComponent {
-  get rolesGuard() {
+  get authGuard() {
     return `
-import { Guard, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
 
-@Guard()
+@Injectable()
+export class AuthGuard implements CanActivate {
+  async canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    return await validateRequest(request);
+  }
+}`;
+  }
+
+  get authGuardJs() {
+    return `
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AuthGuard {
+  async canActivate(context) {
+    const request = context.switchToHttp().getRequest();
+    return await validateRequest(request);
+  }
+}`;
+  }
+
+  get rolesGuard() {
+    return `
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+
+@Injectable()
 export class RolesGuard implements CanActivate {
-  canActivate(dataOrRequest, context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
     return true;
   }
 }`;
@@ -22,13 +53,32 @@ export class RolesGuard implements CanActivate {
 
   get rolesGuardJs() {
     return `
-import { Guard } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-@Guard()
+@Injectable()
 export class RolesGuard {
-  canActivate(dataOrRequest, context) {
+  canActivate(context) {
     return true;
   }
+}`;
+  }
+
+  get argumentsHost() {
+    return `
+export interface ArgumentsHost {
+  getArgs<T extends Array<any> = any[]>(): T;
+  getArgByIndex<T = any>(index: number): T;
+  switchToRpc(): RpcArgumentsHost;
+  switchToHttp(): HttpArgumentsHost;
+  switchToWs(): WsArgumentsHost;
+}`;
+  }
+
+  get executionContext() {
+    return `
+export interface ExecutionContext extends ArgumentsHost {
+  getClass<T = any>(): Type<T>;
+  getHandler(): Function;
 }`;
   }
 
@@ -38,6 +88,30 @@ export class RolesGuard {
 @UseGuards(RolesGuard)
 export class CatsController {}
 `;
+  }
+
+  get useGuardsWithInstance() {
+    return `
+@Controller('cats')
+@UseGuards(new RolesGuard())
+export class CatsController {}
+`;
+  }
+
+  get globalScopedGuardModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
+})
+export class ApplicationModule {}`;
   }
 
   get reflectMetadata() {
@@ -94,23 +168,22 @@ async create(createCatDto) {
 
   get rolesGuardExt() {
     return `
-import { Guard, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
 import { Reflector } from '@nestjs/core';
 
-@Guard()
+@Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
-  canActivate(req, context: ExecutionContext): boolean {
-    const { parent, handler } = context;
-    const roles = this.reflector.get<string[]>('roles', handler);
+  canActivate(context: ExecutionContext): boolean {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
     if (!roles) {
       return true;
     }
-
-    const user = req.user;
-    const hasRole = () => !!user.roles.find((role) => !!roles.find((item) => item === role));
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    const hasRole = () => user.roles.some((role) => roles.includes(role));
     return user && user.roles && hasRole();
   }
 }`;
@@ -118,25 +191,24 @@ export class RolesGuard implements CanActivate {
 
   get rolesGuardExtJs() {
     return `
-import { Guard, Dependencies } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-@Guard()
+@Injectable()
 @Dependencies(Reflector)
 export class RolesGuard {
   constructor(reflector) {
     this.reflector = reflector;
   }
 
-  canActivate(req, context) {
-    const { parent, handler } = context;
-    const roles = this.reflector.get('roles', handler);
+  canActivate(context) {
+    const roles = this.reflector.get('roles', context.getHandler());
     if (!roles) {
       return true;
     }
-
-    const user = req.user;
-    const hasRole = () => !!user.roles.find((role) => !!roles.find((item) => item === role));
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    const hasRole = () => user.roles.some((role) => roles.includes(role));
     return user && user.roles && hasRole();
   }
 }`;
@@ -144,12 +216,12 @@ export class RolesGuard {
 
   get controllerMetadata() {
     return `
-const roles = this.reflector.get<string[]>('roles', parent);`;
+const roles = this.reflector.get<string[]>('roles', context.getClass());`;
   }
 
   get controllerMetadataJs() {
     return `
-const roles = this.reflector.get('roles', parent);`;
+const roles = this.reflector.get('roles', context.getClass());`;
   }
 
   get forbidden() {

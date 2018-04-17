@@ -1,15 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-usages',
   templateUrl: './usages.component.html',
-  styleUrls: ['./usages.component.scss']
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CliUsagesComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class CliUsagesComponent extends BasePageComponent {}

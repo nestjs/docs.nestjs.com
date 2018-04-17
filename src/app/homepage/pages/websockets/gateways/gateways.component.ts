@@ -9,13 +9,13 @@ import { BasePageComponent } from '../../page/page.component';
 export class GatewaysComponent extends BasePageComponent {
   get namespace() {
     return `
-@WebSocketGateway({ port: 81, namespace: 'events' })`;
+@WebSocketGateway(81, { namespace: 'events' })`;
   }
 
   get subscribeEvents() {
     return `
 @SubscribeMessage('events')
-onEvent(client, data): WsResponse<any> {
+onEvent(client, data: any): WsResponse<any> {
   const event = 'events';
   return { event, data };
 }`;
@@ -37,25 +37,37 @@ onEvent(client, data) {
   const event = 'events';
   const response = [1, 2, 3];
 
-  return Observable.from(response)
-    .map((res) => ({ event, data: res }));
+  return from(response).pipe(
+    map(data => ({ event, data })),
+  );
 }`;
   }
 
   get streaming() {
     return `
 @SubscribeMessage('events')
-onEvent(client, data): Observable<WsResponse<number>> {
+onEvent(client, data: any: Observable<WsResponse<number>> {
   const event = 'events';
   const response = [1, 2, 3];
 
-  return Observable.from(response)
-    .map((res) => ({ event, data: res }));
+  return from(response).pipe(
+    map(data => ({ event, data })),
+  );
 }`;
   }
 
   get webSocketServer() {
     return `
 @WebSocketServer() server;`;
+  }
+
+  get clientEmit() {
+    return `
+socket.emit('events', { name: 'Nest' });`;
+  }
+
+  get clientListen() {
+    return `
+socket.on('events', (data) => console.log(data));`;
   }
 }

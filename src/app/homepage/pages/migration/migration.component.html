@@ -1,0 +1,72 @@
+<div class="content">
+  <h3>Migration guide</h3>
+  <p>
+    This article provides a set of <strong>guidelines</strong> to migrate from v4 to latest v5 version.
+    During the development, we spent a lot of time trying to avoid any breaking changes.
+    Nevertheless, the API had to change in a bunch of places in order to simplify its use.
+    Also, the previous version has been limited due to decisions that have been made.
+  </p>
+  <h4>Modules</h4>
+  <p>
+    In order to decrease number of differences between Nest and <a href="https://angular.io/" target="blank">Angular</a>,
+    few changes have been made in terms of <code>@Module()</code> decorator.
+  </p>
+  <ul>
+    <li><code>modules</code> property is now deprecated. Use <code>imports</code> instead</li>
+    <li><code>components</code> property is now deprecated. Use <code>providers</code> instead</li>
+  </ul>
+  <h4>Decorators</h4>
+  <p>
+    The <code>@Component()</code>, <code>@Middleware()</code>, <code>@Interceptor()</code>, <code>@Pipe()</code>, and <code>@Guard()</code> are deprecated now.
+    Use <code>@Injectable()</code> instead.
+  </p>
+  <h4>Middlewares</h4>
+  <p>
+    We no longer fully support a <strong>traditional</strong> express middleware model, 
+    meaning, each middleware is now solely bounded to a <strong>path</strong>, regardless of the request method. 
+    Also, there'll be no more error middlewares. This change helps us finding a middle-ground between portability and express compatibility.
+  </p>
+  <pre><code class="language-typescript">{{ middlewares }}</code></pre>
+  <p>
+    However, if you still have to tie a middleware into a particular request method, you can use express instance <strong>directly</strong>.
+  </p>
+  <pre><code class="language-typescript">{{ expressMiddleware }}</code></pre>
+  <p>
+    But the <strong>recommended</strong> approach is to make use of pipes, guards or interceptors instead.
+  </p>
+  <h4>Filters</h4>
+  <p>
+    The exception filters aren't locked in as single-paradigm anymore.
+    Previously, an exception filter had an access to the <code>response</code> object.
+    Together with an incoming release, <code>catch()</code> method takes <code>ArgumentsHost</code> instance instead.
+    This object is well described <a routerLink="/exception-filters">here</a>.
+    Thanks to that, you have an access to each argument, including <code>response</code> object.
+  </p>
+  <span class="filename">
+    <app-tabs #filtersT></app-tabs>
+  </span>
+  <pre [class.hide]="filtersT.isJsActive"><code class="language-typescript">{{ filters }}</code></pre>
+  <pre [class.hide]="!filtersT.isJsActive"><code class="language-typescript">{{ filtersJs }}</code></pre>
+  <h4>Guards</h4>
+  <p>
+    The same as filters, guards are far more <strong>flexible</strong> now. An access to the enhanced <code>ExecutionContext</code> (<a routerLink="/guards">read more</a>) gives guards more superpowers and all of that has been built on top of simplified API.
+  </p>
+  <span class="filename">
+    <app-tabs #guardsT></app-tabs>
+  </span>
+  <pre [class.hide]="guardsT.isJsActive"><code class="language-typescript">{{ guards }}</code></pre>
+  <pre [class.hide]="!guardsT.isJsActive"><code class="language-typescript">{{ guardsJs }}</code></pre>
+  <h4>Interceptors</h4>
+  <p>
+    The interceptors API evolved in the exact same way as <strong>equivalent</strong> guards API.
+  </p>
+  <span class="filename">
+    <app-tabs #interceptorsT></app-tabs>
+  </span>
+  <pre [class.hide]="interceptorsT.isJsActive"><code class="language-typescript">{{ interceptors }}</code></pre>
+  <pre [class.hide]="!interceptorsT.isJsActive"><code class="language-typescript">{{ interceptorsJs }}</code></pre>
+  <h4>Custom decorators</h4>
+  <p>
+    The <code>createRouteParamDecorator()</code> function is deprecated now. Use <code>createParamDecorator()</code> now.
+  </p>
+</div>

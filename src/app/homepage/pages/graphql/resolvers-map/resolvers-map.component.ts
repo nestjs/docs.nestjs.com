@@ -31,7 +31,7 @@ const resolverMap = {
     },
   },
   Author: {
-    posts(author) {
+    posts(author, args, context, info) {
       return filter(posts, { authorId: author.id });
     },
   },
@@ -64,7 +64,7 @@ export class AuthorResolver {
   }
 
   @ResolveProperty()
-  posts(author) {
+  posts(author, args, context, info) {
     return filter(posts, { authorId: author.id });
   }
 }
@@ -97,7 +97,7 @@ export class AuthorResolver {
   }
 
   @ResolveProperty('posts')
-  getPosts(author) {
+  getPosts(author, args, context, info) {
     return filter(posts, { authorId: author.id });
   }
 }`;
@@ -119,7 +119,7 @@ export class AuthorResolver {
   }
 
   @ResolveProperty('posts')
-  async getPosts(author) {
+  async getPosts(author, args, context, info) {
     const { id } = author;
     return await this.postsService.findAll({ authorId: id });
   }
@@ -155,7 +155,7 @@ export class AuthorResolver {
     return `
 @Module({
   imports: [PostsModule],
-  components: [AuthorsService, AuthorResolver],
+  providers: [AuthorsService, AuthorResolver],
 })
 export class AuthorsModule {}`
   }

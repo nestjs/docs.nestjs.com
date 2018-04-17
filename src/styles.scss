@@ -69,9 +69,9 @@ blockquote {
   }
 
   &.warning {
-    background: #fff7f0;
+    background: #fff5ec;
     &::before {
-      background: #ed8529;
+      background: #ffb36f;
     }
     strong,
     a {
@@ -129,6 +129,11 @@ tr {
       margin-bottom: 0;
     }
   }
+}
+
+th { 
+  padding: 20px;
+  background: #efefef;
 }
 
 tr:nth-of-type(even) td {
@@ -199,10 +204,10 @@ tr td {
 }
 
 .external {
-  background: #f5f5f5;
+  background: #f7f7f7;
 
   &::before {
-    background: #d0d0d0;
+    background: #e8e8e8;
   }
 }
 

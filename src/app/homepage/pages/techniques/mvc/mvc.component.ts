@@ -9,46 +9,99 @@ import { BasePageComponent } from '../../page/page.component';
 export class MvcComponent extends BasePageComponent {
   get main() {
     return `
-import * as express from 'express';
-import * as path from 'path';
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+  app.useStaticAssets(__dirname + '/public');
+  app.setBaseViewsDir(__dirname + '/views');
+  app.setViewEngine('hbs');
 
   await app.listen(3000);
 }
-bootstrap();
-`;
+bootstrap();`;
   }
 
   get index() {
     return `
-html
-head
-body
-  p= message`;
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>App</title>
+</head>
+<body>
+  {{ message }}
+</body>
+</html>`;
   }
 
   get root() {
     return `
-@Get()
-root(@Res() res) {
-  res.render('index', { message: 'Hello world!' });
+import { Get, Controller, Render } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  @Get()
+  @Render('index')
+  root() {
+    return { message: 'Hello world!' };
+  }
 }`;
   }
 
   get rootJs() {
     return `
-@Get()
-@Bind(Res())
-root(res) {
-  res.render('index', { message: 'Hello world!' });
+import { Get, Controller, Render } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  @Get()
+  @Render('index')
+  root() {
+    return { message: 'Hello world!' };
+  }
 }`;
+  }
+
+  get rootFastify() {
+    return `
+import { Get, Controller, Render } from '@nestjs/common';
+
+@Controller()
+export class AppController {
+  @Get()
+  @Render('index.hbs')
+  root() {
+    return { message: 'Hello world!' };
+  }
+}`;
+  }
+
+  get mainFastify() {
+    return `
+import { NestFactory } from '@nestjs/core';
+import { ApplicationModule } from './app.module';
+import { FastifyAdapter } from '@nestjs/core/adapters/fastify-adapter';
+import { join } from 'path';
+
+async function bootstrap() {
+  const app = await NestFactory.create(ApplicationModule, new FastifyAdapter());
+  app.useStaticAssets({
+    root: join(__dirname, 'public'),
+    prefix: '/public/',
+  });
+  app.setViewEngine({
+    engine: {
+      handlebars: require('handlebars'),
+    },
+    templates: join(__dirname, 'views'),
+  });
+  await app.listen(3000);
+}
+bootstrap();
+`;
   }
 }

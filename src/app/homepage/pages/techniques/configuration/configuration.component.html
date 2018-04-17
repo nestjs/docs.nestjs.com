@@ -1,0 +1,45 @@
+<div class="content">
+  <h3>Configuration</h3>
+  <p>
+    The applications used to run in different <strong>environments</strong>. Depending on an environment, various sets of configuration variables should be used. 
+    For example, that's very likely that local environment relays on specific database credentials, valid solely for local db instance.
+    In order to solve this issue, we used to take advantage of <code>.env</code> files, that hold key-value pairs, where each key represents a particular value since this approach is very convenient.
+  </p>
+  <p>
+    But when we use a <code>process</code> global object, it's difficult to keep our tests clean since tested class may directly use it.
+    Another way is to create an abstraction layer, a <code>ConfigModule</code> that exposes a <code>ConfigService</code> with loaded configuration variables.
+  </p>
+  <h4>Installation</h4>
+  <p>
+    In order to parse our environment files, we'll use a <a href="https://github.com/motdotla/dotenv" target="blank">dotenv</a> package.
+  </p>
+  <pre><code class="language-typescript">{{ packages }}</code></pre>
+  <h4>Service</h4>
+  <p>
+    Firstly, let's create a <code>ConfigService</code> class.
+  </p>
+  <span class="filename">
+    <app-tabs #configServiceT></app-tabs>
+  </span>
+  <pre [class.hide]="configServiceT.isJsActive"><code class="language-typescript">{{ configService }}</code></pre>
+  <pre [class.hide]="!configServiceT.isJsActive"><code class="language-typescript">{{ configServiceJs }}</code></pre>
+  <p>
+    This class takes a single argument, a <code>filePath</code>, which is a path to your <code>.env</code> file.
+    The <code>get()</code> method is provided to enable access to a private <code>envConfig</code> object that holds each property defined inside an environment file.
+  </p>
+  <p>
+    The last step is to create a <code>ConfigModule</code>.
+  </p>
+  <span class="filename">
+    <app-tabs #configModuleT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ configModule }}</code></pre>
+  <p>
+    The <code>ConfigModule</code> registers a <code>ConfigService</code> and exports it as well. Additionally, we passed a path to the <code>.env</code> file. This path will be different depending on actual execution environment.
+    Now you can simply inject <code>ConfigService</code> anywhere, and pull out a particular value based on a passed key. Sample <code>.env</code> file could look like below:
+  </p>
+  <span class="filename">
+    development.env
+  </span>
+  <pre><code class="language-typescript">{{ sampleEnv }}</code></pre>
+</div>

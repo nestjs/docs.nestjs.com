@@ -22,30 +22,28 @@ throw new RpcException('Invalid credentials.');`;
 
   get rpcExceptionFilter() {
     return `
-import { Catch, RpcExceptionFilter } from '@nestjs/common';
+import { Catch, RpcExceptionFilter, ArgumentsHost } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
 import { RpcException } from '@nestjs/microservices';
-import 'rxjs/add/observable/throw';
+import { _throw } from 'rxjs/observable/throw';
 
 @Catch(RpcException)
 export class ExceptionFilter implements RpcExceptionFilter {
-  catch(exception: RpcException): Observable<any> {
-    return Observable.throw(exception.getError());
+  catch(exception: RpcException, host: ArgumentsHost): Observable<any> {
+    return _throw(exception.getError());
   }
 }`;
   }
 
   get rpcExceptionFilterJs() {
     return `
-import { Catch } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
-import { RpcException } from '@nestjs/microservices';
-import 'rxjs/add/observable/throw';
+import { Catch, } from '@nestjs/common';
+import { _throw } from 'rxjs/observable/throw';
 
 @Catch(RpcException)
 export class ExceptionFilter {
-  catch(exception) {
-    return Observable.throw(exception.getError());
+  catch(exception, host) {
+    return _throw(exception.getError());
   }
 }`;
   }

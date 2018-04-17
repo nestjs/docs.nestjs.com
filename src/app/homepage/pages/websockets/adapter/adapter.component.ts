@@ -10,38 +10,64 @@ export class AdapterComponent extends BasePageComponent {
   get wsAdapter() {
     return `
 import * as WebSocket from 'ws';
-import { WebSocketAdapter } from '@nestjs/common';
-import { MessageMappingProperties } from '@nestjs/websockets';
+import { WebSocketAdapter, MessageMappingProperties } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/filter';
+import { mergeMap, filter, tap } from 'rxjs/operators';
+import { fromEvent } from 'rxjs/observable/fromEvent';
+import { empty } from 'rxjs/observable/empty';
 
 export class WsAdapter implements WebSocketAdapter {
-  create(port: number) {
-    return new WebSocket.Server({ port });
+  constructor(private readonly httpServer) {}
+
+  create(
+    port: number,
+    options?: any & { namespace?: string; server?: any },
+  ): any {
+    const { server, ...wsOptions } = options;
+    if (port === 0 && this.httpServer) {
+      return new ws.Server({
+        server: this.httpServer,
+        ...wsOptions,
+      });
+    }
+    return server ? server : new ws.Server({ port, ...wsOptions });
   }
 
-  bindClientConnect(server, callback: (...args: any[]) => void) {
+  bindClientConnect(server, callback: (...args) => void) {
     server.on('connection', callback);
   }
 
-  bindMessageHandlers(client: WebSocket, handlers: MessageMappingProperties[], process: (data) => Observable<any>) {
-    Observable.fromEvent(client, 'message')
-      .switchMap((buffer) => this.bindMessageHandler(buffer, handlers, process))
-      .filter((result) => !!result)
-      .subscribe((response) => client.send(JSON.stringify(response)));
+  bindMessageHandlers(
+    client: WebSocket,
+    handlers: MessageMappingProperties[],
+    process: (data: any) => Observable<any>,
+  ) {
+    fromEvent(client, 'message')
+      .pipe(
+        mergeMap(data => this.bindMessageHandler(data, handlers, process)),
+        filter(result => !!result),
+      )
+      .subscribe(response => client.send(JSON.stringify(response)));
   }
 
-  bindMessageHandler(buffer, handlers: MessageMappingProperties[], process: (data) => Observable<any>): Observable<any> {
-    const data = JSON.parse(buffer.data);
-    const messageHandler = handlers.find((handler) => handler.message === data.type);
+  bindMessageHandler(
+    buffer,
+    handlers: MessageMappingProperties[],
+    process: (data: any) => Observable<any>,
+  ): Observable<any> {
+    const message = JSON.parse(buffer.data);
+    const messageHandler = handlers.find(
+      handler => handler.message === message.event,
+    );
     if (!messageHandler) {
-      return Observable.empty();
+      return empty();
     }
     const { callback } = messageHandler;
-    return process(callback(data));
+    return process(callback(message.data));
+  }
+
+  close(server) {
+    server.close();
   }
 }`;
   }
@@ -49,16 +75,24 @@ export class WsAdapter implements WebSocketAdapter {
   get wsAdapterJs() {
     return `
 import * as WebSocket from 'ws';
-import { MessageMappingProperties } from '@nestjs/websockets';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/filter';
+import { mergeMap, filter, tap } from 'rxjs/operators';
+import { fromEvent } from 'rxjs/observable/fromEvent';
+import { empty } from 'rxjs/observable/empty';
 
 export class WsAdapter {
-  create(port) {
-    return new WebSocket.Server({ port });
+  constructor(httpServer) {
+    this.httpServer = httpServer;
+  }
+
+  create(port, options = {}) {
+    const { server, ...wsOptions } = options;
+    if (port === 0 && this.httpServer) {
+      return new ws.Server({
+        server: this.httpServer,
+        ...wsOptions,
+      });
+    }
+    return server ? server : new ws.Server({ port, ...wsOptions });
   }
 
   bindClientConnect(server, callback) {
@@ -66,20 +100,28 @@ export class WsAdapter {
   }
 
   bindMessageHandlers(client, handlers, process) {
-    Observable.fromEvent(client, 'message')
-      .switchMap((buffer) => this.bindMessageHandler(buffer, handlers, process))
-      .filter((result) => !!result)
-      .subscribe((response) => client.send(JSON.stringify(response)));
+    fromEvent(client, 'message')
+      .pipe(
+        mergeMap(data => this.bindMessageHandler(data, handlers, process)),
+        filter(result => !!result),
+      )
+      .subscribe(response => client.send(JSON.stringify(response)));
   }
 
   bindMessageHandler(buffer, handlers, process) {
-    const data = JSON.parse(buffer.data);
-    const messageHandler = handlers.find((handler) => handler.message === data.type);
+    const message = JSON.parse(buffer.data);
+    const messageHandler = handlers.find(
+      handler => handler.message === message.event,
+    );
     if (!messageHandler) {
-      return Observable.empty();
+      return empty();
     }
     const { callback } = messageHandler;
-    return process(callback(data));
+    return process(callback(message.data));
+  }
+
+  close(server) {
+    server.close();
   }
 }`;
   }

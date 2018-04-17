@@ -41,7 +41,7 @@ import { Module } from '@nestjs/common';
 import { databaseProviders } from './database.providers';
 
 @Module({
-  components: [...databaseProviders],
+  providers: [...databaseProviders],
   exports: [...databaseProviders],
 })
 export class DatabaseModule {}`;
@@ -89,14 +89,16 @@ export const photoProviders = [
 
   get photoService() {
     return `
-import { Component, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Photo } from './photo.entity';
 
-@Component()
+@Injectable()
 export class PhotoService {
   constructor(
-    @Inject('PhotoRepositoryToken') private readonly photoRepository: Repository<Photo>) {}
+    @Inject('PhotoRepositoryToken')
+    private readonly photoRepository: Repository<Photo>,
+  ) {}
 
   async findAll(): Promise<Photo[]> {
     return await this.photoRepository.find();
@@ -113,7 +115,7 @@ import { PhotoService } from './photo.service';
 
 @Module({
   imports: [DatabaseModule],
-  components: [
+  providers: [
     ...photoProviders,
     PhotoService,
   ],

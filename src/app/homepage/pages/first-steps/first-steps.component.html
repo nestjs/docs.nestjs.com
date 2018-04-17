@@ -5,7 +5,7 @@
     <strong>core fundamentals</strong> of Nest. The main idea is to get familiar with essential Nest application building blocks.
     You'll build a basic CRUD application which features covers a lot of ground at an introductory level.
   </p>
-  <h3>Language</h3>
+  <h4>Language</h4>
   <p>
     We're in love with
     <a href="http://www.typescriptlang.org/" target="blank">TypeScript</a>, but above all - we love
@@ -15,31 +15,23 @@
     <a href="http://babeljs.io/" target="blank">Babel</a> compiler.
   </p>
   <p>
-    In the articles, we're mostly using TypeScript, but you can always
-    <strong>switch the code snippets</strong> to the JavaScript version when it contains some TypeScript-specific expressions.
+    In the articles, we mostly use TypeScript, but you can always
+    <strong>switch the code snippets</strong> to the vanilla JavaScript syntax when they contain some TypeScript-specific expressions.
   </p>
-  <h3>Prerequisites</h3>
+  <h4>Prerequisites</h4>
   <p>
     Please make sure that
     <a href="https://nodejs.org/" target="blank">Node.js</a> (>= 6.11.0) is installed on your operating system.
   </p>
-  <h3>Setup</h3>
+  <h4>Setup</h4>
   <p>
     Setting up a new project is quite simple with
-    <a href="https://github.com/kamilmysliwiec/nest-typescript-starter" target="blank">Starter repository</a>. Just make sure that you have
+    <a href="https://github.com/nestjs/nest-cli" target="blank">Nest CLI</a>. Just make sure that you have
     <a href="https://www.npmjs.com/" target="blank">npm</a> installed then use following commands in your OS terminal:
   </p>
-  <span class="filename">
-    <app-tabs #starter></app-tabs>
-  </span>
-  <pre [class.hide]="starter.isJsActive"><code class="language-bash">
-$ git clone https://github.com/nestjs/typescript-starter.git project
-$ cd project
-$ npm install</code></pre>
-  <pre [class.hide]="!starter.isJsActive"><code class="language-bash">
-$ git clone https://github.com/nestjs/javascript-starter.git project
-$ cd project
-$ npm install</code></pre>
+  <pre><code class="language-bash">
+$ npm i -g @nestjs/cli
+$ nest new project</code></pre>
   <p>The
     <code>project</code> directory will contain several core files inside
     <code>src</code> directory. 
@@ -92,7 +84,7 @@ $ npm install</code></pre>
       <code>create()</code> method returns an object, which fulfills
       <code>INestApplication</code> interface, and provides a set of usable methods, which are well described in the next chapters.
     </p>
-    <h3>Running application</h3>
+    <h4>Running application</h4>
     <p>
       Once the installation process is complete, you can run the following command to start the HTTP server:
     </p>

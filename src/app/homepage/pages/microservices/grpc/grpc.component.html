@@ -1,0 +1,111 @@
+<div class="content">
+  <h3>gRPC</h3>
+  <p>
+    The <a href="https://github.com/grpc/grpc-node" target="blank">gRPC</a> is a high-performance, open-source universal RPC framework.
+  </p>
+  <h4>Installation</h4>
+  <p>Before we start, we have to install required package:</p>
+  <pre><code class="language-bash">
+$ npm i --save grpc</code></pre>
+  <h4>Transporter</h4>
+  <p>
+    In order to switch to <strong>gRPC</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.
+  </p>
+  <span class="filename">
+    {{ 'main' | extension: optionsT.isJsActive }}
+    <app-tabs #optionsT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ options }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>join()</code> function is imported from <code>path</code> package.
+  </blockquote>
+  <h4>Options</h4>
+  <p>
+    There is a bunch of available options that determine a transporter behavior.
+  </p>
+  <table>
+    <tr>
+      <td><code>url</code></td>
+      <td>Connection url</td>
+    </tr>
+    <tr>
+      <td><code>protoPath</code></td>
+      <td>Absolute path to the <code>.proto</code> file</td>
+    </tr>
+    <tr>
+      <td><code>package</code></td>
+      <td>Protobuf package name</td>
+    </tr>
+    <tr>
+      <td><code>credentials</code></td>
+      <td>Server credentials (<a href="https://grpc.io/grpc/node/grpc.ServerCredentials.html" target="blank">read more</a>)</td>
+    </tr>
+  </table>
+  <h4>Overview</h4>
+  <p>
+    In general, a <code>package</code> property sets a <a href="https://developers.google.com/protocol-buffers/docs/proto" target="blank">protobuf</a> package name, 
+    while <code>protoPath</code> is a path to the <code>.proto</code> definitions file.
+    The <code>hero.proto</code> file is structured using protocol buffer language.
+  </p>
+  <span class="filename">
+    hero.proto
+  </span>
+  <pre><code class="language-typescript">{{ heroProto }}</code></pre>
+  <p>
+    In the above example, we defined a <code>HeroService</code> that exposes a <code>FindOne()</code> gRPC handler which expects <code>HeroById</code> as an input and returns a <code>Hero</code> message.
+    In order to define a handler that fulfills this protobuf definition, we have to use a <code>@GrpcRoute()</code> decorator.
+    The previously known <code>@MessagePattern()</code> is no longer useful.
+  </p>
+  <span class="filename">
+    {{ 'hero.controller' | extension: grpcHandlerT.isJsActive }}
+    <app-tabs #grpcHandlerT></app-tabs>
+  </span>
+  <pre [class.hide]="grpcHandlerT.isJsActive"><code class="language-typescript">{{ grpcHandler }}</code></pre>
+  <pre [class.hide]="!grpcHandlerT.isJsActive"><code class="language-typescript">{{ grpcHandlerJs }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>@GrpcRoute()</code> decorator is imported from <code>@nestjs/microservices</code> package.
+  </blockquote>
+  <p>
+    The <code>HeroService</code> is a service's name, while <code>FindOne</code> points to a <code>FindOne()</code> gRPC handler.
+    The corresponding <code>findOne()</code> method takes two arguments, the <code>data</code> passed from the caller and <code>metadata</code> that stores gRPC request's metadata. 
+  </p>
+  <h4>Client</h4>
+  <p>
+    In order to create a client instance, we need to make use of <code>@Client()</code> decorator.
+  </p>
+  <span class="filename">
+    {{ 'hero.controller' | extension: grpcClientT.isJsActive }}
+    <app-tabs #grpcClientT></app-tabs>
+  </span>
+  <pre [class.hide]="grpcClientT.isJsActive"><code class="language-typescript">{{ grpcClient }}</code></pre>
+  <pre [class.hide]="!grpcClientT.isJsActive"><code class="language-typescript">{{ grpcClientJs }}</code></pre>
+  <p>
+    There is a small difference compared to the previous examples. Instead of the <code>ClientProxy</code> class, we use the <code>ClientGrpc</code> that provides a <code>getService()</code> method.
+    The <code>getService()</code> generic method takes service's name as an argument and returns its instance if available.
+  </p>
+  <span class="filename">
+    {{ 'hero.controller' | extension: serviceInstanceT.isJsActive }}
+    <app-tabs #serviceInstanceT></app-tabs>
+  </span>
+  <pre [class.hide]="serviceInstanceT.isJsActive"><code class="language-typescript">{{ serviceInstance }}</code></pre>
+  <pre [class.hide]="!serviceInstanceT.isJsActive"><code class="language-typescript">{{ serviceInstanceJs }}</code></pre>
+  <p>
+    The <code>heroService</code> object exposes the same set of methods that have been defined inside <code>.proto</code> file.
+    Note, all of them are <strong>lowercased</strong> (in order to follow the natural convention).
+    Basically, our gRPC <code>HeroService</code> definition contains <code>FindOne()</code> function.
+    It means that <code>heroService</code> instance will provide the <code>findOne()</code> method.
+  </p>
+  <pre><code class="language-typescript">{{ heroService }}</code></pre>
+  <p>
+    All service's methods return <code>Observable</code>. Since Nest supports <a href="https://github.com/reactivex/rxjs">RxJS</a> streams and works pretty well with them, we can return them within HTTP handler as well. 
+  </p>
+  <span class="filename">
+    {{ 'hero.controller' | extension: heroControllerT.isJsActive }}
+    <app-tabs #heroControllerT></app-tabs>
+  </span>
+  <pre [class.hide]="heroControllerT.isJsActive"><code class="language-typescript">{{ heroController }}</code></pre>
+  <pre [class.hide]="!heroControllerT.isJsActive"><code class="language-typescript">{{ heroControllerJs }}</code></pre>
+  <p>
+    A full working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/04-grpc" target="blank">here</a>.
+  </p>
+</div>

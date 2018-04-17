@@ -259,4 +259,29 @@ export class ApplicationModule {
   }
 }`;
   }
+
+  get applyMultipleMiddlewares() {
+    return `
+export class ApplicationModule implements NestModule {
+  configure(consumer: MiddlewaresConsumer) {
+    consumer
+      .apply(cors(), helmet(), logger)
+      .forRoutes(CatsController);
+  }
+}`;
+}
+
+get applyMultipleMiddlewaresJs() {
+  return `
+@Module({
+  imports: [CatsModule],
+})
+export class ApplicationModule {
+  configure(consumer) {
+      consumer
+        .apply(cors(), helmet(), logger)
+        .forRoutes(CatsController);
+    }
+  }`;
+  }
 }

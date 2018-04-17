@@ -9,12 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class QuickStartComponent extends BasePageComponent {
   get middleware() {
     return `
-import {
-  Module,
-  MiddlewaresConsumer,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module, MiddlewaresConsumer, NestModule } from '@nestjs/common';
 import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule } from '@nestjs/graphql';
 
@@ -25,14 +20,14 @@ export class ApplicationModule implements NestModule {
   configure(consumer: MiddlewaresConsumer) {
     consumer
       .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes('/graphql');
   }
 }`;
   }
 
   get middlewareJs() {
     return `
-import { Module, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule } from '@nestjs/graphql';
 
@@ -43,19 +38,14 @@ export class ApplicationModule {
   configure(consumer) {
     consumer
       .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes('/graphql');
   }
 }`;
   }
 
   get createSchema() {
     return `
-import {
-  Module,
-  MiddlewaresConsumer,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module, MiddlewaresConsumer, NestModule } from '@nestjs/common';
 import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 
@@ -71,14 +61,14 @@ export class ApplicationModule implements NestModule {
 
     consumer
       .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes('/graphql');
   }
 }`;
   }
 
   get createSchemaJs() {
     return `
-import { Module,  RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 
@@ -97,7 +87,7 @@ export class ApplicationModule {
 
     consumer
       .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+      .forRoutes('/graphql');
   }
 }`;
   }

@@ -33,11 +33,11 @@
   <p>
     The <code>resolve()</code> method has to return a regular library-specific middleware <code>(req, res, next) => any</code>.
   </p>
-  <h4>Dependency Injection</h4>
+  <h4>Dependency injection</h4>
   <p>
     There's no exception when it comes to the middlewares. Same as providers and controllers, they are able to <strong>inject dependencies</strong> that belongs to the same module (through the <code>constructor</code>).
   </p>
-  <h4>Where to put the middlewares?</h4>
+  <h4>How to apply a middleware?</h4>
   <p>
     There's no place for middlewares in the <code>@Module()</code> decorator.
     We have to set them up using the <code>configure()</code> method of the module class.
@@ -81,7 +81,7 @@
   <pre [class.hide]="!applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethodJs }}</code></pre>
   <p>
     We have passed a plain string - <code>ApplicationModule</code> to the <code>with()</code> method.
-    Now we have to adjust the <code>resolve()</code> method of the <code>LoggerMiddleware</code>.
+    Thereafter, we have to adjust the <code>resolve()</code> method of the <code>LoggerMiddleware</code>.
   </p>
   <span class="filename">
     {{ 'logger.middleware' | extension: loggerMiddlewareWithArgsT.isJsActive }}
@@ -116,7 +116,7 @@
   </span>
   <pre><code class="language-typescript">{{ functionalMiddleware }}</code></pre>
   <p>
-    Now we can use it within the <code>ApplicationModule</code>.
+     And use it within the <code>ApplicationModule</code>:
   </p>
   <span class="filename">
     {{ 'app.module' | extension: applyFunctionalMiddlewareT.isJsActive }}
@@ -125,6 +125,24 @@
   <pre [class.hide]="applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
   <pre [class.hide]="!applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddlewareJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> Let's consider using <strong>functional middlewares</strong> every time when your middleware doesn't have any dependencies.
+    <strong>Hint</strong> Let's consider using <strong>functional middlewares</strong> every time when your middleware doesn't need any dependencies.
   </blockquote>
+  <h4>Multiple middlewares</h4>
+  <p>
+    As mentioned before, in order to bind multiple middlewares that are executed sequentially, we can separate them by a comma inside the <code>apply()</code> method.
+  </p>
+  <span class="filename">
+    <app-tabs #applyMultipleMiddlewaresT></app-tabs>
+  </span>
+  <pre [class.hide]="applyMultipleMiddlewaresT.isJsActive"><code class="language-typescript">{{ applyMultipleMiddlewares }}</code></pre>
+  <pre [class.hide]="!applyMultipleMiddlewaresT.isJsActive"><code class="language-typescript">{{ applyMultipleMiddlewaresJs }}</code></pre>
+  <h4>Global middlewares</h4>
+  <p>
+    In order to tie a middleware to each registered route at once, we can take advantage of <code>use()</code> method that is supplied by the <code>INestApplication</code> instance:
+  </p>
+  <pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule);
+app.use(logger);
+await app.listen(3000);</code></pre>
+
 </div>

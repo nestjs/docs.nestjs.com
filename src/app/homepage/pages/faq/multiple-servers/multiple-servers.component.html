@@ -1,7 +1,12 @@
 <div class="content">
-  <h3>HTTPS & Multiple Simultaneous Servers</h3>
+  <h3>HTTPS</h3>
   <p>
-    Since you can have a full control of the <code>express</code> instance lifecycle, it's not a big deal to create a few multiple simultaneous servers (e.g. both HTTP & HTTPS).
+    In order to create application that uses HTTPS protocol, we have to pass an options object:
   </p>
+  <pre><code class="language-typescript">{{ https }}</code></pre>
+ <h4>Multiple simultaneous servers</h4>
+ <p>
+   A full control over the <code>express</code> instance gives a simple way to create a several multiple simultaneous servers that are listening on different ports. 
+ </p>
  <pre><code class="language-typescript">{{ servers }}</code></pre>
 </div>

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CliInstallationComponent } from './installation.component';
+import { ScalarsComponent } from './scalars.component';
 
-describe('CliInstallationComponent', () => {
-  let component: CliInstallationComponent;
-  let fixture: ComponentFixture<CliInstallationComponent>;
+describe('ScalarsComponent', () => {
+  let component: ScalarsComponent;
+  let fixture: ComponentFixture<ScalarsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CliInstallationComponent ]
+      declarations: [ ScalarsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CliInstallationComponent);
+    fixture = TestBed.createComponent(ScalarsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

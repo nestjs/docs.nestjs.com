@@ -11,7 +11,7 @@ export class SubscriptionsComponent extends BasePageComponent {
     return `
 Subscription: {
   commentAdded: {
-    subscribe: () => pubsub.asyncIterator('commentAdded')
+    subscribe: () => pubSub.asyncIterator('commentAdded')
   }
 }`;
   }
@@ -36,7 +36,7 @@ const posts = [
 ];
 
 // example pubsub
-const pubsub = new PubSub();
+const pubSub = new PubSub();
 
 @Resolver('Author')
 export class AuthorResolver {
@@ -48,7 +48,7 @@ export class AuthorResolver {
   @Subscription()
   commentAdded() {
     return {
-      subscribe: () => pubsub.asyncIterator('commentAdded'),
+      subscribe: () => pubSub.asyncIterator('commentAdded'),
     };
   }
 

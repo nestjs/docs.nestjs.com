@@ -1,11 +1,10 @@
 <div class="content">
   <h3>Guards</h3>
   <p>
-    There's one difference between <a routerLink="/guards">regular guards</a> and the microservices <strong>guards</strong>.
-    The microservices guards takes the <code>data</code> passed from the client instead of expressjs request object as an argument of the <code>canActivate()</code> function.
-    Also, when the guard returns <code>false</code>, it throws <code>RpcException</code> (not <code>HttpException</code>).
+    There's no difference between microservices <strong>guards</strong> and the <a routerLink="/guards">regular guards</a>.
+    The only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>RpcException</code>.
   </p>
-  <blockquote>
-    <strong>Hint</strong> The <code>RpcException</code> class is available within the <code>@nestjs/microservices</code> package.
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>RpcException</code> class is exposed from <code>@nestjs/microservices</code> package.
   </blockquote>
 </div>

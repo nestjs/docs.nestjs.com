@@ -1,0 +1,23 @@
+<div class="content">
+  <h3>Logger</h3>
+  <p>
+    Nest comes with a default implementation of internal <code>Logger</code> that is used during the instantiation process and also, in several different situations, such as <strong>occurred exception</strong>, and so on.
+    But sometimes, you might want to disable logging entirely, or provide a custom implementation and handle messages on your own.
+    In order to turn off a logger, we use a Nest's options object.
+  </p>
+  <pre><code class="language-typescript">{{ logger }}</code></pre>
+  <p>
+    Nevertheless, we could want to use a different logger under the hood, instead of disabling a whole logging mechanism.
+    In order to that, we have to pass an object that fulfills <code>LoggerService</code> interface.
+    An example could be a built-in <code>console</code>.
+  </p>
+  <pre><code class="language-typescript">{{ console }}</code></pre>
+  <p>
+    But it's not an apt idea. However, we can create our own logger easily.
+  </p>
+  <pre><code class="language-typescript">{{ myLogger }}</code></pre>
+  <p>
+    Then, we can apply <code>MyLogger</code> instance directly:
+  </p>
+  <pre><code class="language-typescript">{{ useMyLogger }}</code></pre>
+</div>

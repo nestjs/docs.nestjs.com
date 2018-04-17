@@ -9,13 +9,84 @@ import { BasePageComponent } from '../page/page.component';
 export class PipesComponent extends BasePageComponent {
   get validationPipe() {
     return `
-import { PipeTransform, Pipe, ArgumentMetadata } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 
-@Pipe()
+@Injectable()
 export class ValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     return value;
   }
+}`;
+  }
+
+  get validationPipeJs() {
+    return `
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class ValidationPipe {
+  transform(value, metadata) {
+    return value;
+  }
+}`;
+  }
+
+  get joiPipe() {
+    return `
+import * as Joi from 'joi';
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+
+@Injectable()
+export class JoiValidationPipe implements PipeTransform {
+  constructor(private readonly schema) {}
+
+  transform(value: any, metadata: ArgumentMetadata) {
+    const { error } = Joi.validate(value, this.schema);
+    if (error) {
+      throw new BadRequestException('Validation failed');
+    }
+    return value;
+  }
+}`;
+  }
+
+  get joiPipeJs() {
+    return `
+import * as Joi from 'joi';
+import { Injectable, BadRequestException } from '@nestjs/common';
+
+@Injectable()
+export class JoiValidationPipe {
+  constructor(schema) {
+    this.schema = schema;
+  }
+
+  transform(value, metadata) {
+    const { error } = Joi.validate(value, this.schema);
+    if (error) {
+      throw new BadRequestException('Validation failed');
+    }
+    return value;
+  }
+}`;
+  }
+
+  get useJoiPipe() {
+    return `
+@Post()
+@UsePipes(new JoiValidationPipe(createCatSchema))
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}`;
+  }
+
+  get useJoiPipeJs() {
+    return `
+@Post()
+@Bind(Body())
+@UsePipes(new JoiValidationPipe(createCatSchema))
+async create(createCatDto) {
+  this.catsService.create(createCatDto);
 }`;
   }
 
@@ -63,11 +134,11 @@ export class CreateCatDto {
 
   get fullValidationPipe() {
     return `
-import { PipeTransform, Pipe, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
-@Pipe()
+@Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   async transform(value, { metatype }: ArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) {
@@ -106,6 +177,22 @@ async create(@Body() createCatDto: CreateCatDto) {
 }`;
   }
 
+  get globalScopedPipeModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: CustomGlobalPipe,
+    },
+  ],
+})
+export class ApplicationModule {}`;
+  }
+
   get createCatsControllerMethodPipeClass() {
     return `
 @Post()
@@ -127,9 +214,9 @@ bootstrap();`;
 
   get parseIntPipe() {
     return `
-import { PipeTransform, Pipe, ArgumentMetadata, HttpStatus, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, ArgumentMetadata, HttpStatus, BadRequestException } from '@nestjs/common';
 
-@Pipe()
+@Injectable()
 export class ParseIntPipe implements PipeTransform<string, number> {
   async transform(value: string, metadata: ArgumentMetadata): number {
     const val = parseInt(value, 10);
@@ -143,9 +230,9 @@ export class ParseIntPipe implements PipeTransform<string, number> {
 
   get parseIntPipeJs() {
     return `
-import { Pipe, HttpStatus, BadRequestException} from '@nestjs/common';
+import { Injectable, BadRequestException} from '@nestjs/common';
 
-@Pipe()
+@Injectable()
 export class ParseIntPipe {
   async transform(value, metadata) {
     const val = parseInt(value, 10);
@@ -174,6 +261,23 @@ async findOne(id) {
 }`;
   }
 
+  get userBindParam() {
+    return `
+@Get(':id')
+findOne(@Param('id', UserByIdPipe) userEntity: UserEntity) {
+  return userEntity;
+}`;
+  }
+
+  get userBindParamJs() {
+    return `
+@Get(':id')
+@Bind(Param('id', UserByIdPipe))
+findOne(userEntity) {
+  return userEntity;
+}`;
+  }
+
   get bindBodyParam() {
     return `
 @Post()
@@ -188,6 +292,22 @@ async create(@Body(new CustomPipe()) createCatDto: CreateCatDto) {
 @Bind(Body(new CustomPipe()))
 async create(createCatDto) {
   await this.catsService.create(createCatDto);
+}`;
+  }
+
+  get createCatsControllerParamPipeTransformFalse() {
+    return `
+@Post()
+@UsePipes(new ValidationPipe({ transform: false }))
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}`;
+  }
+
+  get constructorCode() {
+    return `
+export interface ValidationPipeOptions extends ValidatorOptions {
+  transform?: boolean;
 }`;
   }
 

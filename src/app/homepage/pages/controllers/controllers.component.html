@@ -16,18 +16,13 @@
   <p>
     In the example above, we used the <code>@Controller('cats')</code> decorator which is <strong>required</strong> to define a basic controller.
     The <code>cats</code> is an optional prefix for each route registered in the class. Using a prefix allows you to avoid repeating yourself when all your routes share a common prefix.
-  </p>
-  <p>
-    The <code>@Get()</code> decorator on the <code>findAll()</code> method tells Nest to create an endpoint for this route path
+    The <code>@Get()</code> decorator near to <code>findAll()</code> method tells Nest to create an endpoint for this route path
     and map every corresponding request to this handler. Since we declared a prefix for every route (<code>cats</code>),
     Nest will map every <code>/cats</code> <strong>GET</strong> request to this method.
   </p>
   <p>
     When a GET request is made to this endpoint, Nest will return a 200 status code and the parsed <strong>JSON</strong>, in this case just an empty array.
-    How is that possible?
-  </p>
-  <p>
-    We distinguish <strong>two different approaches</strong> to manipulate the response:
+    How is that possible? We distinguish <strong>two different approaches</strong> to manipulate the response:
   </p>
   <table>
     <tr>
@@ -50,17 +45,14 @@
     </tr>
   </table>
   <blockquote>
-    <strong>Notice!</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route and will no longer work as expected.
+    <strong>Warning</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route and will no longer work as expected.
   </blockquote>
   <h4>Request object</h4>
   <p>
     A lot of endpoints need an access to the client <strong>request</strong> details.
-    In fact, Nest is using express <a href="http://expressjs.com/en/api.html#req" target="blank">request object</a> by default.
+    In fact, Nest is using library-specific (express by default) <a href="http://expressjs.com/en/api.html#req" target="blank">request object</a>.
     We can force Nest to inject the request object into handler using <code>@Req()</code> decorator.
   </p>
-  <blockquote class="info">
-    <strong>Hint</strong> There's a <code>@types/express</code> package and we strongly recommend to use it (<code>Request</code> has its own typings then).
-  </blockquote>
   <span class="filename">
     {{ 'cats.controller' | extension: requestObjectT.isJsActive }}
     <app-tabs #requestObjectT></app-tabs>
@@ -110,7 +102,7 @@
   </table>
   <h4>More endpoints</h4>
   <p>
-    We have already defined an endpoint to fetch the data (<strong>GET</strong> route). It'd be great to provide a way of creating the new records as well.
+    We defined an endpoint to fetch the data (<strong>GET</strong> route). It would be great to provide a way of creating the new records as well.
     Let's create the <strong>POST</strong> handler:
   </p>
   <span class="filename">
@@ -178,7 +170,7 @@
     Our previous example of POST route handler doesn't accept any client params. Let's fix this by adding the <code>@Body()</code> argument here.
   </p>
   <p>
-    But firstly (if you use TypeScript), we need to establish the <strong>DTO</strong> (Data Transfer Object) schema.
+    But firstly (if you use TypeScript), we need to determine the <strong>DTO</strong> (Data Transfer Object) schema.
     A DTO is an object that defines how the data will be sent over the network.
     We could do this by using <strong>TypeScript</strong>
     interfaces, or by simple classes. What may be surprising, we recommend using <strong>classes</strong> here. Why?
@@ -199,7 +191,7 @@
     always try to make our functions as <a href="https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976" target="blank">pure</a> as possible.
   </p>
   <p>
-    Now we can use the schema inside the <code>CatsController</code>:
+    Thereafter we can use the schema inside the <code>CatsController</code>:
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: exampleWithBodyT.isJsActive }}
@@ -213,7 +205,7 @@
   </p>
   <h4>Last step</h4>
   <p>
-    The controller is prepared, and ready to use, but Nest doesn't know that <code>CatsController</code> exists yet.
+    The controller is prepared, nevertheless, Nest still doesn't know that <code>CatsController</code> exists yet.
     Hence, it won't create an instance of this class. We need to tell Nest about it.
   </p>
   <p>
@@ -228,7 +220,7 @@
   <p>
     Tada! We attached the metadata to the module class, and thus Nest can easily reflect which controllers have to be mounted.
   </p>
-  <h4>Express approach</h4>
+  <h4>Library-specific approach</h4>
   <p>
     So far we've discussed the Nest standard way of manipulating responses.
     The second way of manipulating the response is to use library-specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>.

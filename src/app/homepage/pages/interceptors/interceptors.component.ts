@@ -9,18 +9,21 @@ import { BasePageComponent } from '../page/page.component';
 export class InterceptorsComponent extends BasePageComponent {
   get loggingInterceptor() {
     return `
-import { Interceptor, NestInterceptor, ExecutionContext } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/do';
+import { tap } from 'rxjs/operators';
 
-@Interceptor()
+@Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  intercept(dataOrRequest, context: ExecutionContext, stream$: Observable<any>): Observable<any> {
+  intercept(
+    context: ExecutionContext,
+    call$: Observable<any>,
+  ): Observable<any> {
     console.log('Before...');
+  
     const now = Date.now();
-
-    return stream$.do(
-      () => console.log(\`After... \${Date.now() - now}ms\`),
+    return call$.pipe(
+      tap(() => console.log(\`After... \${Date.now() - now\}ms\`)),
     );
   }
 }`;
@@ -28,17 +31,18 @@ export class LoggingInterceptor implements NestInterceptor {
 
   get loggingInterceptorJs() {
     return `
-import { Interceptor } from '@nestjs/common';
-import 'rxjs/add/operator/do';
+import { Injectable } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+import { tap } from 'rxjs/operators';
 
-@Interceptor()
+@Injectable()
 export class LoggingInterceptor {
-  intercept(dataOrRequest, context, stream$) {
+  intercept(context, call$) {
     console.log('Before...');
-    const now = Date.now();
 
-    return stream$.do(
-      () => console.log(\`After... \${Date.now() - now}ms\`),
+    const now = Date.now();
+    return call$.pipe(
+      tap(() => console.log(\`After... \${Date.now() - now\}ms\`)),
     );
   }
 }`;
@@ -50,35 +54,95 @@ export class LoggingInterceptor {
 export class CatsController {}`;
   }
 
+  get useLoggingInterceptorWithInstance() {
+    return `
+@UseInterceptors(new LoggingInterceptor())
+export class CatsController {}`;
+  }
+
   get consoleOutput() {
     return `
 Before...
 After... 1ms`;
   }
 
+  get globalScopedInterceptorModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
+})
+export class ApplicationModule {}`;
+  }
+
   get transformInterceptor() {
     return `
-import { Interceptor, NestInterceptor, ExecutionContext } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 
-@Interceptor()
-export class TransformInterceptor implements NestInterceptor {
-  intercept(dataOrRequest, context: ExecutionContext, stream$: Observable<any>): Observable<any> {
-    return stream$.map((data) => ({ data }));
+export interface Response<T> {
+  data: T;
+}
+
+@Injectable()
+export class TransformInterceptor<T>
+  implements NestInterceptor<T, Response<T>> {
+  intercept(
+    context: ExecutionContext,
+    call$: Observable<T>,
+  ): Observable<Response<T>> {
+    return call$.pipe(map(data => ({ data })));
   }
 }`;
   }
 
   get transformInterceptorJs() {
     return `
-import { Interceptor } from '@nestjs/common';
-import 'rxjs/add/operator/map';
+import { Injectable } from '@nestjs/common';
+import { map } from 'rxjs/operators';
 
-@Interceptor()
+@Injectable()
 export class TransformInterceptor {
-  intercept(dataOrRequest, context, stream$) {
-    return stream$.map((data) => ({ data }));
+  intercept(context, call$) {
+    return call$.pipe(map(data => ({ data })));
+  }
+}`;
+  }
+
+  get nullTransformInterceptor() {
+    return `
+import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+
+@Injectable()
+export class ExcludeNullInterceptor implements NestInterceptor {
+  intercept(
+    context: ExecutionContext,
+    call$: Observable<any>,
+  ): Observable<any> {
+    return call$.pipe(map(value => value === null ? '' : value ));
+  }
+}`;
+  }
+
+  get nullTransformInterceptorJs() {
+    return `
+import { Injectable } from '@nestjs/common';
+import { map } from 'rxjs/operators';
+
+@Injectable()
+export class ExcludeNullInterceptor {
+  intercept(context, call$) {
+    return call$.pipe(map(value => value === null ? '' : value ));
   }
 }`;
   }
@@ -92,72 +156,85 @@ export class TransformInterceptor {
 
   get cacheInterceptor() {
     return `
-import { Interceptor, NestInterceptor, ExecutionContext } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import { of } from 'rxjs/observable/of';
 
-@Interceptor()
+@Injectable()
 export class CacheInterceptor implements NestInterceptor {
-  intercept(dataOrRequest, context: ExecutionContext, stream$: Observable<any>): Observable<any> {
+  intercept(
+    context: ExecutionContext,
+    call$: Observable<any>,
+  ): Observable<any> {
     const isCached = true;
     if (isCached) {
-      return Observable.of([]);
+      return of([]);
     }
-    return stream$;
-  } 
+    return call$;
+  }
 }`;
   }
 
   get cacheInterceptorJs() {
     return `
-import { Interceptor } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import { Injectable } from '@nestjs/common';
+import { of } from 'rxjs/observable/of';
 
-@Interceptor()
+@Injectable()
 export class CacheInterceptor {
-  intercept(dataOrRequest, context, stream$) {
+  intercept(context, call$) {
     const isCached = true;
     if (isCached) {
-      return Observable.of([]);
+      return of([]);
     }
-    return stream$;
-  } 
+    return call$;
+  }
 }`;
   }
 
   get exceptionMapping() {
     return `
-import { Interceptor, NestInterceptor, ExecutionContext, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  HttpStatus,
+} from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { catchError } from 'rxjs/operators';
+import { _throw } from 'rxjs/observable/throw';
 
-@Interceptor()
-export class ExceptionInterceptor implements NestInterceptor {
-  intercept(dataOrRequest, context: ExecutionContext, stream$: Observable<any>): Observable<any> {
-    return stream$.catch((err) => Observable.throw(
-      new HttpException('Exception interceptor message', HttpStatus.BAD_GATEWAY),
-    ));
+@Injectable()
+export class ErrorsInterceptor implements NestInterceptor {
+  intercept(
+    context: ExecutionContext,
+    call$: Observable<any>,
+  ): Observable<any> {
+    return call$.pipe(
+      catchError(err =>
+        _throw(new HttpException('Message', HttpStatus.BAD_GATEWAY)),
+      ),
+    );
   }
 }`;
   }
 
   get exceptionMappingJs() {
     return `
-import { Interceptor, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { catchError } from 'rxjs/operators';
+import { _throw } from 'rxjs/observable/throw';
 
-@Interceptor()
-export class ExceptionInterceptor {
-  intercept(dataOrRequest, context, stream$) {
-    return stream$.catch((err) => Observable.throw(
-      new HttpException('Exception interceptor message', HttpStatus.BAD_GATEWAY),
-    ));
+@Injectable()
+export class ErrorsInterceptor {
+  intercept(context, call$) {
+    return call$.pipe(
+      catchError(err =>
+        _throw(new HttpException('Message', HttpStatus.BAD_GATEWAY)),
+      ),
+    );
   }
 }`;
   }
@@ -177,5 +254,54 @@ const eventsInterceptor = app
 
 app.useGlobalInterceptors(eventsInterceptor);
 `;
+  }
+
+  get argumentsHost() {
+    return `
+export interface ArgumentsHost {
+  getArgs<T extends Array<any> = any[]>(): T;
+  getArgByIndex<T = any>(index: number): T;
+  switchToRpc(): RpcArgumentsHost;
+  switchToHttp(): HttpArgumentsHost;
+  switchToWs(): WsArgumentsHost;
+}`;
+  }
+
+  get executionContext() {
+    return `
+export interface ExecutionContext extends ArgumentsHost {
+  getClass<T = any>(): Type<T>;
+  getHandler(): Function;
+}`;
+  }
+
+  get timeoutInterceptor() {
+    return `
+import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs/Observable';
+import { timeout } from 'rxjs/operators';
+
+@Injectable()
+export class TimeoutInterceptor implements NestInterceptor {
+  intercept(
+    context: ExecutionContext,
+    call$: Observable<any>,
+  ): Observable<any> {
+    return call$.pipe(timeout(5000))
+  }
+}`;
+  }
+
+  get timeoutInterceptorJs() {
+    return `
+import { Injectable } from '@nestjs/common';
+import { timeout } from 'rxjs/operators';
+
+@Injectable()
+export class TimeoutInterceptor {
+  intercept(context, call$) {
+    return call$.pipe(timeout(5000))
+  }
+}`;
   }
 }

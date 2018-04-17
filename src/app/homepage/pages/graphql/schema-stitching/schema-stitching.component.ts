@@ -66,7 +66,7 @@ configure(consumer) {
 
   consumer
     .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-    .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+    .forRoutes('/graphql');
 }`;
   }
 

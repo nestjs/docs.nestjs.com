@@ -22,9 +22,9 @@
   <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
   <h4>Refactor</h4>
   <p>
-    We have used a local <code>PubSub</code> instance here. Instead, we should define <code>PubSub</code> as a <strong>component</strong>, inject
-    it through the constructor (using <code>@Inject()</code> decorator), and reuse it across the entire application.
-    You can read more about Nest custom components <a routerLink="/fundamentals/dependency-injection">here</a>.
+    We have used a local <code>PubSub</code> instance here. Instead, we should define <code>PubSub</code> as a <strong>provider</strong>, inject
+    it through the constructor (using <code>@Inject()</code> decorator), and reuse it across the whole application.
+    You can read more about Nest custom providers <a routerLink="/fundamentals/custom-providers">here</a>.
   </p>
   <h4>Type definitions</h4>
   <p>
@@ -33,6 +33,6 @@
   <span class="filename">author-types.graphql</span>
   <pre><code class="language-java">{{ typeDefs }}</code></pre>
   <p>
-    That's all. We created a single <code>commentAdded(repoFullName: String!): Comment</code> subscription.
+    Well done. We created a single <code>commentAdded(repoFullName: String!): Comment</code> subscription. Additionally, we should create a web sockets server that emits and is subscribing to events, but to keep this example as simple as possible, we omitted this part. Nevertheless, you can find a full sample implementation <a href="https://github.com/nestjs/nest/blob/master/sample/12-graphql-apollo" target="blank">here</a>.
   </p>
 </div>

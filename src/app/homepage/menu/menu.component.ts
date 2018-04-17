@@ -19,48 +19,56 @@ export class MenuComponent implements OnInit {
       title: 'Overview',
       isOpened: true,
       children: [
-        { title: 'First Steps', path: '/first-steps' },
+        { title: 'First steps', path: '/first-steps' },
         { title: 'Controllers', path: '/controllers' },
         { title: 'Providers', path: '/providers' },
         { title: 'Modules', path: '/modules' },
         { title: 'Middlewares', path: '/middlewares' },
-        { title: 'Exception Filters', path: '/exception-filters' },
+        { title: 'Exception filters', path: '/exception-filters' },
         { title: 'Pipes', path: '/pipes' },
         { title: 'Guards', path: '/guards' },
         { title: 'Interceptors', path: '/interceptors' },
-        { title: 'Custom Decorators', path: '/custom-decorators' },
+        { title: 'Custom decorators', path: '/custom-decorators' },
       ]
     },
     {
       title: 'Fundamentals',
       isOpened: false,
       children: [
-        { title: 'Dependency Injection', path: '/fundamentals/dependency-injection' },
-        { title: 'Async Components', path: '/fundamentals/async-components' },
-        { title: 'Circular Dependency', path: '/fundamentals/circular-dependency' },
-        { title: 'Unit Testing', path: '/fundamentals/unit-testing' },
-        { title: 'E2E Testing', path: '/fundamentals/e2e-testing' },
+        { title: 'Custom providers', path: '/fundamentals/custom-providers' },
+        { title: 'Asynchronous providers', path: '/fundamentals/async-providers' },
+        { title: 'Circular dependency', path: '/fundamentals/circular-dependency' },
+        { title: 'Platform agnosticism', path: '/fundamentals/platform-agnosticism' },
+        { title: 'Testing', path: '/fundamentals/unit-testing' },
       ]
     },
     {
       title: 'Techniques',
       isOpened: false,
       children: [
-        { title: 'MVC', path: '/techniques/mvc' },
-        { title: 'SQL', path: '/techniques/sql' },
-        { title: 'MongoDB', path: '/techniques/mongodb' },
         { title: 'Authentication', path: '/techniques/authentication' },
+        { title: 'Database', path: '/techniques/database' },
+        { title: 'Mongo', path: '/techniques/mongodb' },
+        { title: 'File upload', path: '/techniques/file-upload' },
+        { title: 'Logger', path: '/techniques/logger' },
+        { title: 'CORS', path: '/techniques/cors' },
+        { title: 'Configuration', path: '/techniques/configuration' },
+        { title: 'HTTP module', path: '/techniques/http-module' },
+        { title: 'Model-View-Controller', path: '/techniques/mvc' },
+        { title: 'Performance (Fastify)', path: '/techniques/performance' },
+        { title: 'Hot reload (Webpack)', path: '/techniques/hot-reload' },
       ]
     },
     {
       title: 'GraphQL',
       isOpened: false,
       children: [
-        { title: 'Quick Start', path: '/graphql/quick-start' },
-        { title: 'Resolvers Map', path: '/graphql/resolvers-map' },
+        { title: 'Quick start', path: '/graphql/quick-start' },
+        { title: 'Resolvers map', path: '/graphql/resolvers-map' },
         { title: 'Mutations', path: '/graphql/mutations' },
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
-        { title: 'Guards & Interceptors', path: '/graphql/guards-interceptors' },
+        { title: 'Scalars', path: '/graphql/scalars' },
+        { title: 'Guards & interceptors', path: '/graphql/guards-interceptors' },
         { title: 'Schema stitching', path: '/graphql/schema-stitching' },
         { title: 'IDE', path: '/graphql/ide' },
       ]
@@ -70,11 +78,11 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Gateways', path: '/websockets/gateways' },
-        { title: 'Exception Filters', path: '/websockets/exception-filters' },
+        { title: 'Exception filters', path: '/websockets/exception-filters' },
         { title: 'Pipes', path: '/websockets/pipes' },
         { title: 'Guards', path: '/websockets/guards' },
         { title: 'Interceptors', path: '/websockets/interceptors' },
-        { title: 'Adapter', path: '/websockets/adapter' },
+        { title: 'Adapters', path: '/websockets/adapter' },
       ]
     },
     {
@@ -83,15 +91,17 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Basics', path: '/microservices/basics' },
         { title: 'Redis', path: '/microservices/redis' },
-        { title: 'Exception Filters', path: '/microservices/exception-filters' },
+        { title: 'MQTT', path: '/microservices/mqtt' },
+        { title: 'NATS', path: '/microservices/nats' },
+        { title: 'gRPC', path: '/microservices/grpc' },
+        { title: 'Exception filters', path: '/microservices/exception-filters' },
         { title: 'Pipes', path: '/microservices/pipes' },
         { title: 'Guards', path: '/microservices/guards' },
         { title: 'Interceptors', path: '/microservices/interceptors' },
-        { title: 'Custom Transport', path: '/microservices/custom-transport' },
       ]
     },
     {
-      title: 'Execution Context',
+      title: 'Execution context',
       isOpened: false,
       path: '/execution-context',
     },
@@ -99,34 +109,38 @@ export class MenuComponent implements OnInit {
       title: 'Recipes',
       isOpened: false,
       children: [
-        { title: 'SQL (TypeORM)', path: '/recipes/sql-typeorm' },
-        { title: 'MongoDB (Mongoose)', path: '/recipes/mongodb' },
-        { title: 'SQL (Sequelize)', path: '/recipes/sql-sequelize' },
-        { title: 'Authentication (Passport)', path: '/recipes/passport' },
+        { title: 'TypeORM', path: '/recipes/sql-typeorm' },
+        { title: 'Mongoose', path: '/recipes/mongodb' },
+        { title: 'Sequelize', path: '/recipes/sql-sequelize' },
+        // { title: 'Authentication (Passport)', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
-        { title: 'MongoDB E2E (Mockgoose)', path: '/recipes/mockgoose' },
       ],
     },
     {
-      title: 'Advanced',
+      title: 'CLI',
       isOpened: false,
       children: [
-        { title: 'Hierarchical Injector', path: '/advanced/hierarchical-injector' },
-        { title: 'Mixin Class', path: '/advanced/mixins' },
+        { title: 'Overview', path: '/cli/overview' },
+        { title: 'Usage', path: '/cli/usages' }
       ]
     },
     {
       title: 'FAQ',
       isOpened: false,
       children: [
-        { title: 'Express Instance', path: '/faq/express-instance' },
-        { title: 'Global Route Prefix', path: '/faq/global-prefix' },
-        { title: 'Lifecycle Events', path: '/faq/lifecycle-events' },
-        { title: 'Hybrid Application', path: '/faq/hybrid-application' },
-        { title: 'HTTPS & Multiple Servers', path: '/faq/multiple-servers' },
-        { title: 'Examples', externalUrl: 'https://github.com/kamilmysliwiec/nest/tree/master/examples' },
+        { title: 'Express instance', path: '/faq/express-instance' },
+        { title: 'Global path prefix', path: '/faq/global-prefix' },
+        { title: 'Lifecycle events', path: '/faq/lifecycle-events' },
+        { title: 'Hybrid application', path: '/faq/hybrid-application' },
+        { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
+        { title: 'Examples', externalUrl: 'https://github.com/kamilmysliwiec/nest/tree/master/sample' },
       ]
+    },
+    {
+      title: 'Migration guide',
+      isOpened: false,
+      path: '/migration-guide',
     },
     {
       title: 'Support me',
@@ -134,14 +148,10 @@ export class MenuComponent implements OnInit {
       externalUrl: 'https://opencollective.com/nest',
     },
     {
-      title: 'Cli',
+      title: 'V4',
       isOpened: false,
-      children: [
-        { title: 'Overview', path: '/cli/overview' },
-        { title: 'Installation', path: '/cli/installation' },
-        { title: 'Usages', path: '/cli/usages' }
-      ]
-    }
+      externalUrl: 'https://docs.nestjs.com/v4/',
+    },
   ];
 
   constructor(private readonly route: ActivatedRoute) {}

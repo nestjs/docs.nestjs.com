@@ -1,7 +1,7 @@
 <div class="content">
    <h3>Modules</h3>
    <p>
-      A module is a class with a <code>@Module()</code> decorator. The <code>@Module()</code> decorator provides metadata that <strong>Nest</strong> make use of to organize the application structure.
+      A module is a class annotated with a <code>@Module()</code> decorator. The <code>@Module()</code> decorator provides metadata that <strong>Nest</strong> makes use of to organize the application structure.
    </p>
    <figure><img src="/assets/Modules_1.png" /></figure>
    <p>
@@ -32,7 +32,7 @@
      </tr>
    </table>
    <p>
-      The module <strong>encapsulates</strong> providers by default. It means that it isn't possible to inject providers which are neither directly part of the current module nor they're exported from the imported modules.
+      The module <strong>encapsulates</strong> providers by default. It means that it's impossible to inject providers that are neither directly part of the current module nor they're exported from the imported modules.
     </p>
    <h4>Feature module</h4>
     <p>
@@ -54,7 +54,7 @@
     </span>
     <pre><code class="language-typescript">{{ appModule }}</code></pre>
     <p>
-      Now Nest knows that besides <code>ApplicationModule</code>, it's essential to register the <code>CatsModule</code> as well.
+      Thanks to that Nest knows that besides <code>ApplicationModule</code>, it's essential to register the <code>CatsModule</code> as well.
       That's how our directory structure looks right now:
       </p>
       <div class="file-tree">
@@ -78,15 +78,15 @@
           <div class="item">main.ts</div>
         </div>
       </div>
-    <h3>Shared module</h3>
+    <h4>Shared module</h4>
     <p>
-      In Nest, modules <strong>are singletons</strong> by default, and thus you can share the <strong>same instance</strong> of any provider between 2..* modules without any effort.
+      In Nest, modules <strong>are singletons</strong> by default, and thus you can share the <strong>same instance</strong> of any provider between 2..* modules effortlessly.
     </p>
     <figure><img src="/assets/Shared_Module_1.png" /></figure>
     <p>
-      Every module is a <strong>Shared Module</strong> in fact. Once created it can be reused by any module.
+      Every module is a <strong>shared module</strong> in fact. Once created it can be reused by any module.
       Let's imagine that we want to share the <code>CatsService</code> instance between few other modules.
-      In order to that, we need to put the <code>CatsService</code> into <code>exports</code> array as shown below:
+      In order to do that, we need to put the <code>CatsService</code> into <code>exports</code> array as shown below:
     </p>
     <span class="filename">
       {{ 'cats.module' | extension: catsModuleSharedT.isJsActive }}
@@ -94,19 +94,19 @@
     </span>
     <pre><code class="language-typescript">{{ catsModuleShared }}</code></pre>
     <p>
-      Now each module which would import the <code>CatsModule</code> has access to the <code>CatsService</code> and will share the same instance with all of the modules which are importing this module too.
+      Now each module which would import the <code>CatsModule</code> has an access to the <code>CatsService</code> and will share the same instance with all of the modules that import this module as well.
     </p>
-    <blockquote>
-      <strong>Notice</strong> You should not export the controllers.
-    </blockquote>
     <h4>Modules re-exporting</h4>
     <p>
       The modules can export their internal providers. Moreover, they can re-export modules imported by themselves.
     </p>
+    <span class="filename">
+      <app-tabs #reExportExamleT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ reExportExamle }}</code></pre>
-    <h4>Dependency Injection</h4>
+    <h4>Dependency injection</h4>
     <p>
-      It's natural that a module can <strong>inject</strong> providers which belong to it (e.g. for configuration purposes):
+      A module class can <strong>inject</strong> providers as well (e.g. for configuration purposes):
     </p>
     <span class="filename">
       {{ 'cats.module' | extension: catsModuleDiT.isJsActive }}
@@ -115,25 +115,28 @@
     <pre [class.hide]="catsModuleDiT.isJsActive"><code class="language-typescript">{{ catsModuleDi }}</code></pre>
     <pre [class.hide]="!catsModuleDiT.isJsActive"><code class="language-typescript">{{ catsModuleDiJs }}</code></pre>
     <p>
-      However, module classes can't be injected by the providers due to <a href="/fundamentals/circular-dependency">circular dependency</a>.
+      However, module classes cannot be injected by the providers due to <a href="/fundamentals/circular-dependency">circular dependency</a>.
     </p>
     <h4>Global modules</h4>
     <p>
-      If you have to import the same set of modules everywhere, it can be annoying.
+      If you have to import the same set of modules everywhere, it might be annoying.
       In <a href="https://angular.io" target="blank">Angular</a>, the <code>providers</code> are registered in the global scope.
       Once defined, they're available everywhere. On the other hand, Nest encapsulates providers inside the module scope.
-      You can't use the module providers elsewhere without importing them.
+      You aren't able to use the module providers elsewhere without importing them.
       But sometimes, you may just want to provide a set of things which should be available always - out-of-the-box, for example: helpers, database connection, whatever.
       That's why you're able to make the module a <strong>global</strong> one.
     </p>
+    <span class="filename">
+      <app-tabs #globalScopeT></app-tabs>
+    </span>
     <pre><code class="language-typescript">{{ globalScope }}</code></pre>
     <p>
       The <code>@Global()</code> decorator makes the module global-scoped.
-      Global modules should be registered <strong>only once</strong>, in best case by the root or core module.
-      Afterwards, the <code>CatsService</code> provider will be ubiquitous, although <code>CatsModule</code> won't be imported.
+      Global modules shall be registered <strong>only once</strong>, in best case by the root or core module.
+      Afterward, the <code>CatsService</code> provider will be ubiquitous, although <code>CatsModule</code> won't be imported.
     </p>
     <blockquote class="info">
-      <strong>Hint</strong> Making everything global is not a good solution. Global modules are here to reduce the amount of necessary boilerplate. The <code>imports</code> array is still the best way to make the module API transparent.
+      <strong>Hint</strong> Making everything global is not a good solution. The global modules are available to reduce the amount of necessary boilerplate. The <code>imports</code> array is still the best way to make the module API transparent.
     </blockquote>
     <h4>Dynamic modules</h4>
     <p>
@@ -141,14 +144,22 @@
       It enables you to create customizable modules without any effort.
       Let's have a look at the <code>DatabaseModule</code>:
     </p>
-    <pre><code class="language-typescript">{{ dynamicModules }}</code></pre>
+    <span class="filename">
+      <app-tabs #dynamicModulesT></app-tabs>
+    </span>
+    <pre [class.hide]="dynamicModulesT.isJsActive"><code class="language-typescript">{{ dynamicModules }}</code></pre>
+    <pre [class.hide]="!dynamicModulesT.isJsActive"><code class="language-typescript">{{ dynamicModulesJs }}</code></pre>
     <p>
-      It defines the <code>Connection</code> provider by default, but additionally - depending on the passed <code>options</code> and <code>entities</code> - it exposes a collection of the providers, for example repository components.
-      In fact, the dynamic module <strong>extends</strong> the module metadata.
+      This module defines the <code>Connection</code> provider by default, but additionally - depending on the passed <code>options</code> and <code>entities</code> - it exposes a collection of the providers, for example, repositories.
+      In fact, the dynamic module <strong>extends</strong> the base module metadata.
       This substantial feature is useful when you need to register providers dynamically.
-      Then you may import the <code>DatabaseModule</code> in the following manner:
+      Then you could import the <code>DatabaseModule</code> in the following manner:
     </p>
     <pre><code class="language-typescript">{{ importDynamicModules }}</code></pre>
+    <p>
+      In order to export dynamic module, you can omit a function call part:
+    </p>
+    <pre><code class="language-typescript">{{ exportDynamicModules }}</code></pre>
     <!--<h4>Single Scope</h4>
     <p>
       There're modules which shouldn't be shared at all. To prevent a module from being a singleton, you can use <code>@SingleScope()</code>

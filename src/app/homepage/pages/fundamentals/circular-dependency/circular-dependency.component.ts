@@ -9,7 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class CircularDependencyComponent extends BasePageComponent {
   get moduleRef() {
     return `
-@Component()
+@Injectable()
 export class CatsService implements OnModuleInit {
   private service: Service;
   constructor(private readonly moduleRef: ModuleRef) {}
@@ -22,7 +22,7 @@ export class CatsService implements OnModuleInit {
 
   get moduleRefJs() {
     return `
-@Component()
+@Injectable()
 @Dependencies(ModuleRef)
 export class CatsService {
   constructor(moduleRef) {
@@ -37,7 +37,7 @@ export class CatsService {
 
   get proxy() {
     return `
-@Component()
+@Injectable()
 export class Proxy {
   private readonly subject: Subject<any>;
 
@@ -53,7 +53,7 @@ export class Proxy {
 
   get forwardRef() {
     return `
-@Component()
+@Injectable()
 export class CatsService {
   constructor(
     @Inject(forwardRef(() => CommonService))
@@ -64,7 +64,7 @@ export class CatsService {
 
   get forwardRefJs() {
     return `
-@Component()
+@Injectable()
 @Dependencies(forwardRef(() => CommonService))
 export class CatsService {
   constructor(commonService) {
@@ -75,7 +75,7 @@ export class CatsService {
 
   get forwardRefCommon() {
     return `
-@Component()
+@Injectable()
 export class CommonService {
   constructor(
     @Inject(forwardRef(() => CatsService))
@@ -86,7 +86,7 @@ export class CommonService {
 
   get forwardRefCommonJs() {
     return `
-@Component()
+@Injectable()
 @Dependencies(forwardRef(() => CatsService))
 export class CommonService {
   constructor(catsService) {

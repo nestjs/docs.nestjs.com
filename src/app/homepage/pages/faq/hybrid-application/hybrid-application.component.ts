@@ -11,7 +11,7 @@ export class HybridApplicationComponent extends BasePageComponent {
     return `
 const app = await NestFactory.create(ApplicationModule);
 const microservice = app.connectMicroservice({
-    transport: Transport.TCP,
+  transport: Transport.TCP,
 });
 
 await app.startAllMicroservicesAsync();

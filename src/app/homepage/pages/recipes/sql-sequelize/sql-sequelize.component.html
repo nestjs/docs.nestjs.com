@@ -2,50 +2,48 @@
     <h3>SQL (Sequelize)</h3>
     <h5>This chapter applies only to TypeScript</h5>
     <p>
-      <a href="https://github.com/sequelize/sequelize" target="blank">Sequelize</a> is the most popular Object Relational Mapper (ORM) available in the node.js world.
-      It's written in plain JavaScript, but there's a <a href="https://github.com/RobinBuschmann/sequelize-typescript" target="blank">sequelize-typescript</a> TypeScript wrapper which provides a set of decorators and other extras for the base sequelize.
+      <a href="https://github.com/sequelize/sequelize" target="blank">Sequelize</a> is a popular Object Relational Mapper (ORM)
+      written in a vanilla JavaScript, but there is a <a href="https://github.com/RobinBuschmann/sequelize-typescript" target="blank">sequelize-typescript</a> TypeScript wrapper which provides a set of decorators and other extras for the base sequelize.
       To start the adventure with this library we have to install the following dependencies:
     </p>
     <pre><code class="language-typescript">{{ dependencies }}</code></pre>
     <p>
       The first step we need to do is create a <strong>Sequelize</strong> instance with an options object passed into the constructor.
-      Also, we need to add all of the models (the alternative is to use <code>modelPaths</code> property) and <code>sync()</code> our database tables.
+      Also, we need to add all models (the alternative is to use <code>modelPaths</code> property) and <code>sync()</code> our database tables.
     </p>
     <span class="filename">database.providers.ts</span>
     <pre><code class="language-typescript">{{ databaseProviders }}</code></pre>
     <blockquote class="warning">
-        <strong>Hint</strong> Following best practices, we've declared the custom component in the separated file which has a <code>*.providers.ts</code> suffix.
+        <strong>Hint</strong> Following best practices, we declared the custom provider in the separated file which has a <code>*.providers.ts</code> suffix.
      </blockquote>
      <p>
-       Then we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.
+       Then, we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.
     </p>
     <span class="filename">database.module.ts</span>
     <pre><code class="language-typescript">{{ databaseModule }}</code></pre>
     <p>
-      It's everything. Now we can inject the <code>Sequelize</code> object using <code>@Inject()</code> decorator.
-      Each component which would depend on the <code>Sequelize</code> async component will wait until the <code>Promise</code> would be resolved.
+      Now we can inject the <code>Sequelize</code> object using <code>@Inject()</code> decorator.
+      Each class that would depend on the <code>Sequelize</code> async provider will wait until a <code>Promise</code> is resolved.
     </p>
     <h4>Model injection</h4>
     <p>
-      In <a href="https://github.com/sequelize/sequelize" target="blank">Sequelize</a> the <strong>Model</strong> represents a table in the database. Instances of this class represent a database row.
+      In <a href="https://github.com/sequelize/sequelize" target="blank">Sequelize</a> the <strong>Model</strong> defines a table in the database. Instances of this class represent a database row.
       Firstly, we need at least one entity:
     </p>
     <span class="filename">cats/cat.entity.ts</span>
     <pre><code class="language-typescript">{{ catEntity }}</code></pre>
     <p>
       The <code>Cat</code> entity belongs to the <code>cats</code> directory.
-      This directory represents the <code>CatsModule</code>. It's your decision where you gonna keep your model files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
-    </p>
-    <p>
+      This directory represents the <code>CatsModule</code>.
       Now it's time to create a <strong>Repository</strong> component:
     </p>
     <span class="filename">cats.providers.ts</span>
     <pre><code class="language-typescript">{{ catsProviders }}</code></pre>
     <blockquote>
-        <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong> at all. Both <code>CatsRepository</code> and <code>SequelizeToken</code> should be kept in the separated <code>constants.ts</code> file.
+        <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong>. Both <code>CatsRepository</code> and <code>SequelizeToken</code> should be kept in the separated <code>constants.ts</code> file.
      </blockquote>
      <p>
-       In Sequelize we're using static methods to manipulate the data, so we're just creating an <strong>alias</strong> here.
+       In Sequelize, we use static methods to manipulate the data, and thus we created an <strong>alias</strong> here.
      </p>
      <p>
        Now we can inject the <code>CatsRepository</code> to the <code>CatsService</code> using the <code>@Inject()</code> decorator:
@@ -53,19 +51,16 @@
      <span class="filename">cats.service.ts</span>
     <pre><code class="language-typescript">{{ catsService }}</code></pre>
     <p>
-      The database connection's <strong>asynchronous</strong>, but Nest makes this process's completely invisible for the end-user.
-      The <code>CatsRepository</code> component's waiting for the db connection, and the <code>CatsService</code> is delayed until repository would be ready to use.
-      The entire application can start when each component is instantiated.
+      The database connection is <strong>asynchronous</strong>, but Nest makes this process completely invisible for the end-user.
+      The <code>CatsRepository</code> provider is waiting for the db connection, and the <code>CatsService</code> is delayed until repository is ready to use.
+      The entire application can start when each class is instantiated.
     </p>
     <p>
-      Here's a final <code>CatsModule</code>:
+      Here is a final <code>CatsModule</code>:
     </p>
     <span class="filename">cats.module.ts</span>
     <pre><code class="language-typescript">{{ catsModule }}</code></pre>
     <blockquote class="warning">
         <strong>Hint</strong> Don't forget to import the <code>CatsModule</code> into the root <code>ApplicationModule</code>.
      </blockquote>
-     <p>
-       The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/07-sequelize" target="blank">here</a>.
-     </p>
   </div>

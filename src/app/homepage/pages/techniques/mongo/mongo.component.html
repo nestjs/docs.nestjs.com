@@ -1,7 +1,7 @@
 <div class="content">
   <h3>MongoDB</h3>
   <p>
-    There are 2 ways of dealing with the MongoDB. You can use a <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> that provides a MongoDB support or <a href="http://mongoosejs.com" target="blank">Mongoose</a> which is the most popular <a href="https://www.mongodb.org/" target="blank">MongoDB</a> object modelling tool.
+    There are two ways of dealing with the MongoDB database. You can either use a <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> that provides a MongoDB support or <a href="http://mongoosejs.com" target="blank">Mongoose</a> which is the most popular <a href="https://www.mongodb.org/" target="blank">MongoDB</a> object modeling tool.
     If you wanna stay with the <strong>TypeORM</strong> you can follow <a routerLink="/techniques/sql">these steps</a>.
     Otherwise, we'll use a dedicated <code>@nestjs/mongoose</code> package.
   </p>
@@ -32,7 +32,7 @@ $ npm install --save @nestjs/mongoose mongoose</code></pre>
   <pre><code class="language-typescript">{{ catSchema }}</code></pre>
   <p>
     The <code>CatsSchema</code> belongs to the <code>cats</code> directory.
-    This directory represents the <code>CatsModule</code>. It's your decision where you gonna keep your schema files. From my point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
+    This directory represents the <code>CatsModule</code>. It's your decision where you gonna keep your schema files. From our point of view, the best way's to hold them nearly their <strong>domain</strong>, in the appropriate module directory.
   </p>
   <p>
     Let's have a look at the <code>CatsModule</code>:
@@ -44,9 +44,7 @@ $ npm install --save @nestjs/mongoose mongoose</code></pre>
   <pre><code class="language-typescript">{{ catsModule }}</code></pre>
   <p>
     This module uses <code>forFeature()</code> method to define which models shall be registered in the current scope.
-  </p>
-  <p>
-    Now we can inject the <code>CatModel</code> to the <code>CatsService</code> using the <code>@InjectModel()</code> decorator:
+    Thanks to that, we can inject the <code>CatModel</code> to the <code>CatsService</code> using the <code>@InjectModel()</code> decorator:
   </p>
   <span class="filename">
     {{ 'cats/cats.service' | extension: catsServiceT.isJsActive }}
@@ -54,10 +52,22 @@ $ npm install --save @nestjs/mongoose mongoose</code></pre>
   </span>
   <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
   <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
+  <h4>Testing</h4>
   <p>
-    That's all. The full source code's available <a href="https://github.com/nestjs/nest/tree/master/examples/14-mongoose-module" target="blank">here</a>.
+    When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent and their execution process quick as possible.
+    But our classes might depend on models that are pulled from the connection instance. What's then?
+    The solution is to create fake models. In order to achieve that, we should set up <a routerLink="/fundamentals/custom-providers">custom providers</a>.
+    In fact, each registered model is represented by <code>NameModel</code> token, where <code>Name</code> is a model's name.
   </p>
-  <blockquote class="warning">
-    <strong>Hint</strong> Don't forget to import the <code>CatsModule</code> into the root <code>ApplicationModule</code>.
-  </blockquote>
+  <p>
+    The <code>@nestjs/mongoose</code> package exposes <code>getModelToken()</code> function that returns prepared token based on a given model's name.
+  </p>
+  <pre><code class="language-typescript">{{ mockRepository }}</code></pre>
+  <p>
+    Now a hardcoded <code>catModel</code> will be used as a <code>Model&#60;Cat&#62;</code>.
+    Whenever any provider asks for <code>Model&#60;Cat&#62;</code> using an <code>@InjectModel()</code> decorator, Nest will use a registered <code>catModel</code> object.
+  </p>
+  <p>
+    A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/14-mongoose-base" target="blank">here</a>.
+  </p>
 </div>

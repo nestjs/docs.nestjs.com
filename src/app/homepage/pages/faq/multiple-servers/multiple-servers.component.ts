@@ -7,11 +7,22 @@ import { BasePageComponent } from '../../page/page.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MultipleServersComponent extends BasePageComponent {
+  get https() {
+    return `
+const httpsOptions = {
+  key: fs.readFileSync('./secrets/private-key.pem'),
+  cert: fs.readFileSync('./secrets/public-certificate.pem')
+};
+const app = await NestFactory.create(ApplicationModule, {
+  httpsOptions,
+});
+await app.listen(3000);`;
+  }
   get servers() {
     return `
 const httpsOptions = {
-  key: fs.readFileSync("./secrets/private-key.pem"),
-  cert: fs.readFileSync("./secrets/public-certificate.pem")
+  key: fs.readFileSync('./secrets/private-key.pem'),
+  cert: fs.readFileSync('./secrets/public-certificate.pem')
 };
 
 const server = express();

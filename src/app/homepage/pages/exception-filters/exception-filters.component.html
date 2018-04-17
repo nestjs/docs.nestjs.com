@@ -1,5 +1,5 @@
 <div class="content">
-  <h3>Exception Filters</h3>
+  <h3>Exception filters</h3>
   <p>
     The built-in
     <strong>exceptions layer</strong> is responsible for handling all thrown exceptions across your whole application. When an unhandled
@@ -20,7 +20,7 @@
     There's a built-in
     <code>HttpException</code> class exposed from the
     <code>@nestjs/common</code> package. As you already know, when you throw a
-    <code>HttpException</code> object, it'll be caught by the handler and afterward, transformed to the relevant JSON response.
+    <code>HttpException</code> object, it'll be caught by the handler and afterwards, transformed to the relevant JSON response.
   </p>
   <p>
     In the
@@ -34,13 +34,13 @@
   </span>
   <pre [class.hide]="createMethodT.isJsActive"><code class="language-typescript">{{ createMethod }}</code></pre>
   <pre [class.hide]="!createMethodT.isJsActive"><code class="language-typescript">{{ createMethodJs }}</code></pre>
-  <blockquote class="warning">
-    <strong>Warning</strong> We used the
-    <code>HttpStatus</code> here. It's a helper enumerator imported from the
+  <blockquote class="info">
+    <strong>Hint</strong> We used the
+    <code>HttpStatus</code> here. It is a helper enumerator imported from the
     <code>@nestjs/common</code> package.
   </blockquote>
   <p>
-    Now when the client calls this endpoint, the response would look like this:
+    When the client calls this endpoint, the response would look like this:
   </p>
   <pre><code class="language-typescript">{{ forbiddenResponse }}</code></pre>
   <p>
@@ -60,7 +60,7 @@
     And this's how the response would look like:
   </p>
   <pre><code class="language-typescript">{{ customResponse }}</code></pre>
-  <h4>Exceptions Hierarchy</h4>
+  <h4>Exceptions hierarchy</h4>
   <p>
     A good practice is to create your own
     <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base
@@ -139,7 +139,7 @@
       <code>GatewayTimeoutException</code>
     </li>
   </ul>
-  <h4>Exception Filters</h4>
+  <h4>Exception filters</h4>
   <p>
     The base exception handler is fine, but sometimes you may want to have a
     <strong>full control</strong> over the exceptions layer, for example, add some logging or use a different JSON schema based on
@@ -147,9 +147,8 @@
     <strong>exception filters</strong> has been created.
   </p>
   <p>
-    We're gonna create a filter which is responsible for catching exceptions that are instance of
-    <code>HttpException</code> class and override the
-    <code>message</code> property.
+    We are going to create a filter which is responsible for catching exceptions that are an instance of
+    <code>HttpException</code> class and set up a custom response logic for them.
   </p>
   <span class="filename">
     {{ 'http-exception.filter' | extension: httpExceptionFilterT.isJsActive }}
@@ -183,9 +182,9 @@
     <code>ArgumentsHost</code> supplies us with a set of useful methods that helps to pick correct arguments from the underlying array. In other words,
     <code>ArgumentsHost</code> is nothing else than just an
     <strong>array of arguments</strong>. For example, when the filter is used within HTTP application context,
-    <code>ArgumentsHost</code> would contain
-    <code>[request, response]</code> array. However, when current context is a web sockets application, this array will be equal to
-    <code>[client, data]</code> array. This design decision enables you to access any argument that would be eventually passed to the corresponding
+    <code>ArgumentsHost</code> will contain
+    <code>[request, response]</code> array inside. However, when current context is a web sockets application, this array will be equal to
+    <code>[client, data]</code>. This design decision enables you to access any argument that would be eventually passed to the corresponding
     handler.
   </p>
   <p>
@@ -199,8 +198,8 @@
   </span>
   <pre [class.hide]="forbiddenCreateMethodWithFilterT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodWithFilter }}</code></pre>
   <pre [class.hide]="!forbiddenCreateMethodWithFilterT.isJsActive"><code class="language-typescript">{{ forbiddenCreateMethodWithFilterJs }}</code></pre>
-  <blockquote class="warning">
-    <strong>Warning</strong> The
+  <blockquote class="info">
+    <strong>Hint</strong> The
     <code>@UseFilters()</code> decorator is imported from the
     <code>@nestjs/common</code> package.
   </blockquote>
@@ -209,7 +208,7 @@
     <code>@UseFilters()</code> decorator here. Same as
     <code>@Catch()</code>, it takes an endless number of parameters. The instance of
     <code>HttpExceptionFilter</code> has been created immedietely in-place. Another available way is to pass the class (not instance), leaving framework the instantiation
-    responsibility and allowing
+    responsibility and enabling
     <strong>dependency injection</strong>.
   </p>
   <span class="filename">
@@ -245,7 +244,7 @@
   </span>
   <pre><code class="language-typescript">{{ globalScopedFilter }}</code></pre>
   <blockquote>
-    <strong>Notice</strong> The
+    <strong>Warning</strong> The
     <code>useGlobalFilters()</code> method doesn't set up filters for gateways and microservices.
   </blockquote>
   <p>
@@ -260,11 +259,12 @@
   </span>
   <pre><code class="language-typescript">{{ globalModuleFilter }}</code></pre>
   <blockquote class="info">
-      <strong>Hint</strong> The alternative way is to use an <a routerLink="/execution-context">execution context</a> feature.
+      <strong>Hint</strong> The alternative option is to use an <a routerLink="/execution-context">execution context</a> feature.
+      Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
     </blockquote>
   <h4>Catch everything</h4>
   <p>
-    In order to handle every occurred exception, you may leave the parentheses empty (
+    In order to handle every occurred exception (regardless of the exception type), you may leave the parentheses empty (
     <code>@Catch()</code>):
   </p>
   <span class="filename">

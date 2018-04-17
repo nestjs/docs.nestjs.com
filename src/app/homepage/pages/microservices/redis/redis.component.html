@@ -1,18 +1,39 @@
 <div class="content">
   <h3>Redis</h3>
   <p>
-    There's' another way to play with the Nest microservices. Instead of TCP communication, we can use the great <a href="https://redis.io/" target="blank">Redis</a> feature – the <strong>publish / subscribe</strong>.
+    A second built-in transporter is based on <a href="https://redis.io/" target="blank">Redis</a> database.
+    This transporter takes advantage of <strong>publish/subscribe</strong> feature.
   </p>
   <figure><img src="/assets/Redis_1.png" /></figure>
+  <h4>Installation</h4>
+  <p>Before we start, we have to install required package:</p>
+  <pre><code class="language-bash">
+$ npm i --save redis</code></pre>
+  <h4>Overview</h4>
   <p>
-    To switch from the TCP transport strategy to Redis <strong>pub/sub</strong>, we only need to change the options object passed to the <code>createMicroservice()</code> method.
+    In order to switch from TCP transport strategy to Redis <strong>pub/sub</strong>, we need to change an options object passed to the <code>createMicroservice()</code> method.
   </p>
   <span class="filename">
     {{ 'main' | extension: optionsT.isJsActive }}
     <app-tabs #optionsT></app-tabs>
   </span>
   <pre><code class="language-typescript">{{ options }}</code></pre>
-  <blockquote class="warning">
-      <strong>Hint</strong> Don't forget to change the <code>Transport.REDIS</code> in the <code>@Client()</code> decorator too.
-   </blockquote>
+  <h4>Options</h4>
+  <p>
+    There is a bunch of available options that determine a transporter behaviour.
+  </p>
+  <table>
+    <tr>
+      <td><code>url</code></td>
+      <td>Connection url</td>
+    </tr>
+    <tr>
+      <td><code>retryAttempts</code></td>
+      <td>A total amount of connection attempts</td>
+    </tr>
+    <tr>
+      <td><code>retryDelay</code></td>
+      <td>A connection retrying delay (ms)</td>
+    </tr>
+  </table>
 </div>

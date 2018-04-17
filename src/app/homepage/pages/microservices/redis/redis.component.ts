@@ -11,7 +11,9 @@ export class RedisComponent extends BasePageComponent {
     return `
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.REDIS,
-  url: 'redis://localhost:6379',
+  options: {
+    url: 'redis://localhost:6379',
+  },
 });`;
   }
 }
