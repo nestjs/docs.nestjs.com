@@ -6,7 +6,7 @@
   top: 0;
   bottom: 0;
 
-  @include media(medium) {
+  /*@include media(medium) {
     position: static;
     margin: 15px -20px -15px;
     
@@ -15,7 +15,7 @@
       display: inline-block;
       margin: 0 !important;
     }
-  }
+  }*/
 }
 
 .tab {
