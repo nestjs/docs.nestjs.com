@@ -9,7 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class IdeComponent extends BasePageComponent {
   get createSchema() {
     return `
-import { Module, MiddlewaresConsumer, NestModule } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 
@@ -19,7 +19,7 @@ import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 export class ApplicationModule implements NestModule {
   constructor(private readonly graphQLFactory: GraphQLFactory) {}
 
-  configure(consumer: MiddlewaresConsumer) {
+  configure(consumer: MiddlewareConsumer) {
     const typeDefs = this.graphQLFactory.mergeTypesByPaths('./**/*.graphql');
     const schema = this.graphQLFactory.createSchema({ typeDefs });
 
