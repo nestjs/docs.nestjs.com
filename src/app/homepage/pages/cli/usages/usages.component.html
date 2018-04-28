@@ -15,7 +15,7 @@ $ nest [command] [...options]</code></pre>
       <strong>--dry-run</strong>: allows to simulate the command execution in order to verify how it will affect your working directory
     </li>
   </ul>
-  <h4>new</h4>
+  <h4>new (alias n)</h4>
   <p>
     The
     <strong>new</strong> command generates a Nest project based on the <a href="https://github.com/nestjs/typescript-starter" target="blank">typescript-starter</a> as well as install the required packages.
@@ -54,7 +54,14 @@ $ nest [command] [...options]</code></pre>
       <td>''</td>
     </tr>
   </table>
-  <h4>generate</h4>
+  <p>
+    Example usage:
+  </p>
+  <pre><code class="language-bash">
+$ nest new my-awesome-app</code>
+OR <code class="language-bash">
+$ nest n my-awesome-app</code></pre>
+  <h4>generate (alias g)</h4>
   <p>
     The
     <strong>generate</strong> command generates a Nest architecture component.
@@ -87,28 +94,35 @@ $ nest [command] [...options]</code></pre>
   </table>
   <p>A list of available architecture components:</p>
   <ul>
-    <li>controller</li>
-    <li>exception</li>
-    <li>guard</li>
-    <li>interceptor</li>
-    <li>middleware</li>
-    <li>module</li>
-    <li>pipe</li>
-    <li>service</li>
+    <li>class       (alias cl)</li>
+    <li>controller  (alias co)</li>
+    <li>decorator   (alias d)</li>
+    <li>exception   (alias e)</li>
+    <li>filter      (alias f)</li>
+    <li>gateway     (alias ga)</li>
+    <li>guard       (alias gu)</li>
+    <li>interceptor (alias i)</li>
+    <li>middleware  (alias mi)</li>
+    <li>module      (alias mo)</li>
+    <li>pipe        (alias pi)</li>
+    <li>provider    (alias pr)</li>
+    <li>service     (alias s)</li>
   </ul>
   <p>
     Example usage:
   </p>
   <pre><code class="language-bash">
-$ nest generate service users</code></pre>
-  <h4>info</h4>
+$ nest generate service users</code>
+OR <code class="language-bash">
+$ nest g s users</code></pre>
+  <h4>info (alias i)</h4>
   <p>
     The
     <strong>info</strong> command will display your project information.
   </p>
   <pre><code class="language-bash">
 $ nest info
-  _   _             _      ___  _____  _____  _     _____
+ _   _             _      ___  _____  _____  _     _____
 | \ | |           | |    |_  |/  ___|/  __ \| |   |_   _|
 |  \| |  ___  ___ | |_     | |\ `--. | /  \/| |     | |
 | . ` | / _ \/ __|| __|    | | `--. \| |    | |     | |
