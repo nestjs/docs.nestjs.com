@@ -8,11 +8,11 @@ import { BasePageComponent } from '../page/page.component';
 export class MiddlewaresComponent extends BasePageComponent {
   get loggerMiddleware() {
     return `
-import { Injectable, NestMiddleware, FunctionMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  resolve(...args: any[]): FunctionMiddleware {
+  resolve(...args: any[]): MiddlewareFunction {
     return (req, res, next) => {
       console.log('Request...');
       next();
@@ -150,11 +150,11 @@ export class ApplicationModule {
 
   get loggerMiddlewareWithArgs() {
     return `
-import { Injectable, NestMiddleware, FunctionMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  resolve(name: string): FunctionMiddleware {
+  resolve(name: string): MiddlewareFunction {
     return (req, res, next) => {
       console.log(\`[\${name}\] Request...\`); // [ApplicationModule] Request...
       next();
@@ -180,11 +180,11 @@ export class LoggerMiddleware {
 
   get defferedMiddleware() {
       return `
-import { Injectable, NestMiddleware, FunctionMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  async resolve(name: string): Promise<FunctionMiddleware> {
+  async resolve(name: string): Promise<MiddlewareFunction> {
     await someAsyncJob();
 
     return async (req, res, next) => {

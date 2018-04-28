@@ -108,9 +108,9 @@ const routes: Routes = [
         data: { title: 'Modules' },
       },
       {
-        path: 'middlewares',
+        path: 'middleware',
         component: MiddlewaresComponent,
-        data: { title: 'Middlewares' },
+        data: { title: 'Middleware' },
       },
       {
         path: 'pipes',
@@ -446,7 +446,7 @@ const routes: Routes = [
         data: {
           title: 'Usage - CLI'
         }
-      }
+      },
     ],
   },
   {

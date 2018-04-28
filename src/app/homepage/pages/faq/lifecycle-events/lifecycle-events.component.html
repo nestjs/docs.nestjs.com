@@ -10,4 +10,12 @@
   </span>
   <pre [class.hide]="lifecycleEventsT.isJsActive"><code class="language-typescript">{{ lifecycleEvents }}</code></pre>
   <pre [class.hide]="!lifecycleEventsT.isJsActive"><code class="language-typescript">{{ lifecycleEventsJs }}</code></pre>
+  <p>
+    In order to defer initialization of the application, you can either use <code>await</code> keyword or return a <code>Promise</code>.
+  </p>
+  <span class="filename">
+    <app-tabs #asyncLifecycleEventT></app-tabs>
+  </span>
+  <pre [class.hide]="asyncLifecycleEventT.isJsActive"><code class="language-typescript">{{ asyncLifecycleEvent }}</code></pre>
+  <pre [class.hide]="!asyncLifecycleEventT.isJsActive"><code class="language-typescript">{{ asyncLifecycleEventJs }}</code></pre>
 </div>

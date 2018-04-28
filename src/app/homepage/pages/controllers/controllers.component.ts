@@ -54,9 +54,7 @@ import { Controller, Get, Post } from '@nestjs/common';
 @Controller('cats')
 export class CatsController {
   @Post()
-  create() {
-    // TODO: Add some logic here
-  }
+  create() {}
 
   @Get()
   findAll() {
@@ -82,9 +80,7 @@ import { Controller, Get, Post, HttpCode } from '@nestjs/common';
 export class CatsController {
   @HttpCode(204)
   @Post()
-  create() {
-    // TODO: Add some logic here
-  }
+  create() {}
 
   @Get()
   findAll() {
@@ -113,7 +109,7 @@ async findAll() {
     return `
 @Get()
 findAll(): Observable<any[]> {
-  return Observable.of([]);
+  return of([]);
 }`;
   }
 
@@ -121,7 +117,7 @@ findAll(): Observable<any[]> {
     return `
 @Get()
 findAll() {
-  return Observable.of([]);
+  return of([]);
 }`;
   }
 
@@ -137,18 +133,14 @@ export class CreateCatDto {
   get exampleWithBody() {
     return `
 @Post()
-async create(@Body() createCatDto: CreateCatDto) {
-  // TODO: Add some logic here
-}`;
+async create(@Body() createCatDto: CreateCatDto) {}`;
   }
 
   get exampleWithBodyJs() {
     return `
 @Post()
 @Bind(Body())
-async create(createCatDto) {
-// TODO: Add some logic here
-}`;
+async create(createCatDto) {}`;
   }
 
   get appModule() {
@@ -185,7 +177,6 @@ import { CreateCatDto } from './dto/create-cat.dto';
 export class CatsController {
   @Post()
   create(@Res() res, @Body() createCatDto: CreateCatDto) {
-    // TODO: Add some logic here
     res.status(HttpStatus.CREATED).send();
   }
 
@@ -205,7 +196,6 @@ export class CatsController {
   @Post()
   @Bind(Res(), Body())
   create(res, createCatDto) {
-    // TODO: Add some logic here
     res.status(HttpStatus.CREATED).send();
   }
 

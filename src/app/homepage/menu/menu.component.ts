@@ -23,7 +23,7 @@ export class MenuComponent implements OnInit {
         { title: 'Controllers', path: '/controllers' },
         { title: 'Providers', path: '/providers' },
         { title: 'Modules', path: '/modules' },
-        { title: 'Middlewares', path: '/middlewares' },
+        { title: 'Middleware', path: '/middleware' },
         { title: 'Exception filters', path: '/exception-filters' },
         { title: 'Pipes', path: '/pipes' },
         { title: 'Guards', path: '/guards' },

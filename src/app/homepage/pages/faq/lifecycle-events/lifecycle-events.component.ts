@@ -14,11 +14,11 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 @Injectable()
 export class UsersService implements OnModuleInit, OnModuleDestroy {
   onModuleInit() {
-    console.log(\`Module is initialized...\`);
+    console.log(\`Initialization...\`);
   }
   
   onModuleDestroy() {
-    console.log(\`Module is destroyed...\`);
+    console.log(\`Cleanup...\`);
   }
 }`;
   }
@@ -30,12 +30,26 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class UsersService {
   onModuleInit() {
-    console.log(\`Module is initialized...\`);
+    console.log(\`Initialization...\`);
   }
 
   onModuleDestroy() {
-    console.log(\`Module is destroyed...\`);
+    console.log(\`Cleanup...\`);
   }
+}`;
+  }
+
+  get asyncLifecycleEvent() {
+    return `
+async onModuleInit(): Promise<any> {
+  await this.fetch();
+}`;
+  }
+
+  get asyncLifecycleEventJs() {
+    return `
+async onModuleInit() {
+  await this.fetch();
 }`;
   }
 }
