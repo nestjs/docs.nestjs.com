@@ -10,15 +10,15 @@ export class GuardsComponent extends BasePageComponent {
   get authGuard() {
     return `
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  async canActivate(
+  canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    return await validateRequest(request);
+    return validateRequest(request);
   }
 }`;
   }
@@ -39,7 +39,7 @@ export class AuthGuard {
   get rolesGuard() {
     return `
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -169,7 +169,7 @@ async create(createCatDto) {
   get rolesGuardExt() {
     return `
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()

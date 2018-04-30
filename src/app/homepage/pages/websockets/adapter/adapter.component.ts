@@ -11,26 +11,14 @@ export class AdapterComponent extends BasePageComponent {
     return `
 import * as WebSocket from 'ws';
 import { WebSocketAdapter, MessageMappingProperties } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable, fromEvent, empty } from 'rxjs';
 import { mergeMap, filter, tap } from 'rxjs/operators';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { empty } from 'rxjs/observable/empty';
 
 export class WsAdapter implements WebSocketAdapter {
   constructor(private readonly httpServer) {}
 
-  create(
-    port: number,
-    options?: any & { namespace?: string; server?: any },
-  ): any {
-    const { server, ...wsOptions } = options;
-    if (port === 0 && this.httpServer) {
-      return new ws.Server({
-        server: this.httpServer,
-        ...wsOptions,
-      });
-    }
-    return server ? server : new ws.Server({ port, ...wsOptions });
+  create(port: number, options: any = {}): any {
+    return new ws.Server({ port, ...options });
   }
 
   bindClientConnect(server, callback: (...args) => void) {
@@ -60,10 +48,9 @@ export class WsAdapter implements WebSocketAdapter {
       handler => handler.message === message.event,
     );
     if (!messageHandler) {
-      return empty();
+      return empty;
     }
-    const { callback } = messageHandler;
-    return process(callback(message.data));
+    return process(messageHandler.callback(message.data));
   }
 
   close(server) {
@@ -76,8 +63,7 @@ export class WsAdapter implements WebSocketAdapter {
     return `
 import * as WebSocket from 'ws';
 import { mergeMap, filter, tap } from 'rxjs/operators';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { empty } from 'rxjs/observable/empty';
+import { fromEvent, empty } from 'rxjs';
 
 export class WsAdapter {
   constructor(httpServer) {
@@ -85,14 +71,7 @@ export class WsAdapter {
   }
 
   create(port, options = {}) {
-    const { server, ...wsOptions } = options;
-    if (port === 0 && this.httpServer) {
-      return new ws.Server({
-        server: this.httpServer,
-        ...wsOptions,
-      });
-    }
-    return server ? server : new ws.Server({ port, ...wsOptions });
+    return new ws.Server({ port, ...options });
   }
 
   bindClientConnect(server, callback) {
@@ -114,10 +93,9 @@ export class WsAdapter {
       handler => handler.message === message.event,
     );
     if (!messageHandler) {
-      return empty();
+      return empty;
     }
-    const { callback } = messageHandler;
-    return process(callback(message.data));
+    return process(messageHandler.callback(message.data));
   }
 
   close(server) {

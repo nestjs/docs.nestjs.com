@@ -6,4 +6,13 @@ import { BasePageComponent } from '../../page/page.component';
   templateUrl: './interceptors.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MicroservicesInterceptorsComponent extends BasePageComponent {}
+export class MicroservicesInterceptorsComponent extends BasePageComponent {
+  get example() {
+    return `
+@UseInterceptors(new TransformInterceptor())
+@MessagePattern({ cmd: 'sum' })
+sum(data: number[]): number {
+  return (data || []).reduce((a, b) => a + b);
+}`;
+  }
+}

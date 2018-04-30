@@ -169,7 +169,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Support me',
       isOpened: false,
-      externalUrl: 'https://opencollective.com/nest',
+      path: '/support',
     },
     {
       title: 'V4',

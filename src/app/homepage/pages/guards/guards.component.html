@@ -27,10 +27,6 @@
     </span>
     <pre [class.hide]="authGuardT.isJsActive"><code class="language-typescript">{{ authGuard }}</code></pre>
     <pre [class.hide]="!authGuardT.isJsActive"><code class="language-typescript">{{ authGuardJs }}</code></pre>
-    <blockquote>
-      <strong>Warning</strong> Keep in mind that when returned value is equal to <code>false</code>, Nest <strong>won't call</strong> anything else, including interceptors.
-      If you want to return an error response to the end-user, you should throw an exception.
-    </blockquote>
     <p>
       Regardless of the logic that sits behind <code>validateRequest()</code> function, the main point is to show how simple is to take advantage of guards.
       Every guard provides a <code>canActivate()</code> function. The guard might return its boolean answer either synchronously or asynchronously via a (<code>Promise</code> or <code>Observable</code>).

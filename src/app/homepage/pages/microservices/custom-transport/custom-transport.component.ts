@@ -11,7 +11,7 @@ export class CustomTransportComponent extends BasePageComponent {
     return `
 import * as amqp from 'amqplib';
 import { Server, CustomTransportStrategy } from '@nestjs/microservices';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 export class RabbitMQServer extends Server implements CustomTransportStrategy {
     private server: amqp.Connection = null;
@@ -68,7 +68,7 @@ export class RabbitMQServer extends Server implements CustomTransportStrategy {
     return `
 import * as amqp from 'amqplib';
 import { Server } from '@nestjs/microservices';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 export class RabbitMQServer extends Server {
     constructor(host, queue) {

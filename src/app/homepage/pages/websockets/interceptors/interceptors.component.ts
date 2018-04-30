@@ -6,4 +6,14 @@ import { BasePageComponent } from '../../page/page.component';
   templateUrl: './interceptors.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WsInterceptorsComponent extends BasePageComponent {}
+export class WsInterceptorsComponent extends BasePageComponent {
+  get example() {
+    return `
+@UseInterceptors(new TransformInterceptor())
+@SubscribeMessage('events')
+onEvent(client, data: any): WsResponse<any> {
+  const event = 'events';
+  return { event, data };
+}`;
+  }
+}

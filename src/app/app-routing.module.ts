@@ -73,6 +73,7 @@ import { MigrationComponent } from './homepage/pages/migration/migration.compone
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
+import { SupportComponent } from './homepage/pages/support/support.component';
 
 const routes: Routes = [
   {
@@ -432,6 +433,11 @@ const routes: Routes = [
         path: 'migration-guide',
         component: MigrationComponent,
         data: { title: 'Migration guide - FAQ' },
+      },
+      {
+        path: 'support',
+        component: SupportComponent,
+        data: { title: 'Support' },
       },
       {
         path: 'cli/overview',
