@@ -47,13 +47,13 @@ export class AuthService {
 
   get httpStrategy() {
     return `
-import { BearerStrategy } from 'passport-http-bearer';
+import { Strategy } from 'passport-http-bearer';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class HttpStrategy extends PassportStrategy(BearerStrategy) {
+export class HttpStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
     super();
   }
@@ -70,14 +70,14 @@ export class HttpStrategy extends PassportStrategy(BearerStrategy) {
 
   get httpStrategyJs() {
     return `
-import { BearerStrategy } from 'passport-http-bearer';
+import { Strategy } from 'passport-http-bearer';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Dependencies, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Injectable()
 @Dependencies(AuthService)
-export class HttpStrategy extends PassportStrategy(BearerStrategy) {
+export class HttpStrategy extends PassportStrategy(Strategy) {
   constructor(authService) {
     super();
     this.authService = authService;

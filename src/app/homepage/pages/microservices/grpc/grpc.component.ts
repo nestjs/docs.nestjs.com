@@ -40,19 +40,79 @@ message Hero {
 
   get grpcHandler() {
     return `
-@GrpcRoute('HeroService', 'FindOne')
+@GrpcMethod('HeroService', 'FindOne')
 findOne(data: HeroById, metadata: any): Hero {
-  const items = [{ id: 1, name: 'John' }, { id: 2, name: 'Doe' }];
+  const items = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Doe' },
+  ];
   return items.find(({ id }) => id === data.id);
 }`;
   }
 
   get grpcHandlerJs() {
     return `
-@GrpcRoute('HeroService', 'FindOne')
+@GrpcMethod('HeroService', 'FindOne')
 findOne(data, metadata) {
-  const items = [{ id: 1, name: 'John' }, { id: 2, name: 'Doe' }];
+  const items = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Doe' },
+  ];
   return items.find(({ id }) => id === data.id);
+}`;
+  }
+
+  get grpcHandlerMethod() {
+    return `
+@GrpcMethod('HeroService')
+findOne(data: HeroById, metadata: any): Hero {
+  const items = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Doe' },
+  ];
+  return items.find(({ id }) => id === data.id);
+}`;
+  }
+
+  get grpcHandlerMethodJs() {
+    return `
+@GrpcMethod('HeroService')
+findOne(data, metadata) {
+  const items = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Doe' },
+  ];
+  return items.find(({ id }) => id === data.id);
+}`;
+  }
+
+  get grpcHandlerClass() {
+    return `
+@Controller()
+export class HeroService {
+  @GrpcMethod()
+  findOne(data: HeroById, metadata: any): Hero {
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
+}`;
+  }
+
+  get grpcHandlerClassJs() {
+    return `
+@Controller()
+export class HeroService {
+  @GrpcMethod()
+  findOne(data, metadata) {
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
 }`;
   }
 

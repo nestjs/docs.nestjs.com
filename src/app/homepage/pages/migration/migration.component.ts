@@ -81,6 +81,7 @@ export class RolesGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
     return true;
   }
 }`;
@@ -101,6 +102,7 @@ export class RolesGuard {
 export class RolesGuard {
   canActivate(context) {
     // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
     return true;
   }
 }`;
@@ -128,6 +130,7 @@ export class TransformInterceptor implements NestInterceptor {
     call$: Observable<T>,
   ): Observable<Response<T>> {
     // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
     return call$.pipe(map(data => ({ data })));
   }
 }`;
@@ -148,6 +151,7 @@ export class TransformInterceptor {
 export class TransformInterceptor {
   intercept(context, call$) {
     // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
     return call$.pipe(map(data => ({ data })));
   }
 }`;

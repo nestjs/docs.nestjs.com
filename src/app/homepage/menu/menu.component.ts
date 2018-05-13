@@ -172,7 +172,7 @@ export class MenuComponent implements OnInit {
       path: '/support',
     },
     {
-      title: 'V4',
+      title: 'Version 4',
       isOpened: false,
       externalUrl: 'https://docs.nestjs.com/v4/',
     },

@@ -14,8 +14,7 @@ $ npm i --save fastify fastify-formbody`;
 
   get bootstrap() {
     return `
-import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter } from '@nestjs/core/adapters';
+import { NestFactory, FastifyAdapter } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
 
 async function bootstrap() {

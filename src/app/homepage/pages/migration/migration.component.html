@@ -1,15 +1,16 @@
 <div class="content">
   <h3>Migration guide</h3>
   <p>
-    This article provides a set of <strong>guidelines</strong> to migrate from v4 to latest v5 version.
+    This article provides a set of <strong>guidelines</strong> to migrate from 4 to latest 5 version.
     During the development, we spent a lot of time trying to avoid any breaking changes.
     Nevertheless, the API had to change in a bunch of places in order to simplify its usage.
-    Also, the previous version has been limited due to decisions that have been made.
+    Also, the previous version has been limited due to decisions that have been made at the very early stage.
+    Now, we are less opinionated and even more powerful than before. 
   </p>
   <h4>Modules</h4>
   <p>
-    In order to decrease number of differences between Nest and <a href="https://angular.io/" target="blank">Angular</a>,
-    few changes have been made in terms of <code>@Module()</code> decorator.
+    In order to decrease the number of differences between Nest and <a href="https://angular.io/" target="blank">Angular</a>,
+    few changes have been made regarding <code>@Module()</code> decorator.
   </p>
   <ul>
     <li><code>modules</code> property is now deprecated. Use <code>imports</code> instead</li>
@@ -34,9 +35,10 @@
   <p>
     But the <strong>recommended</strong> approach is to make use of pipes, guards or interceptors instead.
   </p>
-  <h4>Consumer</h4>
+  <h4>Middleware interfaces</h4>
   <p>
     The <code>MiddlewaresConsumer</code> class has been changed to <code>MiddlewareConsumer</code>.
+    Also, the <code>ExpressMiddleware</code> no longer exists, use <code>MiddlewareFunction</code> interface instead.
   </p>
   <h4>Filters</h4>
   <p>
@@ -71,6 +73,16 @@
   <pre [class.hide]="!interceptorsT.isJsActive"><code class="language-typescript">{{ interceptorsJs }}</code></pre>
   <h4>Custom decorators</h4>
   <p>
-    The <code>createRouteParamDecorator()</code> function is deprecated now. Use <code>createParamDecorator()</code> now.
+    The <code>createRouteParamDecorator()</code> function is deprecated. Use <code>createParamDecorator()</code> now.
+  </p>
+  <h4>Node.js</h4>
+  <p>
+    We follow the Node.js release schedule which recently moved to <code>8.x</code> as an active <strong>LTS</strong> version. 
+    Therefore, Nest 5 supports >= <code>8.9.0</code> as the lowest version now.
+    This shift gaves us sustainable performance boosts thanks to the <code>es2017</code> target of the TypeScript compilation.
+  </p>
+  <h4>External libraries</h4>
+  <p>
+    Nest 5 doesn't support <a href="https://github.com/ReactiveX/rxjs">rxjs</a> < 6.0.0. Keep in mind to upgrade this package as well.
   </p>
 </div>
