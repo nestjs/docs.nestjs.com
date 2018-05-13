@@ -218,7 +218,7 @@ import { PipeTransform, Injectable, ArgumentMetadata, HttpStatus, BadRequestExce
 
 @Injectable()
 export class ParseIntPipe implements PipeTransform<string, number> {
-  async transform(value: string, metadata: ArgumentMetadata): number {
+  transform(value: string, metadata: ArgumentMetadata): number {
     const val = parseInt(value, 10);
     if (isNaN(val)) {
       throw new BadRequestException('Validation failed');
@@ -234,7 +234,7 @@ import { Injectable, BadRequestException} from '@nestjs/common';
 
 @Injectable()
 export class ParseIntPipe {
-  async transform(value, metadata) {
+  transform(value, metadata) {
     const val = parseInt(value, 10);
     if (isNaN(val)) {
       throw new BadRequestException('Validation failed');
