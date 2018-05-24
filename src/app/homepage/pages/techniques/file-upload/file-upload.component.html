@@ -4,6 +4,12 @@
     In order to handle file uploading, Nest makes use of <a href="https://github.com/expressjs/multer" target="blank">multer</a> middleware.
     This middleware is fully configurable and you can adjust its behavior to your application requirements.
   </p>
+  <p>
+    Multer is middleware for handling <code>multipart/form-data</code>, which is primarily used for uploading files.
+  </p>
+  <blockquote class="info">
+    <strong>Hint</strong> Multer will not process any form which is not multipart (<code>multipart/form-data</code>).
+  </blockquote>
   <h4>Basic example</h4>
   <p>
     When we want to upload a single file, we simply tie <code>FileInterceptor()</code> to the handler, and then, pull outs <code>file</code> from the <code>request</code> using <code>@UploadedFile()</code> decorator.
@@ -33,4 +39,4 @@
   <blockquote class="info">
     <strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@UploadedFiles()</code> decorator are exposed from <code>@nestjs/common</code> package.
   </blockquote>
-</div> 
+</div>
