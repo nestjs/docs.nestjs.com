@@ -127,4 +127,13 @@ async create(@Body() createCatDto: CreateCatDto) {
 @Controller('cats')
 export class CatsController {}`;
   }
+
+  get fileUpload() {
+    return `
+@UseInterceptors(FileInterceptor('file'))
+@ApiConsumes('multipart/form-data')
+@ApiImplicitFile({name: 'file', required: true, description: 'file containing cats list'})
+uploadFile(@UploadedFile() file) {
+}`;
+  }
 }

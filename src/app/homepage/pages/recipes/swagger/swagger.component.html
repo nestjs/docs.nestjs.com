@@ -2,7 +2,7 @@
     <h3>OpenAPI (Swagger)</h3>
     <h5>This chapter applies only to TypeScript</h5>
     <p>
-      The <a href="https://swagger.io/specification/" target="blank">OpenAPI</a> (Swagger) specification is a powerful definition format to describe RESTful APIs. 
+      The <a href="https://swagger.io/specification/" target="blank">OpenAPI</a> (Swagger) specification is a powerful definition format to describe RESTful APIs.
       Nest provides a dedicated <a href="https://github.com/nestjs/swagger" target="blank">module</a> to work with it.
     </p>
     <h4>Installation</h4>
@@ -103,6 +103,12 @@ $ npm run start</code></pre>
       That's how the OpenAPI documentation should look like now:
     </p>
     <figure><img src="/assets/swagger-auth.gif" /></figure>
+
+    <h4>File upload</h4>
+    <p>You can enable file upload for a specific method with the <code>@ApiImplicitFile</code> decorator, combined with <code>@ApiConsumes</code>. Here's a full example using <a routerLink="/techniques/file-upload">File Upload</a> technique:</p>
+
+    <pre><code class="language-typescript">{{ fileUpload }}</code></pre>
+
     <h4>Decorators</h4>
     <p>
       All of the available OpenAPI decorators has an <code>Api</code> prefix to be clearly distinguishable from the core decorators.
@@ -147,6 +153,10 @@ $ npm run start</code></pre>
       </tr>
       <tr>
         <td><code>@ApiImplicitHeader()</code></td>
+        <td>Method</td>
+      </tr>
+      <tr>
+        <td><code>@ApiImplicitFile()</code></td>
         <td>Method</td>
       </tr>
       <tr>
