@@ -6,7 +6,7 @@
    <figure><img src="/assets/Guards_1.png" /></figure>
    <p>
      The guards have a <strong>single responsibility</strong>. They determine whether a request shall be handled by the route handler or not.
-     Until now, the access restriction logic was mostly inside the <a routerLink="/middlewares">middlewares</a>.
+     Until now, the access restriction logic was mostly inside the <a routerLink="/middleware">middleware</a>.
      It's still fine since things such as token validation or attaching properties to the <code>request</code> object are not strongly connected with a particular routes.
    </p>
    <p>
@@ -27,10 +27,6 @@
     </span>
     <pre [class.hide]="authGuardT.isJsActive"><code class="language-typescript">{{ authGuard }}</code></pre>
     <pre [class.hide]="!authGuardT.isJsActive"><code class="language-typescript">{{ authGuardJs }}</code></pre>
-    <blockquote>
-      <strong>Warning</strong> Keep in mind that when returned value is equal to <code>false</code>, Nest <strong>won't call</strong> anything else, including interceptors.
-      If you want to return an error response to the end-user, you should throw an exception.
-    </blockquote>
     <p>
       Regardless of the logic that sits behind <code>validateRequest()</code> function, the main point is to show how simple is to take advantage of guards.
       Every guard provides a <code>canActivate()</code> function. The guard might return its boolean answer either synchronously or asynchronously via a (<code>Promise</code> or <code>Observable</code>).
@@ -186,9 +182,12 @@
   <pre [class.hide]="controllerMetadataT.isJsActive"><code class="language-typescript">{{ controllerMetadata }}</code></pre>
   <pre [class.hide]="!controllerMetadataT.isJsActive"><code class="language-typescript">{{ controllerMetadataJs }}</code></pre>
   <p>
-    When a user tries to call the <code>/cats</code> POST endpoint without enough privileges, Nest won't handle it, and the request will be left <strong>hanging</strong>.
-    In fact, the guard which returns <code>false</code> entirely stops the request processing process. Keep in mind that Nest won't call anything else, including interceptors.
-    If you want to return an error response to the end-user, you should throw an exception.
+    When a user tries to call the <code>/cats</code> POST endpoint without enough privileges, Nest will automatically return response below:
+  </p>
+  <pre><code class="language-typescript">{{ forbidden }}</code></pre>
+  <p>
+    In fact, the guard which returns <code>false</code> throws <code>HttpException</code>.
+    If you want to return a different error response to the end-user, you should throw an exception.
     Afterward, this exception can be caught by the <a routerLink="/exception-filters">exception filter</a>.
   </p>
 </div>

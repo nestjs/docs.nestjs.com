@@ -73,6 +73,7 @@ import { MigrationComponent } from './homepage/pages/migration/migration.compone
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
+import { SupportComponent } from './homepage/pages/support/support.component';
 
 const routes: Routes = [
   {
@@ -108,9 +109,9 @@ const routes: Routes = [
         data: { title: 'Modules' },
       },
       {
-        path: 'middlewares',
+        path: 'middleware',
         component: MiddlewaresComponent,
-        data: { title: 'Middlewares' },
+        data: { title: 'Middleware' },
       },
       {
         path: 'pipes',
@@ -434,6 +435,11 @@ const routes: Routes = [
         data: { title: 'Migration guide - FAQ' },
       },
       {
+        path: 'support',
+        component: SupportComponent,
+        data: { title: 'Support' },
+      },
+      {
         path: 'cli/overview',
         component: CliOverviewComponent,
         data: {
@@ -446,7 +452,7 @@ const routes: Routes = [
         data: {
           title: 'Usage - CLI'
         }
-      }
+      },
     ],
   },
   {

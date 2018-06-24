@@ -6,4 +6,13 @@ import { BasePageComponent } from '../../page/page.component';
   templateUrl: './pipes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MicroservicesPipesComponent extends BasePageComponent {}
+export class MicroservicesPipesComponent extends BasePageComponent {
+  get example() {
+    return `
+@UsePipes(new ValidationPipe())
+@MessagePattern({ cmd: 'sum' })
+sum(data: number[]): number {
+  return (data || []).reduce((a, b) => a + b);
+}`;
+  }
+}

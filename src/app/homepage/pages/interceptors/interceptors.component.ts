@@ -10,7 +10,7 @@ export class InterceptorsComponent extends BasePageComponent {
   get loggingInterceptor() {
     return `
 import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class LoggingInterceptor implements NestInterceptor {
   get loggingInterceptorJs() {
     return `
 import { Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Injectable()
@@ -85,7 +85,7 @@ export class ApplicationModule {}`;
   get transformInterceptor() {
     return `
 import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface Response<T> {
@@ -120,7 +120,7 @@ export class TransformInterceptor {
   get nullTransformInterceptor() {
     return `
 import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
@@ -157,7 +157,7 @@ export class ExcludeNullInterceptor {
   get cacheInterceptor() {
     return `
 import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { of } from 'rxjs/observable/of';
 
 @Injectable()
@@ -201,7 +201,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { _throw } from 'rxjs/observable/throw';
 
@@ -278,7 +278,7 @@ export interface ExecutionContext extends ArgumentsHost {
   get timeoutInterceptor() {
     return `
 import { Injectable, NestInterceptor, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 
 @Injectable()

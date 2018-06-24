@@ -4,7 +4,7 @@
     The controllers are responsible for handling incoming <strong>requests</strong> and returning a <strong>response</strong> to the client.</p>
   <figure><img src="/assets/Controllers_1.png" /></figure>
   <p>
-    In order to create a basic controller we have to use <strong>decorators</strong>.
+    In order to create a basic controller we are using <strong>decorators</strong>.
     Thanks to them Nest knows how to map controllers to the corresponding routes.
   </p>
   <span class="filename">
@@ -22,7 +22,7 @@
   </p>
   <p>
     When a GET request is made to this endpoint, Nest will return a 200 status code and the parsed <strong>JSON</strong>, in this case just an empty array.
-    How is that possible? We distinguish <strong>two different approaches</strong> to manipulate the response:
+    How is that possible? Generally, we distinguish <strong>two different approaches</strong> to manipulate the response:
   </p>
   <table>
     <tr>
@@ -45,7 +45,7 @@
     </tr>
   </table>
   <blockquote>
-    <strong>Warning</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route and will no longer work as expected.
+    <strong>Warning</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler is using either <code>@Res()</code> or <code>@Next()</code>, if that's the case - the standard way is disabled for this single route and will no longer work as expected.
   </blockquote>
   <h4>Request object</h4>
   <p>
@@ -100,9 +100,9 @@
     </tr>
     </tbody>
   </table>
-  <h4>More endpoints</h4>
+  <h4>Defining endpoints</h4>
   <p>
-    We defined an endpoint to fetch the data (<strong>GET</strong> route). It would be great to provide a way of creating the new records as well.
+    We defined an endpoint to fetch the data (<strong>GET</strong> route). That would be great to provide a way of creating the new records as well.
     Let's create the <strong>POST</strong> handler:
   </p>
   <span class="filename">
@@ -114,7 +114,7 @@
     It's really easy. Nest provides the rest of those endpoints decorators in the same fashion -
     <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>, and <code>@All()</code>.
   </p>
-  <h4>Status code manipulation</h4>
+  <h4>Status code</h4>
   <p>
     As mentioned, the response <strong>status code</strong> is always 200 by default, except POST requests, when it's <strong>201</strong>.
     We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.
@@ -124,15 +124,24 @@
     <app-tabs #statusCodeT></app-tabs>
   </span>
   <pre><code class="language-typescript">{{ statusCode }}</code></pre>
+  <h4>Response headers</h4>
+  <p>
+    To specify a custom response header, you can either use a <code>@Header()</code> decorator or a library-specific request object.
+  </p>
+  <pre><code class="language-typescript">{{ header }}</code></pre>
   <h4>Route parameters</h4>
   <p>
     Routes with static paths can't help when you need to accept <strong>dynamic data</strong> as part of the URL.
     In order to define routes with parameters, simply specify the route parameters in the path of the route as shown below.
   </p>
   <pre><code class="language-typescript">{{ routeParameters }}</code></pre>
+  <p>
+    In order to pick up a particular parameter, simply pass its name in parenthesis.
+  </p>
+  <pre><code class="language-typescript">{{ routeParameter }}</code></pre>
   <h4>Async / await</h4>
   <p>
-    We love modern JavaScript, and we know that the data extraction is mostly <strong>asynchronous</strong>.
+    We love modern JavaScript and we know that the data extraction is mostly <strong>asynchronous</strong>.
     That's why Nest supports <code>async</code> functions and works pretty well with them.
   </p>
   <blockquote class="info">
@@ -182,7 +191,7 @@
     Let's create the <code>CreateCatDto</code>:
   </p>
   <span class="filename">
-    {{ 'dto/create-cat.dto' | extension: createCatSchemaT.isJsActive }}
+    {{ 'create-cat.dto' | extension: createCatSchemaT.isJsActive }}
     <app-tabs #createCatSchemaT></app-tabs>
   </span>
   <pre><code class="language-typescript">{{ createCatSchema }}</code></pre>
@@ -199,6 +208,16 @@
   </span>
   <pre [class.hide]="exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBody }}</code></pre>
   <pre [class.hide]="!exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBodyJs }}</code></pre>
+  <h4>Full sample</h4>
+  <p>
+    Here is an example that makes use of few available decorators to create a basic controller that exposes a couple of methods to play with the internal data.
+  </p>
+  <span class="filename">
+    {{ 'cats.controller' | extension: fullSampleT.isJsActive }}
+    <app-tabs #fullSampleT></app-tabs>
+  </span>
+  <pre [class.hide]="fullSampleT.isJsActive"><code class="language-typescript">{{ fullSample }}</code></pre>
+  <pre [class.hide]="!fullSampleT.isJsActive"><code class="language-typescript">{{ fullSample }}</code></pre>
   <h4>Handling errors</h4>
   <p>
     There's a separate chapter about working with the exceptions <a routerLink="/exception-filters">here</a>.

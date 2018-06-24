@@ -6,4 +6,14 @@ import { BasePageComponent } from '../../page/page.component';
   templateUrl: './pipes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WsPipesComponent extends BasePageComponent {}
+export class WsPipesComponent extends BasePageComponent {
+  get example() {
+    return `
+@UsePipes(new ValidationPipe())
+@SubscribeMessage('events')
+onEvent(client, data: any): WsResponse<any> {
+  const event = 'events';
+  return { event, data };
+}`;
+  }
+}

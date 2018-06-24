@@ -141,17 +141,22 @@
   <h4>Class validator</h4>
   <h5>This section applies only to TypeScript.</h5>
   <p>
-    Nest works well with the
-    <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>, this amazing library allows you to use decorator-based validation. Decorator based validation is
+    Nest works well with the 
+    <a href="https://github.com/pleerock/class-validator" target="blank">class-validator</a>. This amazing library allows you to use decorator-based validation. Decorator based validation is
     really powerful with the
     <strong>pipe</strong> capabilities since we have access to the
-    <code>metatype</code> of the processed property. Let's add a few decorators to the
-    <code>CreateCatDto</code>.
+    <code>metatype</code> of the processed property. However, before we start, we need to install required packages: 
+  </p>
+  <pre><code class="language-bash">
+$ npm i --save class-validator class-transformer</code></pre>
+  <p>
+    Once the libraries are installed, we can add a few decorators to the
+    <code>CreateCatDto</code> class.
   </p>
   <span class="filename">create-cat.dto.ts</span>
   <pre><code class="language-typescript">{{ createCatDtoValidation }}</code></pre>
   <p>
-    Once it's done, we can create a
+    When it's done, we can create a
     <code>ValidationPipe</code> class.
   </p>
   <span class="filename">validation.pipe.ts</span>
@@ -266,7 +271,7 @@
   <pre [class.hide]="!userBindParamT.isJsActive"><code class="language-typescript">{{ userBindParamJs }}</code></pre>
    <h4>A built-in ValidationPipe</h4>
     <p>
-      Fortunately, you don't have to build those pipes on your own since the <code>ValidationPipe</code> and the <code>ParseIntPipe</code> are built-in pipes.
+      Fortunately, you don't have to build those pipes on your own since the <code>ValidationPipe</code> and the <code>ParseIntPipe</code> are built-in pipes (keep in mind that <code>ValidationPipe</code> requires both <code>class-validator</code> and <code>class-transformer</code> packages installed).
     </p>
     <p>
       The built-in <code>ValidationPipe</code> offers more options than that one described in this chapter, which has been kept basic for the sake of simplicity and to reduce the learning curve.

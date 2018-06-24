@@ -9,7 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class QuickStartComponent extends BasePageComponent {
   get middleware() {
     return `
-import { Module, MiddlewaresConsumer, NestModule } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule } from '@nestjs/graphql';
 
@@ -17,7 +17,7 @@ import { GraphQLModule } from '@nestjs/graphql';
   imports: [GraphQLModule],
 })
 export class ApplicationModule implements NestModule {
-  configure(consumer: MiddlewaresConsumer) {
+  configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
       .forRoutes('/graphql');
@@ -45,7 +45,7 @@ export class ApplicationModule {
 
   get createSchema() {
     return `
-import { Module, MiddlewaresConsumer, NestModule } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 
@@ -55,7 +55,7 @@ import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 export class ApplicationModule implements NestModule {
   constructor(private readonly graphQLFactory: GraphQLFactory) {}
 
-  configure(consumer: MiddlewaresConsumer) {
+  configure(consumer: MiddlewareConsumer) {
     const typeDefs = this.graphQLFactory.mergeTypesByPaths('./**/*.graphql');
     const schema = this.graphQLFactory.createSchema({ typeDefs });
 

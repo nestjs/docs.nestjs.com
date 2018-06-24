@@ -82,9 +82,8 @@ export class AppController {
 
   get mainFastify() {
     return `
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, FastifyAdapter } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
-import { FastifyAdapter } from '@nestjs/core/adapters/fastify-adapter';
 import { join } from 'path';
 
 async function bootstrap() {

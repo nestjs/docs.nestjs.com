@@ -1,5 +1,5 @@
 <div class="content">
-  <h3>Middlewares</h3>
+  <h3>Middleware</h3>
   <p>
     The middleware is a function which is called <strong>before</strong> the route handler.
     Middleware functions have access to the <a href="http://expressjs.com/en/4x/api.html#req" target="blank">request</a>
@@ -8,7 +8,7 @@
   </p>
   <figure><img src="/assets/Middlewares_1.png" /></figure>
   <p>
-    The Nest middlewares, by default, are equal to <a href="http://expressjs.com/en/guide/using-middleware.html" target="blank">express</a> middlewares. Here's a great list of the middleware capabilities copied from the official express documentation:
+    The Nest middleware, by default, are equal to <a href="http://expressjs.com/en/guide/using-middleware.html" target="blank">express</a> middleware. Here's a great list of the middleware capabilities copied from the official express documentation:
   </p>
   <blockquote class="external">
     Middleware functions can perform the following tasks:
@@ -35,13 +35,13 @@
   </p>
   <h4>Dependency injection</h4>
   <p>
-    There's no exception when it comes to the middlewares. Same as providers and controllers, they are able to <strong>inject dependencies</strong> that belongs to the same module (through the <code>constructor</code>).
+    There's no exception when it comes to the middleware. Same as providers and controllers, they are able to <strong>inject dependencies</strong> that belongs to the same module (through the <code>constructor</code>).
   </p>
   <h4>How to apply a middleware?</h4>
   <p>
-    There's no place for middlewares in the <code>@Module()</code> decorator.
+    There's no place for middleware in the <code>@Module()</code> decorator.
     We have to set them up using the <code>configure()</code> method of the module class.
-    Modules that include middlewares have to implement the <code>NestModule</code> interface.
+    Modules that include middleware have to implement the <code>NestModule</code> interface.
     Let's set up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
   </p>
   <span class="filename">
@@ -52,7 +52,7 @@
   <pre [class.hide]="!applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModuleJs }}</code></pre>
   <p>
     In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers that we have previously defined inside the <code>CatsController</code>.
-    The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middlewares. All of them can be simply <strong>chained</strong>.
+    The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All of them can be simply <strong>chained</strong>.
     Let's go over them.
   </p>
   <p>
@@ -66,9 +66,9 @@
   <pre [class.hide]="applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
   <pre [class.hide]="!applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllersJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> The <code>apply()</code> method can either take a single middleware, or an <strong>array of middlewares</strong>.
+    <strong>Hint</strong> The <code>apply()</code> method can either take a single middleware, or an <strong>array of middleware</strong>.
   </blockquote>
-  <h4>Pass arguments to the middleware</h4>
+  <h4>Configurable middleware</h4>
   <p>
     Sometimes the behaviour of the middleware depends on the custom values e.g. an array of user roles, options object, and so on.
     We can apply additional arguments to the <code>resolve()</code> using the <code>with()</code> method. See an example below:
@@ -92,7 +92,7 @@
   <p>
     In this case, the value of the <code>name</code> property will be <code>'ApplicationModule'</code>.
   </p>
-  <h4>Asynchronous middlewares</h4>
+  <h4>Asynchronous middleware</h4>
   <p>
     There are no contraindications that would prevent us from returning the <code>async</code> function within the <code>resolve()</code> method.
     Also, it's possible to make the <code>resolve()</code> method <code>async</code> as well. This common pattern is called <strong>deffered middleware</strong>.
@@ -103,7 +103,7 @@
   </span>
   <pre [class.hide]="defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddleware }}</code></pre>
   <pre [class.hide]="!defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddlewareJs }}</code></pre>
-  <h4>Functional middlewares</h4>
+  <h4>Functional middleware</h4>
   <p>
     The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies.
     Why can't we just use a simple function? It's a good question, cause in fact - we can.
@@ -125,18 +125,18 @@
   <pre [class.hide]="applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
   <pre [class.hide]="!applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddlewareJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> Let's consider using <strong>functional middlewares</strong> every time when your middleware doesn't need any dependencies.
+    <strong>Hint</strong> Let's consider using <strong>functional middleware</strong> every time when your middleware doesn't need any dependencies.
   </blockquote>
-  <h4>Multiple middlewares</h4>
+  <h4>Multiple middleware</h4>
   <p>
-    As mentioned before, in order to bind multiple middlewares that are executed sequentially, we can separate them by a comma inside the <code>apply()</code> method.
+    As mentioned before, in order to bind multiple middleware that are executed sequentially, we can separate them by a comma inside the <code>apply()</code> method.
   </p>
   <span class="filename">
     <app-tabs #applyMultipleMiddlewaresT></app-tabs>
   </span>
   <pre [class.hide]="applyMultipleMiddlewaresT.isJsActive"><code class="language-typescript">{{ applyMultipleMiddlewares }}</code></pre>
   <pre [class.hide]="!applyMultipleMiddlewaresT.isJsActive"><code class="language-typescript">{{ applyMultipleMiddlewaresJs }}</code></pre>
-  <h4>Global middlewares</h4>
+  <h4>Global middleware</h4>
   <p>
     In order to tie a middleware to each registered route at once, we can take advantage of <code>use()</code> method that is supplied by the <code>INestApplication</code> instance:
   </p>

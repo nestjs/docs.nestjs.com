@@ -132,7 +132,7 @@ import * as passport from 'passport';
 import {
   Module,
   NestModule,
-  MiddlewaresConsumer,
+  MiddlewareConsumer,
   RequestMethod,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -144,7 +144,7 @@ import { AuthController } from './auth.controller';
   controllers: [AuthController],
 })
 export class AuthModule implements NestModule {
-  public configure(consumer: MiddlewaresConsumer) {
+  public configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(passport.authenticate('jwt', { session: false }))
       .forRoutes({ path: '/auth/authorized', method: RequestMethod.ALL });

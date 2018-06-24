@@ -6,4 +6,14 @@ import { BasePageComponent } from '../../page/page.component';
   templateUrl: './guards.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WsGuardsComponent extends BasePageComponent {}
+export class WsGuardsComponent extends BasePageComponent {
+  get example() {
+    return `
+@UseGuards(AuthGuard)
+@SubscribeMessage('events')
+onEvent(client, data: any): WsResponse<any> {
+  const event = 'events';
+  return { event, data };
+}`;
+  }
+}

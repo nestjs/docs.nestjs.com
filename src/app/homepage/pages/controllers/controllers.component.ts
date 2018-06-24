@@ -15,7 +15,7 @@ import { Controller, Get } from '@nestjs/common';
 export class CatsController {
   @Get()
   findAll() {
-    return [];
+    return 'This action returns all cats';
   }
 }`;
   }
@@ -28,7 +28,7 @@ import { Controller, Get, Req } from '@nestjs/common';
 export class CatsController {
   @Get()
   findAll(@Req() request) {
-    return [];
+    return 'This action returns all cats';
   }
 }`;
   }
@@ -42,7 +42,7 @@ export class CatsController {
   @Get()
   @Bind(Req())
   findAll(request) {
-    return [];
+    return 'This action returns all cats';
   }
 }`;
   }
@@ -55,12 +55,12 @@ import { Controller, Get, Post } from '@nestjs/common';
 export class CatsController {
   @Post()
   create() {
-    // TODO: Add some logic here
+    return 'This action adds a new cat';
   }
 
   @Get()
   findAll() {
-    return [];
+    return 'This action returns all cats';
   }
 }`;
   }
@@ -70,26 +70,33 @@ export class CatsController {
 @Get(':id')
 findOne(@Param() params) {
   console.log(params.id);
-  return {};
+  return \`This action returns a #\${params.id}\ cat\`;
+}`;
+  }
+
+  get routeParameter() {
+    return `
+@Get(':id')
+findOne(@Param('id') id) {
+  return \`This action returns a #\${id}\ cat\`;
 }`;
   }
 
   get statusCode() {
     return `
-import { Controller, Get, Post, HttpCode } from '@nestjs/common';
-
-@Controller('cats')
-export class CatsController {
-  @HttpCode(204)
-  @Post()
-  create() {
-    // TODO: Add some logic here
+@Post()
+@HttpCode(204)
+create() {
+  return 'This action adds a new cat';
+}`;
   }
 
-  @Get()
-  findAll() {
-    return [];
-  }
+  get header() {
+    return `
+@Post()
+@Header('Cache-Control', 'none')
+create() {
+  return 'This action adds a new cat';
 }`;
   }
 
@@ -113,7 +120,7 @@ async findAll() {
     return `
 @Get()
 findAll(): Observable<any[]> {
-  return Observable.of([]);
+  return of([]);
 }`;
   }
 
@@ -121,7 +128,7 @@ findAll(): Observable<any[]> {
     return `
 @Get()
 findAll() {
-  return Observable.of([]);
+  return of([]);
 }`;
   }
 
@@ -138,7 +145,7 @@ export class CreateCatDto {
     return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
-  // TODO: Add some logic here
+  return await this.catsService.create(createCatDto);
 }`;
   }
 
@@ -147,7 +154,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 @Post()
 @Bind(Body())
 async create(createCatDto) {
-// TODO: Add some logic here
+  return await this.catsService.create(createCatDto);
 }`;
   }
 
@@ -178,14 +185,12 @@ bootstrap();`;
 
   get expressWay() {
     return `
-import { Controller, Get, Post, Res, Body, HttpStatus } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
+import { Controller, Get, Post, Res, HttpStatus } from '@nestjs/common';
 
 @Controller('cats')
 export class CatsController {
   @Post()
-  create(@Res() res, @Body() createCatDto: CreateCatDto) {
-    // TODO: Add some logic here
+  create(@Res() res) {
     res.status(HttpStatus.CREATED).send();
   }
 
@@ -205,7 +210,6 @@ export class CatsController {
   @Post()
   @Bind(Res(), Body())
   create(res, createCatDto) {
-    // TODO: Add some logic here
     res.status(HttpStatus.CREATED).send();
   }
 
@@ -213,6 +217,39 @@ export class CatsController {
   @Bind(Res())
   findAll(res) {
      res.status(HttpStatus.OK).json([]);
+  }
+}`;
+  }
+
+  get fullSample() {
+    return `
+import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+
+@Controller('cats')
+export class CatsController {
+  @Post()
+  create(@Body() createCatDto) {
+    return 'This action adds a new cat';
+  }
+
+  @Get()
+  findAll() {
+    return 'This action returns all cats';
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id) {
+    return \`This action returns a #\${id}\ cat\`;
+  }
+
+  @Put(':id')
+  update(@Param('id') id, @Body() updateCatDto) {
+    return \`This action updates a #\${id}\ cat\`;
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id) {
+    return \`This action removes a #\${id}\ cat\`;
   }
 }`;
   }

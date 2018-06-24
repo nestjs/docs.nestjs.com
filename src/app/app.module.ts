@@ -86,6 +86,7 @@ import { MigrationComponent } from './homepage/pages/migration/migration.compone
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
+import { SupportComponent } from './homepage/pages/support/support.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -178,6 +179,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MqttComponent,
     GrpcComponent,
     NatsComponent,
+    SupportComponent,
   ],
   bootstrap: [
     AppComponent

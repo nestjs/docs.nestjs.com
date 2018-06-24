@@ -94,9 +94,24 @@ client: ClientProxy;`;
 @Get()
 call(): Observable<number> {
   const pattern = { cmd: 'sum' };
-  const data = [1, 2, 3, 4, 5];
+  const payload = [1, 2, 3];
+  return this.client.send<number>(pattern, payload);
+}`;
+  }
 
-  return this.client.send<number>(pattern, data);
+  get clientProxy() {
+    return `
+constructor() {
+  this.client = ClientProxyFactory.create({
+    transport: Transport.TCP
+  });
+}`;
+  }
+
+  get connect() {
+    return `
+async onModuleInit() {
+  await this.client.connect();
 }`;
   }
 
@@ -105,9 +120,8 @@ call(): Observable<number> {
 @Get()
 call() {
   const pattern = { cmd: 'sum' };
-  const data = [1, 2, 3, 4, 5];
-
-  return this.client.send(pattern, data);
+  const payload = [1, 2, 3];
+  return this.client.send(pattern, payload);
 }`;
   }
 }

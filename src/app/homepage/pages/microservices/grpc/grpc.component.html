@@ -53,7 +53,7 @@ $ npm i --save grpc</code></pre>
   <pre><code class="language-typescript">{{ heroProto }}</code></pre>
   <p>
     In the above example, we defined a <code>HeroService</code> that exposes a <code>FindOne()</code> gRPC handler which expects <code>HeroById</code> as an input and returns a <code>Hero</code> message.
-    In order to define a handler that fulfills this protobuf definition, we have to use a <code>@GrpcRoute()</code> decorator.
+    In order to define a handler that fulfills this protobuf definition, we have to use a <code>@GrpcMethod()</code> decorator.
     The previously known <code>@MessagePattern()</code> is no longer useful.
   </p>
   <span class="filename">
@@ -63,12 +63,32 @@ $ npm i --save grpc</code></pre>
   <pre [class.hide]="grpcHandlerT.isJsActive"><code class="language-typescript">{{ grpcHandler }}</code></pre>
   <pre [class.hide]="!grpcHandlerT.isJsActive"><code class="language-typescript">{{ grpcHandlerJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> The <code>@GrpcRoute()</code> decorator is imported from <code>@nestjs/microservices</code> package.
+    <strong>Hint</strong> The <code>@GrpcMethod()</code> decorator is imported from <code>@nestjs/microservices</code> package.
   </blockquote>
   <p>
     The <code>HeroService</code> is a service's name, while <code>FindOne</code> points to a <code>FindOne()</code> gRPC handler.
     The corresponding <code>findOne()</code> method takes two arguments, the <code>data</code> passed from the caller and <code>metadata</code> that stores gRPC request's metadata. 
   </p>
+  <p>
+    Furthermore, the <code>FindOne</code> is actually redundant here.
+    If you don't pass a second argument to the <code>@GrpcMethod()</code>, Nest will automatically use the method name with the capitalized first letter,
+    for example, <code>findOne</code> -> <code>FindOne</code>.
+  </p>
+  <span class="filename">
+    {{ 'hero.controller' | extension: grpcHandlerMethodT.isJsActive }}
+    <app-tabs #grpcHandlerMethodT></app-tabs>
+  </span>
+  <pre [class.hide]="grpcHandlerMethodT.isJsActive"><code class="language-typescript">{{ grpcHandlerMethod }}</code></pre>
+  <pre [class.hide]="!grpcHandlerMethodT.isJsActive"><code class="language-typescript">{{ grpcHandlerMethodJs }}</code></pre>
+  <p>
+    Likewise, you might not pass any argument. In this case, Nest would use a class name.
+  </p>
+  <span class="filename">
+    {{ 'hero.controller' | extension: grpcHandlerClassT.isJsActive }}
+    <app-tabs #grpcHandlerClassT></app-tabs>
+  </span>
+  <pre [class.hide]="grpcHandlerClassT.isJsActive"><code class="language-typescript">{{ grpcHandlerClass }}</code></pre>
+  <pre [class.hide]="!grpcHandlerClassT.isJsActive"><code class="language-typescript">{{ grpcHandlerClassJs }}</code></pre>
   <h4>Client</h4>
   <p>
     In order to create a client instance, we need to make use of <code>@Client()</code> decorator.

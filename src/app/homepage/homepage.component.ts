@@ -27,7 +27,9 @@ export class HomepageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.router.events.filter(e => e instanceof NavigationEnd).subscribe(() => {
-      this.previousWidth = window.innerWidth;
+      if (window.innerWidth > 768) {
+        return false;
+      }
       this.isSidebarOpened = false;
       this.cd.detectChanges();
     });

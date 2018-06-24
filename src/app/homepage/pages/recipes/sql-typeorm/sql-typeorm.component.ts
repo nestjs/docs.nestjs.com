@@ -11,7 +11,7 @@ export class SqlTypeormComponent extends BasePageComponent {
     return `
 $ npm install --save typeorm mysql`;
   }
-  
+
   get databaseProviders() {
     return `
 import { createConnection } from 'typeorm';
@@ -29,7 +29,7 @@ export const databaseProviders = [
       entities: [
           __dirname + '/../**/*.entity{.ts,.js}',
       ],
-      autoSchemaSync: true,
+      synchronize: true,
     }),
   },
 ];`;

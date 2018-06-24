@@ -1,11 +1,16 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  OnInit,
+} from '@angular/core';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent implements OnInit {
   @Input() isSidebarOpened = true;
@@ -13,7 +18,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Introduction',
       isOpened: false,
-      path: '/'
+      path: '/',
     },
     {
       title: 'Overview',
@@ -23,24 +28,33 @@ export class MenuComponent implements OnInit {
         { title: 'Controllers', path: '/controllers' },
         { title: 'Providers', path: '/providers' },
         { title: 'Modules', path: '/modules' },
-        { title: 'Middlewares', path: '/middlewares' },
+        { title: 'Middleware', path: '/middleware' },
         { title: 'Exception filters', path: '/exception-filters' },
         { title: 'Pipes', path: '/pipes' },
         { title: 'Guards', path: '/guards' },
         { title: 'Interceptors', path: '/interceptors' },
         { title: 'Custom decorators', path: '/custom-decorators' },
-      ]
+      ],
     },
     {
       title: 'Fundamentals',
       isOpened: false,
       children: [
         { title: 'Custom providers', path: '/fundamentals/custom-providers' },
-        { title: 'Asynchronous providers', path: '/fundamentals/async-providers' },
-        { title: 'Circular dependency', path: '/fundamentals/circular-dependency' },
-        { title: 'Platform agnosticism', path: '/fundamentals/platform-agnosticism' },
+        {
+          title: 'Asynchronous providers',
+          path: '/fundamentals/async-providers',
+        },
+        {
+          title: 'Circular dependency',
+          path: '/fundamentals/circular-dependency',
+        },
+        {
+          title: 'Platform agnosticism',
+          path: '/fundamentals/platform-agnosticism',
+        },
         { title: 'Testing', path: '/fundamentals/unit-testing' },
-      ]
+      ],
     },
     {
       title: 'Techniques',
@@ -57,7 +71,7 @@ export class MenuComponent implements OnInit {
         { title: 'Model-View-Controller', path: '/techniques/mvc' },
         { title: 'Performance (Fastify)', path: '/techniques/performance' },
         { title: 'Hot reload (Webpack)', path: '/techniques/hot-reload' },
-      ]
+      ],
     },
     {
       title: 'GraphQL',
@@ -68,10 +82,13 @@ export class MenuComponent implements OnInit {
         { title: 'Mutations', path: '/graphql/mutations' },
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
-        { title: 'Guards & interceptors', path: '/graphql/guards-interceptors' },
+        {
+          title: 'Guards & interceptors',
+          path: '/graphql/guards-interceptors',
+        },
         { title: 'Schema stitching', path: '/graphql/schema-stitching' },
         { title: 'IDE', path: '/graphql/ide' },
-      ]
+      ],
     },
     {
       title: 'WebSockets',
@@ -83,7 +100,7 @@ export class MenuComponent implements OnInit {
         { title: 'Guards', path: '/websockets/guards' },
         { title: 'Interceptors', path: '/websockets/interceptors' },
         { title: 'Adapters', path: '/websockets/adapter' },
-      ]
+      ],
     },
     {
       title: 'Microservices',
@@ -94,11 +111,14 @@ export class MenuComponent implements OnInit {
         { title: 'MQTT', path: '/microservices/mqtt' },
         { title: 'NATS', path: '/microservices/nats' },
         { title: 'gRPC', path: '/microservices/grpc' },
-        { title: 'Exception filters', path: '/microservices/exception-filters' },
+        {
+          title: 'Exception filters',
+          path: '/microservices/exception-filters',
+        },
         { title: 'Pipes', path: '/microservices/pipes' },
         { title: 'Guards', path: '/microservices/guards' },
         { title: 'Interceptors', path: '/microservices/interceptors' },
-      ]
+      ],
     },
     {
       title: 'Execution context',
@@ -122,8 +142,8 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Overview', path: '/cli/overview' },
-        { title: 'Usage', path: '/cli/usages' }
-      ]
+        { title: 'Usage', path: '/cli/usages' },
+      ],
     },
     {
       title: 'FAQ',
@@ -134,8 +154,12 @@ export class MenuComponent implements OnInit {
         { title: 'Lifecycle events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
-        { title: 'Examples', externalUrl: 'https://github.com/kamilmysliwiec/nest/tree/master/sample' },
-      ]
+        {
+          title: 'Examples',
+          externalUrl:
+            'https://github.com/kamilmysliwiec/nest/tree/master/sample',
+        },
+      ],
     },
     {
       title: 'Migration guide',
@@ -145,22 +169,35 @@ export class MenuComponent implements OnInit {
     {
       title: 'Support me',
       isOpened: false,
-      externalUrl: 'https://opencollective.com/nest',
+      path: '/support',
     },
     {
-      title: 'V4',
+      title: 'Version 4',
       isOpened: false,
       externalUrl: 'https://docs.nestjs.com/v4/',
     },
   ];
 
-  constructor(private readonly route: ActivatedRoute) {}
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+  ) {}
 
   ngOnInit() {
+    this.router.events
+      .filter((event) => event instanceof NavigationEnd)
+      .subscribe((event) => this.toggleCategory());
+
+    this.toggleCategory();
+  }
+
+  toggleCategory() {
     const { firstChild } = this.route.snapshot;
     if (firstChild.url && firstChild.url[1]) {
       const { path } = firstChild.url[0];
-      const index = this.items.findIndex(({ title }) => title.toLowerCase() === path);
+      const index = this.items.findIndex(
+        ({ title }) => title.toLowerCase() === path,
+      );
       if (index < 0) {
         return;
       }
