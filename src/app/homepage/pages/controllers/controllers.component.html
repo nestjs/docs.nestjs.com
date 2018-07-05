@@ -1,11 +1,11 @@
 <div class="content">
   <h3>Controllers</h3>
   <p>
-    The controllers are responsible for handling incoming <strong>requests</strong> and returning a <strong>response</strong> to the client.</p>
+    The controllers are responsible for handling incoming <strong>requests</strong> and returning <strong>responses</strong> to the client.</p>
   <figure><img src="/assets/Controllers_1.png" /></figure>
   <p>
-    In order to create a basic controller we are using <strong>decorators</strong>.
-    Thanks to them Nest knows how to map controllers to the corresponding routes.
+    In order to create a basic controller we use <strong>decorators</strong>.
+    They associate classes with the essential metadata, therefore Nest knows how to map controllers to the corresponding routes.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: catsControllerT.isJsActive }}
@@ -163,7 +163,7 @@
   <p>
     Furthermore, Nest route handlers are even more powerful. They can return RxJS
     <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="blank">observable streams</a>.
-    It makes the migration between a simple web application and the Nest microservice much easier.
+    Nest will automatically subscribe to the source underneath and take the first emitted value.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: observableExampleT.isJsActive }}
@@ -252,7 +252,7 @@
   <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
   <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
   <p>
-    This manner is much less clear in general. I definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
-    with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you have full control of the response object.
+    This manner is much less clear in general. You should definitely prefer the first approach, but to make the Nest <strong>backward compatible</strong>
+    with the previous versions, this method is still available. Also, the <strong>response object</strong> gives more flexibility - you have full control of the response object (headers manipulation and so on).
   </p>
 </div>

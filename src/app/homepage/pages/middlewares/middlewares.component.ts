@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -49,7 +49,7 @@ export class ApplicationModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
-      .forRoutes('/cats');
+      .forRoutes('cats');
   }
 }`;
   }
@@ -67,7 +67,43 @@ export class ApplicationModule {
   configure(consumer) {
     consumer
       .apply(LoggerMiddleware)
-      .forRoutes('/cats');
+      .forRoutes('cats');
+  }
+}`;
+  }
+
+  get routeInfo() {
+    return `
+import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+
+@Module({
+  imports: [CatsModule],
+})
+export class ApplicationModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'cats', method: RequestMethod.GET });
+  }
+}`;
+  }
+
+  get routeInfoJs() {
+    return `
+import { Module, RequestMethod } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+
+@Module({
+  imports: [CatsModule],
+})
+export class ApplicationModule {
+  configure(consumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'cats', method: RequestMethod.GET });
   }
 }`;
   }
@@ -82,7 +118,7 @@ import { CatsModule } from './cats/cats.module';
   imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
+  configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
       .forRoutes(CatsController);
@@ -108,6 +144,50 @@ export class ApplicationModule {
 }`;
   }
 
+  get applicationModuleExclude() {
+    return `
+import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+
+@Module({
+  imports: [CatsModule],
+})
+export class ApplicationModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude(
+        { path: 'cats', method: RequestMethod.GET },
+        { path: 'cats', method: RequestMethod.POST },
+      )
+      .forRoutes(CatsController);
+  }
+}`;
+  }
+
+  get applicationModuleExcludeJs() {
+    return `
+import { Module, RequestMethod } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+
+@Module({
+  imports: [CatsModule],
+})
+export class ApplicationModule {
+  configure(consumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude(
+        { path: 'cats', method: RequestMethod.GET },
+        { path: 'cats', method: RequestMethod.POST },
+      )
+      .forRoutes(CatsController);
+  }
+}`;
+  }
+
   get applicationModuleWithMethod() {
     return `
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
@@ -119,7 +199,7 @@ import { CatsController } from './cats/cats.controller';
   imports: [CatsModule],
 })
 export class ApplicationModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): void {
+  configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
       .with('ApplicationModule')

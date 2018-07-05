@@ -21,20 +21,6 @@
     The <code>@Component()</code>, <code>@Middleware()</code>, <code>@Interceptor()</code>, <code>@Pipe()</code>, and <code>@Guard()</code> are deprecated now.
     Use <code>@Injectable()</code> instead.
   </p>
-  <h4>Middleware</h4>
-  <p>
-    We no longer fully support a <strong>traditional</strong> express middleware model, 
-    meaning, each middleware is now solely bounded to a <strong>path</strong>, regardless of the request method. 
-    Also, there'll be no more error middleware. This change helps us finding a middle-ground between portability and express compatibility.
-  </p>
-  <pre><code class="language-typescript">{{ middlewares }}</code></pre>
-  <p>
-    However, if you still have to tie a middleware into a particular request method, you can use express instance <strong>directly</strong>.
-  </p>
-  <pre><code class="language-typescript">{{ expressMiddleware }}</code></pre>
-  <p>
-    But the <strong>recommended</strong> approach is to make use of pipes, guards or interceptors instead.
-  </p>
   <h4>Middleware interfaces</h4>
   <p>
     The <code>MiddlewaresConsumer</code> class has been changed to <code>MiddlewareConsumer</code>.

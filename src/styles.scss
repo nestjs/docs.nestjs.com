@@ -9,7 +9,7 @@ body {
   font-weight: 400;
   // letter-spacing: 0.2px;
   font-family: 'Lato', 'Helvetica Neue', sans-serif;
-  background-color: #fbfbfb;
+  background-color: #fdfdfd;
   color: $grey-color;
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -175,8 +175,9 @@ tr td {
 
   .item {
     display: block;
-    line-height: 34px;
-    color: #6d6d6d;
+    line-height: 32px;
+    font-size: 15px;
+    color: #5a5a5a;
   }
 
   .children {

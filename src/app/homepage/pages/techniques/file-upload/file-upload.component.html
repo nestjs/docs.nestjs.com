@@ -6,9 +6,11 @@
   </p>
   <p>
     Multer is middleware for handling <code>multipart/form-data</code>, which is primarily used for uploading files.
+
   </p>
-  <blockquote class="info">
-    <strong>Hint</strong> Multer will not process any form which is not multipart (<code>multipart/form-data</code>).
+  <blockquote class="warning">
+    <strong>Warning</strong> Multer will not process any form which is not multipart (<code>multipart/form-data</code>).
+    Besides, this package won't work with the <code>FastifyAdapter</code>.
   </blockquote>
   <h4>Basic example</h4>
   <p>
@@ -26,9 +28,9 @@
     The <code>FileInterceptor()</code> takes two arguments, a <code>fieldName</code> (points to field from HTML form that holds a file)
     and optional <code>options</code> object. These <code>MulterOptions</code> are equivalent to those passed into multer constructor (more details <a href="https://github.com/expressjs/multer#multeropts" target="blank">here</a>)
   </p>
-  <h4>Multiple files</h4>
+  <h4>Array of files</h4>
   <p>
-    In order to upload multiple files at once, we use <code>FilesInterceptor()</code>. This interceptor takes three arguments. A <code>fieldName</code> (that remains the same), <code>maxCount</code> which is a maximum number of files that can be uploaded at the same time, and optional <code>MulterOptions</code> object.
+    In order to upload an array of files, we use <code>FilesInterceptor()</code>. This interceptor takes three arguments. A <code>fieldName</code> (that remains the same), <code>maxCount</code> which is a maximum number of files that can be uploaded at the same time, and optional <code>MulterOptions</code> object.
     Additionally, to pick files from <code>request</code> object, we use <code>@UploadedFiles()</code> decorator
   </p>
   <span class="filename">
@@ -39,4 +41,13 @@
   <blockquote class="info">
     <strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@UploadedFiles()</code> decorator are exposed from <code>@nestjs/common</code> package.
   </blockquote>
+  <h4>Multiple files</h4>
+  <p>
+    To upload multiple fields (all with different keys), we use <code>FileFieldsInterceptor()</code> decorator.
+  </p>
+  <span class="filename">
+    <app-tabs #fileFieldsT></app-tabs>
+  </span>
+  <pre [class.hide]="fileFieldsT.isJsActive"><code class="language-typescript">{{ fileFields }}</code></pre>
+  <pre [class.hide]="!fileFieldsT.isJsActive"><code class="language-typescript">{{ fileFieldsJS }}</code></pre>
 </div>

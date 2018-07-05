@@ -311,6 +311,16 @@ $ npm i --save class-validator class-transformer</code></pre>
         <td>If set to true, instead of stripping non-whitelisted properties validator will throw an exception.</td>
       </tr>
       <tr>
+        <td><code>forbidUnknownValues</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, the validation of unknown objects would fail immediately.</td>
+      </tr>
+      <tr>
+        <td><code>disableErrorMessages</code></td>
+        <td><code>boolean</code></td>
+        <td>If set to true, the validation errors would not be forwarded to the client.</td>
+      </tr>
+      <tr>
         <td><code>groups</code></td>
         <td><code>string[]</code></td>
         <td>Groups to be used during validation of the object.</td>

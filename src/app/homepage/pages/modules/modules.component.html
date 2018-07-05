@@ -136,7 +136,7 @@
       Afterward, the <code>CatsService</code> provider will be ubiquitous, although <code>CatsModule</code> won't be imported.
     </p>
     <blockquote class="info">
-      <strong>Hint</strong> Making everything global is not a good solution. The global modules are available to reduce the amount of necessary boilerplate. The <code>imports</code> array is still the best way to make the module API transparent.
+      <strong>Hint</strong> Making everything global is not a good choice. The global modules are available to reduce the amount of necessary boilerplate. The <code>imports</code> array is still the best way to make the module API transparent.
     </blockquote>
     <h4>Dynamic modules</h4>
     <p>
@@ -149,6 +149,9 @@
     </span>
     <pre [class.hide]="dynamicModulesT.isJsActive"><code class="language-typescript">{{ dynamicModules }}</code></pre>
     <pre [class.hide]="!dynamicModulesT.isJsActive"><code class="language-typescript">{{ dynamicModulesJs }}</code></pre>
+    <blockquote class="info">
+      <strong>Hint</strong> The <code>forRoot()</code> may return dynamic module either synchronously or asynchronously (<code>Promise</code>).
+    </blockquote>
     <p>
       This module defines the <code>Connection</code> provider by default, but additionally - depending on the passed <code>options</code> and <code>entities</code> - it exposes a collection of the providers, for example, repositories.
       In fact, the dynamic module <strong>extends</strong> the base module metadata.
