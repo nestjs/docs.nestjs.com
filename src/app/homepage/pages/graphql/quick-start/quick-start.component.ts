@@ -16,7 +16,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 @Module({
   imports: [GraphQLModule],
 })
-export class ApplicationModule implements NestModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
@@ -34,7 +34,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 @Module({
   imports: [GraphQLModule],
 })
-export class ApplicationModule {
+export class AppModule {
   configure(consumer) {
     consumer
       .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
@@ -52,7 +52,7 @@ import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 @Module({
   imports: [GraphQLModule],
 })
-export class ApplicationModule implements NestModule {
+export class AppModule implements NestModule {
   constructor(private readonly graphQLFactory: GraphQLFactory) {}
 
   configure(consumer: MiddlewareConsumer) {
@@ -76,7 +76,7 @@ import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
 @Module({
   imports: [GraphQLModule],
 })
-export class ApplicationModule {
+export class AppModule {
   constructor(graphQLFactory) {
     this.graphQLFactory = graphQLFactory;
   }
