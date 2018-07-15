@@ -17,6 +17,7 @@
 
   &.opened {
     @include transform(translateX(0));
+    overflow: auto;
   }
   @include media(large) { width: 300px; }
   @include media(normal) { 
