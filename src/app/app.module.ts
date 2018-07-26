@@ -85,6 +85,7 @@ import { ConfigurationComponent } from './homepage/pages/techniques/configuratio
 import { MigrationComponent } from './homepage/pages/migration/migration.component';
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
+import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 
@@ -178,6 +179,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MigrationComponent,
     MqttComponent,
     GrpcComponent,
+    RabbitMQComponent,
     NatsComponent,
     SupportComponent,
   ],

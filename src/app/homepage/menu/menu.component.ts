@@ -111,6 +111,7 @@ export class MenuComponent implements OnInit {
         { title: 'MQTT', path: '/microservices/mqtt' },
         { title: 'NATS', path: '/microservices/nats' },
         { title: 'gRPC', path: '/microservices/grpc' },
+        { title: 'RabbitMQ', path: '/microservices/rabbitmq' },
         {
           title: 'Exception filters',
           path: '/microservices/exception-filters',

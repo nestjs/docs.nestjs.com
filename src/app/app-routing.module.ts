@@ -73,6 +73,7 @@ import { MigrationComponent } from './homepage/pages/migration/migration.compone
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
+import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 
 const routes: Routes = [
@@ -280,6 +281,11 @@ const routes: Routes = [
         path: 'microservices/grpc',
         component: GrpcComponent,
         data: { title: 'gRPC - Microservices' },
+      },
+      {
+        path: 'microservices/rabbitmq',
+        component: RabbitMQComponent,
+        data: { title: 'RabbitMQ - Microservices' },
       },
       {
         path: 'microservices/pipes',
