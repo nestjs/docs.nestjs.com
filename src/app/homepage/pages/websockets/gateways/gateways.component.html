@@ -37,7 +37,7 @@ $ npm i --save @nestjs/websockets</code></pre>
   <pre [class.hide]="subscribeEventsT.isJsActive"><code class="language-typescript">{{ subscribeEvents }}</code></pre>
   <pre [class.hide]="!subscribeEventsT.isJsActive"><code class="language-typescript">{{ subscribeEventsJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> Both <code>WsResponse</code> interface and <code>@SubscribeMessage()</code> decorator are imported from <code>@nestjs/common</code> package.
+    <strong>Hint</strong> Both <code>WsResponse</code> interface and <code>@SubscribeMessage()</code> decorator are imported from <code>@nestjs/websockets</code> package.
   </blockquote>
   <p>
     The <code>onEvent()</code> function takes 2 arguments. First one is a library-specific <a href="https://socket.io/docs/server-api/#socket" target="blank">socket instance</a> and the second one is the data received from the client.
