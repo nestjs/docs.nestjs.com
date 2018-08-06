@@ -62,6 +62,7 @@ import { CliUsagesComponent } from './homepage/pages/cli/usages/usages.component
 import { PlatformAgnosticismComponent } from './homepage/pages/fundamentals/platform-agnosticism/platform-agnosticism.component';
 import { ScalarsComponent } from './homepage/pages/graphql/scalars/scalars.component';
 import { CorsComponent } from './homepage/pages/techniques/cors/cors.component';
+import { AngularComponent } from './homepage/pages/techniques/angular/angular.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
 import { LoggerComponent } from './homepage/pages/techniques/logger/logger.component';
@@ -324,6 +325,11 @@ const routes: Routes = [
       {
         path: 'recipes/passport',
         component: PassportComponent,
+      },
+      {
+        path: 'techniques/angular',
+        component: AngularComponent,
+        data: { title: 'Angular' },
       },
       {
         path: 'techniques/authentication',

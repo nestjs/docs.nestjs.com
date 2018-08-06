@@ -1,0 +1,19 @@
+<div class="content">
+  <h3>Angular</h3>
+  <p>
+    Serve <strong>Angular</strong> application with Nest.
+  </p>
+  <h4>Basic example</h4>
+  <p>
+    Serving Angular is possible via catching <code>NotFoundException</code> and serve Angular <code>dist/index.html</code> on non existed routes:
+  </p>
+  <pre><code class="language-typescript">{{ notFoundExceptionFilter }}</code></pre>
+  <h4>Global filter</h4>
+  <p>
+    Then, we need to register global filter in <code>main.ts</code>:
+  </p>
+  <pre><code class="language-typescript">{{ mainTs }}</code></pre>
+  <p>
+    If a request to the server hits a non existed route, the <code>NotFoundException</code> fired, then <code>NotFoundExceptionFilter</code> catch the NotFoundException and serve <code>dist/index.html</code>
+  </p>
+</div>

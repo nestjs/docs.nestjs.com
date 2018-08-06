@@ -74,6 +74,7 @@ import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.componen
 import { CliModule } from './homepage/pages/cli/cli.module';
 import { PlatformAgnosticismComponent } from './homepage/pages/fundamentals/platform-agnosticism/platform-agnosticism.component';
 import { ScalarsComponent } from './homepage/pages/graphql/scalars/scalars.component';
+import { AngularComponent } from './homepage/pages/techniques/angular/angular.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { CorsComponent } from './homepage/pages/techniques/cors/cors.component';
 import { LoggerComponent } from './homepage/pages/techniques/logger/logger.component';
@@ -167,6 +168,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MongoComponent,
     PlatformAgnosticismComponent,
     ScalarsComponent,
+    AngularComponent,
     AuthenticationComponent,
     CorsComponent,
     LoggerComponent,

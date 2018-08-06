@@ -60,6 +60,7 @@ export class MenuComponent implements OnInit {
       title: 'Techniques',
       isOpened: false,
       children: [
+        { title: 'Angular', path: '/techniques/angular' },
         { title: 'Authentication', path: '/techniques/authentication' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
