@@ -118,6 +118,74 @@ $ npm run start</code></pre>
       To define a custom HTTP response, we use <code>@ApiResponse()</code> decorator.
     </p>
     <pre><code class="language-typescript">{{ response }}</code></pre>
+    <p>
+      Same as common <strong>HTTP Exceptions</strong> defined in <a routerLink="/exception-filters"><strong>Exception Filters</strong></a>,
+      Nest also provides a set of usable <strong>API Responses</strong> that inherits from the core <code>@ApiResponse</code> decorator:
+    </p>
+    <ul>
+      <li>
+        <code>@ApiOkResponse()</code>
+      </li>
+      <li>
+        <code>@ApiCreatedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiBadRequestResponse()</code>
+      </li>
+      <li>
+        <code>@ApiUnauthorizedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiNotFoundResponse()</code>
+      </li>
+      <li>
+        <code>@ApiForbiddenResponse()</code>
+      </li>
+      <li>
+        <code>@ApiMethodNotAllowedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiNotAcceptableResponse()</code>
+      </li>
+      <li>
+        <code>@ApiRequestTimeoutResponse()</code>
+      </li>
+      <li>
+        <code>@ApiConflictResponse()</code>
+      </li>
+      <li>
+        <code>@ApiGoneResponse()</code>
+      </li>
+      <li>
+        <code>@ApiPayloadTooLargeResponse()</code>
+      </li>
+      <li>
+        <code>@ApiUnsupportedMediaTypeResponse()</code>
+      </li>
+      <li>
+        <code>@ApiUnprocessableEntityResponse()</code>
+      </li>
+      <li>
+        <code>@ApiInternalServerErrorResponse()</code>
+      </li>
+      <li>
+        <code>@ApiNotImplementedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiBadGatewayResponse()</code>
+      </li>
+      <li>
+        <code>@ApiServiceUnavailableResponse()</code>
+      </li>
+      <li>
+        <code>@ApiGatewayTimeoutResponse()</code>
+      </li>
+    </ul>
+    <p>
+      In addition to the available <strong>HTTP Exceptions</strong>, Nest provides short-hand decorators for:
+      <code>HttpStatus.OK</code>, <code>HttpStatus.CREATED</code> and <code>HttpStatus.METHOD_NOT_ALLOWED</code>
+    </p>
+    <pre><code class="language-typescript">{{ customResponse }}</code></pre>
     <h4>Authentication</h4>
     <p>
       You can enable the bearer authorization using <code>addBearerAuth()</code> method of the <code>DocumentBuilder</code> class.
