@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -10,13 +10,14 @@ export class MvcComponent extends BasePageComponent {
   get main() {
     return `
 import { NestFactory } from '@nestjs/core';
+import { join } from 'path';
 import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
-  app.useStaticAssets(__dirname + '/public');
-  app.setBaseViewsDir(__dirname + '/views');
+  app.useStaticAssets(join(__dirname + './../public'));
+  app.setBaseViewsDir(join(__dirname + './../views'));
   app.setViewEngine('hbs');
 
   await app.listen(3000);
@@ -89,14 +90,14 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule, new FastifyAdapter());
   app.useStaticAssets({
-    root: join(__dirname, 'public'),
+    root: join(__dirname, './../public'),
     prefix: '/public/',
   });
   app.setViewEngine({
     engine: {
       handlebars: require('handlebars'),
     },
-    templates: join(__dirname, 'views'),
+    templates: join(__dirname, './../views'),
   });
   await app.listen(3000);
 }

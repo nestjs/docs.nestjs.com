@@ -52,11 +52,17 @@
   <pre [class.hide]="!applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModuleJs }}</code></pre>
   <p>
     In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers that we have previously defined inside the <code>CatsController</code>.
-    The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All of them can be simply <strong>chained</strong>.
-    Let's go over them.
+    Besides, we may restrict a middleware to the particular request method.
   </p>
-  <p>
-    The <code>forRoutes()</code> can take a single string, multiple string, a controller class and even multiple controller classes.
+  <span class="filename">
+    {{ 'app.module' | extension: routeInfoT.isJsActive }}
+    <app-tabs #routeInfoT></app-tabs>
+  </span>
+  <pre [class.hide]="routeInfoT.isJsActive"><code class="language-typescript">{{ routeInfo }}</code></pre>
+  <pre [class.hide]="!routeInfoT.isJsActive"><code class="language-typescript">{{ routeInfoJs }}</code></pre>
+  <p> 
+    The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All of them can be simply <strong>chained</strong>.
+    The <code>forRoutes()</code> can take a single string, multiple strings, <code>RouteInfo</code> object, a controller class and even multiple controller classes.
     In most cases you'll probably just pass the <strong>controllers</strong> and separate them by a comma. Below is an example with a single controller:
   </p>
   <span class="filename">
@@ -66,12 +72,21 @@
   <pre [class.hide]="applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
   <pre [class.hide]="!applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllersJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> The <code>apply()</code> method can either take a single middleware, or an <strong>array of middleware</strong>.
+    <strong>Hint</strong> The <code>apply()</code> method may either take a single middleware, or an <strong>array of middleware</strong>.
   </blockquote>
+  <p>
+    Whilst class is used, quite often we might want to <strong>exclude</strong> certain routes. That is very intuitive due to the <code>exclude()</code> method.
+  </p>
+  <span class="filename">
+    {{ 'app.module' | extension: applicationModuleExcludeT.isJsActive }}
+    <app-tabs #applicationModuleExcludeT></app-tabs>
+  </span>
+  <pre [class.hide]="applicationModuleExcludeT.isJsActive"><code class="language-typescript">{{ applicationModuleExclude }}</code></pre>
+  <pre [class.hide]="!applicationModuleExcludeT.isJsActive"><code class="language-typescript">{{ applicationModuleExcludeJs }}</code></pre>
   <h4>Configurable middleware</h4>
   <p>
     Sometimes the behaviour of the middleware depends on the custom values e.g. an array of user roles, options object, and so on.
-    We can apply additional arguments to the <code>resolve()</code> using the <code>with()</code> method. See an example below:
+    We may apply additional arguments to the <code>resolve()</code> using the <code>with()</code> method. See an example below:
   </p>
   <span class="filename">
     {{ 'app.module' | extension: applicationModuleWithMethodT.isJsActive }}

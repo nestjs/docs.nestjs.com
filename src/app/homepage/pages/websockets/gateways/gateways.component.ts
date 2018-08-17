@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -46,7 +46,7 @@ onEvent(client, data) {
   get streaming() {
     return `
 @SubscribeMessage('events')
-onEvent(client, data: any: Observable<WsResponse<number>> {
+onEvent(client, data: any): Observable<WsResponse<number>> {
   const event = 'events';
   const response = [1, 2, 3];
 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -112,11 +112,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -135,11 +136,12 @@ export class HttpExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -157,11 +159,12 @@ export class AnyExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -179,11 +182,12 @@ export class AnyExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });

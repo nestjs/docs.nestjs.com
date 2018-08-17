@@ -121,7 +121,7 @@
       <code>UnsupportedMediaTypeException</code>
     </li>
     <li>
-      <code>UnprocessableException</code>
+      <code>UnprocessableEntityException</code>
     </li>
     <li>
       <code>InternalServerErrorException</code>
@@ -207,7 +207,7 @@
     We have used the
     <code>@UseFilters()</code> decorator here. Same as
     <code>@Catch()</code>, it takes an endless number of parameters. The instance of
-    <code>HttpExceptionFilter</code> has been created immedietely in-place. Another available way is to pass the class (not instance), leaving framework the instantiation
+    <code>HttpExceptionFilter</code> has been created immediately in-place. Another available way is to pass the class (not instance), leaving framework the instantiation
     responsibility and enabling
     <strong>dependency injection</strong>.
   </p>

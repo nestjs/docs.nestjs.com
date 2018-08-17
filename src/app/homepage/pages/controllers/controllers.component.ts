@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -233,8 +233,8 @@ export class CatsController {
   }
 
   @Get()
-  findAll() {
-    return 'This action returns all cats';
+  findAll(@Query() query) {
+    return \`This action returns all cats (limit: \${query.limit} items)\`;
   }
 
   @Get(':id')

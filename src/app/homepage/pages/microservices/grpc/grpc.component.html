@@ -6,7 +6,7 @@
   <h4>Installation</h4>
   <p>Before we start, we have to install required package:</p>
   <pre><code class="language-bash">
-$ npm i --save grpc</code></pre>
+$ npm i --save grpc @grpc/proto-loader</code></pre>
   <h4>Transporter</h4>
   <p>
     In order to switch to <strong>gRPC</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.
@@ -30,7 +30,11 @@ $ npm i --save grpc</code></pre>
     </tr>
     <tr>
       <td><code>protoPath</code></td>
-      <td>Absolute path to the <code>.proto</code> file</td>
+      <td>Absolute (or relative to the root dir) path to the <code>.proto</code> file</td>
+    </tr>
+    <tr>
+      <td><code>loader</code></td>
+      <td>@grpc/proto-loader options. They are well-described <a href="https://github.com/grpc/grpc-node/tree/master/packages/grpc-protobufjs#usage" target="blank">here</a>.</td>
     </tr>
     <tr>
       <td><code>package</code></td>

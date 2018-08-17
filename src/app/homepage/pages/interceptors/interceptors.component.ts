@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -20,7 +20,7 @@ export class LoggingInterceptor implements NestInterceptor {
     call$: Observable<any>,
   ): Observable<any> {
     console.log('Before...');
-  
+
     const now = Date.now();
     return call$.pipe(
       tap(() => console.log(\`After... \${Date.now() - now\}ms\`)),
@@ -201,9 +201,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { _throw } from 'rxjs/observable/throw';
 
 @Injectable()
 export class ErrorsInterceptor implements NestInterceptor {
@@ -213,7 +212,7 @@ export class ErrorsInterceptor implements NestInterceptor {
   ): Observable<any> {
     return call$.pipe(
       catchError(err =>
-        _throw(new HttpException('Message', HttpStatus.BAD_GATEWAY)),
+        throwError(new HttpException('Message', HttpStatus.BAD_GATEWAY)),
       ),
     );
   }
@@ -224,15 +223,15 @@ export class ErrorsInterceptor implements NestInterceptor {
     return `
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { HttpException } from '@nestjs/common';
+import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { _throw } from 'rxjs/observable/throw';
 
 @Injectable()
 export class ErrorsInterceptor {
   intercept(context, call$) {
     return call$.pipe(
       catchError(err =>
-        _throw(new HttpException('Message', HttpStatus.BAD_GATEWAY)),
+        throwError(new HttpException('Message', HttpStatus.BAD_GATEWAY)),
       ),
     );
   }
