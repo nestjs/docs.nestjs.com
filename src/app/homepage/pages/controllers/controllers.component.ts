@@ -145,7 +145,7 @@ export class CreateCatDto {
     return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
-  return await this.catsService.create(createCatDto);
+  return 'This action adds a new cat';
 }`;
   }
 
@@ -154,7 +154,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 @Post()
 @Bind(Body())
 async create(createCatDto) {
-  return await this.catsService.create(createCatDto);
+  return 'This action adds a new cat';
 }`;
   }
 

@@ -1,5 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -114,5 +113,17 @@ import { CatsService } from './cats/cats.service';
 })
 export class ApplicationModule {}
 `;
+  }
+
+  get optional() {
+    return `
+import { Injectable, Optional } from '@nestjs/common';
+
+@Injectable()
+export class HttpService {
+  constructor(
+    @Optional() @Inject('HTTP_OPTIONS') private readonly httpClient,
+  ) {}
+}`;
   }
 }

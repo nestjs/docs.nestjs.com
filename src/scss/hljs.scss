@@ -1,9 +1,8 @@
 .filename {
   margin: 0;
-  background: #1d1d1d;
-  border-bottom: 2px solid #232323;
+  background: #292929;
   color: #fff;
-  padding: 15px 30px;
+  padding: 12px 30px;
   margin: 35px 0 -35px;
   display: block;
   min-height: 25px;
@@ -36,7 +35,8 @@ pre[class*='language-'] {
   letter-spacing: normal;
   color: #f7f7f7;
   background: none;
-  font-family: Inconsolata, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: Inconsolata, Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono',
+    monospace;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
@@ -64,13 +64,13 @@ pre[class*='language-'] {
 pre[class*='language-'],
 :not(pre) > code[class*='language-'] {
   background: #1d1d1d;
-  box-shadow: 0 5px 20px rgba(6, 6, 6, 0.35);
+  // box-shadow: 0 5px 20px rgba(6, 6, 6, 0.35);
   border-radius: 6px;
 }
 
 /* Code blocks */
 pre[class*='language-'] {
-  padding: 4px 35px 30px;
+  padding: 0 30px 26px;
   margin: 35px 0;
   overflow: auto;
   border: 0;

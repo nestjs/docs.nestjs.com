@@ -1,5 +1,5 @@
-@import "../../../../scss/variables.scss";
-@import "../../../../scss/utils.scss";
+@import '../../../../scss/variables.scss';
+@import '../../../../scss/utils.scss';
 
 :host {
   position: relative;
@@ -12,15 +12,15 @@ h3 {
   font-weight: bold;
   color: $black-color;
   font-size: 16px;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   &:hover {
     color: $red-color;
   }
 }
 
-  .active h3 {
-    color: $red-color;
-  }
+.active h3 {
+  color: $red-color;
+}
 
 .arrow-icon {
   @extend .transition;
@@ -31,31 +31,35 @@ h3 {
   cursor: pointer;
 }
 
-  li {
-    display: block;
-    padding: 8px 0;
+li {
+  display: block;
+  padding: 6px 0;
 
-    a {
-      color: $black-color;
-      font-size: 16px;
-      text-decoration: none;
-      cursor: pointer;
-      &:hover {
-        color: $red-color;
-      }
-      &.active { font-weight: 600; }
+  a {
+    color: $black-color;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      color: $red-color;
     }
-
-    .pending {
-      color: #afafaf !important;
-      pointer-events: none;
+    &.active {
+      font-weight: 600;
     }
   }
+
+  .pending {
+    color: #afafaf !important;
+    pointer-events: none;
+  }
+}
 
 .nav-item {
   ul {
     display: none;
+    margin: 10px 0 15px;
   }
+
   &.opened {
     ul {
       display: block;

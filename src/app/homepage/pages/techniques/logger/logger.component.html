@@ -1,15 +1,16 @@
 <div class="content">
   <h3>Logger</h3>
   <p>
-    Nest comes with a default implementation of internal <code>Logger</code> that is used during the instantiation process and also, in several different situations, such as <strong>occurred exception</strong>, and so on.
-    But sometimes, you might want to disable logging entirely, or provide a custom implementation and handle messages on your own.
-    In order to turn off a logger, we use a Nest's options object.
+    Nest comes with a default implementation of internal <code>Logger</code> that is used during the instantiation process
+    and also, in several different situations, such as <strong>occurred exception</strong>, and so on. But sometimes, you
+    might want to disable logging entirely, or provide a custom implementation and handle messages on your own. In order
+    to turn off a logger, we use a Nest's options object.
   </p>
   <pre><code class="language-typescript">{{ logger }}</code></pre>
   <p>
-    Nevertheless, we could want to use a different logger under the hood, instead of disabling a whole logging mechanism.
-    In order to do that, we have to pass an object that fulfills <code>LoggerService</code> interface.
-    An example could be a built-in <code>console</code>.
+    Nevertheless, we could want to use a different logger under the hood, instead of disabling a whole logging mechanism. In
+    order to do that, we have to pass an object that fulfills <code>LoggerService</code> interface. An example could
+    be a built-in <code>console</code>.
   </p>
   <pre><code class="language-typescript">{{ console }}</code></pre>
   <p>
@@ -20,4 +21,27 @@
     Then, we can apply <code>MyLogger</code> instance directly:
   </p>
   <pre><code class="language-typescript">{{ useMyLogger }}</code></pre>
+  <h4>Extend built-in logger</h4>
+  <p>
+    Lot of use cases require creating your own logger. You don't have to entirely reinvent the wheel though. Simply extend built-in
+    <code>Logger</code> class to partially override the default implementation, and use <code>super</code> to delegate the
+    call to the parent class.
+  </p>
+  <pre><code class="language-typescript">{{ inheritance }}</code></pre>
+  <h4>Dependency injection</h4>
+  <p>
+    If you want to enable dependency injection in your logger, you have to make the <code>MyLogger</code> class a part of
+    the real application. For instance, you can create a <code>LoggerModule</code>.
+  </p>
+  <pre><code class="language-typescript">{{ loggerModule }}</code></pre>
+  <p>
+    Once <code>LoggerModule</code> is imported anywhere, the framework will take charge of creating an instance of your logger.
+    Now, to use the same instance of a logger across the whole app, including bootstraping and error handling stuff, use
+    following construction:
+  </p>
+  <pre><code class="language-typescript">{{ useLoggerDi }}</code></pre>
+  <p>
+    The only downside of this solution is that your first initialization messages won't be handled by your logger instance, though,
+    it shouldn't really matter at this point.
+  </p>
 </div>

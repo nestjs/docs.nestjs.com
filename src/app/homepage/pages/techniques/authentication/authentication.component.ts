@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class AuthenticationComponent extends BasePageComponent {
   get dependencies() {
     return `
-$ npm install --save @nestjs/passport passport passport-jwt passport-http-bearer jsonwebtoken`;
+$ npm install --save @nestjs/passport passport passport-http-bearer`;
   }
 
   get authService() {
@@ -92,7 +92,7 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
   }
 }`;
   }
-  
+
   get jwtStrategy() {
     return `
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -196,18 +196,21 @@ findAll() {
 
   get authServiceJwt() {
     return `
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async createToken() {
+  async createToken(): string {
     const user: JwtPayload = { email: 'user@email.com' };
-    return jwt.sign(user, 'secretKey', { expiresIn: 3600 });
+    return this.jwtService.sign(user);
   }
 
   async validateUser(payload: JwtPayload): Promise<any> {
@@ -218,21 +221,22 @@ export class AuthService {
 
   get authServiceJwtJs() {
     return `
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 import { Injectable, Dependencies } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
-@Dependencies(UsersService)
+@Dependencies(UsersService, JwtService)
 export class AuthService {
-  constructor(usersService) {
+  constructor(usersService, jwtService) {
     this.usersService = usersService;
+    this.jwtService = jwtService;
   }
 
   async createToken() {
     const user = { email: 'user@email.com' };
-    return jwt.sign(user, 'secretKey', { expiresIn: 3600 });
+    return this.jwtService.sign(user);
   }
 
   async validateUser(payload) {
@@ -244,12 +248,21 @@ export class AuthService {
   get authModuleJwt() {
     return `
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    JwtModule.register({
+      secretOrPrivateKey: 'secretKey',
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
+    UsersModule,
+  ],
   providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}`;
@@ -258,14 +271,28 @@ export class AuthModule {}`;
   get authModuleJwtJs() {
     return `
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    JwtModule.register({
+      secretOrPrivateKey: 'secretKey',
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
+    UsersModule,
+  ],
   providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}`;
+  }
+
+  get multipleStrategies() {
+    return `
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt')`;
   }
 }

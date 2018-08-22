@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-exception-filters',
   templateUrl: './exception-filters.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MicroservicesExceptionFiltersComponent extends BasePageComponent {
   get rpcException() {
@@ -27,7 +27,7 @@ import { Observable, throwError } from 'rxjs';
 import { RpcException } from '@nestjs/microservices';
 
 @Catch(RpcException)
-export class ExceptionFilter implements RpcExceptionFilter {
+export class ExceptionFilter implements RpcExceptionFilter<RpcException> {
   catch(exception: RpcException, host: ArgumentsHost): Observable<any> {
     return throwError(exception.getError());
   }
@@ -53,6 +53,32 @@ export class ExceptionFilter {
 @MessagePattern({ cmd: 'sum' })
 sum(data: number[]): number {
   return (data || []).reduce((a, b) => a + b);
+}`;
+  }
+
+  get inheritance() {
+    return `
+import { Catch, ArgumentsHost } from '@nestjs/common';
+import { BaseRpcExceptionFilter } from '@nestjs/microservices';
+
+@Catch()
+export class AllExceptionsFilter extends BaseRpcExceptionFilter {
+  catch(exception: any, host: ArgumentsHost) {
+    return super.catch(exception, host);
+  }
+}`;
+  }
+
+  get inheritanceJs() {
+    return `
+import { Catch } from '@nestjs/common';
+import { BaseRpcExceptionFilter } from '@nestjs/microservices';
+
+@Catch()
+export class AllExceptionsFilter extends BaseRpcExceptionFilter {
+  catch(exception, host) {
+    return super.catch(exception, host);
+  }
 }`;
   }
 }

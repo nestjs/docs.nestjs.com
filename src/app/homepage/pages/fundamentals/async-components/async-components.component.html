@@ -1,19 +1,23 @@
 <div class="content">
   <h3>Asynchronous providers</h3>
   <p>
-    When the application start has to be delayed until some <strong>asynchronous tasks</strong> will be finished, for example, until the connection with the database will be established, you should consider using asynchronous providers.
-    In order to create an <code>async</code> provider, we use the <code>useFactory</code>. The factory has to return a <code>Promise</code> (thus <code>async</code> functions fit as well).
+    When the application start has to be delayed until some <strong>asynchronous tasks</strong> will be finished, for example,
+    until the connection with the database will be established, you should consider using asynchronous providers. In order
+    to create an <code>async</code> provider, we use the <code>useFactory</code>. The factory has to return a <code>Promise</code>    (thus
+    <code>async</code> functions fit as well).
   </p>
   <pre><code class="language-typescript">{{ asyncComponent }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> Learn more about the custom providers syntax <a routerLink="/fundamentals/custom-providers">here</a>.
   </blockquote>
+  <h4>Injection</h4>
   <p>
-    The asynchronous providers can be simply injected to other components by their tokens (in the above case, by the <code>AsyncDbConnection</code> token).
-    Each class that depends on the asynchronous provider will be instantiated once the async provider is <strong>already resolved</strong>.
+    The asynchronous providers can be simply injected to other components by their tokens (in the above case, by the <code>AsyncDbConnection</code>    token).
+    Each class that depends on the asynchronous provider will be instantiated once the async provider is <strong>already
+      resolved</strong>.
   </p>
   <p>
-    The above example is for demonstration purposes. 
-    If you're looking for more detailed one, <a routerLink="/recipes/sql-typeorm">see here</a>.
+    The above example is for demonstration purposes. If you're looking for more detailed one, <a routerLink="/recipes/sql-typeorm">see
+      here</a>.
   </p>
 </div>

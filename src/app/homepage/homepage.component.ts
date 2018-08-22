@@ -1,13 +1,14 @@
 import {
-  Component,
-  ViewEncapsulation,
-  HostListener,
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  HostListener,
   OnInit,
+  ViewEncapsulation,
 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { BasePageComponent } from './pages/page/page.component';
 
 @Component({
   selector: 'app-homepage',
@@ -19,6 +20,8 @@ import { Router, NavigationEnd } from '@angular/router';
 export class HomepageComponent implements OnInit, AfterViewInit {
   isSidebarOpened = true;
   previousWidth: number;
+  contentRef: HTMLElement;
+  isMarkupReady: boolean;
 
   constructor(
     private readonly cd: ChangeDetectorRef,
@@ -55,5 +58,17 @@ export class HomepageComponent implements OnInit, AfterViewInit {
       this.isSidebarOpened = false;
       this.cd.detectChanges();
     }
+  }
+
+  onRouteActivate(component: BasePageComponent) {
+    if (!component) {
+      return;
+    }
+    const nativeElement = component.nativeElement;
+    if (!nativeElement) {
+      return;
+    }
+    this.contentRef = nativeElement.querySelector('.content');
+    this.cd.markForCheck();
   }
 }
