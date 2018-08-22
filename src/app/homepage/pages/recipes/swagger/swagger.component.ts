@@ -139,6 +139,16 @@ async create(@Body() createCatDto: CreateCatDto) {
 }`;
   }
 
+  get customResponse() {
+    return `
+@Post()
+@ApiCreatedResponse({ description: 'The record has been successfully created.'})
+@ApiForbiddenResponse({ description: 'Forbidden.'})
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}`;
+  }
+
   get bearerAuth() {
     return `
 @ApiUseTags('cats')

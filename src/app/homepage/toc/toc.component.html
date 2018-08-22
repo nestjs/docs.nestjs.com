@@ -1,0 +1,7 @@
+<div class="toc-wrapper" #tocWrapper>
+  <ul>
+    <li *ngFor="let item of headings; trackBy: trackById; let index = index" [attr.id]="item.id" [class.current]="index === activeId"
+      (click)="navigateToAnchor(item.elementRef)">
+      {{ item.textContent }}</li>
+  </ul>
+</div>

@@ -1,14 +1,17 @@
 <div class="content">
   <h3>Circular dependency</h3>
   <p>
-    The circular dependency occurs when for example, class A needs class B, and class B needs class A as well. 
-    Nest permits creating <strong>circular dependencies</strong> between both providers and modules, but we advise you to avoid whenever it's possible. Sometimes it's really difficult to avoid this kind of the relationships, that's why we have provided some ways to deal with this issue.
+    The circular dependency occurs when for example, class A needs class B, and class B needs class A as well. Nest permits creating
+    <strong>circular dependencies</strong> between both providers and modules, but we advise you to avoid whenever it's possible.
+    Sometimes it's really difficult to avoid this kind of the relationships, that's why we have provided some ways to deal
+    with this issue.
   </p>
   <h4>Forward reference</h4>
   <p>
-    The <strong>forward reference</strong> allows Nest referring to references which aren't defined so far.
-    When <code>CatsService</code> and <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and the <code>forwardRef()</code> utility, otherwise Nest won't instantiate them because all of the essential metadata won't be available.
-    Let's see the following snippet:
+    The <strong>forward reference</strong> allows Nest referring to references which aren't defined so far. When <code>CatsService</code>    and
+    <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and
+    the <code>forwardRef()</code> utility, otherwise Nest won't instantiate them because all of the essential metadata won't
+    be available. Let's see the following snippet:
   </p>
   <span class="filename">
     {{ 'cats.service' | extension: forwardRefT.isJsActive }}
@@ -18,7 +21,7 @@
   <pre [class.hide]="!forwardRefT.isJsActive"><code class="language-typescript">{{ forwardRefJs }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> The <code>forwardRef()</code> function is imported from the <code>@nestjs/common</code> package.
-  </blockquote> 
+  </blockquote>
   <p>
     Here's the first side of the relationship. Now let's do the same with the <code>CommonService</code>:
   </p>
@@ -30,9 +33,10 @@
   <pre [class.hide]="!forwardRefCommonT.isJsActive"><code class="language-typescript">{{ forwardRefCommonJs }}</code></pre>
   <blockquote class="warning">
     <strong>Warning</strong> You don't have a guarantee which constructor will be called first.
-  </blockquote> 
+  </blockquote>
   <p>
-    In order to create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on both parts of the modules association:
+    In order to create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on
+    both parts of the modules association:
   </p>
   <span class="filename">
     {{ 'common.module' | extension: forwardRefModuleT.isJsActive }}
@@ -51,8 +55,10 @@
   <pre [class.hide]="!moduleRefT.isJsActive"><code class="language-typescript">{{ moduleRefJs }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> The <code>ModuleRef</code> class is imported from the <code>@nestjs/core</code> package.
-  </blockquote> 
+  </blockquote>
   <p>
-    The module reference has a <code>get()</code> method which allows retrieving any component available in the current module.
+    The module reference has a <code>get()</code> method which allows retrieving a provider available in the current module.
+    Additionally, you can switch to a non-strict mode, which enables you to pick any existing provider across the whole app.
   </p>
+  <pre><code class="language-typescript">{{ nonStrictMode }}</code></pre>
 </div>

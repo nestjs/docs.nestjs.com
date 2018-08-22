@@ -1,20 +1,22 @@
 <div class="content">
-  <h3>Model-View-Controller (MVC)</h3>
+  <h3>Model-View-Controller</h3>
   <p>
-    Nest, by default, makes use of <a href="https://github.com/expressjs/express" target="blank">express</a> library under the hood. Hence, every tutorial about MVC (Model-View-Controller) pattern in express concerns Nest as well.
-    Firstly, let's scaffold a simple Nest application using <a href="https://github.com/nestjs/nest-cli" target="blank">CLI</a> tool:
+    Nest, by default, makes use of <a href="https://github.com/expressjs/express" target="blank">express</a> library under
+    the hood. Hence, every tutorial about MVC (Model-View-Controller) pattern in express concerns Nest as well. Firstly,
+    let's scaffold a simple Nest application using <a href="https://github.com/nestjs/nest-cli" target="blank">CLI</a> tool:
   </p>
-<pre><code class="language-bash">
+  <pre><code class="language-bash">
 $ npm i -g @nestjs/cli
 $ nest new project</code></pre>
   <p>
-    In order to create a MVC app, we have to install a <a href="http://expressjs.com/en/guide/using-template-engines.html" target="blank">template engine</a>:
+    In order to create a MVC app, we have to install a <a href="http://expressjs.com/en/guide/using-template-engines.html"
+      target="blank">template engine</a>:
   </p>
   <pre><code class="language-bash">
 $ npm install --save hbs</code></pre>
   <p>
-    We decided to use a <code>hbs</code> engine, though, you can use whatever fits your requirements.
-    Once the installation process is completed, we need to configure the express instance using following code:
+    We decided to use a <code>hbs</code> engine, though, you can use whatever fits your requirements. Once the installation
+    process is completed, we need to configure the express instance using following code:
   </p>
   <span class="filename">
     {{ 'main' | extension: mainT.isJsActive }}
@@ -22,12 +24,13 @@ $ npm install --save hbs</code></pre>
   </span>
   <pre><code class="language-typescript">{{ main }}</code></pre>
   <p>
-    We told <a href="https://github.com/expressjs/express" target="blank">express</a> that the <code>public</code> directory will be used for storing static assets,
+    We told <a href="https://github.com/expressjs/express" target="blank">express</a> that the <code>public</code> directory
+    will be used for storing static assets,
     <code>views</code> will contain templates, and a <code>hbs</code> template engine should be used to render an HTML output.
   </p>
   <p>
-    Now, let's create a <code>views</code> directory and <code>index.hbs</code> template inside it.
-    In the template, we are gonna print a <code>message</code> passed from the controller:
+    Now, let's create a <code>views</code> directory and <code>index.hbs</code> template inside it. In the template, we are
+    gonna print a <code>message</code> passed from the controller:
   </p>
   <span class="filename">index.hbs</span>
   <pre><code class="language-html">{{ index }}</code></pre>
@@ -41,25 +44,27 @@ $ npm install --save hbs</code></pre>
   <pre [class.hide]="rootT.isJsActive"><code class="language-typescript">{{ root }}</code></pre>
   <pre [class.hide]="!rootT.isJsActive"><code class="language-typescript">{{ rootJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> In fact, when Nest detects <code>@Res()</code> decorator, it injects library-specific <code>response</code> object. Learn more about its abilities <a href="http://expressjs.com/en/api.html" target="blank">here</a>.
+    <strong>Hint</strong> In fact, when Nest detects <code>@Res()</code> decorator, it injects library-specific <code>response</code>    object.
+    Learn more about its abilities <a href="http://expressjs.com/en/api.html" target="blank">here</a>.
   </blockquote>
   <p>
-    While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code> message.
+    While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see
+    the <code>Hello world!</code> message.
   </p>
   <p>
     A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/15-mvc">here</a>.
   </p>
   <h4>Fastify</h4>
   <p>
-    As mentioned in this <a routerLink="/techniques/http-performance">chapter</a>, we are able to use any compatible HTTP provider together with Nest.
-    One of them is a <a href="https://github.com/fastify/fastify" target="_blank">fastify</a> library.
-    In order to create a MVC application with fastify, we have to install following packages:
+    As mentioned in this <a routerLink="/techniques/http-performance">chapter</a>, we are able to use any compatible HTTP
+    provider together with Nest. One of them is a <a href="https://github.com/fastify/fastify" target="_blank">fastify</a>
+    library. In order to create a MVC application with fastify, we have to install following packages:
   </p>
-<pre><code class="language-bash">
+  <pre><code class="language-bash">
 $ npm i --save fastify point-of-view handlebars</code></pre>
   <p>
-    The next steps cover almost the same stuff as in case of express library (with small differences). 
-    Once the installation process is completed, we need to open <code>main.ts</code> file and update its contents:
+    The next steps cover almost the same stuff as in case of express library (with small differences). Once the installation
+    process is completed, we need to open <code>main.ts</code> file and update its contents:
   </p>
   <span class="filename">
     {{ 'main' | extension: mainT.isJsActive }}
@@ -67,8 +72,8 @@ $ npm i --save fastify point-of-view handlebars</code></pre>
   </span>
   <pre><code class="language-typescript">{{ mainFastify }}</code></pre>
   <p>
-    The API is different a little but the idea that sits behind those methods calls remains the same.
-    Also, we have to ensure that the template name passed into the <code>@Render()</code> decorators include a file extension.
+    The API is different a little but the idea that sits behind those methods calls remains the same. Also, we have to ensure
+    that the template name passed into the <code>@Render()</code> decorators include a file extension.
   </p>
   <span class="filename">
     {{ 'app.controller' | extension: rootFastifyT.isJsActive }}
@@ -76,7 +81,8 @@ $ npm i --save fastify point-of-view handlebars</code></pre>
   </span>
   <pre><code class="language-typescript">{{ rootFastify }}</code></pre>
   <p>
-    While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code> message.
+    While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see
+    the <code>Hello world!</code> message.
   </p>
   <p>
     A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/17-mvc-fastify">here</a>.

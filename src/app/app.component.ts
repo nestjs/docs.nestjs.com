@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -19,10 +18,7 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     this.router.events
       .filter(ev => ev instanceof NavigationEnd)
-      .subscribe(ev => {
-        window.scroll(0, 0);
-        this.updateTitle();
-      });
+      .subscribe(ev => this.updateTitle());
   }
 
   updateTitle() {

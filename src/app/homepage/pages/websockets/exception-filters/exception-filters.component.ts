@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-exception-filters',
   templateUrl: './exception-filters.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WsExceptionFiltersComponent extends BasePageComponent {
   get wsException() {
@@ -27,6 +27,32 @@ throw new WsException('Invalid credentials.');`;
 onEvent(client, data: any): WsResponse<any> {
   const event = 'events';
   return { event, data };
+}`;
+  }
+
+  get inheritance() {
+    return `
+import { Catch, ArgumentsHost } from '@nestjs/common';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
+
+@Catch()
+export class AllExceptionsFilter extends BaseWsExceptionFilter {
+  catch(exception: any, host: ArgumentsHost) {
+    super.catch(exception, host);
+  }
+}`;
+  }
+
+  get inheritanceJs() {
+    return `
+import { Catch } from '@nestjs/common';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
+
+@Catch()
+export class AllExceptionsFilter extends BaseWsExceptionFilter {
+  catch(exception, host) {
+    super.catch(exception, host);
+  }
 }`;
   }
 }

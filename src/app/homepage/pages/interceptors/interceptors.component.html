@@ -1,60 +1,71 @@
 <div class="content">
-   <h3>Interceptors</h3>
-   <p>
-     An interceptor is a class annotated with the <code>@Injectable()</code> decorator.
-     The interceptor should implement the <code>NestInterceptor</code> interface.
-   </p>
-   <figure><img src="/assets/Interceptors_1.png" /></figure>
-   <p>
-     Interceptors have a set of useful capabilities which are inspired by the <strong>Aspect-Oriented Programming</strong> (AOP) technique.
-     They make possible to:
-   </p>
-   <ul>
-     <li>bind <strong>extra logic</strong> before / after method execution</li>
-     <li><strong>transform</strong> the result returned from a function</li>
-     <li><strong>transform</strong> the exception thrown from a function</li>
-     <li>extend the basic function behaviour</li>
-     <li>completely <strong>override</strong> a function depending on the chosen conditions (e.g. caching purposes)</li>
-   </ul>
-   <h4>Basics</h4>
-   <p>
-     Each interceptor has the <code>intercept()</code> method that takes 2 arguments. The first one is the <code>ExecutionContext</code> instance (exactly the same object as for <a routerLink="/guards">guards</a>). 
-     The <code>ExecutionContext</code> inherits from <code>ArgumentsHost</code> (first mention <a routerLink="/exception-filters">here</a>).
-     The
-     <code>ArgumentsHost</code> is a wrapper around arguments that have been passed to the
-     <strong>original</strong> handler, and it contains different arguments array under the hood based on the type of the application. 
-   </p>
-   <pre><code class="language-typescript">{{ argumentsHost }}</code></pre>
+  <h3>Interceptors</h3>
+  <p>
+    An interceptor is a class annotated with the <code>@Injectable()</code> decorator. The interceptor should implement the
+    <code>NestInterceptor</code> interface.
+  </p>
+  <figure><img src="/assets/Interceptors_1.png" /></figure>
+  <p>
+    Interceptors have a set of useful capabilities which are inspired by the <strong>Aspect-Oriented Programming</strong>
+    (AOP) technique. They make possible to:
+  </p>
+  <ul>
+    <li>bind <strong>extra logic</strong> before / after method execution</li>
+    <li><strong>transform</strong> the result returned from a function</li>
+    <li><strong>transform</strong> the exception thrown from a function</li>
+    <li>extend the basic function behaviour</li>
+    <li>completely <strong>override</strong> a function depending on the chosen conditions (e.g. caching purposes)</li>
+  </ul>
+  <h4>Basics</h4>
+  <p>
+    Each interceptor has the <code>intercept()</code> method that takes 2 arguments. The first one is the <code>ExecutionContext</code>    instance
+    (exactly the same object as for <a routerLink="/guards">guards</a>). The <code>ExecutionContext</code> inherits from
+    <code>ArgumentsHost</code> (first mention <a routerLink="/exception-filters">here</a>). The
+    <code>ArgumentsHost</code> is a wrapper around arguments that have been passed to the
+    <strong>original</strong> handler, and it contains different arguments array under the hood based on the type of the
+    application.
+  </p>
+  <pre><code class="language-typescript">{{ argumentsHost }}</code></pre>
   <p>
     The
-    <code>ArgumentsHost</code> supplies us with a set of useful methods that helps to pick correct arguments from the underlying array. In other words,
+    <code>ArgumentsHost</code> supplies us with a set of useful methods that helps to pick correct arguments from the underlying
+    array. In other words,
     <code>ArgumentsHost</code> is nothing else than just an
     <strong>array of arguments</strong>. For example, when the guard is used within HTTP application context,
     <code>ArgumentsHost</code> will contain
-    <code>[request, response]</code> array inside. However, when current context is a web sockets application, this array will be equal to
-    <code>[client, data]</code>. This design decision enables you to access any argument that would be eventually passed to the corresponding
-    handler.
+    <code>[request, response]</code> array inside. However, when current context is a web sockets application, this array
+    will be equal to
+    <code>[client, data]</code>. This design decision enables you to access any argument that would be eventually passed
+    to the corresponding handler.
   </p>
   <p>
-    The <code>ExecutionContext</code> offers a little bit more. It extends <code>ArgumentsHost</code>, but also, provides more details about current execution process.
+    The <code>ExecutionContext</code> offers a little bit more. It extends <code>ArgumentsHost</code>, but also, provides
+    more details about current execution process.
   </p>
   <pre><code class="language-typescript">{{ executionContext }}</code></pre>
   <p>
-    The <code>getHandler()</code> returns a reference to the currently processed handler, while <code>getClass()</code> returns a type of the <code>Controller</code> class which this particular handler belongs to.
-    Using other words, if the user points to <code>create()</code> method that is defined and registered within <code>CatsController</code>,
-    the <code>getHandler()</code> will return a reference to the <code>create()</code> method and <code>getClass()</code> in this case, will simply return a <code>CatsController</code> <strong>type</strong> (not instance).
+    The <code>getHandler()</code> returns a reference to the currently processed handler, while <code>getClass()</code> returns
+    a type of the <code>Controller</code> class which this particular handler belongs to. Using other words, if the user
+    points to <code>create()</code> method that is defined and registered within <code>CatsController</code>, the <code>getHandler()</code>    will
+    return a reference to the <code>create()</code> method and <code>getClass()</code> in this case, will simply return a
+    <code>CatsController</code> <strong>type</strong> (not instance).
   </p>
   <p>
-     The second argument is a <code>call$</code>, an <code>Observable</code> stream. If you don't return this stream, the main handler won't be evaluated at all. What does it mean?
-     Basically, the <code>call$</code> is a stream that <strong>defers the final handler execution</strong>.
-     Let's say, someone made a POST <code>/cats</code> request. This request points to <code>create()</code> handler defined inside the <code>CatsController</code>.
-     If an interceptor which does not return a <code>call$</code> stream is called along the way, the <code>create()</code> method won't be evaluated.
-     Only when <code>call$</code> stream is returned, the final method will be triggered. Why? Because Nest <strong>subscribes</strong> to the returned stream and uses values that this stream produces to create either a single response or multiple responses for the end-user. Moreover, as mentioned a while ago, <code>call$</code> is an <code>Observable</code>, meaning, it supplies us with a set of very powerful operators that helps with, for example, response manipulation.
-   </p>
-   <h4>Before/after interception</h4>
-   <p>
-     The first use case is to use the interceptor to add extra logic either before or after the function execution. It's useful when we're gonna <strong>log interaction</strong> with the application, e.g. storing user calls, asynchronously dispatching events or calculating the timestamp.
-     As an example, let's create a simple <code>LoggingInterceptor</code>.
+    The second argument is a <code>call$</code>, an <code>Observable</code> stream. If you don't return this stream, the
+    main handler won't be evaluated at all. What does it mean? Basically, the <code>call$</code> is a stream that <strong>defers
+      the final handler execution</strong>. Let's say, someone made a POST <code>/cats</code> request. This request points
+    to <code>create()</code> handler defined inside the <code>CatsController</code>. If an interceptor which does not return
+    a <code>call$</code> stream is called along the way, the <code>create()</code> method won't be evaluated. Only when <code>call$</code>    stream
+    is returned, the final method will be triggered. Why? Because Nest <strong>subscribes</strong> to the returned stream
+    and uses values that this stream produces to create either a single response or multiple responses for the end-user.
+    Moreover, as mentioned a while ago, <code>call$</code> is an <code>Observable</code>, meaning, it supplies us with a
+    set of very powerful operators that helps with, for example, response manipulation.
+  </p>
+  <h4>Aspect interception</h4>
+  <p>
+    The first use case is to use the interceptor to add extra logic either before or after the function execution. It's useful
+    when we're gonna <strong>log interaction</strong> with the application, e.g. storing user calls, asynchronously dispatching
+    events or calculating the timestamp. As an example, let's create a simple <code>LoggingInterceptor</code>.
   </p>
   <span class="filename">
     {{ 'logging.interceptor' | extension: loggingInterceptorT.isJsActive }}
@@ -62,15 +73,26 @@
   </span>
   <pre [class.hide]="loggingInterceptorT.isJsActive"><code class="language-typescript">{{ loggingInterceptor }}</code></pre>
   <pre [class.hide]="!loggingInterceptorT.isJsActive"><code class="language-typescript">{{ loggingInterceptorJs }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong>
+    The <code>NestInterceptor&#60;T, R&#62;</code> is a generic interface in which <code>T</code> indicates a type of the
+    processed <code>Observable&#60;T&#62;</code> (behind the stream), while <code>R</code> the return type of the value wrapped
+    into returned <code>Observable&#60;R&#62;</code>.
+  </blockquote>
   <blockquote class="warning">
-      <strong>Notice</strong> Interceptors act the same as controllers, providers, guards, and so on, meaning, they can <strong>inject dependencies</strong> through the <code>constructor</code>.
-   </blockquote>
-   <p>
-     Since <code>call$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>, we have a lot of various operators which we can use to manipulate the stream. In the example above, We used the <code>tap()</code> operator that invokes the function upon graceful or exceptional termination of the observable sequence.
-   </p>
-   <p>
-     In order to set up the interceptor, we use the <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code> package.
-     Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped, method-scoped, and global-scoped as well.
+    <strong>Notice</strong> Interceptors act the same as controllers, providers, guards, and so on, meaning, they can <strong>inject
+      dependencies
+    </strong> through the <code>constructor</code>.
+  </blockquote>
+  <p>
+    Since <code>call$</code> is a <a href="https://github.com/reactivex/rxjs" target="blank">RxJS</a> <code>Observable</code>,
+    we have a lot of various operators which we can use to manipulate the stream. In the example above, We used the <code>tap()</code>    operator
+    that invokes the function upon graceful or exceptional termination of the observable sequence.
+  </p>
+  <p>
+    In order to set up the interceptor, we use the <code>@UseInterceptors()</code> decorator imported from the <code>@nestjs/common</code>    package.
+    Same as <a routerLink="/guards">guards</a>, interceptors can be controller-scoped, method-scoped, and global-scoped as
+    well.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: useLoggingInterceptorT.isJsActive }}
@@ -78,16 +100,16 @@
   </span>
   <pre><code class="language-typescript">{{ useLoggingInterceptor }}</code></pre>
   <blockquote class="info">
-      <strong>Hint</strong> The <code>@UseInterceptors()</code> decorator is imported from the <code>@nestjs/common</code> package.
-   </blockquote>
+    <strong>Hint</strong> The <code>@UseInterceptors()</code> decorator is imported from the <code>@nestjs/common</code>    package.
+  </blockquote>
   <p>
-    Thanks to that, each route handler defined in <code>CatsController</code> will use <code>LoggingInterceptor</code>.
-    When someone calls the GET <code>/cats</code> endpoint, you'll see a following output in your console window:
+    Thanks to that, each route handler defined in <code>CatsController</code> will use <code>LoggingInterceptor</code>. When
+    someone calls the GET <code>/cats</code> endpoint, you'll see a following output in your console window:
   </p>
   <pre><code class="language-typescript">{{ consoleOutput }}</code></pre>
   <p>
-    Note that we passed the <code>LoggingInterceptor</code> type instead of an instance, leaving framework the instantiation responsibility and enabling dependency injection.
-    Another available way is to pass the immediately created instance:
+    Note that we passed the <code>LoggingInterceptor</code> type instead of an instance, leaving framework the instantiation
+    responsibility and enabling dependency injection. Another available way is to pass the immediately created instance:
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: useLoggingInterceptorWithInstanceT.isJsActive }}
@@ -95,14 +117,16 @@
   </span>
   <pre><code class="language-typescript">{{ useLoggingInterceptorWithInstance }}</code></pre>
   <p>
-    As mentioned before, the construction above attaches the interceptor to every handler declared by this controller. If we decide to restrict only one of them, we just need to set up the interceptor at <strong>method level</strong>.
-    In order to bind the global interceptor, we use the <code>useGlobalInterceptors()</code> method of the Nest application instance:
+    As mentioned before, the construction above attaches the interceptor to every handler declared by this controller. If we
+    decide to restrict only one of them, we just need to set up the interceptor at <strong>method level</strong>. In
+    order to bind the global interceptor, we use the <code>useGlobalInterceptors()</code> method of the Nest application
+    instance:
   </p>
   <pre><code class="language-typescript">{{ globalInterceptors }}</code></pre>
   <p>
-    The global interceptors are used across the whole application, for every controller and every route handler. In terms of dependency
-    injection, global interceptors registered from the outside of any module (as in the previous example above) cannot inject
-    dependencies since they don't belong to any module. In order to solve this issue, you can set up a guard
+    The global interceptors are used across the whole application, for every controller and every route handler. In terms of
+    dependency injection, global interceptors registered from the outside of any module (as in the previous example above)
+    cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a guard
     <strong>directly from any module</strong> using following construction:
   </p>
   <span class="filename">
@@ -116,14 +140,16 @@
   </blockquote>
   <h4>Response mapping</h4>
   <p>
-    We already know that <code>call$</code> is an <code>Observable</code>.
-    This object contains the value <strong>returned</strong> from the route handler, and thus we can easily mutate it using the <code>map()</code> operator.
+    We already know that <code>call$</code> is an <code>Observable</code>. This object contains the value <strong>returned</strong>
+    from the route handler, and thus we can easily mutate it using the <code>map()</code> operator.
   </p>
   <blockquote>
-    <strong>Warning</strong> The response mapping feature doesn't work with the library-specific response strategy (using the <code>@Res()</code> object directly is forbidden).
+    <strong>Warning</strong> The response mapping feature doesn't work with the library-specific response strategy (using
+    the <code>@Res()</code> object directly is forbidden).
   </blockquote>
   <p>
-    Let's create the <code>TransformInterceptor</code> that will take each response and modify it by assigning to the <code>data</code> property of the newly created object.
+    Let's create the <code>TransformInterceptor</code> that will take each response and modify it by assigning to the <code>data</code>    property
+    of the newly created object.
   </p>
   <span class="filename">
     {{ 'transform.interceptor' | extension: transformInterceptorT.isJsActive }}
@@ -132,14 +158,19 @@
   <pre [class.hide]="transformInterceptorT.isJsActive"><code class="language-typescript">{{ transformInterceptor }}</code></pre>
   <pre [class.hide]="!transformInterceptorT.isJsActive"><code class="language-typescript">{{ transformInterceptorJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> Nest interceptors work like a charm with asynchronous <code>intercept()</code> methods, meaning, you can effortlessly switch your method to <code>async</code> if necessary.
+    <strong>Hint</strong> Nest interceptors work like a charm with asynchronous <code>intercept()</code> methods, meaning,
+    you can effortlessly switch your method to <code>async</code> if necessary.
   </blockquote>
   <p>
-    Afterward, when someone calls the GET <code>/cats</code> endpoint, the request would look like below (we assumed that route handler returns an empty array <code>[]</code>):
+    Afterward, when someone calls the GET <code>/cats</code> endpoint, the request would look like below (we assumed that
+    route handler returns an empty array <code>[]</code>):
   </p>
   <pre><code class="language-typescript">{{ dataResponse }}</code></pre>
   <p>
-    The interceptors have a huge potential when it comes to creating reusable solutions used in whole applications. For example, let's imagine that we need to transform each occurred <code>null</code> value to empty string <code>''</code>. We can do it using one line of code and bind interceptor as a global one. Thanks to that, it'll be automatically reused by each registered handler.
+    The interceptors have a huge potential when it comes to creating reusable solutions used in whole applications. For example,
+    let's imagine that we need to transform each occurred <code>null</code> value to empty string <code>''</code>. We
+    can do it using one line of code and bind interceptor as a global one. Thanks to that, it'll be automatically reused
+    by each registered handler.
   </p>
   <span class="filename">
     <app-tabs #nullTransformInterceptorT></app-tabs>
@@ -154,12 +185,14 @@
     {{ 'errors.interceptor' | extension: exceptionMappingT.isJsActive }}
     <app-tabs #exceptionMappingT></app-tabs>
   </span>
-   <pre [class.hide]="exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMapping }}</code></pre>
-   <pre [class.hide]="!exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMappingJs }}</code></pre>
+  <pre [class.hide]="exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMapping }}</code></pre>
+  <pre [class.hide]="!exceptionMappingT.isJsActive"><code class="language-typescript">{{ exceptionMappingJs }}</code></pre>
   <h4>Stream overriding</h4>
   <p>
-    There're several reasons why sometimes we might want to completely prevent calling the handler and return a different value instead (e.g. from cache due to performance issues).
-    An excellent example is a <strong>cache interceptor</strong> that would store the cached responses with some TTL. Unfortunately, this feature needs a bit more code and due to simplification, we'll provide only a basic example that should briefly explain the main concept.
+    There're several reasons why sometimes we might want to completely prevent calling the handler and return a different value
+    instead (e.g. from cache due to performance issues). An excellent example is a <strong>cache interceptor</strong>
+    that would store the cached responses with some TTL. Unfortunately, this feature needs a bit more code and due to simplification,
+    we'll provide only a basic example that should briefly explain the main concept.
   </p>
   <span class="filename">
     {{ 'cache.interceptor' | extension: cacheInterceptorT.isJsActive }}
@@ -168,15 +201,17 @@
   <pre [class.hide]="cacheInterceptorT.isJsActive"><code class="language-typescript">{{ cacheInterceptor }}</code></pre>
   <pre [class.hide]="!cacheInterceptorT.isJsActive"><code class="language-typescript">{{ cacheInterceptorJs }}</code></pre>
   <p>
-    Here's a <code>CacheInterceptor</code> with a hardcoded <code>isCached</code> variable and the hardcoded response <code>[]</code> as well.
-    We returned a new stream here, created through the <code>of</code> operator, therefore the route handler <strong>won't be called</strong> at all.
-    When someone calls endpoint that makes use of <code>CacheInterceptor</code>, the response (a hardcoded, empty array) will be returned immedietely.
-    In order to create a generic solution, you can take advantage of <code>Reflector</code> and create a custom decorator. The <code>Reflector</code> is well described in the <a routerLink="/guards">guards</a> chapter. 
+    Here's a <code>CacheInterceptor</code> with a hardcoded <code>isCached</code> variable and the hardcoded response <code>[]</code>    as
+    well. We returned a new stream here, created through the <code>of</code> operator, therefore the route handler <strong>won't
+      be called</strong> at all. When someone calls endpoint that makes use of <code>CacheInterceptor</code>, the response
+    (a hardcoded, empty array) will be returned immedietely. In order to create a generic solution, you can take advantage
+    of <code>Reflector</code> and create a custom decorator. The <code>Reflector</code> is well described in the <a routerLink="/guards">guards</a>
+    chapter.
   </p>
   <p>
-    The possibility of returning the stream gives us many possibilities.
-    Let's think about another common use-case. Imagine you would like to handle <strong>timeouts</strong>. 
-    When your endpoint doesn't return anything after a period of time, we want to respond with an error response.
+    The possibility of returning the stream gives us many possibilities. Let's think about another common use-case. Imagine you
+    would like to handle <strong>timeouts</strong>. When your endpoint doesn't return anything after a period of time,
+    we want to respond with an error response.
   </p>
   <span class="filename">
     {{ 'timeout.interceptor' | extension: timeoutInterceptorT.isJsActive }}

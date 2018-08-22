@@ -8,7 +8,7 @@ body {
   font-size: 16px;
   font-weight: 400;
   // letter-spacing: 0.2px;
-  font-family: 'Lato', 'Helvetica Neue', sans-serif;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
   background-color: #fdfdfd;
   color: $grey-color;
   margin: 0;
@@ -54,7 +54,7 @@ blockquote {
 
   &::before {
     height: 100%;
-    width: 4px;
+    width: 5px;
     content: '';
     background: $red-color;
     display: block;
@@ -66,6 +66,12 @@ blockquote {
 
   strong {
     color: $red-color;
+    &:first-of-type {
+      display: block;
+      text-transform: uppercase;
+      font-size: 15px;
+      font-weight: bold;
+    }
   }
 
   &.warning {
@@ -92,7 +98,7 @@ blockquote {
 }
 
 figure {
-  margin: 60px;
+  margin: 60px 30px;
   text-align: center;
   @include media(medium) {
     margin: 60px 0;
@@ -131,7 +137,7 @@ tr {
   }
 }
 
-th { 
+th {
   padding: 20px;
   background: #efefef;
 }

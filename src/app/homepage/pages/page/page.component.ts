@@ -1,5 +1,10 @@
 declare var Prism;
-import { ElementRef, AfterViewChecked, Component, ApplicationRef } from '@angular/core';
+import {
+  AfterViewChecked,
+  ApplicationRef,
+  Component,
+  ElementRef,
+} from '@angular/core';
 
 @Component({
   selector: 'app-base-page',
@@ -10,7 +15,16 @@ export class BasePageComponent implements AfterViewChecked {
 
   constructor(
     private readonly applicationRef: ApplicationRef,
-    private readonly el: ElementRef) {}
+    private readonly el: ElementRef,
+  ) {}
+
+  get nativeElement(): HTMLElement {
+    return this.el.nativeElement;
+  }
+
+  get isMarkupReady(): boolean {
+    return this.isHljsInitialized;
+  }
 
   ngAfterViewChecked() {
     this.initHljs();
@@ -22,12 +36,11 @@ export class BasePageComponent implements AfterViewChecked {
     }
     const tags = this.el.nativeElement.querySelectorAll('code');
     [].forEach.call(tags, (code: HTMLElement) => {
-        if (code.className) {
-          Prism.highlightElement(code);
-          this.isHljsInitialized = true;
-        }
+      if (code.className) {
+        Prism.highlightElement(code);
+        this.isHljsInitialized = true;
       }
-    );
+    });
     setTimeout(() => this.applicationRef.tick(), 100);
   }
 }

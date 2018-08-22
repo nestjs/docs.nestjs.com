@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -13,7 +13,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.GRPC,
   options: {
     package: 'hero',
-    protoPath: join(__dirname, './hero/hero.proto'),
+    protoPath: join(__dirname, 'hero/hero.proto'),
   },
 });`;
   }
@@ -122,7 +122,7 @@ export class HeroService {
   transport: Transport.GRPC,
   options: {
     package: 'hero',
-    protoPath: join(__dirname, './hero/hero.proto'),
+    protoPath: join(__dirname, 'hero/hero.proto'),
   },
 })
 private readonly client: ClientGrpc;`;
@@ -134,7 +134,7 @@ private readonly client: ClientGrpc;`;
   transport: Transport.GRPC,
   options: {
     package: 'hero',
-    protoPath: join(__dirname, './hero/hero.proto'),
+    protoPath: join(__dirname, 'hero/hero.proto'),
   },
 })
 client;`;

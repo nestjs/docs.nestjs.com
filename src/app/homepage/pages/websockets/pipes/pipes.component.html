@@ -1,15 +1,17 @@
 <div class="content">
   <h3>Pipes</h3>
   <p>
-    There's no difference between web sockets <strong>pipes</strong> and the <a routerLink="/pipes">regular pipes</a>.
-    The only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>WsException</code>.
+    There's no difference between web sockets <strong>pipes</strong> and the <a routerLink="/pipes">regular pipes</a>. The
+    only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>WsException</code>.
     Besides, all pipes will be applied only to the <code>data</code> parameter.
   </p>
   <blockquote class="info">
     <strong>Hint</strong> The <code>WsException</code> class is exposed from <code>@nestjs/websockets</code> package.
   </blockquote>
+  <h4>Binding pipes</h4>
   <p>
-    Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> pipe (class-scoped works either):
+    Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> pipe (class-scoped works
+    either):
   </p>
   <pre><code class="language-typescript">{{ example }}</code></pre>
 </div>
