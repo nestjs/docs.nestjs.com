@@ -106,8 +106,10 @@ $ npm run start</code></pre>
 
     <h4>File upload</h4>
     <p>You can enable file upload for a specific method with the <code>@ApiImplicitFile</code> decorator, combined with <code>@ApiConsumes</code>. Here's a full example using <a routerLink="/techniques/file-upload">File Upload</a> technique:</p>
-
     <pre><code class="language-typescript">{{ fileUpload }}</code></pre>
+    <blockquote class="warning">
+      <strong>Notice</strong> If you this decorator with a DTO, every property of your class will individually appear in swagger. This is due to swagger not being able to send object when content-type is formData.
+    </blockquote>
 
     <h4>Decorators</h4>
     <p>
