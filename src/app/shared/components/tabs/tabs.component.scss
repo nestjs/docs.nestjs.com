@@ -19,18 +19,19 @@
 }
 
 .tab {
-  color: #8e8e8e;
+  color: #b1b1b1;
   cursor: pointer;
   margin: 0;
   float: right;
+  font-weight: 600;
   height: 100%;
-  padding: 15px 20px;
+  padding: 12px 20px;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
 
   &:hover:not(.active) {
-    color: #dadada;
-    background: #232323;
+    color: #efefef;
+    // background: #232323;
   }
   &.active {
     // color: #fff;

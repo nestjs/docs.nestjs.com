@@ -88,7 +88,26 @@ export declare const ApiModelProperty: (metadata?: {
   required?: boolean;
   type?: any;
   isArray?: boolean;
+  collectionFormat?: string;
   default?: any;
+  enum?: SwaggerEnumType;
+  format?: string;
+  multipleOf?: number;
+  maximum?: number;
+  exclusiveMaximum?: number;
+  minimum?: number;
+  exclusiveMinimum?: number;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  maxItems?: number;
+  minItems?: number;
+  uniqueItems?: boolean;
+  maxProperties?: number;
+  minProperties?: number;
+  readOnly?: boolean;
+  xml?: any;
+  example?: any;
 }) => PropertyDecorator;`;
   }
 
@@ -120,6 +139,16 @@ async create(@Body() createCatDto: CreateCatDto) {
 }`;
   }
 
+  get customResponse() {
+    return `
+@Post()
+@ApiCreatedResponse({ description: 'The record has been successfully created.'})
+@ApiForbiddenResponse({ description: 'Forbidden.'})
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}`;
+  }
+
   get bearerAuth() {
     return `
 @ApiUseTags('cats')
@@ -133,7 +162,41 @@ export class CatsController {}`;
 @UseInterceptors(FileInterceptor('file'))
 @ApiConsumes('multipart/form-data')
 @ApiImplicitFile({name: 'file', required: true, description: 'file containing cats list'})
-uploadFile(@UploadedFile() file) {
+uploadFile(@UploadedFile() file) {}`;
+  }
+  get apiImplicitQuery() {
+      return `
+export const ApiImplicitQuery = (metadata: {
+  name: string;
+  description?: string;
+  required?: boolean;
+  type?: 'String' | 'Number' | 'Boolean' | any;
+  isArray?: boolean;
+  enum?: SwaggerEnumType;
+  collectionFormat?: 'csv' | 'ssv' | 'tsv' | 'pipes' | 'multi';
+}): MethodDecorator`;
+  }
+
+  get enumImplicitQuery() {
+      return `
+@ApiImplicitQuery({ name: 'role', enum: ['Admin', 'Moderator', 'User'] })
+async filterByRole(@Query('role') role: UserRole = UserRole.User) {
+  // role returns: UserRole.Admin, UserRole.Moderator OR UserRole.User
+}`;
+  }
+
+  get enumProperty() {
+      return `
+@ApiModelProperty({ enum: ['Admin', 'Moderator', 'User']})
+role: UserRole;`;
+  }
+
+  get userRoleEnum() {
+      return `
+export enum UserRole {
+  Admin = 'Admin',
+  Moderator = 'Moderator',
+  User = 'User'
 }`;
   }
 }

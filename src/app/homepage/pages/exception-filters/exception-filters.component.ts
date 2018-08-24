@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
   selector: 'app-exception-filters',
   templateUrl: './exception-filters.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExceptionFiltersComponent extends BasePageComponent {
   get errorResponse() {
@@ -60,7 +60,7 @@ async create(createCatDto) {
   }
 
   get customResponse() {
-    return  `
+    return `
 {
   "status": 403,
   "error": "This is a custom message"
@@ -68,7 +68,7 @@ async create(createCatDto) {
   }
 
   get forbiddenResponse() {
-    return  `
+    return `
 {
   "statusCode": 403,
   "message": "Forbidden"
@@ -99,7 +99,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 async create(createCatDto) {
   throw new ForbiddenException();
 }`;
-}
+  }
 
   get httpExceptionFilter() {
     return `
@@ -112,11 +112,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -135,11 +136,12 @@ export class HttpExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -152,16 +154,17 @@ export class HttpExceptionFilter {
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 
 @Catch()
-export class AnyExceptionFilter implements ExceptionFilter {
+export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -174,16 +177,17 @@ export class AnyExceptionFilter implements ExceptionFilter {
 import { ExceptionFilter, Catch } from '@nestjs/common';
 
 @Catch()
-export class AnyExceptionFilter implements ExceptionFilter {
+export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception, host) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
+    const status = exception.getStatus();
 
     response
       .status(status)
       .json({
-        statusCode: exception.getStatus(),
+        statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
       });
@@ -232,7 +236,6 @@ async create(createCatDto) {
 }
 `;
   }
-
 
   get controllerScopedFilter() {
     return `
@@ -287,5 +290,39 @@ import { APP_FILTER } from '@nestjs/core';
   ],
 })
 export class ApplicationModule {}`;
+  }
+
+  get inheritance() {
+    return `
+import { Catch, ArgumentsHost, HttpServer } from '@nestjs/common';
+import { BaseExceptionFilter, HTTP_SERVER_REF } from '@nestjs/core';
+
+@Catch()
+export class AllExceptionsFilter extends BaseExceptionFilter {
+  constructor(@Inject(HTTP_SERVER_REF) applicationRef: HttpServer) {
+    super(applicationRef);
+  }
+
+  catch(exception: any, host: ArgumentsHost) {
+    super.catch(exception, host);
+  }
+}`;
+  }
+
+  get inheritanceJs() {
+    return `
+import { Catch } from '@nestjs/common';
+import { BaseExceptionFilter, HTTP_SERVER_REF } from '@nestjs/core';
+
+@Catch()
+export class AllExceptionsFilter extends BaseExceptionFilter {
+  constructor(@Inject(HTTP_SERVER_REF) applicationRef) {
+    super(applicationRef);
+  }
+
+  catch(exception, host) {
+    super.catch(exception, host);
+  }
+}`;
   }
 }

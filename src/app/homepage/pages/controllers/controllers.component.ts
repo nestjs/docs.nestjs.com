@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -145,7 +145,7 @@ export class CreateCatDto {
     return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
-  return await this.catsService.create(createCatDto);
+  return 'This action adds a new cat';
 }`;
   }
 
@@ -154,7 +154,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 @Post()
 @Bind(Body())
 async create(createCatDto) {
-  return await this.catsService.create(createCatDto);
+  return 'This action adds a new cat';
 }`;
   }
 
@@ -233,8 +233,8 @@ export class CatsController {
   }
 
   @Get()
-  findAll() {
-    return 'This action returns all cats';
+  findAll(@Query() query) {
+    return \`This action returns all cats (limit: \${query.limit} items)\`;
   }
 
   @Get(':id')

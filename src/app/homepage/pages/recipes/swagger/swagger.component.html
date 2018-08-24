@@ -77,6 +77,31 @@ $ npm run start</code></pre>
     <p>
       Thanks to that we can simply set the <strong>default</strong> value, determine whether the property is required or explicitly set the type.
     </p>
+    <h4>Working with Enums</h4>
+    <p>
+      To be able for <code>SwaggerModule</code> to identify an <code>Enum</code>, we have to manually set the <code>enum</code> property on <code>@ApiModelProperty</code> with an <code>Array of values</code>.
+    </p>
+    <pre><code class="language-typescript">{{ enumProperty }}</code></pre>
+    <p>
+      <code>UserRole</code> enum can be defined as following snippet:
+    </p>
+    <pre><code class="language-typescript">{{ userRoleEnum }}</code></pre>
+    <blockquote class="warning">
+      <strong>Note</strong> The above usage can only be applied to a <strong>property</strong> as part of a <strong>model definition.</strong>
+    </blockquote>
+    <p>
+      Enums can be used by itself with the <code>@Query()</code> parameter decorator in combination with the <code>@ApiImplicitQuery()</code> decorator.
+    </p>
+    <pre><code class="language-typescript">{{ apiImplicitQuery }}</code></pre>
+    <pre><code class="language-typescript">{{ enumImplicitQuery }}</code></pre>
+    <figure><img src="/assets/enum_query.gif" /></figure>
+    <blockquote class="warning">
+      <strong>Hint</strong> <code>enum</code> and <code>isArray</code> can also be used in combination in <code>@ApiImplicitQuery()</code>
+    </blockquote>
+    <p>
+      With <code>isArray</code> set to <strong>true</strong>, the <code>enum</code> now can be selected as a <strong>multi-select</strong>:
+    </p>
+    <figure><img src="/assets/enum_query_array.gif" /></figure>
     <h4>Working with arrays</h4>
     <p>
       We have to manually indicate the type and set the <code>isArray</code> property to true when the property is actually an array:
@@ -93,6 +118,74 @@ $ npm run start</code></pre>
       To define a custom HTTP response, we use <code>@ApiResponse()</code> decorator.
     </p>
     <pre><code class="language-typescript">{{ response }}</code></pre>
+    <p>
+      Same as common <strong>HTTP Exceptions</strong> defined in <a routerLink="/exception-filters"><strong>Exception Filters</strong></a>,
+      Nest also provides a set of usable <strong>API Responses</strong> that inherits from the core <code>@ApiResponse</code> decorator:
+    </p>
+    <ul>
+      <li>
+        <code>@ApiOkResponse()</code>
+      </li>
+      <li>
+        <code>@ApiCreatedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiBadRequestResponse()</code>
+      </li>
+      <li>
+        <code>@ApiUnauthorizedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiNotFoundResponse()</code>
+      </li>
+      <li>
+        <code>@ApiForbiddenResponse()</code>
+      </li>
+      <li>
+        <code>@ApiMethodNotAllowedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiNotAcceptableResponse()</code>
+      </li>
+      <li>
+        <code>@ApiRequestTimeoutResponse()</code>
+      </li>
+      <li>
+        <code>@ApiConflictResponse()</code>
+      </li>
+      <li>
+        <code>@ApiGoneResponse()</code>
+      </li>
+      <li>
+        <code>@ApiPayloadTooLargeResponse()</code>
+      </li>
+      <li>
+        <code>@ApiUnsupportedMediaTypeResponse()</code>
+      </li>
+      <li>
+        <code>@ApiUnprocessableEntityResponse()</code>
+      </li>
+      <li>
+        <code>@ApiInternalServerErrorResponse()</code>
+      </li>
+      <li>
+        <code>@ApiNotImplementedResponse()</code>
+      </li>
+      <li>
+        <code>@ApiBadGatewayResponse()</code>
+      </li>
+      <li>
+        <code>@ApiServiceUnavailableResponse()</code>
+      </li>
+      <li>
+        <code>@ApiGatewayTimeoutResponse()</code>
+      </li>
+    </ul>
+    <p>
+      In addition to the available <strong>HTTP Exceptions</strong>, Nest provides short-hand decorators for:
+      <code>HttpStatus.OK</code>, <code>HttpStatus.CREATED</code> and <code>HttpStatus.METHOD_NOT_ALLOWED</code>
+    </p>
+    <pre><code class="language-typescript">{{ customResponse }}</code></pre>
     <h4>Authentication</h4>
     <p>
       You can enable the bearer authorization using <code>addBearerAuth()</code> method of the <code>DocumentBuilder</code> class.
@@ -159,6 +252,10 @@ $ npm run start</code></pre>
       </tr>
       <tr>
         <td><code>@ApiImplicitFile()</code></td>
+        <td>Method</td>
+      </tr>
+      <tr>
+        <td><code>@ApiExcludeEndpoint()</code></td>
         <td>Method</td>
       </tr>
       <tr>

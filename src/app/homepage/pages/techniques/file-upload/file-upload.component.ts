@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -40,6 +40,31 @@ uploadFile(@UploadedFiles() files) {
 @Post('upload')
 @UseInterceptors(FilesInterceptor('files'))
 @Bind(UploadedFiles())
+uploadFile(files) {
+  console.log(files);
+}`;
+  }
+
+  get fileFields() {
+    return `
+@Post('upload')
+@UseInterceptors(FileFieldsInterceptor([
+  { name: 'avatar', maxCount: 1 },
+  { name: 'background', maxCount: 1 },
+]))
+uploadFile(@UploadedFiles() files) {
+  console.log(files);
+}`;
+  }
+
+  get fileFieldsJs() {
+    return `
+@Post('upload')
+@Bind(UploadedFiles())
+@UseInterceptors(FileFieldsInterceptor([
+  { name: 'avatar', maxCount: 1 },
+  { name: 'background', maxCount: 1 },
+]))
 uploadFile(files) {
   console.log(files);
 }`;

@@ -1,12 +1,16 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-circular-dependency',
   templateUrl: './circular-dependency.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CircularDependencyComponent extends BasePageComponent {
+  get nonStrictMode() {
+    return `
+this.moduleRef.get(Service, { strict: false });`;
+  }
   get moduleRef() {
     return `
 @Injectable()
@@ -15,7 +19,7 @@ export class CatsService implements OnModuleInit {
   constructor(private readonly moduleRef: ModuleRef) {}
 
   onModuleInit() {
-    this.service = this.moduleRef.get<Service>(Service);
+    this.service = this.moduleRef.get(Service);
   }
 }`;
   }
@@ -103,4 +107,3 @@ export class CommonService {
 export class CommonModule {}`;
   }
 }
-

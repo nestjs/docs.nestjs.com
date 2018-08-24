@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../page/page.component';
 
 @Component({
@@ -298,7 +298,7 @@ async create(createCatDto) {
   get createCatsControllerParamPipeTransformFalse() {
     return `
 @Post()
-@UsePipes(new ValidationPipe({ transform: false }))
+@UsePipes(new ValidationPipe({ transform: true }))
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;

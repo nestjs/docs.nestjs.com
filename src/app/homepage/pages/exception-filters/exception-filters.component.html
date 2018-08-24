@@ -2,8 +2,8 @@
   <h3>Exception filters</h3>
   <p>
     The built-in
-    <strong>exceptions layer</strong> is responsible for handling all thrown exceptions across your whole application. When an unhandled
-    exception is caught, the end-user will receive an appropriate user-friendly response.
+    <strong>exceptions layer</strong> is responsible for handling all thrown exceptions across your whole application. When
+    an unhandled exception is caught, the end-user will receive an appropriate user-friendly response.
   </p>
   <figure>
     <img src="/assets/Filter_1.png" />
@@ -15,7 +15,7 @@
     <code>HttpException</code>), a user receives the below JSON response:
   </p>
   <pre><code class="language-typescript">{{ errorResponse }}</code></pre>
-  <h4>HttpException</h4>
+  <h4>Base exceptions</h4>
   <p>
     There's a built-in
     <code>HttpException</code> class exposed from the
@@ -26,7 +26,8 @@
     In the
     <code>CatsController</code>, we have a
     <code>create()</code> method (a
-    <code>POST</code> route). Let's assume that this route handler would throw an exception for some reason. We're gonna hardcode it:
+    <code>POST</code> route). Let's assume that this route handler would throw an exception for some reason. We're gonna
+    hardcode it:
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: createMethodT.isJsActive }}
@@ -64,7 +65,8 @@
   <p>
     A good practice is to create your own
     <strong>exceptions hierarchy</strong>. It means that every HTTP exception should inherit from the base
-    <code>HttpException</code> class. As a result, Nest will recognize your exception, and will fully take care of the error responses.
+    <code>HttpException</code> class. As a result, Nest will recognize your exception, and will fully take care of the error
+    responses.
   </p>
   <span class="filename">
     {{ 'forbidden.exception' | extension: forbiddenExceptionT.isJsActive }}
@@ -74,7 +76,8 @@
   <p>
     Since
     <code>ForbiddenException</code> extends the base
-    <code>HttpException</code>, it's going to work well with the core exceptions handler, and therefore we can use it inside the
+    <code>HttpException</code>, it's going to work well with the core exceptions handler, and therefore we can use it inside
+    the
     <code>create()</code> method.
   </p>
   <span class="filename">
@@ -121,7 +124,7 @@
       <code>UnsupportedMediaTypeException</code>
     </li>
     <li>
-      <code>UnprocessableException</code>
+      <code>UnprocessableEntityException</code>
     </li>
     <li>
       <code>InternalServerErrorException</code>
@@ -142,8 +145,8 @@
   <h4>Exception filters</h4>
   <p>
     The base exception handler is fine, but sometimes you may want to have a
-    <strong>full control</strong> over the exceptions layer, for example, add some logging or use a different JSON schema based on
-    some chosen factors. We love generic solutions and making your life easier, that's why the feature called
+    <strong>full control</strong> over the exceptions layer, for example, add some logging or use a different JSON schema
+    based on some chosen factors. We adore generic solutions and making your life easier, that's why the feature called
     <strong>exception filters</strong> has been created.
   </p>
   <p>
@@ -157,16 +160,18 @@
   <pre [class.hide]="httpExceptionFilterT.isJsActive"><code class="language-typescript">{{ httpExceptionFilter }}</code></pre>
   <pre [class.hide]="!httpExceptionFilterT.isJsActive"><code class="language-typescript">{{ httpExceptionFilterJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> All exception filters should implement the
-    <code>ExceptionFilter</code> interface. It forces you to provide the
-    <code>catch()</code> method with the valid signature.
+    <strong>Hint</strong> All exception filters should implement the generic
+    <code>ExceptionFilter&#60;T&#62;</code> interface. It forces you to provide the
+    <code>catch(exception: T, host: ArgumentsHost)</code> method with the valid signature.
+    <code>T</code> indicates a type of the exception.
   </blockquote>
   <p>
     The
-    <code>@Catch(HttpException)</code> decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for
+    <code>@Catch(HttpException)</code> decorator binds the required metadata to the exception filter, telling Nest that this
+    particular filter is looking for
     <code>HttpException</code> and nothing else. In practice, the
-    <code>@Catch()</code> decorator may take an endless number of parameters, therefore you can set up the filter for several types of exceptions,
-    just separate them by a comma.
+    <code>@Catch()</code> decorator may take an endless number of parameters, therefore you can set up the filter for several
+    types of exceptions, just separate them by a comma.
   </p>
   <p>
     The
@@ -174,19 +179,23 @@
     <code>host</code> is a
     <code>ArgumentsHost</code> object. The
     <code>ArgumentsHost</code> is a wrapper around arguments that have been passed to the
-    <strong>original</strong> handler, and it contains different arguments array under the hood based on the type of the application.
+    <strong>original</strong> handler, and it contains different arguments array under the hood based on the type of the
+    application.
   </p>
   <pre><code class="language-typescript">{{ argumentsHost }}</code></pre>
   <p>
     The
-    <code>ArgumentsHost</code> supplies us with a set of useful methods that helps to pick correct arguments from the underlying array. In other words,
+    <code>ArgumentsHost</code> supplies us with a set of useful methods that helps to pick correct arguments from the underlying
+    array. In other words,
     <code>ArgumentsHost</code> is nothing else than just an
     <strong>array of arguments</strong>. For example, when the filter is used within HTTP application context,
     <code>ArgumentsHost</code> will contain
-    <code>[request, response]</code> array inside. However, when current context is a web sockets application, this array will be equal to
-    <code>[client, data]</code>. This design decision enables you to access any argument that would be eventually passed to the corresponding
-    handler.
+    <code>[request, response]</code> array inside. However, when current context is a web sockets application, this array
+    will be equal to
+    <code>[client, data]</code>. This design decision enables you to access any argument that would be eventually passed
+    to the corresponding handler.
   </p>
+  <h4>Binding filters</h4>
   <p>
     Let's tie
     <code>HttpExceptionFilter</code> to the
@@ -207,8 +216,8 @@
     We have used the
     <code>@UseFilters()</code> decorator here. Same as
     <code>@Catch()</code>, it takes an endless number of parameters. The instance of
-    <code>HttpExceptionFilter</code> has been created immedietely in-place. Another available way is to pass the class (not instance), leaving framework the instantiation
-    responsibility and enabling
+    <code>HttpExceptionFilter</code> has been created immediately in-place. Another available way is to pass the class (not
+    instance), leaving framework the instantiation responsibility and enabling
     <strong>dependency injection</strong>.
   </p>
   <span class="filename">
@@ -224,8 +233,8 @@
   <p>
     In the example above, the
     <code>HttpExceptionFilter</code> is applied only to the single
-    <code>create()</code> route handler, but it's not the only available way. In fact, the exception filters can be method-scoped, controller-scoped,
-    and also global-scoped.
+    <code>create()</code> route handler, but it's not the only available way. In fact, the exception filters can be method-scoped,
+    controller-scoped, and also global-scoped.
   </p>
   <span class="filename">
     {{ 'cats.controller' | extension: controllerScopedFilterT.isJsActive }}
@@ -235,8 +244,8 @@
   <p>
     This construction sets up the
     <code>HttpExceptionFilter</code> for every route handler defined inside the
-    <code>CatsController</code>. It's the example of the controller-scoped exception filter. The last available scope is the global-scoped exception
-    filter.
+    <code>CatsController</code>. It's the example of the controller-scoped exception filter. The last available scope is
+    the global-scoped exception filter.
   </p>
   <span class="filename">
     {{ 'main' | extension: globalScopedFilterT.isJsActive }}
@@ -245,7 +254,7 @@
   <pre><code class="language-typescript">{{ globalScopedFilter }}</code></pre>
   <blockquote>
     <strong>Warning</strong> The
-    <code>useGlobalFilters()</code> method doesn't set up filters for gateways and microservices.
+    <code>useGlobalFilters()</code> method neither set up filters for gateways nor microservices.
   </blockquote>
   <p>
     The global filters are used across the whole application, for every controller and every route handler. In terms of dependency
@@ -259,20 +268,45 @@
   </span>
   <pre><code class="language-typescript">{{ globalModuleFilter }}</code></pre>
   <blockquote class="info">
-      <strong>Hint</strong> The alternative option is to use an <a routerLink="/execution-context">execution context</a> feature.
-      Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
-    </blockquote>
+    <strong>Hint</strong> The alternative option is to use an <a routerLink="/execution-context">execution context</a> feature.
+    Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
+  </blockquote>
   <h4>Catch everything</h4>
   <p>
-    In order to handle every occurred exception (regardless of the exception type), you may leave the parentheses empty (
-    <code>@Catch()</code>):
+    In order to handle every occurred exception (regardless of the exception type), you may leave the parentheses empty, e.g.
+    <code>@Catch()</code>.
   </p>
   <span class="filename">
-    {{ 'any-exception.filter' | extension: exceptionFilterT.isJsActive }}
     <app-tabs #exceptionFilterT></app-tabs>
   </span>
   <pre [class.hide]="exceptionFilterT.isJsActive"><code class="language-typescript">{{ exceptionFilter }}</code></pre>
   <pre [class.hide]="!exceptionFilterT.isJsActive"><code class="language-typescript">{{ exceptionFilterJs }}</code></pre>
   <p>In the example above the filter will catch each exception that has been thrown without limiting itself to a set of particular
-    classes.</p>
+    classes.
+  </p>
+  <h4>Inheritance</h4>
+  <p>
+    Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. There might
+    be use-cases though when you would like to reuse an already implemented, <strong>core exception filter</strong>,
+    and override the behavior based on certain factors.
+  </p>
+  <p>
+    In order to delegate exception processing to the base filter, you need to extend <code>BaseExceptionFilter</code> and
+    call inherited <code>catch()</code> method. Besides, <code>HttpServer</code> reference has to be injected and passed
+    to the
+    <code>super()</code> call.
+  </p>
+  <span class="filename">
+    <app-tabs #inheritanceT></app-tabs>
+  </span>
+  <pre [class.hide]="inheritanceT.isJsActive"><code class="language-typescript">{{ inheritance }}</code></pre>
+  <pre [class.hide]="!inheritanceT.isJsActive"><code class="language-typescript">{{ inheritanceJs }}</code></pre>
+  <blockquote class="warning">
+    <strong>Warning</strong>
+    Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using <code>new</code>    keyword).
+  </blockquote>
+  <p>
+    Obviously, you should enhance above implementation with your tailored <strong>business</strong> logic (e.g. add various
+    conditions).
+  </p>
 </div>
