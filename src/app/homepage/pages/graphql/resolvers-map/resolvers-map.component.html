@@ -1,56 +1,81 @@
 <div class="content">
   <h3>Resolvers map</h3>
   <p>
-    When using <code>graphql-tools</code>, you have to create a resolvers map manually.
-    The following example is copied & pasted from the <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo documentation</a> where you can read more about it:
+    If you're using <code>graphql-tools</code>, you have to create a resolvers map manually. The following example is copied
+    from the <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo documentation
+    </a> where you can read more about it:
   </p>
-  <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ resolversMapExample }}</code></pre>
   <p>
-    With the <code>@nestjs/graphql</code> package, the resolvers map is generated automatically using the metadata.
-    Let's rewrite the above example with the <strong>equivalent</strong> Nest-way code.
+    With the <code>@nestjs/graphql</code> package, the resolvers map is generated automatically using the metadata provided
+    by the decorators. Let's rewrite the above example with the equivalent Nest code.
   </p>
-  <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ resolvers }}</code></pre>
   <p>
-    The <code>@Resolver()</code> decorator doesn't affect queries and mutations.
-    It only tells Nest that each <code>@ResolveProperty()</code> has a parent, which is an <code>Author</code> in this case.
+    The <code>@Resolver()</code> decorator does not affect queries and mutations (neither <code>@Query()</code> nor <code>@Mutation()</code>    decorators).
+    This only serves to inform Nest that each <code>@ResolveProperty()</code> has a parent, which is an <code>Author</code>    in
+    this case.
   </p>
   <blockquote class="info">
-    <strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don't have to mark a class as a <code>@Injectable()</code>, otherwise, it's necessary.
+    <strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don't have to mark a class as a <code>@Injectable()</code>,
+    otherwise, it's necessary.
   </blockquote>
   <p>
-    Conventionally, we would use something like a <code>getAuthor()</code> or <code>getPosts()</code> as a method names.
-    We can do that easily as well:
+    Conventionally, we would use something like <code>getAuthor()</code> or <code>getPosts()</code> as a method names. We
+    can do that easily as well by moving the real names between decorator's parentheses.
   </p>
-  <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> The <code>@Resolver()</code> decorator can be used at the method-level as well.
   </blockquote>
-  <h4>Refactor</h4>
   <p>
-    The idea behind the above code is to show the differences between the Apollo and the Nest-way to allow for a simple transition of your code.
-    Right now, we're gonna do a small refactor to take advantages of the Nest architecture, to make it a <strong>real-world</strong> example. 
+    In the above example, you may note that we refer to the following arguments using dedicated decorators. Below is a comparison
+    of the provided decorators and the plain Apollo parameters they represent.
   </p>
-  <span class="filename">
-    <app-tabs #authorResolverT></app-tabs>
-  </span>
-  <pre [class.hide]="authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExample }}</code></pre>
-  <pre [class.hide]="!authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExampleJs }}</code></pre>
+  <table>
+    <tbody>
+      <tr>
+        <td><code>@Root()</code> and <code>@Parent()</code></td>
+        <td><code>root</code>/<code>parent</code></td>
+      </tr>
+      <tr>
+        <td><code>@Context(param?: string)</code></td>
+        <td><code>context</code> / <code>context[param]</code></td>
+      </tr>
+      <tr>
+        <td><code>@Info(param?: string)</code></td>
+        <td><code>info</code> / <code>info[param]</code></td>
+      </tr>
+      <tr>
+        <td><code>@Args(param?: string)</code></td>
+        <td><code>args</code> / <code>args[param]</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4>Refactoring</h4>
   <p>
-    Now we have to register the <code>AuthorResolver</code> somewhere, for example inside the newly created <code>AuthorsModule</code>. 
+    The idea behind the above code is to show the differences between the Apollo and the Nest-way to allow for a simple transition
+    of your code. Right now, we're gonna do a small refactor to take advantages of the Nest architecture, to make it a <strong>real-world</strong>
+    example.
+  </p>
+  <pre><code class="language-typescript">{{ realWorldExample }}</code></pre>
+  <p>
+    Basically, we got rid of the locally defined mock data. Instead, we use both <code>AuthorsService</code> and <code>PostsService</code>    to
+    retrieve entities from our data store. Once we're done here, we have to register the <code>AuthorResolver</code> somewhere,
+    for example inside the newly created <code>AuthorsModule</code>.
   </p>
   <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ authorsModule }}</code></pre>
-  <p>  
-    The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct resolvers map automatically.
-    The only thing you have to do is to import this module somewhere, therefore Nest will know that <code>AuthorsModule</code> exists.
+  <p>
+    The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct resolvers
+    map automatically. The only thing that you should be aware of is that you need to import this module somewhere, therefore
+    Nest will know that <code>AuthorsModule</code> truly exists.
   </p>
   <h4>Type definitions</h4>
   <p>
-    The last missing piece is a type definitions (<a href="http://graphql.org/learn/schema/#type-language" target="blank">read more</a>) file.
-    Let's create it near to the resolver class.
+    The last missing piece is a type definitions (
+    <a href="http://graphql.org/learn/schema/#type-language" target="blank">read more</a>) file. Let's create it near to
+    the resolver class.
   </p>
   <span class="filename">author-types.graphql</span>
   <pre><code class="language-java">{{ typeDefs }}</code></pre>

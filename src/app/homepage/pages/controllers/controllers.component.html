@@ -139,6 +139,18 @@
     <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>, and
     <code>@All()</code>. All of them represent respective HTTP request methods.
   </p>
+  <h4>Route wildcards</h4>
+  <p>
+    Pattern based routes are supported as well. For instance, the asterisk is used as a wildcard, and will match any combination
+    of characters.
+  </p>
+  <pre><code class="language-typescript">{{ routeWildcards }}</code></pre>
+  <p>
+    Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters <code>?</code>,
+    <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The hyphen
+    (
+    <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.
+  </p>
   <h4>Status code</h4>
   <p>
     As mentioned, the response <strong>status code</strong> is always <strong>200</strong> by default, except for POST requests

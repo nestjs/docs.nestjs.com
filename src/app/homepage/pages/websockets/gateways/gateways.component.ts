@@ -4,12 +4,33 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-gateways',
   templateUrl: './gateways.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GatewaysComponent extends BasePageComponent {
   get namespace() {
     return `
 @WebSocketGateway(81, { namespace: 'events' })`;
+  }
+
+  get moreOptions() {
+    return `
+@WebSocketGateway(81, { transports: ['websocket'] })`;
+  }
+
+  get subscribeEventsAck() {
+    return `
+@SubscribeMessage('events')
+onEvent(client, data: string): string {
+  return data;
+}`;
+  }
+
+  get subscribeEventsAckJs() {
+    return `
+@SubscribeMessage('events')
+onEvent(client, data) {
+  return data;
+}`;
   }
 
   get subscribeEvents() {
@@ -69,5 +90,10 @@ socket.emit('events', { name: 'Nest' });`;
   get clientListen() {
     return `
 socket.on('events', (data) => console.log(data));`;
+  }
+
+  get ackListener() {
+    return `
+socket.emit('events', { name: 'Nest' }, (data) => console.log(data));`;
   }
 }

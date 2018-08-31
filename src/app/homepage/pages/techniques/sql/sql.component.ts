@@ -260,4 +260,72 @@ export class AuthorService {
   ) {}
 }`;
   }
+
+  get asyncConfiguration() {
+    return `
+TypeOrmModule.forRootAsync({
+  useFactory: () => ({
+    type: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'test',
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: true,
+  }),
+})`;
+  }
+
+  get asyncConfigurationFactoryAsync() {
+    return `
+TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    type: 'mysql',
+    host: configService.getString('HOST'),
+    port: configService.getString('PORT'),
+    username: configService.getString('USERNAME'),
+    password: configService.getString('PASSWORD'),
+    database: configService.getString('DATABASE'),
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: true,
+  }),
+  inject: [ConfigService],
+})`;
+  }
+
+  get asyncConfigurationClass() {
+    return `
+TypeOrmModule.forRootAsync({
+  useClass: TypeOrmConfigService,
+})`;
+  }
+
+  get asyncConfigurationClassBody() {
+    return `
+@Injectable()
+class TypeOrmConfigService implements TypeOrmOptionsFactory {
+  createTypeOrmOptions(): TypeOrmModuleOptions {
+    return {
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'test',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    };
+  }
+}`;
+  }
+
+  get asyncConfigurationExisting() {
+    return `
+TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+})`;
+  }
 }

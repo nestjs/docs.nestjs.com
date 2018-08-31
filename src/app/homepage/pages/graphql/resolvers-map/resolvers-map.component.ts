@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -15,13 +15,10 @@ import { find, filter } from 'lodash';
 const authors = [
   { id: 1, firstName: 'Tom', lastName: 'Coleman' },
   { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
 ];
 const posts = [
   { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
   { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
 ];
 
 const resolverMap = {
@@ -40,31 +37,28 @@ const resolverMap = {
 
   get resolvers() {
     return `
-import { Query, Resolver, ResolveProperty } from '@nestjs/graphql';
+import { Query, Resolver, ResolveProperty, Args, Parent } from '@nestjs/graphql';
 import { find, filter } from 'lodash';
 
 // example data
 const authors = [
   { id: 1, firstName: 'Tom', lastName: 'Coleman' },
   { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
 ];
 const posts = [
   { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
   { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
 ];
 
 @Resolver('Author')
 export class AuthorResolver {
   @Query()
-  author(obj, args, context, info) {
-    return find(authors, { id: args.id });
+  author(@Args('id') id: number) {
+    return find(authors, { id });
   }
 
   @ResolveProperty()
-  posts(author, args, context, info) {
+  posts(@Parent() author) {
     return filter(posts, { authorId: author.id });
   }
 }
@@ -73,36 +67,33 @@ export class AuthorResolver {
 
   get resolversWithNames() {
     return `
-import { Query, Resolver, ResolveProperty } from '@nestjs/graphql';
+import { Query, Resolver, ResolveProperty, Parent, Args } from '@nestjs/graphql';
 import { find, filter } from 'lodash';
 
 // example data
 const authors = [
   { id: 1, firstName: 'Tom', lastName: 'Coleman' },
   { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
 ];
 const posts = [
   { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
   { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
 ];
 
 @Resolver('Author')
 export class AuthorResolver {
   @Query('author')
-  getAuthor(obj, args, context, info) {
-    return find(authors, { id: args.id });
+  getAuthor(@Args('id') id: number) {
+    return find(authors, { id });
   }
 
   @ResolveProperty('posts')
-  getPosts(author, args, context, info) {
+  getPosts(@Parent() author) {
     return filter(posts, { authorId: author.id });
   }
 }`;
   }
-  
+
   get realWorldExample() {
     return `
 @Resolver('Author')
@@ -113,43 +104,17 @@ export class AuthorResolver {
   ) {}
 
   @Query('author')
-  async getAuthor(obj, args, context, info) {
-    const { id } = args;
+  async getAuthor(@Args('id') id: number) {
     return await this.authorsService.findOneById(id);
   }
 
   @ResolveProperty('posts')
-  async getPosts(author, args, context, info) {
+  async getPosts(@Parent() author) {
     const { id } = author;
     return await this.postsService.findAll({ authorId: id });
   }
 }`;
   }
-
-  get realWorldExampleJs() {
-    return `
-@Resolver('Author')
-@Dependencies(AuthorsService, PostsService)
-export class AuthorResolver {
-  constructor(authorsService, postsService) {
-    this.authorsService = authorsService;
-    this.postsService = postsService;
-  }
-
-  @Query('author')
-  async getAuthor(obj, args, context, info) {
-    const { id } = args;
-    return await this.authorsService.findOneById(id);
-  }
-
-  @ResolveProperty('posts')
-  async getPosts(author) {
-    const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
-  }
-}`;
-  }
-
 
   get authorsModule() {
     return `
@@ -157,7 +122,7 @@ export class AuthorResolver {
   imports: [PostsModule],
   providers: [AuthorsService, AuthorResolver],
 })
-export class AuthorsModule {}`
+export class AuthorsModule {}`;
   }
 
   get typeDefs() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -42,7 +42,7 @@ import { CatSchema } from './schemas/cat.schema';
   controllers: [CatsController],
   providers: [CatsService],
 })
-export class CatsModule {}`
+export class CatsModule {}`;
   }
 
   get catsService() {
@@ -105,5 +105,52 @@ export class CatsService {
   ],
 })
 export class CatsModule {}`;
+  }
+
+  get asyncConfiguration() {
+    return `
+MongooseModule.forRootAsync({
+  useFactory: () => ({
+    uri: 'mongodb://localhost/nest',
+  }),
+})`;
+  }
+
+  get asyncConfigurationFactoryAsync() {
+    return `
+MongooseModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    uri: configService.getString('MONGODB_URI'),
+  }),
+  inject: [ConfigService],
+})`;
+  }
+
+  get asyncConfigurationClass() {
+    return `
+MongooseModule.forRootAsync({
+  useClass: MongooseConfigService,
+})`;
+  }
+
+  get asyncConfigurationClassBody() {
+    return `
+@Injectable()
+class MongooseConfigService implements MongooseOptionsFactory {
+  createMongooseOptions(): MongooseModuleOptions {
+    return {
+      uri: 'mongodb://localhost/nest',
+    };
+  }
+}`;
+  }
+
+  get asyncConfigurationExisting() {
+    return `
+MongooseModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+})`;
   }
 }

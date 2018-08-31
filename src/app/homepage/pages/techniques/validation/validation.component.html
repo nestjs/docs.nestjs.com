@@ -1,0 +1,80 @@
+<div class="content">
+  <h3>Validation</h3>
+  <p>
+    The validation is an essential functionality of any existing web application. To automatically validate incoming requests,
+    we leverage <a href="https://github.com/typestack/class-validator" target="blank">class-validator</a> package which
+    built-in <code>ValidationPipe</code> makes use of underneath. The <code>ValidationPipe</code> provides a convenient method
+    to validate incoming client payloads with a variety of powerful validation rules.
+  </p>
+  <h4>Overview</h4>
+  <p>
+    In <a routerLink="/pipes">Pipes</a> chapter, we went through the process of building a simplified validation pipe. To
+    better understand what we're doing under the hood, we heavily recommend to read this article. Here, we'll mainly focus
+    on the real use-cases instead.
+  </p>
+  <h4>Auto-validation</h4>
+  <p>
+    For the sake of this tutorial, we'll bind <code>ValidationPipe</code> to the whole application, thus, all endpoints will
+    be automatically protected from the incorrect data.
+  </p>
+  <pre><code class="language-typescript">{{ autoValidation }}</code></pre>
+  <p>
+    To test our pipe, let's create a basic endpoint.
+  </p>
+  <pre><code class="language-typescript">{{ createEndpoint }}</code></pre>
+  <p>
+    Then, add a few validation rules in our <code>CreateCatDto</code>.
+  </p>
+  <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
+  <p>
+    Now, when someone perform a request to our endpoint with invalid, let's say <code>email</code>, application would respond
+    with <code>400 Bad Request</code> code and following response body.
+  </p>
+  <pre><code class="language-typescript">{{ badRequest }}</code></pre>
+  <p>
+    Obviously, the response body is not a sole use-case for the<code>ValidationPipe</code>. Imagine, that we would like to
+    accept
+    <code>:id</code> in the endpoint path. Only numbers shall be valid though. This is pretty simple as well.
+  </p>
+  <pre><code class="language-typescript">{{ findOneEndpoint }}</code></pre>
+  <p>
+    And <code>FindOneParams</code> looks like below.
+  </p>
+  <pre><code class="language-typescript">{{ findOneParams }}</code></pre>
+  <h4>Disable detailed errors</h4>
+  <p>
+    Error messages help a lot in order to comprehend what was wrong with the data sent through the network. However, in some
+    production environments, you might want to disable detailed errors.
+  </p>
+  <pre><code class="language-typescript">{{ disableErrors }}</code></pre>
+  <p>
+    Now, error messages won't be populated to the end user.
+  </p>
+  <h4>Stripping properties</h4>
+  <p>
+    Quite frequently, we would like only predefined (whitelisted) properties to be passed on. For instance, if we expect <code>email</code>    and
+    <code>password</code> properties, when someone sends <code>age</code>, this property should be stripped and not available
+    in the DTO. To enable such behavior, set <code>whitelist</code> to <code>true</code>.
+  </p>
+  <pre><code class="language-typescript">{{ strippingProperties }}</code></pre>
+  <p>
+    This setting will enable auto-stripping of non-whitelisted (without any decorator on top of them) properties. However, if
+    you want to stop the request processing entirely, and return an error response to the user, use <code>forbidNonWhitelisted</code>    instead.
+  </p>
+  <h4>Auto payload transforming</h4>
+  <p>
+    The <code>ValidationPipe</code> doesn't automatically transform your payloads to the corresponding DTO classes. If you
+    take a look at either <code>createCatDto</code> or <code>findOneParams</code> in your controller methods, you will notice
+    that they're not actual instances of these classes. To enable auto-transformation, set <code>transform</code> to <code>true</code>.
+  </p>
+  <pre><code class="language-typescript">{{ transforming }}</code></pre>
+  <h4>Websockets & Microservices</h4>
+  <p>
+    All these guidelines cornern both WebSockets as well as microservices, regardless of transport method that is being used.
+  </p>
+  <h4>Learn more</h4>
+  <p>
+    In order to read more about custom validators, error messages, and available decorators, visit this <a href="https://github.com/typestack/class-validator"
+      target="blank">page</a>.
+  </p>
+</div>

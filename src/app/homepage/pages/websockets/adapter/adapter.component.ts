@@ -1,21 +1,21 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-adapter',
   templateUrl: './adapter.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdapterComponent extends BasePageComponent {
   get wsAdapter() {
     return `
 import * as WebSocket from 'ws';
-import { WebSocketAdapter, MessageMappingProperties } from '@nestjs/common';
+import { WebSocketAdapter, MessageMappingProperties, INestApplicationContext } from '@nestjs/common';
 import { Observable, fromEvent, empty } from 'rxjs';
 import { mergeMap, filter, tap } from 'rxjs/operators';
 
 export class WsAdapter implements WebSocketAdapter {
-  constructor(private readonly httpServer) {}
+  constructor(private readonly app: INestApplicationContext) {}
 
   create(port: number, options: any = {}): any {
     return new ws.Server({ port, ...options });
@@ -33,7 +33,7 @@ export class WsAdapter implements WebSocketAdapter {
     fromEvent(client, 'message')
       .pipe(
         mergeMap(data => this.bindMessageHandler(data, handlers, process)),
-        filter(result => !!result),
+        filter(result => result),
       )
       .subscribe(response => client.send(JSON.stringify(response)));
   }
@@ -66,8 +66,8 @@ import { mergeMap, filter, tap } from 'rxjs/operators';
 import { fromEvent, empty } from 'rxjs';
 
 export class WsAdapter {
-  constructor(httpServer) {
-    this.httpServer = httpServer;
+  constructor(app) {
+    this.app = app;
   }
 
   create(port, options = {}) {
@@ -107,6 +107,28 @@ export class WsAdapter {
   get setupAdapter() {
     return `
 const app = await NestFactory.create(ApplicationModule);
-app.useWebSocketAdapter(new WsAdapter());`;
+app.useWebSocketAdapter(new WsAdapter(app));`;
+  }
+
+  get setupRedisAdapter() {
+    return `
+const app = await NestFactory.create(ApplicationModule);
+app.useWebSocketAdapter(new RedisIoAdapter(app));`;
+  }
+
+  get extendIoAdapter() {
+    return `
+import { IoAdapter } from '@nestjs/websockets';
+import * as redisIoAdapter from 'socket.io-redis';
+
+const redisAdapter = redisIoAdapter({ host: 'localhost', port: 6379 });
+
+export class RedisIoAdapter extends IoAdapter {
+  createIOServer(port: number, options?: any): any {
+    const server = super.createIOServer(port, options);
+    server.adapter(redisAdapter);
+    return server;
+  }
+}`;
   }
 }

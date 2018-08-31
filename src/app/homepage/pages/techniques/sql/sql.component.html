@@ -158,6 +158,38 @@ $ npm install --save @nestjs/typeorm typeorm mysql</code></pre>
     Afterward, simply inject the repository using <code>@InjectRepository()</code> decorator.
   </p>
   <pre><code class="language-typescript">{{ injectCustomRepository }}</code></pre>
+  <h4>Async configuration</h4>
+  <p>
+    Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use
+    <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.
+  </p>
+  <p>
+    First possible approach is to use a factory function:
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfiguration }}</code></pre>
+  <p>
+    Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through
+    <code>inject</code>).
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationFactoryAsync }}</code></pre>
+  <p>
+    Alternatively, you are able to use class instead of a factory.
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationClass }}</code></pre>
+  <p>
+    Above construction will instantiate <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and will leverage
+    it to create options object. The <code>TypeOrmConfigService</code> has to implement <code>TypeOrmOptionsFactory</code>    interface.
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationClassBody }}</code></pre>
+  <p>
+    In order to prevent the creation of <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and use a provider
+    imported from a different module, you can use the <code>useExisting</code> syntax.
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationExisting }}</code></pre>
+  <p>
+    It works the same as <code>useClass</code> with one critical difference - <code>TypeOrmModule</code> will lookup imported
+    modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.
+  </p>
   <h4>Example</h4>
   <p>
     A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm" target="blank">here</a>.
