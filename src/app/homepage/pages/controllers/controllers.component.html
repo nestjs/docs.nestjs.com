@@ -16,7 +16,7 @@
   <h4>Routing</h4>
   <p>
     In the following example we'll use the <code>@Controller()</code> decorator which is <strong>required</strong> to define
-    a basic controller. We'll specify an optional prefix of <code>cats</code>. Using a prefix in a Controller decoraror allows
+    a basic controller. We'll specify an optional prefix of <code>cats</code>. Using a prefix in a Controller decorator allows
     us to avoid repeating ourselves when routes could potentially share a common prefix.
   </p>
   <span class="filename">
@@ -35,7 +35,7 @@
     <code>cats</code>), Nest will map every <code>/cats</code> <strong>GET</strong> request to this method.
   </p>
   <p>
-    When a GET request is made to this endpoint, Nest will now return a 200 status code and the parsed <strong>JSON</strong>
+    When a GET request is made to this endpoint, Nest will now return a 200 status code and the serialized <strong>JSON</strong>
     response, which in this case just an empty array. Why does that happen? Generally, we distinguish <strong>two different
       approaches
     </strong> to manipulate responses:
@@ -45,7 +45,7 @@
       <td>Standard (recommended)</td>
       <td>
         When we return a JavaScript object or array, it'll be <strong>automatically</strong>
-        parsed to JSON. When we return a string however, Nest will send just a string without attempting to parse it.
+        serialized to JSON. When we return a string however, Nest will send just a string without attempting to serialize it.
         <br />
         <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST requests
         which use <strong>201</strong>. We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator
