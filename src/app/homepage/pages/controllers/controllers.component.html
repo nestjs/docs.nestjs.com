@@ -292,7 +292,7 @@
   <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
   <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
   <p>
-    Though this approach works, it's much less clear in general. The first approach should always be prepared, but to make Nest
+    Though this approach works, it's much less clear in general. The first approach should always be preferred, but to make Nest
     <strong>backwards compatible</strong>
     with previous versions, the above approach is still available. One other thing to note is the <strong>response object</strong>
     in this approach allows for more flexibility - by allowing us to have full control of the response object (headers manipulation
