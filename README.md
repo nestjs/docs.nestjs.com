@@ -34,7 +34,7 @@ Navigate to `http://localhost:4200/`. The app will automatically reload if you c
 
 ```
 $ npm install
-$ npm run start
+$ npm start
 ```
 
 ## Build
