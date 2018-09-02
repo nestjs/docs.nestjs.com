@@ -88,7 +88,7 @@ MulterModule.registerAsync({
 
   get asyncConfigurationFactoryAsync() {
     return `
-MulterModule.registerAsyncAsync({
+MulterModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
     dest: configService.getString('MULTER_DEST'),
