@@ -23,8 +23,12 @@
   <h4>Bearer strategy</h4>
   <p>
     As has been said already, firstly, we'll implement <a href="https://github.com/jaredhanson/passport-http-bearer" target="blank">passport-http-bearer</a>
-    library. Let's start by creating the <code>AuthService</code> class that will expose a single method,
-    <code>validateUser()</code> which responsibility is querying the user through provided bearer <strong>token</strong>.
+    library. Bearer tokens are typically used protect API endpoints, and are often issued using OAuth 2.0. The HTTP Bearer authentication
+    strategy authenticates users using a bearer token.
+  </p>
+  <p>
+    Let's start by creating the <code>AuthService</code> class that will expose a single method,
+    <code>validateUser()</code> which responsibility is to query user using provided bearer <strong>token</strong>.
   </p>
   <span class="filename">
     {{ 'auth.service' | extension: authServiceT.isJsActive }}
@@ -49,7 +53,7 @@
   <pre [class.hide]="!httpStrategyT.isJsActive"><code class="language-typescript">{{ httpStrategyJs }}</code></pre>
   <p>
     The <code>HttpStrategy</code> uses <code>AuthService</code> to validate the token. When the token is valid, passport
-    allows further request processing. Otherwise, the user receives <code>401 (Unauthorized)</code> response.
+    allows further request processing. Otherwise, the user receives <code>401 Unauthorized</code> response.
   </p>
   <p>
     Afterward, we can create the <code>AuthModule</code>.
@@ -62,19 +66,64 @@
   <pre [class.hide]="!authModuleT.isJsActive"><code class="language-typescript">{{ authModuleJs }}</code></pre>
   <blockquote class="warning">
     <strong>Notice</strong> In order to make use of <code>UsersService</code>, the <code>AuthModule</code> imports <code>UsersModule</code>.
-    The internal implementation is unimportant here.
+    The internal implementation is unimportant here and heavily depends on your technical project requirements (e.g. database).
   </blockquote>
   <p>
     Then, you can simply use the <code>AuthGuard</code> wherever you want to enable the authentication.
   </p>
   <pre><code class="language-typescript">{{ useGuards }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>AuthGuard</code> is exposed from <code>@nestjs/passport</code> package.
-  </blockquote>
   <p>
-    The <code>bearer</code> is a name of the strategy that passport will make use of. Also, the <code>AuthGuard</code> accepts
-    a second argument, <code>options</code> object that you are able to pass in order to determine the passport behavior.
+    The <code>@AuthGuard()</code> is imported from <code>@nestjs/passport</code> package. Also, <code>bearer</code> is a
+    name of the strategy that passport will make use of. Let us check if endpoint is effectively secured. To ensure that
+    everything work correctly, we'll perform a GET request to the <code>users</code> resource without setting a valid token.
   </p>
+  <pre><code class="language-bash">
+$ curl localhost:3000/users</code></pre>
+  <p>
+    Application should respond with <code>401 Unauthorized</code> status code and following response body:
+  </p>
+  <pre><code class="language-typescript">
+"statusCode": 401,
+"error": "Unauthorized"</code></pre>
+  <p>
+    If you create a valid token beforehand and pass it along with the HTTP request, the application will respectively identify
+    a user, attach its object to the request, and allow further request processing.
+  </p>
+  <pre><code class="language-bash">
+$ curl localhost:3000/users -H "Authorization: Bearer TOKEN"</code></pre>
+  <h4>Default strategy</h4>
+  <p>
+    To determine default passport behavior, you can register the <code>PassportModule</code>.
+  </p>
+  <span class="filename">
+    {{ 'auth.module' | extension: passportModuleT.isJsActive }}
+    <app-tabs #passportModuleT></app-tabs>
+  </span>
+  <pre [class.hide]="passportModuleT.isJsActive"><code class="language-typescript">{{ passportModule }}</code></pre>
+  <pre [class.hide]="!passportModuleT.isJsActive"><code class="language-typescript">{{ passportModuleJs }}</code></pre>
+  <p>
+    Once you set <code>defaultStrategy</code>, you no longer need to manually pass the strategy name in the <code>@AuthGuard()</code>    decorator.
+  </p>
+  <pre><code class="language-typescript">{{ useGuardsDefault }}</code></pre>
+  <h4>User object</h4>
+  <p>
+    When request is validated correctly, the user entity will be attached to the request object and accessible through
+    <code>user</code> property (e.g. <code>req.user</code>). To change the property name, set <code>property</code> of the
+    options object.
+  </p>
+  <pre><code class="language-typescript">{{ userObject }}</code></pre>
+  <h4>Customize passport</h4>
+  <p>
+    Depending on the strategy that is being used, passport takes a bunch of properties that shape the library behavior. Use <code>register()</code>    method
+    to pass down options object directly to the passport instance.
+  </p>
+  <pre><code class="language-typescript">{{ passportOptions }}</code></pre>
+  <h4>Inheritance</h4>
+  <p>
+    In most cases, <code>AuthGuard</code> will be sufficient. However, in order to adjust either default error handling or
+    authentication logic, you can extend the class and override methods within a subclass.
+  </p>
+  <pre><code class="language-typescript">{{ inheritance }}</code></pre>
   <h4>JWT strategy</h4>
   <p>
     A second described approach is to authenticate endpoints using a <strong>JSON web token</strong> (JWT). To implement
@@ -122,7 +171,8 @@ $ npm install --save @nestjs/jwt passport-jwt</code></pre>
   <pre [class.hide]="!authModuleJwtT.isJsActive"><code class="language-typescript">{{ authModuleJwtJs }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> In order to make use of <code>UsersService</code>, the <code>AuthModule</code> imports <code>UsersModule</code>.
-    The internal implementation is unimportant here.
+    The internal implementation is unimportant here. Besides, <code>JwtModule</code> has been registered statically. To switch
+    to asynchronous configuration, read more <a href="https://github.com/nestjs/passport" target="blank">here</a>.
   </blockquote>
   <p>
     Both expiration time and <code>secretKey</code> are hardcoded (in a real-world application you should rather consider
@@ -132,13 +182,25 @@ $ npm install --save @nestjs/jwt passport-jwt</code></pre>
     Then, you can simply use the <code>AuthGuard</code> wherever you want to enable the authentication.
   </p>
   <pre><code class="language-typescript">{{ useGuardsJwt }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>AuthGuard</code> is exposed from <code>@nestjs/passport</code> package.
-  </blockquote>
   <p>
-    The <code>jwt</code> is a name of the strategy that passport will make use of. Also, the <code>AuthGuard</code> accepts
-    a second argument, <code>options</code> object that you are able to pass in order to determine the passport behavior.
+    Let us check if endpoint is effectively secured. To ensure that everything work correctly, we'll perform a GET request to
+    the <code>users</code> resource without setting a valid token.
   </p>
+  <pre><code class="language-bash">
+$ curl localhost:3000/users</code></pre>
+  <p>
+    Application should respond with <code>401 Unauthorized</code> status code and following response body:
+  </p>
+  <pre><code class="language-typescript">
+"statusCode": 401,
+"error": "Unauthorized"</code></pre>
+  <p>
+    If you create a valid token beforehand and pass it along with the HTTP request, the application will respectively identify
+    a user, attach its object to the request, and allow further request processing.
+  </p>
+  <pre><code class="language-bash">
+$ curl localhost:3000/users -H "Authorization: Bearer TOKEN"</code></pre>
+  <h4>Example</h4>
   <p>
     A full working example is available
     <a href="https://github.com/nestjs/nest/tree/master/sample/19-auth" target="blank">here</a>.

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -17,7 +17,7 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
 export class ConfigService {
-  private readonly envConfig: { [prop: string]: string };
+  private readonly envConfig: { [key: string]: string };
 
   constructor(filePath: string) {
     this.envConfig = dotenv.parse(fs.readFileSync(filePath))
@@ -95,7 +95,7 @@ import * as Joi from 'joi';
 import * as fs from 'fs';
 
 export interface EnvConfig {
-  [prop: string]: string;
+  [key: string]: string;
 }
 
 export class ConfigService {
@@ -107,7 +107,7 @@ export class ConfigService {
   }
 
   /**
-   * Ensures all needed variables are set, and returns the validated JavaScript object 
+   * Ensures all needed variables are set, and returns the validated JavaScript object
    * including the applied default values.
    */
   private validateInput(envConfig: EnvConfig): EnvConfig {

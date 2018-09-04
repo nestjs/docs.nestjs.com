@@ -1,10 +1,10 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
-  ChangeDetectionStrategy,
   OnInit,
 } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -13,7 +13,8 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent implements OnInit {
-  @Input() isSidebarOpened = true;
+  @Input()
+  isSidebarOpened = true;
   readonly items = [
     {
       title: 'Introduction',
@@ -64,9 +65,13 @@ export class MenuComponent implements OnInit {
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
         { title: 'File upload', path: '/techniques/file-upload' },
+        { title: 'Validation', path: '/techniques/validation' },
+        { title: 'Caching', path: '/techniques/caching' },
+        { title: 'Serialization', path: '/techniques/serialization' },
         { title: 'Logger', path: '/techniques/logger' },
-        { title: 'CORS', path: '/techniques/cors' },
+        { title: 'Security', path: '/techniques/security' },
         { title: 'Configuration', path: '/techniques/configuration' },
+        { title: 'Compression', path: '/techniques/compression' },
         { title: 'HTTP module', path: '/techniques/http-module' },
         { title: 'Model-View-Controller', path: '/techniques/mvc' },
         { title: 'Performance (Fastify)', path: '/techniques/performance' },
@@ -83,11 +88,10 @@ export class MenuComponent implements OnInit {
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
         {
-          title: 'Guards & interceptors',
-          path: '/graphql/guards-interceptors',
+          title: 'Tooling',
+          path: '/graphql/tooling',
         },
-        { title: 'Schema stitching', path: '/graphql/schema-stitching' },
-        { title: 'IDE', path: '/graphql/ide' },
+        // { title: 'Schema stitching', path: '/graphql/schema-stitching' },
       ],
     },
     {
@@ -185,8 +189,8 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.router.events
-      .filter((event) => event instanceof NavigationEnd)
-      .subscribe((event) => this.toggleCategory());
+      .filter(event => event instanceof NavigationEnd)
+      .subscribe(event => this.toggleCategory());
 
     this.toggleCategory();
   }

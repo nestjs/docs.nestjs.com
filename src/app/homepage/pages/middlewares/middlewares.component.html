@@ -39,12 +39,13 @@
   </p>
   <h4>Dependency injection</h4>
   <p>
-    There's no exception when it comes to the middleware. Same as providers and controllers, they are able to <strong>inject
-      dependencies</strong> that belongs to the same module (through the <code>constructor</code>).
+    There is no exception when it comes to the middleware. Same as providers and controllers, they are able to <strong>inject
+      dependencies
+    </strong> that belongs to the same module (through the <code>constructor</code>).
   </p>
   <h4>Applying middleware</h4>
   <p>
-    There's no place for middleware in the <code>@Module()</code> decorator. We have to set them up using the <code>configure()</code>    method
+    There is no place for middleware in the <code>@Module()</code> decorator. We have to set them up using the <code>configure()</code>    method
     of the module class. Modules that include middleware have to implement the <code>NestModule</code> interface. Let's set
     up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
   </p>
@@ -65,6 +66,19 @@
   </span>
   <pre [class.hide]="routeInfoT.isJsActive"><code class="language-typescript">{{ routeInfo }}</code></pre>
   <pre [class.hide]="!routeInfoT.isJsActive"><code class="language-typescript">{{ routeInfoJs }}</code></pre>
+  <h4>Route wildcards</h4>
+  <p>
+    Pattern based routes are supported as well. For instance, the asterisk is used as a <strong>wildcard</strong>, and will
+    match any combination of characters.
+  </p>
+  <pre><code class="language-typescript">{{ routeWildcards }}</code></pre>
+  <p>
+    Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters <code>?</code>,
+    <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The hyphen
+    (
+    <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.
+  </p>
+  <h4>Middleware consumer</h4>
   <p>
     The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All
     of them can be simply <strong>chained</strong>. The <code>forRoutes()</code> can take a single string, multiple strings,
@@ -90,6 +104,14 @@
   </span>
   <pre [class.hide]="applicationModuleExcludeT.isJsActive"><code class="language-typescript">{{ applicationModuleExclude }}</code></pre>
   <pre [class.hide]="!applicationModuleExcludeT.isJsActive"><code class="language-typescript">{{ applicationModuleExcludeJs }}</code></pre>
+  <p>
+    Consequently, <code>LoggerMiddleware</code> will be bounded to all routes defined inside <code>CatsController</code>    except
+    these two passed to the <code>exclude()</code> function. Please note that <code>exclude()</code> method <strong>won't
+      work
+    </strong> with your functional middleware. In addition, this function doesn't exclude paths from more generic routes
+    (e.g. wildcards). In such case, you should rather put your paths-restriction logic directly to the middleware and, for
+    example, compare a request's URL.
+  </p>
   <h4>Configurable middleware</h4>
   <p>
     Sometimes the behaviour of the middleware depends on the custom values e.g. an array of user roles, options object, and so
@@ -131,7 +153,8 @@
   <p>
     The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies. Why can't
     we just use a simple function? It's a good question, cause in fact - we can. This type of the middleware is called <strong>functional
-      middleware</strong>. Let's transform the logger into a function.
+      middleware
+    </strong>. Let's transform the logger into a function.
   </p>
   <span class="filename">
     {{ 'logger.middleware' | extension: functionalMiddlewareT.isJsActive }}

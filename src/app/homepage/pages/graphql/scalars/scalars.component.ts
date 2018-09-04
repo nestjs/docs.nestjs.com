@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -9,8 +9,17 @@ import { BasePageComponent } from '../../page/page.component';
 export class ScalarsComponent extends BasePageComponent {
   get jsonScalar() {
     return `
-const resolvers = { JSON: GraphQLJSON };
-const schema = this.graphQLFactory.createSchema({ typeDefs, resolvers });`;
+import * as GraphQLJSON from 'graphql-type-json';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.graphql'],
+      resolvers: { JSON: GraphQLJSON },
+    }),
+  ],
+})
+export class ApplicationModule {}`;
   }
 
   get typeDefJson() {
@@ -20,5 +29,39 @@ scalar JSON
 type Foo {
   field: JSON
 }`;
+  }
+
+  get classScalar() {
+    return `
+import { Scalar } from '@nestjs/graphql';
+import { Kind } from 'graphql';
+
+@Scalar('Date')
+export class DateScalar {
+  description = 'Date custom scalar type';
+
+  parseValue(value) {
+    return new Date(value); // value from the client
+  }
+
+  serialize(value) {
+    return value.getTime(); // value sent to the client
+  }
+
+  parseLiteral(ast) {
+    if (ast.kind === Kind.INT) {
+      return parseInt(ast.value, 10); // ast value is always in string format
+    }
+    return null;
+  }
+}`;
+  }
+
+  get registerDateScalar() {
+    return `
+@Module({
+  providers: [DateScalar],
+})
+export class CommonModule {}`;
   }
 }

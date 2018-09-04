@@ -1,0 +1,99 @@
+<div class="content">
+  <h3>Caching</h3>
+  <p>
+    Cache is a great and simple <strong>technique</strong> that helps in improving your app's performance. It acts as a temporary
+    data store, which accessing is really performant.
+  </p>
+  <h4>In-memory cache</h4>
+  <p>
+    Nest provides a unified API for various cache storages. The built-in one is an in-memory data store. However, you can easily
+    switch to a more comprehensive solution, like Redis. In order to enable caching, firstly import <code>CacheModule</code>    and
+    call its <code>register()</code> method.
+  </p>
+  <pre><code class="language-typescript">{{ inMemoryCache }}</code></pre>
+  <p>
+    Then just tie <code>CacheInterceptor</code> somewhere.
+  </p>
+  <pre><code class="language-typescript">{{ appController }}</code></pre>
+  <blockquote class="warning">
+    <strong>Warning</strong>
+    Only <code>GET</code> endpoints are cached.
+  </blockquote>
+  <h4>Global cache</h4>
+  <p>
+    To reduce an amount of the required boilerplate, you can bind <code>CacheInterceptor</code> to each existing endpoint
+    at once.
+  </p>
+  <pre><code class="language-typescript">{{ globalCache }}</code></pre>
+  <h4>WebSockets & Microservices</h4>
+  <p>
+    Obviously, you can effortlessly apply <code>CacheInterceptor</code> to WebSocket subscribers as well as Microservice's
+    patterns (regardless of transport method that is being used).
+  </p>
+  <pre><code class="language-typescript">{{ websockets }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong>
+    The <code>@CacheKey()</code> decorator is imported from <code>@nestjs/common</code> package.
+  </blockquote>
+  <p>
+    However, the additional <code>@CacheKey()</code> decorator is required in order to specify a key used to subsequently
+    store and retrieve cached data. Besides, please note that you <strong>shouldn't cache everything</strong>. Actions which
+    responsibility is to perform some business operations rather than simply querying the data should never be cached.
+  </p>
+  <h4>Customize caching</h4>
+  <p>
+    All cached data have its own expiration time (TTL). To customize default values, pass options object to the <code>register()</code>    method.
+  </p>
+  <pre><code class="language-typescript">{{ customizeCache }}</code></pre>
+  <h4>Different stores</h4>
+  <p>
+    We take advantage of <a href="https://github.com/BryanDonovan/node-cache-manager" target="blank">cache-manager</a> under
+    the hood. This package supports a wide-range of useful stores, for example, <a href="https://github.com/dabroek/node-cache-manager-redis-store"
+      target="blank">Redis</a> store (full list <a href="https://github.com/BryanDonovan/node-cache-manager#store-engines"
+      target="blank">here</a>). To set up the Redis store, simple pass the package together with correspoding options to the
+    <code>register()</code> method.
+  </p>
+  <pre><code class="language-typescript">{{ redisStore }}</code></pre>
+  <h4>Adjust tracking</h4>
+  <p>
+    By default, Nest uses request URL (in HTTP app) or cache key (in websockets and microservices) set through <code>@CacheKey()</code>    decorator
+    to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different
+    factors, for example, using HTTP headers (e.g. <code>Authorization</code> to properly identify <code>profile</code> endpoints).
+  </p>
+  <p>
+    In order to achieve that, create a subclass of <code>CacheInterceptor</code> and override <code>trackBy()</code> method.
+  </p>
+  <pre><code class="language-typescript">{{ trackBy }}</code></pre>
+  <h4>Async configuration</h4>
+  <p>
+    Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use
+    <code>registerAsync()</code> method, that provides a couple of various ways to deal with async data.
+  </p>
+  <p>
+    First possible approach is to use a factory function:
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfiguration }}</code></pre>
+  <p>
+    Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through
+    <code>inject</code>).
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationFactoryAsync }}</code></pre>
+  <p>
+    Alternatively, you are able to use class instead of a factory.
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationClass }}</code></pre>
+  <p>
+    Above construction will instantiate <code>CacheConfigService</code> inside <code>CacheModule</code> and will leverage
+    it to create options object. The <code>CacheConfigService</code> has to implement <code>CacheOptionsFactory</code> interface.
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationClassBody }}</code></pre>
+  <p>
+    In order to prevent the creation of <code>CacheConfigService</code> inside <code>CacheModule</code> and use a provider
+    imported from a different module, you can use the <code>useExisting</code> syntax.
+  </p>
+  <pre><code class="language-typescript">{{ asyncConfigurationExisting }}</code></pre>
+  <p>
+    It works the same as <code>useClass</code> with one critical difference - <code>CacheModule</code> will lookup imported
+    modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.
+  </p>
+</div>

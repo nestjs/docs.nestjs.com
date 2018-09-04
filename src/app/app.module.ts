@@ -1,6 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { PerfectScrollbarConfigInterface, PerfectScrollbarModule, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import {
+  PerfectScrollbarConfigInterface,
+  PerfectScrollbarModule,
+  PERFECT_SCROLLBAR_CONFIG,
+} from 'ngx-perfect-scrollbar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MatchHeightDirective } from './common/directives/match-height.directive';
@@ -65,7 +69,6 @@ import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.compo
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
-import { CorsComponent } from './homepage/pages/techniques/cors/cors.component';
 import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
 import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
 import { HttpModuleComponent } from './homepage/pages/techniques/http-module/http-module.component';
@@ -73,6 +76,7 @@ import { LoggerComponent } from './homepage/pages/techniques/logger/logger.compo
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
+import { SecurityComponent } from './homepage/pages/techniques/security/security.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
 import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
 import { WsExceptionFiltersComponent } from './homepage/pages/websockets/exception-filters/exception-filters.component';
@@ -80,10 +84,13 @@ import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways
 import { WsGuardsComponent } from './homepage/pages/websockets/guards/guards.component';
 import { WsInterceptorsComponent } from './homepage/pages/websockets/interceptors/interceptors.component';
 import { WsPipesComponent } from './homepage/pages/websockets/pipes/pipes.component';
+import { TocComponent } from './homepage/toc/toc.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
-import { TocComponent } from './homepage/toc/toc.component';
-
+import { CompressionComponent } from './homepage/pages/techniques/compression/compression.component';
+import { ValidationComponent } from './homepage/pages/techniques/validation/validation.component';
+import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
+import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -91,12 +98,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 };
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    PerfectScrollbarModule,
-    CliModule,
-  ],
+  imports: [BrowserModule, AppRoutingModule, PerfectScrollbarModule, CliModule],
   declarations: [
     AppComponent,
     HomepageComponent,
@@ -165,7 +167,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     PlatformAgnosticismComponent,
     ScalarsComponent,
     AuthenticationComponent,
-    CorsComponent,
+    SecurityComponent,
     LoggerComponent,
     PerformanceComponent,
     FileUploadComponent,
@@ -178,15 +180,17 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     NatsComponent,
     SupportComponent,
     TocComponent,
+    CompressionComponent,
+    ValidationComponent,
+    CachingComponent,
+    SerializationComponent,
   ],
-  bootstrap: [
-    AppComponent
-  ],
+  bootstrap: [AppComponent],
   providers: [
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
-      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    }
-  ]
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG,
+    },
+  ],
 })
 export class AppModule {}
