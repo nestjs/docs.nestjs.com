@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --sourcemap=false",
+    "start": "ng serve --source-map=false",
     "build": "ng build",
     "build:prod": "ng build --prod --aot",
     "test": "ng test",
