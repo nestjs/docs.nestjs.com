@@ -30,17 +30,14 @@
     Once fastify is installed, we can use a <code>FastifyAdapter</code>.
   </p>
   <pre><code class="language-typescript">{{ bootstrap }}</code></pre>
-
+  <blockquote class="warning">
+    <strong>Notice</strong> If you're running your Nest instance inside of a <strong>docker container</strong> you
+    will need to specify the host, like so:
+  </blockquote>
+  <pre><code class="language-typescript">{{ docker }}</code></pre>
   <p>
     And that's all. Also, you are able to pass options into fastify constructor through <code>FastifyAdapter</code>
     constructor.
-  </p>
-  <blockquote class="warning">
-    <strong>Notice</strong> If you're running your Nest instance inside a docker, you need to specify the host
-    '0.0.0.0' in the
-    <code>FastifyAdapter</code> through the constructor.
-  </blockquote>
-  <p>
     Keep in mind that now, Nest uses fastify as an <strong>HTTP provider</strong>, meaning, each recipe that relays on
     express won't work anymore. You should rather use fastify equivalent packages.
   </p>
