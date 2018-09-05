@@ -58,7 +58,7 @@ export class CreateUserDto {
 
   get findOneEndpoint() {
     return `
-@Get('id')
+@Get(':id')
 findOne(@Param() params: FindOneParams) {
   return 'This action returns a user';
 }`;
