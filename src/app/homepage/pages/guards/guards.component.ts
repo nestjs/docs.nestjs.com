@@ -248,4 +248,19 @@ const authGuard = app
 app.useGlobalGuards(authGuard);
 `;
   }
+
+  get componentScopedGuardModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { UserService } from '../service';
+import { UserGuard } from '../guard';
+
+@Module({
+  providers: [
+    UserService, UserGuard
+  ],
+})
+export class ServiceModule {}`;
+  }
+
 }

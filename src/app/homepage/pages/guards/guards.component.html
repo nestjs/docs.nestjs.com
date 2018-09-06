@@ -127,6 +127,14 @@
     <app-tabs #globalScopedGuardModuleT></app-tabs>
   </span>
   <pre><code class="language-typescript">{{ globalScopedGuardModule }}</code></pre>
+  <p>
+    Also, the guard in the controller can be similarly treated as a normal injectable class for dependency injection. E.g:
+  </p>
+  <span class="filename">
+    {{ 'service.module' | extension: componentScopedGuardModuleT.isJsActive }}
+    <app-tabs #componentScopedGuardModuleT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ componentScopedGuardModule }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> The alternative option is to use an <a routerLink="/execution-context">execution context</a> feature.
     Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
