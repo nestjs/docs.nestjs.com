@@ -23,7 +23,6 @@ import { E2eTestingComponent } from './homepage/pages/fundamentals/e2e-testing/e
 import { PlatformAgnosticismComponent } from './homepage/pages/fundamentals/platform-agnosticism/platform-agnosticism.component';
 import { UnitTestingComponent } from './homepage/pages/fundamentals/unit-testing/unit-testing.component';
 import { GuardsInterceptorsComponent } from './homepage/pages/graphql/guards-interceptors/guards-interceptors.component';
-import { IdeComponent } from './homepage/pages/graphql/ide/ide.component';
 import { MutationsComponent } from './homepage/pages/graphql/mutations/mutations.component';
 import { QuickStartComponent } from './homepage/pages/graphql/quick-start/quick-start.component';
 import { ResolversMapComponent } from './homepage/pages/graphql/resolvers-map/resolvers-map.component';
@@ -55,8 +54,9 @@ import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-ty
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
+import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
+import { CompressionComponent } from './homepage/pages/techniques/compression/compression.component';
 import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
-import { CorsComponent } from './homepage/pages/techniques/cors/cors.component';
 import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
 import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
 import { HttpModuleComponent } from './homepage/pages/techniques/http-module/http-module.component';
@@ -64,7 +64,10 @@ import { LoggerComponent } from './homepage/pages/techniques/logger/logger.compo
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
+import { SecurityComponent } from './homepage/pages/techniques/security/security.component';
+import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
+import { ValidationComponent } from './homepage/pages/techniques/validation/validation.component';
 import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
 import { WsExceptionFiltersComponent } from './homepage/pages/websockets/exception-filters/exception-filters.component';
 import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways.component';
@@ -210,14 +213,18 @@ const routes: Routes = [
       },
       {
         path: 'graphql/guards-interceptors',
-        component: GuardsInterceptorsComponent,
-        data: { title: 'GraphQL - Guards & Interceptors' },
+        redirectTo: 'graphq/tooling',
       },
       {
+        path: 'graphql/tooling',
+        component: GuardsInterceptorsComponent,
+        data: { title: 'GraphQL - Tooling' },
+      },
+      /*{
         path: 'graphql/ide',
         component: IdeComponent,
         data: { title: 'GraphQL - IDE' },
-      },
+      },*/
       {
         path: 'graphql/schema-stitching',
         component: SchemaStitchingComponent,
@@ -348,9 +355,19 @@ const routes: Routes = [
         data: { title: 'MVC' },
       },
       {
-        path: 'techniques/mvc',
-        component: MvcComponent,
-        data: { title: 'MVC' },
+        path: 'techniques/serialization',
+        component: SerializationComponent,
+        data: { title: 'Serialization' },
+      },
+      {
+        path: 'techniques/caching',
+        component: CachingComponent,
+        data: { title: 'Caching' },
+      },
+      {
+        path: 'techniques/validation',
+        component: ValidationComponent,
+        data: { title: 'Validation' },
       },
       {
         path: 'techniques/sql',
@@ -397,9 +414,14 @@ const routes: Routes = [
         data: { title: 'Configuration' },
       },
       {
-        path: 'techniques/cors',
-        component: CorsComponent,
-        data: { title: 'CORS' },
+        path: 'techniques/security',
+        component: SecurityComponent,
+        data: { title: 'Security' },
+      },
+      {
+        path: 'techniques/compression',
+        component: CompressionComponent,
+        data: { title: 'Compression' },
       },
       {
         path: 'faq/express-instance',

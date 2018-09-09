@@ -5,7 +5,7 @@
   @extend .transition;
   @extend .box-sizing;
   @include transform(translateX(-100%));
-  padding: 100px 30px 40px 45px;
+  padding: 90px 30px 40px 45px;
   width: 300px;
   background: #f9f9f9;
   box-shadow: inset -35px -18px 70px rgba(233, 233, 233, 0.25);
@@ -37,8 +37,8 @@
 }
 
 .nav-item {
-  margin: 0 -20px;
-  padding: 0 20px;
+  margin: 0 -10px;
+  padding: 0 10px;
   border-bottom: 1px solid #efefef;
   &:last-of-type {
     border: 0;

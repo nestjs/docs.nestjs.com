@@ -1,14 +1,14 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-swagger',
-  templateUrl: './swagger.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
+               selector: 'app-swagger',
+               templateUrl: './swagger.component.html',
+               changeDetection: ChangeDetectionStrategy.OnPush,
+           })
 export class SwaggerComponent extends BasePageComponent {
-  get bootstrapFile() {
-    return `
+    get bootstrapFile() {
+        return `
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ApplicationModule } from './app.module';
@@ -28,18 +28,62 @@ async function bootstrap() {
   await app.listen(3001);
 }
 bootstrap();`;
-  }
+    }
 
-  get postHandler() {
-    return `
+    get secondaryBootstrapFile() {
+        return `
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ApplicationModule } from './app.module';
+
+// imports CatsModule and DogsModule;
+
+async function bootstrap() {
+  const app = await NestFactory.create(ApplicationModule);
+
+  /**
+   * createDocument(application, configurationOptions, extraOptions);
+   *
+   * createDocument method takes in an optional 3rd argument "extraOptions"
+   * which is an object with "include" property where you can pass an Array
+   * of Modules that you want to include in that Swagger Specification
+   * E.g: CatsModule and DogsModule will have two separate Swagger Specifications which
+   * will be exposed on two different SwaggerUI with two different endpoints.
+   */
+
+  const options = new DocumentBuilder()
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+  const catDocument = SwaggerModule.createDocument(app, options, { include: [CatsModule] });
+  SwaggerModule.setup('api/cats', app, catDocument);
+
+  const secondOptions = new DocumentBuilder()
+    .setTitle('Dogs example')
+    .setDescription('The dogs API description')
+    .setVersion('1.0')
+    .addTag('dogs')
+    .build();
+  const dogDocument = SwaggerModule.createDocument(app, secondOptions, { include: [DogsModule] });
+  SwaggerModule.setup('api/dogs', app, dogDocument);
+
+  await app.listen(3001);
+}
+bootstrap();`;
+    }
+
+    get postHandler() {
+        return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;
-  }
+    }
 
-  get postHandlerJs() {
-    return `
+    get postHandlerJs() {
+        return `
 @Post()
 @Bind(Body())
 @ApiImplicitBody({ name: 'CreateCatDto', type: CreateCatDto })
@@ -47,10 +91,10 @@ async create(createCatDto) {
   this.catsService.create(createCatDto);
 }
 `;
-  }
+    }
 
-  get createCatDto() {
-    return `
+    get createCatDto() {
+        return `
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateCatDto {
@@ -63,10 +107,10 @@ export class CreateCatDto {
   @ApiModelProperty()
   readonly breed: string;
 }`;
-  }
+    }
 
-  get createCatDtoJs() {
-    return `
+    get createCatDtoJs() {
+        return `
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateCatDto {
@@ -79,10 +123,10 @@ export class CreateCatDto {
   @ApiModelProperty({ type: String })
   readonly breed;
 }`;
-  }
+    }
 
-  get apiModelProperty() {
-    return `
+    get apiModelProperty() {
+        return `
 export declare const ApiModelProperty: (metadata?: {
   description?: string;
   required?: boolean;
@@ -109,53 +153,53 @@ export declare const ApiModelProperty: (metadata?: {
   xml?: any;
   example?: any;
 }) => PropertyDecorator;`;
-  }
+    }
 
-  get apiModelPropertyOptional() {
-    return `
+    get apiModelPropertyOptional() {
+        return `
 @ApiModelProperty({ required: false })`;
-  }
+    }
 
-  get arrayProperty() {
-    return `
+    get arrayProperty() {
+        return `
 @ApiModelProperty({ type: String, isArray: true })
 readonly names: string[];`;
-  }
+    }
 
-  get useTags() {
-    return `
+    get useTags() {
+        return `
 @ApiUseTags('cats')
 @Controller('cats')
 export class CatsController {}`;
-  }
+    }
 
-  get response() {
-    return `
+    get response() {
+        return `
 @Post()
 @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
 @ApiResponse({ status: 403, description: 'Forbidden.'})
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;
-  }
+    }
 
-  get customResponse() {
-    return `
+    get customResponse() {
+        return `
 @Post()
 @ApiCreatedResponse({ description: 'The record has been successfully created.'})
 @ApiForbiddenResponse({ description: 'Forbidden.'})
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;
-  }
+    }
 
-  get bearerAuth() {
-    return `
+    get bearerAuth() {
+        return `
 @ApiUseTags('cats')
 @ApiBearerAuth()
 @Controller('cats')
 export class CatsController {}`;
-  }
+    }
 
   get fileUpload() {
     return `
@@ -164,6 +208,7 @@ export class CatsController {}`;
 @ApiImplicitFile({name: 'file', required: true, description: 'file containing cats list'})
 uploadFile(@UploadedFile() file) {}`;
   }
+  
   get apiImplicitQuery() {
       return `
 export const ApiImplicitQuery = (metadata: {
@@ -175,28 +220,28 @@ export const ApiImplicitQuery = (metadata: {
   enum?: SwaggerEnumType;
   collectionFormat?: 'csv' | 'ssv' | 'tsv' | 'pipes' | 'multi';
 }): MethodDecorator`;
-  }
+    }
 
-  get enumImplicitQuery() {
-      return `
+    get enumImplicitQuery() {
+        return `
 @ApiImplicitQuery({ name: 'role', enum: ['Admin', 'Moderator', 'User'] })
 async filterByRole(@Query('role') role: UserRole = UserRole.User) {
   // role returns: UserRole.Admin, UserRole.Moderator OR UserRole.User
 }`;
-  }
+    }
 
-  get enumProperty() {
-      return `
+    get enumProperty() {
+        return `
 @ApiModelProperty({ enum: ['Admin', 'Moderator', 'User']})
 role: UserRole;`;
-  }
+    }
 
-  get userRoleEnum() {
-      return `
+    get userRoleEnum() {
+        return `
 export enum UserRole {
   Admin = 'Admin',
   Moderator = 'Moderator',
   User = 'User'
 }`;
-  }
+    }
 }

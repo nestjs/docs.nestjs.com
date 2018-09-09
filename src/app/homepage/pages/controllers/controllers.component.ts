@@ -82,6 +82,14 @@ findOne(@Param('id') id) {
 }`;
   }
 
+  get routeWildcards() {
+    return `
+@Get('ab*cd')
+findAll() {
+  return 'This route uses a wildcard';
+}`;
+  }
+
   get statusCode() {
     return `
 @Post()

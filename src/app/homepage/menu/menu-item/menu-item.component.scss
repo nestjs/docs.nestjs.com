@@ -13,6 +13,7 @@ h3 {
   color: $black-color;
   font-size: 16px;
   letter-spacing: 0.1px;
+  margin: 14px 0;
   &:hover {
     color: $red-color;
   }
@@ -33,11 +34,11 @@ h3 {
 
 li {
   display: block;
-  padding: 6px 0;
+  padding: 4px 0;
 
   a {
     color: $black-color;
-    font-size: 16px;
+    font-size: 15px;
     text-decoration: none;
     cursor: pointer;
     &:hover {
@@ -81,5 +82,5 @@ li {
 }
 
 ul {
-  padding-left: 25px;
+  padding-left: 15px;
 }

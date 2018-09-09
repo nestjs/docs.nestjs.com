@@ -1,0 +1,67 @@
+<div class="content">
+  <h3>Serialization</h3>
+  <p>
+    Serializers provides clean abstraction layer towards <strong>data manipulation</strong> before sending the actual response.
+    For instance, sensitive data like user's password should be always excluded from the eventual response. Furthermore,
+    certain properties might require additional transformation, let's say, we don't want to send the whole database entity.
+    Instead, we would like to pick only <code>id</code> and <code>name</code>. The rest should be automatically stripped.
+    Unluckily, manually mapping all entities may bring a lot of confusedness.
+  </p>
+  <h4>Overview</h4>
+  <p>
+    In order to provide a straightforward way to carry out these operations, Nest comes with the <code>ClassSerializerInterceptor</code>    class.
+    It uses <a href="https://github.com/typestack/class-transformer" target="blank">class-transformer</a> package to provide
+    a declarative and extensible way of transforming objects. Basically, the <code>ClassSerializerInterceptor</code> takes
+    the value returned from the method and call <code>classToPlain()</code> function from <a href="https://github.com/typestack/class-transformer"
+      target="blank">class-transformer</a> package.
+  </p>
+  <h4>Exclude properties</h4>
+  <p>
+    Let's assume that we want to automatically exclude a <code>password</code> property from the following entity:
+  </p>
+  <pre><code class="language-typescript">{{ userEntity }}</code></pre>
+  <p>
+    Then, return the instance of this class directly from the controller's method.
+  </p>
+  <pre><code class="language-typescript">{{ returnUserEntity }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong>
+    The <code>ClassSerializerInterceptor</code> is imported from <code>@nestjs/common</code> package.
+  </blockquote>
+  <p>
+    Now, when you call this endpoint, you'll receive a following response:
+  </p>
+  <pre><code class="language-typescript">{{ response }}</code></pre>
+  <h4>Expose properties</h4>
+  <p>
+    If you want to expose earlier precalculated property, simply use <code>@Expose()</code> decorator.
+  </p>
+  <pre><code class="language-typescript">{{ expose }}</code></pre>
+  <h4>Transform</h4>
+  <p>
+    You can perform additional data transformation using <code>@Transform()</code> decorator. For example, you want to pick
+    a name of the <code>RoleEntity</code> instead of returning the whole object.
+  </p>
+  <pre><code class="language-typescript">{{ transform }}</code></pre>
+  <h4>Pass options</h4>
+  <p>
+    The transform options may vary depending on the certain factors. In order to override default settings, use <code>@SerializeOptions()</code>    decorator.
+  </p>
+  <pre><code class="language-typescript">{{ serializeOptions }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong>
+    The <code>@SerializeOptions()</code> decorator is imported from <code>@nestjs/common</code> package.
+  </blockquote>
+  <p>
+    These opions will be passed as a second argument of the <code>classToPlain()</code> function.
+  </p>
+  <h4>Websockets & Microservices</h4>
+  <p>
+    All these guidelines cornern both WebSockets as well as microservices, regardless of transport method that is being used.
+  </p>
+  <h4>Learn more</h4>
+  <p>
+    In order to read more about available decorators, options, visit this <a href="https://github.com/typestack/class-transformer"
+      target="blank">page</a>.
+  </p>
+</div>

@@ -22,6 +22,8 @@ export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
   async validateUser(token: string): Promise<any> {
+    // Validate if token passed along with HTTP request
+    // is associated with any registered account in the database
     return await this.usersService.findOneByToken(token);
   }
 }`;
@@ -40,6 +42,8 @@ export class AuthService {
   }
 
   async validateUser(token) {
+    // Validate if token passed along with HTTP request
+    // is associated with any registered account in the database
     return await this.usersService.findOneByToken(token);
   }
 }`;
@@ -58,12 +62,12 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(token: any, done: Function) {
+  async validate(token: string) {
     const user = await this.authService.validateUser(token);
     if (!user) {
-      return done(new UnauthorizedException(), false);
+      throw new UnauthorizedException();
     }
-    done(null, user);
+    return user;
   }
 }`;
   }
@@ -83,12 +87,12 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     this.authService = authService;
   }
 
-  async validate(token, done) {
+  async validate(token) {
     const user = await this.authService.validateUser(token);
     if (!user) {
-      return done(new UnauthorizedException(), false);
+      throw new UnauthorizedException();
     }
-    done(null, user);
+    return user;
   }
 }`;
   }
@@ -110,12 +114,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload, done: Function) {
+  async validate(payload: JwtPayload) {
     const user = await this.authService.validateUser(payload);
     if (!user) {
-      return done(new UnauthorizedException(), false);
+      throw new UnauthorizedException();
     }
-    done(null, user);
+    return user;
   }
 }`;
   }
@@ -185,13 +189,68 @@ findAll() {
 }`;
   }
 
-  get useGuardsJwt() {
+  get useGuardsDefault() {
     return `
 @Get('users')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard())
 findAll() {
   return [];
 }`;
+  }
+
+  get useGuardsJwt() {
+    return `
+@Get('users')
+@UseGuards(AuthGuard())
+findAll() {
+  return [];
+}`;
+  }
+
+  get passportModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { HttpStrategy } from './http.strategy';
+import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: 'bearer' }),
+    UsersModule,
+  ],
+  providers: [AuthService, HttpStrategy],
+})
+export class AuthModule {}`;
+  }
+
+  get passportModuleJs() {
+    return `
+import { Module } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { HttpStrategy } from './http.strategy';
+import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: 'bearer' }),
+    UsersModule,
+  ],
+  providers: [AuthService, HttpStrategy],
+})
+export class AuthModule {}`;
+  }
+
+  get userObject() {
+    return `
+PassportModule.register({ property: 'profile' })`;
+  }
+
+  get passportOptions() {
+    return `
+PassportModule.register({ session: true })`;
   }
 
   get authServiceJwt() {
@@ -208,7 +267,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async createToken(): string {
+  async signIn(): string {
+    // In the real-world app you shouldn't expose this method publicly
+    // instead, return a token once you verify user credentials
     const user: JwtPayload = { email: 'user@email.com' };
     return this.jwtService.sign(user);
   }
@@ -234,7 +295,9 @@ export class AuthService {
     this.jwtService = jwtService;
   }
 
-  async createToken() {
+  async signIn() {
+    // In the real-world app you shouldn't expose this method publicly
+    // instead, return a token once you verify user credentials
     const user = { email: 'user@email.com' };
     return this.jwtService.sign(user);
   }
@@ -252,9 +315,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secretOrPrivateKey: 'secretKey',
       signOptions: {
@@ -275,9 +340,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secretOrPrivateKey: 'secretKey',
       signOptions: {
@@ -294,5 +361,31 @@ export class AuthModule {}`;
   get multipleStrategies() {
     return `
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt')`;
+  }
+
+  get inheritance() {
+    return `
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  canActivate(context: ExecutionContext) {
+    // Add your custom authentication logic here
+    // for example, call super.logIn(request) to establish a session.
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user, info) {
+    if (err || !user) {
+      throw err || new UnauthorizedException();
+    }
+    return user;
+  }
+}`;
   }
 }

@@ -41,6 +41,37 @@ $ npm run start</code></pre>
       The <code>SwaggerModule</code> automatically reflects all of your endpoints.
       In the background, it's making use of <code>swagger-ui-express</code> and creates a live documentation.
     </p>
+    <h4>Multiple Swagger Specifications</h4>
+    <p>
+      <code>SwaggerModule</code> also provides a way to support multiple Swagger Specifications. In other words, you can serve different documentations with different <code>SwaggerUI</code> on different endpoints.
+    </p>
+    <p>
+      In order to allow <code>SwaggerModule</code> to support <strong>multi-specs</strong>, your <code>NestJS</code> application must be written with <strong>Modularization</strong> approach.
+      <code>createDocument()</code> method takes in a 3rd argument: <strong>extraOptions</strong> which is an object where a property <code>include</code> expects an <strong>Array of Modules</strong>.
+    </p>
+    <p>
+      You can setup Multiple Specifications support as shown below:
+    </p>
+    <pre><code class="language-typescript">{{ secondaryBootstrapFile }}</code></pre>
+    <p>
+      Now you can start your server with the following command:
+    </p>
+    <pre><code class="language-bash">
+$ npm run start</code></pre>
+    <p>
+      Navigate to <code>http://localhost:3000/api/cats</code> to see SwaggerUI for your Cats:
+    </p>
+    <figure><img src="/assets/swagger-cats.png" /></figure>
+    <p>
+      While <code>http://localhost:3000/api/docs</code> will expose a SwaggerUI for your Dogs:
+    </p>
+    <figure><img src="/assets/swagger-dogs.png" /></figure>
+    <blockquote class="warning">
+      <strong>Notice</strong> You have to construct a <strong>SwaggerOptions</strong> with <code>DocumentBuilder</code>,
+      run <code>createDocument()</code> against newly constructed <code>options</code> then immediately "serve" it with <code>setup()</code>
+      before you can start working on a second <strong>SwaggerOptions</strong> for a second Swagger Specification. This specific order is to
+      prevent <strong>Swagger Configurations</strong> being overriden by different <strong>Options</strong>.
+    </blockquote>
     <h4>Body, query, path parameters</h4>
     <p>
       During the examination of the defined controllers, the <code>SwaggerModule</code> is looking for all used <code>@Body()</code>, <code>@Query()</code>, and <code>@Param()</code> decorators in the route handlers.
