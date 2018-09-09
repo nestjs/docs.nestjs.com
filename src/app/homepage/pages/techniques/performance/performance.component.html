@@ -1,18 +1,24 @@
 <div class="content">
   <h3>Performance (Fastify)</h3>
   <p>Under the hood, Nest makes use of
-    <a href="https://expressjs.com/" target="_blank">Express</a>, but as mentioned already, provides compatibility with a wide range of other libraries, like e.g.
-    <a href="https://github.com/fastify/fastify"
-      target="_blank">Fastify</a>. How does it work?
-    In fact, what Nest needs to use your favorite library, is a compatible adapter, that primarily proxies corresponding handlers to appropriate library-specific methods.
+    <a href="https://expressjs.com/" target="_blank">Express</a>, but as mentioned already, provides compatibility with
+    a wide range of other libraries, like e.g.
+    <a href="https://github.com/fastify/fastify" target="_blank">Fastify</a>. How does it work?
+    In fact, what Nest needs to use your favorite library, is a compatible adapter, that primarily proxies
+    corresponding handlers to appropriate library-specific methods.
     Additionally, your library has to provide at least similar request-response cycle management as express.
   </p>
   <p>
-    A <a href="https://github.com/fastify/fastify" target="_blank">Fastify</a> fits here very well because it solves design issues in a similar manner as express does.
-    However, fastify is much <strong>faster</strong>, achieving almost two times better benchmarks results. The question, why Nest still uses express as a default HTTP provider then? Because express is widely-used, well-known, and has a huge set of compatible middleware.
+    A <a href="https://github.com/fastify/fastify" target="_blank">Fastify</a> fits here very well because it solves
+    design issues in a similar manner as express does.
+    However, fastify is much <strong>faster</strong>, achieving almost two times better benchmarks results. The
+    question, why Nest still uses express as a default HTTP provider then? Because express is widely-used, well-known,
+    and has a huge set of compatible middleware.
   </p>
   <p>
-    But we don't lock people in a single paradigm. We let them use whatever they need. Fastify is a better choice when you care about really good performance, that's why we provide a built-in <code>FastifyAdapter</code> that helps to integrate this library with Nest.
+    But we don't lock people in a single paradigm. We let them use whatever they need. Fastify is a better choice when
+    you care about really good performance, that's why we provide a built-in <code>FastifyAdapter</code> that helps to
+    integrate this library with Nest.
   </p>
   <h4>Installation</h4>
   <p>
@@ -24,9 +30,14 @@
     Once fastify is installed, we can use a <code>FastifyAdapter</code>.
   </p>
   <pre><code class="language-typescript">{{ bootstrap }}</code></pre>
+  If you're running your Nest instance inside of a <strong>docker container</strong> you will need to specify the host,
+  like so:
+  <pre><code class="language-typescript">{{ docker }}</code></pre>
   <p>
-    And that's all. Also, you are able to pass options into fastify constructor through <code>FastifyAdapter</code> constructor. 
-    Keep in mind that now, Nest uses fastify as an <strong>HTTP provider</strong>, meaning, each recipe that relays on express won't work anymore. You should rather use fastify equivalent packages.
+    And that's all. Also, you are able to pass options into fastify constructor through <code>FastifyAdapter</code>
+    constructor.
+    Keep in mind that now, Nest uses fastify as an <strong>HTTP provider</strong>, meaning, each recipe that relays on
+    express won't work anymore. You should rather use fastify equivalent packages.
   </p>
   <p>
     A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/10-fastify">here</a>.
