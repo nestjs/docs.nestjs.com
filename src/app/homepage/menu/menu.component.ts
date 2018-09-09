@@ -83,7 +83,7 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Quick start', path: '/graphql/quick-start' },
-        { title: 'Resolvers map', path: '/graphql/resolvers-map' },
+        { title: 'Resolvers', path: '/graphql/resolvers-map' },
         { title: 'Mutations', path: '/graphql/mutations' },
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },

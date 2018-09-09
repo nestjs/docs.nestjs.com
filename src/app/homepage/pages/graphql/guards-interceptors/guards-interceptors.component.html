@@ -1,46 +1,63 @@
 <div class="content">
   <h3>Tooling</h3>
   <p>
-    In the GraphQL world, a lot of articles complain how to handle stuff like an <strong>authentication</strong>, or <strong>side-effects</strong>
-    of operations. Should we put it inside the business logic? Shall we use a higher-order function to enhance queries and mutations
+    In the GraphQL world, a lot of articles complain how to handle stuff like an <strong>authentication</strong>, or
+    <strong>side-effects</strong>
+    of operations. Should we put it inside the business logic? Shall we use a higher-order function to enhance queries
+    and mutations
     as well, for example, with an authorization logic? Or maybe use <a href="https://www.apollographql.com/docs/apollo-server/v2/features/directives.html"
       target="blank">schema directives</a>. There is no single answer anyway.
   </p>
   <p>
     Nest ecosystem is trying to help with this issue using existing features like <a routerLink="/guards">guards</a>
-    and <a routerLink="/interceptors">interceptors</a>. The idea behind them is to reduce redundancy and also, supply you
+    and <a routerLink="/interceptors">interceptors</a>. The idea behind them is to reduce redundancy and also, supply
+    you
     with tooling that helps creating well-structured, readable, and consistent applications.
   </p>
   <h4>Overview</h4>
   <p>
-    You can use either <a routerLink="/guards">guards</a>, <a routerLink="/interceptors">interceptors</a>, and <a routerLink="/pipes">pipes</a>
-    in the same fashion as in the simple REST application. Additionally, you are able to easily create your own decorators, by
+    You can use either <a routerLink="/guards">guards</a>, <a routerLink="/interceptors">interceptors</a>, and <a
+      routerLink="/pipes">pipes</a>
+    in the same fashion as in the simple REST application. Additionally, you are able to easily create your own
+    decorators, by
     leveraging <a routerLink="/custom-decorators">custom decorators</a> feature. They all act equivalently. Let's have
     a look at the following code:
   </p>
   <pre><code class="language-typescript">{{ useGuardsExample }}</code></pre>
   <p>
-    As you can see, GraphQL works pretty well with both guards and pipes. Thanks to that you can, for instance, move your authentication
-    logic to the guard, or even reuse the same guard class as in the REST application. The interceptors works in the exact
+    As you can see, GraphQL works pretty well with both guards and pipes. Thanks to that you can, for instance, move
+    your authentication
+    logic to the guard, or even reuse the same guard class as in the REST application. The interceptors works in the
+    exact
     same way:
   </p>
   <pre><code class="language-typescript">{{ useInterceptorsExample }}</code></pre>
   <h4>Execution context</h4>
   <p>
-    However, the <code>ExecutionContext</code> received by both guards and interceptors is somewhat different. GraphQL resolvers
-    have a separate set of arguments, respectively, <code>root</code>, <code>args</code>, <code>context</code>, and <code>info</code>.
-    Hence, we need to transform given <code>ExecutionContext</code> to <code>GqlExecutionContext</code>, which is basically
+    However, the <code>ExecutionContext</code> received by both guards and interceptors is somewhat different. GraphQL
+    resolvers
+    have a separate set of arguments, respectively, <code>root</code>, <code>args</code>, <code>context</code>, and
+    <code>info</code>.
+    Hence, we need to transform given <code>ExecutionContext</code> to <code>GqlExecutionContext</code>, which is
+    basically
     very simple.
   </p>
   <pre><code class="language-typescript">{{ gqlExecutionContext }}</code></pre>
   <p>
-    <code>GqlExecutionContext</code> exposes corresponding methods for each argument, like <code>getArgs()</code>, <code>getContext()</code>,
+    <code>GqlExecutionContext</code> exposes corresponding methods for each argument, like <code>getArgs()</code>,
+    <code>getContext()</code>,
     and so on. Now we can effortlessly pick up every argument specific for currently processed request.
   </p>
   <h4>Custom decorators</h4>
   <p>
-    As mentioned before, the <a routerLink="/custom-decorators">custom decorators</a> feature works like a charm with GraphQL
-    resolvers as well. Though, the factory function takes an array of arguments, instead of a <code>request</code> object.
+    As mentioned before, the <a routerLink="/custom-decorators">custom decorators</a> feature works like a charm with
+    GraphQL
+    resolvers as well. Though, the factory function takes an array of arguments, instead of a <code>request</code>
+    object.
   </p>
   <pre><code class="language-typescript">{{ customDecorators }}</code></pre>
+  <p>
+    And then:
+  </p>
+  <pre><code class="language-typescript">{{ customDecoratorsExample }}</code></pre>
 </div>

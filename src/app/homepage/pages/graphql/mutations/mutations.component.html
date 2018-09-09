@@ -1,39 +1,28 @@
 <div class="content">
   <h3>Mutations</h3>
   <p>
-    In GraphQL, in order to modify the server-side data, we use mutations. Read more about them
-    <a href="http://graphql.org/learn/queries/#mutations" target="blank">here</a>. The official
-    <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo</a> documentation
+    In GraphQL, in order to modify the server-side data, we use mutations (read more
+    <a href="http://graphql.org/learn/queries/#mutations" target="blank">here</a>)a. The official
+    <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo</a>
+    documentation
     shares an
     <code>upvotePost()</code> mutation example. This mutation allows to increase a post
-    <code>votes</code> property value.
-  </p>
-  <pre><code class="language-typescript">{{ mutationsExample }}</code></pre>
-  <p>
-    In order to create an equivalent mutation in Nest, we'll make use of the
+    <code>votes</code> property value. In order to create an equivalent mutation in Nest, we'll make use of the
     <code>@Mutation()</code> decorator. Let's extend our
-    <code>AuthorResolver</code> used in the previous section (<a routerLink="/graphql/resolvers-map">resolvers map</a>).
-  </p>
-  <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
-  <h4>Refactoring</h4>
-  <p>
-    Once again (same as in
-    <a routerLink="/graphql/resolvers-map">resolvers map</a> chapter) we're gonna do a small refactor to take advantage of
-    the Nest architecture, to turn it into a
-    <strong>real-world</strong> example.
+    <code>AuthorResolver</code> used in the previous section (see <a routerLink="/graphql/resolvers-map">resolvers</a>).
   </p>
   <pre><code class="language-typescript">{{ realWorldExample }}</code></pre>
   <p>
-    That's all. Notice that we've assumed that the business logic has been moved to the <code>PostsService</code> (respectively
+    Notice that we've assumed that the business logic has been moved to the <code>PostsService</code>
+    (respectively
     querying post and incrementing <code>votes</code> property).
   </p>
   <h4>Type definitions</h4>
   <p>
     The last step is to add our mutation to the existing types definition.
   </p>
-  <span class="filename">author-types.graphql</span>
   <pre><code class="language-java">{{ typeDefs }}</code></pre>
   <p>
-    The <code>upvotePost(postId: Int!): Post</code> mutation is available now.
+    The <code>upvotePost(postId: Int!): Post</code> mutation should be available now.
   </p>
 </div>

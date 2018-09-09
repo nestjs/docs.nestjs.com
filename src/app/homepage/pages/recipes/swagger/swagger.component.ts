@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-               selector: 'app-swagger',
-               templateUrl: './swagger.component.html',
-               changeDetection: ChangeDetectionStrategy.OnPush,
-           })
+  selector: 'app-swagger',
+  templateUrl: './swagger.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 export class SwaggerComponent extends BasePageComponent {
-    get bootstrapFile() {
-        return `
+  get bootstrapFile() {
+    return `
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ApplicationModule } from './app.module';
@@ -28,10 +28,10 @@ async function bootstrap() {
   await app.listen(3001);
 }
 bootstrap();`;
-    }
+  }
 
-    get secondaryBootstrapFile() {
-        return `
+  get secondaryBootstrapFile() {
+    return `
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ApplicationModule } from './app.module';
@@ -72,18 +72,18 @@ async function bootstrap() {
   await app.listen(3001);
 }
 bootstrap();`;
-    }
+  }
 
-    get postHandler() {
-        return `
+  get postHandler() {
+    return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;
-    }
+  }
 
-    get postHandlerJs() {
-        return `
+  get postHandlerJs() {
+    return `
 @Post()
 @Bind(Body())
 @ApiImplicitBody({ name: 'CreateCatDto', type: CreateCatDto })
@@ -91,10 +91,10 @@ async create(createCatDto) {
   this.catsService.create(createCatDto);
 }
 `;
-    }
+  }
 
-    get createCatDto() {
-        return `
+  get createCatDto() {
+    return `
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateCatDto {
@@ -107,10 +107,10 @@ export class CreateCatDto {
   @ApiModelProperty()
   readonly breed: string;
 }`;
-    }
+  }
 
-    get createCatDtoJs() {
-        return `
+  get createCatDtoJs() {
+    return `
 import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateCatDto {
@@ -123,10 +123,10 @@ export class CreateCatDto {
   @ApiModelProperty({ type: String })
   readonly breed;
 }`;
-    }
+  }
 
-    get apiModelProperty() {
-        return `
+  get apiModelProperty() {
+    return `
 export declare const ApiModelProperty: (metadata?: {
   description?: string;
   required?: boolean;
@@ -153,64 +153,64 @@ export declare const ApiModelProperty: (metadata?: {
   xml?: any;
   example?: any;
 }) => PropertyDecorator;`;
-    }
+  }
 
-    get apiModelPropertyOptional() {
-        return `
+  get apiModelPropertyOptional() {
+    return `
 @ApiModelProperty({ required: false })`;
-    }
+  }
 
-    get arrayProperty() {
-        return `
-@ApiModelProperty({ type: String, isArray: true })
+  get arrayProperty() {
+    return `
+@ApiModelProperty({ type: [String] })
 readonly names: string[];`;
-    }
+  }
 
-    get useTags() {
-        return `
+  get useTags() {
+    return `
 @ApiUseTags('cats')
 @Controller('cats')
 export class CatsController {}`;
-    }
+  }
 
-    get response() {
-        return `
+  get response() {
+    return `
 @Post()
 @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
 @ApiResponse({ status: 403, description: 'Forbidden.'})
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;
-    }
+  }
 
-    get customResponse() {
-        return `
+  get customResponse() {
+    return `
 @Post()
 @ApiCreatedResponse({ description: 'The record has been successfully created.'})
 @ApiForbiddenResponse({ description: 'Forbidden.'})
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }`;
-    }
+  }
 
-    get bearerAuth() {
-        return `
+  get bearerAuth() {
+    return `
 @ApiUseTags('cats')
 @ApiBearerAuth()
 @Controller('cats')
 export class CatsController {}`;
-    }
+  }
 
   get fileUpload() {
     return `
 @UseInterceptors(FileInterceptor('file'))
 @ApiConsumes('multipart/form-data')
-@ApiImplicitFile({name: 'file', required: true, description: 'file containing cats list'})
+@ApiImplicitFile({ name: 'file', required: true, description: 'List of cats' })
 uploadFile(@UploadedFile() file) {}`;
   }
-  
+
   get apiImplicitQuery() {
-      return `
+    return `
 export const ApiImplicitQuery = (metadata: {
   name: string;
   description?: string;
@@ -220,28 +220,28 @@ export const ApiImplicitQuery = (metadata: {
   enum?: SwaggerEnumType;
   collectionFormat?: 'csv' | 'ssv' | 'tsv' | 'pipes' | 'multi';
 }): MethodDecorator`;
-    }
+  }
 
-    get enumImplicitQuery() {
-        return `
+  get enumImplicitQuery() {
+    return `
 @ApiImplicitQuery({ name: 'role', enum: ['Admin', 'Moderator', 'User'] })
 async filterByRole(@Query('role') role: UserRole = UserRole.User) {
   // role returns: UserRole.Admin, UserRole.Moderator OR UserRole.User
 }`;
-    }
+  }
 
-    get enumProperty() {
-        return `
+  get enumProperty() {
+    return `
 @ApiModelProperty({ enum: ['Admin', 'Moderator', 'User']})
 role: UserRole;`;
-    }
+  }
 
-    get userRoleEnum() {
-        return `
+  get userRoleEnum() {
+    return `
 export enum UserRole {
   Admin = 'Admin',
   Moderator = 'Moderator',
   User = 'User'
 }`;
-    }
+  }
 }
