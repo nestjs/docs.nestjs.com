@@ -201,8 +201,16 @@ async create(@Body() createCatDto: CreateCatDto) {
 export class CatsController {}`;
     }
 
-    get apiImplicitQuery() {
-        return `
+  get fileUpload() {
+    return `
+@UseInterceptors(FileInterceptor('file'))
+@ApiConsumes('multipart/form-data')
+@ApiImplicitFile({name: 'file', required: true, description: 'file containing cats list'})
+uploadFile(@UploadedFile() file) {}`;
+  }
+  
+  get apiImplicitQuery() {
+      return `
 export const ApiImplicitQuery = (metadata: {
   name: string;
   description?: string;
