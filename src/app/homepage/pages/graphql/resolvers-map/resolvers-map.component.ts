@@ -120,4 +120,15 @@ export class IQuery {
   author(id: number): Author | Promise<Author>;
 }`;
   }
+
+  get validateInput() {
+    return `
+import { MinLength, MaxLength } from 'class-validator';
+
+export class CreatePostInput {
+  @MinLength(3)
+  @MaxLength(50)
+  title: string;
+}`;
+  }
 }
