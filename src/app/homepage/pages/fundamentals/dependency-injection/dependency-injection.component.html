@@ -53,7 +53,7 @@
   <h4>Use factory</h4>
   <p>
     The <code>useFactory</code> is a way of creating providers <strong>dynamically</strong>. The actual provider will be equal to a returned value of the factory function.
-    The factory function can either depends on several different providers or stay completely independent.
+    The factory function can either depend on several different providers or stay completely independent.
     It means that factory may accept arguments, that Nest will resolve and pass during the instantiation process.
     Additionally, this function can return value <strong>asynchronously</strong>. It's explained in more detail <a routerLink="/fundamentals/async-providers">here</a>.
     Use it when your provider has to be dynamically calculated or in case to resolve an asynchronous operation.
