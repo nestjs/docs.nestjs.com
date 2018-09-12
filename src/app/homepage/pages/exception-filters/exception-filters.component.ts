@@ -325,4 +325,16 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
   }
 }`;
   }
+
+  get globalScopedBaseFilter() {
+    return `
+async function bootstrap() {
+  const app = await NestFactory.create(ApplicationModule);
+  const httpRef = app.get(HTTP_SERVER_REF);
+  app.useGlobalFilters(new AllExceptionsFilter(httpRef));
+  await app.listen(3000);
+}
+bootstrap();
+`;
+  }
 }
