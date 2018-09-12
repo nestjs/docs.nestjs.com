@@ -85,4 +85,11 @@ GraphQLModule.forRootAsync({
   useExisting: ConfigService,
 })`;
   }
+
+  get includeSubset() {
+    return `
+GraphQLModule.forRoot({
+  include: [CatsModule],
+})`;
+  }
 }

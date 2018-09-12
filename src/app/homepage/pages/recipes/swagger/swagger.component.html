@@ -90,14 +90,14 @@ $ npm run start</code></pre>
   </p>
   <h4>Multiple specifications</h4>
   <p>
-    <code>SwaggerModule</code> also provides a way to support multiple Swagger Specifications. In other words, you can
+    Swagger module also provides a way to support multiple specifications. In other words, you can
     serve different documentations with different <code>SwaggerUI</code> on different endpoints.
   </p>
   <p>
-    In order to allow <code>SwaggerModule</code> to support <strong>multi-specs</strong>, your <code>NestJS</code>
-    application must be written with <strong>Modularization</strong> approach.
-    <code>createDocument()</code> method takes in a 3rd argument: <strong>extraOptions</strong> which is an object
-    where a property <code>include</code> expects an <strong>Array of Modules</strong>.
+    In order to allow <code>SwaggerModule</code> to support multi-spec, your
+    application must be written with modular approach.
+    The <code>createDocument()</code> method takes in a 3rd argument: <code>extraOptions</code> which is an object
+    where a property <code>include</code> expects an array of modules.
   </p>
   <p>
     You can setup Multiple Specifications support as shown below:
@@ -122,7 +122,7 @@ $ npm run start</code></pre>
     <code>setup()</code>
     before you can start working on a second <strong>SwaggerOptions</strong> for a second Swagger Specification. This
     specific order is to
-    prevent <strong>Swagger Configurations</strong> being overriden by different <strong>Options</strong>.
+    prevent Swagger configurations being overriden by different options.
   </blockquote>
   <h4>Working with enums</h4>
   <p>
