@@ -301,6 +301,10 @@
   </span>
   <pre [class.hide]="inheritanceT.isJsActive"><code class="language-typescript">{{ inheritance }}</code></pre>
   <pre [class.hide]="!inheritanceT.isJsActive"><code class="language-typescript">{{ inheritanceJs }}</code></pre>
+  <blockquote class="warning">
+    <strong>Warning</strong>
+    Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using <code>new</code> keyword but <code>@UseFilters()</code>).
+  </blockquote>
     You can use a global filter that extends the base filter by injecting the <code>HttpServer</code> reference.
   <pre><code class="language-typescript">{{ globalScopedBaseFilter }}</code></pre>
   <p>
