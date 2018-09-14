@@ -1,14 +1,15 @@
 <div class="content">
   <h3>Prisma</h3>
   <p>
-    <a href="https://www.prisma.io/" target="blank">Prisma</a> is a performant open-source GraphQL layer doing the
-    heavy lifting in your GraphQL server. In this chapter we won't go into details about Prisma, so head over to their
+    <a href="https://www.prisma.io/" target="blank">Prisma</a> turns your database into a GraphQL API and enables the
+    use of GraphQL as a universal query language for all databases. Instead of writing SQL or using a NoSQL API, you
+    can query your database with GraphQL. In this chapter we won't go into details about Prisma, so head over to their
     website and have a look what
     <a href="https://www.prisma.io/features/" target="blank">features</a> are available.
   </p>
-  <blockquote class="info">
-    <strong>Hint</strong> In this article, you'll learn how to integrate <code>Prisma</code>
-    into the Nest framework. We assume that you are already familiar with GraphQL concepts and the
+  <blockquote class="warning">
+    <strong>Notice</strong> In this article, you'll learn how to integrate <code>Prisma</code>
+    into the Nest framework. We assume that you are already familiar with the GraphQL concepts and the
     <code>@nestjs/graphql</code> module.
   </blockquote>
   <h4>Dependencies</h4>
@@ -37,26 +38,51 @@
     information about data modeling in Prisma click <a href="https://www.prisma.io/features/data-modeling/" target="blank">here</a>.
   </blockquote>
   <p>
-    Feel free to open the Prisma GraphQL API to send queries and mutations by typing <code>prisma playground</code>
+    By typing <code>prisma playground</code> you can open the Prisma GraphQL playground. Feel free to send queries and
+    mutations.
   </p>
   <h4>Create the client</h4>
-  <p>Install the GraphQL CLI using the following command:</p>
+  <p>There are a couple of ways to integrate a GraphQL API. We are going to use <a href="https://www.npmjs.com/package/graphql-cli"
+      target="blank">GraphQL CLI</a>, a command line tool for commpon GraphQL development workflows. To install the
+    GraphQL CLI use the following command:</p>
   <pre><code class="language-typescript">{{installGraphCli}}</code></pre>
   <p>Next, create your .graphqlconfig in the root directory of the your Nest application:</p>
   <pre><code class="language-shell">
 $ touch .graphqlconfig.yml</code></pre>
   <p>Put the following contens into it:</p>
   <pre><code class="language-yaml">{{graphqlconfigYml}}</code></pre>
-  <p>To download the Prisma database schema to <code>src/prisma/prisma-types.graphql</code> and create a Prisma
+  <p>To download your Prisma GraphQL schema to <code>src/prisma/prisma-types.graphql</code> and create your Prisma
     client under <code>src/prisma/prisma.binding.graphql</code>, run the following commands
     in your terminal:</p>
   <pre><code class="language-shell">
 $ graphql get-schema --project database
 $ graphql codegen --project database</code></pre>
+
   <h4>Integration</h4>
+  <p>Almost done. Now we lets create a module for our Prisma integration.</p>
   <span class="filename">src/prisma/prisma.service</span>
   <pre><code class="language-typescript">{{ prismaService }}</code></pre>
 
   <span class="filename">src/prisma/prisma.module</span>
   <pre><code class="language-typescript">{{ prismaModule }}</code></pre>
+
+  <blockquote class="info">
+    <strong>Hint</strong> To create new modules and services in no time we can make use of the <a routerLink="/cli/overview">Nest
+      CLI</a>. To create a <code>PrismaModule</code> type <code>nest g module prisma</code> and for the service <code>nest g service prisma/prisma</code>
+  </blockquote>
+
+  <h4>Usage</h4>
+  <p>To use your new service we are going to import the <code>PrismaModule</code> and inject the <code>PrismaService</code>
+    into <code>UsersResolver</code>.</p>
+  <span class="filename">src/users/users.module</span>
+  <pre><code class="language-typescript">{{ usersModule }}</code></pre>
+
+  <span class="filename">src/users/users.resolver</span>
+  <pre><code class="language-typescript">{{ usersResolver }}</code></pre>
+
+  <h4>Example</h4>
+  <p>
+    A slightly modified example is available
+    <a href="https://github.com/nestjs/nest/tree/master/sample/22-graphql-prisma" target="blank">here</a>.
+  </p>
 </div>

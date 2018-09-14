@@ -71,4 +71,34 @@ import { PrismaService } from './prisma.service';
 })
 export class PrismaModule {}`;
   }
+
+  get usersModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { UsersResolver } from './users.resolver';
+import { PrismaModule } from '../prisma/prisma.module';
+
+@Module({
+  providers: [UsersResolver],
+  imports: [PrismaModule],
+})
+export class UsersModule {}`;
+  }
+
+  get usersResolver() {
+    return `
+import { Query, Resolver, Args, Info } from '@nestjs/graphql';
+import { PrismaService } from '../prisma/prisma.service';
+import { User } from '../graphql.schema';
+ 
+@Resolver()
+export class UsersResolver {
+  constructor(private readonly prisma: PrismaService) {}
+
+  @Query('users')
+  async getUsers(@Args() args, @Info() info): Promise<User[]> {
+    return await this.prisma.query.users(args, info);
+  }
+}`;
+  }
 }
