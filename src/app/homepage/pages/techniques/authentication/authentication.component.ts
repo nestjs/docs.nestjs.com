@@ -388,4 +388,22 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 }`;
   }
+
+  get graphQl() {
+    return `
+@Injectable()
+export class GqlAuthGuard extends AuthGuard('jwt') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+}`;
+  }
+
+  get requestInContext() {
+    return `
+GraphQLModule.forRoot({
+  context: ({ req }) => ({ req }),
+})`;
+  }
 }

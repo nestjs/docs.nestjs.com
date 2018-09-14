@@ -1,17 +1,21 @@
 <div class="content">
   <h3>Quick start</h3>
   <p>
-    GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data. It is an elegant
+    GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data. It is an
+    elegant
     approach that solves many of these problems that we have with typical REST apis. There is a great
-    <a href="https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b" target="blank">comparison</a> between GraphQL
-    and REST. In this set of articles, we're not going to explain what the GraphQL is, but rather show how to work with the
+    <a href="https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b" target="blank">comparison</a> between
+    GraphQL
+    and REST. In this set of articles, we're not going to explain what the GraphQL is, but rather show how to work with
+    the
     dedicated
     <code>@nestjs/graphql</code> module. This chapter assumes that you are already familiar with GraphQL essentials.
   </p>
   <p>
     The
     <code>GraphQLModule</code> is nothing more than a wrapper around the
-    <a href="https://www.apollographql.com/" target="blank">Apollo</a> server. We don't reinvent the wheel but provide a
+    <a href="https://www.apollographql.com/" target="blank">Apollo</a> server. We don't reinvent the wheel but provide
+    a
     ready to use module instead, that brings a clean way to play with the GraphQL and Nest together.
   </p>
   <h4>Installation</h4>
@@ -30,9 +34,12 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
   </span>
   <pre><code class="language-typescript">{{ middleware }}</code></pre>
   <p>
-    The <code>typePaths</code> property indicates where the <code>GraphQLModule</code> should look for the GraphQL files.
-    Besides, all options will be passed down to the underlying Apollo instance (read more about available settings <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt"
-      target="blank">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code>    mode,
+    The <code>typePaths</code> property indicates where the <code>GraphQLModule</code> should look for the GraphQL
+    files.
+    Besides, all options will be passed down to the underlying Apollo instance (read more about available settings <a
+      href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt"
+      target="blank">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code>
+    mode,
     simply pass below options:
   </p>
   <span class="filename">
@@ -45,16 +52,26 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
   </p>
   <h4>Playground</h4>
   <p>
-    The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the GraphQL server
-    itself. Whilst your application is running in the background, open your web browser and navigate to <code>http://localhost:3000/graphql</code>    (host
+    The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the
+    GraphQL server
+    itself. Whilst your application is running in the background, open your web browser and navigate to <code>http://localhost:3000/graphql</code>
+    (host
     and port may vary depending on your configuration).
   </p>
   <figure>
     <img src="/assets/playground.png" alt="" />
   </figure>
+  <h4>Multiple endpoints</h4>
+  <p>
+    Another useful feature of this module is a capability to serve multiple endpoints at once. Thanks to that, you can
+    decide which modules should be included in which endpoint. By default, <code>GraphQL</code> searches for resolvers
+    throughout the whole app. To limit only a subset of modules, you can use the <code>include</code> property.
+  </p>
+  <pre><code class="language-typescript">{{ includeSubset }}</code></pre>
   <h4>Async configuration</h4>
   <p>
-    Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use
+    Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such
+    case, use
     <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.
   </p>
   <p>
@@ -62,7 +79,8 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
   </p>
   <pre><code class="language-typescript">{{ asyncConfiguration }}</code></pre>
   <p>
-    Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through
+    Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies
+    through
     <code>inject</code>).
   </p>
   <pre><code class="language-typescript">{{ asyncConfigurationFactoryAsync }}</code></pre>
@@ -71,17 +89,21 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
   </p>
   <pre><code class="language-typescript">{{ asyncConfigurationClass }}</code></pre>
   <p>
-    Above construction will instantiate <code>GqlConfigService</code> inside <code>GraphQLModule</code> and will leverage
-    it to create options object. The <code>GqlConfigService</code> has to implement <code>GqlOptionsFactory</code> interface.
+    Above construction will instantiate <code>GqlConfigService</code> inside <code>GraphQLModule</code> and will
+    leverage
+    it to create options object. The <code>GqlConfigService</code> has to implement <code>GqlOptionsFactory</code>
+    interface.
   </p>
   <pre><code class="language-typescript">{{ asyncConfigurationClassBody }}</code></pre>
   <p>
-    In order to prevent the creation of <code>GqlConfigService</code> inside <code>GraphQLModule</code> and use a provider
+    In order to prevent the creation of <code>GqlConfigService</code> inside <code>GraphQLModule</code> and use a
+    provider
     imported from a different module, you can use the <code>useExisting</code> syntax.
   </p>
   <pre><code class="language-typescript">{{ asyncConfigurationExisting }}</code></pre>
   <p>
-    It works the same as <code>useClass</code> with one critical difference - <code>GraphQLModule</code> will lookup imported
+    It works the same as <code>useClass</code> with one critical difference - <code>GraphQLModule</code> will lookup
+    imported
     modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.
   </p>
   <h4>Example</h4>

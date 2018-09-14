@@ -85,7 +85,7 @@ type Query {
 GraphQLModule.forRoot({
   typePaths: ['./**/*.graphql'],
   definitions: {
-    path: join(process.cwd(), 'src/graphql.d.ts'),
+    path: join(process.cwd(), 'src/graphql.ts'),
   },
 })`;
   }
@@ -95,7 +95,7 @@ GraphQLModule.forRoot({
 GraphQLModule.forRoot({
   typePaths: ['./**/*.graphql'],
   definitions: {
-    path: join(process.cwd(), 'src/graphql.d.ts'),
+    path: join(process.cwd(), 'src/graphql.ts'),
     outputAs: 'class',
   },
 })`;
@@ -116,8 +116,8 @@ export class Post {
   votes?: number;
 }
 
-export class IQuery {
-  author(id: number): Author | Promise<Author>;
+export abstract class IQuery {
+  abstract author(id: number): Author | Promise<Author>;
 }`;
   }
 
