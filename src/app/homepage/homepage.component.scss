@@ -204,3 +204,31 @@
     display: none;
   }
 }
+
+.companies-wrapper {
+  text-align: center;
+}
+
+.company-logo {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px 20px;
+}
+
+.company-logo img {
+  max-width: 165px;
+  max-height: 100px;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+
+  &:hover {
+    -webkit-filter: grayscale(0%);
+    filter: grayscale(0%);
+  }
+}
+
+.companies-list a {
+  color: #404040;
+  font-size: 15px;
+  font-weight: 400;
+}

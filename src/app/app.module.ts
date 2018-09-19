@@ -91,6 +91,7 @@ import { CompressionComponent } from './homepage/pages/techniques/compression/co
 import { ValidationComponent } from './homepage/pages/techniques/validation/validation.component';
 import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
 import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
+import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -184,6 +185,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
+    WhoUsesComponent,
   ],
   bootstrap: [AppComponent],
   providers: [

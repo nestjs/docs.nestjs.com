@@ -166,6 +166,11 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'Discover',
+      isOpened: false,
+      children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
+    },
+    {
       title: 'Migration guide',
       isOpened: false,
       path: '/migration-guide',

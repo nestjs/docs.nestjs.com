@@ -8,6 +8,7 @@ import { CliUsagesComponent } from './homepage/pages/cli/usages/usages.component
 import { ComponentsComponent } from './homepage/pages/components/components.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
 import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
 import { ExpressInstanceComponent } from './homepage/pages/faq/express-instance/express-instance.component';
@@ -447,6 +448,11 @@ const routes: Routes = [
         path: 'faq/multiple-servers',
         component: MultipleServersComponent,
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
+      },
+      {
+        path: 'discover/companies',
+        component: WhoUsesComponent,
+        data: { title: 'Discover - Who is using Nest?' },
       },
       {
         path: 'migration-guide',

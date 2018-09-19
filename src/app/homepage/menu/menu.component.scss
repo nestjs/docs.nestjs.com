@@ -39,8 +39,12 @@
 .nav-item {
   margin: 0 -10px;
   padding: 0 10px;
-  border-bottom: 1px solid #efefef;
+  // border-bottom: 1px solid #efefef;
   &:last-of-type {
     border: 0;
+  }
+
+  h3 {
+    margin: 20px 0;
   }
 }
