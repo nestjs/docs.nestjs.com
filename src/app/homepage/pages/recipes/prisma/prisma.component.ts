@@ -34,15 +34,15 @@ $ npm install -g graphql-cli`;
   get graphqlconfigYml() {
     return `
 projects:
-database:
-  schemaPath: src/prisma/prisma-types.graphql
-  extensions:
-    prisma: prisma.yml
-    codegen:
-      - generator: prisma-binding
-        language: typescript
-        output:
-          binding: src/prisma/prisma.binding.ts`;
+  database:
+    schemaPath: src/prisma/prisma-types.graphql
+    extensions:
+      prisma: prisma.yml
+      codegen:
+        - generator: prisma-binding
+          language: typescript
+          output:
+            binding: src/prisma/prisma.binding.ts`;
   }
 
   get prismaService() {
