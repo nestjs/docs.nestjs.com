@@ -53,6 +53,7 @@ import { PassportComponent } from './homepage/pages/recipes/passport/passport.co
 import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
+import { PrismaComponent } from './homepage/pages/recipes/prisma/prisma.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
@@ -349,6 +350,11 @@ const routes: Routes = [
         path: 'recipes/swagger',
         component: SwaggerComponent,
         data: { title: 'OpenAPI (Swagger)' },
+      },
+      {
+        path: 'recipes/prisma',
+        component: PrismaComponent,
+        data: { title: 'Prisma' }
       },
       {
         path: 'techniques/mvc',

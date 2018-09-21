@@ -28,7 +28,7 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/adidas.svg',
       url: 'https://www.adidas.com',
-      width: '100px',
+      width: '80px',
     },
     {
       logo: 'https://nestjs.com/gojob-logo.2b6e823c.png',
@@ -38,12 +38,12 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/trellis.png',
       url: 'https://trellis.org/',
-      width: '100px',
+      width: '70px',
     },
     {
       logo: 'https://nestjs.com/scalio-logo.0a1046af.svg',
       url: 'https://scal.io',
-      width: '130px',
+      width: '120px',
     },
     {
       logo: '/assets/logo/rewe.svg',

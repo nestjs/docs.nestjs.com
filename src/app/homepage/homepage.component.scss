@@ -205,10 +205,6 @@
   }
 }
 
-.companies-wrapper {
-  text-align: center;
-}
-
 .company-logo {
   display: inline-block;
   vertical-align: middle;
@@ -216,14 +212,16 @@
 }
 
 .company-logo img {
-  max-width: 165px;
-  max-height: 100px;
+  max-width: 130px;
+  max-height: 90px;
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
+  opacity: 0.5;
 
   &:hover {
     -webkit-filter: grayscale(0%);
     filter: grayscale(0%);
+    opacity: 1;
   }
 }
 
