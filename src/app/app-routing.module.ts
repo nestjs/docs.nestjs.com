@@ -8,6 +8,7 @@ import { CliUsagesComponent } from './homepage/pages/cli/usages/usages.component
 import { ComponentsComponent } from './homepage/pages/components/components.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
 import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
 import { ExpressInstanceComponent } from './homepage/pages/faq/express-instance/express-instance.component';
@@ -52,6 +53,7 @@ import { PassportComponent } from './homepage/pages/recipes/passport/passport.co
 import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
+import { PrismaComponent } from './homepage/pages/recipes/prisma/prisma.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
@@ -350,6 +352,11 @@ const routes: Routes = [
         data: { title: 'OpenAPI (Swagger)' },
       },
       {
+        path: 'recipes/prisma',
+        component: PrismaComponent,
+        data: { title: 'Prisma' }
+      },
+      {
         path: 'techniques/mvc',
         component: MvcComponent,
         data: { title: 'MVC' },
@@ -447,6 +454,11 @@ const routes: Routes = [
         path: 'faq/multiple-servers',
         component: MultipleServersComponent,
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
+      },
+      {
+        path: 'discover/companies',
+        component: WhoUsesComponent,
+        data: { title: 'Discover - Who is using Nest?' },
       },
       {
         path: 'migration-guide',

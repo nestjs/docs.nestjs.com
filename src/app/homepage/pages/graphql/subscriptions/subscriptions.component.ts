@@ -18,28 +18,24 @@ Subscription: {
 
   get resolversWithNames() {
     return `
-import { Query, Resolver, Subscription, ResolveProperty, Parent, Args } from '@nestjs/graphql';
-import { find, filter } from 'lodash';
-import { PubSub } from 'graphql-subscriptions';
-
-// example data
-const authors = [
-  { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-  { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-];
-const posts = [
-  { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-  { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-];
-
-// example pubsub
 const pubSub = new PubSub();
 
 @Resolver('Author')
 export class AuthorResolver {
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) {}
+
   @Query('author')
-  getAuthor(@Args('id') id: number) {
-    return find(authors, { id });
+  async getAuthor(@Args('id') id: number) {
+    return await this.authorsService.findOneById(id);
+  }
+
+  @ResolveProperty('posts')
+  async getPosts(@Parent() author) {
+    const { id } = author;
+    return await this.postsService.findAll({ authorId: id });
   }
 
   @Subscription()
@@ -48,12 +44,15 @@ export class AuthorResolver {
       subscribe: () => pubSub.asyncIterator('commentAdded'),
     };
   }
-
-  @ResolveProperty('posts')
-  getPosts(@Parent() author) {
-    return filter(posts, { authorId: author.id });
-  }
 }`;
+  }
+
+  get enableSubscriptions() {
+    return `
+GraphQLModule.forRoot({
+  typePaths: ['./**/*.graphql'],
+  installSubscriptionHandlers: true,
+})`;
   }
 
   get typeDefs() {

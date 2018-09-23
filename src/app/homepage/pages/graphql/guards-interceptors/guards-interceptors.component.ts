@@ -45,4 +45,13 @@ export const User = createParamDecorator(
   (data, [root, args, ctx, info]) => ctx.user,
 );`;
   }
+
+  get customDecoratorsExample() {
+    return `
+@Mutation()
+async upvotePost(
+  @User() user: UserEntity,
+  @Args('postId') postId: number,
+) {}`;
+  }
 }

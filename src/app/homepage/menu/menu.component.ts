@@ -83,7 +83,7 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Quick start', path: '/graphql/quick-start' },
-        { title: 'Resolvers map', path: '/graphql/resolvers-map' },
+        { title: 'Resolvers', path: '/graphql/resolvers-map' },
         { title: 'Mutations', path: '/graphql/mutations' },
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
@@ -139,6 +139,7 @@ export class MenuComponent implements OnInit {
         // { title: 'Authentication (Passport)', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
+        { title: 'Prisma', path:'/recipes/prisma' }
       ],
     },
     {
@@ -164,6 +165,11 @@ export class MenuComponent implements OnInit {
             'https://github.com/kamilmysliwiec/nest/tree/master/sample',
         },
       ],
+    },
+    {
+      title: 'Discover',
+      isOpened: false,
+      children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
     {
       title: 'Migration guide',

@@ -64,7 +64,7 @@ onEvent(client, data): Observable<string[]> {
     return `
 CacheModule.register({
   ttl: 5, // seconds
-  max: 10, // seconds
+  max: 10, // maximum number of items in cache
 })`;
   }
 

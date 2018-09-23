@@ -267,7 +267,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(): string {
+  async signIn(): Promise<string> {
     // In the real-world app you shouldn't expose this method publicly
     // instead, return a token once you verify user credentials
     const user: JwtPayload = { email: 'user@email.com' };
@@ -387,5 +387,23 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return user;
   }
 }`;
+  }
+
+  get graphQl() {
+    return `
+@Injectable()
+export class GqlAuthGuard extends AuthGuard('jwt') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+}`;
+  }
+
+  get requestInContext() {
+    return `
+GraphQLModule.forRoot({
+  context: ({ req }) => ({ req }),
+})`;
   }
 }

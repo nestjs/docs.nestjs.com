@@ -19,6 +19,7 @@ import { CliModule } from './homepage/pages/cli/cli.module';
 import { ComponentsComponent } from './homepage/pages/components/components.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
+import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
 import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
 import { ExpressInstanceComponent } from './homepage/pages/faq/express-instance/express-instance.component';
@@ -63,11 +64,14 @@ import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { MockgooseComponent } from './homepage/pages/recipes/mockgoose/mockgoose.component';
 import { MongodbComponent } from './homepage/pages/recipes/mongodb/mongodb.component';
 import { PassportComponent } from './homepage/pages/recipes/passport/passport.component';
+import { PrismaComponent } from './homepage/pages/recipes/prisma/prisma.component';
 import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
+import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
+import { CompressionComponent } from './homepage/pages/techniques/compression/compression.component';
 import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
 import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
 import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
@@ -77,7 +81,9 @@ import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.componen
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
 import { SecurityComponent } from './homepage/pages/techniques/security/security.component';
+import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
+import { ValidationComponent } from './homepage/pages/techniques/validation/validation.component';
 import { AdapterComponent } from './homepage/pages/websockets/adapter/adapter.component';
 import { WsExceptionFiltersComponent } from './homepage/pages/websockets/exception-filters/exception-filters.component';
 import { GatewaysComponent } from './homepage/pages/websockets/gateways/gateways.component';
@@ -87,10 +93,6 @@ import { WsPipesComponent } from './homepage/pages/websockets/pipes/pipes.compon
 import { TocComponent } from './homepage/toc/toc.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
-import { CompressionComponent } from './homepage/pages/techniques/compression/compression.component';
-import { ValidationComponent } from './homepage/pages/techniques/validation/validation.component';
-import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
-import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -149,6 +151,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     MockgooseComponent,
     PassportComponent,
     SwaggerComponent,
+    PrismaComponent,
     CqrsComponent,
     TabsComponent,
     ExtensionPipe,
@@ -184,6 +187,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
+    WhoUsesComponent,
   ],
   bootstrap: [AppComponent],
   providers: [
