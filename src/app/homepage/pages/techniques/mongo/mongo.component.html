@@ -57,6 +57,12 @@ $ npm install --save @nestjs/mongoose mongoose</code></pre>
   </span>
   <pre [class.hide]="catsServiceT.isJsActive"><code class="language-typescript">{{ catsService }}</code></pre>
   <pre [class.hide]="!catsServiceT.isJsActive"><code class="language-typescript">{{ catsServiceJs }}</code></pre>
+  <h4>Connection Injection</h4>
+  <p>
+    Maybe sometime you will need the native <a href="https://mongoosejs.com/docs/api.html#Connection">Mongoose Connection</a>
+    (for an integration with an external library, or to use the native API). In such case, use the <code>@InjectConnection</code> decorator:
+  </p>
+  <pre><code class="language-typescript">{{ injectConnection }}</code></pre>
   <h4>Testing</h4>
   <p>
     When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent

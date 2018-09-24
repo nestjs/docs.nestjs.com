@@ -93,6 +93,21 @@ export class CatsService {
 }`;
   }
 
+  get injectConnection() {
+    return `
+import { Injectable } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+
+@Injectable()
+export class CatsService {
+  constructor(@InjectConnection() private readonly connection: Connection) {}
+
+  // ...
+
+}`;
+  }
+
   get mockRepository() {
     return `
 @Module({
