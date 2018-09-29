@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BasePageComponent } from '../../page/page.component';
+import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { BasePageComponent } from "../../page/page.component";
 
 @Component({
-  selector: 'app-prisma',
-  templateUrl: './prisma.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: "app-prisma",
+  templateUrl: "./prisma.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PrismaComponent extends BasePageComponent {
   get dependencies() {
     return `
-$ npm install --save prisma prisma-binding`;
+$ npm install --save prisma-binding`;
   }
 
   get prismaYaml() {
@@ -37,7 +37,8 @@ projects:
   database:
     schemaPath: src/prisma/prisma-types.graphql
     extensions:
-      prisma: prisma.yml
+      endpoints:
+        default: https://us1.prisma.sh/nest-f6ec12/prisma/dev
       codegen:
         - generator: prisma-binding
           language: typescript
