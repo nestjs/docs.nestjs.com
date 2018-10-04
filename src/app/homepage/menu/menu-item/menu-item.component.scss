@@ -36,6 +36,10 @@ li {
   display: block;
   padding: 4px 0;
 
+  &:first-of-type {
+    padding-top: 0;
+  }
+
   a {
     color: $black-color;
     font-size: 15px;
