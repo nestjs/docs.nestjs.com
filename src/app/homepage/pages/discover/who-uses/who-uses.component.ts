@@ -57,6 +57,10 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/architectnow.png',
       url: 'http://architectnow.net'
+    },
+    {
+      logo: '/assets/logo/iflix.svg',
+      url: 'https://www.iflix.com'
     }
   ];
 
