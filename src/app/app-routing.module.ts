@@ -66,6 +66,14 @@ import { LoggerComponent } from './homepage/pages/techniques/logger/logger.compo
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
+import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
+import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
+import { MigrationComponent } from './homepage/pages/migration/migration.component';
+import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
+import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
+import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
+import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
+import { SupportComponent } from './homepage/pages/support/support.component';
 import { SecurityComponent } from './homepage/pages/techniques/security/security.component';
 import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
@@ -286,6 +294,11 @@ const routes: Routes = [
         path: 'microservices/grpc',
         component: GrpcComponent,
         data: { title: 'gRPC - Microservices' },
+      },
+      {
+        path: 'microservices/rabbitmq',
+        component: RabbitMQComponent,
+        data: { title: 'RabbitMQ - Microservices' },
       },
       {
         path: 'microservices/pipes',

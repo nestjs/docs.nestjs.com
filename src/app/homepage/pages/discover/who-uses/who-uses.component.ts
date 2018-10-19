@@ -54,6 +54,10 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: 'https://nestjs.com/genuinebee.bdd5ef72.svg',
       url: 'https://genuinebee.com/',
     },
+    {
+      logo: '/assets/logo/architectnow.png',
+      url: 'http://architectnow.net'
+    }
   ];
 
   readonly companiesUrls = [
@@ -64,7 +68,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://kerberus.com.co/',
     'https://www.notadd.com/',
     'http://jsdaddy.io/',
-    'http://architectnow.net/',
     'https://www.yumpingo.com/',
     'https://www.analytics-importer.cz/',
     'https://www.dayzim.com/',
