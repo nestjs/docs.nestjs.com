@@ -1,15 +1,16 @@
 <div class="content">
   <h3>gRPC</h3>
   <p>
-    The <a href="https://github.com/grpc/grpc-node" target="blank">gRPC</a> is a high-performance, open-source universal RPC framework.
+    The <a href="https://github.com/grpc/grpc-node" target="blank">gRPC</a> is a high-performance, open-source universal
+    RPC framework.
   </p>
   <h4>Installation</h4>
   <p>Before we start, we have to install required package:</p>
   <pre><code class="language-bash">
-$ npm i --save grpc</code></pre>
+$ npm i --save grpc @grpc/proto-loader</code></pre>
   <h4>Transporter</h4>
   <p>
-    In order to switch to <strong>gRPC</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.
+    In order to switch to <strong>gRPC</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code>    method.
   </p>
   <span class="filename">
     {{ 'main' | extension: optionsT.isJsActive }}
@@ -33,8 +34,9 @@ $ npm i --save grpc</code></pre>
       <td>Absolute (or relative to the root dir) path to the <code>.proto</code> file</td>
     </tr>
     <tr>
-      <td><code>root</code></td>
-      <td>Absolute path to the root directory</td>
+      <td><code>loader</code></td>
+      <td><code>@grpc/proto-loader</code> options. They are well-described <a href="https://github.com/grpc/grpc-node/tree/master/packages/grpc-protobufjs#usage"
+          target="blank">here</a>.</td>
     </tr>
     <tr>
       <td><code>package</code></td>
@@ -47,18 +49,19 @@ $ npm i --save grpc</code></pre>
   </table>
   <h4>Overview</h4>
   <p>
-    In general, a <code>package</code> property sets a <a href="https://developers.google.com/protocol-buffers/docs/proto" target="blank">protobuf</a> package name, 
-    while <code>protoPath</code> is a path to the <code>.proto</code> definitions file.
-    The <code>hero.proto</code> file is structured using protocol buffer language.
+    In general, a <code>package</code> property sets a <a href="https://developers.google.com/protocol-buffers/docs/proto"
+      target="blank">protobuf</a> package name, while <code>protoPath</code> is a path to the <code>.proto</code> definitions
+    file. The <code>hero.proto</code> file is structured using protocol buffer language.
   </p>
   <span class="filename">
     hero.proto
   </span>
   <pre><code class="language-typescript">{{ heroProto }}</code></pre>
   <p>
-    In the above example, we defined a <code>HeroService</code> that exposes a <code>FindOne()</code> gRPC handler which expects <code>HeroById</code> as an input and returns a <code>Hero</code> message.
-    In order to define a handler that fulfills this protobuf definition, we have to use a <code>@GrpcMethod()</code> decorator.
-    The previously known <code>@MessagePattern()</code> is no longer useful.
+    In the above example, we defined a <code>HeroService</code> that exposes a <code>FindOne()</code> gRPC handler which
+    expects <code>HeroById</code> as an input and returns a <code>Hero</code> message. In order to define a handler that
+    fulfills this protobuf definition, we have to use a <code>@GrpcMethod()</code> decorator. The previously known <code>@MessagePattern()</code>    is
+    no longer useful.
   </p>
   <span class="filename">
     {{ 'hero.controller' | extension: grpcHandlerT.isJsActive }}
@@ -70,13 +73,13 @@ $ npm i --save grpc</code></pre>
     <strong>Hint</strong> The <code>@GrpcMethod()</code> decorator is imported from <code>@nestjs/microservices</code> package.
   </blockquote>
   <p>
-    The <code>HeroService</code> is a service's name, while <code>FindOne</code> points to a <code>FindOne()</code> gRPC handler.
-    The corresponding <code>findOne()</code> method takes two arguments, the <code>data</code> passed from the caller and <code>metadata</code> that stores gRPC request's metadata. 
+    The <code>HeroService</code> is a service's name, while <code>FindOne</code> points to a <code>FindOne()</code> gRPC
+    handler. The corresponding <code>findOne()</code> method takes two arguments, the <code>data</code> passed from the caller
+    and <code>metadata</code> that stores gRPC request's metadata.
   </p>
   <p>
-    Furthermore, the <code>FindOne</code> is actually redundant here.
-    If you don't pass a second argument to the <code>@GrpcMethod()</code>, Nest will automatically use the method name with the capitalized first letter,
-    for example, <code>findOne</code> -> <code>FindOne</code>.
+    Furthermore, the <code>FindOne</code> is actually redundant here. If you don't pass a second argument to the <code>@GrpcMethod()</code>,
+    Nest will automatically use the method name with the capitalized first letter, for example, <code>findOne</code> -> <code>FindOne</code>.
   </p>
   <span class="filename">
     {{ 'hero.controller' | extension: grpcHandlerMethodT.isJsActive }}
@@ -104,8 +107,9 @@ $ npm i --save grpc</code></pre>
   <pre [class.hide]="grpcClientT.isJsActive"><code class="language-typescript">{{ grpcClient }}</code></pre>
   <pre [class.hide]="!grpcClientT.isJsActive"><code class="language-typescript">{{ grpcClientJs }}</code></pre>
   <p>
-    There is a small difference compared to the previous examples. Instead of the <code>ClientProxy</code> class, we use the <code>ClientGrpc</code> that provides a <code>getService()</code> method.
-    The <code>getService()</code> generic method takes service's name as an argument and returns its instance if available.
+    There is a small difference compared to the previous examples. Instead of the <code>ClientProxy</code> class, we use
+    the <code>ClientGrpc</code> that provides a <code>getService()</code> method. The <code>getService()</code> generic method
+    takes service's name as an argument and returns its instance if available.
   </p>
   <span class="filename">
     {{ 'hero.controller' | extension: serviceInstanceT.isJsActive }}
@@ -114,14 +118,14 @@ $ npm i --save grpc</code></pre>
   <pre [class.hide]="serviceInstanceT.isJsActive"><code class="language-typescript">{{ serviceInstance }}</code></pre>
   <pre [class.hide]="!serviceInstanceT.isJsActive"><code class="language-typescript">{{ serviceInstanceJs }}</code></pre>
   <p>
-    The <code>heroService</code> object exposes the same set of methods that have been defined inside <code>.proto</code> file.
-    Note, all of them are <strong>lowercased</strong> (in order to follow the natural convention).
-    Basically, our gRPC <code>HeroService</code> definition contains <code>FindOne()</code> function.
-    It means that <code>heroService</code> instance will provide the <code>findOne()</code> method.
+    The <code>heroService</code> object exposes the same set of methods that have been defined inside <code>.proto</code>    file.
+    Note, all of them are <strong>lowercased</strong> (in order to follow the natural convention). Basically, our gRPC <code>HeroService</code>    definition
+    contains <code>FindOne()</code> function. It means that <code>heroService</code> instance will provide the <code>findOne()</code>    method.
   </p>
   <pre><code class="language-typescript">{{ heroService }}</code></pre>
   <p>
-    All service's methods return <code>Observable</code>. Since Nest supports <a href="https://github.com/reactivex/rxjs">RxJS</a> streams and works pretty well with them, we can return them within HTTP handler as well. 
+    All service's methods return <code>Observable</code>. Since Nest supports <a href="https://github.com/reactivex/rxjs">RxJS</a>
+    streams and works pretty well with them, we can return them within HTTP handler as well.
   </p>
   <span class="filename">
     {{ 'hero.controller' | extension: heroControllerT.isJsActive }}

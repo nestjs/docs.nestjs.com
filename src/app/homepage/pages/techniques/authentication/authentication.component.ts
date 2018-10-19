@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { BasePageComponent } from '../../page/page.component';
 export class AuthenticationComponent extends BasePageComponent {
   get dependencies() {
     return `
-$ npm install --save @nestjs/passport passport passport-jwt passport-http-bearer jsonwebtoken`;
+$ npm install --save @nestjs/passport passport passport-http-bearer`;
   }
 
   get authService() {
@@ -22,6 +22,8 @@ export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
   async validateUser(token: string): Promise<any> {
+    // Validate if token passed along with HTTP request
+    // is associated with any registered account in the database
     return await this.usersService.findOneByToken(token);
   }
 }`;
@@ -40,6 +42,8 @@ export class AuthService {
   }
 
   async validateUser(token) {
+    // Validate if token passed along with HTTP request
+    // is associated with any registered account in the database
     return await this.usersService.findOneByToken(token);
   }
 }`;
@@ -58,12 +62,12 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(token: any, done: Function) {
+  async validate(token: string) {
     const user = await this.authService.validateUser(token);
     if (!user) {
-      return done(new UnauthorizedException(), false);
+      throw new UnauthorizedException();
     }
-    done(null, user);
+    return user;
   }
 }`;
   }
@@ -83,16 +87,16 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     this.authService = authService;
   }
 
-  async validate(token, done) {
+  async validate(token) {
     const user = await this.authService.validateUser(token);
     if (!user) {
-      return done(new UnauthorizedException(), false);
+      throw new UnauthorizedException();
     }
-    done(null, user);
+    return user;
   }
 }`;
   }
-  
+
   get jwtStrategy() {
     return `
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -110,12 +114,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload, done: Function) {
+  async validate(payload: JwtPayload) {
     const user = await this.authService.validateUser(payload);
     if (!user) {
-      return done(new UnauthorizedException(), false);
+      throw new UnauthorizedException();
     }
-    done(null, user);
+    return user;
   }
 }`;
   }
@@ -185,29 +189,89 @@ findAll() {
 }`;
   }
 
-  get useGuardsJwt() {
+  get useGuardsDefault() {
     return `
 @Get('users')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard())
 findAll() {
   return [];
 }`;
   }
 
+  get useGuardsJwt() {
+    return `
+@Get('users')
+@UseGuards(AuthGuard())
+findAll() {
+  return [];
+}`;
+  }
+
+  get passportModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { HttpStrategy } from './http.strategy';
+import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: 'bearer' }),
+    UsersModule,
+  ],
+  providers: [AuthService, HttpStrategy],
+})
+export class AuthModule {}`;
+  }
+
+  get passportModuleJs() {
+    return `
+import { Module } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { HttpStrategy } from './http.strategy';
+import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: 'bearer' }),
+    UsersModule,
+  ],
+  providers: [AuthService, HttpStrategy],
+})
+export class AuthModule {}`;
+  }
+
+  get userObject() {
+    return `
+PassportModule.register({ property: 'profile' })`;
+  }
+
+  get passportOptions() {
+    return `
+PassportModule.register({ session: true })`;
+  }
+
   get authServiceJwt() {
     return `
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async createToken() {
+  async signIn(): Promise<string> {
+    // In the real-world app you shouldn't expose this method publicly
+    // instead, return a token once you verify user credentials
     const user: JwtPayload = { email: 'user@email.com' };
-    return jwt.sign(user, 'secretKey', { expiresIn: 3600 });
+    return this.jwtService.sign(user);
   }
 
   async validateUser(payload: JwtPayload): Promise<any> {
@@ -218,21 +282,24 @@ export class AuthService {
 
   get authServiceJwtJs() {
     return `
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 import { Injectable, Dependencies } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
-@Dependencies(UsersService)
+@Dependencies(UsersService, JwtService)
 export class AuthService {
-  constructor(usersService) {
+  constructor(usersService, jwtService) {
     this.usersService = usersService;
+    this.jwtService = jwtService;
   }
 
-  async createToken() {
+  async signIn() {
+    // In the real-world app you shouldn't expose this method publicly
+    // instead, return a token once you verify user credentials
     const user = { email: 'user@email.com' };
-    return jwt.sign(user, 'secretKey', { expiresIn: 3600 });
+    return this.jwtService.sign(user);
   }
 
   async validateUser(payload) {
@@ -244,12 +311,23 @@ export class AuthService {
   get authModuleJwt() {
     return `
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secretOrPrivateKey: 'secretKey',
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
+    UsersModule,
+  ],
   providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}`;
@@ -258,14 +336,74 @@ export class AuthModule {}`;
   get authModuleJwtJs() {
     return `
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secretOrPrivateKey: 'secretKey',
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
+    UsersModule,
+  ],
   providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}`;
+  }
+
+  get multipleStrategies() {
+    return `
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt')`;
+  }
+
+  get inheritance() {
+    return `
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  canActivate(context: ExecutionContext) {
+    // Add your custom authentication logic here
+    // for example, call super.logIn(request) to establish a session.
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user, info) {
+    if (err || !user) {
+      throw err || new UnauthorizedException();
+    }
+    return user;
+  }
+}`;
+  }
+
+  get graphQl() {
+    return `
+@Injectable()
+export class GqlAuthGuard extends AuthGuard('jwt') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+}`;
+  }
+
+  get requestInContext() {
+    return `
+GraphQLModule.forRoot({
+  context: ({ req }) => ({ req }),
+})`;
   }
 }

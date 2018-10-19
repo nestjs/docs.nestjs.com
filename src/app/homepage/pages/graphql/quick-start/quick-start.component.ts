@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -9,86 +9,87 @@ import { BasePageComponent } from '../../page/page.component';
 export class QuickStartComponent extends BasePageComponent {
   get middleware() {
     return `
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { graphqlExpress } from 'apollo-server-express';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
-  imports: [GraphQLModule],
+  imports: [
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.graphql'],
+    }),
+  ],
 })
-export class ApplicationModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
-      .forRoutes('/graphql');
-  }
-}`;
+export class ApplicationModule {}`;
   }
 
-  get middlewareJs() {
+  get moreOptions() {
     return `
 import { Module } from '@nestjs/common';
-import { graphqlExpress } from 'apollo-server-express';
 import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
-  imports: [GraphQLModule],
+  imports: [
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.graphql'],
+      debug: false,
+      playground: false,
+    }),
+  ],
 })
-export class ApplicationModule {
-  configure(consumer) {
-    consumer
-      .apply(graphqlExpress(req => ({ schema: {}, rootValue: req })))
-      .forRoutes('/graphql');
-  }
-}`;
+export class ApplicationModule {}`;
   }
 
-  get createSchema() {
+  get asyncConfiguration() {
     return `
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { graphqlExpress } from 'apollo-server-express';
-import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
-
-@Module({
-  imports: [GraphQLModule],
-})
-export class ApplicationModule implements NestModule {
-  constructor(private readonly graphQLFactory: GraphQLFactory) {}
-
-  configure(consumer: MiddlewareConsumer) {
-    const typeDefs = this.graphQLFactory.mergeTypesByPaths('./**/*.graphql');
-    const schema = this.graphQLFactory.createSchema({ typeDefs });
-
-    consumer
-      .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-      .forRoutes('/graphql');
-  }
-}`;
+GraphQLModule.forRootAsync({
+  useFactory: () => ({
+    typePaths: ['./**/*.graphql'],
+  }),
+})`;
   }
 
-  get createSchemaJs() {
+  get asyncConfigurationFactoryAsync() {
     return `
-import { Module } from '@nestjs/common';
-import { graphqlExpress } from 'apollo-server-express';
-import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql';
-
-@Dependencies(GraphQLFactory)
-@Module({
-  imports: [GraphQLModule],
-})
-export class ApplicationModule {
-  constructor(graphQLFactory) {
-    this.graphQLFactory = graphQLFactory;
+GraphQLModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    typePaths: configService.getString('GRAPHQL_TYPE_PATHS'),
+  }),
+  inject: [ConfigService],
+})`;
   }
 
-  configure(consumer) {
-    const typeDefs = this.graphQLFactory.mergeTypesByPaths('./**/*.graphql');
-    const schema = this.graphQLFactory.createSchema({ typeDefs });
+  get asyncConfigurationClass() {
+    return `
+GraphQLModule.forRootAsync({
+  useClass: GqlConfigService,
+})`;
+  }
 
-    consumer
-      .apply(graphqlExpress(req => ({ schema, rootValue: req })))
-      .forRoutes('/graphql');
+  get asyncConfigurationClassBody() {
+    return `
+@Injectable()
+class GqlConfigService implements GqlOptionsFactory {
+  createGqlOptions(): GqlModuleOptions {
+    return {
+      typePaths: ['./**/*.graphql'],
+    };
   }
 }`;
+  }
+
+  get asyncConfigurationExisting() {
+    return `
+GraphQLModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+})`;
+  }
+
+  get includeSubset() {
+    return `
+GraphQLModule.forRoot({
+  include: [CatsModule],
+})`;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -39,6 +39,39 @@ export class MyLogger implements LoggerService {
 const app = await NestFactory.create(ApplicationModule, {
   logger: new MyLogger(),
 });
+await app.listen(3000);`;
+  }
+
+  get inheritance() {
+    return `
+import { Logger } from '@nestjs/common';
+
+export class MyLogger extends Logger {
+  error(message: string, trace: string) {
+    // add your custom business logic
+    super.error(message, trace);
+  }
+}`;
+  }
+
+  get loggerModule() {
+    return `
+import { Module } from '@nestjs/common';
+import { MyLogger } from './my-logger.service.ts';
+
+@Module({
+  providers: [MyLogger],
+  exports: [MyLogger],
+})
+export class LoggerModule {};`;
+  }
+
+  get useLoggerDi() {
+    return `
+const app = await NestFactory.create(ApplicationModule, {
+  logger: false,
+});
+app.useLogger(app.get(MyLogger));
 await app.listen(3000);`;
   }
 }

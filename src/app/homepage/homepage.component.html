@@ -5,11 +5,12 @@
     </a>
   </div>
 </app-header>
-<div class="container-fluid" matchHeight>
+<div class="container-fluid">
   <app-menu [class.opened]="isSidebarOpened" perfectScrollbar></app-menu>
   <div class="container" [class.wide]="!isSidebarOpened">
     <div class="page-wrapper">
-      <router-outlet></router-outlet>
+      <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
+      <app-toc [contentReference]="contentRef"></app-toc>
     </div>
     <div class="sponsors-wrapper">
       <div class="sponsors-container">
@@ -24,14 +25,11 @@
               <img src="https://docs.nestjs.com/assets/sponsors/valor-software.png" class="logo-sponsor" />
             </a>
           </div>
-          <div class="inline-column"> 
+          <div class="inline-column">
             <h4 class="title">Sponsors / Backers</h4>
-            <!--<a href="https://valor-software.com/">
-              <img src="https://nestjs.com/img/scalio-logo.svg" class="logo-sponsor-small" />
+            <a href="http://www.xtremis.com/en">
+              <img src="https://nestjs.com/logo-xtremis.0feb160c.svg" class="logo-sponsor-small" />
             </a>
-            <a href="https://valor-software.com/">
-              <img src="https://nestjs.com/img/swingdev-logo.svg" class="logo-sponsor-small" />
-            </a>-->
             <div class="backers-wrapper">
               <a href="https://opencollective.com/nest/backer/0/website" target="_blank">
                 <img src="https://opencollective.com/nest/backer/0/avatar.svg">

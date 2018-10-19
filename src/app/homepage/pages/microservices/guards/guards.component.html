@@ -1,12 +1,13 @@
 <div class="content">
   <h3>Guards</h3>
   <p>
-    There's no difference between microservices <strong>guards</strong> and the <a routerLink="/guards">regular guards</a>.
+    There is no difference between microservices <strong>guards</strong> and the <a routerLink="/guards">regular guards</a>.
     The only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>RpcException</code>.
   </p>
   <blockquote class="info">
     <strong>Hint</strong> The <code>RpcException</code> class is exposed from <code>@nestjs/microservices</code> package.
   </blockquote>
+  <h4>Binding guards</h4>
   <p>
     Here is an example that makes use of a <strong>method-scoped</strong> guard (class-scoped works either):
   </p>

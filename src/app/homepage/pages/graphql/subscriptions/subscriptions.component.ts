@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -18,31 +18,24 @@ Subscription: {
 
   get resolversWithNames() {
     return `
-import { Query, Resolver, Subscription, ResolveProperty } from '@nestjs/graphql';
-import { find, filter } from 'lodash';
-import { PubSub } from 'graphql-subscriptions';
-
-// example data
-const authors = [
-  { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-  { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
-];
-const posts = [
-  { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-  { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
-];
-
-// example pubsub
 const pubSub = new PubSub();
 
 @Resolver('Author')
 export class AuthorResolver {
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) {}
+
   @Query('author')
-  getAuthor(obj, args, context, info) {
-    return find(authors, { id: args.id });
+  async getAuthor(@Args('id') id: number) {
+    return await this.authorsService.findOneById(id);
+  }
+
+  @ResolveProperty('posts')
+  async getPosts(@Parent() author) {
+    const { id } = author;
+    return await this.postsService.findAll({ authorId: id });
   }
 
   @Subscription()
@@ -51,12 +44,15 @@ export class AuthorResolver {
       subscribe: () => pubSub.asyncIterator('commentAdded'),
     };
   }
-
-  @ResolveProperty('posts')
-  getPosts(author) {
-    return filter(posts, { authorId: author.id });
-  }
 }`;
+  }
+
+  get enableSubscriptions() {
+    return `
+GraphQLModule.forRoot({
+  typePaths: ['./**/*.graphql'],
+  installSubscriptionHandlers: true,
+})`;
   }
 
   get typeDefs() {

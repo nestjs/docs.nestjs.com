@@ -69,4 +69,58 @@ uploadFile(files) {
   console.log(files);
 }`;
   }
+
+  get multerModule() {
+    return `
+MulterModule.register({
+  dest: '/upload',
+}),`;
+  }
+
+  get asyncConfiguration() {
+    return `
+MulterModule.registerAsync({
+  useFactory: () => ({
+    dest: '/upload',
+  }),
+})`;
+  }
+
+  get asyncConfigurationFactoryAsync() {
+    return `
+MulterModule.registerAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    dest: configService.getString('MULTER_DEST'),
+  }),
+  inject: [ConfigService],
+})`;
+  }
+
+  get asyncConfigurationClass() {
+    return `
+MulterModule.registerAsync({
+  useClass: MulterConfigService,
+})`;
+  }
+
+  get asyncConfigurationClassBody() {
+    return `
+@Injectable()
+class MulterConfigService implements MulterOptionsFactory {
+  createMulterOptions(): MulterModuleOptions {
+    return {
+      dest: '/upload',
+    };
+  }
+}`;
+  }
+
+  get asyncConfigurationExisting() {
+    return `
+MulterModule.registerAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+})`;
+  }
 }

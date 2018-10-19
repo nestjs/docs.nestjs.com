@@ -4,7 +4,7 @@ import { BasePageComponent } from '../../page/page.component';
 @Component({
   selector: 'app-performance',
   templateUrl: './performance.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PerformanceComponent extends BasePageComponent {
   get packages() {
@@ -22,5 +22,11 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();`;
+  }
+
+  get docker() {
+    return `
+await app.listen(3000, '0.0.0.0');
+`;
   }
 }

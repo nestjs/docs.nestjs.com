@@ -1,15 +1,16 @@
-@import "../../../scss/variables.scss";
-@import "../../../scss/utils.scss";
+@import '../../../scss/variables.scss';
+@import '../../../scss/utils.scss';
 
 :host {
   @extend .transition;
   @extend .box-sizing;
   @include transform(translateX(-100%));
-  padding: 45px 30px 40px 45px;
-  width: 345px;
+  padding: 90px 30px 40px 45px;
+  width: 300px;
   background: #f9f9f9;
-  box-shadow: inset -35px -18px 70px rgba(233, 233, 233, 0.65);
-  position: absolute !important;
+  box-shadow: inset -35px -18px 70px rgba(233, 233, 233, 0.25);
+  position: fixed !important;
+  border-right: 1px solid #efefef;
   bottom: 0;
   top: 0;
   z-index: 1000;
@@ -18,26 +19,32 @@
   &.opened {
     @include transform(translateX(0));
   }
-  @include media(large) { width: 300px; }
-  @include media(normal) { 
+  @include media(large) {
+    width: 300px;
+  }
+  @include media(normal) {
     &.opened {
-      z-index: 1000000;
+      z-index: 1000;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
   }
   @include media(medium) {
-    padding: 20px 25px 20px 25px; 
+    padding: 20px 25px 20px 25px;
   }
-  @include media(small) { 
-    width: 100%; 
+  @include media(small) {
+    width: 100%;
   }
 }
 
 .nav-item {
-  margin: 0 -20px;
-  padding: 0 20px;
-  border-bottom: 1px solid #efefef;
+  margin: 0 -10px;
+  padding: 0 10px;
+  // border-bottom: 1px solid #efefef;
   &:last-of-type {
     border: 0;
+  }
+
+  h3 {
+    margin: 20px 0;
   }
 }

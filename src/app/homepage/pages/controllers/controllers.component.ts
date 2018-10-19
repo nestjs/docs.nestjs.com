@@ -82,6 +82,14 @@ findOne(@Param('id') id) {
 }`;
   }
 
+  get routeWildcards() {
+    return `
+@Get('ab*cd')
+findAll() {
+  return 'This route uses a wildcard';
+}`;
+  }
+
   get statusCode() {
     return `
 @Post()
@@ -145,7 +153,7 @@ export class CreateCatDto {
     return `
 @Post()
 async create(@Body() createCatDto: CreateCatDto) {
-  return await this.catsService.create(createCatDto);
+  return 'This action adds a new cat';
 }`;
   }
 
@@ -154,7 +162,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 @Post()
 @Bind(Body())
 async create(createCatDto) {
-  return await this.catsService.create(createCatDto);
+  return 'This action adds a new cat';
 }`;
   }
 

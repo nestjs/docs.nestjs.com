@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -11,8 +11,7 @@ export class GuardsInterceptorsComponent extends BasePageComponent {
     return `
 @Query('author')
 @UseGuards(AuthGuard)
-async getAuthor(obj, args, context, info) {
-  const { id } = args;
+async getAuthor(@Args('id', ParseIntPipe) id: number) {
   return await this.authorsService.findOneById(id);
 }`;
   }
@@ -21,8 +20,38 @@ async getAuthor(obj, args, context, info) {
     return `
 @Mutation()
 @UseInterceptors(EventsInterceptor)
-async upvotePost(_, { postId }) {
+async upvotePost(@Args('postId') postId: number) {
   return await this.postsService.upvoteById({ id: postId });
 }`;
+  }
+
+  get gqlExecutionContext() {
+    return `
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const ctx = GqlExecutionContext.create(context);
+    return true;
+  }
+}`;
+  }
+
+  get customDecorators() {
+    return `
+export const User = createParamDecorator(
+  (data, [root, args, ctx, info]) => ctx.user,
+);`;
+  }
+
+  get customDecoratorsExample() {
+    return `
+@Mutation()
+async upvotePost(
+  @User() user: UserEntity,
+  @Args('postId') postId: number,
+) {}`;
   }
 }

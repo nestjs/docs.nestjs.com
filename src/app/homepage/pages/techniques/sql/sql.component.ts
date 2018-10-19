@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -21,7 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
   ],
@@ -164,39 +164,33 @@ export class PhotoService {
 
   get multipleConnections() {
     return `
+const defaultOptions = {
+  type: 'postgres',
+  port: 5432,
+  username: 'user',
+  password: 'password',
+  database: 'db',
+  synchronize: true,
+};
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host:  'photo_db_host',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'db',
+      ...defaultOptions,
+      host: 'photo_db_host',
       entities: [Photo],
-      synchronize: true
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      ...defaultOptions,
       name: 'personsConnection',
       host:  'person_db_host',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'db',
       entities: [Person],
-      synchronize: true
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      ...defaultOptions,
       name: 'albumsConnection',
       host:  'album_db_host',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'db',
       entities: [Album],
-      synchronize: true
     })
   ]
 })
@@ -206,11 +200,10 @@ export class ApplicationModule {}`;
   get forFeatureWithConnection() {
     return `
 @Module({
-  // ...
   TypeOrmModule.forFeature([Photo]),
   TypeOrmModule.forFeature([Person], 'personsConnection'),
   TypeOrmModule.forFeature([Album], 'albumsConnection')
-})    
+})
 export class ApplicationModule {}`;
   }
 
@@ -239,5 +232,100 @@ export class PersonService {
   ],
 })
 export class PhotoModule {}`;
+  }
+
+  get customRepository() {
+    return `
+@EntityRepository(Author)
+export class AuthorRepository extends Repository<Author> {}`;
+  }
+
+  get registerCustomRepository() {
+    return `
+@Module({
+  imports: [TypeOrmModule.forFeature([Author, AuthorRepository])],
+  controller: [AuthorController],
+  providers: [AuthorService],
+})
+export class AuthorModule {}`;
+  }
+
+  get injectCustomRepository() {
+    return `
+@Injectable()
+export class AuthorService {
+  constructor(
+    @InjectRepository(AuthorRepository)
+    private readonly authorRepository: AuthorRepository,
+  ) {}
+}`;
+  }
+
+  get asyncConfiguration() {
+    return `
+TypeOrmModule.forRootAsync({
+  useFactory: () => ({
+    type: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'test',
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: true,
+  }),
+})`;
+  }
+
+  get asyncConfigurationFactoryAsync() {
+    return `
+TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    type: 'mysql',
+    host: configService.getString('HOST'),
+    port: configService.getString('PORT'),
+    username: configService.getString('USERNAME'),
+    password: configService.getString('PASSWORD'),
+    database: configService.getString('DATABASE'),
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: true,
+  }),
+  inject: [ConfigService],
+})`;
+  }
+
+  get asyncConfigurationClass() {
+    return `
+TypeOrmModule.forRootAsync({
+  useClass: TypeOrmConfigService,
+})`;
+  }
+
+  get asyncConfigurationClassBody() {
+    return `
+@Injectable()
+class TypeOrmConfigService implements TypeOrmOptionsFactory {
+  createTypeOrmOptions(): TypeOrmModuleOptions {
+    return {
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'test',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    };
+  }
+}`;
+  }
+
+  get asyncConfigurationExisting() {
+    return `
+TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+})`;
   }
 }

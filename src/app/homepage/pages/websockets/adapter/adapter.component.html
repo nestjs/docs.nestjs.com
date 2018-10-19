@@ -1,9 +1,9 @@
 <div class="content">
   <h3>Adapters</h3>
   <p>
-    The Nest web sockets module is based on <a href="https://github.com/socketio/socket.io" target="blank">socket.io</a> package,
-    but you can bring your own library (or even a native implementation), by making use of <code>WebSocketAdapter</code> interface.
-    This interface forces to implement few methods described in the following table: 
+    The WebSockets module is based on <a href="https://github.com/socketio/socket.io" target="blank">socket.io</a>
+    package, but you can bring your own library (or even a native implementation), by making use of <code>WebSocketAdapter</code>    interface.
+    This interface forces to implement few methods described in the following table:
   </p>
   <table>
     <tr>
@@ -12,25 +12,54 @@
     </tr>
     <tr>
       <td><code>bindClientConnect</code></td>
-      <td>Binds the client connection event</td>  
+      <td>Binds the client connection event</td>
     </tr>
     <tr>
       <td><code>bindClientDisconnect</code></td>
-      <td>Binds the client disconnection event (optional*)</td>  
+      <td>Binds the client disconnection event (optional*)</td>
     </tr>
     <tr>
       <td><code>bindMessageHandlers</code></td>
-      <td>Binds the incoming message to the corresponding message handler</td>  
+      <td>Binds the incoming message to the corresponding message handler</td>
     </tr>
     <tr>
       <td><code>close</code></td>
       <td>Terminates a server instance</td>
     </tr>
   </table>
+  <h4>Extend socket.io</h4>
   <p>
-    For demonstration purposes, we are going to integrate the <a href="https://github.com/websockets/ws" target="blank">ws</a> library.
-    In fact, the adapter for this library is already created and is exposed from the <code>@nestjs/websockets</code> package as a <code>WsAdapter</code> class.
-    Here is how the simplified implementation looks like:
+    The socket.io package is wrapped in an <code>IoAdapter</code> class. What if you would like to enhance the basic functionality
+    of the adapter? For instance, your technical requirements require a capability to broadcast events across multiple load-balanced
+    instances of your web service. For this, you can extend <code>IoAdapter</code> and override a single method which responsibility
+    is to instantiate new socket.io servers. But first of all, let's install the required package.
+  </p>
+  <pre><code class="language-bash">
+$ npm i --save socket.io-redis</code></pre>
+  <p>
+    Once the package is installed, we can create a <code>RedisIoAdapter</code> class.
+  </p>
+  <pre><code class="language-typescript">{{ extendIoAdapter }}</code></pre>
+  <p>
+    Afterward, simply switch to your newly created Redis adapter.
+  </p>
+  <pre><code class="language-typescript">{{ setupRedisAdapter }}</code></pre>
+  <h4>Ws library</h4>
+  <p>
+    Another built-in adapter is a <code>WsAdapter</code> which in turn acts like a proxy between the framework and integrate
+    blazing fast and thoroughly tested <a href="https://github.com/websockets/ws" target="blank">ws</a> library. This adapter
+    is fully compatible with native browser WebSockets and is far faster than socket.io package. Unluckily, it has significantly
+    fewer functionalities available out-of-the-box. In some cases, you may just don't necesserily need them though.
+  </p>
+  <pre><code class="language-typescript">{{ setupAdapter }}</code></pre>
+  <blockquote class="info">
+    <strong>Hint</strong> The <code>WsAdapter</code> is imported from <code>@nestjs/websockets</code>.
+  </blockquote>
+  <h4>Advanced (custom adapter)</h4>
+  <p>
+    For demonstration purposes, we are going to handwritten integrate the <a href="https://github.com/websockets/ws" target="blank">ws</a>
+    library. As mentioned, the adapter for this library is already created and is exposed from the <code>@nestjs/websockets</code>    package
+    as a <code>WsAdapter</code> class. Here is how the simplified implementation could potentialy looks like:
   </p>
   <span class="filename">
     {{ 'ws-adapter' | extension: wsAdapterT.isJsActive }}
@@ -39,7 +68,8 @@
   <pre [class.hide]="wsAdapterT.isJsActive"><code class="language-typescript">{{ wsAdapter }}</code></pre>
   <pre [class.hide]="!wsAdapterT.isJsActive"><code class="language-typescript">{{ wsAdapterJs }}</code></pre>
   <blockquote class="info">
-    <strong>Hint</strong> When you want to take advantage of <a href="https://github.com/websockets/ws" target="blank">ws</a> library, use built-in <code>WsAdapter</code> instead of creating your own one.
+    <strong>Hint</strong> When you want to take advantage of <a href="https://github.com/websockets/ws" target="blank">ws</a>
+    library, use built-in <code>WsAdapter</code> instead of creating your own one.
   </blockquote>
   <p>
     Then, we can set up a custom adapter using <code>useWebSocketAdapter()</code> method:
@@ -49,9 +79,7 @@
     <app-tabs #setupAdapterT></app-tabs>
   </span>
   <pre><code class="language-typescript">{{ setupAdapter }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> A full source code that makes use of <code>WsAdapter</code> is available <a href="https://github.com/nestjs/nest/tree/update/version-5/sample/16-gateways-ws" target="blank">here</a>.
-  </blockquote>
+  <h4>Example</h4>
   <p>
     A working example that uses <code>WsAdapter</code> is available <a href="https://github.com/nestjs/nest/tree/master/sample/16-gateways-ws">here</a>.
   </p>

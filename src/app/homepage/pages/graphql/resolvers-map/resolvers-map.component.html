@@ -1,63 +1,111 @@
 <div class="content">
-  <h3>Resolvers map</h3>
+  <h3>Resolvers</h3>
   <p>
-    When using <code>graphql-tools</code>, you have to create a resolvers map manually.
-    The following example is copied & pasted from the <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html" target="blank">Apollo documentation</a> where you can read more about it:
+    Typically, you have to create a resolvers map manually. The <code>@nestjs/graphql</code>
+    package, on the other hand, generate resolvers map automatically using the metadata provided
+    by the decorators. In order to learn the library basics, we'll create a simple authors API. Firstly, let's define
+    our types in SDL (read <a href="http://graphql.org/learn/schema/#type-language" target="blank">more</a>):
   </p>
-  <span class="filename"><app-tabs></app-tabs></span>
-  <pre><code class="language-typescript">{{ resolversMapExample }}</code></pre>
+  <pre><code class="language-java">{{ typeDefs }}</code></pre>
   <p>
-    With the <code>@nestjs/graphql</code> package, the resolvers map is generated automatically using the metadata.
-    Let's rewrite the above example with the <strong>equivalent</strong> Nest-way code.
+    Our GraphQL schema contains single query exposed, the <code>author(id: Int!): Author</code>.
+    Now, let's create an <code>AuthorResolver</code>.
   </p>
-  <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ resolvers }}</code></pre>
-  <p>
-    The <code>@Resolver()</code> decorator doesn't affect queries and mutations.
-    It only tells Nest that each <code>@ResolveProperty()</code> has a parent, which is an <code>Author</code> in this case.
-  </p>
   <blockquote class="info">
-    <strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don't have to mark a class as a <code>@Injectable()</code>, otherwise, it's necessary.
+    <strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don't have to mark a class as an <code>@Injectable()</code>,
+    otherwise, it's necessary.
   </blockquote>
   <p>
-    Conventionally, we would use something like a <code>getAuthor()</code> or <code>getPosts()</code> as a method names.
-    We can do that easily as well:
+    The <code>@Resolver()</code> decorator does not affect queries and mutations (neither <code>@Query()</code> nor
+    <code>@Mutation()</code> decorators).
+    It only informs Nest that each <code>@ResolveProperty()</code> inside this particular class has a parent, which is
+    an <code>Author</code> type
+    in this case (<code>Author.posts</code> relation).
   </p>
-  <span class="filename"><app-tabs></app-tabs></span>
-  <pre><code class="language-typescript">{{ resolversWithNames }}</code></pre>
+  <p>
+    Conventionally, we would use something like <code>getAuthor()</code> or <code>getPosts()</code> as method names.
+    We
+    can do that easily as well by moving the real names between decorator's parentheses.
+  </p>
+  <pre><code class="language-typescript">{{ realWorldExample }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> The <code>@Resolver()</code> decorator can be used at the method-level as well.
   </blockquote>
-  <h4>Refactor</h4>
+  <h4>Decorators</h4>
   <p>
-    The idea behind the above code is to show the differences between the Apollo and the Nest-way to allow for a simple transition of your code.
-    Right now, we're gonna do a small refactor to take advantages of the Nest architecture, to make it a <strong>real-world</strong> example. 
+    You may note that we refer to the following arguments using dedicated decorators. Below is a
+    comparison
+    of the provided decorators and the plain Apollo parameters they represent.
+  </p>
+  <table>
+    <tbody>
+      <tr>
+        <td><code>@Root()</code> and <code>@Parent()</code></td>
+        <td><code>root</code>/<code>parent</code></td>
+      </tr>
+      <tr>
+        <td><code>@Context(param?: string)</code></td>
+        <td><code>context</code> / <code>context[param]</code></td>
+      </tr>
+      <tr>
+        <td><code>@Info(param?: string)</code></td>
+        <td><code>info</code> / <code>info[param]</code></td>
+      </tr>
+      <tr>
+        <td><code>@Args(param?: string)</code></td>
+        <td><code>args</code> / <code>args[param]</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4>Module</h4>
+  <p>
+    Once we're done here, we have to register the <code>AuthorResolver</code>
+    somewhere,
+    for example inside the newly created <code>AuthorsModule</code>.
   </p>
   <span class="filename">
-    <app-tabs #authorResolverT></app-tabs>
+    <app-tabs></app-tabs>
   </span>
-  <pre [class.hide]="authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExample }}</code></pre>
-  <pre [class.hide]="!authorResolverT.isJsActive"><code class="language-typescript">{{ realWorldExampleJs }}</code></pre>
-  <p>
-    Now we have to register the <code>AuthorResolver</code> somewhere, for example inside the newly created <code>AuthorsModule</code>. 
-  </p>
-  <span class="filename"><app-tabs></app-tabs></span>
   <pre><code class="language-typescript">{{ authorsModule }}</code></pre>
-  <p>  
-    The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct resolvers map automatically.
-    The only thing you have to do is to import this module somewhere, therefore Nest will know that <code>AuthorsModule</code> exists.
-  </p>
-  <h4>Type definitions</h4>
   <p>
-    The last missing piece is a type definitions (<a href="http://graphql.org/learn/schema/#type-language" target="blank">read more</a>) file.
-    Let's create it near to the resolver class.
-  </p>
-  <span class="filename">author-types.graphql</span>
-  <pre><code class="language-java">{{ typeDefs }}</code></pre>
-  <p>
-    That's all. We created a single <code>author(id: Int!)</code> query.
+    The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct
+    resolvers
+    map automatically. The only thing that you should be aware of is that you need to import this module somewhere,
+    therefore
+    Nest will know that <code>AuthorsModule</code> truly exists.
   </p>
   <blockquote class="info">
     <strong>Hint</strong> Learn more about GraphQL queries <a href="http://graphql.org/learn/queries/" target="blank">here</a>.
+  </blockquote>
+  <h4>Typings</h4>
+  <p>
+    Separate creation of both GraphQL types and corresponding TypeScript definitions creates unnecessary redundancy.
+    Eventually, we end up without a single source of truth and each change made within SDL forces us to adjust
+    interfaces
+    as well. Thus, the <code>@nestjs/graphql</code> package serves another interesting functionality, which is
+    the automatic generation of TS definitions using abstract syntax tree (AST). In order to enable it, simply
+    customize <code>definitions</code> property.
+  </p>
+  <pre><code class="language-typescript">{{ generateTypings }}</code></pre>
+  <p>
+    The <code>src/graphql.ts</code> indicates where to save TypeScript output. By default, all types are transformed
+    to the interfaces.
+    However, you can switch to classes instead by changing <code>outputAs</code> property to <code>class</code>.
+  </p>
+  <pre><code class="language-typescript">{{ generateTypingsAsClass }}</code></pre>
+  <p>
+    Consequently, it will generate the following file:
+  </p>
+  <pre><code class="language-typescript">{{ generatedTypings }}</code></pre>
+  <p>
+    Classes allow you using <strong>decorators</strong> which makes them extremely useful in terms of the validation
+    purposes (read <a routerLink="/techniques/validation">more</a>). For example:
+  </p>
+  <pre><code class="language-typescript">{{ validateInput }}</code></pre>
+  <blockquote class="warning">
+    <strong>Notice</strong>
+    To enable auto-validation of your inputs (and parameters), you have to use <code>ValidationPipe</code>. Read more
+    about validation <a routerLink="/techniques/validation">here</a> or more specifically about pipes <a routerLink="/pipes">here</a>.
   </blockquote>
 </div>

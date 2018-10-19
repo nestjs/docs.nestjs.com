@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
@@ -7,102 +7,28 @@ import { BasePageComponent } from '../../page/page.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResolversMapComponent extends BasePageComponent {
-  get resolversMapExample() {
-    return `
-import { find, filter } from 'lodash';
-
-// example data
-const authors = [
-  { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-  { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
-];
-const posts = [
-  { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-  { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
-];
-
-const resolverMap = {
-  Query: {
-    author(obj, args, context, info) {
-      return find(authors, { id: args.id });
-    },
-  },
-  Author: {
-    posts(author, args, context, info) {
-      return filter(posts, { authorId: author.id });
-    },
-  },
-};`;
-  }
-
   get resolvers() {
     return `
-import { Query, Resolver, ResolveProperty } from '@nestjs/graphql';
-import { find, filter } from 'lodash';
-
-// example data
-const authors = [
-  { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-  { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
-];
-const posts = [
-  { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-  { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
-];
-
 @Resolver('Author')
 export class AuthorResolver {
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) {}
+
   @Query()
-  author(obj, args, context, info) {
-    return find(authors, { id: args.id });
+  async author(@Args('id') id: number) {
+    return await this.authorsService.findOneById(id);
   }
 
   @ResolveProperty()
-  posts(author, args, context, info) {
-    return filter(posts, { authorId: author.id });
-  }
-}
-`;
-  }
-
-  get resolversWithNames() {
-    return `
-import { Query, Resolver, ResolveProperty } from '@nestjs/graphql';
-import { find, filter } from 'lodash';
-
-// example data
-const authors = [
-  { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-  { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
-];
-const posts = [
-  { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-  { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
-];
-
-@Resolver('Author')
-export class AuthorResolver {
-  @Query('author')
-  getAuthor(obj, args, context, info) {
-    return find(authors, { id: args.id });
-  }
-
-  @ResolveProperty('posts')
-  getPosts(author, args, context, info) {
-    return filter(posts, { authorId: author.id });
+  async posts(@Parent() author) {
+    const { id } = author;
+    return await this.postsService.findAll({ authorId: id });
   }
 }`;
   }
-  
+
   get realWorldExample() {
     return `
 @Resolver('Author')
@@ -113,43 +39,17 @@ export class AuthorResolver {
   ) {}
 
   @Query('author')
-  async getAuthor(obj, args, context, info) {
-    const { id } = args;
+  async getAuthor(@Args('id') id: number) {
     return await this.authorsService.findOneById(id);
   }
 
   @ResolveProperty('posts')
-  async getPosts(author, args, context, info) {
+  async getPosts(@Parent() author) {
     const { id } = author;
     return await this.postsService.findAll({ authorId: id });
   }
 }`;
   }
-
-  get realWorldExampleJs() {
-    return `
-@Resolver('Author')
-@Dependencies(AuthorsService, PostsService)
-export class AuthorResolver {
-  constructor(authorsService, postsService) {
-    this.authorsService = authorsService;
-    this.postsService = postsService;
-  }
-
-  @Query('author')
-  async getAuthor(obj, args, context, info) {
-    const { id } = args;
-    return await this.authorsService.findOneById(id);
-  }
-
-  @ResolveProperty('posts')
-  async getPosts(author) {
-    const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
-  }
-}`;
-  }
-
 
   get authorsModule() {
     return `
@@ -157,7 +57,7 @@ export class AuthorResolver {
   imports: [PostsModule],
   providers: [AuthorsService, AuthorResolver],
 })
-export class AuthorsModule {}`
+export class AuthorsModule {}`;
   }
 
   get typeDefs() {
@@ -177,6 +77,58 @@ type Post {
 
 type Query {
   author(id: Int!): Author
+}`;
+  }
+
+  get generateTypings() {
+    return `
+GraphQLModule.forRoot({
+  typePaths: ['./**/*.graphql'],
+  definitions: {
+    path: join(process.cwd(), 'src/graphql.ts'),
+  },
+})`;
+  }
+
+  get generateTypingsAsClass() {
+    return `
+GraphQLModule.forRoot({
+  typePaths: ['./**/*.graphql'],
+  definitions: {
+    path: join(process.cwd(), 'src/graphql.ts'),
+    outputAs: 'class',
+  },
+})`;
+  }
+
+  get generatedTypings() {
+    return `
+export class Author {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  posts?: Post[];
+}
+
+export class Post {
+  id: number;
+  title?: string;
+  votes?: number;
+}
+
+export abstract class IQuery {
+  abstract author(id: number): Author | Promise<Author>;
+}`;
+  }
+
+  get validateInput() {
+    return `
+import { MinLength, MaxLength } from 'class-validator';
+
+export class CreatePostInput {
+  @MinLength(3)
+  @MaxLength(50)
+  title: string;
 }`;
   }
 }

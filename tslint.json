@@ -17,8 +17,7 @@
       false
     ],
     "import-blacklist": [
-      true,
-      "rxjs"
+      true
     ],
     "import-spacing": true,
     "indent": [

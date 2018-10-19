@@ -108,6 +108,11 @@ export class ApplicationModule {
 }`;
   }
 
+  get routeWildcards() {
+    return `
+forRoutes({ path: 'ab*cd', method: RequestMethod.ALL })`;
+  }
+
   get applicationModuleByControllers() {
     return `
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
@@ -259,7 +264,7 @@ export class LoggerMiddleware {
   }
 
   get defferedMiddleware() {
-      return `
+    return `
 import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
 
 @Injectable()
@@ -294,16 +299,16 @@ export class LoggerMiddleware {
 }`;
   }
 
-    get functionalMiddleware() {
-        return `
+  get functionalMiddleware() {
+    return `
 export function logger(req, res, next) {
   console.log(\`Request...\`);
   next();
 };`;
-    }
+  }
 
-    get applyFunctionalMiddleware() {
-        return `
+  get applyFunctionalMiddleware() {
+    return `
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { logger } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
@@ -319,10 +324,10 @@ export class ApplicationModule implements NestModule {
       .forRoutes(CatsController);
   }
 }`;
-    }
+  }
 
-    get applyFunctionalMiddlewareJs() {
-      return `
+  get applyFunctionalMiddlewareJs() {
+    return `
 import { Module } from '@nestjs/common';
 import { logger } from './common/middlewares/logger.middleware';
 import { CatsModule } from './cats/cats.module';
@@ -349,10 +354,10 @@ export class ApplicationModule implements NestModule {
       .forRoutes(CatsController);
   }
 }`;
-}
+  }
 
-get applyMultipleMiddlewaresJs() {
-  return `
+  get applyMultipleMiddlewaresJs() {
+    return `
 @Module({
   imports: [CatsModule],
 })

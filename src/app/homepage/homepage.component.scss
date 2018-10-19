@@ -1,5 +1,5 @@
-@import "../../scss/utils.scss";
-@import "../../scss/variables.scss";
+@import '../../scss/utils.scss';
+@import '../../scss/variables.scss';
 
 .container-fluid {
   position: relative;
@@ -10,36 +10,43 @@
 }
 
 .logo-wrapper {
-  svg, img {
-    width: 140px;
-    height: 65px;
+  svg,
+  img {
+    width: 110px;
+    height: 50px;
   }
 }
 .container {
   @extend .transition;
   @extend .box-sizing;
-  @include transform(translateX(345px));
-  width: calc(100% - 345px);
-  padding: 35px 50px 90px;
+  //@include transform(translateX(300px));
+  margin-left: 300px;
+  width: calc(100% - 300px);
+  padding: 85px 50px 90px;
   display: inline-block;
   vertical-align: top;
   position: relative;
 
   &.wide {
-    @include transform(translateX(0));
+    //@include transform(translateX(0));
+    margin-left: 0;
     width: 100%;
     display: block;
   }
 
   @include media(large) {
-    @include transform(translateX(300px));
+    //@include transform(translateX(300px));
+    margin-left: 300px;
     width: calc(100% - 300px);
-    &.wide { width: 100%; }
+    &.wide {
+      width: 100%;
+    }
   }
   @include media(medium) {
-    @include transform(translateX(0));
+    //@include transform(translateX(0));
+    margin-left: 0;
     width: 100%;
-    padding: 20px 30px 0;
+    padding: 85px 20px 0;
   }
 }
 
@@ -55,17 +62,22 @@
     }
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: $black-color;
   }
-  h3 { 
-    font-size: 24px; 
+  h3 {
+    font-size: 24px;
     font-weight: 700;
     margin: 45px 0 20px;
   }
   h5 {
     color: $grey-color;
-    margin-top: -20px;
+    margin-top: -12px;
     font-weight: 600;
     font-size: 16px;
   }
@@ -79,8 +91,8 @@
 
 .sponsors-wrapper {
   border-top: 1px solid #e8e8e8;
-  padding: 25px 0 60px;
-  margin-top: 45px;
+  padding: 10px 0 60px;
+  margin-top: 20px;
   position: relative;
 
   img {
@@ -123,13 +135,13 @@
   }
 
   .logo-sponsor {
-    width: 250px;
+    width: 280px;
   }
 
   .logo-sponsor-small {
     width: 150px;
     margin-right: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
 
   .btn-primary {
@@ -167,9 +179,54 @@
   vertical-align: top;
   margin: 0;
   float: left;
-  
+
   @include media(normal) {
     width: 100%;
     float: none;
   }
+}
+
+.toc-wrapper,
+.content {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.content {
+  width: calc(100% - 220px);
+  @include media(large) {
+    width: 100%;
+  }
+}
+
+.toc-wrapper {
+  @include media(large) {
+    display: none;
+  }
+}
+
+.company-logo {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px 20px;
+}
+
+.company-logo img {
+  max-width: 130px;
+  max-height: 90px;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  opacity: 0.5;
+
+  &:hover {
+    -webkit-filter: grayscale(0%);
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+}
+
+.companies-list a {
+  color: #404040;
+  font-size: 15px;
+  font-weight: 400;
 }
