@@ -114,8 +114,8 @@ export class MenuComponent implements OnInit {
         { title: 'Redis', path: '/microservices/redis' },
         { title: 'MQTT', path: '/microservices/mqtt' },
         { title: 'NATS', path: '/microservices/nats' },
-        { title: 'gRPC', path: '/microservices/grpc' },
         { title: 'RabbitMQ', path: '/microservices/rabbitmq' },
+        { title: 'gRPC', path: '/microservices/grpc' },
         {
           title: 'Exception filters',
           path: '/microservices/exception-filters',
@@ -140,7 +140,7 @@ export class MenuComponent implements OnInit {
         // { title: 'Authentication (Passport)', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
-        { title: 'Prisma', path:'/recipes/prisma' }
+        { title: 'Prisma', path: '/recipes/prisma' },
       ],
     },
     {

@@ -22,6 +22,7 @@ export class HomepageComponent implements OnInit, AfterViewInit {
   previousWidth: number;
   contentRef: HTMLElement;
   isMarkupReady: boolean;
+  backerIds = Array.from({ length: 50 }, (_, i) => i);
 
   constructor(
     private readonly cd: ChangeDetectorRef,

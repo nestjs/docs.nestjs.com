@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-cqrs',
   templateUrl: './cqrs.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CqrsComponent extends BasePageComponent {
   get heroGameService() {
@@ -232,7 +232,7 @@ export class HeroesGameSagas {
 
   get sagaJs() {
     return `
-@Component()
+@Injectable()
 export class HeroesGameSagas {
   dragonKilled = (events$) => {
     return events$.ofType(HeroKilledDragonEvent)
