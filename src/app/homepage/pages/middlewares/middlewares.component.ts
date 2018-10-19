@@ -110,7 +110,7 @@ export class ApplicationModule {
 
   get routeWildcards() {
     return `
-forRoutes({ path: '*', method: RequestMethod.ALL })`;
+forRoutes({ path: 'ab*cd', method: RequestMethod.ALL })`;
   }
 
   get applicationModuleByControllers() {
