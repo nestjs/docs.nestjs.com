@@ -1,0 +1,60 @@
+<div class="content">
+  <h3>RabbitMQ</h3>
+  <p>
+    The <a href="https://www.rabbitmq.com/" target="blank">RabbitMQ</a> is the most widely deployed open source message broker.
+  </p>
+  <h4>Installation</h4>
+  <p>Before we start, we have to install required package:</p>
+  <pre><code class="language-bash">
+$ npm i --save amqp</code></pre>
+  <h4>Transporter</h4>
+  <p>
+    In order to switch to <strong>RabbitMQ</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.
+  </p>
+  <span class="filename">
+    {{ 'main' | extension: optionsT.isJsActive }}
+    <app-tabs #optionsT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ options }}</code></pre>
+  <h4>Options</h4>
+  <p>
+    There are a bunch of available options that determine a transporter behavior.
+  </p>
+  <table>
+    <tr>
+      <td><code>url</code></td>
+      <td>Connection url </td>
+    </tr>
+    <tr>
+      <td><code>queue</code></td>
+      <td>Queue name which your server will listen</td>
+    </tr>
+    <tr>
+      <td><code>queueOptions</code></td>
+      <td>Additional options for creating a queue. They are well-described <a href="https://github.com/postwait/node-amqp" target="blank">here</a></td>
+    </tr>
+  </table>
+  <h4>Client</h4>
+  <p>
+    In order to connect with Client, we are creating the <code>ClientProxy</code> instance using the <code>ClientProxyFactory</code> (exported from <code>@nestjs/microservices</code> package).
+  </p>
+  <span class="filename">
+    {{ 'client' | extension: clientT.isJsActive }}
+    <app-tabs #clientT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ client }}</code></pre>
+  <p>
+    In <code>queue</code>, we define queue that our server is listening. You don't have to worry about reply queue, NestJS will create it for each client. But each server needs a unique queue. You can use multiple instanсes of your server to balance your load.
+  </p>
+  <p>
+    To send a message and listen to reply simply use <code>send()</code> method:
+  </p>
+  <span class="filename">
+    {{ 'client' | extension: sendT.isJsActive }}
+    <app-tabs #sendT></app-tabs>
+  </span>
+  <pre><code class="language-typescript">{{ send }}</code></pre>
+  <p>
+    Where <code>MyInterfaceForMessage</code> and <code>MyInterfaceForReply</code> are interfaces for message and reply.
+  </p>
+</div>
