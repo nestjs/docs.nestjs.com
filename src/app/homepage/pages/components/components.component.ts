@@ -117,13 +117,24 @@ export class ApplicationModule {}
 
   get optional() {
     return `
-import { Injectable, Optional } from '@nestjs/common';
+import { Injectable, Optional, Inject } from '@nestjs/common';
 
 @Injectable()
-export class HttpService {
+export class HttpService<T> {
   constructor(
-    @Optional() @Inject('HTTP_OPTIONS') private readonly httpClient,
+    @Optional() @Inject('HTTP_OPTIONS') private readonly httpClient: T,
   ) {}
+}`;
+  }
+
+  get propertyInjection() {
+    return `
+import { Injectable, Inject } from '@nestjs/common';
+
+@Injectable()
+export class HttpService<T> {
+  @Inject('HTTP_OPTIONS')
+  private readonly httpClient: T;
 }`;
   }
 }

@@ -9,7 +9,8 @@
 $ npm i --save nats</code></pre>
   <h4>Overview</h4>
   <p>
-    In order to switch to <strong>NATS</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.
+    In order to switch to <strong>NATS</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code>
+    method.
   </p>
   <span class="filename">
     {{ 'main' | extension: optionsT.isJsActive }}
@@ -20,5 +21,7 @@ $ npm i --save nats</code></pre>
   <p>
     There are a bunch of available options that determine a transporter behavior.
     They are well-described <a href="https://github.com/nats-io/node-nats#connect-options" target="blank">here</a>.
+    Also, there is an additional <code>queue</code> property which allows you specifying a name of the queue that your
+    server should subscribe to (leave <code>undefined</code> if you don't want use any particular queue)
   </p>
 </div>

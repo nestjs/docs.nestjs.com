@@ -54,6 +54,7 @@ import { MicroservicesInterceptorsComponent } from './homepage/pages/microservic
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 import { MicroservicesPipesComponent } from './homepage/pages/microservices/pipes/pipes.component';
+import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
 import { RedisComponent } from './homepage/pages/microservices/redis/redis.component';
 import { MiddlewaresComponent } from './homepage/pages/middlewares/middlewares.component';
 import { MigrationComponent } from './homepage/pages/migration/migration.component';
@@ -75,13 +76,6 @@ import { CompressionComponent } from './homepage/pages/techniques/compression/co
 import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
 import { FileUploadComponent } from './homepage/pages/techniques/file-upload/file-upload.component';
 import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
-import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
-import { MigrationComponent } from './homepage/pages/migration/migration.component';
-import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
-import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
-import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
-import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
-import { SupportComponent } from './homepage/pages/support/support.component';
 import { HttpModuleComponent } from './homepage/pages/techniques/http-module/http-module.component';
 import { LoggerComponent } from './homepage/pages/techniques/logger/logger.component';
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';

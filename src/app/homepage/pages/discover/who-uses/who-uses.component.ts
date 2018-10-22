@@ -5,6 +5,7 @@ import { BasePageComponent } from '../../page/page.component';
   selector: 'app-who-uses',
   templateUrl: './who-uses.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./who-uses.component.scss'],
 })
 export class WhoUsesComponent extends BasePageComponent {
   readonly companies = [
@@ -23,11 +24,11 @@ export class WhoUsesComponent extends BasePageComponent {
     },
     {
       logo: 'https://nestjs.com/swingdev-logo.66e92510.svg',
-      url: 'https://www.swingdev.io/',
+      url: 'https://swingdev.io/',
     },
     {
       logo: '/assets/logo/adidas.svg',
-      url: 'https://www.adidas.com',
+      url: 'https://adidas.com',
       width: '80px',
     },
     {
@@ -70,16 +71,23 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://prohabits.com/',
     'https://komed-health.com/',
     'https://kerberus.com.co/',
-    'https://www.notadd.com/',
+    'https://notadd.com/',
     'http://jsdaddy.io/',
-    'https://www.yumpingo.com/',
-    'https://www.analytics-importer.cz/',
-    'https://www.dayzim.com/',
-    'https://www.wizkids.co.uk/',
+    'https://yumpingo.com/',
+    'https://analytics-importer.cz/',
+    'https://dayzim.com/',
+    'https://wizkids.co.uk/',
     'https://pilvia.com/',
-    'https://www.wi-q.com/',
+    'https://wi-q.com/',
     'http://agrofel.com.br',
-    'https://www.societegenerale.com/',
+    'https://societegenerale.com/',
     'https://trashpanda.hulan.nl/',
+    'https://bytedance.com/',
+    'https://votercircle.com',
+    'https://erento.com',
+    'https://ideas.manticore-labs.com/',
+    'https://smartexlab.com/',
+    'https://automama.ru/',
+    'https://iflix.com/',
   ];
 }

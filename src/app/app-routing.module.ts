@@ -42,6 +42,7 @@ import { MicroservicesInterceptorsComponent } from './homepage/pages/microservic
 import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
 import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
 import { MicroservicesPipesComponent } from './homepage/pages/microservices/pipes/pipes.component';
+import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
 import { RedisComponent } from './homepage/pages/microservices/redis/redis.component';
 import { MiddlewaresComponent } from './homepage/pages/middlewares/middlewares.component';
 import { MigrationComponent } from './homepage/pages/migration/migration.component';
@@ -50,10 +51,10 @@ import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { CqrsComponent } from './homepage/pages/recipes/cqrs/cqrs.component';
 import { MongodbComponent } from './homepage/pages/recipes/mongodb/mongodb.component';
 import { PassportComponent } from './homepage/pages/recipes/passport/passport.component';
+import { PrismaComponent } from './homepage/pages/recipes/prisma/prisma.component';
 import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
-import { PrismaComponent } from './homepage/pages/recipes/prisma/prisma.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
@@ -66,14 +67,6 @@ import { LoggerComponent } from './homepage/pages/techniques/logger/logger.compo
 import { MongoComponent } from './homepage/pages/techniques/mongo/mongo.component';
 import { MvcComponent } from './homepage/pages/techniques/mvc/mvc.component';
 import { PerformanceComponent } from './homepage/pages/techniques/performance/performance.component';
-import { HotReloadComponent } from './homepage/pages/techniques/hot-reload/hot-reload.component';
-import { ConfigurationComponent } from './homepage/pages/techniques/configuration/configuration.component';
-import { MigrationComponent } from './homepage/pages/migration/migration.component';
-import { MqttComponent } from './homepage/pages/microservices/mqtt/mqtt.component';
-import { NatsComponent } from './homepage/pages/microservices/nats/nats.component';
-import { GrpcComponent } from './homepage/pages/microservices/grpc/grpc.component';
-import { RabbitMQComponent } from './homepage/pages/microservices/rabbitmq/rabbitmq.component';
-import { SupportComponent } from './homepage/pages/support/support.component';
 import { SecurityComponent } from './homepage/pages/techniques/security/security.component';
 import { SerializationComponent } from './homepage/pages/techniques/serialization/serialization.component';
 import { SqlComponent } from './homepage/pages/techniques/sql/sql.component';
@@ -367,7 +360,7 @@ const routes: Routes = [
       {
         path: 'recipes/prisma',
         component: PrismaComponent,
-        data: { title: 'Prisma' }
+        data: { title: 'Prisma' },
       },
       {
         path: 'techniques/mvc',
