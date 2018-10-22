@@ -81,6 +81,15 @@
       Look
       <a routerLink="/fundamentals/dependency-injection">here</a> to find more examples.
     </p>
+    <h4>Property-based injection</h4>
+    <p>
+      In some very specific cases, a property-based injection might be useful. For instance, if your top-level class
+      depends on either one or multiple providers, passing them all the way up by calling <code>super()</code>
+      in sub-classes from the constructor can be very annonying. Thus, in order to avoid it, you can use <code>@Inject()</code>
+      decorator on
+      a property level.
+    </p>
+    <pre><code class="language-typescript">{{ propertyInjection }}</code></pre>
     <h4>Optional providers</h4>
     <p>
       Occasionally, you might face relations which do not necessarily have to be resolved. For instance, your class may
@@ -93,15 +102,6 @@
       signature.
     </p>
     <pre><code class="language-typescript">{{ optional }}</code></pre>
-    <h4>Property-based injection</h4>
-    <p>
-      In some very specific cases, a property-based injection might be useful. For instance, if your top-level class
-      depends on either one or multiple providers, passing them all the way up by calling <code>super()</code>
-      in sub-classes from the constructor can be very annonying. Thus, in order to avoid it, you can use <code>@Inject()</code>
-      decorator on
-      a property level.
-    </p>
-    <pre><code class="language-typescript">{{ propertyInjection }}</code></pre>
     <blockquote class="warning">
       <strong>Warning</strong>
       If your class doesn't extend any other provider, you should always prefer using
