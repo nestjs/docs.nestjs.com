@@ -75,6 +75,20 @@
     font-weight: 700;
     margin: 45px 0 20px;
   }
+  h3, h4 {
+    a {
+      margin-left: .5em;
+    }
+    &::before {
+      content: '';
+      display: block;
+      position: relative;
+      width: 0;
+      height: 5em;
+      margin-top: -5em;
+      pointer-events: none;
+    }
+  }
   h5 {
     color: $grey-color;
     margin-top: -12px;

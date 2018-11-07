@@ -94,6 +94,7 @@ import { WsPipesComponent } from './homepage/pages/websockets/pipes/pipes.compon
 import { TocComponent } from './homepage/toc/toc.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
+import { HeaderAnchorDirective } from './common/directives/header-anchor.directive';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -114,6 +115,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     ControllersComponent,
     BasePageComponent,
     MatchHeightDirective,
+    HeaderAnchorDirective,
     ComponentsComponent,
     ModulesComponent,
     MiddlewaresComponent,
