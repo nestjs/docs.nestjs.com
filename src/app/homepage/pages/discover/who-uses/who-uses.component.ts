@@ -59,6 +59,11 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/architectnow.png',
       url: 'http://architectnow.net',
     },
+    {
+      logo: '/assets/logo/roche-logo.png',
+      url: 'https://roche.com',
+      width: '100px',
+    }
   ];
 
   readonly companiesUrls = [
