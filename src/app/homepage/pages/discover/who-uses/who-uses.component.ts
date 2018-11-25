@@ -90,5 +90,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://smartexlab.com/',
     'https://automama.ru/',
     'https://iflix.com/',
+    'https://culturacolectiva.com',
   ];
 }
