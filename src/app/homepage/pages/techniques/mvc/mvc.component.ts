@@ -90,7 +90,7 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule, new FastifyAdapter());
   app.useStaticAssets({
-    root: join(__dirname, '..', public'),
+    root: join(__dirname, '..', 'public'),
     prefix: '/public/',
   });
   app.setViewEngine({

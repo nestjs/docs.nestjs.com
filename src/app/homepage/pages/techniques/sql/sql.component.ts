@@ -200,9 +200,11 @@ export class ApplicationModule {}`;
   get forFeatureWithConnection() {
     return `
 @Module({
-  TypeOrmModule.forFeature([Photo]),
-  TypeOrmModule.forFeature([Person], 'personsConnection'),
-  TypeOrmModule.forFeature([Album], 'albumsConnection')
+  imports: [
+    TypeOrmModule.forFeature([Photo]),
+    TypeOrmModule.forFeature([Person], 'personsConnection'),
+    TypeOrmModule.forFeature([Album], 'albumsConnection')
+  ]
 })
 export class ApplicationModule {}`;
   }

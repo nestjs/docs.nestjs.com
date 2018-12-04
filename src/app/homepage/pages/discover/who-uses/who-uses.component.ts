@@ -62,6 +62,11 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/iflix.svg',
       url: 'https://www.iflix.com'
+    },
+    {
+      logo: '/assets/logo/roche-logo.png',
+      url: 'https://roche.com',
+      width: '100px',
     }
   ];
 
@@ -89,5 +94,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://smartexlab.com/',
     'https://automama.ru/',
     'https://iflix.com/',
+    'https://culturacolectiva.com',
   ];
 }
