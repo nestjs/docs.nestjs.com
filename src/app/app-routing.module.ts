@@ -16,6 +16,7 @@ import { GlobalPrefixComponent } from './homepage/pages/faq/global-prefix/global
 import { HybridApplicationComponent } from './homepage/pages/faq/hybrid-application/hybrid-application.component';
 import { LifecycleEventsComponent } from './homepage/pages/faq/lifecycle-events/lifecycle-events.component';
 import { MultipleServersComponent } from './homepage/pages/faq/multiple-servers/multiple-servers.component';
+import { DocumentationComponent } from './homepage/pages/faq/documentation/documentation.component';
 import { FirstStepsComponent } from './homepage/pages/first-steps/first-steps.component';
 import { AsyncComponentsComponent } from './homepage/pages/fundamentals/async-components/async-components.component';
 import { CircularDependencyComponent } from './homepage/pages/fundamentals/circular-dependency/circular-dependency.component';
@@ -460,6 +461,11 @@ const routes: Routes = [
         path: 'faq/multiple-servers',
         component: MultipleServersComponent,
         data: { title: 'HTTPS & Multiple Servers - FAQ' },
+      },
+      {
+        path: 'faq/documentation',
+        component: DocumentationComponent,
+        data: { title: 'Documentation - FAQ' }
       },
       {
         path: 'discover/companies',
