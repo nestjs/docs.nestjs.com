@@ -94,6 +94,7 @@ import { WsPipesComponent } from './homepage/pages/websockets/pipes/pipes.compon
 import { TocComponent } from './homepage/toc/toc.component';
 import { TabsComponent } from './shared/components/tabs/tabs.component';
 import { ExtensionPipe } from './shared/pipes/extension.pipe';
+import { TerminusComponent } from './homepage/pages/recipes/terminus/terminus.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -153,6 +154,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     PassportComponent,
     SwaggerComponent,
     PrismaComponent,
+    TerminusComponent,
     CqrsComponent,
     TabsComponent,
     ExtensionPipe,

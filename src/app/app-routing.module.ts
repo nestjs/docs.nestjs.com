@@ -55,6 +55,7 @@ import { PrismaComponent } from './homepage/pages/recipes/prisma/prisma.componen
 import { SqlSequelizeComponent } from './homepage/pages/recipes/sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './homepage/pages/recipes/sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './homepage/pages/recipes/swagger/swagger.component';
+import { TerminusComponent } from './homepage/pages/recipes/terminus/terminus.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { AuthenticationComponent } from './homepage/pages/techniques/authentication/authentication.component';
 import { CachingComponent } from './homepage/pages/techniques/caching/caching.component';
@@ -328,6 +329,11 @@ const routes: Routes = [
         component: MongodbComponent,
         data: { title: 'MongoDB (Mongoose)' },
       },
+      {
+        path: 'recipes/terminus',
+        component: TerminusComponent,
+        data: { title: 'Terminus' },
+      },
       /*{
         path: 'recipes/mockgoose',
         component: MockgooseComponent,
@@ -507,4 +513,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
