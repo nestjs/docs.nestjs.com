@@ -47,6 +47,11 @@ $ npm run start</code></pre>
     The <code>SwaggerModule</code> automatically reflects all of your endpoints.
     In the background, it's making use of <code>swagger-ui-express</code> and creates a live documentation.
   </p>
+  <blockquote class="info">
+    <strong>Hint</strong> If you want to download the corresponding `Swagger JSON` file, you can simply call
+    <code>http://localhost:3000/api-json</code> in your browser (if your Swagger documentation is published under
+    <code>http://localhost:3000/api</code>).
+  </blockquote>
   <h4>Body, query, path parameters</h4>
   <p>
     During the examination of the defined controllers, the <code>SwaggerModule</code> is looking for all used <code>@Body()</code>,
