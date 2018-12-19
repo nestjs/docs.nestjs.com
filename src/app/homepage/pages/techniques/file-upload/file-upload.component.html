@@ -39,10 +39,10 @@
     we use <code>@UploadedFiles()</code> decorator
   </p>
   <span class="filename">
-    <app-tabs #multiplteFilesT></app-tabs>
+    <app-tabs #multipleFilesT></app-tabs>
   </span>
-  <pre [class.hide]="multiplteFilesT.isJsActive"><code class="language-typescript">{{ multipleFiles }}</code></pre>
-  <pre [class.hide]="!multiplteFilesT.isJsActive"><code class="language-typescript">{{ multipleFilesJs }}</code></pre>
+  <pre [class.hide]="multipleFilesT.isJsActive"><code class="language-typescript">{{ multipleFiles }}</code></pre>
+  <pre [class.hide]="!multipleFilesT.isJsActive"><code class="language-typescript">{{ multipleFilesJs }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@UploadedFiles()</code> decorator are exposed from
     <code>@nestjs/common</code> package.

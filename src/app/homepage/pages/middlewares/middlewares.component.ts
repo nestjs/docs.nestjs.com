@@ -263,7 +263,7 @@ export class LoggerMiddleware {
 }`;
   }
 
-  get defferedMiddleware() {
+  get deferredMiddleware() {
     return `
 import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
 
@@ -281,7 +281,7 @@ export class LoggerMiddleware implements NestMiddleware {
 }`;
   }
 
-  get defferedMiddlewareJs() {
+  get deferredMiddlewareJs() {
     return `
 import { Injectable } from '@nestjs/common';
 

@@ -111,7 +111,7 @@ export class CatsModule {
 }`;
   }
 
-  get reExportExamle() {
+  get reExportExample() {
     return `
 @Module({
   imports: [CommonModule],
