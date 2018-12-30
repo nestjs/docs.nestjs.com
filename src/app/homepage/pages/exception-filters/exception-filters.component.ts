@@ -103,8 +103,7 @@ async create(createCatDto) {
 
   get httpExceptionFilter() {
     return `
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { HttpException } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -127,8 +126,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   get httpExceptionFilterJs() {
     return `
-import { Catch } from '@nestjs/common';
-import { HttpException } from '@nestjs/common';
+import { Catch, HttpException } from '@nestjs/common';
 
 @Catch(HttpException)
 export class HttpExceptionFilter {
