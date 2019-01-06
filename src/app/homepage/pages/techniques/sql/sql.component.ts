@@ -38,7 +38,7 @@ export class ApplicationModule {}`;
   "username": "root",
   "password": "root",
   "database": "test",
-  "entities": ["src/**/**.entity{.ts,.js}"],
+  "entities": ["src/**/*.entity{.ts,.js}"],
   "synchronize": true
 }`;
   }
@@ -125,7 +125,7 @@ export class PhotoModule {}`;
 
   get photoService() {
     return `
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Photo } from './photo.entity';
@@ -183,16 +183,16 @@ const defaultOptions = {
     TypeOrmModule.forRoot({
       ...defaultOptions,
       name: 'personsConnection',
-      host:  'person_db_host',
+      host: 'person_db_host',
       entities: [Person],
     }),
     TypeOrmModule.forRoot({
       ...defaultOptions,
       name: 'albumsConnection',
-      host:  'album_db_host',
+      host: 'album_db_host',
       entities: [Album],
-    })
-  ]
+    }),
+  ],
 })
 export class ApplicationModule {}`;
   }
@@ -203,8 +203,8 @@ export class ApplicationModule {}`;
   imports: [
     TypeOrmModule.forFeature([Photo]),
     TypeOrmModule.forFeature([Person], 'personsConnection'),
-    TypeOrmModule.forFeature([Album], 'albumsConnection')
-  ]
+    TypeOrmModule.forFeature([Album], 'albumsConnection'),
+  ],
 })
 export class ApplicationModule {}`;
   }
@@ -217,7 +217,7 @@ export class PersonService {
     @InjectConnection('personsConnection')
     private readonly connection: Connection,
     @InjectEntityManager('personsConnection')
-    private readonly entityManager: EntityManager
+    private readonly entityManager: EntityManager,
   ) {}
 }`;
   }
