@@ -193,6 +193,36 @@ async create(@Body() createCatDto: CreateCatDto) {
 }`;
   }
 
+  get typedResponseClass() {
+    return `
+export class Cat {
+  @ApiModelProperty()
+  id: number;
+  
+  @ApiModelProperty()
+  name: string;
+
+  @ApiModelProperty()
+  age: number;
+
+  @ApiModelProperty()
+  breed: string;
+}`;
+  }
+
+  get typedResponseController() {
+    return`
+@ApiUseTags('cats')
+@Controller('cats')
+export class CatsController {
+  @Post()
+  @ApiCreatedResponse({ description: 'The record has been successfully created.', type: Cat})
+  async create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
+    return this.catsService.create(createCatDto);
+  }
+}`;
+  }
+
   get bearerAuth() {
     return `
 @ApiUseTags('cats')
