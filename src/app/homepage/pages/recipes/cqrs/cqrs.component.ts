@@ -221,11 +221,12 @@ export class HeroKilledDragonHandler {
 
   get saga() {
     return `
-@Component()
+@Injectable()
 export class HeroesGameSagas {
   dragonKilled = (events$: EventObservable<any>): Observable<ICommand> => {
-    return events$.ofType(HeroKilledDragonEvent)
-      .map((event) => new DropAncientItemCommand(event.heroId, fakeItemID));
+    return events$.ofType(HeroKilledDragonEvent).pipe(
+      map((event) => new DropAncientItemCommand(event.heroId, fakeItemID)),
+    );
   }
 }`;
   }
@@ -235,8 +236,9 @@ export class HeroesGameSagas {
 @Injectable()
 export class HeroesGameSagas {
   dragonKilled = (events$) => {
-    return events$.ofType(HeroKilledDragonEvent)
-      .map((event) => new DropAncientItemCommand(event.heroId, fakeItemID));
+    return events$.ofType(HeroKilledDragonEvent).pipe(
+      map((event) => new DropAncientItemCommand(event.heroId, fakeItemID)),
+    );
   }
 }`;
   }
