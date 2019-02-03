@@ -126,7 +126,7 @@
   <p>
     The global interceptors are used across the whole application, for every controller and every route handler. In terms of
     dependency injection, global interceptors registered from the outside of any module (as in the previous example above)
-    cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a guard
+    cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up an interceptor
     <strong>directly from any module</strong> using following construction:
   </p>
   <span class="filename">
