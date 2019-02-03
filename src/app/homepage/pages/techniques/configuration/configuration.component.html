@@ -63,7 +63,7 @@
   <span class="filename">app.service.ts</span>
   <pre><code class="language-typescript">{{ configServiceInjection }}</code></pre>
   <blockquote class="info">
-    Instead of importing <code>ConfigModule</code> repeatingly in all your modules, you can also declare <code>ConfigModule</code>    as
+    Instead of importing <code>ConfigModule</code> in all your modules, you can also declare <code>ConfigModule</code> as
     a global module.
   </blockquote>
   <h4>Advanced configuration</h4>
@@ -79,7 +79,7 @@
       a lack of <strong>validation</strong> of the provided <code>.env</code> file
     </li>
     <li>
-      the env file provides booleans as string (<code>'true'</code>), and thus have to cast them to a <code>boolean</code>      every
+      the env file provides booleans as string (<code>'true'</code>), and thus have to cast them to a <code>boolean</code> every
       time
     </li>
   </ul>

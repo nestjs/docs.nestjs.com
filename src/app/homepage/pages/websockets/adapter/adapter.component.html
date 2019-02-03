@@ -49,7 +49,7 @@ $ npm i --save socket.io-redis</code></pre>
     Another built-in adapter is a <code>WsAdapter</code> which in turn acts like a proxy between the framework and integrate
     blazing fast and thoroughly tested <a href="https://github.com/websockets/ws" target="blank">ws</a> library. This adapter
     is fully compatible with native browser WebSockets and is far faster than socket.io package. Unluckily, it has significantly
-    fewer functionalities available out-of-the-box. In some cases, you may just don't necesserily need them though.
+    fewer functionalities available out-of-the-box. In some cases, you may just don't necessarily need them though.
   </p>
   <pre><code class="language-typescript">{{ setupAdapter }}</code></pre>
   <blockquote class="info">
@@ -59,7 +59,7 @@ $ npm i --save socket.io-redis</code></pre>
   <p>
     For demonstration purposes, we are going to handwritten integrate the <a href="https://github.com/websockets/ws" target="blank">ws</a>
     library. As mentioned, the adapter for this library is already created and is exposed from the <code>@nestjs/websockets</code>    package
-    as a <code>WsAdapter</code> class. Here is how the simplified implementation could potentialy looks like:
+    as a <code>WsAdapter</code> class. Here is how the simplified implementation could potentially looks like:
   </p>
   <span class="filename">
     {{ 'ws-adapter' | extension: wsAdapterT.isJsActive }}

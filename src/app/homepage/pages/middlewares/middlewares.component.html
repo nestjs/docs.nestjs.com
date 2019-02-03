@@ -141,20 +141,19 @@
   <p>
     There are no contraindications that would prevent us from returning the <code>async</code> function within the <code>resolve()</code>    method.
     Also, it's possible to make the <code>resolve()</code> method <code>async</code> as well. This common pattern is called
-    <strong>deffered middleware</strong>.
+    <strong>deferred middleware</strong>.
   </p>
   <span class="filename">
-    {{ 'logger.middleware' | extension: defferedMiddlewareT.isJsActive }}
-    <app-tabs #defferedMiddlewareT></app-tabs>
+    {{ 'logger.middleware' | extension: deferredMiddlewareT.isJsActive }}
+    <app-tabs #deferredMiddlewareT></app-tabs>
   </span>
-  <pre [class.hide]="defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddleware }}</code></pre>
-  <pre [class.hide]="!defferedMiddlewareT.isJsActive"><code class="language-typescript">{{ defferedMiddlewareJs }}</code></pre>
+  <pre [class.hide]="deferredMiddlewareT.isJsActive"><code class="language-typescript">{{ deferredMiddleware }}</code></pre>
+  <pre [class.hide]="!deferredMiddlewareT.isJsActive"><code class="language-typescript">{{ deferredMiddlewareJs }}</code></pre>
   <h4>Functional middleware</h4>
   <p>
     The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies. Why can't
-    we just use a simple function? It's a good question, cause in fact - we can. This type of the middleware is called <strong>functional
-      middleware
-    </strong>. Let's transform the logger into a function.
+    we just use a simple function? It's a good question, cause in fact - we can. This type of the middleware is called
+    <strong>functional middleware</strong>. Let's transform the logger into a function.
   </p>
   <span class="filename">
     {{ 'logger.middleware' | extension: functionalMiddlewareT.isJsActive }}

@@ -204,7 +204,7 @@
     Here's a <code>CacheInterceptor</code> with a hardcoded <code>isCached</code> variable and the hardcoded response <code>[]</code>    as
     well. We returned a new stream here, created through the <code>of</code> operator, therefore the route handler <strong>won't
       be called</strong> at all. When someone calls endpoint that makes use of <code>CacheInterceptor</code>, the response
-    (a hardcoded, empty array) will be returned immedietely. In order to create a generic solution, you can take advantage
+    (a hardcoded, empty array) will be returned immediately. In order to create a generic solution, you can take advantage
     of <code>Reflector</code> and create a custom decorator. The <code>Reflector</code> is well described in the <a routerLink="/guards">guards</a>
     chapter.
   </p>

@@ -11,8 +11,8 @@
   <pre><code class="language-bash">$ npm install --save cache-manager</code></pre>
   <h4>In-memory cache</h4>
   <p>
-    Nest provides a unified API for various cache storages. The built-in one is an in-memory data store. However, you can easily
-    switch to a more comprehensive solution, like Redis. In order to enable caching, firstly import <code>CacheModule</code>    and
+    Nest provides a unified API for various cache storage providers. The built-in one is an in-memory data store. However, you can easily
+    switch to a more comprehensive solution, like Redis. In order to enable caching, firstly import <code>CacheModule</code> and
     call its <code>register()</code> method.
   </p>
   <pre><code class="language-typescript">{{ inMemoryCache }}</code></pre>
@@ -55,7 +55,7 @@
     We take advantage of <a href="https://github.com/BryanDonovan/node-cache-manager" target="blank">cache-manager</a> under
     the hood. This package supports a wide-range of useful stores, for example, <a href="https://github.com/dabroek/node-cache-manager-redis-store"
       target="blank">Redis</a> store (full list <a href="https://github.com/BryanDonovan/node-cache-manager#store-engines"
-      target="blank">here</a>). To set up the Redis store, simple pass the package together with correspoding options to the
+      target="blank">here</a>). To set up the Redis store, simple pass the package together with corresponding options to the
     <code>register()</code> method.
   </p>
   <pre><code class="language-typescript">{{ redisStore }}</code></pre>

@@ -5,7 +5,7 @@
     For instance, sensitive data like user's password should be always excluded from the eventual response. Furthermore,
     certain properties might require additional transformation, let's say, we don't want to send the whole database entity.
     Instead, we would like to pick only <code>id</code> and <code>name</code>. The rest should be automatically stripped.
-    Unluckily, manually mapping all entities may bring a lot of confusedness.
+    Unluckily, manually mapping all entities may bring a lot of confusion.
   </p>
   <h4>Overview</h4>
   <p>
@@ -53,11 +53,11 @@
     The <code>@SerializeOptions()</code> decorator is imported from <code>@nestjs/common</code> package.
   </blockquote>
   <p>
-    These opions will be passed as a second argument of the <code>classToPlain()</code> function.
+    These options will be passed as a second argument of the <code>classToPlain()</code> function.
   </p>
   <h4>Websockets & Microservices</h4>
   <p>
-    All these guidelines cornern both WebSockets as well as microservices, regardless of transport method that is being used.
+    All these guidelines concern both WebSockets as well as microservices, regardless of transport method that is being used.
   </p>
   <h4>Learn more</h4>
   <p>

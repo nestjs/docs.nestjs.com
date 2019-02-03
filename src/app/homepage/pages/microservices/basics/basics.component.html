@@ -14,7 +14,7 @@ $ npm i --save @nestjs/microservices</code></pre>
   <p>
     In general, Nest supports a bunch of built-in transporters. They are based on <strong>request-response</strong> paradigm
     and a whole communication logic is hidden behind an abstraction layer. Thanks to that you can easily switch between transporters
-    without changing any line of your code. We don't support streaming platforms with log based persistance, such as <a href="https://docs.confluent.io/3.0.0/streams/"
+    without changing any line of your code. We don't support streaming platforms with log based persistence, such as <a href="https://docs.confluent.io/3.0.0/streams/"
       target="blank">Kafka</a> or <a href="https://github.com/nats-io/node-nats-streaming" target="blank">NATS streaming</a>
     because they have been created to solve a different range of issues. However, you can still use them with Nest by making
     use of <a routerLink="/execution-context">execution context</a> feature.
@@ -122,7 +122,7 @@ $ npm i --save @nestjs/microservices</code></pre>
   <pre><code class="language-typescript">{{ clientProxy }}</code></pre>
   <p>
     The <code>ClientProxy</code> is <strong>lazy</strong>. It doesn't initiate a connection immediately. Instead, it will
-    be established before the first microservice's call, and then reused across each subsequent call. However, if you want
+    be established before the first microservice call, and then reused across each subsequent call. However, if you want
     to delay an application's bootstrapping process and manually initialize a connection, you can use a <code>connect()</code>    method
     inside the <code>OnModuleInit</code> lifecycle hook.
   </p>
