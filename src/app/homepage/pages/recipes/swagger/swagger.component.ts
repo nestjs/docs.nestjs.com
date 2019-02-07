@@ -197,9 +197,6 @@ async create(@Body() createCatDto: CreateCatDto) {
     return `
 export class Cat {
   @ApiModelProperty()
-  id: number;
-  
-  @ApiModelProperty()
   name: string;
 
   @ApiModelProperty()
