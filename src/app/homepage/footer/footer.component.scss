@@ -6,15 +6,10 @@
   @extend .box-sizing;
   background: $black-color;
   display: block;
-  height: 90px;
-  padding: 5px 2px 15px 50px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0;
+  padding: 40px 0;
+  margin: 0 -85px;
   width: auto;
-  font-size: 15px;
+  font-size: 14px;
 
   @include media(medium) {
     padding: 15px;
@@ -30,6 +25,7 @@ footer {
   display: block;
   position: relative;
   color: #929292;
+  text-align: center;
 
   a {
     @extend .transition;
@@ -41,26 +37,21 @@ footer {
 
   p {
     line-height: 25px;
+    margin-bottom: 0;
   }
 }
 
 .social-wrapper {
-  @extend .center-top;
-  position: absolute;
+  text-align: center;
   right: 40px;
 
-  @include media(medium) {
-    @include transform(translateX(0) translateY(0));
-    position: static;
-    text-align: center;
-  }
   a {
     @extend .transition;
     display: inline-block;
     vertical-align: middle;
-    color: $darksilver-color;
+    color: $silver-color;
     font-size: 22px;
-    margin-left: 12px;
+    margin-left: 15px;
     cursor: pointer;
 
     &:first-of-type {

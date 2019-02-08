@@ -7,7 +7,6 @@ import {
 } from 'ngx-perfect-scrollbar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MatchHeightDirective } from './common/directives/match-height.directive';
 import { FooterComponent } from './homepage/footer/footer.component';
 import { HeaderComponent } from './homepage/header/header.component';
 import { HomepageComponent } from './homepage/homepage.component';
@@ -113,7 +112,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FirstStepsComponent,
     ControllersComponent,
     BasePageComponent,
-    MatchHeightDirective,
     ComponentsComponent,
     ModulesComponent,
     MiddlewaresComponent,

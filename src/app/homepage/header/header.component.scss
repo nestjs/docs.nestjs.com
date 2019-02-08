@@ -34,11 +34,11 @@ header {
     background: #212121;
   }
   &.opened {
-    width: 300px;
+    width: 265px;
     // box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 
     @include media(large) {
-      width: 300px;
+      width: 265px;
     }
     @include media(normal) {
       width: 80px;
@@ -65,8 +65,11 @@ header {
   height: 100%;
   text-align: center;
   vertical-align: top;
-  padding-left: 40px;
+  padding-left: 85px;
 
+  @include media(large) {
+    padding-left: 50px;
+  }
   @include media(medium) {
     padding-left: 10px;
   }
@@ -93,9 +96,9 @@ header {
     @extend .transition;
     display: inline-block;
     vertical-align: middle;
-    color: #b9b9b9;
+    color: $silver-color;
     font-size: 22px;
-    margin-left: 12px;
+    margin-left: 15px;
     cursor: pointer;
 
     &:first-of-type {

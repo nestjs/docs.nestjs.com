@@ -11,9 +11,8 @@ h3 {
   text-transform: uppercase;
   font-weight: bold;
   color: $black-color;
-  font-size: 16px;
-  letter-spacing: 0.1px;
-  margin: 18px 0;
+  font-size: 15px;
+  margin: 10px 0;
   &:hover {
     color: $red-color;
   }
@@ -25,6 +24,8 @@ h3 {
 
 .arrow-icon {
   @extend .transition;
+  @include transform(rotate(90deg));
+
   position: absolute;
   top: 1px;
   right: 20px;
@@ -34,7 +35,7 @@ h3 {
 
 li {
   display: block;
-  padding: 4px 0;
+  padding: 3px 0;
 
   &:first-of-type {
     padding-top: 0;
@@ -42,7 +43,7 @@ li {
 
   a {
     color: $black-color;
-    font-size: 15px;
+    font-size: 14px;
     text-decoration: none;
     cursor: pointer;
     &:hover {
@@ -50,6 +51,7 @@ li {
     }
     &.active {
       font-weight: 600;
+      color: $red-color;
     }
   }
 
@@ -70,7 +72,7 @@ li {
       display: block;
     }
     .arrow-icon {
-      @include transform(rotate(90deg));
+      @include transform(rotate(-90deg));
       color: $red-color;
     }
   }
