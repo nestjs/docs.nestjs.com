@@ -503,6 +503,8 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {
       enableTracing: !environment.production,
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled',
     }),
   ],
   exports: [RouterModule],
