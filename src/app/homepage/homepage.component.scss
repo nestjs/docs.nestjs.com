@@ -80,6 +80,25 @@
     font-weight: 600;
     margin: 40px 0 -5px;
   }
+  h3,
+  h4 {
+    a {
+      @include opacity(0);
+      margin-left: 0.35em;
+    }
+    &:hover a {
+      @include opacity(1);
+    }
+    &::before {
+      content: '';
+      display: block;
+      position: relative;
+      width: 0;
+      height: 5em;
+      margin-top: -5em;
+      pointer-events: none;
+    }
+  }
   h5 {
     color: $grey-color;
     margin-top: -12px;

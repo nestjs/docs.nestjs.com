@@ -1,101 +1,71 @@
 <div class="content" #contentReference>
-  <h3 id="first-steps">First steps</h3>
-  <p>
-    In this set of articles, you'll learn the
-    <strong>core fundamentals</strong> of Nest. To get familiar with the essential building-blocks of Nest applications,
-    we'll build a basic CRUD application with features that cover a lot of ground at an introductory level.
-  </p>
-  <h4 id="language">Language</h4>
-  <p>
-    We're in love with
-    <a href="http://www.typescriptlang.org/" target="blank">TypeScript</a>, but above all - we love
-    <a href="https://nodejs.org/en/" target="blank">Node.js</a>. That's why Nest is compatible with both TypeScript and
-    <strong>pure JavaScript</strong>. Nest is taking advantage of latest language features, so to use a framework with simple
-    JavaScript we need a
-    <a href="http://babeljs.io/" target="blank">Babel</a> compiler.
-  </p>
-  <p>
-    We'll mostly use TypeScript in the examples we provide, but you can always
-    <strong>switch the code snippets</strong> to vanilla JavaScript syntax.
-  </p>
-  <h4 id="prerequisites">Prerequisites</h4>
-  <p>
-    Please make sure that
-    <a href="https://nodejs.org/" target="blank">Node.js</a>
-    <strong>(>= 8.9.0)</strong> is installed on your operating system.
-  </p>
-  <h4 id="setup">Setup</h4>
-  <p>
-    Setting up a new project is quite simple with the
-    <a routerLink="/cli/overview">Nest CLI</a>. With
-    <a href="https://www.npmjs.com/" target="blank">npm</a> installed, you can create a new Nest project with the following
-    commands in your OS terminal:
-  </p>
-  <pre><code class="language-bash">
+      <h3 appAnchor id="first-steps">First steps</h3>
+<p>In this set of articles, you&#39;ll learn the <strong>core fundamentals</strong> of Nest. To get familiar with the essential building-blocks of Nest applications, we&#39;ll build a basic CRUD application with features that cover a lot of ground at an introductory level.</p>
+<h4 appAnchor id="language">Language</h4>
+<p>We&#39;re in love with <a href="http://www.typescriptlang.org/">TypeScript</a>, but above all - we love <a href="https://nodejs.org/en/">Node.js</a>. That&#39;s why Nest is compatible with both TypeScript and <strong>pure JavaScript</strong>. Nest is taking advantage of latest language features, so to use a framework with simple JavaScript we need a <a href="http://babeljs.io/">Babel</a> compiler.</p>
+<p>We&#39;ll mostly use TypeScript in the examples we provide, but you can always <strong>switch the code snippets</strong> to vanilla JavaScript syntax.</p>
+<h4 appAnchor id="prerequisites">Prerequisites</h4>
+<p>Please make sure that <a href="https://nodejs.org/">Node.js</a> (&gt;= 8.9.0) is installed on your operating system.</p>
+<h4 appAnchor id="setup">Setup</h4>
+<p>Setting up a new project is quite simple with the <a routerLink="/cli/overview">Nest CLI</a>. With <a href="https://www.npmjs.com/">npm</a> installed, you can create a new Nest project with the following commands in your OS terminal:</p>
+<pre><code class="language-bash">
 $ npm i -g @nestjs/cli
-$ nest new project</code></pre>
-  <p>The
-    <code>project</code> directory will be scaffolded with several core files being located within a
-    <code>src/</code> directory.
-  </p>
-  <div class="file-tree">
-    <div class="item">src</div>
-    <div class="children">
-      <div class="item">app.controller.ts</div>
-      <div class="item">app.module.ts</div>
-      <div class="item">main.ts</div>
-    </div>
+$ nest new project-name</code></pre>
+<p>The <code>project</code> directory will be scaffolded with several core files being located within a <code>src/</code> directory.</p>
+<div class="file-tree">
+  <div class="item">src</div>
+  <div class="children">
+    <div class="item">app.controller.ts</div>
+    <div class="item">app.module.ts</div>
+    <div class="item">main.ts</div>
   </div>
-  <p>
-    Following the convention, newly created modules should have their dedicated directory.
-    <table>
-      <tr>
-        <td>
-          <code>main.ts</code>
-        </td>
-        <td>The entry file of the application. It uses
-          <code>NestFactory</code> to create the Nest application instance.</td>
-      </tr>
-      <tr>
-        <td>
-          <code>app.module.ts</code>
-        </td>
-        <td>Defines
-          <code>AppModule</code>, the root module of the application.</td>
-      </tr>
-      <tr>
-        <td>
-          <code>app.controller.ts</code>
-        </td>
-        <td>Basic controller sample with a single route.</td>
-      </tr>
-    </table>
-    <p>
-      The
-      <code>main.ts</code> includes an async function, which will
-      <strong>bootstrap</strong> our application:
-    </p>
-    <span class="filename">
-      {{ 'main' | extension: bootstrapSwitch.isJsActive }}
-      <app-tabs #bootstrapSwitch></app-tabs>
-    </span>
-    <pre><code class="language-typescript">{{ bootstrap }}</code></pre>
-    <p>
-      To create a Nest application instance, we are using the
-      <code>NestFactory</code>. <code>NestFactory</code> is one of the most fundamental classes, it exposes a few static
-      methods that allows creating application instance. The
-      <code>create()</code> method returns an object, which fulfills the
-      <code>INestApplication</code> interface, and provides a set of usable methods which are well described in the next
-      chapters.
-    </p>
-    <h4 id="running-application">Running application</h4>
-    <p>
-      Once the installation process is complete, you can run the following command to start the HTTP server:
-    </p>
-    <pre><code class=" language-bash ">
-$ npm run start</code></pre>
-    <p>
-      This command starts the HTTP server on the port defined inside the <code>src/main.ts</code> file. While the application
-      is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code>      message.
-    </p>
 </div>
+
+<p>Following the convention, newly created modules should have their dedicated directory.</p>
+<table>
+<thead>
+</thead>
+<tbody><tr>
+<td><code>main.ts</code></td>
+<td>The entry file of the application. It uses <code>NestFactory</code> to create the Nest application instance.</td>
+</tr>
+<tr>
+<td><code>app.module.ts</code></td>
+<td>Defines <code>AppModule</code> - the root module of the application.</td>
+</tr>
+<tr>
+<td><code>app.controller.ts</code></td>
+<td>Basic controller sample with a single route.</td>
+</tr>
+</tbody></table>
+<p>The <code>main.ts</code> includes an async function, which will <strong>bootstrap</strong> our application:</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: appc0bd51fd3260775a432ca892bc34be960242fb73.isJsActive }}
+<app-tabs #appc0bd51fd3260775a432ca892bc34be960242fb73></app-tabs>
+</span><pre [class.hide]="!appc0bd51fd3260775a432ca892bc34be960242fb73.isJsActive"><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create(ApplicationModule);
+  await app.listen(3000);
+&#125;
+bootstrap();</code></pre>
+<pre [class.hide]="appc0bd51fd3260775a432ca892bc34be960242fb73.isJsActive"><code class="language-javascript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create(ApplicationModule);
+  await app.listen(3000);
+&#125;
+bootstrap();</code></pre>
+<p>To create a Nest application instance, we are using the <code>NestFactory</code>. <code>NestFactory</code> is one of the most fundamental classes, it exposes a few static methods that allows creating application instance. The <code>create()</code> method returns an object, which fulfills the <code>INestApplication</code> interface, and provides a set of usable methods which are well described in the next chapters.</p>
+<h4 appAnchor id="running-application">Running application</h4>
+<p>Once the installation process is complete, you can run the following command to start the HTTP server:</p>
+<pre><code class="language-bash">
+$ npm run start</code></pre>
+<p>This command starts the HTTP server on the port defined inside the <code>src/main.ts</code> file. While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code> message.</p>
+
+    </div>

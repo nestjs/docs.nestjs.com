@@ -80,9 +80,13 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
     const headings = this.contentReference.querySelectorAll('h3, h4');
+    const removeAnchor = (text: string) => {
+      const anchorId = text && text.indexOf('#');
+      return anchorId >= 0 ? text.slice(0, anchorId) : text;
+    };
     this.headings = Array.from(headings).map((item: any) => ({
       offsetTop: item.offsetTop,
-      textContent: item.textContent,
+      textContent: removeAnchor(item.textContent),
       elementRef: item as HTMLElement,
     }));
   }
@@ -132,7 +136,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
   navigateToAnchor(elementRef: HTMLElement) {
     if (elementRef) {
       elementRef.scrollIntoView(true);
-      window.scrollBy(0, -this.scrollTopOffset);
+      // window.scrollBy(0, -this.scrollTopOffset);
       this.findCurrentHeading();
     }
   }
