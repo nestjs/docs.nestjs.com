@@ -28,6 +28,11 @@
     We
     can do that easily as well by moving the real names between decorator's parentheses.
   </p>
+  <blockquote class="info">
+    <strong>Hint</strong> If you want to prefix all the resolver names (unless overridden in the method decorator), you
+    can use the <code>@ResolverPrefix()</code> class decorator. This is especially useful since namespaces are not yet
+    supported in GraphQL (see this <a href="https://github.com/facebook/graphql/issues/163" target="blank">thread</a>).
+  </blockquote>
   <pre><code class="language-typescript">{{ realWorldExample }}</code></pre>
   <blockquote class="info">
     <strong>Hint</strong> The <code>@Resolver()</code> decorator can be used at the method-level as well.
