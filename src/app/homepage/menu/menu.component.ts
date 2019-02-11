@@ -161,6 +161,7 @@ export class MenuComponent implements OnInit {
         { title: 'Lifecycle events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
+        { title: 'Documentation', path: '/faq/documentation' },
         {
           title: 'Examples',
           externalUrl:

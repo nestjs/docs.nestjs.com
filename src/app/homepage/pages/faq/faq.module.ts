@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { DocumentationComponent } from './documentation/documentation.component';
 import { ExpressInstanceComponent } from './express-instance/express-instance.component';
 import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
@@ -34,6 +35,11 @@ const routes: Routes = [
     component: MultipleServersComponent,
     data: { title: 'HTTPS & Multiple Servers - FAQ' },
   },
+  {
+    path: 'documentation',
+    component: DocumentationComponent,
+    data: { title: 'Documentation - FAQ' },
+  },
 ];
 
 @NgModule({
@@ -44,6 +50,7 @@ const routes: Routes = [
     LifecycleEventsComponent,
     HybridApplicationComponent,
     MultipleServersComponent,
+    DocumentationComponent,
   ],
 })
 export class FaqModule {}
