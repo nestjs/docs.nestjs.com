@@ -37,7 +37,7 @@ Following the convention, newly created modules should have their dedicated dire
 |                     |                                                                                                   |
 | ------------------- | ------------------------------------------------------------------------------------------------- |
 | `main.ts`           | The entry file of the application. It uses `NestFactory` to create the Nest application instance. |
-| `app.module.ts`     | Defines `AppModule` - the root module of the application.                                         |
+| `app.module.ts`     | The root module of the application.                                                               |
 | `app.controller.ts` | Basic controller sample with a single route.                                                      |
 
 The `main.ts` includes an async function, which will **bootstrap** our application:
@@ -65,6 +65,15 @@ bootstrap();
 ```
 
 To create a Nest application instance, we are using the `NestFactory`. `NestFactory` is one of the most fundamental classes, it exposes a few static methods that allows creating application instance. The `create()` method returns an object, which fulfills the `INestApplication` interface, and provides a set of usable methods which are well described in the next chapters.
+
+#### Platform
+
+Nest aims to be a platform-agnostic framework. A platform independence makes possible creating reusable logical parts, that people can take advantage of across several different types of applications. Technically, Nest is able to work with any HTTP library as soon as an adapter is created. And there are two HTTP platforms supported out-of-the-box so far, [express](https://expressjs.com/) and [fastify](https://www.fastify.io).
+
+|                    |                                                                                                                                                                                                                                                           |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `platform-express` | [Express](https://expressjs.com/) is a well-known minimalist web framework for node. It's a battle tested, production-ready library with lots of resources implemented by the community. The `@nestjs/platform-express` package is being used by default. |
+| `platform-fastify` | [Fastify](https://expressjs.com/) is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it [here](/techniques/performance).                                                                               |
 
 #### Running application
 

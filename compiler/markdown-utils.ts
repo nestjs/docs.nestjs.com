@@ -25,15 +25,18 @@ export function replaceFilename(
   const startIndex = filenameIndex + filenameKey.length;
   const endIndex = text.indexOf(')');
   const directiveRef = `app` + crypto.randomBytes(20).toString('hex');
+  const filename = text.slice(startIndex + 1, endIndex);
   return (
     `
-<span class="filename">
-  {{ '${text.slice(
-    startIndex + 1,
-    endIndex,
-  )}' | extension: ${directiveRef}.isJsActive }}
+<span class="filename">` +
+    (filename.length > 0
+      ? `
+  {{ '${filename}' | extension: ${directiveRef}.isJsActive }}`
+      : '') +
+    `
 <app-tabs #${directiveRef}></app-tabs>
-</span>` + renderer(text.slice(endIndex + 1), directiveRef)
+</span>` +
+    renderer(text.slice(endIndex + 1), directiveRef).trim()
   );
 }
 
@@ -49,11 +52,15 @@ export function parseSwitcher(
   const wrapCondition = (snippet: string, lang: 'ts' | 'js') =>
     elementKey
       ? snippet.slice(0, 4) +
-        ` [class.hide]="${lang === 'js' ? '' : '!'}${elementKey}.isJsActive"` +
+        ` [class.hide]="${lang === 'js' ? '!' : ''}${elementKey}.isJsActive"` +
         snippet.slice(4, snippet.length)
       : snippet;
   return (
     wrapCondition(renderer(tsCode, 'typescript'), 'ts') +
-    wrapCondition(renderer(jsCode, 'javascript'), 'js')
+    wrapCondition(renderer(jsCode, 'typescript'), 'js')
   );
+}
+
+export function insertText(text: string, index: number, textToAdd: string) {
+  return text.slice(0, index) + textToAdd + text.slice(index);
 }

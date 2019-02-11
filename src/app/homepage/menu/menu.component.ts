@@ -54,7 +54,7 @@ export class MenuComponent implements OnInit {
           title: 'Platform agnosticism',
           path: '/fundamentals/platform-agnosticism',
         },
-        { title: 'Testing', path: '/fundamentals/unit-testing' },
+        { title: 'Testing', path: '/fundamentals/testing' },
       ],
     },
     {
@@ -204,7 +204,12 @@ export class MenuComponent implements OnInit {
 
   toggleCategory() {
     const { firstChild } = this.route.snapshot;
-    if (firstChild.url && firstChild.url[1]) {
+    if (
+      (firstChild.url && firstChild.url[1]) ||
+      (firstChild.url &&
+        firstChild.routeConfig &&
+        firstChild.routeConfig.loadChildren)
+    ) {
       const { path } = firstChild.url[0];
       const index = this.items.findIndex(
         ({ title }) => title.toLowerCase() === path,

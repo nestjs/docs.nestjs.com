@@ -245,7 +245,7 @@ export class AuthorRepository extends Repository<Author> {}`;
   get registerCustomRepository() {
     return `
 @Module({
-  imports: [TypeOrmModule.forFeature([Author, AuthorRepository])],
+  imports: [TypeOrmModule.forFeature([AuthorRepository])],
   controller: [AuthorController],
   providers: [AuthorService],
 })

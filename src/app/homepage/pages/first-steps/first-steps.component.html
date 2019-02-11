@@ -31,7 +31,7 @@ $ nest new project-name</code></pre>
 </tr>
 <tr>
 <td><code>app.module.ts</code></td>
-<td>Defines <code>AppModule</code> - the root module of the application.</td>
+<td>The root module of the application.</td>
 </tr>
 <tr>
 <td><code>app.controller.ts</code></td>
@@ -41,9 +41,9 @@ $ nest new project-name</code></pre>
 <p>The <code>main.ts</code> includes an async function, which will <strong>bootstrap</strong> our application:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appc0bd51fd3260775a432ca892bc34be960242fb73.isJsActive }}
-<app-tabs #appc0bd51fd3260775a432ca892bc34be960242fb73></app-tabs>
-</span><pre [class.hide]="!appc0bd51fd3260775a432ca892bc34be960242fb73.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app1f36d17efab31085d3d9a3998a0f9832bdbed6d7.isJsActive }}
+<app-tabs #app1f36d17efab31085d3d9a3998a0f9832bdbed6d7></app-tabs>
+</span><pre [class.hide]="app1f36d17efab31085d3d9a3998a0f9832bdbed6d7.isJsActive"><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
@@ -52,7 +52,7 @@ async function bootstrap() &#123;
   await app.listen(3000);
 &#125;
 bootstrap();</code></pre>
-<pre [class.hide]="appc0bd51fd3260775a432ca892bc34be960242fb73.isJsActive"><code class="language-javascript">
+<pre [class.hide]="!app1f36d17efab31085d3d9a3998a0f9832bdbed6d7.isJsActive"><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
@@ -60,8 +60,21 @@ async function bootstrap() &#123;
   const app = await NestFactory.create(ApplicationModule);
   await app.listen(3000);
 &#125;
-bootstrap();</code></pre>
-<p>To create a Nest application instance, we are using the <code>NestFactory</code>. <code>NestFactory</code> is one of the most fundamental classes, it exposes a few static methods that allows creating application instance. The <code>create()</code> method returns an object, which fulfills the <code>INestApplication</code> interface, and provides a set of usable methods which are well described in the next chapters.</p>
+bootstrap();</code></pre><p>To create a Nest application instance, we are using the <code>NestFactory</code>. <code>NestFactory</code> is one of the most fundamental classes, it exposes a few static methods that allows creating application instance. The <code>create()</code> method returns an object, which fulfills the <code>INestApplication</code> interface, and provides a set of usable methods which are well described in the next chapters.</p>
+<h4 appAnchor id="platform">Platform</h4>
+<p>Nest aims to be a platform-agnostic framework. A platform independence makes possible creating reusable logical parts, that people can take advantage of across several different types of applications. Technically, Nest is able to work with any HTTP library as soon as an adapter is created. And there are two HTTP platforms supported out-of-the-box so far, <a href="https://expressjs.com/">express</a> and <a href="https://www.fastify.io">fastify</a>.</p>
+<table>
+<thead>
+</thead>
+<tbody><tr>
+<td><code>platform-express</code></td>
+<td><a href="https://expressjs.com/">Express</a> is a well-known minimalist web framework for node. It&#39;s a battle tested, production-ready library with lots of resources implemented by the community. The <code>@nestjs/platform-express</code> package is being used by default.</td>
+</tr>
+<tr>
+<td><code>platform-fastify</code></td>
+<td><a href="https://expressjs.com/">Fastify</a> is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it <a routerLink="/techniques/performance">here</a>.</td>
+</tr>
+</tbody></table>
 <h4 appAnchor id="running-application">Running application</h4>
 <p>Once the installation process is complete, you can run the following command to start the HTTP server:</p>
 <pre><code class="language-bash">

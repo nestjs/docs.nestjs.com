@@ -14,11 +14,6 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://valor-software.com/',
     },
     {
-      logo: 'https://nestjs.com/logo-xtremis.0feb160c.svg',
-      url: 'http://xtremis.com/',
-      width: '200px',
-    },
-    {
       logo: 'https://nestjs.com/neoteric.0e4df380.png',
       url: 'https://neoteric.eu/',
     },
@@ -32,7 +27,7 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '80px',
     },
     {
-      logo: 'https://nestjs.com/gojob-logo.2b6e823c.png',
+      logo: 'https://nestjs.com/img/gojob-logo.png',
       url: 'https://gojob.com/',
       width: '100px',
     },
@@ -63,7 +58,7 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/roche-logo.png',
       url: 'https://roche.com',
       width: '100px',
-    }
+    },
   ];
 
   readonly companiesUrls = [
@@ -72,6 +67,7 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://prohabits.com/',
     'https://komed-health.com/',
     'https://kerberus.com.co/',
+    'http://xtremis.com/',
     'https://notadd.com/',
     'http://jsdaddy.io/',
     'https://yumpingo.com/',
@@ -91,5 +87,14 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://automama.ru/',
     'https://iflix.com/',
     'https://culturacolectiva.com',
+    'https://framework.watch',
+    'https://mobilejazz.com/',
+    'https://cgiandi.com/',
+    'https://www.titlex.com.au/',
+    'https://codengage.com/',
+    'https://budacode.com/',
+    'https://blueanchor.io/',
+    'https://www.easymetrics.com/',
+    'https://getapollo.io/',
   ];
 }

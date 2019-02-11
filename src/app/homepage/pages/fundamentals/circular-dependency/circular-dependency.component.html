@@ -1,64 +1,94 @@
-<div class="content">
-  <h3>Circular dependency</h3>
-  <p>
-    The circular dependency occurs when for example, class A needs class B, and class B needs class A as well. Nest permits creating
-    <strong>circular dependencies</strong> between both providers and modules, but we advise you to avoid whenever it's possible.
-    Sometimes it's really difficult to avoid this kind of the relationships, that's why we have provided some ways to deal
-    with this issue.
-  </p>
-  <h4>Forward reference</h4>
-  <p>
-    The <strong>forward reference</strong> allows Nest referring to references which aren't defined so far. When <code>CatsService</code>    and
-    <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and
-    the <code>forwardRef()</code> utility, otherwise Nest won't instantiate them because all of the essential metadata won't
-    be available. Let's see the following snippet:
-  </p>
-  <span class="filename">
-    {{ 'cats.service' | extension: forwardRefT.isJsActive }}
-    <app-tabs #forwardRefT></app-tabs>
-  </span>
-  <pre [class.hide]="forwardRefT.isJsActive"><code class="language-typescript">{{ forwardRef }}</code></pre>
-  <pre [class.hide]="!forwardRefT.isJsActive"><code class="language-typescript">{{ forwardRefJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>forwardRef()</code> function is imported from the <code>@nestjs/common</code> package.
-  </blockquote>
-  <p>
-    Here's the first side of the relationship. Now let's do the same with the <code>CommonService</code>:
-  </p>
-  <span class="filename">
-    {{ 'common.service' | extension: forwardRefCommonT.isJsActive }}
-    <app-tabs #forwardRefCommonT></app-tabs>
-  </span>
-  <pre [class.hide]="forwardRefCommonT.isJsActive"><code class="language-typescript">{{ forwardRefCommon }}</code></pre>
-  <pre [class.hide]="!forwardRefCommonT.isJsActive"><code class="language-typescript">{{ forwardRefCommonJs }}</code></pre>
-  <blockquote class="warning">
-    <strong>Warning</strong> You don't have a guarantee which constructor will be called first.
-  </blockquote>
-  <p>
-    In order to create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on
-    both parts of the modules association:
-  </p>
-  <span class="filename">
-    {{ 'common.module' | extension: forwardRefModuleT.isJsActive }}
-    <app-tabs #forwardRefModuleT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ forwardRefModule }}</code></pre>
-  <h4>Module reference</h4>
-  <p>
-    Nest provides the <code>ModuleRef</code> class that can be simply injected into any component.
-  </p>
-  <span class="filename">
-    {{ 'cats.service' | extension: moduleRefT.isJsActive }}
-    <app-tabs #moduleRefT></app-tabs>
-  </span>
-  <pre [class.hide]="moduleRefT.isJsActive"><code class="language-typescript">{{ moduleRef }}</code></pre>
-  <pre [class.hide]="!moduleRefT.isJsActive"><code class="language-typescript">{{ moduleRefJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>ModuleRef</code> class is imported from the <code>@nestjs/core</code> package.
-  </blockquote>
-  <p>
-    The module reference has a <code>get()</code> method which allows retrieving a provider available in the current module.
-    Additionally, you can switch to a non-strict mode, which enables you to pick any existing provider across the whole app.
-  </p>
-  <pre><code class="language-typescript">{{ nonStrictMode }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="circular-dependency">Circular dependency</h3>
+<p>The circular dependency occurs when for example, class A needs class B, and class B needs class A as well. Nest permits creating <strong>circular dependencies</strong> between both providers and modules, but we advise you to avoid whenever it&#39;s possible. Sometimes it&#39;s really difficult to avoid this kind of the relationships, that&#39;s why we have provided some ways to deal with this issue.</p>
+<h4 appAnchor id="forward-reference">Forward reference</h4>
+<p>The <strong>forward reference</strong> allows Nest referring to references which aren&#39;t defined so far. When <code>CatsService</code> and <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and the <code>forwardRef()</code> utility, otherwise Nest won&#39;t instantiate them because all of the essential metadata won&#39;t be available. Let&#39;s see the following snippet:</p>
+
+<span class="filename">
+  {{ 'cats.service' | extension: app1efdb74fe6a777dee098434923d45f04ca1690b2.isJsActive }}
+<app-tabs #app1efdb74fe6a777dee098434923d45f04ca1690b2></app-tabs>
+</span><pre [class.hide]="app1efdb74fe6a777dee098434923d45f04ca1690b2.isJsActive"><code class="language-typescript">
+@Injectable()
+export class CatsService &#123;
+  constructor(
+    @Inject(forwardRef(() =&gt; CommonService))
+    private readonly commonService: CommonService,
+  ) &#123;&#125;
+&#125;</code></pre>
+<pre [class.hide]="!app1efdb74fe6a777dee098434923d45f04ca1690b2.isJsActive"><code class="language-typescript">
+@Injectable()
+@Dependencies(forwardRef(() =&gt; CommonService))
+export class CatsService &#123;
+  constructor(commonService) &#123;
+    this.commonService = commonService;
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> The <code>forwardRef()</code> function is imported from the <code>@nestjs/common</code> package.
+</blockquote>
+<p>Here&#39;s the first side of the relationship. Now let&#39;s do the same with the <code>CommonService</code>:</p>
+
+<span class="filename">
+  {{ 'common.service' | extension: app04fd883cc913f18b33f573216a274ba3211d22f0.isJsActive }}
+<app-tabs #app04fd883cc913f18b33f573216a274ba3211d22f0></app-tabs>
+</span><pre [class.hide]="app04fd883cc913f18b33f573216a274ba3211d22f0.isJsActive"><code class="language-typescript">
+@Injectable()
+export class CommonService &#123;
+  constructor(
+    @Inject(forwardRef(() =&gt; CatsService))
+    private readonly catsService: CatsService,
+  ) &#123;&#125;
+&#125;</code></pre>
+<pre [class.hide]="!app04fd883cc913f18b33f573216a274ba3211d22f0.isJsActive"><code class="language-typescript">
+@Injectable()
+@Dependencies(forwardRef(() =&gt; CatsService))
+export class CommonService &#123;
+  constructor(catsService) &#123;
+    this.catsService = catsService;
+  &#125;
+&#125;</code></pre><blockquote class="
+warning "><strong>Warning</strong> You don&#39;t have guarantee which constructor will be called first.
+</blockquote>
+<p>In order to create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on both parts of the modules association:</p>
+
+<span class="filename">
+  {{ 'common.module' | extension: appdec7f37e4f4f1e58910fe292a1993da7772b9dbe.isJsActive }}
+<app-tabs #appdec7f37e4f4f1e58910fe292a1993da7772b9dbe></app-tabs>
+</span><pre><code class="language-typescript">
+@Module(&#123;
+  imports: [forwardRef(() =&gt; CatsModule)],
+&#125;)
+export class CommonModule &#123;&#125;</code></pre><h4 appAnchor id="module-reference">Module reference</h4>
+<p>Nest provides the <code>ModuleRef</code> class that can be simply injected into any component.</p>
+
+<span class="filename">
+  {{ 'cats.service' | extension: app5f1dff999d7947be9b3da7bf3f951b51220620b0.isJsActive }}
+<app-tabs #app5f1dff999d7947be9b3da7bf3f951b51220620b0></app-tabs>
+</span><pre [class.hide]="app5f1dff999d7947be9b3da7bf3f951b51220620b0.isJsActive"><code class="language-typescript">
+@Injectable()
+export class CatsService implements OnModuleInit &#123;
+  private service: Service;
+  constructor(private readonly moduleRef: ModuleRef) &#123;&#125;
+
+  onModuleInit() &#123;
+    this.service = this.moduleRef.get(Service);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app5f1dff999d7947be9b3da7bf3f951b51220620b0.isJsActive"><code class="language-typescript">
+@Injectable()
+@Dependencies(ModuleRef)
+export class CatsService &#123;
+  constructor(moduleRef) &#123;
+    this.moduleRef = moduleRef;
+  &#125;
+
+  onModuleInit() &#123;
+    this.service = this.moduleRef.get(Service);
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> The <code>ModuleRef</code> class is imported from the <code>@nestjs/core</code> package.
+</blockquote>
+<p>The module reference has a <code>get()</code> method which allows retrieving a provider available in the current module. Additionally, you can switch to a non-strict mode, which enables you to pick any existing provider across the whole app.</p>
+<pre><code class="language-typescript">
+this.moduleRef.get(Service, &#123; strict: false &#125;);</code></pre>
+
+    </div>

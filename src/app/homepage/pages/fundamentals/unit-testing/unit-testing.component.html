@@ -1,118 +1,243 @@
-<div class="content">
-  <h3>Testing</h3>
-  <p>
-    Automatic tests are an essential part of the fully functional <strong>software product</strong>.
-    That is very critical to cover at least the most sensitive parts of your system. 
-    In order to achieve that goal, we produce a set of different tests like integration tests, unit tests, e2e tests, and so on.
-    And Nest provides a bunch of test utilities that improves testing experience.
-  </p>
-  <p>
-    In general, you can use any <strong>testing framework</strong> that you enjoy working with.
-    We don't enforce tooling, choose whatever fits your requirements.
-    The main Nest application starter is integrated with <a href="https://github.com/facebook/jest" target="blank">Jest</a> framework to reduce an amount of overhead when it comes to start writing your tests, but still, you can get rid of it and use any other tool easily.
-  </p>
-  <h4>Installation</h4>
-  <p>
-    Firstly, we need to install the required package:
-  </p>
-  <pre><code class="language-typescript">
+<div class="content" #contentReference>
+      <h3 id="testing">Testing</h3>
+<p>Automatic tests are an essential part of the fully functional <strong>software product</strong>. That is very critical to cover at least the most sensitive parts of your system. In order to achieve that goal, we produce a set of different tests like integration tests, unit tests, e2e tests, and so on. And Nest provides a bunch of test utilities that improves testing experience.</p>
+<p>In general, you can use any <strong>testing framework</strong> that you enjoy working with. We don&#39;t enforce tooling, choose whatever fits your requirements. The main Nest application starter is integrated with <a href="https://github.com/facebook/jest">Jest</a> framework to reduce an amount of overhead when it comes to start writing your tests, but still, you can get rid of it and use any other tool easily.</p>
+<h4 appAnchor id="installation">Installation</h4>
+<p>Firstly, we need to install the required package:</p>
+<pre><code class="language-bash">
 $ npm i --save-dev @nestjs/testing</code></pre>
-  <h4>Unit testing</h4>
-  <p> 
-    In the following example, we have two different classes, <code>CatsController</code> and <code>CatsService</code> respectively.
-    As mentioned before, <a href="https://github.com/facebook/jest" target="blank">Jest</a> is used as a fully-fledged testing framework.
-    That framework behaves like a test-runner and also, provides assert functions and test-doubles utilities that helps with mocking, spying, etc.
-    We have manually enforced <code>catsService.findAll()</code> method to return <code>result</code> variable, once it's called.
-    Thanks to that, we can test whether <code>catsController.findAll()</code> returns expected result, or not.
-  </p>
-  <span class="filename">
-    {{ 'cats.controller.spec' | extension: isolatedTestsT.isJsActive }}
-    <app-tabs #isolatedTestsT></app-tabs>
-  </span>
-  <pre [class.hide]="isolatedTestsT.isJsActive"><code class="language-typescript">{{ isolatedTests }}</code></pre>
-  <pre [class.hide]="!isolatedTestsT.isJsActive"><code class="language-typescript">{{ isolatedTestsJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> Keep your test files nearby tested classes. The testing files should have a <code>.spec</code> or <code>.test</code> suffix.
-  </blockquote>
-  <p>
-    We didn't make use of any existing Nest testing utility so far. 
-    Since we have manually taken care of instantiating tested classes, above test suite has nothing to do with Nest.
-    This type of testing is called <strong>isolated tests</strong>.
-  </p>
-  <h4>Testing utilities</h4>
-  <p>
-    The <code>@nestjs/testing</code> package gives us a set of utilities that boost the testing process.
-    Let's rewrite the previous example, but now, using exposed <code>Test</code> class.
-  </p>
-  <span class="filename">
-    {{ 'cats.controller.spec' | extension: utilsT.isJsActive }}
-    <app-tabs #utilsT></app-tabs>
-  </span>
-  <pre [class.hide]="utilsT.isJsActive"><code class="language-typescript">{{ utils }}</code></pre>
-  <pre [class.hide]="!utilsT.isJsActive"><code class="language-typescript">{{ utilsJs }}</code></pre>
-  <p>
-    <code>Test</code> class has a <code>createTestingModule()</code> method that takes a module metadata (the same object as this one passed in <code>@Module()</code> decorator) as an argument.
-    This method creates a <code>TestingModule</code> instance which in turn provides a few methods, but only one of them is useful when it comes to unit tests - the <code>compile()</code>.
-    This function is <strong>asynchronous</strong>, therefore it has to be awaited. Once module is compiled, you can retrieve any instance using <code>get()</code> method. 
-  </p>
-  <p>
-    In order to mock a real instance, you can override existing provider with a <a routerLink="/fundamentals/dependency-injection">custom provider</a>.
-  </p>
-  <h4>End-to-end testing</h4>
-  <p>
-    When the application grows, it is difficult to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements.
-    To perform e2e tests we use the same configuration as in the case of <strong>unit testing</strong>, but additionally, we take advantage of <a href="https://github.com/visionmedia/supertest" target="blank">supertest</a> library that allows simulating HTTP requests.
-  </p>
-  <span class="filename">
-    {{ 'cats.e2e-spec' | extension: e2eTestsT.isJsActive }}
-    <app-tabs #e2eTestsT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ e2eTests }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> Keep your e2e test files inside the <code>e2e</code> directory. The testing files should have a <code>.e2e-spec</code> or <code>.e2e-test</code> suffix.
-  </blockquote>
-  <p>
-    The <code>cats.e2e-spec.ts</code> test file contains a single HTTP endpoint test (<code>/cats</code>).
-    We have used <code>app.getHttpServer()</code> method to pick up an underlying HTTP server that runs in the background of Nest application.
-    Notice that <code>TestingModule</code> instance provides a <code>overrideProvider()</code> method, and thus we can <strong>override</strong> the existing provider which is declared by the imported module.
-    Also, we can successively override the guards, interceptors, filters, and pipes using corresponding methods, <code>overrideGuard()</code>, <code>overrideInterceptor()</code>, <code>overrideFilter()</code>, and <code>overridePipe()</code> respectively.
-  </p> 
-  <p>
-    The compiled module has several methods well described in the following table:
-  </p>
-  <table>
-      <tr>
-        <td>
-          <code>createNestInstance()</code>
-        </td>
-        <td>
-          Creates a Nest instance based on a given module (returns <code>INestApplication</code>).
-          Notice that it's necessary to manually initialize the application using <code>init()</code> method.
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <code>createNestMicroservice()</code>
-        </td>
-        <td>
-          Creates a Nest microservice instance based on a given module (returns <code>INestMicroservice</code>).
-        </td>
-      </tr>
-      <tr>
+<h4 appAnchor id="unit-testing">Unit testing</h4>
+<p>In the following example, we have two different classes, <code>CatsController</code> and <code>CatsService</code> respectively. As mentioned before, <a href="https://github.com/facebook/jest">Jest</a> is used as a fully-fledged testing framework. That framework behaves like a test-runner and also, provides assert functions and test-doubles utilities that helps with mocking, spying, etc. We have manually enforced <code>catsService.findAll()</code> method to return <code>result</code> variable, once it&#39;s called. Thanks to that, we can test whether <code>catsController.findAll()</code> returns expected result, or not.</p>
+
+<span class="filename">
+  {{ 'cats.controller.spec' | extension: appbc4a7ea6033fe3ecd0a58e40295b2486e65cbcbc.isJsActive }}
+<app-tabs #appbc4a7ea6033fe3ecd0a58e40295b2486e65cbcbc></app-tabs>
+</span><pre [class.hide]="appbc4a7ea6033fe3ecd0a58e40295b2486e65cbcbc.isJsActive"><code class="language-typescript">
+import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
+import &#123; CatsService &#125; from &#39;./cats.service&#39;;
+
+describe(&#39;CatsController&#39;, () =&gt; &#123;
+  let catsController: CatsController;
+  let catsService: CatsService;
+
+  beforeEach(() =&gt; &#123;
+    catsService = new CatsService();
+    catsController = new CatsController(catsService);
+  &#125;);
+
+  describe(&#39;findAll&#39;, () =&gt; &#123;
+    it(&#39;should return an array of cats&#39;, async () =&gt; &#123;
+      const result = [&#39;test&#39;];
+      jest.spyOn(catsService, &#39;findAll&#39;).mockImplementation(() =&gt; result);
+
+      expect(await catsController.findAll()).toBe(result);
+    &#125;);
+  &#125;);
+&#125;);</code></pre>
+<pre [class.hide]="!appbc4a7ea6033fe3ecd0a58e40295b2486e65cbcbc.isJsActive"><code class="language-typescript">
+import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
+import &#123; CatsService &#125; from &#39;./cats.service&#39;;
+
+describe(&#39;CatsController&#39;, () =&gt; &#123;
+  let catsController;
+  let catsService;
+
+  beforeEach(() =&gt; &#123;
+    catsService = new CatsService();
+    catsController = new CatsController(catsService);
+  &#125;);
+
+  describe(&#39;findAll&#39;, () =&gt; &#123;
+    it(&#39;should return an array of cats&#39;, async () =&gt; &#123;
+      const result = [&#39;test&#39;];
+      jest.spyOn(catsService, &#39;findAll&#39;).mockImplementation(() =&gt; result);
+
+      expect(await catsController.findAll()).toBe(result);
+    &#125;);
+  &#125;);
+&#125;);</code></pre><blockquote class="
+info "><strong>Hint</strong> Keep your test files nearby tested classes. The testing files should have a <code>.spec</code> or <code>.test</code> suffix.
+</blockquote>
+<p>We didn&#39;t make use of any existing Nest testing utility so far. Since we have manually taken care of instantiating tested classes, above test suite has nothing to do with Nest. This type of testing is called <strong>isolated tests</strong>.</p>
+<h4 appAnchor id="testing-utilities">Testing utilities</h4>
+<p>The <code>@nestjs/testing</code> package gives us a set of utilities that boost the testing process. Let&#39;s rewrite the previous example, but now, using exposed <code>Test</code> class.</p>
+
+<span class="filename">
+  {{ 'cats.controller.spec' | extension: app1d51a3bbf0c0b54e4e77c7b80b8f7776791b478b.isJsActive }}
+<app-tabs #app1d51a3bbf0c0b54e4e77c7b80b8f7776791b478b></app-tabs>
+</span><pre [class.hide]="app1d51a3bbf0c0b54e4e77c7b80b8f7776791b478b.isJsActive"><code class="language-typescript">
+import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
+import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
+import &#123; CatsService &#125; from &#39;./cats.service&#39;;
+
+describe(&#39;CatsController&#39;, () =&gt; &#123;
+  let catsController: CatsController;
+  let catsService: CatsService;
+
+  beforeEach(async () =&gt; &#123;
+    const module = await Test.createTestingModule(&#123;
+        controllers: [CatsController],
+        providers: [CatsService],
+      &#125;).compile();
+
+    catsService = module.get&lt;CatsService&gt;(CatsService);
+    catsController = module.get&lt;CatsController&gt;(CatsController);
+  &#125;);
+
+  describe(&#39;findAll&#39;, () =&gt; &#123;
+    it(&#39;should return an array of cats&#39;, async () =&gt; &#123;
+      const result = [&#39;test&#39;];
+      jest.spyOn(catsService, &#39;findAll&#39;).mockImplementation(() =&gt; result);
+
+      expect(await catsController.findAll()).toBe(result);
+    &#125;);
+  &#125;);
+&#125;);</code></pre>
+<pre [class.hide]="!app1d51a3bbf0c0b54e4e77c7b80b8f7776791b478b.isJsActive"><code class="language-typescript">
+import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
+import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
+import &#123; CatsService &#125; from &#39;./cats.service&#39;;
+
+describe(&#39;CatsController&#39;, () =&gt; &#123;
+  let catsController;
+  let catsService;
+
+  beforeEach(async () =&gt; &#123;
+    const module = await Test.createTestingModule(&#123;
+        controllers: [CatsController],
+        providers: [CatsService],
+      &#125;).compile();
+
+    catsService = module.get(CatsService);
+    catsController = module.get(CatsController);
+  &#125;);
+
+  describe(&#39;findAll&#39;, () =&gt; &#123;
+    it(&#39;should return an array of cats&#39;, async () =&gt; &#123;
+      const result = [&#39;test&#39;];
+      jest.spyOn(catsService, &#39;findAll&#39;).mockImplementation(() =&gt; result);
+
+      expect(await catsController.findAll()).toBe(result);
+    &#125;);
+  &#125;);
+&#125;);</code></pre><p><code>Test</code> class has a <code>createTestingModule()</code> method that takes a module metadata (the same object as this one passed in <code>@Module()</code> decorator) as an argument. This method creates a <code>TestingModule</code> instance which in turn provides a few methods, but only one of them is useful when it comes to unit tests - the <code>compile()</code>. This function is <strong>asynchronous</strong>, therefore it has to be awaited. Once module is compiled, you can retrieve any instance using <code>get()</code> method.</p>
+<p>In order to mock a real instance, you can override existing provider with a <a routerLink="/fundamentals/dependency-injection">custom provider</a>.</p>
+<h4 appAnchor id="end-to-end-testing">End-to-end testing</h4>
+<p>When the application grows, it is difficult to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements. To perform e2e tests we use the same configuration as in the case of <strong>unit testing</strong>, but additionally, we take advantage of <a href="https://github.com/visionmedia/supertest">supertest</a> library that allows simulating HTTP requests.</p>
+
+<span class="filename">
+  {{ 'cats.e2e-spec' | extension: app33aa089bfefb052dbd1be99a7de12953894ab123.isJsActive }}
+<app-tabs #app33aa089bfefb052dbd1be99a7de12953894ab123></app-tabs>
+</span><pre [class.hide]="app33aa089bfefb052dbd1be99a7de12953894ab123.isJsActive"><code class="language-typescript">
+import * as request from &#39;supertest&#39;;
+import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
+import &#123; CatsModule &#125; from &#39;../../src/cats/cats.module&#39;;
+import &#123; CatsService &#125; from &#39;../../src/cats/cats.service&#39;;
+import &#123; INestApplication &#125; from &#39;@nestjs/common&#39;;
+
+describe(&#39;Cats&#39;, () =&gt; &#123;
+  let app: INestApplication;
+  let catsService = &#123; findAll: () =&gt; [&#39;test&#39;] &#125;;
+
+  beforeAll(async () =&gt; &#123;
+    const module = await Test.createTestingModule(&#123;
+      imports: [CatsModule],
+    &#125;)
+      .overrideProvider(CatsService)
+      .useValue(catsService)
+      .compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  &#125;);
+
+  it(`/GET cats`, () =&gt; &#123;
+    return request(app.getHttpServer())
+      .get(&#39;/cats&#39;)
+      .expect(200)
+      .expect(&#123;
+        data: catsService.findAll(),
+      &#125;);
+  &#125;);
+
+  afterAll(async () =&gt; &#123;
+    await app.close();
+  &#125;);
+&#125;);</code></pre>
+<pre [class.hide]="!app33aa089bfefb052dbd1be99a7de12953894ab123.isJsActive"><code class="language-typescript">
+import * as request from &#39;supertest&#39;;
+import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
+import &#123; CatsModule &#125; from &#39;../../src/cats/cats.module&#39;;
+import &#123; CatsService &#125; from &#39;../../src/cats/cats.service&#39;;
+import &#123; INestApplication &#125; from &#39;@nestjs/common&#39;;
+
+describe(&#39;Cats&#39;, () =&gt; &#123;
+  let app: INestApplication;
+  let catsService = &#123; findAll: () =&gt; [&#39;test&#39;] &#125;;
+
+  beforeAll(async () =&gt; &#123;
+    const module = await Test.createTestingModule(&#123;
+      imports: [CatsModule],
+    &#125;)
+      .overrideProvider(CatsService)
+      .useValue(catsService)
+      .compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  &#125;);
+
+  it(`/GET cats`, () =&gt; &#123;
+    return request(app.getHttpServer())
+      .get(&#39;/cats&#39;)
+      .expect(200)
+      .expect(&#123;
+        data: catsService.findAll(),
+      &#125;);
+  &#125;);
+
+  afterAll(async () =&gt; &#123;
+    await app.close();
+  &#125;);
+&#125;);</code></pre><blockquote class="
+info "><strong>Hint</strong> Keep your e2e test files inside the <code>e2e</code> directory. The testing files should have a <code>.e2e-spec</code> or <code>.e2e-test</code> suffix.
+</blockquote>
+<p>The <code>cats.e2e-spec.ts</code> test file contains a single HTTP endpoint test (<code>/cats</code>). We have used <code>app.getHttpServer()</code> method to pick up an underlying HTTP server that runs in the background of Nest application. Notice that <code>TestingModule</code> instance provides a <code>overrideProvider()</code> method, and thus we can <strong>override</strong> the existing provider which is declared by the imported module. Also, we can successively override the guards, interceptors, filters, and pipes using corresponding methods, <code>overrideGuard()</code>, <code>overrideInterceptor()</code>, <code>overrideFilter()</code>, and <code>overridePipe()</code> respectively.</p>
+<p>The compiled module has several methods well described in the following table:</p>
+<table>
+    <tr>
       <td>
-        <code>get()</code>
+        <code>createNestInstance()</code>
       </td>
       <td>
-        Retrieves an instance of either controller or provider (including guards, filters, and so on) available in the application context.
+        Creates a Nest instance based on a given module (returns <code>INestApplication</code>).
+        Notice that it's necessary to manually initialize the application using <code>init()</code> method.
       </td>
     </tr>
     <tr>
       <td>
-        <code>select()</code>
+        <code>createNestMicroservice()</code>
       </td>
       <td>
-        Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with enabled strict mode).
+        Creates a Nest microservice instance based on a given module (returns <code>INestMicroservice</code>).
       </td>
     </tr>
-  </table>
-</div>
+    <tr>
+    <td>
+      <code>get()</code>
+    </td>
+    <td>
+      Retrieves an instance of either controller or provider (including guards, filters, and so on) available in the application context.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>select()</code>
+    </td>
+    <td>
+      Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with enabled strict mode).
+    </td>
+  </tr>
+</table>
+
+    </div>

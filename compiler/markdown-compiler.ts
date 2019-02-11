@@ -5,6 +5,7 @@ import { join } from 'path';
 import {
   appendEmptyLine,
   escapeBrackets,
+  insertText,
   parseSwitcher,
   replaceFilename,
 } from './markdown-utils';
@@ -54,7 +55,7 @@ renderer.code = function(
     language,
     isEscaped,
   );
-  output = appendEmptyLine(output);
+  output = switcherKey ? output : appendEmptyLine(output);
   return escapeBrackets(output);
 };
 
@@ -74,8 +75,24 @@ renderer.link = (href: string, title: string, text: string) => {
 const originalHeadingRenderer = renderer.heading.bind(renderer);
 renderer.heading = (...args: string[]) => {
   const text = originalHeadingRenderer(...args);
+  if (!text.includes('h4')) {
+    return text;
+  }
   const startIndex = text.indexOf('<h') + 3;
-  return text.slice(0, startIndex) + ` appAnchor` + text.slice(startIndex);
+  return insertText(text, startIndex, ` appAnchor`);
+};
+
+const originalBlockquoteRenderer = renderer.blockquote.bind(renderer);
+renderer.blockquote = (quote: string) => {
+  let text: string = originalBlockquoteRenderer(quote);
+  text = text.replace('<p>', '');
+  text = text.replace('</p>', '');
+
+  const blockquoteTag = '<blockquote>';
+  text = text.replace('<blockquote>', '<blockquote');
+  text = insertText(text, blockquoteTag.length - 1, ` class="`);
+  text = insertText(text, text.indexOf('<strong>'), '">');
+  return text;
 };
 
 const rootDir = 'content';
@@ -107,6 +124,8 @@ watcher.on('change', path => {
       join(process.cwd(), `src/app/homepage/pages${distPath}/${distFilename}`),
       html + '\n',
     );
-    console.log(`${distFilename} has been saved.`);
+    console.log(
+      `[${distFilename}] has been saved. (${new Date().toLocaleTimeString()})`,
+    );
   });
 });

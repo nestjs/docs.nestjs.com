@@ -1,196 +1,200 @@
-<div class="content">
-  <h3>Middleware</h3>
-  <p>
-    The middleware is a function which is called <strong>before</strong> the route handler. Middleware functions have access
-    to the <a href="http://expressjs.com/en/4x/api.html#req" target="blank">request</a>
-    and <a href="http://expressjs.com/en/4x/api.html#res" target="blank">response</a> objects, and the <code>next</code>    middleware
-    function in the application’s request-response cycle. The <strong>next</strong> middleware function is commonly denoted
-    by a variable named <code>next</code>.
-  </p>
-  <figure><img src="/assets/Middlewares_1.png" /></figure>
-  <p>
-    The Nest middleware, by default, are equal to <a href="http://expressjs.com/en/guide/using-middleware.html" target="blank">express</a>
-    middleware. Here's a great list of the middleware capabilities copied from the official express documentation:
-  </p>
-  <blockquote class="external">
-    Middleware functions can perform the following tasks:
-    <ul>
-      <li>execute any code.</li>
-      <li>make changes to the request and the response objects.</li>
-      <li>end the request-response cycle.</li>
-      <li>call the next middleware function in the stack.</li>
-      <li>if the current middleware function does not end the request-response cycle, it must call <code>next()</code> to
-        pass control to the next middleware function. Otherwise, the request will be left hanging.</li>
-    </ul>
-  </blockquote>
-  <p>
-    The Nest middleware is either a function, or a class with an <code>@Injectable()</code> decorator. The class should implement
-    the <code>NestMiddleware</code> interface, while function does not have any special requirements. Let's start from the
-    <code>LoggerMiddleware</code> example.
-  </p>
-  <span class="filename">
-    {{ 'logger.middleware' | extension: loggerMiddlewareT.isJsActive }}
-    <app-tabs #loggerMiddlewareT></app-tabs>
-  </span>
-  <pre [class.hide]="loggerMiddlewareT.isJsActive"><code class="language-typescript">{{ loggerMiddleware }}</code></pre>
-  <pre [class.hide]="!loggerMiddlewareT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareJs }}</code></pre>
-  <p>
-    The <code>resolve()</code> method has to return a regular library-specific middleware <code>(req, res, next) => any</code>.
-  </p>
-  <h4>Dependency injection</h4>
-  <p>
-    There is no exception when it comes to the middleware. Same as providers and controllers, they are able to <strong>inject
-      dependencies
-    </strong> that belongs to the same module (through the <code>constructor</code>).
-  </p>
-  <h4>Applying middleware</h4>
-  <p>
-    There is no place for middleware in the <code>@Module()</code> decorator. We have to set them up using the <code>configure()</code>    method
-    of the module class. Modules that include middleware have to implement the <code>NestModule</code> interface. Let's set
-    up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: applicationModuleT.isJsActive }}
-    <app-tabs #applicationModuleT></app-tabs>
-  </span>
-  <pre [class.hide]="applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModule }}</code></pre>
-  <pre [class.hide]="!applicationModuleT.isJsActive"><code class="language-typescript">{{ applicationModuleJs }}</code></pre>
-  <p>
-    In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers that we have
-    previously defined inside the <code>CatsController</code>. Besides, we may restrict a middleware to the particular request
-    method.
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: routeInfoT.isJsActive }}
-    <app-tabs #routeInfoT></app-tabs>
-  </span>
-  <pre [class.hide]="routeInfoT.isJsActive"><code class="language-typescript">{{ routeInfo }}</code></pre>
-  <pre [class.hide]="!routeInfoT.isJsActive"><code class="language-typescript">{{ routeInfoJs }}</code></pre>
-  <h4>Route wildcards</h4>
-  <p>
-    Pattern based routes are supported as well. For instance, the asterisk is used as a <strong>wildcard</strong>, and will
-    match any combination of characters.
-  </p>
-  <pre><code class="language-typescript">{{ routeWildcards }}</code></pre>
-  <p>
-    Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters <code>?</code>,
-    <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The hyphen
-    (
-    <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.
-  </p>
-  <h4>Middleware consumer</h4>
-  <p>
-    The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All
-    of them can be simply <strong>chained</strong>. The <code>forRoutes()</code> can take a single string, multiple strings,
-    <code>RouteInfo</code> object, a controller class and even multiple controller classes. In most cases you'll probably
-    just pass the <strong>controllers</strong> and separate them by a comma. Below is an example with a single controller:
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: applicationModuleByControllersT.isJsActive }}
-    <app-tabs #applicationModuleByControllersT></app-tabs>
-  </span>
-  <pre [class.hide]="applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllers }}</code></pre>
-  <pre [class.hide]="!applicationModuleByControllersT.isJsActive"><code class="language-typescript">{{ applicationModuleByControllersJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>apply()</code> method may either take a single middleware, or an <strong>array of middleware</strong>.
-  </blockquote>
-  <p>
-    Whilst class is used, quite often we might want to <strong>exclude</strong> certain routes. That is very intuitive due
-    to the <code>exclude()</code> method.
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: applicationModuleExcludeT.isJsActive }}
-    <app-tabs #applicationModuleExcludeT></app-tabs>
-  </span>
-  <pre [class.hide]="applicationModuleExcludeT.isJsActive"><code class="language-typescript">{{ applicationModuleExclude }}</code></pre>
-  <pre [class.hide]="!applicationModuleExcludeT.isJsActive"><code class="language-typescript">{{ applicationModuleExcludeJs }}</code></pre>
-  <p>
-    Consequently, <code>LoggerMiddleware</code> will be bounded to all routes defined inside <code>CatsController</code>    except
-    these two passed to the <code>exclude()</code> function. Please note that <code>exclude()</code> method <strong>won't
-      work
-    </strong> with your functional middleware. In addition, this function doesn't exclude paths from more generic routes
-    (e.g. wildcards). In such case, you should rather put your paths-restriction logic directly to the middleware and, for
-    example, compare a request's URL.
-  </p>
-  <h4>Configurable middleware</h4>
-  <p>
-    Sometimes the behaviour of the middleware depends on the custom values e.g. an array of user roles, options object, and so
-    on. We may apply additional arguments to the <code>resolve()</code> using the <code>with()</code> method. See an
-    example below:
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: applicationModuleWithMethodT.isJsActive }}
-    <app-tabs #applicationModuleWithMethodT></app-tabs>
-  </span>
-  <pre [class.hide]="applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethod }}</code></pre>
-  <pre [class.hide]="!applicationModuleWithMethodT.isJsActive"><code class="language-typescript">{{ applicationModuleWithMethodJs }}</code></pre>
-  <p>
-    We have passed a plain string - <code>ApplicationModule</code> to the <code>with()</code> method. Thereafter, we have
-    to adjust the <code>resolve()</code> method of the <code>LoggerMiddleware</code>.
-  </p>
-  <span class="filename">
-    {{ 'logger.middleware' | extension: loggerMiddlewareWithArgsT.isJsActive }}
-    <app-tabs #loggerMiddlewareWithArgsT></app-tabs>
-  </span>
-  <pre [class.hide]="loggerMiddlewareWithArgsT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareWithArgs }}</code></pre>
-  <pre [class.hide]="!loggerMiddlewareWithArgsT.isJsActive"><code class="language-typescript">{{ loggerMiddlewareWithArgsJs }}</code></pre>
-  <p>
-    In this case, the value of the <code>name</code> property will be <code>'ApplicationModule'</code>.
-  </p>
-  <h4>Asynchronous middleware</h4>
-  <p>
-    There are no contraindications that would prevent us from returning the <code>async</code> function within the <code>resolve()</code>    method.
-    Also, it's possible to make the <code>resolve()</code> method <code>async</code> as well. This common pattern is called
-    <strong>deferred middleware</strong>.
-  </p>
-  <span class="filename">
-    {{ 'logger.middleware' | extension: deferredMiddlewareT.isJsActive }}
-    <app-tabs #deferredMiddlewareT></app-tabs>
-  </span>
-  <pre [class.hide]="deferredMiddlewareT.isJsActive"><code class="language-typescript">{{ deferredMiddleware }}</code></pre>
-  <pre [class.hide]="!deferredMiddlewareT.isJsActive"><code class="language-typescript">{{ deferredMiddlewareJs }}</code></pre>
-  <h4>Functional middleware</h4>
-  <p>
-    The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies. Why can't
-    we just use a simple function? It's a good question, cause in fact - we can. This type of the middleware is called
-    <strong>functional middleware</strong>. Let's transform the logger into a function.
-  </p>
-  <span class="filename">
-    {{ 'logger.middleware' | extension: functionalMiddlewareT.isJsActive }}
-    <app-tabs #functionalMiddlewareT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ functionalMiddleware }}</code></pre>
-  <p>
-    And use it within the <code>ApplicationModule</code>:
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: applyFunctionalMiddlewareT.isJsActive }}
-    <app-tabs #applyFunctionalMiddlewareT></app-tabs>
-  </span>
-  <pre [class.hide]="applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddleware }}</code></pre>
-  <pre [class.hide]="!applyFunctionalMiddlewareT.isJsActive"><code class="language-typescript">{{ applyFunctionalMiddlewareJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> Let's consider using <strong>functional middleware</strong> every time when your middleware doesn't
-    need any dependencies.
-  </blockquote>
-  <h4>Multiple middleware</h4>
-  <p>
-    As mentioned before, in order to bind multiple middleware that are executed sequentially, we can separate them by a comma
-    inside the <code>apply()</code> method.
-  </p>
-  <span class="filename">
-    <app-tabs #applyMultipleMiddlewaresT></app-tabs>
-  </span>
-  <pre [class.hide]="applyMultipleMiddlewaresT.isJsActive"><code class="language-typescript">{{ applyMultipleMiddlewares }}</code></pre>
-  <pre [class.hide]="!applyMultipleMiddlewaresT.isJsActive"><code class="language-typescript">{{ applyMultipleMiddlewaresJs }}</code></pre>
-  <h4>Global middleware</h4>
-  <p>
-    In order to tie a middleware to each registered route at once, we can take advantage of <code>use()</code> method that
-    is supplied by the <code>INestApplication</code> instance:
-  </p>
-  <pre><code class="language-typescript">
+<div class="content" #contentReference>
+      <h3 id="middleware">Middleware</h3>
+<p>The middleware is a function which is called <strong>before</strong> the route handler. Middleware functions have access to the <a href="http://expressjs.com/en/4x/api.html#req">request</a> and <a href="http://expressjs.com/en/4x/api.html#res">response</a> objects, and the <code>next</code> middleware function in the application’s request-response cycle. The <strong>next</strong> middleware function is commonly denoted by a variable named <code>next</code>.</p>
+<figure><img src="/assets/Middlewares_1.png" /></figure>
+
+<p>The Nest middleware, by default, are equal to <a href="http://expressjs.com/en/guide/using-middleware.html">express</a> middleware. Here&#39;s a great list of the middleware capabilities copied from the official express documentation:</p>
+<blockquote class="external">
+  Middleware functions can perform the following tasks:
+  <ul>
+    <li>execute any code.</li>
+    <li>make changes to the request and the response objects.</li>
+    <li>end the request-response cycle.</li>
+    <li>call the next middleware function in the stack.</li>
+    <li>if the current middleware function does not end the request-response cycle, it must call <code>next()</code> to
+      pass control to the next middleware function. Otherwise, the request will be left hanging.</li>
+  </ul>
+</blockquote>
+
+<p>The Nest middleware is either a function, or a class with an <code>@Injectable()</code> decorator. The class should implement the <code>NestMiddleware</code> interface, while function does not have any special requirements.</p>
+
+<span class="filename">
+  {{ 'logger.middleware' | extension: app0be2e3647669bc79bab21263425b88127f6aae0b.isJsActive }}
+<app-tabs #app0be2e3647669bc79bab21263425b88127f6aae0b></app-tabs>
+</span><pre [class.hide]="app0be2e3647669bc79bab21263425b88127f6aae0b.isJsActive"><code class="language-typescript">
+import &#123; Injectable, NestMiddleware &#125; from &#39;@nestjs/common&#39;;
+import &#123; Request, Response &#125; from &#39;express&#39;;
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware &#123;
+  use(req: Request, res: Response, next: Function) &#123;
+    console.log(&#39;Request...&#39;);
+    next();
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app0be2e3647669bc79bab21263425b88127f6aae0b.isJsActive"><code class="language-typescript">
+import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
+
+@Injectable()
+export class LoggerMiddleware &#123;
+  use(req, res, next) &#123;
+    console.log(&#39;Request...&#39;);
+    next();
+  &#125;
+&#125;</code></pre><h4 appAnchor id="dependency-injection">Dependency injection</h4>
+<p>There is no exception when it comes to the middleware. Same as providers and controllers, they are able to <strong>inject dependencies</strong> that belongs to the same module (through the <code>constructor</code>).</p>
+<h4 appAnchor id="applying-middleware">Applying middleware</h4>
+<p>There is no place for middleware in the <code>@Module()</code> decorator. We have to set them up using the <code>configure()</code> method of the module class. Modules that include middleware have to implement the <code>NestModule</code> interface. Let&#39;s set up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: appe49b56139c0f51ea7c85705b6d6a4d5dfb41fc37.isJsActive }}
+<app-tabs #appe49b56139c0f51ea7c85705b6d6a4d5dfb41fc37></app-tabs>
+</span><pre [class.hide]="appe49b56139c0f51ea7c85705b6d6a4d5dfb41fc37.isJsActive"><code class="language-typescript">
+import &#123; Module, NestModule, MiddlewareConsumer &#125; from &#39;@nestjs/common&#39;;
+import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
+import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
+
+@Module(&#123;
+  imports: [CatsModule],
+&#125;)
+export class ApplicationModule implements NestModule &#123;
+  configure(consumer: MiddlewareConsumer) &#123;
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(&#39;cats&#39;);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appe49b56139c0f51ea7c85705b6d6a4d5dfb41fc37.isJsActive"><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
+import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
+
+@Module(&#123;
+  imports: [CatsModule],
+&#125;)
+export class ApplicationModule &#123;
+  configure(consumer) &#123;
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(&#39;cats&#39;);
+  &#125;
+&#125;</code></pre><p>In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers that we have previously defined inside the <code>CatsController</code>. Besides, we may restrict a middleware to the particular request method.</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: appc4e98b524eda7c087fd56abcdf0e55675d616d6c.isJsActive }}
+<app-tabs #appc4e98b524eda7c087fd56abcdf0e55675d616d6c></app-tabs>
+</span><pre [class.hide]="appc4e98b524eda7c087fd56abcdf0e55675d616d6c.isJsActive"><code class="language-typescript">
+import &#123; Module, NestModule, RequestMethod, MiddlewareConsumer &#125; from &#39;@nestjs/common&#39;;
+import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
+import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
+
+@Module(&#123;
+  imports: [CatsModule],
+&#125;)
+export class ApplicationModule implements NestModule &#123;
+  configure(consumer: MiddlewareConsumer) &#123;
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(&#123; path: &#39;cats&#39;, method: RequestMethod.GET &#125;);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appc4e98b524eda7c087fd56abcdf0e55675d616d6c.isJsActive"><code class="language-typescript">
+import &#123; Module, RequestMethod &#125; from &#39;@nestjs/common&#39;;
+import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
+import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
+
+@Module(&#123;
+  imports: [CatsModule],
+&#125;)
+export class ApplicationModule &#123;
+  configure(consumer) &#123;
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(&#123; path: &#39;cats&#39;, method: RequestMethod.GET &#125;);
+  &#125;
+&#125;</code></pre><h4 appAnchor id="route-wildcards">Route wildcards</h4>
+<p>Pattern based routes are supported as well. For instance, the asterisk is used as a <strong>wildcard</strong>, and will match any combination of characters.</p>
+<pre><code class="language-typescript">
+forRoutes(&#123; path: &#39;ab*cd&#39;, method: RequestMethod.ALL &#125;);</code></pre>
+<p>Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters <code>?</code>, <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The hyphen ( <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.</p>
+<h4 appAnchor id="middleware-consumer">Middleware consumer</h4>
+<p>The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All of them can be simply <strong>chained</strong>. The <code>forRoutes()</code> can take a single string, multiple strings, <code>RouteInfo</code> object, a controller class and even multiple controller classes. In most cases you&#39;ll probably just pass the <strong>controllers</strong> and separate them by a comma. Below is an example with a single controller:</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: app8b0421d4a5c34992d31b68ebcf8afe3c3bff10a1.isJsActive }}
+<app-tabs #app8b0421d4a5c34992d31b68ebcf8afe3c3bff10a1></app-tabs>
+</span><pre [class.hide]="app8b0421d4a5c34992d31b68ebcf8afe3c3bff10a1.isJsActive"><code class="language-typescript">
+import &#123; Module, NestModule, MiddlewareConsumer &#125; from &#39;@nestjs/common&#39;;
+import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
+import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
+
+@Module(&#123;
+  imports: [CatsModule],
+&#125;)
+export class ApplicationModule implements NestModule &#123;
+  configure(consumer: MiddlewareConsumer) &#123;
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(CatsController);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app8b0421d4a5c34992d31b68ebcf8afe3c3bff10a1.isJsActive"><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
+import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
+
+@Module(&#123;
+  imports: [CatsModule],
+&#125;)
+export class ApplicationModule &#123;
+  configure(consumer) &#123;
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes(CatsController);
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> The <code>apply()</code> method may either take a single middleware, or an <strong>array of middleware</strong>.
+</blockquote>
+<p>Whilst class is used, quite often we might want to <strong>exclude</strong> certain routes. That is very intuitive due to the <code>exclude()</code> method.</p>
+<pre><code class="language-typescript">
+consumer
+  .apply(LoggerMiddleware)
+  .exclude(
+    &#123; path: &#39;cats&#39;, method: RequestMethod.GET &#125;,
+    &#123; path: &#39;cats&#39;, method: RequestMethod.POST &#125;,
+  )
+  .forRoutes(CatsController);</code></pre>
+<p>Consequently, <code>LoggerMiddleware</code> will be bounded to all routes defined inside <code>CatsController</code> except these two passed to the <code>exclude()</code> function. Please note that <code>exclude()</code> method <strong>won&#39;t work</strong> with your functional middleware. In addition, this function doesn&#39;t exclude paths from more generic routes (e.g. wildcards). In such case, you should rather put your paths-restriction logic directly to the middleware and, for example, compare a request&#39;s URL.</p>
+<h4 appAnchor id="functional-middleware">Functional middleware</h4>
+<p>The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies. Why can&#39;t we just use a simple function? It&#39;s a good question, cause in fact - we can. This type of the middleware is called <strong>functional middleware</strong>. Let&#39;s transform the logger into a function.</p>
+
+<span class="filename">
+  {{ 'logger.middleware' | extension: appf42768a6c0e4583430229e2898cc6c124eed62ed.isJsActive }}
+<app-tabs #appf42768a6c0e4583430229e2898cc6c124eed62ed></app-tabs>
+</span><pre><code class="language-typescript">
+export function logger(req, res, next) &#123;
+  console.log(`Request...`);
+  next();
+&#125;;</code></pre><p>And use it within the <code>ApplicationModule</code>:</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: appccbfff3aec6d6f325593d32e89edca10863700f4.isJsActive }}
+<app-tabs #appccbfff3aec6d6f325593d32e89edca10863700f4></app-tabs>
+</span><pre><code class="language-typescript">
+consumer
+  .apply(logger)
+  .forRoutes(CatsController);</code></pre><blockquote class="
+info "><strong>Hint</strong> Let&#39;s consider using <strong>functional middleware</strong> every time when your middleware doesn&#39;t need any dependencies.
+</blockquote>
+<h4 appAnchor id="multiple-middleware">Multiple middleware</h4>
+<p>As mentioned before, in order to bind multiple middleware that are executed sequentially, we can separate them by a comma inside the <code>apply()</code> method.</p>
+<pre><code class="language-typescript">
+consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);</code></pre>
+<h4 appAnchor id="global-middleware">Global middleware</h4>
+<p>In order to tie a middleware to each registered route at once, we can take advantage of <code>use()</code> method that is supplied by the <code>INestApplication</code> instance:</p>
+<pre><code class="language-typescript">
 const app = await NestFactory.create(ApplicationModule);
 app.use(logger);
 await app.listen(3000);</code></pre>
 
-</div>
+    </div>
