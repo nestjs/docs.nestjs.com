@@ -141,6 +141,7 @@ export class MenuComponent implements OnInit {
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
         { title: 'Prisma', path: '/recipes/prisma' },
+        { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
       ],
     },
     {

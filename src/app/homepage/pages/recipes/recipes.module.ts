@@ -9,6 +9,7 @@ import { PrismaComponent } from './prisma/prisma.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './swagger/swagger.component';
+import { TerminusComponent } from './terminus/terminus.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,11 @@ const routes: Routes = [
     component: PrismaComponent,
     data: { title: 'Prisma' },
   },
+  {
+    path: 'terminus',
+    component: TerminusComponent,
+    data: { title: 'Health checks (Terminus)' },
+  },
 ];
 
 @NgModule({
@@ -57,6 +63,7 @@ const routes: Routes = [
     SwaggerComponent,
     PrismaComponent,
     CqrsComponent,
+    TerminusComponent,
   ],
 })
 export class RecipesModule {}
