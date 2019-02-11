@@ -81,7 +81,7 @@ const configServiceProvider = {
 export class ApplicationModule {}
 ```
 
-> **Notice** Instead of a custom token, we have used the `ConfigService` class, and therefore we have overridden the default implementation.
+> warning **Notice** Instead of a custom token, we have used the `ConfigService` class, and therefore we have overridden the default implementation.
 
 In this case, even if any class depends on `ConfigService`, Nest will inject an instance of the provided class (`DevelopmentConfigService` or `ProductionConfigService`) instead.
 

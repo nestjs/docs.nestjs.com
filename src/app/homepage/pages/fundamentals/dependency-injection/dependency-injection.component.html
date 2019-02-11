@@ -20,13 +20,13 @@ export class ApplicationModule &#123;&#125;</code></pre>
 <p>In order to inject custom provider, we use the <code>@Inject()</code> decorator. This decorator takes a single argument - the token.</p>
 
 <span class="filename">
-<app-tabs #app4151a13aacbbd4aeeb4e71d6c1e1decdd6fa46c7></app-tabs>
-</span><pre [class.hide]="app4151a13aacbbd4aeeb4e71d6c1e1decdd6fa46c7.isJsActive"><code class="language-typescript">
+<app-tabs #app9300f94eb79c72cb84d955465422d15a39a76522></app-tabs>
+</span><pre [class.hide]="app9300f94eb79c72cb84d955465422d15a39a76522.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsRepository &#123;
   constructor(@Inject(&#39;CONNECTION&#39;) connection: Connection) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app4151a13aacbbd4aeeb4e71d6c1e1decdd6fa46c7.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app9300f94eb79c72cb84d955465422d15a39a76522.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(&#39;CONNECTION&#39;)
 export class CatsRepository &#123;
@@ -66,15 +66,15 @@ const configServiceProvider = &#123;
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
 <blockquote class="
-"><strong>Notice</strong> Instead of a custom token, we have used the <code>ConfigService</code> class, and therefore we have overridden the default implementation.
+warning "><strong>Notice</strong> Instead of a custom token, we have used the <code>ConfigService</code> class, and therefore we have overridden the default implementation.
 </blockquote>
 <p>In this case, even if any class depends on <code>ConfigService</code>, Nest will inject an instance of the provided class (<code>DevelopmentConfigService</code> or <code>ProductionConfigService</code>) instead.</p>
 <h4 appAnchor id="use-factory">Use factory</h4>
 <p>The <code>useFactory</code> is a way of creating providers <strong>dynamically</strong>. The actual provider will be equal to a returned value of the factory function. The factory function can either depend on several different providers or stay completely independent. It means that factory may accept arguments, that Nest will resolve and pass during the instantiation process. Additionally, this function can return value <strong>asynchronously</strong>. It&#39;s explained in more detail here. Use it when your provider has to be dynamically calculated or in case to resolve an asynchronous operation.</p>
 
 <span class="filename">
-<app-tabs #app0be2c1ba32cca48b4590638ac700781ee0ee42a3></app-tabs>
-</span><pre [class.hide]="app0be2c1ba32cca48b4590638ac700781ee0ee42a3.isJsActive"><code class="language-typescript">
+<app-tabs #app71a6c76ed40da0e1c591b85d9862e5f8782aa075></app-tabs>
+</span><pre [class.hide]="app71a6c76ed40da0e1c591b85d9862e5f8782aa075.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -88,7 +88,7 @@ const connectionFactory = &#123;
   providers: [connectionFactory],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!app0be2c1ba32cca48b4590638ac700781ee0ee42a3.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app71a6c76ed40da0e1c591b85d9862e5f8782aa075.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;
@@ -108,8 +108,8 @@ info "><strong>Hint</strong> If your factory needs other providers, you have to 
 <p>In order to export a custom provider, we can either use a token or a whole object. The following example shows a token case:</p>
 
 <span class="filename">
-<app-tabs #app27bacc40aa952bf9c69bf4b15fe69008636da357></app-tabs>
-</span><pre [class.hide]="app27bacc40aa952bf9c69bf4b15fe69008636da357.isJsActive"><code class="language-typescript">
+<app-tabs #app98a150714ecd6b46a94413744303afa8d2a5ab77></app-tabs>
+</span><pre [class.hide]="app98a150714ecd6b46a94413744303afa8d2a5ab77.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -124,7 +124,7 @@ const connectionFactory = &#123;
   exports: [&#39;CONNECTION&#39;],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!app27bacc40aa952bf9c69bf4b15fe69008636da357.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app98a150714ecd6b46a94413744303afa8d2a5ab77.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;
@@ -141,8 +141,8 @@ const connectionFactory = &#123;
 export class ApplicationModule &#123;&#125;</code></pre><p>But you can use a whole object as well:</p>
 
 <span class="filename">
-<app-tabs #app1b897a68ea7119dace3fa89b789576ffe0356445></app-tabs>
-</span><pre [class.hide]="app1b897a68ea7119dace3fa89b789576ffe0356445.isJsActive"><code class="language-typescript">
+<app-tabs #appa61b90d2f3834b78735fd04d017d16672e230ba3></app-tabs>
+</span><pre [class.hide]="appa61b90d2f3834b78735fd04d017d16672e230ba3.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -157,7 +157,7 @@ const connectionFactory = &#123;
   exports: [connectionFactory],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!app1b897a68ea7119dace3fa89b789576ffe0356445.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa61b90d2f3834b78735fd04d017d16672e230ba3.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;

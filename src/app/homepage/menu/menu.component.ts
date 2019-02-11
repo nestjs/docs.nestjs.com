@@ -51,6 +51,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/circular-dependency',
         },
         {
+          title: 'Injection scopes',
+          path: '/fundamentals/injection-scopes',
+        },
+        {
           title: 'Platform agnosticism',
           path: '/fundamentals/platform-agnosticism',
         },

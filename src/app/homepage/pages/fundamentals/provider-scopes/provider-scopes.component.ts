@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-authentication',
-  templateUrl: './authentication.component.html',
+  selector: 'app-provider-scopes',
+  templateUrl: './provider-scopes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthenticationComponent extends BasePageComponent {}
+export class ProviderScopesComponent extends BasePageComponent {}
