@@ -91,6 +91,7 @@ export class AppService {
 
   get configServiceValidation() {
     return `
+import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
 import * as fs from 'fs';
 
