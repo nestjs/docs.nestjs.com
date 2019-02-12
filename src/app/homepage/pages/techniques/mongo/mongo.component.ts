@@ -76,7 +76,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CatSchema } from './schemas/cat.schema';
 
 @Injectable()
-@Dependencies(InjectModel(CatSchema))
+@Dependencies(InjectModel('Cat'))
 export class CatsService {
   constructor(catModel) {
     this.catModel = catModel;
