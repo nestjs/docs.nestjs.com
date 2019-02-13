@@ -1,111 +1,152 @@
-<div class="content">
-  <h3>Resolvers</h3>
-  <p>
-    Typically, you have to create a resolvers map manually. The <code>@nestjs/graphql</code>
-    package, on the other hand, generate resolvers map automatically using the metadata provided
-    by the decorators. In order to learn the library basics, we'll create a simple authors API. Firstly, let's define
-    our types in SDL (read <a href="http://graphql.org/learn/schema/#type-language" target="blank">more</a>):
-  </p>
-  <pre><code class="language-java">{{ typeDefs }}</code></pre>
-  <p>
-    Our GraphQL schema contains single query exposed, the <code>author(id: Int!): Author</code>.
-    Now, let's create an <code>AuthorResolver</code>.
-  </p>
-  <pre><code class="language-typescript">{{ resolvers }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don't have to mark a class as an <code>@Injectable()</code>,
-    otherwise, it's necessary.
-  </blockquote>
-  <p>
-    The <code>@Resolver()</code> decorator does not affect queries and mutations (neither <code>@Query()</code> nor
-    <code>@Mutation()</code> decorators).
-    It only informs Nest that each <code>@ResolveProperty()</code> inside this particular class has a parent, which is
-    an <code>Author</code> type
-    in this case (<code>Author.posts</code> relation).
-  </p>
-  <p>
-    Conventionally, we would use something like <code>getAuthor()</code> or <code>getPosts()</code> as method names.
-    We
-    can do that easily as well by moving the real names between decorator's parentheses.
-  </p>
-  <pre><code class="language-typescript">{{ realWorldExample }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>@Resolver()</code> decorator can be used at the method-level as well.
-  </blockquote>
-  <h4>Decorators</h4>
-  <p>
-    You may note that we refer to the following arguments using dedicated decorators. Below is a
-    comparison
-    of the provided decorators and the plain Apollo parameters they represent.
-  </p>
-  <table>
-    <tbody>
-      <tr>
-        <td><code>@Root()</code> and <code>@Parent()</code></td>
-        <td><code>root</code>/<code>parent</code></td>
-      </tr>
-      <tr>
-        <td><code>@Context(param?: string)</code></td>
-        <td><code>context</code> / <code>context[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Info(param?: string)</code></td>
-        <td><code>info</code> / <code>info[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Args(param?: string)</code></td>
-        <td><code>args</code> / <code>args[param]</code></td>
-      </tr>
-    </tbody>
-  </table>
-  <h4>Module</h4>
-  <p>
-    Once we're done here, we have to register the <code>AuthorResolver</code>
-    somewhere,
-    for example inside the newly created <code>AuthorsModule</code>.
-  </p>
-  <span class="filename">
-    <app-tabs></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ authorsModule }}</code></pre>
-  <p>
-    The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct
-    resolvers
-    map automatically. The only thing that you should be aware of is that you need to import this module somewhere,
-    therefore
-    Nest will know that <code>AuthorsModule</code> truly exists.
-  </p>
-  <blockquote class="info">
-    <strong>Hint</strong> Learn more about GraphQL queries <a href="http://graphql.org/learn/queries/" target="blank">here</a>.
-  </blockquote>
-  <h4>Typings</h4>
-  <p>
-    Separate creation of both GraphQL types and corresponding TypeScript definitions creates unnecessary redundancy.
-    Eventually, we end up without a single source of truth and each change made within SDL forces us to adjust
-    interfaces
-    as well. Thus, the <code>@nestjs/graphql</code> package serves another interesting functionality, which is
-    the automatic generation of TS definitions using abstract syntax tree (AST). In order to enable it, simply
-    customize <code>definitions</code> property.
-  </p>
-  <pre><code class="language-typescript">{{ generateTypings }}</code></pre>
-  <p>
-    The <code>src/graphql.ts</code> indicates where to save TypeScript output. By default, all types are transformed
-    to the interfaces.
-    However, you can switch to classes instead by changing <code>outputAs</code> property to <code>class</code>.
-  </p>
-  <pre><code class="language-typescript">{{ generateTypingsAsClass }}</code></pre>
-  <p>
-    Consequently, it will generate the following file:
-  </p>
-  <pre><code class="language-typescript">{{ generatedTypings }}</code></pre>
-  <p>
-    Classes allow you using <strong>decorators</strong> which makes them extremely useful in terms of the validation
-    purposes (read <a routerLink="/techniques/validation">more</a>). For example:
-  </p>
-  <pre><code class="language-typescript">{{ validateInput }}</code></pre>
-  <blockquote class="warning">
-    <strong>Notice</strong>
-    To enable auto-validation of your inputs (and parameters), you have to use <code>ValidationPipe</code>. Read more
-    about validation <a routerLink="/techniques/validation">here</a> or more specifically about pipes <a routerLink="/pipes">here</a>.
-  </blockquote>
-</div>
+<div class="content" #contentReference>
+      <h3 id="resolvers">Resolvers</h3>
+<p>Typically, you have to create a resolvers map manually. The <code>@nestjs/graphql</code> package, on the other hand, generate resolvers map automatically using the metadata provided by the decorators. In order to learn the library basics, we&#39;ll create a simple authors API. Firstly, let&#39;s define our types in SDL (read <a href="http://graphql.org/learn/schema/#type-language">more</a>):</p>
+<pre><code class="language-java">
+type Author &#123;
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post]
+&#125;
+
+type Post &#123;
+  id: Int!
+  title: String
+  votes: Int
+&#125;
+
+type Query &#123;
+  author(id: Int!): Author
+&#125;</code></pre>
+<p>Our GraphQL schema contains single query exposed, the <code>author(id: Int!): Author</code>. Now, let&#39;s create an <code>AuthorResolver</code>.</p>
+<pre><code class="language-typescript">
+@Resolver(&#39;Author&#39;)
+export class AuthorResolver &#123;
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) &#123;&#125;
+
+  @Query()
+  async author(@Args(&#39;id&#39;) id: number) &#123;
+    return await this.authorsService.findOneById(id);
+  &#125;
+
+  @ResolveProperty()
+  async posts(@Parent() author) &#123;
+    const &#123; id &#125; = author;
+    return await this.postsService.findAll(&#123; authorId: id &#125;);
+  &#125;
+&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> If you use the <code>@Resolver()</code> decorator, you don&#39;t have to mark a class as an <code>@Injectable()</code>, otherwise, it&#39;s necessary.
+</blockquote>
+<p>The <code>@Resolver()</code> decorator does not affect queries and mutations (neither <code>@Query()</code> nor <code>@Mutation()</code> decorators). It only informs Nest that each <code>@ResolveProperty()</code> inside this particular class has a parent, which is an <code>Author</code> type in this case (<code>Author.posts</code> relation).</p>
+<p>Conventionally, we would use something like <code>getAuthor()</code> or <code>getPosts()</code> as method names. We can do that easily as well by moving the real names between decorator&#39;s parentheses.</p>
+<pre><code class="language-typescript">
+@Resolver(&#39;Author&#39;)
+export class AuthorResolver &#123;
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) &#123;&#125;
+
+  @Query(&#39;author&#39;)
+  async getAuthor(@Args(&#39;id&#39;) id: number) &#123;
+    return await this.authorsService.findOneById(id);
+  &#125;
+
+  @ResolveProperty(&#39;posts&#39;)
+  async getPosts(@Parent() author) &#123;
+    const &#123; id &#125; = author;
+    return await this.postsService.findAll(&#123; authorId: id &#125;);
+  &#125;
+&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> The <code>@Resolver()</code> decorator can be used at the method-level as well.
+</blockquote>
+<h4 appAnchor id="decorators"><span>Decorators</span></h4>
+<p>You may note that we refer to the following arguments using dedicated decorators. Below is a comparison of the provided decorators and the plain Apollo parameters they represent.</p>
+<table>
+  <tbody>
+    <tr>
+      <td><code>@Root()</code> and <code>@Parent()</code></td>
+      <td><code>root</code>/<code>parent</code></td>
+    </tr>
+    <tr>
+      <td><code>@Context(param?: string)</code></td>
+      <td><code>context</code> / <code>context[param]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Info(param?: string)</code></td>
+      <td><code>info</code> / <code>info[param]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Args(param?: string)</code></td>
+      <td><code>args</code> / <code>args[param]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 appAnchor id="module"><span>Module</span></h4>
+<p>Once we&#39;re done here, we have to register the <code>AuthorResolver</code> somewhere, for example inside the newly created <code>AuthorsModule</code>.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  imports: [PostsModule],
+  providers: [AuthorsService, AuthorResolver],
+&#125;)
+export class AuthorsModule &#123;&#125;</code></pre>
+<p>The <code>GraphQLModule</code> will take care of reflecting the metadata and transforming class into the correct resolvers map automatically. The only thing that you should be aware of is that you need to import this module somewhere, therefore Nest will know that <code>AuthorsModule</code> truly exists.</p>
+<blockquote class="
+info "><strong>Hint</strong> Learn more about GraphQL queries <a href="http://graphql.org/learn/queries/">here</a>.
+</blockquote>
+<h4 appAnchor id="typings"><span>Typings</span></h4>
+<p>Separate creation of both GraphQL types and corresponding TypeScript definitions creates unnecessary redundancy. Eventually, we end up without a single source of truth and each change made within SDL forces us to adjust interfaces as well. Thus, the <code>@nestjs/graphql</code> package serves another interesting functionality, which is the automatic generation of TS definitions using abstract syntax tree (AST). In order to enable it, simply customize <code>definitions</code> property.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+  definitions: &#123;
+    path: join(process.cwd(), &#39;src/graphql.ts&#39;),
+  &#125;,
+&#125;),</code></pre>
+<p>The <code>src/graphql.ts</code> indicates where to save TypeScript output. By default, all types are transformed to the interfaces. However, you can switch to classes instead by changing <code>outputAs</code> property to <code>class</code>.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+  definitions: &#123;
+    path: join(process.cwd(), &#39;src/graphql.ts&#39;),
+    outputAs: &#39;class&#39;,
+  &#125;,
+&#125;),</code></pre>
+<p>Consequently, it will generate the following file:</p>
+<pre><code class="language-typescript">
+export class Author &#123;
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  posts?: Post[];
+&#125;
+
+export class Post &#123;
+  id: number;
+  title?: string;
+  votes?: number;
+&#125;
+
+export abstract class IQuery &#123;
+  abstract author(id: number): Author | Promise&lt;Author&gt;;
+&#125;</code></pre>
+<p>Classes allow you using <strong>decorators</strong> which makes them extremely useful in terms of the validation purposes (read <a routerLink="/techniques/validation">more</a>). For example:</p>
+<pre><code class="language-typescript">
+import &#123; MinLength, MaxLength &#125; from &#39;class-validator&#39;;
+
+export class CreatePostInput &#123;
+  @MinLength(3)
+  @MaxLength(50)
+  title: string;
+&#125;</code></pre>
+<blockquote class="
+warning "><strong>Notice</strong> To enable auto-validation of your inputs (and parameters), you have to use <code>ValidationPipe</code>. Read more about validation <a routerLink="/techniques/validation">here</a> or more specifically about pipes <a routerLink="/pipes">here</a>.
+</blockquote>
+
+    </div>

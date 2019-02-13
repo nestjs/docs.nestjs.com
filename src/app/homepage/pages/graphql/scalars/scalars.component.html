@@ -1,33 +1,59 @@
-<div class="content">
-  <h3>Scalars</h3>
-  <p>
-    In order to define a custom scalar (read more about scalars <a href="https://www.apollographql.com/docs/graphql-tools/scalars.html"
-      target="blank">here</a>), we have to create a type definition and a dedicated resolver as well. Here (as in the official
-    documentation), we’ll take the <code>graphql-type-json</code> package for demonstration purposes. This npm package defines
-    a <code>JSON</code> GraphQL scalar type. Firstly, let's install the package:
-  </p>
-  <pre><code class="language-bash">
-$ npm i --save graphql-type-json
-</code></pre>
-  <p>
-    Once the package is installed, we have to pass a custom resolver to the <code>forRoot()</code> method:
-  </p>
-  <pre><code class="language-typescript">{{ jsonScalar }}</code></pre>
-  <p>
-    Now we can use <code>JSON</code> scalar in our type definitions:
-  </p>
-  <pre><code class="language-java">{{ typeDefJson }}</code></pre>
-  <h4>Classes</h4>
-  <p>
-    Another form of defining the scalar type is to create a simple class. Let's say that we would like to enhance our schema
-    with the <code>Date</code> type.
-  </p>
-  <pre><code class="language-typescript">{{ classScalar }}</code></pre>
-  <p>
-    Afterward, we need to register <code>DateScalar</code> as a provider.
-  </p>
-  <pre><code class="language-typescript">{{ registerDateScalar }}</code></pre>
-  <p>
-    And now we are able to use <code>Date</code> scalar in our type definitions.
-  </p>
-</div>
+<div class="content" #contentReference>
+      <h3 id="scalars">Scalars</h3>
+<p>In order to define a custom scalar (read more about scalars <a href="https://www.apollographql.com/docs/graphql-tools/scalars.html">here</a>), we have to create a type definition and a dedicated resolver as well. Here (as in the official documentation), we’ll take the <code>graphql-type-json</code> package for demonstration purposes. This npm package defines a <code>JSON</code> GraphQL scalar type. Firstly, let&#39;s install the package:</p>
+<pre><code class="language-bash">
+$ npm i --save graphql-type-json</code></pre>
+<p>Once the package is installed, we have to pass a custom resolver to the <code>forRoot()</code> method:</p>
+<pre><code class="language-typescript">
+import * as GraphQLJSON from &#39;graphql-type-json&#39;;
+
+@Module(&#123;
+  imports: [
+    GraphQLModule.forRoot(&#123;
+      typePaths: [&#39;./**/*.graphql&#39;],
+      resolvers: &#123; JSON: GraphQLJSON &#125;,
+    &#125;),
+  ],
+&#125;)
+export class ApplicationModule &#123;&#125;</code></pre>
+<p>Now we can use <code>JSON</code> scalar in our type definitions:</p>
+<pre><code class="language-java">
+scalar JSON
+
+type Foo &#123;
+  field: JSON
+&#125;</code></pre>
+<h4 appAnchor id="classes"><span>Classes</span></h4>
+<p>Another form of defining the scalar type is to create a simple class. Let&#39;s say that we would like to enhance our schema with the <code>Date</code> type.</p>
+<pre><code class="language-typescript">
+import &#123; Scalar &#125; from &#39;@nestjs/graphql&#39;;
+import &#123; Kind &#125; from &#39;graphql&#39;;
+
+@Scalar(&#39;Date&#39;)
+export class DateScalar &#123;
+  description = &#39;Date custom scalar type&#39;;
+
+  parseValue(value) &#123;
+    return new Date(value); // value from the client
+  &#125;
+
+  serialize(value) &#123;
+    return value.getTime(); // value sent to the client
+  &#125;
+
+  parseLiteral(ast) &#123;
+    if (ast.kind === Kind.INT) &#123;
+      return parseInt(ast.value, 10); // ast value is always in string format
+    &#125;
+    return null;
+  &#125;
+&#125;</code></pre>
+<p>Afterward, we need to register <code>DateScalar</code> as a provider.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  providers: [DateScalar],
+&#125;)
+export class CommonModule &#123;&#125;</code></pre>
+<p>And now we are able to use <code>Date</code> scalar in our type definitions.</p>
+
+    </div>

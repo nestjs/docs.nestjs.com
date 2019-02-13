@@ -1,21 +1,44 @@
-<div class="content">
-  <h3>Lifecycle Events</h3>
-  <p>
-    There are two application lifecycle events, <code>OnModuleInit</code> and <code>OnModuleDestroy</code> hooks. 
-    It's a good practice to use them for all the initialization stuff and avoid putting anything directly in the constructor.
-   The constructor should be used only to initialize the class members and for injecting the required dependencies.
-  </p>
-  <span class="filename">
-    <app-tabs #lifecycleEventsT></app-tabs>
-  </span>
-  <pre [class.hide]="lifecycleEventsT.isJsActive"><code class="language-typescript">{{ lifecycleEvents }}</code></pre>
-  <pre [class.hide]="!lifecycleEventsT.isJsActive"><code class="language-typescript">{{ lifecycleEventsJs }}</code></pre>
-  <p>
-    In order to defer initialization of the application, you can either use <code>await</code> keyword or return a <code>Promise</code>.
-  </p>
-  <span class="filename">
-    <app-tabs #asyncLifecycleEventT></app-tabs>
-  </span>
-  <pre [class.hide]="asyncLifecycleEventT.isJsActive"><code class="language-typescript">{{ asyncLifecycleEvent }}</code></pre>
-  <pre [class.hide]="!asyncLifecycleEventT.isJsActive"><code class="language-typescript">{{ asyncLifecycleEventJs }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="lifecycle-events">Lifecycle Events</h3>
+<p>There are two application lifecycle events, <code>OnModuleInit</code> and <code>OnModuleDestroy</code> hooks. It&#39;s a good practice to use them for all the initialization stuff and avoid putting anything directly in the constructor. The constructor should be used only to initialize the class members and for injecting the required dependencies.</p>
+
+<span class="filename">
+<app-tabs #appa08439f103fc1083afe327f8ebe3a37300b4f846></app-tabs>
+</span><pre [class.hide]="appa08439f103fc1083afe327f8ebe3a37300b4f846.isJsActive"><code class="language-typescript">
+import &#123; Injectable, OnModuleInit, OnModuleDestroy &#125; from &#39;@nestjs/common&#39;;
+
+@Injectable()
+export class UsersService implements OnModuleInit, OnModuleDestroy &#123;
+  onModuleInit() &#123;
+    console.log(`Initialization...`);
+  &#125;
+
+  onModuleDestroy() &#123;
+    console.log(`Cleanup...`);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appa08439f103fc1083afe327f8ebe3a37300b4f846.isJsActive"><code class="language-typescript">
+import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
+
+@Injectable()
+export class UsersService &#123;
+  onModuleInit() &#123;
+    console.log(`Initialization...`);
+  &#125;
+
+  onModuleDestroy() &#123;
+    console.log(`Cleanup...`);
+  &#125;
+&#125;</code></pre><p>In order to defer initialization of the application, you can either use <code>await</code> keyword or return a <code>Promise</code>.</p>
+
+<span class="filename">
+<app-tabs #app20043371c6919eb975b56805b4f2b61ffb9bc601></app-tabs>
+</span><pre [class.hide]="app20043371c6919eb975b56805b4f2b61ffb9bc601.isJsActive"><code class="language-typescript">
+async onModuleInit(): Promise&lt;any&gt; &#123;
+  await this.fetch();
+&#125;</code></pre>
+<pre [class.hide]="!app20043371c6919eb975b56805b4f2b61ffb9bc601.isJsActive"><code class="language-typescript">
+async onModuleInit() &#123;
+  await this.fetch();
+&#125;</code></pre>
+    </div>

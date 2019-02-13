@@ -1,147 +1,158 @@
-<div class="content">
-  <h3>Basics</h3>
-  <p>
-    The Nest microservice is a type of application that uses a different <strong>transport</strong> layer than HTTP.
-  </p>
-  <figure><img src="/assets/Microservices_1.png" /></figure>
-  <h4>Installation</h4>
-  <p>
-    Firstly, we need to install the required package:
-  </p>
-  <pre><code class="language-typescript">
+<div class="content" #contentReference>
+      <h3 id="basics">Basics</h3>
+<p>The Nest microservice is a type of application that uses a different <strong>transport</strong> layer than HTTP.</p>
+<figure><img src="/assets/Microservices_1.png" /></figure>
+
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>Firstly, we need to install the required package:</p>
+<pre><code class="language-bash">
 $ npm i --save @nestjs/microservices</code></pre>
-  <h4>Overview</h4>
-  <p>
-    In general, Nest supports a bunch of built-in transporters. They are based on <strong>request-response</strong> paradigm
-    and a whole communication logic is hidden behind an abstraction layer. Thanks to that you can easily switch between transporters
-    without changing any line of your code. We don't support streaming platforms with log based persistence, such as <a href="https://docs.confluent.io/3.0.0/streams/"
-      target="blank">Kafka</a> or <a href="https://github.com/nats-io/node-nats-streaming" target="blank">NATS streaming</a>
-    because they have been created to solve a different range of issues. However, you can still use them with Nest by making
-    use of <a routerLink="/execution-context">execution context</a> feature.
-  </p>
-  <p>
-    In order to create a microservice, we use <code>createMicroservice()</code> method of the <code>NestFactory</code> class.
-    By default, a microservice listens on messages via <strong>TCP protocol</strong>.
-  </p>
-  <span class="filename">
-    {{ 'main' | extension: bootstrapT.isJsActive }}
-    <app-tabs #bootstrapT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ bootstrap }}</code></pre>
-  <p>
-    The second argument of the <code>createMicroservice()</code> method is an options object. This object may have two members:
-  </p>
-  <table>
-    <tr>
-      <td><code>transport</code></td>
-      <td>Specifies the transporter</td>
-    </tr>
-    <tr>
-      <td><code>options</code></td>
-      <td>A transporter-specific options object that determines transporter behaviour</td>
-    </tr>
-  </table>
-  <p>
-    The <code>options</code> object is different depending on chosen transporter. A <strong>TCP</strong> transporter exposes
-    few properties described below.
-  </p>
-  <table>
-    <tr>
-      <td><code>host</code></td>
-      <td>Connection hostname</td>
-    </tr>
-    <tr>
-      <td><code>port</code></td>
-      <td>Connection port</td>
-    </tr>
-    <tr>
-      <td><code>retryAttempts</code></td>
-      <td>A total amount of connection attempts</td>
-    </tr>
-    <tr>
-      <td><code>retryDelay</code></td>
-      <td>A connection retrying delay (ms)</td>
-    </tr>
-  </table>
-  <h4>Patterns</h4>
-  <p>
-    A microservice recognizes messages through <strong>patterns</strong>. The pattern is a plain value, for example, a literal
-    object, string, or a symbol. In order to create a pattern handler, we use the <code>@MessagePattern()</code> decorator
-    which is imported from the <code>@nestjs/microservices</code> package.
-  </p>
-  <span class="filename">
-    {{ 'math.controller' | extension: mathControllerT.isJsActive }}
-    <app-tabs #mathControllerT></app-tabs>
-  </span>
-  <pre [class.hide]="mathControllerT.isJsActive"><code class="language-typescript">{{ mathController }}</code></pre>
-  <pre [class.hide]="!mathControllerT.isJsActive"><code class="language-typescript">{{ mathControllerJs }}</code></pre>
-  <p>
-    The <code>sum()</code> handler is listening to messages that fulfil the <code>cmd: 'sum'</code> pattern. The pattern
-    handler takes a single argument, the <code>data</code> passed from the client. In this case, the data is an array of
-    numbers which has to be accumulated.
-  </p>
-  <h4>Asynchronous responses</h4>
-  <p>
-    Each pattern handler is able to respond either synchronously or <strong>asynchronously</strong>. Hence, <code>async</code>    methods
-    are supported.
-  </p>
-  <span class="filename">
-    {{ 'math.controller' | extension: asyncT.isJsActive }}
-    <app-tabs #asyncT></app-tabs>
-  </span>
-  <pre [class.hide]="asyncT.isJsActive"><code class="language-typescript">{{ asyncPromise }}</code></pre>
-  <pre [class.hide]="!asyncT.isJsActive"><code class="language-typescript">{{ asyncPromiseJs }}</code></pre>
-  <p>
-    Additionally, we are able to return the <a href="https://github.com/reactivex/rxjs" target="blank">Rx</a>&nbsp;<code>Observable</code>,
-    and thus the values will be emitted until the stream is completed.
-  </p>
-  <span class="filename">
-    {{ 'math.controller' | extension: streamingT.isJsActive }}
-    <app-tabs #streamingT></app-tabs>
-  </span>
-  <pre [class.hide]="streamingT.isJsActive"><code class="language-typescript">{{ streaming }}</code></pre>
-  <pre [class.hide]="!streamingT.isJsActive"><code class="language-typescript">{{ streamingJs }}</code></pre>
-  <p>
-    Above message handler will respond <strong>3 times</strong> (with each item from the array).
-  </p>
-  <h4>Client</h4>
-  <p>
-    In order to connect with the Nest microservice, we are using the <code>ClientProxy</code> class which instance is assigned
-    to a property through <code>@Client()</code> decorator. This decorator takes a single argument. It is the same object
-    as a Nest microservice options object.
-  </p>
-  <pre><code class="language-typescript">{{ clientDecorator }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> Both <code>@Client()</code> decorator and <code>ClientProxy</code> class are imported from the
-    <code>@nestjs/microservices</code> package.
-  </blockquote>
-  <p>
-    Another solution would be to manually create the <code>ClientProxy</code> instance using the <code>ClientProxyFactory</code>    (exported
-    from <code>@nestjs/microservices</code> package).
-  </p>
-  <pre><code class="language-typescript">{{ clientProxy }}</code></pre>
-  <p>
-    The <code>ClientProxy</code> is <strong>lazy</strong>. It doesn't initiate a connection immediately. Instead, it will
-    be established before the first microservice call, and then reused across each subsequent call. However, if you want
-    to delay an application's bootstrapping process and manually initialize a connection, you can use a <code>connect()</code>    method
-    inside the <code>OnModuleInit</code> lifecycle hook.
-  </p>
-  <pre><code class="language-typescript">{{ connect }}</code></pre>
-  <p>
-    If the connection cannot be created, the <code>connect()</code> method will reject with the corresponding error object.
-  </p>
-  <p>
-    The <code>ClientProxy</code> exposes a <code>send()</code> method. This method is intended to call the microservice and
-    returns the <code>Observable</code> with its response, meaning, we can subscribe to the emitted values easily.
-  </p>
-  <span class="filename">
-    <app-tabs #sendMethodT></app-tabs>
-  </span>
-  <pre [class.hide]="sendMethodT.isJsActive"><code class="language-typescript">{{ sendMethod }}</code></pre>
-  <pre [class.hide]="!sendMethodT.isJsActive"><code class="language-typescript">{{ sendMethodJs }}</code></pre>
-  <p>
-    The <code>send()</code> method takes 2 arguments, <code>pattern</code> and <code>payload</code>. The <code>pattern</code>    has
-    to be equal to this one defined in the <code>@MessagePattern()</code> decorator, while <code>payload</code> is a message
-    that we want to transmit to another microservice.
-  </p>
-</div>
+<h4 appAnchor id="overview"><span>Overview</span></h4>
+<p>In general, Nest supports a bunch of built-in transporters. They are based on <strong>request-response</strong> paradigm and a whole communication logic is hidden behind an abstraction layer. Thanks to that you can easily switch between transporters without changing any line of your code. We don&#39;t support streaming platforms with log based persistence, such as <a href="https://docs.confluent.io/3.0.0/streams/">Kafka</a> or <a href="https://github.com/nats-io/node-nats-streaming">NATS streaming</a> because they have been created to solve a different range of issues. However, you can still use them with Nest by making use of <a routerLink="/execution-context">execution context</a> feature.</p>
+<p>In order to create a microservice, we use <code>createMicroservice()</code> method of the <code>NestFactory</code> class. By default, a microservice listens on messages via <strong>TCP protocol</strong>.</p>
+
+<span class="filename">
+  {{ 'main' | extension: app0029b98dccd1b6d3f3ce81927238c580daa93884.isJsActive }}
+<app-tabs #app0029b98dccd1b6d3f3ce81927238c580daa93884></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; Transport &#125; from &#39;@nestjs/microservices&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
+    transport: Transport.TCP,
+  &#125;);
+  app.listen(() =&gt; console.log(&#39;Microservice is listening&#39;));
+&#125;
+bootstrap();</code></pre><p>The second argument of the <code>createMicroservice()</code> method is an options object. This object may have two members:</p>
+<table>
+  <tr>
+    <td><code>transport</code></td>
+    <td>Specifies the transporter</td>
+  </tr>
+  <tr>
+    <td><code>options</code></td>
+    <td>A transporter-specific options object that determines transporter behaviour</td>
+  </tr>
+</table>
+<p>
+  The <code>options</code> object is different depending on chosen transporter. A <strong>TCP</strong> transporter exposes
+  few properties described below.
+</p>
+<table>
+  <tr>
+    <td><code>host</code></td>
+    <td>Connection hostname</td>
+  </tr>
+  <tr>
+    <td><code>port</code></td>
+    <td>Connection port</td>
+  </tr>
+  <tr>
+    <td><code>retryAttempts</code></td>
+    <td>A total amount of connection attempts</td>
+  </tr>
+  <tr>
+    <td><code>retryDelay</code></td>
+    <td>A connection retrying delay (ms)</td>
+  </tr>
+</table>
+
+<h4 appAnchor id="patterns"><span>Patterns</span></h4>
+<p>A microservice recognizes messages through <strong>patterns</strong>. The pattern is a plain value, for example, a literal object, string, or a symbol. In order to create a pattern handler, we use the <code>@MessagePattern()</code> decorator which is imported from the <code>@nestjs/microservices</code> package.</p>
+
+<span class="filename">
+  {{ 'math.controller' | extension: app350f9a48f43c0cd01eea5e9856bc5fdb56581acb.isJsActive }}
+<app-tabs #app350f9a48f43c0cd01eea5e9856bc5fdb56581acb></app-tabs>
+</span><pre [class.hide]="app350f9a48f43c0cd01eea5e9856bc5fdb56581acb.isJsActive"><code class="language-typescript">
+import &#123; Controller &#125; from &#39;@nestjs/common&#39;;
+import &#123; MessagePattern &#125; from &#39;@nestjs/microservices&#39;;
+
+@Controller()
+export class MathController &#123;
+  @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+  sum(data: number[]): number &#123;
+    return (data || []).reduce((a, b) =&gt; a + b);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app350f9a48f43c0cd01eea5e9856bc5fdb56581acb.isJsActive"><code class="language-typescript">
+import &#123; Controller &#125; from &#39;@nestjs/common&#39;;
+import &#123; MessagePattern &#125; from &#39;@nestjs/microservices&#39;;
+
+@Controller()
+export class MathController &#123;
+  @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+  sum(data) &#123;
+    return (data || []).reduce((a, b) =&gt; a + b);
+  &#125;
+&#125;</code></pre><p>The <code>sum()</code> handler is listening to messages that fulfil the <code>cmd: &#39;sum&#39;</code> pattern. The pattern handler takes a single argument, the <code>data</code> passed from the client. In this case, the data is an array of numbers which has to be accumulated.</p>
+<h4 appAnchor id="asynchronous-responses"><span>Asynchronous responses</span></h4>
+<p>Each pattern handler is able to respond either synchronously or <strong>asynchronously</strong>. Hence, <code>async</code> methods are supported.</p>
+
+<span class="filename">
+<app-tabs #appe3fe31713fa23724dbb0e4d9ebb36cfd96beb4b0></app-tabs>
+</span><pre [class.hide]="appe3fe31713fa23724dbb0e4d9ebb36cfd96beb4b0.isJsActive"><code class="language-typescript">
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+async sum(data: number[]): Promise&lt;number&gt; &#123;
+  return (data || []).reduce((a, b) =&gt; a + b);
+&#125;</code></pre>
+<pre [class.hide]="!appe3fe31713fa23724dbb0e4d9ebb36cfd96beb4b0.isJsActive"><code class="language-typescript">
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+async sum(data) &#123;
+  return (data || []).reduce((a, b) =&gt; a + b);
+&#125;</code></pre><p>Additionally, we are able to return the <a href="https://github.com/reactivex/rxjs">Rx</a> <code>Observable</code>, and thus the values will be emitted until the stream is completed.</p>
+
+<span class="filename">
+<app-tabs #appeda111079085fac87daf0e30c18727b26cd6e719></app-tabs>
+</span><pre [class.hide]="appeda111079085fac87daf0e30c18727b26cd6e719.isJsActive"><code class="language-typescript">
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+sum(data: number[]): Observable&lt;number&gt; &#123;
+  return from([1, 2, 3]);
+&#125;</code></pre>
+<pre [class.hide]="!appeda111079085fac87daf0e30c18727b26cd6e719.isJsActive"><code class="language-typescript">
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+sum(data: number[]): Observable&lt;number&gt; &#123;
+  return from([1, 2, 3]);
+&#125;</code></pre><p>Above message handler will respond <strong>3 times</strong> (with each item from the array).</p>
+<h4 appAnchor id="client"><span>Client</span></h4>
+<p>In order to connect with the Nest microservice, we are using the <code>ClientProxy</code> class which instance is assigned to a property through <code>@Client()</code> decorator. This decorator takes a single argument. It is the same object as a Nest microservice options object.</p>
+<pre><code class="language-typescript">
+@Client(&#123; transport: Transport.TCP &#125;)
+client: ClientProxy;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> Both <code>@Client()</code> decorator and <code>ClientProxy</code> class are imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<p>Another solution would be to manually create the <code>ClientProxy</code> instance using the <code>ClientProxyFactory</code> (exported from <code>@nestjs/microservices</code> package).</p>
+<pre><code class="language-typescript">
+constructor() &#123;
+  this.client = ClientProxyFactory.create(&#123;
+    transport: Transport.TCP
+  &#125;);
+&#125;</code></pre>
+<p>The <code>ClientProxy</code> is <strong>lazy</strong>. It doesn&#39;t initiate a connection immediately. Instead, it will be established before the first microservice call, and then reused across each subsequent call. However, if you want to delay an application&#39;s bootstrapping process and manually initialize a connection, you can use a <code>connect()</code> method inside the <code>OnModuleInit</code> lifecycle hook.</p>
+<pre><code class="language-typescript">
+async onModuleInit() &#123;
+  await this.client.connect();
+&#125;</code></pre>
+<p>If the connection cannot be created, the <code>connect()</code> method will reject with the corresponding error object.</p>
+<p>The <code>ClientProxy</code> exposes a <code>send()</code> method. This method is intended to call the microservice and returns the <code>Observable</code> with its response, meaning, we can subscribe to the emitted values easily.</p>
+
+<span class="filename">
+<app-tabs #app7f5804ae12c045b2471ac609e400feabd53ee073></app-tabs>
+</span><pre [class.hide]="app7f5804ae12c045b2471ac609e400feabd53ee073.isJsActive"><code class="language-typescript">
+@Get()
+call(): Observable&lt;number&gt; &#123;
+  const pattern = &#123; cmd: &#39;sum&#39; &#125;;
+  const payload = [1, 2, 3];
+  return this.client.send&lt;number&gt;(pattern, payload);
+&#125;</code></pre>
+<pre [class.hide]="!app7f5804ae12c045b2471ac609e400feabd53ee073.isJsActive"><code class="language-typescript">
+@Get()
+call() &#123;
+  const pattern = &#123; cmd: &#39;sum&#39; &#125;;
+  const payload = [1, 2, 3];
+  return this.client.send(pattern, payload);
+&#125;</code></pre><p>The <code>send()</code> method takes 2 arguments, <code>pattern</code> and <code>payload</code>. The <code>pattern</code> has to be equal to this one defined in the <code>@MessagePattern()</code> decorator, while <code>payload</code> is a message that we want to transmit to another microservice.</p>
+
+    </div>

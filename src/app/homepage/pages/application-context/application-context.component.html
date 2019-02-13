@@ -1,0 +1,51 @@
+<div class="content" #contentReference>
+      <h3 id="execution-context">Execution Context</h3>
+<p>There are several ways of mounting the Nest application. You can create either a web app, microservice or just a Nest <strong>execution context</strong>. The Nest context is a wrapper around the Nest container, which holds all instantiated classes. We can grab an existing instance from within any imported module directly using application object. Thanks to that, you can take advantages of the Nest framework everywhere, including <strong>CRON</strong> jobs and even build a <strong>CLI</strong> on top of it.</p>
+<h4 appAnchor id="getting-started"><span>Getting started</span></h4>
+<p>In order to create a Nest application context, we use the following syntax:</p>
+
+<span class="filename">
+<app-tabs #appa5c01988772d1807bb14eb8ccff674bb6954529c></app-tabs>
+</span><pre><code class="language-typescript">
+async function bootstrap() &#123;
+  const app = await NestFactory.createApplicationContext(ApplicationModule);
+  // application logic...
+&#125;
+bootstrap();</code></pre><p>Afterward, Nest allows you to pick any instance registered within Nest application. Let&#39;s imagine that we have a <code>TasksController</code> in the <code>TasksModule</code>. This class provides a set of usable methods, which we want to call from within CRON job.</p>
+
+<span class="filename">
+<app-tabs #app1d6e77b7e9374fddc0883e0c7d8821dd529a3326></app-tabs>
+</span><pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule);
+const tasksController = app.get(TasksController);</code></pre><p>And that&#39;s it. To grab <code>TasksController</code> instance we had to use <code>get()</code> method. We didn&#39;t have to go through entire modules tree, the <code>get()</code> method act like a <strong>query</strong> that search for an instance in each registered module automatically. However, if you prefer a strict context checking, you can always switch to it using <code>strict: true</code> options object that has to be passed as the second argument of <code>get()</code> method. Then, you have to go through all modules to pick up a particular instance from the selected context.</p>
+
+<span class="filename">
+<app-tabs #appb96d5fd81a059b0000f6759696a5de91faf1cb8c></app-tabs>
+</span><pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule);
+const tasksController = app.select(TasksModule).get(TasksController, &#123; strict: true &#125;);</code></pre><table>
+  <tr>
+    <td>
+      <code>get()</code>
+    </td>
+    <td>
+      Retrieves an instance of either controller or provider (including guards, filters, and so on) available in the application
+      context.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>select()</code>
+    </td>
+    <td>
+      Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with
+      enabled strict mode).
+    </td>
+  </tr>
+</table>
+
+<blockquote class="
+info "><strong>Hint</strong> The root module is selected by default. In order to select any other module, you need to go through entire modules tree (step by step).
+</blockquote>
+
+    </div>
