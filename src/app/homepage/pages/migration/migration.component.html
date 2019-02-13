@@ -1,74 +1,147 @@
-<div class="content">
-  <h3>Migration guide</h3>
-  <p>
-    This article provides a set of <strong>guidelines</strong> to migrate from 4 to latest 5 version.
-    During the development, we spent a lot of time trying to avoid any breaking changes.
-    Nevertheless, the API had to change in a bunch of places in order to simplify its usage.
-    Also, the previous version has been limited due to decisions that have been made at the very early stage.
-    Now, we are less opinionated and even more powerful than before. 
-  </p>
-  <h4>Modules</h4>
-  <p>
-    In order to decrease the number of differences between Nest and <a href="https://angular.io/" target="blank">Angular</a>,
-    few changes have been made regarding <code>@Module()</code> decorator.
-  </p>
-  <ul>
-    <li><code>modules</code> property is now deprecated. Use <code>imports</code> instead</li>
-    <li><code>components</code> property is now deprecated. Use <code>providers</code> instead</li>
-  </ul>
-  <h4>Decorators</h4>
-  <p>
-    The <code>@Component()</code>, <code>@Middleware()</code>, <code>@Interceptor()</code>, <code>@Pipe()</code>, and <code>@Guard()</code> are deprecated now.
-    Use <code>@Injectable()</code> instead.
-  </p>
-  <h4>Middleware interfaces</h4>
-  <p>
-    The <code>MiddlewaresConsumer</code> class has been changed to <code>MiddlewareConsumer</code>.
-    Also, the <code>ExpressMiddleware</code> no longer exists, use <code>MiddlewareFunction</code> interface instead.
-  </p>
-  <h4>Filters</h4>
-  <p>
-    The exception filters aren't locked in as single-paradigm anymore.
-    Previously, an exception filter had an access to the <code>response</code> object.
-    Together with an incoming release, <code>catch()</code> method takes <code>ArgumentsHost</code> instance instead.
-    This object is well described <a routerLink="/exception-filters">here</a>.
-    Thanks to that, you have an access to each argument, including <code>response</code> object.
-  </p>
-  <span class="filename">
-    <app-tabs #filtersT></app-tabs>
-  </span>
-  <pre [class.hide]="filtersT.isJsActive"><code class="language-typescript">{{ filters }}</code></pre>
-  <pre [class.hide]="!filtersT.isJsActive"><code class="language-typescript">{{ filtersJs }}</code></pre>
-  <h4>Guards</h4>
-  <p>
-    The same as filters, guards are far more <strong>flexible</strong> now. An access to the enhanced <code>ExecutionContext</code> (<a routerLink="/guards">read more</a>) gives guards more superpowers and all of that has been built on top of simplified API.
-  </p>
-  <span class="filename">
-    <app-tabs #guardsT></app-tabs>
-  </span>
-  <pre [class.hide]="guardsT.isJsActive"><code class="language-typescript">{{ guards }}</code></pre>
-  <pre [class.hide]="!guardsT.isJsActive"><code class="language-typescript">{{ guardsJs }}</code></pre>
-  <h4>Interceptors</h4>
-  <p>
-    The interceptors API evolved in the exact same way as <strong>equivalent</strong> guards API.
-  </p>
-  <span class="filename">
-    <app-tabs #interceptorsT></app-tabs>
-  </span>
-  <pre [class.hide]="interceptorsT.isJsActive"><code class="language-typescript">{{ interceptors }}</code></pre>
-  <pre [class.hide]="!interceptorsT.isJsActive"><code class="language-typescript">{{ interceptorsJs }}</code></pre>
-  <h4>Custom decorators</h4>
-  <p>
-    The <code>createRouteParamDecorator()</code> function is deprecated. Use <code>createParamDecorator()</code> now.
-  </p>
-  <h4>Node.js</h4>
-  <p>
-    We follow the Node.js release schedule which recently moved to <code>8.x</code> as an active <strong>LTS</strong> version. 
-    Therefore, Nest 5 supports >= <code>8.9.0</code> as the lowest version now.
-    This shift gave us sustainable performance boosts thanks to the <code>es2017</code> target of the TypeScript compilation.
-  </p>
-  <h4>External libraries</h4>
-  <p>
-    Nest 5 doesn't support <a href="https://github.com/ReactiveX/rxjs">rxjs</a> < 6.0.0. Keep in mind to upgrade this package as well.
-  </p>
-</div>
+<div class="content" #contentReference>
+      <h3 id="migration-guide">Migration guide</h3>
+<p>This article provides a set of <strong>guidelines</strong> to migrate from 4 to latest 5 version. During the development, we spent a lot of time trying to avoid any breaking changes. Nevertheless, the API had to change in a bunch of places in order to simplify its usage. Also, the previous version has been limited due to decisions that have been made at the very early stage. Now, we are less opinionated and even more powerful than before.</p>
+<h4 appAnchor id="modules"><span>Modules</span></h4>
+<p>In order to decrease the number of differences between Nest and <a href="https://angular.io/">Angular</a>, few changes have been made regarding <code>@Module()</code> decorator.</p>
+<ul>
+<li><code>modules</code> property is now deprecated. Use <code>imports</code> instead</li>
+<li><code>components</code> property is now deprecated. Use <code>providers</code> instead</li>
+</ul>
+<h4 appAnchor id="decorators"><span>Decorators</span></h4>
+<p>The <code>@Component()</code>, <code>@Middleware()</code>, <code>@Interceptor()</code>, <code>@Pipe()</code>, and <code>@Guard()</code> are deprecated now. Use <code>@Injectable()</code> instead.</p>
+<h4 appAnchor id="middleware-interfaces"><span>Middleware interfaces</span></h4>
+<p>The <code>MiddlewaresConsumer</code> class has been changed to <code>MiddlewareConsumer</code>. Also, the <code>ExpressMiddleware</code> no longer exists, use <code>MiddlewareFunction</code> interface instead.</p>
+<h4 appAnchor id="filters"><span>Filters</span></h4>
+<p>The exception filters aren&#39;t locked in as single-paradigm anymore. Previously, an exception filter had an access to the <code>response</code> object. Together with an incoming release, <code>catch()</code> method takes <code>ArgumentsHost</code> instance instead. This object is well described <a routerLink="/exception-filters">here</a>. Thanks to that, you have an access to each argument, including <code>response</code> object.</p>
+
+<span class="filename">
+<app-tabs #appa91aee14b6710a0f939af969aae0bb73a2c96c8e></app-tabs>
+</span><pre [class.hide]="appa91aee14b6710a0f939af969aae0bb73a2c96c8e.isJsActive"><code class="language-typescript">
+// Before
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter &#123;
+  catch(exception: HttpException, response) &#123;&#125;
+&#125;
+
+// After
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter &#123;
+  catch(exception: HttpException, host: ArgumentsHost) &#123;
+    const response = host.switchToHttp().getResponse();
+    // ...
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appa91aee14b6710a0f939af969aae0bb73a2c96c8e.isJsActive"><code class="language-typescript">
+// Before
+@Catch(HttpException)
+export class HttpExceptionFilter &#123;
+  catch(exception, response) &#123;&#125;
+&#125;
+
+// After
+@Catch(HttpException)
+export class HttpExceptionFilter &#123;
+  catch(exception, host) &#123;
+    const response = host.switchToHttp().getResponse();
+    // ...
+  &#125;
+&#125;</code></pre><h4 appAnchor id="guards"><span>Guards</span></h4>
+<p>The same as filters, guards are far more <strong>flexible</strong> now. An access to the enhanced <code>ExecutionContext</code> (<a routerLink="/guards">read more</a>) gives guards more superpowers and all of that has been built on top of simplified API.</p>
+
+<span class="filename">
+<app-tabs #app92100582ab02969973aed093c630db9105adfed6></app-tabs>
+</span><pre [class.hide]="app92100582ab02969973aed093c630db9105adfed6.isJsActive"><code class="language-typescript">
+// Before
+@Guard()
+export class RolesGuard implements CanActivate &#123;
+  canActivate(
+    dataOrRequest,
+    context: ExecutionContext,
+  ): boolean | Promise&lt;boolean&gt; | Observable&lt;boolean&gt; &#123;
+    return true;
+  &#125;
+&#125;
+
+// After
+@Injectable()
+export class RolesGuard implements CanActivate &#123;
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise&lt;boolean&gt; | Observable&lt;boolean&gt; &#123;
+    // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
+    return true;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app92100582ab02969973aed093c630db9105adfed6.isJsActive"><code class="language-typescript">
+// Before
+@Guard()
+export class RolesGuard &#123;
+  canActivate(dataOrRequest, context) &#123;
+    return true;
+  &#125;
+&#125;
+
+// After
+@Injectable()
+export class RolesGuard &#123;
+  canActivate(context) &#123;
+    // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
+    return true;
+  &#125;
+&#125;</code></pre><h4 appAnchor id="interceptors"><span>Interceptors</span></h4>
+<p>The interceptors API evolved in the exact same way as <strong>equivalent</strong> guards API.</p>
+
+<span class="filename">
+<app-tabs #app3a0940a17a9616064da7aeb6a242b4adeecdd07a></app-tabs>
+</span><pre [class.hide]="app3a0940a17a9616064da7aeb6a242b4adeecdd07a.isJsActive"><code class="language-typescript">
+// Before
+@Interceptor()
+export class TransformInterceptor implements NestInterceptor &#123;
+  intercept(
+    dataOrRequest,
+    context: ExecutionContext,
+    stream$: Observable&lt;any&gt;,
+  ): Observable&lt;any&gt; &#123;
+    return stream$.map((data) =&gt; (&#123; data &#125;));
+  &#125;
+&#125;
+
+// After
+@Injectable()
+export class TransformInterceptor implements NestInterceptor &#123;
+  intercept(
+    context: ExecutionContext,
+    call$: Observable&lt;T&gt;,
+  ): Observable&lt;Response&lt;T&gt;&gt; &#123;
+    // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
+    return call$.pipe(map(data =&gt; (&#123; data &#125;)));
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app3a0940a17a9616064da7aeb6a242b4adeecdd07a.isJsActive"><code class="language-typescript">
+// Before
+@Interceptor()
+export class TransformInterceptor &#123;
+  intercept(dataOrRequest, context, stream$) &#123;
+    return stream$.map((data) =&gt; (&#123; data &#125;));
+  &#125;
+&#125;
+
+// After
+@Injectable()
+export class TransformInterceptor &#123;
+  intercept(context, call$) &#123;
+    // const request = context.switchToHttp().getRequest();
+    // const data = context.switchToWs().getData();
+    return call$.pipe(map(data =&gt; (&#123; data &#125;)));
+  &#125;
+&#125;</code></pre><h4 appAnchor id="custom-decorators"><span>Custom decorators</span></h4>
+<p>The <code>createRouteParamDecorator()</code> function is deprecated. Use <code>createParamDecorator()</code> now.</p>
+<h4 appAnchor id="nodejs"><span>Node.js</span></h4>
+<p>We follow the Node.js release schedule which recently moved to <code>8.x</code> as an active <strong>LTS</strong> version. Therefore, Nest 5 supports &gt;= <code>8.9.0</code> as the lowest version now. This shift gave us sustainable performance boosts thanks to the <code>es2017</code> target of the TypeScript compilation.</p>
+<h4 appAnchor id="external-libraries"><span>External libraries</span></h4>
+<p>Nest 5 doesn&#39;t support <a href="https://github.com/ReactiveX/rxjs">rxjs</a> &lt; 6.0.0. Keep in mind to upgrade this package as well.</p>
+
+    </div>

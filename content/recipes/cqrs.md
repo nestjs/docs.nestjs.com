@@ -1,150 +1,329 @@
-<div class="content">
-  <h3>Command query responsibility segregation</h3>
-  <p>
-    The flow of the simplest <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete" target="blank">CRUD</a> applications can be described using the following steps:    
-  </p>
-  <ol>
-    <li>Controllers layer handle <strong>HTTP requests</strong> and delegate tasks to the services.</li>
-    <li>Services layer is the place where the most of the business logic is being done.</li>
-    <li><strong>Services</strong> uses Repositories / DAOs to change / persist entities.</li>
-    <li>Entities are our models - just containers for the values, with setters and getters.</li>
-  </ol>
-  <p>
-    In most cases, there's no reason to make small and medium-sized applications more complicated. 
-    But sometimes it's not enough and when our needs become <strong>more sophisticated</strong> we want to have scalable systems with straightforward data flow.
-  </p>
-  <p>
-    That's why Nest provides a lightweight <a href="https://github.com/nestjs/cqrs" target="blank">CQRS module</a> which components are well-described below.
-  </p>
-  <h4>Commands</h4>
-  <p>
-    In order to make the application easier to understand, each change has to be preceded by a <strong>Command</strong>. 
-    When any command is dispatched, the application has to react on it. 
-    Commands could be dispatched from the services and consumed in corresponding <strong>Command Handlers</strong>.
-  </p>
-  <span class="filename">
-    {{ 'heroes-game.service' | extension: heroGameServiceT.isJsActive }}
-    <app-tabs #heroGameServiceT></app-tabs>
-  </span>
-  <pre [class.hide]="heroGameServiceT.isJsActive"><code class="language-typescript">{{ heroGameService }}</code></pre>
-  <pre [class.hide]="!heroGameServiceT.isJsActive"><code class="language-typescript">{{ heroGameServiceJs }}</code></pre>
-  <p>
-    Here's a sample service that dispatches <code>KillDragonCommand</code>. Let's see how the command looks like:
-  </p>
-  <span class="filename">
-    {{ 'kill-dragon.command' | extension: killDragonCommandT.isJsActive }}
-    <app-tabs #killDragonCommandT></app-tabs>
-  </span>
-  <pre [class.hide]="killDragonCommandT.isJsActive"><code class="language-typescript">{{ killDragonCommand }}</code></pre>
-  <pre [class.hide]="!killDragonCommandT.isJsActive"><code class="language-typescript">{{ killDragonCommandJs }}</code></pre>
-  <p>
-    The <code>CommandBus</code> is a commands <strong>stream</strong>. It delegates commands to the equivalent handlers.
-    Each Command has to have corresponding <strong>Command Handler</strong>:
-  </p>
-  <span class="filename">
-    {{ 'kill-dragon.handler' | extension: killDragonHandlerT.isJsActive }}
-    <app-tabs #killDragonHandlerT></app-tabs>
-  </span>
-  <pre [class.hide]="killDragonHandlerT.isJsActive"><code class="language-typescript">{{ killDragonHandler }}</code></pre>
-  <pre [class.hide]="!killDragonHandlerT.isJsActive"><code class="language-typescript">{{ killDragonHandlerJs }}</code></pre>
-  <p>
-    Now every application state change is a result of the <strong>Command</strong> occurrence. 
-    The logic is encapsulated in handlers. If we want we can simply add logging here or even more, we can persist our commands in the database (e.g. for the diagnostics purposes). 
-  <p>
-  <p>
-    Why do we need <code>resolve()</code> function? Sometimes we might want to return a message from handler to the service. Also, we can just call this function at the beginning of the <code>execute()</code> method, therefore the application would first turn back into the service and return a response to the client and then <strong>asynchronously</strong> come back here to process the dispatched command.
-  </p>
-  <h4>Events</h4>
-  <p>
-    Since we have encapsulated commands in handlers, we prevent interaction between them - the application structure'is still not flexible, not <strong>reactive</strong>. 
-    The solution is to use <strong>events</strong>.
-  </p>
-  <span class="filename">
-    {{ 'hero-killed-dragon.event' | extension: killedDragonEventT.isJsActive }}
-    <app-tabs #killedDragonEventT></app-tabs>
-  </span>
-  <pre [class.hide]="killedDragonEventT.isJsActive"><code class="language-typescript">{{ killedDragonEvent }}</code></pre>
-  <pre [class.hide]="!killedDragonEventT.isJsActive"><code class="language-typescript">{{ killedDragonEventJs }}</code></pre>
-  <p>
-    Events are asynchronous. They are dispatched by <strong>models</strong>.
-    Models have to extend the <code>AggregateRoot</code> class.
-  </p>
-  <span class="filename">
-    {{ 'hero.model' | extension: heroModelT.isJsActive }}
-    <app-tabs #heroModelT></app-tabs>
-  </span>
-  <pre [class.hide]="heroModelT.isJsActive"><code class="language-typescript">{{ heroModel }}</code></pre>
-  <pre [class.hide]="!heroModelT.isJsActive"><code class="language-typescript">{{ heroModelJs }}</code></pre>
-  <p>
-    The <code>apply()</code> method does not dispatch events yet because there's no relationship between model and the <code>EventPublisher</code> class. 
-    How to tell the model about the publisher? We need to use a publisher <code>mergeObjectContext()</code> method inside our command handler.      
-  </p>
-  <span class="filename">
-    {{ 'kill-dragon.handler' | extension: mergedT.isJsActive }}
-    <app-tabs #mergedT></app-tabs>
-  </span>
-  <pre [class.hide]="mergedT.isJsActive"><code class="language-typescript">{{ merged }}</code></pre>
-  <pre [class.hide]="!mergedT.isJsActive"><code class="language-typescript">{{ mergedJs }}</code></pre>
-  <p>
-    Now everything works as expected. Notice that we need to <code>commit()</code> events since they're not dispatched immediately. 
-    Of course, an object doesn't have to exist already. We can easily merge type context also:
-  </p>
-  <pre><code class="language-typescript">{{ mergedType }}</code></pre>
-  <p>
-    That's it. A model has an ability to publish events now. 
-    We have to handle them.
-  </p>
-  <p>
-    Each event can have a lot of <strong>Event Handlers</strong>. 
-    They don't have to know about each other.
-  </p>
-  <span class="filename">
-    {{ 'hero-killed-dragon.handler' | extension: eventHandlerT.isJsActive }}
-    <app-tabs #eventHandlerT></app-tabs>
-  </span>
-  <pre [class.hide]="eventHandlerT.isJsActive"><code class="language-typescript">{{ eventHandler }}</code></pre>
-  <pre [class.hide]="!eventHandlerT.isJsActive"><code class="language-typescript">{{ eventHandlerJs }}</code></pre>
-  <p>
-    Now we can move the <strong>write logic</strong> into the event handlers.
-  </p>
-  <h4>Sagas</h4>
-  <p>
-    This type of <strong>Event-Driven Architecture</strong> improves application <strong>reactiveness and scalability</strong>. 
-    Now, when we have events, we can simply react to them in various manners. 
-    The <strong>Sagas</strong> are the last building block from the architecture point of view.
-  </p>
-  <p>
-    The sagas are an incredibly powerful feature.
-    Single saga may listen for 1..* events. It can combine, merge, filter [...] events streams. 
-    <a href="https://github.com/ReactiveX/rxjs" target="blank">RxJS</a> library is the place where the magic comes from. 
-    In simple words, each saga has to return an Observable which contains a command. This command is dispatched <strong>asynchronously</strong>. 
-  </p>
-  <span class="filename">
-    {{ 'heroes-game.saga' | extension: sagaT.isJsActive }}
-    <app-tabs #sagaT></app-tabs>
-  </span>
-  <pre [class.hide]="sagaT.isJsActive"><code class="language-typescript">{{ saga }}</code></pre>
-  <pre [class.hide]="!sagaT.isJsActive"><code class="language-typescript">{{ sagaJs }}</code></pre>
-  <p>
-    We declared a rule that when any hero kills the dragon - it should obtain the ancient item.
-    Then the <code>DropAncientItemCommand</code> will be dispatched and processed by the appropriate handler.
-  </p>
-  <h4>Setup</h4>
-  <p>
-    The last thing which we have to take care of is to set up the whole mechanism.
-  </p>
-  <span class="filename">
-    {{ 'heroes-game.module' | extension: setupT.isJsActive }}
-    <app-tabs #setupT></app-tabs>
-  </span>
-  <pre [class.hide]="setupT.isJsActive"><code class="language-typescript">{{ setup }}</code></pre>
-  <pre [class.hide]="!setupT.isJsActive"><code class="language-typescript">{{ setupJs }}</code></pre>
-  <h4>Summary</h4>
-  <p>
-    Both <code>CommandBus</code> and <code>EventBus</code> are <strong>Observables</strong>.
-    It means that you can easily subscribe to the whole stream and enrich your application with <strong>Event Sourcing</strong>.
-  </p>
-  <p>
-    A working example is available <a href="https://github.com/kamilmysliwiec/nest-cqrs-example" target="blank">here</a>.
-  </p>
-</div>
+### Command query responsibility segregation
+
+The flow of the simplest [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) applications can be described using the following steps:
+
+1.  Controllers layer handle **HTTP requests** and delegate tasks to the services.
+2.  Services layer is the place where the most of the business logic is being done.
+3.  **Services** uses Repositories / DAOs to change / persist entities.
+4.  Entities are our models - just containers for the values, with setters and getters.
+
+In most cases, there's no reason to make small and medium-sized applications more complicated. But sometimes it's not enough and when our needs become **more sophisticated** we want to have scalable systems with straightforward data flow.
+
+That's why Nest provides a lightweight [CQRS module](https://github.com/nestjs/cqrs) which components are well-described below.
+
+#### Commands
+
+In order to make the application easier to understand, each change has to be preceded by a **Command**. When any command is dispatched, the application has to react on it. Commands could be dispatched from the services and consumed in corresponding **Command Handlers**.
+
+```typescript
+@@filename(heroes-game.service)
+@Injectable()
+export class HeroesGameService {
+  constructor(private readonly commandBus: CommandBus) {}
+
+  async killDragon(heroId: string, killDragonDto: KillDragonDto) {
+    return await this.commandBus.execute(
+      new KillDragonCommand(heroId, killDragonDto.dragonId)
+    );
+  }
+}
+@@switch
+@Injectable()
+@Dependencies(CommandBus)
+export class HeroesGameService {
+  constructor(commandBus) {
+    this.commandBus = commandBus;
+  }
+
+  async killDragon(heroId, killDragonDto) {
+    return await this.commandBus.execute(
+      new KillDragonCommand(heroId, killDragonDto.dragonId)
+    );
+  }
+}
+```
+
+Here's a sample service that dispatches `KillDragonCommand`. Let's see how the command looks like:
+
+```typescript
+@@filename(kill-dragon.command)
+export class KillDragonCommand implements ICommand {
+  constructor(
+    public readonly heroId: string,
+    public readonly dragonId: string,
+  ) {}
+}
+@@switch
+export class KillDragonCommand {
+  constructor(heroId, dragonId) {
+    this.heroId = heroId;
+    this.dragonId = dragonId;
+  }
+}
+```
+
+The `CommandBus` is a commands **stream**. It delegates commands to the equivalent handlers. Each Command has to have corresponding **Command Handler**:
+
+```typescript
+@@filename(kill-dragon.handler)
+@CommandHandler(KillDragonCommand)
+export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
+  constructor(private readonly repository: HeroRepository) {}
+
+  async execute(command: KillDragonCommand, resolve: (value?) => void) {
+    const { heroId, dragonId } = command;
+    const hero = this.repository.findOneById(+heroId);
+
+    hero.killEnemy(dragonId);
+    await this.repository.persist(hero);
+    resolve();
+  }
+}
+@@switch
+@CommandHandler(KillDragonCommand)
+@Dependencies(HeroRepository)
+export class KillDragonHandler {
+  constructor(repository) {
+    this.repository = repository;
+  }
+
+  async execute(command, resolve) {
+    const { heroId, dragonId } = command;
+    const hero = this.repository.findOneById(+heroId);
+
+    hero.killEnemy(dragonId);
+    await this.repository.persist(hero);
+    resolve();
+  }
+}
+```
+
+Now every application state change is a result of the **Command** occurrence. The logic is encapsulated in handlers. If we want we can simply add logging here or even more, we can persist our commands in the database (e.g. for the diagnostics purposes).
+
+Why do we need `resolve()` function? Sometimes we might want to return a message from handler to the service. Also, we can just call this function at the beginning of the `execute()` method, therefore the application would first turn back into the service and return a response to the client and then **asynchronously** come back here to process the dispatched command.
+
+#### Events
+
+Since we have encapsulated commands in handlers, we prevent interaction between them - the application structure'is still not flexible, not **reactive**. The solution is to use **events**.
+
+```typescript
+@@filename(hero-killed-dragon.event)
+export class HeroKilledDragonEvent implements IEvent {
+  constructor(
+    public readonly heroId: string,
+    public readonly dragonId: string) {}
+}
+@@switch
+export class HeroKilledDragonEvent {
+  constructor(heroId, dragonId) {
+    this.heroId = heroId;
+    this.dragonId = dragonId;
+  }
+}
+```
+
+Events are asynchronous. They are dispatched by **models**. Models have to extend the `AggregateRoot` class.
+
+```typescript
+@@filename(hero.model)
+export class Hero extends AggregateRoot {
+  constructor(private readonly id: string) {
+    super();
+  }
+
+  killEnemy(enemyId: string) {
+    // logic
+    this.apply(new HeroKilledDragonEvent(this.id, enemyId));
+  }
+}
+@@switch
+export class Hero extends AggregateRoot {
+  constructor(id) {
+    super();
+    this.id = id;
+  }
+
+  killEnemy(enemyId) {
+    // logic
+    this.apply(new HeroKilledDragonEvent(this.id, enemyId));
+  }
+}
+```
+
+The `apply()` method does not dispatch events yet because there's no relationship between model and the `EventPublisher` class. How to tell the model about the publisher? We need to use a publisher `mergeObjectContext()` method inside our command handler.
+
+```typescript
+@@filename(kill-dragon.handler)
+@CommandHandler(KillDragonCommand)
+export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
+  constructor(
+    private readonly repository: HeroRepository,
+    private readonly publisher: EventPublisher,
+  ) {}
+
+  async execute(command: KillDragonCommand, resolve: (value?) => void) {
+    const { heroId, dragonId } = command;
+    const hero = this.publisher.mergeObjectContext(
+      await this.repository.findOneById(+heroId),
+    );
+    hero.killEnemy(dragonId);
+    hero.commit();
+    resolve();
+  }
+}
+@@switch
+@CommandHandler(KillDragonCommand)
+@Dependencies(HeroRepository, EventPublisher)
+export class KillDragonHandler {
+  constructor(repository, publisher) {
+    this.repository = repository;
+    this.publisher = publisher;
+  }
+
+  async execute(command, resolve) {
+    const { heroId, dragonId } = command;
+    const hero = this.publisher.mergeObjectContext(
+      await this.repository.findOneById(+heroId),
+    );
+    hero.killEnemy(dragonId);
+    hero.commit();
+    resolve();
+  }
+}
+```
+
+Now everything works as expected. Notice that we need to `commit()` events since they're not dispatched immediately. Of course, an object doesn't have to exist already. We can easily merge type context also:
+
+```typescript
+const HeroModel = this.publisher.mergeContext(Hero);
+new HeroModel('id');
+```
+
+That's it. A model has an ability to publish events now. We have to handle them.
+
+Each event can have a lot of **Event Handlers**. They don't have to know about each other.
+
+```typescript
+@@filename(hero-killed-dragon.handler)
+@EventsHandler(HeroKilledDragonEvent)
+export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEvent> {
+  constructor(private readonly repository: HeroRepository) {}
+
+  handle(event: HeroKilledDragonEvent) {
+    // logic
+  }
+}
+```
+
+Now we can move the **write logic** into the event handlers.
+
+#### Sagas
+
+This type of **Event-Driven Architecture** improves application **reactiveness and scalability**. Now, when we have events, we can simply react to them in various manners. The **Sagas** are the last building block from the architecture point of view.
+
+The sagas are an incredibly powerful feature. Single saga may listen for 1..\* events. It can combine, merge, filter \[...\] events streams. [RxJS](https://github.com/ReactiveX/rxjs) library is the place where the magic comes from. In simple words, each saga has to return an Observable which contains a command. This command is dispatched **asynchronously**.
+
+```typescript
+@@filename(heroes-game.saga)
+@Injectable()
+export class HeroesGameSagas {
+  dragonKilled = (events$: EventObservable<any>): Observable<ICommand> => {
+    return events$.ofType(HeroKilledDragonEvent).pipe(
+      map((event) => new DropAncientItemCommand(event.heroId, fakeItemID)),
+    );
+  }
+}
+@@switch
+@Injectable()
+export class HeroesGameSagas {
+  dragonKilled = (events$) => {
+    return events$.ofType(HeroKilledDragonEvent).pipe(
+      map((event) => new DropAncientItemCommand(event.heroId, fakeItemID)),
+    );
+  }
+}
+```
+
+We declared a rule that when any hero kills the dragon - it should obtain the ancient item. Then the `DropAncientItemCommand` will be dispatched and processed by the appropriate handler.
+
+#### Setup
+
+The last thing which we have to take care of is to set up the whole mechanism.
+
+```typescript
+@@filename(heroes-game.module)
+export const CommandHandlers = [KillDragonHandler, DropAncientItemHandler];
+export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
+
+@Module({
+  imports: [CQRSModule],
+  controllers: [HeroesGameController],
+  providers: [
+    HeroesGameService,
+    HeroesGameSagas,
+    ...CommandHandlers,
+    ...EventHandlers,
+    HeroRepository,
+  ]
+})
+export class HeroesGameModule implements OnModuleInit {
+  constructor(
+    private readonly moduleRef: ModuleRef,
+    private readonly command$: CommandBus,
+    private readonly event$: EventBus,
+    private readonly heroesGameSagas: HeroesGameSagas,
+  ) {}
+
+  onModuleInit() {
+    this.command$.setModuleRef(this.moduleRef);
+    this.event$.setModuleRef(this.moduleRef);
+
+    this.event$.register(EventHandlers);
+    this.command$.register(CommandHandlers);
+    this.event$.combineSagas([
+      this.heroesGameSagas.dragonKilled,
+    ]);
+  }
+}
+@@switch
+export const CommandHandlers = [KillDragonHandler, DropAncientItemHandler];
+export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
+
+@Module({
+  imports: [CQRSModule],
+  controllers: [HeroesGameController],
+  providers: [
+    HeroesGameService,
+    HeroesGameSagas,
+    ...CommandHandlers,
+    ...EventHandlers,
+    HeroRepository,
+  ]
+})
+@Dependencies(ModuleRef, CommandBus, EventBus, HeroesGameSagas)
+export class HeroesGameModule {
+  constructor(moduleRef, command$, event$, heroesGameSagas) {
+    this.moduleRef = moduleRef;
+    this.command$ = command$;
+    this.event$ = event$;
+    this.heroesGameSagas = heroesGameSagas;
+  }
+
+  onModuleInit() {
+    this.command$.setModuleRef(this.moduleRef);
+    this.event$.setModuleRef(this.moduleRef);
+
+    this.event$.register(EventHandlers);
+    this.command$.register(CommandHandlers);
+    this.event$.combineSagas([
+        this.heroesGameSagas.dragonKilled,
+    ]);
+  }
+}
+```
+
+#### Summary
+
+Both `CommandBus` and `EventBus` are **Observables**. It means that you can easily subscribe to the whole stream and enrich your application with **Event Sourcing**.
+
+A working example is available [here](https://github.com/kamilmysliwiec/nest-cqrs-example).

@@ -1,338 +1,333 @@
-<div class="content">
-  <h3>OpenAPI (Swagger)</h3>
-  <h5>This chapter applies only to TypeScript</h5>
-  <p>
-    The <a href="https://swagger.io/specification/" target="blank">OpenAPI</a> (Swagger) specification is a powerful
-    definition format to describe RESTful APIs.
-    Nest provides a dedicated <a href="https://github.com/nestjs/swagger" target="blank">module</a> to work with it.
-  </p>
-  <h4>Installation</h4>
-  <p>
-    Firstly you have to install the module:
-  </p>
-  <pre><code class="language-typescript">
+<div class="content" #contentReference>
+      <h3 id="openapi-swagger">OpenAPI (Swagger)</h3>
+<h5 id="this-chapter-applies-only-to-typescript">This chapter applies only to TypeScript</h5>
+<p>The <a href="https://swagger.io/specification/">OpenAPI</a> (Swagger) specification is a powerful definition format to describe RESTful APIs. Nest provides a dedicated <a href="https://github.com/nestjs/swagger">module</a> to work with it.</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>Firstly you have to install the module:</p>
+<pre><code class="language-bash">
 $ npm install --save @nestjs/swagger</code></pre>
-  <h4>Bootstrap</h4>
-  <p>
-    Once the installation process is done, open your bootstrap file (mostly <code>main.ts</code>) and initialize the
-    Swagger using <code>SwaggerModule</code> class:
-  </p>
-  <pre><code class="language-typescript">{{ bootstrapFile }}</code></pre>
-  <p>
-    The <code>DocumentBuilder</code> is a helper class that helps to structure a base document for the <code>SwaggerModule</code>.
-    It contains several methods that allow setting such properties like title, description, version, and so on.
-  </p>
-  <p>
-    In order to create a full document (with defined HTTP routes) we use the <code>createDocument()</code> method of
-    the <code>SwaggerModule</code> class.
-    This method takes two arguments, the application instance and the base Swagger options respectively.
-  </p>
-  <p>
-    The last step is to call <code>setup()</code>. It accepts sequentially <strong>(1)</strong> path to mount the
-    Swagger,
-    <strong>(2)</strong> application instance, and <strong>(3)</strong> the document that describes the Nest
-    application.
-  </p>
-  <p>
-    Now you can run the following command to start the HTTP server:
-  </p>
-  <pre><code class="language-bash">
-$ npm run start</code></pre>
-  <p>
-    While the application is running, open your browser and navigate to <code>http://localhost:3000/api</code>. You
-    should see similar page:
-  </p>
-  <figure><img src="/assets/swagger1.png" /></figure>
-  <p>
-    The <code>SwaggerModule</code> automatically reflects all of your endpoints.
-    In the background, it's making use of <code>swagger-ui-express</code> and creates a live documentation.
-  </p>
-  <blockquote class="info">
-    <strong>Hint</strong> If you want to download the corresponding `Swagger JSON` file, you can simply call
-    <code>http://localhost:3000/api-json</code> in your browser (if your Swagger documentation is published under
-    <code>http://localhost:3000/api</code>).
-  </blockquote>
-  <h4>Body, query, path parameters</h4>
-  <p>
-    During the examination of the defined controllers, the <code>SwaggerModule</code> is looking for all used <code>@Body()</code>,
-    <code>@Query()</code>, and <code>@Param()</code> decorators in the route handlers.
-    Thanks to them, the valid document can be created.
-  </p>
-  <p>
-    Moreover, the module creates the <strong>models definitions</strong> by taking advantage of the <strong>reflection</strong>.
-    Take a look at the following code:
-  </p>
-  <pre><code class="language-typescript">{{ postHandler }}</code></pre>
-  <blockquote class="warning">
-    <strong>Notice</strong> To implicitly set the body definition you can use the <code>@ApiImplicitBody()</code>
-    decorator (<code>@nestjs/swagger</code> package).
-  </blockquote>
-  <p>
-    Based on the <code>CreateCatDto</code>, the module definition will be created:
-  </p>
-  <figure><img src="/assets/swagger-dto.png" /></figure>
-  <p>
-    As you can see, the definition's empty although the class has few declared properties.
-    In order to make the class properties accessible to the <code>SwaggerModule</code>, we have to mark all of them
-    with <code>@ApiModelProperty()</code> decorator:
-  </p>
-  <pre><code class="language-typescript">{{ createCatDto }}</code></pre>
-  <p>
-    Let's open the browser and verify the generated <code>CreateCatDto</code> model:
-  </p>
-  <figure><img src="/assets/swagger-dto2.png" /></figure>
-  <p>
-    The <code>@ApiModelProperty()</code> decorator accepts options object:
-  </p>
-  <pre><code class="language-typescript">{{ apiModelProperty }}</code></pre>
-  <blockquote class="warning">
-    <strong>Hint</strong> There's an <code>@ApiModelPropertyOptional()</code> shortcut decorator which helps to avoid
-    continuous typing <code>{{ apiModelPropertyOptional }}</code>.
-  </blockquote>
-  <p>
-    Thanks to that we can simply set the <strong>default</strong> value, determine whether the property is required or
-    explicitly set the type.
-  </p>
-  <h4>Multiple specifications</h4>
-  <p>
-    Swagger module also provides a way to support multiple specifications. In other words, you can
-    serve different documentations with different <code>SwaggerUI</code> on different endpoints.
-  </p>
-  <p>
-    In order to allow <code>SwaggerModule</code> to support multi-spec, your
-    application must be written with modular approach.
-    The <code>createDocument()</code> method takes in a 3rd argument: <code>extraOptions</code> which is an object
-    where a property <code>include</code> expects an array of modules.
-  </p>
-  <p>
-    You can setup Multiple Specifications support as shown below:
-  </p>
-  <pre><code class="language-typescript">{{ secondaryBootstrapFile }}</code></pre>
-  <p>
-    Now you can start your server with the following command:
-  </p>
-  <pre><code class="language-bash">
-$ npm run start</code></pre>
-  <p>
-    Navigate to <code>http://localhost:3000/api/cats</code> to see SwaggerUI for your Cats:
-  </p>
-  <figure><img src="/assets/swagger-cats.png" /></figure>
-  <p>
-    While <code>http://localhost:3000/api/dogs</code> will expose a SwaggerUI for your Dogs:
-  </p>
-  <figure><img src="/assets/swagger-dogs.png" /></figure>
-  <blockquote class="warning">
-    <strong>Notice</strong> You have to construct a <strong>SwaggerOptions</strong> with <code>DocumentBuilder</code>,
-    run <code>createDocument()</code> against newly constructed <code>options</code> then immediately "serve" it with
-    <code>setup()</code>
-    before you can start working on a second <strong>SwaggerOptions</strong> for a second Swagger Specification. This
-    specific order is to
-    prevent Swagger configurations being overridden by different options.
-  </blockquote>
-  <h4>Working with enums</h4>
-  <p>
-    To be able for <code>SwaggerModule</code> to identify an <code>Enum</code>, we have to manually set the <code>enum</code>
-    property on <code>@ApiModelProperty</code> with an array of values..
-  </p>
-  <pre><code class="language-typescript">{{ enumProperty }}</code></pre>
-  <p>
-    <code>UserRole</code> enum can be defined as following snippet:
-  </p>
-  <pre><code class="language-typescript">{{ userRoleEnum }}</code></pre>
-  <blockquote class="warning">
-    <strong>Note</strong> The above usage can only be applied to a <strong>property</strong> as part of a <strong>model
-      definition.</strong>
-  </blockquote>
-  <p>
-    Enums can be used by itself with the <code>@Query()</code> parameter decorator in combination with the <code>@ApiImplicitQuery()</code>
-    decorator.
-  </p>
-  <pre><code class="language-typescript">{{ enumImplicitQuery }}</code></pre>
-  <figure><img src="/assets/enum_query.gif" /></figure>
-  <blockquote class="warning">
-    <strong>Hint</strong> <code>enum</code> and <code>isArray</code> can also be used in combination in <code>@ApiImplicitQuery()</code>
-  </blockquote>
-  <p>
-    With <code>isArray</code> set to <strong>true</strong>, the <code>enum</code> now can be selected as a <strong>multi-select</strong>:
-  </p>
-  <figure><img src="/assets/enum_query_array.gif" /></figure>
-  <h4>Working with arrays</h4>
-  <p>
-    We have to manually indicate a type when the property is
-    actually an array:
-  </p>
-  <pre><code class="language-typescript">{{ arrayProperty }}</code></pre>
-  <p>
-    Simply put your type as the first element of an array (as shown above) or set an <code>isArray</code> property to
-    <code>true</code>.
-  </p>
-  <h4>Tags</h4>
-  <p>
-    At the beginning, we created a <code>cats</code> tag (by making use of <code>DocumentBuilder</code>).
-    In order to attach the controller to the specified tag, we need to use <code>@ApiUseTags(...tags)</code> decorator.
-  </p>
-  <pre><code class="language-typescript">{{ useTags }}</code></pre>
-  <h4>Responses</h4>
-  <p>
-    To define a custom HTTP response, we use <code>@ApiResponse()</code> decorator.
-  </p>
-  <pre><code class="language-typescript">{{ response }}</code></pre>
-  <p>
-    Same as common HTTP exceptions defined in <a routerLink="/exception-filters">Exception
-      Filters</a> section,
-    Nest also provides a set of usable <strong>API responses</strong> that inherits from the core <code>@ApiResponse</code>
-    decorator:
-  </p>
-  <ul>
-    <li>
-      <code>@ApiOkResponse()</code>
-    </li>
-    <li>
-      <code>@ApiCreatedResponse()</code>
-    </li>
-    <li>
-      <code>@ApiBadRequestResponse()</code>
-    </li>
-    <li>
-      <code>@ApiUnauthorizedResponse()</code>
-    </li>
-    <li>
-      <code>@ApiNotFoundResponse()</code>
-    </li>
-    <li>
-      <code>@ApiForbiddenResponse()</code>
-    </li>
-    <li>
-      <code>@ApiMethodNotAllowedResponse()</code>
-    </li>
-    <li>
-      <code>@ApiNotAcceptableResponse()</code>
-    </li>
-    <li>
-      <code>@ApiRequestTimeoutResponse()</code>
-    </li>
-    <li>
-      <code>@ApiConflictResponse()</code>
-    </li>
-    <li>
-      <code>@ApiGoneResponse()</code>
-    </li>
-    <li>
-      <code>@ApiPayloadTooLargeResponse()</code>
-    </li>
-    <li>
-      <code>@ApiUnsupportedMediaTypeResponse()</code>
-    </li>
-    <li>
-      <code>@ApiUnprocessableEntityResponse()</code>
-    </li>
-    <li>
-      <code>@ApiInternalServerErrorResponse()</code>
-    </li>
-    <li>
-      <code>@ApiNotImplementedResponse()</code>
-    </li>
-    <li>
-      <code>@ApiBadGatewayResponse()</code>
-    </li>
-    <li>
-      <code>@ApiServiceUnavailableResponse()</code>
-    </li>
-    <li>
-      <code>@ApiGatewayTimeoutResponse()</code>
-    </li>
-  </ul>
-  <p>
-    In addition to the available HTTP exceptions, Nest provides short-hand decorators for:
-    <code>HttpStatus.OK</code>, <code>HttpStatus.CREATED</code> and <code>HttpStatus.METHOD_NOT_ALLOWED</code>
-  </p>
-  <pre><code class="language-typescript">{{ customResponse }}</code></pre>
-  <h4>Authentication</h4>
-  <p>
-    You can enable the bearer authorization using <code>addBearerAuth()</code> method of the <code>DocumentBuilder</code>
-    class.
-    Then to restrict the chosen route or entire controller, use <code>@ApiBearerAuth()</code> decorator.
-  </p>
-  <pre><code class="language-typescript">{{ bearerAuth }}</code></pre>
-  <p>
-    That's how the OpenAPI documentation should look like now:
-  </p>
-  <figure><img src="/assets/swagger-auth.gif" /></figure>
+<h4 appAnchor id="bootstrap"><span>Bootstrap</span></h4>
+<p>Once the installation process is done, open your bootstrap file (mostly <code>main.ts</code>) and initialize the Swagger using <code>SwaggerModule</code> class:</p>
+<pre><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; SwaggerModule, DocumentBuilder &#125; from &#39;@nestjs/swagger&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
-  <h4>File upload</h4>
-  <p>You can enable file upload for a specific method with the <code>@ApiImplicitFile</code> decorator together with
-    <code>@ApiConsumes()</code>. Here's a full example using <a routerLink="/techniques/file-upload">File Upload</a>
-    technique:</p>
-  <pre><code class="language-typescript">{{ fileUpload }}</code></pre>
-  <h4>Decorators</h4>
-  <p>
-    All of the available OpenAPI decorators has an <code>Api</code> prefix to be clearly distinguishable from the core
-    decorators.
-    Below is a full list of the exported decorators with a defined use-level (where might be applied).
-  </p>
-  <table>
-    <tr>
-      <td><code>@ApiOperation()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiResponse()</code></td>
-      <td>Method / Controller</td>
-    </tr>
-    <tr>
-      <td><code>@ApiProduces()</code></td>
-      <td>Method / Controller</td>
-    </tr>
-    <tr>
-      <td><code>@ApiConsumes()</code></td>
-      <td>Method / Controller</td>
-    </tr>
-    <tr>
-      <td><code>@ApiBearerAuth()</code></td>
-      <td>Method / Controller</td>
-    </tr>
-    <tr>
-      <td><code>@ApiOAuth2Auth()</code></td>
-      <td>Method / Controller</td>
-    </tr>
-    <tr>
-      <td><code>@ApiImplicitBody()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiImplicitParam()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiImplicitQuery()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiImplicitHeader()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiImplicitFile()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiExcludeEndpoint()</code></td>
-      <td>Method</td>
-    </tr>
-    <tr>
-      <td><code>@ApiUseTags()</code></td>
-      <td>Method / Controller</td>
-    </tr>
-    <tr>
-      <td><code>@ApiModelProperty()</code></td>
-      <td>Model</td>
-    </tr>
-    <tr>
-      <td><code>@ApiModelPropertyOptional()</code></td>
-      <td>Model</td>
-    </tr>
-  </table>
-  <p>
-    A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/11-swagger" target="blank">here</a>.
-  </p>
-</div>
+async function bootstrap() &#123;
+  const app = await NestFactory.create(ApplicationModule);
+
+  const options = new DocumentBuilder()
+    .setTitle(&#39;Cats example&#39;)
+    .setDescription(&#39;The cats API description&#39;)
+    .setVersion(&#39;1.0&#39;)
+    .addTag(&#39;cats&#39;)
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup(&#39;api&#39;, app, document);
+
+  await app.listen(3001);
+&#125;
+bootstrap();</code></pre>
+<p>The <code>DocumentBuilder</code> is a helper class that helps to structure a base document for the <code>SwaggerModule</code>. It contains several methods that allow setting such properties like title, description, version, and so on.</p>
+<p>In order to create a full document (with defined HTTP routes) we use the <code>createDocument()</code> method of the <code>SwaggerModule</code> class. This method takes two arguments, the application instance and the base Swagger options respectively.</p>
+<p>The last step is to call <code>setup()</code>. It accepts sequentially <strong>(1)</strong> path to mount the Swagger, <strong>(2)</strong> application instance, and <strong>(3)</strong> the document that describes the Nest application.</p>
+<p>Now you can run the following command to start the HTTP server:</p>
+<pre><code class="language-bash">
+$ npm run start</code></pre>
+<p>While the application is running, open your browser and navigate to <code>http://localhost:3000/api</code>. You should see similar page:</p>
+<figure><img src="/assets/swagger1.png" /></figure>
+
+<p>The <code>SwaggerModule</code> automatically reflects all of your endpoints. In the background, it&#39;s making use of <code>swagger-ui-express</code> and creates a live documentation.</p>
+<blockquote class="
+info "><strong>Hint</strong> If you want to download the corresponding `Swagger JSON` file, you can simply call <code>http://localhost:3000/api-json</code> in your browser (if your Swagger documentation is published under <code>http://localhost:3000/api</code>).
+</blockquote>
+<h4 appAnchor id="body-query-path-parameters"><span>Body, query, path parameters</span></h4>
+<p>During the examination of the defined controllers, the <code>SwaggerModule</code> is looking for all used <code>@Body()</code>, <code>@Query()</code>, and <code>@Param()</code> decorators in the route handlers. Thanks to them, the valid document can be created.</p>
+<p>Moreover, the module creates the <strong>models definitions</strong> by taking advantage of the <strong>reflection</strong>. Take a look at the following code:</p>
+<pre><code class="language-typescript">
+@Post()
+async create(@Body() createCatDto: CreateCatDto) &#123;
+  this.catsService.create(createCatDto);
+&#125;</code></pre>
+<blockquote class="
+warning "><strong>Notice</strong> To implicitly set the body definition you can use the <code>@ApiImplicitBody()</code> decorator (<code>@nestjs/swagger</code> package).
+</blockquote>
+<p>Based on the <code>CreateCatDto</code>, the module definition will be created:</p>
+<figure><img src="/assets/swagger-dto.png" /></figure>
+
+<p>As you can see, the definition&#39;s empty although the class has few declared properties. In order to make the class properties accessible to the <code>SwaggerModule</code>, we have to mark all of them with <code>@ApiModelProperty()</code> decorator:</p>
+<pre><code class="language-typescript">
+import &#123; ApiModelProperty &#125; from &#39;@nestjs/swagger&#39;;
+
+export class CreateCatDto &#123;
+  @ApiModelProperty()
+  readonly name: string;
+
+  @ApiModelProperty()
+  readonly age: number;
+
+  @ApiModelProperty()
+  readonly breed: string;
+&#125;</code></pre>
+<p>Let&#39;s open the browser and verify the generated <code>CreateCatDto</code> model:</p>
+<figure><img src="/assets/swagger-dto2.png" /></figure>
+
+<p>The <code>@ApiModelProperty()</code> decorator accepts options object:</p>
+<pre><code class="language-typescript">
+export const ApiModelProperty: (metadata?: &#123;
+  description?: string;
+  required?: boolean;
+  type?: any;
+  isArray?: boolean;
+  collectionFormat?: string;
+  default?: any;
+  enum?: SwaggerEnumType;
+  format?: string;
+  multipleOf?: number;
+  maximum?: number;
+  exclusiveMaximum?: number;
+  minimum?: number;
+  exclusiveMinimum?: number;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  maxItems?: number;
+  minItems?: number;
+  uniqueItems?: boolean;
+  maxProperties?: number;
+  minProperties?: number;
+  readOnly?: boolean;
+  xml?: any;
+  example?: any;
+&#125;) =&gt; PropertyDecorator;</code></pre>
+<blockquote class="
+warning "><strong>Hint</strong> There&#39;s an <code>@ApiModelPropertyOptional()</code> shortcut decorator which helps to avoid continuous typing <code>{{ apiModelPropertyOptional }}</code>.
+</blockquote>
+<p>Thanks to that we can simply set the <strong>default</strong> value, determine whether the property is required or explicitly set the type.</p>
+<h4 appAnchor id="multiple-specifications"><span>Multiple specifications</span></h4>
+<p>Swagger module also provides a way to support multiple specifications. In other words, you can serve different documentations with different <code>SwaggerUI</code> on different endpoints.</p>
+<p>In order to allow <code>SwaggerModule</code> to support multi-spec, your application must be written with modular approach. The <code>createDocument()</code> method takes in a 3rd argument: <code>extraOptions</code> which is an object where a property <code>include</code> expects an array of modules.</p>
+<p>You can setup Multiple Specifications support as shown below:</p>
+<pre><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; SwaggerModule, DocumentBuilder &#125; from &#39;@nestjs/swagger&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+
+// imports CatsModule and DogsModule;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create(ApplicationModule);
+
+  /**
+   * createDocument(application, configurationOptions, extraOptions);
+   *
+   * createDocument method takes in an optional 3rd argument &quot;extraOptions&quot;
+   * which is an object with &quot;include&quot; property where you can pass an Array
+   * of Modules that you want to include in that Swagger Specification
+   * E.g: CatsModule and DogsModule will have two separate Swagger Specifications which
+   * will be exposed on two different SwaggerUI with two different endpoints.
+   */
+
+  const options = new DocumentBuilder()
+    .setTitle(&#39;Cats example&#39;)
+    .setDescription(&#39;The cats API description&#39;)
+    .setVersion(&#39;1.0&#39;)
+    .addTag(&#39;cats&#39;)
+    .build();
+  const catDocument = SwaggerModule.createDocument(app, options, &#123;
+    include: [CatsModule],
+  &#125;);
+  SwaggerModule.setup(&#39;api/cats&#39;, app, catDocument);
+
+  const secondOptions = new DocumentBuilder()
+    .setTitle(&#39;Dogs example&#39;)
+    .setDescription(&#39;The dogs API description&#39;)
+    .setVersion(&#39;1.0&#39;)
+    .addTag(&#39;dogs&#39;)
+    .build();
+  const dogDocument = SwaggerModule.createDocument(app, secondOptions, &#123;
+    include: [DogsModule],
+  &#125;);
+  SwaggerModule.setup(&#39;api/dogs&#39;, app, dogDocument);
+
+  await app.listen(3001);
+&#125;
+bootstrap();</code></pre>
+<p>Now you can start your server with the following command:</p>
+<pre><code class="language-bash">
+$ npm run start</code></pre>
+<p>Navigate to <code>http://localhost:3000/api/cats</code> to see SwaggerUI for your Cats:</p>
+<figure><img src="/assets/swagger-cats.png" /></figure>
+
+<p>While <code>http://localhost:3000/api/dogs</code> will expose a SwaggerUI for your Dogs:</p>
+<figure><img src="/assets/swagger-dogs.png" /></figure>
+
+<blockquote class="
+warning "><strong>Notice</strong> You have to construct a <strong>SwaggerOptions</strong> with <code>DocumentBuilder</code>, run <code>createDocument()</code> against newly constructed <code>options</code> then immediately &quot;serve&quot; it with <code>setup()</code> before you can start working on a second <strong>SwaggerOptions</strong> for a second Swagger Specification. This specific order is to prevent Swagger configurations being overridden by different options.
+</blockquote>
+<h4 appAnchor id="working-with-enums"><span>Working with enums</span></h4>
+<p>To be able for <code>SwaggerModule</code> to identify an <code>Enum</code>, we have to manually set the <code>enum</code> property on <code>@ApiModelProperty</code> with an array of values..</p>
+<pre><code class="language-typescript">
+@ApiModelProperty(&#123; enum: [&#39;Admin&#39;, &#39;Moderator&#39;, &#39;User&#39;]&#125;)
+role: UserRole;</code></pre>
+<p><code>UserRole</code> enum can be defined as following snippet:</p>
+<pre><code class="language-typescript">
+export enum UserRole &#123;
+  Admin = &#39;Admin&#39;,
+  Moderator = &#39;Moderator&#39;,
+  User = &#39;User&#39;,
+&#125;</code></pre>
+<blockquote class="
+warning "><strong>Note</strong> The above usage can only be applied to a <strong>property</strong> as part of a <strong>model definition.</strong>
+</blockquote>
+<p>Enums can be used by itself with the <code>@Query()</code> parameter decorator in combination with the <code>@ApiImplicitQuery()</code> decorator.</p>
+<pre><code class="language-typescript">
+@ApiImplicitQuery(&#123; name: &#39;role&#39;, enum: [&#39;Admin&#39;, &#39;Moderator&#39;, &#39;User&#39;] &#125;)
+async filterByRole(@Query(&#39;role&#39;) role: UserRole = UserRole.User) &#123;
+  // role returns: UserRole.Admin, UserRole.Moderator OR UserRole.User
+&#125;</code></pre>
+<figure><img src="/assets/enum_query.gif" /></figure>
+
+<blockquote class="
+warning "><strong>Hint</strong> <code>enum</code> and <code>isArray</code> can also be used in combination in <code>@ApiImplicitQuery()</code>
+</blockquote>
+<p>With <code>isArray</code> set to <strong>true</strong>, the <code>enum</code> now can be selected as a <strong>multi-select</strong>:</p>
+<figure><img src="/assets/enum_query_array.gif" /></figure>
+
+<h4 appAnchor id="working-with-arrays"><span>Working with arrays</span></h4>
+<p>We have to manually indicate a type when the property is actually an array:</p>
+<pre><code class="language-typescript">
+@ApiModelProperty(&#123; type: [String] &#125;)
+readonly names: string[];</code></pre>
+<p>Simply put your type as the first element of an array (as shown above) or set an <code>isArray</code> property to <code>true</code>.</p>
+<h4 appAnchor id="tags"><span>Tags</span></h4>
+<p>At the beginning, we created a <code>cats</code> tag (by making use of <code>DocumentBuilder</code>). In order to attach the controller to the specified tag, we need to use <code>@ApiUseTags(...tags)</code> decorator.</p>
+<pre><code class="language-typescript">
+@ApiUseTags(&#39;cats&#39;)
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;&#125;</code></pre>
+<h4 appAnchor id="responses"><span>Responses</span></h4>
+<p>To define a custom HTTP response, we use <code>@ApiResponse()</code> decorator.</p>
+<pre><code class="language-typescript">
+@Post()
+@ApiResponse(&#123; status: 201, description: &#39;The record has been successfully created.&#39;&#125;)
+@ApiResponse(&#123; status: 403, description: &#39;Forbidden.&#39;&#125;)
+async create(@Body() createCatDto: CreateCatDto) &#123;
+  this.catsService.create(createCatDto);
+&#125;</code></pre>
+<p>Same as common HTTP exceptions defined in Exception Filters section, Nest also provides a set of usable <strong>API responses</strong> that inherits from the core <code>@ApiResponse</code> decorator:</p>
+<ul>
+<li><code>@ApiOkResponse()</code></li>
+<li><code>@ApiCreatedResponse()</code></li>
+<li><code>@ApiBadRequestResponse()</code></li>
+<li><code>@ApiUnauthorizedResponse()</code></li>
+<li><code>@ApiNotFoundResponse()</code></li>
+<li><code>@ApiForbiddenResponse()</code></li>
+<li><code>@ApiMethodNotAllowedResponse()</code></li>
+<li><code>@ApiNotAcceptableResponse()</code></li>
+<li><code>@ApiRequestTimeoutResponse()</code></li>
+<li><code>@ApiConflictResponse()</code></li>
+<li><code>@ApiGoneResponse()</code></li>
+<li><code>@ApiPayloadTooLargeResponse()</code></li>
+<li><code>@ApiUnsupportedMediaTypeResponse()</code></li>
+<li><code>@ApiUnprocessableEntityResponse()</code></li>
+<li><code>@ApiInternalServerErrorResponse()</code></li>
+<li><code>@ApiNotImplementedResponse()</code></li>
+<li><code>@ApiBadGatewayResponse()</code></li>
+<li><code>@ApiServiceUnavailableResponse()</code></li>
+<li><code>@ApiGatewayTimeoutResponse()</code></li>
+</ul>
+<p>In addition to the available HTTP exceptions, Nest provides short-hand decorators for: <code>HttpStatus.OK</code>, <code>HttpStatus.CREATED</code> and <code>HttpStatus.METHOD_NOT_ALLOWED</code></p>
+<pre><code class="language-typescript">
+@Post()
+@ApiCreatedResponse(&#123; description: &#39;The record has been successfully created.&#39;&#125;)
+@ApiForbiddenResponse(&#123; description: &#39;Forbidden.&#39;&#125;)
+async create(@Body() createCatDto: CreateCatDto) &#123;
+  this.catsService.create(createCatDto);
+&#125;</code></pre>
+<h4 appAnchor id="authentication"><span>Authentication</span></h4>
+<p>You can enable the bearer authorization using <code>addBearerAuth()</code> method of the <code>DocumentBuilder</code> class. Then to restrict the chosen route or entire controller, use <code>@ApiBearerAuth()</code> decorator.</p>
+<pre><code class="language-typescript">
+@ApiUseTags(&#39;cats&#39;)
+@ApiBearerAuth()
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;&#125;</code></pre>
+<p>That&#39;s how the OpenAPI documentation should look like now:</p>
+<figure><img src="/assets/swagger-auth.gif" /></figure>
+
+<h4 appAnchor id="file-upload"><span>File upload</span></h4>
+<p>You can enable file upload for a specific method with the <code>@ApiImplicitFile</code> decorator together with <code>@ApiConsumes()</code>. Here&#39;s a full example using <a routerLink="/techniques/file-upload">File Upload</a> technique:</p>
+<pre><code class="language-typescript">
+@UseInterceptors(FileInterceptor(&#39;file&#39;))
+@ApiConsumes(&#39;multipart/form-data&#39;)
+@ApiImplicitFile(&#123; name: &#39;file&#39;, required: true, description: &#39;List of cats&#39; &#125;)
+uploadFile(@UploadedFile() file) &#123;&#125;</code></pre>
+<h4 appAnchor id="decorators"><span>Decorators</span></h4>
+<p>All of the available OpenAPI decorators has an <code>Api</code> prefix to be clearly distinguishable from the core decorators. Below is a full list of the exported decorators with a defined use-level (where might be applied).</p>
+<table>
+<thead>
+</thead>
+<tbody><tr>
+<td><code>@ApiOperation()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiResponse()</code></td>
+<td>Method / Controller</td>
+</tr>
+<tr>
+<td><code>@ApiProduces()</code></td>
+<td>Method / Controller</td>
+</tr>
+<tr>
+<td><code>@ApiConsumes()</code></td>
+<td>Method / Controller</td>
+</tr>
+<tr>
+<td><code>@ApiBearerAuth()</code></td>
+<td>Method / Controller</td>
+</tr>
+<tr>
+<td><code>@ApiOAuth2Auth()</code></td>
+<td>Method / Controller</td>
+</tr>
+<tr>
+<td><code>@ApiImplicitBody()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiImplicitParam()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiImplicitQuery()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiImplicitHeader()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiImplicitFile()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiExcludeEndpoint()</code></td>
+<td>Method</td>
+</tr>
+<tr>
+<td><code>@ApiUseTags()</code></td>
+<td>Method / Controller</td>
+</tr>
+<tr>
+<td><code>@ApiModelProperty()</code></td>
+<td>Model</td>
+</tr>
+<tr>
+<td><code>@ApiModelPropertyOptional()</code></td>
+<td>Model</td>
+</tr>
+</tbody></table>
+<p>A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/11-swagger">here</a>.</p>
+
+    </div>
