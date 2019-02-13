@@ -1,12 +1,12 @@
-<div class="content">
+<div class="content" #contentReference>
       <h3 id="introduction">Introduction</h3>
 <p>Nest is a framework for building efficient, scalable <a href="http://nodejs.org/">Node.js</a> server-side applications. It uses progressive JavaScript, is built with <a href="http://www.typescriptlang.org/">TypeScript</a> (preserves compatibility with pure JavaScript) and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).</p>
 <p>Under the hood, Nest makes use of <a href="https://expressjs.com/">Express</a>, but also provides compatibility with a wide range of other libraries (e.g. <a href="https://github.com/fastify/fastify">Fastify</a>). This allows for easy use of the myriad third-party plugins which are available.</p>
-<h4 id="philosophy">Philosophy</h4>
+<h4 appAnchor id="philosophy"><span>Philosophy</span></h4>
 <p>In recent years, thanks to Node.js, JavaScript has become the “lingua franca” of the web for both front and backend applications. This has given rise to awesome projects like <a href="https://angular.io/">Angular</a>, <a href="https://github.com/facebook/react">React</a> and <a href="https://github.com/vuejs/vue">Vue</a> which improve developer productivity and enable the construction of fast, testable, and extensible frontend applications. However, while plenty of superb libraries, helpers, and tools exist for Node (and server-side JavaScript), none of them effectively solve the main problem - <strong>architecture</strong>.</p>
 <p>Nest provides an out-of-the-box application architecture which allows for effortless creation of highly testable, scalable, loosely coupled, and easily maintainable applications.</p>
-<h4 id="installation">Installation</h4>
-<p>To get started, scaffold the base project with the <a href="/cli/overview">Nest CLI</a>:</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>To get started, scaffold the base project with the <a routerLink="/cli/overview">Nest CLI</a>:</p>
 <pre><code class="language-bash">
 $ npm i -g @nestjs/cli
 $ nest new project-name</code></pre>
@@ -19,7 +19,7 @@ $ npm run start</code></pre>
 <p>Or start a new project from scratch with <strong>npm</strong> (or <strong>yarn</strong>):</p>
 <pre><code class="language-bash">
 $ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata</code></pre>
-<h4 id="stay-in-touch">Stay in touch</h4>
+<h4 appAnchor id="stay-in-touch"><span>Stay in touch</span></h4>
 <ul>
 <li>Author - <a href="https://kamilmysliwiec.com/">Kamil Mysliwiec</a></li>
 <li>Website - <a href="https://nestjs.com/">https://nestjs.com</a></li>

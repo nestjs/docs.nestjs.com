@@ -3,7 +3,7 @@
 <p>There are a lot of scenarios when you might want to bind something <strong>directly</strong> to the Nest inversion of control container. For example, any constant values, configuration objects created based on the current environment, external libraries, or pre-calculated values that depends on few other defined providers. Moreover, you are able to override default implementations, e.g. use different classes or make use of various test doubles (for testing purposes) when needed.</p>
 <p>One essential thing that you should always keep in mind is that Nest uses <strong>tokens</strong> to identify dependencies. Usually, the auto-generated tokens are equal to classes. If you want to create a custom provider, you&#39;d need to choose a token. Mostly, the custom tokens are represented by plain strings. Following best practices, you should hold those tokens in the separated file, for example, inside <code>constants.ts</code>.</p>
 <p>Let&#39;s go through the available options.</p>
-<h4 appAnchor id="use-value">Use value</h4>
+<h4 appAnchor id="use-value"><span>Use value</span></h4>
 <p>The <code>useValue</code> syntax is useful when it comes to either define a constant value, put external library into Nest container, or replace a real implementation with the mock object.</p>
 <pre><code class="language-typescript">
 import &#123; connection &#125; from &#39;./connection&#39;;
@@ -20,13 +20,13 @@ export class ApplicationModule &#123;&#125;</code></pre>
 <p>In order to inject custom provider, we use the <code>@Inject()</code> decorator. This decorator takes a single argument - the token.</p>
 
 <span class="filename">
-<app-tabs #app9300f94eb79c72cb84d955465422d15a39a76522></app-tabs>
-</span><pre [class.hide]="app9300f94eb79c72cb84d955465422d15a39a76522.isJsActive"><code class="language-typescript">
+<app-tabs #appd566573af7e7c30c1b0cc1f0ece0ded7fad64b27></app-tabs>
+</span><pre [class.hide]="appd566573af7e7c30c1b0cc1f0ece0ded7fad64b27.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsRepository &#123;
   constructor(@Inject(&#39;CONNECTION&#39;) connection: Connection) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app9300f94eb79c72cb84d955465422d15a39a76522.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appd566573af7e7c30c1b0cc1f0ece0ded7fad64b27.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(&#39;CONNECTION&#39;)
 export class CatsRepository &#123;
@@ -50,7 +50,7 @@ const catsServiceProvider = &#123;
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
 <p>In above example, the <code>CatsService</code> will be overridden by a passed <code>mockCatsService</code> mock object. It means, that Nest instead of creating <code>CatsService</code> instance manually, will treat this provider as resolved already, and use <code>mockCatsService</code> as its representative value.</p>
-<h4 appAnchor id="use-class">Use class</h4>
+<h4 appAnchor id="use-class"><span>Use class</span></h4>
 <p>The <code>useClass</code> syntax allows you using different class per chosen factors. For example, we have an abstract (or default) <code>ConfigService</code> class. Depending on the current environment, Nest should use a different implementation of the configuration service.</p>
 <pre><code class="language-typescript">
 const configServiceProvider = &#123;
@@ -69,12 +69,12 @@ export class ApplicationModule &#123;&#125;</code></pre>
 warning "><strong>Notice</strong> Instead of a custom token, we have used the <code>ConfigService</code> class, and therefore we have overridden the default implementation.
 </blockquote>
 <p>In this case, even if any class depends on <code>ConfigService</code>, Nest will inject an instance of the provided class (<code>DevelopmentConfigService</code> or <code>ProductionConfigService</code>) instead.</p>
-<h4 appAnchor id="use-factory">Use factory</h4>
+<h4 appAnchor id="use-factory"><span>Use factory</span></h4>
 <p>The <code>useFactory</code> is a way of creating providers <strong>dynamically</strong>. The actual provider will be equal to a returned value of the factory function. The factory function can either depend on several different providers or stay completely independent. It means that factory may accept arguments, that Nest will resolve and pass during the instantiation process. Additionally, this function can return value <strong>asynchronously</strong>. It&#39;s explained in more detail here. Use it when your provider has to be dynamically calculated or in case to resolve an asynchronous operation.</p>
 
 <span class="filename">
-<app-tabs #app71a6c76ed40da0e1c591b85d9862e5f8782aa075></app-tabs>
-</span><pre [class.hide]="app71a6c76ed40da0e1c591b85d9862e5f8782aa075.isJsActive"><code class="language-typescript">
+<app-tabs #app91c6de1a8c83c55163d033c7b0522eab3cbadcc5></app-tabs>
+</span><pre [class.hide]="app91c6de1a8c83c55163d033c7b0522eab3cbadcc5.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -88,7 +88,7 @@ const connectionFactory = &#123;
   providers: [connectionFactory],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!app71a6c76ed40da0e1c591b85d9862e5f8782aa075.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app91c6de1a8c83c55163d033c7b0522eab3cbadcc5.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;
@@ -104,12 +104,12 @@ const connectionFactory = &#123;
 export class ApplicationModule &#123;&#125;</code></pre><blockquote class="
 info "><strong>Hint</strong> If your factory needs other providers, you have to pass their tokens inside the <code>inject</code> array. Nest will pass instances as arguments of the function in the same order.
 </blockquote>
-<h4 appAnchor id="export-custom-provider">Export custom provider</h4>
+<h4 appAnchor id="export-custom-provider"><span>Export custom provider</span></h4>
 <p>In order to export a custom provider, we can either use a token or a whole object. The following example shows a token case:</p>
 
 <span class="filename">
-<app-tabs #app98a150714ecd6b46a94413744303afa8d2a5ab77></app-tabs>
-</span><pre [class.hide]="app98a150714ecd6b46a94413744303afa8d2a5ab77.isJsActive"><code class="language-typescript">
+<app-tabs #app24b665c27e09ff8acb91b23dbbaf8b6e46e12f4c></app-tabs>
+</span><pre [class.hide]="app24b665c27e09ff8acb91b23dbbaf8b6e46e12f4c.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -124,7 +124,7 @@ const connectionFactory = &#123;
   exports: [&#39;CONNECTION&#39;],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!app98a150714ecd6b46a94413744303afa8d2a5ab77.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app24b665c27e09ff8acb91b23dbbaf8b6e46e12f4c.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;
@@ -141,8 +141,8 @@ const connectionFactory = &#123;
 export class ApplicationModule &#123;&#125;</code></pre><p>But you can use a whole object as well:</p>
 
 <span class="filename">
-<app-tabs #appa61b90d2f3834b78735fd04d017d16672e230ba3></app-tabs>
-</span><pre [class.hide]="appa61b90d2f3834b78735fd04d017d16672e230ba3.isJsActive"><code class="language-typescript">
+<app-tabs #appfd4b28b3b10db9847bc2640bf7e02318dd670111></app-tabs>
+</span><pre [class.hide]="appfd4b28b3b10db9847bc2640bf7e02318dd670111.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -157,7 +157,7 @@ const connectionFactory = &#123;
   exports: [connectionFactory],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!appa61b90d2f3834b78735fd04d017d16672e230ba3.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appfd4b28b3b10db9847bc2640bf7e02318dd670111.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;

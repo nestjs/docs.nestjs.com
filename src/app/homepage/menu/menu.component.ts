@@ -184,7 +184,7 @@ export class MenuComponent implements OnInit {
       path: '/migration-guide',
     },
     {
-      title: 'Support me',
+      title: 'Support us',
       isOpened: false,
       path: '/support',
     },
