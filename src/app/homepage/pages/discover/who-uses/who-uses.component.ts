@@ -63,6 +63,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://roche.com',
       width: '100px',
     },
+    {
+      logo: '/assets/logo/run-players-league.png',
+      url: 'https://runplayersleague.com',
+      width: '90px',
+    },
   ];
 
   readonly companiesUrls = [
