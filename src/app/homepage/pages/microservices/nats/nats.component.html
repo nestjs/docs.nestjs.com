@@ -1,27 +1,23 @@
-<div class="content">
-  <h3>NATS</h3>
-  <p>
-    The <a href="https://nats.io" target="blank">NATS</a> is a simple, high performance open source messaging system.
-  </p>
-  <h4>Installation</h4>
-  <p>Before we start, we have to install required package:</p>
-  <pre><code class="language-bash">
+<div class="content" #contentReference>
+      <h3 id="nats">NATS</h3>
+<p>The <a href="https://nats.io">NATS</a> is a simple, high performance open source messaging system.</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>Before we start, we have to install required package:</p>
+<pre><code class="language-bash">
 $ npm i --save nats</code></pre>
-  <h4>Overview</h4>
-  <p>
-    In order to switch to <strong>NATS</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code>
-    method.
-  </p>
-  <span class="filename">
-    {{ 'main' | extension: optionsT.isJsActive }}
-    <app-tabs #optionsT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ options }}</code></pre>
-  <h4>Options</h4>
-  <p>
-    There are a bunch of available options that determine a transporter behavior.
-    They are well-described <a href="https://github.com/nats-io/node-nats#connect-options" target="blank">here</a>.
-    Also, there is an additional <code>queue</code> property which allows you specifying a name of the queue that your
-    server should subscribe to (leave <code>undefined</code> if you don't want use any particular queue)
-  </p>
-</div>
+<h4 appAnchor id="overview"><span>Overview</span></h4>
+<p>In order to switch to <strong>NATS</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
+
+<span class="filename">
+  {{ 'main' | extension: app517a93a00a361ea7b31f09c780d09577dd411434.isJsActive }}
+<app-tabs #app517a93a00a361ea7b31f09c780d09577dd411434></app-tabs>
+</span><pre><code class="language-typescript">
+const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
+  transport: Transport.NATS,
+  options: &#123;
+    url: &#39;nats://localhost:4222&#39;,
+  &#125;,
+&#125;);</code></pre><h4 appAnchor id="options"><span>Options</span></h4>
+<p>There are a bunch of available options that determine a transporter behavior. They are well-described <a href="https://github.com/nats-io/node-nats#connect-options">here</a>. Also, there is an additional <code>queue</code> property which allows you specifying a name of the queue that your server should subscribe to (leave <code>undefined</code> if you don&#39;t want use any particular queue)</p>
+
+    </div>

@@ -1,8 +1,8 @@
-<div class="content">
-  <h3>Global Prefix</h3>
-  <p>
-    In order to set a prefix for each route registered in the application at once, you can 
-    use the <code>setGlobalPrefix()</code> method of the <code>INestApplication</code> instance.
-  </p>
-  <pre><code class="language-typescript">{{ globalPrefix }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="global-prefix">Global Prefix</h3>
+<p>In order to set a prefix for each route registered in the application at once, you can use the <code>setGlobalPrefix()</code> method of the <code>INestApplication</code> instance.</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule);
+app.setGlobalPrefix(&#39;v1&#39;);</code></pre>
+
+    </div>

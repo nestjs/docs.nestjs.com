@@ -56,17 +56,19 @@ And when it comes to controllers, pass the `ControllerOptions` object:
 export class CatsController {}
 ```
 
+> warning **Notice** Gateways should never rely on request-scoped providers because they act as singletons. One gateway encapsulates a real socket inside and cannot be instantiated multiple times.
+
 #### Per-request injection
 
 The request-scoped providers have to be used very carefully. Keep in mind that the scope actually bubbles up in the **injection chain**. If your controller depends on a provider which is request-scoped, it means that your controller is actually request-scoped as well.
 
 Imagine the following chain: `CatsController <- CatsService <- CatsRepository`. If your `CatsService` is request-scoped, the `CatsController` would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas `CatsRepository` would remain as a singleton.
 
-> warning **Warning** The circular dependencies in this case will lead to a very painful side-effects and thus, you should certainly avoid using them.
+> **Warning** The circular dependencies in this case will lead to a very painful side-effects and thus, you should certainly avoid using them.
 
 #### Request provider
 
-Using request-scoped providers gives you a capability to inject an original request reference.
+In the HTTP application, using request-scoped providers gives you a capability to inject an original request reference.
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';

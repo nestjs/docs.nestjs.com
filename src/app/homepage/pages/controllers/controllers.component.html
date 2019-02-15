@@ -5,13 +5,13 @@
 
 <p>A controller&#39;s purpose is to receive specific requests for the application. The <strong>routing</strong> mechanism controls which controller receives which requests. Frequently, each controller has more than one route, and different routes can perform different actions.</p>
 <p>In order to create a basic controller, we use classes and <strong>decorators</strong>. Decorators associate classes with required metadata and enable Nest to create a routing map (tie requests to the corresponding controllers).</p>
-<h4 appAnchor id="routing">Routing</h4>
+<h4 appAnchor id="routing"><span>Routing</span></h4>
 <p>In the following example we&#39;ll use the <code>@Controller()</code> decorator which is <strong>required</strong> to define a basic controller. We&#39;ll specify an optional prefix of <code>cats</code>. Using a prefix in a Controller decorator allows us to avoid repeating ourselves when routes could potentially share a common prefix.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appbab6067bba73f84b543f9e6b98c8e7acd225caf2.isJsActive }}
-<app-tabs #appbab6067bba73f84b543f9e6b98c8e7acd225caf2></app-tabs>
-</span><pre [class.hide]="appbab6067bba73f84b543f9e6b98c8e7acd225caf2.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app4dc27e13b8f214fbd765e786f30879b54b41b22d.isJsActive }}
+<app-tabs #app4dc27e13b8f214fbd765e786f30879b54b41b22d></app-tabs>
+</span><pre [class.hide]="app4dc27e13b8f214fbd765e786f30879b54b41b22d.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)
@@ -21,7 +21,7 @@ export class CatsController &#123;
     return &#39;This action returns all cats&#39;;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appbab6067bba73f84b543f9e6b98c8e7acd225caf2.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app4dc27e13b8f214fbd765e786f30879b54b41b22d.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)
@@ -62,13 +62,13 @@ info "><strong>Hint</strong> To create a controller using CLI, simply execute <c
 <blockquote class="
 warning "><strong>Warning</strong> You can&#39;t use both approaches at the same time. Nest detects whether the handler is using either <code>@Res()</code> or <code>@Next()</code>. If both approaches are used in the same time - the Standard approach is automatically disabled for this single route and will no longer work as expected.
 </blockquote>
-<h4 appAnchor id="request-object">Request object</h4>
+<h4 appAnchor id="request-object"><span>Request object</span></h4>
 <p>A lot of endpoints need access to the client <strong>request</strong> details. In fact, Nest is using a library-specific (express by default) <a href="http://expressjs.com/en/api.html#req">request object</a>. As a result, we can force Nest to inject the request object into the handler using the <code>@Req()</code> decorator.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app2d59af4f439bd639ebd895496a38d940e3680535.isJsActive }}
-<app-tabs #app2d59af4f439bd639ebd895496a38d940e3680535></app-tabs>
-</span><pre [class.hide]="app2d59af4f439bd639ebd895496a38d940e3680535.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app73215275508df1c8ad2fa120445469e99a08430b.isJsActive }}
+<app-tabs #app73215275508df1c8ad2fa120445469e99a08430b></app-tabs>
+</span><pre [class.hide]="app73215275508df1c8ad2fa120445469e99a08430b.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Req &#125; from &#39;@nestjs/common&#39;;
 import &#123; Request &#125; from &#39;express&#39;;
 
@@ -79,7 +79,7 @@ export class CatsController &#123;
     return &#39;This action returns all cats&#39;;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app2d59af4f439bd639ebd895496a38d940e3680535.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app73215275508df1c8ad2fa120445469e99a08430b.isJsActive"><code class="language-typescript">
 import &#123; Controller, Bind, Get, Req &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)
@@ -130,13 +130,13 @@ export class CatsController &#123;
 <blockquote class="
 info "><strong>Hint</strong> To learn how to create your own custom decorators, visit <a routerLink="/custom-decorators">this</a> chapter.
 </blockquote>
-<h4 appAnchor id="resources">Resources</h4>
+<h4 appAnchor id="resources"><span>Resources</span></h4>
 <p>We defined an endpoint to fetch the cats resource (<strong>GET</strong> route). It&#39;ll also be great to provide a way of creating new records as well. For this, let&#39;s create the <strong>POST</strong> handler:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app7dacdc921761e71c246ec5f0a476f070d2dd111e.isJsActive }}
-<app-tabs #app7dacdc921761e71c246ec5f0a476f070d2dd111e></app-tabs>
-</span><pre [class.hide]="app7dacdc921761e71c246ec5f0a476f070d2dd111e.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app1fbe93bfd4dceb60b2bfbe2ee72b49f2b7831006.isJsActive }}
+<app-tabs #app1fbe93bfd4dceb60b2bfbe2ee72b49f2b7831006></app-tabs>
+</span><pre [class.hide]="app1fbe93bfd4dceb60b2bfbe2ee72b49f2b7831006.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)
@@ -151,7 +151,7 @@ export class CatsController &#123;
     return &#39;This action returns all cats&#39;;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app7dacdc921761e71c246ec5f0a476f070d2dd111e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app1fbe93bfd4dceb60b2bfbe2ee72b49f2b7831006.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)
@@ -166,7 +166,7 @@ export class CatsController &#123;
     return &#39;This action returns all cats&#39;;
   &#125;
 &#125;</code></pre><p>It&#39;s that simple. Nest provides the rest of those endpoint decorators in the same fashion - <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>, and <code>@All()</code>. All of them represent respective HTTP request methods.</p>
-<h4 appAnchor id="route-wildcards">Route wildcards</h4>
+<h4 appAnchor id="route-wildcards"><span>Route wildcards</span></h4>
 <p>Pattern based routes are supported as well. For instance, the asterisk is used as a wildcard, and will match any combination of characters.</p>
 <pre><code class="language-typescript">
 @Get(&#39;ab*cd&#39;)
@@ -174,7 +174,7 @@ findAll() &#123;
   return &#39;This route uses a wildcard&#39;;
 &#125;</code></pre>
 <p>Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters <code>?</code>, <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The hyphen ( <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.</p>
-<h4 appAnchor id="status-code">Status code</h4>
+<h4 appAnchor id="status-code"><span>Status code</span></h4>
 <p>As mentioned, the response <strong>status code</strong> is always <strong>200</strong> by default, except for POST requests which are <strong>201</strong>. We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.</p>
 <pre><code class="language-typescript">
 @Post()
@@ -183,7 +183,7 @@ create() &#123;
   return &#39;This action adds a new cat&#39;;
 &#125;</code></pre>
 <p>Often, your status code isn&#39;t static but depends on various factors. In that case, you can use a library-specific <strong>response</strong> (inject using <code>@Res()</code>) object (or, in case of an error, throw an exception).</p>
-<h4 appAnchor id="headers">Headers</h4>
+<h4 appAnchor id="headers"><span>Headers</span></h4>
 <p>To specify a custom response header, you can either use a <code>@Header()</code> decorator or a library-specific response object.</p>
 <pre><code class="language-typescript">
 @Post()
@@ -191,18 +191,18 @@ create() &#123;
 create() &#123;
   return &#39;This action adds a new cat&#39;;
 &#125;</code></pre>
-<h4 appAnchor id="route-parameters">Route parameters</h4>
+<h4 appAnchor id="route-parameters"><span>Route parameters</span></h4>
 <p>Routes with static paths can&#39;t help when you need to accept <strong>dynamic data</strong> as part of the URL. In order to define routes with parameters, we can directly particularise the route parameters in the path of the route.</p>
 
 <span class="filename">
-<app-tabs #app27c9036d3bfd3204207b09418ae2f8e22f81b9b4></app-tabs>
-</span><pre [class.hide]="app27c9036d3bfd3204207b09418ae2f8e22f81b9b4.isJsActive"><code class="language-typescript">
+<app-tabs #app2c9fcb7095bfd310cdf6790ff27c1c6859213fad></app-tabs>
+</span><pre [class.hide]="app2c9fcb7095bfd310cdf6790ff27c1c6859213fad.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 findOne(@Param() params): string &#123;
   console.log(params.id);
   return `This action returns a #$&#123;params.id&#125; cat`;
 &#125;</code></pre>
-<pre [class.hide]="!app27c9036d3bfd3204207b09418ae2f8e22f81b9b4.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app2c9fcb7095bfd310cdf6790ff27c1c6859213fad.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 @Bind(Param())
 findOne(params) &#123;
@@ -211,18 +211,18 @@ findOne(params) &#123;
 &#125;</code></pre><p>In order to pick up a particular parameter, simply pass its name in parenthesis.</p>
 
 <span class="filename">
-<app-tabs #appf185b62c7f976a86f465585876e81197f7a586bb></app-tabs>
-</span><pre [class.hide]="appf185b62c7f976a86f465585876e81197f7a586bb.isJsActive"><code class="language-typescript">
+<app-tabs #appf0fd234bd35a372a326089bd37fbab6d16ebd298></app-tabs>
+</span><pre [class.hide]="appf0fd234bd35a372a326089bd37fbab6d16ebd298.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 findOne(@Param(&#39;id&#39;) id): string &#123;
   return `This action returns a #$&#123;id&#125; cat`;
 &#125;</code></pre>
-<pre [class.hide]="!appf185b62c7f976a86f465585876e81197f7a586bb.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf0fd234bd35a372a326089bd37fbab6d16ebd298.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 @Bind(Param(&#39;id&#39;))
 findOne(id) &#123;
   return `This action returns a #$&#123;id&#125; cat`;
-&#125;</code></pre><h4 appAnchor id="routes-order">Routes order</h4>
+&#125;</code></pre><h4 appAnchor id="routes-order"><span>Routes order</span></h4>
 <p>Be aware that routes registration <strong>order</strong> (methods order in classes) matters. Assume that you have a route that allows getting cats by identifiers (<code>cats/:id</code>). If you register another endpoint below the mentioned one, which basically returns all cats at once (<code>cats</code>), the request will never hit the actual handler because all path parameters are optional. See the following example:</p>
 <pre><code class="language-typescript">
 @Controller(&#39;cats&#39;)
@@ -240,10 +240,10 @@ export class CatsController &#123;
   &#125;
 &#125;</code></pre>
 <p>In order to avoid such side-effects, simply move <code>findAll()</code> method above <code>findOne()</code>.</p>
-<h4 appAnchor id="scopes">Scopes</h4>
+<h4 appAnchor id="scopes"><span>Scopes</span></h4>
 <p>For the people coming from different languages, it might be awkward that in Nest almost everything is shared across the incoming requests. We have a connection pool to the database, singleton services with a global state etc. Generally, Node.js doesn&#39;t follow request/response Multi-Threaded Stateless Model in which every request is being processed by the separate thread. Hence, using singleton instances is fully <strong>safe</strong> for our applications.</p>
 <p>However, there are edge-cases when request-based lifetime of the controller may be an intentional behavior, for instance per-request cache in GraphQL applications, request tracking or multi-tenancy. Learn how to use them <a routerLink="/techniques/scopes">here</a>.</p>
-<h4 appAnchor id="asynchronousness">Asynchronousness</h4>
+<h4 appAnchor id="asynchronousness"><span>Asynchronousness</span></h4>
 <p>We love modern JavaScript and we know that data extraction is mostly <strong>asynchronous</strong>. That&#39;s why Nest supports and works well with <code>async</code> functions.</p>
 <blockquote class="
 info "><strong>Hint</strong> Learn more about <code>async / await</code> feature <a href="https://kamilmysliwiec.com/typescript-2-1-introduction-async-await">here</a>
@@ -251,40 +251,40 @@ info "><strong>Hint</strong> Learn more about <code>async / await</code> feature
 <p>Every async function has to return a <code>Promise</code>. It means that you can return a deferred value that Nest will be able to resolve by itself. Let&#39;s see an example of this below:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appace10dbf108c18aafc44342bd9ff298fb55f3c9c.isJsActive }}
-<app-tabs #appace10dbf108c18aafc44342bd9ff298fb55f3c9c></app-tabs>
-</span><pre [class.hide]="appace10dbf108c18aafc44342bd9ff298fb55f3c9c.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app2ef9b4e1344698756eb2899d84265c08fe456c9c.isJsActive }}
+<app-tabs #app2ef9b4e1344698756eb2899d84265c08fe456c9c></app-tabs>
+</span><pre [class.hide]="app2ef9b4e1344698756eb2899d84265c08fe456c9c.isJsActive"><code class="language-typescript">
 @Get()
 async findAll(): Promise&lt;any[]&gt; &#123;
   return [];
 &#125;</code></pre>
-<pre [class.hide]="!appace10dbf108c18aafc44342bd9ff298fb55f3c9c.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app2ef9b4e1344698756eb2899d84265c08fe456c9c.isJsActive"><code class="language-typescript">
 @Get()
 async findAll() &#123;
   return [];
 &#125;</code></pre><p>The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return Rx <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html">observable streams</a>. Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appefee467652b71dc594b6d0117998e023555c6c16.isJsActive }}
-<app-tabs #appefee467652b71dc594b6d0117998e023555c6c16></app-tabs>
-</span><pre [class.hide]="appefee467652b71dc594b6d0117998e023555c6c16.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: appb06534db8dcafcc6f7f48f0716d732de01900482.isJsActive }}
+<app-tabs #appb06534db8dcafcc6f7f48f0716d732de01900482></app-tabs>
+</span><pre [class.hide]="appb06534db8dcafcc6f7f48f0716d732de01900482.isJsActive"><code class="language-typescript">
 @Get()
 findAll(): Observable&lt;any[]&gt; &#123;
   return of([]);
 &#125;</code></pre>
-<pre [class.hide]="!appefee467652b71dc594b6d0117998e023555c6c16.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb06534db8dcafcc6f7f48f0716d732de01900482.isJsActive"><code class="language-typescript">
 @Get()
 findAll() &#123;
   return of([]);
 &#125;</code></pre><p>Either of the above approaches work and you can use whatever fits your requirements.</p>
-<h4 appAnchor id="request-payloads">Request payloads</h4>
+<h4 appAnchor id="request-payloads"><span>Request payloads</span></h4>
 <p>Our previous example of the POST route handler didn&#39;t accept any client params. Let&#39;s fix this by adding the <code>@Body()</code> argument here.</p>
 <p>But first (if you use TypeScript), we need to determine the <strong>DTO</strong> (Data Transfer Object) schema. A DTO is an object that defines how the data will be sent over the network. We could determine the DTO schema by using <strong>TypeScript</strong> interfaces, or by simple classes. Surprisingly, we recommend using <strong>classes</strong> here. Why? Classes are part of the JavaScript ES6 standard, and therefore they represent plain functions. On the other hand, since TypeScript interfaces are removed during the transpilation, Nest can&#39;t refer to them. This is important because features such as <strong>Pipes</strong> enable additional possibilities when they have access to the metatype of the variable.</p>
 <p>Let&#39;s create the <code>CreateCatDto</code> class:</p>
 
 <span class="filename">
-  {{ 'create-cat.dto' | extension: app0f7115ec78766302e1896c3cca97b5351da8c702.isJsActive }}
-<app-tabs #app0f7115ec78766302e1896c3cca97b5351da8c702></app-tabs>
+  {{ 'create-cat.dto' | extension: appc9fbe3e75f04a41eddd776a09bcebbbda5a122a3.isJsActive }}
+<app-tabs #appc9fbe3e75f04a41eddd776a09bcebbbda5a122a3></app-tabs>
 </span><pre><code class="language-typescript">
 export class CreateCatDto &#123;
   readonly name: string;
@@ -293,27 +293,27 @@ export class CreateCatDto &#123;
 &#125;</code></pre><p>It has only three basic properties. Thereafter we can use the newly created schema inside the <code>CatsController</code>:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appc87910efac87a1daf063b94eebf2643d7a55b65a.isJsActive }}
-<app-tabs #appc87910efac87a1daf063b94eebf2643d7a55b65a></app-tabs>
-</span><pre [class.hide]="appc87910efac87a1daf063b94eebf2643d7a55b65a.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: appa66bdfed2103f06a3fda8e10f0c17a93b582ec8d.isJsActive }}
+<app-tabs #appa66bdfed2103f06a3fda8e10f0c17a93b582ec8d></app-tabs>
+</span><pre [class.hide]="appa66bdfed2103f06a3fda8e10f0c17a93b582ec8d.isJsActive"><code class="language-typescript">
 @Post()
 async create(@Body() createCatDto: CreateCatDto) &#123;
   return &#39;This action adds a new cat&#39;;
 &#125;</code></pre>
-<pre [class.hide]="!appc87910efac87a1daf063b94eebf2643d7a55b65a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa66bdfed2103f06a3fda8e10f0c17a93b582ec8d.isJsActive"><code class="language-typescript">
 @Post()
 @Bind(Body())
 async create(createCatDto) &#123;
   return &#39;This action adds a new cat&#39;;
-&#125;</code></pre><h4 appAnchor id="handling-errors">Handling errors</h4>
+&#125;</code></pre><h4 appAnchor id="handling-errors"><span>Handling errors</span></h4>
 <p>There&#39;s a separate chapter about handling errors (i.e. working with exceptions) <a routerLink="/exception-filters">here</a>.</p>
-<h4 appAnchor id="full-resource-sample">Full resource sample</h4>
+<h4 appAnchor id="full-resource-sample"><span>Full resource sample</span></h4>
 <p>Here is a example that makes use of a few available decorators to create a basic controller. The following controller exposes a couple of methods to access and manipulate internal data.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app1084ee72e88ff7cfb763b15d5dc71a7e6e2cf3bb.isJsActive }}
-<app-tabs #app1084ee72e88ff7cfb763b15d5dc71a7e6e2cf3bb></app-tabs>
-</span><pre [class.hide]="app1084ee72e88ff7cfb763b15d5dc71a7e6e2cf3bb.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app6047cdafe454d6c89d6b65401bf94eeb2b4b1029.isJsActive }}
+<app-tabs #app6047cdafe454d6c89d6b65401bf94eeb2b4b1029></app-tabs>
+</span><pre [class.hide]="app6047cdafe454d6c89d6b65401bf94eeb2b4b1029.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Query, Post, Body, Put, Param, Delete &#125; from &#39;@nestjs/common&#39;;
 import &#123; CreateCatDto, UpdateCatDto, ListAllEntities &#125; from &#39;./dto&#39;;
 
@@ -344,7 +344,7 @@ export class CatsController &#123;
     return `This action removes a #$&#123;id&#125; cat`;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app1084ee72e88ff7cfb763b15d5dc71a7e6e2cf3bb.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app6047cdafe454d6c89d6b65401bf94eeb2b4b1029.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Query, Post, Body, Put, Param, Delete &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)
@@ -373,13 +373,13 @@ export class CatsController &#123;
   remove(@Param(&#39;id&#39;) id) &#123;
     return `This action removes a #$&#123;id&#125; cat`;
   &#125;
-&#125;</code></pre><h4 appAnchor id="getting-up-and-running">Getting up and running</h4>
+&#125;</code></pre><h4 appAnchor id="getting-up-and-running"><span>Getting up and running</span></h4>
 <p>With the above controller fully prepared, Nest still doesn&#39;t know that <code>CatsController</code> exists and as a result won&#39;t create an instance of this class.</p>
 <p>Controllers always belong to the module, which is why we hold the <code>controllers</code> array within the <code>@Module()</code> decorator. Since we don&#39;t have any other modules except the root <code>ApplicationModule</code>, we&#39;ll use that to introduce the <code>CatsController</code>:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app62c3f448ec270510bb38c825cfa4b7911179b1ff.isJsActive }}
-<app-tabs #app62c3f448ec270510bb38c825cfa4b7911179b1ff></app-tabs>
+  {{ 'app.module' | extension: appff68bd7bac00dc6eeffbbfc175e2a1c845b7c715.isJsActive }}
+<app-tabs #appff68bd7bac00dc6eeffbbfc175e2a1c845b7c715></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsController &#125; from &#39;./cats/cats.controller&#39;;
@@ -388,12 +388,12 @@ import &#123; CatsController &#125; from &#39;./cats/cats.controller&#39;;
   controllers: [CatsController],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre><p>We attached the metadata to the module class, and Nest can now easily reflect which controllers have to be mounted.</p>
-<h4 appAnchor id="appendix-library-specific-approach">Appendix: Library-specific approach</h4>
+<h4 appAnchor id="appendix-library-specific-approach"><span>Appendix: Library-specific approach</span></h4>
 <p>So far we&#39;ve discussed the Nest standard way of manipulating responses. The second way of manipulating the response is to use a library-specific <a href="http://expressjs.com/en/api.html#res">response object</a>. In order to inject a particular response object, we need to use the <code>@Res()</code> decorator. To show the differences, let&#39;s rewrite the <code>CatsController</code> to the following:</p>
 
 <span class="filename">
-<app-tabs #app3ebc535b5f8277b36d47a26836b2c2b1d2c9c30f></app-tabs>
-</span><pre [class.hide]="app3ebc535b5f8277b36d47a26836b2c2b1d2c9c30f.isJsActive"><code class="language-typescript">
+<app-tabs #appd3916df53b9eead0cc84adb81360060785f0d820></app-tabs>
+</span><pre [class.hide]="appd3916df53b9eead0cc84adb81360060785f0d820.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post, Res, HttpStatus &#125; from &#39;@nestjs/common&#39;;
 import &#123; Response &#125; from &#39;express&#39;;
 
@@ -409,7 +409,7 @@ export class CatsController &#123;
      res.status(HttpStatus.OK).json([]);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app3ebc535b5f8277b36d47a26836b2c2b1d2c9c30f.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appd3916df53b9eead0cc84adb81360060785f0d820.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post, Bind, Res, Body, HttpStatus &#125; from &#39;@nestjs/common&#39;;
 
 @Controller(&#39;cats&#39;)

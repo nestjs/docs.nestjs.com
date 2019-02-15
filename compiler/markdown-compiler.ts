@@ -74,12 +74,14 @@ renderer.link = (href: string, title: string, text: string) => {
 
 const originalHeadingRenderer = renderer.heading.bind(renderer);
 renderer.heading = (...args: string[]) => {
-  const text = originalHeadingRenderer(...args);
+  let text = originalHeadingRenderer(...args);
   if (!text.includes('h4')) {
     return text;
   }
   const startIndex = text.indexOf('<h') + 3;
-  return insertText(text, startIndex, ` appAnchor`);
+  text = insertText(text, startIndex, ` appAnchor`);
+  text = insertText(text, text.indexOf('">') + 2, '<span>');
+  return insertText(text, text.length - 6, '</span>');
 };
 
 const originalBlockquoteRenderer = renderer.blockquote.bind(renderer);

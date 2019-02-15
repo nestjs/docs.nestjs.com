@@ -52,11 +52,13 @@ export class WhoUsesComponent extends BasePageComponent {
     },
     {
       logo: '/assets/logo/architectnow.png',
-      url: 'http://architectnow.net'
+      url: 'http://architectnow.net',
+      width: '150px',
     },
     {
       logo: '/assets/logo/iflix.svg',
-      url: 'https://www.iflix.com'
+      url: 'https://www.iflix.com',
+      width: '80px',
     },
     {
       logo: '/assets/logo/roche-logo.png',

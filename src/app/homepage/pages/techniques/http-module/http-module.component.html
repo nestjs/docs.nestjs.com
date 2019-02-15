@@ -1,37 +1,54 @@
-<div class="content">
-  <h3>HTTP module</h3>
-  <p>
-    <a href="https://github.com/axios/axios" target="blank">Axios</a> is rich-feature HTTP client that is widely used in
-    dozens of applications. That's why Nest wraps this package and exposes it by default as a built-in <code>HttpModule</code>.
-    The <code>HttpModule</code> exports <code>HttpService</code> that simply exposes axios-based methods to perform HTTP
-    request, but also, transforms return types into <code>Observables</code>.
-  </p>
-  <p>
-    In order to use a <code>HttpService</code>, we need to import <code>HttpModule</code>.
-  </p>
-  <pre><code class="language-typescript">{{ httpModule }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>HttpModule</code> is exposed from <code>@nestjs/common</code> package.
-  </blockquote>
-  <p>
-    Then, you can inject <code>HttpService</code>. This class is easily accessible from <code>@nestjs/common</code> package.
-  </p>
-  <span class="filename">
-    <app-tabs #httpServiceT></app-tabs>
-  </span>
-  <pre [class.hide]="httpServiceT.isJsActive"><code class="language-typescript">{{ httpService }}</code></pre>
-  <pre [class.hide]="!httpServiceT.isJsActive"><code class="language-typescript">{{ httpServiceJs }}</code></pre>
-  <p>
-    All methods return <code>AxiosResponse</code> wrapped with <code>Observable</code> object.
-  </p>
-  <h4>Configuration</h4>
-  <p>
-    <a href="https://github.com/axios/axios" target="blank">Axios</a> gives a bunch of options that you may take advantage
-    of to make your <code>HttpService</code> even more powerful. Read more about them <a href="https://github.com/axios/axios#request-config"
-      target="blank">here</a>. To configure underlying library instance, use <code>register()</code> method of <code>HttpModule</code>.
-  </p>
-  <pre><code class="language-typescript">{{ configuration }}</code></pre>
-  <p>
-    All these properties will be passed down to the <strong>axios</strong> constructor.
-  </p>
-</div>
+<div class="content" #contentReference>
+      <h3 id="http-module">HTTP module</h3>
+<p><a href="https://github.com/axios/axios">Axios</a> is rich-feature HTTP client that is widely used in dozens of applications. That&#39;s why Nest wraps this package and exposes it by default as a built-in <code>HttpModule</code>. The <code>HttpModule</code> exports <code>HttpService</code> that simply exposes axios-based methods to perform HTTP request, but also, transforms return types into <code>Observables</code>.</p>
+<p>In order to use a <code>HttpService</code>, we need to import <code>HttpModule</code>.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  imports: [HttpModule],
+  providers: [CatsService],
+&#125;)
+export class CatsModule &#123;&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> The <code>HttpModule</code> is exposed from <code>@nestjs/common</code> package.
+</blockquote>
+<p>Then, you can inject <code>HttpService</code>. This class is easily accessible from <code>@nestjs/common</code> package.</p>
+
+<span class="filename">
+<app-tabs #app60eeb028477ef34a42c0922057022f5f9f56ffab></app-tabs>
+</span><pre [class.hide]="app60eeb028477ef34a42c0922057022f5f9f56ffab.isJsActive"><code class="language-typescript">
+@Injectable()
+export class CatsService &#123;
+  constructor(private readonly httpService: HttpService) &#123;&#125;
+
+  findAll(): Observable&lt;AxiosResponse&lt;Cat[]&gt;&gt; &#123;
+    return this.httpService.get(&#39;http://localhost:3000/cats&#39;);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app60eeb028477ef34a42c0922057022f5f9f56ffab.isJsActive"><code class="language-typescript">
+@Injectable()
+@Dependencies(HttpService)
+export class CatsService &#123;
+  constructor(httpService) &#123;
+    this.httpService = httpService;
+  &#125;
+
+  findAll() &#123;
+    return this.httpService.get(&#39;http://localhost:3000/cats&#39;);
+  &#125;
+&#125;</code></pre><p>All methods return <code>AxiosResponse</code> wrapped with <code>Observable</code> object.</p>
+<h4 appAnchor id="configuration"><span>Configuration</span></h4>
+<p><a href="https://github.com/axios/axios">Axios</a> gives a bunch of options that you may take advantage of to make your <code>HttpService</code> even more powerful. Read more about them <a href="https://github.com/axios/axios#request-config">here</a>. To configure underlying library instance, use <code>register()</code> method of <code>HttpModule</code>.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  imports: [
+    HttpModule.register(&#123;
+      timeout: 5000,
+      maxRedirects: 5,
+    &#125;),
+  ],
+  providers: [CatsService],
+&#125;)
+export class CatsModule &#123;&#125;</code></pre>
+<p>All these properties will be passed down to the <strong>axios</strong> constructor.</p>
+
+    </div>

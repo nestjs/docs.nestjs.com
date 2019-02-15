@@ -1,8 +1,13 @@
-<div class="content">
-  <h3>Hybrid Application</h3>
-  <p>
-    The <strong>hybrid application</strong> is an application that listens for HTTP requests, as well as makes use of connected microservices
-    The <code>INestApplication</code> can be combined with the endless number of the <code>INestMicroservice</code> instances through <code>connectMicroservice()</code> method.
-  </p>
-  <pre><code class="language-typescript">{{ hybridApplication }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="hybrid-application">Hybrid Application</h3>
+<p>The <strong>hybrid application</strong> is an application that listens for HTTP requests, as well as makes use of connected microservices The <code>INestApplication</code> can be combined with the endless number of the <code>INestMicroservice</code> instances through <code>connectMicroservice()</code> method.</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule);
+const microservice = app.connectMicroservice(&#123;
+  transport: Transport.TCP,
+&#125;);
+
+await app.startAllMicroservicesAsync();
+await app.listen(3001);</code></pre>
+
+    </div>
