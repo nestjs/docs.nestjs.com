@@ -11,9 +11,9 @@ info "><strong>Hint</strong> Since Nest enables the possibility to design and or
 <p>Let&#39;s start by creating a simple <code>CatsService</code> provider.</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: appba4242a6e08ac2e90beb2b8771071e9aa84e3fe1.isJsActive }}
-<app-tabs #appba4242a6e08ac2e90beb2b8771071e9aa84e3fe1></app-tabs>
-</span><pre [class.hide]="appba4242a6e08ac2e90beb2b8771071e9aa84e3fe1.isJsActive"><code class="language-typescript">
+  {{ 'cats.service' | extension: appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2.isJsActive }}
+<app-tabs #appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2></app-tabs>
+</span><pre [class.hide]="appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; Cat &#125; from &#39;./interfaces/cat.interface&#39;;
 
@@ -29,7 +29,7 @@ export class CatsService &#123;
     return this.cats;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appba4242a6e08ac2e90beb2b8771071e9aa84e3fe1.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -58,9 +58,9 @@ export interface Cat &#123;
 <p>Since we have the service class already done, let&#39;s use it inside the <code>CatsController</code>:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app06b0baa8aa55a3dd3cb300e620f9f07c4eb4e377.isJsActive }}
-<app-tabs #app06b0baa8aa55a3dd3cb300e620f9f07c4eb4e377></app-tabs>
-</span><pre [class.hide]="app06b0baa8aa55a3dd3cb300e620f9f07c4eb4e377.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app173e24208c7a51c0ff5ffa0f021d3537fb668bd5.isJsActive }}
+<app-tabs #app173e24208c7a51c0ff5ffa0f021d3537fb668bd5></app-tabs>
+</span><pre [class.hide]="app173e24208c7a51c0ff5ffa0f021d3537fb668bd5.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post, Body &#125; from &#39;@nestjs/common&#39;;
 import &#123; CreateCatDto &#125; from &#39;./dto/create-cat.dto&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
@@ -80,7 +80,7 @@ export class CatsController &#123;
     return this.catsService.findAll();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app06b0baa8aa55a3dd3cb300e620f9f07c4eb4e377.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app173e24208c7a51c0ff5ffa0f021d3537fb668bd5.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post, Body, Bind, Dependencies &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
 
@@ -104,7 +104,7 @@ export class CatsController &#123;
 &#125;</code></pre><p>The <code>CatsService</code> is injected through the class constructor. Don&#39;t be afraid of the <code>private readonly</code> shortened syntax. It means that we&#39;ve created and initialized the <code>catsService</code> member immediately in the same location.</p>
 <h4 appAnchor id="dependency-injection"><span>Dependency injection</span></h4>
 <p>Nest is built around the strong design pattern commonly known as <strong>Dependency injection</strong>. We recommend to read a great article about this concept in the official <a href="https://angular.io/guide/dependency-injection">Angular</a> documentation.</p>
-<p>In Nest, thanks to the <strong>TypeScript</strong> capabilities, it&#39;s extremely easy to manage dependencies because they will be resolved just by type and afterward, passed to your controller&#39;s constructor (or assigned to the indicated property):</p>
+<p>In Nest, thanks to the TypeScript capabilities, it&#39;s extremely easy to manage dependencies because they will be resolved just by type and afterward, passed to your controller&#39;s constructor (or assigned to the indicated property):</p>
 <pre><code class="language-typescript">
 constructor(private readonly catsService: CatsService) &#123;&#125;</code></pre>
 <h4 appAnchor id="scopes"><span>Scopes</span></h4>
@@ -137,11 +137,11 @@ export class HttpService&lt;T&gt; &#123;
 warning "><strong>Warning</strong> If your class doesn&#39;t extend any other provider, you should always prefer using <strong>constructor-based</strong> injection.
 </blockquote>
 <h4 appAnchor id="provider-registration"><span>Provider registration</span></h4>
-<p>The last thing is to tell the module that something called <code>CatsService</code> truly exists. We do this by editing our module file - <code>app.module.ts</code>, and put the service into the <code>providers</code> array of the <code>@Module()</code> decorator.</p>
+<p>The last thing is to tell the module that something called <code>CatsService</code> truly exists. We do this by editing our module file - <code>app.module.ts</code>, and putting the service into the <code>providers</code> array of the <code>@Module()</code> decorator.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app9198e5435ca47848fb7a701c36bd385d23926835.isJsActive }}
-<app-tabs #app9198e5435ca47848fb7a701c36bd385d23926835></app-tabs>
+  {{ 'app.module' | extension: app5f646543e507037ec6fa13b31c812d269c752c60.isJsActive }}
+<app-tabs #app5f646543e507037ec6fa13b31c812d269c752c60></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsController &#125; from &#39;./cats/cats.controller&#39;;
@@ -151,7 +151,7 @@ import &#123; CatsService &#125; from &#39;./cats/cats.service&#39;;
   controllers: [CatsController],
   providers: [CatsService],
 &#125;)
-export class ApplicationModule &#123;&#125;</code></pre><p>Thanks to that, Nest will be able to resolve the dependencies of the <code>CatsController</code> class. This is how our directory structure looks right now:</p>
+export class ApplicationModule &#123;&#125;</code></pre><p>Hence, Nest will be able to resolve the dependencies of the <code>CatsController</code> class. This is how our directory structure looks right now:</p>
 <div class="file-tree">
 <div class="item">src</div>
 <div class="children">

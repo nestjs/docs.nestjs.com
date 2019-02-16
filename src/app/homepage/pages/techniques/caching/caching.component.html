@@ -49,14 +49,23 @@ import &#123; APP_INTERCEPTOR &#125; from &#39;@nestjs/core&#39;;
 export class ApplicationModule &#123;&#125;</code></pre>
 <h4 appAnchor id="websockets--microservices"><span>WebSockets &amp; Microservices</span></h4>
 <p>Obviously, you can effortlessly apply <code>CacheInterceptor</code> to WebSocket subscribers as well as Microservice&#39;s patterns (regardless of transport method that is being used).</p>
-<pre><code class="language-typescript">
+
+<span class="filename">
+<app-tabs #app3c4cedb8146d6eeedc4ca07322adac34e6cb456c></app-tabs>
+</span><pre [class.hide]="app3c4cedb8146d6eeedc4ca07322adac34e6cb456c.isJsActive"><code class="language-typescript">
 @CacheKey(&#39;events&#39;)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage(&#39;events&#39;)
-onEvent(client, data): Observable&lt;string[]&gt; &#123;
+handleEvent(client: Client, data: string[]): Observable&lt;string[]&gt; &#123;
   return [];
 &#125;</code></pre>
-<blockquote class="
+<pre [class.hide]="!app3c4cedb8146d6eeedc4ca07322adac34e6cb456c.isJsActive"><code class="language-typescript">
+@CacheKey(&#39;events&#39;)
+@UseInterceptors(CacheInterceptor)
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client, data) &#123;
+  return [];
+&#125;</code></pre><blockquote class="
 info "><strong>Hint</strong> The <code>@CacheKey()</code> decorator is imported from <code>@nestjs/common</code> package.
 </blockquote>
 <p>However, the additional <code>@CacheKey()</code> decorator is required in order to specify a key used to subsequently store and retrieve cached data. Besides, please note that you <strong>shouldn&#39;t cache everything</strong>. Actions which responsibility is to perform some business operations rather than simply querying the data should never be cached.</p>
@@ -87,7 +96,7 @@ import &#123; AppController &#125; from &#39;./app.controller&#39;;
 export class ApplicationModule &#123;&#125;</code></pre>
 <h4 appAnchor id="adjust-tracking"><span>Adjust tracking</span></h4>
 <p>By default, Nest uses request URL (in HTTP app) or cache key (in websockets and microservices) set through <code>@CacheKey()</code> decorator to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different factors, for example, using HTTP headers (e.g. <code>Authorization</code> to properly identify <code>profile</code> endpoints).</p>
-<p>In order to achieve that, create a subclass of <code>CacheInterceptor</code> and override <code>trackBy()</code> method.</p>
+<p>In order to accomplish that, create a subclass of <code>CacheInterceptor</code> and override <code>trackBy()</code> method.</p>
 <pre><code class="language-typescript">
 @Injectable()
 class HttpCacheInterceptor extends CacheInterceptor &#123;

@@ -20,11 +20,13 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.RMQ,
   options: {
     urls: [`amqp://localhost:5672`],
-    queue: 'my_queue',
+    queue: 'cats_queue',
     queueOptions: { durable: false },
   },
 });
 ```
+
+> info **Hint** `Transport` enumerator is imported from the `@nestjs/microservices` package.
 
 #### Options
 

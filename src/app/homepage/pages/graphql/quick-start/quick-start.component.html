@@ -6,26 +6,28 @@
 <p>Firstly, we need to install the required packages:</p>
 <pre><code class="language-bash">
 $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code></pre>
+<h4 appAnchor id="overview"><span>Overview</span></h4>
+<p>Nest offers two ways of building GraphQL applications, the schema first and the classes first respectively.</p>
+<p>In the <strong>schema first</strong> approach, the source of truth is a GraphQL SDL (Schema Definition Language). It&#39;s a language-agnostic way which basically allows you to share schema files between different platforms. Furthermore, Nest will automatically generate your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.</p>
+<p>In the <strong>classes first</strong> approach on the other hand, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to worki exclusively with TypeScript and avoid the context switching between languages syntax.</p>
 <h4 appAnchor id="getting-started"><span>Getting started</span></h4>
 <p>Once the packages are installed, we can register the <code>GraphQLModule</code>.</p>
 
 <span class="filename">
-<app-tabs #app255521d4eea504bfff06a30f959bd51844911e5f></app-tabs>
+<app-tabs #app27f02a9192dec2a2041d641b223941f77dc7b892></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
 
 @Module(&#123;
   imports: [
-    GraphQLModule.forRoot(&#123;
-      typePaths: [&#39;./**/*.graphql&#39;],
-    &#125;),
+    GraphQLModule.forRoot(&#123;&#125;),
   ],
 &#125;)
-export class ApplicationModule &#123;&#125;</code></pre><p>The <code>typePaths</code> property indicates where the <code>GraphQLModule</code> should look for the GraphQL files. Besides, all options will be passed down to the underlying Apollo instance (read more about available settings <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code> mode, simply pass below options:</p>
+export class ApplicationModule &#123;&#125;</code></pre><p>The <code>.forRoot()</code> method takes an options object as an argument. These options will be passed down to the underlying Apollo instance (read more about available settings <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code> mode, simply pass the following options:</p>
 
 <span class="filename">
-<app-tabs #appf394d857faa3b13f760a02dc0874e1b51ad8b20e></app-tabs>
+<app-tabs #appdd7df0f3c1037efb6b5c46b832194c75cefe8967></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
@@ -33,7 +35,6 @@ import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
 @Module(&#123;
   imports: [
     GraphQLModule.forRoot(&#123;
-      typePaths: [&#39;./**/*.graphql&#39;],
       debug: false,
       playground: false,
     &#125;),
@@ -52,6 +53,72 @@ export class ApplicationModule &#123;&#125;</code></pre><p>As mentioned, all the
 GraphQLModule.forRoot(&#123;
   include: [CatsModule],
 &#125;),</code></pre>
+<h4 appAnchor id="schema-first"><span>Schema first</span></h4>
+<p>To start using schema first way, simply add <code>typePaths</code> array inside the options object.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+&#125;),</code></pre>
+<p>The <code>typePaths</code> property indicates where the <code>GraphQLModule</code> should look for the GraphQL files.
+All those files will be eventually combined in the memory which means that you can split your schemas into several files and hold them near to their resolvers.</p>
+<p>Separate creation of both GraphQL types and corresponding TypeScript definitions creates unnecessary redundancy. Eventually, we end up without a single source of truth and each change made within SDL forces us to adjust interfaces as well. Thus, the <code>@nestjs/graphql</code> package serves another interesting functionality, which is the automatic generation of TS definitions using abstract syntax tree (AST). In order to enable it, simply add <code>definitions</code> property.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+  definitions: &#123;
+    path: join(process.cwd(), &#39;src/graphql.ts&#39;),
+  &#125;,
+&#125;),</code></pre>
+<p>The <code>src/graphql.ts</code> indicates where to save TypeScript output. By default, all types are transformed to the interfaces. However, you can switch to classes instead by changing <code>outputAs</code> property to <code>class</code>.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+  definitions: &#123;
+    path: join(process.cwd(), &#39;src/graphql.ts&#39;),
+    outputAs: &#39;class&#39;,
+  &#125;,
+&#125;),</code></pre>
+<p>However, generating type definitions on each application start may not be necessary. Instead, we might prefer to have full control, produce typings only when a dedicated command has been executed. In this case, we can create our own script, let&#39;s say <code>generate-typings.ts</code>:</p>
+<pre><code class="language-typescript">
+import &#123; GraphQLDefinitionsFactory &#125; from &#39;@nestjs/graphql&#39;;
+import &#123; join &#125; from &#39;path&#39;;
+
+const definitionsFactory = new GraphQLDefinitionsFactory();
+definitionsFactory.generate(&#123;
+  typePaths: [&#39;./src/**/*.graphql&#39;],
+  path: join(process.cwd(), &#39;src/graphql.ts&#39;),
+  outputAs: &#39;class&#39;,
+&#125;);</code></pre>
+<p>Afterward, simply run your file:</p>
+<pre><code class="language-bash">
+ts-node generate-typings</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> You can also compile a script beforehand and use <code>node</code> executable instead.
+</blockquote>
+<p>In order to switch to the watch mode (automatically generate typings on any <code>.graphql</code> file change), pass <code>watch</code> option to the <code>generate()</code> method.</p>
+<pre><code class="language-typescript">
+definitionsFactory.generate(&#123;
+  typePaths: [&#39;./src/**/*.graphql&#39;],
+  path: join(process.cwd(), &#39;src/graphql.ts&#39;),
+  outputAs: &#39;class&#39;,
+  watch: true,
+&#125;);</code></pre>
+<p>A fully working sample is available <a href="https://github.com/nestjs/nest/tree/master/sample/12-graphql-apollo">here</a>.</p>
+<h4 appAnchor id="classes-first"><span>Classes first</span></h4>
+<p>In the <strong>classes first</strong> approach, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema.</p>
+<p>Nest is using an amazing <a href="https://19majkel94.github.io/type-graphql/">type-graphql</a> library under the hood in order provide this functionality. Hence, before we proceed, you have to install this package.</p>
+<pre><code class="language-bash">
+$ npm i type-graphql</code></pre>
+<p>Once the installation process is completed, we can add <code>autoSchemaFile</code> property to the options object.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+  definitions: &#123;
+    autoSchemaFile: &#39;schema.gql&#39;,
+  &#125;,
+&#125;),</code></pre>
+<p>The <code>autoGeneratedSchema</code> indicates a path where your automatically generated schema will be created. Additionally, you can pass the <code>buildSchemaOptions</code> property - an options object which will be passed in to the <code>buildSchema()</code> function (from the <code>type-graphql</code> package).</p>
+<p>A fully working sample is available <a href="https://github.com/nestjs/nest/tree/master/sample/23-type-graphql">here</a>.</p>
 <h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
 <p>Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.</p>
 <p>First possible approach is to use a factory function:</p>
@@ -92,7 +159,5 @@ GraphQLModule.forRootAsync(&#123;
   useExisting: ConfigService,
 &#125;),</code></pre>
 <p>It works the same as <code>useClass</code> with one critical difference - <code>GraphQLModule</code> will lookup imported modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.</p>
-<h4 appAnchor id="example"><span>Example</span></h4>
-<p>A fully working sample is available <a href="https://github.com/nestjs/nest/tree/master/sample/12-graphql-apollo">here</a>.</p>
 
     </div>

@@ -1,14 +1,14 @@
 ### Guards
 
-A guard is a class annotated with the `@Injectable()` decorator. The guard should implement the `CanActivate` interface.
+A guard is a class annotated with the `@Injectable()` decorator. Guards should implement the `CanActivate` interface.
 
 <figure><img src="/assets/Guards_1.png" /></figure>
 
-The guards have a **single responsibility**. They determine whether a request shall be handled by the route handler or not. Until now, the access restriction logic was mostly inside the [middleware](/middleware). It's still fine since things such as token validation or attaching properties to the `request` object are not strongly connected with a particular routes.
+Guards have a **single responsibility**. They determine whether a request shall be handled by the route handler or not. Until now, the access restriction logic was mostly inside the [middleware](/middleware). It's still fine since things such as token validation or attaching properties to the `request` object are not strongly connected with a particular routes (and their metadata).
 
 But middleware, by its nature, is dumb. It doesn't know which handler will be executed after calling the `next()` function. On the other hand, **Guards** have an access to the `ExecutionContext` instance, and thus we know exactly what's going to be evaluated.
 
-> info **Hint** Guards are executed **after** each middleware, but **before** any pipe.
+> info **Hint** Guards are executed **after** each middleware, but **before** any interceptor and pipe.
 
 #### Authorization guard
 
@@ -118,9 +118,9 @@ const app = await NestFactory.create(ApplicationModule);
 app.useGlobalGuards(new RolesGuard());
 ```
 
-> **Notice** The `useGlobalGuards()` method doesn't set up guards for gateways and microservices (whereas hybrid app is being used).
+> warning **Notice** The `useGlobalGuards()` method doesn't set up guards for gateways and microservices (whereas hybrid app is being used).
 
-The global guards are used across the whole application, for every controller and every route handler. In terms of dependency injection, global guards registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a guard **directly from any module** using following construction:
+The global guards are used across the whole application, for every controller and every route handler. In terms of the dependency injection, global guards registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a guard **directly from any module** using following construction:
 
 ```typescript
 @@filename(app.module)
@@ -138,9 +138,9 @@ import { APP_GUARD } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** The alternative option is to use an [execution context](/execution-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
 
-#### Reflector
+#### Reflection
 
 The guard is working now, but we're still not taking advantage of the most important guard features, being the **execution context** .
 
@@ -179,7 +179,7 @@ import { SetMetadata } from '@nestjs/common';
 export const Roles = (...roles) => SetMetadata('roles', roles);
 ```
 
-This approach is much cleaner and readable (and is strongly typed). Since we've got a `@Roles()` decorator now, we can use it with the `create()` method.
+This approach is much cleaner and readable (and is strongly typed). Since we have the `@Roles()` decorator now, we can use it with the `create()` method.
 
 ```typescript
 @@filename(cats.controller)
@@ -246,11 +246,13 @@ export class RolesGuard {
 
 > info **Hint** In the node.js world, it's a common practice to attach the authorized user to the `request` object. That's why we assumed that `request.user` contains the user instance.
 
-The `Reflector` allows us to easily reflect the metadata by the specified **key**. In the example above, we used `getHandler()` in order to reflect the metadata because it's a **reference** to the route handler function. We could make this guard even **more generic** if we add the controller reflection part as well. To extract the **controller metadata**, we should use `context.getClass()` instead of `getHandler()` function:
+The `Reflector` allows us to easily reflect the metadata by the specified **key**. In the example above, we used `getHandler()` in order to reflect the metadata because it's a **reference** to the route handler function. We could make this guard even more generic if we add the controller reflection part as well. To extract the **controller metadata**, we should use `context.getClass()` instead of `getHandler()` function:
 
 ```typescript
 @@filename()
 const roles = this.reflector.get<string[]>('roles', context.getClass());
+@@switch
+const roles = this.reflector.get('roles', context.getClass());
 ```
 
 When a user tries to call the `/cats` POST endpoint without enough privileges, Nest will automatically return response below:

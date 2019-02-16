@@ -8,13 +8,45 @@ $ nest new project</code></pre>
 <pre><code class="language-bash">
 $ npm install --save hbs</code></pre>
 <p>We decided to use a <code>hbs</code> engine, though, you can use whatever fits your requirements. Once the installation process is completed, we need to configure the express instance using following code:</p>
-  <span class="filename">
-    {{ 'main' | extension: mainT.isJsActive }}
-    <app-tabs #mainT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ main }}</code></pre>
 
-<p>We told <a href="https://github.com/expressjs/express">express</a> that the <code>public</code> directory will be used for storing static assets, <code>views</code> will contain templates, and a <code>hbs</code> template engine should be used to render an HTML output.</p>
+<span class="filename">
+  {{ 'main' | extension: app8ed60e9a395e20f62a9188a8adc1f9d75d1de389.isJsActive }}
+<app-tabs #app8ed60e9a395e20f62a9188a8adc1f9d75d1de389></app-tabs>
+</span><pre [class.hide]="app8ed60e9a395e20f62a9188a8adc1f9d75d1de389.isJsActive"><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; NestExpressApplication &#125; from &#39;@nestjs/platform-express&#39;;
+import &#123; join &#125; from &#39;path&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create&lt;NestExpressApplication&gt;(
+    ApplicationModule,
+  );
+
+  app.useStaticAssets(join(__dirname, &#39;..&#39;, &#39;public&#39;));
+  app.setBaseViewsDir(join(__dirname, &#39;..&#39;, &#39;views&#39;));
+  app.setViewEngine(&#39;hbs&#39;);
+
+  await app.listen(3000);
+&#125;
+bootstrap();</code></pre>
+<pre [class.hide]="!app8ed60e9a395e20f62a9188a8adc1f9d75d1de389.isJsActive"><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; join &#125; from &#39;path&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create(
+    ApplicationModule,
+  );
+
+  app.useStaticAssets(join(__dirname, &#39;..&#39;, &#39;public&#39;));
+  app.setBaseViewsDir(join(__dirname, &#39;..&#39;, &#39;views&#39;));
+  app.setViewEngine(&#39;hbs&#39;);
+
+  await app.listen(3000);
+&#125;
+bootstrap();</code></pre><p>We told <a href="https://github.com/expressjs/express">express</a> that the <code>public</code> directory will be used for storing static assets, <code>views</code> will contain templates, and a <code>hbs</code> template engine should be used to render an HTML output.</p>
 <p>Now, let&#39;s create a <code>views</code> directory and <code>index.hbs</code> template inside it. In the template, we are gonna print a <code>message</code> passed from the controller:</p>
 <pre><code class="language-html">
 &lt;!DOCTYPE html&gt;
@@ -30,8 +62,8 @@ $ npm install --save hbs</code></pre>
 <p>Afterward, open the <code>app.controller</code> file and replace the <code>root()</code> method with the following code:</p>
 
 <span class="filename">
-  {{ 'app.controller' | extension: app2890a3272a1923c852270c4e6775f429e992c215.isJsActive }}
-<app-tabs #app2890a3272a1923c852270c4e6775f429e992c215></app-tabs>
+  {{ 'app.controller' | extension: app7641c27bb370460425ee058dbc3d74f690325429.isJsActive }}
+<app-tabs #app7641c27bb370460425ee058dbc3d74f690325429></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Get, Controller, Render &#125; from &#39;@nestjs/common&#39;;
 
@@ -55,10 +87,35 @@ $ npm i --save fastify point-of-view handlebars</code></pre>
 <p>The next steps cover almost the same stuff as in case of express library (with small differences). Once the installation process is completed, we need to open <code>main.ts</code> file and update its contents:</p>
 
 <span class="filename">
-  {{ 'main' | extension: app5d8f7b75a530406e4b7e349510cc80727f6dc69b.isJsActive }}
-<app-tabs #app5d8f7b75a530406e4b7e349510cc80727f6dc69b></app-tabs>
-</span><pre><code class="language-typescript">
-import &#123; NestFactory, FastifyAdapter &#125; from &#39;@nestjs/core&#39;;
+  {{ 'main' | extension: app8e4e931833c243c64c80f8e6ba88ff6495cf40f6.isJsActive }}
+<app-tabs #app8e4e931833c243c64c80f8e6ba88ff6495cf40f6></app-tabs>
+</span><pre [class.hide]="app8e4e931833c243c64c80f8e6ba88ff6495cf40f6.isJsActive"><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; NestFastifyApplication, FastifyAdapter &#125; from &#39;@nestjs/platform-fastify&#39;;
+import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
+import &#123; join &#125; from &#39;path&#39;;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create&lt;NestFastifyApplication&gt;(
+    ApplicationModule,
+    new FastifyAdapter(),
+  );
+  app.useStaticAssets(&#123;
+    root: join(__dirname, &#39;..&#39;, &#39;public&#39;),
+    prefix: &#39;/public/&#39;,
+  &#125;);
+  app.setViewEngine(&#123;
+    engine: &#123;
+      handlebars: require(&#39;handlebars&#39;),
+    &#125;,
+    templates: join(__dirname, &#39;..&#39;, &#39;views&#39;),
+  &#125;);
+  await app.listen(3000);
+&#125;
+bootstrap();</code></pre>
+<pre [class.hide]="!app8e4e931833c243c64c80f8e6ba88ff6495cf40f6.isJsActive"><code class="language-typescript">
+import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
+import &#123; FastifyAdapter &#125; from &#39;@nestjs/platform-fastify&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 import &#123; join &#125; from &#39;path&#39;;
 
@@ -79,8 +136,8 @@ async function bootstrap() &#123;
 bootstrap();</code></pre><p>The API is different a little but the idea that sits behind those methods calls remains the same. Also, we have to ensure that the template name passed into the <code>@Render()</code> decorators include a file extension.</p>
 
 <span class="filename">
-  {{ 'app.controller' | extension: appa60f07ecc9ceae5b52b5ff18027cc885a25c055d.isJsActive }}
-<app-tabs #appa60f07ecc9ceae5b52b5ff18027cc885a25c055d></app-tabs>
+  {{ 'app.controller' | extension: appf1e36c7c12dc5878c1878436c80a4b1ed615b32f.isJsActive }}
+<app-tabs #appf1e36c7c12dc5878c1878436c80a4b1ed615b32f></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Get, Controller, Render &#125; from &#39;@nestjs/common&#39;;
 

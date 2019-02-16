@@ -1,6 +1,6 @@
 <div class="content" #contentReference>
       <h3 id="testing">Testing</h3>
-<p>Automatic tests are an essential part of the fully functional <strong>software product</strong>. That is very critical to cover at least the most sensitive parts of your system. In order to achieve that goal, we produce a set of different tests like integration tests, unit tests, e2e tests, and so on. And Nest provides a bunch of test utilities that improves testing experience.</p>
+<p>Automatic tests are an essential part of the fully functional <strong>software product</strong>. That is very critical to cover at least the most sensitive parts of your system. In order to accomplish that goal, we produce a set of different tests like integration tests, unit tests, e2e tests, and so on. And Nest provides a bunch of test utilities that improves testing experience.</p>
 <p>In general, you can use any <strong>testing framework</strong> that you enjoy working with. We don&#39;t enforce tooling, choose whatever fits your requirements. The main Nest application starter is integrated with <a href="https://github.com/facebook/jest">Jest</a> framework to reduce an amount of overhead when it comes to start writing your tests, but still, you can get rid of it and use any other tool easily.</p>
 <h4 appAnchor id="installation"><span>Installation</span></h4>
 <p>Firstly, we need to install the required package:</p>
@@ -10,9 +10,9 @@ $ npm i --save-dev @nestjs/testing</code></pre>
 <p>In the following example, we have two different classes, <code>CatsController</code> and <code>CatsService</code> respectively. As mentioned before, <a href="https://github.com/facebook/jest">Jest</a> is used as a fully-fledged testing framework. That framework behaves like a test-runner and also, provides assert functions and test-doubles utilities that helps with mocking, spying, etc. We have manually enforced <code>catsService.findAll()</code> method to return <code>result</code> variable, once it&#39;s called. Thanks to that, we can test whether <code>catsController.findAll()</code> returns expected result, or not.</p>
 
 <span class="filename">
-  {{ 'cats.controller.spec' | extension: app0fe6faaec611343e3feedbc807a2e3051240ed02.isJsActive }}
-<app-tabs #app0fe6faaec611343e3feedbc807a2e3051240ed02></app-tabs>
-</span><pre [class.hide]="app0fe6faaec611343e3feedbc807a2e3051240ed02.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller.spec' | extension: app4f18c1b8179bb666284f6a66ce8774dc54a476e3.isJsActive }}
+<app-tabs #app4f18c1b8179bb666284f6a66ce8774dc54a476e3></app-tabs>
+</span><pre [class.hide]="app4f18c1b8179bb666284f6a66ce8774dc54a476e3.isJsActive"><code class="language-typescript">
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
 
@@ -34,7 +34,7 @@ describe(&#39;CatsController&#39;, () =&gt; &#123;
     &#125;);
   &#125;);
 &#125;);</code></pre>
-<pre [class.hide]="!app0fe6faaec611343e3feedbc807a2e3051240ed02.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app4f18c1b8179bb666284f6a66ce8774dc54a476e3.isJsActive"><code class="language-typescript">
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
 
@@ -63,9 +63,9 @@ info "><strong>Hint</strong> Keep your test files nearby tested classes. The tes
 <p>The <code>@nestjs/testing</code> package gives us a set of utilities that boost the testing process. Let&#39;s rewrite the previous example, but now, using exposed <code>Test</code> class.</p>
 
 <span class="filename">
-  {{ 'cats.controller.spec' | extension: app71f8e840dea09e1e0fcf5c432fce288ca6f68607.isJsActive }}
-<app-tabs #app71f8e840dea09e1e0fcf5c432fce288ca6f68607></app-tabs>
-</span><pre [class.hide]="app71f8e840dea09e1e0fcf5c432fce288ca6f68607.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller.spec' | extension: app526bd4b8a7586dd62169935f6771b7b1b7822e15.isJsActive }}
+<app-tabs #app526bd4b8a7586dd62169935f6771b7b1b7822e15></app-tabs>
+</span><pre [class.hide]="app526bd4b8a7586dd62169935f6771b7b1b7822e15.isJsActive"><code class="language-typescript">
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
@@ -93,7 +93,7 @@ describe(&#39;CatsController&#39;, () =&gt; &#123;
     &#125;);
   &#125;);
 &#125;);</code></pre>
-<pre [class.hide]="!app71f8e840dea09e1e0fcf5c432fce288ca6f68607.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app526bd4b8a7586dd62169935f6771b7b1b7822e15.isJsActive"><code class="language-typescript">
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
@@ -123,12 +123,12 @@ describe(&#39;CatsController&#39;, () =&gt; &#123;
 &#125;);</code></pre><p><code>Test</code> class has a <code>createTestingModule()</code> method that takes a module metadata (the same object as this one passed in <code>@Module()</code> decorator) as an argument. This method creates a <code>TestingModule</code> instance which in turn provides a few methods, but only one of them is useful when it comes to unit tests - the <code>compile()</code>. This function is <strong>asynchronous</strong>, therefore it has to be awaited. Once module is compiled, you can retrieve any instance using <code>get()</code> method.</p>
 <p>In order to mock a real instance, you can override existing provider with a <a routerLink="/fundamentals/dependency-injection">custom provider</a>.</p>
 <h4 appAnchor id="end-to-end-testing"><span>End-to-end testing</span></h4>
-<p>When the application grows, it is difficult to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements. To perform e2e tests we use the same configuration as in the case of <strong>unit testing</strong>, but additionally, we take advantage of <a href="https://github.com/visionmedia/supertest">supertest</a> library that allows simulating HTTP requests.</p>
+<p>When the application grows, it is hard to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements. To perform e2e tests we use the same configuration as in the case of <strong>unit testing</strong>, but additionally, we take advantage of <a href="https://github.com/visionmedia/supertest">supertest</a> library that allows simulating HTTP requests.</p>
 
 <span class="filename">
-  {{ 'cats.e2e-spec' | extension: app12a21f401f5c5b0f7ab08a27af40628b1106fbe4.isJsActive }}
-<app-tabs #app12a21f401f5c5b0f7ab08a27af40628b1106fbe4></app-tabs>
-</span><pre [class.hide]="app12a21f401f5c5b0f7ab08a27af40628b1106fbe4.isJsActive"><code class="language-typescript">
+  {{ 'cats.e2e-spec' | extension: appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2.isJsActive }}
+<app-tabs #appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2></app-tabs>
+</span><pre [class.hide]="appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2.isJsActive"><code class="language-typescript">
 import * as request from &#39;supertest&#39;;
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsModule &#125; from &#39;../../src/cats/cats.module&#39;;
@@ -164,7 +164,7 @@ describe(&#39;Cats&#39;, () =&gt; &#123;
     await app.close();
   &#125;);
 &#125;);</code></pre>
-<pre [class.hide]="!app12a21f401f5c5b0f7ab08a27af40628b1106fbe4.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2.isJsActive"><code class="language-typescript">
 import * as request from &#39;supertest&#39;;
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsModule &#125; from &#39;../../src/cats/cats.module&#39;;
@@ -235,7 +235,7 @@ info "><strong>Hint</strong> Keep your e2e test files inside the <code>e2e</code
       <code>select()</code>
     </td>
     <td>
-      Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with enabled strict mode).
+      Navigates through the modules graph, for example, to pull out a specific instance from the selected module (used along with enabled strict mode <code>strict: true</code> in <code>get()</code> method).
     </td>
   </tr>
 </table>

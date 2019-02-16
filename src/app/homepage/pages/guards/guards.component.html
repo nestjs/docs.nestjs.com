@@ -1,20 +1,20 @@
 <div class="content" #contentReference>
       <h3 id="guards">Guards</h3>
-<p>A guard is a class annotated with the <code>@Injectable()</code> decorator. The guard should implement the <code>CanActivate</code> interface.</p>
+<p>A guard is a class annotated with the <code>@Injectable()</code> decorator. Guards should implement the <code>CanActivate</code> interface.</p>
 <figure><img src="/assets/Guards_1.png" /></figure>
 
-<p>The guards have a <strong>single responsibility</strong>. They determine whether a request shall be handled by the route handler or not. Until now, the access restriction logic was mostly inside the <a routerLink="/middleware">middleware</a>. It&#39;s still fine since things such as token validation or attaching properties to the <code>request</code> object are not strongly connected with a particular routes.</p>
+<p>Guards have a <strong>single responsibility</strong>. They determine whether a request shall be handled by the route handler or not. Until now, the access restriction logic was mostly inside the <a routerLink="/middleware">middleware</a>. It&#39;s still fine since things such as token validation or attaching properties to the <code>request</code> object are not strongly connected with a particular routes (and their metadata).</p>
 <p>But middleware, by its nature, is dumb. It doesn&#39;t know which handler will be executed after calling the <code>next()</code> function. On the other hand, <strong>Guards</strong> have an access to the <code>ExecutionContext</code> instance, and thus we know exactly what&#39;s going to be evaluated.</p>
 <blockquote class="
-info "><strong>Hint</strong> Guards are executed <strong>after</strong> each middleware, but <strong>before</strong> any pipe.
+info "><strong>Hint</strong> Guards are executed <strong>after</strong> each middleware, but <strong>before</strong> any interceptor and pipe.
 </blockquote>
 <h4 appAnchor id="authorization-guard"><span>Authorization guard</span></h4>
 <p>One of the best guards use-cases is the <strong>authorization</strong> logic because specific routes should be available only when the caller has sufficient permissions. The <code>AuthGuard</code> that we have a plan to create is going to sequentially extract and validate the token sent in request headers.</p>
 
 <span class="filename">
-  {{ 'auth.guard' | extension: appad098ac6a5e14a9bf4ef9e04b280f20f07341bc6.isJsActive }}
-<app-tabs #appad098ac6a5e14a9bf4ef9e04b280f20f07341bc6></app-tabs>
-</span><pre [class.hide]="appad098ac6a5e14a9bf4ef9e04b280f20f07341bc6.isJsActive"><code class="language-typescript">
+  {{ 'auth.guard' | extension: appcbbc53d3651f019fef072460dc58621a3e513264.isJsActive }}
+<app-tabs #appcbbc53d3651f019fef072460dc58621a3e513264></app-tabs>
+</span><pre [class.hide]="appcbbc53d3651f019fef072460dc58621a3e513264.isJsActive"><code class="language-typescript">
 import &#123; Injectable, CanActivate, ExecutionContext &#125; from &#39;@nestjs/common&#39;;
 import &#123; Observable &#125; from &#39;rxjs&#39;;
 
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate &#123;
     return validateRequest(request);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appad098ac6a5e14a9bf4ef9e04b280f20f07341bc6.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appcbbc53d3651f019fef072460dc58621a3e513264.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -54,9 +54,9 @@ export interface ExecutionContext extends ArgumentsHost &#123;
 <p>A little bit more detailed example is a <code>RolesGuard</code>. This guard permits access only to users with a specific role. We are gonna start with a basic guard template:</p>
 
 <span class="filename">
-  {{ 'roles.guard' | extension: appe6ea75eed7423504a7a5b6c47eb8d2e7b3560d7e.isJsActive }}
-<app-tabs #appe6ea75eed7423504a7a5b6c47eb8d2e7b3560d7e></app-tabs>
-</span><pre [class.hide]="appe6ea75eed7423504a7a5b6c47eb8d2e7b3560d7e.isJsActive"><code class="language-typescript">
+  {{ 'roles.guard' | extension: app9c40df897483741941778e4a237be2e11161a739.isJsActive }}
+<app-tabs #app9c40df897483741941778e4a237be2e11161a739></app-tabs>
+</span><pre [class.hide]="app9c40df897483741941778e4a237be2e11161a739.isJsActive"><code class="language-typescript">
 import &#123; Injectable, CanActivate, ExecutionContext &#125; from &#39;@nestjs/common&#39;;
 import &#123; Observable &#125; from &#39;rxjs&#39;;
 
@@ -68,7 +68,7 @@ export class RolesGuard implements CanActivate &#123;
     return true;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appe6ea75eed7423504a7a5b6c47eb8d2e7b3560d7e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app9c40df897483741941778e4a237be2e11161a739.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -80,7 +80,7 @@ export class RolesGuard &#123;
 <p>The guards can be <strong>controller-scoped</strong>, method-scoped, and global-scoped as well. In order to set up the guard, we have to use a <code>@UseGuards()</code> decorator. This decorator may take an endless number of arguments, meaning, you can pass several guards and separate them by a comma.</p>
 
 <span class="filename">
-<app-tabs #app8a1511dc3c88465b2a22e8f613a134a7e77a5cca></app-tabs>
+<app-tabs #app8724ad8ddc3f64f3b46fff63cc81177a01d7cff9></app-tabs>
 </span><pre><code class="language-typescript">
 @Controller(&#39;cats&#39;)
 @UseGuards(RolesGuard)
@@ -90,24 +90,24 @@ info "><strong>Hint</strong> The <code>@UseGuards()</code> decorator is imported
 <p>We have passed the <code>RolesGuard</code> type instead of an instance, leaving framework the instantiation responsibility and enabling dependency injection. Another available way is to pass the immediately created instance:</p>
 
 <span class="filename">
-<app-tabs #app29d22e25d50baa9fe2b2e69fabeb20fc62db3853></app-tabs>
+<app-tabs #app7d42249aeaf4b595c1cb6da9c802f7855fbee819></app-tabs>
 </span><pre><code class="language-typescript">
 @Controller(&#39;cats&#39;)
 @UseGuards(new RolesGuard())
 export class CatsController &#123;&#125;</code></pre><p>The construction above attaches the guard to every handler declared by this controller. If we decide to restrict only one of them, we just need to set up the guard at <strong>method level</strong>. In order to bind the global guard, we use the <code>useGlobalGuards()</code> method of the Nest application instance:</p>
 
 <span class="filename">
-<app-tabs #app0fec043e3c0b06ab3e70cd63861d6a5a75d53179></app-tabs>
+<app-tabs #app1f26936837b9fab726183ece67c21c27c4711c8a></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.create(ApplicationModule);
 app.useGlobalGuards(new RolesGuard());</code></pre><blockquote class="
-"><strong>Notice</strong> The <code>useGlobalGuards()</code> method doesn&#39;t set up guards for gateways and microservices (whereas hybrid app is being used).
+warning "><strong>Notice</strong> The <code>useGlobalGuards()</code> method doesn&#39;t set up guards for gateways and microservices (whereas hybrid app is being used).
 </blockquote>
-<p>The global guards are used across the whole application, for every controller and every route handler. In terms of dependency injection, global guards registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don&#39;t belong to any module. In order to solve this issue, you can set up a guard <strong>directly from any module</strong> using following construction:</p>
+<p>The global guards are used across the whole application, for every controller and every route handler. In terms of the dependency injection, global guards registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don&#39;t belong to any module. In order to solve this issue, you can set up a guard <strong>directly from any module</strong> using following construction:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app829185ab7d2a7e881936434bdea189fd96f97dbd.isJsActive }}
-<app-tabs #app829185ab7d2a7e881936434bdea189fd96f97dbd></app-tabs>
+  {{ 'app.module' | extension: app32160b8afaee1a1bfd1ad79adfa61e84db70cee8.isJsActive }}
+<app-tabs #app32160b8afaee1a1bfd1ad79adfa61e84db70cee8></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; APP_GUARD &#125; from &#39;@nestjs/core&#39;;
@@ -121,23 +121,23 @@ import &#123; APP_GUARD &#125; from &#39;@nestjs/core&#39;;
   ],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre><blockquote class="
-info "><strong>Hint</strong> The alternative option is to use an <a routerLink="/execution-context">execution context</a> feature. Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
+info "><strong>Hint</strong> The alternative option is to use an <a routerLink="/application-context">application context</a> feature. Also, <code>useClass</code> is not the only way of dealing with custom providers registration. Learn more <a routerLink="/fundamentals/dependency-injection">here</a>.
 </blockquote>
-<h4 appAnchor id="reflector"><span>Reflector</span></h4>
+<h4 appAnchor id="reflection"><span>Reflection</span></h4>
 <p>The guard is working now, but we&#39;re still not taking advantage of the most important guard features, being the <strong>execution context</strong> .</p>
 <p>The <code>RolesGuard</code> isn&#39;t reusable so far. How would we know which roles need to be processed by the handler? The <code>CatsController</code> could have a lot of them. Some might be available only for admin, some for everyone, although, they don&#39;t have any permissions.</p>
 <p>That&#39;s why along with the guards, Nest provides the ability to attach custom <strong>metadata</strong> through <code>@SetMetadata()</code> decorator.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appc0164ef38b25dff2a2f026e5b0af4861e8c797d8.isJsActive }}
-<app-tabs #appc0164ef38b25dff2a2f026e5b0af4861e8c797d8></app-tabs>
-</span><pre [class.hide]="appc0164ef38b25dff2a2f026e5b0af4861e8c797d8.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: appa142958dabd992a32204299cd006d0b155e25747.isJsActive }}
+<app-tabs #appa142958dabd992a32204299cd006d0b155e25747></app-tabs>
+</span><pre [class.hide]="appa142958dabd992a32204299cd006d0b155e25747.isJsActive"><code class="language-typescript">
 @Post()
 @SetMetadata(&#39;roles&#39;, [&#39;admin&#39;])
 async create(@Body() createCatDto: CreateCatDto) &#123;
   this.catsService.create(createCatDto);
 &#125;</code></pre>
-<pre [class.hide]="!appc0164ef38b25dff2a2f026e5b0af4861e8c797d8.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa142958dabd992a32204299cd006d0b155e25747.isJsActive"><code class="language-typescript">
 @Post()
 @SetMetadata(&#39;roles&#39;, [&#39;admin&#39;])
 @Bind(Body())
@@ -149,27 +149,27 @@ info "><strong>Hint</strong> The <code>@SetMetadata()</code> decorator is import
 <p>With the construction above, we attached the <code>roles</code> metadata (<code>roles</code> is a key, while <code>[&#39;admin&#39;]</code> is a particular value) to the <code>create()</code> method. It&#39;s not a good practice to use <code>@SetMetadata()</code> directly. Instead, you should always create your own decorators:</p>
 
 <span class="filename">
-  {{ 'roles.decorator' | extension: app8a298ed28b79f153a791835b429dd202eb1db54a.isJsActive }}
-<app-tabs #app8a298ed28b79f153a791835b429dd202eb1db54a></app-tabs>
-</span><pre [class.hide]="app8a298ed28b79f153a791835b429dd202eb1db54a.isJsActive"><code class="language-typescript">
+  {{ 'roles.decorator' | extension: appf7b1a8dba5b45110d6ac821e2569fa44cfa5aaff.isJsActive }}
+<app-tabs #appf7b1a8dba5b45110d6ac821e2569fa44cfa5aaff></app-tabs>
+</span><pre [class.hide]="appf7b1a8dba5b45110d6ac821e2569fa44cfa5aaff.isJsActive"><code class="language-typescript">
 import &#123; SetMetadata &#125; from &#39;@nestjs/common&#39;;
 
 export const Roles = (...roles: string[]) =&gt; SetMetadata(&#39;roles&#39;, roles);</code></pre>
-<pre [class.hide]="!app8a298ed28b79f153a791835b429dd202eb1db54a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf7b1a8dba5b45110d6ac821e2569fa44cfa5aaff.isJsActive"><code class="language-typescript">
 import &#123; SetMetadata &#125; from &#39;@nestjs/common&#39;;
 
-export const Roles = (...roles) =&gt; SetMetadata(&#39;roles&#39;, roles);</code></pre><p>This approach is much cleaner and readable (and is strongly typed). Since we&#39;ve got a <code>@Roles()</code> decorator now, we can use it with the <code>create()</code> method.</p>
+export const Roles = (...roles) =&gt; SetMetadata(&#39;roles&#39;, roles);</code></pre><p>This approach is much cleaner and readable (and is strongly typed). Since we have the <code>@Roles()</code> decorator now, we can use it with the <code>create()</code> method.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app8eb29d2d80a7bbba3686c3d126d6aad2d67d0fbb.isJsActive }}
-<app-tabs #app8eb29d2d80a7bbba3686c3d126d6aad2d67d0fbb></app-tabs>
-</span><pre [class.hide]="app8eb29d2d80a7bbba3686c3d126d6aad2d67d0fbb.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app85143a3b370e9d3a0240820e71723842d3ad9ed0.isJsActive }}
+<app-tabs #app85143a3b370e9d3a0240820e71723842d3ad9ed0></app-tabs>
+</span><pre [class.hide]="app85143a3b370e9d3a0240820e71723842d3ad9ed0.isJsActive"><code class="language-typescript">
 @Post()
 @Roles(&#39;admin&#39;)
 async create(@Body() createCatDto: CreateCatDto) &#123;
   this.catsService.create(createCatDto);
 &#125;</code></pre>
-<pre [class.hide]="!app8eb29d2d80a7bbba3686c3d126d6aad2d67d0fbb.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app85143a3b370e9d3a0240820e71723842d3ad9ed0.isJsActive"><code class="language-typescript">
 @Post()
 @Roles(&#39;admin&#39;)
 @Bind(Body())
@@ -178,9 +178,9 @@ async create(createCatDto) &#123;
 &#125;</code></pre><p>Alright. Let&#39;s take a step back to the <code>RolesGuard</code> again. It simply returns <code>true</code> immediately, allowing request to proceed so far. In order to reflect the metadata, we&#39;ll use the <code>Reflector</code> helper class which is provided out of the box by the framework and exposed from the <code>@nestjs/core</code> package.</p>
 
 <span class="filename">
-  {{ 'roles.guard' | extension: appca22b50624a17379561b9a4d930afb46360190b9.isJsActive }}
-<app-tabs #appca22b50624a17379561b9a4d930afb46360190b9></app-tabs>
-</span><pre [class.hide]="appca22b50624a17379561b9a4d930afb46360190b9.isJsActive"><code class="language-typescript">
+  {{ 'roles.guard' | extension: appd2fe4edfcbbf083852b08c134a88b84288c7abd5.isJsActive }}
+<app-tabs #appd2fe4edfcbbf083852b08c134a88b84288c7abd5></app-tabs>
+</span><pre [class.hide]="appd2fe4edfcbbf083852b08c134a88b84288c7abd5.isJsActive"><code class="language-typescript">
 import &#123; Injectable, CanActivate, ExecutionContext &#125; from &#39;@nestjs/common&#39;;
 import &#123; Observable &#125; from &#39;rxjs&#39;;
 import &#123; Reflector &#125; from &#39;@nestjs/core&#39;;
@@ -200,7 +200,7 @@ export class RolesGuard implements CanActivate &#123;
     return user &amp;&amp; user.roles &amp;&amp; hasRole();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appca22b50624a17379561b9a4d930afb46360190b9.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appd2fe4edfcbbf083852b08c134a88b84288c7abd5.isJsActive"><code class="language-typescript">
 import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
 import &#123; Reflector &#125; from &#39;@nestjs/core&#39;;
 
@@ -224,12 +224,14 @@ export class RolesGuard &#123;
 &#125;</code></pre><blockquote class="
 info "><strong>Hint</strong> In the node.js world, it&#39;s a common practice to attach the authorized user to the <code>request</code> object. That&#39;s why we assumed that <code>request.user</code> contains the user instance.
 </blockquote>
-<p>The <code>Reflector</code> allows us to easily reflect the metadata by the specified <strong>key</strong>. In the example above, we used <code>getHandler()</code> in order to reflect the metadata because it&#39;s a <strong>reference</strong> to the route handler function. We could make this guard even <strong>more generic</strong> if we add the controller reflection part as well. To extract the <strong>controller metadata</strong>, we should use <code>context.getClass()</code> instead of <code>getHandler()</code> function:</p>
+<p>The <code>Reflector</code> allows us to easily reflect the metadata by the specified <strong>key</strong>. In the example above, we used <code>getHandler()</code> in order to reflect the metadata because it&#39;s a <strong>reference</strong> to the route handler function. We could make this guard even more generic if we add the controller reflection part as well. To extract the <strong>controller metadata</strong>, we should use <code>context.getClass()</code> instead of <code>getHandler()</code> function:</p>
 
 <span class="filename">
-<app-tabs #app456beae7dc484ac7816ad3bdd648f88bab276968></app-tabs>
-</span><pre><code class="language-typescript">
-const roles = this.reflector.get&lt;string[]&gt;(&#39;roles&#39;, context.getClass());</code></pre><p>When a user tries to call the <code>/cats</code> POST endpoint without enough privileges, Nest will automatically return response below:</p>
+<app-tabs #appfe7c1fb257b1f8822b149c8ccfd72c25e25979d0></app-tabs>
+</span><pre [class.hide]="appfe7c1fb257b1f8822b149c8ccfd72c25e25979d0.isJsActive"><code class="language-typescript">
+const roles = this.reflector.get&lt;string[]&gt;(&#39;roles&#39;, context.getClass());</code></pre>
+<pre [class.hide]="!appfe7c1fb257b1f8822b149c8ccfd72c25e25979d0.isJsActive"><code class="language-typescript">
+const roles = this.reflector.get(&#39;roles&#39;, context.getClass());</code></pre><p>When a user tries to call the <code>/cats</code> POST endpoint without enough privileges, Nest will automatically return response below:</p>
 <pre><code class="language-typescript">
 &#123;
   &quot;statusCode&quot;: 403,

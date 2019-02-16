@@ -64,7 +64,7 @@ The request-scoped providers have to be used very carefully. Keep in mind that t
 
 Imagine the following chain: `CatsController <- CatsService <- CatsRepository`. If your `CatsService` is request-scoped, the `CatsController` would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas `CatsRepository` would remain as a singleton.
 
-> **Warning** The circular dependencies in this case will lead to a very painful side-effects and thus, you should certainly avoid using them.
+> **Warning** The circular dependencies in this case will lead to very painful side-effects and thus, you should certainly avoid creating them.
 
 #### Request provider
 

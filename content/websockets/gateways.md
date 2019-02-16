@@ -1,25 +1,29 @@
 ### Gateways
 
-Gateway is a class annotated with `@WebSocketGateway()` decorator. Gateways, by default, make use of [socket.io](https://github.com/socketio/socket.io) package under the hood, but also, provide compatibility with a wide range of other libraries, including native web sockets implementation, read more [here](/websockets/adapter).
+Gateway is a class annotated with `@WebSocketGateway()` decorator. Gateways make use of [socket.io](https://github.com/socketio/socket.io) package under the hood, but also, provide compatibility with a wide range of other libraries, including native web sockets implementation, read more [here](/websockets/adapter).
 
 <figure><img src="/assets/Gateways_1.png" /></figure>
 
-> warning **Hint** Gateway behaves same as a simple **provider**, therefore it can effortlessly inject dependencies through constructor. Also, gateway might be injected by other classes (providers and controllers) as well.
+> warning **Hint** Gateway behaves same as a simple **provider**, therefore it can effortlessly inject dependencies through constructor. Also, gateway can be injected by other classes (providers and controllers) as well.
 
 #### Installation
 
-Firstly, we need to install the required package:
+Firstly, we need to install the required packages:
 
 ```bash
-$ npm i --save @nestjs/websockets
+@@filename()
+$ npm i --save @nestjs/websockets @nestjs/platform-socket.io
+$ npm i --save-dev @types/socket.io
+@@switch
+$ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 ```
 
 #### Overview
 
-In general, each gateway is listening to the same port as **HTTP server** is running on, unless your app is not a web application, or you have changed the port manually. We can change this behavior by passing an argument to the `@WebSocketGateway(81)` decorator where `81` is a chosen port number. Additionally, you can set a [namespace](https://socket.io/docs/rooms-and-namespaces/) used by this gateway with the following construction:
+In general, each gateway is listening to the same port as **HTTP server** is running on, unless your app is not a web application, or you have changed the port manually. We can change this behavior by passing an argument to the `@WebSocketGateway(80)` decorator where `80` is a chosen port number. Additionally, you can set a [namespace](https://socket.io/docs/rooms-and-namespaces/) used by this gateway with the following construction:
 
 ```typescript
-@WebSocketGateway(81, { namespace: 'events' })
+@WebSocketGateway(80, { namespace: 'events' })
 ```
 
 > **Warning** The gateway won't start until you put it inside the `providers` array.
@@ -35,27 +39,27 @@ Alright, the gateway is listening now, but we are not subscribing to the incomin
 ```typescript
 @@filename(events.gateway)
 @SubscribeMessage('events')
-onEvent(client, data: string): string {
+handleEvent(client: Client, data: string): string {
   return data;
 }
 @@switch
 @SubscribeMessage('events')
-onEvent(client, data) {
+handleEvent(client, data) {
   return data;
 }
 ```
 
 > info **Hint** The `@SubscribeMessage()` decorator is imported from `@nestjs/websockets` package.
 
-The `onEvent()` function takes two arguments. First one is a library-specific [socket instance](https://socket.io/docs/server-api/#socket) and the second one is the data received from the client. Once we get the message, we send an acknowledgment with the same data that someone has sent over the network. Also, it is possible to emit messages using a library-specific approach, for example, by making use of `client.emit()` method. However, in this case, you aren't able to use interceptors. If you don't want to respond to the user, just don't return anything (or explicitly return "falsy" value, e.g. `undefined`).
+The `handleEvent()` function takes two arguments. First one is a platform-specific [socket instance](https://socket.io/docs/server-api/#socket) and the second one is the data received from the client. Once we get the message, we send an acknowledgment with the same data that someone has sent over the network. Also, it is possible to emit messages using a library-specific approach, for example, by making use of `client.emit()` method. However, in this case, you aren't able to use interceptors. If you don't want to respond to the user, just don't return anything (or explicitly return "falsy" value, e.g. `undefined`).
 
-Now when the client emits a message in the following manner:
+Now when the client emits a message in the following way:
 
 ```typescript
 socket.emit('events', { name: 'Nest' });
 ```
 
-The `onEvent()` method will be executed. In order to listen for messages emitted from within above handler, the client has to attach a corresponding acknowledgment's listener:
+The `handleEvent()` method will be executed. In order to listen to messages emitted from within the above handler, the client has to attach a corresponding acknowledgment listener:
 
 ```typescript
 socket.emit('events', { name: 'Nest' }, data => console.log(data));
@@ -68,13 +72,13 @@ The acknowledgment is dispatched only once. Furthermore, it is not supported by 
 ```typescript
 @@filename(events.gateway)
 @SubscribeMessage('events')
-onEvent(client, data: any): WsResponse<any> {
+handleEvent(client: Client, data: unknown): WsResponse<unknown> {
   const event = 'events';
   return { event, data };
 }
 @@switch
 @SubscribeMessage('events')
-onEvent(client, data) {
+handleEvent(client, data) {
   const event = 'events';
   return { event, data };
 }
@@ -90,12 +94,12 @@ socket.on('events', data => console.log(data));
 
 #### Asynchronous responses
 
-Each message handler can be either synchronous or **asynchronous** (`async`), thereby you're able to return the `Promise`. Moreover, you can return the [Rx](https://github.com/reactivex/rxjs)  `Observable`, which means that you can return multiple values (they will be emitted until the stream is completed).
+Each message handler can be either synchronous or **asynchronous** (`async`), thereby you're able to return the `Promise`. Moreover, you can return the [Observable](https://github.com/reactivex/rxjs), which means that you can return multiple values (they will be emitted until the stream is completed).
 
 ```typescript
 @@filename(events.gateway)
 @SubscribeMessage('events')
-onEvent(client, data: any): Observable<WsResponse<number>> {
+onEvent(client: Client, data: unknown): Observable<WsResponse<number>> {
   const event = 'events';
   const response = [1, 2, 3];
 
@@ -155,10 +159,11 @@ There are 3 useful lifecycle hooks. All of them have corresponding interfaces an
 
 #### Server
 
-Occasionally, you may want to have a direct access to the native, **library-specific** server instance. The reference to this object is passed as an argument to the `afterInit()` method (`OnGatewayInit` interface). The second approach is to make use of `@WebSocketServer()` decorator.
+Occasionally, you may want to have a direct access to the native, **platform-specific** server instance. The reference to this object is passed as an argument to the `afterInit()` method (`OnGatewayInit` interface). The second approach is to make use of `@WebSocketServer()` decorator.
 
 ```typescript
-@WebSocketServer() server;
+@WebSocketServer()
+server: Server;
 ```
 
 > warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.

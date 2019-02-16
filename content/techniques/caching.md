@@ -67,10 +67,18 @@ export class ApplicationModule {}
 Obviously, you can effortlessly apply `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of transport method that is being used).
 
 ```typescript
+@@filename()
 @CacheKey('events')
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage('events')
-onEvent(client, data): Observable<string[]> {
+handleEvent(client: Client, data: string[]): Observable<string[]> {
+  return [];
+}
+@@switch
+@CacheKey('events')
+@UseInterceptors(CacheInterceptor)
+@SubscribeMessage('events')
+handleEvent(client, data) {
   return [];
 }
 ```
@@ -116,7 +124,7 @@ export class ApplicationModule {}
 
 By default, Nest uses request URL (in HTTP app) or cache key (in websockets and microservices) set through `@CacheKey()` decorator to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different factors, for example, using HTTP headers (e.g. `Authorization` to properly identify `profile` endpoints).
 
-In order to achieve that, create a subclass of `CacheInterceptor` and override `trackBy()` method.
+In order to accomplish that, create a subclass of `CacheInterceptor` and override `trackBy()` method.
 
 ```typescript
 @Injectable()

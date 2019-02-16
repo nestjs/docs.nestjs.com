@@ -2,7 +2,11 @@
 
 > **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **Mongoose** package from scratch using custom components. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/mongoose` package. To learn more, see [here](/techniques/mongodb).
 
-[Mongoose](http://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool. To start the adventure with this library we have to install all required dependencies:
+[Mongoose](http://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool.
+
+#### Getting started
+
+To start the adventure with this library we have to install all required dependencies:
 
 ```typescript
 @@filename()
@@ -12,7 +16,7 @@ $ npm install --save-dev @types/mongoose
 $ npm install --save mongoose
 ```
 
-The first step we need to do is to establish the connection with our database using `connect()` function. The `connect()` function returns a `Promise`, therefore we have to create an [async provider](/fundamentals/async-components).
+The first step we need to do is to establish the connection with our database using `connect()` function. The `connect()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
 
 ```typescript
 @@filename(database.providers)
@@ -20,7 +24,7 @@ import * as mongoose from 'mongoose';
 
 export const databaseProviders = [
   {
-    provide: 'DbConnectionToken',
+    provide: 'DATABASE_CONNECTION',
     useFactory: (): Promise<typeof mongoose> =>
       mongoose.connect('mongodb://localhost/nest'),
   },
@@ -30,7 +34,7 @@ import * as mongoose from 'mongoose';
 
 export const databaseProviders = [
   {
-    provide: 'DbConnectionToken',
+    provide: 'DATABASE_CONNECTION',
     useFactory: () => mongoose.connect('mongodb://localhost/nest'),
   },
 ];
@@ -80,9 +84,9 @@ import { CatSchema } from './schemas/cat.schema';
 
 export const catsProviders = [
   {
-    provide: 'CatModelToken',
+    provide: 'CAT_MODEL',
     useFactory: (connection: Connection) => connection.model('Cat', CatSchema),
-    inject: ['DbConnectionToken'],
+    inject: ['DATABASE_CONNECTION'],
   },
 ];
 @@switch
@@ -90,16 +94,16 @@ import { CatSchema } from './schemas/cat.schema';
 
 export const catsProviders = [
   {
-    provide: 'CatModelToken',
+    provide: 'CAT_MODEL',
     useFactory: (connection) => connection.model('Cat', CatSchema),
-    inject: ['DbConnectionToken'],
+    inject: ['DATABASE_CONNECTION'],
   },
 ];
 ```
 
-> **Notice** In the real-world applications you should avoid **magic strings**. Both `CatModelToken` and `DbConnectionToken` should be kept in the separated `constants.ts` file.
+> **Notice** In the real-world applications you should avoid **magic strings**. Both `CAT_MODEL` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
-Now we can inject the `CatModelToken` to the `CatsService` using the `@Inject()` decorator:
+Now we can inject the `CAT_MODEL` to the `CatsService` using the `@Inject()` decorator:
 
 ```typescript
 @@filename(cats.service)
@@ -111,7 +115,7 @@ import { CreateCatDto } from './dto/create-cat.dto';
 @Injectable()
 export class CatsService {
   constructor(
-    @Inject('CatModelToken')
+    @Inject('CAT_MODEL')
     private readonly catModel: Model<Cat>,
   ) {}
 
@@ -128,7 +132,7 @@ export class CatsService {
 import { Injectable, Dependencies } from '@nestjs/common';
 
 @Injectable()
-@Dependencies('CatModelToken')
+@Dependencies('CAT_MODEL')
 export class CatsService {
   constructor(catModel) {
     this.catModel = catModel;
@@ -180,4 +184,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> warning **Hint** Don't forget to import the `CatsModule` into the root `ApplicationModule`.
+> warning **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.

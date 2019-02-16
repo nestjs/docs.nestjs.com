@@ -168,6 +168,7 @@ import { PassportModule } from '@nestjs/passport';
     UsersModule,
   ],
   providers: [AuthService, HttpStrategy],
+  exports: [PassportModule, AuthService]
 })
 export class AuthModule {}
 ```
@@ -181,6 +182,8 @@ findAll() {
   return [];
 }
 ```
+
+> warning **Notice** Keep in mind that either `PassportModule` or `AuthModule` has to be imported by every module that makes use of the `AuthGuard`.
 
 #### User object
 
@@ -370,7 +373,7 @@ import { PassportModule } from '@nestjs/passport';
     UsersModule,
   ],
   providers: [AuthService, JwtStrategy],
-  exports: [PassportModule],
+  exports: [PassportModule, AuthService],
 })
 export class AuthModule {}
 ```

@@ -19,7 +19,7 @@ Nest will handle thrown exception and as a result, emits the `exception` message
 
 #### Filters
 
-The **custom filters** feature is supported as well and works equivalently. Here is an example that makes use of a manually instantiated **method-scoped** filter (class-scoped works too):
+The **custom filters** feature is supported as well and works equivalently. Here is an example that makes use of a manually instantiated method-scope filter (class-scoped works too):
 
 ```typescript
 @UseFilters(new WsExceptionFilter())
@@ -43,7 +43,7 @@ import { BaseWsExceptionFilter } from '@nestjs/websockets';
 
 @Catch()
 export class AllExceptionsFilter extends BaseWsExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     super.catch(exception, host);
   }
 }

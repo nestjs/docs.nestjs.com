@@ -178,7 +178,7 @@ export class PhotoService {
 }
 ```
 
-> **Notice** Don't forget to import the `PhotoModule` into the root `ApplicationModule`.
+> warning **Notice** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
 
 #### Multiple databases
 
@@ -294,29 +294,20 @@ Once the class is created, the next step is to hand over the instantiation respo
 export class AuthorModule {}
 ```
 
-> warning **Notice** Even though `AuthorRepository` is passed, it's not enough to create a custom repository yet. The corresponding entity class, `Author` in this case, is required as well.
+Afterward, simply inject the repository using the following construction:
 
-Afterward, simply inject the repository using `@InjectRepository()` decorator.
-
-  <pre><code class="language-typescript">{{ injectCustomRepository }}</code></pre>
+```typescript
+@Injectable()
+export class AuthorService {
+  constructor(private readonly authorRepository: AuthorRepository) {}
+}
+```
 
 #### Async configuration
 
 Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use `forRootAsync()` method, that provides a couple of various ways to deal with async data.
 
 First possible approach is to use a factory function:
-
-```typescript
-@Injectable()
-export class AuthorService {
-  constructor(
-    @InjectRepository(AuthorRepository)
-    private readonly authorRepository: AuthorRepository,
-  ) {}
-}
-```
-
-Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -333,7 +324,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Alternatively, you are able to use class instead of a factory.
+Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -349,6 +340,14 @@ TypeOrmModule.forRootAsync({
     synchronize: true,
   }),
   inject: [ConfigService],
+});
+```
+
+Alternatively, you are able to use class instead of a factory.
+
+```typescript
+TypeOrmModule.forRootAsync({
+  useClass: TypeOrmConfigService,
 });
 ```
 

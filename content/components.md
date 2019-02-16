@@ -113,7 +113,7 @@ The `CatsService` is injected through the class constructor. Don't be afraid of 
 
 Nest is built around the strong design pattern commonly known as **Dependency injection**. We recommend to read a great article about this concept in the official [Angular](https://angular.io/guide/dependency-injection) documentation.
 
-In Nest, thanks to the **TypeScript** capabilities, it's extremely easy to manage dependencies because they will be resolved just by type and afterward, passed to your controller's constructor (or assigned to the indicated property):
+In Nest, thanks to the TypeScript capabilities, it's extremely easy to manage dependencies because they will be resolved just by type and afterward, passed to your controller's constructor (or assigned to the indicated property):
 
 ```typescript
 constructor(private readonly catsService: CatsService) {}
@@ -162,7 +162,7 @@ export class HttpService<T> {
 
 #### Provider registration
 
-The last thing is to tell the module that something called `CatsService` truly exists. We do this by editing our module file - `app.module.ts`, and put the service into the `providers` array of the `@Module()` decorator.
+The last thing is to tell the module that something called `CatsService` truly exists. We do this by editing our module file - `app.module.ts`, and putting the service into the `providers` array of the `@Module()` decorator.
 
 ```typescript
 @@filename(app.module)
@@ -177,7 +177,7 @@ import { CatsService } from './cats/cats.service';
 export class ApplicationModule {}
 ```
 
-Thanks to that, Nest will be able to resolve the dependencies of the `CatsController` class. This is how our directory structure looks right now:
+Hence, Nest will be able to resolve the dependencies of the `CatsController` class. This is how our directory structure looks right now:
 
 <div class="file-tree">
 <div class="item">src</div>

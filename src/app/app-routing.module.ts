@@ -82,9 +82,9 @@ const routes: Routes = [
         data: { title: 'Custom decorators' },
       },
       {
-        path: 'execution-context',
+        path: 'application-context',
         component: ApplicationContextComponent,
-        data: { title: 'Execution Context' },
+        data: { title: 'Application context' },
       },
       {
         path: 'discover/companies',

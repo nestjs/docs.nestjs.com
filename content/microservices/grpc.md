@@ -25,7 +25,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 });
 ```
 
-> info **Hint** The `join()` function is imported from `path` package.
+> info **Hint** The `join()` function is imported from `path` package, while `Transport` enum is coming from `@nestjs/microservices`.
 
 #### Options
 
@@ -122,7 +122,7 @@ findOne(data, metadata) {
 
 > info **Hint** The `@GrpcMethod()` decorator is imported from `@nestjs/microservices` package.
 
-The `HeroService` is a service's name, while `FindOne` points to a `FindOne()` gRPC handler. The corresponding `findOne()` method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request's metadata.
+The `HeroService` is a service name, while `FindOne` points to a `FindOne()` gRPC handler. The corresponding `findOne()` method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request's metadata.
 
 Furthermore, the `FindOne` is actually redundant here. If you don't pass a second argument to the `@GrpcMethod()`, Nest will automatically use the method name with the capitalized first letter, for example, `findOne` -> `FindOne`.
 
@@ -155,20 +155,36 @@ export class HeroService {
 
 Likewise, you might not pass any argument. In this case, Nest would use a class name.
 
-  <span class="filename">
-    {{ 'hero.controller' | extension: grpcHandlerClassT.isJsActive }}
-    <app-tabs #grpcHandlerClassT></app-tabs>
-  </span>
-  <pre
-    [class.hide]="grpcHandlerClassT.isJsActive"
-  ><code class="language-typescript">{{ grpcHandlerClass }}</code></pre>
-  <pre
-    [class.hide]="!grpcHandlerClassT.isJsActive"
-  ><code class="language-typescript">{{ grpcHandlerClassJs }}</code></pre>
+```typescript
+@@filename(hero.controller)
+@Controller()
+export class HeroService {
+  @GrpcMethod()
+  findOne(data: HeroById, metadata: any): Hero {
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
+}
+@@switch
+@Controller()
+export class HeroService {
+  @GrpcMethod()
+  findOne(data, metadata) {
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
+}
+```
 
 #### Client
 
-In order to create a client instance, we need to make use of `@Client()` decorator.
+In order to create a client instance, we need to use `@Client()` decorator.
 
 ```typescript
 @Client({
@@ -178,10 +194,10 @@ In order to create a client instance, we need to make use of `@Client()` decorat
     protoPath: join(__dirname, 'hero/hero.proto'),
   },
 })
-private client: ClientGrpc;
+client: ClientGrpc;
 ```
 
-There is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientGrpc` that provides a `getService()` method. The `getService()` generic method takes service's name as an argument and returns its instance if available.
+There is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientGrpc` that provides a `getService()` method. The `getService()` generic method takes service name as an argument and returns its instance if available.
 
 ```typescript
 @@filename(hero.controller)
@@ -202,7 +218,7 @@ interface HeroService {
 }
 ```
 
-All service's methods return `Observable`. Since Nest supports [RxJS](https://github.com/reactivex/rxjs) streams and works pretty well with them, we can return them within HTTP handler as well.
+All service methods return `Observable`. Since Nest supports [RxJS](https://github.com/reactivex/rxjs) streams and works pretty well with them, we can return them within HTTP handler as well.
 
 ```typescript
 @@filename(hero.controller)

@@ -9,17 +9,20 @@ $ npm i --save amqplib amqp-connection-manager</code></pre>
 <p>In order to switch to <strong>RabbitMQ</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app9bc923c2f159737b32610272a960aa84d11787c0.isJsActive }}
-<app-tabs #app9bc923c2f159737b32610272a960aa84d11787c0></app-tabs>
+  {{ 'main' | extension: appa963c73439bcba148a9decb585d390618797481c.isJsActive }}
+<app-tabs #appa963c73439bcba148a9decb585d390618797481c></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.RMQ,
   options: &#123;
     urls: [`amqp://localhost:5672`],
-    queue: &#39;my_queue&#39;,
+    queue: &#39;cats_queue&#39;,
     queueOptions: &#123; durable: false &#125;,
   &#125;,
-&#125;);</code></pre><h4 appAnchor id="options"><span>Options</span></h4>
+&#125;);</code></pre><blockquote class="
+info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<h4 appAnchor id="options"><span>Options</span></h4>
 <p>There are a bunch of available options that determine a transporter behavior.</p>
 <table>
   <tr>

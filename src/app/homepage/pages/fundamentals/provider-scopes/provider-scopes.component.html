@@ -50,7 +50,7 @@ warning "><strong>Notice</strong> Gateways should never rely on request-scoped p
 <p>The request-scoped providers have to be used very carefully. Keep in mind that the scope actually bubbles up in the <strong>injection chain</strong>. If your controller depends on a provider which is request-scoped, it means that your controller is actually request-scoped as well.</p>
 <p>Imagine the following chain: <code>CatsController &lt;- CatsService &lt;- CatsRepository</code>. If your <code>CatsService</code> is request-scoped, the <code>CatsController</code> would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas <code>CatsRepository</code> would remain as a singleton.</p>
 <blockquote class="
-"><strong>Warning</strong> The circular dependencies in this case will lead to a very painful side-effects and thus, you should certainly avoid using them.
+"><strong>Warning</strong> The circular dependencies in this case will lead to very painful side-effects and thus, you should certainly avoid creating them.
 </blockquote>
 <h4 appAnchor id="request-provider"><span>Request provider</span></h4>
 <p>In the HTTP application, using request-scoped providers gives you a capability to inject an original request reference.</p>

@@ -20,7 +20,7 @@ While working with Prisma you can either host your own instance or use the [Pris
 2.  Create a new service `prisma init`, choose the demo server and follow the instructions
 3.  Deploy your service `prisma deploy`
 
-If you find yourself in trouble jump over to their [Quick Start](https://www.prisma.io/docs/quickstart/) section for further details. Eventually you should see two new files in your project directory. respectively `prisma.yaml`.
+If you find yourself in trouble jump over to their [Quick Start](https://www.prisma.io/docs/quickstart/) section for further details. Eventually you should see two new files in your project directory, `prisma.yaml` configuration file:
 
 ```yaml
 endpoint: https://us1.prisma.sh/nest-f6ec12/prisma/dev
@@ -38,7 +38,7 @@ type User {
 
 > warning **Notice** In the real-world applications you will create more complex data models. For more information about data modeling in Prisma click [here](https://www.prisma.io/features/data-modeling/).
 
-By typing `prisma playground` you can open the Prisma GraphQL playground. Feel free to send queries and mutations.
+By typing `prisma playground` you can open the Prisma GraphQL playground.
 
 #### Create the client
 
@@ -48,7 +48,7 @@ There are a couple of ways to integrate a GraphQL API. We are going to use [Grap
 $ npm install -g graphql-cli
 ```
 
-Next, create your .graphqlconfig in the root directory of the your Nest application:
+Next, create your `.graphqlconfig` in the root directory of the your Nest application:
 
 ```bash
 $ touch .graphqlconfig.yml
@@ -70,7 +70,7 @@ projects:
             binding: src/prisma/prisma.binding.ts
 ```
 
-To download your Prisma GraphQL schema to `src/prisma/prisma-types.graphql` and create your Prisma client under `src/prisma/prisma.binding.graphql`, run the following commands in your terminal:
+To download your Prisma GraphQL schema to `prisma/prisma-types.graphql` and create your Prisma client under `prisma/prisma.binding.graphql`, run the following commands in your terminal:
 
 ```bash
 $ graphql get-schema --project database
@@ -111,7 +111,7 @@ import { PrismaService } from './prisma.service';
 export class PrismaModule {}
 ```
 
-> info **Hint** To create new modules and services in no time we can make use of the [Nest CLI](/cli/overview). To create a `PrismaModule` type `nest g module prisma` and for the service `nest g service prisma/prisma`
+> info **Hint** To create new modules and services in no time we can make use of the [Nest CLI](/cli/overview). To create a `PrismaModule` type `nest g module prisma` and for the service `nest g service prisma`
 
 #### Usage
 
@@ -130,7 +130,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 export class UsersModule {}
 ```
 
-Importing `PrismaModule` makes exported `PrismaService` available in `UsersModule` context.
+Importing `PrismaModule` makes exported `PrismaService` available in the `UsersModule` context.
 
 ```typescript
 @@filename(users.resolver)

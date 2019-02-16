@@ -5,12 +5,20 @@
 info "><strong>Hint</strong> The <code>RpcException</code> class is exposed from <code>@nestjs/microservices</code> package.
 </blockquote>
 <h4 appAnchor id="binding-pipes"><span>Binding pipes</span></h4>
-<p>Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> pipe (class-scoped works either):</p>
-<pre><code class="language-typescript">
+<p>Here is an example that makes use of a manually instantiated method-scoped pipe (class-scoped works too):</p>
+
+<span class="filename">
+<app-tabs #appbcfcd0413cbdce472a526db41aac674a3e89924b></app-tabs>
+</span><pre [class.hide]="appbcfcd0413cbdce472a526db41aac674a3e89924b.isJsActive"><code class="language-typescript">
 @UsePipes(new ValidationPipe())
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
-sum(data: number[]): number &#123;
+accumulate(data: number[]): number &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre>
-
+<pre [class.hide]="!appbcfcd0413cbdce472a526db41aac674a3e89924b.isJsActive"><code class="language-typescript">
+@UsePipes(new ValidationPipe())
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+accumulate(data) &#123;
+  return (data || []).reduce((a, b) =&gt; a + b);
+&#125;</code></pre>
     </div>

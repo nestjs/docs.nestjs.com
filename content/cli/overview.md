@@ -1,13 +1,21 @@
 ### Overview
 
-In order to help people manage their projects, the [CLI](https://github.com/nestjs/nest-cli) tool has been created. It helps on many grounds at once, from scaffolding the project to building well-structured applications. The Nest CLI is based on the [@angular-devkit](https://github.com/angular/devkit) package. Also, there're special schematics that are dedicated to the Nest development [@nestjs/schematics](https://github.com/nestjs/schematics).
+[Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface tool that helps you to to initialize and develop your applications. It helps on many grounds at once, from scaffolding the project to building well-structured apps. The Nest CLI is based on the [Angular Devkit](https://github.com/angular/devkit) package.
 
 #### Installation
 
-Install CLI using **NPM**:
+Install the CLI using **NPM**:
 
 ```bash
 $ npm install -g @nestjs/cli
+```
+
+#### Basic workflow
+
+Once the installation process is finished, you should be able to invoke CLI commands directly from your command line through the `nest` executable. In order to get a list of available functionalities, use the following command:
+
+```bash
+$ nest --help
 ```
 
 #### Contribute

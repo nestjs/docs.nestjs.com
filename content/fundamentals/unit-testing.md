@@ -1,6 +1,6 @@
 ### Testing
 
-Automatic tests are an essential part of the fully functional **software product**. That is very critical to cover at least the most sensitive parts of your system. In order to achieve that goal, we produce a set of different tests like integration tests, unit tests, e2e tests, and so on. And Nest provides a bunch of test utilities that improves testing experience.
+Automatic tests are an essential part of the fully functional **software product**. That is very critical to cover at least the most sensitive parts of your system. In order to accomplish that goal, we produce a set of different tests like integration tests, unit tests, e2e tests, and so on. And Nest provides a bunch of test utilities that improves testing experience.
 
 In general, you can use any **testing framework** that you enjoy working with. We don't enforce tooling, choose whatever fits your requirements. The main Nest application starter is integrated with [Jest](https://github.com/facebook/jest) framework to reduce an amount of overhead when it comes to start writing your tests, but still, you can get rid of it and use any other tool easily.
 
@@ -136,7 +136,7 @@ In order to mock a real instance, you can override existing provider with a [cus
 
 #### End-to-end testing
 
-When the application grows, it is difficult to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements. To perform e2e tests we use the same configuration as in the case of **unit testing**, but additionally, we take advantage of [supertest](https://github.com/visionmedia/supertest) library that allows simulating HTTP requests.
+When the application grows, it is hard to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements. To perform e2e tests we use the same configuration as in the case of **unit testing**, but additionally, we take advantage of [supertest](https://github.com/visionmedia/supertest) library that allows simulating HTTP requests.
 
 ```typescript
 @@filename(cats.e2e-spec)
@@ -250,7 +250,7 @@ The compiled module has several methods well described in the following table:
       <code>select()</code>
     </td>
     <td>
-      Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with enabled strict mode).
+      Navigates through the modules graph, for example, to pull out a specific instance from the selected module (used along with enabled strict mode <code>strict: true</code> in <code>get()</code> method).
     </td>
   </tr>
 </table>

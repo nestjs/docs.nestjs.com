@@ -9,8 +9,8 @@ $ npm i --save mqtt</code></pre>
 <p>In order to switch to <strong>MQTT</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: appa4180658336b11406f036f5094ec8836e988d41a.isJsActive }}
-<app-tabs #appa4180658336b11406f036f5094ec8836e988d41a></app-tabs>
+  {{ 'main' | extension: appece76407663ccf5f58610610f149ac154ef1d36a.isJsActive }}
+<app-tabs #appece76407663ccf5f58610610f149ac154ef1d36a></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.MQTT,
@@ -18,7 +18,10 @@ const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
     host: &#39;localhost&#39;,
     port: 1883,
   &#125;,
-&#125;);</code></pre><h4 appAnchor id="options"><span>Options</span></h4>
+&#125;);</code></pre><blockquote class="
+info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<h4 appAnchor id="options"><span>Options</span></h4>
 <p>There are a bunch of available options that determine a transporter behavior. They are well-described <a href="https://github.com/mqttjs/MQTT.js">here</a>.</p>
 
     </div>

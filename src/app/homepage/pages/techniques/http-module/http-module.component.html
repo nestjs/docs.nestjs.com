@@ -14,8 +14,8 @@ info "><strong>Hint</strong> The <code>HttpModule</code> is exposed from <code>@
 <p>Then, you can inject <code>HttpService</code>. This class is easily accessible from <code>@nestjs/common</code> package.</p>
 
 <span class="filename">
-<app-tabs #app60eeb028477ef34a42c0922057022f5f9f56ffab></app-tabs>
-</span><pre [class.hide]="app60eeb028477ef34a42c0922057022f5f9f56ffab.isJsActive"><code class="language-typescript">
+<app-tabs #appb11218165dca196b5274fd499b886389808f109d></app-tabs>
+</span><pre [class.hide]="appb11218165dca196b5274fd499b886389808f109d.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsService &#123;
   constructor(private readonly httpService: HttpService) &#123;&#125;
@@ -24,7 +24,7 @@ export class CatsService &#123;
     return this.httpService.get(&#39;http://localhost:3000/cats&#39;);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app60eeb028477ef34a42c0922057022f5f9f56ffab.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb11218165dca196b5274fd499b886389808f109d.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(HttpService)
 export class CatsService &#123;
@@ -50,5 +50,48 @@ export class CatsService &#123;
 &#125;)
 export class CatsModule &#123;&#125;</code></pre>
 <p>All these properties will be passed down to the <strong>axios</strong> constructor.</p>
+<h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
+<p>Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use <code>registerAsync()</code> method, that provides a couple of various ways to deal with async data.</p>
+<p>First possible approach is to use a factory function:</p>
+<pre><code class="language-typescript">
+HttpModule.forRootAsync(&#123;
+  useFactory: () =&gt; (&#123;
+    timeout: 5000,
+    maxRedirects: 5,
+  &#125;),
+&#125;);</code></pre>
+<p>Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through <code>inject</code>).</p>
+<pre><code class="language-typescript">
+HttpModule.forRootAsync(&#123;
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) =&gt; (&#123;
+    timeout: configService.getString(&#39;HTTP_TIMEOUT&#39;),
+    maxRedirects: configService.getString(&#39;HTTP_MAX_REDIRECTS&#39;),
+  &#125;),
+  inject: [ConfigService],
+&#125;);</code></pre>
+<p>Alternatively, you are able to use class instead of a factory.</p>
+<pre><code class="language-typescript">
+HttpModule.forRootAsync(&#123;
+  useClass: HttpConfigService,
+&#125;);</code></pre>
+<p>Above construction will instantiate <code>HttpConfigService</code> inside <code>HttpModule</code> and will leverage it to create options object. The <code>HttpConfigService</code> has to implement <code>HttpOptionsFactory</code> interface.</p>
+<pre><code class="language-typescript">
+@Injectable()
+class HttpConfigService implements HttpOptionsFactory &#123;
+  createHttpOptions(): HttpModuleOptions &#123;
+    return &#123;
+      timeout: 5000,
+      maxRedirects: 5,
+    &#125;;
+  &#125;
+&#125;</code></pre>
+<p>In order to prevent the creation of <code>HttpConfigService</code> inside <code>HttpModule</code> and use a provider imported from a different module, you can use the <code>useExisting</code> syntax.</p>
+<pre><code class="language-typescript">
+HttpModule.forRootAsync(&#123;
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+&#125;);</code></pre>
+<p>It works the same as <code>useClass</code> with one critical difference - <code>HttpModule</code> will lookup imported modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.</p>
 
     </div>

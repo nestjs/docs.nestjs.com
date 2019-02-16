@@ -9,8 +9,8 @@ $ npm i --save grpc @grpc/proto-loader</code></pre>
 <p>In order to switch to <strong>gRPC</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app035be8507222327a1dcaa87b9cb9c6c1e8cca8eb.isJsActive }}
-<app-tabs #app035be8507222327a1dcaa87b9cb9c6c1e8cca8eb></app-tabs>
+  {{ 'main' | extension: appaccb609d40dec5994b490bc69204706d13575f12.isJsActive }}
+<app-tabs #appaccb609d40dec5994b490bc69204706d13575f12></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.GRPC,
@@ -19,7 +19,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
     protoPath: join(__dirname, &#39;hero/hero.proto&#39;),
   &#125;,
 &#125;);</code></pre><blockquote class="
-info "><strong>Hint</strong> The <code>join()</code> function is imported from <code>path</code> package.
+info "><strong>Hint</strong> The <code>join()</code> function is imported from <code>path</code> package, while <code>Transport</code> enum is coming from <code>@nestjs/microservices</code>.
 </blockquote>
 <h4 appAnchor id="options"><span>Options</span></h4>
 <p>There are a bunch of available options that determine a transporter behavior.</p>
@@ -88,9 +88,9 @@ message Hero &#123;
 <p>In the above example, we defined a <code>HeroService</code> that exposes a <code>FindOne()</code> gRPC handler which expects <code>HeroById</code> as an input and returns a <code>Hero</code> message. In order to define a handler that fulfills this protobuf definition, we have to use a <code>@GrpcMethod()</code> decorator. The previously known <code>@MessagePattern()</code> is no longer useful.</p>
 
 <span class="filename">
-  {{ 'hero.controller' | extension: appd84cb6c99aede35e6f8fa5d73f2433adb8e77e2b.isJsActive }}
-<app-tabs #appd84cb6c99aede35e6f8fa5d73f2433adb8e77e2b></app-tabs>
-</span><pre [class.hide]="appd84cb6c99aede35e6f8fa5d73f2433adb8e77e2b.isJsActive"><code class="language-typescript">
+  {{ 'hero.controller' | extension: app7bfd38e9883776f24e360ffd4cc2df84bf50e8a0.isJsActive }}
+<app-tabs #app7bfd38e9883776f24e360ffd4cc2df84bf50e8a0></app-tabs>
+</span><pre [class.hide]="app7bfd38e9883776f24e360ffd4cc2df84bf50e8a0.isJsActive"><code class="language-typescript">
 @GrpcMethod(&#39;HeroService&#39;, &#39;FindOne&#39;)
 findOne(data: HeroById, metadata: any): Hero &#123;
   const items = [
@@ -99,7 +99,7 @@ findOne(data: HeroById, metadata: any): Hero &#123;
   ];
   return items.find((&#123; id &#125;) =&gt; id === data.id);
 &#125;</code></pre>
-<pre [class.hide]="!appd84cb6c99aede35e6f8fa5d73f2433adb8e77e2b.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app7bfd38e9883776f24e360ffd4cc2df84bf50e8a0.isJsActive"><code class="language-typescript">
 @GrpcMethod(&#39;HeroService&#39;, &#39;FindOne&#39;)
 findOne(data, metadata) &#123;
   const items = [
@@ -110,13 +110,13 @@ findOne(data, metadata) &#123;
 &#125;</code></pre><blockquote class="
 info "><strong>Hint</strong> The <code>@GrpcMethod()</code> decorator is imported from <code>@nestjs/microservices</code> package.
 </blockquote>
-<p>The <code>HeroService</code> is a service&#39;s name, while <code>FindOne</code> points to a <code>FindOne()</code> gRPC handler. The corresponding <code>findOne()</code> method takes two arguments, the <code>data</code> passed from the caller and <code>metadata</code> that stores gRPC request&#39;s metadata.</p>
+<p>The <code>HeroService</code> is a service name, while <code>FindOne</code> points to a <code>FindOne()</code> gRPC handler. The corresponding <code>findOne()</code> method takes two arguments, the <code>data</code> passed from the caller and <code>metadata</code> that stores gRPC request&#39;s metadata.</p>
 <p>Furthermore, the <code>FindOne</code> is actually redundant here. If you don&#39;t pass a second argument to the <code>@GrpcMethod()</code>, Nest will automatically use the method name with the capitalized first letter, for example, <code>findOne</code> -&gt; <code>FindOne</code>.</p>
 
 <span class="filename">
-  {{ 'hero.controller' | extension: appb599f36282308f8fb5eef2b44fa0ee37b2656a53.isJsActive }}
-<app-tabs #appb599f36282308f8fb5eef2b44fa0ee37b2656a53></app-tabs>
-</span><pre [class.hide]="appb599f36282308f8fb5eef2b44fa0ee37b2656a53.isJsActive"><code class="language-typescript">
+  {{ 'hero.controller' | extension: app2ae14a4aa363f411874fa028eb883363d5879c47.isJsActive }}
+<app-tabs #app2ae14a4aa363f411874fa028eb883363d5879c47></app-tabs>
+</span><pre [class.hide]="app2ae14a4aa363f411874fa028eb883363d5879c47.isJsActive"><code class="language-typescript">
 @Controller()
 export class HeroService &#123;
   @GrpcMethod()
@@ -128,7 +128,7 @@ export class HeroService &#123;
     return items.find((&#123; id &#125;) =&gt; id === data.id);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appb599f36282308f8fb5eef2b44fa0ee37b2656a53.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app2ae14a4aa363f411874fa028eb883363d5879c47.isJsActive"><code class="language-typescript">
 @Controller()
 export class HeroService &#123;
   @GrpcMethod()
@@ -140,19 +140,35 @@ export class HeroService &#123;
     return items.find((&#123; id &#125;) =&gt; id === data.id);
   &#125;
 &#125;</code></pre><p>Likewise, you might not pass any argument. In this case, Nest would use a class name.</p>
-  <span class="filename">
-    {{ 'hero.controller' | extension: grpcHandlerClassT.isJsActive }}
-    <app-tabs #grpcHandlerClassT></app-tabs>
-  </span>
-  <pre
-    [class.hide]="grpcHandlerClassT.isJsActive"
-  ><code class="language-typescript">{{ grpcHandlerClass }}</code></pre>
-  <pre
-    [class.hide]="!grpcHandlerClassT.isJsActive"
-  ><code class="language-typescript">{{ grpcHandlerClassJs }}</code></pre>
 
-<h4 appAnchor id="client"><span>Client</span></h4>
-<p>In order to create a client instance, we need to make use of <code>@Client()</code> decorator.</p>
+<span class="filename">
+  {{ 'hero.controller' | extension: app5d408331dae1e4cb4e890241bf56bb3e3a931fd7.isJsActive }}
+<app-tabs #app5d408331dae1e4cb4e890241bf56bb3e3a931fd7></app-tabs>
+</span><pre [class.hide]="app5d408331dae1e4cb4e890241bf56bb3e3a931fd7.isJsActive"><code class="language-typescript">
+@Controller()
+export class HeroService &#123;
+  @GrpcMethod()
+  findOne(data: HeroById, metadata: any): Hero &#123;
+    const items = [
+      &#123; id: 1, name: &#39;John&#39; &#125;,
+      &#123; id: 2, name: &#39;Doe&#39; &#125;,
+    ];
+    return items.find((&#123; id &#125;) =&gt; id === data.id);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app5d408331dae1e4cb4e890241bf56bb3e3a931fd7.isJsActive"><code class="language-typescript">
+@Controller()
+export class HeroService &#123;
+  @GrpcMethod()
+  findOne(data, metadata) &#123;
+    const items = [
+      &#123; id: 1, name: &#39;John&#39; &#125;,
+      &#123; id: 2, name: &#39;Doe&#39; &#125;,
+    ];
+    return items.find((&#123; id &#125;) =&gt; id === data.id);
+  &#125;
+&#125;</code></pre><h4 appAnchor id="client"><span>Client</span></h4>
+<p>In order to create a client instance, we need to use <code>@Client()</code> decorator.</p>
 <pre><code class="language-typescript">
 @Client(&#123;
   transport: Transport.GRPC,
@@ -161,17 +177,17 @@ export class HeroService &#123;
     protoPath: join(__dirname, &#39;hero/hero.proto&#39;),
   &#125;,
 &#125;)
-private client: ClientGrpc;</code></pre>
-<p>There is a small difference compared to the previous examples. Instead of the <code>ClientProxy</code> class, we use the <code>ClientGrpc</code> that provides a <code>getService()</code> method. The <code>getService()</code> generic method takes service&#39;s name as an argument and returns its instance if available.</p>
+client: ClientGrpc;</code></pre>
+<p>There is a small difference compared to the previous examples. Instead of the <code>ClientProxy</code> class, we use the <code>ClientGrpc</code> that provides a <code>getService()</code> method. The <code>getService()</code> generic method takes service name as an argument and returns its instance if available.</p>
 
 <span class="filename">
-  {{ 'hero.controller' | extension: app4102353916233e98711bcc7fd047b9b1313adba2.isJsActive }}
-<app-tabs #app4102353916233e98711bcc7fd047b9b1313adba2></app-tabs>
-</span><pre [class.hide]="app4102353916233e98711bcc7fd047b9b1313adba2.isJsActive"><code class="language-typescript">
+  {{ 'hero.controller' | extension: app0da73eaaff18b00f562ae26cdb3be35b5f8e868c.isJsActive }}
+<app-tabs #app0da73eaaff18b00f562ae26cdb3be35b5f8e868c></app-tabs>
+</span><pre [class.hide]="app0da73eaaff18b00f562ae26cdb3be35b5f8e868c.isJsActive"><code class="language-typescript">
 onModuleInit() &#123;
   this.heroService = this.client.getService&lt;HeroService&gt;(&#39;HeroService&#39;);
 &#125;</code></pre>
-<pre [class.hide]="!app4102353916233e98711bcc7fd047b9b1313adba2.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app0da73eaaff18b00f562ae26cdb3be35b5f8e868c.isJsActive"><code class="language-typescript">
 onModuleInit() &#123;
   this.heroService = this.client.getService(&#39;HeroService&#39;);
 &#125;</code></pre><p>The <code>heroService</code> object exposes the same set of methods that have been defined inside <code>.proto</code> file. Note, all of them are <strong>lowercased</strong> (in order to follow the natural convention). Basically, our gRPC <code>HeroService</code> definition contains <code>FindOne()</code> function. It means that <code>heroService</code> instance will provide the <code>findOne()</code> method.</p>
@@ -179,17 +195,17 @@ onModuleInit() &#123;
 interface HeroService &#123;
   findOne(data: &#123; id: number &#125;): Observable&lt;any&gt;;
 &#125;</code></pre>
-<p>All service&#39;s methods return <code>Observable</code>. Since Nest supports <a href="https://github.com/reactivex/rxjs">RxJS</a> streams and works pretty well with them, we can return them within HTTP handler as well.</p>
+<p>All service methods return <code>Observable</code>. Since Nest supports <a href="https://github.com/reactivex/rxjs">RxJS</a> streams and works pretty well with them, we can return them within HTTP handler as well.</p>
 
 <span class="filename">
-  {{ 'hero.controller' | extension: app1955b931308a89c575e489b510177d397a3205e1.isJsActive }}
-<app-tabs #app1955b931308a89c575e489b510177d397a3205e1></app-tabs>
-</span><pre [class.hide]="app1955b931308a89c575e489b510177d397a3205e1.isJsActive"><code class="language-typescript">
+  {{ 'hero.controller' | extension: appee717afeedf9e87c42e3dea368008fe82cf792dc.isJsActive }}
+<app-tabs #appee717afeedf9e87c42e3dea368008fe82cf792dc></app-tabs>
+</span><pre [class.hide]="appee717afeedf9e87c42e3dea368008fe82cf792dc.isJsActive"><code class="language-typescript">
 @Get()
 call(): Observable&lt;any&gt; &#123;
   return this.heroService.findOne(&#123; id: 1 &#125;);
 &#125;</code></pre>
-<pre [class.hide]="!app1955b931308a89c575e489b510177d397a3205e1.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appee717afeedf9e87c42e3dea368008fe82cf792dc.isJsActive"><code class="language-typescript">
 @Get()
 call() &#123;
   return this.heroService.findOne(&#123; id: 1 &#125;);

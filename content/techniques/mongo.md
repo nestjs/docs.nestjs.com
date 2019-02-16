@@ -28,7 +28,7 @@ The `forRoot()` method accepts the same configuration object as `mongoose.connec
 With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
 
 ```typescript
-@@filename(cats/schemas/cat.schema)
+@@filename(schemas/cat.schema)
 import * as mongoose from 'mongoose';
 
 export const CatSchema = new mongoose.Schema({
@@ -81,13 +81,13 @@ export class CatsService {
     return await this.catModel.find().exec();
   }
 }
+@@switch
 import { Model } from 'mongoose';
 import { Injectable, Dependencies } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CatSchema } from './schemas/cat.schema';
 
 @Injectable()
-@Dependencies(InjectModel(CatSchema))
+@Dependencies(InjectModel('Cat'))
 export class CatsService {
   constructor(catModel) {
     this.catModel = catModel;

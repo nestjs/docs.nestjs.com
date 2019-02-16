@@ -5,21 +5,21 @@
 info "><strong>Hint</strong> The <code>WsException</code> class is exposed from <code>@nestjs/websockets</code> package.
 </blockquote>
 <h4 appAnchor id="binding-guards"><span>Binding guards</span></h4>
-<p>Here is an example that makes use of a <strong>method-scoped</strong> guard (class-scoped works too):</p>
+<p>Here is an example that makes use of a method-scoped guard (class-scoped works too):</p>
 
 <span class="filename">
-<app-tabs #appfdfdc88d502040caa5069e5df82413110956033d></app-tabs>
-</span><pre [class.hide]="appfdfdc88d502040caa5069e5df82413110956033d.isJsActive"><code class="language-typescript">
+<app-tabs #app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a></app-tabs>
+</span><pre [class.hide]="app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a.isJsActive"><code class="language-typescript">
 @UseGuards(AuthGuard)
 @SubscribeMessage(&#39;events&#39;)
-onEvent(client: Client, data: any): WsResponse&lt;any&gt; &#123;
+handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
   const event = &#39;events&#39;;
   return &#123; event, data &#125;;
 &#125;</code></pre>
-<pre [class.hide]="!appfdfdc88d502040caa5069e5df82413110956033d.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a.isJsActive"><code class="language-typescript">
 @UseGuards(AuthGuard)
 @SubscribeMessage(&#39;events&#39;)
-onEvent(client, data) &#123;
+handleEvent(client, data) &#123;
   const event = &#39;events&#39;;
   return &#123; event, data &#125;;
 &#125;</code></pre>

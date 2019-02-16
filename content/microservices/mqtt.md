@@ -25,6 +25,8 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 });
 ```
 
+> info **Hint** `Transport` enumerator is imported from the `@nestjs/microservices` package.
+
 #### Options
 
 There are a bunch of available options that determine a transporter behavior. They are well-described [here](https://github.com/mqttjs/MQTT.js).

@@ -13,12 +13,12 @@ info "><strong>Hint</strong> The <code>RpcException</code> class is imported fro
   &quot;message&quot;: &quot;Invalid credentials.&quot;
 &#125;</code></pre>
 <h4 appAnchor id="filters"><span>Filters</span></h4>
-<p>The <strong>exception filters</strong> work in the same fashion as the primary ones, with a one, small difference. The <code>catch()</code> method has to return an <code>Observable</code>.</p>
+<p>The exception filters work in the same fashion as the primary ones, with a one, small difference. The <code>catch()</code> method has to return an <code>Observable</code>.</p>
 
 <span class="filename">
-  {{ 'rpc-exception.filter' | extension: app6877b4936bc209f55e0aac90d74baec408dff215.isJsActive }}
-<app-tabs #app6877b4936bc209f55e0aac90d74baec408dff215></app-tabs>
-</span><pre [class.hide]="app6877b4936bc209f55e0aac90d74baec408dff215.isJsActive"><code class="language-typescript">
+  {{ 'rpc-exception.filter' | extension: app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive }}
+<app-tabs #app893a1f04515236a941270c3dab46a2c326a69fdc></app-tabs>
+</span><pre [class.hide]="app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive"><code class="language-typescript">
 import &#123; Catch, RpcExceptionFilter, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
 import &#123; Observable, throwError &#125; from &#39;rxjs&#39;;
 import &#123; RpcException &#125; from &#39;@nestjs/microservices&#39;;
@@ -29,8 +29,8 @@ export class ExceptionFilter implements RpcExceptionFilter&lt;RpcException&gt; &
     return throwError(exception.getError());
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app6877b4936bc209f55e0aac90d74baec408dff215.isJsActive"><code class="language-typescript">
-import &#123; Catch, &#125; from &#39;@nestjs/common&#39;;
+<pre [class.hide]="!app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive"><code class="language-typescript">
+import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
 import &#123; throwError &#125; from &#39;rxjs&#39;;
 
 @Catch(RpcException)
@@ -39,22 +39,30 @@ export class ExceptionFilter &#123;
     return throwError(exception.getError());
   &#125;
 &#125;</code></pre><blockquote class="
-"><strong>Warning</strong> It is impossible to set up the microservices exception filters globally.
+"><strong>Warning</strong> It is impossible to set up the microservice exception filters globally when the hybrid application feature is being used.
 </blockquote>
-<p>Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> filter (class-scoped works either):</p>
-<pre><code class="language-typescript">
+<p>Here is an example that makes use of a manually instantiated method-scoped filter (class-scoped works too):</p>
+
+<span class="filename">
+<app-tabs #appda8b10c1e1298f76eb78662782317ef67cb124a0></app-tabs>
+</span><pre [class.hide]="appda8b10c1e1298f76eb78662782317ef67cb124a0.isJsActive"><code class="language-typescript">
 @UseFilters(new ExceptionFilter())
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
-sum(data: number[]): number &#123;
+accumulate(data: number[]): number &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre>
-<h4 appAnchor id="inheritance"><span>Inheritance</span></h4>
+<pre [class.hide]="!appda8b10c1e1298f76eb78662782317ef67cb124a0.isJsActive"><code class="language-typescript">
+@UseFilters(new ExceptionFilter())
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+accumulate(data) &#123;
+  return (data || []).reduce((a, b) =&gt; a + b);
+&#125;</code></pre><h4 appAnchor id="inheritance"><span>Inheritance</span></h4>
 <p>Typically, you&#39;ll create fully customized exception filters crafted to fulfill your application requirements. There might be use-cases though when you would like to reuse an already implemented, <strong>core exception filter</strong>, and override the behavior based on certain factors.</p>
 <p>In order to delegate exception processing to the base filter, you need to extend <code>BaseExceptionFilter</code> and call inherited <code>catch()</code> method. Besides, <code>HttpServer</code> reference has to be injected and passed to the <code>super()</code> call.</p>
 
 <span class="filename">
-<app-tabs #app98fa4a95763fda362d38dd29b6e0bda3a3eff83a></app-tabs>
-</span><pre [class.hide]="app98fa4a95763fda362d38dd29b6e0bda3a3eff83a.isJsActive"><code class="language-typescript">
+<app-tabs #appa23312628712933086429c47d4e78ddc73976a64></app-tabs>
+</span><pre [class.hide]="appa23312628712933086429c47d4e78ddc73976a64.isJsActive"><code class="language-typescript">
 import &#123; Catch, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseRpcExceptionFilter &#125; from &#39;@nestjs/microservices&#39;;
 
@@ -64,7 +72,7 @@ export class AllExceptionsFilter extends BaseRpcExceptionFilter &#123;
     return super.catch(exception, host);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app98fa4a95763fda362d38dd29b6e0bda3a3eff83a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa23312628712933086429c47d4e78ddc73976a64.isJsActive"><code class="language-typescript">
 import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseRpcExceptionFilter &#125; from &#39;@nestjs/microservices&#39;;
 

@@ -1,6 +1,6 @@
 ### Usage
 
-In order to achieve a high user-experience, the CLI commands share the same command schema.
+In order to provide a great user-experience, the CLI commands share the same command schema.
 
 ```bash
 $ nest [command] [...options]
@@ -11,19 +11,12 @@ $ nest [command] [...options]
 Each command accepts a set of **options** that are listed below:
 
 - **\--dry-run**: allows to simulate the command execution in order to verify how it will affect your working directory
+- **\--no-spec**: allows to turn off the generation of spec files (only applies to the `generate` command)
+- **\--flat**: allows to turn off the generation of the dedicated directory (only applies to the `generate` command)
 
 #### new (alias: n)
 
-The **new** command generates a Nest project based on the [typescript-starter](https://github.com/nestjs/typescript-starter) as well as install the required packages. The CLI will ask you for missing information to create the project, for example, which package manager do you want to use to install dependencies.
-
-| Option      | Description                  | Required | Default value |
-| ----------- | ---------------------------- | -------- | ------------- |
-| name        | Your application name        | false    | nest-app-name |
-| description | Your application description | false    | description   |
-| version     | Your application version     | false    | 1.0.0         |
-| author      | Your application author      | false    | ''            |
-
-Example usage:
+The **new** command scaffolds the Nest project based on the [typescript-starter](https://github.com/nestjs/typescript-starter) as well as install the required packages. The CLI will ask you for missing information - the application name (if not specified) and a package manager that you want to use to install dependencies.
 
 ```bash
 $ nest new my-awesome-app
@@ -35,25 +28,27 @@ The **generate** command generates a Nest architecture component.
 
 | Option    | Description                                                | Required | Default value |
 | --------- | ---------------------------------------------------------- | -------- | ------------- |
-| schematic | The schematic name from the list bellow.                   | true     | N/A           |
-| name      | The name of the generated Nest architecture component.     | true     | N/A           |
+| schematic | The schematic name from the list below.                    | true     | N/A           |
+| name      | The name of the generated Nest architecture component.     | false    | N/A           |
 | path      | The path from to generate the Nest architecture component. | false    | src           |
 
 A list of available architecture components:
 
-- class (alias: cl)
-- controller (alias: co)
-- decorator (alias: d)
-- exception (alias: e)
-- filter (alias: f)
-- gateway (alias: ga)
-- guard (alias: gu)
-- interceptor (alias: i)
-- middleware (alias: mi)
-- module (alias: mo)
-- pipe (alias: pi)
-- provider (alias: pr)
-- service (alias: s)
+- `class` (alias: cl)
+- `controller` (alias: co)
+- `decorator` (alias: d)
+- `filter` (alias: f)
+- `gateway` (alias: ga)
+- `guard` (alias: gu)
+- `interface` (alias: -)
+- `interceptor` (alias: in)
+- `library` (alias: lib)
+- `middleware` (alias: mi)
+- `module` (alias: mo)
+- `pipe` (alias: pi)
+- `provider` (alias: pr)
+- `resolver` (alias: r)
+- `service` (alias: s)
 
 Example usage:
 

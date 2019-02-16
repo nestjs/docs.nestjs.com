@@ -1,19 +1,21 @@
 <div class="content" #contentReference>
-      <h3 id="health-checks-terminus">Health Checks (Terminus)</h3>
-<p>The JavaScript library <a href="https://github.com/godaddy/terminus">@godaddy/terminus</a> offers hooks to react on graceful shutdowns and supports you creating proper <a href="https://kubernetes.io/">Kubernetes</a> readiness / liveness checks for any HTTP application. The module <a href="https://github.com/nestjs/terminus">@nestjs/terminus</a> integrates the terminus library with the NestJS ecosystem. To get started with <code>@nestjs/terminus</code> we need to install the required dependencies.</p>
+      <h3 id="health-checks-terminus">Health checks (Terminus)</h3>
+<p>The <a href="https://github.com/godaddy/terminus">terminus</a> offers hooks to react on graceful shutdowns and supports you creating proper <a href="https://kubernetes.io/">Kubernetes</a> readiness / liveness checks for any HTTP application. The module <a href="https://github.com/nestjs/terminus">@nestjs/terminus</a> integrates the terminus library with the Nest ecosystem.</p>
+<h4 appAnchor id="getting-started"><span>Getting started</span></h4>
+<p>To get started with <code>@nestjs/terminus</code> we need to install the required dependencies.</p>
 <pre><code class="language-bash">
 $ npm install --save @nestjs/terminus @godaddy/terminus</code></pre>
-<h4 appAnchor id="setting-up-a-health-check"><span>Setting up a Health Check</span></h4>
+<h4 appAnchor id="setting-up-a-health-check"><span>Setting up a health check</span></h4>
 <p>A health check represents a summary of <strong>health indicators</strong>. A health indicator executes a check of a service, whether it is in a healthy state or not. A health check is positive, if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, <a href="https://github.com/nestjs/terminus">@nestjs/terminus</a> provides a set of predefined health indicators, such as:</p>
 <ul>
-<li>DatabaseHealthIndicator</li>
-<li>DNSHealthIndicator</li>
+<li><code>DatabaseHealthIndicator</code></li>
+<li><code>DNSHealthIndicator</code></li>
 </ul>
 <p>The first step to get started with our first health check, is to setup a service which will associate health indicators to an endpoint.</p>
 
 <span class="filename">
-  {{ 'terminus-options.service' | extension: appcdda9cdd713c68a9b701ddc866d5701633bbb314.isJsActive }}
-<app-tabs #appcdda9cdd713c68a9b701ddc866d5701633bbb314></app-tabs>
+  {{ 'terminus-options.service' | extension: appde2ef10eabbc37140044bf15e88457f9417da0c0.isJsActive }}
+<app-tabs #appde2ef10eabbc37140044bf15e88457f9417da0c0></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123;
   TerminusEndpoint,
@@ -24,8 +26,8 @@ import &#123;
 
 class TerminusOptionsService implements TerminusOptionsFactory &#123;
   constructor(
-    @Inject(DNSHealthIndicator) private readonly dns: DNSHealthIndicator,
-  ) &#123; &#125;
+    private readonly dns: DNSHealthIndicator,
+  ) &#123;&#125;
 
   createTerminusOptions(): TerminusModuleOptions &#123;
     const healthEndpoint: TerminusEndpoint = &#123;
@@ -34,16 +36,15 @@ class TerminusOptionsService implements TerminusOptionsFactory &#123;
         async () =&gt; this.dns.pingCheck(&#39;google&#39;, &#39;https://google.com&#39;),
       ],
     &#125;;
-
     return &#123;
       endpoints: [healthEndpoint],
     &#125;;
   &#125;
-&#125;</code></pre><p>Once we have set up our <code>HealthService</code>, we can import the <code>TerminusModule</code> into the root <code>ApplicationModule</code>. The <code>HealthService</code> will all provide the settings, which will be used by the <code>TerminusModule</code></p>
+&#125;</code></pre><p>Once we have set up our <code>HealthService</code>, we can import the <code>TerminusModule</code> into the root <code>ApplicationModule</code>. The <code>HealthService</code> will provide the settings, which in turn will be used by the <code>TerminusModule</code>.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app79ad00fb4bdd03a6e2e268aee15f5f72bbfb6dd4.isJsActive }}
-<app-tabs #app79ad00fb4bdd03a6e2e268aee15f5f72bbfb6dd4></app-tabs>
+  {{ 'app.module' | extension: app34ea8600acdbe9c0588dc1b0f80b0fdb6a0889eb.isJsActive }}
+<app-tabs #app34ea8600acdbe9c0588dc1b0f80b0fdb6a0889eb></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TerminusModule &#125; from &#39;@nestjs/terminus&#39;;
@@ -57,19 +58,19 @@ import &#123; TerminusOptions &#125; from &#39;./terminus-options.service&#39;;
   ],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre><blockquote class="
-info "><strong>Hint</strong> If done correctly Nest will expose the defined health check(s), which are reachable through a GET request to the defined route. For example <code>curl -X GET &#39;http://localhost:3000/health&#39;</code>
+info "><strong>Hint</strong> If done correctly, Nest will expose the defined health check(s), which are reachable through a GET request to the defined route. For example <code>curl -X GET &#39;http://localhost:3000/health&#39;</code>
 </blockquote>
-<h4 appAnchor id="creating-a-custom-health-indicator"><span>Creating a custom Health Indicator</span></h4>
-<p>In some cases the predefined health indicators provided by <code>@nestjs/terminus</code> do not cover all of your health check requirements. In this case you can set up a custom health indicator according to your needs.</p>
-<p>Lets get started by creating a service which will represent our custom health indicator. To get a basic understanding how a health indicator is structured, we will create an example <code>DogHealthIndicator</code>. This health indicator should have the state &quot;up&quot;, if every <code>Dog</code> object has the type <code>goodboy</code>, otherwise it will throw an error, which then the health indicator will be seen as &quot;down&quot;.</p>
+<h4 appAnchor id="custom-health-indicator"><span>Custom health indicator</span></h4>
+<p>In some cases, the predefined health indicators provided by <code>@nestjs/terminus</code> do not cover all of your health check requirements. In this case you can set up a custom health indicator according to your needs.</p>
+<p>Let&#39;s get started by creating a service which will represent our custom health indicator. To get a basic understanding how a health indicator is structured, we will create an example <code>DogHealthIndicator</code>. This health indicator should have the state &quot;up&quot;, if every <code>Dog</code> object has the type <code>goodboy</code>, otherwise it will throw an error, which then the health indicator will be seen as &quot;down&quot;.</p>
 
 <span class="filename">
-  {{ 'dog.health' | extension: app872c7a8e578f88ca8d1931942132627c937af5b1.isJsActive }}
-<app-tabs #app872c7a8e578f88ca8d1931942132627c937af5b1></app-tabs>
+  {{ 'dog.health' | extension: appbe0fb977417093d02d1dcaced5404d3e36d43440.isJsActive }}
+<app-tabs #appbe0fb977417093d02d1dcaced5404d3e36d43440></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; HealthCheckError &#125; from &#39;@godaddy/terminus&#39;;
-import &#123; HealthIndicatorResult &#125; from &#39;@brunnerlivio/terminus&#39;;
+import &#123; HealthIndicatorResult &#125; from &#39;@nestjs/terminus&#39;;
 
 export interface Dog &#123;
   name: string;
@@ -86,11 +87,9 @@ export class DogHealthIndicator &#123;
   async isHealthy(key: string): Promise&lt;HealthIndicatorResult&gt; &#123;
     const badboys = this.dogs.filter(dog =&gt; dog.type === &#39;badboy&#39;);
     const status = badboys.length &gt; 0 ? &#39;down&#39; : &#39;up&#39;;
-
     const result = &#123;
       [key]: &#123; status, badboys: badboys.length &#125;,
     &#125;;
-
     if (status === &#39;down&#39;) &#123;
       throw new HealthCheckError(&#39;Dogcheck failed&#39;, result);
     &#125;
@@ -104,21 +103,22 @@ import &#123; TerminusOptions &#125; from &#39;./terminus-options.service&#39;;
 import &#123; DogHealthIndicator &#125; from &#39;./dog.health.ts&#39;;
 
 @Module(&#123;
-  providers: [DogHealthIndicator],
-  exports: [DogHealthIndicator]
   imports: [
     TerminusModule.forRootAsync(&#123;
       imports: [ApplicationModule],
       useClass: TerminusOptionsService,
     &#125;),
   ],
+  providers: [DogHealthIndicator],
+  exports: [DogHealthIndicator],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
 <blockquote class="
-error "><strong>Hint</strong> In a real world application the <code>DogHealthIndicator</code> should be provided in a separate Module, for example <code>DogModule</code>, which then get imported by the <code>ApplicationModule</code>. But keep in mind to add the <code>DogHealthIndicator</code> to the <code>exports</code> array of the <code>DogModule</code> and add the <code>DogModule</code> in <code>imports</code> array of the <code>TerminusModule.forRootAsync()</code> parameter object.
+info "><strong>Hint</strong> In a real world application the <code>DogHealthIndicator</code> should be provided in a separate module, for example <code>DogsModule</code>, which then will be imported by the <code>ApplicationModule</code>. But keep in mind to add the <code>DogHealthIndicator</code> to the <code>exports</code> array of the <code>DogModule</code> and add the <code>DogModule</code> in <code>imports</code> array of the <code>TerminusModule.forRootAsync()</code> parameter object.
 </blockquote>
 <p>The last required thing to do is to add the now available health indicator in the required health check endpoint. For that we go back to our <code>TerminusOptionsService</code> and implement it to the <code>/health</code> endpoint.</p>
 <pre><code class="language-typescript">
+import &#123;
   TerminusEndpoint,
   TerminusOptionsFactory,
   DNSHealthIndicator,
@@ -127,8 +127,8 @@ error "><strong>Hint</strong> In a real world application the <code>DogHealthInd
 
 class TerminusOptionsService implements TerminusOptionsFactory &#123;
   constructor(
-    @Inject(DogHealthIndicator) private readonly dogHealthIndicator: DogHealthIndicator
-  ) &#123; &#125;
+    private readonly dogHealthIndicator: DogHealthIndicator
+  ) &#123;
 
   createTerminusOptions(): TerminusModuleOptions &#123;
     const healthEndpoint: TerminusEndpoint = &#123;
@@ -137,7 +137,6 @@ class TerminusOptionsService implements TerminusOptionsFactory &#123;
         async () =&gt; this.dogHealthIndicator.isHealthy(&#39;dog&#39;),
       ],
     &#125;;
-
     return &#123;
       endpoints: [healthEndpoint],
     &#125;;

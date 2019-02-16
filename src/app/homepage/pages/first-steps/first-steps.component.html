@@ -27,7 +27,7 @@ $ nest new project-name</code></pre>
 </thead>
 <tbody><tr>
 <td><code>main.ts</code></td>
-<td>The entry file of the application. It uses <code>NestFactory</code> to create the Nest application instance.</td>
+<td>The entry file of the application which uses <code>NestFactory</code> to create a Nest application instance.</td>
 </tr>
 <tr>
 <td><code>app.module.ts</code></td>
@@ -41,9 +41,9 @@ $ nest new project-name</code></pre>
 <p>The <code>main.ts</code> includes an async function, which will <strong>bootstrap</strong> our application:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appcc1fb926e7869636a3301f29fcbb1f22d453f9b1.isJsActive }}
-<app-tabs #appcc1fb926e7869636a3301f29fcbb1f22d453f9b1></app-tabs>
-</span><pre [class.hide]="appcc1fb926e7869636a3301f29fcbb1f22d453f9b1.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: app9dc4f734fa2d1355f1e9ee3189a2ca4a1f0bcddf.isJsActive }}
+<app-tabs #app9dc4f734fa2d1355f1e9ee3189a2ca4a1f0bcddf></app-tabs>
+</span><pre [class.hide]="app9dc4f734fa2d1355f1e9ee3189a2ca4a1f0bcddf.isJsActive"><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
@@ -52,7 +52,7 @@ async function bootstrap() &#123;
   await app.listen(3000);
 &#125;
 bootstrap();</code></pre>
-<pre [class.hide]="!appcc1fb926e7869636a3301f29fcbb1f22d453f9b1.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app9dc4f734fa2d1355f1e9ee3189a2ca4a1f0bcddf.isJsActive"><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
@@ -75,6 +75,10 @@ bootstrap();</code></pre><p>To create a Nest application instance, we are using 
 <td><a href="https://expressjs.com/">Fastify</a> is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it <a routerLink="/techniques/performance">here</a>.</td>
 </tr>
 </tbody></table>
+<p>In addition, every platform exposes a dedicated application interface, respectively <code>NestExpressApplication</code> and <code>NestFastifyApplication</code>.</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create&lt;NestExpressApplication&gt;(ApplicationModule);</code></pre>
+<p>Once you pass a type variable, <code>app</code> object will have methods available exclusively for a specific platform. Nonetheless, you don&#39;t have to do it <strong>unless</strong> you really need to access this platform API.</p>
 <h4 appAnchor id="running-application"><span>Running application</span></h4>
 <p>Once the installation process is complete, you can run the following command to start the HTTP server:</p>
 <pre><code class="language-bash">

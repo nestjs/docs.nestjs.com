@@ -11,15 +11,18 @@ $ npm i --save redis</code></pre>
 <p>In order to switch from TCP transport strategy to Redis <strong>pub/sub</strong>, we need to change an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: appa98d37bc1fef9627ce7167b067c2bf3bba703784.isJsActive }}
-<app-tabs #appa98d37bc1fef9627ce7167b067c2bf3bba703784></app-tabs>
+  {{ 'main' | extension: app27e69c12b203d0ddb9c33b47528b1caa48ce3b17.isJsActive }}
+<app-tabs #app27e69c12b203d0ddb9c33b47528b1caa48ce3b17></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.REDIS,
   options: &#123;
     url: &#39;redis://localhost:6379&#39;,
   &#125;,
-&#125;);</code></pre><h4 appAnchor id="options"><span>Options</span></h4>
+&#125;);</code></pre><blockquote class="
+info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<h4 appAnchor id="options"><span>Options</span></h4>
 <p>There are a bunch of available options that determine a transporter behaviour.</p>
 <table>
   <tr>

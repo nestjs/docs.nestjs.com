@@ -109,6 +109,9 @@
   h3:first-of-type {
     margin: 20px 0;
   }
+  h3 + h5 {
+    margin-top: -10px !important;
+  }
   p {
     text-align: justify;
   }

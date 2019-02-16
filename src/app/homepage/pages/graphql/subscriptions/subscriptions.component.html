@@ -1,6 +1,6 @@
 <div class="content" #contentReference>
       <h3 id="subscriptions">Subscriptions</h3>
-<p>Subscription is just another GraphQL operation type like Query and Mutation. It allows creating real-time subscriptions over a bidirectional transport layer, mainly over websockets. Read more about the subscriptions <a href="https://www.apollographql.com/docs/graphql-subscriptions">here</a>. Below is a <code>commentAdded</code> subscription example, copied and pasted directly from the official <a href="https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema.html">Apollo</a> documentation:</p>
+<p>Subscription is just another GraphQL operation type like Query and Mutation. It allows creating real-time subscriptions over a bidirectional transport layer, mainly over websockets. Read more about the subscriptions <a href="https://www.apollographql.com/docs/graphql-subscriptions">here</a>. Below is a <code>commentAdded</code> subscription example, copied directly from the official <a href="https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema.html">Apollo</a> documentation:</p>
 <pre><code class="language-typescript">
 Subscription: &#123;
   commentAdded: &#123;
@@ -10,7 +10,8 @@ Subscription: &#123;
 <blockquote class="
 warning "><strong>Notice</strong> The <code>pubsub</code> is an instance of <code>PubSub</code> class. Read more about it <a href="https://www.apollographql.com/docs/graphql-subscriptions/setup.html">here</a>.
 </blockquote>
-<p>In order to create an equivalent subscription in Nest, we&#39;ll make use of the <code>@Subscription()</code> decorator. Let&#39;s extend our <code>AuthorResolver</code> used in the resolvers section.</p>
+<h4 appAnchor id="schema-first"><span>Schema first</span></h4>
+<p>To create an equivalent subscription in Nest, we&#39;ll make use of the <code>@Subscription()</code> decorator.</p>
 <pre><code class="language-typescript">
 const pubSub = new PubSub();
 
@@ -34,20 +35,26 @@ export class AuthorResolver &#123;
 
   @Subscription()
   commentAdded() &#123;
-    return &#123;
-      subscribe: () =&gt; pubSub.asyncIterator(&#39;commentAdded&#39;),
-    &#125;;
+    return pubSub.asyncIterator(&#39;commentAdded&#39;);
   &#125;
 &#125;</code></pre>
-<p>We have used a local <code>PubSub</code> instance here. Instead, we should define <code>PubSub</code> as a <strong>provider</strong>, inject it through the constructor (using <code>@Inject()</code> decorator), and reuse it across the whole application. You can read more about Nest custom providers <a routerLink="/fundamentals/custom-providers">here</a>.</p>
-<h4 appAnchor id="module"><span>Module</span></h4>
-<p>In order to enable subscriptions, we have to set <code>installSubscriptionHandlers</code> property to <code>true</code>.</p>
+<p>In order to filter out specific events based on context and arguments, we can set a <code>filter</code> property.</p>
 <pre><code class="language-typescript">
-GraphQLModule.forRoot(&#123;
-  typePaths: [&#39;./**/*.graphql&#39;],
-  installSubscriptionHandlers: true,
-&#125;),</code></pre>
-<p>To customize the subscriptions server (e.g. change port), you can use <code>subscriptions</code> property (read <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">more</a>).</p>
+@Subscription(&#39;commentAdded&#39;, &#123;
+  filter: (payload, variables) =&gt;
+    payload.commentAdded.repositoryName === variables.repoFullName,
+&#125;)
+commentAdded() &#123;
+  return pubSub.asyncIterator(&#39;commentAdded&#39;);
+&#125;</code></pre>
+<p>To mutate the published payload, we can use a <code>resolve</code> function.</p>
+<pre><code class="language-typescript">
+@Subscription(&#39;commentAdded&#39;, &#123;
+  resolve: value =&gt; value,
+&#125;)
+commentAdded() &#123;
+  return pubSub.asyncIterator(&#39;commentAdded&#39;);
+&#125;</code></pre>
 <h4 appAnchor id="type-definitions"><span>Type definitions</span></h4>
 <p>The last step is to update type definitions file.</p>
 <pre><code class="language-java">
@@ -77,5 +84,65 @@ type Subscription &#123;
   commentAdded(repoFullName: String!): Comment
 &#125;</code></pre>
 <p>Well done. We created a single <code>commentAdded(repoFullName: String!): Comment</code> subscription. You can find a full sample implementation <a href="https://github.com/nestjs/nest/blob/master/sample/12-graphql-apollo">here</a>.</p>
+<h4 appAnchor id="class-first"><span>Class first</span></h4>
+<p>To create a subscription using the class-first approach, we&#39;ll make use of the <code>@Subscription()</code> decorator.</p>
+<pre><code class="language-typescript">
+const pubSub = new PubSub();
+
+@Resolver(&#39;Author&#39;)
+export class AuthorResolver &#123;
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) &#123;&#125;
+
+  @Query(returns =&gt; Author, &#123; name: &#39;author&#39; &#125;)
+  async getAuthor(@Args(&#123; name: &#39;id&#39;, type: () =&gt; Int &#125;) id: number) &#123;
+    return await this.authorsService.findOneById(id);
+  &#125;
+
+  @ResolveProperty(&#39;posts&#39;)
+  async getPosts(@Parent() author) &#123;
+    const &#123; id &#125; = author;
+    return await this.postsService.findAll(&#123; authorId: id &#125;);
+  &#125;
+
+  @Subscription(returns =&gt; Comment)
+  commentAdded() &#123;
+    return pubSub.asyncIterator(&#39;commentAdded&#39;);
+  &#125;
+&#125;</code></pre>
+<p>In order to filter out specific events based on context and arguments, we can set a <code>filter</code> property.</p>
+<pre><code class="language-typescript">
+@Subscription(returns =&gt; Comment, &#123;
+  filter: (payload, variables) =&gt;
+    payload.commentAdded.repositoryName === variables.repoFullName,
+&#125;)
+commentAdded() &#123;
+  return pubSub.asyncIterator(&#39;commentAdded&#39;);
+&#125;</code></pre>
+<p>To mutate the published payload, we can use a <code>resolve</code> function.</p>
+<pre><code class="language-typescript">
+@Subscription(returns =&gt; Comment, &#123;
+  resolve: value =&gt; value,
+&#125;)
+commentAdded() &#123;
+  return pubSub.asyncIterator(&#39;commentAdded&#39;);
+&#125;</code></pre>
+<h4 appAnchor id="pubsub"><span>PubSub</span></h4>
+<p>We used a local <code>PubSub</code> instance here. Instead, we should define <code>PubSub</code> as a <strong>provider</strong>, inject it through the constructor (using <code>@Inject()</code> decorator), and reuse it among the whole application. You can read more about Nest custom providers <a routerLink="/fundamentals/custom-providers">here</a>.</p>
+<pre><code class="language-typescript">
+&#123;
+  provide: &#39;PUB_SUB&#39;,
+  useValue: new PubSub(),
+&#125;</code></pre>
+<h4 appAnchor id="module"><span>Module</span></h4>
+<p>In order to enable subscriptions, we have to set <code>installSubscriptionHandlers</code> property to <code>true</code>.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  typePaths: [&#39;./**/*.graphql&#39;],
+  installSubscriptionHandlers: true,
+&#125;),</code></pre>
+<p>To customize the subscriptions server (e.g. change port), you can use <code>subscriptions</code> property (read <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">more</a>).</p>
 
     </div>

@@ -1,6 +1,8 @@
 <div class="content" #contentReference>
       <h3 id="mutations">Mutations</h3>
-<p>In GraphQL, in order to modify the server-side data, we use mutations (read more <a href="http://graphql.org/learn/queries/#mutations">here</a>). The official <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html">Apollo</a> documentation shares an <code>upvotePost()</code> mutation example. This mutation allows to increase a post <code>votes</code> property value. In order to create an equivalent mutation in Nest, we&#39;ll make use of the <code>@Mutation()</code> decorator. Let&#39;s extend our <code>AuthorResolver</code> used in the previous section (see <a routerLink="/graphql/resolvers-map">resolvers</a>).</p>
+<p>In GraphQL, in order to modify the server-side data, we use mutations (read more <a href="http://graphql.org/learn/queries/#mutations">here</a>). The official <a href="https://www.apollographql.com/docs/graphql-tools/generate-schema.html">Apollo</a> documentation shares an <code>upvotePost()</code> mutation example. This mutation allows to increase a post <code>votes</code> property value. In order to create an equivalent mutation in Nest, we&#39;ll make use of the <code>@Mutation()</code> decorator.</p>
+<h4 appAnchor id="schema-first"><span>Schema first</span></h4>
+<p>Let&#39;s extend our <code>AuthorResolver</code> used in the previous section (see <a routerLink="/graphql/resolvers-map">resolvers</a>).</p>
 <pre><code class="language-typescript">
 @Resolver(&#39;Author&#39;)
 export class AuthorResolver &#123;
@@ -24,7 +26,7 @@ export class AuthorResolver &#123;
     return await this.postsService.findAll(&#123; authorId: id &#125;);
   &#125;
 &#125;</code></pre>
-<p>Notice that we&#39;ve assumed that the business logic has been moved to the <code>PostsService</code> (respectively querying post and incrementing <code>votes</code> property).</p>
+<p>Notice that we assumed that the business logic has been moved to the <code>PostsService</code> (respectively querying post and incrementing <code>votes</code> property).</p>
 <h4 appAnchor id="type-definitions"><span>Type definitions</span></h4>
 <p>The last step is to add our mutation to the existing types definition.</p>
 <pre><code class="language-java">
@@ -49,5 +51,47 @@ type Mutation &#123;
   upvotePost(postId: Int!): Post
 &#125;</code></pre>
 <p>The <code>upvotePost(postId: Int!): Post</code> mutation should be available now.</p>
+<h4 appAnchor id="class-first"><span>Class first</span></h4>
+<p>Let&#39;s add another method to the <code>AuthorResolver</code> used in the previous section (see <a routerLink="/graphql/resolvers-map">resolvers</a>).</p>
+<pre><code class="language-typescript">
+@Resolver(of =&gt; Author)
+export class AuthorResolver &#123;
+  constructor(
+    private readonly authorsService: AuthorsService,
+    private readonly postsService: PostsService,
+  ) &#123;&#125;
+
+  @Query(returns =&gt; Author, &#123; name: &#39;author&#39; &#125;)
+  async getAuthor(@Args(&#123; name: &#39;id&#39;, type: () =&gt; Int &#125;) id: number) &#123;
+    return await this.authorsService.findOneById(id);
+  &#125;
+
+  @Mutation(returns =&gt; Post)
+  async upvotePost(@Args(&#123; name: &#39;postId&#39;, type: () =&gt; Int &#125;) postId: number) &#123;
+    return await this.postsService.upvoteById(&#123; id: postId &#125;);
+  &#125;
+
+  @ResolveProperty(&#39;posts&#39;)
+  async getPosts(@Parent() author) &#123;
+    const &#123; id &#125; = author;
+    return await this.postsService.findAll(&#123; authorId: id &#125;);
+  &#125;
+&#125;</code></pre>
+<p>The <code>upvotePost()</code> takes the <code>postId</code> (<code>Int</code>) as an input parameter and returns an updated <code>Post</code> entity. For the same reasons as in the <a routerLink="/graphql/resolvers-map">resolvers</a> section, we have to explicitly set the expected type.</p>
+<p>If the mutation has to take an object as a parameter, we can create an input type.</p>
+<pre><code class="language-typescript">
+@InputType()
+export class UpvotePostInput &#123;
+  @Field() postId: number;
+&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> Both <code>@InputType()</code> and <code>@Field()</code> are imported from the <code>type-graphql</code> package.
+</blockquote>
+<p>And then use it in the resolver class:</p>
+<pre><code class="language-typescript">
+@Mutation(returns =&gt; Post)
+async upvotePost(
+  @Args(&#39;upvotePostData&#39;) upvotePostData: UpvotePostInput,
+) &#123;&#125;</code></pre>
 
     </div>

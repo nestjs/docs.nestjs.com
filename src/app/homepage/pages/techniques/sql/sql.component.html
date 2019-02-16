@@ -10,8 +10,8 @@ info "><strong>Notice</strong> In this chapter we&#39;ll use a MySQL database, b
 <p>Once the installation process is completed, we can import the <code>TypeOrmModule</code> into the root <code>ApplicationModule</code>.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appd9e4472ffa6ed5f5980c125bc46907c0f0780910.isJsActive }}
-<app-tabs #appd9e4472ffa6ed5f5980c125bc46907c0f0780910></app-tabs>
+  {{ 'app.module' | extension: app2e9bc198246a586d9aad5e46961cdbd785840375.isJsActive }}
+<app-tabs #app2e9bc198246a586d9aad5e46961cdbd785840375></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
@@ -45,8 +45,8 @@ export class ApplicationModule &#123;&#125;</code></pre><p>The <code>forRoot()</
 <p>Then, we can simply leave the parenthesis empty:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app5d90416f598c9b8323ccf8c6b9b2fb9d9fcfdb37.isJsActive }}
-<app-tabs #app5d90416f598c9b8323ccf8c6b9b2fb9d9fcfdb37></app-tabs>
+  {{ 'app.module' | extension: appdeaa87f4668056529a018d99a7aa504f7745bb2c.isJsActive }}
+<app-tabs #appdeaa87f4668056529a018d99a7aa504f7745bb2c></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
@@ -57,9 +57,9 @@ import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
 export class ApplicationModule &#123;&#125;</code></pre><p>Afterward, the <code>Connection</code> and <code>EntityManager</code> will be available to inject across entire project (without importing any module elsewhere), for example, in this way:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app39b6072a6061a50948e1fd6fbb74158cc69e7062.isJsActive }}
-<app-tabs #app39b6072a6061a50948e1fd6fbb74158cc69e7062></app-tabs>
-</span><pre [class.hide]="app39b6072a6061a50948e1fd6fbb74158cc69e7062.isJsActive"><code class="language-typescript">
+  {{ 'app.module' | extension: appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive }}
+<app-tabs #appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652></app-tabs>
+</span><pre [class.hide]="appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive"><code class="language-typescript">
 import &#123; Connection &#125; from &#39;typeorm&#39;;
 
 @Module(&#123;
@@ -68,7 +68,7 @@ import &#123; Connection &#125; from &#39;typeorm&#39;;
 export class ApplicationModule &#123;
   constructor(private readonly connection: Connection) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app39b6072a6061a50948e1fd6fbb74158cc69e7062.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive"><code class="language-typescript">
 import &#123; Connection &#125; from &#39;typeorm&#39;;
 
 @Dependencies(Connection)
@@ -84,8 +84,8 @@ export class ApplicationModule &#123;
 <p>Firstly, we need at least one entity. We&#39;re gonna reuse the <code>Photo</code> entity from the official documentation.</p>
 
 <span class="filename">
-  {{ 'photo.entity' | extension: appc91892917e07273ef675d9b2e638738687f2c99c.isJsActive }}
-<app-tabs #appc91892917e07273ef675d9b2e638738687f2c99c></app-tabs>
+  {{ 'photo.entity' | extension: app9d9a320a31cc2f4c8e667763b562c4b883f2edde.isJsActive }}
+<app-tabs #app9d9a320a31cc2f4c8e667763b562c4b883f2edde></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Entity, Column, PrimaryGeneratedColumn &#125; from &#39;typeorm&#39;;
 
@@ -112,8 +112,8 @@ export class Photo &#123;
 <p>Let&#39;s have a look at the <code>PhotoModule</code>:</p>
 
 <span class="filename">
-  {{ 'photo.module' | extension: appdfc937f9ffa0202dfff43afb708be05990c8afa1.isJsActive }}
-<app-tabs #appdfc937f9ffa0202dfff43afb708be05990c8afa1></app-tabs>
+  {{ 'photo.module' | extension: appaf3f51a4a266615f248a08fb75db244a42d1ff2f.isJsActive }}
+<app-tabs #appaf3f51a4a266615f248a08fb75db244a42d1ff2f></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
@@ -129,9 +129,9 @@ import &#123; Photo &#125; from &#39;./photo.entity&#39;;
 export class PhotoModule &#123;&#125;</code></pre><p>This module uses <code>forFeature()</code> method to define which repositories shall be registered in the current scope. Thanks to that we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@InjectRepository()</code> decorator:</p>
 
 <span class="filename">
-  {{ 'photo.service' | extension: appa0a7154d14224ad18f048e8fce0406f3d8732c9e.isJsActive }}
-<app-tabs #appa0a7154d14224ad18f048e8fce0406f3d8732c9e></app-tabs>
-</span><pre [class.hide]="appa0a7154d14224ad18f048e8fce0406f3d8732c9e.isJsActive"><code class="language-typescript">
+  {{ 'photo.service' | extension: appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive }}
+<app-tabs #appf228a7dfe5c81a649ad933ae2db7ef119b736e95></app-tabs>
+</span><pre [class.hide]="appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; InjectRepository &#125; from &#39;@nestjs/typeorm&#39;;
 import &#123; Repository &#125; from &#39;typeorm&#39;;
@@ -148,7 +148,7 @@ export class PhotoService &#123;
     return await this.photoRepository.find();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appa0a7154d14224ad18f048e8fce0406f3d8732c9e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive"><code class="language-typescript">
 import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
 import &#123; InjectRepository &#125; from &#39;@nestjs/typeorm&#39;;
 import &#123; Photo &#125; from &#39;./photo.entity&#39;;
@@ -164,7 +164,7 @@ export class PhotoService &#123;
     return await this.photoRepository.find();
   &#125;
 &#125;</code></pre><blockquote class="
-"><strong>Notice</strong> Don&#39;t forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
+warning "><strong>Notice</strong> Do not forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
 </blockquote>
 <h4 appAnchor id="multiple-databases"><span>Multiple databases</span></h4>
 <p>Some of your projects may require multiple database connections. Fortunately, this can also be achieved with this module. To work with multiple connections, the first thing to do is to create those connections. In this case, the connection naming becomes <strong>mandatory</strong>.</p>
@@ -257,24 +257,15 @@ info "><strong>Hint</strong> Both <code>@EntityRepository()</code> and <code>Rep
   providers: [AuthorService],
 &#125;)
 export class AuthorModule &#123;&#125;</code></pre>
-<blockquote class="
-warning "><strong>Notice</strong> Even though <code>AuthorRepository</code> is passed, it&#39;s not enough to create a custom repository yet. The corresponding entity class, <code>Author</code> in this case, is required as well.
-</blockquote>
-<p>Afterward, simply inject the repository using <code>@InjectRepository()</code> decorator.</p>
-  <pre><code class="language-typescript">{{ injectCustomRepository }}</code></pre>
-
-<h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
-<p>Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.</p>
-<p>First possible approach is to use a factory function:</p>
+<p>Afterward, simply inject the repository using the following construction:</p>
 <pre><code class="language-typescript">
 @Injectable()
 export class AuthorService &#123;
-  constructor(
-    @InjectRepository(AuthorRepository)
-    private readonly authorRepository: AuthorRepository,
-  ) &#123;&#125;
+  constructor(private readonly authorRepository: AuthorRepository) &#123;&#125;
 &#125;</code></pre>
-<p>Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through <code>inject</code>).</p>
+<h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
+<p>Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.</p>
+<p>First possible approach is to use a factory function:</p>
 <pre><code class="language-typescript">
 TypeOrmModule.forRootAsync(&#123;
   useFactory: () =&gt; (&#123;
@@ -288,7 +279,7 @@ TypeOrmModule.forRootAsync(&#123;
     synchronize: true,
   &#125;),
 &#125;);</code></pre>
-<p>Alternatively, you are able to use class instead of a factory.</p>
+<p>Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through <code>inject</code>).</p>
 <pre><code class="language-typescript">
 TypeOrmModule.forRootAsync(&#123;
   imports: [ConfigModule],
@@ -303,6 +294,11 @@ TypeOrmModule.forRootAsync(&#123;
     synchronize: true,
   &#125;),
   inject: [ConfigService],
+&#125;);</code></pre>
+<p>Alternatively, you are able to use class instead of a factory.</p>
+<pre><code class="language-typescript">
+TypeOrmModule.forRootAsync(&#123;
+  useClass: TypeOrmConfigService,
 &#125;);</code></pre>
 <p>Above construction will instantiate <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and will leverage it to create options object. The <code>TypeOrmConfigService</code> has to implement <code>TypeOrmOptionsFactory</code> interface.</p>
 <pre><code class="language-typescript">

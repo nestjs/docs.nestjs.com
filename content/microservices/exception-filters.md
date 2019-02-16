@@ -19,7 +19,7 @@ Nest will handle thrown exception and as a result, returns the `error` object wi
 
 #### Filters
 
-The **exception filters** work in the same fashion as the primary ones, with a one, small difference. The `catch()` method has to return an `Observable`.
+The exception filters work in the same fashion as the primary ones, with a one, small difference. The `catch()` method has to return an `Observable`.
 
 ```typescript
 @@filename(rpc-exception.filter)
@@ -34,7 +34,7 @@ export class ExceptionFilter implements RpcExceptionFilter<RpcException> {
   }
 }
 @@switch
-import { Catch, } from '@nestjs/common';
+import { Catch } from '@nestjs/common';
 import { throwError } from 'rxjs';
 
 @Catch(RpcException)
@@ -45,14 +45,21 @@ export class ExceptionFilter {
 }
 ```
 
-> **Warning** It is impossible to set up the microservices exception filters globally.
+> **Warning** It is impossible to set up the microservice exception filters globally when the hybrid application feature is being used.
 
-Here is an example that makes use of a manually instantiated **method-scoped** filter (class-scoped works either):
+Here is an example that makes use of a manually instantiated method-scoped filter (class-scoped works too):
 
 ```typescript
+@@filename()
 @UseFilters(new ExceptionFilter())
 @MessagePattern({ cmd: 'sum' })
-sum(data: number[]): number {
+accumulate(data: number[]): number {
+  return (data || []).reduce((a, b) => a + b);
+}
+@@switch
+@UseFilters(new ExceptionFilter())
+@MessagePattern({ cmd: 'sum' })
+accumulate(data) {
   return (data || []).reduce((a, b) => a + b);
 }
 ```

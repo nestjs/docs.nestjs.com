@@ -1,6 +1,6 @@
 ### Adapters
 
-The WebSockets module is based on [socket.io](https://github.com/socketio/socket.io) package, but you can bring your own library (or even a native implementation), by making use of `WebSocketAdapter` interface. This interface forces to implement few methods described in the following table:
+The WebSockets module is platform-agnostic, hence, you can bring your own library (or even a native implementation) by making use of `WebSocketAdapter` interface. This interface forces to implement few methods described in the following table:
 
 <table>
   <tr>
@@ -27,7 +27,7 @@ The WebSockets module is based on [socket.io](https://github.com/socketio/socket
 
 #### Extend socket.io
 
-The socket.io package is wrapped in an `IoAdapter` class. What if you would like to enhance the basic functionality of the adapter? For instance, your technical requirements require a capability to broadcast events across multiple load-balanced instances of your web service. For this, you can extend `IoAdapter` and override a single method which responsibility is to instantiate new socket.io servers. But first of all, let's install the required package.
+The [socket.io](https://github.com/socketio/socket.io) package is wrapped in an `IoAdapter` class. What if you would like to enhance the basic functionality of the adapter? For instance, your technical requirements require a capability to broadcast events across multiple load-balanced instances of your web service. For this, you can extend `IoAdapter` and override a single method which responsibility is to instantiate new socket.io servers. But first of all, let's install the required package.
 
 ```bash
 $ npm i --save socket.io-redis
@@ -36,7 +36,7 @@ $ npm i --save socket.io-redis
 Once the package is installed, we can create a `RedisIoAdapter` class.
 
 ```typescript
-import { IoAdapter } from '@nestjs/websockets';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import * as redisIoAdapter from 'socket.io-redis';
 
 const redisAdapter = redisIoAdapter({ host: 'localhost', port: 6379 });
@@ -59,18 +59,26 @@ app.useWebSocketAdapter(new RedisIoAdapter(app));
 
 #### Ws library
 
-Another built-in adapter is a `WsAdapter` which in turn acts like a proxy between the framework and integrate blazing fast and thoroughly tested [ws](https://github.com/websockets/ws) library. This adapter is fully compatible with native browser WebSockets and is far faster than socket.io package. Unluckily, it has significantly fewer functionalities available out-of-the-box. In some cases, you may just don't necessarily need them though.
+Another available adapter is a `WsAdapter` which in turn acts like a proxy between the framework and integrate blazing fast and thoroughly tested [ws](https://github.com/websockets/ws) library. This adapter is fully compatible with native browser WebSockets and is far faster than socket.io package. Unluckily, it has significantly fewer functionalities available out-of-the-box. In some cases, you may just don't necessarily need them though.
+
+In order to use `ws`, we firstly have to install the required package:
+
+```bash
+$ npm i --save @nestjs/platform-ws
+```
+
+Once the package is installed, we can switch an adapter:
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule);
 app.useWebSocketAdapter(new WsAdapter(app));
 ```
 
-> info **Hint** The `WsAdapter` is imported from `@nestjs/websockets`.
+> info **Hint** The `WsAdapter` is imported from `@nestjs/platform-ws`.
 
 #### Advanced (custom adapter)
 
-For demonstration purposes, we are going to handwritten integrate the [ws](https://github.com/websockets/ws) library. As mentioned, the adapter for this library is already created and is exposed from the `@nestjs/websockets` package as a `WsAdapter` class. Here is how the simplified implementation could potentially looks like:
+For demonstration purposes, we are going to integrate the [ws](https://github.com/websockets/ws) library manually. As mentioned, the adapter for this library is already created and is exposed from the `@nestjs/platform-ws` package as a `WsAdapter` class. Here is how the simplified implementation could potentially look like:
 
 ```typescript
 @@filename(ws-adapter)
@@ -86,10 +94,10 @@ export class WsAdapter implements WebSocketAdapter {
     return new ws.Server({ port, ...options });
   }
 
-  bindClientConnect(server, callback: (...args) => void) {
+  bindClientConnect(server, callback: Function) {
     server.on('connection', callback);
   }
-
+a
   bindMessageHandlers(
     client: WebSocket,
     handlers: MessageMappingProperties[],

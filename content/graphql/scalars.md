@@ -1,5 +1,9 @@
 ### Scalars
 
+The GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean` and `ID`. However, sometimes you may need to support custom atomic data types (e.g. `Date`).
+
+#### Schema first
+
 In order to define a custom scalar (read more about scalars [here](https://www.apollographql.com/docs/graphql-tools/scalars.html)), we have to create a type definition and a dedicated resolver as well. Here (as in the official documentation), we’ll take the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type. Firstly, let's install the package:
 
 ```bash
@@ -32,29 +36,27 @@ type Foo {
 }
 ```
 
-#### Classes
-
 Another form of defining the scalar type is to create a simple class. Let's say that we would like to enhance our schema with the `Date` type.
 
 ```typescript
 import { Scalar } from '@nestjs/graphql';
-import { Kind } from 'graphql';
+import { Kind, ValueNode } from 'graphql';
 
 @Scalar('Date')
 export class DateScalar {
   description = 'Date custom scalar type';
 
-  parseValue(value) {
+  parseValue(value: any) {
     return new Date(value); // value from the client
   }
 
-  serialize(value) {
+  serialize(value: any) {
     return value.getTime(); // value sent to the client
   }
 
-  parseLiteral(ast) {
+  parseLiteral(ast: ValueNode) {
     if (ast.kind === Kind.INT) {
-      return parseInt(ast.value, 10); // ast value is always in string format
+      return parseInt(ast.value, 10);
     }
     return null;
   }
@@ -71,3 +73,52 @@ export class CommonModule {}
 ```
 
 And now we are able to use `Date` scalar in our type definitions.
+
+```java
+scalar Date
+```
+
+#### Class first
+
+In order to create a `Date` scalar, simply create a new class.
+
+```typescript
+import { Scalar } from '@nestjs/graphql';
+import { Kind, ValueNode } from 'graphql';
+
+@Scalar('Date', type => Date)
+export class DateScalar {
+  description = 'Date custom scalar type';
+
+  parseValue(value: any) {
+    return new Date(value); // value from the client
+  }
+
+  serialize(value: any) {
+    return value.getTime(); // value sent to the client
+  }
+
+  parseLiteral(ast: ValueNode) {
+    if (ast.kind === Kind.INT) {
+      return parseInt(ast.value, 10);
+    }
+    return null;
+  }
+}
+```
+
+Once it's ready, register `DateScalar` as a provider.
+
+```typescript
+@Module({
+  providers: [DateScalar],
+})
+export class CommonModule {}
+```
+
+Now you can use `Date` type in your classes.
+
+```typescript
+@Field()
+creationDate: Date;
+```

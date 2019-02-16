@@ -2,7 +2,11 @@
 
 ##### This chapter applies only to TypeScript
 
-[Sequelize](https://github.com/sequelize/sequelize) is a popular Object Relational Mapper (ORM) written in a vanilla JavaScript, but there is a [sequelize-typescript](https://github.com/RobinBuschmann/sequelize-typescript) TypeScript wrapper which provides a set of decorators and other extras for the base sequelize. To start the adventure with this library we have to install the following dependencies:
+[Sequelize](https://github.com/sequelize/sequelize) is a popular Object Relational Mapper (ORM) written in a vanilla JavaScript, but there is a [sequelize-typescript](https://github.com/RobinBuschmann/sequelize-typescript) TypeScript wrapper which provides a set of decorators and other extras for the base sequelize.
+
+#### Getting started
+
+To start the adventure with this library we have to install the following dependencies:
 
 ```bash
 $ npm install --save sequelize sequelize-typescript mysql2
@@ -18,7 +22,7 @@ import { Cat } from '../cats/cat.entity';
 
 export const databaseProviders = [
   {
-    provide: 'SequelizeToken',
+    provide: 'SEQUELIZE',
     useFactory: async () => {
       const sequelize = new Sequelize({
         dialect: 'mysql',
@@ -74,7 +78,7 @@ export class Cat extends Model<Cat> {
 }
 ```
 
-The `Cat` entity belongs to the `cats` directory. This directory represents the `CatsModule`. Now it's time to create a **Repository** component:
+The `Cat` entity belongs to the `cats` directory. This directory represents the `CatsModule`. Now it's time to create a **Repository** provider:
 
 ```typescript
 @@filename(cats.providers)
@@ -82,36 +86,36 @@ import { Cat } from './cat.entity';
 
 export const catsProviders = [
   {
-    provide: 'CatsRepository',
+    provide: 'CATS_REPOSITORY',
     useValue: Cat,
   },
 ];
 ```
 
-> **Notice** In the real-world applications you should avoid **magic strings**. Both `CatsRepository` and `SequelizeToken` should be kept in the separated `constants.ts` file.
+> **Notice** In the real-world applications you should avoid **magic strings**. Both `CATS_REPOSITORY` and `SEQUELIZE` should be kept in the separated `constants.ts` file.
 
 In Sequelize, we use static methods to manipulate the data, and thus we created an **alias** here.
 
-Now we can inject the `CatsRepository` to the `CatsService` using the `@Inject()` decorator:
+Now we can inject the `CATS_REPOSITORY` to the `CatsService` using the `@Inject()` decorator:
 
 ```typescript
 @@filename(cats.service)
-import { Component, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { Cat } from './cat.entity';
 
-@Component()
+@Injectable()
 export class CatsService {
   constructor(
-    @Inject('CatsRepository') private readonly catsRepository: typeof Cat) {}
+    @Inject('CATS_REPOSITORY') private readonly CATS_REPOSITORY: typeof Cat) {}
 
   async findAll(): Promise<Cat[]> {
-    return await this.catsRepository.findAll<Cat>();
+    return await this.CATS_REPOSITORY.findAll<Cat>();
   }
 }
 ```
 
-The database connection is **asynchronous**, but Nest makes this process completely invisible for the end-user. The `CatsRepository` provider is waiting for the db connection, and the `CatsService` is delayed until repository is ready to use. The entire application can start when each class is instantiated.
+The database connection is **asynchronous**, but Nest makes this process completely invisible for the end-user. The `CATS_REPOSITORY` provider is waiting for the db connection, and the `CatsService` is delayed until repository is ready to use. The entire application can start when each class is instantiated.
 
 Here is a final `CatsModule`:
 
@@ -134,4 +138,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> warning **Hint** Don't forget to import the `CatsModule` into the root `ApplicationModule`.
+> warning **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.

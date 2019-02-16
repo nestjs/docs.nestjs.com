@@ -60,3 +60,64 @@ export class CatsModule {}
 ```
 
 All these properties will be passed down to the **axios** constructor.
+
+#### Async configuration
+
+Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use `registerAsync()` method, that provides a couple of various ways to deal with async data.
+
+First possible approach is to use a factory function:
+
+```typescript
+HttpModule.forRootAsync({
+  useFactory: () => ({
+    timeout: 5000,
+    maxRedirects: 5,
+  }),
+});
+```
+
+Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
+
+```typescript
+HttpModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    timeout: configService.getString('HTTP_TIMEOUT'),
+    maxRedirects: configService.getString('HTTP_MAX_REDIRECTS'),
+  }),
+  inject: [ConfigService],
+});
+```
+
+Alternatively, you are able to use class instead of a factory.
+
+```typescript
+HttpModule.forRootAsync({
+  useClass: HttpConfigService,
+});
+```
+
+Above construction will instantiate `HttpConfigService` inside `HttpModule` and will leverage it to create options object. The `HttpConfigService` has to implement `HttpOptionsFactory` interface.
+
+```typescript
+@Injectable()
+class HttpConfigService implements HttpOptionsFactory {
+  createHttpOptions(): HttpModuleOptions {
+    return {
+      timeout: 5000,
+      maxRedirects: 5,
+    };
+  }
+}
+```
+
+In order to prevent the creation of `HttpConfigService` inside `HttpModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
+
+```typescript
+HttpModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+});
+```
+
+It works the same as `useClass` with one critical difference - `HttpModule` will lookup imported modules to reuse already created `ConfigService`, instead of instantiating it on its own.

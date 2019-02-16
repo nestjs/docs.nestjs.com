@@ -13,7 +13,7 @@ info "><strong>Hint</strong> The <code>WsException</code> class is imported from
   message: &#39;Invalid credentials.&#39;
 &#125;</code></pre>
 <h4 appAnchor id="filters"><span>Filters</span></h4>
-<p>The <strong>custom filters</strong> feature is supported as well and works equivalently. Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> filter (class-scoped works too):</p>
+<p>The <strong>custom filters</strong> feature is supported as well and works equivalently. Here is an example that makes use of a manually instantiated method-scope filter (class-scoped works too):</p>
 <pre><code class="language-typescript">
 @UseFilters(new WsExceptionFilter())
 @SubscribeMessage(&#39;events&#39;)
@@ -26,18 +26,18 @@ onEvent(client, data: any): WsResponse&lt;any&gt; &#123;
 <p>In order to delegate exception processing to the base filter, you need to extend <code>BaseWsExceptionFilter</code> and call inherited <code>catch()</code> method.</p>
 
 <span class="filename">
-<app-tabs #app2308e3d0c93d8f0dfe7651e6ab1d610b771b3cfd></app-tabs>
-</span><pre [class.hide]="app2308e3d0c93d8f0dfe7651e6ab1d610b771b3cfd.isJsActive"><code class="language-typescript">
+<app-tabs #app7d4bc957db416190b3453e52d8e9ff979c66bac0></app-tabs>
+</span><pre [class.hide]="app7d4bc957db416190b3453e52d8e9ff979c66bac0.isJsActive"><code class="language-typescript">
 import &#123; Catch, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseWsExceptionFilter &#125; from &#39;@nestjs/websockets&#39;;
 
 @Catch()
 export class AllExceptionsFilter extends BaseWsExceptionFilter &#123;
-  catch(exception: any, host: ArgumentsHost) &#123;
+  catch(exception: unknown, host: ArgumentsHost) &#123;
     super.catch(exception, host);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app2308e3d0c93d8f0dfe7651e6ab1d610b771b3cfd.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app7d4bc957db416190b3453e52d8e9ff979c66bac0.isJsActive"><code class="language-typescript">
 import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseWsExceptionFilter &#125; from &#39;@nestjs/websockets&#39;;
 

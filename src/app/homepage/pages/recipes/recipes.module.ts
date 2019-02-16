@@ -3,8 +3,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { CqrsComponent } from './cqrs/cqrs.component';
+import { DocumentationComponent } from './documentation/documentation.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
-import { PassportComponent } from './passport/passport.component';
 import { PrismaComponent } from './prisma/prisma.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
@@ -21,10 +21,6 @@ const routes: Routes = [
     path: 'mongodb',
     component: MongodbComponent,
     data: { title: 'MongoDB (Mongoose)' },
-  },
-  {
-    path: 'passport',
-    component: PassportComponent,
   },
   {
     path: 'sql-sequelize',
@@ -51,6 +47,11 @@ const routes: Routes = [
     component: TerminusComponent,
     data: { title: 'Health checks (Terminus)' },
   },
+  {
+    path: 'documentation',
+    component: DocumentationComponent,
+    data: { title: 'Documentation (Compodoc)' },
+  },
 ];
 
 @NgModule({
@@ -59,11 +60,11 @@ const routes: Routes = [
     SqlTypeormComponent,
     SqlSequelizeComponent,
     MongodbComponent,
-    PassportComponent,
     SwaggerComponent,
     PrismaComponent,
     CqrsComponent,
     TerminusComponent,
+    DocumentationComponent,
   ],
 })
 export class RecipesModule {}

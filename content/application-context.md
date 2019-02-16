@@ -1,6 +1,6 @@
-### Execution Context
+### Application context
 
-There are several ways of mounting the Nest application. You can create either a web app, microservice or just a Nest **execution context**. The Nest context is a wrapper around the Nest container, which holds all instantiated classes. We can grab an existing instance from within any imported module directly using application object. Thanks to that, you can take advantages of the Nest framework everywhere, including **CRON** jobs and even build a **CLI** on top of it.
+There are several ways of mounting the Nest application. You can create either a web app, microservice or just a Nest **application context**. Nest context is a wrapper around the Nest container, which holds all instantiated classes. We can grab an existing instance from within any imported module directly using application object. Hence, you can take advantage of the Nest framework everywhere, including **CRON** jobs and even build a **CLI** on top of it.
 
 #### Getting started
 
@@ -15,20 +15,20 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Afterward, Nest allows you to pick any instance registered within Nest application. Let's imagine that we have a `TasksController` in the `TasksModule`. This class provides a set of usable methods, which we want to call from within CRON job.
+Afterward, Nest allows you to pick any instance registered within Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of usable methods, which we want to call from within CRON job.
 
 ```typescript
 @@filename()
 const app = await NestFactory.create(ApplicationModule);
-const tasksController = app.get(TasksController);
+const tasksService = app.get(TasksService);
 ```
 
-And that's it. To grab `TasksController` instance we had to use `get()` method. We didn't have to go through entire modules tree, the `get()` method act like a **query** that search for an instance in each registered module automatically. However, if you prefer a strict context checking, you can always switch to it using `strict: true` options object that has to be passed as the second argument of `get()` method. Then, you have to go through all modules to pick up a particular instance from the selected context.
+And that's it. To grab `TasksService` instance we had to use `get()` method. We didn't have to go through entire modules tree, the `get()` method act like a **query** that search for an instance in each registered module automatically. However, if you prefer a strict context checking, you can always switch to it using `strict: true` options object that has to be passed as the second argument of `get()` method. Then, you have to go through all modules to pick up a particular instance from the selected context.
 
 ```typescript
 @@filename()
 const app = await NestFactory.create(ApplicationModule);
-const tasksController = app.select(TasksModule).get(TasksController, { strict: true });
+const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
 <table>
@@ -46,10 +46,10 @@ const tasksController = app.select(TasksModule).get(TasksController, { strict: t
       <code>select()</code>
     </td>
     <td>
-      Navigates through the module tree, for example, to pull out a specific instance from the selected module (used together with
+      Navigates through the modules graph, for example, to pull out a specific instance from the selected module (used together with
       enabled strict mode).
     </td>
   </tr>
 </table>
 
-> info **Hint** The root module is selected by default. In order to select any other module, you need to go through entire modules tree (step by step).
+> info **Hint** In non-strict mode, the root module is selected by default. In order to select any other module, you need to go through entire modules tree (step by step).

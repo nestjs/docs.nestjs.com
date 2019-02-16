@@ -1,50 +1,17 @@
 <div class="content" #contentReference>
       <h3 id="usage">Usage</h3>
-<p>In order to achieve a high user-experience, the CLI commands share the same command schema.</p>
+<p>In order to provide a great user-experience, the CLI commands share the same command schema.</p>
 <pre><code class="language-bash">
 $ nest [command] [...options]</code></pre>
 <h4 appAnchor id="options"><span>Options</span></h4>
 <p>Each command accepts a set of <strong>options</strong> that are listed below:</p>
 <ul>
 <li><strong>--dry-run</strong>: allows to simulate the command execution in order to verify how it will affect your working directory</li>
+<li><strong>--no-spec</strong>: allows to turn off the generation of spec files (only applies to the <code>generate</code> command)</li>
+<li><strong>--flat</strong>: allows to turn off the generation of the dedicated directory (only applies to the <code>generate</code> command)</li>
 </ul>
 <h4 appAnchor id="new-alias-n"><span>new (alias: n)</span></h4>
-<p>The <strong>new</strong> command generates a Nest project based on the <a href="https://github.com/nestjs/typescript-starter">typescript-starter</a> as well as install the required packages. The CLI will ask you for missing information to create the project, for example, which package manager do you want to use to install dependencies.</p>
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Description</th>
-<th>Required</th>
-<th>Default value</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>name</td>
-<td>Your application name</td>
-<td>false</td>
-<td>nest-app-name</td>
-</tr>
-<tr>
-<td>description</td>
-<td>Your application description</td>
-<td>false</td>
-<td>description</td>
-</tr>
-<tr>
-<td>version</td>
-<td>Your application version</td>
-<td>false</td>
-<td>1.0.0</td>
-</tr>
-<tr>
-<td>author</td>
-<td>Your application author</td>
-<td>false</td>
-<td>&#39;&#39;</td>
-</tr>
-</tbody></table>
-<p>Example usage:</p>
+<p>The <strong>new</strong> command scaffolds the Nest project based on the <a href="https://github.com/nestjs/typescript-starter">typescript-starter</a> as well as install the required packages. The CLI will ask you for missing information - the application name (if not specified) and a package manager that you want to use to install dependencies.</p>
 <pre><code class="language-bash">
 $ nest new my-awesome-app</code></pre>
 <h4 appAnchor id="generate-alias-g"><span>generate (alias: g)</span></h4>
@@ -60,14 +27,14 @@ $ nest new my-awesome-app</code></pre>
 </thead>
 <tbody><tr>
 <td>schematic</td>
-<td>The schematic name from the list bellow.</td>
+<td>The schematic name from the list below.</td>
 <td>true</td>
 <td>N/A</td>
 </tr>
 <tr>
 <td>name</td>
 <td>The name of the generated Nest architecture component.</td>
-<td>true</td>
+<td>false</td>
 <td>N/A</td>
 </tr>
 <tr>
@@ -79,19 +46,21 @@ $ nest new my-awesome-app</code></pre>
 </tbody></table>
 <p>A list of available architecture components:</p>
 <ul>
-<li>class (alias: cl)</li>
-<li>controller (alias: co)</li>
-<li>decorator (alias: d)</li>
-<li>exception (alias: e)</li>
-<li>filter (alias: f)</li>
-<li>gateway (alias: ga)</li>
-<li>guard (alias: gu)</li>
-<li>interceptor (alias: i)</li>
-<li>middleware (alias: mi)</li>
-<li>module (alias: mo)</li>
-<li>pipe (alias: pi)</li>
-<li>provider (alias: pr)</li>
-<li>service (alias: s)</li>
+<li><code>class</code> (alias: cl)</li>
+<li><code>controller</code> (alias: co)</li>
+<li><code>decorator</code> (alias: d)</li>
+<li><code>filter</code> (alias: f)</li>
+<li><code>gateway</code> (alias: ga)</li>
+<li><code>guard</code> (alias: gu)</li>
+<li><code>interface</code> (alias: -)</li>
+<li><code>interceptor</code> (alias: in)</li>
+<li><code>library</code> (alias: lib)</li>
+<li><code>middleware</code> (alias: mi)</li>
+<li><code>module</code> (alias: mo)</li>
+<li><code>pipe</code> (alias: pi)</li>
+<li><code>provider</code> (alias: pr)</li>
+<li><code>resolver</code> (alias: r)</li>
+<li><code>service</code> (alias: s)</li>
 </ul>
 <p>Example usage:</p>
 <pre><code class="language-bash">

@@ -4,13 +4,17 @@
 
 > **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **TypeORM** package from scratch using custom providers mechanism. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
 
-[TypeORM](https://github.com/typeorm/typeorm) is definitely the most mature Object Relational Mapper (ORM) available in the node.js world. Since it's written in TypeScript, it works pretty well with the Nest framework. To start the adventure with this library we have to install all required dependencies:
+[TypeORM](https://github.com/typeorm/typeorm) is definitely the most mature Object Relational Mapper (ORM) available in the node.js world. Since it's written in TypeScript, it works pretty well with the Nest framework.
+
+#### Getting started
+
+To start the adventure with this library we have to install all required dependencies:
 
 ```bash
 $ npm install --save typeorm mysql
 ```
 
-The first step we need to do is to establish the connection with our database using `createConnection()` function imported from the `typeorm` package. The `createConnection()` function returns a `Promise`, therefore we have to create an [async provider](/fundamentals/async-components).
+The first step we need to do is to establish the connection with our database using `createConnection()` function imported from the `typeorm` package. The `createConnection()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
 
 ```typescript
 @@filename(database.providers)
@@ -18,7 +22,7 @@ import { createConnection } from 'typeorm';
 
 export const databaseProviders = [
   {
-    provide: 'DbConnectionToken',
+    provide: 'DATABASE_CONNECTION',
     useFactory: async () => await createConnection({
       type: 'mysql',
       host: 'localhost',
@@ -37,7 +41,7 @@ export const databaseProviders = [
 
 > warning **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
 
-Then, we need to export these providers to make them **accessible** for the rest part of the application.
+Then, we need to export these providers to make them **accessible** for the rest of the application.
 
 ```typescript
 @@filename(database.module)
@@ -94,16 +98,16 @@ import { Photo } from './photo.entity';
 
 export const photoProviders = [
   {
-    provide: 'PhotoRepositoryToken',
+    provide: 'PHOTO_REPOSITORY',
     useFactory: (connection: Connection) => connection.getRepository(Photo),
-    inject: ['DbConnectionToken'],
+    inject: ['DATABASE_CONNECTION'],
   },
 ];
 ```
 
-> warning **Notice** In the real-world applications you should avoid **magic strings**. Both `PhotoRepositoryToken` and `DbConnectionToken` should be kept in the separated `constants.ts` file.
+> warning **Notice** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
-Now we can inject the `PhotoRepository` to the `PhotoService` using the `@Inject()` decorator:
+Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inject()` decorator:
 
 ```typescript
 @@filename(photo.service)
@@ -114,7 +118,7 @@ import { Photo } from './photo.entity';
 @Injectable()
 export class PhotoService {
   constructor(
-    @Inject('PhotoRepositoryToken')
+    @Inject('PHOTO_REPOSITORY')
     private readonly photoRepository: Repository<Photo>,
   ) {}
 
@@ -145,4 +149,4 @@ import { PhotoService } from './photo.service';
 export class PhotoModule {}
 ```
 
-> warning **Hint** Don't forget to import the `PhotoModule` into the root `ApplicationModule`.
+> warning **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.

@@ -1,44 +1,67 @@
 <div class="content" #contentReference>
       <h3 id="lifecycle-events">Lifecycle Events</h3>
-<p>There are two application lifecycle events, <code>OnModuleInit</code> and <code>OnModuleDestroy</code> hooks. It&#39;s a good practice to use them for all the initialization stuff and avoid putting anything directly in the constructor. The constructor should be used only to initialize the class members and for injecting the required dependencies.</p>
+<p>Every application element has a lifecycle managed by Nest. Nest offers four different lifecycle hooks available:</p>
+<ul>
+<li><code>OnModuleInit</code></li>
+<li><code>OnApplicationBootstrap</code></li>
+<li><code>OnModuleDestroy</code></li>
+<li><code>OnApplicationShutdown</code></li>
+</ul>
+<p>They provide visibility into these key life moments and the ability to act when they occur.</p>
+<h4 appAnchor id="usage"><span>Usage</span></h4>
+<p>Each lifecycle hook is represented by interface. Interfaces are technically optional because they do not exist anyway after TypeScript compilation. Nonetheless, it&#39;s a good practice to use them in order to benefit from strong typing and editor tooling.</p>
 
 <span class="filename">
-<app-tabs #appa08439f103fc1083afe327f8ebe3a37300b4f846></app-tabs>
-</span><pre [class.hide]="appa08439f103fc1083afe327f8ebe3a37300b4f846.isJsActive"><code class="language-typescript">
-import &#123; Injectable, OnModuleInit, OnModuleDestroy &#125; from &#39;@nestjs/common&#39;;
+<app-tabs #app2066c396e256bb22337f3976ae325d01b34e55b2></app-tabs>
+</span><pre [class.hide]="app2066c396e256bb22337f3976ae325d01b34e55b2.isJsActive"><code class="language-typescript">
+import &#123; Injectable, OnModuleInit &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
-export class UsersService implements OnModuleInit, OnModuleDestroy &#123;
+export class UsersService implements OnModuleInit &#123;
   onModuleInit() &#123;
-    console.log(`Initialization...`);
-  &#125;
-
-  onModuleDestroy() &#123;
-    console.log(`Cleanup...`);
+    console.log(`The module has been initialized.`);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appa08439f103fc1083afe327f8ebe3a37300b4f846.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app2066c396e256bb22337f3976ae325d01b34e55b2.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
 export class UsersService &#123;
   onModuleInit() &#123;
-    console.log(`Initialization...`);
+    console.log(`The module has been initialized.`);
   &#125;
-
-  onModuleDestroy() &#123;
-    console.log(`Cleanup...`);
-  &#125;
-&#125;</code></pre><p>In order to defer initialization of the application, you can either use <code>await</code> keyword or return a <code>Promise</code>.</p>
+&#125;</code></pre><p>Additionally, both <code>OnModuleInit</code> and <code>OnApplicationBootstrap</code> hooks allow you to defer the application initialization process (return a <code>Promise</code> or mark the method as <code>async</code>).</p>
 
 <span class="filename">
-<app-tabs #app20043371c6919eb975b56805b4f2b61ffb9bc601></app-tabs>
-</span><pre [class.hide]="app20043371c6919eb975b56805b4f2b61ffb9bc601.isJsActive"><code class="language-typescript">
-async onModuleInit(): Promise&lt;any&gt; &#123;
+<app-tabs #appf174a44e8dde07f0b6d872108d38dfacf785570a></app-tabs>
+</span><pre [class.hide]="appf174a44e8dde07f0b6d872108d38dfacf785570a.isJsActive"><code class="language-typescript">
+async onModuleInit(): Promise&lt;void&gt; &#123;
   await this.fetch();
 &#125;</code></pre>
-<pre [class.hide]="!app20043371c6919eb975b56805b4f2b61ffb9bc601.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf174a44e8dde07f0b6d872108d38dfacf785570a.isJsActive"><code class="language-typescript">
 async onModuleInit() &#123;
   await this.fetch();
-&#125;</code></pre>
+&#125;</code></pre><h4 appAnchor id="overview"><span>Overview</span></h4>
+<p>Here is a brief description of each lifecycle hook:</p>
+<table>
+<thead>
+</thead>
+<tbody><tr>
+<td><code>OnModuleInit</code></td>
+<td>Called once the host module has been initialized</td>
+</tr>
+<tr>
+<td><code>OnModuleDestroy</code></td>
+<td>Cleanup just before Nest destroys the host module (<code>app.close()</code> method has been evaluated)</td>
+</tr>
+<tr>
+<td><code>OnApplicationBootstrap</code></td>
+<td>Called once the application has started</td>
+</tr>
+<tr>
+<td><code>OnApplicationShutdown</code></td>
+<td>Responds to the system signals (application gets shutdown by e.g. <code>SIGTERM</code>)</td>
+</tr>
+</tbody></table>
+
     </div>

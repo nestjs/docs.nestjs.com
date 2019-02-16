@@ -6,20 +6,20 @@ There is no difference between web sockets **guards** and the [regular guards](/
 
 #### Binding guards
 
-Here is an example that makes use of a **method-scoped** guard (class-scoped works too):
+Here is an example that makes use of a method-scoped guard (class-scoped works too):
 
 ```typescript
 @@filename()
 @UseGuards(AuthGuard)
 @SubscribeMessage('events')
-onEvent(client: Client, data: any): WsResponse<any> {
+handleEvent(client: Client, data: unknown): WsResponse<unknown> {
   const event = 'events';
   return { event, data };
 }
 @@switch
 @UseGuards(AuthGuard)
 @SubscribeMessage('events')
-onEvent(client, data) {
+handleEvent(client, data) {
   const event = 'events';
   return { event, data };
 }

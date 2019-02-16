@@ -6,12 +6,19 @@ There is no difference between microservices **pipes** and the [regular pipes](/
 
 #### Binding pipes
 
-Here is an example that makes use of a manually instantiated **method-scoped** pipe (class-scoped works either):
+Here is an example that makes use of a manually instantiated method-scoped pipe (class-scoped works too):
 
 ```typescript
+@@filename()
 @UsePipes(new ValidationPipe())
 @MessagePattern({ cmd: 'sum' })
-sum(data: number[]): number {
+accumulate(data: number[]): number {
+  return (data || []).reduce((a, b) => a + b);
+}
+@@switch
+@UsePipes(new ValidationPipe())
+@MessagePattern({ cmd: 'sum' })
+accumulate(data) {
   return (data || []).reduce((a, b) => a + b);
 }
 ```

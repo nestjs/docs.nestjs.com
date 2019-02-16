@@ -3,7 +3,7 @@
 <h5 id="this-chapter-applies-only-to-typescript">This chapter applies only to TypeScript</h5>
 <p>The <a href="https://swagger.io/specification/">OpenAPI</a> (Swagger) specification is a powerful definition format to describe RESTful APIs. Nest provides a dedicated <a href="https://github.com/nestjs/swagger">module</a> to work with it.</p>
 <h4 appAnchor id="installation"><span>Installation</span></h4>
-<p>Firstly you have to install the module:</p>
+<p>Firstly you have to install the required package:</p>
 <pre><code class="language-bash">
 $ npm install --save @nestjs/swagger</code></pre>
 <h4 appAnchor id="bootstrap"><span>Bootstrap</span></h4>
@@ -34,16 +34,16 @@ bootstrap();</code></pre>
 <p>Now you can run the following command to start the HTTP server:</p>
 <pre><code class="language-bash">
 $ npm run start</code></pre>
-<p>While the application is running, open your browser and navigate to <code>http://localhost:3000/api</code>. You should see similar page:</p>
+<p>While the application is running, open your browser and navigate to <code>http://localhost:3000/api</code>. You should see a similar page:</p>
 <figure><img src="/assets/swagger1.png" /></figure>
 
 <p>The <code>SwaggerModule</code> automatically reflects all of your endpoints. In the background, it&#39;s making use of <code>swagger-ui-express</code> and creates a live documentation.</p>
 <blockquote class="
-info "><strong>Hint</strong> If you want to download the corresponding `Swagger JSON` file, you can simply call <code>http://localhost:3000/api-json</code> in your browser (if your Swagger documentation is published under <code>http://localhost:3000/api</code>).
+info "><strong>Hint</strong> If you want to download the corresponding Swagger JSON file, you can simply call <code>http://localhost:3000/api-json</code> in your browser (if your Swagger documentation is published under <code>http://localhost:3000/api</code>).
 </blockquote>
 <h4 appAnchor id="body-query-path-parameters"><span>Body, query, path parameters</span></h4>
-<p>During the examination of the defined controllers, the <code>SwaggerModule</code> is looking for all used <code>@Body()</code>, <code>@Query()</code>, and <code>@Param()</code> decorators in the route handlers. Thanks to them, the valid document can be created.</p>
-<p>Moreover, the module creates the <strong>models definitions</strong> by taking advantage of the <strong>reflection</strong>. Take a look at the following code:</p>
+<p>During the examination of the defined controllers, the <code>SwaggerModule</code> is looking for all used <code>@Body()</code>, <code>@Query()</code>, and <code>@Param()</code> decorators in the route handlers. Hence, the valid document can be created.</p>
+<p>Moreover, the module creates the <strong>models definitions</strong> by taking advantage of the reflection. Take a look at the following code:</p>
 <pre><code class="language-typescript">
 @Post()
 async create(@Body() createCatDto: CreateCatDto) &#123;
@@ -55,7 +55,7 @@ warning "><strong>Notice</strong> To implicitly set the body definition you can 
 <p>Based on the <code>CreateCatDto</code>, the module definition will be created:</p>
 <figure><img src="/assets/swagger-dto.png" /></figure>
 
-<p>As you can see, the definition&#39;s empty although the class has few declared properties. In order to make the class properties accessible to the <code>SwaggerModule</code>, we have to mark all of them with <code>@ApiModelProperty()</code> decorator:</p>
+<p>As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties accessible to the <code>SwaggerModule</code>, we have to mark all of them with <code>@ApiModelProperty()</code> decorator:</p>
 <pre><code class="language-typescript">
 import &#123; ApiModelProperty &#125; from &#39;@nestjs/swagger&#39;;
 
@@ -113,8 +113,6 @@ import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; SwaggerModule, DocumentBuilder &#125; from &#39;@nestjs/swagger&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
-// imports CatsModule and DogsModule;
-
 async function bootstrap() &#123;
   const app = await NestFactory.create(ApplicationModule);
 
@@ -134,6 +132,7 @@ async function bootstrap() &#123;
     .setVersion(&#39;1.0&#39;)
     .addTag(&#39;cats&#39;)
     .build();
+
   const catDocument = SwaggerModule.createDocument(app, options, &#123;
     include: [CatsModule],
   &#125;);
@@ -145,6 +144,7 @@ async function bootstrap() &#123;
     .setVersion(&#39;1.0&#39;)
     .addTag(&#39;dogs&#39;)
     .build();
+
   const dogDocument = SwaggerModule.createDocument(app, secondOptions, &#123;
     include: [DogsModule],
   &#125;);
@@ -156,21 +156,21 @@ bootstrap();</code></pre>
 <p>Now you can start your server with the following command:</p>
 <pre><code class="language-bash">
 $ npm run start</code></pre>
-<p>Navigate to <code>http://localhost:3000/api/cats</code> to see SwaggerUI for your Cats:</p>
+<p>Navigate to <code>http://localhost:3000/api/cats</code> to see SwaggerUI for your cats:</p>
 <figure><img src="/assets/swagger-cats.png" /></figure>
 
-<p>While <code>http://localhost:3000/api/dogs</code> will expose a SwaggerUI for your Dogs:</p>
+<p>While <code>http://localhost:3000/api/dogs</code> will expose a SwaggerUI for your dogs:</p>
 <figure><img src="/assets/swagger-dogs.png" /></figure>
 
 <blockquote class="
 warning "><strong>Notice</strong> You have to construct a <strong>SwaggerOptions</strong> with <code>DocumentBuilder</code>, run <code>createDocument()</code> against newly constructed <code>options</code> then immediately &quot;serve&quot; it with <code>setup()</code> before you can start working on a second <strong>SwaggerOptions</strong> for a second Swagger Specification. This specific order is to prevent Swagger configurations being overridden by different options.
 </blockquote>
 <h4 appAnchor id="working-with-enums"><span>Working with enums</span></h4>
-<p>To be able for <code>SwaggerModule</code> to identify an <code>Enum</code>, we have to manually set the <code>enum</code> property on <code>@ApiModelProperty</code> with an array of values..</p>
+<p>To be able for <code>SwaggerModule</code> to identify an <code>Enum</code>, we have to manually set the <code>enum</code> property on <code>@ApiModelProperty</code> with an array of values.</p>
 <pre><code class="language-typescript">
 @ApiModelProperty(&#123; enum: [&#39;Admin&#39;, &#39;Moderator&#39;, &#39;User&#39;]&#125;)
 role: UserRole;</code></pre>
-<p><code>UserRole</code> enum can be defined as following snippet:</p>
+<p><code>UserRole</code> enum can be defined as following:</p>
 <pre><code class="language-typescript">
 export enum UserRole &#123;
   Admin = &#39;Admin&#39;,
@@ -191,7 +191,7 @@ async filterByRole(@Query(&#39;role&#39;) role: UserRole = UserRole.User) &#123;
 <blockquote class="
 warning "><strong>Hint</strong> <code>enum</code> and <code>isArray</code> can also be used in combination in <code>@ApiImplicitQuery()</code>
 </blockquote>
-<p>With <code>isArray</code> set to <strong>true</strong>, the <code>enum</code> now can be selected as a <strong>multi-select</strong>:</p>
+<p>With <code>isArray</code> set to <strong>true</strong>, the <code>enum</code> can be selected as a <strong>multi-select</strong>:</p>
 <figure><img src="/assets/enum_query_array.gif" /></figure>
 
 <h4 appAnchor id="working-with-arrays"><span>Working with arrays</span></h4>

@@ -6,7 +6,7 @@ The [OpenAPI](https://swagger.io/specification/) (Swagger) specification is a po
 
 #### Installation
 
-Firstly you have to install the module:
+Firstly you have to install the required package:
 
 ```bash
 $ npm install --save @nestjs/swagger
@@ -50,19 +50,19 @@ Now you can run the following command to start the HTTP server:
 $ npm run start
 ```
 
-While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see similar page:
+While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see a similar page:
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
 The `SwaggerModule` automatically reflects all of your endpoints. In the background, it's making use of `swagger-ui-express` and creates a live documentation.
 
-> info **Hint** If you want to download the corresponding \`Swagger JSON\` file, you can simply call `http://localhost:3000/api-json` in your browser (if your Swagger documentation is published under `http://localhost:3000/api`).
+> info **Hint** If you want to download the corresponding Swagger JSON file, you can simply call `http://localhost:3000/api-json` in your browser (if your Swagger documentation is published under `http://localhost:3000/api`).
 
 #### Body, query, path parameters
 
-During the examination of the defined controllers, the `SwaggerModule` is looking for all used `@Body()`, `@Query()`, and `@Param()` decorators in the route handlers. Thanks to them, the valid document can be created.
+During the examination of the defined controllers, the `SwaggerModule` is looking for all used `@Body()`, `@Query()`, and `@Param()` decorators in the route handlers. Hence, the valid document can be created.
 
-Moreover, the module creates the **models definitions** by taking advantage of the **reflection**. Take a look at the following code:
+Moreover, the module creates the **models definitions** by taking advantage of the reflection. Take a look at the following code:
 
 ```typescript
 @Post()
@@ -77,7 +77,7 @@ Based on the `CreateCatDto`, the module definition will be created:
 
 <figure><img src="/assets/swagger-dto.png" /></figure>
 
-As you can see, the definition's empty although the class has few declared properties. In order to make the class properties accessible to the `SwaggerModule`, we have to mark all of them with `@ApiModelProperty()` decorator:
+As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties accessible to the `SwaggerModule`, we have to mark all of them with `@ApiModelProperty()` decorator:
 
 ```typescript
 import { ApiModelProperty } from '@nestjs/swagger';
@@ -146,8 +146,6 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ApplicationModule } from './app.module';
 
-// imports CatsModule and DogsModule;
-
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
@@ -167,6 +165,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('cats')
     .build();
+
   const catDocument = SwaggerModule.createDocument(app, options, {
     include: [CatsModule],
   });
@@ -178,6 +177,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('dogs')
     .build();
+
   const dogDocument = SwaggerModule.createDocument(app, secondOptions, {
     include: [DogsModule],
   });
@@ -194,11 +194,11 @@ Now you can start your server with the following command:
 $ npm run start
 ```
 
-Navigate to `http://localhost:3000/api/cats` to see SwaggerUI for your Cats:
+Navigate to `http://localhost:3000/api/cats` to see SwaggerUI for your cats:
 
 <figure><img src="/assets/swagger-cats.png" /></figure>
 
-While `http://localhost:3000/api/dogs` will expose a SwaggerUI for your Dogs:
+While `http://localhost:3000/api/dogs` will expose a SwaggerUI for your dogs:
 
 <figure><img src="/assets/swagger-dogs.png" /></figure>
 
@@ -206,14 +206,14 @@ While `http://localhost:3000/api/dogs` will expose a SwaggerUI for your Dogs:
 
 #### Working with enums
 
-To be able for `SwaggerModule` to identify an `Enum`, we have to manually set the `enum` property on `@ApiModelProperty` with an array of values..
+To be able for `SwaggerModule` to identify an `Enum`, we have to manually set the `enum` property on `@ApiModelProperty` with an array of values.
 
 ```typescript
 @ApiModelProperty({ enum: ['Admin', 'Moderator', 'User']})
 role: UserRole;
 ```
 
-`UserRole` enum can be defined as following snippet:
+`UserRole` enum can be defined as following:
 
 ```typescript
 export enum UserRole {
@@ -238,7 +238,7 @@ async filterByRole(@Query('role') role: UserRole = UserRole.User) {
 
 > warning **Hint** `enum` and `isArray` can also be used in combination in `@ApiImplicitQuery()`
 
-With `isArray` set to **true**, the `enum` now can be selected as a **multi-select**:
+With `isArray` set to **true**, the `enum` can be selected as a **multi-select**:
 
 <figure><img src="/assets/enum_query_array.gif" /></figure>
 

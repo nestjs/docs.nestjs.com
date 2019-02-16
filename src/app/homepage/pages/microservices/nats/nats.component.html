@@ -9,15 +9,18 @@ $ npm i --save nats</code></pre>
 <p>In order to switch to <strong>NATS</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app517a93a00a361ea7b31f09c780d09577dd411434.isJsActive }}
-<app-tabs #app517a93a00a361ea7b31f09c780d09577dd411434></app-tabs>
+  {{ 'main' | extension: appa9542ff0ab7410b0d219d4314d169f9f4e12204d.isJsActive }}
+<app-tabs #appa9542ff0ab7410b0d219d4314d169f9f4e12204d></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.NATS,
   options: &#123;
     url: &#39;nats://localhost:4222&#39;,
   &#125;,
-&#125;);</code></pre><h4 appAnchor id="options"><span>Options</span></h4>
+&#125;);</code></pre><blockquote class="
+info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<h4 appAnchor id="options"><span>Options</span></h4>
 <p>There are a bunch of available options that determine a transporter behavior. They are well-described <a href="https://github.com/nats-io/node-nats#connect-options">here</a>. Also, there is an additional <code>queue</code> property which allows you specifying a name of the queue that your server should subscribe to (leave <code>undefined</code> if you don&#39;t want use any particular queue)</p>
 
     </div>

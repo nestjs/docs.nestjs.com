@@ -15,11 +15,43 @@ $ npm install --save hbs
 
 We decided to use a `hbs` engine, though, you can use whatever fits your requirements. Once the installation process is completed, we need to configure the express instance using following code:
 
-  <span class="filename">
-    {{ 'main' | extension: mainT.isJsActive }}
-    <app-tabs #mainT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ main }}</code></pre>
+```typescript
+@@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import { ApplicationModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(
+    ApplicationModule,
+  );
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
+
+  await app.listen(3000);
+}
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { join } from 'path';
+import { ApplicationModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(
+    ApplicationModule,
+  );
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
+
+  await app.listen(3000);
+}
+bootstrap();
+```
 
 We told [express](https://github.com/expressjs/express) that the `public` directory will be used for storing static assets, `views` will contain templates, and a `hbs` template engine should be used to render an HTML output.
 
@@ -74,7 +106,32 @@ The next steps cover almost the same stuff as in case of express library (with s
 
 ```typescript
 @@filename(main)
-import { NestFactory, FastifyAdapter } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
+import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
+import { ApplicationModule } from './app.module';
+import { join } from 'path';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    ApplicationModule,
+    new FastifyAdapter(),
+  );
+  app.useStaticAssets({
+    root: join(__dirname, '..', 'public'),
+    prefix: '/public/',
+  });
+  app.setViewEngine({
+    engine: {
+      handlebars: require('handlebars'),
+    },
+    templates: join(__dirname, '..', 'views'),
+  });
+  await app.listen(3000);
+}
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { ApplicationModule } from './app.module';
 import { join } from 'path';
 

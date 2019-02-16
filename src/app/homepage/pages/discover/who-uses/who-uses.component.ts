@@ -58,12 +58,12 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/iflix.svg',
       url: 'https://www.iflix.com',
-      width: '80px',
+      width: '70px',
     },
     {
       logo: '/assets/logo/roche-logo.png',
       url: 'https://roche.com',
-      width: '100px',
+      width: '90px',
     },
   ];
 

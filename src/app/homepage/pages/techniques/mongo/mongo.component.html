@@ -7,8 +7,8 @@ $ npm install --save @nestjs/mongoose mongoose</code></pre>
 <p>Once the installation process is completed, we can import the <code>MongooseModule</code> into the root <code>ApplicationModule</code>.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app7061eab7d196d2a011428702937662cc44ab4397.isJsActive }}
-<app-tabs #app7061eab7d196d2a011428702937662cc44ab4397></app-tabs>
+  {{ 'app.module' | extension: appad7aa4d13aa6ffee77099508d8a2baeb581e1893.isJsActive }}
+<app-tabs #appad7aa4d13aa6ffee77099508d8a2baeb581e1893></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; MongooseModule &#125; from &#39;@nestjs/mongoose&#39;;
@@ -21,8 +21,8 @@ export class ApplicationModule &#123;&#125;</code></pre><p>The <code>forRoot()</
 <p>With Mongoose, everything is derived from a <a href="http://mongoosejs.com/docs/guide.html">Schema</a>. Let&#39;s define the <code>CatSchema</code>:</p>
 
 <span class="filename">
-  {{ 'cats/schemas/cat.schema' | extension: app2ed0b5c1ac4f0f545b95e38548ce24e4f4edaf95.isJsActive }}
-<app-tabs #app2ed0b5c1ac4f0f545b95e38548ce24e4f4edaf95></app-tabs>
+  {{ 'schemas/cat.schema' | extension: app4d90f4674668f2825db111ff0ad96f689421e5fa.isJsActive }}
+<app-tabs #app4d90f4674668f2825db111ff0ad96f689421e5fa></app-tabs>
 </span><pre><code class="language-typescript">
 import * as mongoose from &#39;mongoose&#39;;
 
@@ -34,8 +34,8 @@ export const CatSchema = new mongoose.Schema(&#123;
 <p>Let&#39;s have a look at the <code>CatsModule</code>:</p>
 
 <span class="filename">
-  {{ 'cats.module' | extension: app2a4860b85a23b1c9ae4e5d056933592e7e1e8983.isJsActive }}
-<app-tabs #app2a4860b85a23b1c9ae4e5d056933592e7e1e8983></app-tabs>
+  {{ 'cats.module' | extension: appbcf7a29916c7665c61c18d3dc36101b1ce171a27.isJsActive }}
+<app-tabs #appbcf7a29916c7665c61c18d3dc36101b1ce171a27></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; MongooseModule &#125; from &#39;@nestjs/mongoose&#39;;
@@ -51,9 +51,9 @@ import &#123; CatSchema &#125; from &#39;./schemas/cat.schema&#39;;
 export class CatsModule &#123;&#125;</code></pre><p>This module uses <code>forFeature()</code> method to define which models shall be registered in the current scope. Thanks to that, we can inject the <code>CatModel</code> to the <code>CatsService</code> using the <code>@InjectModel()</code> decorator:</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: app550f67a6808cfdc46c4e924d6d25ce26ac5229be.isJsActive }}
-<app-tabs #app550f67a6808cfdc46c4e924d6d25ce26ac5229be></app-tabs>
-</span><pre><code class="language-typescript">
+  {{ 'cats.service' | extension: app2b8f9c3d20b9821d685062dd4e76e8e998cefcd7.isJsActive }}
+<app-tabs #app2b8f9c3d20b9821d685062dd4e76e8e998cefcd7></app-tabs>
+</span><pre [class.hide]="app2b8f9c3d20b9821d685062dd4e76e8e998cefcd7.isJsActive"><code class="language-typescript">
 import &#123; Model &#125; from &#39;mongoose&#39;;
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; InjectModel &#125; from &#39;@nestjs/mongoose&#39;;
@@ -72,14 +72,14 @@ export class CatsService &#123;
   async findAll(): Promise&lt;Cat[]&gt; &#123;
     return await this.catModel.find().exec();
   &#125;
-&#125;
+&#125;</code></pre>
+<pre [class.hide]="!app2b8f9c3d20b9821d685062dd4e76e8e998cefcd7.isJsActive"><code class="language-typescript">
 import &#123; Model &#125; from &#39;mongoose&#39;;
 import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
 import &#123; InjectModel &#125; from &#39;@nestjs/mongoose&#39;;
-import &#123; CatSchema &#125; from &#39;./schemas/cat.schema&#39;;
 
 @Injectable()
-@Dependencies(InjectModel(CatSchema))
+@Dependencies(InjectModel(&#39;Cat&#39;))
 export class CatsService &#123;
   constructor(catModel) &#123;
     this.catModel = catModel;
