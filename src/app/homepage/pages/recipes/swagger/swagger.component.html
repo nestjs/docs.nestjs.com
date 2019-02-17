@@ -101,7 +101,7 @@ export const ApiModelProperty: (metadata?: &#123;
   example?: any;
 &#125;) =&gt; PropertyDecorator;</code></pre>
 <blockquote class="
-warning "><strong>Hint</strong> There&#39;s an <code>@ApiModelPropertyOptional()</code> shortcut decorator which helps to avoid continuous typing <code>{{ apiModelPropertyOptional }}</code>.
+warning "><strong>Hint</strong> There&#39;s an <code>@ApiModelPropertyOptional()</code> shortcut decorator which helps to avoid continuous typing <code>@ApiModelProperty(&amp;#123 required: false &amp;#125)</code>.
 </blockquote>
 <p>Thanks to that we can simply set the <strong>default</strong> value, determine whether the property is required or explicitly set the type.</p>
 <h4 appAnchor id="multiple-specifications"><span>Multiple specifications</span></h4>

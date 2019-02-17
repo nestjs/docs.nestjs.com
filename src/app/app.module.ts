@@ -13,6 +13,7 @@ import { HeaderComponent } from './homepage/header/header.component';
 import { HomepageComponent } from './homepage/homepage.component';
 import { MenuItemComponent } from './homepage/menu/menu-item/menu-item.component';
 import { MenuComponent } from './homepage/menu/menu.component';
+import { MixinComponentsComponent } from './homepage/pages/advanced/mixin-components/mixin-components.component';
 import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
 import { ComponentsComponent } from './homepage/pages/components/components.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
@@ -57,6 +58,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BasePageComponent,
     ComponentsComponent,
     ModulesComponent,
+    MixinComponentsComponent,
     MiddlewaresComponent,
     PipesComponent,
     ExceptionFiltersComponent,

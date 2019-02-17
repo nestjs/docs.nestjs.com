@@ -1,12 +1,9 @@
 RewriteEngine On
 RewriteBase /
 
-#if the request is not secure
 RewriteCond %{HTTPS} off
-#redirect to the secure version
 RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
 
-#These are your existing rules
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
