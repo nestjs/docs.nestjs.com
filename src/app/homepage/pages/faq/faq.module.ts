@@ -2,19 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
-import { DocumentationComponent } from './documentation/documentation.component';
-import { ExpressInstanceComponent } from './express-instance/express-instance.component';
 import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
+import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
 import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
 
 const routes: Routes = [
-  {
-    path: 'express-instance',
-    component: ExpressInstanceComponent,
-    data: { title: 'Express instance - FAQ' },
-  },
   {
     path: 'global-prefix',
     component: GlobalPrefixComponent,
@@ -36,21 +30,20 @@ const routes: Routes = [
     data: { title: 'HTTPS & Multiple Servers - FAQ' },
   },
   {
-    path: 'documentation',
-    component: DocumentationComponent,
-    data: { title: 'Documentation - FAQ' },
+    path: 'http-adapter',
+    component: HttpAdapterComponent,
+    data: { title: 'HTTP adapter - FAQ' },
   },
 ];
 
 @NgModule({
   imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [
-    ExpressInstanceComponent,
     GlobalPrefixComponent,
     LifecycleEventsComponent,
     HybridApplicationComponent,
     MultipleServersComponent,
-    DocumentationComponent,
+    HttpAdapterComponent,
   ],
 })
 export class FaqModule {}

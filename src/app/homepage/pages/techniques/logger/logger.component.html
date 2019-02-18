@@ -1,47 +1,63 @@
-<div class="content">
-  <h3>Logger</h3>
-  <p>
-    Nest comes with a default implementation of internal <code>Logger</code> that is used during the instantiation process
-    and also, in several different situations, such as <strong>occurred exception</strong>, and so on. But sometimes, you
-    might want to disable logging entirely, or provide a custom implementation and handle messages on your own. In order
-    to turn off a logger, we use a Nest's options object.
-  </p>
-  <pre><code class="language-typescript">{{ logger }}</code></pre>
-  <p>
-    Nevertheless, we could want to use a different logger under the hood, instead of disabling a whole logging mechanism. In
-    order to do that, we have to pass an object that fulfills <code>LoggerService</code> interface. An example could
-    be a built-in <code>console</code>.
-  </p>
-  <pre><code class="language-typescript">{{ console }}</code></pre>
-  <p>
-    But it's not an apt idea. However, we can create our own logger easily.
-  </p>
-  <pre><code class="language-typescript">{{ myLogger }}</code></pre>
-  <p>
-    Then, we can apply <code>MyLogger</code> instance directly:
-  </p>
-  <pre><code class="language-typescript">{{ useMyLogger }}</code></pre>
-  <h4>Extend built-in logger</h4>
-  <p>
-    Lot of use cases require creating your own logger. You don't have to entirely reinvent the wheel though. Simply extend built-in
-    <code>Logger</code> class to partially override the default implementation, and use <code>super</code> to delegate the
-    call to the parent class.
-  </p>
-  <pre><code class="language-typescript">{{ inheritance }}</code></pre>
-  <h4>Dependency injection</h4>
-  <p>
-    If you want to enable dependency injection in your logger, you have to make the <code>MyLogger</code> class a part of
-    the real application. For instance, you can create a <code>LoggerModule</code>.
-  </p>
-  <pre><code class="language-typescript">{{ loggerModule }}</code></pre>
-  <p>
-    Once <code>LoggerModule</code> is imported anywhere, the framework will take charge of creating an instance of your logger.
-    Now, to use the same instance of a logger across the whole app, including bootstrapping and error handling stuff, use
-    following construction:
-  </p>
-  <pre><code class="language-typescript">{{ useLoggerDi }}</code></pre>
-  <p>
-    The only downside of this solution is that your first initialization messages won't be handled by your logger instance, though,
-    it shouldn't really matter at this point.
-  </p>
-</div>
+<div class="content" #contentReference>
+      <h3 id="logger">Logger</h3>
+<p>Nest comes with a default implementation of internal <code>Logger</code> that is used during the instantiation process and also, in several different situations, such as <strong>occurred exception</strong>, and so on. But sometimes, you might want to disable logging entirely, or provide a custom implementation and handle messages on your own. In order to turn off a logger, we use a Nest&#39;s options object.</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule, &#123;
+  logger: false,
+&#125;);
+await app.listen(3000);</code></pre>
+<p>Nevertheless, we could want to use a different logger under the hood, instead of disabling a whole logging mechanism. In order to do that, we have to pass an object that fulfills <code>LoggerService</code> interface. An example could be a built-in <code>console</code>.</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule, &#123;
+  logger: console,
+&#125;);
+await app.listen(3000);</code></pre>
+<p>But it&#39;s not an apt idea. However, we can create our own logger easily.</p>
+<pre><code class="language-typescript">
+import &#123; LoggerService &#125; from &#39;@nestjs/common&#39;;
+
+export class MyLogger implements LoggerService &#123;
+  log(message: string) &#123;&#125;
+  error(message: string, trace: string) &#123;&#125;
+  warn(message: string) &#123;&#125;
+  debug(message: string) &#123;&#125;
+  verbose(message: string) &#123;&#125;
+&#125;</code></pre>
+<p>Then, we can apply <code>MyLogger</code> instance directly:</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule, &#123;
+  logger: new MyLogger(),
+&#125;);
+await app.listen(3000);</code></pre>
+<h4 appAnchor id="extend-built-in-logger"><span>Extend built-in logger</span></h4>
+<p>Lot of use cases require creating your own logger. You don&#39;t have to entirely reinvent the wheel though. Simply extend built-in <code>Logger</code> class to partially override the default implementation, and use <code>super</code> to delegate the call to the parent class.</p>
+<pre><code class="language-typescript">
+import &#123; Logger &#125; from &#39;@nestjs/common&#39;;
+
+export class MyLogger extends Logger &#123;
+  error(message: string, trace: string) &#123;
+    // add your tailored logic here
+    super.error(message, trace);
+  &#125;
+&#125;</code></pre>
+<h4 appAnchor id="dependency-injection"><span>Dependency injection</span></h4>
+<p>If you want to enable dependency injection in your logger, you have to make the <code>MyLogger</code> class a part of the real application. For instance, you can create a <code>LoggerModule</code>.</p>
+<pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; MyLogger &#125; from &#39;./my-logger.service.ts&#39;;
+
+@Module(&#123;
+  providers: [MyLogger],
+  exports: [MyLogger],
+&#125;)
+export class LoggerModule &#123;&#125;</code></pre>
+<p>Once <code>LoggerModule</code> is imported anywhere, the framework will take charge of creating an instance of your logger. Now, to use the same instance of a logger across the whole app, including bootstrapping and error handling stuff, use following construction:</p>
+<pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule, &#123;
+  logger: false,
+&#125;);
+app.useLogger(app.get(MyLogger));
+await app.listen(3000);</code></pre>
+<p>The only downside of this solution is that your first initialization messages won&#39;t be handled by your logger instance, though, it shouldn&#39;t really matter at this point.</p>
+
+    </div>

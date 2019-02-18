@@ -51,6 +51,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/circular-dependency',
         },
         {
+          title: 'Injection scopes',
+          path: '/fundamentals/injection-scopes',
+        },
+        {
           title: 'Platform agnosticism',
           path: '/fundamentals/platform-agnosticism',
         },
@@ -126,9 +130,9 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
-      title: 'Execution context',
+      title: 'Application context',
       isOpened: false,
-      path: '/execution-context',
+      path: '/application-context',
     },
     {
       title: 'Recipes',
@@ -137,11 +141,11 @@ export class MenuComponent implements OnInit {
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
-        // { title: 'Authentication (Passport)', path: '/recipes/passport' },
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
+        { title: 'Documentation', path: '/recipes/documentation' },
       ],
     },
     {
@@ -156,23 +160,16 @@ export class MenuComponent implements OnInit {
       title: 'FAQ',
       isOpened: false,
       children: [
-        { title: 'Express instance', path: '/faq/express-instance' },
+        { title: 'HTTP adapter', path: '/faq/http-adapter' },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Lifecycle events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
-        { title: 'Documentation', path: '/faq/documentation' },
         {
           title: 'Examples',
-          externalUrl:
-            'https://github.com/kamilmysliwiec/nest/tree/master/sample',
+          externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
         },
       ],
-    },
-    {
-      title: 'Discover',
-      isOpened: false,
-      children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
     {
       title: 'Migration guide',
@@ -180,14 +177,15 @@ export class MenuComponent implements OnInit {
       path: '/migration-guide',
     },
     {
-      title: 'Support me',
+      title: 'Discover',
       isOpened: false,
-      path: '/support',
+      children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
     {
-      title: 'Version 4',
+      title: 'Support us',
+      icon: 'pets',
       isOpened: false,
-      externalUrl: 'https://docs.nestjs.com/v4/',
+      path: '/support',
     },
   ];
 

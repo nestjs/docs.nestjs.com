@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { environment } from '../environments/environment';
 import { HomepageComponent } from './homepage/homepage.component';
+import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
 import { ComponentsComponent } from './homepage/pages/components/components.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
-import { ExecutionContextComponent } from './homepage/pages/execution-context/execution-context.component';
 import { FirstStepsComponent } from './homepage/pages/first-steps/first-steps.component';
 import { GuardsComponent } from './homepage/pages/guards/guards.component';
 import { InterceptorsComponent } from './homepage/pages/interceptors/interceptors.component';
@@ -82,9 +82,9 @@ const routes: Routes = [
         data: { title: 'Custom decorators' },
       },
       {
-        path: 'execution-context',
-        component: ExecutionContextComponent,
-        data: { title: 'Execution Context' },
+        path: 'application-context',
+        component: ApplicationContextComponent,
+        data: { title: 'Application context' },
       },
       {
         path: 'discover/companies',

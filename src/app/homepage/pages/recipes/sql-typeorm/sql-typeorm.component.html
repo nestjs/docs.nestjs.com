@@ -1,71 +1,143 @@
-<div class="content">
-  <h3>SQL (TypeORM)</h3>
-  <h5>This chapter applies only to TypeScript</h5>
-  <blockquote>
-    <strong>Warning</strong> In this article, you'll learn how to create a <code>DatabaseModule</code>
-    based on the <strong>TypeORM</strong> package from scratch using custom providers mechanism. As a consequence, this solution
-    contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated
-    <code>@nestjs/typeorm</code> package. To learn more, see <a routerLink="/techniques/sql">here</a>.
-  </blockquote>
-  <p>
-    <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> is definitely the most mature Object Relational Mapper (ORM) available in the node.js world.
-    Since it's written in TypeScript, it works pretty well with the Nest framework.
-    To start the adventure with this library we have to install all required dependencies:
-  </p>
-  <pre><code class="language-typescript">{{ dependencies }}</code></pre>
-  <p>
-    The first step we need to do is to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package.
-    The <code>createConnection()</code> function returns a <code>Promise</code>, therefore we have to create an <a routerLink="/fundamentals/async-components">async provider</a>.
-  </p>
-  <span class="filename">database.providers.ts</span>
-  <pre><code class="language-typescript">{{ databaseProviders }}</code></pre>
-  <blockquote class="warning">
-      <strong>Hint</strong> Following best practices, we declared the custom provider in the separated file which has a <code>*.providers.ts</code> suffix.
-   </blockquote>
-   <p>
-     Then, we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.
-  </p>
-  <span class="filename">database.module.ts</span>
-  <pre><code class="language-typescript">{{ databaseModule }}</code></pre>
-  <p>
-    Now we can inject the <code>Connection</code> object using <code>@Inject()</code> decorator.
-    Each class that would depend on the <code>Connection</code> async provider will wait until a <code>Promise</code> is resolved.
-  </p>
-  <h4>Repository pattern</h4>
-  <p>
-    The <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> supports the repository design pattern, thus each entity has its own Repository. These repositories can be obtained from the database connection.
-  </p>
-  <p>
-    But firstly, we need at least one entity. We are going to reuse the <code>Photo</code> entity from the official documentation.
-  </p>
-  <span class="filename">photo/photo.entity.ts</span>
-  <pre><code class="language-typescript">{{ photoEntity }}</code></pre>
-  <p>
-    The <code>Photo</code> entity belongs to the <code>photo</code> directory.
-    This directory represents the <code>PhotoModule</code>.
-    Now, let's create a <strong>Repository</strong> provider:
-  </p>
-  <span class="filename">photo.providers.ts</span>
-  <pre><code class="language-typescript">{{ photoProviders }}</code></pre>
-  <blockquote>
-      <strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong>. Both <code>PhotoRepositoryToken</code> and <code>DbConnectionToken</code> should be kept in the separated <code>constants.ts</code> file. 
-   </blockquote>
-   <p>
-     Now we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@Inject()</code> decorator:
-   </p>
-   <span class="filename">photo.service.ts</span>
-  <pre><code class="language-typescript">{{ photoService }}</code></pre>
-  <p>
-    The database connection is <strong>asynchronous</strong>, but Nest makes this process completely invisible for the end-user.
-    The <code>PhotoRepository</code> is waiting for the db connection, and the <code>PhotoService</code> is delayed until repository is ready to use.
-    The entire application can start when each class is instantiated.
-  </p>
-  <p>
-    Here is a final <code>PhotoModule</code>:
-  </p>
-  <span class="filename">photo.module.ts</span>
-  <pre><code class="language-typescript">{{ photoModule }}</code></pre>
-  <blockquote class="warning">
-      <strong>Hint</strong> Don't forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
-   </blockquote>
-</div>
+<div class="content" #contentReference>
+      <h3 id="sql-typeorm">SQL (TypeORM)</h3>
+<h5 id="this-chapter-applies-only-to-typescript">This chapter applies only to TypeScript</h5>
+<blockquote class="
+"><strong>Warning</strong> In this article, you&#39;ll learn how to create a <code>DatabaseModule</code> based on the <strong>TypeORM</strong> package from scratch using custom providers mechanism. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated <code>@nestjs/typeorm</code> package. To learn more, see <a routerLink="/techniques/sql">here</a>.
+</blockquote>
+<p><a href="https://github.com/typeorm/typeorm">TypeORM</a> is definitely the most mature Object Relational Mapper (ORM) available in the node.js world. Since it&#39;s written in TypeScript, it works pretty well with the Nest framework.</p>
+<h4 appAnchor id="getting-started"><span>Getting started</span></h4>
+<p>To start the adventure with this library we have to install all required dependencies:</p>
+<pre><code class="language-bash">
+$ npm install --save typeorm mysql</code></pre>
+<p>The first step we need to do is to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package. The <code>createConnection()</code> function returns a <code>Promise</code>, and therefore we have to create an <a routerLink="/fundamentals/async-components">async provider</a>.</p>
+
+<span class="filename">
+  {{ 'database.providers' | extension: app3f06c950d79ce4d3176d605eeb00be857c025038.isJsActive }}
+<app-tabs #app3f06c950d79ce4d3176d605eeb00be857c025038></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; createConnection &#125; from &#39;typeorm&#39;;
+
+export const databaseProviders = [
+  &#123;
+    provide: &#39;DATABASE_CONNECTION&#39;,
+    useFactory: async () =&gt; await createConnection(&#123;
+      type: &#39;mysql&#39;,
+      host: &#39;localhost&#39;,
+      port: 3306,
+      username: &#39;root&#39;,
+      password: &#39;root&#39;,
+      database: &#39;test&#39;,
+      entities: [
+          __dirname + &#39;/../**/*.entity&#123;.ts,.js&#125;&#39;,
+      ],
+      synchronize: true,
+    &#125;),
+  &#125;,
+];</code></pre><blockquote class="
+warning "><strong>Hint</strong> Following best practices, we declared the custom provider in the separated file which has a <code>*.providers.ts</code> suffix.
+</blockquote>
+<p>Then, we need to export these providers to make them <strong>accessible</strong> for the rest of the application.</p>
+
+<span class="filename">
+  {{ 'database.module' | extension: app508d2d2c6270bf37f995e91327d5a0d5060153ca.isJsActive }}
+<app-tabs #app508d2d2c6270bf37f995e91327d5a0d5060153ca></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; databaseProviders &#125; from &#39;./database.providers&#39;;
+
+@Module(&#123;
+  providers: [...databaseProviders],
+  exports: [...databaseProviders],
+&#125;)
+export class DatabaseModule &#123;&#125;</code></pre><p>Now we can inject the <code>Connection</code> object using <code>@Inject()</code> decorator. Each class that would depend on the <code>Connection</code> async provider will wait until a <code>Promise</code> is resolved.</p>
+<h4 appAnchor id="repository-pattern"><span>Repository pattern</span></h4>
+<p>The <a href="https://github.com/typeorm/typeorm">TypeORM</a> supports the repository design pattern, thus each entity has its own Repository. These repositories can be obtained from the database connection.</p>
+<p>But firstly, we need at least one entity. We are going to reuse the <code>Photo</code> entity from the official documentation.</p>
+
+<span class="filename">
+  {{ 'photo.entity' | extension: appf5ca96648d438fa043e1372da57c15a1c63f80a8.isJsActive }}
+<app-tabs #appf5ca96648d438fa043e1372da57c15a1c63f80a8></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Entity, Column, PrimaryGeneratedColumn &#125; from &#39;typeorm&#39;;
+
+@Entity()
+export class Photo &#123;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column(&#123; length: 500 &#125;)
+  name: string;
+
+  @Column(&#39;text&#39;)
+  description: string;
+
+  @Column()
+  filename: string;
+
+  @Column(&#39;int&#39;)
+  views: number;
+
+  @Column()
+  isPublished: boolean;
+&#125;</code></pre><p>The <code>Photo</code> entity belongs to the <code>photo</code> directory. This directory represents the <code>PhotoModule</code>. Now, let&#39;s create a <strong>Repository</strong> provider:</p>
+
+<span class="filename">
+  {{ 'photo.providers' | extension: appf5d81e4c77a7ea00abd0068b7a0dc58bf4d12d59.isJsActive }}
+<app-tabs #appf5d81e4c77a7ea00abd0068b7a0dc58bf4d12d59></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Connection, Repository &#125; from &#39;typeorm&#39;;
+import &#123; Photo &#125; from &#39;./photo.entity&#39;;
+
+export const photoProviders = [
+  &#123;
+    provide: &#39;PHOTO_REPOSITORY&#39;,
+    useFactory: (connection: Connection) =&gt; connection.getRepository(Photo),
+    inject: [&#39;DATABASE_CONNECTION&#39;],
+  &#125;,
+];</code></pre><blockquote class="
+warning "><strong>Notice</strong> In the real-world applications you should avoid <strong>magic strings</strong>. Both <code>PHOTO_REPOSITORY</code> and <code>DATABASE_CONNECTION</code> should be kept in the separated <code>constants.ts</code> file.
+</blockquote>
+<p>Now we can inject the <code>Repository&lt;Photo&gt;</code> to the <code>PhotoService</code> using the <code>@Inject()</code> decorator:</p>
+
+<span class="filename">
+  {{ 'photo.service' | extension: app5072ed884c09862be0bc34fd67b9f42bacd8b395.isJsActive }}
+<app-tabs #app5072ed884c09862be0bc34fd67b9f42bacd8b395></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Injectable, Inject &#125; from &#39;@nestjs/common&#39;;
+import &#123; Repository &#125; from &#39;typeorm&#39;;
+import &#123; Photo &#125; from &#39;./photo.entity&#39;;
+
+@Injectable()
+export class PhotoService &#123;
+  constructor(
+    @Inject(&#39;PHOTO_REPOSITORY&#39;)
+    private readonly photoRepository: Repository&lt;Photo&gt;,
+  ) &#123;&#125;
+
+  async findAll(): Promise&lt;Photo[]&gt; &#123;
+    return await this.photoRepository.find();
+  &#125;
+&#125;</code></pre><p>The database connection is <strong>asynchronous</strong>, but Nest makes this process completely invisible for the end-user. The <code>PhotoRepository</code> is waiting for the db connection, and the <code>PhotoService</code> is delayed until repository is ready to use. The entire application can start when each class is instantiated.</p>
+<p>Here is a final <code>PhotoModule</code>:</p>
+
+<span class="filename">
+  {{ 'photo.module' | extension: appb0f192aad8b1ab7a48be552dfc01c4c5a23ced0f.isJsActive }}
+<app-tabs #appb0f192aad8b1ab7a48be552dfc01c4c5a23ced0f></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; DatabaseModule &#125; from &#39;../database/database.module&#39;;
+import &#123; photoProviders &#125; from &#39;./photo.providers&#39;;
+import &#123; PhotoService &#125; from &#39;./photo.service&#39;;
+
+@Module(&#123;
+  imports: [DatabaseModule],
+  providers: [
+    ...photoProviders,
+    PhotoService,
+  ],
+&#125;)
+export class PhotoModule &#123;&#125;</code></pre><blockquote class="
+warning "><strong>Hint</strong> Do not forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
+</blockquote>
+
+    </div>

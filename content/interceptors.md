@@ -1,13 +1,13 @@
 ### Interceptors
 
-An interceptor is a class annotated with the `@Injectable()` decorator. The interceptor should implement the `NestInterceptor` interface.
+An interceptor is a class annotated with the `@Injectable()` decorator. Interceptors should implement the `NestInterceptor` interface.
 
 <figure><img src="/assets/Interceptors_1.png" /></figure>
 
 Interceptors have a set of useful capabilities which are inspired by the **Aspect-Oriented Programming** (AOP) technique. They make possible to:
 
 - bind **extra logic** before / after method execution
-- **transform** the result returned from a function
+- transform the result returned from a function
 - **transform** the exception thrown from a function
 - extend the basic function behaviour
 - completely **override** a function depending on the chosen conditions (e.g. caching purposes)
@@ -29,11 +29,11 @@ export interface ExecutionContext extends ArgumentsHost {
 
 The `getHandler()` returns a reference to the currently processed handler, while `getClass()` returns a type of the `Controller` class which this particular handler belongs to. Using other words, if the user points to `create()` method that is defined and registered within `CatsController`, the `getHandler()` will return a reference to the `create()` method and `getClass()` in this case, will simply return a `CatsController` **type** (not instance).
 
-## Call handler
+#### Call handler
 
 The second argument is a `CallHandler`. If you don't manually call `handle()` method, the main handler won't be evaluated at all. What does it mean? Basically, the `CallHandler` is an object which wraps the execution stream, and thus **defers the final handler execution**.
 
-Let's say, someone made a POST `/cats` request. This request points to `create()` handler defined inside the `CatsController`. If an interceptor which does not call a `handle()` method is called along the way, the `create()` method won't be evaluated. Only when `handle()` is called, the final method will be triggered. Why? Because Nest **subscribes** to the returned stream and uses values that this stream produces to create either a single response or multiple responses for the end-user. Moreover, `handle()` returns an `Observable`, meaning, it supplies us with a set of very powerful operators that helps with, for example, response manipulation.
+Let's say, someone made a POST `/cats` request. This request points to `create()` handler defined inside the `CatsController`. If an interceptor which does not call a `handle()` method is called along the way, the `create()` method won't be evaluated. Only when `handle()` is called (and its value has been returned), the final method will be triggered. Why? Because Nest **subscribes** to the returned stream and uses values that this stream produces to create either a single response or multiple responses for the end-user. Moreover, `handle()` returns an `Observable`, meaning, it supplies us with a set of very powerful operators that helps with, for example, response manipulation.
 
 #### Aspect interception
 
@@ -82,7 +82,7 @@ export class LoggingInterceptor {
 
 > warning **Notice** Interceptors act the same as controllers, providers, guards, and so on, meaning, they can **inject dependencies** through the `constructor`.
 
-Since `handle()` returns an [RxJS](https://github.com/reactivex/rxjs) `Observable`, we have a lot of various operators which we can use to manipulate the stream. In the example above, We used the `tap()` operator that invokes the function upon graceful or exceptional termination of the observable sequence.
+Since `handle()` returns an RxJS `Observable`, we have a lot of various operators which we can use to manipulate the stream. In the example above, We used the `tap()` operator that invokes the function upon graceful or exceptional termination of the observable sequence.
 
 #### Binding interceptors
 
@@ -136,13 +136,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** The alternative option is to use an execution context feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more Learn more [here](/fundamentals/dependency-injection).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more Learn more [here](/fundamentals/dependency-injection).
 
 #### Response mapping
 
 We already know that `handle()` returns an `Observable`. The stream contains the value **returned** from the route handler, and thus we can easily mutate it using the `map()` operator.
 
-> **Warning** The response mapping feature doesn't work with the library-specific response strategy (using the `@Res()` object directly is forbidden).
+> warning **Warning** The response mapping feature doesn't work with the library-specific response strategy (using the `@Res()` object directly is forbidden).
 
 Let's create the `TransformInterceptor` that will take each response and modify it by assigning to the `data` property of the newly created object.
 
@@ -178,9 +178,9 @@ export class TransformInterceptor {
 
 Afterward, when someone calls the GET `/cats` endpoint, the request would look like below (assuming that route handler returns an empty array `[]`):
 
-```typescript
+```json
 {
-    "data": []
+  "data": []
 }
 ```
 

@@ -6,6 +6,7 @@ import { AsyncComponentsComponent } from './async-components/async-components.co
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
 import { DependencyInjectionComponent } from './dependency-injection/dependency-injection.component';
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
+import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
 
 const routes: Routes = [
@@ -46,6 +47,11 @@ const routes: Routes = [
     data: { title: 'Testing' },
   },
   {
+    path: 'injection-scopes',
+    component: ProviderScopesComponent,
+    data: { title: 'Injection scopes' },
+  },
+  {
     path: 'circular-dependency',
     component: CircularDependencyComponent,
     data: { title: 'Circular Dependency' },
@@ -60,6 +66,7 @@ const routes: Routes = [
     DependencyInjectionComponent,
     UnitTestingComponent,
     CircularDependencyComponent,
+    ProviderScopesComponent,
   ],
 })
 export class FundamentalsModule {}

@@ -1,74 +1,118 @@
-<div class="content">
-  <h3>Migration guide</h3>
-  <p>
-    This article provides a set of <strong>guidelines</strong> to migrate from 4 to latest 5 version.
-    During the development, we spent a lot of time trying to avoid any breaking changes.
-    Nevertheless, the API had to change in a bunch of places in order to simplify its usage.
-    Also, the previous version has been limited due to decisions that have been made at the very early stage.
-    Now, we are less opinionated and even more powerful than before. 
-  </p>
-  <h4>Modules</h4>
-  <p>
-    In order to decrease the number of differences between Nest and <a href="https://angular.io/" target="blank">Angular</a>,
-    few changes have been made regarding <code>@Module()</code> decorator.
-  </p>
-  <ul>
-    <li><code>modules</code> property is now deprecated. Use <code>imports</code> instead</li>
-    <li><code>components</code> property is now deprecated. Use <code>providers</code> instead</li>
-  </ul>
-  <h4>Decorators</h4>
-  <p>
-    The <code>@Component()</code>, <code>@Middleware()</code>, <code>@Interceptor()</code>, <code>@Pipe()</code>, and <code>@Guard()</code> are deprecated now.
-    Use <code>@Injectable()</code> instead.
-  </p>
-  <h4>Middleware interfaces</h4>
-  <p>
-    The <code>MiddlewaresConsumer</code> class has been changed to <code>MiddlewareConsumer</code>.
-    Also, the <code>ExpressMiddleware</code> no longer exists, use <code>MiddlewareFunction</code> interface instead.
-  </p>
-  <h4>Filters</h4>
-  <p>
-    The exception filters aren't locked in as single-paradigm anymore.
-    Previously, an exception filter had an access to the <code>response</code> object.
-    Together with an incoming release, <code>catch()</code> method takes <code>ArgumentsHost</code> instance instead.
-    This object is well described <a routerLink="/exception-filters">here</a>.
-    Thanks to that, you have an access to each argument, including <code>response</code> object.
-  </p>
-  <span class="filename">
-    <app-tabs #filtersT></app-tabs>
-  </span>
-  <pre [class.hide]="filtersT.isJsActive"><code class="language-typescript">{{ filters }}</code></pre>
-  <pre [class.hide]="!filtersT.isJsActive"><code class="language-typescript">{{ filtersJs }}</code></pre>
-  <h4>Guards</h4>
-  <p>
-    The same as filters, guards are far more <strong>flexible</strong> now. An access to the enhanced <code>ExecutionContext</code> (<a routerLink="/guards">read more</a>) gives guards more superpowers and all of that has been built on top of simplified API.
-  </p>
-  <span class="filename">
-    <app-tabs #guardsT></app-tabs>
-  </span>
-  <pre [class.hide]="guardsT.isJsActive"><code class="language-typescript">{{ guards }}</code></pre>
-  <pre [class.hide]="!guardsT.isJsActive"><code class="language-typescript">{{ guardsJs }}</code></pre>
-  <h4>Interceptors</h4>
-  <p>
-    The interceptors API evolved in the exact same way as <strong>equivalent</strong> guards API.
-  </p>
-  <span class="filename">
-    <app-tabs #interceptorsT></app-tabs>
-  </span>
-  <pre [class.hide]="interceptorsT.isJsActive"><code class="language-typescript">{{ interceptors }}</code></pre>
-  <pre [class.hide]="!interceptorsT.isJsActive"><code class="language-typescript">{{ interceptorsJs }}</code></pre>
-  <h4>Custom decorators</h4>
-  <p>
-    The <code>createRouteParamDecorator()</code> function is deprecated. Use <code>createParamDecorator()</code> now.
-  </p>
-  <h4>Node.js</h4>
-  <p>
-    We follow the Node.js release schedule which recently moved to <code>8.x</code> as an active <strong>LTS</strong> version. 
-    Therefore, Nest 5 supports >= <code>8.9.0</code> as the lowest version now.
-    This shift gave us sustainable performance boosts thanks to the <code>es2017</code> target of the TypeScript compilation.
-  </p>
-  <h4>External libraries</h4>
-  <p>
-    Nest 5 doesn't support <a href="https://github.com/ReactiveX/rxjs">rxjs</a> < 6.0.0. Keep in mind to upgrade this package as well.
-  </p>
-</div>
+<div class="content" #contentReference>
+      <h3 id="migration-guide">Migration guide</h3>
+<p>This article provides a set of <strong>guidelines</strong> for migrating from 5 to the latest 6 version. Even though we tried to reduce a number of breaking changes, the API had to be modified in a few places in order to simplify its usage.</p>
+<h4 appAnchor id="middleware"><span>Middleware</span></h4>
+<p>Based on <a href="https://github.com/nestjs/nest/issues/1378">this</a> topic, the middleware API has been changed in order to make it more straightforward for people who come from different Node libraries and also to reduce the number of confusions that arose from the previous API.</p>
+
+<span class="filename">
+<app-tabs #appea299a6a23d272d92b647a4bf46f6f7757e27e5b></app-tabs>
+</span><pre [class.hide]="appea299a6a23d272d92b647a4bf46f6f7757e27e5b.isJsActive"><code class="language-typescript">
+// Before
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware &#123;
+ resolve(...args: any[]): MiddlewareFunction &#123;
+   return (req: Request, res: Response, next: Function) =&gt; &#123;
+     console.log(&#39;Request...&#39;);
+     next();
+   &#125;;
+ &#125;
+&#125;
+
+// After
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware &#123;
+  use(req: Request, res: Response, next: Function) &#123;
+    console.log(&#39;Request...&#39;);
+    next();
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appea299a6a23d272d92b647a4bf46f6f7757e27e5b.isJsActive"><code class="language-typescript">
+@Injectable()
+export class LoggerMiddleware &#123;
+ resolve(...args) &#123;
+   return (req, res, next) =&gt; &#123;
+     console.log(&#39;Request...&#39;);
+     next();
+   &#125;;
+ &#125;
+&#125;
+
+// After
+@Injectable()
+export class LoggerMiddleware &#123;
+  use(req, res, next) &#123;
+    console.log(&#39;Request...&#39;);
+    next();
+  &#125;
+&#125;</code></pre><p>Consequently, the <code>with()</code> method of the <code>MiddlewareConsumer</code> won&#39;t work anymore (is fully useless). If you want to pass options to the middleware class, use a <a routerLink="/fundamentals/custom-providers">custom provider</a> or check more examples <a href="https://github.com/nestjs/nest/issues/1378">here</a>.</p>
+<h4 appAnchor id="interceptors"><span>Interceptors</span></h4>
+<p>The interceptors API has also been simplified. In addition, the change was required due to this <a href="https://github.com/nestjs/nest/issues/1016">issue</a> which was reported by the community.</p>
+
+<span class="filename">
+<app-tabs #appa2b386d7d1e4942233d54d8c15deeed9456ba2cc></app-tabs>
+</span><pre [class.hide]="appa2b386d7d1e4942233d54d8c15deeed9456ba2cc.isJsActive"><code class="language-typescript">
+// Before
+@Injectable()
+export class TransformInterceptor implements NestInterceptor &#123;
+  intercept(
+    context: ExecutionContext,
+    call$: Observable&lt;T&gt;,
+  ): Observable&lt;Response&lt;T&gt;&gt; &#123;
+    return call$.pipe(map(data =&gt; (&#123; data &#125;)));
+  &#125;
+&#125;
+
+// After
+@Injectable()
+export class TransformInterceptor implements NestInterceptor &#123;
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable&lt;Response&lt;T&gt;&gt; &#123;
+    return next
+      .handle()
+      .pipe(map(data =&gt; (&#123; data &#125;)));
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appa2b386d7d1e4942233d54d8c15deeed9456ba2cc.isJsActive"><code class="language-typescript">
+// Before
+@Injectable()
+export class TransformInterceptor &#123;
+  intercept(context, next) &#123;
+    return call$.pipe(map(data =&gt; (&#123; data &#125;)));
+  &#125;
+&#125;
+
+// After
+@Injectable()
+export class TransformInterceptor &#123;
+  intercept(context, next) &#123;
+    return next
+      .handle()
+      .pipe(map(data =&gt; (&#123; data &#125;)));
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> The <code>CallHandler</code> interface is exported from the <code>@nestjs/common</code> package.
+</blockquote>
+<p>Please note that your interceptors will now run in the correct order - they will follow a simple request processing pipeline, being executed from global to concrete once the request wants to hit an end-handler, and then (in response pipeline), they will be executed from specific to global ones (if you attach some asynchronous/mapping logic inside them).</p>
+<h4 appAnchor id="platforms"><span>Platforms</span></h4>
+<p>So far, even if you were not using an HTTP server, you had to install the <code>express</code> library internally (as a dependency of the <code>@nestjs/core</code> package). Since a new major release, Nest will no longer ship these packages upfront. Each platform has been extracted into an individual package, respectively <code>@nestjs/platform-express</code>, <code>@nestjs/platform-fastify</code>, <code>@nestjs/platform-ws</code>, and <code>@nestjs/platform-socket.io</code>. Assuming that your application was using both <code>express</code> and <code>socket.io</code>, you only have to install the corresponding platforms:</p>
+<pre><code class="language-bash">
+$ npm i @nestjs/platform-express @nestjs/platform-socket.io</code></pre>
+<p>Also, every existing adapter (for example, <code>FastifyAdapter</code>) is now being served from the dedicated platform package.</p>
+<ul>
+<li><code>FastifyAdapter</code> - <code>@nestjs/platform-fastify</code></li>
+<li><code>ExpressAdapter</code> - <code>@nestjs/platform-express</code></li>
+<li><code>WsAdapter</code> - <code>@nestjs/platform-ws</code></li>
+<li><code>IoAdapter</code> - <code>@nestjs/platform-socket.io</code></li>
+</ul>
+<h4 appAnchor id="metadata-reflection"><span>Metadata reflection</span></h4>
+<p>The <code>@ReflectMetadata()</code> decorator has been deprecated and will be removed in the next major release (for now it will only display a warning). Use the <code>@SetMetadata()</code> decorator instead.</p>
+<h4 appAnchor id="graphql"><span>GraphQL</span></h4>
+<p>The subscriptions mechanism has been changed. Check <a routerLink="/graphql/subscriptions">this</a> chapter for more details. Additionally, <code>@nestjs/graphql</code> package was heavily relying on <code>@ReflectMetadata()</code> (which has been deprecated) so it&#39;s required to update the package itself as well.</p>
+<h4 appAnchor id="deprecations"><span>Deprecations</span></h4>
+<p>All deprecations (from 4 to 5 version) have been finally removed.</p>
+<h4 appAnchor id="typescript"><span>TypeScript</span></h4>
+<p>Nest 6 supports the latest major release of <a href="https://www.typescriptlang.org/">TypeScript</a> (3.0.0).</p>
+
+    </div>

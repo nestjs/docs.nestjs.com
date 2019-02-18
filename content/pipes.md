@@ -119,7 +119,7 @@ export class CreateCatDto {
 }
 ```
 
-This object always has to be correct, and thus we have to validate these three members. We could do it inside the route handler method, but we'd break the **single responsibility rule** (SRP). The second idea is to create a **validator class** and delegate the task there, but we'll have to use this validator every time at the beginning of each method. So what about the validation middleware? It's a good idea, but it's impossible to create a **generic middleware** which could be used across the whole application.
+This object always has to be correct, and thus we have to validate these three members. We could do it inside the route handler method, but we would break the **single responsibility rule** (SRP). The second idea is to create a **validator class** and delegate the task there, but we'll have to use this validator every time at the beginning of each method. So what about the validation middleware? It's a good idea, but it's impossible to create a **generic middleware** which could be used across the whole application.
 
 That's the first use-case, when you should consider to use a **Pipe**.
 
@@ -175,6 +175,7 @@ The pipe tying is extremely simple - we need to use `@UsePipes()` decorator and 
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
+@@switch
 @Post()
 @Bind(Body())
 @UsePipes(new JoiValidationPipe(createCatSchema))
@@ -292,7 +293,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> **Notice** The `useGlobalPipes()` method doesn't set up pipes for gateways and micro services (while hybrid app feature is being used).
+> warning **Notice** The `useGlobalPipes()` method doesn't set up pipes for gateways and micro services (whereas hybrid app feature is being used).
 
 The global pipes are used across the whole application, for every controller and every route handler. In terms of dependency injection, global pipes registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a pipe **directly from any module** using following construction:
 
@@ -306,7 +307,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> info **Hint** The alternative option is to use an [execution context](/execution-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
 
 #### Transformer pipe
 
@@ -379,7 +380,9 @@ findOne(userEntity) {
 
 Fortunately, you don't have to build those pipes on your own since the `ValidationPipe` and the `ParseIntPipe` are built-in pipes (keep in mind that `ValidationPipe` requires both `class-validator` and `class-transformer` packages installed).
 
-The built-in `ValidationPipe` offers more options than that one described in this chapter, which has been kept basic for the sake of simplicity and to reduce the learning curve. If you take a look at the `createCatDto` in your controller function, you will notice that it isn't an actual `CreateCatDto` instance. That is because this pipe only validates the payload, without transforming it into the expected type. However, if you want the pipe to mutate the payload, you can configure it by passing appropriate options:
+The built-in `ValidationPipe` offers more options than that one described in this chapter, which has been kept basic for the sake of simplicity and to reduce the learning curve. You can check lots of examples [here](/techniques/validation).
+
+If you take a look at the `createCatDto` in your controller function, you will notice that it isn't an actual `CreateCatDto` instance. That is because this pipe only validates the payload, without transforming it into the expected type. However, if you want the pipe to mutate the payload, you can configure it by passing appropriate options:
 
 ```typescript
 @@filename(cats.controller)

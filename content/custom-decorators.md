@@ -8,6 +8,8 @@ Nest is built around a language feature called **decorators**. It's a well-known
   you are trying to decorate. Decorators can be defined for either a class or a property.
 </blockquote>
 
+#### Param decorators
+
 Nest provides a set of useful **param decorators** that you can use together with the HTTP route handlers. Below is a comparison of the decorators with the plain express objects.
 
 <table>
@@ -104,6 +106,13 @@ Will make possible to access the `test` string via the `data` argument:
 
 ```typescript
 @@filename(user.decorator)
+import { createParamDecorator } from '@nestjs/common';
+
+export const User = createParamDecorator((data: string, req) => {
+  console.log(data); // test
+  return req.user;
+});
+@@switch
 import { createParamDecorator } from '@nestjs/common';
 
 export const User = createParamDecorator((data, req) => {

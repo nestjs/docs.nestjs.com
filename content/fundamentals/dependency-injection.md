@@ -2,7 +2,7 @@
 
 There are a lot of scenarios when you might want to bind something **directly** to the Nest inversion of control container. For example, any constant values, configuration objects created based on the current environment, external libraries, or pre-calculated values that depends on few other defined providers. Moreover, you are able to override default implementations, e.g. use different classes or make use of various test doubles (for testing purposes) when needed.
 
-One essential thing that you should always keep in mind is that Nest uses **tokens** to identify dependencies. Usually, the auto-generated tokens are equal to classes. If you want to create a custom provider, you'd need to choose a token. Mostly, the custom tokens are represented by plain strings. Following best practices, you should hold those tokens in the separated file, for example, inside `constants.ts`.
+One essential thing that you should always keep in mind is that Nest uses **tokens** to identify dependencies. Usually, the auto-generated tokens are equal to classes. If you want to create a custom provider, you'd need to choose a token. Mostly, the custom tokens are represented by either plain strings or symbols. Following best practices, you should hold those tokens in the separated file, for example, inside `constants.ts`.
 
 Let's go through the available options.
 
@@ -81,7 +81,7 @@ const configServiceProvider = {
 export class ApplicationModule {}
 ```
 
-> **Notice** Instead of a custom token, we have used the `ConfigService` class, and therefore we have overridden the default implementation.
+> warning **Notice** Instead of a custom token, we have used the `ConfigService` class, and therefore we have overridden the default implementation.
 
 In this case, even if any class depends on `ConfigService`, Nest will inject an instance of the provided class (`DevelopmentConfigService` or `ProductionConfigService`) instead.
 

@@ -91,7 +91,7 @@ export class CatsService {
 
 > info **Hint** The `ModuleRef` class is imported from the `@nestjs/core` package.
 
-The module reference has a `get()` method which allows retrieving a provider available in the current module. Additionally, you can switch to a non-strict mode, which enables you to pick any existing provider across the whole app.
+The module reference has a `get()` method which allows retrieving a provider available in the current module. Additionally, you can switch to a non-strict mode, which enables you to pick any existing provider among the entire application.
 
 ```typescript
 this.moduleRef.get(Service, { strict: false });

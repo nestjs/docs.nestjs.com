@@ -1,55 +1,86 @@
-<div class="content">
-  <h3>Exception filters</h3>
-  <p>
-    The only difference between <a routerLink="/exception-filters">HTTP exception filter</a> layer and corresponding microservices
-    layer is that instead of throwing <code>HttpException</code>, you should rather use <code>RpcException</code>.
-  </p>
-  <pre><code class="language-typescript">{{ rpcException }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>RpcException</code> class is imported from the <code>@nestjs/microservices</code> package.
-  </blockquote>
-  <p>
-    Nest will handle thrown exception and as a result, returns the <code>error</code> object with the following structure:
-  </p>
-  <pre><code class="language-typescript">{{ exceptionResponse }}</code></pre>
-  <h4>Filters</h4>
-  <p>
-    The <strong>exception filters</strong> work in the same fashion as the primary ones, with a one, small difference. The
-    <code>catch()</code> method has to return an <code>Observable</code>.
-  </p>
-  <span class="filename">
-    {{ 'rpc-exception.filter' | extension: rpcExceptionFilterT.isJsActive }}
-    <app-tabs #rpcExceptionFilterT></app-tabs>
-  </span>
-  <pre [class.hide]="rpcExceptionFilterT.isJsActive"><code class="language-typescript">{{ rpcExceptionFilter }}</code></pre>
-  <pre [class.hide]="!rpcExceptionFilterT.isJsActive"><code class="language-typescript">{{ rpcExceptionFilterJs }}</code></pre>
-  <blockquote>
-    <strong>Warning</strong> It is impossible to set up the microservices exception filters globally.
-  </blockquote>
-  <p>
-    Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> filter (class-scoped works
-    either):
-  </p>
-  <pre><code class="language-typescript">{{ example }}</code></pre>
-  <h4>Inheritance</h4>
-  <p>
-    Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. There might
-    be use-cases though when you would like to reuse an already implemented, <strong>core exception filter</strong>,
-    and override the behavior based on certain factors.
-  </p>
-  <p>
-    In order to delegate exception processing to the base filter, you need to extend <code>BaseExceptionFilter</code> and
-    call inherited <code>catch()</code> method. Besides, <code>HttpServer</code> reference has to be injected and passed
-    to the
-    <code>super()</code> call.
-  </p>
-  <span class="filename">
-    <app-tabs #inheritanceT></app-tabs>
-  </span>
-  <pre [class.hide]="inheritanceT.isJsActive"><code class="language-typescript">{{ inheritance }}</code></pre>
-  <pre [class.hide]="!inheritanceT.isJsActive"><code class="language-typescript">{{ inheritanceJs }}</code></pre>
-  <p>
-    Obviously, you should enhance above implementation with your tailored <strong>business</strong> logic (e.g. add various
-    conditions).
-  </p>
-</div>
+<div class="content" #contentReference>
+      <h3 id="exception-filters">Exception filters</h3>
+<p>The only difference between HTTP exception filter layer and corresponding microservices layer is that instead of throwing <code>HttpException</code>, you should rather use <code>RpcException</code>.</p>
+<pre><code class="language-typescript">
+throw new RpcException(&#39;Invalid credentials.&#39;);</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> The <code>RpcException</code> class is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<p>Nest will handle thrown exception and as a result, returns the <code>error</code> object with the following structure:</p>
+<pre><code class="language-json">
+&#123;
+  &quot;status&quot;: &quot;error&quot;,
+  &quot;message&quot;: &quot;Invalid credentials.&quot;
+&#125;</code></pre>
+<h4 appAnchor id="filters"><span>Filters</span></h4>
+<p>The exception filters work in the same fashion as the primary ones, with a one, small difference. The <code>catch()</code> method has to return an <code>Observable</code>.</p>
+
+<span class="filename">
+  {{ 'rpc-exception.filter' | extension: app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive }}
+<app-tabs #app893a1f04515236a941270c3dab46a2c326a69fdc></app-tabs>
+</span><pre [class.hide]="app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive"><code class="language-typescript">
+import &#123; Catch, RpcExceptionFilter, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
+import &#123; Observable, throwError &#125; from &#39;rxjs&#39;;
+import &#123; RpcException &#125; from &#39;@nestjs/microservices&#39;;
+
+@Catch(RpcException)
+export class ExceptionFilter implements RpcExceptionFilter&lt;RpcException&gt; &#123;
+  catch(exception: RpcException, host: ArgumentsHost): Observable&lt;any&gt; &#123;
+    return throwError(exception.getError());
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive"><code class="language-typescript">
+import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
+import &#123; throwError &#125; from &#39;rxjs&#39;;
+
+@Catch(RpcException)
+export class ExceptionFilter &#123;
+  catch(exception, host) &#123;
+    return throwError(exception.getError());
+  &#125;
+&#125;</code></pre><blockquote class="
+"><strong>Warning</strong> It is impossible to set up the microservice exception filters globally when the hybrid application feature is being used.
+</blockquote>
+<p>Here is an example that makes use of a manually instantiated method-scoped filter (class-scoped works too):</p>
+
+<span class="filename">
+<app-tabs #appda8b10c1e1298f76eb78662782317ef67cb124a0></app-tabs>
+</span><pre [class.hide]="appda8b10c1e1298f76eb78662782317ef67cb124a0.isJsActive"><code class="language-typescript">
+@UseFilters(new ExceptionFilter())
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+accumulate(data: number[]): number &#123;
+  return (data || []).reduce((a, b) =&gt; a + b);
+&#125;</code></pre>
+<pre [class.hide]="!appda8b10c1e1298f76eb78662782317ef67cb124a0.isJsActive"><code class="language-typescript">
+@UseFilters(new ExceptionFilter())
+@MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
+accumulate(data) &#123;
+  return (data || []).reduce((a, b) =&gt; a + b);
+&#125;</code></pre><h4 appAnchor id="inheritance"><span>Inheritance</span></h4>
+<p>Typically, you&#39;ll create fully customized exception filters crafted to fulfill your application requirements. There might be use-cases though when you would like to reuse an already implemented, <strong>core exception filter</strong>, and override the behavior based on certain factors.</p>
+<p>In order to delegate exception processing to the base filter, you need to extend <code>BaseExceptionFilter</code> and call inherited <code>catch()</code> method. Besides, <code>HttpServer</code> reference has to be injected and passed to the <code>super()</code> call.</p>
+
+<span class="filename">
+<app-tabs #appa23312628712933086429c47d4e78ddc73976a64></app-tabs>
+</span><pre [class.hide]="appa23312628712933086429c47d4e78ddc73976a64.isJsActive"><code class="language-typescript">
+import &#123; Catch, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
+import &#123; BaseRpcExceptionFilter &#125; from &#39;@nestjs/microservices&#39;;
+
+@Catch()
+export class AllExceptionsFilter extends BaseRpcExceptionFilter &#123;
+  catch(exception: any, host: ArgumentsHost) &#123;
+    return super.catch(exception, host);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appa23312628712933086429c47d4e78ddc73976a64.isJsActive"><code class="language-typescript">
+import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
+import &#123; BaseRpcExceptionFilter &#125; from &#39;@nestjs/microservices&#39;;
+
+@Catch()
+export class AllExceptionsFilter extends BaseRpcExceptionFilter &#123;
+  catch(exception, host) &#123;
+    return super.catch(exception, host);
+  &#125;
+&#125;</code></pre><p>Obviously, you should enhance above implementation with your tailored <strong>business</strong> logic (e.g. add various conditions).</p>
+
+    </div>

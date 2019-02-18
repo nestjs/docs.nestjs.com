@@ -8,7 +8,7 @@ The built-in **exceptions layer** is responsible for handling all thrown excepti
 
 Each occurred exception is handled by the global exception filter, and when it's **unrecognized** (is neither `HttpException` nor a class that inherits from `HttpException`), a user receives the below JSON response:
 
-```typescript
+```json
 {
   "statusCode": 500,
   "message": "Internal server error"
@@ -19,7 +19,7 @@ Each occurred exception is handled by the global exception filter, and when it's
 
 There's a built-in `HttpException` class exposed from the `@nestjs/common` package. As you already know, when you throw a `HttpException` object, it'll be caught by the handler and afterwards, transformed to the relevant JSON response.
 
-In the `CatsController`, we have a `findALl()` method (a `GET` route). Let's assume that this route handler would throw an exception for some reason. We're gonna hardcode it:
+In the `CatsController`, we have a `findAll()` method (a `GET` route). Let's assume that this route handler would throw an exception for some reason. We're gonna hardcode it:
 
 ```typescript
 @@filename(cats.controller)
@@ -33,7 +33,7 @@ async findAll() {
 
 When the client calls this endpoint, the response would look like this:
 
-```typescript
+```json
 {
   "statusCode": 403,
   "message": "Forbidden"
@@ -55,10 +55,10 @@ async findAll() {
 
 And this is how the response would look like:
 
-```typescript
+```json
 {
   "statusCode": 403,
-  "message": "Forbidden"
+  "error": "This is a custom message"
 }
 ```
 
@@ -162,7 +162,7 @@ The `@Catch(HttpException)` decorator binds the required metadata to the excepti
 
 #### Arguments host
 
-The `exception` property is a currently processed exception, while `host` is a `ArgumentsHost` object. The `ArgumentsHost` is a wrapper around arguments that have been passed to the **original** handler, and it contains different arguments array under the hood based on the type of the application.
+The `exception` property is a currently processed exception, while `host` is a `ArgumentsHost` object. The `ArgumentsHost` is a wrapper around arguments that have been passed to the **original** handler, and it contains different arguments array under the hood based on the type of the application (and platform which is being used).
 
 ```typescript
 export interface ArgumentsHost {
@@ -216,7 +216,7 @@ async create(createCatDto) {
 }
 ```
 
-> info **Hint** Prefer applying classes instead of instances when possible. It reduces **memory usage** since Nest can easily reuse instances of the same class across your whole application.
+> info **Hint** Prefer applying classes instead of instances when possible. It reduces **memory usage** since Nest can easily reuse instances of the same class among your entire module.
 
 In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, but it's not the only available way. In fact, the exception filters can be method-scoped, controller-scoped, and also global-scoped.
 
@@ -238,7 +238,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> warning **Warning** The `useGlobalFilters()` method neither set up filters for gateways nor microservices.
+> warning **Warning** The `useGlobalFilters()` method neither set up filters for gateways nor hybrid application.
 
 The global filters are used across the whole application, for every controller and every route handler. In terms of dependency injection, global filters registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a filter **directly from any module** using following construction:
 
@@ -258,7 +258,7 @@ import { APP_FILTER } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** The alternative option is to use an execution context feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/custom-providers).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/custom-providers).
 
 #### Catch everything
 
@@ -269,7 +269,7 @@ import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
@@ -299,7 +299,7 @@ import { BaseExceptionFilter } from '@nestjs/core';
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     super.catch(exception, host);
   }
 }
@@ -315,15 +315,17 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 }
 ```
 
-> warning **Warning** Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using `new` keyword but `@UseFilters()`).
+> warning **Warning** Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using `new` keyword).
 
 You can use a global filter that extends the base filter by injecting the `HttpServer` reference.
 
 ```typescript
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
-  const httpRef = app.get(HTTP_SERVER_REF);
-  app.useGlobalFilters(new AllExceptionsFilter(httpRef));
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+
   await app.listen(3000);
 }
 bootstrap();

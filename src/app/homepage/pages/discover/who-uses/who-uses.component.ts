@@ -52,22 +52,29 @@ export class WhoUsesComponent extends BasePageComponent {
     },
     {
       logo: '/assets/logo/architectnow.png',
-      url: 'http://architectnow.net'
+      url: 'http://architectnow.net',
+      width: '150px',
     },
     {
       logo: '/assets/logo/iflix.svg',
-      url: 'https://www.iflix.com'
+      url: 'https://www.iflix.com',
+      width: '70px',
     },
     {
       logo: '/assets/logo/roche-logo.png',
       url: 'https://roche.com',
-      width: '100px',
+      width: '90px',
     },
     {
       logo: '/assets/logo/run-players-league.png',
       url: 'https://runplayersleague.com',
       width: '90px',
     },
+    {
+      logo: '/assets/logo/yanrongyun.svg',
+      url: 'http://www.yanrongyun.com',
+      width: '120px',
+    }
   ];
 
   readonly companiesUrls = [

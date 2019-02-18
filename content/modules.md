@@ -87,7 +87,7 @@ That is how our directory structure looks right now:
 
 #### Shared module
 
-In Nest, modules **are singletons** by default, and thus you can share the **same instance** of any provider between 2..\* modules effortlessly.
+In Nest, modules are **singletons** by default, and thus you can share the **same instance** of any provider between 2..\* modules effortlessly.
 
 <figure><img src="/assets/Shared_Module_1.png" /></figure>
 
@@ -184,6 +184,7 @@ The `@Global()` decorator makes the module global-scoped. Global modules shall b
 The Nest module system comes with a feature called **dynamic modules**. It enables you to create customizable modules without any effort. Let's have a look at the `DatabaseModule`:
 
 ```typescript
+@@filename()
 import { Module, DynamicModule } from '@nestjs/common';
 import { createDatabaseProviders } from './database.providers';
 import { Connection } from './connection.provider';
@@ -223,7 +224,7 @@ export class DatabaseModule {
 
 > info **Hint** The `forRoot()` may return dynamic module either synchronously or asynchronously (`Promise`).
 
-This module defines the `Connection` provider by default, but additionally - depending on the passed `options` and `entities` - it exposes a collection of the providers, for example, repositories. In fact, the dynamic module **extends** the base module metadata. This substantial feature is useful when you need to register providers dynamically. Then you could import the `DatabaseModule` in the following manner:
+This module defines the `Connection` provider by default, but additionally - depending on the passed `options` and `entities` - it exposes a collection of the providers, for example, repositories. In fact, the dynamic module **extends** (not overrides!) the base module metadata. This substantial feature is useful when you need to register providers dynamically. Then you could import the `DatabaseModule` in the following manner:
 
 ```typescript
 import { Module } from '@nestjs/common';

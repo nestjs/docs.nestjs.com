@@ -39,7 +39,7 @@ export class CatsController {
 
 The `@Get()` decorator before the `findAll()` method tells Nest to create an endpoint for this particular route path and map every corresponding request to this handler. Since we've declared a prefix for every route ( `cats`), Nest will map every `/cats` GET request to this method.
 
-When a GET request is made to this endpoint, Nest will now return a 200 status code and the associated response, which in this case is just a string. Why does that happen? Generally, we distinguish **two different approaches** to manipulate responses:
+When a GET request is made to this endpoint, Nest will now return a 200 status code and the associated response, which in this case is just a string. Why does that happen? Generally, we distinguish two **different** approaches to manipulate responses:
 
 <table>
   <tr>
@@ -51,7 +51,7 @@ When a GET request is made to this endpoint, Nest will now return a 200 status c
       <br />
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
       requests
-      which use <strong>201</strong>. We can easily change this behaviour by adding the <code>@HttpCode(...)</code>
+      which use 201. We can easily change this behaviour by adding the <code>@HttpCode(...)</code>
       decorator
       at a handler-level.
     </td>
@@ -60,12 +60,12 @@ When a GET request is made to this endpoint, Nest will now return a 200 status c
     <td>Library-specific</td>
     <td>
       We can use the library specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-      which we can inject using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).
+      which can be injected using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).
     </td>
   </tr>
 </table>
 
-> warning **Warning** You can't use both approaches at the same time. Nest detects whether the handler is using either `@Res()` or `@Next()`. If both approaches are used in the same time - the Standard approach is automatically disabled for this single route and will no longer work as expected.
+> warning **Warning** You cannot use both approaches at the same time. Nest detects whether the handler is using either `@Res()` or `@Next()`. If both approaches are used in the same time - the Standard approach is automatically disabled for this single route and will no longer work as expected.
 
 #### Request object
 
@@ -96,7 +96,9 @@ export class CatsController {
 }
 ```
 
-The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](http://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use **dedicated decorators** instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a comparison of the provided decorators and the plain express objects they represent.
+> warning **Hint** In order to take advantage of `express` typings, install `@types/express` package.
+
+The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](http://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use dedicated decorators instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a comparison of the provided decorators and the plain platform-specific objects they represent.
 
 <table>
   <tbody>
@@ -205,7 +207,7 @@ Often, your status code isn't static but depends on various factors. In that cas
 
 #### Headers
 
-To specify a custom response header, you can either use a `@Header()` decorator or a library-specific response object.
+To specify a custom response header, you can either use a `@Header()` decorator or a library-specific response object (and call `res.header()` directly).
 
 ```typescript
 @Post()

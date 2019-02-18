@@ -3,7 +3,6 @@
 
 :host {
   background: $black-color;
-  // box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
   display: block;
   width: 100%;
   height: 70px;
@@ -24,7 +23,6 @@ header {
   width: 80px;
   top: 0;
   bottom: 0;
-  // background: $darkgrey-color;
   display: inline-block;
   position: relative;
   z-index: 10000;
@@ -35,7 +33,6 @@ header {
   }
   &.opened {
     width: 265px;
-    // box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 
     @include media(large) {
       width: 265px;
@@ -49,8 +46,8 @@ header {
 
     svg {
       width: 30px;
-      stroke: #fff;
-      stroke-width: 5;
+      height: 30px;
+      fill: #f3f5f7;
     }
   }
   @include media(medium) {
@@ -59,8 +56,6 @@ header {
 }
 
 :host /deep/ .logo-wrapper {
-  // display: block;
-  // width: 100%;
   display: inline-block;
   height: 100%;
   text-align: center;
@@ -80,14 +75,8 @@ header {
   }
 }
 
-/*.social-wrapper,
-.icon-wrapper {
-  position: absolute;
-}*/
-
 .social-wrapper {
   @extend .center-top;
-  // right: 40px;
   float: right;
   padding-right: 40px;
   position: relative;
@@ -188,18 +177,9 @@ header {
     display: inline-block;
     padding: 1px 2px;
     font-weight: 700;
-    background: -webkit-linear-gradient(
-      #ee2943,
-      #d31e5a
-    ); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(
-      #ee2943,
-      #d31e5a
-    ); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(
-      #ee2943,
-      #d31e5a
-    ); /* For Firefox 3.6 to 15 */
+    background: -webkit-linear-gradient(#ee2943, #d31e5a);
+    background: -o-linear-gradient(#ee2943, #d31e5a);
+    background: -moz-linear-gradient(#ee2943, #d31e5a);
     background: linear-gradient(#ee2943, #d31e5a); /* Standard syntax */
   }
 }

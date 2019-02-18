@@ -1,17 +1,26 @@
-<div class="content">
-  <h3>Pipes</h3>
-  <p>
-    There is no difference between web sockets <strong>pipes</strong> and the <a routerLink="/pipes">regular pipes</a>. The
-    only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>WsException</code>.
-    Besides, all pipes will be applied only to the <code>data</code> parameter.
-  </p>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>WsException</code> class is exposed from <code>@nestjs/websockets</code> package.
-  </blockquote>
-  <h4>Binding pipes</h4>
-  <p>
-    Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> pipe (class-scoped works
-    either):
-  </p>
-  <pre><code class="language-typescript">{{ example }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="pipes">Pipes</h3>
+<p>There is no difference between web sockets <strong>pipes</strong> and the <a routerLink="/pipes">regular pipes</a>. The only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>WsException</code>. Besides, all pipes will be applied only to the <code>data</code> parameter (because either validating or transforming <code>client</code> instance sounds awkward).</p>
+<blockquote class="
+info "><strong>Hint</strong> The <code>WsException</code> class is exposed from <code>@nestjs/websockets</code> package.
+</blockquote>
+<h4 appAnchor id="binding-pipes"><span>Binding pipes</span></h4>
+<p>Here is an example that makes use of a manually instantiated method-scoped pipe (class-scoped works too):</p>
+
+<span class="filename">
+<app-tabs #app909a33d53ba70891f4e2ed6057a7a296d241edb4></app-tabs>
+</span><pre [class.hide]="app909a33d53ba70891f4e2ed6057a7a296d241edb4.isJsActive"><code class="language-typescript">
+@UsePipes(new ValidationPipe())
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
+  const event = &#39;events&#39;;
+  return &#123; event, data &#125;;
+&#125;</code></pre>
+<pre [class.hide]="!app909a33d53ba70891f4e2ed6057a7a296d241edb4.isJsActive"><code class="language-typescript">
+@UsePipes(new ValidationPipe())
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client, data) &#123;
+  const event = &#39;events&#39;;
+  return &#123; event, data &#125;;
+&#125;</code></pre>
+    </div>
