@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 648 352.8">
+<defs>
+    <style>.cls-1{fill:#b62d31;}.cls-2{fill:#4c4c4d;}</style>
+</defs>
+<title>ngATL_logo</title>
+<g id="Layer_2" data-name="Layer 2">
+    <g id="Layer_1-2" data-name="Layer 1">
+        <path class="cls-1" d="M0,103.27H18.56l17.58,74.65V103.27H53.33V232H34.77L17.84,159.69V232H0Z"/>
+        <path class="cls-1" d="M98.47,141.38V128.26q0-8.66-8.07-8.72h-.13q-8,0-8,8.72V207q0,8.72,8.07,8.72T98.47,207V193.73H90.92V175.36H117V207q0,27-26.7,27.09T63.7,207V128.26q0-27,26.63-27t26.7,27v13.12Z"/>
+        <path class="cls-1" d="M210.76,132.79,497.64,232h-18.7l19.15-128.7h25.45L542.64,232H523.88Z"/>
+        <path class="cls-1" d="M293.42,103.27v18.3H576V232H557.47V121.57H540.09v-18.3Z"/>
+        <path class="cls-1" d="M299.85,232V103.27h18.56v110.4H648V232Z"/>
+    </g>
+</g>
+</svg>

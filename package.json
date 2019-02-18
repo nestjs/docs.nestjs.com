@@ -5,8 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --source-map=false",
-    "build": "ng build",
-    "build:prod": "ng build --prod --aot",
+    "build": "ng build --deleteOutputPath=false",
+    "build:prod": "ng build --prod --aot --deleteOutputPath=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
