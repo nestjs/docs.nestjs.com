@@ -29,13 +29,15 @@ export class HomepageComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.router.events.filter(e => e instanceof NavigationEnd).subscribe(() => {
-      if (window.innerWidth > 768) {
-        return false;
-      }
-      this.isSidebarOpened = false;
-      this.cd.detectChanges();
-    });
+    this.router.events
+      .filter(e => e instanceof NavigationEnd)
+      .subscribe(() => {
+        if (window.innerWidth > 768) {
+          return false;
+        }
+        this.isSidebarOpened = false;
+        this.cd.detectChanges();
+      });
   }
 
   ngAfterViewInit() {

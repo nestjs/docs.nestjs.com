@@ -1,11 +1,13 @@
 <nav class="nav-container" (click)="$event.stopPropagation()">
-  <app-menu-item 
+  <app-menu-item
     *ngFor="let item of items"
     [isOpen]="item.isOpened"
     [title]="item.title"
     [externalUrl]="item?.externalUrl"
+    [icon]="item?.icon"
     [path]="item?.path"
     [children]="item.children"
     class="nav-item"
   ></app-menu-item>
-</nav> 
+  <a href="https://docs.nestjs.com/v5" class="btn btn-version">Version 5</a>
+</nav>

@@ -1,0 +1,15 @@
+@media (max-width: 480px) {
+  .company-logo {
+    width: 360px;
+    max-width: 100%;
+    display: block;
+    text-align: center;
+    margin: 40px auto;
+
+    img {
+      width: 180px !important;
+      max-width: 100%;
+      max-height: none;
+    }
+  }
+}

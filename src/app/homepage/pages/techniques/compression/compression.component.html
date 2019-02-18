@@ -1,27 +1,18 @@
-<div class="content">
-  <h3>Compression</h3>
-  <p>
-    Compression can greatly decrease the size of the response body and hence increase the speed of a web app. Use the <a
-      href="https://github.com/expressjs/compression" target="blank">compression</a> middleware to enable gzip compression.
-  </p>
-  <h4>Installation</h4>
-  <p>Firstly, install the required package:</p>
-  <pre><code class="language-bash">
+<div class="content" #contentReference>
+      <h3 id="compression">Compression</h3>
+<p>Compression can greatly decrease the size of the response body and hence increase the speed of a web app. Use the <a href="https://github.com/expressjs/compression">compression</a> middleware to enable gzip compression.</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>Firstly, install the required package:</p>
+<pre><code class="language-bash">
 $ npm i --save compression</code></pre>
-  <p>
-    Once the installation is completed, apply it as a global middleware.
-  </p>
-  <pre><code class="language-typescript">
-import * as compression from 'compression';
+<p>Once the installation is completed, apply it as a global middleware.</p>
+<pre><code class="language-typescript">
+import * as compression from &#39;compression&#39;;
 // somewhere in your initialization file
 app.use(compression());</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong>
-    If you work wtih <code>FastifyAdapter</code>, consider using <a href="hhttps://github.com/fastify/fastify-compress" target="blank">fastify-compress</a>
-    instead.
-  </blockquote>
-  <p>
-    For a <strong>high-traffic</strong> website in production, the best way to put compression in place is to implement it
-    at a reverse proxy level. In that case, you do not need to use compression middleware.
-  </p>
-</div>
+<blockquote class="
+info "><strong>Hint</strong> If you work with <code>FastifyAdapter</code>, consider using <a href="https://github.com/fastify/fastify-compress">fastify-compress</a> instead.
+</blockquote>
+<p>For a <strong>high-traffic</strong> website in production, the best way to put compression in place is to implement it at a reverse proxy level. In that case, you do not need to use compression middleware.</p>
+
+    </div>

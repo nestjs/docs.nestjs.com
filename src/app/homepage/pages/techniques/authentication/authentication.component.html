@@ -1,268 +1,379 @@
-<div class="content">
-  <h3>Authentication</h3>
-  <p>
-    Authentication is an
-    <strong>essential</strong> part of most existing applications. There are a lot of different approaches, strategies,
-    and
-    ways to handle user authorization. What we eventually decide to use depends on the particular application
-    requirements
-    and is strongly associated with their needs.
-  </p>
-  <p>
-    <a href="https://github.com/jaredhanson/passport" target="blank">Passport</a> is the most popular node.js
-    authentication
-    library, well-known by community and successively used in many production applications. It's really simple to
-    integrate
-    this tool with
-    <strong>Nest</strong> framework using dedicated passport utilities. For demonstration purposes, we'll set up both
-    <a href="https://github.com/jaredhanson/passport-http-bearer" target="blank">passport-http-bearer</a>
-    and <a href="https://github.com/themikenicholson/passport-jwt" target="blank">passport-jwt</a> strategy.
-  </p>
-  <h4>Installation</h4>
-  <p>
-    In order to start the adventure with this library, we have to install a few fundamental packages. Additionally,
-    we'll start
-    by implementing the bearer strategy, and thus we need to install <code>passport-http-bearer</code> package.
-  </p>
-  <pre><code class="language-bash">{{ dependencies }}</code></pre>
-  <h4>Bearer strategy</h4>
-  <p>
-    As has been said already, firstly, we'll implement <a href="https://github.com/jaredhanson/passport-http-bearer"
-      target="blank">passport-http-bearer</a>
-    library. Bearer tokens are typically used protect API endpoints, and are often issued using OAuth 2.0. The HTTP
-    Bearer authentication
-    strategy authenticates users using a bearer token.
-  </p>
-  <p>
-    Let's start by creating the <code>AuthService</code> class that will expose a single method,
-    <code>validateUser()</code> which responsibility is to query user using provided bearer <strong>token</strong>.
-  </p>
-  <span class="filename">
-    {{ 'auth.service' | extension: authServiceT.isJsActive }}
-    <app-tabs #authServiceT></app-tabs>
-  </span>
-  <pre [class.hide]="authServiceT.isJsActive"><code class="language-typescript">{{ authService }}</code></pre>
-  <pre [class.hide]="!authServiceT.isJsActive"><code class="language-typescript">{{ authServiceJs }}</code></pre>
-  <p>
-    The <code>validateUser()</code> method takes <code>token</code> as an argument. This token is extracted from <code>Authorization</code>
-    header
-    that has been passed along with HTTP request. The <code>findOneByToken()</code> method's responsibility is to
-    validate
-    if passed token truly exists and is associated with any registered account in the database.
-  </p>
-  <p>
-    Once <code>AuthService</code> class is done, we have to create a corresponding <strong>strategy</strong> that
-    passport
-    will use to authenticate requests.
-  </p>
-  <span class="filename">
-    {{ 'http.strategy' | extension: httpStrategyT.isJsActive }}
-    <app-tabs #httpStrategyT></app-tabs>
-  </span>
-  <pre [class.hide]="httpStrategyT.isJsActive"><code class="language-typescript">{{ httpStrategy }}</code></pre>
-  <pre [class.hide]="!httpStrategyT.isJsActive"><code class="language-typescript">{{ httpStrategyJs }}</code></pre>
-  <p>
-    The <code>HttpStrategy</code> uses <code>AuthService</code> to validate the token. When the token is valid,
-    passport
-    allows further request processing. Otherwise, the user receives <code>401 Unauthorized</code> response.
-  </p>
-  <p>
-    Afterward, we can create the <code>AuthModule</code>.
-  </p>
-  <span class="filename">
-    {{ 'auth.module' | extension: authModuleT.isJsActive }}
-    <app-tabs #authModuleT></app-tabs>
-  </span>
-  <pre [class.hide]="authModuleT.isJsActive"><code class="language-typescript">{{ authModule }}</code></pre>
-  <pre [class.hide]="!authModuleT.isJsActive"><code class="language-typescript">{{ authModuleJs }}</code></pre>
-  <blockquote class="warning">
-    <strong>Notice</strong> In order to make use of <code>UsersService</code>, the <code>AuthModule</code> imports
-    <code>UsersModule</code>.
-    The internal implementation is unimportant here and heavily depends on your technical project requirements (e.g.
-    database).
-  </blockquote>
-  <p>
-    Then, you can simply use the <code>AuthGuard</code> wherever you want to enable the authentication.
-  </p>
-  <pre><code class="language-typescript">{{ useGuards }}</code></pre>
-  <p>
-    The <code>@AuthGuard()</code> is imported from <code>@nestjs/passport</code> package. Also, <code>bearer</code> is
-    a
-    name of the strategy that passport will make use of. Let us check if endpoint is effectively secured. To ensure
-    that
-    everything work correctly, we'll perform a GET request to the <code>users</code> resource without setting a valid
-    token.
-  </p>
-  <pre><code class="language-bash">
-$ curl localhost:3000/users</code></pre>
-  <p>
-    Application should respond with <code>401 Unauthorized</code> status code and following response body:
-  </p>
-  <pre><code class="language-typescript">
-"statusCode": 401,
-"error": "Unauthorized"</code></pre>
-  <p>
-    If you create a valid token beforehand and pass it along with the HTTP request, the application will respectively
-    identify
-    a user, attach its object to the request, and allow further request processing.
-  </p>
-  <pre><code class="language-bash">
-$ curl localhost:3000/users -H "Authorization: Bearer TOKEN"</code></pre>
-  <h4>Default strategy</h4>
-  <p>
-    To determine default passport behavior, you can register the <code>PassportModule</code>.
-  </p>
-  <span class="filename">
-    {{ 'auth.module' | extension: passportModuleT.isJsActive }}
-    <app-tabs #passportModuleT></app-tabs>
-  </span>
-  <pre [class.hide]="passportModuleT.isJsActive"><code class="language-typescript">{{ passportModule }}</code></pre>
-  <pre [class.hide]="!passportModuleT.isJsActive"><code class="language-typescript">{{ passportModuleJs }}</code></pre>
-  <p>
-    Once you set <code>defaultStrategy</code>, you no longer need to manually pass the strategy name in the <code>@AuthGuard()</code>
-    decorator.
-  </p>
-  <pre><code class="language-typescript">{{ useGuardsDefault }}</code></pre>
-  <h4>User object</h4>
-  <p>
-    When request is validated correctly, the user entity will be attached to the request object and accessible through
-    <code>user</code> property (e.g. <code>req.user</code>). To change the property name, set <code>property</code> of
-    the
-    options object.
-  </p>
-  <pre><code class="language-typescript">{{ userObject }}</code></pre>
-  <h4>Customize passport</h4>
-  <p>
-    Depending on the strategy that is being used, passport takes a bunch of properties that shape the library behavior.
-    Use <code>register()</code> method
-    to pass down options object directly to the passport instance.
-  </p>
-  <pre><code class="language-typescript">{{ passportOptions }}</code></pre>
-  <h4>Inheritance</h4>
-  <p>
-    In most cases, <code>AuthGuard</code> will be sufficient. However, in order to adjust either default error handling
-    or
-    authentication logic, you can extend the class and override methods within a subclass.
-  </p>
-  <pre><code class="language-typescript">{{ inheritance }}</code></pre>
-  <h4>JWT strategy</h4>
-  <p>
-    A second described approach is to authenticate endpoints using a <strong>JSON web token</strong> (JWT). To
-    implement
-    a JWT-based authentication flow, we need to install required packages.
-  </p>
-  <pre><code class="language-bash">
-$ npm install --save @nestjs/jwt passport-jwt</code></pre>
-  <p>
-    Once the installation process is done, we can focus on <code>AuthService</code> class. We need to switch from the
-    token
-    validation to a payload-based validation logic as well as provide a way to create a JWT token for the particular
-    user
-    which then could be used to authenticate the incoming request.
-  </p>
-  <span class="filename">
-    {{ 'auth.service' | extension: authServiceJwtT.isJsActive }}
-    <app-tabs #authServiceJwtT></app-tabs>
-  </span>
-  <pre [class.hide]="authServiceJwtT.isJsActive"><code class="language-typescript">{{ authServiceJwt }}</code></pre>
-  <pre [class.hide]="!authServiceJwtT.isJsActive"><code class="language-typescript">{{ authServiceJwtJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong>
-    The <code>JwtPayload</code> is an interface with a single property, an <code>email</code>, and represents decoded
-    JWT
-    token.
-  </blockquote>
-  <p>
-    In order to simplify an example, we created a fake user. The second step is to create a corresponding <code>JwtStrategy</code>.
-  </p>
-  <span class="filename">
-    {{ 'jwt.strategy' | extension: jwtStrategyT.isJsActive }}
-    <app-tabs #jwtStrategyT></app-tabs>
-  </span>
-  <pre [class.hide]="jwtStrategyT.isJsActive"><code class="language-typescript">{{ jwtStrategy }}</code></pre>
-  <pre [class.hide]="!jwtStrategyT.isJsActive"><code class="language-typescript">{{ jwtStrategyJs }}</code></pre>
-  <p>
-    The <code>JwtStrategy</code> uses <code>AuthService</code> to validate the decoded payload. When the payload is
-    valid
-    (user exists), passport allows further request processing. Otherwise, the user receives <code>401 (Unauthorized)</code>
-    response.
-  </p>
-  <p>
-    Afterward, we can move to the <code>AuthModule</code>.
-  </p>
-  <span class="filename">
-    {{ 'auth.module' | extension: authModuleJwtT.isJsActive }}
-    <app-tabs #authModuleJwtT></app-tabs>
-  </span>
-  <pre [class.hide]="authModuleJwtT.isJsActive"><code class="language-typescript">{{ authModuleJwt }}</code></pre>
-  <pre [class.hide]="!authModuleJwtT.isJsActive"><code class="language-typescript">{{ authModuleJwtJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> In order to make use of <code>UsersService</code>, the <code>AuthModule</code> imports <code>UsersModule</code>.
-    The internal implementation is unimportant here. Besides, <code>JwtModule</code> has been registered statically. To
-    switch
-    to asynchronous configuration, read more <a href="https://github.com/nestjs/passport" target="blank">here</a>.
-  </blockquote>
-  <p>
-    Both expiration time and <code>secretKey</code> are hardcoded (in a real-world application you should rather
-    consider
-    using environment variables).
-  </p>
-  <p>
-    Then, you can simply use the <code>AuthGuard</code> wherever you want to enable the authentication.
-  </p>
-  <pre><code class="language-typescript">{{ useGuardsJwt }}</code></pre>
-  <p>
-    Let us check if endpoint is effectively secured. To ensure that everything work correctly, we'll perform a GET
-    request to
-    the <code>users</code> resource without setting a valid token.
-  </p>
-  <pre><code class="language-bash">
-$ curl localhost:3000/users</code></pre>
-  <p>
-    Application should respond with <code>401 Unauthorized</code> status code and following response body:
-  </p>
-  <pre><code class="language-typescript">
-"statusCode": 401,
-"error": "Unauthorized"</code></pre>
-  <p>
-    If you create a valid token beforehand and pass it along with the HTTP request, the application will respectively
-    identify
-    a user, attach its object to the request, and allow further request processing.
-  </p>
-  <pre><code class="language-bash">
-$ curl localhost:3000/users -H "Authorization: Bearer TOKEN"</code></pre>
-  <h4>Example</h4>
-  <p>
-    A full working example is available
-    <a href="https://github.com/nestjs/nest/tree/master/sample/19-auth" target="blank">here</a>.
-  </p>
-  <h4>Multiple strategies</h4>
-  <p>
-    Usually, you'll end up with single strategy reused across the whole application. However, there might be cases when
-    you'd
-    prefer to use different strategies for different scopes. In the case of multiple strategies, pass the second
-    argument
-    to the <code>PassportStrategy</code> function. Generally, this argument is a name of the strategy.
-  </p>
-  <pre><code class="language-typescript">{{ multipleStrategies }}</code></pre>
-  <p>
-    In above example, the <code>jwt</code> becomes the name of the <code>JwtStrategy</code>. Afterward, you can use
-    <code>@AuthGuard('jwt')</code>,
-    just the same as before.
-  </p>
-  <h4>GraphQL</h4>
-  <p>
-    In order to use <code>AuthGuard</code> together with <a routerLink="/graphql/quick-start">GraphQL</a>, you have to
-    extend the built-in <code>AuthGuard</code> class and override <code>getRequest()</code> method.
-  </p>
-  <pre><code class="language-typescript">{{ graphQl }}</code></pre>
-  <p>
-    We assumed that <code>req</code> (request) has been passed as a part of the context value.
-    We have to set this behavior in the module settings.
-  </p>
-  <pre><code class="language-typescript">{{ requestInContext }}</code></pre>
-  <p>
-    And now, context value will have <code>req</code> property.
-  </p>
+<div class="content" #contentReference>
+      <h3 id="authentication">Authentication</h3>
+<p>Authentication is an <strong>essential</strong> part of most existing applications. There are a lot of different approaches, strategies, and ways to handle user authorization. What we eventually decide to use depends on the particular application requirements and is strongly associated with their needs.</p>
+<p><a href="https://github.com/jaredhanson/passport">Passport</a> is the most popular node.js authentication library, well-known by community and successively used in many production applications. It&#39;s really simple to integrate this tool with <strong>Nest</strong> framework using dedicated passport utilities. For demonstration purposes, we&#39;ll set up both <a href="https://github.com/jaredhanson/passport-http-bearer">passport-http-bearer</a> and <a href="https://github.com/themikenicholson/passport-jwt">passport-jwt</a> strategy.</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>In order to start the adventure with this library, we have to install a few fundamental packages. Additionally, we&#39;ll start by implementing the bearer strategy, and thus we need to install <code>passport-http-bearer</code> package.</p>
+<pre><code class="language-bash">
+$ npm install --save @nestjs/passport passport passport-http-bearer</code></pre>
+<h4 appAnchor id="bearer-strategy"><span>Bearer strategy</span></h4>
+<p>As has been said already, firstly, we&#39;ll implement <a href="https://github.com/jaredhanson/passport-http-bearer">passport-http-bearer</a> library. Bearer tokens are typically used to protect API endpoints, and are often issued using OAuth 2.0. The HTTP Bearer authentication strategy authenticates users using a bearer token.</p>
+<p>Let&#39;s start by creating the <code>AuthService</code> class that will expose a single method, <code>validateUser()</code> which responsibility is to query user using provided bearer <strong>token</strong>.</p>
 
-</div>
+<span class="filename">
+  {{ 'auth.service' | extension: app0f376b280763a24f2c5e4982b9e8adb01f052f8e.isJsActive }}
+<app-tabs #app0f376b280763a24f2c5e4982b9e8adb01f052f8e></app-tabs>
+</span><pre [class.hide]="app0f376b280763a24f2c5e4982b9e8adb01f052f8e.isJsActive"><code class="language-typescript">
+import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
+import &#123; UsersService &#125; from &#39;../users/users.service&#39;;
+
+@Injectable()
+export class AuthService &#123;
+  constructor(private readonly usersService: UsersService) &#123;&#125;
+
+  async validateUser(token: string): Promise&lt;any&gt; &#123;
+    // Validate if token passed along with HTTP request
+    // is associated with any registered account in the database
+    return await this.usersService.findOneByToken(token);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app0f376b280763a24f2c5e4982b9e8adb01f052f8e.isJsActive"><code class="language-typescript">
+import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
+import &#123; UsersService &#125; from &#39;../users/users.service&#39;;
+
+@Injectable()
+@Dependencies(UsersService)
+export class AuthService &#123;
+  constructor(usersService) &#123;
+    this.usersService = usersService;
+  &#125;
+
+  async validateUser(token) &#123;
+    // Validate if token passed along with HTTP request
+    // is associated with any registered account in the database
+    return await this.usersService.findOneByToken(token);
+  &#125;
+&#125;</code></pre><p>The <code>validateUser()</code> method takes <code>token</code> as an argument. This token is extracted from <code>Authorization</code> header that has been passed along with HTTP request. The <code>findOneByToken()</code> method&#39;s responsibility is to validate if passed token truly exists and is associated with any registered account in the database.</p>
+<p>Once <code>AuthService</code> class is done, we have to create a corresponding <strong>strategy</strong> that passport will use to authenticate requests.</p>
+
+<span class="filename">
+  {{ 'http.strategy' | extension: app8838f27baef52a10008716578b6b531db9282186.isJsActive }}
+<app-tabs #app8838f27baef52a10008716578b6b531db9282186></app-tabs>
+</span><pre [class.hide]="app8838f27baef52a10008716578b6b531db9282186.isJsActive"><code class="language-typescript">
+import &#123; Strategy &#125; from &#39;passport-http-bearer&#39;;
+import &#123; PassportStrategy &#125; from &#39;@nestjs/passport&#39;;
+import &#123; Injectable, UnauthorizedException &#125; from &#39;@nestjs/common&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+
+@Injectable()
+export class HttpStrategy extends PassportStrategy(Strategy) &#123;
+  constructor(private readonly authService: AuthService) &#123;
+    super();
+  &#125;
+
+  async validate(token: string) &#123;
+    const user = await this.authService.validateUser(token);
+    if (!user) &#123;
+      throw new UnauthorizedException();
+    &#125;
+    return user;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app8838f27baef52a10008716578b6b531db9282186.isJsActive"><code class="language-typescript">
+import &#123; Strategy &#125; from &#39;passport-http-bearer&#39;;
+import &#123; PassportStrategy &#125; from &#39;@nestjs/passport&#39;;
+import &#123; Injectable, Dependencies, UnauthorizedException &#125; from &#39;@nestjs/common&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+
+@Injectable()
+@Dependencies(AuthService)
+export class HttpStrategy extends PassportStrategy(Strategy) &#123;
+  constructor(authService) &#123;
+    super();
+    this.authService = authService;
+  &#125;
+
+  async validate(token) &#123;
+    const user = await this.authService.validateUser(token);
+    if (!user) &#123;
+      throw new UnauthorizedException();
+    &#125;
+    return user;
+  &#125;
+&#125;</code></pre><p>The <code>HttpStrategy</code> uses <code>AuthService</code> to validate the token. When the token is valid, passport allows further request processing. Otherwise, the user receives <code>401 Unauthorized</code> response.</p>
+<p>Afterwards, we can create the <code>AuthModule</code>.</p>
+
+<span class="filename">
+  {{ 'auth.module' | extension: app9d38b9c1454ee611239d61a85eeacb5d5d8112e5.isJsActive }}
+<app-tabs #app9d38b9c1454ee611239d61a85eeacb5d5d8112e5></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+import &#123; HttpStrategy &#125; from &#39;./http.strategy&#39;;
+import &#123; UsersModule &#125; from &#39;../users/users.module&#39;;
+
+@Module(&#123;
+  imports: [UsersModule],
+  providers: [AuthService, HttpStrategy],
+&#125;)
+export class AuthModule &#123;&#125;</code></pre><blockquote class="
+warning "><strong>Notice</strong> In order to make use of <code>UsersService</code>, the <code>AuthModule</code> imports <code>UsersModule</code>. The internal implementation is unimportant here and heavily depends on your technical project requirements (e.g. database).
+</blockquote>
+<p>Then, you can simply use the <code>AuthGuard</code> wherever you want to enable the authentication.</p>
+<pre><code class="language-typescript">
+@Get(&#39;users&#39;)
+@UseGuards(AuthGuard(&#39;bearer&#39;))
+findAll() &#123;
+  return [];
+&#125;</code></pre>
+<p>The <code>@AuthGuard()</code> is imported from <code>@nestjs/passport</code> package. Also, <code>bearer</code> is a name of the strategy that passport will make use of. Let us check if endpoint is effectively secured. To ensure that everything work correctly, we&#39;ll perform a GET request to the <code>users</code> resource without setting a valid token.</p>
+<pre><code class="language-bash">
+$ curl localhost:3000/users</code></pre>
+<p>Application should respond with <code>401 Unauthorized</code> status code and following response body:</p>
+<pre><code class="language-typescript">
+&quot;statusCode&quot;: 401,
+&quot;error&quot;: &quot;Unauthorized&quot;</code></pre>
+<p>If you create a valid token beforehand and pass it along with the HTTP request, the application will respectively identify a user, attach its object to the request, and allow further request processing.</p>
+<pre><code class="language-bash">
+$ curl localhost:3000/users -H &quot;Authorization: Bearer TOKEN&quot;</code></pre>
+<h4 appAnchor id="default-strategy"><span>Default strategy</span></h4>
+<p>To determine default passport behavior, you can register the <code>PassportModule</code>.</p>
+
+<span class="filename">
+  {{ 'auth.module' | extension: appa81e70dceb4296fb6313eb0081d3d87ad408e0bc.isJsActive }}
+<app-tabs #appa81e70dceb4296fb6313eb0081d3d87ad408e0bc></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+import &#123; HttpStrategy &#125; from &#39;./http.strategy&#39;;
+import &#123; UsersModule &#125; from &#39;../users/users.module&#39;;
+import &#123; PassportModule &#125; from &#39;@nestjs/passport&#39;;
+
+@Module(&#123;
+  imports: [
+    PassportModule.register(&#123; defaultStrategy: &#39;bearer&#39; &#125;),
+    UsersModule,
+  ],
+  providers: [AuthService, HttpStrategy],
+  exports: [PassportModule, AuthService]
+&#125;)
+export class AuthModule &#123;&#125;</code></pre><p>Once you set <code>defaultStrategy</code>, you no longer need to manually pass the strategy name in the <code>@AuthGuard()</code> decorator.</p>
+<pre><code class="language-typescript">
+@Get(&#39;users&#39;)
+@UseGuards(AuthGuard())
+findAll() &#123;
+  return [];
+&#125;</code></pre>
+<blockquote class="
+warning "><strong>Notice</strong> Keep in mind that either <code>PassportModule</code> or <code>AuthModule</code> has to be imported by every module that makes use of the <code>AuthGuard</code>.
+</blockquote>
+<h4 appAnchor id="user-object"><span>User object</span></h4>
+<p>When request is validated correctly, the user entity will be attached to the request object and accessible through <code>user</code> property (e.g. <code>req.user</code>). To change the property name, set <code>property</code> of the options object.</p>
+<pre><code class="language-typescript">
+PassportModule.register(&#123; property: &#39;profile&#39; &#125;);</code></pre>
+<h4 appAnchor id="customize-passport"><span>Customize passport</span></h4>
+<p>Depending on the strategy that is being used, passport takes a bunch of properties that shape the library behavior. Use <code>register()</code> method to pass down options object directly to the passport instance.</p>
+<pre><code class="language-typescript">
+PassportModule.register(&#123; session: true &#125;);</code></pre>
+<h4 appAnchor id="inheritance"><span>Inheritance</span></h4>
+<p>In most cases, <code>AuthGuard</code> will be sufficient. However, in order to adjust either default error handling or authentication logic, you can extend the class and override methods within a subclass.</p>
+<pre><code class="language-typescript">
+import &#123;
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+&#125; from &#39;@nestjs/common&#39;;
+import &#123; AuthGuard &#125; from &#39;@nestjs/passport&#39;;
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard(&#39;jwt&#39;) &#123;
+  canActivate(context: ExecutionContext) &#123;
+    // Add your custom authentication logic here
+    // for example, call super.logIn(request) to establish a session.
+    return super.canActivate(context);
+  &#125;
+
+  handleRequest(err, user, info) &#123;
+    if (err || !user) &#123;
+      throw err || new UnauthorizedException();
+    &#125;
+    return user;
+  &#125;
+&#125;</code></pre>
+<h4 appAnchor id="jwt-strategy"><span>JWT strategy</span></h4>
+<p>A second described approach is to authenticate endpoints using a <strong>JSON web token</strong> (JWT). To implement a JWT-based authentication flow, we need to install required packages.</p>
+<pre><code class="language-bash">
+$ npm install --save @nestjs/jwt passport-jwt</code></pre>
+<p>Once the installation process is done, we can focus on <code>AuthService</code> class. We need to switch from the token validation to a payload-based validation logic as well as provide a way to create a JWT token for the particular user which then could be used to authenticate the incoming request.</p>
+
+<span class="filename">
+  {{ 'auth.service' | extension: app9edba91537f92464458e432e031fe87ce2c3c95f.isJsActive }}
+<app-tabs #app9edba91537f92464458e432e031fe87ce2c3c95f></app-tabs>
+</span><pre [class.hide]="app9edba91537f92464458e432e031fe87ce2c3c95f.isJsActive"><code class="language-typescript">
+import &#123; JwtService &#125; from &#39;@nestjs/jwt&#39;;
+import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
+import &#123; UsersService &#125; from &#39;../users/users.service&#39;;
+import &#123; JwtPayload &#125; from &#39;./interfaces/jwt-payload.interface&#39;;
+
+@Injectable()
+export class AuthService &#123;
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) &#123;&#125;
+
+  async signIn(): Promise&lt;string&gt; &#123;
+    // In the real-world app you shouldn&#39;t expose this method publicly
+    // instead, return a token once you verify user credentials
+    const user: JwtPayload = &#123; email: &#39;user@email.com&#39; &#125;;
+    return this.jwtService.sign(user);
+  &#125;
+
+  async validateUser(payload: JwtPayload): Promise&lt;any&gt; &#123;
+    return await this.usersService.findOneByEmail(payload.email);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app9edba91537f92464458e432e031fe87ce2c3c95f.isJsActive"><code class="language-typescript">
+import &#123; JwtService &#125; from &#39;@nestjs/jwt&#39;;
+import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
+import &#123; UsersService &#125; from &#39;../users/users.service&#39;;
+import &#123; JwtPayload &#125; from &#39;./interfaces/jwt-payload.interface&#39;;
+
+@Injectable()
+@Dependencies(UsersService, JwtService)
+export class AuthService &#123;
+  constructor(usersService, jwtService) &#123;
+    this.usersService = usersService;
+    this.jwtService = jwtService;
+  &#125;
+
+  async signIn() &#123;
+    // In the real-world app you shouldn&#39;t expose this method publicly
+    // instead, return a token once you verify user credentials
+    const user = &#123; email: &#39;user@email.com&#39; &#125;;
+    return this.jwtService.sign(user);
+  &#125;
+
+  async validateUser(payload) &#123;
+    return await this.usersService.findOneByEmail(payload.email);
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> The <code>JwtPayload</code> is an interface with a single property, an <code>email</code>, and represents decoded JWT token.
+</blockquote>
+<p>In order to simplify an example, we created a fake user. The second step is to create a corresponding <code>JwtStrategy</code>.</p>
+
+<span class="filename">
+  {{ 'jwt.strategy' | extension: app53c15aca8b967049be9126050610a891c8cde1b9.isJsActive }}
+<app-tabs #app53c15aca8b967049be9126050610a891c8cde1b9></app-tabs>
+</span><pre [class.hide]="app53c15aca8b967049be9126050610a891c8cde1b9.isJsActive"><code class="language-typescript">
+import &#123; ExtractJwt, Strategy &#125; from &#39;passport-jwt&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+import &#123; PassportStrategy &#125; from &#39;@nestjs/passport&#39;;
+import &#123; Injectable, UnauthorizedException &#125; from &#39;@nestjs/common&#39;;
+import &#123; JwtPayload &#125; from &#39;./interfaces/jwt-payload.interface&#39;;
+
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) &#123;
+  constructor(private readonly authService: AuthService) &#123;
+    super(&#123;
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: &#39;secretKey&#39;,
+    &#125;);
+  &#125;
+
+  async validate(payload: JwtPayload) &#123;
+    const user = await this.authService.validateUser(payload);
+    if (!user) &#123;
+      throw new UnauthorizedException();
+    &#125;
+    return user;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app53c15aca8b967049be9126050610a891c8cde1b9.isJsActive"><code class="language-typescript">
+import &#123; ExtractJwt, Strategy &#125; from &#39;passport-jwt&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+import &#123; PassportStrategy &#125; from &#39;@nestjs/passport&#39;;
+import &#123; Injectable, Dependencies, UnauthorizedException &#125; from &#39;@nestjs/common&#39;;
+
+@Injectable()
+@Dependencies(AuthService)
+export class JwtStrategy extends PassportStrategy(Strategy) &#123;
+  constructor(authService) &#123;
+    super(&#123;
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: &#39;secretKey&#39;,
+    &#125;);
+    this.authService = authService;
+  &#125;
+
+  async validate(payload, done) &#123;
+    const user = await this.authService.validateUser(payload);
+    if (!user) &#123;
+      return done(new UnauthorizedException(), false);
+    &#125;
+    done(null, user);
+  &#125;
+&#125;</code></pre><p>The <code>JwtStrategy</code> uses <code>AuthService</code> to validate the decoded payload. When the payload is valid (user exists), passport allows further request processing. Otherwise, the user receives <code>401 (Unauthorized)</code> response.</p>
+<p>Afterward, we can move to the <code>AuthModule</code>.</p>
+
+<span class="filename">
+  {{ 'auth.module' | extension: app3fb76d641764b314a377431629cd0a0b54e427f1.isJsActive }}
+<app-tabs #app3fb76d641764b314a377431629cd0a0b54e427f1></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; JwtModule &#125; from &#39;@nestjs/jwt&#39;;
+import &#123; AuthService &#125; from &#39;./auth.service&#39;;
+import &#123; JwtStrategy &#125; from &#39;./jwt.strategy&#39;;
+import &#123; UsersModule &#125; from &#39;../users/users.module&#39;;
+import &#123; PassportModule &#125; from &#39;@nestjs/passport&#39;;
+
+@Module(&#123;
+  imports: [
+    PassportModule.register(&#123; defaultStrategy: &#39;jwt&#39; &#125;),
+    JwtModule.register(&#123;
+      secretOrPrivateKey: &#39;secretKey&#39;,
+      signOptions: &#123;
+        expiresIn: 3600,
+      &#125;,
+    &#125;),
+    UsersModule,
+  ],
+  providers: [AuthService, JwtStrategy],
+  exports: [PassportModule, AuthService],
+&#125;)
+export class AuthModule &#123;&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> In order to make use of <code>UsersService</code>, the <code>AuthModule</code> imports <code>UsersModule</code>. The internal implementation is unimportant here. Besides, <code>JwtModule</code> has been registered statically. To switch to asynchronous configuration, read more <a href="https://github.com/nestjs/passport">here</a>.
+</blockquote>
+<p>Both expiration time and <code>secretKey</code> are hardcoded (in a real-world application you should rather consider using environment variables).</p>
+<p>Then, you can simply use the <code>AuthGuard</code> wherever you want to enable the authentication.</p>
+<pre><code class="language-typescript">
+@Get(&#39;users&#39;)
+@UseGuards(AuthGuard())
+findAll() &#123;
+  return [];
+&#125;</code></pre>
+<p>Let us check if endpoint is effectively secured. To ensure that everything work correctly, we&#39;ll perform a GET request to the <code>users</code> resource without setting a valid token.</p>
+<pre><code class="language-bash">
+$ curl localhost:3000/users</code></pre>
+<p>Application should respond with <code>401 Unauthorized</code> status code and following response body:</p>
+<pre><code class="language-typescript">
+&quot;statusCode&quot;: 401,
+&quot;error&quot;: &quot;Unauthorized&quot;</code></pre>
+<p>If you create a valid token beforehand and pass it along with the HTTP request, the application will respectively identify a user, attach its object to the request, and allow further request processing.</p>
+<pre><code class="language-bash">
+$ curl localhost:3000/users -H &quot;Authorization: Bearer TOKEN&quot;</code></pre>
+<h4 appAnchor id="example"><span>Example</span></h4>
+<p>A full working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/19-auth">here</a>.</p>
+<h4 appAnchor id="multiple-strategies"><span>Multiple strategies</span></h4>
+<p>Usually, you&#39;ll end up with single strategy reused across the whole application. However, there might be cases when you&#39;d prefer to use different strategies for different scopes. In the case of multiple strategies, pass the second argument to the <code>PassportStrategy</code> function. Generally, this argument is a name of the strategy.</p>
+<pre><code class="language-typescript">
+export class JwtStrategy extends PassportStrategy(Strategy, &#39;jwt&#39;)</code></pre>
+<p>In above example, the <code>jwt</code> becomes the name of the <code>JwtStrategy</code>. Afterward, you can use <code>@AuthGuard(&#39;jwt&#39;)</code>, just the same as before.</p>
+<h4 appAnchor id="graphql"><span>GraphQL</span></h4>
+<p>In order to use <code>AuthGuard</code> together with <a routerLink="/graphql/quick-start">GraphQL</a>, you have to extend the built-in <code>AuthGuard</code> class and override <code>getRequest()</code> method.</p>
+<pre><code class="language-typescript">
+@Injectable()
+export class GqlAuthGuard extends AuthGuard(&#39;jwt&#39;) &#123;
+  getRequest(context: ExecutionContext) &#123;
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  &#125;
+&#125;</code></pre>
+<p>We assumed that <code>req</code> (request) has been passed as a part of the context value. We have to set this behavior in the module settings.</p>
+<pre><code class="language-typescript">
+GraphQLModule.forRoot(&#123;
+  context: (&#123; req &#125;) =&gt; (&#123; req &#125;),
+&#125;);</code></pre>
+<p>And now, context value will have <code>req</code> property.</p>
+
+    </div>

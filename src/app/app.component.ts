@@ -26,7 +26,8 @@ export class AppComponent implements OnInit {
     if (!route) {
       return undefined;
     }
-    const childRoute = route.firstChild;
+    let childRoute = route.firstChild;
+    childRoute = childRoute.firstChild ? childRoute.firstChild : childRoute;
     const {
       data: { title },
     } = childRoute;

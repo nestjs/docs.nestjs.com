@@ -19,10 +19,10 @@
 .container {
   @extend .transition;
   @extend .box-sizing;
-  //@include transform(translateX(300px));
-  margin-left: 300px;
-  width: calc(100% - 300px);
-  padding: 85px 50px 90px;
+  //@include transform(translateX(265px));
+  margin-left: 265px;
+  width: calc(100% - 265px);
+  padding: 85px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -35,9 +35,10 @@
   }
 
   @include media(large) {
-    //@include transform(translateX(300px));
-    margin-left: 300px;
-    width: calc(100% - 300px);
+    //@include transform(translateX(265px));
+    margin-left: 265px;
+    width: calc(100% - 265px);
+    padding: 85px 50px 0;
     &.wide {
       width: 100%;
     }
@@ -75,14 +76,41 @@
     font-weight: 700;
     margin: 45px 0 20px;
   }
+  h4 {
+    font-weight: 600;
+    margin: 40px 0 -5px;
+  }
+  h3,
+  h4 {
+    a {
+      @include opacity(0);
+      padding-left: 0.35em;
+    }
+    span:hover + a,
+    span + a:hover {
+      @include opacity(1);
+    }
+    &::before {
+      content: '';
+      display: block;
+      position: relative;
+      width: 0;
+      height: 5em;
+      margin-top: -5em;
+      pointer-events: none;
+    }
+  }
   h5 {
     color: $grey-color;
-    margin-top: -12px;
+    margin-top: 5px;
     font-weight: 600;
     font-size: 16px;
   }
   h3:first-of-type {
     margin: 20px 0;
+  }
+  h3 + h5 {
+    margin-top: -10px !important;
   }
   p {
     text-align: justify;
@@ -140,8 +168,12 @@
 
   .logo-sponsor-small {
     width: 150px;
-    margin-right: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
+    display: block;
+  }
+
+  .logo-blueanchor {
+    width: 200px;
   }
 
   .btn-primary {
