@@ -65,6 +65,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://roche.com',
       width: '90px',
     },
+    {
+      logo: '/assets/logo/yanrongyun.svg',
+      url: 'http://www.yanrongyun.com',
+      width: '120px',
+    }
   ];
 
   readonly companiesUrls = [
