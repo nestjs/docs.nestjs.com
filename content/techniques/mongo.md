@@ -109,7 +109,6 @@ export class CatsService {
 Maybe sometime you will need the native [Mongoose Connection](https://mongoosejs.com/docs/api.html#Connection)
 (for an integration with an external library, or to use the native API). In such cases, use the `@InjectConnection` decorator:
 
-
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
