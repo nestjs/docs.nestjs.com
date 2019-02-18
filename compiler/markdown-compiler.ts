@@ -61,7 +61,7 @@ renderer.code = function(
 
 const originalLinkRenderer = renderer.link;
 renderer.link = (href: string, title: string, text: string) => {
-  if (!href.includes('http')) {
+  if (!href.includes('http') && !href.includes('mailto')) {
     return (originalLinkRenderer.call(
       renderer,
       href,

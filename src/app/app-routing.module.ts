@@ -7,6 +7,7 @@ import { ComponentsComponent } from './homepage/pages/components/components.comp
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
+import { EnterpriseComponent } from './homepage/pages/enterprise/enterprise.component';
 import { ExceptionFiltersComponent } from './homepage/pages/exception-filters/exception-filters.component';
 import { FirstStepsComponent } from './homepage/pages/first-steps/first-steps.component';
 import { GuardsComponent } from './homepage/pages/guards/guards.component';
@@ -100,6 +101,11 @@ const routes: Routes = [
         path: 'support',
         component: SupportComponent,
         data: { title: 'Support' },
+      },
+      {
+        path: 'enterprise',
+        component: EnterpriseComponent,
+        data: { title: 'Enterprise Support' },
       },
       {
         path: 'fundamentals',
