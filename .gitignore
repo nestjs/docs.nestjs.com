@@ -2,8 +2,8 @@
 
 # compiled output
 dist/*
+!/dist/v4
 !/dist/v5
-
 
 /tmp
 /out-tsc
