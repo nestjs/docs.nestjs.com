@@ -126,6 +126,7 @@ Once the packages are installed, we can move to our `ConfigService`.
 
 ```typescript
 @@filename(config.service)
+import * as dotenv from 'dotenv';
 import * as Joi from 'joi';
 import * as fs from 'fs';
 
