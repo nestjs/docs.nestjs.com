@@ -167,7 +167,7 @@ export class ApplicationModule {
 }
 ```
 
-> info **Hint** The `apply()` method may either take a single middleware, or an **array of middleware**.
+> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify **multiple middlewares**.
 
 Whilst class is used, quite often we might want to **exclude** certain routes. That is very intuitive due to the `exclude()` method.
 
