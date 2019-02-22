@@ -6,11 +6,13 @@
     "ng": "ng",
     "start": "ng serve --source-map=false",
     "build": "ng build --deleteOutputPath=false",
+    "prebuild:prod": "npm run markdown",
     "build:prod": "ng build --prod --aot --deleteOutputPath=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "compile-markdown": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts"
+    "markdown": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts",
+    "markdown:watch": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts --watch"
   },
   "private": true,
   "dependencies": {
@@ -34,6 +36,7 @@
     "@ultimate/ngxerrors": "^1.4.0",
     "angular2-highlight-js": "^6.0.1-alpha",
     "core-js": "^2.6.4",
+    "fast-glob": "^2.2.6",
     "hammerjs": "^2.0.8",
     "lodash": "^4.17.10",
     "ng2-prism": "^2.3.2",
@@ -43,6 +46,7 @@
     "prismjs": "^1.15.0",
     "rxjs": "^6.4.0",
     "rxjs-compat": "^6.4.0",
+    "yargs": "^13.2.1",
     "zone.js": "^0.8.29"
   },
   "devDependencies": {

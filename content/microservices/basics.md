@@ -168,24 +168,53 @@ The `handleUserCreated()` method is listening to `user_created` event. The event
 
 #### Client
 
-In order to either exchange messages or publish events to the Nest microservice, we are using the `ClientProxy` class which instance is assigned to a property through `@Client()` decorator. This decorator takes a single argument. It is the same object as a Nest microservice options object (passed in to the `createMicroservice()` method).
+In order to either exchange messages or publish events to the Nest microservice, we use the `ClientProxy` class which instance can be created in a few ways. Firstly, we may import the `ClientsModule` which exposes static `register()` method. This method takes an array as a parameter in which every element has a `name` (which is a sort of the microservice identifier) as well as microservice-specific options (it's the same object as this one passed in to the `createMicroservice()` method).
+
+```typescript
+ClientsModule.register([
+  { name: 'MATH_SERVICE', transport: Transport.TCP },
+]),
+```
+
+> info **Hint** The `ClientsModule` is imported from the `@nestjs/microservices` package.
+
+Once the module has been imported, we can inject `MATH_SERVICE` using the `@Inject()` decorator.
+
+```typescript
+constructor(
+  constructor(
+    @Inject('MATH_SERVICE') private readonly client: ClientProxy,
+  ) {}
+)
+```
+
+> info **Hint** The `ClientProxy` class is imported from the `@nestjs/microservices` package.
+
+Nonetheless, this approach doesn't allow us to asynchronously fetch the microservice configuration. In this case, we can directly use `ClientProxyFactory` to register a [custom provider](/techniques/custom-providers) (which is a client instance):
+
+```typescript
+{
+  provide: 'MATH_SERVICE',
+  useFactory: (configService: ConfigService) => {
+    const mathSvcOptions = configService.getMathSvcOptions();
+    return ClientProxyFactory.create(mathSvcOptions);
+  },
+  inject: [ConfigService],
+}
+```
+
+> info **Hint** The `ClientProxyFactory` is imported from the `@nestjs/microservices` package.
+
+The last feasible solution is to use the `@Client()` property decorator.
 
 ```typescript
 @Client({ transport: Transport.TCP })
 client: ClientProxy;
 ```
 
-> info **Hint** Both `@Client()` decorator and `ClientProxy` class are imported from the `@nestjs/microservices` package.
+> info **Hint** The `@Client()` is imported from the `@nestjs/microservices` package.
 
-Another solution would be to manually create the `ClientProxy` instance using the `ClientProxyFactory` (exported from `@nestjs/microservices` package).
-
-```typescript
-constructor() {
-  this.client = ClientProxyFactory.create({
-    transport: Transport.TCP
-  });
-}
-```
+However, using decorator is not a recommended way (hard to test, tough to share client instance).
 
 The `ClientProxy` is **lazy**. It doesn't initiate a connection immediately. Instead, it will be established before the first microservice call, and then reused across each subsequent call. However, if you want to delay an application bootstrapping process and manually initialize a connection, you can use a `connect()` method inside the `OnModuleInit` lifecycle hook.
 

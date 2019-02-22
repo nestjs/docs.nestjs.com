@@ -47,7 +47,7 @@ header {
     svg {
       width: 30px;
       height: 30px;
-      fill: #f3f5f7;
+      fill: #fff;
     }
   }
   @include media(medium) {
@@ -82,10 +82,10 @@ header {
   position: relative;
 
   a {
-    @extend .transition;
+    @extend .transition-fast;
     display: inline-block;
     vertical-align: middle;
-    color: $silver-color;
+    color: #fff;
     font-size: 22px;
     margin-left: 15px;
     cursor: pointer;
@@ -94,11 +94,56 @@ header {
       font-size: 20px;
     }
     &:hover {
-      color: $white-color;
+      color: $red-color;
     }
   }
   @include media(small) {
     display: none;
+  }
+}
+
+.menu-wrapper {
+  @extend .center-top;
+  position: relative;
+  float: right;
+  padding: 14px 25px;
+
+  ul {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  li {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 30px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    &:last-of-type a {
+      @include radius(2px);
+      padding: 4px 6px;
+      background: $red-color;
+
+      &:hover {
+        background: #262626;
+      }
+    }
+  }
+
+  a {
+    @extend .transition-fast;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+
+    &:hover {
+      color: $red-color;
+    }
   }
 }
 

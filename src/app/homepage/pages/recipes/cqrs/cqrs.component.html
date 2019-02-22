@@ -13,9 +13,9 @@
 <p>In order to make the application easier to understand, each change has to be preceded by <strong>Command</strong>. When any command is dispatched, the application has to react on it. Commands can be dispatched from the services (or directly from the controllers/gateways) and consumed in corresponding <strong>Command Handlers</strong>.</p>
 
 <span class="filename">
-  {{ 'heroes-game.service' | extension: app9a6fc34b181166efa1edd09bbf9e9a3f5cbfcc3e.isJsActive }}
-<app-tabs #app9a6fc34b181166efa1edd09bbf9e9a3f5cbfcc3e></app-tabs>
-</span><pre [class.hide]="app9a6fc34b181166efa1edd09bbf9e9a3f5cbfcc3e.isJsActive"><code class="language-typescript">
+  {{ 'heroes-game.service' | extension: app8d73d56b8c8f16e0e5fc111573d605e2b59bef01.isJsActive }}
+<app-tabs #app8d73d56b8c8f16e0e5fc111573d605e2b59bef01></app-tabs>
+</span><pre [class.hide]="app8d73d56b8c8f16e0e5fc111573d605e2b59bef01.isJsActive"><code class="language-typescript">
 @Injectable()
 export class HeroesGameService &#123;
   constructor(private readonly commandBus: CommandBus) &#123;&#125;
@@ -26,7 +26,7 @@ export class HeroesGameService &#123;
     );
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app9a6fc34b181166efa1edd09bbf9e9a3f5cbfcc3e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app8d73d56b8c8f16e0e5fc111573d605e2b59bef01.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(CommandBus)
 export class HeroesGameService &#123;
@@ -42,16 +42,16 @@ export class HeroesGameService &#123;
 &#125;</code></pre><p>Here&#39;s a sample service that dispatches <code>KillDragonCommand</code>. Let&#39;s see how the command looks like:</p>
 
 <span class="filename">
-  {{ 'kill-dragon.command' | extension: app27bc2d22c870a724ce743ec4a490772716bf7bdb.isJsActive }}
-<app-tabs #app27bc2d22c870a724ce743ec4a490772716bf7bdb></app-tabs>
-</span><pre [class.hide]="app27bc2d22c870a724ce743ec4a490772716bf7bdb.isJsActive"><code class="language-typescript">
+  {{ 'kill-dragon.command' | extension: app6745e787e7455111597c01dab65e8df786df1eb5.isJsActive }}
+<app-tabs #app6745e787e7455111597c01dab65e8df786df1eb5></app-tabs>
+</span><pre [class.hide]="app6745e787e7455111597c01dab65e8df786df1eb5.isJsActive"><code class="language-typescript">
 export class KillDragonCommand &#123;
   constructor(
     public readonly heroId: string,
     public readonly dragonId: string,
   ) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app27bc2d22c870a724ce743ec4a490772716bf7bdb.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app6745e787e7455111597c01dab65e8df786df1eb5.isJsActive"><code class="language-typescript">
 export class KillDragonCommand &#123;
   constructor(heroId, dragonId) &#123;
     this.heroId = heroId;
@@ -60,9 +60,9 @@ export class KillDragonCommand &#123;
 &#125;</code></pre><p>The <code>CommandBus</code> is a commands <strong>stream</strong>. It delegates commands to the equivalent handlers. Each command has to have corresponding <strong>Command Handler</strong>:</p>
 
 <span class="filename">
-  {{ 'kill-dragon.handler' | extension: appa4d5c7619a997d538728156ed74a7887aaa77330.isJsActive }}
-<app-tabs #appa4d5c7619a997d538728156ed74a7887aaa77330></app-tabs>
-</span><pre [class.hide]="appa4d5c7619a997d538728156ed74a7887aaa77330.isJsActive"><code class="language-typescript">
+  {{ 'kill-dragon.handler' | extension: app78ba949fe9a9262829a153c312fe1a6ee5891ed4.isJsActive }}
+<app-tabs #app78ba949fe9a9262829a153c312fe1a6ee5891ed4></app-tabs>
+</span><pre [class.hide]="app78ba949fe9a9262829a153c312fe1a6ee5891ed4.isJsActive"><code class="language-typescript">
 @CommandHandler(KillDragonCommand)
 export class KillDragonHandler implements ICommandHandler&lt;KillDragonCommand&gt; &#123;
   constructor(private readonly repository: HeroRepository) &#123;&#125;
@@ -75,7 +75,7 @@ export class KillDragonHandler implements ICommandHandler&lt;KillDragonCommand&g
     await this.repository.persist(hero);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appa4d5c7619a997d538728156ed74a7887aaa77330.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app78ba949fe9a9262829a153c312fe1a6ee5891ed4.isJsActive"><code class="language-typescript">
 @CommandHandler(KillDragonCommand)
 @Dependencies(HeroRepository)
 export class KillDragonHandler &#123;
@@ -95,16 +95,16 @@ export class KillDragonHandler &#123;
 <p>Since we have encapsulated commands in handlers, we prevent interaction between them - the application structure is still not flexible, not <strong>reactive</strong>. The solution is to use <strong>events</strong>.</p>
 
 <span class="filename">
-  {{ 'hero-killed-dragon.event' | extension: appdb1d2adc1f700c77c3fba3a1b8d1556d2b2b0219.isJsActive }}
-<app-tabs #appdb1d2adc1f700c77c3fba3a1b8d1556d2b2b0219></app-tabs>
-</span><pre [class.hide]="appdb1d2adc1f700c77c3fba3a1b8d1556d2b2b0219.isJsActive"><code class="language-typescript">
+  {{ 'hero-killed-dragon.event' | extension: appac54b73f6b970ebffc199581bbc41ec11a77c542.isJsActive }}
+<app-tabs #appac54b73f6b970ebffc199581bbc41ec11a77c542></app-tabs>
+</span><pre [class.hide]="appac54b73f6b970ebffc199581bbc41ec11a77c542.isJsActive"><code class="language-typescript">
 export class HeroKilledDragonEvent &#123;
   constructor(
     public readonly heroId: string,
     public readonly dragonId: string,
   ) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!appdb1d2adc1f700c77c3fba3a1b8d1556d2b2b0219.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appac54b73f6b970ebffc199581bbc41ec11a77c542.isJsActive"><code class="language-typescript">
 export class HeroKilledDragonEvent &#123;
   constructor(heroId, dragonId) &#123;
     this.heroId = heroId;
@@ -113,9 +113,9 @@ export class HeroKilledDragonEvent &#123;
 &#125;</code></pre><p>Events are asynchronous. They are dispatched either by <strong>models</strong> or directly using <code>EventBus</code>. In order to dispatch events, models have to extend the <code>AggregateRoot</code> class.</p>
 
 <span class="filename">
-  {{ 'hero.model' | extension: app14f0f0abaf1056004a74bbd6772f17959649238d.isJsActive }}
-<app-tabs #app14f0f0abaf1056004a74bbd6772f17959649238d></app-tabs>
-</span><pre [class.hide]="app14f0f0abaf1056004a74bbd6772f17959649238d.isJsActive"><code class="language-typescript">
+  {{ 'hero.model' | extension: app9aa5fe6c72b73c67a33128d7576219238714748d.isJsActive }}
+<app-tabs #app9aa5fe6c72b73c67a33128d7576219238714748d></app-tabs>
+</span><pre [class.hide]="app9aa5fe6c72b73c67a33128d7576219238714748d.isJsActive"><code class="language-typescript">
 export class Hero extends AggregateRoot &#123;
   constructor(private readonly id: string) &#123;
     super();
@@ -126,7 +126,7 @@ export class Hero extends AggregateRoot &#123;
     this.apply(new HeroKilledDragonEvent(this.id, enemyId));
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app14f0f0abaf1056004a74bbd6772f17959649238d.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app9aa5fe6c72b73c67a33128d7576219238714748d.isJsActive"><code class="language-typescript">
 export class Hero extends AggregateRoot &#123;
   constructor(id) &#123;
     super();
@@ -140,9 +140,9 @@ export class Hero extends AggregateRoot &#123;
 &#125;</code></pre><p>The <code>apply()</code> method does not dispatch events yet because there&#39;s no relationship between model and the <code>EventPublisher</code> class. How to associate the model and the publisher? We need to use a publisher <code>mergeObjectContext()</code> method inside our command handler.</p>
 
 <span class="filename">
-  {{ 'kill-dragon.handler' | extension: appc699fd50a64278e37ea68307460ab58ce8168782.isJsActive }}
-<app-tabs #appc699fd50a64278e37ea68307460ab58ce8168782></app-tabs>
-</span><pre [class.hide]="appc699fd50a64278e37ea68307460ab58ce8168782.isJsActive"><code class="language-typescript">
+  {{ 'kill-dragon.handler' | extension: appceab78c98c2c3abbab445bfcceac7efda919a50b.isJsActive }}
+<app-tabs #appceab78c98c2c3abbab445bfcceac7efda919a50b></app-tabs>
+</span><pre [class.hide]="appceab78c98c2c3abbab445bfcceac7efda919a50b.isJsActive"><code class="language-typescript">
 @CommandHandler(KillDragonCommand)
 export class KillDragonHandler implements ICommandHandler&lt;KillDragonCommand&gt; &#123;
   constructor(
@@ -159,7 +159,7 @@ export class KillDragonHandler implements ICommandHandler&lt;KillDragonCommand&g
     hero.commit();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appc699fd50a64278e37ea68307460ab58ce8168782.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appceab78c98c2c3abbab445bfcceac7efda919a50b.isJsActive"><code class="language-typescript">
 @CommandHandler(KillDragonCommand)
 @Dependencies(HeroRepository, EventPublisher)
 export class KillDragonHandler &#123;
@@ -189,8 +189,8 @@ info "><strong>Hint</strong> The <code>EventBus</code> is an injectable class.
 <p>Each event can have multiple <strong>Event Handlers</strong>.</p>
 
 <span class="filename">
-  {{ 'hero-killed-dragon.handler' | extension: app75a7d3fd5af3a7aa9847ab307c6c6a4d049cbb57.isJsActive }}
-<app-tabs #app75a7d3fd5af3a7aa9847ab307c6c6a4d049cbb57></app-tabs>
+  {{ 'hero-killed-dragon.handler' | extension: app1daece143839092101f0114696f727cfb784cd8d.isJsActive }}
+<app-tabs #app1daece143839092101f0114696f727cfb784cd8d></app-tabs>
 </span><pre><code class="language-typescript">
 @EventsHandler(HeroKilledDragonEvent)
 export class HeroKilledDragonHandler implements IEventHandler&lt;HeroKilledDragonEvent&gt; &#123;
@@ -205,9 +205,9 @@ export class HeroKilledDragonHandler implements IEventHandler&lt;HeroKilledDrago
 <p>The sagas are an incredibly powerful feature. Single saga may listen for 1..* events. It can combine, merge, filter [...] events streams. <a href="https://github.com/ReactiveX/rxjs">RxJS</a> library is the place where the magic comes from. In simple words, each saga has to return an Observable which contains a command. This command is dispatched <strong>asynchronously</strong>.</p>
 
 <span class="filename">
-  {{ 'heroes-game.saga' | extension: appfdee00ed1bedf444c1df8fd6eea4ab5c9c6c5726.isJsActive }}
-<app-tabs #appfdee00ed1bedf444c1df8fd6eea4ab5c9c6c5726></app-tabs>
-</span><pre [class.hide]="appfdee00ed1bedf444c1df8fd6eea4ab5c9c6c5726.isJsActive"><code class="language-typescript">
+  {{ 'heroes-game.saga' | extension: appf2420f7180c79dbdf11c60771130e1af59bd8386.isJsActive }}
+<app-tabs #appf2420f7180c79dbdf11c60771130e1af59bd8386></app-tabs>
+</span><pre [class.hide]="appf2420f7180c79dbdf11c60771130e1af59bd8386.isJsActive"><code class="language-typescript">
 @Injectable()
 export class HeroesGameSagas &#123;
   @Saga()
@@ -218,7 +218,7 @@ export class HeroesGameSagas &#123;
     );
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appfdee00ed1bedf444c1df8fd6eea4ab5c9c6c5726.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf2420f7180c79dbdf11c60771130e1af59bd8386.isJsActive"><code class="language-typescript">
 @Injectable()
 export class HeroesGameSagas &#123;
   @Saga()
@@ -238,20 +238,14 @@ info "><strong>Hint</strong> The <code>ofType</code> operator is exported from t
 <p>The last thing which we have to take care of is to set up the whole mechanism.</p>
 
 <span class="filename">
-  {{ 'heroes-game.module' | extension: app4b3be263021a78f74a166249e3304c39d73ceca1.isJsActive }}
-<app-tabs #app4b3be263021a78f74a166249e3304c39d73ceca1></app-tabs>
+  {{ 'heroes-game.module' | extension: appd6060e4958fd7ad05aa33929ac675f6230778799.isJsActive }}
+<app-tabs #appd6060e4958fd7ad05aa33929ac675f6230778799></app-tabs>
 </span><pre><code class="language-typescript">
 export const CommandHandlers = [KillDragonHandler, DropAncientItemHandler];
 export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 
 @Module(&#123;
-  imports: [
-    CqrsModule.forFeature(&#123;
-      commands: CommandHandlers,
-      events: EventHandlers,
-      sagas: [HeroesGameSagas],
-    &#125;),
-  ],
+  imports: [CqrsModule],
   controllers: [HeroesGameController],
   providers: [
     HeroesGameService,
@@ -261,13 +255,7 @@ export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
     HeroRepository,
   ]
 &#125;)
-export class HeroesGameModule &#123;&#125;</code></pre><p>And in the root module:</p>
-<pre><code class="language-typescript">
-@Module(&#123;
-  imports: [CqrsModule.forRoot(), HeroesGameModule],
-&#125;)
-export class ApplicationModule &#123;&#125;</code></pre>
-<h4 appAnchor id="summary"><span>Summary</span></h4>
+export class HeroesGameModule &#123;&#125;</code></pre><h4 appAnchor id="summary"><span>Summary</span></h4>
 <p><code>CommandBus</code>, <code>QueryBus</code> and <code>EventBus</code> are <strong>Observables</strong>. It means that you can easily subscribe to the whole stream and enrich your application with <strong>Event Sourcing</strong>.</p>
 <p>A working example is available <a href="https://github.com/kamilmysliwiec/nest-cqrs-example">here</a>.</p>
 

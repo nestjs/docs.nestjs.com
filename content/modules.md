@@ -87,7 +87,7 @@ That is how our directory structure looks right now:
 
 #### Shared module
 
-In Nest, modules are **singletons** by default, and thus you can share the **same instance** of any provider between 2..\* modules effortlessly.
+In Nest, modules are **singletons** by default, and thus you can share the same instance of any provider between 2..\* modules effortlessly.
 
 <figure><img src="/assets/Shared_Module_1.png" /></figure>
 

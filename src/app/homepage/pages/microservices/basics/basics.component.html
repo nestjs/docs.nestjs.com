@@ -13,8 +13,8 @@ $ npm i --save @nestjs/microservices</code></pre>
 <p>In order to create a microservice, we use <code>createMicroservice()</code> method of the <code>NestFactory</code> class.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app23eb774be65bd0d920e4e6f9d863dc6fb0599290.isJsActive }}
-<app-tabs #app23eb774be65bd0d920e4e6f9d863dc6fb0599290></app-tabs>
+  {{ 'main' | extension: app7f80774873eff4ba6f94453908290c27126348fd.isJsActive }}
+<app-tabs #app7f80774873eff4ba6f94453908290c27126348fd></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; Transport &#125; from &#39;@nestjs/microservices&#39;;
@@ -71,9 +71,9 @@ info "><strong>Hint</strong> A microservice is listening to messages through <st
 <p>Basically, to create a message handler (based on the request-response paradigm), we use the <code>@MessagePattern()</code> decorator which is imported from the <code>@nestjs/microservices</code> package.</p>
 
 <span class="filename">
-  {{ 'math.controller' | extension: appc35b7ff6d5b05c58ba6c265d971b70916cb53ae7.isJsActive }}
-<app-tabs #appc35b7ff6d5b05c58ba6c265d971b70916cb53ae7></app-tabs>
-</span><pre [class.hide]="appc35b7ff6d5b05c58ba6c265d971b70916cb53ae7.isJsActive"><code class="language-typescript">
+  {{ 'math.controller' | extension: appe2d2ddf4c2a4f1f7e9997ba5cd67d6c83771b5f5.isJsActive }}
+<app-tabs #appe2d2ddf4c2a4f1f7e9997ba5cd67d6c83771b5f5></app-tabs>
+</span><pre [class.hide]="appe2d2ddf4c2a4f1f7e9997ba5cd67d6c83771b5f5.isJsActive"><code class="language-typescript">
 import &#123; Controller &#125; from &#39;@nestjs/common&#39;;
 import &#123; MessagePattern &#125; from &#39;@nestjs/microservices&#39;;
 
@@ -84,7 +84,7 @@ export class MathController &#123;
     return (data || []).reduce((a, b) =&gt; a + b);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appc35b7ff6d5b05c58ba6c265d971b70916cb53ae7.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appe2d2ddf4c2a4f1f7e9997ba5cd67d6c83771b5f5.isJsActive"><code class="language-typescript">
 import &#123; Controller &#125; from &#39;@nestjs/common&#39;;
 import &#123; MessagePattern &#125; from &#39;@nestjs/microservices&#39;;
 
@@ -99,26 +99,26 @@ export class MathController &#123;
 <p>Each message handler is able to respond either synchronously or <strong>asynchronously</strong>. Hence, <code>async</code> methods are supported.</p>
 
 <span class="filename">
-<app-tabs #app2b4430245d7302d154d8773f13de2b0a5dc7a801></app-tabs>
-</span><pre [class.hide]="app2b4430245d7302d154d8773f13de2b0a5dc7a801.isJsActive"><code class="language-typescript">
+<app-tabs #app29a81c43f431670a28dd0ebcfb24e3a217782d6b></app-tabs>
+</span><pre [class.hide]="app29a81c43f431670a28dd0ebcfb24e3a217782d6b.isJsActive"><code class="language-typescript">
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 async accumulate(data: number[]): Promise&lt;number&gt; &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre>
-<pre [class.hide]="!app2b4430245d7302d154d8773f13de2b0a5dc7a801.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app29a81c43f431670a28dd0ebcfb24e3a217782d6b.isJsActive"><code class="language-typescript">
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 async accumulate(data) &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre><p>Additionally, we are able to return an <code>Observable</code>, and thus the values will be emitted until the stream is completed.</p>
 
 <span class="filename">
-<app-tabs #app90eb5d1fd4723e2a578daf61b4daae6bca18dbd4></app-tabs>
-</span><pre [class.hide]="app90eb5d1fd4723e2a578daf61b4daae6bca18dbd4.isJsActive"><code class="language-typescript">
+<app-tabs #appeadb8428468b2bcf32d9da4ab08d76edc1b12f69></app-tabs>
+</span><pre [class.hide]="appeadb8428468b2bcf32d9da4ab08d76edc1b12f69.isJsActive"><code class="language-typescript">
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data: number[]): Observable&lt;number&gt; &#123;
   return from([1, 2, 3]);
 &#125;</code></pre>
-<pre [class.hide]="!app90eb5d1fd4723e2a578daf61b4daae6bca18dbd4.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appeadb8428468b2bcf32d9da4ab08d76edc1b12f69.isJsActive"><code class="language-typescript">
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data: number[]): Observable&lt;number&gt; &#123;
   return from([1, 2, 3]);
@@ -128,36 +128,61 @@ accumulate(data: number[]): Observable&lt;number&gt; &#123;
 <p>In order to create an event handler, we use the <code>@EventPattern()</code> decorator which is imported from the <code>@nestjs/microservices</code> package.</p>
 
 <span class="filename">
-<app-tabs #app1a3811f4c6deaf5094f3fafa24da4a9f2b53f74e></app-tabs>
-</span><pre [class.hide]="app1a3811f4c6deaf5094f3fafa24da4a9f2b53f74e.isJsActive"><code class="language-typescript">
+<app-tabs #app67b33ff064e636f3fdea7bd63138e42f4910d8c0></app-tabs>
+</span><pre [class.hide]="app67b33ff064e636f3fdea7bd63138e42f4910d8c0.isJsActive"><code class="language-typescript">
 @EventPattern(&#39;user_created&#39;)
 async handleUserCreated(data: Record&lt;string, unknown&gt;) &#123;
   // business logic
 &#125;</code></pre>
-<pre [class.hide]="!app1a3811f4c6deaf5094f3fafa24da4a9f2b53f74e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app67b33ff064e636f3fdea7bd63138e42f4910d8c0.isJsActive"><code class="language-typescript">
 @EventPattern(&#39;user_created&#39;)
 async handleUserCreated(data) &#123;
   // business logic
 &#125;</code></pre><p>The <code>handleUserCreated()</code> method is listening to <code>user_created</code> event. The event handler takes a single argument, the <code>data</code> passed from the client (in this case, an event payload which has been sent over the network).</p>
 <h4 appAnchor id="client"><span>Client</span></h4>
-<p>In order to either exchange messages or publish events to the Nest microservice, we are using the <code>ClientProxy</code> class which instance is assigned to a property through <code>@Client()</code> decorator. This decorator takes a single argument. It is the same object as a Nest microservice options object (passed in to the <code>createMicroservice()</code> method).</p>
+<p>In order to either exchange messages or publish events to the Nest microservice, we use the <code>ClientProxy</code> class which instance can be created in a few ways. Firstly, we may import the <code>ClientsModule</code> which exposes static <code>register()</code> method. This method takes an array as a parameter in which every element has a <code>name</code> (which is a sort of the microservice identifier) as well as microservice-specific options (it&#39;s the same object as this one passed in to the <code>createMicroservice()</code> method).</p>
+<pre><code class="language-typescript">
+ClientsModule.register([
+  &#123; name: &#39;MATH_SERVICE&#39;, transport: Transport.TCP &#125;,
+]),</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> The <code>ClientsModule</code> is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<p>Once the module has been imported, we can inject <code>MATH_SERVICE</code> using the <code>@Inject()</code> decorator.</p>
+<pre><code class="language-typescript">
+constructor(
+  constructor(
+    @Inject(&#39;MATH_SERVICE&#39;) private readonly client: ClientProxy,
+  ) &#123;&#125;
+)</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> The <code>ClientProxy</code> class is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<p>Nonetheless, this approach doesn&#39;t allow us to asynchronously fetch the microservice configuration. In this case, we can directly use <code>ClientProxyFactory</code> to register a <a routerLink="/techniques/custom-providers">custom provider</a> (which is a client instance):</p>
+<pre><code class="language-typescript">
+&#123;
+  provide: &#39;MATH_SERVICE&#39;,
+  useFactory: (configService: ConfigService) =&gt; &#123;
+    const mathSvcOptions = configService.getMathSvcOptions();
+    return ClientProxyFactory.create(mathSvcOptions);
+  &#125;,
+  inject: [ConfigService],
+&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> The <code>ClientProxyFactory</code> is imported from the <code>@nestjs/microservices</code> package.
+</blockquote>
+<p>The last feasible solution is to use the <code>@Client()</code> property decorator.</p>
 <pre><code class="language-typescript">
 @Client(&#123; transport: Transport.TCP &#125;)
 client: ClientProxy;</code></pre>
 <blockquote class="
-info "><strong>Hint</strong> Both <code>@Client()</code> decorator and <code>ClientProxy</code> class are imported from the <code>@nestjs/microservices</code> package.
+info "><strong>Hint</strong> The <code>@Client()</code> is imported from the <code>@nestjs/microservices</code> package.
 </blockquote>
-<p>Another solution would be to manually create the <code>ClientProxy</code> instance using the <code>ClientProxyFactory</code> (exported from <code>@nestjs/microservices</code> package).</p>
-<pre><code class="language-typescript">
-constructor() &#123;
-  this.client = ClientProxyFactory.create(&#123;
-    transport: Transport.TCP
-  &#125;);
-&#125;</code></pre>
+<p>However, using decorator is not a recommended way (hard to test, tough to share client instance).</p>
 <p>The <code>ClientProxy</code> is <strong>lazy</strong>. It doesn&#39;t initiate a connection immediately. Instead, it will be established before the first microservice call, and then reused across each subsequent call. However, if you want to delay an application bootstrapping process and manually initialize a connection, you can use a <code>connect()</code> method inside the <code>OnModuleInit</code> lifecycle hook.</p>
 
 <span class="filename">
-<app-tabs #app91ffb7f731b9ab749a2e211a795a85462d92a4e1></app-tabs>
+<app-tabs #app2ba4fc5abccdac3b0d5cf04663d768bcad18aab2></app-tabs>
 </span><pre><code class="language-typescript">
 async onModuleInit() &#123;
   await this.client.connect();
@@ -166,14 +191,14 @@ async onModuleInit() &#123;
 <p>The <code>ClientProxy</code> exposes a <code>send()</code> method. This method is intended to call the microservice and returns the <code>Observable</code> with its response. Consequently, we can subscribe to the emitted values easily.</p>
 
 <span class="filename">
-<app-tabs #app5b7a3568b59a9dbf35655e4fd66e511a09662a6a></app-tabs>
-</span><pre [class.hide]="app5b7a3568b59a9dbf35655e4fd66e511a09662a6a.isJsActive"><code class="language-typescript">
+<app-tabs #app44271d9e127010c8bf43f0b2b96d8db8cb1f3ab4></app-tabs>
+</span><pre [class.hide]="app44271d9e127010c8bf43f0b2b96d8db8cb1f3ab4.isJsActive"><code class="language-typescript">
 accumulate(): Observable&lt;number&gt; &#123;
   const pattern = &#123; cmd: &#39;sum&#39; &#125;;
   const payload = [1, 2, 3];
   return this.client.send&lt;number&gt;(pattern, payload);
 &#125;</code></pre>
-<pre [class.hide]="!app5b7a3568b59a9dbf35655e4fd66e511a09662a6a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app44271d9e127010c8bf43f0b2b96d8db8cb1f3ab4.isJsActive"><code class="language-typescript">
 accumulate() &#123;
   const pattern = &#123; cmd: &#39;sum&#39; &#125;;
   const payload = [1, 2, 3];
@@ -183,12 +208,12 @@ accumulate() &#123;
 <p>Another available method is <code>emit()</code>. This method responsibility is to publish an event to the message broker.</p>
 
 <span class="filename">
-<app-tabs #app266d1571c6b07de55848dce19c585fded1f3b497></app-tabs>
-</span><pre [class.hide]="app266d1571c6b07de55848dce19c585fded1f3b497.isJsActive"><code class="language-typescript">
+<app-tabs #app3bb8fd32dbd5ade2905cadcbe564b9b04794994b></app-tabs>
+</span><pre [class.hide]="app3bb8fd32dbd5ade2905cadcbe564b9b04794994b.isJsActive"><code class="language-typescript">
 async publish() &#123;
   this.client.emit&lt;number&gt;(&#39;user_created&#39;, new UserCreatedEvent());
 &#125;</code></pre>
-<pre [class.hide]="!app266d1571c6b07de55848dce19c585fded1f3b497.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app3bb8fd32dbd5ade2905cadcbe564b9b04794994b.isJsActive"><code class="language-typescript">
 async publish() &#123;
   this.client.emit(&#39;user_created&#39;, new UserCreatedEvent());
 &#125;</code></pre><p>The <code>emit()</code> method takes two arguments, <code>pattern</code> and <code>payload</code>. The <code>pattern</code> has to be equal to this one defined in the <code>@EventPattern()</code> decorator while <code>payload</code> is an event payload that we want to transmit to another microservice.</p>

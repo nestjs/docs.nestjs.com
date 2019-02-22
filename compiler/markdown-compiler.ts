@@ -1,4 +1,5 @@
 import * as chokidar from 'chokidar';
+import * as fg from 'fast-glob';
 import * as fs from 'fs';
 import * as marked from 'marked';
 import { join } from 'path';
@@ -98,17 +99,11 @@ renderer.blockquote = (quote: string) => {
 };
 
 const rootDir = 'content';
-const watcher = chokidar.watch(join(process.cwd(), rootDir), {
-  ignored: /(^|[\/\\])\../,
-  persistent: true,
-});
-
-console.log('# Markdown compiler is watching files.. (content dir)');
-watcher.on('change', path => {
+function readAndCompile(path: string, done: (filename?: string) => void) {
   fs.readFile(path, 'utf-8', (err, data) => {
     if (err) {
       console.error(err);
-      return;
+      return done();
     }
     const html = `<div class="content" #contentReference>
       ${marked(data.toString(), { renderer })}
@@ -126,8 +121,35 @@ watcher.on('change', path => {
       join(process.cwd(), `src/app/homepage/pages${distPath}/${distFilename}`),
       html + '\n',
     );
-    console.log(
-      `[${distFilename}] has been saved. (${new Date().toLocaleTimeString()})`,
+    return done(distFilename);
+  });
+}
+
+const argv = require('yargs').argv;
+if (argv.watch) {
+  const watcher = chokidar.watch(join(process.cwd(), rootDir), {
+    ignored: /(^|[\/\\])\../,
+    persistent: true,
+  });
+
+  console.log('# Markdown compiler is watching files.. (content dir)');
+  watcher.on('change', path => {
+    readAndCompile(path, (filename?: string) => {
+      filename &&
+        console.log(
+          `[${filename}] has been saved. (${new Date().toLocaleTimeString()})`,
+        );
+    });
+  });
+} else {
+  fg(['content/**/*.md']).then(entries => {
+    entries.forEach(path =>
+      readAndCompile(path as string, (filename?: string) => {
+        filename &&
+          console.log(
+            `[${filename}] has been saved. (${new Date().toLocaleTimeString()})`,
+          );
+      }),
     );
   });
-});
+}

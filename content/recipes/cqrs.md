@@ -267,13 +267,7 @@ export const CommandHandlers = [KillDragonHandler, DropAncientItemHandler];
 export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
 
 @Module({
-  imports: [
-    CqrsModule.forFeature({
-      commands: CommandHandlers,
-      events: EventHandlers,
-      sagas: [HeroesGameSagas],
-    }),
-  ],
+  imports: [CqrsModule],
   controllers: [HeroesGameController],
   providers: [
     HeroesGameService,
@@ -284,15 +278,6 @@ export const EventHandlers =  [HeroKilledDragonHandler, HeroFoundItemHandler];
   ]
 })
 export class HeroesGameModule {}
-```
-
-And in the root module:
-
-```typescript
-@Module({
-  imports: [CqrsModule.forRoot(), HeroesGameModule],
-})
-export class ApplicationModule {}
 ```
 
 #### Summary
