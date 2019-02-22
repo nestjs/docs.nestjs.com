@@ -51,19 +51,6 @@ and help you to craft the change so that it is successfully accepted into the pr
 
 Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion might inform you of workarounds readily available.
 
-We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. In order to reproduce bugs we will systematically ask you to provide a minimal reproduction scenario using a repository or [Gist](https://gist.github.com/). Having a live, reproducible scenario gives us wealth of important information without going back & forth to you with additional questions like:
-
-- version of NestJS used
-- 3rd-party libraries and their versions
-- and most importantly - a use-case that fails
-
-<!--
-// TODO we need to create a playground, similar to plunkr
-
-A minimal reproduce scenario using a repository or Gist allows us to quickly confirm a bug (or point out coding problem) as well as confirm that we are fixing the right problem. If neither of these are not a suitable way to demonstrate the problem (for example for issues related to our npm packaging), please create a standalone git repository demonstrating the problem. -->
-
-<!-- We will be insisting on a minimal reproduce scenario in order to save maintainers time and ultimately be able to fix more bugs. Interestingly, from our experience users often find coding problems themselves while preparing a minimal plunk. We understand that sometimes it might be hard to extract essentials bits of code from a larger code-base but we really need to isolate the problem before we can fix it. -->
-
 Unfortunately, we are not able to investigate / fix bugs without a minimal reproduction, so if we don't hear back from you we are going to close an issue that don't have enough info to be reproduced.
 
 You can file new issues by filling out our [new issue form](https://github.com/nestjs/nest/issues/new).
@@ -206,26 +193,6 @@ Must be one of the following:
 * **refactor**: A code change that neither fixes a bug nor adds a feature
 * **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 * **test**: Adding missing tests or correcting existing tests
-
-### Scope
-The scope should be the name of the npm package affected (as perceived by person reading changelog generated from commit messages.
-
-The following is the list of supported scopes:
-
-* **common**
-* **core**
-* **sample**
-* **microservices**
-* **testing**
-* **websockets**
-
-There are currently a few exceptions to the "use package name" rule:
-
-* **packaging**: used for changes that change the npm package layout in all of our packages, e.g. public path changes, package.json changes done to all packages, d.ts file/format changes, changes to bundles, etc.
-* **changelog**: used for updating the release notes in CHANGELOG.md
-* **sample/#**: for the example apps directory, replacing # with the example app number
-<!-- * **aio**: used for docs-app (angular.io) related changes within the /aio directory of the repo -->
-* none/empty string: useful for `style`, `test` and `refactor` changes that are done across all packages (e.g. `style: add missing semicolons`)
 
 ### Subject
 The subject contains succinct description of the change:
