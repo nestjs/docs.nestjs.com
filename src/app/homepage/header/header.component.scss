@@ -108,6 +108,10 @@ header {
   float: right;
   padding: 14px 25px;
 
+  @include media(normal) {
+    display: none;
+  }
+
   ul {
     display: inline-block;
     vertical-align: middle;
