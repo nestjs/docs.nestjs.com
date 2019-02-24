@@ -35,7 +35,10 @@ Navigate to `http://localhost:4200/`. The app will automatically reload if you c
 ```
 $ npm install
 $ npm run start
+$ npm run markdown:watch
 ```
+
+All pages are written in the [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory. Run `npm run markdown:watch` to compile them to HTML files on file change.
 
 ## Build
 
