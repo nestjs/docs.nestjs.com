@@ -68,7 +68,7 @@ To create a Nest application instance, we are using the `NestFactory`. `NestFact
 
 #### Platform
 
-Nest aims to be a platform-agnostic framework. A platform independence makes possible creating reusable logical parts, that people can take advantage of across several different types of applications. Technically, Nest is able to work with any HTTP library as soon as an adapter is created. And there are two HTTP platforms supported out-of-the-box so far, [express](https://expressjs.com/) and [fastify](https://www.fastify.io).
+Nest aims to be a platform-agnostic framework. Platform independence makes possible creating reusable logical parts that developers can take advantage of across several different types of applications. Technically, Nest is able to work with any HTTP library as soon as an adapter is created. And there are two HTTP platforms supported out-of-the-box so far, [express](https://expressjs.com/) and [fastify](https://www.fastify.io).
 
 |                    |                                                                                                                                                                                                                                                           |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

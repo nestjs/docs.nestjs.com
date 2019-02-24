@@ -9,12 +9,12 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
 <h4 appAnchor id="overview"><span>Overview</span></h4>
 <p>Nest offers two ways of building GraphQL applications, the schema first and the classes first respectively.</p>
 <p>In the <strong>schema first</strong> approach, the source of truth is a GraphQL SDL (Schema Definition Language). It&#39;s a language-agnostic way which basically allows you to share schema files between different platforms. Furthermore, Nest will automatically generate your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.</p>
-<p>In the <strong>classes first</strong> approach on the other hand, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to worki exclusively with TypeScript and avoid the context switching between languages syntax.</p>
+<p>In the <strong>classes first</strong> approach on the other hand, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to work exclusively with TypeScript and avoid the context switching between languages syntax.</p>
 <h4 appAnchor id="getting-started"><span>Getting started</span></h4>
 <p>Once the packages are installed, we can register the <code>GraphQLModule</code>.</p>
 
 <span class="filename">
-<app-tabs #app27f02a9192dec2a2041d641b223941f77dc7b892></app-tabs>
+<app-tabs #appd973e2e6bd8c6d7f6a136b8eeeef08aa886220d7></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
@@ -27,7 +27,7 @@ import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
 export class ApplicationModule &#123;&#125;</code></pre><p>The <code>.forRoot()</code> method takes an options object as an argument. These options will be passed down to the underlying Apollo instance (read more about available settings <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code> mode, simply pass the following options:</p>
 
 <span class="filename">
-<app-tabs #appdd7df0f3c1037efb6b5c46b832194c75cefe8967></app-tabs>
+<app-tabs #app3ebc76aa3a29f639089f34dc80c5162ca77d899b></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;

@@ -27,24 +27,24 @@ type Foo &#123;
 &#125;</code></pre>
 <p>Another form of defining the scalar type is to create a simple class. Let&#39;s say that we would like to enhance our schema with the <code>Date</code> type.</p>
 <pre><code class="language-typescript">
-import &#123; Scalar &#125; from &#39;@nestjs/graphql&#39;;
+import &#123; Scalar, CustomScalar &#125; from &#39;@nestjs/graphql&#39;;
 import &#123; Kind, ValueNode &#125; from &#39;graphql&#39;;
 
 @Scalar(&#39;Date&#39;)
-export class DateScalar &#123;
+export class DateScalar implements CustomScalar&lt;number, Date&gt; &#123;
   description = &#39;Date custom scalar type&#39;;
 
-  parseValue(value: any) &#123;
+  parseValue(value: number): Date &#123;
     return new Date(value); // value from the client
   &#125;
 
-  serialize(value: any) &#123;
+  serialize(value: Date): number &#123;
     return value.getTime(); // value sent to the client
   &#125;
 
-  parseLiteral(ast: ValueNode) &#123;
+  parseLiteral(ast: ValueNode): Date &#123;
     if (ast.kind === Kind.INT) &#123;
-      return parseInt(ast.value, 10);
+      return new Date(ast.value);
     &#125;
     return null;
   &#125;
@@ -61,24 +61,24 @@ scalar Date</code></pre>
 <h4 appAnchor id="class-first"><span>Class first</span></h4>
 <p>In order to create a <code>Date</code> scalar, simply create a new class.</p>
 <pre><code class="language-typescript">
-import &#123; Scalar &#125; from &#39;@nestjs/graphql&#39;;
+import &#123; Scalar, CustomScalar &#125; from &#39;@nestjs/graphql&#39;;
 import &#123; Kind, ValueNode &#125; from &#39;graphql&#39;;
 
 @Scalar(&#39;Date&#39;, type =&gt; Date)
-export class DateScalar &#123;
+export class DateScalar implements CustomScalar&lt;number, Date&gt; &#123;
   description = &#39;Date custom scalar type&#39;;
 
-  parseValue(value: any) &#123;
+  parseValue(value: number): Date &#123;
     return new Date(value); // value from the client
   &#125;
 
-  serialize(value: any) &#123;
+  serialize(value: Date): number &#123;
     return value.getTime(); // value sent to the client
   &#125;
 
-  parseLiteral(ast: ValueNode) &#123;
+  parseLiteral(ast: ValueNode): Date &#123;
     if (ast.kind === Kind.INT) &#123;
-      return parseInt(ast.value, 10);
+      return new Date(ast.value);
     &#125;
     return null;
   &#125;

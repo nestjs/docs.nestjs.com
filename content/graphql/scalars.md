@@ -39,24 +39,24 @@ type Foo {
 Another form of defining the scalar type is to create a simple class. Let's say that we would like to enhance our schema with the `Date` type.
 
 ```typescript
-import { Scalar } from '@nestjs/graphql';
+import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
 @Scalar('Date')
-export class DateScalar {
+export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
-  parseValue(value: any) {
+  parseValue(value: number): Date {
     return new Date(value); // value from the client
   }
 
-  serialize(value: any) {
+  serialize(value: Date): number {
     return value.getTime(); // value sent to the client
   }
 
-  parseLiteral(ast: ValueNode) {
+  parseLiteral(ast: ValueNode): Date {
     if (ast.kind === Kind.INT) {
-      return parseInt(ast.value, 10);
+      return new Date(ast.value);
     }
     return null;
   }
@@ -83,24 +83,24 @@ scalar Date
 In order to create a `Date` scalar, simply create a new class.
 
 ```typescript
-import { Scalar } from '@nestjs/graphql';
+import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
 @Scalar('Date', type => Date)
-export class DateScalar {
+export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
-  parseValue(value: any) {
+  parseValue(value: number): Date {
     return new Date(value); // value from the client
   }
 
-  serialize(value: any) {
+  serialize(value: Date): number {
     return value.getTime(); // value sent to the client
   }
 
-  parseLiteral(ast: ValueNode) {
+  parseLiteral(ast: ValueNode): Date {
     if (ast.kind === Kind.INT) {
-      return parseInt(ast.value, 10);
+      return new Date(ast.value);
     }
     return null;
   }

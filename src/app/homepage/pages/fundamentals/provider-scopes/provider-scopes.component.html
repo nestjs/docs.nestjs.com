@@ -20,7 +20,7 @@
 </table>
 
 <blockquote class="
-info "><strong>Hint</strong> Using a singleton scope is always the <strong>recommended</strong> way. Sharing providers among requests leads to a lower memory consumption and thus to better performance of your application (no requirement to instantiate class every time).
+info "><strong>Hint</strong> Using a singleton scope is always the <strong>recommended</strong> way. Sharing providers among requests leads to lower memory consumption and thus to better performance of your application (no requirement to instantiate class every time).
 </blockquote>
 <h4 appAnchor id="usage"><span>Usage</span></h4>
 <p>In order to switch to another injection scope, you have to pass an argument to the <code>@Injectable()</code> decorator:</p>
@@ -48,7 +48,7 @@ warning "><strong>Notice</strong> Gateways should never rely on request-scoped p
 </blockquote>
 <h4 appAnchor id="per-request-injection"><span>Per-request injection</span></h4>
 <p>The request-scoped providers have to be used very carefully. Keep in mind that the scope actually bubbles up in the <strong>injection chain</strong>. If your controller depends on a provider which is request-scoped, it means that your controller is actually request-scoped as well.</p>
-<p>Imagine the following chain: <code>CatsController &lt;- CatsService &lt;- CatsRepository</code>. If your <code>CatsService</code> is request-scoped, the <code>CatsController</code> would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas <code>CatsRepository</code> would remain as a singleton.</p>
+<p>Imagine the following chain: <code>CatsController &lt;- CatsService &lt;- CatsRepository</code>. If your <code>CatsService</code> is request-scoped (and the rest are, theoretically, singletons), the <code>CatsController</code> would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas <code>CatsRepository</code> would remain as a singleton.</p>
 <blockquote class="
 "><strong>Warning</strong> The circular dependencies in this case will lead to very painful side-effects and thus, you should certainly avoid creating them.
 </blockquote>
@@ -63,6 +63,16 @@ import &#123; Request &#125; from &#39;express&#39;;
 export class CatsService &#123;
   constructor(@Inject(REQUEST) private readonly request: Request) &#123;&#125;
 &#125;</code></pre>
+<p>However, this functionality doesn&#39;t work with either micro services or GraphQL applications. In <a routerLink="/graphql/quick-start">GraphQL</a> applications, you can inject <code>CONTEXT</code> instead.</p>
+<pre><code class="language-typescript">
+import &#123; Injectable, Scope, Inject &#125; from &#39;@nestjs/common&#39;;
+import &#123; CONTEXT &#125; from &#39;@nestjs/graphql&#39;;
+
+@Injectable(&#123; scope: Scope.REQUEST &#125;)
+export class CatsService &#123;
+  constructor(@Inject(CONTEXT) private readonly context) &#123;&#125;
+&#125;</code></pre>
+<p>Afterwards, you can configure your <code>context</code> value (in the <code>GraphQLModule</code>) to contain <code>request</code> as its property.</p>
 <h4 appAnchor id="performance"><span>Performance</span></h4>
 <p>Using request-scoped providers will obviously affect application performance. Even though Nest is trying to cache as much metadata as possible, it will still have to create an instance of your class on each request. Hence, it will slow down your average response time and overall benchmarking result. If your provider doesn&#39;t necessarily need to be request-scoped, you should rather stick with the singleton scope.</p>
 

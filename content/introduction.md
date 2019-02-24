@@ -36,6 +36,5 @@ $ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata
 
 #### Stay in touch
 
-- Author - [Kamil Mysliwiec](https://kamilmysliwiec.com/)
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)

@@ -31,7 +31,7 @@ footer {
     @extend .transition;
     color: #929292;
     &:hover {
-      color: $white-color;
+      color: $red-color;
     }
   }
 
@@ -58,7 +58,7 @@ footer {
       font-size: 20px;
     }
     &:hover {
-      color: $white-color;
+      color: $red-color;
     }
   }
 }

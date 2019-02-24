@@ -18,7 +18,7 @@ Nest offers two ways of building GraphQL applications, the schema first and the 
 
 In the **schema first** approach, the source of truth is a GraphQL SDL (Schema Definition Language). It's a language-agnostic way which basically allows you to share schema files between different platforms. Furthermore, Nest will automatically generate your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.
 
-In the **classes first** approach on the other hand, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to worki exclusively with TypeScript and avoid the context switching between languages syntax.
+In the **classes first** approach on the other hand, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to work exclusively with TypeScript and avoid the context switching between languages syntax.
 
 #### Getting started
 

@@ -23,7 +23,7 @@ Basically, every provider can act as a singleton, be request-scoped, and be swit
   </tr>
 </table>
 
-> info **Hint** Using a singleton scope is always the **recommended** way. Sharing providers among requests leads to a lower memory consumption and thus to better performance of your application (no requirement to instantiate class every time).
+> info **Hint** Using a singleton scope is always the **recommended** way. Sharing providers among requests leads to lower memory consumption and thus to better performance of your application (no requirement to instantiate class every time).
 
 #### Usage
 
@@ -62,7 +62,7 @@ export class CatsController {}
 
 The request-scoped providers have to be used very carefully. Keep in mind that the scope actually bubbles up in the **injection chain**. If your controller depends on a provider which is request-scoped, it means that your controller is actually request-scoped as well.
 
-Imagine the following chain: `CatsController <- CatsService <- CatsRepository`. If your `CatsService` is request-scoped, the `CatsController` would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas `CatsRepository` would remain as a singleton.
+Imagine the following chain: `CatsController <- CatsService <- CatsRepository`. If your `CatsService` is request-scoped (and the rest are, theoretically, singletons), the `CatsController` would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas `CatsRepository` would remain as a singleton.
 
 > **Warning** The circular dependencies in this case will lead to very painful side-effects and thus, you should certainly avoid creating them.
 
@@ -80,6 +80,20 @@ export class CatsService {
   constructor(@Inject(REQUEST) private readonly request: Request) {}
 }
 ```
+
+However, this functionality doesn't work with either micro services or GraphQL applications. In [GraphQL](/graphql/quick-start) applications, you can inject `CONTEXT` instead.
+
+```typescript
+import { Injectable, Scope, Inject } from '@nestjs/common';
+import { CONTEXT } from '@nestjs/graphql';
+
+@Injectable({ scope: Scope.REQUEST })
+export class CatsService {
+  constructor(@Inject(CONTEXT) private readonly context) {}
+}
+```
+
+Afterwards, you can configure your `context` value (in the `GraphQLModule`) to contain `request` as its property.
 
 #### Performance
 
