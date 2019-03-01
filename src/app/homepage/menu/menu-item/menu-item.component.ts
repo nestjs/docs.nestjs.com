@@ -1,10 +1,14 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { openCloseAnimation } from '../../../common';
 
 @Component({
   selector: 'app-menu-item',
   templateUrl: './menu-item.component.html',
   styleUrls: ['./menu-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    openCloseAnimation
+  ]
 })
 export class MenuItemComponent {
   @Input() isOpen = false;
