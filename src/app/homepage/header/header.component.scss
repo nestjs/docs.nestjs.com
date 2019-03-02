@@ -115,6 +115,7 @@ header {
   ul {
     display: inline-block;
     vertical-align: middle;
+    padding: 0;
   }
 
   li {
@@ -134,6 +135,10 @@ header {
       &:hover {
         background: #262626;
       }
+    }
+
+    @include media(large) {
+      margin-left: 20px;
     }
   }
 
