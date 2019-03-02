@@ -7,7 +7,7 @@
     <h3>{{ title }}</h3>
     <i class="fa fa-angle-right arrow-icon"></i>
   </div>
-  <ul class="sub-nav">
+  <ul [@openCloseAnimation]="isOpen" class="sub-nav">
     <li *ngFor="let item of children">
       <a
         *ngIf="!item.externalUrl"
