@@ -135,8 +135,10 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
 
   navigateToAnchor(elementRef: HTMLElement) {
     if (elementRef) {
-      elementRef.scrollIntoView(true);
-      // window.scrollBy(0, -this.scrollTopOffset);
+      elementRef.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
       this.findCurrentHeading();
     }
   }
