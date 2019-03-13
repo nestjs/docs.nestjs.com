@@ -1,6 +1,5 @@
 .filename {
-  margin: 0;
-  background: #292929;
+  background: #151515;
   color: #fff;
   padding: 12px 30px;
   margin: 35px 0 -35px;
@@ -10,6 +9,7 @@
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   overflow: hidden;
+  font-size: 15px;
 }
 
 .filename + pre[class*='language-'],

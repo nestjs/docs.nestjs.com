@@ -1,9 +1,21 @@
-<div class="content">
-  <h3>Interceptors</h3>
-  <p>
-    There is no difference between <a routerLink="/interceptors">regular interceptors</a> and the web sockets interceptors.
-    Here is an example that makes use of a manually instantiated <strong>method-scoped</strong> filter (class-scoped works
-    either):
-  </p>
-  <pre><code class="language-typescript">{{ example }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="interceptors">Interceptors</h3>
+<p>There is no difference between <a routerLink="/interceptors">regular interceptors</a> and the web sockets interceptors. Here is an example that makes use of a manually instantiated method-scoped interceptor (class-scoped works too):</p>
+
+<span class="filename">
+<app-tabs #appa4b93057882a1a52d65a5ad70f688b8a4f6b808c></app-tabs>
+</span><pre [class.hide]="appa4b93057882a1a52d65a5ad70f688b8a4f6b808c.isJsActive"><code class="language-typescript">
+@UseInterceptors(new TransformInterceptor())
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
+  const event = &#39;events&#39;;
+  return &#123; event, data &#125;;
+&#125;</code></pre>
+<pre [class.hide]="!appa4b93057882a1a52d65a5ad70f688b8a4f6b808c.isJsActive"><code class="language-typescript">
+@UseInterceptors(new TransformInterceptor())
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client, data) &#123;
+  const event = &#39;events&#39;;
+  return &#123; event, data &#125;;
+&#125;</code></pre>
+    </div>

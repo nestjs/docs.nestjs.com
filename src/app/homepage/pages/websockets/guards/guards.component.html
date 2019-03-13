@@ -1,15 +1,26 @@
-<div class="content">
-  <h3>Guards</h3>
-  <p>
-    There is no difference between web sockets <strong>guards</strong> and the <a routerLink="/guards">regular guards</a>.
-    The only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>WsException</code>.
-  </p>
-  <blockquote class="info">
-    <strong>Hint</strong> The <code>WsException</code> class is exposed from <code>@nestjs/websockets</code> package.
-  </blockquote>
-  <h4>Binding guards</h4>
-  <p>
-    Here is an example that makes use of a <strong>method-scoped</strong> guard (class-scoped works either):
-  </p>
-  <pre><code class="language-typescript">{{ example }}</code></pre>
-</div>
+<div class="content" #contentReference>
+      <h3 id="guards">Guards</h3>
+<p>There is no difference between web sockets <strong>guards</strong> and the <a routerLink="/guards">regular guards</a>. The only thing you should be aware of is that instead of throwing <code>HttpException</code>, you should use the <code>WsException</code>.</p>
+<blockquote class="
+info "><strong>Hint</strong> The <code>WsException</code> class is exposed from <code>@nestjs/websockets</code> package.
+</blockquote>
+<h4 appAnchor id="binding-guards"><span>Binding guards</span></h4>
+<p>Here is an example that makes use of a method-scoped guard (class-scoped works too):</p>
+
+<span class="filename">
+<app-tabs #app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a></app-tabs>
+</span><pre [class.hide]="app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a.isJsActive"><code class="language-typescript">
+@UseGuards(AuthGuard)
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
+  const event = &#39;events&#39;;
+  return &#123; event, data &#125;;
+&#125;</code></pre>
+<pre [class.hide]="!app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a.isJsActive"><code class="language-typescript">
+@UseGuards(AuthGuard)
+@SubscribeMessage(&#39;events&#39;)
+handleEvent(client, data) &#123;
+  const event = &#39;events&#39;;
+  return &#123; event, data &#125;;
+&#125;</code></pre>
+    </div>

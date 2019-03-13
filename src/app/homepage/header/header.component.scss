@@ -3,7 +3,6 @@
 
 :host {
   background: $black-color;
-  // box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
   display: block;
   width: 100%;
   height: 70px;
@@ -24,7 +23,6 @@ header {
   width: 80px;
   top: 0;
   bottom: 0;
-  // background: $darkgrey-color;
   display: inline-block;
   position: relative;
   z-index: 10000;
@@ -34,11 +32,10 @@ header {
     background: #212121;
   }
   &.opened {
-    width: 300px;
-    // box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+    width: 265px;
 
     @include media(large) {
-      width: 300px;
+      width: 265px;
     }
     @include media(normal) {
       width: 80px;
@@ -49,8 +46,8 @@ header {
 
     svg {
       width: 30px;
-      stroke: #fff;
-      stroke-width: 5;
+      height: 30px;
+      fill: #fff;
     }
   }
   @include media(medium) {
@@ -59,14 +56,15 @@ header {
 }
 
 :host /deep/ .logo-wrapper {
-  // display: block;
-  // width: 100%;
   display: inline-block;
   height: 100%;
   text-align: center;
   vertical-align: top;
-  padding-left: 40px;
+  padding-left: 85px;
 
+  @include media(large) {
+    padding-left: 50px;
+  }
   @include media(medium) {
     padding-left: 10px;
   }
@@ -77,36 +75,83 @@ header {
   }
 }
 
-/*.social-wrapper,
-.icon-wrapper {
-  position: absolute;
-}*/
-
 .social-wrapper {
   @extend .center-top;
-  // right: 40px;
   float: right;
   padding-right: 40px;
   position: relative;
 
   a {
-    @extend .transition;
+    @extend .transition-fast;
     display: inline-block;
     vertical-align: middle;
-    color: #b9b9b9;
+    color: #fff;
     font-size: 22px;
-    margin-left: 12px;
+    margin-left: 15px;
     cursor: pointer;
 
     &:first-of-type {
       font-size: 20px;
     }
     &:hover {
-      color: $white-color;
+      color: $red-color;
     }
   }
   @include media(small) {
     display: none;
+  }
+}
+
+.menu-wrapper {
+  @extend .center-top;
+  position: relative;
+  float: right;
+  padding: 14px 25px;
+
+  @include media(normal) {
+    display: none;
+  }
+
+  ul {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0;
+  }
+
+  li {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 30px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    &:last-of-type a {
+      @include radius(2px);
+      padding: 4px 6px;
+      background: $red-color;
+
+      &:hover {
+        background: #262626;
+      }
+    }
+
+    @include media(large) {
+      margin-left: 20px;
+    }
+  }
+
+  a {
+    @extend .transition-fast;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+
+    &:hover {
+      color: $red-color;
+    }
   }
 }
 
@@ -185,18 +230,9 @@ header {
     display: inline-block;
     padding: 1px 2px;
     font-weight: 700;
-    background: -webkit-linear-gradient(
-      #ee2943,
-      #d31e5a
-    ); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(
-      #ee2943,
-      #d31e5a
-    ); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(
-      #ee2943,
-      #d31e5a
-    ); /* For Firefox 3.6 to 15 */
+    background: -webkit-linear-gradient(#ee2943, #d31e5a);
+    background: -o-linear-gradient(#ee2943, #d31e5a);
+    background: -moz-linear-gradient(#ee2943, #d31e5a);
     background: linear-gradient(#ee2943, #d31e5a); /* Standard syntax */
   }
 }

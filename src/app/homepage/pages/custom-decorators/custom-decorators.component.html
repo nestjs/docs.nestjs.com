@@ -1,109 +1,126 @@
-<div class="content">
-  <h3>Custom route decorators</h3>
-  <p>
-    Nest is built around a language feature called <strong>decorators</strong>. It's a well-known concept in a lot of commonly
-    used programming languages, but in the JavaScript world, it's still relatively new. In order to better understand how
-    the decorators work, you should take a look at <a href="https://medium.com/google-developers/exploring-es7-decorators-76ecb65fb841"
-      target="blank">this</a> article. Here's a simple definition:
-  </p>
-  <blockquote class="external">
-    An ES2016 decorator is an expression which returns a function and can take a target, name and property descriptor as arguments.
-    You apply it by prefixing the decorator with an <code>@</code> character and placing this at the very top of what
-    you are trying to decorate. Decorators can be defined for either a class or a property.
-  </blockquote>
-  <p>
-    Nest provides a set of useful <strong>param decorators</strong> that you can use together with the HTTP route handlers.
-    Below is a comparison of the decorators with the plain express objects.
-  </p>
-  <table>
-    <tbody>
-      <tr>
-        <td><code>@Request()</code></td>
-        <td><code>req</code></td>
-      </tr>
-      <tr>
-        <td><code>@Response()</code></td>
-        <td><code>res</code></td>
-      </tr>
-      <tr>
-        <td><code>@Next()</code></td>
-        <td><code>next</code></td>
-      </tr>
-      <tr>
-        <td><code>@Session()</code></td>
-        <td><code>req.session</code></td>
-      </tr>
-      <tr>
-        <td><code>@Param(param?: string)</code></td>
-        <td><code>req.params</code> / <code>req.params[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Body(param?: string)</code></td>
-        <td><code>req.body</code> / <code>req.body[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Query(param?: string)</code></td>
-        <td><code>req.query</code> / <code>req.query[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Headers(param?: string)</code></td>
-        <td><code>req.headers</code> / <code>req.headers[param]</code></td>
-      </tr>
-    </tbody>
-  </table>
-  <p>
-    Additionally, you can create your own, <strong>custom decorator</strong>. Why it is useful?
-  </p>
-  <p>
-    In the node.js world, it's a common practice to attach properties to the <strong>request</strong> object. Then you have
-    to manually grab them every time in the route handlers, for example, using following construction:
-  </p>
-  <pre><code class="language-typescript">
+<div class="content" #contentReference>
+      <h3 id="custom-route-decorators">Custom route decorators</h3>
+<p>Nest is built around a language feature called <strong>decorators</strong>. It&#39;s a well-known concept in a lot of commonly used programming languages, but in the JavaScript world, it&#39;s still relatively new. In order to better understand how the decorators work, you should take a look at <a href="https://medium.com/google-developers/exploring-es7-decorators-76ecb65fb841">this</a> article. Here&#39;s a simple definition:</p>
+<blockquote class="external">
+  An ES2016 decorator is an expression which returns a function and can take a target, name and property descriptor as arguments.
+  You apply it by prefixing the decorator with an <code>@</code> character and placing this at the very top of what
+  you are trying to decorate. Decorators can be defined for either a class or a property.
+</blockquote>
+
+<h4 appAnchor id="param-decorators"><span>Param decorators</span></h4>
+<p>Nest provides a set of useful <strong>param decorators</strong> that you can use together with the HTTP route handlers. Below is a comparison of the decorators with the plain express objects.</p>
+<table>
+  <tbody>
+    <tr>
+      <td><code>@Request()</code></td>
+      <td><code>req</code></td>
+    </tr>
+    <tr>
+      <td><code>@Response()</code></td>
+      <td><code>res</code></td>
+    </tr>
+    <tr>
+      <td><code>@Next()</code></td>
+      <td><code>next</code></td>
+    </tr>
+    <tr>
+      <td><code>@Session()</code></td>
+      <td><code>req.session</code></td>
+    </tr>
+    <tr>
+      <td><code>@Param(param?: string)</code></td>
+      <td><code>req.params</code> / <code>req.params[param]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Body(param?: string)</code></td>
+      <td><code>req.body</code> / <code>req.body[param]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Query(param?: string)</code></td>
+      <td><code>req.query</code> / <code>req.query[param]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Headers(param?: string)</code></td>
+      <td><code>req.headers</code> / <code>req.headers[param]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Additionally, you can create your own, <strong>custom decorator</strong>. Why it is useful?</p>
+<p>In the node.js world, it&#39;s a common practice to attach properties to the <strong>request</strong> object. Then you have to manually grab them every time in the route handlers, for example, using following construction:</p>
+<pre><code class="language-typescript">
 const user = req.user;</code></pre>
-  <p>
-    In order to make it more readable and transparent, we can create a <code>@User()</code> decorator and reuse it across
-    all existing controllers.
-  </p>
-  <span class="filename">
-    {{ 'user.decorator' | extension: userDecoratorT.isJsActive }}
-    <app-tabs #userDecoratorT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ userDecorator }}</code></pre>
-  <p>
-    Then, you can simply use it wherever it fits your requirements.
-  </p>
-  <span class="filename">
-    <app-tabs #controllerExampleT></app-tabs>
-  </span>
-  <pre [class.hide]="controllerExampleT.isJsActive"><code class="language-typescript">{{ controllerExample }}</code></pre>
-  <pre [class.hide]="!controllerExampleT.isJsActive"><code class="language-typescript">{{ controllerExampleJs }}</code></pre>
-  <h4>Passing data</h4>
-  <p>
-    When the behavior of your decorator depends on some conditions, you may use the <code>data</code> param to pass an argument
-    to the decorator's factory function. For example, the construction below:
-  </p>
-  <span class="filename">
-    <app-tabs #controllerExampleDataT></app-tabs>
-  </span>
-  <pre [class.hide]="controllerExampleDataT.isJsActive"><code class="language-typescript">{{ controllerExampleData }}</code></pre>
-  <pre [class.hide]="!controllerExampleDataT.isJsActive"><code class="language-typescript">{{ controllerExampleDataJs }}</code></pre>
-  <p>
-    Will make possible to access the <code>test</code> string via the <code>data</code> argument:
-  </p>
-  <span class="filename">
-    {{ 'user.decorator' | extension: userDecoratorDataT.isJsActive }}
-    <app-tabs #userDecoratorDataT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ userDecoratorData }}</code></pre>
-  <h4>Working with pipes</h4>
-  <p>
-    Nest treats custom param decorators in the same fashion as the built-in ones (<code>@Body()</code>, <code>@Param()</code>    and
-    <code>@Query()</code>). It means that pipes are executed for the custom annotated parameters as well (in this case, for
-    the <code>user</code> argument). Moreover, you can apply the pipe directly to the custom decorator:
-  </p>
-  <span class="filename">
-    <app-tabs #pipeExampleT></app-tabs>
-  </span>
-  <pre [class.hide]="pipeExampleT.isJsActive"><code class="language-typescript">{{ pipeExample }}</code></pre>
-  <pre [class.hide]="!pipeExampleT.isJsActive"><code class="language-typescript">{{ pipeExampleJs }}</code></pre>
-</div>
+<p>In order to make it more readable and transparent, we can create a <code>@User()</code> decorator and reuse it across all existing controllers.</p>
+
+<span class="filename">
+  {{ 'user.decorator' | extension: appc0a1f7cfacfd33f64fbda895d60c41202408422c.isJsActive }}
+<app-tabs #appc0a1f7cfacfd33f64fbda895d60c41202408422c></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; createParamDecorator &#125; from &#39;@nestjs/common&#39;;
+
+export const User = createParamDecorator((data, req) =&gt; &#123;
+  return req.user;
+&#125;);</code></pre><p>Then, you can simply use it wherever it fits your requirements.</p>
+
+<span class="filename">
+<app-tabs #app1377c70bfef13d86accdb81cc543d3218f274a78></app-tabs>
+</span><pre [class.hide]="app1377c70bfef13d86accdb81cc543d3218f274a78.isJsActive"><code class="language-typescript">
+@Get()
+async findOne(@User() user: UserEntity) &#123;
+  console.log(user);
+&#125;</code></pre>
+<pre [class.hide]="!app1377c70bfef13d86accdb81cc543d3218f274a78.isJsActive"><code class="language-typescript">
+@Get()
+@Bind(User())
+async findOne(user) &#123;
+  console.log(user);
+&#125;</code></pre><h4 appAnchor id="passing-data"><span>Passing data</span></h4>
+<p>When the behavior of your decorator depends on some conditions, you may use the <code>data</code> param to pass an argument to the decorator&#39;s factory function. For example, the construction below:</p>
+
+<span class="filename">
+<app-tabs #appc40fe279540c97d0e845d735159c917292a210ac></app-tabs>
+</span><pre [class.hide]="appc40fe279540c97d0e845d735159c917292a210ac.isJsActive"><code class="language-typescript">
+@Get()
+async findOne(@User(&#39;test&#39;) user: UserEntity) &#123;
+  console.log(user);
+&#125;</code></pre>
+<pre [class.hide]="!appc40fe279540c97d0e845d735159c917292a210ac.isJsActive"><code class="language-typescript">
+@Get()
+@Bind(User(&#39;test&#39;))
+async findOne(user) &#123;
+  console.log(user);
+&#125;</code></pre><p>Will make possible to access the <code>test</code> string via the <code>data</code> argument:</p>
+
+<span class="filename">
+  {{ 'user.decorator' | extension: appa6aa31cae888140b726f9d3399cee644a99d7385.isJsActive }}
+<app-tabs #appa6aa31cae888140b726f9d3399cee644a99d7385></app-tabs>
+</span><pre [class.hide]="appa6aa31cae888140b726f9d3399cee644a99d7385.isJsActive"><code class="language-typescript">
+import &#123; createParamDecorator &#125; from &#39;@nestjs/common&#39;;
+
+export const User = createParamDecorator((data: string, req) =&gt; &#123;
+  console.log(data); // test
+  return req.user;
+&#125;);</code></pre>
+<pre [class.hide]="!appa6aa31cae888140b726f9d3399cee644a99d7385.isJsActive"><code class="language-typescript">
+import &#123; createParamDecorator &#125; from &#39;@nestjs/common&#39;;
+
+export const User = createParamDecorator((data, req) =&gt; &#123;
+  console.log(data); // test
+  return req.user;
+&#125;);</code></pre><h4 appAnchor id="working-with-pipes"><span>Working with pipes</span></h4>
+<p>Nest treats custom param decorators in the same fashion as the built-in ones (<code>@Body()</code>, <code>@Param()</code> and <code>@Query()</code>). It means that pipes are executed for the custom annotated parameters as well (in this case, for the <code>user</code> argument). Moreover, you can apply the pipe directly to the custom decorator:</p>
+
+<span class="filename">
+<app-tabs #app7842f3241a3487015c331d03489f14deac35e905></app-tabs>
+</span><pre [class.hide]="app7842f3241a3487015c331d03489f14deac35e905.isJsActive"><code class="language-typescript">
+@Get()
+async findOne(@User(new ValidationPipe()) user: UserEntity) &#123;
+  console.log(user);
+&#125;</code></pre>
+<pre [class.hide]="!app7842f3241a3487015c331d03489f14deac35e905.isJsActive"><code class="language-typescript">
+@Get()
+@Bind(User(new ValidationPipe()))
+async findOne(user) &#123;
+  console.log(user);
+&#125;</code></pre>
+    </div>

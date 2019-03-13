@@ -1,7 +1,10 @@
 <app-header (toggle)="toggleSidebar()" [isSidebarOpened]="isSidebarOpened">
   <div class="logo-wrapper">
-    <a href="http://docs.nestjs.com/" title="Documentation | NestJS - A node.js framework built on top of TypeScript">
-      <img src="/assets/logo_text.svg">
+    <a
+      href="http://docs.nestjs.com/"
+      title="Documentation | NestJS - A node.js framework built on top of TypeScript"
+    >
+      <img src="/assets/logo_text.svg" />
     </a>
   </div>
 </app-header>
@@ -15,27 +18,40 @@
     <div class="sponsors-wrapper">
       <div class="sponsors-container">
         <h3>Support us</h3>
-        <p>Nest is an MIT-licensed open source project. It can grow thanks to the support by these awesome people. If
-          you'd
-          like to join them, please read more
-          <a routerLink="/support">here</a>.</p>
+        <p>
+          Nest is an MIT-licensed open source project. It can grow thanks to the
+          support by these awesome people. If you'd like to join them, please
+          read more <a routerLink="/support">here</a>.
+        </p>
         <div class="row clearfix">
           <div class="inline-column">
             <h4 class="title">Principal Sponsor</h4>
             <a href="https://valor-software.com/">
-              <img src="https://docs.nestjs.com/assets/sponsors/valor-software.png" class="logo-sponsor" />
+              <img
+                src="https://docs.nestjs.com/assets/sponsors/valor-software.png"
+                class="logo-sponsor"
+              />
             </a>
           </div>
           <div class="inline-column">
-            <h4 class="title">Sponsors / Backers</h4>
-            <a href="http://www.xtremis.com/en">
-              <img src="https://nestjs.com/logo-xtremis.0feb160c.svg" class="logo-sponsor-small" />
+            <h4 class="title">Sponsors / Partners</h4>
+            <a href="https://blueanchor.io/">
+              <img
+                src="https://nestjs.com/img/blueanchor.png"
+                class="logo-sponsor-small logo-blueanchor"
+              />
             </a>
-            <div class="backers-wrapper">
+            <a href="https://novologic.com/">
+              <img
+                src="https://nestjs.com/img/novologic.png"
+                class="logo-sponsor-small"
+              />
+            </a>
+            <!--<div class="backers-wrapper">
               <a href="https://opencollective.com/nest/backer/{{ id }}/website" *ngFor="let id of backerIds" target="_blank">
                 <img src="https://opencollective.com/nest/backer/{{ id }}/avatar.svg">
               </a>
-            </div>
+            </div>-->
           </div>
         </div>
         <!--<a href="https://opencollective.com/nest" class="btn btn-primary" target="blank">
@@ -46,7 +62,10 @@
     <app-footer>
       <p>
         Made by
-        <a href="https://kamilmysliwiec.com" title="Kamil Mysliwiec Blog | Full-Stack Software Engineer">
+        <a
+          href="https://kamilmysliwiec.com"
+          title="Kamil Mysliwiec Blog | Full-Stack Software Engineer"
+        >
           Kamil Myśliwiec
         </a>
       </p>

@@ -1,25 +1,56 @@
-<div class="nav-item" [class.opened]="isOpen" *ngIf="children; else withoutChildren">
+<div
+  class="nav-item"
+  [class.opened]="isOpen"
+  *ngIf="children; else withoutChildren"
+>
   <div class="heading" (click)="toggle()">
     <h3>{{ title }}</h3>
     <i class="fa fa-angle-right arrow-icon"></i>
   </div>
-  <ul class="sub-nav">
+  <ul [@openCloseAnimation]="isOpen" class="sub-nav">
     <li *ngFor="let item of children">
-      <a *ngIf="!item.externalUrl"
-         [class.pending]="item.isPending"
-         [routerLink]="item.path"
-         routerLinkActive="active"
-         [routerLinkActiveOptions]="{ exact: true }">{{ item.title }}</a>
-      <a *ngIf="!!item.externalUrl" href="{{ item.externalUrl }}" target="blank">{{ item.title }}</a>
+      <a
+        *ngIf="!item.externalUrl"
+        [class.pending]="item.isPending"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >{{ item.title }}
+        <i class="material-icons">
+          {{ item.icon }}
+        </i></a
+      >
+      <a *ngIf="!!item.externalUrl" href="{{ item.externalUrl }}" target="blank"
+        >{{ item.title }}
+        <i class="material-icons">
+          {{ item.icon }}
+        </i></a
+      >
     </li>
   </ul>
 </div>
 <ng-template #withoutChildren>
   <div class="heading">
-    <a *ngIf="!externalUrl"
-       [routerLink]="path"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"><h3>{{ title }}</h3></a>
-    <a *ngIf="!!externalUrl" href="{{ externalUrl }}" target="blank"><h3>{{ title }}</h3></a>
+    <a
+      *ngIf="!externalUrl"
+      [routerLink]="path"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [class.has-icon]="icon"
+      ><h3>
+        {{ title }}
+        <i class="material-icons">
+          {{ icon }}
+        </i>
+      </h3></a
+    >
+    <a *ngIf="!!externalUrl" href="{{ externalUrl }}" target="blank"
+      ><h3>
+        {{ title }}
+        <i class="material-icons">
+          {{ icon }}
+        </i>
+      </h3>
+    </a>
   </div>
 </ng-template>

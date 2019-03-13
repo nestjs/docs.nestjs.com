@@ -1,348 +1,433 @@
-<div class="content">
-  <h3>Controllers</h3>
-  <p>
-    Controllers are responsible for handling incoming <strong>requests</strong> and returning <strong>responses</strong>
-    to the client.</p>
-  <figure><img src="/assets/Controllers_1.png" /></figure>
-  <p>
-    A controller's purpose is to receive specific requests for the application. The <strong>routing</strong> mechanism
-    controls
-    which controller receives which requests. Frequently, each controller has more than one route, and different routes
-    can
-    perform different actions.
-  </p>
-  <p>
-    In order to create a basic controller, we use classes and <strong>decorators</strong>. Decorators associate classes
-    with
-    required metadata and enable Nest to create a routing map (tie requests to the corresponding controllers).
-  </p>
-  <h4>Routing</h4>
-  <p>
-    In the following example we'll use the <code>@Controller()</code> decorator which is <strong>required</strong> to
-    define
-    a basic controller. We'll specify an optional prefix of <code>cats</code>. Using a prefix in a Controller decorator
-    allows
-    us to avoid repeating ourselves when routes could potentially share a common prefix.
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: catsControllerT.isJsActive }}
-    <app-tabs #catsControllerT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ catsController }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong>
-    To create a controller using CLI, simply execute <code>$ nest g controller cats</code> command.
-  </blockquote>
-  <p>
-    The <code>@Get()</code> decorator before the <code>findAll()</code> method tells Nest to create an endpoint for
-    this
-    particular route path and map every corresponding request to this handler. Since we've declared a prefix for every
-    route
-    (
-    <code>cats</code>), Nest will map every <code>/cats</code> <strong>GET</strong> request to this method.
-  </p>
-  <p>
-    When a GET request is made to this endpoint, Nest will now return a 200 status code and the associated
-    response, which in this case is just a string. Why does that happen? Generally, we distinguish <strong>two
-      different
-      approaches
-    </strong> to manipulate responses:
-  </p>
-  <table>
+<div class="content" #contentReference>
+      <h3 id="controllers">Controllers</h3>
+<p>Controllers are responsible for handling incoming <strong>requests</strong> and returning <strong>responses</strong> to the client.</p>
+<figure><img src="/assets/Controllers_1.png" /></figure>
+
+<p>A controller&#39;s purpose is to receive specific requests for the application. The <strong>routing</strong> mechanism controls which controller receives which requests. Frequently, each controller has more than one route, and different routes can perform different actions.</p>
+<p>In order to create a basic controller, we use classes and <strong>decorators</strong>. Decorators associate classes with required metadata and enable Nest to create a routing map (tie requests to the corresponding controllers).</p>
+<h4 appAnchor id="routing"><span>Routing</span></h4>
+<p>In the following example we&#39;ll use the <code>@Controller()</code> decorator which is <strong>required</strong> to define a basic controller. We&#39;ll specify an optional prefix of <code>cats</code>. Using a prefix in a Controller decorator allows us to avoid repeating ourselves when routes could potentially share a common prefix.</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app2a40eafba07329f3ae63b29f23f5d96ff45b2cd3.isJsActive }}
+<app-tabs #app2a40eafba07329f3ae63b29f23f5d96ff45b2cd3></app-tabs>
+</span><pre [class.hide]="app2a40eafba07329f3ae63b29f23f5d96ff45b2cd3.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Get()
+  findAll(): string &#123;
+    return &#39;This action returns all cats&#39;;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app2a40eafba07329f3ae63b29f23f5d96ff45b2cd3.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Get()
+  findAll() &#123;
+    return &#39;This action returns all cats&#39;;
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> To create a controller using CLI, simply execute <code>$ nest g controller cats</code> command.
+</blockquote>
+<p>The <code>@Get()</code> decorator before the <code>findAll()</code> method tells Nest to create an endpoint for this particular route path and map every corresponding request to this handler. Since we&#39;ve declared a prefix for every route ( <code>cats</code>), Nest will map every <code>/cats</code> GET request to this method.</p>
+<p>When a GET request is made to this endpoint, Nest will now return a 200 status code and the associated response, which in this case is just a string. Why does that happen? Generally, we distinguish two <strong>different</strong> approaches to manipulate responses:</p>
+<table>
+  <tr>
+    <td>Standard (recommended)</td>
+    <td>
+      When we return a JavaScript object or array, it'll be <strong>automatically</strong>
+      serialized to JSON. When we return a string however, Nest will send just a string without attempting to
+      serialize it.
+      <br />
+      <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
+      requests
+      which use 201. We can easily change this behaviour by adding the <code>@HttpCode(...)</code>
+      decorator
+      at a handler-level.
+    </td>
+  </tr>
+  <tr>
+    <td>Library-specific</td>
+    <td>
+      We can use the library specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
+      which can be injected using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).
+    </td>
+  </tr>
+</table>
+
+<blockquote class="
+warning "><strong>Warning</strong> You cannot use both approaches at the same time. Nest detects whether the handler is using either <code>@Res()</code> or <code>@Next()</code>. If both approaches are used in the same time - the Standard approach is automatically disabled for this single route and will no longer work as expected.
+</blockquote>
+<h4 appAnchor id="request-object"><span>Request object</span></h4>
+<p>A lot of endpoints need access to the client <strong>request</strong> details. In fact, Nest is using a library-specific (express by default) <a href="http://expressjs.com/en/api.html#req">request object</a>. As a result, we can force Nest to inject the request object into the handler using the <code>@Req()</code> decorator.</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app0d4bd577aab502a7f2e9db9b07f89b1d9d8f8380.isJsActive }}
+<app-tabs #app0d4bd577aab502a7f2e9db9b07f89b1d9d8f8380></app-tabs>
+</span><pre [class.hide]="app0d4bd577aab502a7f2e9db9b07f89b1d9d8f8380.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Req &#125; from &#39;@nestjs/common&#39;;
+import &#123; Request &#125; from &#39;express&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Get()
+  findAll(@Req() request: Request): string &#123;
+    return &#39;This action returns all cats&#39;;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app0d4bd577aab502a7f2e9db9b07f89b1d9d8f8380.isJsActive"><code class="language-typescript">
+import &#123; Controller, Bind, Get, Req &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Get()
+  @Bind(Req())
+  findAll(request) &#123;
+    return &#39;This action returns all cats&#39;;
+  &#125;
+&#125;</code></pre><blockquote class="
+warning "><strong>Hint</strong> In order to take advantage of <code>express</code> typings, install <code>@types/express</code> package.
+</blockquote>
+<p>The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more <a href="http://expressjs.com/en/api.html#req">here</a>). In most cases, it&#39;s not necessary to grab these properties manually. We can use dedicated decorators instead, such as <code>@Body()</code> or <code>@Query()</code>, which are available out of the box. Below is a comparison of the provided decorators and the plain platform-specific objects they represent.</p>
+<table>
+  <tbody>
     <tr>
-      <td>Standard (recommended)</td>
-      <td>
-        When we return a JavaScript object or array, it'll be <strong>automatically</strong>
-        serialized to JSON. When we return a string however, Nest will send just a string without attempting to
-        serialize it.
-        <br />
-        <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
-        requests
-        which use <strong>201</strong>. We can easily change this behaviour by adding the <code>@HttpCode(...)</code>
-        decorator
-        at a handler-level.
-      </td>
+      <td><code>@Request()</code></td>
+      <td><code>req</code></td>
     </tr>
     <tr>
-      <td>Library-specific</td>
-      <td>
-        We can use the library specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-        which we can inject using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).
-      </td>
+      <td><code>@Response()</code></td>
+      <td><code>res</code></td>
     </tr>
-  </table>
-  <blockquote>
-    <strong>Warning</strong> It's forbidden to use both approaches at the same time. Nest detects whether the handler
-    is
-    using either <code>@Res()</code> or <code>@Next()</code>. If both approaches are used in the same time - the
-    Standard
-    approach is automatically disabled for this single route and will no longer work as expected.
-  </blockquote>
-  <h4>Request object</h4>
-  <p>
-    A lot of endpoints need access to the client <strong>request</strong> details. In fact, Nest is using a
-    library-specific
-    (express by default) <a href="http://expressjs.com/en/api.html#req" target="blank">request object</a>. As a result,
-    we
-    can force Nest to inject the request object into the handler using the <code>@Req()</code> decorator.
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: requestObjectT.isJsActive }}
-    <app-tabs #requestObjectT></app-tabs>
-  </span>
-  <pre [class.hide]="requestObjectT.isJsActive"><code class="language-typescript">{{ requestObject }}</code></pre>
-  <pre [class.hide]="!requestObjectT.isJsActive"><code class="language-typescript">{{ requestObjectJs }}</code></pre>
-  <p>
-    The request object represents the HTTP request and has properties for the request query string, parameters, HTTP
-    headers,
-    and body (read more <a href="http://expressjs.com/en/api.html#req" target="blank">here</a>). In most cases, it's
-    not necessary to grab these properties manually. We can use <strong>dedicated decorators</strong> instead, such as
-    <code>@Body()</code> or
-    <code>@Query()</code>, which are available out of the box. Below is a comparison of the provided decorators and the
-    plain
-    express objects they represent.
-  </p>
-  <table>
-    <tbody>
-      <tr>
-        <td><code>@Request()</code></td>
-        <td><code>req</code></td>
-      </tr>
-      <tr>
-        <td><code>@Response()</code></td>
-        <td><code>res</code></td>
-      </tr>
-      <tr>
-        <td><code>@Next()</code></td>
-        <td><code>next</code></td>
-      </tr>
-      <tr>
-        <td><code>@Session()</code></td>
-        <td><code>req.session</code></td>
-      </tr>
-      <tr>
-        <td><code>@Param(param?: string)</code></td>
-        <td><code>req.params</code> / <code>req.params[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Body(param?: string)</code></td>
-        <td><code>req.body</code> / <code>req.body[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Query(param?: string)</code></td>
-        <td><code>req.query</code> / <code>req.query[param]</code></td>
-      </tr>
-      <tr>
-        <td><code>@Headers(param?: string)</code></td>
-        <td><code>req.headers</code> / <code>req.headers[param]</code></td>
-      </tr>
-    </tbody>
-  </table>
-  <blockquote class="info">
-    <strong>Hint</strong>
-    To learn how to create your own custom decorators, visit <a routerLink="/custom-decorators">this</a> chapter.
-  </blockquote>
-  <h4>Resources</h4>
-  <p>
-    We defined an endpoint to fetch the cats resource (<strong>GET</strong> route). It'll also be great to provide a
-    way
-    of creating new records as well. For this, let's create the <strong>POST</strong> handler:
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: postEndpointT.isJsActive }}
-    <app-tabs #postEndpointT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ postEndpoint }}</code></pre>
-  <p>
-    It's that simple. Nest provides the rest of those endpoint decorators in the same fashion -
-    <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>,
-    and
-    <code>@All()</code>. All of them represent respective HTTP request methods.
-  </p>
-  <h4>Route wildcards</h4>
-  <p>
-    Pattern based routes are supported as well. For instance, the asterisk is used as a wildcard, and will match any
-    combination
-    of characters.
-  </p>
-  <pre><code class="language-typescript">{{ routeWildcards }}</code></pre>
-  <p>
-    Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters
-    <code>?</code>,
-    <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The
-    hyphen
-    (
-    <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.
-  </p>
-  <h4>Status code</h4>
-  <p>
-    As mentioned, the response <strong>status code</strong> is always <strong>200</strong> by default, except for POST
-    requests
-    which are <strong>201</strong>. We can easily change this behaviour by adding the <code>@HttpCode(...)</code>
-    decorator
-    at a handler-level.
-  </p>
-  <pre><code class="language-typescript">{{ statusCode }}</code></pre>
-  <p>
-    Often, your status code isn't static but depends on various factors. In that case, you can use a library-specific
-    <strong>response</strong>
-    (inject using <code>@Res()</code>) object (or, in case of an error, throw an exception).
-  </p>
-  <h4>Headers</h4>
-  <p>
-    To specify a custom response header, you can either use a <code>@Header()</code> decorator or a library-specific
-    response
-    object.
-  </p>
-  <pre><code class="language-typescript">{{ header }}</code></pre>
-  <h4>Route parameters</h4>
-  <p>
-    Routes with static paths can't help when you need to accept <strong>dynamic data</strong> as part of the URL. In
-    order
-    to define routes with parameters, we can directly particularise the route parameters in the path of the route.
-  </p>
-  <pre><code class="language-typescript">{{ routeParameters }}</code></pre>
-  <p>
-    In order to pick up a particular parameter, simply pass its name in parenthesis.
-  </p>
-  <pre><code class="language-typescript">{{ routeParameter }}</code></pre>
-  <h4>Async/await</h4>
-  <p>
-    We love modern JavaScript and we know that data extraction is mostly <strong>asynchronous</strong>. That's why Nest
-    supports
-    and works well with <code>async</code> functions.
-  </p>
-  <blockquote class="info">
-    <strong>Hint</strong> Learn more about <code>async / await</code>&nbsp;<a href="https://kamilmysliwiec.com/typescript-2-1-introduction-async-await"
-      target="blank">here</a>!
-  </blockquote>
-  <p>
-    Every async function has to return a <code>Promise</code>. It means that you can return a deferred value that Nest
-    will
-    be able to resolve by itself. Let's see an example of this below:
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: asyncExampleT.isJsActive }}
-    <app-tabs #asyncExampleT></app-tabs>
-  </span>
-  <pre [class.hide]="asyncExampleT.isJsActive"><code class="language-typescript">{{ asyncExample }}</code></pre>
-  <pre [class.hide]="!asyncExampleT.isJsActive"><code class="language-typescript">{{ asyncExampleJs }}</code></pre>
-  <p>
-    The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return Rx
-    <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html" target="blank">observable streams</a>.
-    Nest
-    will automatically subscribe to the source underneath and take the last emitted value (once the stream is
-    completed).
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: observableExampleT.isJsActive }}
-    <app-tabs #observableExampleT></app-tabs>
-  </span>
-  <pre [class.hide]="observableExampleT.isJsActive"><code class="language-typescript">{{ observableExample }}</code></pre>
-  <pre [class.hide]="!observableExampleT.isJsActive"><code class="language-typescript">{{ observableExampleJs }}</code></pre>
-  <p>
-    Either of the above approaches work and you can use whatever fits your requirements.
-  </p>
-  <h4>Request payloads</h4>
-  <p>
-    Our previous example of the POST route handler didn't accept any client params. Let's fix this by adding the <code>@Body()</code>
-    argument
-    here.
-  </p>
-  <p>
-    But first (if you use TypeScript), we need to determine the <strong>DTO</strong> (Data Transfer Object) schema. A
-    DTO
-    is an object that defines how the data will be sent over the network. We could determine the DTO schema by using
-    <strong>TypeScript</strong>
-    interfaces, or by simple classes. Surprisingly, we recommend using <strong>classes</strong> here. Why? Classes are
-    part
-    of the JavaScript ES6 standard, and therefore they represent plain functions. On the other hand, since TypeScript
-    interfaces
-    are removed during the transpilation, Nest can't refer to them. This is important because features such as <strong>Pipes</strong>
-    enable additional possibilities when they have access to the metatype of the variable.
-  </p>
-  <p>
-    Let's create the <code>CreateCatDto</code> class:
-  </p>
-  <span class="filename">
-    {{ 'create-cat.dto' | extension: createCatSchemaT.isJsActive }}
-    <app-tabs #createCatSchemaT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ createCatSchema }}</code></pre>
-  <p>
-    It has only three basic properties. All of them are marked as <code>readonly</code> because we should always try to
-    make
-    our functions as <a href="https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976"
-      target="blank">pure</a> as possible.
-  </p>
-  <p>
-    Thereafter we can use the newly created schema inside the <code>CatsController</code>:
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: exampleWithBodyT.isJsActive }}
-    <app-tabs #exampleWithBodyT></app-tabs>
-  </span>
-  <pre [class.hide]="exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBody }}</code></pre>
-  <pre [class.hide]="!exampleWithBodyT.isJsActive"><code class="language-typescript">{{ exampleWithBodyJs }}</code></pre>
-  <h4>Full resource sample</h4>
-  <p>
-    Here is a example that makes use of a few available decorators to create a basic controller. The following
-    controller exposes
-    a couple of methods to access and manipulate internal data.
-  </p>
-  <span class="filename">
-    {{ 'cats.controller' | extension: fullSampleT.isJsActive }}
-    <app-tabs #fullSampleT></app-tabs>
-  </span>
-  <pre [class.hide]="fullSampleT.isJsActive"><code class="language-typescript">{{ fullSample }}</code></pre>
-  <pre [class.hide]="!fullSampleT.isJsActive"><code class="language-typescript">{{ fullSample }}</code></pre>
-  <h4>Handling errors</h4>
-  <p>
-    There's a separate chapter about handling errors (i.e. working with exceptions) <a routerLink="/exception-filters">here</a>.
-  </p>
-  <h4>Getting up and running</h4>
-  <p>
-    With the above controller fully prepared, Nest still doesn't know that <code>CatsController</code> exists and as a
-    result
-    won't create an instance of this class.
-  </p>
-  <p>
-    Controllers always belong to the module, which is why we hold the <code>controllers</code> array within the <code>@Module()</code>
-    decorator.
-    Since we don't have any other modules except the root <code>ApplicationModule</code>, we'll use that to introduce
-    the
-    <code>CatsController</code>:
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: appModuleT.isJsActive }}
-    <app-tabs #appModuleT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ appModule }}</code></pre>
-  <p>
-    We attached the metadata to the module class, and Nest can now easily reflect which controllers have to be mounted.
-  </p>
-  <h4>Library-specific approach</h4>
-  <p>
-    So far we've discussed the Nest standard way of manipulating responses. The second way of manipulating the response
-    is to
-    use a library-specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>. In order
-    to inject a particular response object, we need to use the <code>@Res()</code> decorator. To show the differences,
-    let's
-    rewrite the <code>CatsController</code> to the following:
-  </p>
-  <span class="filename">
-    <app-tabs #expressWayT></app-tabs>
-  </span>
-  <pre [class.hide]="expressWayT.isJsActive"><code class="language-typescript">{{ expressWay }}</code></pre>
-  <pre [class.hide]="!expressWayT.isJsActive"><code class="language-typescript">{{ expressWayJs }}</code></pre>
-  <p>
-    Though this approach works, it's much less clear in general. The first approach should always be preferred, but to
-    make Nest
-    <strong>backwards compatible</strong>
-    with previous versions, the above approach is still available. One other thing to note is the <strong>response
-      object</strong>
-    in this approach allows for more flexibility - by allowing us to have full control of the response object (headers
-    manipulation
-    and so on).
-  </p>
-</div>
+    <tr>
+      <td><code>@Next()</code></td>
+      <td><code>next</code></td>
+    </tr>
+    <tr>
+      <td><code>@Session()</code></td>
+      <td><code>req.session</code></td>
+    </tr>
+    <tr>
+      <td><code>@Param(key?: string)</code></td>
+      <td><code>req.params</code> / <code>req.params[key]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Body(key?: string)</code></td>
+      <td><code>req.body</code> / <code>req.body[key]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Query(key?: string)</code></td>
+      <td><code>req.query</code> / <code>req.query[key]</code></td>
+    </tr>
+    <tr>
+      <td><code>@Headers(name?: string)</code></td>
+      <td><code>req.headers</code> / <code>req.headers[name]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote class="
+info "><strong>Hint</strong> To learn how to create your own custom decorators, visit <a routerLink="/custom-decorators">this</a> chapter.
+</blockquote>
+<h4 appAnchor id="resources"><span>Resources</span></h4>
+<p>We defined an endpoint to fetch the cats resource (<strong>GET</strong> route). It&#39;ll also be great to provide a way of creating new records as well. For this, let&#39;s create the <strong>POST</strong> handler:</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app582636ac98b4646d57b17ec6b4715859958592c7.isJsActive }}
+<app-tabs #app582636ac98b4646d57b17ec6b4715859958592c7></app-tabs>
+</span><pre [class.hide]="app582636ac98b4646d57b17ec6b4715859958592c7.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Post &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  create(): string &#123;
+    return &#39;This action adds a new cat&#39;;
+  &#125;
+
+  @Get()
+  findAll(): string &#123;
+    return &#39;This action returns all cats&#39;;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app582636ac98b4646d57b17ec6b4715859958592c7.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Post &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  create() &#123;
+    return &#39;This action adds a new cat&#39;;
+  &#125;
+
+  @Get()
+  findAll() &#123;
+    return &#39;This action returns all cats&#39;;
+  &#125;
+&#125;</code></pre><p>It&#39;s that simple. Nest provides the rest of those endpoint decorators in the same fashion - <code>@Put()</code>, <code>@Delete()</code>, <code>@Patch()</code>, <code>@Options()</code>, <code>@Head()</code>, and <code>@All()</code>. All of them represent respective HTTP request methods.</p>
+<h4 appAnchor id="route-wildcards"><span>Route wildcards</span></h4>
+<p>Pattern based routes are supported as well. For instance, the asterisk is used as a wildcard, and will match any combination of characters.</p>
+<pre><code class="language-typescript">
+@Get(&#39;ab*cd&#39;)
+findAll() &#123;
+  return &#39;This route uses a wildcard&#39;;
+&#125;</code></pre>
+<p>Above route path will match <code>abcd</code>, <code>ab_cd</code>, <code>abecd</code>, and so on. The characters <code>?</code>, <code>+</code>, <code>*</code>, and <code>()</code> are subsets of their regular expression counterparts. The hyphen ( <code>-</code>) and the dot (<code>.</code>) are interpreted literally by string-based paths.</p>
+<h4 appAnchor id="status-code"><span>Status code</span></h4>
+<p>As mentioned, the response <strong>status code</strong> is always <strong>200</strong> by default, except for POST requests which are <strong>201</strong>. We can easily change this behaviour by adding the <code>@HttpCode(...)</code> decorator at a handler-level.</p>
+<pre><code class="language-typescript">
+@Post()
+@HttpCode(204)
+create() &#123;
+  return &#39;This action adds a new cat&#39;;
+&#125;</code></pre>
+<p>Often, your status code isn&#39;t static but depends on various factors. In that case, you can use a library-specific <strong>response</strong> (inject using <code>@Res()</code>) object (or, in case of an error, throw an exception).</p>
+<h4 appAnchor id="headers"><span>Headers</span></h4>
+<p>To specify a custom response header, you can either use a <code>@Header()</code> decorator or a library-specific response object (and call <code>res.header()</code> directly).</p>
+<pre><code class="language-typescript">
+@Post()
+@Header(&#39;Cache-Control&#39;, &#39;none&#39;)
+create() &#123;
+  return &#39;This action adds a new cat&#39;;
+&#125;</code></pre>
+<h4 appAnchor id="route-parameters"><span>Route parameters</span></h4>
+<p>Routes with static paths can&#39;t help when you need to accept <strong>dynamic data</strong> as part of the URL. In order to define routes with parameters, we can directly particularise the route parameters in the path of the route.</p>
+
+<span class="filename">
+<app-tabs #app8f99a87d1e74998ed1f1fe312fcac80edac7c6d0></app-tabs>
+</span><pre [class.hide]="app8f99a87d1e74998ed1f1fe312fcac80edac7c6d0.isJsActive"><code class="language-typescript">
+@Get(&#39;:id&#39;)
+findOne(@Param() params): string &#123;
+  console.log(params.id);
+  return `This action returns a #$&#123;params.id&#125; cat`;
+&#125;</code></pre>
+<pre [class.hide]="!app8f99a87d1e74998ed1f1fe312fcac80edac7c6d0.isJsActive"><code class="language-typescript">
+@Get(&#39;:id&#39;)
+@Bind(Param())
+findOne(params) &#123;
+  console.log(params.id);
+  return `This action returns a #$&#123;params.id&#125; cat`;
+&#125;</code></pre><p>In order to pick up a particular parameter, simply pass its name in parenthesis.</p>
+
+<span class="filename">
+<app-tabs #appd23ad3241b3cd5b830b3782ee788e6802cc4c51e></app-tabs>
+</span><pre [class.hide]="appd23ad3241b3cd5b830b3782ee788e6802cc4c51e.isJsActive"><code class="language-typescript">
+@Get(&#39;:id&#39;)
+findOne(@Param(&#39;id&#39;) id): string &#123;
+  return `This action returns a #$&#123;id&#125; cat`;
+&#125;</code></pre>
+<pre [class.hide]="!appd23ad3241b3cd5b830b3782ee788e6802cc4c51e.isJsActive"><code class="language-typescript">
+@Get(&#39;:id&#39;)
+@Bind(Param(&#39;id&#39;))
+findOne(id) &#123;
+  return `This action returns a #$&#123;id&#125; cat`;
+&#125;</code></pre><h4 appAnchor id="routes-order"><span>Routes order</span></h4>
+<p>Be aware that routes registration <strong>order</strong> (methods order in classes) matters. Assume that you have a route that allows getting cats by identifiers (<code>cats/:id</code>). If you register another endpoint below the mentioned one, which basically returns all cats at once (<code>cats</code>), the request will never hit the actual handler because all path parameters are optional. See the following example:</p>
+<pre><code class="language-typescript">
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Get(&#39;:id&#39;)
+  findOne(@Param(&#39;id&#39;) id: string) &#123;
+    return `This action returns a #$&#123;id&#125; cat`;
+  &#125;
+
+  @Get()
+  findAll() &#123;
+    // This endpoint will never get called
+    // because the &quot;/cats&quot; request is going
+    // to be captured by the &quot;/cats/:id&quot; route handler
+  &#125;
+&#125;</code></pre>
+<p>In order to avoid such side-effects, simply move <code>findAll()</code> method above <code>findOne()</code>.</p>
+<h4 appAnchor id="scopes"><span>Scopes</span></h4>
+<p>For the people coming from different languages, it might be awkward that in Nest almost everything is shared across the incoming requests. We have a connection pool to the database, singleton services with a global state etc. Generally, Node.js doesn&#39;t follow request/response Multi-Threaded Stateless Model in which every request is being processed by the separate thread. Hence, using singleton instances is fully <strong>safe</strong> for our applications.</p>
+<p>However, there are edge-cases when request-based lifetime of the controller may be an intentional behavior, for instance per-request cache in GraphQL applications, request tracking or multi-tenancy. Learn how to use them <a routerLink="/techniques/scopes">here</a>.</p>
+<h4 appAnchor id="asynchronousness"><span>Asynchronousness</span></h4>
+<p>We love modern JavaScript and we know that data extraction is mostly <strong>asynchronous</strong>. That&#39;s why Nest supports and works well with <code>async</code> functions.</p>
+<blockquote class="
+info "><strong>Hint</strong> Learn more about <code>async / await</code> feature <a href="https://kamilmysliwiec.com/typescript-2-1-introduction-async-await">here</a>
+</blockquote>
+<p>Every async function has to return a <code>Promise</code>. It means that you can return a deferred value that Nest will be able to resolve by itself. Let&#39;s see an example of this below:</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app49ae5a9996089d183674e1f2471190cec4744e93.isJsActive }}
+<app-tabs #app49ae5a9996089d183674e1f2471190cec4744e93></app-tabs>
+</span><pre [class.hide]="app49ae5a9996089d183674e1f2471190cec4744e93.isJsActive"><code class="language-typescript">
+@Get()
+async findAll(): Promise&lt;any[]&gt; &#123;
+  return [];
+&#125;</code></pre>
+<pre [class.hide]="!app49ae5a9996089d183674e1f2471190cec4744e93.isJsActive"><code class="language-typescript">
+@Get()
+async findAll() &#123;
+  return [];
+&#125;</code></pre><p>The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return Rx <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html">observable streams</a>. Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app562cb7c5f185fc07f4d20bf1193f74e2eceb6c6d.isJsActive }}
+<app-tabs #app562cb7c5f185fc07f4d20bf1193f74e2eceb6c6d></app-tabs>
+</span><pre [class.hide]="app562cb7c5f185fc07f4d20bf1193f74e2eceb6c6d.isJsActive"><code class="language-typescript">
+@Get()
+findAll(): Observable&lt;any[]&gt; &#123;
+  return of([]);
+&#125;</code></pre>
+<pre [class.hide]="!app562cb7c5f185fc07f4d20bf1193f74e2eceb6c6d.isJsActive"><code class="language-typescript">
+@Get()
+findAll() &#123;
+  return of([]);
+&#125;</code></pre><p>Either of the above approaches work and you can use whatever fits your requirements.</p>
+<h4 appAnchor id="request-payloads"><span>Request payloads</span></h4>
+<p>Our previous example of the POST route handler didn&#39;t accept any client params. Let&#39;s fix this by adding the <code>@Body()</code> argument here.</p>
+<p>But first (if you use TypeScript), we need to determine the <strong>DTO</strong> (Data Transfer Object) schema. A DTO is an object that defines how the data will be sent over the network. We could determine the DTO schema by using <strong>TypeScript</strong> interfaces, or by simple classes. Surprisingly, we recommend using <strong>classes</strong> here. Why? Classes are part of the JavaScript ES6 standard, and therefore they represent plain functions. On the other hand, since TypeScript interfaces are removed during the transpilation, Nest can&#39;t refer to them. This is important because features such as <strong>Pipes</strong> enable additional possibilities when they have access to the metatype of the variable.</p>
+<p>Let&#39;s create the <code>CreateCatDto</code> class:</p>
+
+<span class="filename">
+  {{ 'create-cat.dto' | extension: app553916d7960e46a94ea60492474688d49b33da3c.isJsActive }}
+<app-tabs #app553916d7960e46a94ea60492474688d49b33da3c></app-tabs>
+</span><pre><code class="language-typescript">
+export class CreateCatDto &#123;
+  readonly name: string;
+  readonly age: number;
+  readonly breed: string;
+&#125;</code></pre><p>It has only three basic properties. Thereafter we can use the newly created schema inside the <code>CatsController</code>:</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app46b2d5f90c3447151c0c79da48e0410a84ceb8a5.isJsActive }}
+<app-tabs #app46b2d5f90c3447151c0c79da48e0410a84ceb8a5></app-tabs>
+</span><pre [class.hide]="app46b2d5f90c3447151c0c79da48e0410a84ceb8a5.isJsActive"><code class="language-typescript">
+@Post()
+async create(@Body() createCatDto: CreateCatDto) &#123;
+  return &#39;This action adds a new cat&#39;;
+&#125;</code></pre>
+<pre [class.hide]="!app46b2d5f90c3447151c0c79da48e0410a84ceb8a5.isJsActive"><code class="language-typescript">
+@Post()
+@Bind(Body())
+async create(createCatDto) &#123;
+  return &#39;This action adds a new cat&#39;;
+&#125;</code></pre><h4 appAnchor id="handling-errors"><span>Handling errors</span></h4>
+<p>There&#39;s a separate chapter about handling errors (i.e. working with exceptions) <a routerLink="/exception-filters">here</a>.</p>
+<h4 appAnchor id="full-resource-sample"><span>Full resource sample</span></h4>
+<p>Here is a example that makes use of a few available decorators to create a basic controller. The following controller exposes a couple of methods to access and manipulate internal data.</p>
+
+<span class="filename">
+  {{ 'cats.controller' | extension: app43d992557ff85ed36a5a040cf3664798227027e5.isJsActive }}
+<app-tabs #app43d992557ff85ed36a5a040cf3664798227027e5></app-tabs>
+</span><pre [class.hide]="app43d992557ff85ed36a5a040cf3664798227027e5.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Query, Post, Body, Put, Param, Delete &#125; from &#39;@nestjs/common&#39;;
+import &#123; CreateCatDto, UpdateCatDto, ListAllEntities &#125; from &#39;./dto&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  create(@Body() createCatDto: CreateCatDto) &#123;
+    return &#39;This action adds a new cat&#39;;
+  &#125;
+
+  @Get()
+  findAll(@Query() query: ListAllEntities) &#123;
+    return `This action returns all cats (limit: $&#123;query.limit&#125; items)`;
+  &#125;
+
+  @Get(&#39;:id&#39;)
+  findOne(@Param(&#39;id&#39;) id: string) &#123;
+    return `This action returns a #$&#123;id&#125; cat`;
+  &#125;
+
+  @Put(&#39;:id&#39;)
+  update(@Param(&#39;id&#39;) id: string, @Body() updateCatDto: UpdateCatDto) &#123;
+    return `This action updates a #$&#123;id&#125; cat`;
+  &#125;
+
+  @Delete(&#39;:id&#39;)
+  remove(@Param(&#39;id&#39;) id: string) &#123;
+    return `This action removes a #$&#123;id&#125; cat`;
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!app43d992557ff85ed36a5a040cf3664798227027e5.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Query, Post, Body, Put, Param, Delete &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  create(@Body() createCatDto) &#123;
+    return &#39;This action adds a new cat&#39;;
+  &#125;
+
+  @Get()
+  findAll(@Query() query) &#123;
+    return `This action returns all cats (limit: $&#123;query.limit&#125; items)`;
+  &#125;
+
+  @Get(&#39;:id&#39;)
+  findOne(@Param(&#39;id&#39;) id) &#123;
+    return `This action returns a #$&#123;id&#125; cat`;
+  &#125;
+
+  @Put(&#39;:id&#39;)
+  update(@Param(&#39;id&#39;) id, @Body() updateCatDto) &#123;
+    return `This action updates a #$&#123;id&#125; cat`;
+  &#125;
+
+  @Delete(&#39;:id&#39;)
+  remove(@Param(&#39;id&#39;) id) &#123;
+    return `This action removes a #$&#123;id&#125; cat`;
+  &#125;
+&#125;</code></pre><h4 appAnchor id="getting-up-and-running"><span>Getting up and running</span></h4>
+<p>With the above controller fully prepared, Nest still doesn&#39;t know that <code>CatsController</code> exists and as a result won&#39;t create an instance of this class.</p>
+<p>Controllers always belong to the module, which is why we hold the <code>controllers</code> array within the <code>@Module()</code> decorator. Since we don&#39;t have any other modules except the root <code>ApplicationModule</code>, we&#39;ll use that to introduce the <code>CatsController</code>:</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: app61f2763f538531e29f373506430e7e2119d07875.isJsActive }}
+<app-tabs #app61f2763f538531e29f373506430e7e2119d07875></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; CatsController &#125; from &#39;./cats/cats.controller&#39;;
+
+@Module(&#123;
+  controllers: [CatsController],
+&#125;)
+export class ApplicationModule &#123;&#125;</code></pre><p>We attached the metadata to the module class, and Nest can now easily reflect which controllers have to be mounted.</p>
+<h4 appAnchor id="appendix-library-specific-approach"><span>Appendix: Library-specific approach</span></h4>
+<p>So far we&#39;ve discussed the Nest standard way of manipulating responses. The second way of manipulating the response is to use a library-specific <a href="http://expressjs.com/en/api.html#res">response object</a>. In order to inject a particular response object, we need to use the <code>@Res()</code> decorator. To show the differences, let&#39;s rewrite the <code>CatsController</code> to the following:</p>
+
+<span class="filename">
+<app-tabs #appddf96b4ab1423d24a7ef3ab7011d9abe486da9b6></app-tabs>
+</span><pre [class.hide]="appddf96b4ab1423d24a7ef3ab7011d9abe486da9b6.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Post, Res, HttpStatus &#125; from &#39;@nestjs/common&#39;;
+import &#123; Response &#125; from &#39;express&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  create(@Res() res: Response) &#123;
+    res.status(HttpStatus.CREATED).send();
+  &#125;
+
+  @Get()
+  findAll(@Res() res: Response) &#123;
+     res.status(HttpStatus.OK).json([]);
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appddf96b4ab1423d24a7ef3ab7011d9abe486da9b6.isJsActive"><code class="language-typescript">
+import &#123; Controller, Get, Post, Bind, Res, Body, HttpStatus &#125; from &#39;@nestjs/common&#39;;
+
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  @Bind(Res(), Body())
+  create(res, createCatDto) &#123;
+    res.status(HttpStatus.CREATED).send();
+  &#125;
+
+  @Get()
+  @Bind(Res())
+  findAll(res) &#123;
+     res.status(HttpStatus.OK).json([]);
+  &#125;
+&#125;</code></pre><p>Though this approach works, it&#39;s much less clear in general. The first approach should always be preferred, but to make Nest <strong>backwards compatible</strong> with previous versions, the above approach is still available. One other thing to note is the <strong>response object</strong> in this approach allows for more flexibility - by allowing us to have full control of the response object (headers manipulation and so on).</p>
+
+    </div>

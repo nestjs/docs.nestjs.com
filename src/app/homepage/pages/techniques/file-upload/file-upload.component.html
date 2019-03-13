@@ -1,97 +1,119 @@
-<div class="content">
-  <h3>File upload</h3>
-  <p>
-    In order to handle file uploading, Nest makes use of <a href="https://github.com/expressjs/multer" target="blank">multer</a>
-    middleware. This middleware is fully configurable and you can adjust its behavior to your application requirements.
-  </p>
-  <p>
-    Multer is middleware for handling <code>multipart/form-data</code>, which is primarily used for uploading files.
+<div class="content" #contentReference>
+      <h3 id="file-upload">File upload</h3>
+<p>In order to handle file uploading, Nest makes use of <a href="https://github.com/expressjs/multer">multer</a> middleware. This middleware is fully configurable and you can adjust its behavior to your application requirements.</p>
+<p>Multer is middleware for handling <code>multipart/form-data</code>, which is primarily used for uploading files.</p>
+<blockquote class="
+warning "><strong>Warning</strong> Multer will not process any form which is not multipart (<code>multipart/form-data</code>). Besides, this package won&#39;t work with the <code>FastifyAdapter</code>.
+</blockquote>
+<h4 appAnchor id="basic-example"><span>Basic example</span></h4>
+<p>When we want to upload a single file, we simply tie <code>FileInterceptor()</code> to the handler, and then, pull outs <code>file</code> from the <code>request</code> using <code>@UploadedFile()</code> decorator.</p>
 
-  </p>
-  <blockquote class="warning">
-    <strong>Warning</strong> Multer will not process any form which is not multipart (<code>multipart/form-data</code>).
-    Besides, this package won't work with the <code>FastifyAdapter</code>.
-  </blockquote>
-  <h4>Basic example</h4>
-  <p>
-    When we want to upload a single file, we simply tie <code>FileInterceptor()</code> to the handler, and then, pull outs
-    <code>file</code> from the <code>request</code> using <code>@UploadedFile()</code> decorator.
-  </p>
-  <span class="filename">
-    <app-tabs #singleFileT></app-tabs>
-  </span>
-  <pre [class.hide]="singleFileT.isJsActive"><code class="language-typescript">{{ singleFile }}</code></pre>
-  <pre [class.hide]="!singleFileT.isJsActive"><code class="language-typescript">{{ singleFileJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> Both <code>FileInterceptor()</code> and <code>@UploadedFile()</code> decorator are exposed from
-    <code>@nestjs/common</code> package.
-  </blockquote>
-  <p>
-    The <code>FileInterceptor()</code> takes two arguments, a <code>fieldName</code> (points to field from HTML form that
-    holds a file) and optional <code>options</code> object. These <code>MulterOptions</code> are equivalent to those passed
-    into multer constructor (more details <a href="https://github.com/expressjs/multer#multeropts" target="blank">here</a>)
-  </p>
-  <h4>Array of files</h4>
-  <p>
-    In order to upload an array of files, we use <code>FilesInterceptor()</code>. This interceptor takes three arguments.
-    A <code>fieldName</code> (that remains the same), <code>maxCount</code> which is a maximum number of files that can be
-    uploaded at the same time, and optional <code>MulterOptions</code> object. Additionally, to pick files from <code>request</code>    object,
-    we use <code>@UploadedFiles()</code> decorator
-  </p>
-  <span class="filename">
-    <app-tabs #multiplteFilesT></app-tabs>
-  </span>
-  <pre [class.hide]="multiplteFilesT.isJsActive"><code class="language-typescript">{{ multipleFiles }}</code></pre>
-  <pre [class.hide]="!multiplteFilesT.isJsActive"><code class="language-typescript">{{ multipleFilesJs }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@UploadedFiles()</code> decorator are exposed from
-    <code>@nestjs/common</code> package.
-  </blockquote>
-  <h4>Multiple files</h4>
-  <p>
-    To upload multiple fields (all with different keys), we use <code>FileFieldsInterceptor()</code> decorator.
-  </p>
-  <span class="filename">
-    <app-tabs #fileFieldsT></app-tabs>
-  </span>
-  <pre [class.hide]="fileFieldsT.isJsActive"><code class="language-typescript">{{ fileFields }}</code></pre>
-  <pre [class.hide]="!fileFieldsT.isJsActive"><code class="language-typescript">{{ fileFieldsJs }}</code></pre>
-  <h4>Default options</h4>
-  <p>
-    To customize <a href="https://github.com/expressjs/multer" target="blank">multer</a> behavior, you can register the <code>MulterModule</code>.
-    We support all options listed <a href="https://github.com/expressjs/multer#multeropts" target="blank">here</a>.
-  </p>
-  <pre><code class="language-typescript">{{ multerModule }}</code></pre>
-  <h4>Async configuration</h4>
-  <p>
-    Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use
-    <code>registerAsync()</code> method, that provides a couple of various ways to deal with async data.
-  </p>
-  <p>
-    First possible approach is to use a factory function:
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfiguration }}</code></pre>
-  <p>
-    Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through
-    <code>inject</code>).
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationFactoryAsync }}</code></pre>
-  <p>
-    Alternatively, you are able to use class instead of a factory.
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationClass }}</code></pre>
-  <p>
-    Above construction will instantiate <code>MulterConfigService</code> inside <code>MulterModule</code> and will leverage
-    it to create options object. The <code>MulterConfigService</code> has to implement <code>MulterOptionsFactory</code>    interface.
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationClassBody }}</code></pre>
-  <p>
-    In order to prevent the creation of <code>MulterConfigService</code> inside <code>MulterModule</code> and use a provider
-    imported from a different module, you can use the <code>useExisting</code> syntax.
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationExisting }}</code></pre>
-  <p>
-    It works the same as <code>useClass</code> with one critical difference - <code>MulterModule</code> will lookup imported
-    modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.
-  </p>
-</div>
+<span class="filename">
+<app-tabs #app1a78ea47b495f3970d5ef1172055952f0bce2d81></app-tabs>
+</span><pre [class.hide]="app1a78ea47b495f3970d5ef1172055952f0bce2d81.isJsActive"><code class="language-typescript">
+@Post(&#39;upload&#39;)
+@UseInterceptors(FileInterceptor(&#39;file&#39;))
+uploadFile(@UploadedFile() file) &#123;
+  console.log(file);
+&#125;</code></pre>
+<pre [class.hide]="!app1a78ea47b495f3970d5ef1172055952f0bce2d81.isJsActive"><code class="language-typescript">
+@Post(&#39;upload&#39;)
+@UseInterceptors(FileInterceptor(&#39;file&#39;))
+@Bind(UploadedFile())
+uploadFile(file) &#123;
+  console.log(file);
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> Both <code>FileInterceptor()</code> and <code>@UploadedFile()</code> decorator are exposed from <code>@nestjs/common</code> package.
+</blockquote>
+<p>The <code>FileInterceptor()</code> takes two arguments, a <code>fieldName</code> (points to field from HTML form that holds a file) and optional <code>options</code> object. These <code>MulterOptions</code> are equivalent to those passed into multer constructor (more details <a href="https://github.com/expressjs/multer#multeropts">here</a>)</p>
+<h4 appAnchor id="array-of-files"><span>Array of files</span></h4>
+<p>In order to upload an array of files, we use <code>FilesInterceptor()</code>. This interceptor takes three arguments. A <code>fieldName</code> (that remains the same), <code>maxCount</code> which is a maximum number of files that can be uploaded at the same time, and optional <code>MulterOptions</code> object. Additionally, to pick files from <code>request</code> object, we use <code>@UploadedFiles()</code> decorator</p>
+
+<span class="filename">
+<app-tabs #app8e69e72713a98f4e39c9fe78269551fb4e9df69a></app-tabs>
+</span><pre [class.hide]="app8e69e72713a98f4e39c9fe78269551fb4e9df69a.isJsActive"><code class="language-typescript">
+@Post(&#39;upload&#39;)
+@UseInterceptors(FilesInterceptor(&#39;files&#39;))
+uploadFile(@UploadedFiles() files) &#123;
+  console.log(files);
+&#125;</code></pre>
+<pre [class.hide]="!app8e69e72713a98f4e39c9fe78269551fb4e9df69a.isJsActive"><code class="language-typescript">
+@Post(&#39;upload&#39;)
+@UseInterceptors(FilesInterceptor(&#39;files&#39;))
+@Bind(UploadedFiles())
+uploadFile(files) &#123;
+  console.log(files);
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@UploadedFiles()</code> decorator are exposed from <code>@nestjs/common</code> package.
+</blockquote>
+<h4 appAnchor id="multiple-files"><span>Multiple files</span></h4>
+<p>To upload multiple fields (all with different keys), we use <code>FileFieldsInterceptor()</code> decorator.</p>
+
+<span class="filename">
+<app-tabs #app4db5ddbd96a86a7484e5b11ae2fca3aca13418be></app-tabs>
+</span><pre [class.hide]="app4db5ddbd96a86a7484e5b11ae2fca3aca13418be.isJsActive"><code class="language-typescript">
+@Post(&#39;upload&#39;)
+@UseInterceptors(FileFieldsInterceptor([
+  &#123; name: &#39;avatar&#39;, maxCount: 1 &#125;,
+  &#123; name: &#39;background&#39;, maxCount: 1 &#125;,
+]))
+uploadFile(@UploadedFiles() files) &#123;
+  console.log(files);
+&#125;</code></pre>
+<pre [class.hide]="!app4db5ddbd96a86a7484e5b11ae2fca3aca13418be.isJsActive"><code class="language-typescript">
+@Post(&#39;upload&#39;)
+@Bind(UploadedFiles())
+@UseInterceptors(FileFieldsInterceptor([
+  &#123; name: &#39;avatar&#39;, maxCount: 1 &#125;,
+  &#123; name: &#39;background&#39;, maxCount: 1 &#125;,
+]))
+uploadFile(files) &#123;
+  console.log(files);
+&#125;</code></pre><h4 appAnchor id="default-options"><span>Default options</span></h4>
+<p>To customize <a href="https://github.com/expressjs/multer">multer</a> behavior, you can register the <code>MulterModule</code>. We support all options listed <a href="https://github.com/expressjs/multer#multeropts">here</a>.</p>
+<pre><code class="language-typescript">
+MulterModule.register(&#123;
+  dest: &#39;/upload&#39;,
+&#125;);</code></pre>
+<h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
+<p>Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use <code>registerAsync()</code> method, that provides a couple of various ways to deal with async data.</p>
+<p>First possible approach is to use a factory function:</p>
+<pre><code class="language-typescript">
+MulterModule.registerAsync(&#123;
+  useFactory: () =&gt; (&#123;
+    dest: &#39;/upload&#39;,
+  &#125;),
+&#125;);</code></pre>
+<p>Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through <code>inject</code>).</p>
+<pre><code class="language-typescript">
+MulterModule.registerAsync(&#123;
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) =&gt; (&#123;
+    dest: configService.getString(&#39;MULTER_DEST&#39;),
+  &#125;),
+  inject: [ConfigService],
+&#125;);</code></pre>
+<p>Alternatively, you are able to use class instead of a factory.</p>
+<pre><code class="language-typescript">
+MulterModule.registerAsync(&#123;
+  useClass: MulterConfigService,
+&#125;);</code></pre>
+<p>Above construction will instantiate <code>MulterConfigService</code> inside <code>MulterModule</code> and will leverage it to create options object. The <code>MulterConfigService</code> has to implement <code>MulterOptionsFactory</code> interface.</p>
+<pre><code class="language-typescript">
+@Injectable()
+class MulterConfigService implements MulterOptionsFactory &#123;
+  createMulterOptions(): MulterModuleOptions &#123;
+    return &#123;
+      dest: &#39;/upload&#39;,
+    &#125;;
+  &#125;
+&#125;</code></pre>
+<p>In order to prevent the creation of <code>MulterConfigService</code> inside <code>MulterModule</code> and use a provider imported from a different module, you can use the <code>useExisting</code> syntax.</p>
+<pre><code class="language-typescript">
+MulterModule.registerAsync(&#123;
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+&#125;);</code></pre>
+<p>It works the same as <code>useClass</code> with one critical difference - <code>MulterModule</code> will lookup imported modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.</p>
+
+    </div>

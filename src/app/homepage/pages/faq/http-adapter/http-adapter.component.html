@@ -1,0 +1,40 @@
+<div class="content" #contentReference>
+      <h3 id="http-adapter">HTTP adapter</h3>
+<p>Occasionally, you may want to access the underlying HTTP server, either within the Nest application context or from the outside.</p>
+<p>Basically, every native (platform-specific) HTTP server/library instance is wrapped in an <strong>adapter</strong>. The adapter is registered as a globally available provider that might be plucked from the application context as well as injected into other providers easily.</p>
+<h4 appAnchor id="outside-strategy"><span>Outside strategy</span></h4>
+<p>In order to get the <code>HttpAdapter</code> from the outside of the application context, you can call <code>getHttpAdapter()</code> method.</p>
+
+<span class="filename">
+<app-tabs #app7a8c9551ebd49932e6f7385ca0ad8f15049c90a0></app-tabs>
+</span><pre><code class="language-typescript">
+const app = await NestFactory.create(ApplicationModule);
+const httpAdapter = app.getHttpAdapter();</code></pre><h4 appAnchor id="in-context-strategy"><span>In-context strategy</span></h4>
+<p>In order to get the <code>HttpAdapterHost</code> from within the application context, you can inject it in the same way as any other existing provider (let&#39;s say, through <code>constructor</code>).</p>
+
+<span class="filename">
+<app-tabs #app6afd48a7c7e40b05056f6eb1eca8e4758711bd94></app-tabs>
+</span><pre [class.hide]="app6afd48a7c7e40b05056f6eb1eca8e4758711bd94.isJsActive"><code class="language-typescript">
+export class CatsService &#123;
+  constructor(private readonly adapterHost: HttpAdapterHost) &#123;&#125;
+&#125;</code></pre>
+<pre [class.hide]="!app6afd48a7c7e40b05056f6eb1eca8e4758711bd94.isJsActive"><code class="language-typescript">
+@Dependencies(HttpAdapterHost)
+export class CatsService &#123;
+  constructor(adapterHost) &#123;
+    this.adapterHost = adapterHost;
+  &#125;
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> The <code>HttpAdapterHost</code> is imported from the <code>@nestjs/core</code> package.
+</blockquote>
+<h4 appAnchor id="adapter-host"><span>Adapter host</span></h4>
+<p>So far, we have learnt how to get the <code>HttpAdapterHost</code>. However, it&#39;s still not an actual <code>HttpAdapter</code>. In order to get the <code>HttpAdapter</code>, simply access the <code>httpAdapter</code> property.</p>
+<pre><code class="language-typescript">
+const adapterHost = app.get(HttpAdapterHost);
+const httpAdapter = adapterHost.httpAdapter;</code></pre>
+<p>The <code>httpAdapter</code> is a real instance of the HTTP adapter used by the framework underneath. It can be either <code>ExpressAdapter</code> or <code>FastifyAdapter</code> (both classes extend <code>AbstractHttpAdapter</code>).</p>
+<p>Every adapter exposes several useful methods to interact with the HTTP server. Nonetheless, if you want to access the library reference directly, call <code>getInstance()</code> method.</p>
+<pre><code class="language-typescript">
+const instance = httpAdapter.getInstance();</code></pre>
+
+    </div>

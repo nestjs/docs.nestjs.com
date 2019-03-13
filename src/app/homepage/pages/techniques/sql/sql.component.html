@@ -1,197 +1,330 @@
-<div class="content">
-  <h3>Database (TypeORM)</h3>
-  <p>
-    In order to reduce a boilerplate necessary to start the adventure with any database, Nest comes with the ready to use <code>@nestjs/typeorm</code>    package.
-    We selected <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> because it's definitely the most
-    mature Object Relational Mapper (ORM) available so far. Since it's written in TypeScript, it works pretty well with the
-    Nest framework.
-  </p>
-  <p>
-    Firstly, we need to install all of the required dependencies:
-  </p>
-  <pre><code class="language-bash">
+<div class="content" #contentReference>
+      <h3 id="database-typeorm">Database (TypeORM)</h3>
+<p>In order to reduce a boilerplate necessary to start the adventure with any database, Nest comes with the ready to use <code>@nestjs/typeorm</code> package. We have selected <a href="https://github.com/typeorm/typeorm">TypeORM</a> because it&#39;s definitely the most mature Object Relational Mapper (ORM) available so far. Since it&#39;s written in TypeScript, it works pretty well with the Nest framework.</p>
+<p>Firstly, we need to install all of the required dependencies:</p>
+<pre><code class="language-bash">
 $ npm install --save @nestjs/typeorm typeorm mysql</code></pre>
-  <blockquote class="info">
-    <strong>Notice</strong> In this chapter we'll use a MySQL database, but <strong>TypeORM</strong> provides a support for
-    a lot of different databases such as PostgreSQL, SQLite, and even MongoDB (NoSQL).
-  </blockquote>
-  <p>
-    Once the installation process is completed, we can import the <code>TypeOrmModule</code> into the root <code>ApplicationModule</code>.
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: importTypeOrmT.isJsActive }}
-    <app-tabs #importTypeOrmT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ importTypeOrm }}</code></pre>
-  <p>
-    The <code>forRoot()</code> method accepts the same configuration object as <code>createConnection()</code> from the <a
-      href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> package. Futhermore, instead of passing anything
-    to the <code>forRoot()</code>, we can create an <code>ormconfig.json</code> file in the project root directory.
-  </p>
-  <span class="filename">ormconfig.json</span>
-  <pre><code class="language-json">{{ ormconfig }}</code></pre>
-  <p>
-    Then, we can simply leave the parenthesis empty:
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: importTypeOrmEmptyT.isJsActive }}
-    <app-tabs #importTypeOrmEmptyT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ importTypeOrmEmpty }}</code></pre>
-  <p>
-    Afterward, the <code>Connection</code> and <code>EntityManager</code> will be available to inject across entire project
-    (without importing any module elsewhere), for example, in this way:
-  </p>
-  <span class="filename">
-    {{ 'app.module' | extension: importTypeOrmEmptyT.isJsActive }}
-    <app-tabs #importTypeOrmEmptyT></app-tabs>
-  </span>
-  <pre [class.hide]="importTypeOrmEmptyT.isJsActive"><code class="language-typescript">{{ importConnectionInstance }}</code></pre>
-  <pre [class.hide]="!importTypeOrmEmptyT.isJsActive"><code class="language-typescript">{{ importConnectionInstanceJs }}</code></pre>
-  <h4>Repository pattern</h4>
-  <p>
-    The <a href="https://github.com/typeorm/typeorm" target="blank">TypeORM</a> supports the repository design pattern, so
-    each entity has its own Repository. These repositories can be obtained from the database connection.
-  </p>
-  <p>
-    Firstly, we need at least one entity. We're gonna reuse the <code>Photo</code> entity from the offical documentation.
-  </p>
-  <span class="filename">
-    {{ 'photo/photo.entity' | extension: photoEntityT.isJsActive }}
-    <app-tabs #photoEntityT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ photoEntity }}</code></pre>
-  <p>
-    The <code>Photo</code> entity belongs to the <code>photo</code> directory. This directory represents the <code>PhotoModule</code>.
-    It's your decision where you gonna keep your model files. From our point of view, the best way's to hold them nearly
-    their <strong>domain</strong>, in the corresponding module directory.
-  </p>
-  <p>
-    Let's have a look at the <code>PhotoModule</code>:
-  </p>
-  <span class="filename">
-    {{ 'photo/photo.module' | extension: photoModuleT.isJsActive }}
-    <app-tabs #photoModuleT></app-tabs>
-  </span>
-  <pre><code class="language-typescript">{{ photoModule }}</code></pre>
-  <p>
-    This module uses <code>forFeature()</code> method to define which repositories shall be registered in the current scope.
-    Thanks to that we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@InjectRepository()</code>    decorator:
-  </p>
-  <span class="filename">
-    {{ 'photo/photo.service' | extension: photoServiceT.isJsActive }}
-    <app-tabs #photoServiceT></app-tabs>
-  </span>
-  <pre [class.hide]="photoServiceT.isJsActive"><code class="language-typescript">{{ photoService }}</code></pre>
-  <pre [class.hide]="!photoServiceT.isJsActive"><code class="language-typescript">{{ photoServiceJs }}</code></pre>
-  <blockquote class="warning">
-    <strong>Notice</strong> Don't forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
-  </blockquote>
-  <h4>Multiple databases</h4>
-  <p>
-    Some of your projects may require multiple database connections. Fortunately, this can also be achieved with this module.
-    To work with multiple connections, the first thing to do is to create those connections. In this case, the connection
-    naming becomes <strong>mandatory</strong>.
-  </p>
-  <p>
-    Say you have a <code>Person</code> entity and a an <code>Album</code> entity, each stored in their own database.
-  </p>
-  <pre><code class="language-typescript">{{ multipleConnections }}</code></pre>
-  <blockquote class="warning">
-    <strong>Notice</strong> If you don't set any <code>name</code> for a connection, its name is set to <code>default</code>.
-    Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they simply
-    get overridden.
-  </blockquote>
-  <p>
-    At this point, you have each of your <code>Photo</code>, <code>Person</code> and <code>Album</code> entities registered
-    in their own connection. With this setup, you have to tell the <code>TypeOrmModule.forFeature()</code> function and the
-    <code>@InjectRepository()</code> decorator which connection should be used. If you do not pass any connection name, the
-    <code>default</code> connection is used.
-  </p>
-  <pre><code class="language-typescript">{{ forFeatureWithConnection }}</code></pre>
-  <p>
-    You can also inject the <code>Connection</code> or <code>EntityManager</code> for a given connection:
-  </p>
-  <pre><code class="language-typescript">{{ injectConnectionAndEntityManager }}</code></pre>
-  <h4>Testing</h4>
-  <p>
-    When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent
-    and their execution process quick as possible. But our classes might depend on repositories that are pulled from the
-    connection instance. What's then? The solution is to create fake repositories. In order to achieve that, we should set
-    up <a routerLink="/fundamentals/custom-providers">custom providers</a>. In fact, each registered repository is represented
-    by <code>EntityNameRepository</code> token, where <code>EntityName</code> is a name of your entity class.
-  </p>
-  <p>
-    The <code>@nestjs/typeorm</code> package exposes <code>getRepositoryToken()</code> function that returns prepared token
-    based on a given entity.
-  </p>
-  <pre><code class="language-typescript">{{ mockRepository }}</code></pre>
-  <p>
-    Now a hardcoded <code>mockRepository</code> will be used as a <code>PhotoRepository</code>. Whenever any provider asks
-    for <code>PhotoRepository</code> using an <code>@InjectRepository()</code> decorator, Nest will use a registered <code>mockRepository</code>    object.
-  </p>
-  <h4>Custom repository</h4>
-  <p>
-    TypeORM provides feature called <strong>custom repositories</strong>. To learn more about it, visit <a href="http://typeorm.io/#/custom-repository"
-      target="blank">this</a> page. Basically, custom repository allows you extending a base repository class, and enrich it
-    with a couple of special methods.
-  </p>
-  <p>
-    In order to create your custom repository, use <code>@EntityRepository()</code> decorator and extend <code>Repository</code>    class.
-  </p>
-  <pre><code class="language-typescript">{{ customRepository }}</code></pre>
-  <blockquote class="info">
-    <strong>Hint</strong>
-    Both <code>@EntityRepository()</code> and <code>Repository</code> are exposed from <code>typeorm</code> package.
-  </blockquote>
-  <p>
-    Once the class is created, the next step is to hand over the instantiation responsibility to Nest. For this, we have to pass
-    <code>AuthorRepository</code> class to the <code>TypeOrm.forFeature()</code> method.
-  </p>
-  <pre><code class="language-typescript">{{ registerCustomRepository }}</code></pre>
-  <blockquote class="warning">
-    <strong>Notice</strong>
-    Even though <code>AuthorRepository</code> is passed, it's not enough to create a custom repository yet. The corresponding
-    entity class, <code>Author</code> in this case, is required as well.
-  </blockquote>
-  <p>
-    Afterward, simply inject the repository using <code>@InjectRepository()</code> decorator.
-  </p>
-  <pre><code class="language-typescript">{{ injectCustomRepository }}</code></pre>
-  <h4>Async configuration</h4>
-  <p>
-    Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use
-    <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.
-  </p>
-  <p>
-    First possible approach is to use a factory function:
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfiguration }}</code></pre>
-  <p>
-    Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through
-    <code>inject</code>).
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationFactoryAsync }}</code></pre>
-  <p>
-    Alternatively, you are able to use class instead of a factory.
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationClass }}</code></pre>
-  <p>
-    Above construction will instantiate <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and will leverage
-    it to create options object. The <code>TypeOrmConfigService</code> has to implement <code>TypeOrmOptionsFactory</code>    interface.
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationClassBody }}</code></pre>
-  <p>
-    In order to prevent the creation of <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and use a provider
-    imported from a different module, you can use the <code>useExisting</code> syntax.
-  </p>
-  <pre><code class="language-typescript">{{ asyncConfigurationExisting }}</code></pre>
-  <p>
-    It works the same as <code>useClass</code> with one critical difference - <code>TypeOrmModule</code> will lookup imported
-    modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.
-  </p>
-  <h4>Example</h4>
-  <p>
-    A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm" target="blank">here</a>.
-  </p>
-</div>
+<blockquote class="
+info "><strong>Notice</strong> In this chapter we&#39;ll use a MySQL database, but <strong>TypeORM</strong> provides a support for a lot of different databases such as PostgreSQL, SQLite, and even MongoDB (NoSQL).
+</blockquote>
+<p>Once the installation process is completed, we can import the <code>TypeOrmModule</code> into the root <code>ApplicationModule</code>.</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: app2e9bc198246a586d9aad5e46961cdbd785840375.isJsActive }}
+<app-tabs #app2e9bc198246a586d9aad5e46961cdbd785840375></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
+
+@Module(&#123;
+  imports: [
+    TypeOrmModule.forRoot(&#123;
+      type: &#39;mysql&#39;,
+      host: &#39;localhost&#39;,
+      port: 3306,
+      username: &#39;root&#39;,
+      password: &#39;root&#39;,
+      database: &#39;test&#39;,
+      entities: [__dirname + &#39;/**/*.entity&#123;.ts,.js&#125;&#39;],
+      synchronize: true,
+    &#125;),
+  ],
+&#125;)
+export class ApplicationModule &#123;&#125;</code></pre><p>The <code>forRoot()</code> method accepts the same configuration object as <code>createConnection()</code> from the <a href="https://github.com/typeorm/typeorm">TypeORM</a> package. Futhermore, instead of passing anything to the <code>forRoot()</code>, we can create an <code>ormconfig.json</code> file in the project root directory.</p>
+<pre><code class="language-json">
+&#123;
+  &quot;type&quot;: &quot;mysql&quot;,
+  &quot;host&quot;: &quot;localhost&quot;,
+  &quot;port&quot;: 3306,
+  &quot;username&quot;: &quot;root&quot;,
+  &quot;password&quot;: &quot;root&quot;,
+  &quot;database&quot;: &quot;test&quot;,
+  &quot;entities&quot;: [&quot;src/**/*.entity&#123;.ts,.js&#125;&quot;],
+  &quot;synchronize&quot;: true
+&#125;</code></pre>
+<p>Then, we can simply leave the parenthesis empty:</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: appdeaa87f4668056529a018d99a7aa504f7745bb2c.isJsActive }}
+<app-tabs #appdeaa87f4668056529a018d99a7aa504f7745bb2c></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
+
+@Module(&#123;
+  imports: [TypeOrmModule.forRoot()],
+&#125;)
+export class ApplicationModule &#123;&#125;</code></pre><p>Afterward, the <code>Connection</code> and <code>EntityManager</code> will be available to inject across entire project (without importing any module elsewhere), for example, in this way:</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive }}
+<app-tabs #appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652></app-tabs>
+</span><pre [class.hide]="appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive"><code class="language-typescript">
+import &#123; Connection &#125; from &#39;typeorm&#39;;
+
+@Module(&#123;
+  imports: [TypeOrmModule.forRoot(), PhotoModule],
+&#125;)
+export class ApplicationModule &#123;
+  constructor(private readonly connection: Connection) &#123;&#125;
+&#125;</code></pre>
+<pre [class.hide]="!appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive"><code class="language-typescript">
+import &#123; Connection &#125; from &#39;typeorm&#39;;
+
+@Dependencies(Connection)
+@Module(&#123;
+  imports: [TypeOrmModule.forRoot(), PhotoModule],
+&#125;)
+export class ApplicationModule &#123;
+  constructor(connection) &#123;
+    this.connection = connection;
+  &#125;
+&#125;</code></pre><h4 appAnchor id="repository-pattern"><span>Repository pattern</span></h4>
+<p>The <a href="https://github.com/typeorm/typeorm">TypeORM</a> supports the repository design pattern, so each entity has its own Repository. These repositories can be obtained from the database connection.</p>
+<p>Firstly, we need at least one entity. We&#39;re gonna reuse the <code>Photo</code> entity from the official documentation.</p>
+
+<span class="filename">
+  {{ 'photo.entity' | extension: app9d9a320a31cc2f4c8e667763b562c4b883f2edde.isJsActive }}
+<app-tabs #app9d9a320a31cc2f4c8e667763b562c4b883f2edde></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Entity, Column, PrimaryGeneratedColumn &#125; from &#39;typeorm&#39;;
+
+@Entity()
+export class Photo &#123;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column(&#123; length: 500 &#125;)
+  name: string;
+
+  @Column(&#39;text&#39;)
+  description: string;
+
+  @Column()
+  filename: string;
+
+  @Column(&#39;int&#39;)
+  views: number;
+
+  @Column()
+  isPublished: boolean;
+&#125;</code></pre><p>The <code>Photo</code> entity belongs to the <code>photo</code> directory. This directory represents the <code>PhotoModule</code>. It&#39;s your decision where you gonna keep your model files. From our point of view, the best way&#39;s to hold them nearly their <strong>domain</strong>, in the corresponding module directory.</p>
+<p>Let&#39;s have a look at the <code>PhotoModule</code>:</p>
+
+<span class="filename">
+  {{ 'photo.module' | extension: appaf3f51a4a266615f248a08fb75db244a42d1ff2f.isJsActive }}
+<app-tabs #appaf3f51a4a266615f248a08fb75db244a42d1ff2f></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
+import &#123; PhotoService &#125; from &#39;./photo.service&#39;;
+import &#123; PhotoController &#125; from &#39;./photo.controller&#39;;
+import &#123; Photo &#125; from &#39;./photo.entity&#39;;
+
+@Module(&#123;
+  imports: [TypeOrmModule.forFeature([Photo])],
+  providers: [PhotoService],
+  controllers: [PhotoController],
+&#125;)
+export class PhotoModule &#123;&#125;</code></pre><p>This module uses <code>forFeature()</code> method to define which repositories shall be registered in the current scope. Thanks to that we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@InjectRepository()</code> decorator:</p>
+
+<span class="filename">
+  {{ 'photo.service' | extension: appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive }}
+<app-tabs #appf228a7dfe5c81a649ad933ae2db7ef119b736e95></app-tabs>
+</span><pre [class.hide]="appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive"><code class="language-typescript">
+import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
+import &#123; InjectRepository &#125; from &#39;@nestjs/typeorm&#39;;
+import &#123; Repository &#125; from &#39;typeorm&#39;;
+import &#123; Photo &#125; from &#39;./photo.entity&#39;;
+
+@Injectable()
+export class PhotoService &#123;
+  constructor(
+    @InjectRepository(Photo)
+    private readonly photoRepository: Repository&lt;Photo&gt;,
+  ) &#123;&#125;
+
+  async findAll(): Promise&lt;Photo[]&gt; &#123;
+    return await this.photoRepository.find();
+  &#125;
+&#125;</code></pre>
+<pre [class.hide]="!appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive"><code class="language-typescript">
+import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
+import &#123; InjectRepository &#125; from &#39;@nestjs/typeorm&#39;;
+import &#123; Photo &#125; from &#39;./photo.entity&#39;;
+
+@Injectable()
+@Dependencies(InjectRepository(Photo))
+export class PhotoService &#123;
+  constructor(photoRepository) &#123;
+    this.photoRepository = photoRepository;
+  &#125;
+
+  async findAll() &#123;
+    return await this.photoRepository.find();
+  &#125;
+&#125;</code></pre><blockquote class="
+warning "><strong>Notice</strong> Do not forget to import the <code>PhotoModule</code> into the root <code>ApplicationModule</code>.
+</blockquote>
+<h4 appAnchor id="multiple-databases"><span>Multiple databases</span></h4>
+<p>Some of your projects may require multiple database connections. Fortunately, this can also be achieved with this module. To work with multiple connections, the first thing to do is to create those connections. In this case, the connection naming becomes <strong>mandatory</strong>.</p>
+<p>Say you have a <code>Person</code> entity and an <code>Album</code> entity, each stored in their own database.</p>
+<pre><code class="language-typescript">
+const defaultOptions = &#123;
+  type: &#39;postgres&#39;,
+  port: 5432,
+  username: &#39;user&#39;,
+  password: &#39;password&#39;,
+  database: &#39;db&#39;,
+  synchronize: true,
+&#125;;
+
+@Module(&#123;
+  imports: [
+    TypeOrmModule.forRoot(&#123;
+      ...defaultOptions,
+      host: &#39;photo_db_host&#39;,
+      entities: [Photo],
+    &#125;),
+    TypeOrmModule.forRoot(&#123;
+      ...defaultOptions,
+      name: &#39;personsConnection&#39;,
+      host: &#39;person_db_host&#39;,
+      entities: [Person],
+    &#125;),
+    TypeOrmModule.forRoot(&#123;
+      ...defaultOptions,
+      name: &#39;albumsConnection&#39;,
+      host: &#39;album_db_host&#39;,
+      entities: [Album],
+    &#125;),
+  ],
+&#125;)
+export class ApplicationModule &#123;&#125;</code></pre>
+<blockquote class="
+warning "><strong>Notice</strong> If you don&#39;t set any <code>name</code> for a connection, its name is set to <code>default</code>. Please note that you shouldn&#39;t have multiple connections without a name, or with the same name, otherwise they simply get overridden.
+</blockquote>
+<p>At this point, you have each of your <code>Photo</code>, <code>Person</code> and <code>Album</code> entities registered in their own connection. With this setup, you have to tell the <code>TypeOrmModule.forFeature()</code> function and the <code>@InjectRepository()</code> decorator which connection should be used. If you do not pass any connection name, the <code>default</code> connection is used.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  imports: [
+    TypeOrmModule.forFeature([Photo]),
+    TypeOrmModule.forFeature([Person], &#39;personsConnection&#39;),
+    TypeOrmModule.forFeature([Album], &#39;albumsConnection&#39;),
+  ],
+&#125;)
+export class ApplicationModule &#123;&#125;</code></pre>
+<p>You can also inject the <code>Connection</code> or <code>EntityManager</code> for a given connection:</p>
+<pre><code class="language-typescript">
+@Injectable()
+export class PersonService &#123;
+  constructor(
+    @InjectConnection(&#39;personsConnection&#39;)
+    private readonly connection: Connection,
+    @InjectEntityManager(&#39;personsConnection&#39;)
+    private readonly entityManager: EntityManager,
+  ) &#123;&#125;
+&#125;</code></pre>
+<h4 appAnchor id="testing"><span>Testing</span></h4>
+<p>When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent and their execution process quick as possible. But our classes might depend on repositories that are pulled from the connection instance. What&#39;s then? The solution is to create fake repositories. In order to achieve that, we should set up <a routerLink="/fundamentals/custom-providers">custom providers</a>. In fact, each registered repository is represented by <code>EntityNameRepository</code> token, where <code>EntityName</code> is a name of your entity class.</p>
+<p>The <code>@nestjs/typeorm</code> package exposes <code>getRepositoryToken()</code> function that returns prepared token based on a given entity.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  providers: [
+    PhotoService,
+    &#123;
+      provide: getRepositoryToken(Photo),
+      useValue: mockRepository,
+    &#125;,
+  ],
+&#125;)
+export class PhotoModule &#123;&#125;</code></pre>
+<p>Now a hardcoded <code>mockRepository</code> will be used as a <code>PhotoRepository</code>. Whenever any provider asks for <code>PhotoRepository</code> using an <code>@InjectRepository()</code> decorator, Nest will use a registered <code>mockRepository</code> object.</p>
+<h4 appAnchor id="custom-repository"><span>Custom repository</span></h4>
+<p>TypeORM provides feature called <strong>custom repositories</strong>. To learn more about it, visit <a href="http://typeorm.io/#/custom-repository">this</a> page. Basically, custom repository allows you extending a base repository class, and enrich it with a couple of special methods.</p>
+<p>In order to create your custom repository, use <code>@EntityRepository()</code> decorator and extend <code>Repository</code> class.</p>
+<pre><code class="language-typescript">
+@EntityRepository(Author)
+export class AuthorRepository extends Repository&lt;Author&gt; &#123;&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> Both <code>@EntityRepository()</code> and <code>Repository</code> are exposed from <code>typeorm</code> package.
+</blockquote>
+<p>Once the class is created, the next step is to hand over the instantiation responsibility to Nest. For this, we have to pass <code>AuthorRepository</code> class to the <code>TypeOrm.forFeature()</code> method.</p>
+<pre><code class="language-typescript">
+@Module(&#123;
+  imports: [TypeOrmModule.forFeature([AuthorRepository])],
+  controller: [AuthorController],
+  providers: [AuthorService],
+&#125;)
+export class AuthorModule &#123;&#125;</code></pre>
+<p>Afterward, simply inject the repository using the following construction:</p>
+<pre><code class="language-typescript">
+@Injectable()
+export class AuthorService &#123;
+  constructor(private readonly authorRepository: AuthorRepository) &#123;&#125;
+&#125;</code></pre>
+<h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
+<p>Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use <code>forRootAsync()</code> method, that provides a couple of various ways to deal with async data.</p>
+<p>First possible approach is to use a factory function:</p>
+<pre><code class="language-typescript">
+TypeOrmModule.forRootAsync(&#123;
+  useFactory: () =&gt; (&#123;
+    type: &#39;mysql&#39;,
+    host: &#39;localhost&#39;,
+    port: 3306,
+    username: &#39;root&#39;,
+    password: &#39;root&#39;,
+    database: &#39;test&#39;,
+    entities: [__dirname + &#39;/**/*.entity&#123;.ts,.js&#125;&#39;],
+    synchronize: true,
+  &#125;),
+&#125;);</code></pre>
+<p>Obviously, our factory behaves like every other one (might be <code>async</code> and is able to inject dependencies through <code>inject</code>).</p>
+<pre><code class="language-typescript">
+TypeOrmModule.forRootAsync(&#123;
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) =&gt; (&#123;
+    type: &#39;mysql&#39;,
+    host: configService.getString(&#39;HOST&#39;),
+    port: configService.getString(&#39;PORT&#39;),
+    username: configService.getString(&#39;USERNAME&#39;),
+    password: configService.getString(&#39;PASSWORD&#39;),
+    database: configService.getString(&#39;DATABASE&#39;),
+    entities: [__dirname + &#39;/**/*.entity&#123;.ts,.js&#125;&#39;],
+    synchronize: true,
+  &#125;),
+  inject: [ConfigService],
+&#125;);</code></pre>
+<p>Alternatively, you are able to use class instead of a factory.</p>
+<pre><code class="language-typescript">
+TypeOrmModule.forRootAsync(&#123;
+  useClass: TypeOrmConfigService,
+&#125;);</code></pre>
+<p>Above construction will instantiate <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and will leverage it to create options object. The <code>TypeOrmConfigService</code> has to implement <code>TypeOrmOptionsFactory</code> interface.</p>
+<pre><code class="language-typescript">
+@Injectable()
+class TypeOrmConfigService implements TypeOrmOptionsFactory &#123;
+  createTypeOrmOptions(): TypeOrmModuleOptions &#123;
+    return &#123;
+      type: &#39;mysql&#39;,
+      host: &#39;localhost&#39;,
+      port: 3306,
+      username: &#39;root&#39;,
+      password: &#39;root&#39;,
+      database: &#39;test&#39;,
+      entities: [__dirname + &#39;/**/*.entity&#123;.ts,.js&#125;&#39;],
+      synchronize: true,
+    &#125;;
+  &#125;
+&#125;</code></pre>
+<p>In order to prevent the creation of <code>TypeOrmConfigService</code> inside <code>TypeOrmModule</code> and use a provider imported from a different module, you can use the <code>useExisting</code> syntax.</p>
+<pre><code class="language-typescript">
+TypeOrmModule.forRootAsync(&#123;
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+&#125;);</code></pre>
+<p>It works the same as <code>useClass</code> with one critical difference - <code>TypeOrmModule</code> will lookup imported modules to reuse already created <code>ConfigService</code>, instead of instantiating it on its own.</p>
+<h4 appAnchor id="example"><span>Example</span></h4>
+<p>A working example is available <a href="https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm">here</a>.</p>
+
+    </div>

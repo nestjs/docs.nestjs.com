@@ -1,7 +1,10 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
+dist/*
+!/dist/v4
+!/dist/v5
+
 /tmp
 /out-tsc
 
