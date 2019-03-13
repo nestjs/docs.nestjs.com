@@ -98,7 +98,7 @@ Let's open the browser and verify the generated `CreateCatDto` model:
 
 <figure><img src="/assets/swagger-dto2.png" /></figure>
 
-The `@ApiModelProperty()` decorator accepts options object:
+The `@ApiModelProperty()` decorator accepts the following options object:
 
 ```typescript
 export const ApiModelProperty: (metadata?: {
@@ -308,6 +308,36 @@ async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
+
+To specify a return model for the requests, one has to create a class, annotate all properties with the `@ApiModelProperty()` Decorator and has to use the `type` property of the Response Decorators.
+
+```typescript
+export class Cat {
+  @ApiModelProperty()
+  name: string;
+
+  @ApiModelProperty()
+  age: number;
+
+  @ApiModelProperty()
+  breed: string;
+}
+```
+
+```typescript
+@ApiUseTags('cats')
+@Controller('cats')
+export class CatsController {
+  @Post()
+  @ApiCreatedResponse({ description: 'The record has been successfully created.', type: Cat})
+  async create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
+    return this.catsService.create(createCatDto);
+  }
+}
+```
+
+Let's open the browser and verify the generated `Cat` model:
+<figure><img src="/assets/swagger-response-type.png" /></figure>
 
 #### Authentication
 
