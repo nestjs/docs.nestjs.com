@@ -126,6 +126,23 @@ The `@ReflectMetadata()` decorator has been deprecated and will be removed in th
 
 The subscriptions mechanism has been changed. Check [this](/graphql/subscriptions) chapter for more details. Additionally, `@nestjs/graphql` package was heavily relying on `@ReflectMetadata()` (which has been deprecated) so it's required to update the package itself as well.
 
+#### Express instance
+
+We no longer support passing `express` instance as a second argument of the `NestFactory.create()` method. In order to pluck underlying HTTP adapter, use techniques described [here](/faq/http-adapter). Also, you can pass `ExpressAdapter` instead (simply pass your `express` instance as a constructor parameter `new ExpressAdapter(express)`).
+
+```typescript
+// Before (no longer supported)
+const server = express();
+const app = await NestFactory.create(ApplicationModule, server);
+
+// After (potential solution)
+const server = express();
+const app = await NestFactory.create(
+  ApplicationModule,
+  new ExpressAdapter(server),
+);
+```
+
 #### Deprecations
 
 All deprecations (from 4 to 5 version) have been finally removed.
