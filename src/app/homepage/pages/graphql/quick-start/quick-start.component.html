@@ -14,7 +14,7 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code
 <p>Once the packages are installed, we can register the <code>GraphQLModule</code>.</p>
 
 <span class="filename">
-<app-tabs #appd973e2e6bd8c6d7f6a136b8eeeef08aa886220d7></app-tabs>
+<app-tabs #app5eed8fa7af12ac52787479cfadf8e7e339d8bedc></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
@@ -27,7 +27,7 @@ import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
 export class ApplicationModule &#123;&#125;</code></pre><p>The <code>.forRoot()</code> method takes an options object as an argument. These options will be passed down to the underlying Apollo instance (read more about available settings <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code> mode, simply pass the following options:</p>
 
 <span class="filename">
-<app-tabs #app3ebc76aa3a29f639089f34dc80c5162ca77d899b></app-tabs>
+<app-tabs #app6e0d37406074a25412fdd330e30d1ee2092f0556></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;

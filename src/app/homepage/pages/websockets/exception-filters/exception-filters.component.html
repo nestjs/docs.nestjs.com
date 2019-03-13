@@ -26,8 +26,8 @@ onEvent(client, data: any): WsResponse&lt;any&gt; &#123;
 <p>In order to delegate exception processing to the base filter, you need to extend <code>BaseWsExceptionFilter</code> and call inherited <code>catch()</code> method.</p>
 
 <span class="filename">
-<app-tabs #app7d4bc957db416190b3453e52d8e9ff979c66bac0></app-tabs>
-</span><pre [class.hide]="app7d4bc957db416190b3453e52d8e9ff979c66bac0.isJsActive"><code class="language-typescript">
+<app-tabs #app4acfcb0a09fbc1cb43dbc4b6928b9c4138ef2a6c></app-tabs>
+</span><pre [class.hide]="app4acfcb0a09fbc1cb43dbc4b6928b9c4138ef2a6c.isJsActive"><code class="language-typescript">
 import &#123; Catch, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseWsExceptionFilter &#125; from &#39;@nestjs/websockets&#39;;
 
@@ -37,7 +37,7 @@ export class AllExceptionsFilter extends BaseWsExceptionFilter &#123;
     super.catch(exception, host);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app7d4bc957db416190b3453e52d8e9ff979c66bac0.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app4acfcb0a09fbc1cb43dbc4b6928b9c4138ef2a6c.isJsActive"><code class="language-typescript">
 import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseWsExceptionFilter &#125; from &#39;@nestjs/websockets&#39;;
 

@@ -72,7 +72,7 @@ export class CreateCatDto &#123;
 <p>Let&#39;s open the browser and verify the generated <code>CreateCatDto</code> model:</p>
 <figure><img src="/assets/swagger-dto2.png" /></figure>
 
-<p>The <code>@ApiModelProperty()</code> decorator accepts options object:</p>
+<p>The <code>@ApiModelProperty()</code> decorator accepts the following options object:</p>
 <pre><code class="language-typescript">
 export const ApiModelProperty: (metadata?: &#123;
   description?: string;
@@ -245,6 +245,31 @@ async create(@Body() createCatDto: CreateCatDto) &#123;
 async create(@Body() createCatDto: CreateCatDto) &#123;
   this.catsService.create(createCatDto);
 &#125;</code></pre>
+<p>To specify a return model for the requests, one has to create a class, annotate all properties with the <code>@ApiModelProperty()</code> Decorator and has to use the <code>type</code> property of the Response Decorators.</p>
+<pre><code class="language-typescript">
+export class Cat &#123;
+  @ApiModelProperty()
+  name: string;
+
+  @ApiModelProperty()
+  age: number;
+
+  @ApiModelProperty()
+  breed: string;
+&#125;</code></pre>
+<pre><code class="language-typescript">
+@ApiUseTags(&#39;cats&#39;)
+@Controller(&#39;cats&#39;)
+export class CatsController &#123;
+  @Post()
+  @ApiCreatedResponse(&#123; description: &#39;The record has been successfully created.&#39;, type: Cat&#125;)
+  async create(@Body() createCatDto: CreateCatDto): Promise&lt;Cat&gt; &#123;
+    return this.catsService.create(createCatDto);
+  &#125;
+&#125;</code></pre>
+<p>Let&#39;s open the browser and verify the generated <code>Cat</code> model:</p>
+<figure><img src="/assets/swagger-response-type.png" /></figure>
+
 <h4 appAnchor id="authentication"><span>Authentication</span></h4>
 <p>You can enable the bearer authorization using <code>addBearerAuth()</code> method of the <code>DocumentBuilder</code> class. Then to restrict the chosen route or entire controller, use <code>@ApiBearerAuth()</code> decorator.</p>
 <pre><code class="language-typescript">

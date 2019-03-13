@@ -9,8 +9,8 @@ $ npm i --save amqplib amqp-connection-manager</code></pre>
 <p>In order to switch to <strong>RabbitMQ</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: appa963c73439bcba148a9decb585d390618797481c.isJsActive }}
-<app-tabs #appa963c73439bcba148a9decb585d390618797481c></app-tabs>
+  {{ 'main' | extension: app0bdc6fb0ade57877cf07ad036b35318afe01c7ec.isJsActive }}
+<app-tabs #app0bdc6fb0ade57877cf07ad036b35318afe01c7ec></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.RMQ,

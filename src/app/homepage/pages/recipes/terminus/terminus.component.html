@@ -14,8 +14,8 @@ $ npm install --save @nestjs/terminus @godaddy/terminus</code></pre>
 <p>The first step to get started with our first health check, is to setup a service which will associate health indicators to an endpoint.</p>
 
 <span class="filename">
-  {{ 'terminus-options.service' | extension: appde2ef10eabbc37140044bf15e88457f9417da0c0.isJsActive }}
-<app-tabs #appde2ef10eabbc37140044bf15e88457f9417da0c0></app-tabs>
+  {{ 'terminus-options.service' | extension: app93febb8f89ca0cd7d565f4eb551967ac5c4f87c8.isJsActive }}
+<app-tabs #app93febb8f89ca0cd7d565f4eb551967ac5c4f87c8></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123;
   TerminusEndpoint,
@@ -43,8 +43,8 @@ class TerminusOptionsService implements TerminusOptionsFactory &#123;
 &#125;</code></pre><p>Once we have set up our <code>HealthService</code>, we can import the <code>TerminusModule</code> into the root <code>ApplicationModule</code>. The <code>HealthService</code> will provide the settings, which in turn will be used by the <code>TerminusModule</code>.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app34ea8600acdbe9c0588dc1b0f80b0fdb6a0889eb.isJsActive }}
-<app-tabs #app34ea8600acdbe9c0588dc1b0f80b0fdb6a0889eb></app-tabs>
+  {{ 'app.module' | extension: app9fcb1b06017a4ef64b9271dd916162270caf15c8.isJsActive }}
+<app-tabs #app9fcb1b06017a4ef64b9271dd916162270caf15c8></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TerminusModule &#125; from &#39;@nestjs/terminus&#39;;
@@ -65,8 +65,8 @@ info "><strong>Hint</strong> If done correctly, Nest will expose the defined hea
 <p>Let&#39;s get started by creating a service which will represent our custom health indicator. To get a basic understanding how a health indicator is structured, we will create an example <code>DogHealthIndicator</code>. This health indicator should have the state &quot;up&quot;, if every <code>Dog</code> object has the type <code>goodboy</code>, otherwise it will throw an error, which then the health indicator will be seen as &quot;down&quot;.</p>
 
 <span class="filename">
-  {{ 'dog.health' | extension: appbe0fb977417093d02d1dcaced5404d3e36d43440.isJsActive }}
-<app-tabs #appbe0fb977417093d02d1dcaced5404d3e36d43440></app-tabs>
+  {{ 'dog.health' | extension: app4a32826793a377f7870adafb055c3734968fb86b.isJsActive }}
+<app-tabs #app4a32826793a377f7870adafb055c3734968fb86b></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; HealthCheckError &#125; from &#39;@godaddy/terminus&#39;;

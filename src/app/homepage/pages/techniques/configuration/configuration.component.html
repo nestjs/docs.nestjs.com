@@ -10,8 +10,8 @@ $ npm i --save dotenv</code></pre>
 <p>Firstly, let&#39;s create a <code>ConfigService</code> class.</p>
 
 <span class="filename">
-<app-tabs #app076f756bdb0cee142ce2b32eca07b741fd35d31d></app-tabs>
-</span><pre [class.hide]="app076f756bdb0cee142ce2b32eca07b741fd35d31d.isJsActive"><code class="language-typescript">
+<app-tabs #appe28bb530058710056b86a38258aeaedf8864f37c></app-tabs>
+</span><pre [class.hide]="appe28bb530058710056b86a38258aeaedf8864f37c.isJsActive"><code class="language-typescript">
 import * as dotenv from &#39;dotenv&#39;;
 import * as fs from &#39;fs&#39;;
 
@@ -26,7 +26,7 @@ export class ConfigService &#123;
     return this.envConfig[key];
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app076f756bdb0cee142ce2b32eca07b741fd35d31d.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appe28bb530058710056b86a38258aeaedf8864f37c.isJsActive"><code class="language-typescript">
 import * as dotenv from &#39;dotenv&#39;;
 import * as fs from &#39;fs&#39;;
 
@@ -42,7 +42,7 @@ export class ConfigService &#123;
 <p>The last step is to create a <code>ConfigModule</code>.</p>
 
 <span class="filename">
-<app-tabs #appfa171313e819343dbf92af78a5089d4646a253fb></app-tabs>
+<app-tabs #appeba1bbe52810c68a3fc1210faab9eaae0fcc3b25></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; ConfigService &#125; from &#39;./config.service&#39;;
@@ -64,8 +64,8 @@ DATABASE_PASSWORD = test;</code></pre>
 <p>To access <strong>environment variables</strong> from our <code>ConfigService</code> we need to inject it. Therefore we firstly need to import the module.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appa04a20190646d4d029bf0bbc01c670493c4ec07f.isJsActive }}
-<app-tabs #appa04a20190646d4d029bf0bbc01c670493c4ec07f></app-tabs>
+  {{ 'app.module' | extension: appae171e04a78c7e30c3aedae37db450051d19aa80.isJsActive }}
+<app-tabs #appae171e04a78c7e30c3aedae37db450051d19aa80></app-tabs>
 </span><pre><code class="language-typescript">
 @Module(&#123;
   imports: [ConfigModule],
@@ -73,8 +73,8 @@ DATABASE_PASSWORD = test;</code></pre>
 &#125;)</code></pre><p>Afterward, you can inject it using an injection token. By default, the token is equal to the class name (in our example <code>ConfigService</code>).</p>
 
 <span class="filename">
-  {{ 'app.service' | extension: appc59492dad42296a1483eceea8942d022aa1d70b7.isJsActive }}
-<app-tabs #appc59492dad42296a1483eceea8942d022aa1d70b7></app-tabs>
+  {{ 'app.service' | extension: app43aa9429c4fe60999aca9b8f0a9c443d0b738691.isJsActive }}
+<app-tabs #app43aa9429c4fe60999aca9b8f0a9c443d0b738691></app-tabs>
 </span><pre><code class="language-typescript">
 @Injectable()
 export class AppService &#123;
@@ -102,9 +102,10 @@ $ npm install --save-dev @types/joi</code></pre>
 <p>Once the packages are installed, we can move to our <code>ConfigService</code>.</p>
 
 <span class="filename">
-  {{ 'config.service' | extension: app306a647b1ee01ac120fae7187f3e1a62a9b4f735.isJsActive }}
-<app-tabs #app306a647b1ee01ac120fae7187f3e1a62a9b4f735></app-tabs>
+  {{ 'config.service' | extension: app6714e91d9854d54a586737515398424a57933ebc.isJsActive }}
+<app-tabs #app6714e91d9854d54a586737515398424a57933ebc></app-tabs>
 </span><pre><code class="language-typescript">
+import * as dotenv from &#39;dotenv&#39;;
 import * as Joi from &#39;joi&#39;;
 import * as fs from &#39;fs&#39;;
 
@@ -147,8 +148,8 @@ export class ConfigService &#123;
 <p>For each config property, we have to add a getter function.</p>
 
 <span class="filename">
-  {{ 'config.service' | extension: app1804bbda788787f38adced2224cbe1b3e2ca563f.isJsActive }}
-<app-tabs #app1804bbda788787f38adced2224cbe1b3e2ca563f></app-tabs>
+  {{ 'config.service' | extension: appb216ecef452a789a83e2d5f99a94172c4ef55db6.isJsActive }}
+<app-tabs #appb216ecef452a789a83e2d5f99a94172c4ef55db6></app-tabs>
 </span><pre><code class="language-typescript">
 get isApiAuthEnabled(): boolean &#123;
   return Boolean(this.envConfig.API_AUTH_ENABLED);
@@ -156,8 +157,8 @@ get isApiAuthEnabled(): boolean &#123;
 <p>Now we can directly access the class properties.</p>
 
 <span class="filename">
-  {{ 'app.service' | extension: appa2b7cd66378422ba0dc5f3359abd0677233924f8.isJsActive }}
-<app-tabs #appa2b7cd66378422ba0dc5f3359abd0677233924f8></app-tabs>
+  {{ 'app.service' | extension: app2212d8f5faee4cdac88ffeeb56f8a5bdcfd67659.isJsActive }}
+<app-tabs #app2212d8f5faee4cdac88ffeeb56f8a5bdcfd67659></app-tabs>
 </span><pre><code class="language-typescript">
 @Injectable()
 export class AppService &#123;

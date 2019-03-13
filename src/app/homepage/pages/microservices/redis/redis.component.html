@@ -11,8 +11,8 @@ $ npm i --save redis</code></pre>
 <p>In order to switch from TCP transport strategy to Redis <strong>pub/sub</strong>, we need to change an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app27e69c12b203d0ddb9c33b47528b1caa48ce3b17.isJsActive }}
-<app-tabs #app27e69c12b203d0ddb9c33b47528b1caa48ce3b17></app-tabs>
+  {{ 'main' | extension: app42cc77495aa8872cb591418a2d4acd216b3a4134.isJsActive }}
+<app-tabs #app42cc77495aa8872cb591418a2d4acd216b3a4134></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.REDIS,

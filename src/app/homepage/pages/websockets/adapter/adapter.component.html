@@ -62,8 +62,8 @@ info "><strong>Hint</strong> The <code>WsAdapter</code> is imported from <code>@
 <p>For demonstration purposes, we are going to integrate the <a href="https://github.com/websockets/ws">ws</a> library manually. As mentioned, the adapter for this library is already created and is exposed from the <code>@nestjs/platform-ws</code> package as a <code>WsAdapter</code> class. Here is how the simplified implementation could potentially look like:</p>
 
 <span class="filename">
-  {{ 'ws-adapter' | extension: appa229aa673a40141e58a4fad38743de80e140800b.isJsActive }}
-<app-tabs #appa229aa673a40141e58a4fad38743de80e140800b></app-tabs>
+  {{ 'ws-adapter' | extension: app6e155cee017e33182dfb1fafe74bbab2fba67c11.isJsActive }}
+<app-tabs #app6e155cee017e33182dfb1fafe74bbab2fba67c11></app-tabs>
 </span><pre><code class="language-typescript">
 import * as WebSocket from &#39;ws&#39;;
 import &#123; WebSocketAdapter, MessageMappingProperties, INestApplicationContext &#125; from &#39;@nestjs/common&#39;;
@@ -118,8 +118,8 @@ info "><strong>Hint</strong> When you want to take advantage of <a href="https:/
 <p>Then, we can set up a custom adapter using <code>useWebSocketAdapter()</code> method:</p>
 
 <span class="filename">
-  {{ 'main' | extension: appb4432829fc9a1d0d4b8bc31a6808a7e8f2e2ff93.isJsActive }}
-<app-tabs #appb4432829fc9a1d0d4b8bc31a6808a7e8f2e2ff93></app-tabs>
+  {{ 'main' | extension: app7c5c2e0b8dc1fa2c25f80ddc8ff6ac073666eacb.isJsActive }}
+<app-tabs #app7c5c2e0b8dc1fa2c25f80ddc8ff6ac073666eacb></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.create(ApplicationModule);
 app.useWebSocketAdapter(new WsAdapter(app));</code></pre><h4 appAnchor id="example"><span>Example</span></h4>

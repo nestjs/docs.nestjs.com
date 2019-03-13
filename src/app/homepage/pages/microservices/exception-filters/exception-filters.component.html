@@ -16,9 +16,9 @@ info "><strong>Hint</strong> The <code>RpcException</code> class is imported fro
 <p>The exception filters work in the same fashion as the primary ones, with a one, small difference. The <code>catch()</code> method has to return an <code>Observable</code>.</p>
 
 <span class="filename">
-  {{ 'rpc-exception.filter' | extension: app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive }}
-<app-tabs #app893a1f04515236a941270c3dab46a2c326a69fdc></app-tabs>
-</span><pre [class.hide]="app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive"><code class="language-typescript">
+  {{ 'rpc-exception.filter' | extension: app0359274c0e122ee16f2ef619377f3d398843a6ae.isJsActive }}
+<app-tabs #app0359274c0e122ee16f2ef619377f3d398843a6ae></app-tabs>
+</span><pre [class.hide]="app0359274c0e122ee16f2ef619377f3d398843a6ae.isJsActive"><code class="language-typescript">
 import &#123; Catch, RpcExceptionFilter, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
 import &#123; Observable, throwError &#125; from &#39;rxjs&#39;;
 import &#123; RpcException &#125; from &#39;@nestjs/microservices&#39;;
@@ -29,7 +29,7 @@ export class ExceptionFilter implements RpcExceptionFilter&lt;RpcException&gt; &
     return throwError(exception.getError());
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app893a1f04515236a941270c3dab46a2c326a69fdc.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app0359274c0e122ee16f2ef619377f3d398843a6ae.isJsActive"><code class="language-typescript">
 import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
 import &#123; throwError &#125; from &#39;rxjs&#39;;
 
@@ -44,14 +44,14 @@ export class ExceptionFilter &#123;
 <p>Here is an example that makes use of a manually instantiated method-scoped filter (class-scoped works too):</p>
 
 <span class="filename">
-<app-tabs #appda8b10c1e1298f76eb78662782317ef67cb124a0></app-tabs>
-</span><pre [class.hide]="appda8b10c1e1298f76eb78662782317ef67cb124a0.isJsActive"><code class="language-typescript">
+<app-tabs #appa1c0dabdc7af74506f6cb82de1a6d9629860c9a1></app-tabs>
+</span><pre [class.hide]="appa1c0dabdc7af74506f6cb82de1a6d9629860c9a1.isJsActive"><code class="language-typescript">
 @UseFilters(new ExceptionFilter())
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data: number[]): number &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre>
-<pre [class.hide]="!appda8b10c1e1298f76eb78662782317ef67cb124a0.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa1c0dabdc7af74506f6cb82de1a6d9629860c9a1.isJsActive"><code class="language-typescript">
 @UseFilters(new ExceptionFilter())
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data) &#123;
@@ -61,8 +61,8 @@ accumulate(data) &#123;
 <p>In order to delegate exception processing to the base filter, you need to extend <code>BaseExceptionFilter</code> and call inherited <code>catch()</code> method. Besides, <code>HttpServer</code> reference has to be injected and passed to the <code>super()</code> call.</p>
 
 <span class="filename">
-<app-tabs #appa23312628712933086429c47d4e78ddc73976a64></app-tabs>
-</span><pre [class.hide]="appa23312628712933086429c47d4e78ddc73976a64.isJsActive"><code class="language-typescript">
+<app-tabs #app6d276f08714e6de8c8e39d8230c6f221210485c9></app-tabs>
+</span><pre [class.hide]="app6d276f08714e6de8c8e39d8230c6f221210485c9.isJsActive"><code class="language-typescript">
 import &#123; Catch, ArgumentsHost &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseRpcExceptionFilter &#125; from &#39;@nestjs/microservices&#39;;
 
@@ -72,7 +72,7 @@ export class AllExceptionsFilter extends BaseRpcExceptionFilter &#123;
     return super.catch(exception, host);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appa23312628712933086429c47d4e78ddc73976a64.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app6d276f08714e6de8c8e39d8230c6f221210485c9.isJsActive"><code class="language-typescript">
 import &#123; Catch &#125; from &#39;@nestjs/common&#39;;
 import &#123; BaseRpcExceptionFilter &#125; from &#39;@nestjs/microservices&#39;;
 

@@ -10,9 +10,9 @@ $ npm i --save-dev @nestjs/testing</code></pre>
 <p>In the following example, we have two different classes, <code>CatsController</code> and <code>CatsService</code> respectively. As mentioned before, <a href="https://github.com/facebook/jest">Jest</a> is used as a fully-fledged testing framework. That framework behaves like a test-runner and also, provides assert functions and test-doubles utilities that helps with mocking, spying, etc. We have manually enforced <code>catsService.findAll()</code> method to return <code>result</code> variable, once it&#39;s called. Thanks to that, we can test whether <code>catsController.findAll()</code> returns expected result, or not.</p>
 
 <span class="filename">
-  {{ 'cats.controller.spec' | extension: app4f18c1b8179bb666284f6a66ce8774dc54a476e3.isJsActive }}
-<app-tabs #app4f18c1b8179bb666284f6a66ce8774dc54a476e3></app-tabs>
-</span><pre [class.hide]="app4f18c1b8179bb666284f6a66ce8774dc54a476e3.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller.spec' | extension: app17b9158e861dd6d301143f19326b5b1d791522a1.isJsActive }}
+<app-tabs #app17b9158e861dd6d301143f19326b5b1d791522a1></app-tabs>
+</span><pre [class.hide]="app17b9158e861dd6d301143f19326b5b1d791522a1.isJsActive"><code class="language-typescript">
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
 
@@ -34,7 +34,7 @@ describe(&#39;CatsController&#39;, () =&gt; &#123;
     &#125;);
   &#125;);
 &#125;);</code></pre>
-<pre [class.hide]="!app4f18c1b8179bb666284f6a66ce8774dc54a476e3.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app17b9158e861dd6d301143f19326b5b1d791522a1.isJsActive"><code class="language-typescript">
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
 
@@ -63,9 +63,9 @@ info "><strong>Hint</strong> Keep your test files nearby tested classes. The tes
 <p>The <code>@nestjs/testing</code> package gives us a set of utilities that boost the testing process. Let&#39;s rewrite the previous example, but now, using exposed <code>Test</code> class.</p>
 
 <span class="filename">
-  {{ 'cats.controller.spec' | extension: app526bd4b8a7586dd62169935f6771b7b1b7822e15.isJsActive }}
-<app-tabs #app526bd4b8a7586dd62169935f6771b7b1b7822e15></app-tabs>
-</span><pre [class.hide]="app526bd4b8a7586dd62169935f6771b7b1b7822e15.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller.spec' | extension: app27042765cb7806ee344e9f77251abff6ae4c33d0.isJsActive }}
+<app-tabs #app27042765cb7806ee344e9f77251abff6ae4c33d0></app-tabs>
+</span><pre [class.hide]="app27042765cb7806ee344e9f77251abff6ae4c33d0.isJsActive"><code class="language-typescript">
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
@@ -93,7 +93,7 @@ describe(&#39;CatsController&#39;, () =&gt; &#123;
     &#125;);
   &#125;);
 &#125;);</code></pre>
-<pre [class.hide]="!app526bd4b8a7586dd62169935f6771b7b1b7822e15.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app27042765cb7806ee344e9f77251abff6ae4c33d0.isJsActive"><code class="language-typescript">
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
@@ -126,9 +126,9 @@ describe(&#39;CatsController&#39;, () =&gt; &#123;
 <p>When the application grows, it is hard to manually test a behavior of each API endpoint. The end-to-end tests help us to make sure that everything is working correctly and fits project requirements. To perform e2e tests we use the same configuration as in the case of <strong>unit testing</strong>, but additionally, we take advantage of <a href="https://github.com/visionmedia/supertest">supertest</a> library that allows simulating HTTP requests.</p>
 
 <span class="filename">
-  {{ 'cats.e2e-spec' | extension: appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2.isJsActive }}
-<app-tabs #appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2></app-tabs>
-</span><pre [class.hide]="appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2.isJsActive"><code class="language-typescript">
+  {{ 'cats.e2e-spec' | extension: app78a547a7dfd0062395b7af20ec6d51a5380988da.isJsActive }}
+<app-tabs #app78a547a7dfd0062395b7af20ec6d51a5380988da></app-tabs>
+</span><pre [class.hide]="app78a547a7dfd0062395b7af20ec6d51a5380988da.isJsActive"><code class="language-typescript">
 import * as request from &#39;supertest&#39;;
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsModule &#125; from &#39;../../src/cats/cats.module&#39;;
@@ -164,7 +164,7 @@ describe(&#39;Cats&#39;, () =&gt; &#123;
     await app.close();
   &#125;);
 &#125;);</code></pre>
-<pre [class.hide]="!appb17d1d16c6cbacd2d67b4b41e2b6a80528c8a3c2.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app78a547a7dfd0062395b7af20ec6d51a5380988da.isJsActive"><code class="language-typescript">
 import * as request from &#39;supertest&#39;;
 import &#123; Test &#125; from &#39;@nestjs/testing&#39;;
 import &#123; CatsModule &#125; from &#39;../../src/cats/cats.module&#39;;

@@ -12,8 +12,8 @@ $ npm install --save typeorm mysql</code></pre>
 <p>The first step we need to do is to establish the connection with our database using <code>createConnection()</code> function imported from the <code>typeorm</code> package. The <code>createConnection()</code> function returns a <code>Promise</code>, and therefore we have to create an <a routerLink="/fundamentals/async-components">async provider</a>.</p>
 
 <span class="filename">
-  {{ 'database.providers' | extension: app3f06c950d79ce4d3176d605eeb00be857c025038.isJsActive }}
-<app-tabs #app3f06c950d79ce4d3176d605eeb00be857c025038></app-tabs>
+  {{ 'database.providers' | extension: app08aff0e8ec695b37f94cdce5df4265cd5b04c35d.isJsActive }}
+<app-tabs #app08aff0e8ec695b37f94cdce5df4265cd5b04c35d></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; createConnection &#125; from &#39;typeorm&#39;;
 
@@ -39,8 +39,8 @@ warning "><strong>Hint</strong> Following best practices, we declared the custom
 <p>Then, we need to export these providers to make them <strong>accessible</strong> for the rest of the application.</p>
 
 <span class="filename">
-  {{ 'database.module' | extension: app508d2d2c6270bf37f995e91327d5a0d5060153ca.isJsActive }}
-<app-tabs #app508d2d2c6270bf37f995e91327d5a0d5060153ca></app-tabs>
+  {{ 'database.module' | extension: appe832c6bdb6d98bdca05bf634aa64af97fb02bfd5.isJsActive }}
+<app-tabs #appe832c6bdb6d98bdca05bf634aa64af97fb02bfd5></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; databaseProviders &#125; from &#39;./database.providers&#39;;
@@ -55,8 +55,8 @@ export class DatabaseModule &#123;&#125;</code></pre><p>Now we can inject the <c
 <p>But firstly, we need at least one entity. We are going to reuse the <code>Photo</code> entity from the official documentation.</p>
 
 <span class="filename">
-  {{ 'photo.entity' | extension: appf5ca96648d438fa043e1372da57c15a1c63f80a8.isJsActive }}
-<app-tabs #appf5ca96648d438fa043e1372da57c15a1c63f80a8></app-tabs>
+  {{ 'photo.entity' | extension: app10a364b6e807662be24c9b6d362b89e8812a3301.isJsActive }}
+<app-tabs #app10a364b6e807662be24c9b6d362b89e8812a3301></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Entity, Column, PrimaryGeneratedColumn &#125; from &#39;typeorm&#39;;
 
@@ -82,8 +82,8 @@ export class Photo &#123;
 &#125;</code></pre><p>The <code>Photo</code> entity belongs to the <code>photo</code> directory. This directory represents the <code>PhotoModule</code>. Now, let&#39;s create a <strong>Repository</strong> provider:</p>
 
 <span class="filename">
-  {{ 'photo.providers' | extension: appf5d81e4c77a7ea00abd0068b7a0dc58bf4d12d59.isJsActive }}
-<app-tabs #appf5d81e4c77a7ea00abd0068b7a0dc58bf4d12d59></app-tabs>
+  {{ 'photo.providers' | extension: appbac30de116847124edbebc80e36954a92b9f5cf4.isJsActive }}
+<app-tabs #appbac30de116847124edbebc80e36954a92b9f5cf4></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Connection, Repository &#125; from &#39;typeorm&#39;;
 import &#123; Photo &#125; from &#39;./photo.entity&#39;;
@@ -100,8 +100,8 @@ warning "><strong>Notice</strong> In the real-world applications you should avoi
 <p>Now we can inject the <code>Repository&lt;Photo&gt;</code> to the <code>PhotoService</code> using the <code>@Inject()</code> decorator:</p>
 
 <span class="filename">
-  {{ 'photo.service' | extension: app5072ed884c09862be0bc34fd67b9f42bacd8b395.isJsActive }}
-<app-tabs #app5072ed884c09862be0bc34fd67b9f42bacd8b395></app-tabs>
+  {{ 'photo.service' | extension: app189333e71b51c68e67d8a9eb73fb5bd50aaaa852.isJsActive }}
+<app-tabs #app189333e71b51c68e67d8a9eb73fb5bd50aaaa852></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Injectable, Inject &#125; from &#39;@nestjs/common&#39;;
 import &#123; Repository &#125; from &#39;typeorm&#39;;
@@ -121,8 +121,8 @@ export class PhotoService &#123;
 <p>Here is a final <code>PhotoModule</code>:</p>
 
 <span class="filename">
-  {{ 'photo.module' | extension: appb0f192aad8b1ab7a48be552dfc01c4c5a23ced0f.isJsActive }}
-<app-tabs #appb0f192aad8b1ab7a48be552dfc01c4c5a23ced0f></app-tabs>
+  {{ 'photo.module' | extension: app5a5281e0e5aec69f40fd10b45f5ffd612d9f8139.isJsActive }}
+<app-tabs #app5a5281e0e5aec69f40fd10b45f5ffd612d9f8139></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; DatabaseModule &#125; from &#39;../database/database.module&#39;;

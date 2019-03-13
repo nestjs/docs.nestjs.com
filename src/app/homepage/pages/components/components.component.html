@@ -11,9 +11,9 @@ info "><strong>Hint</strong> Since Nest enables the possibility to design and or
 <p>Let&#39;s start by creating a simple <code>CatsService</code> provider.</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2.isJsActive }}
-<app-tabs #appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2></app-tabs>
-</span><pre [class.hide]="appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2.isJsActive"><code class="language-typescript">
+  {{ 'cats.service' | extension: appbc44019a00ceed23f3f5e2f0d782db7b02180a13.isJsActive }}
+<app-tabs #appbc44019a00ceed23f3f5e2f0d782db7b02180a13></app-tabs>
+</span><pre [class.hide]="appbc44019a00ceed23f3f5e2f0d782db7b02180a13.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; Cat &#125; from &#39;./interfaces/cat.interface&#39;;
 
@@ -29,7 +29,7 @@ export class CatsService &#123;
     return this.cats;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appf68b7dbb333515d6186fb1e4d1ecd9164cce72e2.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appbc44019a00ceed23f3f5e2f0d782db7b02180a13.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -58,9 +58,9 @@ export interface Cat &#123;
 <p>Since we have the service class already done, let&#39;s use it inside the <code>CatsController</code>:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app173e24208c7a51c0ff5ffa0f021d3537fb668bd5.isJsActive }}
-<app-tabs #app173e24208c7a51c0ff5ffa0f021d3537fb668bd5></app-tabs>
-</span><pre [class.hide]="app173e24208c7a51c0ff5ffa0f021d3537fb668bd5.isJsActive"><code class="language-typescript">
+  {{ 'cats.controller' | extension: appc3df5f914707397c5b2d255546d15078c3bf45f5.isJsActive }}
+<app-tabs #appc3df5f914707397c5b2d255546d15078c3bf45f5></app-tabs>
+</span><pre [class.hide]="appc3df5f914707397c5b2d255546d15078c3bf45f5.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post, Body &#125; from &#39;@nestjs/common&#39;;
 import &#123; CreateCatDto &#125; from &#39;./dto/create-cat.dto&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
@@ -80,7 +80,7 @@ export class CatsController &#123;
     return this.catsService.findAll();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app173e24208c7a51c0ff5ffa0f021d3537fb668bd5.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appc3df5f914707397c5b2d255546d15078c3bf45f5.isJsActive"><code class="language-typescript">
 import &#123; Controller, Get, Post, Body, Bind, Dependencies &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsService &#125; from &#39;./cats.service&#39;;
 
@@ -140,8 +140,8 @@ warning "><strong>Warning</strong> If your class doesn&#39;t extend any other pr
 <p>The last thing is to tell the module that something called <code>CatsService</code> truly exists. We do this by editing our module file - <code>app.module.ts</code>, and putting the service into the <code>providers</code> array of the <code>@Module()</code> decorator.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app5f646543e507037ec6fa13b31c812d269c752c60.isJsActive }}
-<app-tabs #app5f646543e507037ec6fa13b31c812d269c752c60></app-tabs>
+  {{ 'app.module' | extension: appb49f97b7a799d1315637c09734db84548dfdb1da.isJsActive }}
+<app-tabs #appb49f97b7a799d1315637c09734db84548dfdb1da></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsController &#125; from &#39;./cats/cats.controller&#39;;

@@ -14,8 +14,8 @@ info "><strong>Hint</strong> The <code>HttpModule</code> is exposed from <code>@
 <p>Then, you can inject <code>HttpService</code>. This class is easily accessible from <code>@nestjs/common</code> package.</p>
 
 <span class="filename">
-<app-tabs #appb11218165dca196b5274fd499b886389808f109d></app-tabs>
-</span><pre [class.hide]="appb11218165dca196b5274fd499b886389808f109d.isJsActive"><code class="language-typescript">
+<app-tabs #app8c5c0f16cbeacee858e47db354e774686f16914e></app-tabs>
+</span><pre [class.hide]="app8c5c0f16cbeacee858e47db354e774686f16914e.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsService &#123;
   constructor(private readonly httpService: HttpService) &#123;&#125;
@@ -24,7 +24,7 @@ export class CatsService &#123;
     return this.httpService.get(&#39;http://localhost:3000/cats&#39;);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appb11218165dca196b5274fd499b886389808f109d.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app8c5c0f16cbeacee858e47db354e774686f16914e.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(HttpService)
 export class CatsService &#123;
