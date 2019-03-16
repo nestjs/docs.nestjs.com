@@ -31,7 +31,9 @@ import {
   DNSHealthIndicator,
   TerminusModuleOptions
 } from '@nestjs/terminus';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class TerminusOptionsService implements TerminusOptionsFactory {
   constructor(
     private readonly dns: DNSHealthIndicator,
@@ -39,6 +41,29 @@ export class TerminusOptionsService implements TerminusOptionsFactory {
 
   createTerminusOptions(): TerminusModuleOptions {
     const healthEndpoint: TerminusEndpoint = {
+      url: '/health',
+      healthIndicators: [
+        async () => this.dns.pingCheck('google', 'https://google.com'),
+      ],
+    };
+    return {
+      endpoints: [healthEndpoint],
+    };
+  }
+}
+@@switch
+import { Injectable, Dependencies } from '@nestjs/common';
+import { DNSHealthIndicator } from '@nestjs/terminus';
+
+@Injectable()
+@Dependencies(DNSHealthIndicator)
+export class TerminusOptionsService {
+  constructor(dns) {
+    this.dns = dns;
+  }
+
+  createTerminusOptions() {
+    const healthEndpoint = {
       url: '/health',
       healthIndicators: [
         async () => this.dns.pingCheck('google', 'https://google.com'),
@@ -106,6 +131,28 @@ export class DogHealthIndicator extends HealthIndicator {
     throw new HealthCheckError('Dogcheck failed', result);
   }
 }
+@@switch
+import { Injectable } from '@nestjs/common';
+import { HealthCheckError } from '@godaddy/terminus';
+
+@Injectable()
+export class DogHealthIndicator extends HealthIndicator {
+  dogs = [
+    { name: 'Fido', type: 'goodboy' },
+    { name: 'Rex', type: 'badboy' },
+  ];
+
+  async isHealthy(key) {
+    const badboys = this.dogs.filter(dog => dog.type === 'badboy');
+    const isHealthy = badboys.length > 0;
+    const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
+
+    if (isHealthy) {
+      return result;
+    }
+    throw new HealthCheckError('Dogcheck failed', result);
+  }
+}
 ```
 
 The next thing we need to do is registering the health indicator as a provider.
@@ -142,15 +189,39 @@ import {
   DNSHealthIndicator,
   TerminusModuleOptions
 } from '@nestjs/terminus';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class TerminusOptionsService implements TerminusOptionsFactory {
   constructor(
-    @Inject(DogHealthIndicator)
     private readonly dogHealthIndicator: DogHealthIndicator
   ) { }
 
   createTerminusOptions(): TerminusModuleOptions {
     const healthEndpoint: TerminusEndpoint = {
+      url: '/health',
+      healthIndicators: [
+        async () => this.dogHealthIndicator.isHealthy('dog'),
+      ],
+    };
+    return {
+      endpoints: [healthEndpoint],
+    };
+  }
+}
+@@switch
+import { DogHealthIndicator } from '../dog/dog.health';
+import { Injectable, Dependencies } from '@nestjs/common';
+
+@Injectable()
+@Dependencies(DogHealthIndicator)
+export class TerminusOptionsService {
+  constructor(dogHealthIndicator) {
+    this.dogHealthIndicator = dogHealthIndicator;
+  }
+
+  createTerminusOptions() {
+    const healthEndpoint = {
       url: '/health',
       healthIndicators: [
         async () => this.dogHealthIndicator.isHealthy('dog'),
