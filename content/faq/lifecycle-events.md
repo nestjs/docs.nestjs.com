@@ -53,14 +53,36 @@ async onModuleInit() {
   await this.fetch();
 }
 ```
+#### OnApplicationShutdown
 
-#### Overview
+The `OnApplicationShutdown` responds to the system signals (when application gets shutdown by e.g. `SIGTERM`).
+Use this hook to gracefully shutdown a Nest application. This feature is often used with [Kubernetes](https://kubernetes.io/) or
+[Heroku](https://www.heroku.com/).
 
-Here is a brief description of each lifecycle hook:
+To use this hook you must activate a listener which listens to shutdown signals.
 
-|                          |                                                                                             |
-| ------------------------ | ------------------------------------------------------------------------------------------- |
-| `OnModuleInit`           | Called once the host module has been initialized                                            |
-| `OnModuleDestroy`        | Cleanup just before Nest destroys the host module (`app.close()` method has been evaluated) |
-| `OnApplicationBootstrap` | Called once the application has started                                                     |
-| `OnApplicationShutdown`  | Responds to the system signals (application gets shutdown by e.g. `SIGTERM`)                |
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // Starts listening to shutdown hooks
+  app.enableShutdownHooks();
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+If the application receives a signal it will call the `onApplicationShutdown` function of your
+`Injectable` with the corresponding signal as first parameter. If your function does return a
+promise, it will not shutdown your Nest application until the promise is resolved or rejected.
+
+```typescript
+@Injectable()
+class UsersService implements OnApplicationShutdown {
+  onApplicationShutdown(signal: string) {
+    console.log(signal); // e.g. "SIGINT"
+  }
+}
+```
