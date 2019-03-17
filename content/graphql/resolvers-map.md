@@ -138,9 +138,9 @@ export class CreatePostInput extends Post {
 }
 ```
 
-#### Class first
+#### Code first
 
-In the class first approach, we don't have to write SDL by hand. Instead we'll only use decorators.
+In the code first approach, we don't have to write SDL by hand. Instead we'll only use decorators.
 
 ```typescript
 import { Field, Int, ObjectType } from 'type-graphql';

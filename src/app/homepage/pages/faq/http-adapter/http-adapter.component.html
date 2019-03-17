@@ -6,19 +6,19 @@
 <p>In order to get the <code>HttpAdapter</code> from the outside of the application context, you can call <code>getHttpAdapter()</code> method.</p>
 
 <span class="filename">
-<app-tabs #app7a8c9551ebd49932e6f7385ca0ad8f15049c90a0></app-tabs>
+<app-tabs #app4607af9405450692946bc40f41ae1d85e0bec1ea></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.create(ApplicationModule);
 const httpAdapter = app.getHttpAdapter();</code></pre><h4 appAnchor id="in-context-strategy"><span>In-context strategy</span></h4>
 <p>In order to get the <code>HttpAdapterHost</code> from within the application context, you can inject it in the same way as any other existing provider (let&#39;s say, through <code>constructor</code>).</p>
 
 <span class="filename">
-<app-tabs #app6afd48a7c7e40b05056f6eb1eca8e4758711bd94></app-tabs>
-</span><pre [class.hide]="app6afd48a7c7e40b05056f6eb1eca8e4758711bd94.isJsActive"><code class="language-typescript">
+<app-tabs #app3a16fc9d9a52bd74d8b81943b30c5def0760321c></app-tabs>
+</span><pre [class.hide]="app3a16fc9d9a52bd74d8b81943b30c5def0760321c.isJsActive"><code class="language-typescript">
 export class CatsService &#123;
   constructor(private readonly adapterHost: HttpAdapterHost) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app6afd48a7c7e40b05056f6eb1eca8e4758711bd94.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app3a16fc9d9a52bd74d8b81943b30c5def0760321c.isJsActive"><code class="language-typescript">
 @Dependencies(HttpAdapterHost)
 export class CatsService &#123;
   constructor(adapterHost) &#123;

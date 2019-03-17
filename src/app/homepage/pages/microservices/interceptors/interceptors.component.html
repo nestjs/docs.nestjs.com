@@ -3,14 +3,14 @@
 <p>There is no difference between <a routerLink="/interceptors">regular interceptors</a> and the microservices interceptors. Here is an example that makes use of a manually instantiated method-scoped interceptor (class-scoped works too):</p>
 
 <span class="filename">
-<app-tabs #app43311ad201f65aba64cc940e257e64471a16be59></app-tabs>
-</span><pre [class.hide]="app43311ad201f65aba64cc940e257e64471a16be59.isJsActive"><code class="language-typescript">
+<app-tabs #appad1967d63d574ef5bf1ca17231d8341f797f29e2></app-tabs>
+</span><pre [class.hide]="appad1967d63d574ef5bf1ca17231d8341f797f29e2.isJsActive"><code class="language-typescript">
 @UseInterceptors(new TransformInterceptor())
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data: number[]): number &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre>
-<pre [class.hide]="!app43311ad201f65aba64cc940e257e64471a16be59.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appad1967d63d574ef5bf1ca17231d8341f797f29e2.isJsActive"><code class="language-typescript">
 @UseInterceptors(new TransformInterceptor())
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data) &#123;

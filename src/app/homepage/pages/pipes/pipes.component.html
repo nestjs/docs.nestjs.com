@@ -15,9 +15,9 @@ info "><strong>Hint</strong> The pipe runs inside the exceptions zone. This mean
 <p>Let&#39;s start with the <code>ValidationPipe</code>. Initially, it only takes a value and immediately returns the same value, behaving like an identity function.</p>
 
 <span class="filename">
-  {{ 'validation.pipe' | extension: app7f3b334357a86e387ddb4c6b218c3e973408287e.isJsActive }}
-<app-tabs #app7f3b334357a86e387ddb4c6b218c3e973408287e></app-tabs>
-</span><pre [class.hide]="app7f3b334357a86e387ddb4c6b218c3e973408287e.isJsActive"><code class="language-typescript">
+  {{ 'validation.pipe' | extension: appa57ed8fa610c77ff4a1f91dd0c034dd32cedddd0.isJsActive }}
+<app-tabs #appa57ed8fa610c77ff4a1f91dd0c034dd32cedddd0></app-tabs>
+</span><pre [class.hide]="appa57ed8fa610c77ff4a1f91dd0c034dd32cedddd0.isJsActive"><code class="language-typescript">
 import &#123; PipeTransform, Injectable, ArgumentMetadata &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -26,7 +26,7 @@ export class ValidationPipe implements PipeTransform &#123;
     return value;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app7f3b334357a86e387ddb4c6b218c3e973408287e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa57ed8fa610c77ff4a1f91dd0c034dd32cedddd0.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -88,21 +88,21 @@ warning "><strong>Warning</strong> TypeScript interfaces disappear during the tr
 <p>Let&#39;s focus on the <code>create()</code> method of the <code>CatsController</code> for a while.</p>
 
 <span class="filename">
-<app-tabs #app7864e9bcc196b53d3aed4796c4f2a3f99f456f97></app-tabs>
-</span><pre [class.hide]="app7864e9bcc196b53d3aed4796c4f2a3f99f456f97.isJsActive"><code class="language-typescript">
+<app-tabs #app554f0103dc2ae083f0f4da824c2508364ea76f1e></app-tabs>
+</span><pre [class.hide]="app554f0103dc2ae083f0f4da824c2508364ea76f1e.isJsActive"><code class="language-typescript">
 @Post()
 async create(@Body() createCatDto: CreateCatDto) &#123;
   this.catsService.create(createCatDto);
 &#125;</code></pre>
-<pre [class.hide]="!app7864e9bcc196b53d3aed4796c4f2a3f99f456f97.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app554f0103dc2ae083f0f4da824c2508364ea76f1e.isJsActive"><code class="language-typescript">
 @Post()
 async create(@Body() createCatDto) &#123;
   this.catsService.create(createCatDto);
 &#125;</code></pre><p>There&#39;s a <code>CreateCatDto</code> body parameter:</p>
 
 <span class="filename">
-  {{ 'create-cat.dto' | extension: app140ffe3b7bf4696c4b4143b5c9402dce76166ab8.isJsActive }}
-<app-tabs #app140ffe3b7bf4696c4b4143b5c9402dce76166ab8></app-tabs>
+  {{ 'create-cat.dto' | extension: app3e192d82028d679c4aa3cc85da6b4afc315b3c30.isJsActive }}
+<app-tabs #app3e192d82028d679c4aa3cc85da6b4afc315b3c30></app-tabs>
 </span><pre><code class="language-typescript">
 export class CreateCatDto &#123;
   readonly name: string;
@@ -114,8 +114,8 @@ export class CreateCatDto &#123;
 <p>One of the frequently encountered approaches is to use a <strong>schema-based</strong> validation. The <a href="https://github.com/hapijs/joi">Joi</a> library is a tool that allows you creating schemas in a pretty straightforward way with a readable API. In order to create a pipe that makes use of object schemas, we need to create a simple class that takes a schema as a <code>constructor</code> argument.</p>
 
 <span class="filename">
-<app-tabs #appbf705984d9bfc02b9eb7f9a26f0e5fe6b61c84b8></app-tabs>
-</span><pre [class.hide]="appbf705984d9bfc02b9eb7f9a26f0e5fe6b61c84b8.isJsActive"><code class="language-typescript">
+<app-tabs #appd624080eea3066306fd70e7798448617b3881435></app-tabs>
+</span><pre [class.hide]="appd624080eea3066306fd70e7798448617b3881435.isJsActive"><code class="language-typescript">
 import * as Joi from &#39;joi&#39;;
 import &#123; PipeTransform, Injectable, ArgumentMetadata, BadRequestException &#125; from &#39;@nestjs/common&#39;;
 
@@ -131,7 +131,7 @@ export class JoiValidationPipe implements PipeTransform &#123;
     return value;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appbf705984d9bfc02b9eb7f9a26f0e5fe6b61c84b8.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appd624080eea3066306fd70e7798448617b3881435.isJsActive"><code class="language-typescript">
 import * as Joi from &#39;joi&#39;;
 import &#123; Injectable, BadRequestException &#125; from &#39;@nestjs/common&#39;;
 
@@ -152,14 +152,14 @@ export class JoiValidationPipe &#123;
 <p>The pipe tying is extremely simple - we need to use <code>@UsePipes()</code> decorator and create a pipe instance with the valid Joi schema.</p>
 
 <span class="filename">
-<app-tabs #app7b5b573586938e2668dc0e311888236d7222b3a0></app-tabs>
-</span><pre [class.hide]="app7b5b573586938e2668dc0e311888236d7222b3a0.isJsActive"><code class="language-typescript">
+<app-tabs #app1be30350a22e839a4644c8cf640ecf635e20fd4c></app-tabs>
+</span><pre [class.hide]="app1be30350a22e839a4644c8cf640ecf635e20fd4c.isJsActive"><code class="language-typescript">
 @Post()
 @UsePipes(new JoiValidationPipe(createCatSchema))
 async create(@Body() createCatDto: CreateCatDto) &#123;
   this.catsService.create(createCatDto);
 &#125;</code></pre>
-<pre [class.hide]="!app7b5b573586938e2668dc0e311888236d7222b3a0.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app1be30350a22e839a4644c8cf640ecf635e20fd4c.isJsActive"><code class="language-typescript">
 @Post()
 @Bind(Body())
 @UsePipes(new JoiValidationPipe(createCatSchema))
@@ -173,8 +173,8 @@ $ npm i --save class-validator class-transformer</code></pre>
 <p>Once the libraries are installed, we can add a few decorators to the <code>CreateCatDto</code> class.</p>
 
 <span class="filename">
-  {{ 'create-cat.dto' | extension: appf02d258292de6fbd812c53d31b77d17e1f0237a2.isJsActive }}
-<app-tabs #appf02d258292de6fbd812c53d31b77d17e1f0237a2></app-tabs>
+  {{ 'create-cat.dto' | extension: appa9df8e133211f74c3dd4c6ee607b2270363ec4da.isJsActive }}
+<app-tabs #appa9df8e133211f74c3dd4c6ee607b2270363ec4da></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; IsString, IsInt &#125; from &#39;class-validator&#39;;
 
@@ -190,8 +190,8 @@ export class CreateCatDto &#123;
 &#125;</code></pre><p>When it&#39;s done, we can create a <code>ValidationPipe</code> class.</p>
 
 <span class="filename">
-  {{ 'validation.pipe' | extension: app22e43130029d2c0770e3af497cf4cf3cd5cdea13.isJsActive }}
-<app-tabs #app22e43130029d2c0770e3af497cf4cf3cd5cdea13></app-tabs>
+  {{ 'validation.pipe' | extension: app5c1d661702ee44c3321536b73d9e078def3a7366.isJsActive }}
+<app-tabs #app5c1d661702ee44c3321536b73d9e078def3a7366></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; PipeTransform, Injectable, ArgumentMetadata, BadRequestException &#125; from &#39;@nestjs/common&#39;;
 import &#123; validate &#125; from &#39;class-validator&#39;;
@@ -222,8 +222,8 @@ warning "><strong>Notice</strong> We have used the <a href="https://github.com/p
 <p>The last step is to set up the <code>ValidationPipe</code>. Pipes, same as <a routerLink="/exception-filters">exception filters</a> can be method-scoped, controller-scoped, and global-scoped. Additionally, a pipe can be param-scoped. We can directly tie the pipe instance to the route param decorator, for example, to <code>@Body()</code> decorator. Let&#39;s have a look at the below example:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app95752b3e63c2026fe7fe617028a3519f37d328f5.isJsActive }}
-<app-tabs #app95752b3e63c2026fe7fe617028a3519f37d328f5></app-tabs>
+  {{ 'cats.controller' | extension: appf808aadf511fefc8df3599deb47d297def816656.isJsActive }}
+<app-tabs #appf808aadf511fefc8df3599deb47d297def816656></app-tabs>
 </span><pre><code class="language-typescript">
 @Post()
 async create(
@@ -233,8 +233,8 @@ async create(
 &#125;</code></pre><p>The param-scoped pipes are useful when the validation logic concerns only one, specified parameter. In order to set up a pipe at a method level, you&#39;ll need the <code>UsePipes()</code> decorator.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: appbf71f932e2a46dc540859644768f2517a9987a31.isJsActive }}
-<app-tabs #appbf71f932e2a46dc540859644768f2517a9987a31></app-tabs>
+  {{ 'cats.controller' | extension: appf68b403358a53a8303d621372c9102bc236b8ec1.isJsActive }}
+<app-tabs #appf68b403358a53a8303d621372c9102bc236b8ec1></app-tabs>
 </span><pre><code class="language-typescript">
 @Post()
 @UsePipes(new ValidationPipe())
@@ -246,8 +246,8 @@ info "><strong>Hint</strong> The <code>@UsePipes()</code> decorator is imported 
 <p>The instance of <code>ValidationPipe</code> has been created immediately in-place. Another available way is to pass the class (not instance), leaving framework the instantiation responsibility and enabling <strong>dependency injection</strong>.</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app01d4338eb85a9d82f2114e19e57004635a2e5e9d.isJsActive }}
-<app-tabs #app01d4338eb85a9d82f2114e19e57004635a2e5e9d></app-tabs>
+  {{ 'cats.controller' | extension: app1cbb3b007ee3498d4cf7a612da9b0df6bdacf48d.isJsActive }}
+<app-tabs #app1cbb3b007ee3498d4cf7a612da9b0df6bdacf48d></app-tabs>
 </span><pre><code class="language-typescript">
 @Post()
 @UsePipes(ValidationPipe)
@@ -256,8 +256,8 @@ async create(@Body() createCatDto: CreateCatDto) &#123;
 &#125;</code></pre><p>Since the <code>ValidationPipe</code> was created to be as generic as possible, we&#39;re gonna set it up as a <strong>global-scoped</strong> pipe, for every route handler across the entire application.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app098110d8a0b00cdeb68dfc4c88236124239e3e4c.isJsActive }}
-<app-tabs #app098110d8a0b00cdeb68dfc4c88236124239e3e4c></app-tabs>
+  {{ 'main' | extension: appf4ca1aebe16d29a6f583644b86c5c014a8f260b0.isJsActive }}
+<app-tabs #appf4ca1aebe16d29a6f583644b86c5c014a8f260b0></app-tabs>
 </span><pre><code class="language-typescript">
 async function bootstrap() &#123;
   const app = await NestFactory.create(ApplicationModule);
@@ -270,8 +270,8 @@ warning "><strong>Notice</strong> The <code>useGlobalPipes()</code> method doesn
 <p>The global pipes are used across the whole application, for every controller and every route handler. In terms of dependency injection, global pipes registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don&#39;t belong to any module. In order to solve this issue, you can set up a pipe <strong>directly from any module</strong> using following construction:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appb82039372a8ee4a7147050c76a6ce78980396dff.isJsActive }}
-<app-tabs #appb82039372a8ee4a7147050c76a6ce78980396dff></app-tabs>
+  {{ 'app.module' | extension: app27578811a47ebb2823b9062259954fe685e1921e.isJsActive }}
+<app-tabs #app27578811a47ebb2823b9062259954fe685e1921e></app-tabs>
 </span><pre><code class="language-typescript">
 async function bootstrap() &#123;
   const app = await NestFactory.create(ApplicationModule);
@@ -285,9 +285,9 @@ info "><strong>Hint</strong> The alternative option is to use an <a routerLink="
 <p>Validation isn&#39;t the sole use case. At the beginning of this chapter, we have mentioned that a pipe can also <strong>transform</strong> the input data to the desired output. It&#39;s true because the value returned from the <code>transform</code> function completely overrides the previous value of the argument. Sometimes the data passed from the client needs to undergo some changes. Also, some parts could be missed, therefore we must apply the default values. The <strong>transformer pipes</strong> fill the gap between the request of the client and the request handler.</p>
 
 <span class="filename">
-  {{ 'parse-int.pipe' | extension: appff7bbe242398b6c69c3b15fa02fde0b747eaa687.isJsActive }}
-<app-tabs #appff7bbe242398b6c69c3b15fa02fde0b747eaa687></app-tabs>
-</span><pre [class.hide]="appff7bbe242398b6c69c3b15fa02fde0b747eaa687.isJsActive"><code class="language-typescript">
+  {{ 'parse-int.pipe' | extension: app101482dd848e820ba767334cac4d5258dce4fa84.isJsActive }}
+<app-tabs #app101482dd848e820ba767334cac4d5258dce4fa84></app-tabs>
+</span><pre [class.hide]="app101482dd848e820ba767334cac4d5258dce4fa84.isJsActive"><code class="language-typescript">
 import &#123; PipeTransform, Injectable, ArgumentMetadata, BadRequestException &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -300,7 +300,7 @@ export class ParseIntPipe implements PipeTransform&lt;string, number&gt; &#123;
     return val;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appff7bbe242398b6c69c3b15fa02fde0b747eaa687.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app101482dd848e820ba767334cac4d5258dce4fa84.isJsActive"><code class="language-typescript">
 import &#123; Injectable, BadRequestException&#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -315,13 +315,13 @@ export class ParseIntPipe &#123;
 &#125;</code></pre><p>Here&#39;s a <code>ParseIntPipe</code> which is responsible for parsing a string into an integer value. We can simply tie a pipe to the selected param:</p>
 
 <span class="filename">
-<app-tabs #appdf4eecbc14190379a747e1c9704a0f89fadee016></app-tabs>
-</span><pre [class.hide]="appdf4eecbc14190379a747e1c9704a0f89fadee016.isJsActive"><code class="language-typescript">
+<app-tabs #appe2c8aa0d51b0fc99b26ab881187eb225c802e0d8></app-tabs>
+</span><pre [class.hide]="appe2c8aa0d51b0fc99b26ab881187eb225c802e0d8.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 async findOne(@Param(&#39;id&#39;, new ParseIntPipe()) id) &#123;
   return await this.catsService.findOne(id);
 &#125;</code></pre>
-<pre [class.hide]="!appdf4eecbc14190379a747e1c9704a0f89fadee016.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appe2c8aa0d51b0fc99b26ab881187eb225c802e0d8.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 @Bind(Param(&#39;id&#39;, new ParseIntPipe()))
 async findOne(id) &#123;
@@ -330,13 +330,13 @@ async findOne(id) &#123;
 <p>Another useful case would be to select an <strong>existing user</strong> entity from the database by id:</p>
 
 <span class="filename">
-<app-tabs #appa03a269e7a277409a135edfdeae858c610ab9b6a></app-tabs>
-</span><pre [class.hide]="appa03a269e7a277409a135edfdeae858c610ab9b6a.isJsActive"><code class="language-typescript">
+<app-tabs #apped199e1b8a9170fe706cd635a410c6736a654cd7></app-tabs>
+</span><pre [class.hide]="apped199e1b8a9170fe706cd635a410c6736a654cd7.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 findOne(@Param(&#39;id&#39;, UserByIdPipe) userEntity: UserEntity) &#123;
   return userEntity;
 &#125;</code></pre>
-<pre [class.hide]="!appa03a269e7a277409a135edfdeae858c610ab9b6a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!apped199e1b8a9170fe706cd635a410c6736a654cd7.isJsActive"><code class="language-typescript">
 @Get(&#39;:id&#39;)
 @Bind(Param(&#39;id&#39;, UserByIdPipe))
 findOne(userEntity) &#123;
@@ -347,8 +347,8 @@ findOne(userEntity) &#123;
 <p>If you take a look at the <code>createCatDto</code> in your controller function, you will notice that it isn&#39;t an actual <code>CreateCatDto</code> instance. That is because this pipe only validates the payload, without transforming it into the expected type. However, if you want the pipe to mutate the payload, you can configure it by passing appropriate options:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app27f2419b54a5a9e4df18a4d854c1311b93d35a89.isJsActive }}
-<app-tabs #app27f2419b54a5a9e4df18a4d854c1311b93d35a89></app-tabs>
+  {{ 'cats.controller' | extension: app12b9fdf6e069bb6022b771a562686519c23fa7e2.isJsActive }}
+<app-tabs #app12b9fdf6e069bb6022b771a562686519c23fa7e2></app-tabs>
 </span><pre><code class="language-typescript">
 @Post()
 @UsePipes(new ValidationPipe(&#123; transform: true &#125;))

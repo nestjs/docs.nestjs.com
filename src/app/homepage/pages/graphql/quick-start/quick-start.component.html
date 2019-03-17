@@ -7,14 +7,14 @@
 <pre><code class="language-bash">
 $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql</code></pre>
 <h4 appAnchor id="overview"><span>Overview</span></h4>
-<p>Nest offers two ways of building GraphQL applications, the schema first and the classes first respectively.</p>
+<p>Nest offers two ways of building GraphQL applications, the schema first and the code first respectively.</p>
 <p>In the <strong>schema first</strong> approach, the source of truth is a GraphQL SDL (Schema Definition Language). It&#39;s a language-agnostic way which basically allows you to share schema files between different platforms. Furthermore, Nest will automatically generate your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.</p>
-<p>In the <strong>classes first</strong> approach on the other hand, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to work exclusively with TypeScript and avoid the context switching between languages syntax.</p>
+<p>In the <strong>code first</strong> approach on the other hand, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to work exclusively with TypeScript and avoid the context switching between languages syntax.</p>
 <h4 appAnchor id="getting-started"><span>Getting started</span></h4>
 <p>Once the packages are installed, we can register the <code>GraphQLModule</code>.</p>
 
 <span class="filename">
-<app-tabs #appd973e2e6bd8c6d7f6a136b8eeeef08aa886220d7></app-tabs>
+<app-tabs #app46c63a84a3acd29118e5c9977953431b5a125efb></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
@@ -27,7 +27,7 @@ import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
 export class ApplicationModule &#123;&#125;</code></pre><p>The <code>.forRoot()</code> method takes an options object as an argument. These options will be passed down to the underlying Apollo instance (read more about available settings <a href="https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt">here</a>). For instance, if you want to disable the <code>playground</code> and turn off the <code>debug</code> mode, simply pass the following options:</p>
 
 <span class="filename">
-<app-tabs #app3ebc76aa3a29f639089f34dc80c5162ca77d899b></app-tabs>
+<app-tabs #app9c384ff83f48dae70f2cfa9f3ec684e40d478f4d></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; GraphQLModule &#125; from &#39;@nestjs/graphql&#39;;
@@ -104,8 +104,8 @@ definitionsFactory.generate(&#123;
   watch: true,
 &#125;);</code></pre>
 <p>A fully working sample is available <a href="https://github.com/nestjs/nest/tree/master/sample/12-graphql-apollo">here</a>.</p>
-<h4 appAnchor id="classes-first"><span>Classes first</span></h4>
-<p>In the <strong>classes first</strong> approach, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema.</p>
+<h4 appAnchor id="code-first"><span>Code first</span></h4>
+<p>In the <strong>code first</strong> approach, you&#39;ll only use decorators and TypeScript classes to generate the corresponding GraphQL schema.</p>
 <p>Nest is using an amazing <a href="https://19majkel94.github.io/type-graphql/">type-graphql</a> library under the hood in order provide this functionality. Hence, before we proceed, you have to install this package.</p>
 <pre><code class="language-bash">
 $ npm i type-graphql</code></pre>

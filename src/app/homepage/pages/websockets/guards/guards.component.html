@@ -8,15 +8,15 @@ info "><strong>Hint</strong> The <code>WsException</code> class is exposed from 
 <p>Here is an example that makes use of a method-scoped guard (class-scoped works too):</p>
 
 <span class="filename">
-<app-tabs #app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a></app-tabs>
-</span><pre [class.hide]="app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a.isJsActive"><code class="language-typescript">
+<app-tabs #app7a9627a7d87a46c256fa909236d5d9f5f0b63973></app-tabs>
+</span><pre [class.hide]="app7a9627a7d87a46c256fa909236d5d9f5f0b63973.isJsActive"><code class="language-typescript">
 @UseGuards(AuthGuard)
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
   const event = &#39;events&#39;;
   return &#123; event, data &#125;;
 &#125;</code></pre>
-<pre [class.hide]="!app95fa6179e51c0fdf9e1f9dd2c91996016f8a5d6a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app7a9627a7d87a46c256fa909236d5d9f5f0b63973.isJsActive"><code class="language-typescript">
 @UseGuards(AuthGuard)
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client, data) &#123;

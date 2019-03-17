@@ -57,8 +57,8 @@ $ graphql codegen --project database</code></pre>
 <p>Almost done. Now, let&#39;s create a module for our Prisma integration.</p>
 
 <span class="filename">
-  {{ 'prisma.service' | extension: app87d21170b03388f3456ba7b92acc36a4a33e2fce.isJsActive }}
-<app-tabs #app87d21170b03388f3456ba7b92acc36a4a33e2fce></app-tabs>
+  {{ 'prisma.service' | extension: app05a3e33b81a6ea343155d9d28e52d966d1817721.isJsActive }}
+<app-tabs #app05a3e33b81a6ea343155d9d28e52d966d1817721></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; Prisma &#125; from &#39;./prisma.binding&#39;;
@@ -74,8 +74,8 @@ export class PrismaService extends Prisma &#123;
 &#125;</code></pre><p>Once <code>PrismaService</code> is ready, we need to create a corresponding module.</p>
 
 <span class="filename">
-  {{ 'prisma.module' | extension: appdafce3ef4702433d8bee265cce49d1ffc6052030.isJsActive }}
-<app-tabs #appdafce3ef4702433d8bee265cce49d1ffc6052030></app-tabs>
+  {{ 'prisma.module' | extension: app40ab943e475bec8af861dacba547c80966f47350.isJsActive }}
+<app-tabs #app40ab943e475bec8af861dacba547c80966f47350></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; PrismaService &#125; from &#39;./prisma.service&#39;;
@@ -91,8 +91,8 @@ info "><strong>Hint</strong> To create new modules and services in no time we ca
 <p>To use your new service we are going to import the <code>PrismaModule</code> and inject the <code>PrismaService</code> into <code>UsersResolver</code>.</p>
 
 <span class="filename">
-  {{ 'users.module' | extension: app553f8ab51e282562672b44d9bf32628293eeb23b.isJsActive }}
-<app-tabs #app553f8ab51e282562672b44d9bf32628293eeb23b></app-tabs>
+  {{ 'users.module' | extension: app587d24f415ea22986595fb9b074b326b96543c18.isJsActive }}
+<app-tabs #app587d24f415ea22986595fb9b074b326b96543c18></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; UsersResolver &#125; from &#39;./users.resolver&#39;;
@@ -105,8 +105,8 @@ import &#123; PrismaModule &#125; from &#39;../prisma/prisma.module&#39;;
 export class UsersModule &#123;&#125;</code></pre><p>Importing <code>PrismaModule</code> makes exported <code>PrismaService</code> available in the <code>UsersModule</code> context.</p>
 
 <span class="filename">
-  {{ 'users.resolver' | extension: appdc354efafa4fb746e62e207c733448593ef20736.isJsActive }}
-<app-tabs #appdc354efafa4fb746e62e207c733448593ef20736></app-tabs>
+  {{ 'users.resolver' | extension: app4b736f2c5b42d7e02dcceefc955a80eedbf8ff28.isJsActive }}
+<app-tabs #app4b736f2c5b42d7e02dcceefc955a80eedbf8ff28></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Query, Resolver, Args, Info &#125; from &#39;@nestjs/graphql&#39;;
 import &#123; PrismaService &#125; from &#39;../prisma/prisma.service&#39;;

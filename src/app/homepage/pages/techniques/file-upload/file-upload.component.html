@@ -9,14 +9,14 @@ warning "><strong>Warning</strong> Multer will not process any form which is not
 <p>When we want to upload a single file, we simply tie <code>FileInterceptor()</code> to the handler, and then, pull outs <code>file</code> from the <code>request</code> using <code>@UploadedFile()</code> decorator.</p>
 
 <span class="filename">
-<app-tabs #app1a78ea47b495f3970d5ef1172055952f0bce2d81></app-tabs>
-</span><pre [class.hide]="app1a78ea47b495f3970d5ef1172055952f0bce2d81.isJsActive"><code class="language-typescript">
+<app-tabs #appf8eb83c3cef839ee1efcf3235f4c8ec2053c739c></app-tabs>
+</span><pre [class.hide]="appf8eb83c3cef839ee1efcf3235f4c8ec2053c739c.isJsActive"><code class="language-typescript">
 @Post(&#39;upload&#39;)
 @UseInterceptors(FileInterceptor(&#39;file&#39;))
 uploadFile(@UploadedFile() file) &#123;
   console.log(file);
 &#125;</code></pre>
-<pre [class.hide]="!app1a78ea47b495f3970d5ef1172055952f0bce2d81.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf8eb83c3cef839ee1efcf3235f4c8ec2053c739c.isJsActive"><code class="language-typescript">
 @Post(&#39;upload&#39;)
 @UseInterceptors(FileInterceptor(&#39;file&#39;))
 @Bind(UploadedFile())
@@ -30,14 +30,14 @@ info "><strong>Hint</strong> Both <code>FileInterceptor()</code> and <code>@Uplo
 <p>In order to upload an array of files, we use <code>FilesInterceptor()</code>. This interceptor takes three arguments. A <code>fieldName</code> (that remains the same), <code>maxCount</code> which is a maximum number of files that can be uploaded at the same time, and optional <code>MulterOptions</code> object. Additionally, to pick files from <code>request</code> object, we use <code>@UploadedFiles()</code> decorator</p>
 
 <span class="filename">
-<app-tabs #app8e69e72713a98f4e39c9fe78269551fb4e9df69a></app-tabs>
-</span><pre [class.hide]="app8e69e72713a98f4e39c9fe78269551fb4e9df69a.isJsActive"><code class="language-typescript">
+<app-tabs #app5b6f8a51562ee0736c9d716b70da0a815ccd1339></app-tabs>
+</span><pre [class.hide]="app5b6f8a51562ee0736c9d716b70da0a815ccd1339.isJsActive"><code class="language-typescript">
 @Post(&#39;upload&#39;)
 @UseInterceptors(FilesInterceptor(&#39;files&#39;))
 uploadFile(@UploadedFiles() files) &#123;
   console.log(files);
 &#125;</code></pre>
-<pre [class.hide]="!app8e69e72713a98f4e39c9fe78269551fb4e9df69a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app5b6f8a51562ee0736c9d716b70da0a815ccd1339.isJsActive"><code class="language-typescript">
 @Post(&#39;upload&#39;)
 @UseInterceptors(FilesInterceptor(&#39;files&#39;))
 @Bind(UploadedFiles())
@@ -50,8 +50,8 @@ info "><strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@Upl
 <p>To upload multiple fields (all with different keys), we use <code>FileFieldsInterceptor()</code> decorator.</p>
 
 <span class="filename">
-<app-tabs #app4db5ddbd96a86a7484e5b11ae2fca3aca13418be></app-tabs>
-</span><pre [class.hide]="app4db5ddbd96a86a7484e5b11ae2fca3aca13418be.isJsActive"><code class="language-typescript">
+<app-tabs #appb9a5f6e235fd5057011a3c50e6a7b1e69c497e0b></app-tabs>
+</span><pre [class.hide]="appb9a5f6e235fd5057011a3c50e6a7b1e69c497e0b.isJsActive"><code class="language-typescript">
 @Post(&#39;upload&#39;)
 @UseInterceptors(FileFieldsInterceptor([
   &#123; name: &#39;avatar&#39;, maxCount: 1 &#125;,
@@ -60,7 +60,7 @@ info "><strong>Hint</strong> Both <code>FilesInterceptor()</code> and <code>@Upl
 uploadFile(@UploadedFiles() files) &#123;
   console.log(files);
 &#125;</code></pre>
-<pre [class.hide]="!app4db5ddbd96a86a7484e5b11ae2fca3aca13418be.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb9a5f6e235fd5057011a3c50e6a7b1e69c497e0b.isJsActive"><code class="language-typescript">
 @Post(&#39;upload&#39;)
 @Bind(UploadedFiles())
 @UseInterceptors(FileFieldsInterceptor([

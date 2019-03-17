@@ -101,7 +101,7 @@ type Subscription {
 
 Well done. We created a single `commentAdded(repoFullName: String!): Comment` subscription. You can find a full sample implementation [here](https://github.com/nestjs/nest/blob/master/sample/12-graphql-apollo).
 
-#### Class first
+#### Code first
 
 To create a subscription using the class-first approach, we'll make use of the `@Subscription()` decorator.
 

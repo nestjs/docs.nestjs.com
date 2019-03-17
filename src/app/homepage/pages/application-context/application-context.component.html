@@ -5,7 +5,7 @@
 <p>In order to create a Nest application context, we use the following syntax:</p>
 
 <span class="filename">
-<app-tabs #app7d92f288276a2c46087b0874d3df42e0a86755ab></app-tabs>
+<app-tabs #app7337cf6fff1098b4afba14dd4451560381331d2e></app-tabs>
 </span><pre><code class="language-typescript">
 async function bootstrap() &#123;
   const app = await NestFactory.createApplicationContext(ApplicationModule);
@@ -14,13 +14,13 @@ async function bootstrap() &#123;
 bootstrap();</code></pre><p>Afterward, Nest allows you to pick any instance registered within Nest application. Let&#39;s imagine that we have a <code>TasksService</code> in the <code>TasksModule</code>. This class provides a set of usable methods, which we want to call from within CRON job.</p>
 
 <span class="filename">
-<app-tabs #app01e8dac7c284b22ee71aaf744d7963eca470a0cb></app-tabs>
+<app-tabs #app48b1a973c474ee379305342b32932076d5a019af></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.create(ApplicationModule);
 const tasksService = app.get(TasksService);</code></pre><p>And that&#39;s it. To grab <code>TasksService</code> instance we had to use <code>get()</code> method. We didn&#39;t have to go through entire modules tree, the <code>get()</code> method act like a <strong>query</strong> that search for an instance in each registered module automatically. However, if you prefer a strict context checking, you can always switch to it using <code>strict: true</code> options object that has to be passed as the second argument of <code>get()</code> method. Then, you have to go through all modules to pick up a particular instance from the selected context.</p>
 
 <span class="filename">
-<app-tabs #app4b0b341ec6de2130e1e4d9ad9e7835a6aa69eb58></app-tabs>
+<app-tabs #appaaf1a6f9cee6e2974111746eaec14f84056f8a6f></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.create(ApplicationModule);
 const tasksService = app.select(TasksModule).get(TasksService, &#123; strict: true &#125;);</code></pre><table>

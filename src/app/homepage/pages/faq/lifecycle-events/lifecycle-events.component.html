@@ -12,8 +12,8 @@
 <p>Each lifecycle hook is represented by interface. Interfaces are technically optional because they do not exist anyway after TypeScript compilation. Nonetheless, it&#39;s a good practice to use them in order to benefit from strong typing and editor tooling.</p>
 
 <span class="filename">
-<app-tabs #app2066c396e256bb22337f3976ae325d01b34e55b2></app-tabs>
-</span><pre [class.hide]="app2066c396e256bb22337f3976ae325d01b34e55b2.isJsActive"><code class="language-typescript">
+<app-tabs #app4d2d941996750373916348ab0e7c05580ed67c26></app-tabs>
+</span><pre [class.hide]="app4d2d941996750373916348ab0e7c05580ed67c26.isJsActive"><code class="language-typescript">
 import &#123; Injectable, OnModuleInit &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -22,7 +22,7 @@ export class UsersService implements OnModuleInit &#123;
     console.log(`The module has been initialized.`);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app2066c396e256bb22337f3976ae325d01b34e55b2.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app4d2d941996750373916348ab0e7c05580ed67c26.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -33,12 +33,12 @@ export class UsersService &#123;
 &#125;</code></pre><p>Additionally, both <code>OnModuleInit</code> and <code>OnApplicationBootstrap</code> hooks allow you to defer the application initialization process (return a <code>Promise</code> or mark the method as <code>async</code>).</p>
 
 <span class="filename">
-<app-tabs #appf174a44e8dde07f0b6d872108d38dfacf785570a></app-tabs>
-</span><pre [class.hide]="appf174a44e8dde07f0b6d872108d38dfacf785570a.isJsActive"><code class="language-typescript">
+<app-tabs #appf6f752181cb03a2fd73c50c6c4caa21c6d2a8675></app-tabs>
+</span><pre [class.hide]="appf6f752181cb03a2fd73c50c6c4caa21c6d2a8675.isJsActive"><code class="language-typescript">
 async onModuleInit(): Promise&lt;void&gt; &#123;
   await this.fetch();
 &#125;</code></pre>
-<pre [class.hide]="!appf174a44e8dde07f0b6d872108d38dfacf785570a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf6f752181cb03a2fd73c50c6c4caa21c6d2a8675.isJsActive"><code class="language-typescript">
 async onModuleInit() &#123;
   await this.fetch();
 &#125;</code></pre><h4 appAnchor id="overview"><span>Overview</span></h4>

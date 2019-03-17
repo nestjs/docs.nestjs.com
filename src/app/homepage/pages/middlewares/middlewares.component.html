@@ -19,9 +19,9 @@
 <p>The Nest middleware is either a function, or a class with an <code>@Injectable()</code> decorator. The class should implement the <code>NestMiddleware</code> interface, while function does not have any special requirements.</p>
 
 <span class="filename">
-  {{ 'logger.middleware' | extension: app0944dcd8ce7dbf7795a3ca179e3e2491ccc0bde5.isJsActive }}
-<app-tabs #app0944dcd8ce7dbf7795a3ca179e3e2491ccc0bde5></app-tabs>
-</span><pre [class.hide]="app0944dcd8ce7dbf7795a3ca179e3e2491ccc0bde5.isJsActive"><code class="language-typescript">
+  {{ 'logger.middleware' | extension: app620ba9afb58c0dc4e424f79ab4d85b54c4c6c784.isJsActive }}
+<app-tabs #app620ba9afb58c0dc4e424f79ab4d85b54c4c6c784></app-tabs>
+</span><pre [class.hide]="app620ba9afb58c0dc4e424f79ab4d85b54c4c6c784.isJsActive"><code class="language-typescript">
 import &#123; Injectable, NestMiddleware &#125; from &#39;@nestjs/common&#39;;
 import &#123; Request, Response &#125; from &#39;express&#39;;
 
@@ -32,7 +32,7 @@ export class LoggerMiddleware implements NestMiddleware &#123;
     next();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app0944dcd8ce7dbf7795a3ca179e3e2491ccc0bde5.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app620ba9afb58c0dc4e424f79ab4d85b54c4c6c784.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -47,9 +47,9 @@ export class LoggerMiddleware &#123;
 <p>There is no place for middleware in the <code>@Module()</code> decorator. We have to set them up using the <code>configure()</code> method of the module class. Modules that include middleware have to implement the <code>NestModule</code> interface. Let&#39;s set up the <code>LoggerMiddleware</code> at the <code>ApplicationModule</code> level.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appc27f08b1cd81005af07ca5e6d21f885682425aa7.isJsActive }}
-<app-tabs #appc27f08b1cd81005af07ca5e6d21f885682425aa7></app-tabs>
-</span><pre [class.hide]="appc27f08b1cd81005af07ca5e6d21f885682425aa7.isJsActive"><code class="language-typescript">
+  {{ 'app.module' | extension: appd60290bca3744e0b78aa850c58745f9b63f0e1bd.isJsActive }}
+<app-tabs #appd60290bca3744e0b78aa850c58745f9b63f0e1bd></app-tabs>
+</span><pre [class.hide]="appd60290bca3744e0b78aa850c58745f9b63f0e1bd.isJsActive"><code class="language-typescript">
 import &#123; Module, NestModule, MiddlewareConsumer &#125; from &#39;@nestjs/common&#39;;
 import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
 import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
@@ -64,7 +64,7 @@ export class ApplicationModule implements NestModule &#123;
       .forRoutes(&#39;cats&#39;);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appc27f08b1cd81005af07ca5e6d21f885682425aa7.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appd60290bca3744e0b78aa850c58745f9b63f0e1bd.isJsActive"><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
 import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
@@ -81,9 +81,9 @@ export class ApplicationModule &#123;
 &#125;</code></pre><p>In the above example we have set up the <code>LoggerMiddleware</code> for <code>/cats</code> route handlers that we have previously defined inside the <code>CatsController</code>. Besides, we may restrict a middleware to the particular request method.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app2b0a2c1fb8fee830c5ae674a7e270eb39fb68f13.isJsActive }}
-<app-tabs #app2b0a2c1fb8fee830c5ae674a7e270eb39fb68f13></app-tabs>
-</span><pre [class.hide]="app2b0a2c1fb8fee830c5ae674a7e270eb39fb68f13.isJsActive"><code class="language-typescript">
+  {{ 'app.module' | extension: appb7842b449fc388f7ee78624a3aeee96bd3b55c5b.isJsActive }}
+<app-tabs #appb7842b449fc388f7ee78624a3aeee96bd3b55c5b></app-tabs>
+</span><pre [class.hide]="appb7842b449fc388f7ee78624a3aeee96bd3b55c5b.isJsActive"><code class="language-typescript">
 import &#123; Module, NestModule, RequestMethod, MiddlewareConsumer &#125; from &#39;@nestjs/common&#39;;
 import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
 import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
@@ -98,7 +98,7 @@ export class ApplicationModule implements NestModule &#123;
       .forRoutes(&#123; path: &#39;cats&#39;, method: RequestMethod.GET &#125;);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app2b0a2c1fb8fee830c5ae674a7e270eb39fb68f13.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb7842b449fc388f7ee78624a3aeee96bd3b55c5b.isJsActive"><code class="language-typescript">
 import &#123; Module, RequestMethod &#125; from &#39;@nestjs/common&#39;;
 import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
 import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
@@ -121,9 +121,9 @@ forRoutes(&#123; path: &#39;ab*cd&#39;, method: RequestMethod.ALL &#125;);</code
 <p>The <code>MiddlewareConsumer</code> is a helper class. It provides several built-in methods to manage middleware. All of them can be simply <strong>chained</strong>. The <code>forRoutes()</code> can take a single string, multiple strings, <code>RouteInfo</code> object, a controller class and even multiple controller classes. In most cases you&#39;ll probably just pass the <strong>controllers</strong> and separate them by a comma. Below is an example with a single controller:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appdf9b8fe72429774fa1c3ad915f83771fe6fd8976.isJsActive }}
-<app-tabs #appdf9b8fe72429774fa1c3ad915f83771fe6fd8976></app-tabs>
-</span><pre [class.hide]="appdf9b8fe72429774fa1c3ad915f83771fe6fd8976.isJsActive"><code class="language-typescript">
+  {{ 'app.module' | extension: appb3f791e815c81755288c33fe59d5197d9a4fec9f.isJsActive }}
+<app-tabs #appb3f791e815c81755288c33fe59d5197d9a4fec9f></app-tabs>
+</span><pre [class.hide]="appb3f791e815c81755288c33fe59d5197d9a4fec9f.isJsActive"><code class="language-typescript">
 import &#123; Module, NestModule, MiddlewareConsumer &#125; from &#39;@nestjs/common&#39;;
 import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
 import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
@@ -138,7 +138,7 @@ export class ApplicationModule implements NestModule &#123;
       .forRoutes(CatsController);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appdf9b8fe72429774fa1c3ad915f83771fe6fd8976.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb3f791e815c81755288c33fe59d5197d9a4fec9f.isJsActive"><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; LoggerMiddleware &#125; from &#39;./common/middleware/logger.middleware&#39;;
 import &#123; CatsModule &#125; from &#39;./cats/cats.module&#39;;
@@ -153,7 +153,7 @@ export class ApplicationModule &#123;
       .forRoutes(CatsController);
   &#125;
 &#125;</code></pre><blockquote class="
-info "><strong>Hint</strong> The <code>apply()</code> method may either take a single middleware, or an <strong>array of middleware</strong>.
+info "><strong>Hint</strong> The <code>apply()</code> method may either take a single middleware, or multiple arguments to specify <strong>multiple middlewares</strong>.
 </blockquote>
 <p>Whilst class is used, quite often we might want to <strong>exclude</strong> certain routes. That is very intuitive due to the <code>exclude()</code> method.</p>
 <pre><code class="language-typescript">
@@ -169,8 +169,8 @@ consumer
 <p>The <code>LoggerMiddleware</code> is quite short. It has no members, no additional methods, no dependencies. Why can&#39;t we just use a simple function? It&#39;s a good question, cause in fact - we can. This type of the middleware is called <strong>functional middleware</strong>. Let&#39;s transform the logger into a function.</p>
 
 <span class="filename">
-  {{ 'logger.middleware' | extension: appd5efbf181ab6212bf23f69541ac57039e5810681.isJsActive }}
-<app-tabs #appd5efbf181ab6212bf23f69541ac57039e5810681></app-tabs>
+  {{ 'logger.middleware' | extension: app88a0c83842921c3d76f4c16e3b2dc35e7e7839ac.isJsActive }}
+<app-tabs #app88a0c83842921c3d76f4c16e3b2dc35e7e7839ac></app-tabs>
 </span><pre><code class="language-typescript">
 export function logger(req, res, next) &#123;
   console.log(`Request...`);
@@ -178,8 +178,8 @@ export function logger(req, res, next) &#123;
 &#125;;</code></pre><p>And use it within the <code>ApplicationModule</code>:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app459648876dbbbe0fddef18d45f9d255732325e55.isJsActive }}
-<app-tabs #app459648876dbbbe0fddef18d45f9d255732325e55></app-tabs>
+  {{ 'app.module' | extension: app42b732c7cd798e5b5b247f92a41375135f569f72.isJsActive }}
+<app-tabs #app42b732c7cd798e5b5b247f92a41375135f569f72></app-tabs>
 </span><pre><code class="language-typescript">
 consumer
   .apply(logger)

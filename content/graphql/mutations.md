@@ -62,7 +62,7 @@ type Mutation {
 
 The `upvotePost(postId: Int!): Post` mutation should be available now.
 
-#### Class first
+#### Code first
 
 Let's add another method to the `AuthorResolver` used in the previous section (see [resolvers](/graphql/resolvers-map)).
 

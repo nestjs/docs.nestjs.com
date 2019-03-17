@@ -10,8 +10,8 @@ $ npm install --save-dev @types/sequelize</code></pre>
 <p>The first step we need to do is create a <strong>Sequelize</strong> instance with an options object passed into the constructor. Also, we need to add all models (the alternative is to use <code>modelPaths</code> property) and <code>sync()</code> our database tables.</p>
 
 <span class="filename">
-  {{ 'database.providers' | extension: app888ac5ddbf784835d7582bd0ee09833bc8dde3f9.isJsActive }}
-<app-tabs #app888ac5ddbf784835d7582bd0ee09833bc8dde3f9></app-tabs>
+  {{ 'database.providers' | extension: appcd42dfcbbd7f8aff9424a3f12cff4b3e53084c33.isJsActive }}
+<app-tabs #appcd42dfcbbd7f8aff9424a3f12cff4b3e53084c33></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Sequelize &#125; from &#39;sequelize-typescript&#39;;
 import &#123; Cat &#125; from &#39;../cats/cat.entity&#39;;
@@ -51,8 +51,8 @@ export class DatabaseModule &#123;&#125;</code></pre>
 <p>In <a href="https://github.com/sequelize/sequelize">Sequelize</a> the <strong>Model</strong> defines a table in the database. Instances of this class represent a database row. Firstly, we need at least one entity:</p>
 
 <span class="filename">
-  {{ 'cat.entity' | extension: appfdf0aa6a08fd8983d52295509e554b90fb55792a.isJsActive }}
-<app-tabs #appfdf0aa6a08fd8983d52295509e554b90fb55792a></app-tabs>
+  {{ 'cat.entity' | extension: app972d873e2ee999ac5aabf00f6d9eae4089797512.isJsActive }}
+<app-tabs #app972d873e2ee999ac5aabf00f6d9eae4089797512></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Table, Column, Model &#125; from &#39;sequelize-typescript&#39;;
 
@@ -69,8 +69,8 @@ export class Cat extends Model&lt;Cat&gt; &#123;
 &#125;</code></pre><p>The <code>Cat</code> entity belongs to the <code>cats</code> directory. This directory represents the <code>CatsModule</code>. Now it&#39;s time to create a <strong>Repository</strong> provider:</p>
 
 <span class="filename">
-  {{ 'cats.providers' | extension: app746bed9e78ad7081597e03b4a78bcaf25f7a0cd5.isJsActive }}
-<app-tabs #app746bed9e78ad7081597e03b4a78bcaf25f7a0cd5></app-tabs>
+  {{ 'cats.providers' | extension: appe876c76fd195f4c633611203268209c1c49f6330.isJsActive }}
+<app-tabs #appe876c76fd195f4c633611203268209c1c49f6330></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Cat &#125; from &#39;./cat.entity&#39;;
 
@@ -86,8 +86,8 @@ export const catsProviders = [
 <p>Now we can inject the <code>CATS_REPOSITORY</code> to the <code>CatsService</code> using the <code>@Inject()</code> decorator:</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: appda67b239243eff4ad37980430f47bff50f9f7afe.isJsActive }}
-<app-tabs #appda67b239243eff4ad37980430f47bff50f9f7afe></app-tabs>
+  {{ 'cats.service' | extension: app1c47fd8a2ae7f7fa21c67a27cc9088864d01d0bf.isJsActive }}
+<app-tabs #app1c47fd8a2ae7f7fa21c67a27cc9088864d01d0bf></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Injectable, Inject &#125; from &#39;@nestjs/common&#39;;
 import &#123; CreateCatDto &#125; from &#39;./dto/create-cat.dto&#39;;
@@ -105,8 +105,8 @@ export class CatsService &#123;
 <p>Here is a final <code>CatsModule</code>:</p>
 
 <span class="filename">
-  {{ 'cats.module' | extension: app1c445c6f7f65a75696aac04f894880ed943f6079.isJsActive }}
-<app-tabs #app1c445c6f7f65a75696aac04f894880ed943f6079></app-tabs>
+  {{ 'cats.module' | extension: app28ce41d939c696ab3f144be6c069492b65412b1e.isJsActive }}
+<app-tabs #app28ce41d939c696ab3f144be6c069492b65412b1e></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;

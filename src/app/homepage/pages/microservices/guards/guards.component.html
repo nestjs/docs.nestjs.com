@@ -8,14 +8,14 @@ info "><strong>Hint</strong> The <code>RpcException</code> class is exposed from
 <p>Here is an example that makes use of a method-scoped guard (class-scoped works too):</p>
 
 <span class="filename">
-<app-tabs #app33aa902922b36c4b017436aa4d26f497c941b6f3></app-tabs>
-</span><pre [class.hide]="app33aa902922b36c4b017436aa4d26f497c941b6f3.isJsActive"><code class="language-typescript">
+<app-tabs #app19e3eb4f0aa1022c73b64d68ea8f323411218c5e></app-tabs>
+</span><pre [class.hide]="app19e3eb4f0aa1022c73b64d68ea8f323411218c5e.isJsActive"><code class="language-typescript">
 @UseGuards(AuthGuard)
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data: number[]): number &#123;
   return (data || []).reduce((a, b) =&gt; a + b);
 &#125;</code></pre>
-<pre [class.hide]="!app33aa902922b36c4b017436aa4d26f497c941b6f3.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app19e3eb4f0aa1022c73b64d68ea8f323411218c5e.isJsActive"><code class="language-typescript">
 @UseGuards(AuthGuard)
 @MessagePattern(&#123; cmd: &#39;sum&#39; &#125;)
 accumulate(data) &#123;

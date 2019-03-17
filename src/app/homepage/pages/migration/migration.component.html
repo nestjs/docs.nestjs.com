@@ -5,8 +5,8 @@
 <p>Based on <a href="https://github.com/nestjs/nest/issues/1378">this</a> topic, the middleware API has been changed in order to make it more straightforward for people who come from different Node libraries and also to reduce the number of confusions that arose from the previous API.</p>
 
 <span class="filename">
-<app-tabs #app472be4bc30da3c46fad28ccdc3aeb276cd84ce5e></app-tabs>
-</span><pre [class.hide]="app472be4bc30da3c46fad28ccdc3aeb276cd84ce5e.isJsActive"><code class="language-typescript">
+<app-tabs #app6c1fabf834cfa777c13db915b7b10d04ac07d60b></app-tabs>
+</span><pre [class.hide]="app6c1fabf834cfa777c13db915b7b10d04ac07d60b.isJsActive"><code class="language-typescript">
 // Before
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware &#123;
@@ -26,7 +26,7 @@ export class LoggerMiddleware implements NestMiddleware &#123;
     next();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app472be4bc30da3c46fad28ccdc3aeb276cd84ce5e.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app6c1fabf834cfa777c13db915b7b10d04ac07d60b.isJsActive"><code class="language-typescript">
 @Injectable()
 export class LoggerMiddleware &#123;
  resolve(...args) &#123;
@@ -49,8 +49,8 @@ export class LoggerMiddleware &#123;
 <p>The interceptors API has also been simplified. In addition, the change was required due to this <a href="https://github.com/nestjs/nest/issues/1016">issue</a> which was reported by the community.</p>
 
 <span class="filename">
-<app-tabs #app70cd674308ebf6b9a38ac71f4816a5ab78a794b4></app-tabs>
-</span><pre [class.hide]="app70cd674308ebf6b9a38ac71f4816a5ab78a794b4.isJsActive"><code class="language-typescript">
+<app-tabs #app6147b284bf13b59989adfcc7e599e95af9ed3f52></app-tabs>
+</span><pre [class.hide]="app6147b284bf13b59989adfcc7e599e95af9ed3f52.isJsActive"><code class="language-typescript">
 // Before
 @Injectable()
 export class TransformInterceptor implements NestInterceptor &#123;
@@ -74,7 +74,7 @@ export class TransformInterceptor implements NestInterceptor &#123;
       .pipe(map(data =&gt; (&#123; data &#125;)));
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app70cd674308ebf6b9a38ac71f4816a5ab78a794b4.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app6147b284bf13b59989adfcc7e599e95af9ed3f52.isJsActive"><code class="language-typescript">
 // Before
 @Injectable()
 export class TransformInterceptor &#123;

@@ -8,15 +8,15 @@ info "><strong>Hint</strong> The <code>WsException</code> class is exposed from 
 <p>Here is an example that makes use of a manually instantiated method-scoped pipe (class-scoped works too):</p>
 
 <span class="filename">
-<app-tabs #app909a33d53ba70891f4e2ed6057a7a296d241edb4></app-tabs>
-</span><pre [class.hide]="app909a33d53ba70891f4e2ed6057a7a296d241edb4.isJsActive"><code class="language-typescript">
+<app-tabs #app9656270ed94b0c56a496c99148fad1e1b53f66d3></app-tabs>
+</span><pre [class.hide]="app9656270ed94b0c56a496c99148fad1e1b53f66d3.isJsActive"><code class="language-typescript">
 @UsePipes(new ValidationPipe())
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
   const event = &#39;events&#39;;
   return &#123; event, data &#125;;
 &#125;</code></pre>
-<pre [class.hide]="!app909a33d53ba70891f4e2ed6057a7a296d241edb4.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app9656270ed94b0c56a496c99148fad1e1b53f66d3.isJsActive"><code class="language-typescript">
 @UsePipes(new ValidationPipe())
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client, data) &#123;

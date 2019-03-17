@@ -51,15 +51,15 @@ export class ApplicationModule &#123;&#125;</code></pre>
 <p>Obviously, you can effortlessly apply <code>CacheInterceptor</code> to WebSocket subscribers as well as Microservice&#39;s patterns (regardless of transport method that is being used).</p>
 
 <span class="filename">
-<app-tabs #app3c4cedb8146d6eeedc4ca07322adac34e6cb456c></app-tabs>
-</span><pre [class.hide]="app3c4cedb8146d6eeedc4ca07322adac34e6cb456c.isJsActive"><code class="language-typescript">
+<app-tabs #appa0e41bdbdcb169f57e47550ef04a4d912ac79c6c></app-tabs>
+</span><pre [class.hide]="appa0e41bdbdcb169f57e47550ef04a4d912ac79c6c.isJsActive"><code class="language-typescript">
 @CacheKey(&#39;events&#39;)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client: Client, data: string[]): Observable&lt;string[]&gt; &#123;
   return [];
 &#125;</code></pre>
-<pre [class.hide]="!app3c4cedb8146d6eeedc4ca07322adac34e6cb456c.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa0e41bdbdcb169f57e47550ef04a4d912ac79c6c.isJsActive"><code class="language-typescript">
 @CacheKey(&#39;events&#39;)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage(&#39;events&#39;)

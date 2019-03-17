@@ -78,7 +78,7 @@ And now we are able to use `Date` scalar in our type definitions.
 scalar Date
 ```
 
-#### Class first
+#### Code first
 
 In order to create a `Date` scalar, simply create a new class.
 

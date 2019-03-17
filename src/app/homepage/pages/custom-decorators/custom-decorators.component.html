@@ -53,8 +53,8 @@ const user = req.user;</code></pre>
 <p>In order to make it more readable and transparent, we can create a <code>@User()</code> decorator and reuse it across all existing controllers.</p>
 
 <span class="filename">
-  {{ 'user.decorator' | extension: appc0a1f7cfacfd33f64fbda895d60c41202408422c.isJsActive }}
-<app-tabs #appc0a1f7cfacfd33f64fbda895d60c41202408422c></app-tabs>
+  {{ 'user.decorator' | extension: app513392505f8525c006c9b0ff9c38f1f1ae53ebf5.isJsActive }}
+<app-tabs #app513392505f8525c006c9b0ff9c38f1f1ae53ebf5></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; createParamDecorator &#125; from &#39;@nestjs/common&#39;;
 
@@ -63,13 +63,13 @@ export const User = createParamDecorator((data, req) =&gt; &#123;
 &#125;);</code></pre><p>Then, you can simply use it wherever it fits your requirements.</p>
 
 <span class="filename">
-<app-tabs #app1377c70bfef13d86accdb81cc543d3218f274a78></app-tabs>
-</span><pre [class.hide]="app1377c70bfef13d86accdb81cc543d3218f274a78.isJsActive"><code class="language-typescript">
+<app-tabs #appa44f01ff546df83921fa5feefe8c5be4c0091001></app-tabs>
+</span><pre [class.hide]="appa44f01ff546df83921fa5feefe8c5be4c0091001.isJsActive"><code class="language-typescript">
 @Get()
 async findOne(@User() user: UserEntity) &#123;
   console.log(user);
 &#125;</code></pre>
-<pre [class.hide]="!app1377c70bfef13d86accdb81cc543d3218f274a78.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appa44f01ff546df83921fa5feefe8c5be4c0091001.isJsActive"><code class="language-typescript">
 @Get()
 @Bind(User())
 async findOne(user) &#123;
@@ -78,13 +78,13 @@ async findOne(user) &#123;
 <p>When the behavior of your decorator depends on some conditions, you may use the <code>data</code> param to pass an argument to the decorator&#39;s factory function. For example, the construction below:</p>
 
 <span class="filename">
-<app-tabs #appc40fe279540c97d0e845d735159c917292a210ac></app-tabs>
-</span><pre [class.hide]="appc40fe279540c97d0e845d735159c917292a210ac.isJsActive"><code class="language-typescript">
+<app-tabs #app163abb0997006a4530e0258b6329a81607a1c2a5></app-tabs>
+</span><pre [class.hide]="app163abb0997006a4530e0258b6329a81607a1c2a5.isJsActive"><code class="language-typescript">
 @Get()
 async findOne(@User(&#39;test&#39;) user: UserEntity) &#123;
   console.log(user);
 &#125;</code></pre>
-<pre [class.hide]="!appc40fe279540c97d0e845d735159c917292a210ac.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app163abb0997006a4530e0258b6329a81607a1c2a5.isJsActive"><code class="language-typescript">
 @Get()
 @Bind(User(&#39;test&#39;))
 async findOne(user) &#123;
@@ -92,16 +92,16 @@ async findOne(user) &#123;
 &#125;</code></pre><p>Will make possible to access the <code>test</code> string via the <code>data</code> argument:</p>
 
 <span class="filename">
-  {{ 'user.decorator' | extension: appa6aa31cae888140b726f9d3399cee644a99d7385.isJsActive }}
-<app-tabs #appa6aa31cae888140b726f9d3399cee644a99d7385></app-tabs>
-</span><pre [class.hide]="appa6aa31cae888140b726f9d3399cee644a99d7385.isJsActive"><code class="language-typescript">
+  {{ 'user.decorator' | extension: app8f45187f75a7e56c36190ab6f44a1072bfe36edd.isJsActive }}
+<app-tabs #app8f45187f75a7e56c36190ab6f44a1072bfe36edd></app-tabs>
+</span><pre [class.hide]="app8f45187f75a7e56c36190ab6f44a1072bfe36edd.isJsActive"><code class="language-typescript">
 import &#123; createParamDecorator &#125; from &#39;@nestjs/common&#39;;
 
 export const User = createParamDecorator((data: string, req) =&gt; &#123;
   console.log(data); // test
   return req.user;
 &#125;);</code></pre>
-<pre [class.hide]="!appa6aa31cae888140b726f9d3399cee644a99d7385.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app8f45187f75a7e56c36190ab6f44a1072bfe36edd.isJsActive"><code class="language-typescript">
 import &#123; createParamDecorator &#125; from &#39;@nestjs/common&#39;;
 
 export const User = createParamDecorator((data, req) =&gt; &#123;
@@ -111,13 +111,13 @@ export const User = createParamDecorator((data, req) =&gt; &#123;
 <p>Nest treats custom param decorators in the same fashion as the built-in ones (<code>@Body()</code>, <code>@Param()</code> and <code>@Query()</code>). It means that pipes are executed for the custom annotated parameters as well (in this case, for the <code>user</code> argument). Moreover, you can apply the pipe directly to the custom decorator:</p>
 
 <span class="filename">
-<app-tabs #app7842f3241a3487015c331d03489f14deac35e905></app-tabs>
-</span><pre [class.hide]="app7842f3241a3487015c331d03489f14deac35e905.isJsActive"><code class="language-typescript">
+<app-tabs #app7738edee8dcf0b4e0dfaeb343223ceb9cd62d565></app-tabs>
+</span><pre [class.hide]="app7738edee8dcf0b4e0dfaeb343223ceb9cd62d565.isJsActive"><code class="language-typescript">
 @Get()
 async findOne(@User(new ValidationPipe()) user: UserEntity) &#123;
   console.log(user);
 &#125;</code></pre>
-<pre [class.hide]="!app7842f3241a3487015c331d03489f14deac35e905.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app7738edee8dcf0b4e0dfaeb343223ceb9cd62d565.isJsActive"><code class="language-typescript">
 @Get()
 @Bind(User(new ValidationPipe()))
 async findOne(user) &#123;

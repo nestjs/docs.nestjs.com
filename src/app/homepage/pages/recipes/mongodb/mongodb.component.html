@@ -8,17 +8,17 @@
 <p>To start the adventure with this library we have to install all required dependencies:</p>
 
 <span class="filename">
-<app-tabs #app8dfa25b270839fa5be1d4929d09b5bfb50539e78></app-tabs>
-</span><pre [class.hide]="app8dfa25b270839fa5be1d4929d09b5bfb50539e78.isJsActive"><code class="language-typescript">
+<app-tabs #app86c406106c4b053891ffe36c1692902c758a81a0></app-tabs>
+</span><pre [class.hide]="app86c406106c4b053891ffe36c1692902c758a81a0.isJsActive"><code class="language-typescript">
 $ npm install --save mongoose
 $ npm install --save-dev @types/mongoose</code></pre>
-<pre [class.hide]="!app8dfa25b270839fa5be1d4929d09b5bfb50539e78.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app86c406106c4b053891ffe36c1692902c758a81a0.isJsActive"><code class="language-typescript">
 $ npm install --save mongoose</code></pre><p>The first step we need to do is to establish the connection with our database using <code>connect()</code> function. The <code>connect()</code> function returns a <code>Promise</code>, and therefore we have to create an <a routerLink="/fundamentals/async-components">async provider</a>.</p>
 
 <span class="filename">
-  {{ 'database.providers' | extension: app3c931c75dbb2210e7d7e2f6886141ea6bc6eaccb.isJsActive }}
-<app-tabs #app3c931c75dbb2210e7d7e2f6886141ea6bc6eaccb></app-tabs>
-</span><pre [class.hide]="app3c931c75dbb2210e7d7e2f6886141ea6bc6eaccb.isJsActive"><code class="language-typescript">
+  {{ 'database.providers' | extension: app9a4ffcee9e8a4c349d0d2389700b1dbea1571c03.isJsActive }}
+<app-tabs #app9a4ffcee9e8a4c349d0d2389700b1dbea1571c03></app-tabs>
+</span><pre [class.hide]="app9a4ffcee9e8a4c349d0d2389700b1dbea1571c03.isJsActive"><code class="language-typescript">
 import * as mongoose from &#39;mongoose&#39;;
 
 export const databaseProviders = [
@@ -28,7 +28,7 @@ export const databaseProviders = [
       mongoose.connect(&#39;mongodb://localhost/nest&#39;),
   &#125;,
 ];</code></pre>
-<pre [class.hide]="!app3c931c75dbb2210e7d7e2f6886141ea6bc6eaccb.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app9a4ffcee9e8a4c349d0d2389700b1dbea1571c03.isJsActive"><code class="language-typescript">
 import * as mongoose from &#39;mongoose&#39;;
 
 export const databaseProviders = [
@@ -42,8 +42,8 @@ info "><strong>Hint</strong> Following best practices, we declared the custom pr
 <p>Then, we need to export these providers to make them <strong>accessible</strong> for the rest part of the application.</p>
 
 <span class="filename">
-  {{ 'database.module' | extension: app6a457c0f2a9daaf1202153ef6d312abc03fe3175.isJsActive }}
-<app-tabs #app6a457c0f2a9daaf1202153ef6d312abc03fe3175></app-tabs>
+  {{ 'database.module' | extension: app00676f68c59a6baa05f1cc5dea514ff7a0e5eb05.isJsActive }}
+<app-tabs #app00676f68c59a6baa05f1cc5dea514ff7a0e5eb05></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; databaseProviders &#125; from &#39;./database.providers&#39;;
@@ -57,8 +57,8 @@ export class DatabaseModule &#123;&#125;</code></pre><p>Now we can inject the <c
 <p>With Mongoose, everything is derived from a <a href="http://mongoosejs.com/docs/guide.html">Schema</a>. Let&#39;s define the <code>CatSchema</code>:</p>
 
 <span class="filename">
-  {{ 'schemas/cats.schema' | extension: app148b7af247f7613243b58cc43221cbca479132f4.isJsActive }}
-<app-tabs #app148b7af247f7613243b58cc43221cbca479132f4></app-tabs>
+  {{ 'schemas/cats.schema' | extension: app6a0c7b1d6d640c49493bdb20732cef8ad64962ea.isJsActive }}
+<app-tabs #app6a0c7b1d6d640c49493bdb20732cef8ad64962ea></app-tabs>
 </span><pre><code class="language-typescript">
 import * as mongoose from &#39;mongoose&#39;;
 
@@ -70,9 +70,9 @@ export const CatSchema = new mongoose.Schema(&#123;
 <p>Now it&#39;s time to create a <strong>Model</strong> provider:</p>
 
 <span class="filename">
-  {{ 'cats.providers' | extension: app4d324daafb425e4928faf74bf8d3d146898216bf.isJsActive }}
-<app-tabs #app4d324daafb425e4928faf74bf8d3d146898216bf></app-tabs>
-</span><pre [class.hide]="app4d324daafb425e4928faf74bf8d3d146898216bf.isJsActive"><code class="language-typescript">
+  {{ 'cats.providers' | extension: appd2c129343156f992ab7715572f73ce252ac68c51.isJsActive }}
+<app-tabs #appd2c129343156f992ab7715572f73ce252ac68c51></app-tabs>
+</span><pre [class.hide]="appd2c129343156f992ab7715572f73ce252ac68c51.isJsActive"><code class="language-typescript">
 import &#123; Connection &#125; from &#39;mongoose&#39;;
 import &#123; CatSchema &#125; from &#39;./schemas/cat.schema&#39;;
 
@@ -83,7 +83,7 @@ export const catsProviders = [
     inject: [&#39;DATABASE_CONNECTION&#39;],
   &#125;,
 ];</code></pre>
-<pre [class.hide]="!app4d324daafb425e4928faf74bf8d3d146898216bf.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appd2c129343156f992ab7715572f73ce252ac68c51.isJsActive"><code class="language-typescript">
 import &#123; CatSchema &#125; from &#39;./schemas/cat.schema&#39;;
 
 export const catsProviders = [
@@ -98,9 +98,9 @@ export const catsProviders = [
 <p>Now we can inject the <code>CAT_MODEL</code> to the <code>CatsService</code> using the <code>@Inject()</code> decorator:</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: appa2b1b1319648d735b1488c18566b284f389f4cc7.isJsActive }}
-<app-tabs #appa2b1b1319648d735b1488c18566b284f389f4cc7></app-tabs>
-</span><pre [class.hide]="appa2b1b1319648d735b1488c18566b284f389f4cc7.isJsActive"><code class="language-typescript">
+  {{ 'cats.service' | extension: app251918663e30abde0d440298975f68cfa73c054a.isJsActive }}
+<app-tabs #app251918663e30abde0d440298975f68cfa73c054a></app-tabs>
+</span><pre [class.hide]="app251918663e30abde0d440298975f68cfa73c054a.isJsActive"><code class="language-typescript">
 import &#123; Model &#125; from &#39;mongoose&#39;;
 import &#123; Injectable, Inject &#125; from &#39;@nestjs/common&#39;;
 import &#123; Cat &#125; from &#39;./interfaces/cat.interface&#39;;
@@ -122,7 +122,7 @@ export class CatsService &#123;
     return await this.catModel.find().exec();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appa2b1b1319648d735b1488c18566b284f389f4cc7.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app251918663e30abde0d440298975f68cfa73c054a.isJsActive"><code class="language-typescript">
 import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -153,8 +153,8 @@ export interface Cat extends Document &#123;
 <p>Here is a final <code>CatsModule</code>:</p>
 
 <span class="filename">
-  {{ 'cats.module' | extension: app5da65ed3c1742c940eee73e0a7977bf7e94dc718.isJsActive }}
-<app-tabs #app5da65ed3c1742c940eee73e0a7977bf7e94dc718></app-tabs>
+  {{ 'cats.module' | extension: appece4e1fea4fa77a2c6d340e2eab40f5dd94c3eb6.isJsActive }}
+<app-tabs #appece4e1fea4fa77a2c6d340e2eab40f5dd94c3eb6></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; CatsController &#125; from &#39;./cats.controller&#39;;

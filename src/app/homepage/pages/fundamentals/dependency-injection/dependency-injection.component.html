@@ -20,13 +20,13 @@ export class ApplicationModule &#123;&#125;</code></pre>
 <p>In order to inject custom provider, we use the <code>@Inject()</code> decorator. This decorator takes a single argument - the token.</p>
 
 <span class="filename">
-<app-tabs #app78edb6fab57594969e460998e8ac45d6ab6db248></app-tabs>
-</span><pre [class.hide]="app78edb6fab57594969e460998e8ac45d6ab6db248.isJsActive"><code class="language-typescript">
+<app-tabs #app50c6746e63ce9dc7ea7be990473932ebcb7f9dd6></app-tabs>
+</span><pre [class.hide]="app50c6746e63ce9dc7ea7be990473932ebcb7f9dd6.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsRepository &#123;
   constructor(@Inject(&#39;CONNECTION&#39;) connection: Connection) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app78edb6fab57594969e460998e8ac45d6ab6db248.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app50c6746e63ce9dc7ea7be990473932ebcb7f9dd6.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(&#39;CONNECTION&#39;)
 export class CatsRepository &#123;
@@ -73,8 +73,8 @@ warning "><strong>Notice</strong> Instead of a custom token, we have used the <c
 <p>The <code>useFactory</code> is a way of creating providers <strong>dynamically</strong>. The actual provider will be equal to a returned value of the factory function. The factory function can either depend on several different providers or stay completely independent. It means that factory may accept arguments, that Nest will resolve and pass during the instantiation process. Additionally, this function can return value <strong>asynchronously</strong>. It&#39;s explained in more detail here. Use it when your provider has to be dynamically calculated or in case to resolve an asynchronous operation.</p>
 
 <span class="filename">
-<app-tabs #appa4d2b8a0cec1f1e04a06cba0cbf69af3f4780829></app-tabs>
-</span><pre [class.hide]="appa4d2b8a0cec1f1e04a06cba0cbf69af3f4780829.isJsActive"><code class="language-typescript">
+<app-tabs #app681ccbc6ed27542ec15a03bcd4dfe2648ec39cf0></app-tabs>
+</span><pre [class.hide]="app681ccbc6ed27542ec15a03bcd4dfe2648ec39cf0.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -88,7 +88,7 @@ const connectionFactory = &#123;
   providers: [connectionFactory],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!appa4d2b8a0cec1f1e04a06cba0cbf69af3f4780829.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app681ccbc6ed27542ec15a03bcd4dfe2648ec39cf0.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;
@@ -108,8 +108,8 @@ info "><strong>Hint</strong> If your factory needs other providers, you have to 
 <p>In order to export a custom provider, we can either use a token or a whole object. The following example shows a token case:</p>
 
 <span class="filename">
-<app-tabs #app10a0a847821c062364ad9a5f3bd0670482679fd7></app-tabs>
-</span><pre [class.hide]="app10a0a847821c062364ad9a5f3bd0670482679fd7.isJsActive"><code class="language-typescript">
+<app-tabs #appdcb8b315fab872e00208d05fca977aef0d6323cf></app-tabs>
+</span><pre [class.hide]="appdcb8b315fab872e00208d05fca977aef0d6323cf.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -124,7 +124,7 @@ const connectionFactory = &#123;
   exports: [&#39;CONNECTION&#39;],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!app10a0a847821c062364ad9a5f3bd0670482679fd7.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appdcb8b315fab872e00208d05fca977aef0d6323cf.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;
@@ -141,8 +141,8 @@ const connectionFactory = &#123;
 export class ApplicationModule &#123;&#125;</code></pre><p>But you can use a whole object as well:</p>
 
 <span class="filename">
-<app-tabs #appa18e07c54381483196c7bb1730cc82dd5e1066df></app-tabs>
-</span><pre [class.hide]="appa18e07c54381483196c7bb1730cc82dd5e1066df.isJsActive"><code class="language-typescript">
+<app-tabs #app7a21d127e9a67209b946a8c699890295ef49d14d></app-tabs>
+</span><pre [class.hide]="app7a21d127e9a67209b946a8c699890295ef49d14d.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider: OptionsProvider) =&gt; &#123;
@@ -157,7 +157,7 @@ const connectionFactory = &#123;
   exports: [connectionFactory],
 &#125;)
 export class ApplicationModule &#123;&#125;</code></pre>
-<pre [class.hide]="!appa18e07c54381483196c7bb1730cc82dd5e1066df.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app7a21d127e9a67209b946a8c699890295ef49d14d.isJsActive"><code class="language-typescript">
 const connectionFactory = &#123;
   provide: &#39;CONNECTION&#39;,
   useFactory: (optionsProvider) =&gt; &#123;

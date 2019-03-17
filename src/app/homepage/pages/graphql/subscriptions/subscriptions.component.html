@@ -84,7 +84,7 @@ type Subscription &#123;
   commentAdded(repoFullName: String!): Comment
 &#125;</code></pre>
 <p>Well done. We created a single <code>commentAdded(repoFullName: String!): Comment</code> subscription. You can find a full sample implementation <a href="https://github.com/nestjs/nest/blob/master/sample/12-graphql-apollo">here</a>.</p>
-<h4 appAnchor id="class-first"><span>Class first</span></h4>
+<h4 appAnchor id="code-first"><span>Code first</span></h4>
 <p>To create a subscription using the class-first approach, we&#39;ll make use of the <code>@Subscription()</code> decorator.</p>
 <pre><code class="language-typescript">
 const pubSub = new PubSub();

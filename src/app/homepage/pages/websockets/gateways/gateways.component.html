@@ -10,11 +10,11 @@ warning "><strong>Hint</strong> Gateway behaves same as a simple <strong>provide
 <p>Firstly, we need to install the required packages:</p>
 
 <span class="filename">
-<app-tabs #app9b46c2e43d09ad8ca684fe334acebbd9483a45ca></app-tabs>
-</span><pre [class.hide]="app9b46c2e43d09ad8ca684fe334acebbd9483a45ca.isJsActive"><code class="language-typescript">
+<app-tabs #appf20d9c3ce34bb1efcf855aa017632d55ecb67cdd></app-tabs>
+</span><pre [class.hide]="appf20d9c3ce34bb1efcf855aa017632d55ecb67cdd.isJsActive"><code class="language-typescript">
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 $ npm i --save-dev @types/socket.io</code></pre>
-<pre [class.hide]="!app9b46c2e43d09ad8ca684fe334acebbd9483a45ca.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appf20d9c3ce34bb1efcf855aa017632d55ecb67cdd.isJsActive"><code class="language-typescript">
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io</code></pre><h4 appAnchor id="overview"><span>Overview</span></h4>
 <p>In general, each gateway is listening to the same port as <strong>HTTP server</strong> is running on, unless your app is not a web application, or you have changed the port manually. We can change this behavior by passing an argument to the <code>@WebSocketGateway(80)</code> decorator where <code>80</code> is a chosen port number. Additionally, you can set a <a href="https://socket.io/docs/rooms-and-namespaces/">namespace</a> used by this gateway with the following construction:</p>
 <pre><code class="language-typescript">
@@ -28,14 +28,14 @@ $ npm i --save @nestjs/websockets @nestjs/platform-socket.io</code></pre><h4 app
 <p>Alright, the gateway is listening now, but we are not subscribing to the incoming messages so far. Let&#39;s create a handler that will subscribe to the <code>events</code> messages and respond to the user with the exact same data.</p>
 
 <span class="filename">
-  {{ 'events.gateway' | extension: app2022fe51555594a60d665ce7b5537f44876310a3.isJsActive }}
-<app-tabs #app2022fe51555594a60d665ce7b5537f44876310a3></app-tabs>
-</span><pre [class.hide]="app2022fe51555594a60d665ce7b5537f44876310a3.isJsActive"><code class="language-typescript">
+  {{ 'events.gateway' | extension: app44130f375fc165f90b60a568f69e3fb511644930.isJsActive }}
+<app-tabs #app44130f375fc165f90b60a568f69e3fb511644930></app-tabs>
+</span><pre [class.hide]="app44130f375fc165f90b60a568f69e3fb511644930.isJsActive"><code class="language-typescript">
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client: Client, data: string): string &#123;
   return data;
 &#125;</code></pre>
-<pre [class.hide]="!app2022fe51555594a60d665ce7b5537f44876310a3.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app44130f375fc165f90b60a568f69e3fb511644930.isJsActive"><code class="language-typescript">
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client, data) &#123;
   return data;
@@ -53,15 +53,15 @@ socket.emit(&#39;events&#39;, &#123; name: &#39;Nest&#39; &#125;, data =&gt; con
 <p>The acknowledgment is dispatched only once. Furthermore, it is not supported by native WebSockets implementation. To solve this limitation, you may return an object which consist of two properties. The <code>event</code> which is a name of the emitted event and the <code>data</code> that has to be forwarded to the client.</p>
 
 <span class="filename">
-  {{ 'events.gateway' | extension: app086b89a20e681a18f773cfb5dfeb245cfce80835.isJsActive }}
-<app-tabs #app086b89a20e681a18f773cfb5dfeb245cfce80835></app-tabs>
-</span><pre [class.hide]="app086b89a20e681a18f773cfb5dfeb245cfce80835.isJsActive"><code class="language-typescript">
+  {{ 'events.gateway' | extension: app72ec0ca040198ac815bae3ef877c949657af9e9e.isJsActive }}
+<app-tabs #app72ec0ca040198ac815bae3ef877c949657af9e9e></app-tabs>
+</span><pre [class.hide]="app72ec0ca040198ac815bae3ef877c949657af9e9e.isJsActive"><code class="language-typescript">
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client: Client, data: unknown): WsResponse&lt;unknown&gt; &#123;
   const event = &#39;events&#39;;
   return &#123; event, data &#125;;
 &#125;</code></pre>
-<pre [class.hide]="!app086b89a20e681a18f773cfb5dfeb245cfce80835.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app72ec0ca040198ac815bae3ef877c949657af9e9e.isJsActive"><code class="language-typescript">
 @SubscribeMessage(&#39;events&#39;)
 handleEvent(client, data) &#123;
   const event = &#39;events&#39;;
@@ -76,9 +76,9 @@ socket.on(&#39;events&#39;, data =&gt; console.log(data));</code></pre>
 <p>Each message handler can be either synchronous or <strong>asynchronous</strong> (<code>async</code>), thereby you&#39;re able to return the <code>Promise</code>. Moreover, you can return the <a href="https://github.com/reactivex/rxjs">Observable</a>, which means that you can return multiple values (they will be emitted until the stream is completed).</p>
 
 <span class="filename">
-  {{ 'events.gateway' | extension: appdffcb09e6cd54256bafa05592249d2714ba76a97.isJsActive }}
-<app-tabs #appdffcb09e6cd54256bafa05592249d2714ba76a97></app-tabs>
-</span><pre [class.hide]="appdffcb09e6cd54256bafa05592249d2714ba76a97.isJsActive"><code class="language-typescript">
+  {{ 'events.gateway' | extension: app330db5787bff1786da9296a7602e39edc41286c0.isJsActive }}
+<app-tabs #app330db5787bff1786da9296a7602e39edc41286c0></app-tabs>
+</span><pre [class.hide]="app330db5787bff1786da9296a7602e39edc41286c0.isJsActive"><code class="language-typescript">
 @SubscribeMessage(&#39;events&#39;)
 onEvent(client: Client, data: unknown): Observable&lt;WsResponse&lt;number&gt;&gt; &#123;
   const event = &#39;events&#39;;
@@ -88,7 +88,7 @@ onEvent(client: Client, data: unknown): Observable&lt;WsResponse&lt;number&gt;&g
     map(data =&gt; (&#123; event, data &#125;)),
   );
 &#125;</code></pre>
-<pre [class.hide]="!appdffcb09e6cd54256bafa05592249d2714ba76a97.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app330db5787bff1786da9296a7602e39edc41286c0.isJsActive"><code class="language-typescript">
 @SubscribeMessage(&#39;events&#39;)
 onEvent(client, data) &#123;
   const event = &#39;events&#39;;

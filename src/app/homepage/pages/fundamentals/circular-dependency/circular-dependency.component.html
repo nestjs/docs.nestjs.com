@@ -5,9 +5,9 @@
 <p>The <strong>forward reference</strong> allows Nest referring to references which aren&#39;t defined so far. When <code>CatsService</code> and <code>CommonService</code> depend on each other, both sides of the relationship need to use <code>@Inject()</code> and the <code>forwardRef()</code> utility, otherwise Nest won&#39;t instantiate them because all of the essential metadata won&#39;t be available. Let&#39;s see the following snippet:</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: app219e107244aeb5b0fad58d8b6b9ea86f60e9c5ba.isJsActive }}
-<app-tabs #app219e107244aeb5b0fad58d8b6b9ea86f60e9c5ba></app-tabs>
-</span><pre [class.hide]="app219e107244aeb5b0fad58d8b6b9ea86f60e9c5ba.isJsActive"><code class="language-typescript">
+  {{ 'cats.service' | extension: app203e6989c4c63a5c56f3d76585d444379f4c692b.isJsActive }}
+<app-tabs #app203e6989c4c63a5c56f3d76585d444379f4c692b></app-tabs>
+</span><pre [class.hide]="app203e6989c4c63a5c56f3d76585d444379f4c692b.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsService &#123;
   constructor(
@@ -15,7 +15,7 @@ export class CatsService &#123;
     private readonly commonService: CommonService,
   ) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app219e107244aeb5b0fad58d8b6b9ea86f60e9c5ba.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app203e6989c4c63a5c56f3d76585d444379f4c692b.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(forwardRef(() =&gt; CommonService))
 export class CatsService &#123;
@@ -28,9 +28,9 @@ info "><strong>Hint</strong> The <code>forwardRef()</code> function is imported 
 <p>Here&#39;s the first side of the relationship. Now let&#39;s do the same with the <code>CommonService</code>:</p>
 
 <span class="filename">
-  {{ 'common.service' | extension: app3dee1050304fdb44c705b0a0aebec791c7539c68.isJsActive }}
-<app-tabs #app3dee1050304fdb44c705b0a0aebec791c7539c68></app-tabs>
-</span><pre [class.hide]="app3dee1050304fdb44c705b0a0aebec791c7539c68.isJsActive"><code class="language-typescript">
+  {{ 'common.service' | extension: app0c52ebaf7d03bf865bff6cfdffddaa7f20d15063.isJsActive }}
+<app-tabs #app0c52ebaf7d03bf865bff6cfdffddaa7f20d15063></app-tabs>
+</span><pre [class.hide]="app0c52ebaf7d03bf865bff6cfdffddaa7f20d15063.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CommonService &#123;
   constructor(
@@ -38,7 +38,7 @@ export class CommonService &#123;
     private readonly catsService: CatsService,
   ) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!app3dee1050304fdb44c705b0a0aebec791c7539c68.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app0c52ebaf7d03bf865bff6cfdffddaa7f20d15063.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(forwardRef(() =&gt; CatsService))
 export class CommonService &#123;
@@ -51,8 +51,8 @@ warning "><strong>Warning</strong> You don&#39;t have guarantee which constructo
 <p>In order to create circular dependencies between modules you have to use the same <code>forwardRef()</code> utility on both parts of the modules association:</p>
 
 <span class="filename">
-  {{ 'common.module' | extension: appe3e63db836236aa1fcc3ce18251bcdc6285b4a33.isJsActive }}
-<app-tabs #appe3e63db836236aa1fcc3ce18251bcdc6285b4a33></app-tabs>
+  {{ 'common.module' | extension: app8ed82a39195bb404f3c16f1e80cbf0d5543f8704.isJsActive }}
+<app-tabs #app8ed82a39195bb404f3c16f1e80cbf0d5543f8704></app-tabs>
 </span><pre><code class="language-typescript">
 @Module(&#123;
   imports: [forwardRef(() =&gt; CatsModule)],
@@ -61,9 +61,9 @@ export class CommonModule &#123;&#125;</code></pre><h4 appAnchor id="module-refe
 <p>Nest provides the <code>ModuleRef</code> class that can be simply injected into any component.</p>
 
 <span class="filename">
-  {{ 'cats.service' | extension: appf9ece49e5bb5602dcff563bc7c02d7d9c65a15f6.isJsActive }}
-<app-tabs #appf9ece49e5bb5602dcff563bc7c02d7d9c65a15f6></app-tabs>
-</span><pre [class.hide]="appf9ece49e5bb5602dcff563bc7c02d7d9c65a15f6.isJsActive"><code class="language-typescript">
+  {{ 'cats.service' | extension: app60cf5a5bcafd260e208c626cd873e762ce2cec7b.isJsActive }}
+<app-tabs #app60cf5a5bcafd260e208c626cd873e762ce2cec7b></app-tabs>
+</span><pre [class.hide]="app60cf5a5bcafd260e208c626cd873e762ce2cec7b.isJsActive"><code class="language-typescript">
 @Injectable()
 export class CatsService implements OnModuleInit &#123;
   private service: Service;
@@ -73,7 +73,7 @@ export class CatsService implements OnModuleInit &#123;
     this.service = this.moduleRef.get(Service);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appf9ece49e5bb5602dcff563bc7c02d7d9c65a15f6.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app60cf5a5bcafd260e208c626cd873e762ce2cec7b.isJsActive"><code class="language-typescript">
 @Injectable()
 @Dependencies(ModuleRef)
 export class CatsService &#123;

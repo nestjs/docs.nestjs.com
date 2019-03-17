@@ -10,8 +10,8 @@ info "><strong>Notice</strong> In this chapter we&#39;ll use a MySQL database, b
 <p>Once the installation process is completed, we can import the <code>TypeOrmModule</code> into the root <code>ApplicationModule</code>.</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: app2e9bc198246a586d9aad5e46961cdbd785840375.isJsActive }}
-<app-tabs #app2e9bc198246a586d9aad5e46961cdbd785840375></app-tabs>
+  {{ 'app.module' | extension: appa0e80d59e3b9e0a627b3aa4262748b503b2b4524.isJsActive }}
+<app-tabs #appa0e80d59e3b9e0a627b3aa4262748b503b2b4524></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
@@ -45,8 +45,8 @@ export class ApplicationModule &#123;&#125;</code></pre><p>The <code>forRoot()</
 <p>Then, we can simply leave the parenthesis empty:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appdeaa87f4668056529a018d99a7aa504f7745bb2c.isJsActive }}
-<app-tabs #appdeaa87f4668056529a018d99a7aa504f7745bb2c></app-tabs>
+  {{ 'app.module' | extension: appb16877099c491ca5e06911415a709a68fd78afc2.isJsActive }}
+<app-tabs #appb16877099c491ca5e06911415a709a68fd78afc2></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
@@ -57,9 +57,9 @@ import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
 export class ApplicationModule &#123;&#125;</code></pre><p>Afterward, the <code>Connection</code> and <code>EntityManager</code> will be available to inject across entire project (without importing any module elsewhere), for example, in this way:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive }}
-<app-tabs #appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652></app-tabs>
-</span><pre [class.hide]="appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive"><code class="language-typescript">
+  {{ 'app.module' | extension: app10ea0821a4c02ee300e048b54e06a5910e0d2972.isJsActive }}
+<app-tabs #app10ea0821a4c02ee300e048b54e06a5910e0d2972></app-tabs>
+</span><pre [class.hide]="app10ea0821a4c02ee300e048b54e06a5910e0d2972.isJsActive"><code class="language-typescript">
 import &#123; Connection &#125; from &#39;typeorm&#39;;
 
 @Module(&#123;
@@ -68,7 +68,7 @@ import &#123; Connection &#125; from &#39;typeorm&#39;;
 export class ApplicationModule &#123;
   constructor(private readonly connection: Connection) &#123;&#125;
 &#125;</code></pre>
-<pre [class.hide]="!appc7eb5dfcbaccad858572bc77a8ed3c725bd1d652.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app10ea0821a4c02ee300e048b54e06a5910e0d2972.isJsActive"><code class="language-typescript">
 import &#123; Connection &#125; from &#39;typeorm&#39;;
 
 @Dependencies(Connection)
@@ -84,8 +84,8 @@ export class ApplicationModule &#123;
 <p>Firstly, we need at least one entity. We&#39;re gonna reuse the <code>Photo</code> entity from the official documentation.</p>
 
 <span class="filename">
-  {{ 'photo.entity' | extension: app9d9a320a31cc2f4c8e667763b562c4b883f2edde.isJsActive }}
-<app-tabs #app9d9a320a31cc2f4c8e667763b562c4b883f2edde></app-tabs>
+  {{ 'photo.entity' | extension: app3d0ffbfb22d1f3a35c6c12a8e357790ae7a411da.isJsActive }}
+<app-tabs #app3d0ffbfb22d1f3a35c6c12a8e357790ae7a411da></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Entity, Column, PrimaryGeneratedColumn &#125; from &#39;typeorm&#39;;
 
@@ -112,8 +112,8 @@ export class Photo &#123;
 <p>Let&#39;s have a look at the <code>PhotoModule</code>:</p>
 
 <span class="filename">
-  {{ 'photo.module' | extension: appaf3f51a4a266615f248a08fb75db244a42d1ff2f.isJsActive }}
-<app-tabs #appaf3f51a4a266615f248a08fb75db244a42d1ff2f></app-tabs>
+  {{ 'photo.module' | extension: appf9aec04e4b9446682c79c9502e22860f1ceb81dc.isJsActive }}
+<app-tabs #appf9aec04e4b9446682c79c9502e22860f1ceb81dc></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; Module &#125; from &#39;@nestjs/common&#39;;
 import &#123; TypeOrmModule &#125; from &#39;@nestjs/typeorm&#39;;
@@ -129,9 +129,9 @@ import &#123; Photo &#125; from &#39;./photo.entity&#39;;
 export class PhotoModule &#123;&#125;</code></pre><p>This module uses <code>forFeature()</code> method to define which repositories shall be registered in the current scope. Thanks to that we can inject the <code>PhotoRepository</code> to the <code>PhotoService</code> using the <code>@InjectRepository()</code> decorator:</p>
 
 <span class="filename">
-  {{ 'photo.service' | extension: appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive }}
-<app-tabs #appf228a7dfe5c81a649ad933ae2db7ef119b736e95></app-tabs>
-</span><pre [class.hide]="appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive"><code class="language-typescript">
+  {{ 'photo.service' | extension: appb26db122810ef650c5d89b78d09ea65b14575904.isJsActive }}
+<app-tabs #appb26db122810ef650c5d89b78d09ea65b14575904></app-tabs>
+</span><pre [class.hide]="appb26db122810ef650c5d89b78d09ea65b14575904.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 import &#123; InjectRepository &#125; from &#39;@nestjs/typeorm&#39;;
 import &#123; Repository &#125; from &#39;typeorm&#39;;
@@ -148,7 +148,7 @@ export class PhotoService &#123;
     return await this.photoRepository.find();
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!appf228a7dfe5c81a649ad933ae2db7ef119b736e95.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!appb26db122810ef650c5d89b78d09ea65b14575904.isJsActive"><code class="language-typescript">
 import &#123; Injectable, Dependencies &#125; from &#39;@nestjs/common&#39;;
 import &#123; InjectRepository &#125; from &#39;@nestjs/typeorm&#39;;
 import &#123; Photo &#125; from &#39;./photo.entity&#39;;

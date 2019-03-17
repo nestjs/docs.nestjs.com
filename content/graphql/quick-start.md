@@ -14,11 +14,11 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql
 
 #### Overview
 
-Nest offers two ways of building GraphQL applications, the schema first and the classes first respectively.
+Nest offers two ways of building GraphQL applications, the schema first and the code first respectively.
 
 In the **schema first** approach, the source of truth is a GraphQL SDL (Schema Definition Language). It's a language-agnostic way which basically allows you to share schema files between different platforms. Furthermore, Nest will automatically generate your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.
 
-In the **classes first** approach on the other hand, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to work exclusively with TypeScript and avoid the context switching between languages syntax.
+In the **code first** approach on the other hand, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema. It becomes very handy if you prefer to work exclusively with TypeScript and avoid the context switching between languages syntax.
 
 #### Getting started
 
@@ -146,9 +146,9 @@ definitionsFactory.generate({
 
 A fully working sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-apollo).
 
-#### Classes first
+#### Code first
 
-In the **classes first** approach, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema.
+In the **code first** approach, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema.
 
 Nest is using an amazing [type-graphql](https://19majkel94.github.io/type-graphql/) library under the hood in order provide this functionality. Hence, before we proceed, you have to install this package.
 
