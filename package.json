@@ -59,7 +59,7 @@
     "@types/lodash": "4.14.121",
     "@types/node": "10.14.1",
     "chokidar": "2.1.2",
-    "codelyzer": "4.4.4",
+    "codelyzer": "4.5.0",
     "concurrently": "4.1.0",
     "jasmine-core": "3.2.1",
     "jasmine-spec-reporter": "4.2.1",
