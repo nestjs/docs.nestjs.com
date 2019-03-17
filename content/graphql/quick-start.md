@@ -150,7 +150,7 @@ A fully working sample is available [here](https://github.com/nestjs/nest/tree/m
 
 In the **code first** approach, you'll only use decorators and TypeScript classes to generate the corresponding GraphQL schema.
 
-Nest is using an amazing [type-graphql](https://19majkel94.github.io/type-graphql/) library under the hood in order provide this functionality. Hence, before we proceed, you have to install this package.
+Nest is using an amazing [type-graphql](https://typegraphql.ml/) library under the hood in order provide this functionality. Hence, before we proceed, you have to install this package.
 
 ```bash
 $ npm i type-graphql
