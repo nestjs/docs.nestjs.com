@@ -10,15 +10,15 @@ import { BasePageComponent } from '../../page/page.component';
 export class WhoUsesComponent extends BasePageComponent {
   readonly companies = [
     {
-      logo: 'https://nestjs.com/valor-software.5dab60ec.png',
+      logo: 'https://nestjs.com/img/valor-software.png',
       url: 'https://valor-software.com/',
     },
     {
-      logo: 'https://nestjs.com/neoteric.0e4df380.png',
+      logo: 'https://nestjs.com/img/neoteric.png',
       url: 'https://neoteric.eu/',
     },
     {
-      logo: 'https://nestjs.com/swingdev-logo.66e92510.svg',
+      logo: 'https://nestjs.com/img/swingdev-logo.svg',
       url: 'https://swingdev.io/',
     },
     {
@@ -37,7 +37,7 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '70px',
     },
     {
-      logo: 'https://nestjs.com/scalio-logo.0a1046af.svg',
+      logo: 'https://nestjs.com/img/scalio-logo.svg',
       url: 'https://scal.io',
       width: '120px',
     },
@@ -47,8 +47,9 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '180px',
     },
     {
-      logo: 'https://nestjs.com/genuinebee.bdd5ef72.svg',
-      url: 'https://genuinebee.com/',
+      logo: '/assets/logo/roche-logo.png',
+      url: 'https://roche.com',
+      width: '90px',
     },
     {
       logo: '/assets/logo/architectnow.png',
@@ -61,9 +62,8 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '70px',
     },
     {
-      logo: '/assets/logo/roche-logo.png',
-      url: 'https://roche.com',
-      width: '90px',
+      logo: 'https://nestjs.com/img/genuinebee.svg',
+      url: 'https://genuinebee.com/',
     },
     {
       logo: '/assets/logo/run-players-league.png',
