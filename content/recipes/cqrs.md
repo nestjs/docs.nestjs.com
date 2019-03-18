@@ -197,7 +197,7 @@ new HeroModel('id');
 That's it. A model has an ability to publish events now. And we have to handle them. Additionally, we could emit events manually using `EventBus`:
 
 ```typescript
-this.eventaBus.publish(new HeroKilledDragonEvent());
+this.eventBus.publish(new HeroKilledDragonEvent());
 ```
 
 > info **Hint** The `EventBus` is an injectable class.
