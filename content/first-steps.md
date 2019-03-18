@@ -73,12 +73,12 @@ Nest aims to be a platform-agnostic framework. Platform independence makes possi
 |                    |                                                                                                                                                                                                                                                           |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `platform-express` | [Express](https://expressjs.com/) is a well-known minimalist web framework for node. It's a battle tested, production-ready library with lots of resources implemented by the community. The `@nestjs/platform-express` package is being used by default. |
-| `platform-fastify` | [Fastify](https://expressjs.com/) is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it [here](/techniques/performance).                                                                               |
+| `platform-fastify` | [Fastify](https://www.fastify.io/) is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it [here](/techniques/performance).                                                                              |
 
 In addition, every platform exposes a dedicated application interface, respectively `NestExpressApplication` and `NestFastifyApplication`.
 
 ```typescript
-const app = await NestFactory.create<NestExpressApplication>(ApplicationModule);
+const app = await NestFactory.create<NestExpressApplication>(ApplicationModule)
 ```
 
 Once you pass a type variable, `app` object will have methods available exclusively for a specific platform. Nonetheless, you don't have to do it **unless** you really need to access this platform API.
