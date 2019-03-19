@@ -162,9 +162,6 @@ Once the installation process is completed, we can add `autoSchemaFile` property
 GraphQLModule.forRoot({
   typePaths: ['./**/*.graphql'],
   autoSchemaFile: 'schema.gql',
-  definitions: {
-    ...
-  },
 }),
 ```
 
