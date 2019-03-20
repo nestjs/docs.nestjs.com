@@ -1,6 +1,7 @@
 ### Lifecycle Events
 
 Every application element has a lifecycle managed by Nest.
+
 Nest offers **lifecycle hooks** that provide visibility into key life moments and the
 ability to act when they occur.
 
@@ -56,8 +57,8 @@ async onModuleInit() {
 #### OnApplicationShutdown
 
 The `OnApplicationShutdown` responds to the system signals (when application gets shutdown by e.g. `SIGTERM`).
-Use this hook to gracefully shutdown a Nest application. This feature is often used with [Kubernetes](https://kubernetes.io/) or
-[Heroku](https://www.heroku.com/).
+Use this hook to gracefully shutdown a Nest application. This feature is often used with [Kubernetes](https://kubernetes.io/),
+[Heroku](https://www.heroku.com/) or similar services.
 
 To use this hook you must activate a listener which listens to shutdown signals.
 
@@ -79,9 +80,17 @@ If the application receives a signal it will call the `onApplicationShutdown` fu
 promise, it will not shutdown your Nest application until the promise is resolved or rejected.
 
 ```typescript
+@@filename()
 @Injectable()
 class UsersService implements OnApplicationShutdown {
   onApplicationShutdown(signal: string) {
+    console.log(signal); // e.g. "SIGINT"
+  }
+}
+@@switch
+@Injectable()
+class UsersService implements OnApplicationShutdown {
+  onApplicationShutdown(signal) {
     console.log(signal); // e.g. "SIGINT"
   }
 }
