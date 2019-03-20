@@ -22,6 +22,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
     urls: [`amqp://localhost:5672`],
     queue: 'cats_queue',
     queueOptions: { durable: false },
+    socketOptions: { noDelay: true },
   },
 });
 ```
@@ -52,6 +53,11 @@ There are a bunch of available options that determine a transporter behavior.
   <tr>
     <td><code>queueOptions</code></td>
     <td>Additional queue options. They are well-described <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue"
+        target="blank">here</a></td>
+  </tr>
+  <tr>
+    <td><code>socketOptions</code></td>
+    <td>Additional socket options. They are well-described <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options"
         target="blank">here</a></td>
   </tr>
 </table>
