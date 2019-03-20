@@ -1,12 +1,12 @@
 ### First steps
 
-In this set of articles, you'll learn the **core fundamentals** of Nest. To get familiar with the essential building-blocks of Nest applications, we'll build a basic CRUD application with features that cover a lot of ground at an introductory level.
+In this set of articles, you'll learn the **core fundamentals** of Nest. To get familiar with the essential building blocks of Nest applications, we'll build a basic CRUD application with features that cover a lot of ground at an introductory level.
 
 #### Language
 
-We're in love with [TypeScript](http://www.typescriptlang.org/), but above all - we love [Node.js](https://nodejs.org/en/). That's why Nest is compatible with both TypeScript and **pure JavaScript**. Nest is taking advantage of latest language features, so to use a framework with simple JavaScript we need a [Babel](http://babeljs.io/) compiler.
+We're in love with [TypeScript](http://www.typescriptlang.org/), but above all - we love [Node.js](https://nodejs.org/en/). That's why Nest is compatible with both TypeScript and **pure JavaScript**. Nest takes advantage of the latest language features, so to use it with vanilla JavaScript we need a [Babel](http://babeljs.io/) compiler.
 
-We'll mostly use TypeScript in the examples we provide, but you can always **switch the code snippets** to vanilla JavaScript syntax.
+We'll mostly use TypeScript in the examples we provide, but you can always **switch the code snippets** to vanilla JavaScript syntax (simply click to toggle the language button in the upper right hand corner of each snippet).
 
 #### Prerequisites
 
@@ -21,7 +21,7 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-The `project` directory will be scaffolded with several core files being located within a `src/` directory.
+The `project` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
 
 <div class="file-tree">
   <div class="item">src</div>
@@ -32,18 +32,18 @@ The `project` directory will be scaffolded with several core files being located
   </div>
 </div>
 
-Following the convention, newly created modules should have their dedicated directory.
+Here's a brief overview of those core files:
 
-|                     |                                                                                                   |
-| ------------------- | ------------------------------------------------------------------------------------------------- |
-| `main.ts`           | The entry file of the application which uses `NestFactory` to create a Nest application instance. |
-| `app.module.ts`     | The root module of the application.                                                               |
-| `app.controller.ts` | Basic controller sample with a single route.                                                      |
+|                     |                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `app.controller.ts` | Basic controller sample with a single route.                                                                        |
+| `app.module.ts`     | The root module of the application.                                                                                 |
+| `main.ts`           | The entry file of the application which uses the core function `NestFactory` to create a Nest application instance. |
 
 The `main.ts` includes an async function, which will **bootstrap** our application:
 
 ```typescript
-@@filename(cats.controller)
+@@filename(main.ts)
 
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
@@ -64,31 +64,33 @@ async function bootstrap() {
 bootstrap();
 ```
 
-To create a Nest application instance, we are using the `NestFactory`. `NestFactory` is one of the most fundamental classes, it exposes a few static methods that allows creating application instance. The `create()` method returns an object, which fulfills the `INestApplication` interface, and provides a set of usable methods which are well described in the next chapters.
+To create a Nest application instance, we use the core `NestFactory` class. `NestFactory` exposes a few static methods that allow creating an application instance. The `create()` method returns an application object, which fulfills the `INestApplication` interface. This object provides a set of methods which are described in the coming chapters. In the `main.ts` example above, we simply start up our HTTP listener, which lets the application await inbound HTTP requests.
+
+Note that a project scaffolded with the Nest CLI creates an initial project structure that encourages developers to follow the convention of keeping each module in its own dedicated directory.
 
 #### Platform
 
-Nest aims to be a platform-agnostic framework. Platform independence makes possible creating reusable logical parts that developers can take advantage of across several different types of applications. Technically, Nest is able to work with any HTTP library as soon as an adapter is created. And there are two HTTP platforms supported out-of-the-box so far, [express](https://expressjs.com/) and [fastify](https://www.fastify.io).
+Nest aims to be a platform-agnostic framework. Platform independence makes it possible to create reusable logical parts that developers can take advantage of across several different types of applications. Technically, Nest is able to work with any Node HTTP framework once an adapter is created. There are two HTTP platforms supported out-of-the-box: [express](https://expressjs.com/) and [fastify](https://www.fastify.io). You can choose the one that best suits your needs.
 
-|                    |                                                                                                                                                                                                                                                           |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `platform-express` | [Express](https://expressjs.com/) is a well-known minimalist web framework for node. It's a battle tested, production-ready library with lots of resources implemented by the community. The `@nestjs/platform-express` package is being used by default. |
-| `platform-fastify` | [Fastify](https://www.fastify.io/) is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it [here](/techniques/performance).                                                                              |
+|                    |                                                                                                                                                                                                                                                                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `platform-express` | [Express](https://expressjs.com/) is a well-known minimalist web framework for node. It's a battle tested, production-ready library with lots of resources implemented by the community. The `@nestjs/platform-express` package is used by default. Many users are well served with Express, and need take no action to enable it. |
+| `platform-fastify` | [Fastify](https://www.fastify.io/) is a high performance and low overhead framework highly focused on providing maximum efficiency and speed. Read how to use it [here](/techniques/performance).                                                                                                                                  |
 
-In addition, every platform exposes a dedicated application interface, respectively `NestExpressApplication` and `NestFastifyApplication`.
+Whichever platform is used, it exposes its own application interface. These are seen respectively as `NestExpressApplication` and `NestFastifyApplication`.
+
+When you pass a type to the `NestFactory.create()` method, as in the example below, the `app` object will have methods available exclusively for that specific platform. Note, however, you don't **need** to specify a type **unless** you actually want to access the underlying platform API.
 
 ```typescript
-const app = await NestFactory.create<NestExpressApplication>(ApplicationModule)
+const app = await NestFactory.create<NestExpressApplication>(ApplicationModule);
 ```
 
-Once you pass a type variable, `app` object will have methods available exclusively for a specific platform. Nonetheless, you don't have to do it **unless** you really need to access this platform API.
+#### Running the application
 
-#### Running application
-
-Once the installation process is complete, you can run the following command to start the HTTP server:
+Once the installation process is complete, you can run the following command at your OS command prompt to start the application listening for inbound HTTP requests:
 
 ```bash
 $ npm run start
 ```
 
-This command starts the HTTP server on the port defined inside the `src/main.ts` file. While the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello world!` message.
+This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello world!` message.

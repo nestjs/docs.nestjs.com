@@ -1,9 +1,9 @@
 <div class="content" #contentReference>
       <h3 id="first-steps">First steps</h3>
-<p>In this set of articles, you&#39;ll learn the <strong>core fundamentals</strong> of Nest. To get familiar with the essential building-blocks of Nest applications, we&#39;ll build a basic CRUD application with features that cover a lot of ground at an introductory level.</p>
+<p>In this set of articles, you&#39;ll learn the <strong>core fundamentals</strong> of Nest. To get familiar with the essential building blocks of Nest applications, we&#39;ll build a basic CRUD application with features that cover a lot of ground at an introductory level.</p>
 <h4 appAnchor id="language"><span>Language</span></h4>
-<p>We&#39;re in love with <a href="http://www.typescriptlang.org/">TypeScript</a>, but above all - we love <a href="https://nodejs.org/en/">Node.js</a>. That&#39;s why Nest is compatible with both TypeScript and <strong>pure JavaScript</strong>. Nest is taking advantage of latest language features, so to use a framework with simple JavaScript we need a <a href="http://babeljs.io/">Babel</a> compiler.</p>
-<p>We&#39;ll mostly use TypeScript in the examples we provide, but you can always <strong>switch the code snippets</strong> to vanilla JavaScript syntax.</p>
+<p>We&#39;re in love with <a href="http://www.typescriptlang.org/">TypeScript</a>, but above all - we love <a href="https://nodejs.org/en/">Node.js</a>. That&#39;s why Nest is compatible with both TypeScript and <strong>pure JavaScript</strong>. Nest takes advantage of the latest language features, so to use it with vanilla JavaScript we need a <a href="http://babeljs.io/">Babel</a> compiler.</p>
+<p>We&#39;ll mostly use TypeScript in the examples we provide, but you can always <strong>switch the code snippets</strong> to vanilla JavaScript syntax (simply click to toggle the language button in the upper right hand corner of each snippet).</p>
 <h4 appAnchor id="prerequisites"><span>Prerequisites</span></h4>
 <p>Please make sure that <a href="https://nodejs.org/">Node.js</a> (&gt;= 8.9.0) is installed on your operating system.</p>
 <h4 appAnchor id="setup"><span>Setup</span></h4>
@@ -11,7 +11,7 @@
 <pre><code class="language-bash">
 $ npm i -g @nestjs/cli
 $ nest new project-name</code></pre>
-<p>The <code>project</code> directory will be scaffolded with several core files being located within a <code>src/</code> directory.</p>
+<p>The <code>project</code> directory will be created, node modules and a few other boilerplate files will be installed, and a <code>src/</code> directory will be created and populated with several core files.</p>
 <div class="file-tree">
   <div class="item">src</div>
   <div class="children">
@@ -21,29 +21,29 @@ $ nest new project-name</code></pre>
   </div>
 </div>
 
-<p>Following the convention, newly created modules should have their dedicated directory.</p>
+<p>Here&#39;s a brief overview of those core files:</p>
 <table>
 <thead>
 </thead>
 <tbody><tr>
-<td><code>main.ts</code></td>
-<td>The entry file of the application which uses <code>NestFactory</code> to create a Nest application instance.</td>
+<td><code>app.controller.ts</code></td>
+<td>Basic controller sample with a single route.</td>
 </tr>
 <tr>
 <td><code>app.module.ts</code></td>
 <td>The root module of the application.</td>
 </tr>
 <tr>
-<td><code>app.controller.ts</code></td>
-<td>Basic controller sample with a single route.</td>
+<td><code>main.ts</code></td>
+<td>The entry file of the application which uses the core function <code>NestFactory</code> to create a Nest application instance.</td>
 </tr>
 </tbody></table>
 <p>The <code>main.ts</code> includes an async function, which will <strong>bootstrap</strong> our application:</p>
 
 <span class="filename">
-  {{ 'cats.controller' | extension: app8316299ff6907f5308e3f6c864fcb1dc9043d64a.isJsActive }}
-<app-tabs #app8316299ff6907f5308e3f6c864fcb1dc9043d64a></app-tabs>
-</span><pre [class.hide]="app8316299ff6907f5308e3f6c864fcb1dc9043d64a.isJsActive"><code class="language-typescript">
+  {{ 'main.ts' | extension: app579a0ce694cdb9445c49bd544d2e67a527be136d.isJsActive }}
+<app-tabs #app579a0ce694cdb9445c49bd544d2e67a527be136d></app-tabs>
+</span><pre [class.hide]="app579a0ce694cdb9445c49bd544d2e67a527be136d.isJsActive"><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
@@ -52,7 +52,7 @@ async function bootstrap() &#123;
   await app.listen(3000);
 &#125;
 bootstrap();</code></pre>
-<pre [class.hide]="!app8316299ff6907f5308e3f6c864fcb1dc9043d64a.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app579a0ce694cdb9445c49bd544d2e67a527be136d.isJsActive"><code class="language-typescript">
 import &#123; NestFactory &#125; from &#39;@nestjs/core&#39;;
 import &#123; ApplicationModule &#125; from &#39;./app.module&#39;;
 
@@ -60,29 +60,30 @@ async function bootstrap() &#123;
   const app = await NestFactory.create(ApplicationModule);
   await app.listen(3000);
 &#125;
-bootstrap();</code></pre><p>To create a Nest application instance, we are using the <code>NestFactory</code>. <code>NestFactory</code> is one of the most fundamental classes, it exposes a few static methods that allows creating application instance. The <code>create()</code> method returns an object, which fulfills the <code>INestApplication</code> interface, and provides a set of usable methods which are well described in the next chapters.</p>
+bootstrap();</code></pre><p>To create a Nest application instance, we use the core <code>NestFactory</code> class. <code>NestFactory</code> exposes a few static methods that allow creating an application instance. The <code>create()</code> method returns an application object, which fulfills the <code>INestApplication</code> interface. This object provides a set of methods which are described in the coming chapters. In the <code>main.ts</code> example above, we simply start up our HTTP listener, which lets the application await inbound HTTP requests.</p>
+<p>Note that a project scaffolded with the Nest CLI creates an initial project structure that encourages developers to follow the convention of keeping each module in its own dedicated directory.</p>
 <h4 appAnchor id="platform"><span>Platform</span></h4>
-<p>Nest aims to be a platform-agnostic framework. Platform independence makes possible creating reusable logical parts that developers can take advantage of across several different types of applications. Technically, Nest is able to work with any HTTP library as soon as an adapter is created. And there are two HTTP platforms supported out-of-the-box so far, <a href="https://expressjs.com/">express</a> and <a href="https://www.fastify.io">fastify</a>.</p>
+<p>Nest aims to be a platform-agnostic framework. Platform independence makes it possible to create reusable logical parts that developers can take advantage of across several different types of applications. Technically, Nest is able to work with any Node HTTP framework once an adapter is created. There are two HTTP platforms supported out-of-the-box: <a href="https://expressjs.com/">express</a> and <a href="https://www.fastify.io">fastify</a>. You can choose the one that best suits your needs.</p>
 <table>
 <thead>
 </thead>
 <tbody><tr>
 <td><code>platform-express</code></td>
-<td><a href="https://expressjs.com/">Express</a> is a well-known minimalist web framework for node. It&#39;s a battle tested, production-ready library with lots of resources implemented by the community. The <code>@nestjs/platform-express</code> package is being used by default.</td>
+<td><a href="https://expressjs.com/">Express</a> is a well-known minimalist web framework for node. It&#39;s a battle tested, production-ready library with lots of resources implemented by the community. The <code>@nestjs/platform-express</code> package is used by default. Many users are well served with Express, and need take no action to enable it.</td>
 </tr>
 <tr>
 <td><code>platform-fastify</code></td>
-<td><a href="https://expressjs.com/">Fastify</a> is a fast and low overhead highly focused on providing the best efficiency and speed. Read how to use it <a routerLink="/techniques/performance">here</a>.</td>
+<td><a href="https://www.fastify.io/">Fastify</a> is a high performance and low overhead framework highly focused on providing maximum efficiency and speed. Read how to use it <a routerLink="/techniques/performance">here</a>.</td>
 </tr>
 </tbody></table>
-<p>In addition, every platform exposes a dedicated application interface, respectively <code>NestExpressApplication</code> and <code>NestFastifyApplication</code>.</p>
+<p>Whichever platform is used, it exposes its own application interface. These are seen respectively as <code>NestExpressApplication</code> and <code>NestFastifyApplication</code>.</p>
+<p>When you pass a type to the <code>NestFactory.create()</code> method, as in the example below, the <code>app</code> object will have methods available exclusively for that specific platform. Note, however, you don&#39;t <strong>need</strong> to specify a type <strong>unless</strong> you actually want to access the underlying platform API.</p>
 <pre><code class="language-typescript">
 const app = await NestFactory.create&lt;NestExpressApplication&gt;(ApplicationModule);</code></pre>
-<p>Once you pass a type variable, <code>app</code> object will have methods available exclusively for a specific platform. Nonetheless, you don&#39;t have to do it <strong>unless</strong> you really need to access this platform API.</p>
-<h4 appAnchor id="running-application"><span>Running application</span></h4>
-<p>Once the installation process is complete, you can run the following command to start the HTTP server:</p>
+<h4 appAnchor id="running-the-application"><span>Running the application</span></h4>
+<p>Once the installation process is complete, you can run the following command at your OS command prompt to start the application listening for inbound HTTP requests:</p>
 <pre><code class="language-bash">
 $ npm run start</code></pre>
-<p>This command starts the HTTP server on the port defined inside the <code>src/main.ts</code> file. While the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code> message.</p>
+<p>This command starts the app with the HTTP server listening on the port defined in the <code>src/main.ts</code> file. Once the application is running, open your browser and navigate to <code>http://localhost:3000/</code>. You should see the <code>Hello world!</code> message.</p>
 
     </div>
