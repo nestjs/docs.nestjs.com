@@ -105,7 +105,7 @@ const routes: Routes = [
       {
         path: 'enterprise',
         component: EnterpriseComponent,
-        data: { title: 'Enterprise Support' },
+        data: { title: 'Official Support' },
       },
       {
         path: 'fundamentals',

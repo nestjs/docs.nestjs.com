@@ -182,13 +182,7 @@ export class MenuComponent implements OnInit {
       children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
     {
-      title: 'Enterprise support',
-      isOpened: false,
-      path: '/enterprise',
-    },
-    {
       title: 'Support us',
-      icon: 'pets',
       isOpened: false,
       path: '/support',
     },

@@ -15,17 +15,17 @@
         [routerLink]="item.path"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
-        >{{ item.title }}
-        <i class="material-icons">
+        ><i class="material-icons" *ngIf="item.icon">
           {{ item.icon }}
-        </i></a
-      >
+        </i>
+        {{ item.title }}
+      </a>
       <a *ngIf="!!item.externalUrl" href="{{ item.externalUrl }}" target="blank"
-        >{{ item.title }}
-        <i class="material-icons">
+        ><i class="material-icons" *ngIf="item.icon">
           {{ item.icon }}
-        </i></a
-      >
+        </i>
+        {{ item.title }}
+      </a>
     </li>
   </ul>
 </div>
@@ -38,18 +38,18 @@
       [routerLinkActiveOptions]="{ exact: true }"
       [class.has-icon]="icon"
       ><h3>
-        {{ title }}
-        <i class="material-icons">
+        <i class="material-icons" *ngIf="icon">
           {{ icon }}
         </i>
+        {{ title }}
       </h3></a
     >
     <a *ngIf="!!externalUrl" href="{{ externalUrl }}" target="blank"
       ><h3>
-        {{ title }}
-        <i class="material-icons">
+        <i class="material-icons" *ngIf="icon">
           {{ icon }}
         </i>
+        {{ title }}
       </h3>
     </a>
   </div>

@@ -22,6 +22,10 @@ h3 {
   color: $red-color;
 }
 
+.material-icons {
+  margin-right: 5px;
+}
+
 .arrow-icon {
   @extend .transition;
   @include transform(rotate(90deg));
