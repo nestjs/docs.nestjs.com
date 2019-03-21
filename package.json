@@ -21,7 +21,7 @@
     "@angular/common": "7.2.10",
     "@angular/compiler": "7.2.10",
     "@angular/core": "7.2.10",
-    "@angular/flex-layout": "7.0.0-beta.23",
+    "@angular/flex-layout": "7.0.0-beta.24",
     "@angular/forms": "7.2.10",
     "@angular/http": "7.2.10",
     "@angular/material": "7.3.5",
