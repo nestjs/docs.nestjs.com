@@ -19,7 +19,7 @@ A health check represents a summary of **health indicators**. A health indicator
 - `MongooseHealthIndicator`
 - `MicroserviceHealthIndicator`
 
-##### DNS Health Check
+#### DNS Health Check
 
 The first step to get started with our first health check, is to setup a service which will associate health indicators to an endpoint.
 
@@ -37,7 +37,7 @@ import { Injectable } from '@nestjs/common';
 export class TerminusOptionsService implements TerminusOptionsFactory {
   constructor(
     private readonly dns: DNSHealthIndicator,
-  ) { }
+  ) {}
 
   createTerminusOptions(): TerminusModuleOptions {
     const healthEndpoint: TerminusEndpoint = {
@@ -195,7 +195,7 @@ import { Injectable } from '@nestjs/common';
 export class TerminusOptionsService implements TerminusOptionsFactory {
   constructor(
     private readonly dogHealthIndicator: DogHealthIndicator
-  ) { }
+  ) {}
 
   createTerminusOptions(): TerminusModuleOptions {
     const healthEndpoint: TerminusEndpoint = {
