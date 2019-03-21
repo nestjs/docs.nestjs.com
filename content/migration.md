@@ -118,7 +118,7 @@ Every existing adapter (for example, `FastifyAdapter`) is now being served from 
 - `WsAdapter` - `@nestjs/platform-ws`
 - `IoAdapter` - `@nestjs/platform-socket.io`
 
-Also, `FileInterceptor` (and other `multer` related interceptors) are now exported from `@nestjs/platform-express` (beacuse `multer` library is not compatible with `fastify`). 
+Also, `FileInterceptor` (and other `multer` related interceptors) are now exported from `@nestjs/platform-express` (because `multer` library is not compatible with `fastify`). 
 
 #### Metadata reflection
 
