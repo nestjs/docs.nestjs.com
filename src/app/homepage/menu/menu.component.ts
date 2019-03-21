@@ -55,6 +55,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/injection-scopes',
         },
         {
+          title: 'Lifecycle events',
+          path: '/fundamentals/lifecycle-events'
+        },
+        {
           title: 'Platform agnosticism',
           path: '/fundamentals/platform-agnosticism',
         },
@@ -162,7 +166,6 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'HTTP adapter', path: '/faq/http-adapter' },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
-        { title: 'Lifecycle events', path: '/faq/lifecycle-events' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
         {

@@ -8,6 +8,7 @@ import { DependencyInjectionComponent } from './dependency-injection/dependency-
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
+import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 
 const routes: Routes = [
   {
@@ -52,6 +53,11 @@ const routes: Routes = [
     data: { title: 'Injection scopes' },
   },
   {
+    path: 'lifecycle-events',
+    component: LifecycleEventsComponent,
+    data: { title: 'Lifecycle events' },
+  },
+  {
     path: 'circular-dependency',
     component: CircularDependencyComponent,
     data: { title: 'Circular Dependency' },
@@ -67,6 +73,7 @@ const routes: Routes = [
     UnitTestingComponent,
     CircularDependencyComponent,
     ProviderScopesComponent,
+    LifecycleEventsComponent,
   ],
 })
 export class FundamentalsModule {}
