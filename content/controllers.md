@@ -41,7 +41,7 @@ The `@Get()` HTTP request method decorator before the `findAll()` method tells N
 
 As mentioned, the path includes both the optional controller path prefix **and** any path string declared in the request method decorator. For example, a path prefix of `/api/1.0/customers` combined with the decorator `@Get('profile')` would produce a route mapping for requests like `GET /api/1.0/customers/profile`.
 
-In our example, when a GET request is made to this endpoint, Nest route the request to our user-defined `findAll()` method. This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
+In our example above, when a GET request is made to this endpoint, Nest routes the request to our user-defined `findAll()` method. This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
 
 <table>
   <tr>
@@ -54,20 +54,19 @@ In our example, when a GET request is made to this endpoint, Nest route the requ
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
       requests
       which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
-      decorator
-      at a handler-level.
+      decorator at a handler-level (see <a href='#status-code'>Status codes</a>).
     </td>
   </tr>
   <tr>
     <td>Library-specific</td>
     <td>
       We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-      which can be injected using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can use methods like <code>response.status(200).json({result: 'This action returns all cats'}).send()</code>
+      which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).json({result: 'This action returns all cats'}).send()</code>
     </td>
   </tr>
 </table>
 
-> warning **Warning** You cannot use both approaches at the same time. Nest detects when the handler is using either `@Res()` or `@Next()`, indicating you have chosen the library-specific option. If both approaches are used at the same time the Standard approach is automatically disabled for this single route and will no longer work as expected.
+> warning **Warning** You cannot use both approaches at the same time. Nest detects when the handler is using either `@Res()` or `@Next()`, indicating you have chosen the library-specific option. If both approaches are used at the same time, the Standard approach is **automatically disabled** for this single route and will no longer work as expected.
 
 #### Request object
 
@@ -143,7 +142,7 @@ The request object represents the HTTP request and has properties for the reques
 
 #### Resources
 
-We defined an endpoint to fetch the cats resource (**GET** route). We'll typically also want to provide an endpoint that creates new records. For this, let's create the **POST** handler:
+Earlier, we defined an endpoint to fetch the cats resource (**GET** route). We'll typically also want to provide an endpoint that creates new records. For this, let's create the **POST** handler:
 
 ```typescript
 @@filename(cats.controller)
@@ -257,7 +256,7 @@ findOne(id) {
 
 #### Routes order
 
-Be aware that route registration **order** (the order each route's method appears in a class) matters. Assume that you have a route that returns cats by identifier (`cats/:id`). If you register another endpoint **below it** in the class definition which returns all cats at once (`cats`), the `GET /cats` request will never hit that second handler as desired because all path parameters are optional. See the following example:
+Be aware that route registration **order** (the order each route's method appears in a class) matters. Assume that you have a route that returns cats by identifier (`cats/:id`). If you register another endpoint **below it** in the class definition which returns all cats at once (`cats`), a `GET /cats` request will never hit that second handler as desired because all path parameters are optional. See the following example:
 
 ```typescript
 @Controller('cats')
@@ -276,7 +275,7 @@ export class CatsController {
 }
 ```
 
-In order to avoid such side-effects, simply move the `findAll()` method above `findOne()`.
+In order to avoid such side-effects, simply move the `findAll()` declaration (including its decorator) above `findOne()`.
 
 #### Scopes
 
