@@ -248,4 +248,4 @@ If everything has been done correctly, the `/health` endpoint should respond wit
 }
 ```
 
-You can view working examples in the [@nestjs/terminus repository](https://github.com/nestjs/terminus/tree/master/sample).
+You can view working examples in the `@nestjs/terminus` [repository](https://github.com/nestjs/terminus/tree/master/sample).
