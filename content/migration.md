@@ -111,12 +111,14 @@ So far, even if you were not using an HTTP server, you had to install the `expre
 $ npm i @nestjs/platform-express @nestjs/platform-socket.io
 ```
 
-Also, every existing adapter (for example, `FastifyAdapter`) is now being served from the dedicated platform package.
+Every existing adapter (for example, `FastifyAdapter`) is now being served from the dedicated platform package.
 
 - `FastifyAdapter` - `@nestjs/platform-fastify`
 - `ExpressAdapter` - `@nestjs/platform-express`
 - `WsAdapter` - `@nestjs/platform-ws`
 - `IoAdapter` - `@nestjs/platform-socket.io`
+
+Also, `FileInterceptor` (and other `multer` related interceptors) are now exported from `@nestjs/platform-express` (beacuse `multer` library is not compatible with `fastify`). 
 
 #### Metadata reflection
 
