@@ -10,7 +10,7 @@ In order to create a basic controller, we use classes and **decorators**. Decora
 
 #### Routing
 
-In the following example we'll use the `@Controller()` decorator which is **required** to define a basic controller. We'll specify an optional prefix of `cats`. Using a prefix in a Controller decorator allows us to avoid repeating ourselves when routes could potentially share a common prefix.
+In the following example we'll use the `@Controller()` decorator, which is **required** to define a basic controller. We'll specify an optional route path prefix of `cats`. Using a path prefix in a Controller decorator allows us to easily group a set of related routes, and minimize repetitive code. For example, we may choose to group a set of routes that manage interactions with a customer entity under the route `/api/1.0/customers`. In that case, we could specify the path prefix `/api/1.0/customers` in the `@Controller()` decorator so that we don't have to repeat that portion of the path for each route in the file.
 
 ```typescript
 @@filename(cats.controller)
@@ -35,23 +35,25 @@ export class CatsController {
 }
 ```
 
-> info **Hint** To create a controller using CLI, simply execute `$ nest g controller cats` command.
+> info **Hint** To create a controller using the CLI, simply execute the `$ nest g controller cats` command.
 
-The `@Get()` decorator before the `findAll()` method tells Nest to create an endpoint for this particular route path and map every corresponding request to this handler. Since we've declared a prefix for every route ( `cats`), Nest will map every `/cats` GET request to this method.
+The `@Get()` HTTP request method decorator before the `findAll()` method tells Nest to create a handler for a specific endpoint for HTTP requests. The endpoint corresponds to the HTTP request method (GET in this case) and the route path. What is the route path? The route path for a handler is determined by concatenating the (optional) prefix declared for the controller, and any path specified in the request decorator. Since we've declared a prefix for every route ( `cats`), and haven't added any path information in the decorator, Nest will map `GET /cats` requests to this handler.
 
-When a GET request is made to this endpoint, Nest will now return a 200 status code and the associated response, which in this case is just a string. Why does that happen? Generally, we distinguish two **different** approaches to manipulate responses:
+As mentioned, the path includes both the optional controller path prefix **and** any path string declared in the request method decorator. For example, a path prefix of `/api/1.0/customers` combined with the decorator `@Get('profile')` would produce a route mapping for requests like `GET /api/1.0/customers/profile`.
+
+In our example, when a GET request is made to this endpoint, Nest route the request to our user-defined `findAll()` method. This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
 
 <table>
   <tr>
     <td>Standard (recommended)</td>
     <td>
-      When we return a JavaScript object or array, it'll be <strong>automatically</strong>
-      serialized to JSON. When we return a string however, Nest will send just a string without attempting to
-      serialize it.
+      Using this built-in method, when a request handler returns a JavaScript object or array, it will <strong>automatically</strong>
+      be serialized to JSON. When it returns a string, however, Nest will send just a string without attempting to
+      serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
       <br />
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
       requests
-      which use 201. We can easily change this behaviour by adding the <code>@HttpCode(...)</code>
+      which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
       decorator
       at a handler-level.
     </td>
@@ -59,17 +61,17 @@ When a GET request is made to this endpoint, Nest will now return a 200 status c
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library specific <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-      which can be injected using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).
+      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
+      which can be injected using the <code>@Res()</code> decorator in the function signature (e.g. <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can use methods like <code>response.status(200).json({result: 'This action returns all cats'}).send()</code>
     </td>
   </tr>
 </table>
 
-> warning **Warning** You cannot use both approaches at the same time. Nest detects whether the handler is using either `@Res()` or `@Next()`. If both approaches are used in the same time - the Standard approach is automatically disabled for this single route and will no longer work as expected.
+> warning **Warning** You cannot use both approaches at the same time. Nest detects when the handler is using either `@Res()` or `@Next()`, indicating you have chosen the library-specific option. If both approaches are used at the same time the Standard approach is automatically disabled for this single route and will no longer work as expected.
 
 #### Request object
 
-A lot of endpoints need access to the client **request** details. In fact, Nest is using a library-specific (express by default) [request object](http://expressjs.com/en/api.html#req). As a result, we can force Nest to inject the request object into the handler using the `@Req()` decorator.
+Handlers often need access to the client **request** details. Nest provides access to the [request object](http://expressjs.com/en/api.html#req) of the underlying platform (Express by default). We can access the request object by instructing Nest to inject it by adding the `@Req()` decorator to the handler's signature.
 
 ```typescript
 @@filename(cats.controller)
@@ -96,9 +98,9 @@ export class CatsController {
 }
 ```
 
-> warning **Hint** In order to take advantage of `express` typings, install `@types/express` package.
+> warning **Hint** In order to take advantage of `express` typings (as in the `request: Request` parameter example above), install `@types/express` package.
 
-The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](http://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use dedicated decorators instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a comparison of the provided decorators and the plain platform-specific objects they represent.
+The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](http://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use dedicated decorators instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the plain platform-specific objects they represent.
 
 <table>
   <tbody>
@@ -141,7 +143,7 @@ The request object represents the HTTP request and has properties for the reques
 
 #### Resources
 
-We defined an endpoint to fetch the cats resource (**GET** route). It'll also be great to provide a way of creating new records as well. For this, let's create the **POST** handler:
+We defined an endpoint to fetch the cats resource (**GET** route). We'll typically also want to provide an endpoint that creates new records. For this, let's create the **POST** handler:
 
 ```typescript
 @@filename(cats.controller)
@@ -176,7 +178,7 @@ export class CatsController {
 }
 ```
 
-It's that simple. Nest provides the rest of those endpoint decorators in the same fashion - `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head()`, and `@All()`. All of them represent respective HTTP request methods.
+It's that simple. Nest provides the rest of the standard HTTP request endpoint decorators in the same fashion - `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head()`, and `@All()`. Each represents its respective HTTP request method.
 
 #### Route wildcards
 
@@ -189,11 +191,11 @@ findAll() {
 }
 ```
 
-Above route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
+The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
 #### Status code
 
-As mentioned, the response **status code** is always **200** by default, except for POST requests which are **201**. We can easily change this behaviour by adding the `@HttpCode(...)` decorator at a handler-level.
+As mentioned, the response **status code** is always **200** by default, except for POST requests which are **201**. We can easily change this behavior by adding the `@HttpCode(...)` decorator at a handler level.
 
 ```typescript
 @Post()
@@ -219,7 +221,7 @@ create() {
 
 #### Route parameters
 
-Routes with static paths can't help when you need to accept **dynamic data** as part of the URL. In order to define routes with parameters, we can directly particularise the route parameters in the path of the route.
+Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1)` to get cat with id 1). In order to define routes with parameters, we can add route parameter **tokens** in the path of the route to capture the dynamic value at that position in the request URL. The route parameter token in the `@Get()` decorator example below demonstrates this usage. Route parameters declared in this way can be accessed using the `@Param()` decorator, which should be added to the method signature.
 
 ```typescript
 @@filename()
@@ -237,7 +239,7 @@ findOne(params) {
 }
 ```
 
-In order to pick up a particular parameter, simply pass its name in parenthesis.
+`@Param()` is used to decorate a method parameter (`params` in the example above), and makes the **route** parameters available as properties of that decorated method parameter inside the body of the method. As seen in the code above, we can access the `id` parameter by referencing `params.id`. You can also pass in a particular parameter token to the decorator, and then reference the route parameter directly by name in the method body.
 
 ```typescript
 @@filename()
@@ -255,7 +257,7 @@ findOne(id) {
 
 #### Routes order
 
-Be aware that routes registration **order** (methods order in classes) matters. Assume that you have a route that allows getting cats by identifiers (`cats/:id`). If you register another endpoint below the mentioned one, which basically returns all cats at once (`cats`), the request will never hit the actual handler because all path parameters are optional. See the following example:
+Be aware that route registration **order** (the order each route's method appears in a class) matters. Assume that you have a route that returns cats by identifier (`cats/:id`). If you register another endpoint **below it** in the class definition which returns all cats at once (`cats`), the `GET /cats` request will never hit that second handler as desired because all path parameters are optional. See the following example:
 
 ```typescript
 @Controller('cats')
@@ -274,21 +276,21 @@ export class CatsController {
 }
 ```
 
-In order to avoid such side-effects, simply move `findAll()` method above `findOne()`.
+In order to avoid such side-effects, simply move the `findAll()` method above `findOne()`.
 
 #### Scopes
 
-For the people coming from different languages, it might be awkward that in Nest almost everything is shared across the incoming requests. We have a connection pool to the database, singleton services with a global state etc. Generally, Node.js doesn't follow request/response Multi-Threaded Stateless Model in which every request is being processed by the separate thread. Hence, using singleton instances is fully **safe** for our applications.
+For people coming from different programming language backgrounds, it might be unexpected to learn that in Nest, almost everything is shared across incoming requests. We have a connection pool to the database, singleton services with global state, etc. Remember that Node.js doesn't follow the request/response Multi-Threaded Stateless Model in which every request is processed by a separate thread. Hence, using singleton instances is fully **safe** for our applications.
 
-However, there are edge-cases when request-based lifetime of the controller may be an intentional behavior, for instance per-request cache in GraphQL applications, request tracking or multi-tenancy. Learn how to use them [here](/techniques/scopes).
+However, there are edge-cases when request-based lifetime of the controller may be the desired behavior, for instance per-request caching in GraphQL applications, request tracking or multi-tenancy. Learn how to control scopes [here](/techniques/scopes).
 
-#### Asynchronousness
+#### Asynchronicity
 
 We love modern JavaScript and we know that data extraction is mostly **asynchronous**. That's why Nest supports and works well with `async` functions.
 
 > info **Hint** Learn more about `async / await` feature [here](https://kamilmysliwiec.com/typescript-2-1-introduction-async-await)
 
-Every async function has to return a `Promise`. It means that you can return a deferred value that Nest will be able to resolve by itself. Let's see an example of this below:
+Every async function has to return a `Promise`. This means that you can return a deferred value that Nest will be able to resolve by itself. Let's see an example of this:
 
 ```typescript
 @@filename(cats.controller)
@@ -303,7 +305,7 @@ async findAll() {
 }
 ```
 
-The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return Rx [observable streams](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html). Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).
+The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return RxJS [observable streams](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html). Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).
 
 ```typescript
 @@filename(cats.controller)
@@ -318,13 +320,13 @@ findAll() {
 }
 ```
 
-Either of the above approaches work and you can use whatever fits your requirements.
+Both of the above approaches work and you can use whatever fits your requirements.
 
 #### Request payloads
 
-Our previous example of the POST route handler didn't accept any client params. Let's fix this by adding the `@Body()` argument here.
+Our previous example of the POST route handler didn't accept any client params. Let's fix this by adding the `@Body()` decorator here.
 
-But first (if you use TypeScript), we need to determine the **DTO** (Data Transfer Object) schema. A DTO is an object that defines how the data will be sent over the network. We could determine the DTO schema by using **TypeScript** interfaces, or by simple classes. Surprisingly, we recommend using **classes** here. Why? Classes are part of the JavaScript ES6 standard, and therefore they represent plain functions. On the other hand, since TypeScript interfaces are removed during the transpilation, Nest can't refer to them. This is important because features such as **Pipes** enable additional possibilities when they have access to the metatype of the variable.
+But first (if you use TypeScript), we need to determine the **DTO** (Data Transfer Object) schema. A DTO is an object that defines how the data will be sent over the network. We could determine the DTO schema by using **TypeScript** interfaces, or by simple classes. Interestingly, we recommend using **classes** here. Why? Classes are part of the JavaScript ES6 standard, and therefore they are preserved as real entities in the compiled JavaScript. On the other hand, since TypeScript interfaces are removed during the transpilation, Nest can't refer to them at runtime. This is important because features such as **Pipes** enable additional possibilities when they have access to the metatype of the variable at runtime.
 
 Let's create the `CreateCatDto` class:
 
@@ -337,7 +339,7 @@ export class CreateCatDto {
 }
 ```
 
-It has only three basic properties. Thereafter we can use the newly created schema inside the `CatsController`:
+It has only three basic properties. Thereafter we can use the newly created DTO inside the `CatsController`:
 
 ```typescript
 @@filename(cats.controller)
@@ -355,11 +357,11 @@ async create(createCatDto) {
 
 #### Handling errors
 
-There's a separate chapter about handling errors (i.e. working with exceptions) [here](/exception-filters).
+There's a separate chapter about handling errors (i.e., working with exceptions) [here](/exception-filters).
 
 #### Full resource sample
 
-Here is a example that makes use of a few available decorators to create a basic controller. The following controller exposes a couple of methods to access and manipulate internal data.
+Below is an example that makes use of several of the available decorators to create a basic controller. This controller exposes a couple of methods to access and manipulate internal data.
 
 ```typescript
 @@filename(cats.controller)
@@ -427,9 +429,9 @@ export class CatsController {
 
 #### Getting up and running
 
-With the above controller fully prepared, Nest still doesn't know that `CatsController` exists and as a result won't create an instance of this class.
+With the above controller fully defined, Nest still doesn't know that `CatsController` exists and as a result won't create an instance of this class.
 
-Controllers always belong to the module, which is why we hold the `controllers` array within the `@Module()` decorator. Since we don't have any other modules except the root `ApplicationModule`, we'll use that to introduce the `CatsController`:
+Controllers always belong to a module, which is why we include the `controllers` array within the `@Module()` decorator. Since we haven't yet defined any other modules except the root `ApplicationModule`, we'll use that to introduce the `CatsController`:
 
 ```typescript
 @@filename(app.module)
@@ -442,7 +444,7 @@ import { CatsController } from './cats/cats.controller';
 export class ApplicationModule {}
 ```
 
-We attached the metadata to the module class, and Nest can now easily reflect which controllers have to be mounted.
+We attached the metadata to the module class using the `@Module()` decorator, and Nest can now easily reflect which controllers have to be mounted.
 
 #### Appendix: Library-specific approach
 
