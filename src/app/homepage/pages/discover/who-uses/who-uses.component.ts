@@ -77,7 +77,7 @@ export class WhoUsesComponent extends BasePageComponent {
     },
     {
       logo: '/assets/logo/sclable.svg',
-      url: 'https://www.sclable.com',
+      url: 'https://sclable.com',
       width: '120px',
     },
   ];
