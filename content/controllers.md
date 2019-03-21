@@ -61,7 +61,7 @@ In our example above, when a GET request is made to this endpoint, Nest routes t
     <td>Library-specific</td>
     <td>
       We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-      which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).json({result: 'This action returns all cats'}).send()</code>
+      which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
     </td>
   </tr>
 </table>
@@ -485,4 +485,4 @@ export class CatsController {
 }
 ```
 
-Though this approach works, it's much less clear in general. The first approach should always be preferred, but to make Nest **backwards compatible** with previous versions, the above approach is still available. One other thing to note is the **response object** in this approach allows for more flexibility - by allowing us to have full control of the response object (headers manipulation and so on).
+Though this approach works, it's much less clear in general. The first approach should always be preferred, but to make Nest **backwards compatible** with previous versions, the above approach is still available. One other thing to note is the **response object** in this approach allows for more flexibility by allowing us to have full control of the response object (headers manipulation and so on).
