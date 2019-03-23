@@ -26,7 +26,7 @@ uploadFile(file) {
 }
 ```
 
-> info **Hint** Both `FileInterceptor()` and `@UploadedFile()` decorator are exposed from `@nestjs/common` package.
+> info **Hint** Both `FileInterceptor()` and `@UploadedFile()` decorator are exposed from `@nestjs/platform-express` package.
 
 The `FileInterceptor()` takes two arguments, a `fieldName` (points to field from HTML form that holds a file) and optional `options` object. These `MulterOptions` are equivalent to those passed into multer constructor (more details [here](https://github.com/expressjs/multer#multeropts))
 
@@ -50,7 +50,7 @@ uploadFile(files) {
 }
 ```
 
-> info **Hint** Both `FilesInterceptor()` and `@UploadedFiles()` decorator are exposed from `@nestjs/common` package.
+> info **Hint** Both `FilesInterceptor()` and `@UploadedFiles()` decorator are exposed from `@nestjs/platform-express` package.
 
 #### Multiple files
 
