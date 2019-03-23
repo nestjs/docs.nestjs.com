@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
+    "prestart": "npm run markdown",
     "start": "ng serve --source-map=false",
     "build": "ng build --deleteOutputPath=false",
     "prebuild:prod": "npm run markdown",
