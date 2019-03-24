@@ -10,7 +10,7 @@ In order to create a basic controller, we use classes and **decorators**. Decora
 
 #### Routing
 
-In the following example we'll use the `@Controller()` decorator, which is **required** to define a basic controller. We'll specify an optional route path prefix of `cats`. Using a path prefix in a Controller decorator allows us to easily group a set of related routes, and minimize repetitive code. For example, we may choose to group a set of routes that manage interactions with a customer entity under the route `/api/1.0/customers`. In that case, we could specify the path prefix `/api/1.0/customers` in the `@Controller()` decorator so that we don't have to repeat that portion of the path for each route in the file.
+In the following example we'll use the `@Controller()` decorator, which is **required** to define a basic controller. We'll specify an optional route path prefix of `cats`. Using a path prefix in a `@Controller()` decorator allows us to easily group a set of related routes, and minimize repetitive code. For example, we may choose to group a set of routes that manage interactions with a customer entity under the route `/api/1.0/customers`. In that case, we could specify the path prefix `/api/1.0/customers` in the `@Controller()` decorator so that we don't have to repeat that portion of the path for each route in the file.
 
 ```typescript
 @@filename(cats.controller)
@@ -41,7 +41,7 @@ The `@Get()` HTTP request method decorator before the `findAll()` method tells N
 
 As mentioned, the path includes both the optional controller path prefix **and** any path string declared in the request method decorator. For example, a path prefix of `/api/1.0/customers` combined with the decorator `@Get('profile')` would produce a route mapping for requests like `GET /api/1.0/customers/profile`.
 
-In our example above, when a GET request is made to this endpoint, Nest routes the request to our user-defined `findAll()` method. This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
+In our example above, when a GET request is made to this endpoint, Nest routes the request to our user-defined `findAll()` method. Note that the method name we choose here is completely arbitrary. We obviously must declare a method to bind the route to, but Nest doesn't attach any significance to the method name chosen. This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
 
 <table>
   <tr>
@@ -400,26 +400,31 @@ import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/
 @Controller('cats')
 export class CatsController {
   @Post()
+  @Bind(Body())
   create(@Body() createCatDto) {
     return 'This action adds a new cat';
   }
 
   @Get()
+  @Bind(Query())
   findAll(@Query() query) {
     return `This action returns all cats (limit: ${query.limit} items)`;
   }
 
   @Get(':id')
+  @Bind(Param('id'))
   findOne(@Param('id') id) {
     return `This action returns a #${id} cat`;
   }
 
   @Put(':id')
+  @Bind(Param('id'), Body())
   update(@Param('id') id, @Body() updateCatDto) {
     return `This action updates a #${id} cat`;
   }
 
   @Delete(':id')
+  @Bind(Param('id'))
   remove(@Param('id') id) {
     return `This action removes a #${id} cat`;
   }
@@ -485,4 +490,6 @@ export class CatsController {
 }
 ```
 
-Though this approach works, it's much less clear in general. The first approach should always be preferred, but to make Nest **backwards compatible** with previous versions, the above approach is still available. One other thing to note is the **response object** in this approach allows for more flexibility by allowing us to have full control of the response object (headers manipulation and so on).
+Though this approach works, and does in fact allow for more flexibility in some ways by providing full control of the response object (headers manipulation, library-specific features, and so on), it should be used with care. In general, the approach is much less clear and does have some disadvantages. The main disadvantages are that you lose compatibility with Nest features that depend on Nest standard response handling, such as Interceptors and the `@HttpCode()` decorator. Also, your code can become platform-dependent (as underlying libraries may have different APIs on the response object), and harder to test (you'll have to mock the response object, etc.).
+
+As a result, the Nest standard approach should always be preferred when possible.
