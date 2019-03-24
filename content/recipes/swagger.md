@@ -9,7 +9,7 @@ The [OpenAPI](https://swagger.io/specification/) (Swagger) specification is a po
 Firstly you have to install the required package:
 
 ```bash
-$ npm install --save @nestjs/swagger
+$ npm install --save swagger-ui-express @nestjs/swagger
 ```
 
 #### Bootstrap
