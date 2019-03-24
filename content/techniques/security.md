@@ -75,3 +75,13 @@ app.use(
 ```
 
 > info **Hint** If you work with `FastifyAdapter`, consider using [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) instead.
+
+#### Brute-force prevention
+
+ Prevent brute-force attacks against authorization.
+A simple and powerful technique is to block authorization attempts using two metrics:
+
+ 1. The first is number of consecutive failed attempts by the same user name and IP address.
+1. The second is number of failed attempts from an IP address over some long period of time. For example, block an IP address if it makes 100 failed attempts in one day.
+
+ [rate-limiter-flexible](https://github.com/animir/node-rate-limiter-flexible) package provides tools to make this technique easy and fast. You can find [an example of brute-force protection in the documentation](https://github.com/animir/node-rate-limiter-flexible/wiki/Overall-example#login-endpoint-protection)
