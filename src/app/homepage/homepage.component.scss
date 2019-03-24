@@ -229,6 +229,50 @@
   @include media(large) {
     width: 100%;
   }
+
+  .row {
+    display: flex;
+    @include media(normal) {
+      display: block;
+    }
+  }
+
+  .thumbnail {
+    width: 325px;
+
+    @include media(normal) {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    img {
+      max-width: 100%;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    &.p-l-30 img {
+      padding-left: 30px;
+
+      @include media(normal) {
+        padding-left: 0;
+      }
+    }
+
+    &.p-r-30 img {
+      padding-right: 30px;
+
+      @include media(normal) {
+        padding-right: 0;
+      }
+    }
+  }
+
+  .content {
+    flex-basis: 55%;
+  }
 }
 
 .toc-wrapper {

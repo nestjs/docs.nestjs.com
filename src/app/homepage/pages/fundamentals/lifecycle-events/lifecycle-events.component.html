@@ -28,8 +28,8 @@ ability to act when they occur.</p>
 <p>Each lifecycle hook is represented by interface. Interfaces are technically optional because they do not exist anyway after TypeScript compilation. Nonetheless, it&#39;s a good practice to use them in order to benefit from strong typing and editor tooling.</p>
 
 <span class="filename">
-<app-tabs #app37f2686720457fead4baab169351b56327684fd6></app-tabs>
-</span><pre [class.hide]="app37f2686720457fead4baab169351b56327684fd6.isJsActive"><code class="language-typescript">
+<app-tabs #app11d99dadb7fc439ece9089128a7e761c95098694></app-tabs>
+</span><pre [class.hide]="app11d99dadb7fc439ece9089128a7e761c95098694.isJsActive"><code class="language-typescript">
 import &#123; Injectable, OnModuleInit &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -38,7 +38,7 @@ export class UsersService implements OnModuleInit &#123;
     console.log(`The module has been initialized.`);
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app37f2686720457fead4baab169351b56327684fd6.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app11d99dadb7fc439ece9089128a7e761c95098694.isJsActive"><code class="language-typescript">
 import &#123; Injectable &#125; from &#39;@nestjs/common&#39;;
 
 @Injectable()
@@ -49,12 +49,12 @@ export class UsersService &#123;
 &#125;</code></pre><p>Additionally, both <code>OnModuleInit</code> and <code>OnApplicationBootstrap</code> hooks allow you to defer the application initialization process (return a <code>Promise</code> or mark the method as <code>async</code>).</p>
 
 <span class="filename">
-<app-tabs #appebeca891ea3aa060feceb057601b68c71ec5247f></app-tabs>
-</span><pre [class.hide]="appebeca891ea3aa060feceb057601b68c71ec5247f.isJsActive"><code class="language-typescript">
+<app-tabs #app0a36381c42c5b0fe584168b3237bf229782ae163></app-tabs>
+</span><pre [class.hide]="app0a36381c42c5b0fe584168b3237bf229782ae163.isJsActive"><code class="language-typescript">
 async onModuleInit(): Promise&lt;void&gt; &#123;
   await this.fetch();
 &#125;</code></pre>
-<pre [class.hide]="!appebeca891ea3aa060feceb057601b68c71ec5247f.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app0a36381c42c5b0fe584168b3237bf229782ae163.isJsActive"><code class="language-typescript">
 async onModuleInit() &#123;
   await this.fetch();
 &#125;</code></pre><h4 appAnchor id="onapplicationshutdown"><span>OnApplicationShutdown</span></h4>
@@ -78,15 +78,15 @@ bootstrap();</code></pre>
 promise, it will not shutdown your Nest application until the promise is resolved or rejected.</p>
 
 <span class="filename">
-<app-tabs #app792d268b9c0e48683c8b998d70b5d6fe53a4ebb1></app-tabs>
-</span><pre [class.hide]="app792d268b9c0e48683c8b998d70b5d6fe53a4ebb1.isJsActive"><code class="language-typescript">
+<app-tabs #app5e475ced05c7d9434a5648ae1e7679146352fe53></app-tabs>
+</span><pre [class.hide]="app5e475ced05c7d9434a5648ae1e7679146352fe53.isJsActive"><code class="language-typescript">
 @Injectable()
 class UsersService implements OnApplicationShutdown &#123;
   onApplicationShutdown(signal: string) &#123;
     console.log(signal); // e.g. &quot;SIGINT&quot;
   &#125;
 &#125;</code></pre>
-<pre [class.hide]="!app792d268b9c0e48683c8b998d70b5d6fe53a4ebb1.isJsActive"><code class="language-typescript">
+<pre [class.hide]="!app5e475ced05c7d9434a5648ae1e7679146352fe53.isJsActive"><code class="language-typescript">
 @Injectable()
 class UsersService implements OnApplicationShutdown &#123;
   onApplicationShutdown(signal) &#123;
