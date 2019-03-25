@@ -121,7 +121,7 @@ constructor(private readonly catsService: CatsService) {}
 
 #### Scopes
 
-Each provider has a lifetime strictly dependent on the application lifecycle. Once the application is bootstrapped, every given provider has to be instantiated. Similarly, when the application shutdown, each provider will be destroyed. However, there are ways to make your provider lifetime request-scoped as well. You can read more about these techniques [here](/fundamentals/scopes).
+Each provider has a lifetime strictly dependent on the application lifecycle. Once the application is bootstrapped, every given provider has to be instantiated. Similarly, when the application shutdown, each provider will be destroyed. However, there are ways to make your provider lifetime request-scoped as well. You can read more about these techniques [here](fundamentals/injection-scopes).
 
 #### Custom providers
 
