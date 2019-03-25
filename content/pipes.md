@@ -298,7 +298,7 @@ bootstrap();
 The global pipes are used across the whole application, for every controller and every route handler. In terms of dependency injection, global pipes registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a pipe **directly from any module** using following construction:
 
 ```typescript
-@@filename(app.module)
+@@filename(main)
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
   app.useGlobalPipes(new ValidationPipe());
