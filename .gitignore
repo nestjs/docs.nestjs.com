@@ -63,8 +63,8 @@ src/app/homepage/pages/cli/overview/overview.component.html
 src/app/homepage/pages/faq/global-prefix/global-prefix.component.html
 src/app/homepage/pages/faq/http-adapter/http-adapter.component.html
 src/app/homepage/pages/faq/hybrid-application/hybrid-application.component.html
-src/app/homepage/pages/faq/lifecycle-events/lifecycle-events.component.html
 src/app/homepage/pages/faq/multiple-servers/multiple-servers.component.html
+src/app/homepage/pages/fundamentals/lifecycle-events/lifecycle-events.component.html
 src/app/homepage/pages/fundamentals/async-components/async-components.component.html
 src/app/homepage/pages/fundamentals/circular-dependency/circular-dependency.component.html
 src/app/homepage/pages/fundamentals/platform-agnosticism/platform-agnosticism.component.html
