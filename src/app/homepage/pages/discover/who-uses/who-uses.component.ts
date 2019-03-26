@@ -14,12 +14,14 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://valor-software.com/',
     },
     {
-      logo: 'https://nestjs.com/img/neoteric.png',
-      url: 'https://neoteric.eu/',
+      logo: '/assets/logo/rewe.svg',
+      url: 'https://rewe-digital.com/',
+      width: '180px',
     },
     {
-      logo: 'https://nestjs.com/img/swingdev-logo.svg',
-      url: 'https://swingdev.io/',
+      logo: '/assets/logo/roche-logo.png',
+      url: 'https://roche.com',
+      width: '90px',
     },
     {
       logo: '/assets/logo/adidas.svg',
@@ -27,9 +29,17 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '80px',
     },
     {
+      logo: '/assets/logo/capgemini.svg',
+      url: 'https://capgemini.com',
+    },
+    {
       logo: 'https://nestjs.com/img/gojob-logo.png',
       url: 'https://gojob.com/',
       width: '100px',
+    },
+    {
+      logo: 'https://nestjs.com/img/neoteric.png',
+      url: 'https://neoteric.eu/',
     },
     {
       logo: '/assets/logo/trellis.png',
@@ -42,14 +52,8 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '120px',
     },
     {
-      logo: '/assets/logo/rewe.svg',
-      url: 'https://rewe-digital.com/',
-      width: '180px',
-    },
-    {
-      logo: '/assets/logo/roche-logo.png',
-      url: 'https://roche.com',
-      width: '90px',
+      logo: 'https://nestjs.com/img/swingdev-logo.svg',
+      url: 'https://swingdev.io/',
     },
     {
       logo: '/assets/logo/architectnow.png',
