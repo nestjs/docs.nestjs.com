@@ -194,7 +194,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ExcludeNullInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, call$: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next
       .handle()
       .pipe(map(value => value === null ? '' : value ));
