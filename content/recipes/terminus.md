@@ -82,7 +82,7 @@ Once we have set up our `TerminusOptionsService`, we can import the `TerminusMod
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { TerminusOptions } from './terminus-options.service';
+import { TerminusOptionsService } from './terminus-options.service';
 
 @Module({
   imports: [
