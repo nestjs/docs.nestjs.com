@@ -6,10 +6,16 @@ The [OpenAPI](https://swagger.io/specification/) (Swagger) specification is a po
 
 #### Installation
 
-Firstly you have to install the required package:
+Firstly, you have to install the required packages:
 
 ```bash
-$ npm install --save @nestjs/swagger
+$ npm install --save @nestjs/swagger swagger-ui-express
+```
+
+If you are using fastify, you have to install `fastify-swagger` instead of `swagger-ui-express`:
+
+```bash
+$ npm install --save @nestjs/swagger fastify-swagger
 ```
 
 #### Bootstrap
