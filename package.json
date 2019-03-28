@@ -60,7 +60,7 @@
     "@types/lodash": "4.14.123",
     "@types/node": "10.14.1",
     "chokidar": "2.1.5",
-    "codelyzer": "4.5.0",
+    "codelyzer": "5.0.0",
     "concurrently": "4.1.0",
     "jasmine-core": "3.3.0",
     "jasmine-spec-reporter": "4.2.1",
