@@ -37,7 +37,7 @@ $ npm install
 $ npm run start
 ```
 
-Navigate to [`http://localhost:4200/`](http://localhost:4200/).
+Navigate to <a href="http://localhost:4200/" target="_blank">`http://localhost:4200/`</a>.
 
 All pages are written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory. Run `npm run markdown:watch` to compile them to HTML files on file change.
 
