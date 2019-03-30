@@ -6,6 +6,7 @@
     "ng": "ng",
     "prestart": "npm run markdown",
     "start": "ng serve --source-map=false",
+    "prebuild": "npm run markdown",
     "build": "ng build --deleteOutputPath=false",
     "prebuild:prod": "npm run markdown",
     "build:prod": "ng build --prod --aot --deleteOutputPath=false",
