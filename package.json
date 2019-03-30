@@ -13,8 +13,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "markdown": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts",
-    "markdown:watch": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts --watch"
+    "markdown": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown-compiler.ts",
+    "markdown:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown-compiler.ts --watch"
   },
   "private": true,
   "dependencies": {
