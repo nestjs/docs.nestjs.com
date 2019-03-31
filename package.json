@@ -6,14 +6,15 @@
     "ng": "ng",
     "prestart": "npm run markdown",
     "start": "ng serve --source-map=false",
+    "prebuild": "npm run markdown",
     "build": "ng build --deleteOutputPath=false",
     "prebuild:prod": "npm run markdown",
     "build:prod": "ng build --prod --aot --deleteOutputPath=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "markdown": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts",
-    "markdown:watch": "ts-node -O '{\"module\": \"commonjs\"}' compiler/markdown-compiler.ts --watch"
+    "markdown": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown-compiler.ts",
+    "markdown:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown-compiler.ts --watch"
   },
   "private": true,
   "dependencies": {

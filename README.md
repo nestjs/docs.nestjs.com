@@ -30,19 +30,20 @@ This project is built on top of [Angular CLI](https://github.com/angular/angular
 
 ## Developing
 
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Install project dependencies and start a local server with the following terminal commands:
 
-```
+```bash
 $ npm install
 $ npm run start
-$ npm run markdown:watch
 ```
 
-All pages are written in the [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory. Run `npm run markdown:watch` to compile them to HTML files on file change.
+Navigate to [`http://localhost:4200/`](http://localhost:4200/).
+
+All pages are written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory. Run `npm run markdown:watch` to compile them to HTML files on file change.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use `npm run build:prod` for a production build.
 
 ## Support
 
