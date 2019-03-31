@@ -298,13 +298,19 @@ bootstrap();
 The global pipes are used across the whole application, for every controller and every route handler. In terms of dependency injection, global pipes registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a pipe **directly from any module** using following construction:
 
 ```typescript
-@@filename(main)
-async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
-  app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
-}
-bootstrap();
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+  ],
+})
+export class ApplicationModule {}
 ```
 
 > info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
