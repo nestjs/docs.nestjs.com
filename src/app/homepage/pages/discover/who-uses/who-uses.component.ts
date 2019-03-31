@@ -121,5 +121,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://blueanchor.io/',
     'https://www.easymetrics.com/',
     'https://getapollo.io/',
+    'https://big-bench.com/',
   ];
 }
