@@ -4,7 +4,7 @@ A module is a class annotated with a `@Module()` decorator. The `@Module()` deco
 
 <figure><img src="/assets/Modules_1.png" /></figure>
 
-Each application has at least one module, a **root module**. The root module is the starting point Nest uses to build the **application graph** - the internal data structure Nest uses to resolve module and provider relationships and dependencies. In small applications, the root module may be the only module in your application. For larger applications however, it is usually better to use modules to organize related application components. In this case, you'll have several modules, each with a closely related set of **capabilities**.
+Each application has at least one module, a **root module**. The root module is the starting point Nest uses to build the **application graph** - the internal data structure Nest uses to resolve module and provider relationships and dependencies. While very small applications may theoretically have just the root module, this is not the typical case. We want to emphasize that modules are **strongly** recommended as an effective way to organize your components. Thus, for most applications, the resulting architecture will employ multiple modules, each encapsulating a closely related set of **capabilities**.
 
 The `@Module()` decorator takes a single object whose properties describe the module:
 
@@ -27,14 +27,16 @@ The `@Module()` decorator takes a single object whose properties describe the mo
   </tr>
 </table>
 
-The module **encapsulates** providers by default. This means that it's impossible to inject providers that are neither directly part of the current module nor exported from the imported modules.
+The module **encapsulates** providers by default. This means that it's impossible to inject providers that are neither directly part of the current module nor exported from the imported modules. Thus, you may consider the exported providers from a module as the module's public interface, or API.
 
 #### Feature modules
 
-The `CatsController` and `CatsService` belong to the same application domain. As they are closely related, it makes sense to move them into a feature module. We'll do this by creating the `CatsModule`.
+The `CatsController` and `CatsService` belong to the same application domain. As they are closely related, it makes sense to move them into a feature module. A feature module simply organizes code relevant for a specific feature, keeping code organized and establishing clear boundaries. This helps us manage complexity and develop with [SOLID](https://en.wikipedia.org/wiki/SOLID) principles, especially as the size of the application and/or team grow.
+
+To demonstrate this, we'll create the `CatsModule`.
 
 ```typescript
-@@filename(cats/cats.module.ts)
+@@filename(cats/cats.module)
 import { Module } from '@nestjs/common';
 import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
