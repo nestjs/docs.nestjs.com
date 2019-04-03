@@ -18,7 +18,7 @@ Nest middleware are, by default, equivalent to [express](http://expressjs.com/en
   </ul>
 </blockquote>
 
-You implement custom Nest middleware in either a function, or a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
+You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
 
 ```typescript
 @@filename(logger.middleware)
@@ -85,7 +85,7 @@ export class ApplicationModule {
 }
 ```
 
-In the above example we have set up the `LoggerMiddleware` for the `/cats` route handlers that were previously defined inside the `CatsController`. We may also further restrict a middleware to a particular request method by passing an object containing the route `path` and request `method` to the `forRoutes` method when configuring the middleware. In the example below, notice that we import the `RequestMethod` enum to reference the desired request method type.
+In the above example we have set up the `LoggerMiddleware` for the `/cats` route handlers that were previously defined inside the `CatsController`. We may also further restrict a middleware to a particular request method by passing an object containing the route `path` and request `method` to the `forRoutes()` method when configuring the middleware. In the example below, notice that we import the `RequestMethod` enum to reference the desired request method type.
 
 ```typescript
 @@filename(app.module)
@@ -122,7 +122,7 @@ export class ApplicationModule {
 
 #### Route wildcards
 
-Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters.
+Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
 
 ```typescript
 forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
@@ -167,7 +167,7 @@ export class ApplicationModule {
 }
 ```
 
-> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify **multiple middlewares**.
+> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify [multiple middlewares](#multiple-middleware).
 
 Quite often we might want to **exclude** certain routes from having the middleware applied. When defining middleware with a class (as we have been doing so far, as opposed to using the [functional middleware](#functional-middleware) alternative), we can easily exclude certain routes with the `exclude()` method. This method takes one or more objects identifying the `path` and `method` to be excluded, as shown below:
 
@@ -181,7 +181,7 @@ consumer
   .forRoutes(CatsController);
 ```
 
-With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the two passed to the `exclude()` method. Please note that the `exclude()` method **does not work** with functional middleware (middleware defined in a function rather than in a class; see below for more details). In addition, this method doesn't exclude paths from more generic routes (e.g. wildcards). If you need that level of control, you should put your paths-restriction logic directly into the middleware and, for example, access the request's URL to conditionally apply the middleware logic.
+With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the two passed to the `exclude()` method. Please note that the `exclude()` method **does not work** with functional middleware (middleware defined in a function rather than in a class; see below for more details). In addition, this method doesn't exclude paths from more generic routes (e.g., wildcards). If you need that level of control, you should put your paths-restriction logic directly into the middleware and, for example, access the request's URL to conditionally apply the middleware logic.
 
 #### Functional middleware
 
