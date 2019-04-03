@@ -234,3 +234,104 @@ call() {
 ```
 
 A full working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
+
+### Advanced Protobuf and GRPC cases with Nest
+
+#### Namespaced protobuf files and caveats
+
+Sometimes API requires a more than common sophisticated set of entities to be established
+for having better approach on generated code examples. Lets describe below supposed folder
+structure with examples of proto files
+```bash
+_
+ |
+ |-service_name
+ |     |
+ |     |-orders
+ |     |      |
+ |     |      |-service.proto
+ |     |      |-message.proto
+ |     |
+ |     |-common
+ |     |      |-item_type.proto
+ |     |      |-shipment_type.proto
+ |     |
+ |     |-service_name.proto
+```
+Folder structure described above have few caveats that need to be mention before we
+will move into describing file contents. 
+
+For NestJS this file-structure can be loaded with just pointing on the single file:
+`service_name.proto` which need to just import all of the files with defined `service`
+statement inside.
+
+##### Contents of file-tree from above
+```proto
+// file: service_name/orders/service.proto
+
+syntax = "proto3";
+package service_name.orders;
+
+service Orders {
+  rpc find(Order) returns (Order);
+  rpc sync(stream Order) returns (stream Order);
+}
+```
+```proto
+// file: service_name/orders/message.proto
+
+syntax = "proto3";
+package service_name.orders;
+
+import public "service_name/common/item_type.proto";
+import public "service_name/common/shipment_type.proto";
+
+message Order {
+  int32 id = 1;
+  repeated service_name.common.ItemType itemTypes = 2;
+  service_name.common.shipments.ShipmentType shipmentType = 3;
+}
+```
+```proto
+// file: service_name/common/item_type.proto
+
+syntax = "proto3";
+package service_name.common;
+
+enum ItemType {
+  DEFAULT = 0;
+  SUPERIOR = 1;
+  FLAWLESS = 2;
+}
+```
+```proto
+// file: service_name/common/shipment_type.proto
+
+syntax = "proto3";
+package service_name.common.shipments;
+
+message ShipmentType {
+  string from = 1;
+  string to = 2;
+  string carrier = 3;
+}
+```
+```proto
+// file: service_name/service_name.proto
+
+syntax = "proto3";
+import public "service_name/orders/service.proto";
+```
+Few things that are very important to note in file-examples above:
+1) All `import` statements are lack of `./` or `../` relative directory symbols,
+that is default behavior when designing protobufs with compatibility with other
+platforms than Node.
+2) All references to classes which were imported happened through calling their
+namespace before their name: `service_name.common.shipments.ShipmentType`
+3) All `import` statements started from `root` folder name
+
+##### How to define loader statement for that case
+
+
+
+#### gRPC Streaming
