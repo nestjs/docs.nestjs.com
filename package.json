@@ -75,7 +75,7 @@
     "protractor": "6.0.0",
     "ts-node": "8.0.3",
     "tslint": "5.14.0",
-    "typescript": "3.1.1",
+    "typescript": "3.4.2",
     "uuid": "3.3.2"
   }
 }
