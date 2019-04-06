@@ -1,10 +1,10 @@
 ### Middleware
 
-The middleware is a function which is called **before** the route handler. Middleware functions have access to the [request](http://expressjs.com/en/4x/api.html#req) and [response](http://expressjs.com/en/4x/api.html#res) objects, and the `next` middleware function in the application’s request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
+Middleware is a function which is called **before** the route handler. Middleware functions have access to the [request](http://expressjs.com/en/4x/api.html#req) and [response](http://expressjs.com/en/4x/api.html#res) objects, and the `next()` middleware function in the application’s request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
 
 <figure><img src="/assets/Middlewares_1.png" /></figure>
 
-The Nest middleware, by default, are equal to [express](http://expressjs.com/en/guide/using-middleware.html) middleware. Here's a great list of the middleware capabilities copied from the official express documentation:
+Nest middleware are, by default, equivalent to [express](http://expressjs.com/en/guide/using-middleware.html) middleware. The following description from the official express documentation describes the capabilities of middleware:
 
 <blockquote class="external">
   Middleware functions can perform the following tasks:
@@ -18,7 +18,7 @@ The Nest middleware, by default, are equal to [express](http://expressjs.com/en/
   </ul>
 </blockquote>
 
-The Nest middleware is either a function, or a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while function does not have any special requirements.
+You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
 
 ```typescript
 @@filename(logger.middleware)
@@ -46,11 +46,11 @@ export class LoggerMiddleware {
 
 #### Dependency injection
 
-There is no exception when it comes to the middleware. Same as providers and controllers, they are able to **inject dependencies** that belongs to the same module (through the `constructor`).
+Nest middleware fully supports Dependency Injection. Just as with providers and controllers, they are able to **inject dependencies** that are available within the same module. As usual, this is done through the `constructor`.
 
 #### Applying middleware
 
-There is no place for middleware in the `@Module()` decorator. We have to set them up using the `configure()` method of the module class. Modules that include middleware have to implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `ApplicationModule` level.
+There is no place for middleware in the `@Module()` decorator. Instead, we set them up using the `configure()` method of the module class. Modules that include middleware have to implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `ApplicationModule` level.
 
 ```typescript
 @@filename(app.module)
@@ -85,7 +85,7 @@ export class ApplicationModule {
 }
 ```
 
-In the above example we have set up the `LoggerMiddleware` for `/cats` route handlers that we have previously defined inside the `CatsController`. Besides, we may restrict a middleware to the particular request method.
+In the above example we have set up the `LoggerMiddleware` for the `/cats` route handlers that were previously defined inside the `CatsController`. We may also further restrict a middleware to a particular request method by passing an object containing the route `path` and request `method` to the `forRoutes()` method when configuring the middleware. In the example below, notice that we import the `RequestMethod` enum to reference the desired request method type.
 
 ```typescript
 @@filename(app.module)
@@ -122,17 +122,17 @@ export class ApplicationModule {
 
 #### Route wildcards
 
-Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters.
+Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
 
 ```typescript
 forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
 ```
 
-Above route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
+The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
 #### Middleware consumer
 
-The `MiddlewareConsumer` is a helper class. It provides several built-in methods to manage middleware. All of them can be simply **chained**. The `forRoutes()` can take a single string, multiple strings, `RouteInfo` object, a controller class and even multiple controller classes. In most cases you'll probably just pass the **controllers** and separate them by a comma. Below is an example with a single controller:
+The `MiddlewareConsumer` is a helper class. It provides several built-in methods to manage middleware. All of them can be simply **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method can take a single string, multiple strings, a `RouteInfo` object, a controller class and even multiple controller classes. In most cases you'll probably just pass a list of **controllers** separated by commas. Below is an example with a single controller:
 
 ```typescript
 @@filename(app.module)
@@ -167,25 +167,25 @@ export class ApplicationModule {
 }
 ```
 
-> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify **multiple middlewares**.
+> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="middleware#multiple-middleware">multiple middlewares</a>.
 
-Whilst class is used, quite often we might want to **exclude** certain routes. That is very intuitive due to the `exclude()` method.
+Quite often we might want to **exclude** certain routes from having the middleware applied. When defining middleware with a class (as we have been doing so far, as opposed to using the alternative <a href="middleware#functional-middleware">functional middleware</a>), we can easily exclude certain routes with the `exclude()` method. This method takes one or more objects identifying the `path` and `method` to be excluded, as shown below:
 
 ```typescript
 consumer
   .apply(LoggerMiddleware)
   .exclude(
     { path: 'cats', method: RequestMethod.GET },
-    { path: 'cats', method: RequestMethod.POST },
+    { path: 'cats', method: RequestMethod.POST }
   )
   .forRoutes(CatsController);
 ```
 
-Consequently, `LoggerMiddleware` will be bounded to all routes defined inside `CatsController` except these two passed to the `exclude()` function. Please note that `exclude()` method **won't work** with your functional middleware. In addition, this function doesn't exclude paths from more generic routes (e.g. wildcards). In such case, you should rather put your paths-restriction logic directly to the middleware and, for example, compare a request's URL.
+With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the two passed to the `exclude()` method. Please note that the `exclude()` method **does not work** with functional middleware (middleware defined in a function rather than in a class; see below for more details). In addition, this method doesn't exclude paths from more generic routes (e.g., wildcards). If you need that level of control, you should put your paths-restriction logic directly into the middleware and, for example, access the request's URL to conditionally apply the middleware logic.
 
 #### Functional middleware
 
-The `LoggerMiddleware` is quite short. It has no members, no additional methods, no dependencies. Why can't we just use a simple function? It's a good question, cause in fact - we can. This type of the middleware is called **functional middleware**. Let's transform the logger into a function.
+The `LoggerMiddleware` class we've been using is quite simple. It has no members, no additional methods, and no dependencies. Why can't we just define it in a simple function instead of a class? In fact, we can. This type of middleware is called **functional middleware**. Let's transform the logger middleware from class-based into functional middleware to illustrate the difference:
 
 ```typescript
 @@filename(logger.middleware)
@@ -204,11 +204,11 @@ consumer
   .forRoutes(CatsController);
 ```
 
-> info **Hint** Let's consider using **functional middleware** every time when your middleware doesn't need any dependencies.
+> info **Hint** Consider using the simpler **functional middleware** alternative any time your middleware doesn't need any dependencies.
 
 #### Multiple middleware
 
-As mentioned before, in order to bind multiple middleware that are executed sequentially, we can separate them by a comma inside the `apply()` method.
+As mentioned above, in order to bind multiple middleware that are executed sequentially, simply provide a comma separated list inside the `apply()` method:
 
 ```typescript
 consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
@@ -216,7 +216,7 @@ consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
 
 #### Global middleware
 
-In order to tie a middleware to each registered route at once, we can take advantage of `use()` method that is supplied by the `INestApplication` instance:
+If we want to bind middleware to every registered route at once, we can use the `use()` method that is supplied by the `INestApplication` instance:
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule);
