@@ -24,7 +24,7 @@ const connectionProvider = {
 export class ApplicationModule {}
 ```
 
-In order to inject custom provider, we use the `@Inject()` decorator. This decorator takes a single argument - the token.
+In order to inject a custom provider, we use the `@Inject()` decorator. This decorator takes a single argument - the token.
 
 ```typescript
 @@filename()
