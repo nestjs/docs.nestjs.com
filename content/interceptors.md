@@ -136,7 +136,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more Learn more [here](/fundamentals/dependency-injection).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
 
 #### Response mapping
 
