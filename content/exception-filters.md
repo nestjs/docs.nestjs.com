@@ -1,12 +1,12 @@
 ### Exception filters
 
-The built-in **exceptions layer** is responsible for handling all thrown exceptions across your whole application. When an unhandled exception is caught, the end-user will receive an appropriate user-friendly response.
+Nest comes with a built-in **exceptions layer** which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
 
 <figure>
   <img src="/assets/Filter_1.png" />
 </figure>
 
-Each occurred exception is handled by the global exception filter, and when it's **unrecognized** (is neither `HttpException` nor a class that inherits from `HttpException`), a user receives the below JSON response:
+Out of the box, this action is performed by a **global exception filter**, which handles HttpExceptions (and subclasses of it). When an exception is **unrecognized** (is neither `HttpException` nor a class that inherits from `HttpException`), the client receives the following default JSON response:
 
 ```json
 {
@@ -17,9 +17,9 @@ Each occurred exception is handled by the global exception filter, and when it's
 
 #### Base exceptions
 
-There's a built-in `HttpException` class exposed from the `@nestjs/common` package. As you already know, when you throw a `HttpException` object, it'll be caught by the handler and afterwards, transformed to the relevant JSON response.
+The built-in `HttpException` class is exposed from the `@nestjs/common` package.
 
-In the `CatsController`, we have a `findAll()` method (a `GET` route). Let's assume that this route handler would throw an exception for some reason. We're gonna hardcode it:
+In the `CatsController`, we have a `findAll()` method (a `GET` route handler). Let's assume that this route handler throws an exception for some reason. To demonstrate this, we'll hard-code it as follows:
 
 ```typescript
 @@filename(cats.controller)
@@ -29,7 +29,7 @@ async findAll() {
 }
 ```
 
-> info **Hint** We used the `HttpStatus` here. It is a helper enumerator imported from the `@nestjs/common` package.
+> info **Hint** We used the `HttpStatus` class here. This is a helper enum imported from the `@nestjs/common` package.
 
 When the client calls this endpoint, the response would look like this:
 
@@ -40,7 +40,7 @@ When the client calls this endpoint, the response would look like this:
 }
 ```
 
-The `HttpException` constructor takes `string | object` as the first argument. If you pass an `object` instead of a `string`, you'll completely override the response body.
+The `HttpException` constructor takes two arguments which determine the JSON response body and the HTTP Status Code respectively.  The first argument is of type `string | object`. Pass a string to customize the error message (as shown in the `GET` handler of the `CatsController` above). Pass a plain literal `object` with properties `status` (the status code to appear in the JSON response body) and `error` (the message string) in the first parameter, instead of a `string`, to completely override the response body.  The second constructor argument should be the actual HTTP response code.
 
 ```typescript
 @@filename(cats.controller)
@@ -53,7 +53,7 @@ async findAll() {
 }
 ```
 
-And this is how the response would look like:
+Using the above, this is how the response would look:
 
 ```json
 {
@@ -64,7 +64,7 @@ And this is how the response would look like:
 
 #### Exceptions hierarchy
 
-A good practice is to create your own **exceptions hierarchy**. It means that every HTTP exception should inherit from the base `HttpException` class. As a result, Nest will recognize your exception, and will fully take care of the error responses.
+It is good practice to create your own **exceptions hierarchy**. This means that your custom HTTP exceptions should inherit from the base `HttpException` class. As a result, Nest will recognize your exception, and automatically take care of the error responses.  Let's implement such a custom exception:
 
 ```typescript
 @@filename(forbidden.exception)
@@ -75,7 +75,7 @@ export class ForbiddenException extends HttpException {
 }
 ```
 
-Since `ForbiddenException` extends the base `HttpException`, it's going to work well with the core exceptions handler, and therefore we can use it inside the `findAll()` method.
+Since `ForbiddenException` extends the base `HttpException`, it will work seamlessly with the built-in exceptions handler, and therefore we can use it inside the `findAll()` method.
 
 ```typescript
 @@filename(cats.controller)
@@ -87,7 +87,7 @@ async findAll() {
 
 #### HTTP exceptions
 
-In order to reduce the boilerplate code, Nest provides a set of usable exceptions that inherits from the core `HttpException`. All of them are exposed from the `@nestjs/common` package:
+In order to reduce the need to write boilerplate code, Nest provides a set of usable exceptions that inherit from the core `HttpException`. All of them are exposed from the `@nestjs/common` package:
 
 - `BadRequestException`
 - `UnauthorizedException`
@@ -108,9 +108,9 @@ In order to reduce the boilerplate code, Nest provides a set of usable exception
 
 #### Exception filters
 
-The base exception handler is fine, but sometimes you may want to have a **full control** over the exceptions layer, for example, add some logging or use a different JSON schema based on some chosen factors. We adore generic solutions and making your life easier, that's why the feature called **exception filters** has been created.
+While the base (built-in) exception handler handles many cases, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors.  **Exception filters** are designed for exactly this purpose.
 
-We are going to create a filter which is responsible for catching exceptions that are an instance of `HttpException` class and set up a custom response logic for them.
+Let's create an exception filter which is responsible for catching exceptions that are an instance of the `HttpException` class, and implementing custom response logic for them.
 
 ```typescript
 @@filename(http-exception.filter)
@@ -156,13 +156,13 @@ export class HttpExceptionFilter {
 }
 ```
 
-> info **Hint** All exception filters should implement the generic `ExceptionFilter<T>` interface. It forces you to provide the `catch(exception: T, host: ArgumentsHost)` method with the valid signature. `T` indicates a type of the exception.
+> info **Hint** All exception filters should implement the generic `ExceptionFilter<T>` interface. This requires you to provide the `catch(exception: T, host: ArgumentsHost)` method with its indicated signature. `T` indicates the type of the exception.
 
-The `@Catch(HttpException)` decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for `HttpException` and nothing else. In practice, the `@Catch()` decorator may take an endless number of parameters, and therefore you can set up the filter for several types of exceptions by separating them by a comma.
+The `@Catch(HttpException)` decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for exceptions of type `HttpException` and nothing else. The `@Catch()` decorator may take a single parameter, or a comma-separated list.  This lets you set up the filter for several types of exceptions at once.
 
 #### Arguments host
 
-The `exception` property is a currently processed exception, while `host` is a `ArgumentsHost` object. The `ArgumentsHost` is a wrapper around arguments that have been passed to the **original** handler, and it contains different arguments array under the hood based on the type of the application (and platform which is being used).
+Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a wrapper around the arguments that have been passed to the **original** request handler (where the exception originated). It contains a specific arguments array based on the type of the application (and platform which is being used). Here's what an `ArgumentsHost` looks like:
 
 ```typescript
 export interface ArgumentsHost {
@@ -174,11 +174,11 @@ export interface ArgumentsHost {
 }
 ```
 
-The `ArgumentsHost` supplies us with a set of useful methods that helps to pick correct arguments from the underlying array. In other words, `ArgumentsHost` is nothing else than just an **array of arguments**. For example, when the filter is used within HTTP application context, `ArgumentsHost` will contain `[request, response]` array inside. However, when current context is a web sockets application, this array will be equal to `[client, data]`. This design decision enables you to access any argument that would be eventually passed to the corresponding handler.
+The `ArgumentsHost` supplies us with a set of convenience methods that help to pick the correct arguments from the underlying array, across different application contexts. In other words, `ArgumentsHost` is nothing more than an **array of arguments**. For example, when the filter is used within the HTTP application context, `ArgumentsHost` will contain a `[request, response]` array. However, when the current context is a web sockets application, it will contain a `[client, data]` array, as appropriate to that context. This approach enables you to access any argument that would eventually be passed to the original handler in your custom `catch()` method.
 
 #### Binding filters
 
-Let's tie `HttpExceptionFilter` to the `create()` method.
+Let's tie our new `HttpExceptionFilter` to the `CatsController`'s `create()` method.
 
 ```typescript
 @@filename(cats.controller)
@@ -198,7 +198,7 @@ async create(createCatDto) {
 
 > info **Hint** The `@UseFilters()` decorator is imported from the `@nestjs/common` package.
 
-We have used the `@UseFilters()` decorator here. Same as `@Catch()`, it takes an endless number of parameters. The instance of `HttpExceptionFilter` has been created immediately in-place. Another available way is to pass the class (not instance), leaving framework the instantiation responsibility and enabling **dependency injection**.
+We have used the `@UseFilters()` decorator here. Similar to the `@Catch()` decorator, it can take a single filter instance, or a comma-separated list of filter instances. Here, we created the instance of `HttpExceptionFilter` in place. Alternatively, you may pass the class (instead of an instance), leaving responsibility for instantiation to the framework, and enabling **dependency injection**.
 
 ```typescript
 @@filename(cats.controller)
@@ -216,9 +216,9 @@ async create(createCatDto) {
 }
 ```
 
-> info **Hint** Prefer applying classes instead of instances when possible. It reduces **memory usage** since Nest can easily reuse instances of the same class among your entire module.
+> info **Hint** Prefer applying filters by using classes instead of instances when possible. It reduces **memory usage** since Nest can easily reuse instances of the same class across your entire module.
 
-In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, but it's not the only available way. In fact, the exception filters can be method-scoped, controller-scoped, and also global-scoped.
+In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, making it method-scoped.  Exception filters can be scoped at different levels: method-scoped, controller-scoped, or global-scoped.  For example, to set up a filter as controller-scoped, you would do the following:
 
 ```typescript
 @@filename(cats.controller)
@@ -226,7 +226,9 @@ In the example above, the `HttpExceptionFilter` is applied only to the single `c
 export class CatsController {}
 ```
 
-This construction sets up the `HttpExceptionFilter` for every route handler defined inside the `CatsController`. It's the example of the controller-scoped exception filter. The last available scope is the global-scoped exception filter.
+This construction sets up the `HttpExceptionFilter` for every route handler defined inside the `CatsController`.
+
+To create a global-scoped filter, you would do the following:
 
 ```typescript
 @@filename(main)
@@ -238,9 +240,9 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> warning **Warning** The `useGlobalFilters()` method neither set up filters for gateways nor hybrid application.
+> warning **Warning** The `useGlobalFilters()` method does not set up filters for gateways or hybrid application.
 
-The global filters are used across the whole application, for every controller and every route handler. In terms of dependency injection, global filters registered from the outside of any module (as in the previous example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a filter **directly from any module** using following construction:
+Global-scoped filters are used across the whole application, for every controller and every route handler. In terms of dependency injection, global filters registered from outside of any module (as in the example above) cannot inject dependencies since they don't belong to any module. In order to solve this issue, you can set up a filter **directly from any module** using the following construction:
 
 ```typescript
 @@filename(app.module)
@@ -258,13 +260,17 @@ import { APP_FILTER } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/custom-providers).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature.
+
+
+> Info **Hint** `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
 #### Catch everything
 
-In order to handle every occurred exception (regardless of the exception type), you may leave the parentheses empty, e.g. `@Catch()`.
+In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
 
 ```typescript
+@@filename(all-exceptions.filter)
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 
 @Catch()
@@ -284,16 +290,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
 }
 ```
 
-In the example above the filter will catch each exception that has been thrown without limiting itself to a set of particular classes.
+In the example above the filter will catch each exception thrown, regardless of its type (class).
 
 #### Inheritance
 
-Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. There might be use-cases though when you would like to reuse an already implemented, **core exception filter**, and override the behavior based on certain factors.
+Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to reuse an already implemented, **core exception filter**, and override the behavior based on certain factors.
 
-In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call inherited `catch()` method.
+In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call the inherited `catch()` method.
 
 ```typescript
-@@filename()
+@@filename(all-exceptions.filter)
 import { Catch, ArgumentsHost } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 
@@ -315,11 +321,15 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 }
 ```
 
-> warning **Warning** Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using `new` keyword).
+> warning **Warning** Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using the `new` operator).
+
+
+The above implementation is just a shell demonstrating the approach.  Your implementation of the extended exception filter would include your tailored **business** logic (e.g., handling various conditions).
 
 You can use a global filter that extends the base filter by injecting the `HttpServer` reference.
 
 ```typescript
+@@filename(main)
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
@@ -331,4 +341,4 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Obviously, you should enhance above implementation with your tailored **business** logic (e.g. add various conditions).
+
