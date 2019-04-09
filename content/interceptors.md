@@ -136,7 +136,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more Learn more [here](/fundamentals/dependency-injection).
+> info **Hint** The alternative option is to use an [application context](/application-context) feature. Also, `useClass` is not the only way of dealing with custom providers registration. Learn more [here](/fundamentals/dependency-injection).
 
 #### Response mapping
 
@@ -259,7 +259,7 @@ export class ErrorsInterceptor {
 
 #### Stream overriding
 
-There're several reasons why sometimes we might want to completely prevent calling the handler and return a different value instead (e.g. from cache due to performance issues). An excellent example is a **cache interceptor** that would store the cached responses with some TTL. Unfortunately, this feature needs a bit more code and due to simplification, we'll provide only a basic example that should briefly explain the main concept.
+There are several reasons why sometimes we might want to completely prevent calling the handler and return a different value instead (e.g. from cache due to performance issues). An excellent example is a **cache interceptor** that would store the cached responses with some TTL. Unfortunately, this feature needs a bit more code and due to simplification, we'll provide only a basic example that should briefly explain the main concept.
 
 ```typescript
 @@filename(cache.interceptor)

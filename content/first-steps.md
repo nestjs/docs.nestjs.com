@@ -43,7 +43,7 @@ Here's a brief overview of those core files:
 The `main.ts` includes an async function, which will **bootstrap** our application:
 
 ```typescript
-@@filename(main.ts)
+@@filename(main)
 
 import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './app.module';
