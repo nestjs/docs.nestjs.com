@@ -54,4 +54,9 @@ There are a bunch of available options that determine a transporter behavior.
     <td>Additional queue options. They are well-described <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue"
         target="blank">here</a></td>
   </tr>
+  <tr>
+    <td><code>socketOptions</code></td>
+    <td>Additional socket options. They are well-described <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options"
+        target="blank">here</a></td>
+  </tr>
 </table>
