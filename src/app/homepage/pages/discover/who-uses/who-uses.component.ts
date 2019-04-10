@@ -84,6 +84,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://sclable.com',
       width: '120px',
     },
+    {
+      logo: '/assets/logo/dozto.png',
+      url: 'https://www.dozto.com',
+      width: '130px',
+    }
   ];
 
   readonly companiesUrls = [
