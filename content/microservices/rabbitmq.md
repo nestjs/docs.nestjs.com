@@ -22,7 +22,6 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
     urls: [`amqp://localhost:5672`],
     queue: 'cats_queue',
     queueOptions: { durable: false },
-    socketOptions: { noDelay: true },
   },
 });
 ```
