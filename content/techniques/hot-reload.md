@@ -7,7 +7,7 @@ The highest impact on your application's bootstrapping process has a **TypeScrip
 Firstly, let's install required packages:
 
 ```bash
-$ npm i --save-dev webpack webpack-cli webpack-node-externals
+$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader
 ```
 
 #### Configuration
