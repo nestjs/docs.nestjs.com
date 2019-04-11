@@ -230,7 +230,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 ```
 
-> warning **Notice** In order to use your custom `JwtAuthGuard`, you must add it as a guard to your specific routes (e.g., `@UseGuards(JwtAuthGuard)`)
+> info **Hint** In order to use your custom `JwtAuthGuard`, you must add it as a guard to your specific routes (e.g., `@UseGuards(JwtAuthGuard)`)
 
 #### JWT strategy
 
