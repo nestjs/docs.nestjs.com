@@ -68,7 +68,7 @@ Quite often you might want to asynchronously pass your module options instead of
 First possible approach is to use a factory function:
 
 ```typescript
-HttpModule.forRootAsync({
+HttpModule.registerAsync({
   useFactory: () => ({
     timeout: 5000,
     maxRedirects: 5,
@@ -79,7 +79,7 @@ HttpModule.forRootAsync({
 Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
 
 ```typescript
-HttpModule.forRootAsync({
+HttpModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
     timeout: configService.getString('HTTP_TIMEOUT'),
@@ -92,7 +92,7 @@ HttpModule.forRootAsync({
 Alternatively, you are able to use class instead of a factory.
 
 ```typescript
-HttpModule.forRootAsync({
+HttpModule.registerAsync({
   useClass: HttpConfigService,
 });
 ```
@@ -114,7 +114,7 @@ class HttpConfigService implements HttpOptionsFactory {
 In order to prevent the creation of `HttpConfigService` inside `HttpModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
 
 ```typescript
-HttpModule.forRootAsync({
+HttpModule.registerAsync({
   imports: [ConfigModule],
   useExisting: ConfigService,
 });
