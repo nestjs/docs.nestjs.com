@@ -230,6 +230,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 ```
 
+> info **Hint** In order to use your custom `JwtAuthGuard`, you must add it as a guard to your specific routes (e.g., `@UseGuards(JwtAuthGuard)`)
+
 #### JWT strategy
 
 A second described approach is to authenticate endpoints using a **JSON web token** (JWT). To implement a JWT-based authentication flow, we need to install required packages.
