@@ -29,7 +29,7 @@ async findAll() {
 }
 ```
 
-> info **Hint** We used the `HttpStatus` class here. This is a helper enum imported from the `@nestjs/common` package.
+> info **Hint** We used the `HttpStatus` here. This is a helper enum imported from the `@nestjs/common` package.
 
 When the client calls this endpoint, the response looks like this:
 
@@ -260,13 +260,9 @@ import { APP_FILTER } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done?  Choose the module where the filter (`HttpExceptionFilter` in the example above) is defined.
+> info **Hint** When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done?  Choose the module where the filter (`HttpExceptionFilter` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
-> info **Hint** `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
-
-> info **Hint** You can add as many filters with this technique as needed; simply add each to the providers array.
-
-> info **Hint** The alternative option is to use an [application context](/application-context) feature.
+You can add as many filters with this technique as needed; simply add each to the providers array.
 
 
 #### Catch everything
