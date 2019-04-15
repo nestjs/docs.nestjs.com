@@ -28,7 +28,7 @@ create(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
-Then, add a few validation rules in our `CreateCatDto`.
+Then, add a few validation rules in our `CreateUserDto`.
 
 ```typescript
 import { IsEmail, IsNotEmpty } from 'class-validator';
@@ -111,7 +111,7 @@ This setting will enable auto-stripping of non-whitelisted (without any decorato
 
 #### Auto payload transforming
 
-The `ValidationPipe` doesn't automatically transform your payloads to the corresponding DTO classes. If you take a look at either `createCatDto` or `findOneParams` in your controller methods, you will notice that they're not actual instances of these classes. To enable auto-transformation, set `transform` to `true`.
+The `ValidationPipe` doesn't automatically transform your payloads to the corresponding DTO classes. If you take a look at either `createUserDto` or `findOneParams` in your controller methods, you will notice that they're not actual instances of these classes. To enable auto-transformation, set `transform` to `true`.
 
 ```typescript
 app.useGlobalPipes(
