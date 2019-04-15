@@ -10,6 +10,7 @@ Certain platforms automatically attach our environment variables to the `process
 
 ```bash
 $ npm i --save dotenv
+$ npm i --save-dev @types/dotenv
 ```
 
 #### Service
