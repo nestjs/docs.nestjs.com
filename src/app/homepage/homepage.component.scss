@@ -84,10 +84,11 @@
   h4 {
     a {
       @include opacity(0);
-      padding-left: 0.35em;
+      margin-left: 0.10em;
+      padding: 0 0.25rem;
     }
     span:hover + a,
-    span + a:hover {
+    span + a:hover,a:focus {
       @include opacity(1);
     }
     &::before {
