@@ -65,7 +65,7 @@
     "concurrently": "4.1.0",
     "jasmine-core": "3.4.0",
     "jasmine-spec-reporter": "4.2.1",
-    "karma": "4.0.1",
+    "karma": "4.1.0",
     "karma-chrome-launcher": "2.2.0",
     "karma-cli": "2.0.0",
     "karma-coverage-istanbul-reporter": "2.0.5",
@@ -74,7 +74,7 @@
     "marked": "0.6.2",
     "protractor": "6.0.0",
     "ts-node": "8.1.0",
-    "tslint": "5.15.0",
+    "tslint": "5.16.0",
     "typescript": "3.1.1",
     "uuid": "3.3.2"
   }
