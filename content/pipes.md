@@ -316,7 +316,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> warning **Notice** In the case of <a href="faq/hybrid-application">Hybrid Apps</a> the `useGlobalPipes()` method doesn't set up pipes for gateways and micro services. For "standard" (non-hybrid) microservice apps, `UseGlobalPipes()` does mount pipes globally.
+> warning **Notice** In the case of <a href="faq/hybrid-application">hybrid apps</a> the `useGlobalPipes()` method doesn't set up pipes for gateways and micro services. For "standard" (non-hybrid) microservice apps, `useGlobalPipes()` does mount pipes globally.
 
 Global pipes are used across the whole application, for every controller and every route handler. In terms of dependency injection, global pipes registered from outside of any module (with `useGlobalPipes()` as in the example above) cannot inject dependencies since this is done outside the context of any module. In order to solve this issue, you can set up a global pipe **directly from any module** using the following construction:
 
