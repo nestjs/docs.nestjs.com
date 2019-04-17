@@ -11,7 +11,7 @@ Pipes have two typical use cases:
 - **transformation**: transform input data to the desired output
 - **validation**: evaluate input data and if valid, simply pass it through unchanged; otherwise, throw an exception when the data is incorrect
 
-In both cases, pipes operate on the `arguments` being processed by a <a href="controllers#route-parameters">Controller route handler</a>. Nest interposes a pipe just before a method is invoked, and the pipe receives the arguments destined for the method. Any transformation or validation operation takes place at that time, after which the route handler is invoked with any (potentially) transformed arguments.
+In both cases, pipes operate on the `arguments` being processed by a <a href="controllers#route-parameters">controller route handler</a>. Nest interposes a pipe just before a method is invoked, and the pipe receives the arguments destined for the method. Any transformation or validation operation takes place at that time, after which the route handler is invoked with any (potentially) transformed arguments.
 
 > info **Hint** Pipes run inside the exceptions zone. This means that when a Pipe throws an exception it is handled by the exceptions layer (global exceptions filter and any [exceptions filters](/exception-filters) that are applied to the current context). Given the above, it should be clear that when an exception is thrown in a Pipe, no controller method is subsequently executed.
 
@@ -122,7 +122,7 @@ export class CreateCatDto {
 }
 ```
 
-We want to ensure that any incoming request to the create method contains a valid body. So we have to validate the three members of the createCatDto object. We could do this inside the route handler method, but we would break the **single responsibility rule** (SRP). Another approach could be to create a **validator class** and delegate the task there, but we would have to use this validator at the beginning of each method. How about creating a validation middleware? This could be a good idea, but it's not possible to create **generic middleware** which can be used across the whole application (because middleware is unaware of the **execution context**, including the handler that will be called and any of its parameters).
+We want to ensure that any incoming request to the create method contains a valid body. So we have to validate the three members of the `createCatDto` object. We could do this inside the route handler method, but we would break the **single responsibility rule** (SRP). Another approach could be to create a **validator class** and delegate the task there, but we would have to use this validator at the beginning of each method. How about creating a validation middleware? This could be a good idea, but it's not possible to create **generic middleware** which can be used across the whole application (because middleware is unaware of the **execution context**, including the handler that will be called and any of its parameters).
 
 It turns out that this is a case ideally suited for a **Pipe**. So let's go ahead and build one.
 
