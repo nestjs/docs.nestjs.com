@@ -149,7 +149,7 @@ export class ApplicationModule {}
 
 #### Reflection
 
-Our RolesGuard is working, but it's not very smart yet. We're not yet taking advantage of the most important guard feature - the **execution context**. It doesn't yet know about roles, or which roles are allowed for each handler. The `CatsController`, for example, could have different permission schemes for different routes. Some might be available only for an admin user, and others could be open for everyone. How can we match roles to routes in a flexible and reusable way?
+Our `RolesGuard` is working, but it's not very smart yet. We're not yet taking advantage of the most important guard feature - the **execution context**. It doesn't yet know about roles, or which roles are allowed for each handler. The `CatsController`, for example, could have different permission schemes for different routes. Some might be available only for an admin user, and others could be open for everyone. How can we match roles to routes in a flexible and reusable way?
 
 This is where **custom metadata** comes into play. Nest provides the ability to attach custom **metadata** to route handlers through the `@SetMetadata()` decorator. This metadata supplies our missing `role` data, which a smart guard needs to make decisions. Let's take a look at using `@SetMetadata()`:
 
