@@ -251,7 +251,7 @@ export class RolesGuard {
 }
 ```
 
-> info **Hint** In the node.js world, it's common practice to attach the authorized user to the `request` object. Thus, in our sample code above, we are assuming that `request.user` contains the user instance and allowed roles. In your app, you will probably make that association in your custom **authentication middleware**.
+> info **Hint** In the node.js world, it's common practice to attach the authorized user to the `request` object. Thus, in our sample code above, we are assuming that `request.user` contains the user instance and allowed roles. In your app, you will probably make that association in your custom **authentication guard** (or middleware).
 
 The `Reflector` class allows us to easily access the metadata by the specified **key** (in this case, the key is `'roles'`; refer back to the `roles.decorator.ts` file and the `SetMetadata()` call made there). In the example above, we passed `context.getHandler()` in order to extract the metadata for the currently processed request method. Remember, `getHandler()` gives us a **reference** to the route handler function.
 
