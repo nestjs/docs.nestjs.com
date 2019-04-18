@@ -255,7 +255,7 @@ export class RolesGuard {
 
 The `Reflector` class allows us to easily access the metadata by the specified **key** (in this case, the key is `'roles'`; refer back to the `roles.decorator.ts` file and the `SetMetadata()` call made there). In the example above, we passed `context.getHandler()` in order to extract the metadata for the currently processed request method. Remember, `getHandler()` gives us a **reference** to the route handler function.
 
-We can make this guard more generic by extracting the **controller metadata** and using that to determine the current user role. To extract **controller metadata**, we pass `context.getClass()` instead of `context.getHandler()`:
+We can make this guard more generic by extracting the **controller metadata** and using that to determine the current user role. To extract controller metadata, we pass `context.getClass()` instead of `context.getHandler()`:
 
 ```typescript
 @@filename()
