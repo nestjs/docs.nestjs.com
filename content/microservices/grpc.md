@@ -239,9 +239,9 @@ A full working example is available [here](https://github.com/nestjs/nest/tree/m
 
 #### Namespaced protobuf files and caveats
 
-Sometimes API requires a more than common sophisticated set of entities to be established
-for having better approach on generated code examples. Lets describe below supposed folder
-structure with examples of proto files
+Sometimes API requires a more than a common sophisticated set of entities
+to be established for having a better approach on generated code examples.
+Let's describe below approximate folder structure with examples of proto files.
 ```bash
 _
  |
@@ -262,8 +262,9 @@ Folder structure described above have few caveats that need to be mention before
 will move into describing file contents. 
 
 For NestJS this file-structure can be loaded with just pointing on the single file:
-`service_name.proto` which need to just import all of the files with defined `service`
+`service_name.proto` which need to just import all of the files with defined service
 statement inside.
+
 
 ##### Contents of file-tree from above
 ```proto
@@ -325,15 +326,13 @@ syntax = "proto3";
 package proto_example;
 import public "orders/service.proto";
 ```
-> Few things that are very important to note in file-examples above:
-> 1) All `import` statements are lack of `./` or `../` relative directory symbols,
-> that is default behavior when designing protobufs with compatibility with other
-> platforms than Node.
->
-> 2) All references to classes which were imported happened through calling their
-> namespace before their name: `common.shipments.ShipmentType`
->
-> 3) All `import` statements started relative to proto `root` folder name
+> info **Important** Few things need to be noted for file-examples above:\
+1) All `import` statements are lack of `./` or `../` relative directory symbols,
+that is default behavior when designing protobufs with compatibility with other
+platforms than Node.\
+2) All references to classes which were imported happened through calling their
+namespace before their name: `common.shipments.ShipmentType`\
+3) All `import` statements started relative to proto `root` folder name
 
 ##### How to define loader statement for that case
 
@@ -352,27 +351,27 @@ descriptor for a few tiny changes:
   }
 }
 ```
-Related to simplified [loader options described in the very beginning](#options) of this
+Related to simplified set of options in the beginning of this
 article here are few important changes:
 - `options.loader.includeDirs` is introduced and need to point to the root of `proto`
 files directory
 - `options.protoPath` now points to single file which imports all `service` files presented
-for certain implementation type, in our example it is `root.proto`
+for certain implementation type, in our example it is `root.proto`.
 
 
 
 #### gRPC Streaming
 GRPC on it's own supports long-term live connections more known as `streams`. 
-Streams can be very useful instrument for such service cases as: Chatting, Observations
+Streams can be a very useful instrument for such service cases as Chatting, Observations
 or Chunk-data transfers.
 
 Nest supports GRPC stream handlers in two possible ways:
 - `RXJS Subject + Observable` handler: can be useful to write 
-responses right inside of a Controller method or passed down
+responses right inside of a Controller method or to be passed down
 to Subject/Observable consumer
 - `Pure GRPC call stream` handler: can be useful to be passed
 to some executor which will handle the rest of dispatch for
-the Node standard `RW` stream handler.
+the Node standard `Duplex` stream handler.
 
 ##### GrpcStreamMethod
 ```typescript
@@ -394,9 +393,8 @@ async sync(messages: Observable<any>): Observable<any> {
   return o;
 }
 ```
-For support full-duplex interaction with Rx bound decorator it is required that Observable Subject
+For support full-duplex interaction with `GrpcStreamMethod` decorator it is required that Observable Subject
 will be passed to a return statement of a Controller method.
-
 
 ##### GrpcStreamCall
 ```typescript
@@ -416,4 +414,4 @@ async syncCall(stream: any): void {
 }
 ```
 For the stream call it is `grpc.ServerDuplexStream` object type will be passed down to the method.
-This stream type extending standard Node Duplex stream, so having very similar interface to interact.
+This stream type extending standard Node Duplex stream, so it is having a very similar interface to interact with.
