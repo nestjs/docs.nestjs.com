@@ -245,7 +245,7 @@ structure with examples of proto files
 ```bash
 _
  |
- |-service_name
+ |-example
  |     |
  |     |-orders
  |     |      |
@@ -253,10 +253,10 @@ _
  |     |      |-message.proto
  |     |
  |     |-common
- |     |      |-item_type.proto
- |     |      |-shipment_type.proto
+ |     |      |-item_types.proto
+ |     |      |-shipment_types.proto
  |     |
- |     |-service_name.proto
+ |     |-root.proto
 ```
 Folder structure described above have few caveats that need to be mention before we
 will move into describing file contents. 
@@ -267,71 +267,153 @@ statement inside.
 
 ##### Contents of file-tree from above
 ```proto
-// file: service_name/orders/service.proto
+// file: example/orders/service.proto
 
 syntax = "proto3";
-package service_name.orders;
+import "orders/message.proto";
+package proto_example.orders;
 
-service Orders {
-  rpc find(Order) returns (Order);
-  rpc sync(stream Order) returns (stream Order);
+service OrderService {
+    rpc Find(Order) returns (Order);
+    rpc Sync(stream Order) returns (stream Order);
+    rpc SyncCall(stream Order) returns (stream Order);
 }
 ```
 ```proto
-// file: service_name/orders/message.proto
+// file: example/orders/message.proto
 
 syntax = "proto3";
-package service_name.orders;
+package proto_example.orders;
 
-import public "service_name/common/item_type.proto";
-import public "service_name/common/shipment_type.proto";
+import public "common/item_types.proto";
+import public "common/shipment_types.proto";
 
 message Order {
-  int32 id = 1;
-  repeated service_name.common.ItemType itemTypes = 2;
-  service_name.common.shipments.ShipmentType shipmentType = 3;
+    int32 id = 1;
+    repeated common.items.ItemType itemTypes = 2;
+    common.shipments.ShipmentType shipmentType = 3;
 }
 ```
 ```proto
-// file: service_name/common/item_type.proto
+// file: example/common/item_types.proto
 
 syntax = "proto3";
-package service_name.common;
+package proto_example.common.items;
 
 enum ItemType {
-  DEFAULT = 0;
-  SUPERIOR = 1;
-  FLAWLESS = 2;
+    DEFAULT = 0;
+    SUPERIOR = 1;
+    FLAWLESS = 2;
 }
 ```
 ```proto
-// file: service_name/common/shipment_type.proto
+// file: example/common/shipment_types.proto
 
 syntax = "proto3";
-package service_name.common.shipments;
+package proto_example.common.shipments;
 
 message ShipmentType {
-  string from = 1;
-  string to = 2;
-  string carrier = 3;
+    string from = 1;
+    string to = 2;
+    string carrier = 3;
 }
 ```
 ```proto
-// file: service_name/service_name.proto
+// file: example/root.proto
 
 syntax = "proto3";
-import public "service_name/orders/service.proto";
+package proto_example;
+import public "orders/service.proto";
 ```
-Few things that are very important to note in file-examples above:
-1) All `import` statements are lack of `./` or `../` relative directory symbols,
-that is default behavior when designing protobufs with compatibility with other
-platforms than Node.
-2) All references to classes which were imported happened through calling their
-namespace before their name: `service_name.common.shipments.ShipmentType`
-3) All `import` statements started from `root` folder name
+> Few things that are very important to note in file-examples above:
+> 1) All `import` statements are lack of `./` or `../` relative directory symbols,
+> that is default behavior when designing protobufs with compatibility with other
+> platforms than Node.
+>
+> 2) All references to classes which were imported happened through calling their
+> namespace before their name: `common.shipments.ShipmentType`
+>
+> 3) All `import` statements started relative to proto `root` folder name
 
 ##### How to define loader statement for that case
+
+To load this set of proto-files within one shot we need to adjust our loader
+descriptor for a few tiny changes:
+
+```javascript
+{
+  transport: Transport.GRPC,
+  options: {
+    package: 'proto_example',
+    protoPath: 'root.proto',
+    loader: {
+      includeDirs: [Path.join(__dirname, 'example')]
+    }
+  }
+}
+```
+Related to simplified [loader options described in the very beginning](#options) of this
+article here are few important changes:
+- `options.loader.includeDirs` is introduced and need to point to the root of `proto`
+files directory
+- `options.protoPath` now points to single file which imports all `service` files presented
+for certain implementation type, in our example it is `root.proto`
 
 
 
 #### gRPC Streaming
+GRPC on it's own supports long-term live connections more known as `streams`. 
+Streams can be very useful instrument for such service cases as: Chatting, Observations
+or Chunk-data transfers.
+
+Nest supports GRPC stream handlers in two possible ways:
+- `RXJS Subject + Observable` handler: can be useful to write 
+responses right inside of a Controller method or passed down
+to Subject/Observable consumer
+- `Pure GRPC call stream` handler: can be useful to be passed
+to some executor which will handle the rest of dispatch for
+the Node standard `RW` stream handler.
+
+##### GrpcStreamMethod
+```typescript
+@GrpcStreamMethod('orders.OrderService')
+async sync(messages: Observable<any>): Observable<any> {
+  const s = new Subject();
+  const o = s.asObservable();
+  messages.subscribe(msg => {
+    s.next({
+      id: 1,
+      itemTypes: [1],
+      shipmentType: {
+        from: 'test',
+        to: 'test1',
+        carrier: 'test-carrier',
+      },
+    });
+  });
+  return o;
+}
+```
+For support full-duplex interaction with Rx bound decorator it is required that Observable Subject
+will be passed to a return statement of a Controller method.
+
+
+##### GrpcStreamCall
+```typescript
+@GrpcStreamCall('orders.OrderService')
+async syncCall(stream: any): void {
+  stream.on('data', (msg: any) => {
+    stream.write({
+      id: 1,
+      itemTypes: [1],
+      shipmentType: {
+        from: 'test',
+        to: 'test1',
+        carrier: 'test-carrier',
+      },
+    });
+  });
+}
+```
+For the stream call it is `grpc.ServerDuplexStream` object type will be passed down to the method.
+This stream type extending standard Node Duplex stream, so having very similar interface to interact.
