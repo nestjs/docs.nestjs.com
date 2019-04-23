@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   HostListener,
   OnInit,
   ViewEncapsulation,
@@ -26,6 +27,7 @@ export class HomepageComponent implements OnInit, AfterViewInit {
   constructor(
     private readonly cd: ChangeDetectorRef,
     private readonly router: Router,
+    private readonly elementRef: ElementRef,
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +73,23 @@ export class HomepageComponent implements OnInit, AfterViewInit {
       return;
     }
     this.contentRef = nativeElement.querySelector('.content');
+    if (this.contentRef && !this.contentRef.querySelector('.carbon-wrapper')) {
+      const scriptTag = this.createCarbonScriptTag();
+      const carbonWrapper = document.createElement('div');
+      carbonWrapper.classList.add('carbon-wrapper');
+      carbonWrapper.prepend(scriptTag);
+
+      this.contentRef.prepend(carbonWrapper);
+    }
     this.cd.markForCheck();
+  }
+
+  createCarbonScriptTag(): HTMLScriptElement {
+    const scriptTag = document.createElement('script');
+    scriptTag.type = 'text/javascript';
+    scriptTag.src =
+      '//cdn.carbonads.com/carbon.js?serve=CK7I653M&placement=nestjscom';
+    scriptTag.id = '_carbonads_js';
+    return scriptTag;
   }
 }

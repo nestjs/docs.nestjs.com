@@ -10,6 +10,8 @@
   margin: 0 -85px;
   width: auto;
   font-size: 14px;
+  position: relative;
+  z-index: 12;
 
   @include media(medium) {
     padding: 15px;
