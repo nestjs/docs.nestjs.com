@@ -366,4 +366,11 @@
       position: static;
     }
   }
+
+  @include media(medium) {
+    #carbonads {
+      padding: 30px 0 15px 25px;
+      text-align: left;
+    }
+  }
 }
