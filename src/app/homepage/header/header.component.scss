@@ -97,6 +97,9 @@ header {
       color: $red-color;
     }
   }
+  @include media(medium) {
+    padding-right: 20px;
+  }
   @include media(small) {
     display: none;
   }
