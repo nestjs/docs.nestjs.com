@@ -47,7 +47,7 @@
     "ngx-perfect-scrollbar": "7.2.1",
     "prismjs": "1.16.0",
     "rxjs": "6.5.1",
-    "rxjs-compat": "6.4.0",
+    "rxjs-compat": "6.5.1",
     "yargs": "13.2.2",
     "zone.js": "0.9.0"
   },
