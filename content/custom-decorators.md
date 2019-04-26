@@ -10,7 +10,7 @@ Nest is built around a language feature called **decorators**. Decorators are a 
 
 #### Param decorators
 
-Nest provides a set of useful **param decorators** that you can use together with the HTTP route handlers. Below is a list of the provided decorators and the plain Express objects they represent
+Nest provides a set of useful **param decorators** that you can use together with the HTTP route handlers. Below is a list of the provided decorators and the plain Express (or Fastify) objects they represent
 
 <table>
   <tbody>
