@@ -14,7 +14,7 @@ Interceptors have a set of useful capabilities which are inspired by the [Aspect
 
 #### Basics
 
-Each interceptor implements the `intercept()` method, which takes two arguments. The first one is the `ExecutionContext` instance (exactly the same object as for [guards](/guards)). The `ExecutionContext` inherits from `ArgumentsHost`. We saw ArgumentsHost before in the exception filters chapter. There, we saw that it's a wrapper around arguments that have been passed to the original handler, and contains different arguments arrays based on the type of the application.  You can refer back to the [exception filters chapter](https://docs.nestjs.com/exception-filters#arguments-host) for more on this topic.
+Each interceptor implements the `intercept()` method, which takes two arguments. The first one is the `ExecutionContext` instance (exactly the same object as for [guards](/guards)). The `ExecutionContext` inherits from `ArgumentsHost`. We saw `ArgumentsHost` before in the exception filters chapter. There, we saw that it's a wrapper around arguments that have been passed to the original handler, and contains different arguments arrays based on the type of the application.  You can refer back to the [exception filters](https://docs.nestjs.com/exception-filters#arguments-host) for more on this topic.
 
 #### Execution context
 
@@ -146,11 +146,11 @@ export class ApplicationModule {}
 
 #### Response mapping
 
-We already know that `handle()` returns an `Observable`. The stream contains the value **returned** from the route handler, and thus we can easily mutate it using `RxJS`'s `map()` operator.
+We already know that `handle()` returns an `Observable`. The stream contains the value **returned** from the route handler, and thus we can easily mutate it using RxJS's `map()` operator.
 
 > warning **Warning** The response mapping feature doesn't work with the library-specific response strategy (using the `@Res()` object directly is forbidden).
 
-Let's create the `TransformInterceptor`, which will modify each response in a trivial way to demonstrate the process.  It will use `RxJS`'s `map()` operator to assign the response object to the `data` property of a newly created object, returning the new object to the client.
+Let's create the `TransformInterceptor`, which will modify each response in a trivial way to demonstrate the process.  It will use RxJS's `map()` operator to assign the response object to the `data` property of a newly created object, returning the new object to the client.
 
 ```typescript
 @@filename(transform.interceptor)
@@ -223,7 +223,7 @@ export class ExcludeNullInterceptor {
 
 #### Exception mapping
 
-Another interesting use-case is to take advantage of `RxJS`'s `catchError()` operator to override thrown exceptions:
+Another interesting use-case is to take advantage of RxJS's `catchError()` operator to override thrown exceptions:
 
 ```typescript
 @@filename(errors.interceptor)
@@ -299,11 +299,11 @@ export class CacheInterceptor {
 }
 ```
 
-Our `CacheInterceptor` has a hardcoded `isCached` variable and a hardcoded response `[]` as well. The key point to note is that we return a new stream here, created by the  `RxJS` `of()` operator, therefore the route handler **won't be called** at all. When someone calls an endpoint that makes use of `CacheInterceptor`, the response (a hardcoded, empty array) will be returned immediately. In order to create a generic solution, you can take advantage of `Reflector` and create a custom decorator. The `Reflector` is well described in the [guards](/guards) chapter.
+Our `CacheInterceptor` has a hardcoded `isCached` variable and a hardcoded response `[]` as well. The key point to note is that we return a new stream here, created by the  RxJS `of()` operator, therefore the route handler **won't be called** at all. When someone calls an endpoint that makes use of `CacheInterceptor`, the response (a hardcoded, empty array) will be returned immediately. In order to create a generic solution, you can take advantage of `Reflector` and create a custom decorator. The `Reflector` is well described in the [guards](/guards) chapter.
 
 #### More operators
 
-The possibility of manipulating the stream using `RxJS` operators gives us many capabilities. Let's consider another common use case. Imagine you would like to handle **timeouts** on route requests. When your endpoint doesn't return anything after a period of time, you want to terminate with an error response.  The following construction enables this:
+The possibility of manipulating the stream using RxJS operators gives us many capabilities. Let's consider another common use case. Imagine you would like to handle **timeouts** on route requests. When your endpoint doesn't return anything after a period of time, you want to terminate with an error response.  The following construction enables this:
 
 ```typescript
 @@filename(timeout.interceptor)
