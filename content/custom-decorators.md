@@ -86,40 +86,52 @@ async findOne(user) {
 
 #### Passing data
 
-When the behavior of your decorator depends on some conditions, you can use the `data` parameter to pass an argument to the decorator's factory function:
+When the behavior of your decorator depends on some conditions, you can use the `data` parameter to pass an argument to the decorator's factory function. One use case for this is a custom decorator that extracts properties from the request object by key. Let's assume, for example, that our <a href="techniques/authentication#user-object">authentication layer</a> validates requests and attaches a user entity to the request object. The user entity for an authenticated request might look like:
+
+```json
+{
+  "id": 101,
+  "firstName": "Alan",
+  "lastName": "Turing",
+  "email": "alan@email.com",
+  "roles": ["admin"]
+}
+```
+
+Let's define a decorator that takes a property name as key, and returns the associated value if it exists (or undefined if it doesn't exist, or if the `user` object has not been created).
 
 ```typescript
 @@filename(user.decorator)
 import { createParamDecorator } from '@nestjs/common';
 
 export const User = createParamDecorator((data: string, req) => {
-  req.user.userType = data;
-  return req.user;
+  return data ? req.user && req.user[data] : req.user;
 });
 @@switch
 import { createParamDecorator } from '@nestjs/common';
 
 export const User = createParamDecorator((data, req) => {
-  req.user.userType = data;
-  return req.user;
+  return data ? req.user && req.user[data] : req.user;
 });
 ```
 
-Here's how you could then access this value via the `custom param decorator` in the controller:
+Here's how you could then access a particular property via the `@User()` decorator in the controller:
 
 ```typescript
 @@filename()
 @Get()
-async findOne(@User('test') user: UserEntity) {
-  console.log(`User type is ${user.userType}`);
+async findOne(@User('firstName') firstName: string) {
+  console.log(`Hello ${firstName}`);
 }
 @@switch
 @Get()
-@Bind(User('test'))
-async findOne(user) {
-  console.log(`User type is ${user.userType}`);
+@Bind(User('firstName'))
+async findOne(firstName) {
+  console.log(`Hello ${firstName}`);
 }
 ```
+
+You can use this same decorator with different keys to access different properties.  If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
 
 #### Working with pipes
 
