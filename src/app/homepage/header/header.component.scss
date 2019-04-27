@@ -8,6 +8,10 @@
   height: 70px;
   position: fixed;
   z-index: 10000;
+
+  @media print {
+    position: relative;
+  }
 }
 
 header {
@@ -53,6 +57,10 @@ header {
   @include media(medium) {
     background: transparent;
   }
+
+  @media print {
+    display: none;
+  }
 }
 
 :host /deep/ .logo-wrapper {
@@ -72,6 +80,12 @@ header {
   a {
     display: inline-block;
     padding-top: 10px;
+  }
+  @media print {
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, 0%);
+    padding: 0;
   }
 }
 
@@ -101,6 +115,9 @@ header {
     padding-right: 20px;
   }
   @include media(small) {
+    display: none;
+  }
+  @media print {
     display: none;
   }
 }
@@ -155,6 +172,9 @@ header {
     &:hover {
       color: $red-color;
     }
+  }
+  @media print {
+    display: none;
   }
 }
 
