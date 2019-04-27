@@ -10,6 +10,10 @@
   right: 20px;
   max-height: 350px;
 
+  @media print {
+    display: none;
+  }
+
   ul {
     position: relative;
     padding: 0;

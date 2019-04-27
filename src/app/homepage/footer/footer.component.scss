@@ -63,4 +63,8 @@ footer {
       color: $red-color;
     }
   }
+
+  @media print {
+    display: none;
+  }
 }
