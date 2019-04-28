@@ -267,65 +267,115 @@ statement inside.
 
 
 ##### Contents of file-tree from above
-```proto
-// file: example/orders/service.proto
 
+<table style="table-layout: fixed; width:100%; font-size: 0.8em; line-height: 1.8em;">
+
+<tr>
+<td>
+example/orders/service.proto
+</td>
+<td>
+example/orders/message.proto
+</td>
+</tr>
+ 
+<tr>
+
+<td style="overflow-x:scroll">
+<pre style="overflow: inherit;">
 syntax = "proto3";
 import "orders/message.proto";
 package proto_example.orders;
+&nbsp;
+service OrderService &#123;
+    rpc Find&#40;Order&#41; returns &#40;Order&#41;;
+    rpc Sync&#40;stream Order&#41; returns &#40;stream Order&#41;;
+    rpc SyncCall&#40;stream Order&#41; returns &#40;stream Order&#41;;
+&#125;
+</pre>
+</td>
 
-service OrderService {
-    rpc Find(Order) returns (Order);
-    rpc Sync(stream Order) returns (stream Order);
-    rpc SyncCall(stream Order) returns (stream Order);
-}
-```
-```proto
-// file: example/orders/message.proto
-
+<td style="overflow-x:scroll">
+<pre style="overflow: inherit;">
 syntax = "proto3";
 package proto_example.orders;
-
 import public "common/item_types.proto";
 import public "common/shipment_types.proto";
-
-message Order {
+&nbsp;
+message Order &#123;
     int32 id = 1;
     repeated common.items.ItemType itemTypes = 2;
     common.shipments.ShipmentType shipmentType = 3;
-}
-```
-```proto
-// file: example/common/item_types.proto
+&#125;
+</pre>
+</td>
 
+</tr>
+
+<tr>
+<td>
+example/common/item_types.proto
+</td>
+<td>
+example/common/shipment_types.proto
+</td>
+</tr>
+
+<tr>
+
+<td style="overflow-x:scroll">
+<pre style="overflow: inherit;">
 syntax = "proto3";
 package proto_example.common.items;
-
-enum ItemType {
+&nbsp;
+enum ItemType &#123;
     DEFAULT = 0;
     SUPERIOR = 1;
     FLAWLESS = 2;
-}
-```
-```proto
-// file: example/common/shipment_types.proto
-
+&#125;
+</pre>
+</td>
+  
+<td style="overflow-x:scroll">
+<pre style="overflow: inherit;">
 syntax = "proto3";
 package proto_example.common.shipments;
-
-message ShipmentType {
+&nbsp;
+message ShipmentType &#123;
     string from = 1;
     string to = 2;
     string carrier = 3;
-}
-```
-```proto
-// file: example/root.proto
+&#125;
+</pre>
+</td>
 
+</tr>
+
+<tr>
+<td>
+example/root.proto
+</td>
+<td>
+ &nbsp;
+</td>
+</tr>
+
+<tr>
+
+<td style="overflow-x:scroll">
+<pre style="overflow: inherit;">
 syntax = "proto3";
 package proto_example;
 import public "orders/service.proto";
-```
+</pre>
+</td>
+  
+<td></td>
+  
+</tr>
+
+</table>
+
 > info **Important** Few things need to be noted for file-examples above:\
 1) All `import` statements are lack of `./` or `../` relative directory symbols,
 that is default behavior when designing protobufs with compatibility with other
