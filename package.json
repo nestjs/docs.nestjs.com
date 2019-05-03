@@ -49,7 +49,7 @@
     "rxjs": "6.5.1",
     "rxjs-compat": "6.5.1",
     "yargs": "13.2.2",
-    "zone.js": "0.9.0"
+    "zone.js": "0.9.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.13.8",
