@@ -49,6 +49,12 @@
     width: 100%;
     padding: 85px 20px 0;
   }
+
+  @media print {
+    margin-left: 0;
+    width: 100%;
+    padding: 0 20px 0;
+  }
 }
 
 .page-wrapper {
@@ -220,6 +226,9 @@
 
 .content {
   width: calc(100% - 220px);
+  @media print {
+    width: 100%;
+  }
   @include media(large) {
     width: 100%;
   }
@@ -364,5 +373,9 @@
       padding: 30px 0 15px 25px;
       text-align: left;
     }
+  }
+
+  @media print {
+    display: none;
   }
 }
