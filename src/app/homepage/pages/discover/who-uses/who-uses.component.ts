@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-who-uses',
@@ -88,7 +88,12 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/dozto.png',
       url: 'https://www.dozto.com',
       width: '130px',
-    }
+    },
+    {
+      logo: '/assets/logo/qingtui.png',
+      url: 'https://www.qingtui.cn/',
+      width: '90px',
+    },
   ];
 
   readonly companiesUrls = [
@@ -127,5 +132,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://www.easymetrics.com/',
     'https://getapollo.io/',
     'https://big-bench.com/',
+    'https://www.qingtui.cn/',
   ];
 }
