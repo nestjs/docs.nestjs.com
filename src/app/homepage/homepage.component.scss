@@ -183,18 +183,10 @@
     color: $red-color;
     padding: 12px 20px;
     display: inline-block;
-    position: absolute;
-    right: 40px;
-    top: 50px;
 
     &:hover {
       color: #0894e2;
       border-color: #0894e2;
-    }
-
-    @include media(medium) {
-      position: static;
-      margin-top: 30px;
     }
   }
 }
