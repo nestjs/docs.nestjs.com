@@ -88,6 +88,11 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/dozto.png',
       url: 'https://www.dozto.com',
       width: '130px',
+    },
+    {
+      logo: '/assets/logo/cultura-colectiva.png',
+      url: 'https://culturacolectiva.com',
+      width: '100px',
     }
   ];
 
@@ -116,7 +121,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://smartexlab.com/',
     'https://automama.ru/',
     'https://iflix.com/',
-    'https://culturacolectiva.com',
     'https://framework.watch',
     'https://mobilejazz.com/',
     'https://cgiandi.com/',
