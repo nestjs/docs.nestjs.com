@@ -56,6 +56,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://swingdev.io/',
     },
     {
+      logo: '/assets/logo/cultura-colectiva.png',
+      url: 'https://culturacolectiva.com',
+      width: '90px',
+    },
+    {
       logo: '/assets/logo/architectnow.png',
       url: 'http://architectnow.net',
       width: '150px',
@@ -89,11 +94,6 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://www.dozto.com',
       width: '130px',
     },
-    {
-      logo: '/assets/logo/cultura-colectiva.png',
-      url: 'https://culturacolectiva.com',
-      width: '100px',
-    }
   ];
 
   readonly companiesUrls = [
