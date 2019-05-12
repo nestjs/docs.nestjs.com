@@ -1,0 +1,26 @@
+<h1>{$ doc.name $}</h1>
+<p>{$ doc.description $}</p>
+
+{%- if doc.params %}
+<h2>Params</h2>
+<ul>
+{%- for param in doc.params %}
+  <li>
+    <strong>{$ param.name $}</strong> { {$ param.typeList $} } - {$ param.description $}
+  </li>
+{%- endfor %}
+</ul>
+{%- endif %}
+{%- if doc.returns %}
+<h2>Returns</h2>
+<p>
+  { {$ doc.returns.typeList $} } - {$ doc.returns.description $}
+</p>
+{%- endif %}
+{%- if doc.members.length %}
+{%- for member in doc.members %}
+<h3>{$ member.name $}</h3>
+<p>{$ member.description $}</p>
+
+{%- endfor %}
+{%- endif %}

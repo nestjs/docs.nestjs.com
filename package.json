@@ -66,6 +66,8 @@
     "jasmine-spec-reporter": "4.2.1",
     "karma": "4.2.0",
     "karma-chrome-launcher": "3.0.0",
+    "dgeni": "0.4.12",
+    "dgeni-packages": "0.27.3",
     "karma-cli": "2.0.0",
     "karma-coverage-istanbul-reporter": "2.1.0",
     "karma-jasmine": "2.0.1",
