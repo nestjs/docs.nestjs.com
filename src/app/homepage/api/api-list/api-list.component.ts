@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ApiSection, ApiService } from '../api.service';
-import { map, switchMap } from 'rxjs/operators';
-import { isNgTemplate } from '@angular/compiler';
 
 @Component({
   selector: 'app-api-list',

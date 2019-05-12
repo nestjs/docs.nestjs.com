@@ -1,3 +1,10 @@
+@import '../../../../scss/variables.scss';
+
+.api-list {
+  width: 80%;
+  margin-left: 10%;
+}
+
 .api-list-item {
   list-style: none;
   display: inline-block;
@@ -7,4 +14,49 @@
 
 ul {
   padding: 0;
+}
+
+a {
+  color: $black-color;
+  display: inline-block;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .item-title {
+    padding: 0 5px;
+    position: relative;
+    top: 2px;
+  }
+}
+
+h2 {
+  a {
+    font-size: 24px;
+    color: $red-color;
+  }
+}
+
+.symbol {
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba($black-color, .24);
+  color: $white-color;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  width: 16px;
+
+  // SYMBOL TYPES
+  // Symbol mapping variables in *constants*
+  @each $name, $symbol in $api-symbols {
+    &.#{$name} {
+      background: map-get($symbol, background);
+
+      &:before {
+        content: map-get($symbol, content);
+      }
+    }
+  }
 }
