@@ -95,13 +95,6 @@
     {% if method.shortDescription %}<tr>
       <td class="short-description">
         {$ method.shortDescription | marked $}
-        {%- if method.see.length %}
-        <p>See also:</p>
-        <ul>
-        {% for see in method.see %}
-          <li>{$ see | marked $}</li>{% endfor %}
-        </ul>
-        {% endif %}
       </td>
     </tr>{% endif %}
   {% if method.overloads.length == 0 %}
@@ -212,15 +205,8 @@
           {%- if property.isSetAccessor and not property.isGetAccessor %}<span class='write-only-property'>Write-only.</span>{% endif %}
           {% if property.constructorParamDoc %} <span class='from-constructor'>Declared in constructor.</span>{% endif %}
           {% if property.shortDescription %}{$ property.shortDescription | marked $}{% endif %}
-          {$ (property.description or property.constructorParamDoc.description) | marked $}
-          {%- if property.see.length %}
-          <p>See also:</p>
-          <ul>
-          {% for see in property.see %}
-            <li>{$ see | marked $}</li>{% endfor %}
-          </ul>
-          {% endif %}
-          </td>
+          {$ (property.description or property.constructorParamDoc.description) | marked $}          
+        </td>
     </tr>
     {% endfor %}
     </tbody>

@@ -20,6 +20,8 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/processPackages'))
   .processor(require('./processors/generateApiListDoc'))
   .processor(require('./processors/extractDecoratedClasses'))
+  .processor(require('./processors/processClassLikeMembers'))
+  .processor(require('./processors/filterContainedDocs'))
   .processor(require('./processors/test'))
 
   .config(function(readTypeScriptModules, tsParser) {

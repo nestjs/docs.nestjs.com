@@ -3,7 +3,11 @@
 <h1>{$ doc.name $}</h1>
 <p>{$ doc.tags.description $} </p>
 
-<code language="ts" hideCopy="true" linenums="false">
-{% if doc.isAbstract %}abstract {% endif%}class {$ doc.name $}{$ doc.typeParams | escape $}{$ memberHelper.renderHeritage(doc) $} {{$ memberHelper.renderMembers(doc) $}
+<pre class="language-typescript">
+  <code class="language-typescript">
+{% if doc.isAbstract %}abstract {% endif%}class {$ doc.name $}{$ doc.typeParams | escape $}{$ memberHelper.renderHeritage(doc) $} {{$ memberHelper.renderMembers(doc) $}    
 }
-</code>
+  </code>
+</pre>
+
+{$ memberHelper.renderProperties(doc.properties, 'instance-properties', 'instance-property', 'Properties') $}
