@@ -7,7 +7,7 @@ dist/*
 
 /tmp
 /out-tsc
-/src/app/homepage/api/pages/*
+/src/generated/*
 
 # dependencies
 /node_modules

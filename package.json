@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "prestart": "npm run markdown",
+    "prestart": "npm run markdown && npm run api",
     "start": "ng serve --source-map=false",
     "prebuild": "npm run markdown",
     "build": "ng build --deleteOutputPath=false",
@@ -13,8 +13,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "markdown": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown-compiler.ts",
-    "markdown:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown-compiler.ts --watch"
+    "markdown": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown/markdown-compiler.ts",
+    "markdown:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown/markdown-compiler.ts --watch",
+    "api": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/api/index.ts",
+    "api:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/api/index.ts --watch"
   },
   "private": true,
   "dependencies": {

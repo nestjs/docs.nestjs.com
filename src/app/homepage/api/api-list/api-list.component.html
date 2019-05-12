@@ -1,0 +1,14 @@
+<article>
+  <h1>
+    API List
+  </h1>
+  <section #content></section>
+  <section *ngFor="let section of apiSection | async">
+    <h3>{{ section.title }}</h3>
+    <ul>
+      <li class="api-list-item" *ngFor="let item of section.items">
+        <a [href]="'/api/' + section.name + '/' + item.title">{{ item.docType }} - {{ item.title }} </a>
+      </li>
+    </ul>
+  </section>
+</article>

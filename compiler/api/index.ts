@@ -8,7 +8,7 @@ const typeScriptPackage = require('dgeni-packages/typescript');
 
 const PROJECT_ROOT = resolve(__dirname, '../../sources/nest/');
 const API_SOURCE_PATH = resolve(PROJECT_ROOT, 'packages');
-const OUTPUT_PATH = resolve(__dirname, '../../src/app/homepage/api/pages');
+const OUTPUT_PATH = resolve(__dirname, '../../src/generated/docs/api');
 
 const nestjs = new Package('nestjs', [
   jsdocPackage,
