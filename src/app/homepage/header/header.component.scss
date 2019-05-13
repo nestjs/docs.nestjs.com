@@ -104,6 +104,12 @@ header {
     margin-left: 15px;
     cursor: pointer;
 
+    .discord-icon {
+      fill: #fff;
+      position: relative;
+      top: 3px;
+    }
+
     &:first-of-type {
       font-size: 20px;
     }
