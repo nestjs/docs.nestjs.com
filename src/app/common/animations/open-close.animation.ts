@@ -8,7 +8,7 @@ import {
 
 export const openCloseAnimation = trigger('openCloseAnimation', [
   // 'remove' the element when is not opened
-  state('false', style({ position: 'absolute', left: '-9999rem' })),
+  state('false', style({ display: 'none' })),
   // Closed to Opened
   transition('false => true', [
     // Remove any previous style put by another state.
