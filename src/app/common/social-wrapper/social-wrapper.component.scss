@@ -1,0 +1,41 @@
+@import '../../../scss/variables.scss';
+@import '../../../scss/utils.scss';
+
+.social-wrapper {
+  @extend .center-top;
+  float: right;
+  padding-right: 40px;
+  position: relative;
+
+  a {
+    @extend .transition-fast;
+    display: inline-block;
+    vertical-align: middle;
+    color: #fff;
+    font-size: 22px;
+    margin-left: 15px;
+    cursor: pointer;
+
+    .discord-icon {
+      fill: #fff;
+      position: relative;
+      top: 3px;
+    }
+
+    &:first-of-type {
+      font-size: 20px;
+    }
+    &:hover {
+      color: $red-color;
+    }
+  }
+  @include media(medium) {
+    padding-right: 20px;
+  }
+  @include media(small) {
+    display: none;
+  }
+  @media print {
+    display: none;
+  }
+}
