@@ -18,6 +18,8 @@ A health check represents a summary of **health indicators**. A health indicator
 - `TypeOrmHealthIndicator`
 - `MongooseHealthIndicator`
 - `MicroserviceHealthIndicator`
+- `MemoryHealthIndicator`
+- `DiskHealthIndicator`
 
 #### DNS Health Check
 
