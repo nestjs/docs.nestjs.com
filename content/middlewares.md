@@ -28,7 +28,7 @@ import { Request, Response } from 'express';
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: Function) {
-    console.log('Request...');
+    console.log('Request...', req);
     next();
   }
 }
@@ -38,7 +38,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class LoggerMiddleware {
   use(req, res, next) {
-    console.log('Request...');
+    console.log('Request...', req);
     next();
   }
 }
@@ -190,7 +190,7 @@ The `LoggerMiddleware` class we've been using is quite simple. It has no members
 ```typescript
 @@filename(logger.middleware)
 export function logger(req, res, next) {
-  console.log(`Request...`);
+  console.log(`Request...`, req);
   next();
 };
 ```
