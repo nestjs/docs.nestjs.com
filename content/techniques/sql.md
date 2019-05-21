@@ -299,7 +299,10 @@ Afterward, simply inject the repository using the following construction:
 ```typescript
 @Injectable()
 export class AuthorService {
-  constructor(private readonly authorRepository: AuthorRepository) {}
+  constructor(
+    @InjectRepository(Author)
+    private readonly authorRepository: AuthorRepository,
+  ) {}
 }
 ```
 
