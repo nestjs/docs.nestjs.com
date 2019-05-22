@@ -37,7 +37,7 @@
     "@ngrx/store-devtools": "7.4.0",
     "@ultimate/ngxerrors": "1.4.0",
     "angular2-highlight-js": "6.0.1-alpha",
-    "core-js": "2.6.5",
+    "core-js": "2.6.8",
     "fast-glob": "2.2.7",
     "hammerjs": "2.0.8",
     "lodash": "4.17.11",
