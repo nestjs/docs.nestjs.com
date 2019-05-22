@@ -59,7 +59,7 @@
     "@types/jasmine": "3.3.12",
     "@types/jasminewd2": "2.0.6",
     "@types/lodash": "4.14.130",
-    "@types/node": "10.14.6",
+    "@types/node": "10.14.7",
     "chokidar": "3.0.0",
     "codelyzer": "5.0.1",
     "concurrently": "4.1.0",
