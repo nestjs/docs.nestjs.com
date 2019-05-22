@@ -18,6 +18,8 @@ A health check represents a summary of **health indicators**. A health indicator
 - `TypeOrmHealthIndicator`
 - `MongooseHealthIndicator`
 - `MicroserviceHealthIndicator`
+- `MemoryHealthIndicator`
+- `DiskHealthIndicator`
 
 #### DNS Health Check
 
@@ -249,3 +251,36 @@ If everything has been done correctly, the `/health` endpoint should respond wit
 ```
 
 You can view working examples in the `@nestjs/terminus` [repository](https://github.com/nestjs/terminus/tree/master/sample).
+
+
+#### Custom Logger
+
+The `Terminus` module automatically logs every error during a health check request. By default, it will use the globally defined Nest logger.
+You can read more about the global logger in the [Logger chapter](https://docs.nestjs.com/techniques/logger).
+In some cases, you want to handle the logs of `Terminus` explicitly. In this case, the `TerminusModule.forRoot[Async]` function offers an option
+for a custom logger.
+
+```typescript
+
+TerminusModule.forRootAsync({
+  logger: (message: string, error: Error) => console.error(message, error),
+  endpoints: [
+    ...
+  ]
+})
+
+```
+
+The logger can also be disabled by setting the logger option to `null`.
+
+```typescript
+
+TerminusModule.forRootAsync({
+  logger: null,
+  endpoints: [
+    ...
+  ]
+})
+
+```
+
