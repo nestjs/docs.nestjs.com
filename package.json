@@ -38,7 +38,7 @@
     "@ultimate/ngxerrors": "1.4.0",
     "angular2-highlight-js": "6.0.1-alpha",
     "core-js": "2.6.5",
-    "fast-glob": "2.2.6",
+    "fast-glob": "2.2.7",
     "hammerjs": "2.0.8",
     "lodash": "4.17.11",
     "ng2-prism": "2.3.2",
