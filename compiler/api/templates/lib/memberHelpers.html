@@ -12,15 +12,15 @@
 
 {%- macro renderMembers(doc) -%}
   {%- for member in doc.staticProperties %}{% if not member.internal %}
-  <a class="code-anchor" href="{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
+  <a class="code-anchor" href="/api{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
   {% for member in doc.staticMethods %}{% if not member.internal %}
-  <a class="code-anchor" href="{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
+  <a class="code-anchor" href="/api{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
   {% if doc.constructorDoc and not doc.constructorDoc.internal %}
-  <a class="code-anchor" href="{$ doc.path $}#{$ doc.constructorDoc.anchor | urlencode $}">{$ renderMemberSyntax(doc.constructorDoc, 1) $}</a>{% endif -%}
+  <a class="code-anchor" href="/api{$ doc.path $}#{$ doc.constructorDoc.anchor | urlencode $}">{$ renderMemberSyntax(doc.constructorDoc, 1) $}</a>{% endif -%}
   {% for member in doc.properties %}{% if not member.internal %}
-  <a class="code-anchor" href="{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
+  <a class="code-anchor" href="/api{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
   {% for member in doc.methods %}{% if not member.internal %}
-  <a class="code-anchor" href="{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
+  <a class="code-anchor" href="/api{$ doc.path $}#{$ member.anchor | urlencode $}">{$ renderMemberSyntax(member, 1) $}</a>{% endif %}{% endfor -%}
 
   {%- for ancestor in doc.extendsClauses %}{% if ancestor.doc %}
 
@@ -46,14 +46,15 @@
     {$ overload.shortDescription | marked $}
   </div>{% endif %}
 
-  <code-example language="ts" hideCopy="true" linenums="false" class="no-box api-heading">{$ renderMemberSyntax(overload) $}</code-example>
+  <pre class="language-typescript"><code class="language-typescript">
+{$ renderMemberSyntax(overload) $}</code></pre>
 
   {% if overload.deprecated !== undefined %}
   <div class="deprecated">
     {$ ('**Deprecated** ' + overload.deprecated) | marked $}
   </div>{% endif %}
 
-  <h6 class="no-anchor">Parameters</h6>
+  <h4 class="no-anchor">Parameters</h4>
   {$ params.renderParameters(overload.parameterDocs, cssClass + '-parameters', cssClass + '-parameter', true) $}
 
   {% if overload.type or overload.returns.type %}
