@@ -22,7 +22,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/extractDecoratedClasses'))
   .processor(require('./processors/processClassLikeMembers'))
   .processor(require('./processors/filterContainedDocs'))
-  .processor(require('./processors/test'))
+  .processor(require('./processors/markPrivateDocs'))
 
   .config(function(readTypeScriptModules, tsParser) {
     // Tell TypeScript how to load modules that start with with `@nestjs`

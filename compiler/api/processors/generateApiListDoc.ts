@@ -23,6 +23,7 @@ function getPackageInfo(packageDoc) {
     title: packageDoc.name,
     path: packageDoc.path,
     items: (packageDoc.exports || [])
+      .filter(doc => !doc.privateExport)
       .map(getExportInfo)
       .sort((a, b) => (a.name === b.name ? 0 : a.name > b.name ? 1 : -1))
   };
