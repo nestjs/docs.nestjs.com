@@ -11,7 +11,6 @@ module.exports = function extractDecoratedClasses() {
             const docType = decorator.name.toLowerCase();
             // Cannot use module type, because that is already reserved
             doc.docType = docType === 'module' ? 'nestmodule' : docType;
-            console.log(doc);
             doc.path = `partials/modules/${doc.id}/index.html`;
             doc.outputPath = `partials/modules/${doc.id}/index.html`;
             doc[doc.docType + 'options'] = decorator.argumentInfo[0];

@@ -1,9 +1,10 @@
 module.exports = function test() {
   return {
     docTypes: [],
-    $runAfter: ['processPackages'],
+    $runAfter: ['processClassLikeMembers'],
+    $runBefore: ['renderDocsProcessor'],
     $process(docs: any[]) {
-        // console.log(docs[0].classes);
+      console.log(docs.find(doc => doc.docType === 'class').methods[0]);
     }
   };
 };
