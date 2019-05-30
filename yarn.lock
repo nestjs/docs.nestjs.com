@@ -4398,14 +4398,14 @@ ng2-src-directive@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/ng2-src-directive/-/ng2-src-directive-0.0.10.tgz#1c1f722ca78b44a3169bcc1bbf9e51ea5931dd3b"
 
-ngx-markdown@7.1.4:
-  version "7.1.4"
-  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-7.1.4.tgz#e646ba4a09e26d51299f6c84f9a8fe59bb259c3d"
-  integrity sha512-GnYEKzuj3/DD8ir1MaZM+rlIy/Ua6U1h9VJ1fL1kvESyRRpLV8WoZhu3CdacoyELemwevChOyJh2yecCX+Ye+Q==
+ngx-markdown@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.0.1.tgz#71c97eeaa913ac4f0bdbdad5f8bd8b6ceaf831ca"
+  integrity sha512-PtV2o/77GTGhRv5m8GcgIP8nXjNQqBaAn9GTxsr1zveV9r8IpFRdHgHEDx4ijCOhxxu5+LONsCXbLV1dOS8/Pw==
   dependencies:
     "@types/marked" "^0.6.0"
     marked "^0.6.0"
-    prismjs "^1.15.0"
+    prismjs "^1.16.0"
     tslib "^1.9.0"
 
 ngx-perfect-scrollbar@7.2.1:
@@ -5106,14 +5106,14 @@ postcss@7.0.14, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.13:
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-prismjs@1.16.0:
+prismjs@1.16.0, prismjs@^1.16.0:
   version "1.16.0"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.16.0.tgz#406eb2c8aacb0f5f0f1167930cb83835d10a4308"
   integrity sha512-OA4MKxjFZHSvZcisLGe14THYsug/nF6O1f0pAJc0KN0wTyAcLqmsbE+lTGKSpyh+9pEW57+k6pg2AfYR+coyHA==
   optionalDependencies:
     clipboard "^2.0.0"
 
-prismjs@^1.15.0, "prismjs@git://github.com/PrismJS/prism.git#gh-pages":
+"prismjs@git://github.com/PrismJS/prism.git#gh-pages":
   version "1.15.0"
   resolved "git://github.com/PrismJS/prism.git#7d084d5f17fa40d3451d46cac605308382c9c499"
   optionalDependencies:
