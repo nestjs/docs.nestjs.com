@@ -17,7 +17,7 @@ In both cases, pipes operate on the `arguments` being processed by a <a href="co
 
 #### Built-in pipes
 
-Nest comes with two pipes available right out-of-the-box: `ValidationPipe` and `ParseIntPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
+Nest comes with two pipes available right out-of-the-box: `ValidationPipe`, `ParseIntPipe` and `ParseUUIDPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
 
 Let's start with the `ValidationPipe`. Initially, we'll have it simply take an input value and immediately return the same value, behaving like an identity function.
 
@@ -389,7 +389,25 @@ async findOne(id) {
 }
 ```
 
-With this in place, `ParseIntPipe` will be executed before the request reaches the corresponding handler, ensuring that it will always receive an integer for the `id` parameter.
+If you prefer you can use the `ParseUUIDPipe` which is responsible for parsing a string and validate if is a UUID.
+
+```typescript
+@@filename()
+@Get(':id')
+async findOne(@Param('id', new ParseUUIDPipe()) id) {
+  return await this.catsService.findOne(id);
+}
+@@switch
+@Get(':id')
+@Bind(Param('id', new ParseUUIDPipe()))
+async findOne(id) {
+  return await this.catsService.findOne(id);
+}
+```
+
+> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options. If you want to check UUID v4 you can doit like this: `ParseUUIDPipe({ version: 4 })` 
+
+With this in place, `ParseIntPipe` or `ParseUUIDPipe` will be executed before the request reaches the corresponding handler, ensuring that it will always receive an integer or uuid (according on the used pipe) for the `id` parameter.
 
 Another useful case would be to select an **existing user** entity from the database by id:
 
