@@ -497,6 +497,11 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>boolean</code></td>
     <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
   </tr>
+  <tr>
+    <td><code>validationError.value</code></td>
+    <td><code>boolean</code></td>
+    <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
+  </tr>
 </table>
 
 > info **Notice** Find more information about the `class-validator` package in its [repository](https://github.com/typestack/class-validator).
