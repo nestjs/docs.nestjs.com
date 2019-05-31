@@ -122,6 +122,29 @@ export class ApplicationModule {}
 
 > info **Hint** If your factory needs other providers, you have to pass their tokens inside the `inject` array. Nest will pass instances as arguments of the function in the same order.
 
+### Use existing 
+
+The `useExisting` is way of aliased existed providers. For example, the token `newLoggerService` is a alias for `LoggerService`.
+
+```typescript
+class LoggerService {}
+const loggerServiceProvider = {
+  provide: LoggerService,
+  useClass: LoggerService
+};
+const newLoggerServiceProvider = {
+  provide: 'newLoggerService',
+  useExisting: LoggerService
+};
+
+@Module({
+  providers: [loggerServiceProvider, newLoggerServiceProvider],
+})
+export class ApplicationModule {}
+```
+
+> info **Hint** The instance of `LoggerService` which via provider `newLoggerService` token is equals to the instance which via provider `LoggerService` token.
+
 #### Export custom provider
 
 In order to export a custom provider, we can either use a token or a whole object. The following example shows a token case:
