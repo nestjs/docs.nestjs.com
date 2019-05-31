@@ -1,0 +1,12 @@
+{% import "lib/memberHelpers.html" as memberHelper -%}
+{% import "lib/descendants.html" as descendants -%}
+
+
+<pre class="language-typescript">
+  <code class="language-typescript">
+{% if doc.isAbstract %}abstract {% endif%}class {$ doc.name $}{$ doc.typeParams | escape $}{$ memberHelper.renderHeritage(doc) $} {{$ memberHelper.renderMembers(doc) $}
+}
+  </code>
+</pre>
+
+{$ descendants.renderDescendants(doc, 'class', 'Subclasses', true, r/class|directive|pipe|decorator/) $}

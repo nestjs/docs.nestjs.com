@@ -4,7 +4,7 @@ module.exports = function test() {
     $runAfter: ['processClassLikeMembers'],
     $runBefore: ['renderDocsProcessor'],
     $process(docs: any[]) {
-      console.log(docs.find(doc => doc.docType === 'class').methods[0]);
+      // console.log(docs.find(doc => doc.docType === 'class').methods[0]);
     }
   };
 };

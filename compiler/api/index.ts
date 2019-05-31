@@ -23,6 +23,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/processClassLikeMembers'))
   .processor(require('./processors/filterContainedDocs'))
   .processor(require('./processors/markPrivateDocs'))
+  .processor(require('./processors/shortDescription'))
   .processor(require('./processors/test'))
 
   .config(function(readTypeScriptModules, tsParser) {
@@ -67,10 +68,7 @@ const nestjs = new Package('nestjs', [
         templateEngine.filters.concat(getInjectables(requireFolder(__dirname, './rendering')));
 
     // helpers are made available to the nunjucks templates
-    renderDocsProcessor.helpers.relativePath = function(from, to) {
-      return relative(from, to);
-    };
-
+    renderDocsProcessor.helpers.relativePath = (from: string, to: string) => relative(from, to);
   });
 
 new Dgeni([nestjs]).generate();

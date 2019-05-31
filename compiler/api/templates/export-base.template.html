@@ -1,0 +1,11 @@
+{% extends 'base.template.html' -%}
+
+{% block body %}
+  <section class="short-description">
+    {$ doc.shortDescription | marked $}
+    {% if doc.description %}<p><a href="#description">See more...</a></p>{% endif %}
+  </section>
+  {% block overview %}{% endblock %}
+  {% block details %}{% endblock %}
+  {% block endNotes %}{% include "includes/usageNotes.html" %}{% endblock %}
+{% endblock %}
