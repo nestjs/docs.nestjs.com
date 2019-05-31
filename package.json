@@ -58,7 +58,7 @@
     "@angular/language-service": "7.2.15",
     "@types/jasmine": "3.3.13",
     "@types/jasminewd2": "2.0.6",
-    "@types/lodash": "4.14.132",
+    "@types/lodash": "4.14.133",
     "@types/node": "10.14.7",
     "chokidar": "3.0.0",
     "codelyzer": "5.0.1",
