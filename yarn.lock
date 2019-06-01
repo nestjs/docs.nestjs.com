@@ -4398,10 +4398,10 @@ ng2-src-directive@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/ng2-src-directive/-/ng2-src-directive-0.0.10.tgz#1c1f722ca78b44a3169bcc1bbf9e51ea5931dd3b"
 
-ngx-markdown@8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.0.1.tgz#71c97eeaa913ac4f0bdbdad5f8bd8b6ceaf831ca"
-  integrity sha512-PtV2o/77GTGhRv5m8GcgIP8nXjNQqBaAn9GTxsr1zveV9r8IpFRdHgHEDx4ijCOhxxu5+LONsCXbLV1dOS8/Pw==
+ngx-markdown@8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.0.2.tgz#060257801686fa58adb21d69c264e1c1cff54a84"
+  integrity sha512-dLF205/JrSI7pOIgsrikhf9KYF6yiP797FuHGjVEw51KhHfuhCoR+3pl7Ky2vxuQBJjmkNGbgH75+Qy2SAnFEg==
   dependencies:
     "@types/marked" "^0.6.0"
     marked "^0.6.0"
