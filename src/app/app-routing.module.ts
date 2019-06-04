@@ -110,38 +110,38 @@ const routes: Routes = [
       {
         path: 'fundamentals',
         loadChildren:
-          './homepage/pages/fundamentals/fundamentals.module#FundamentalsModule',
+          () => import('./homepage/pages/fundamentals/fundamentals.module').then(m => m.FundamentalsModule),
       },
       {
         path: 'techniques',
         loadChildren:
-          './homepage/pages/techniques/techniques.module#TechniquesModule',
+          () => import('./homepage/pages/techniques/techniques.module').then(m => m.TechniquesModule),
       },
       {
         path: 'graphql',
-        loadChildren: './homepage/pages/graphql/graphql.module#GraphqlModule',
+        loadChildren: () => import('./homepage/pages/graphql/graphql.module').then(m => m.GraphqlModule),
       },
       {
         path: 'websockets',
         loadChildren:
-          './homepage/pages/websockets/websockets.module#WebsocketsModule',
+          () => import('./homepage/pages/websockets/websockets.module').then(m => m.WebsocketsModule),
       },
       {
         path: 'microservices',
         loadChildren:
-          './homepage/pages/microservices/microservices.module#MicroservicesModule',
+          () => import('./homepage/pages/microservices/microservices.module').then(m => m.MicroservicesModule),
       },
       {
         path: 'recipes',
-        loadChildren: './homepage/pages/recipes/recipes.module#RecipesModule',
+        loadChildren: () => import('./homepage/pages/recipes/recipes.module').then(m => m.RecipesModule),
       },
       {
         path: 'faq',
-        loadChildren: './homepage/pages/faq/faq.module#FaqModule',
+        loadChildren: () => import('./homepage/pages/faq/faq.module').then(m => m.FaqModule),
       },
       {
         path: 'cli',
-        loadChildren: './homepage/pages/cli/cli.module#CliModule',
+        loadChildren: () => import('./homepage/pages/cli/cli.module').then(m => m.CliModule),
       },
     ],
   },

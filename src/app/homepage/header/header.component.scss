@@ -63,7 +63,7 @@ header {
   }
 }
 
-:host /deep/ .logo-wrapper {
+:host ::ng-deep .logo-wrapper {
   display: inline-block;
   height: 100%;
   text-align: center;
@@ -265,7 +265,7 @@ header {
     display: none;
   }
 
-  :host /deep/ .logo-wrapper {
+  :host ::ng-deep .logo-wrapper {
     width: 100%;
   }
 
