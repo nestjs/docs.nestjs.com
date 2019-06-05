@@ -16,11 +16,16 @@ module.exports = function generateApiListDoc() {
   };
 };
 
+function getPackageName(packageDoc) {
+  const idParts = packageDoc.id.split('/').filter(p => p !== 'lib');
+  return idParts[idParts.length - 1].toLowerCase();
+}
+
 function getPackageInfo(packageDoc) {
-  const packageName = packageDoc.id;
+  const packageName = getPackageName(packageDoc);
   return {
-    name: packageName.toLowerCase(),
-    title: packageDoc.name,
+    name: packageDoc.id,
+    title: packageName,
     path: packageDoc.path,
     items: (packageDoc.exports || [])
       .filter(doc => !doc.privateExport)

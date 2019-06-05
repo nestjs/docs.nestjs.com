@@ -4,7 +4,7 @@
   </h1>
   <section class="api-list" *ngFor="let section of apiSection | async">
     <h2>
-      <a [href]="'/api/' + section.name">{{ section.name }}</a>
+      <a [href]="'/api/' + section.name">{{ section.title }}</a>
     </h2>
     <ul>
       <li class="api-list-item" *ngFor="let item of section.items">
