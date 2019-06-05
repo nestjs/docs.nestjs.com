@@ -1,0 +1,27 @@
+@import '../../../scss/variables.scss';
+
+.api-header {
+  display: flex;
+  align-items: center;
+  h1 {
+      // Some spacing to the label
+      margin-right: 20px;
+  }
+}
+
+.api-type-label {
+  border-radius: 2px;
+  color: $white-color;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  @each $name, $symbol in $api-symbols {
+    &.#{$name} {
+      background: map-get($symbol, background);
+    }
+  }
+}
