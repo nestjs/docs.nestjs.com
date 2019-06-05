@@ -124,7 +124,7 @@ export class DogHealthIndicator extends HealthIndicator {
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     const badboys = this.dogs.filter(dog => dog.type === 'badboy');
-    const isHealthy = badboys.length > 0;
+    const isHealthy = badboys.length === 0;
     const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
 
     if (isHealthy) {
@@ -146,7 +146,7 @@ export class DogHealthIndicator extends HealthIndicator {
 
   async isHealthy(key) {
     const badboys = this.dogs.filter(dog => dog.type === 'badboy');
-    const isHealthy = badboys.length > 0;
+    const isHealthy = badboys.length === 0;
     const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
 
     if (isHealthy) {
