@@ -6,8 +6,7 @@ const jsdocPackage = require('dgeni-packages/jsdoc');
 const nunjucksPackage = require('dgeni-packages/nunjucks');
 const typeScriptPackage = require('dgeni-packages/typescript');
 
-const PROJECT_ROOT = resolve(__dirname, '../../sources/nest/');
-const API_SOURCE_PATH = resolve(PROJECT_ROOT, 'packages');
+const PROJECT_ROOT = resolve(__dirname, '../../sources/');
 const OUTPUT_PATH = resolve(__dirname, '../../src/generated/docs/api');
 
 const nestjs = new Package('nestjs', [
@@ -28,17 +27,17 @@ const nestjs = new Package('nestjs', [
 
   .config(function(readTypeScriptModules, tsParser) {
     // Tell TypeScript how to load modules that start with with `@nestjs`
-    tsParser.options.paths = { '@nestjs/*': [API_SOURCE_PATH + '/*'] };
+    tsParser.options.paths = { '@nestjs/*': [PROJECT_ROOT + '/*'] };
     tsParser.options.baseUrl = '.';
 
     // API files are typescript
-    readTypeScriptModules.basePath = API_SOURCE_PATH;
+    readTypeScriptModules.basePath = PROJECT_ROOT;
 
-    readTypeScriptModules.sourceFiles = ['./core/index.ts', './common/index.ts'];
+    readTypeScriptModules.sourceFiles = ['./nest/packages/core/index.ts', './nest/packages/common/index.ts', './terminus/lib/index.ts'];
   })
   .config(function(readFilesProcessor) {
     readFilesProcessor.$enabled = false;
-    readFilesProcessor.basePath = API_SOURCE_PATH;
+    readFilesProcessor.basePath = PROJECT_ROOT;
   })
   .config(function(parseTagsProcessor, getInjectables, tsHost) {
     // Load up all the tag definitions in the tag-defs folder

@@ -2,3 +2,7 @@
 	path = sources/nest
 	url = https://github.com/BrunnerLivio/nest
 	branch=fix/jsdoc-comments
+[submodule "sources/terminus"]
+	path = sources/terminus
+	url = https://github.com/nestjs/terminus
+	branch = feature/api-docs

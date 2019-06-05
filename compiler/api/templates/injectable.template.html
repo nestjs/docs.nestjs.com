@@ -1,4 +1,9 @@
-<h1>{$ doc.name $}</h1>
-<p>{$ doc.tags.description $} </p>
+{% extends 'export-base.template.html' -%}
 
-An injectable
+{% block overview %}
+  {% include "includes/class-overview.html" %}
+{% endblock %}
+{% block details %}
+  {% include "includes/description.html" %}
+  {% include "includes/class-members.html" %}
+{% endblock %}
