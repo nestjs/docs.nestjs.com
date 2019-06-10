@@ -251,6 +251,8 @@ the Node standard `Duplex` stream handler.
 ##### GrpcStreamMethod decorator
 This decorator will provide the function parameter as RxJS Observable.
 ```typescript
+// Set decorator with selecting a Service definition from protobuf package
+// the string is matching to: package proto_example.orders.OrdersService
 @GrpcStreamMethod('orders.OrderService')
 async sync(messages: Observable<any>): Observable<any> {
   const s = new Subject();
@@ -277,6 +279,8 @@ This decorator will provide function parameter as `grpc.ServerDuplexStream`, whi
 supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`, 
 full documentation on available methods can be found [here at official gRPC docs for Node](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html)
 ```typescript
+// Set decorator with selecting a Service definition from protobuf package
+// the string is matching to: package proto_example.orders.OrdersService
 @GrpcStreamCall('orders.OrderService')
 async syncCall(stream: any): void {
   stream.on('data', (msg: any) => {
