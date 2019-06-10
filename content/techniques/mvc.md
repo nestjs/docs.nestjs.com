@@ -86,9 +86,33 @@ export class AppController {
 }
 ```
 
-> info **Hint** In fact, when Nest detects `@Res()` decorator, it injects library-specific `response` object. Learn more about its abilities [here](http://expressjs.com/en/api.html).
+> info **Hint** In fact, when Nest detects `@Res()` decorator, it injects library-specific `response` object. We can use such an object to dynamically render the template. Learn more about its abilities [here](http://expressjs.com/en/api.html).
 
 While the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello world!` message.
+
+#### Dynamic template rendering
+
+If the application logic must dynamically decide which template to render, then we should use `@Res()` decorator:
+
+```typescript
+@@filename(app.controller)
+import { Get, Controller, Render } from '@nestjs/common';
+import { Response } from 'express';
+import { AppService } from './app.service';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  root(@Res() res: Response) {
+    return res.render(
+      this.appService.getViewName(),
+      { message: 'Hello world!' },
+    );
+  }
+}
+```
 
 #### Example
 

@@ -24,7 +24,7 @@ const connectionProvider = {
 export class ApplicationModule {}
 ```
 
-In order to inject custom provider, we use the `@Inject()` decorator. This decorator takes a single argument - the token.
+In order to inject a custom provider, we use the `@Inject()` decorator. This decorator takes a single argument - the token.
 
 ```typescript
 @@filename()
@@ -121,6 +121,27 @@ export class ApplicationModule {}
 ```
 
 > info **Hint** If your factory needs other providers, you have to pass their tokens inside the `inject` array. Nest will pass instances as arguments of the function in the same order.
+
+#### Use existing 
+
+The `useExisting` allows you creating aliases for existing providers. For example, the token `AliasedLoggerService` is an alias for `LoggerService`.
+
+```typescript
+@Injectable()
+class LoggerService {}
+
+const loggerAliasProvider = {
+  provide: 'AliasedLoggerService',
+  useExisting: LoggerService
+};
+
+@Module({
+  providers: [LoggerService, loggerAliasProvider],
+})
+export class ApplicationModule {}
+```
+
+> info **Hint** The instance of `LoggerService` will be equal to the instance defined by `AliasedLoggerService` token.
 
 #### Export custom provider
 

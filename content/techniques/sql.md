@@ -156,8 +156,8 @@ export class PhotoService {
     private readonly photoRepository: Repository<Photo>,
   ) {}
 
-  async findAll(): Promise<Photo[]> {
-    return await this.photoRepository.find();
+  findAll(): Promise<Photo[]> {
+    return this.photoRepository.find();
   }
 }
 @@switch
@@ -172,8 +172,8 @@ export class PhotoService {
     this.photoRepository = photoRepository;
   }
 
-  async findAll() {
-    return await this.photoRepository.find();
+  findAll() {
+    return this.photoRepository.find();
   }
 }
 ```

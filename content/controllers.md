@@ -52,7 +52,7 @@ In our example above, when a GET request is made to this endpoint, Nest routes t
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
       requests
       which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
-      decorator at a handler-level (see <a href='#status-code'>Status codes</a>).
+      decorator at a handler-level (see <a href='controllers#status-code'>Status codes</a>).
     </td>
   </tr>
   <tr>

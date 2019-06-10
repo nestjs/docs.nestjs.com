@@ -1,6 +1,6 @@
 ### Configuration
 
-The applications used to run in different **environments**. Depending on an environment, various sets of configuration variables should be used. For example, that's very likely that local environment relays on specific database credentials, valid solely for local db instance. In order to solve this issue, we used to take advantage of `.env` files, that hold key-value pairs, where each key represents a particular value since this approach is very convenient.
+The applications used to run in different **environments**. Depending on an environment, various sets of configuration variables should be used. For example, that's very likely that local environment relies on specific database credentials, valid solely for local db instance. In order to solve this issue, we used to take advantage of `.env` files, that hold key-value pairs, where each key represents a particular value since this approach is very convenient.
 
 But when we use a `process` global object, it's difficult to keep our tests clean since tested class may directly use it. Another way is to create an abstraction layer, a `ConfigModule` that exposes a `ConfigService` with loaded configuration variables.
 
@@ -10,6 +10,7 @@ Certain platforms automatically attach our environment variables to the `process
 
 ```bash
 $ npm i --save dotenv
+$ npm i --save-dev @types/dotenv
 ```
 
 #### Service
@@ -71,8 +72,8 @@ export class ConfigModule {}
 The `ConfigModule` registers a `ConfigService` and exports it as well. Additionally, we passed a path to the `.env` file. This path will be different depending on actual execution environment. Now you can simply inject `ConfigService` anywhere, and pull out a particular value based on a passed key. Sample `.env` file could look like below:
 
 ```typescript
-DATABASE_USER = test;
-DATABASE_PASSWORD = test;
+DATABASE_USER = test
+DATABASE_PASSWORD = test
 ```
 
 #### Using the ConfigService
@@ -96,7 +97,7 @@ export class AppService {
   private isAuthEnabled: boolean;
   constructor(config: ConfigService) {
     // Please take note that this check is case sensitive!
-    this.isAuthEnabled = config.get('IS_AUTH_ENABLED') === 'true' ? true : false;
+    this.isAuthEnabled = config.get('IS_AUTH_ENABLED') === 'true';
   }
 }
 ```

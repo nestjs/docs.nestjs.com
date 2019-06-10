@@ -42,6 +42,6 @@ If you're running your Nest instance inside of a **docker container** you will n
 await app.listen(3000, '0.0.0.0');
 ```
 
-And that's all. Also, you are able to pass options into fastify constructor through `FastifyAdapter` constructor. Keep in mind that now, Nest uses fastify as an **HTTP provider**, meaning, each recipe that relays on express won't work anymore. You should rather use fastify equivalent packages.
+And that's all. Also, you are able to pass options into fastify constructor through `FastifyAdapter` constructor. Keep in mind that now, Nest uses fastify as an **HTTP provider**, meaning, each recipe that relies on express won't work anymore. You should rather use fastify equivalent packages.
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
