@@ -315,7 +315,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-#### Authentication
+#### Authentication: Bearer
 
 You can enable the bearer authorization using `addBearerAuth()` method of the `DocumentBuilder` class. Then to restrict the chosen route or entire controller, use `@ApiBearerAuth()` decorator.
 
@@ -329,6 +329,28 @@ export class CatsController {}
 That's how the OpenAPI documentation should look like now:
 
 <figure><img src="/assets/swagger-auth.gif" /></figure>
+
+#### Authentication: OAuth2
+
+You can enable the OAuth2 authorization using `addOAuth2()` method of the `DocumentBuilder` class. Then to restrict the chosen route or entire controller, use `@ApiOAuth2Auth()` decorator.
+
+```typescript
+@ApiUseTags('cats')
+@ApiOAuth2Auth()
+@Controller('cats')
+export class CatsController {}
+```
+
+Important moment about Swagger UI bootstrapping in case of you serve it on non-root path.
+To make final redirect step from OAuth2 provider to Swagger UI workable you need to override default `oauth2RedirectUrl` parameter:
+
+```typescript
+SwaggerModule.setup(path, app, document, {
+  swaggerOptions: {
+    oauth2RedirectUrl: `${yourHostOrigin}/${path}/oauth2-redirect.html`
+  }
+});
+```
 
 #### File upload
 
