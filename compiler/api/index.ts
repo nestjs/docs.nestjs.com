@@ -23,6 +23,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/filterContainedDocs'))
   .processor(require('./processors/markPrivateDocs'))
   .processor(require('./processors/shortDescription'))
+  .processor(require('./processors/removeInjectableConstructors'))
   .processor(require('./processors/test'))
 
   .config(function(readTypeScriptModules, tsParser) {
