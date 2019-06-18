@@ -1,8 +1,14 @@
 {% macro paramList(member, truncateLines) -%}
   {%- if member.params -%}
-    ({% for n in range(member.params | length) %}
-      {%- if member.params[n].type.name -%}
-        {$ member.params[n].name | escape | truncateCode(truncateLines) $}: {$ member.params[n].type.name | escape | truncateCode(truncateLines) $}{% if not loop.last %}, {% endif %}
+    {%- set extendedParams = member.params -%}
+  {%- elif member.parameterDocs -%}
+    {%- set extendendParams = member.parameterDocs -%}
+  {%- endif -%}
+  
+  {%- if extendendParams or member.parameters -%}
+    ({% for n in range(extendendParams | length) %}
+      {%- if extendendParams[n].type.name -%}
+        {$ extendendParams[n].name | escape | truncateCode(truncateLines) $}: {$ extendendParams[n].type.name | escape | truncateCode(truncateLines) $}{% if not loop.last %}, {% endif %}
       {%- else -%}
         {$ member.parameters[n] | escape | truncateCode(truncateLines) $}{% if not loop.last %}, {% endif %}
       {%- endif -%}
