@@ -1,7 +1,11 @@
-{% macro paramList(params, truncateLines) -%}
-  {%- if params -%}
-    ({%- for param in params -%}
-      {$ param | escape | truncateCode(truncateLines) $}{% if not loop.last %}, {% endif %}
+{% macro paramList(member, truncateLines) -%}
+  {%- if member.params -%}
+    ({% for n in range(member.params | length) %}
+      {%- if member.params[n].type.name -%}
+        {$ member.params[n].name | escape | truncateCode(truncateLines) $}: {$ member.params[n].type.name | escape | truncateCode(truncateLines) $}{% if not loop.last %}, {% endif %}
+      {%- else -%}
+        {$ member.parameters[n] | escape | truncateCode(truncateLines) $}{% if not loop.last %}, {% endif %}
+      {%- endif -%}
     {%- endfor %})
   {%- endif %}
 {%- endmacro -%}
@@ -11,17 +15,19 @@
   {%- if returnType %}: {$ returnType | escape $}{% endif -%}
 {%- endmacro -%}
 
-{%- macro renderParameters(parameters, containerClass, parameterClass, showType) -%}
+{%- macro renderParameters(overload, containerClass, parameterClass, showType) -%}
+{%- set parameters = overload.parameterDocs -%}
 {%- if parameters.length -%}
 <table class="is-full-width list-table parameters-table {$ containerClass $}">
   <tbody>
-  {% for parameter in parameters %}
+  {% for n in range(parameters.length) %}
+    {%- set parameter = parameters[n] -%}
     <tr class="{$ parameterClass $}">
       <td class="param-name">
         <a id="{$ parameter.anchor $}"></a>
         <code>{$ parameter.name $}</code>
       </td>
-      {% if showType %}<td class="param-type"><code>{% if r/^\{/.test(parameter.type) and r/\}$/.test(parameter.type) and parameter.type.length > 20 %}object{% else %}{$ parameter.type $}{% endif %}</code></td>{% endif %}
+      {% if showType %}<td class="param-type"><code>{% if overload.params[n].type.name %}{$ overload.params[n].type.name $}{% elif r/^\{/.test(parameter.type) and r/\}$/.test(parameter.type) and parameter.type.length > 20 %}object{% else %}{$ parameter.type $}{% endif %}</code></td>{% endif %}
       <td class="param-description">
       {% marked %}
       {% if (parameter.shortDescription and parameter.shortDescription | trim) or (parameter.description | trim) %}{$ parameter.shortDescription + '\n\n' + parameter.description $}
