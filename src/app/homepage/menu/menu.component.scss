@@ -32,6 +32,10 @@
   @include media(small) {
     width: 100%;
   }
+  
+  @media print {
+    display: none;
+  }
 }
 
 .nav-item {
