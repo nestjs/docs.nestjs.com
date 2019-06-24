@@ -1,0 +1,10 @@
+{% extends 'export-base.template.html' %}
+
+{% block overview %}
+  <pre class="language-typescript"><code class="language-typescript">
+const {$ doc.name $}: {$ (doc.type | escape) or 'any' $};</code></pre>
+{% endblock %}
+
+{% block details %}
+  {% include "includes/description.html" %}
+{% endblock %}

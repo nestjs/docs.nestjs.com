@@ -6,3 +6,6 @@
 	path = sources/terminus
 	url = https://github.com/nestjs/terminus
 	branch = feature/api-docs
+[submodule "sources/passport"]
+	path = sources/passport
+	url = https://github.com/BrunnerLivio/passport.git
