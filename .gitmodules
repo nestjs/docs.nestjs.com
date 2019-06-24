@@ -9,3 +9,6 @@
 [submodule "sources/passport"]
 	path = sources/passport
 	url = https://github.com/BrunnerLivio/passport.git
+[submodule "sources/elasticsearch"]
+	path = sources/elasticsearch
+	url = https://github.com/BrunnerLivio/elasticsearch.git

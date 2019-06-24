@@ -9,4 +9,5 @@ export const PACKAGES_PATH: string[] = [
   './nest/packages/common/index.ts',
   './terminus/lib/index.ts',
   './passport/lib/index.ts',
+  './elasticsearch/lib/index.ts',
 ];
