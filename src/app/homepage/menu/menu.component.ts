@@ -162,6 +162,11 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'API',
+      isOpened: false,
+      path: '/api'
+    },
+    {
       title: 'FAQ',
       isOpened: false,
       children: [
