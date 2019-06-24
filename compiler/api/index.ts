@@ -15,6 +15,7 @@ const nestjs = new Package('nestjs', [
   typeScriptPackage
 ])
   .factory(require('./readers/package-content'))
+  .factory(require('./services/getDocFromAlias'))
 
   .processor(require('./processors/processPackages'))
   .processor(require('./processors/generateApiListDoc'))
@@ -24,6 +25,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/markPrivateDocs'))
   .processor(require('./processors/shortDescription'))
   .processor(require('./processors/removeInjectableConstructors'))
+  .processor(require('./processors/processModuleDocs'))
   .processor(require('./processors/test'))
 
   .config(function(readTypeScriptModules, tsParser) {

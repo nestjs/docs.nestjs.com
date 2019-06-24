@@ -1,3 +1,5 @@
+import { byId } from '../util/byId';
+
 module.exports = function processPackages() {
   return {
     docTypes: [],
@@ -27,7 +29,3 @@ module.exports = function processPackages() {
     }
   };
 };
-
-function byId(a, b) {
-  return a.id > b.id ? 1 : -1;
-}
