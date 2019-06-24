@@ -1,7 +1,7 @@
 import { byId } from '../util/byId';
 
 function getPackageName(packageDoc) {
-  const idParts = packageDoc.id.split('/').filter(p => p !== 'lib');
+  const idParts = packageDoc.id.split('/').filter(p => p !== 'lib' && p !== 'src');
   return idParts[idParts.length - 1].toLowerCase();
 }
 

@@ -10,4 +10,5 @@ export const PACKAGES_PATH: string[] = [
   './terminus/lib/index.ts',
   './passport/lib/index.ts',
   './elasticsearch/lib/index.ts',
+  './cqrs/src/index.ts',
 ];
