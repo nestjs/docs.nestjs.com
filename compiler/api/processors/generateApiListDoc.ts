@@ -16,16 +16,11 @@ module.exports = function generateApiListDoc() {
   };
 };
 
-function getPackageName(packageDoc) {
-  const idParts = packageDoc.id.split('/').filter(p => p !== 'lib');
-  return idParts[idParts.length - 1].toLowerCase();
-}
 
 function getPackageInfo(packageDoc) {
-  const packageName = getPackageName(packageDoc);
   return {
     name: packageDoc.id,
-    title: packageName,
+    title: packageDoc.name,
     path: packageDoc.path,
     items: (packageDoc.exports || [])
       .filter(doc => !doc.privateExport)
@@ -49,9 +44,4 @@ function getDocType(doc) {
     return 'const';
   }
   return doc.docType;
-}
-
-const stabilityProperties = ['stable', 'experimental', 'deprecated'];
-function getStability(doc) {
-  return stabilityProperties.find(prop => doc.hasOwnProperty(prop)) || '';
 }

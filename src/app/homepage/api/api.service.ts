@@ -24,12 +24,8 @@ export class ApiService {
   }
 
   getDocument(path) {
-    let requestingFile = path.replace('/api', '');
-    requestingFile = requestingFile.endsWith('/')
-      ? requestingFile
-      : requestingFile + '/';
     return this.http.get(
-      `/generated/docs/api/partials/modules/${requestingFile}index.html`,
+      `/generated/docs/${path}.html`,
       {
         responseType: 'text'
       }

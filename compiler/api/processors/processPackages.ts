@@ -1,5 +1,10 @@
 import { byId } from '../util/byId';
 
+function getPackageName(packageDoc) {
+  const idParts = packageDoc.id.split('/').filter(p => p !== 'lib');
+  return idParts[idParts.length - 1].toLowerCase();
+}
+
 module.exports = function processPackages() {
   return {
     docTypes: [],
@@ -10,8 +15,7 @@ module.exports = function processPackages() {
         if (doc.docType === 'module') {
           // Convert the doc type from 'module' to 'package'
           doc.docType = 'package';
-          // The name is actually the full id
-          doc.name = `@nestjs/${doc.id}`;
+          doc.name = getPackageName(doc);
 
           if (doc.exports) {
             const publicExports = doc.exports.filter(doc => !doc.privateExport);
