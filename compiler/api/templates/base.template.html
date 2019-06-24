@@ -1,5 +1,5 @@
 <header class="api-header">
   <h1>{$ doc.name $}</h1>
-  <label class="api-type-label {$ doc.docType $}">{$ doc.docType $}</label>
+  <label class="api-type-label {$ doc.docType $}">{% if doc.docType === "nestmodule" %}module{% else %}{$ doc.docType $}{% endif %}</label>
 </header>
 {% block body %}{% endblock %}
