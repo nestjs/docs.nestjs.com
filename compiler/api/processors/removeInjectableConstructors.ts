@@ -7,7 +7,6 @@ module.exports = function removeInjectableConstructors() {
       docs.forEach(doc => {
         if (
           doc.constructorDoc &&
-          !doc.constructorDoc.shortDescription &&
           doc.decorators &&
           doc.decorators.some(decorator => this.injectableDecorators.indexOf(decorator.name) !== -1)) {
           delete doc.constructorDoc;

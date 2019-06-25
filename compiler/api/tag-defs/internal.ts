@@ -1,3 +1,3 @@
 module.exports = function() {
-  return { name: 'publicApi' };
+  return { name: 'internal' };
 };

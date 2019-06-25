@@ -1,4 +1,3 @@
 module.exports = function() {
-    return { name: 'usageNotes' };
-  };
-  
+  return { name: 'usageNotes' };
+};

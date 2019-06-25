@@ -39,16 +39,23 @@
     {$ params.returnType(member.type) | trim | truncateCode(truncateLines) $}
 {%- endmacro -%}
 
+{%- macro renderExamples(method) -%}
+  {% for example in method.examples %}
+<div class="example-info">
+  <pre class="language-typescript">
+    <code class="language-typescript">
+{$ example $}</code></pre>
+</div>
+  {% endfor %}
+{%- endmacro -%}
+
 {%- macro renderOverloadInfo(overload, cssClass, method) -%}
 <div class="overload-info">
   {% if overload.shortDescription and (overload.shortDescription != method.shortDescription) %}
   <div class="short-description">
     {$ overload.shortDescription | marked $}
   </div>{% endif %}
-
-  <pre class="language-typescript"><code class="language-typescript">
-{$ renderMemberSyntax(overload) $}</code></pre>
-
+  <code>{$ renderMemberSyntax(overload) $}</code>
   {% if overload.deprecated !== undefined %}
   <div class="deprecated">
     {$ ('**Deprecated** ' + overload.deprecated) | marked $}
@@ -57,6 +64,8 @@
   <h4 class="no-anchor">Parameters</h4>
   {$ params.renderParameters(overload, cssClass + '-parameters', cssClass + '-parameter', true) $}
 
+  <h4 class="no-anchor">Examples</h4>
+  {$ renderExamples(method) $}
   {% if overload.type or overload.returns.type %}
   <h6 class="no-anchor">Returns</h6>
   {% marked %}`{$ (overload.type or overload.returns.type) $}`{% if overload.returns %}: {$ overload.returns.description $}{% endif %}{% endmarked %}
