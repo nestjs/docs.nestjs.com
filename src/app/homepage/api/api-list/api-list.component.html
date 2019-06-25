@@ -2,8 +2,14 @@
   <h1>
     API List
   </h1>
-  <section class="api-list" *ngFor="let section of apiSection | async">
-    <h2>
+  <div class="api-filter">
+    <div class="form-search">
+      <input placeholder="Filter" (input)="setQuery($event.target.value)">
+      <i class="material-icons">search</i>
+    </div>
+  </div>
+  <section class="api-list" *ngFor="let section of filteredSections | async">
+    <h2 *ngIf="section.items">
       <a [href]="section.path">{{ section.title }}</a>
     </h2>
     <ul>
