@@ -6,6 +6,7 @@ import { PACKAGES_PATH, PROJECT_ROOT, OUTPUT_PATH } from './config';
 import * as jsdocPackage from 'dgeni-packages/jsdoc';
 import * as nunjucksPackage from 'dgeni-packages/nunjucks';
 import * as typeScriptPackage from 'dgeni-packages/typescript';
+import { postProcessHtmlPackage } from '../post-process-html';
 
 function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
   // Tell TypeScript how to load modules that start with with `@nestjs`
@@ -37,6 +38,41 @@ function jsDocConfiguration(
 
 function writeFilesConfiguration(writeFilesProcessor: any) {
   writeFilesProcessor.outputFolder = OUTPUT_PATH;
+}
+
+function API_CONTAINED_DOC_TYPES() {
+  return [
+    'member',
+    'function-overload',
+    'get-accessor-info',
+    'set-accessor-info',
+    'parameter'
+  ];
+}
+function API_DOC_TYPES_TO_RENDER(EXPORT_DOC_TYPES) {
+  return EXPORT_DOC_TYPES.concat([
+    'decorator',
+    'nestmodule',
+    'injectable',
+    'pipe',
+    'package'
+  ]);
+}
+
+function API_DOC_TYPES(
+  API_DOC_TYPES_TO_RENDER: string[],
+  API_CONTAINED_DOC_TYPES: string[]
+) {
+  return API_DOC_TYPES_TO_RENDER.concat(API_CONTAINED_DOC_TYPES);
+}
+
+function postProcessors(postProcessHtml: any, autoLinkCode: any, API_DOC_TYPES: string[]) {
+  autoLinkCode.docTypes = API_DOC_TYPES;
+  postProcessHtml.docTypes = API_DOC_TYPES;
+  autoLinkCode.codeElements = ['code',];
+  postProcessHtml.plugins = [
+    autoLinkCode,
+  ];
 }
 
 function templateFinderConfiguration(
@@ -75,10 +111,15 @@ function templateFinderConfiguration(
 const nestjs = new Package('nestjs', [
   jsdocPackage,
   nunjucksPackage,
-  typeScriptPackage
+  typeScriptPackage,
+  postProcessHtmlPackage,
 ])
   .factory(require('./readers/package-content'))
   .factory(require('./services/getDocFromAlias'))
+  .factory(require('./post-processors/auto-link-code'))
+  .factory(API_CONTAINED_DOC_TYPES)
+  .factory(API_DOC_TYPES_TO_RENDER)
+  .factory(API_DOC_TYPES)
 
   .processor(require('./processors/processPackages'))
   .processor(require('./processors/generateApiListDoc'))
@@ -95,6 +136,7 @@ const nestjs = new Package('nestjs', [
   .config(readFilesConfiguration)
   .config(jsDocConfiguration)
   .config(writeFilesConfiguration)
+  .config(postProcessors)
   .config(templateFinderConfiguration);
 
 new Dgeni([nestjs]).generate();

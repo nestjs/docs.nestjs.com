@@ -1,5 +1,8 @@
 import 'prismjs/prism';
+import 'prismjs/plugins/keep-markup/prism-keep-markup';
 import 'prismjs/components/prism-typescript';
+declare var Prism;
+console.log(Prism.plugins);
 
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/delay';
