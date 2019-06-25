@@ -15,7 +15,7 @@
   {% set descendants = doc.descendants | filterByPropertyValue('docType', docTypeMatcher) | filterByPropertyValue('privateExport', undefined) %}
   {% if descendants.length %}
   <div class="descendants {$ descendantType $}">
-    {% if title %}<h2>{$ title $}</h2>{% endif %}
+    {% if title %}<h3><span>{$ title $}</span></h3>{% endif %}
     {$ renderDescendantList(descendants, descendantType, recursed, docTypeMatcher) $}
   </div>
   {% endif %}

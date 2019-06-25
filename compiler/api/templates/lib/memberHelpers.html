@@ -181,7 +181,7 @@
 {% set nonInternalMethods = methods | filterByPropertyValue('internal', undefined) %}
 {% if nonInternalMethods.length %}
 <section class="{$ containerClass $}">
-  <h2>{$ headingText $}</h2>
+  <h3><span><span>{$ headingText $}</span></span></h3>
   {% for member in nonInternalMethods %}
     {$ renderMethodDetail(versionInfo, member, itemClass) $}
   {% endfor %}
@@ -229,7 +229,7 @@
 {% set nonInternalMembers = ancestor.doc[collectionName] | filterByPropertyValue('internal', undefined) %}
 {% if nonInternalMembers.length -%}
 <section class="inherited-members-list">
-  <h3>Inherited from <code><a class="code-anchor" href="{$ ancestor.doc.path $}">{$ ancestor.doc.name $}</a></code></h3>
+  <h4><span>Inherited from <code><a class="code-anchor" href="{$ ancestor.doc.path $}">{$ ancestor.doc.name $}</a></code></span></h4>
   <ul>
   {% for member in nonInternalMembers %}
     <li>

@@ -1,8 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
     "declaration": false,
     "allowUnusedLabels": true,
     "noUnusedLocals": false,
@@ -10,18 +8,9 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "sourceMap": true,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2016",
-      "dom"
-    ],
-    "module": "esnext",
+    "lib": ["es2015"],
     "baseUrl": "./"
-  },
-  "exclude": [
-    "compiler",
-  ]
+  }
 }

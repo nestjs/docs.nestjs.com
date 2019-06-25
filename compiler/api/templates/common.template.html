@@ -1,8 +1,8 @@
-<h1>{$ doc.name $}</h1>
+<h2>{$ doc.name $}</h2>
 <p>{$ doc.description $}</p>
 
 {%- if doc.params %}
-<h2>Params</h2>
+<h3><span>Params</span></h3>
 <ul>
 {%- for param in doc.params %}
   <li>
@@ -12,14 +12,14 @@
 </ul>
 {%- endif %}
 {%- if doc.returns %}
-<h2>Returns</h2>
+<h3><span>Returns</span></h3>
 <p>
   { {$ doc.returns.typeList $} } - {$ doc.returns.description $}
 </p>
 {%- endif %}
 {%- if doc.members.length %}
 {%- for member in doc.members %}
-<h3>{$ member.name $}</h3>
+<h4><span>{$ member.name $}</span></h4>
 <p>{$ member.description $}</p>
 
 {%- endfor %}

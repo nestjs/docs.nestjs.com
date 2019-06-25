@@ -1,6 +1,6 @@
 {%- if doc.see AND doc.see.length %}
 <section class="see-also">
-  <h2>See also</h2>
+  <h3><span>See also</span></h3>
   <ul>
   {% for see in doc.see %}
     <li>{$ see | marked $}</li>{% endfor %}

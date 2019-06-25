@@ -49,28 +49,29 @@ function API_CONTAINED_DOC_TYPES() {
     'parameter'
   ];
 }
-function API_DOC_TYPES_TO_RENDER(EXPORT_DOC_TYPES) {
+function API_DOC_TYPES_TO_RENDER(EXPORT_DOC_TYPES, API_CONTAINED_DOC_TYPES) {
   return EXPORT_DOC_TYPES.concat([
     'decorator',
     'nestmodule',
     'injectable',
     'pipe',
     'package'
-  ]);
+  ]).filter(element => API_CONTAINED_DOC_TYPES.indexOf(element) === -1);
 }
 
 function API_DOC_TYPES(
   API_DOC_TYPES_TO_RENDER: string[],
   API_CONTAINED_DOC_TYPES: string[]
 ) {
-  return API_DOC_TYPES_TO_RENDER.concat(API_CONTAINED_DOC_TYPES);
+  return API_DOC_TYPES_TO_RENDER;
 }
 
-function postProcessors(postProcessHtml: any, autoLinkCode: any, API_DOC_TYPES: string[]) {
+function postProcessors(postProcessHtml: any, autoLinkCode: any, API_DOC_TYPES: string[], API_DOC_TYPES_TO_RENDER: string[]) {
   autoLinkCode.docTypes = API_DOC_TYPES;
-  postProcessHtml.docTypes = API_DOC_TYPES;
-  autoLinkCode.codeElements = ['code',];
+  postProcessHtml.docTypes = API_DOC_TYPES_TO_RENDER;
+  autoLinkCode.codeElements = ['code'];
   postProcessHtml.plugins = [
+    require('./post-processors/autolink-headings'),
     autoLinkCode,
   ];
 }
@@ -131,6 +132,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/removeInjectableConstructors'))
   .processor(require('./processors/processModuleDocs'))
   .processor(require('./processors/computeOutputPath'))
+  .processor(require('./processors/fixInternalDocumentLinks'))
 
   .config(typeScriptConfiguration)
   .config(readFilesConfiguration)

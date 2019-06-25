@@ -5,7 +5,7 @@
 
 {% macro renderTable(items, containerClass, headingText, tableHeading) %}
 <section class="{$ containerClass $}">
-    <h2>{$ headingText $}</h2>
+    <h3><span>{$ headingText $}</span></h3>
     <table class="is-full-width list-table property-table">
       <thead>
         <tr>
@@ -28,7 +28,7 @@
 
 {% macro renderExports(items, cssClass, itemType) %}
 <section class="{$ cssClass $}s">
-  <h2>{$ itemType $}</h2>
+  <h3><span>{$ itemType $}</span></h3>
   <table class="is-full-width list-table {$ cssClass $}-table">
     <thead>
       <tr><th>Name</th><th>Description</th></tr>
@@ -61,7 +61,7 @@
   {$ memberHelpers.renderProperties(doc.staticProperties, 'static-properties', 'static-property', 'Static properties') $}
   {$ memberHelpers.renderMethodDetails(versionInfo, doc.staticMethods, 'static-methods', 'static-method', 'Static methods') $}
   {% if doc.constructorDoc %}
-  <h2>Constructor</h2>
+  <h3><span>Constructor</span></h3>
   {$ memberHelpers.renderMethodDetail(versionInfo, doc.constructorDoc, 'constructor') $}{% endif %}
 
   {$ memberHelpers.renderProperties(doc.properties, 'instance-properties', 'instance-property', 'Properties') $}
