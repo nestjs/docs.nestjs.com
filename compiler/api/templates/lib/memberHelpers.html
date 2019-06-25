@@ -64,8 +64,10 @@
   <h4 class="no-anchor">Parameters</h4>
   {$ params.renderParameters(overload, cssClass + '-parameters', cssClass + '-parameter', true) $}
 
-  <h4 class="no-anchor">Examples</h4>
-  {$ renderExamples(method) $}
+  {% if method.examples and method.examples.length %}
+    <h4 class="no-anchor">Examples</h4>
+    {$ renderExamples(method) $}
+  {% endif %}
   {% if overload.type or overload.returns.type %}
   <h6 class="no-anchor">Returns</h6>
   {% marked %}`{$ (overload.type or overload.returns.type) $}`{% if overload.returns %}: {$ overload.returns.description $}{% endif %}{% endmarked %}

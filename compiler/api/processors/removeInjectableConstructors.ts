@@ -2,7 +2,7 @@ module.exports = function removeInjectableConstructors() {
   return {
     $runAfter: ['processing-docs', 'splitDescription'],
     $runBefore: ['docs-processed'],
-    injectableDecorators: ['Injectable'],
+    injectableDecorators: ['Injectable', 'Module'],
     $process(docs) {
       docs.forEach(doc => {
         if (
