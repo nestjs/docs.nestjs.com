@@ -1,7 +1,7 @@
 [submodule "sources/nest"]
 	path = sources/nest
 	url = https://github.com/BrunnerLivio/nest
-	branch=fix/jsdoc-comments
+	branch=feature/api-docs
 [submodule "sources/terminus"]
 	path = sources/terminus
 	url = https://github.com/nestjs/terminus
@@ -17,4 +17,20 @@
 [submodule "sources/cqrs"]
 	path = sources/cqrs
 	url = https://github.com/BrunnerLivio/cqrs.git
+  branch = feature/api-docs
+[submodule "sources/jwt"]
+	path = sources/jwt
+	url = https://github.com/BrunnerLivio/jwt.git
+  branch = feature/api-docs
+[submodule "sources/mongoose"]
+	path = sources/mongoose
+	url = https://github.com/BrunnerLivio/mongoose.git
+  branch = feature/api-docs
+[submodule "sources/ng-universal"]
+	path = sources/ng-universal
+	url = https://github.com/BrunnerLivio/ng-universal.git
+  branch = feature/api-docs
+[submodule "sources/graphql"]
+	path = sources/graphql
+	url = https://github.com/BrunnerLivio/graphql.git
   branch = feature/api-docs

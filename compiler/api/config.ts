@@ -11,4 +11,8 @@ export const PACKAGES_PATH: string[] = [
   './passport/lib/index.ts',
   './elasticsearch/lib/index.ts',
   './cqrs/src/index.ts',
+  './jwt/lib/index.ts',
+  './graphql/lib/index.ts',
+  './mongoose/lib/index.ts',
+  './ng-universal/lib/index.ts',
 ];
