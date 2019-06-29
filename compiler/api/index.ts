@@ -73,6 +73,7 @@ function postProcessors(postProcessHtml: any, autoLinkCode: any, API_DOC_TYPES: 
   postProcessHtml.plugins = [
     require('./post-processors/autolink-headings'),
     autoLinkCode,
+    require('./post-processors/codeFormatting'),
   ];
 }
 
@@ -131,6 +132,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/shortDescription'))
   .processor(require('./processors/removeInjectableConstructors'))
   .processor(require('./processors/processModuleDocs'))
+  .processor(require('./processors/processDecorators'))
   .processor(require('./processors/computeOutputPath'))
   .processor(require('./processors/fixInternalDocumentLinks'))
 

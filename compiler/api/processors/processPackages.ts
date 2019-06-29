@@ -19,6 +19,7 @@ module.exports = function processPackages() {
 
           if (doc.exports) {
             const publicExports = doc.exports.filter(doc => !doc.privateExport);
+            doc.modules = publicExports.filter(doc => doc.docType === 'decorator').sort(byId);
             doc.modules = publicExports.filter(doc => doc.docType === 'nestmodule').sort(byId);
             doc.classes = publicExports.filter(doc => doc.docType === 'class').sort(byId);
             doc.injectables = publicExports.filter(doc => doc.docType === 'injectable').sort(byId);
