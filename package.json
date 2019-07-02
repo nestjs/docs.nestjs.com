@@ -73,7 +73,7 @@
     "marked": "0.6.3",
     "protractor": "6.0.0",
     "ts-node": "8.2.0",
-    "tslint": "5.17.0",
+    "tslint": "5.18.0",
     "typescript": "3.4.1",
     "uuid": "3.3.2"
   }
