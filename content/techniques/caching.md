@@ -142,7 +142,7 @@ Quite often you might want to asynchronously pass your module options instead of
 First possible approach is to use a factory function:
 
 ```typescript
-CacheModule.forRootAsync({
+CacheModule.registerAsync({
   useFactory: () => ({
     ttl: 5,
   }),
@@ -152,7 +152,7 @@ CacheModule.forRootAsync({
 Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
 
 ```typescript
-CacheModule.forRootAsync({
+CacheModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
     ttl: configService.getString('CACHE_TTL'),
@@ -164,7 +164,7 @@ CacheModule.forRootAsync({
 Alternatively, you are able to use class instead of a factory.
 
 ```typescript
-CacheModule.forRootAsync({
+CacheModule.registerAsync({
   useClass: CacheConfigService,
 });
 ```
@@ -185,7 +185,7 @@ class CacheConfigService implements CacheOptionsFactory {
 In order to prevent the creation of `CacheConfigService` inside `CacheModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
 
 ```typescript
-CacheModule.forRootAsync({
+CacheModule.registerAsync({
   imports: [ConfigModule],
   useExisting: ConfigService,
 });
