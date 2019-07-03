@@ -1,4 +1,14 @@
 {% import "lib/descendants.html" as descendants -%}
+{% import "lib/memberHelpers.html" as memberHelpers -%}
+
+{% if doc.overloads and doc.overloads.length > 0 and doc.overloads < 3 -%}
+  {% for overload in doc.overloads -%}
+    {$ memberHelpers.renderDecoratorInfo(overload, 'function-overload', doc) $}
+    {% if not loop.last %}<hr class="hr-margin fullwidth">{% endif %}
+  {% endfor -%}
+{% else %}
+  {$ memberHelpers.renderDecoratorInfo(doc, 'function-overload', doc) $}
+{% endif %}
 
 {% macro renderOptionsTable(doc) %}
 <table class="is-full-width list-table option-overview">

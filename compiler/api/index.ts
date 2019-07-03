@@ -81,7 +81,8 @@ function templateFinderConfiguration(
   templateFinder: any,
   templateEngine: any,
   renderDocsProcessor: any,
-  getInjectables: any
+  getInjectables: any,
+  computePathsProcessor: any
 ) {
   templateFinder.templateFolders.unshift(resolve(__dirname, 'templates'));
   templateFinder.templatePatterns = [
@@ -97,6 +98,11 @@ function templateFinderConfiguration(
     '${ doc.docType }.template.json',
     'common.template.html'
   ];
+
+  computePathsProcessor.pathTemplates.push({
+    docTypes: ['decorator'],
+    pathTemplate: 'decorator.template.html',
+  });
 
   // Nunjucks and Angular conflict in their template bindings so change Nunjucks
   templateEngine.config.tags = { variableStart: '{$', variableEnd: '$}' };
