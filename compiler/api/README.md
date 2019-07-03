@@ -1,6 +1,6 @@
 # API Documentation Compiler
 
-The API compiler is a script which generates a HTML documentation directly from the nestjs sources code.
+The API compiler is a script which generates HTML documentation directly from the nestjs source code.
 The script takes advantage of [Dgeni](https://github.com/angular/dgeni), a documentation framework used by 
 AngularJS, Angular 2-x and Angular Material.
 
@@ -28,7 +28,7 @@ You can find the compiled assets in the `src/generated` folder.
 
 ### <a name='DebugwithVSCode'></a>Debug with VSCode
 
-Debugging the API script can be hard without and development tool, because the `DocCollection`
+Debugging the API script can be hard without a development tool, because the `DocCollection`
 is not type-secure. Therefore this `.vscode/launch.json` configuration can help massively while
 developing
 
@@ -55,8 +55,8 @@ developing
 
 ## <a name='TagDefinitions'></a>Tag Definitions
 
-This API documentation tool reads its humand-readable information from JSDoc tags.
-An useful resource to get started with JSDoc is the devhints.io [JSDoc cheatsheet](https://devhints.io/jsdoc).
+This API documentation tool reads its human-readable information from JSDoc tags.
+A useful resource to get started with JSDoc is the devhints.io [JSDoc cheatsheet](https://devhints.io/jsdoc).
 
 > **HINT**
 > Some tags which are part of the JSDoc specs are not supported with this generation tool.
@@ -78,7 +78,7 @@ An useful resource to get started with JSDoc is the devhints.io [JSDoc cheatshee
 
 ### <a name='publicApi'></a>@publicApi
 
-Exposes a document to the public api. In case this tag is not set, the `docs.nestjs.com` user interface
+Exposes a document to the public api. If this tag is not set, the `docs.nestjs.com` user interface
 will **NOT** display it.
 
 
