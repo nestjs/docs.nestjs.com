@@ -9,6 +9,14 @@ export const PACKAGES_PATH: string[] = [
   // TODO: Delete me
   './nest/packages/core/nest-factory.ts',
   './nest/packages/common/index.ts',
+  './nest/packages/microservices/index.ts',
+  './nest/packages/platform-express/index.ts',
+  './nest/packages/platform-fastify/index.ts',
+  './nest/packages/platform-socket.io/index.ts',
+  './nest/packages/platform-ws/index.ts',
+  './nest/packages/testing/index.ts',
+  './nest/packages/websockets/index.ts',
+
   './terminus/lib/index.ts',
   './passport/lib/index.ts',
   './elasticsearch/lib/index.ts',
