@@ -1,3 +1,10 @@
+const attributesToTransfer = [
+  'see',
+  'usageNotes',
+  'description',
+  'examples',
+];
+
 /**
  * A class like API doc contains members, but these can be either properties or method.
  * Separate the members into two new collections: `doc.properties` and `doc.methods`.
@@ -54,6 +61,8 @@ function isMethod(doc) {
 function computeMemberDescription(member) {
   if (!member.description && member.overloads) {
     // Perhaps the description is on one of the overloads - take the first non-empty one
-    member.description = member.overloads.map(overload => overload.description).filter(description => !!description)[0];
+    attributesToTransfer.forEach(attribute => {
+      member[attribute] = member.overloads.map(overload => overload[attribute]).filter(attr => !!attr)[0];
+    });
   }
 }
