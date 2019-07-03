@@ -6,14 +6,14 @@
 
 * Database agnostic extendable CRUD controllers.
 * Query string parsing with filtering, pagination, sorting, relations, nested relations, cache, etc.
-* Framework agnostic package with query builder for a frontend usage.
+* Framework agnostic package with query builder for frontend usage.
 * Query, path params and DTO validation.
 * Overriding controller methods with ease.
-* Tiny but mighty configuration (including global configuration).
+* Tiny but powerful configuration (including global configuration).
 * Additional helper decorators.
 * Swagger documentation.
 
-> warning **Notice** So far, `Nestjsx/crud` only supports `TypeORM`, but other ORMs like `Sequelize` and `Mongoose` will be included in the near future. So in this article, you'll learn how to create CRUD controllers and services using `TypeORM`. We assume that you already have installed and set up successfully the `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
+> warning **Notice** So far, `Nestjsx/crud` only supports `TypeORM`, but other ORMs like `Sequelize` and `Mongoose` will be included in the near future. So in this article, you'll learn how to create CRUD controllers and services using `TypeORM`. We assume that you have already successfully installed and set up the `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
 
 #### Getting started
 
@@ -59,7 +59,7 @@ export class HeroesService extends TypeOrmCrudService<Hero> {
 }
 ```
 
-We've done with the service so let's create a **controller**:
+We're done with the service so let's create a **controller**:
 
 ```typescript
 @@filename(heroes.controller)
@@ -111,7 +111,7 @@ By finishing this, your Nest application will have these newly created endpoints
 
 #### Filtering and pagination
 
-[Nestjsx/crud](https://github.com/nestjsx/crud) provides reach tools for filtering and pagination. For example:
+[Nestjsx/crud](https://github.com/nestjsx/crud) provides rich tools for filtering and pagination. For example:
 
 > info **Request** GET /heroes?**select**=name&**filter**=power||gt||90&**sort**=name,ASC&**page**=1&**limit**=3
 
@@ -144,7 +144,7 @@ The response object should be similar to this:
 
 > warning **Notice** Primary columns persist in the resource response object whether they were requested or not. In our case, it's an `id` column.
 
-The complete list of query params and filter operators could be found in the project's [WiKi](https://github.com/nestjsx/crud/wiki/Requests).
+The complete list of query params and filter operators can be found in the project's [WiKi](https://github.com/nestjsx/crud/wiki/Requests).
 
 #### Relations
 
@@ -179,7 +179,7 @@ The response will contain a hero object with a joined profile which will have `a
 
 Also, the response will contain a `faction` object with the `name` column selected because it was set to `eager: true` and thus persists in every response.
 
-More information about relations you can find in the project's [WiKi](https://github.com/nestjsx/crud/wiki/Controllers#join).
+You can find more information about relations in the project's [WiKi](https://github.com/nestjsx/crud/wiki/Controllers#join).
 
 #### Path params validation
 
@@ -268,8 +268,8 @@ export class HeroesController {
 }
 ```
 
-Also, you can apply any method decorator by passing them to the specific route `decorators` array. It becomes very helpful when you want to add some decorators without any need in a base method overriding.
+Also, you can apply any method decorators by passing them to the specific route `decorators` array. This is convenient when you want to add some decorators without overriding base methods.
 
 #### Documentation
 
-The described example of [Nestjsx/crud](https://github.com/nestjsx/crud) usage doesn't cover its all features. You can find answers almost on all project related questions on its [WiKi](https://github.com/nestjsx/crud/wiki/Home) page.
+The examples in this chapter cover only some of the [Nestjsx/crud](https://github.com/nestjsx/crud) features. You can find answers to many more usage questions on the project's [WiKi](https://github.com/nestjsx/crud/wiki/Home) page.
