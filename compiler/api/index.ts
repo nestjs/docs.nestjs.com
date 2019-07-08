@@ -6,7 +6,7 @@ import { PACKAGES_PATH, PROJECT_ROOT, OUTPUT_PATH } from './config';
 import * as jsdocPackage from 'dgeni-packages/jsdoc';
 import * as nunjucksPackage from 'dgeni-packages/nunjucks';
 import * as typeScriptPackage from 'dgeni-packages/typescript';
-import { postProcessHtmlPackage } from '../post-process-html';
+import * as postProcessHtmlPackage from 'dgeni-packages/post-process-html';
 
 function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
   // Tell TypeScript how to load modules that start with with `@nestjs`
