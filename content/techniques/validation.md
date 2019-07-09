@@ -107,7 +107,7 @@ app.useGlobalPipes(
 );
 ```
 
-This setting will enable auto-stripping of non-whitelisted (without any decorator on top of them) properties. However, if you want to stop the request processing entirely, and return an error response to the user, use `forbidNonWhitelisted` instead.
+This setting will enable auto-stripping of non-whitelisted (without any decorator on top of them) properties. However, if you want to stop the request processing entirely, and return an error response to the user, use `forbidNonWhitelisted` in combination with `whitelist`.
 
 #### Auto payload transforming
 
