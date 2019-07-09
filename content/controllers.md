@@ -95,7 +95,7 @@ export class CatsController {
 }
 ```
 
-> warning **Hint** In order to take advantage of `express` typings (as in the `request: Request` parameter example above), install `@types/express` package.
+> info **Hint** In order to take advantage of `express` typings (as in the `request: Request` parameter example above), install `@types/express` package.
 
 The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](http://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use dedicated decorators instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the plain platform-specific objects they represent.
 
