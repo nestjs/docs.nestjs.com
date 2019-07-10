@@ -272,7 +272,7 @@ Now a hardcoded `mockRepository` will be used as a `PhotoRepository`. Whenever a
 
 #### Custom repository
 
-TypeORM provides a feature called **custom repositories**. To learn more about it, visit [this](http://typeorm.io/#/custom-repository) page. Basically, custom repositories allows you to extend a base repository class, and enrich it with a couple of special methods.
+TypeORM provides a feature called **custom repositories**. To learn more about it, visit [this](http://typeorm.io/#/custom-repository) page. Basically, custom repositories allow you to extend a base repository class, and enrich it with a couple of special methods.
 
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
