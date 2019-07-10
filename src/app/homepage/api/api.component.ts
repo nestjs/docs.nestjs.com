@@ -16,7 +16,7 @@ import { BasePageComponent } from '../pages/page/page.component';
   encapsulation: ViewEncapsulation.None
 })
 export class ApiComponent extends BasePageComponent implements OnInit {
-  @ViewChild('content') contentRef: ElementRef<HTMLDivElement>;
+  @ViewChild('content', { static: false }) contentRef: ElementRef<HTMLDivElement>;
   isDetailPage = false;
 
   constructor(
