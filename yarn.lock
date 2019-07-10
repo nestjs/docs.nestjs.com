@@ -4307,10 +4307,10 @@ ngx-markdown@8.1.0:
     prismjs "^1.16.0"
     tslib "^1.9.0"
 
-ngx-perfect-scrollbar@7.2.1:
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/ngx-perfect-scrollbar/-/ngx-perfect-scrollbar-7.2.1.tgz#72cbbba6bc75b4836fa0300760d2d69ed41d241c"
-  integrity sha512-2Dyzx2M3ihGSlcTNwb+o8XGJr4ukkeCMz9J6A0cXyL7eX1Tez6BnRqTcpKe9JWkVEdRVd8+WT0uZ2O0tMiRF3A==
+ngx-perfect-scrollbar@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-perfect-scrollbar/-/ngx-perfect-scrollbar-8.0.0.tgz#19c1bbf9b1a36d89b00a68f7834e39427d29182f"
+  integrity sha512-IXoFbULQnxyJj0gdCcKCLE/6OW9HCP9KARzMCKS1kNxTuzG4DghjM2AaCBRM5/sFwdbn6rqOKMCINtHA8W8YCA==
   dependencies:
     perfect-scrollbar "^1.4.0"
     resize-observer-polyfill "^1.5.0"
