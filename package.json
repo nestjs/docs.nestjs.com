@@ -72,7 +72,7 @@
     "karma-jasmine-html-reporter": "1.4.2",
     "marked": "0.6.3",
     "protractor": "6.0.0",
-    "ts-node": "8.2.0",
+    "ts-node": "8.3.0",
     "tslint": "5.18.0",
     "typescript": "3.4.1",
     "uuid": "3.3.2"
