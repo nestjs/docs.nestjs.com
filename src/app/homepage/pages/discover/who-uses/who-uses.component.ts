@@ -99,6 +99,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://www.qingtui.cn/',
       width: '90px',
     },
+    {
+      logo: '/assets/logo/crowdlinker.svg',
+      url: 'https://crowdlinker.com/',
+      width: '110px'
+    },
   ];
 
   readonly companiesUrls = [
