@@ -16,11 +16,21 @@ function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
   // API files are typescript
   readTypeScriptModules.basePath = PROJECT_ROOT;
   readTypeScriptModules.sourceFiles = PACKAGES_PATH;
+  readTypeScriptModules.hidePrivateMembers = true;
 }
 
-function readFilesConfiguration(readFilesProcessor: any) {
-  readFilesProcessor.$enabled = false;
+function readFilesConfiguration(readFilesProcessor: any, packageContentFileReader: any) {
   readFilesProcessor.basePath = PROJECT_ROOT;
+
+  readFilesProcessor.fileReaders.push(packageContentFileReader);
+
+  readFilesProcessor.sourceFiles = [
+    {
+      basePath: PROJECT_ROOT,
+      include: PROJECT_ROOT + '/**/PACKAGE.md',
+      fileReader: 'packageContentFileReader'
+    }
+  ];
 }
 
 function jsDocConfiguration(
