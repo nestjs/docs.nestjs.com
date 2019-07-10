@@ -152,12 +152,20 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/computeOutputPath'))
   .processor(require('./processors/fixInternalDocumentLinks'))
   .processor(require('./processors/computeApiBreadCrumbs'))
+  .processor(require('./processors/addApiPage'))
 
   .config(typeScriptConfiguration)
   .config(readFilesConfiguration)
   .config(jsDocConfiguration)
   .config(writeFilesConfiguration)
   .config(postProcessors)
-  .config(templateFinderConfiguration);
+  .config(templateFinderConfiguration)
+  .config(function(computePathsProcessor) {
+    computePathsProcessor.pathTemplates.push({
+      docTypes: ['decorator'],
+      pathTemplate: 'decorator.template.html',
+      outputPathTemplate: '${path}'
+    });
+  });
 
 new Dgeni([nestjs]).generate();

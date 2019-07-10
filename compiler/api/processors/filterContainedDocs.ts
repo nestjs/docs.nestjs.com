@@ -3,7 +3,8 @@ const docTypes = [
   'function-overload',
   'get-accessor-info',
   'set-accessor-info',
-  'parameter'
+  'parameter',
+  'package-content'
 ];
 
 /**
@@ -13,7 +14,7 @@ const docTypes = [
 module.exports = function filterContainedDocs() {
   return {
     $runAfter: ['extra-docs-added'],
-    $runBefore: ['computing-paths'],
+    $runBefore: ['computing-paths', 'computeIdsProcessor'],
     $process: docs =>
       docs.filter(doc => docTypes.indexOf(doc.docType) === -1)
   };

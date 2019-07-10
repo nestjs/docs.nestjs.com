@@ -1,3 +1,6 @@
 module.exports = function() {
-  return { name: 'internal' };
+  return {
+    name: 'internal',
+    transforms: () => true
+  };
 };

@@ -4,7 +4,7 @@
 
 {$ memberHelpers.renderMethodDetails(versionInfo, doc.staticMethods, 'static-methods', 'static-method', 'Static methods') $}
 
-{% if doc.constructorDoc %}
+{% if doc.constructorDoc and not doc.constructorDoc.internal %}
 <h3><span>Constructor</span></h3>
 {$ memberHelpers.renderMethodDetail(versionInfo, doc.constructorDoc, 'constructor') $}
 {% endif %}

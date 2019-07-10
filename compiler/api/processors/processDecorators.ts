@@ -12,8 +12,6 @@ module.exports = function processDecorators(log: any, createDocMessage: any) {
           if (doc.docType === 'function') {
             doc.docType = 'decorator';
             doc.template = join(__dirname, '../templates/decorator.template.html');
-          } else if (doc.docType === 'const') {
-            log.warn(createDocMessage('Invalid docType for decorator', doc));
           }
         }
       });

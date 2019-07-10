@@ -89,6 +89,9 @@ module.exports = function autoLinkCode(getDocFromAlias) {
   }
 
   function createLinkNode(doc, text) {
+    if (!doc.path) {
+      return;
+    }
     return {
       type: 'element',
       tagName: 'a',
