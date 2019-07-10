@@ -1,5 +1,17 @@
+{% set breadcrumbDelimiter = joiner('&gt;') %}
+<div class="breadcrumb-container">
+  <div class="breadcrumb">
+    {% for crumb in doc.breadCrumbs %}{% if not loop.last %} {$
+    breadcrumbDelimiter() $} {% if crumb.path %}<a href="{$ crumb.path $}"
+      >{$ crumb.text $}</a
+    >{% else %}{$ crumb.text $}{% endif %}{% endif %}{% endfor %}
+  </div>
+</div>
 <header class="api-header">
   <h2>{$ doc.name $}</h2>
-  <label class="api-type-label {$ doc.docType $}">{% if doc.docType === "nestmodule" %}module{% else %}{$ doc.docType $}{% endif %}</label>
+  <label class="api-type-label {$ doc.docType $}"
+    >{% if doc.docType === "nestmodule" %}module{% else %}{$ doc.docType $}{%
+    endif %}</label
+  >
 </header>
 {% block body %}{% endblock %}

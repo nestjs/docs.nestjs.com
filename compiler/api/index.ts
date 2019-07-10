@@ -151,6 +151,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/processDecorators'))
   .processor(require('./processors/computeOutputPath'))
   .processor(require('./processors/fixInternalDocumentLinks'))
+  .processor(require('./processors/computeApiBreadCrumbs'))
 
   .config(typeScriptConfiguration)
   .config(readFilesConfiguration)
