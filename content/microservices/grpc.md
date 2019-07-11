@@ -238,57 +238,54 @@ A full working example is available [here](https://github.com/nestjs/nest/tree/m
 #### gRPC Streaming
 GRPC on it's own supports long-term live connections more known as `streams`. 
 Streams can be a very useful instrument for such service cases as Chatting, Observations
-or Chunk-data transfers, official documentation on [gRPC Concepts and streams](https://grpc.io/docs/guides/concepts/)
+or Chunk-data transfers. You can find more details in the official documentation ([here](https://grpc.io/docs/guides/concepts/)).
 
 Nest supports GRPC stream handlers in two possible ways:
-- `RxJS Subject + Observable` handler: can be useful to write 
+- RxJS `Subject` + `Observable` handler: can be useful to write 
 responses right inside of a Controller method or to be passed down
-to Subject/Observable consumer
-- `Pure GRPC call stream` handler: can be useful to be passed
+to `Subject`/`Observable` consumer
+- Pure GRPC call stream handler: can be useful to be passed
 to some executor which will handle the rest of dispatch for
 the Node standard `Duplex` stream handler.
 
-##### GrpcStreamMethod decorator
-This decorator will provide the function parameter as RxJS Observable.
+##### Subject strategy
+`@GrpcStreamMethod()` decorator will provide the function parameter as RxJS `Observable`.
+
 ```typescript
 // Set decorator with selecting a Service definition from protobuf package
 // the string is matching to: package proto_example.orders.OrdersService
 @GrpcStreamMethod('orders.OrderService')
 async sync(messages: Observable<any>): Observable<any> {
-  const s = new Subject();
-  const o = s.asObservable();
-  messages.subscribe(msg => {
-    // Do something with the message
-    console.log(msg);
-    // Answer here or anywhere else using Subject
-    s.next({
-      id: 1,
+  const subject = new Subject();
+  messages.subscribe(message => {
+    console.log(message);
+    subject.next({
       shipmentType: {
         carrier: 'test-carrier',
       },
     });
   });
-  return o;
+  return subject.asObservable();
 }
 ```
-For support full-duplex interaction with `GrpcStreamMethod` decorator it is required that RxJS Observable Subject
-will be passed to a return statement of a Controller method.
+For support full-duplex interaction with `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable`
+from the controller method.
 
-##### GrpcStreamCall decorator
-This decorator will provide function parameter as `grpc.ServerDuplexStream`, which
+##### Pure GRPC call stream handler 
+
+`@GrpcStreamCall()` decorator will provide function parameter as `grpc.ServerDuplexStream`, which
 supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`, 
-full documentation on available methods can be found [here at official gRPC docs for Node](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html)
+full documentation on available methods can be found [here](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
+
 ```typescript
 // Set decorator with selecting a Service definition from protobuf package
 // the string is matching to: package proto_example.orders.OrdersService
 @GrpcStreamCall('orders.OrderService')
 async syncCall(stream: any): void {
   stream.on('data', (msg: any) => {
-    // Do something with the message
     console.log(msg);
     // Answer here or anywhere else using stream reference
     stream.write({
-      id: 1,
       shipmentType: {
         carrier: 'test-carrier',
       },
@@ -299,7 +296,3 @@ async syncCall(stream: any): void {
 This decorator do not require any specific return parameter to be provided. 
 It is expected that stream will be handled in the way like any other standard
 stream type.
-
-Protobuf interfaces used in this example: [Protobuf example with Service Stream Definitions](https://github.com/nestjs/nest/blob/master/integration/microservices/src/grpc-advanced/proto/orders/service.proto)
-<br>
-GRPC controller used in this example: [Advanced gRPC controller with NestJS](https://github.com/nestjs/nest/blob/master/integration/microservices/src/grpc-advanced/advanced.grpc.controller.ts)
