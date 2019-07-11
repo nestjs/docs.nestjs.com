@@ -104,6 +104,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://crowdlinker.com/',
       width: '110px'
     },
+    {
+      logo: '/assets/logo/nothing.svg',
+      url: 'https://nothing.ch/',
+      width: '110px'
+    },
   ];
 
   readonly companiesUrls = [
