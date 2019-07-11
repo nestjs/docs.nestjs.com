@@ -256,7 +256,7 @@ the Node standard `Duplex` stream handler.
 // Set decorator with selecting a Service definition from protobuf package
 // the string is matching to: package proto_example.orders.OrdersService
 @GrpcStreamMethod('orders.OrderService')
-async sync(messages: Observable<any>): Observable<any> {
+handleStream(messages: Observable<any>): Observable<any> {
   const subject = new Subject();
   messages.subscribe(message => {
     console.log(message);
@@ -282,7 +282,7 @@ full documentation on available methods can be found [here](https://grpc.github.
 // Set decorator with selecting a Service definition from protobuf package
 // the string is matching to: package proto_example.orders.OrdersService
 @GrpcStreamCall('orders.OrderService')
-async syncCall(stream: any): void {
+handleStream(stream: any) {
   stream.on('data', (msg: any) => {
     console.log(msg);
     // Answer here or anywhere else using stream reference
