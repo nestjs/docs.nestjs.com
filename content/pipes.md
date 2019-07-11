@@ -405,7 +405,7 @@ async findOne(id) {
 }
 ```
 
-> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options. If you want to check UUID v4 you can doit like this: `ParseUUIDPipe({ version: 4 })` 
+> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options. If you want to check UUID v4 you can doit like this: `ParseUUIDPipe(&#123; version: 4 &#125;)` 
 
 With this in place, `ParseIntPipe` or `ParseUUIDPipe` will be executed before the request reaches the corresponding handler, ensuring that it will always receive an integer or uuid (according on the used pipe) for the `id` parameter.
 
