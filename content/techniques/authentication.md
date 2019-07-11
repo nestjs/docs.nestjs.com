@@ -775,6 +775,34 @@ Any standard Passport customization options can be passed the same way, using th
 PassportModule.register({ session: true });
 ```
 
+#### Custom OAuth Parameters
+
+On occasion some OAuth providers require or allow fields to be specified to extend functionality. For example google oauth allows you to specify fields which are used to control what type of access your application has to their account. 
+
+For example you'd see something like the following if you were to directly use passport with express:
+
+```typescript
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { accessType: 'offline' }),
+  () => { /* Successful authentication */ });
+```
+
+When your strategy is initialized you're able to provide similar custom fields through the `customParameters` field in your config object.
+
+```typescript
+@Injectable()
+export class GoogleAuthStrategy extends PassportStrategy(GoogleStrategy) {
+  constructor() {
+    super({
+      /* ... other oauth fields for strategy ... */
+      customParameters: {
+        accessType: 'offline',
+      }
+    });
+  }
+}
+```
+
 #### Named strategies
 
 When implementing a strategy, you can provide a name for it by passing a second argument to the `PassportStrategy` function. If you don't do this, each strategy will have a default name (e.g., 'jwt' for jwt-strategy):
