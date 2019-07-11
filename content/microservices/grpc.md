@@ -236,6 +236,7 @@ call() {
 A full working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
 #### gRPC Streaming
+
 GRPC on it's own supports long-term live connections more known as `streams`. 
 Streams can be a very useful instrument for such service cases as Chatting, Observations
 or Chunk-data transfers. You can find more details in the official documentation ([here](https://grpc.io/docs/guides/concepts/)).
@@ -248,7 +249,7 @@ to `Subject`/`Observable` consumer
 to some executor which will handle the rest of dispatch for
 the Node standard `Duplex` stream handler.
 
-##### Subject strategy
+#### Subject strategy
 `@GrpcStreamMethod()` decorator will provide the function parameter as RxJS `Observable`.
 
 ```typescript
@@ -271,7 +272,7 @@ async sync(messages: Observable<any>): Observable<any> {
 For support full-duplex interaction with `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable`
 from the controller method.
 
-##### Pure GRPC call stream handler 
+#### Pure GRPC call stream handler 
 
 `@GrpcStreamCall()` decorator will provide function parameter as `grpc.ServerDuplexStream`, which
 supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`, 
