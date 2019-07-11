@@ -35,10 +35,20 @@ footer {
 
   a {
     @extend .transition;
-    color: #929292;
+    color: $red-color;
+    font-weight: 600;
     &:hover {
       color: $red-color;
     }
+  }
+
+  .separator {
+    display: inline-block;
+    width: 2px;
+    height: 12px;
+    margin: 0 3px 0 5px;
+    vertical-align: middle;
+    background: #313131;
   }
 
   p {
