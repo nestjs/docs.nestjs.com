@@ -39,7 +39,7 @@
     "core-js": "2.6.9",
     "fast-glob": "3.0.4",
     "hammerjs": "2.0.8",
-    "lodash": "4.17.13",
+    "lodash": "4.17.14",
     "ng2-prism": "2.3.2",
     "ng2-progressbar": "1.3.0",
     "ngx-markdown": "8.1.0",
