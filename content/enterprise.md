@@ -17,7 +17,7 @@ With official support, get expert help directly from the NestJS core team. We ta
   <div class="content">
     <h4>Team Augmentation & Development</h4>
     <p>
-      With team augmentation, NestJS core team members can work directly with your team on a daily basis to help take your project to the next-level. Consider us “part of your team”, tackling the most ambitious problems right by your side.
+      With team augmentation, NestJS core team members can work directly with your team on a daily basis to help take your project to the next-level. Consider us “part of your team”, tackling the most ambitious projects - right by your side.
     </p>
   </div>
   <div class="thumbnail p-l-30">
@@ -32,7 +32,7 @@ With official support, get expert help directly from the NestJS core team. We ta
   <div class="content">
     <h4>NestJS Best Practices</h4>
     <p>
-      Frequent code reviews allow eliminate potential bugs and issues at an early stage as well as help to enforce best practices. Let us perform PR reviews and audits to ensure your code quality, performance, and security.
+      Frequent code reviews can eliminate potentially hazardous bugs & issues at an early stage and help enforce best practices. Let us perform PR reviews & audits to ensure your code quality, performance, and security.
     </p>
   </div>
 </div>
@@ -49,13 +49,10 @@ We provide solid kick-off training as well as more advanced ones that give teams
   <div class="column column-text">
     <h5>Contact us!</h5>
     <p>
-    Let's talk how we can help you become successful with Nest.
+    Let's talk how we can help you become successful with NestJS.
     </p> 
   </div>
    <div class="column column-action">
      <a href="mailto:support@nestjs.com">CONTACT US</a>
    </div>
 </div>
-
-How can we help you become successful with Nest?
-Reach out to us at [support@nestjs.com](mailto:support@nestjs.com), and let’s talk about your project & teams needs!
