@@ -57,5 +57,4 @@ We provide solid kick-off training as well as more advanced ones that give teams
    </div>
 </div>
 
-How can we help you become successful with Nest?
 Reach out to us at [support@nestjs.com](mailto:support@nestjs.com), and let’s talk about your project & teams needs!
