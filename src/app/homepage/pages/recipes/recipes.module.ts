@@ -10,6 +10,7 @@ import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { TerminusComponent } from './terminus/terminus.component';
+import { CrudComponent } from './crud/crud.component';
 
 const routes: Routes = [
   {
@@ -52,6 +53,11 @@ const routes: Routes = [
     component: DocumentationComponent,
     data: { title: 'Documentation (Compodoc)' },
   },
+  {
+    path: 'crud',
+    component: CrudComponent,
+    data: { title: 'CRUD' },
+  },
 ];
 
 @NgModule({
@@ -65,6 +71,7 @@ const routes: Routes = [
     CqrsComponent,
     TerminusComponent,
     DocumentationComponent,
+    CrudComponent,
   ],
 })
 export class RecipesModule {}
