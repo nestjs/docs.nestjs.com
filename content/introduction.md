@@ -1,12 +1,10 @@
 ### NestJS Introduction
 
-Nest (or NestJS) is a framework for building efficient, scalable [Node.js](https://nodejs.org/) server-side applications. It uses progressive JavaScript, is built with and fully supports [TypeScript](http://www.typescriptlang.org/) (yet still enables developers to code in pure JavaScript) and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).
+NestJS (or Nest) is a framework for building efficient, scalable [Node.js](https://nodejs.org/) server-side applications. It uses progressive JavaScript, is built with and fully supports [TypeScript](http://www.typescriptlang.org/) (yet still enables developers to code in pure JavaScript) and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).
 
-Under the hood, Nest makes use of robust HTTP Server frameworks like [Express](https://expressjs.com/) (the default) and optionally can be configured to use [Fastify](https://github.com/fastify/fastify) as well! 
+Under the hood, Nest makes use of robust HTTP Server frameworks like [Express](https://expressjs.com/) (the default) and optionally can be configured to use [Fastify](https://github.com/fastify/fastify) as well!
 
 Nest provides a level of abstraction _above_ these common NodeJS frameworks (Express/Fastify), but also exposes their APIs directly to the developer. This allows developers the freedom to use the myriad of third-party modules which are available for the underlying platform.
-
-> **Note:** Remember Nest (or NestJS) is an extension/abstraction above NodeJS itself - although similary named to libraries like (Next.js/Nuxt.js) which are server-side rendering abstractions/wrappers around React & Vue respectively - NestJS is intended to be a _NodeJS API framework_ and isn't similar or comparable to Nextjs & Nuxtjs.
 
 #### Philosophy
 
