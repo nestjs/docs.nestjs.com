@@ -70,6 +70,18 @@ renderer.link = (href: string, title: string, text: string) => {
       text,
     ) as string).replace('href', 'routerLink');
   }
+
+  if (href.includes('http') && !href.includes('mailto')) {
+    let baseLink = (originalLinkRenderer.call(
+      renderer,
+      href,
+      title,
+      text
+    ) as string);
+
+    baseLink = `${baseLink.substr(0, 2)} target="_blank"${baseLink.substr(2)}`;
+    return baseLink;
+  }
   return originalLinkRenderer.call(renderer, href, title, text);
 };
 
