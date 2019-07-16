@@ -78,6 +78,26 @@ uploadFile(files) {
 }
 ```
 
+#### Any files
+
+To upload any fields (all with different keys, but you don't have to know them), we use `AnyFilesInterceptor()` decorator.
+
+```typescript
+@@filename()
+@Post('upload')
+@UseInterceptors(AnyFilesInterceptor())
+uploadFile(@UploadedFiles() files) {
+  console.log(files);
+}
+@@switch
+@Post('upload')
+@Bind(UploadedFiles())
+@UseInterceptors(AnyFilesInterceptor())
+uploadFile(files) {
+  console.log(files);
+}
+```
+
 #### Default options
 
 To customize [multer](https://github.com/expressjs/multer) behavior, you can register the `MulterModule`. We support all options listed [here](https://github.com/expressjs/multer#multeropts).

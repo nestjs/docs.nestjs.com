@@ -8,6 +8,11 @@
   position: fixed;
   top: 90px;
   right: 20px;
+  max-height: 350px;
+
+  @media print {
+    display: none;
+  }
 
   ul {
     position: relative;

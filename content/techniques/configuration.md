@@ -72,8 +72,8 @@ export class ConfigModule {}
 The `ConfigModule` registers a `ConfigService` and exports it as well. Additionally, we passed a path to the `.env` file. This path will be different depending on actual execution environment. Now you can simply inject `ConfigService` anywhere, and pull out a particular value based on a passed key. Sample `.env` file could look like below:
 
 ```typescript
-DATABASE_USER = test;
-DATABASE_PASSWORD = test;
+DATABASE_USER = test
+DATABASE_PASSWORD = test
 ```
 
 #### Using the ConfigService
@@ -97,7 +97,7 @@ export class AppService {
   private isAuthEnabled: boolean;
   constructor(config: ConfigService) {
     // Please take note that this check is case sensitive!
-    this.isAuthEnabled = config.get('IS_AUTH_ENABLED') === 'true' ? true : false;
+    this.isAuthEnabled = config.get('IS_AUTH_ENABLED') === 'true';
   }
 }
 ```

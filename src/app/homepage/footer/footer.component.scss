@@ -10,11 +10,17 @@
   margin: 0 -85px;
   width: auto;
   font-size: 14px;
+  position: relative;
+  z-index: 12;
+
+  @include media(large) {
+    margin: 0 -50px;
+  }
 
   @include media(medium) {
     padding: 15px;
-    margin: 0 -30px;
-    width: calc(100% + 60px);
+    margin: 0 -20px;
+    width: calc(100% + 40px);
     position: static;
     height: auto;
     text-align: center;
@@ -29,10 +35,20 @@ footer {
 
   a {
     @extend .transition;
-    color: #929292;
+    color: $red-color;
+    font-weight: 600;
     &:hover {
       color: $red-color;
     }
+  }
+
+  .separator {
+    display: inline-block;
+    width: 2px;
+    height: 12px;
+    margin: 0 3px 0 5px;
+    vertical-align: middle;
+    background: #313131;
   }
 
   p {
@@ -60,5 +76,9 @@ footer {
     &:hover {
       color: $red-color;
     }
+  }
+
+  @media print {
+    display: none;
   }
 }

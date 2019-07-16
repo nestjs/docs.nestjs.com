@@ -97,7 +97,7 @@ export class WsAdapter implements WebSocketAdapter {
   bindClientConnect(server, callback: Function) {
     server.on('connection', callback);
   }
-a
+
   bindMessageHandlers(
     client: WebSocket,
     handlers: MessageMappingProperties[],

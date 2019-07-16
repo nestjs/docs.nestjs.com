@@ -1,6 +1,6 @@
 ### Overview
 
-[Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface tool that helps you to to initialize and develop your applications. It helps on many grounds at once, from scaffolding the project to building well-structured apps. The Nest CLI is based on the [Angular Devkit](https://github.com/angular/devkit) package.
+[Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface tool that helps you to initialize and develop your applications. It helps on many grounds at once, from scaffolding the project to building well-structured apps. The Nest CLI is based on the [Angular Devkit](https://github.com/angular/devkit) package.
 
 #### Installation
 

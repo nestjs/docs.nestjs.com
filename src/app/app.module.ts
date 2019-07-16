@@ -32,6 +32,7 @@ import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { SharedModule } from './shared/shared.module';
 import { EnterpriseComponent } from './homepage/pages/enterprise/enterprise.component';
+import { SocialWrapperComponent } from './common/social-wrapper/social-wrapper.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -71,6 +72,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     SupportComponent,
     WhoUsesComponent,
     EnterpriseComponent,
+    SocialWrapperComponent,
   ],
   bootstrap: [AppComponent],
   providers: [

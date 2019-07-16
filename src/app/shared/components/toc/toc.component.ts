@@ -28,10 +28,12 @@ interface HeadingElement {
 export class TocComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   contentReference: HTMLElement;
+
   @Input()
   headings: HeadingElement[] = [];
   activeId: number;
-  @ViewChild('tocWrapper')
+
+  @ViewChild('tocWrapper', { static: true })
   tocWrapper: ElementRef<HTMLElement>;
 
   isPositionFixed = true;
@@ -137,7 +139,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
     if (elementRef) {
       elementRef.scrollIntoView({
         behavior: 'smooth',
-        block: 'start'
+        block: 'start',
       });
       this.findCurrentHeading();
     }

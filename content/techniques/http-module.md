@@ -97,11 +97,11 @@ HttpModule.registerAsync({
 });
 ```
 
-Above construction will instantiate `HttpConfigService` inside `HttpModule` and will leverage it to create options object. The `HttpConfigService` has to implement `HttpOptionsFactory` interface.
+Above construction will instantiate `HttpConfigService` inside `HttpModule` and will leverage it to create options object. The `HttpConfigService` has to implement `HttpModuleOptionsFactory` interface.
 
 ```typescript
 @Injectable()
-class HttpConfigService implements HttpOptionsFactory {
+class HttpConfigService implements HttpModuleOptionsFactory {
   createHttpOptions(): HttpModuleOptions {
     return {
       timeout: 5000,

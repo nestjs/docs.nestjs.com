@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-who-uses',
@@ -56,6 +56,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://swingdev.io/',
     },
     {
+      logo: '/assets/logo/cultura-colectiva.png',
+      url: 'https://culturacolectiva.com',
+      width: '90px',
+    },
+    {
       logo: '/assets/logo/architectnow.png',
       url: 'http://architectnow.net',
       width: '150px',
@@ -88,7 +93,22 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/dozto.png',
       url: 'https://www.dozto.com',
       width: '130px',
-    }
+    },
+    {
+      logo: '/assets/logo/qingtui.png',
+      url: 'https://www.qingtui.cn/',
+      width: '90px',
+    },
+    {
+      logo: '/assets/logo/crowdlinker.svg',
+      url: 'https://crowdlinker.com/',
+      width: '110px'
+    },
+    {
+      logo: '/assets/logo/nothing.svg',
+      url: 'https://nothing.ch/',
+      width: '110px'
+    },
   ];
 
   readonly companiesUrls = [
@@ -116,7 +136,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://smartexlab.com/',
     'https://automama.ru/',
     'https://iflix.com/',
-    'https://culturacolectiva.com',
     'https://framework.watch',
     'https://mobilejazz.com/',
     'https://cgiandi.com/',
@@ -127,5 +146,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://www.easymetrics.com/',
     'https://getapollo.io/',
     'https://big-bench.com/',
+    'https://www.qingtui.cn/',
   ];
 }

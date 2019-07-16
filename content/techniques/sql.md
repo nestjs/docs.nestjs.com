@@ -34,7 +34,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class ApplicationModule {}
 ```
 
-The `forRoot()` method accepts the same configuration object as `createConnection()` from the [TypeORM](https://github.com/typeorm/typeorm) package. Futhermore, instead of passing anything to the `forRoot()`, we can create an `ormconfig.json` file in the project root directory.
+The `forRoot()` method accepts the same configuration object as `createConnection()` from the [TypeORM](https://github.com/typeorm/typeorm) package. Futhermore, instead of passing anything to `forRoot()`, we can create an `ormconfig.json` file in the project root directory.
 
 ```json
 {
@@ -120,7 +120,7 @@ export class Photo {
 }
 ```
 
-The `Photo` entity belongs to the `photo` directory. This directory represents the `PhotoModule`. It's your decision where you gonna keep your model files. From our point of view, the best way's to hold them nearly their **domain**, in the corresponding module directory.
+The `Photo` entity belongs to the `photo` directory. This directory represents the `PhotoModule`. It's your decision where you're gonna keep your model files. From our point of view, the best way's to hold them near their **domain**, in the corresponding module directory.
 
 Let's have a look at the `PhotoModule`:
 
@@ -156,8 +156,8 @@ export class PhotoService {
     private readonly photoRepository: Repository<Photo>,
   ) {}
 
-  async findAll(): Promise<Photo[]> {
-    return await this.photoRepository.find();
+  findAll(): Promise<Photo[]> {
+    return this.photoRepository.find();
   }
 }
 @@switch
@@ -172,8 +172,8 @@ export class PhotoService {
     this.photoRepository = photoRepository;
   }
 
-  async findAll() {
-    return await this.photoRepository.find();
+  findAll() {
+    return this.photoRepository.find();
   }
 }
 ```
@@ -251,9 +251,9 @@ export class PersonService {
 
 #### Testing
 
-When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent and their execution process quick as possible. But our classes might depend on repositories that are pulled from the connection instance. What's then? The solution is to create fake repositories. In order to achieve that, we should set up [custom providers](/fundamentals/custom-providers). In fact, each registered repository is represented by `EntityNameRepository` token, where `EntityName` is a name of your entity class.
+When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent and their execution process quick as possible. But our classes might depend on repositories that are pulled from the connection instance. What then? The solution is to create fake repositories. In order to achieve that, we should set up [custom providers](/fundamentals/custom-providers). In fact, each registered repository is represented by a `EntityNameRepository` token, where `EntityName` is a name of your entity class.
 
-The `@nestjs/typeorm` package exposes `getRepositoryToken()` function that returns prepared token based on a given entity.
+The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which returns a prepared token based on a given entity.
 
 ```typescript
 @Module({
@@ -272,9 +272,9 @@ Now a hardcoded `mockRepository` will be used as a `PhotoRepository`. Whenever a
 
 #### Custom repository
 
-TypeORM provides feature called **custom repositories**. To learn more about it, visit [this](http://typeorm.io/#/custom-repository) page. Basically, custom repository allows you extending a base repository class, and enrich it with a couple of special methods.
+TypeORM provides a feature called **custom repositories**. To learn more about it, visit [this](http://typeorm.io/#/custom-repository) page. Basically, custom repositories allow you to extend a base repository class, and enrich it with a couple of special methods.
 
-In order to create your custom repository, use `@EntityRepository()` decorator and extend `Repository` class.
+In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
 ```typescript
 @EntityRepository(Author)
@@ -343,7 +343,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Alternatively, you are able to use class instead of a factory.
+Alternatively, you are able to use a class instead of a factory.
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -380,7 +380,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-It works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse already created `ConfigService`, instead of instantiating it on its own.
+It works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an already created `ConfigService`, instead of instantiating it on its own.
 
 #### Example
 

@@ -8,6 +8,10 @@
   height: 70px;
   position: fixed;
   z-index: 10000;
+
+  @media print {
+    position: relative;
+  }
 }
 
 header {
@@ -53,9 +57,13 @@ header {
   @include media(medium) {
     background: transparent;
   }
+
+  @media print {
+    display: none;
+  }
 }
 
-:host /deep/ .logo-wrapper {
+:host ::ng-deep .logo-wrapper {
   display: inline-block;
   height: 100%;
   text-align: center;
@@ -73,34 +81,14 @@ header {
     display: inline-block;
     padding-top: 10px;
   }
-}
-
-.social-wrapper {
-  @extend .center-top;
-  float: right;
-  padding-right: 40px;
-  position: relative;
-
-  a {
-    @extend .transition-fast;
-    display: inline-block;
-    vertical-align: middle;
-    color: #fff;
-    font-size: 22px;
-    margin-left: 15px;
-    cursor: pointer;
-
-    &:first-of-type {
-      font-size: 20px;
-    }
-    &:hover {
-      color: $red-color;
-    }
-  }
-  @include media(small) {
-    display: none;
+  @media print {
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, 0%);
+    padding: 0;
   }
 }
+
 
 .menu-wrapper {
   @extend .center-top;
@@ -152,6 +140,9 @@ header {
     &:hover {
       color: $red-color;
     }
+  }
+  @media print {
+    display: none;
   }
 }
 
@@ -242,7 +233,7 @@ header {
     display: none;
   }
 
-  :host /deep/ .logo-wrapper {
+  :host ::ng-deep .logo-wrapper {
     width: 100%;
   }
 
