@@ -47,7 +47,7 @@
     "prismjs": "1.16.0",
     "rxjs": "6.5.2",
     "rxjs-compat": "6.5.2",
-    "yargs": "13.2.4",
+    "yargs": "13.3.0",
     "zone.js": "0.9.1"
   },
   "devDependencies": {
