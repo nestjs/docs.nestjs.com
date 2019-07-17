@@ -15,8 +15,8 @@
     "e2e": "ng e2e",
     "markdown": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown/markdown-compiler.ts",
     "markdown:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/markdown/markdown-compiler.ts --watch",
-    "api": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/api/index.ts",
-    "api:watch": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" compiler/api/index.ts --watch"
+    "api": "ts-node -P compiler/tsconfig.json compiler/api/index.ts",
+    "api:watch": "ts-node -P compiler/tsconfig.json compiler/api/index.ts --watch"
   },
   "private": true,
   "dependencies": {

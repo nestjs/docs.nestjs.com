@@ -8,6 +8,8 @@ import * as nunjucksPackage from 'dgeni-packages/nunjucks';
 import * as typeScriptPackage from 'dgeni-packages/typescript';
 import * as postProcessHtmlPackage from 'dgeni-packages/post-process-html';
 
+import { mergeExplicitSubpackages } from './processors';
+
 function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
   // Tell TypeScript how to load modules that start with with `@nestjs`
   tsParser.options.paths = { '@nestjs/*': [PROJECT_ROOT + '/*'] };
@@ -153,6 +155,7 @@ const nestjs = new Package('nestjs', [
   .processor(require('./processors/fixInternalDocumentLinks'))
   .processor(require('./processors/computeApiBreadCrumbs'))
   .processor(require('./processors/addApiPage'))
+  .processor(mergeExplicitSubpackages)
 
   .config(typeScriptConfiguration)
   .config(readFilesConfiguration)
