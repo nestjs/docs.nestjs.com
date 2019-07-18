@@ -140,7 +140,7 @@ In order to filter out specific events based on context and arguments, we can se
   filter: (payload, variables) =>
     payload.commentAdded.repositoryName === variables.repoFullName,
 })
-commentAdded() {
+commentAdded(@Args({ name: 'repoFullName', type: () => String }) {
   return pubSub.asyncIterator('commentAdded');
 }
 ```
