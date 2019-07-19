@@ -1,97 +1,106 @@
 import { byId } from '../util/byId';
+import { Processor } from 'dgeni';
+import { InjectableDoc, NestModuleDoc, Logger, CreateDocMessage } from './interfaces';
 
-const exportDocTypes = ['injectable'];
+function getContainerName(docType) {
+  return docType + 's';
+}
 
-module.exports = function processModuleDocs(
-  getDocFromAlias,
-  createDocMessage,
-  log
-) {
-  return {
-    $runAfter: ['extractDecoratedClasses', 'computeIdsProcessor'],
-    $runBefore: ['renderDocsProcessor'],
-    $process(docs) {
-      // Match all the injectables to their module
-      const errors = [];
-      docs.forEach(doc => {
-        if (doc.publicApi !== '') {
+export class ProcessModuleDocs implements Processor {
+  constructor(
+    private getDocFromAlias: any,
+    private createDocMessage: CreateDocMessage,
+    private log: Logger
+  ) {}
+  private exportDocTypes = ['injectable'];
+  $runAfter = ['extractDecoratedClasses', 'computeIdsProcessor'];
+  $runBefore = ['renderDocsProcessor'];
+  $process(docs: InjectableDoc[]) {
+    // Match all the injectables to their module
+    const errors = [];
+    docs.forEach(doc => {
+      if (doc.publicApi !== '') {
+        return;
+      }
+      if (this.exportDocTypes.indexOf(doc.docType) !== -1) {
+        if (!doc.modules || doc.modules.length === 0) {
+          errors.push(
+            this.createDocMessage(
+              `"${doc.id}" has no @module tag. Docs of type "${
+                doc.docType
+              }" must have this tag.`,
+              doc
+            )
+          );
           return;
         }
-        if (exportDocTypes.indexOf(doc.docType) !== -1) {
-          if (!doc.modules || doc.modules.length === 0) {
+
+        doc.modules.forEach((nestModule: string, index: number) => {
+          const nestModuleDocs = this.getDocFromAlias(nestModule, doc);
+
+          if (nestModuleDocs.length === 0) {
             errors.push(
-              createDocMessage(
-                `"${doc.id}" has no @module tag. Docs of type "${
-                  doc.docType
-                }" must have this tag.`,
+              this.createDocMessage(
+                `"@module ${nestModule}" does not match a public Module`,
                 doc
               )
             );
             return;
           }
 
-          doc.modules.forEach((nestModule: string, index: number) => {
-            const nestModuleDocs = getDocFromAlias(nestModule, doc);
+          if (nestModuleDocs.length > 1) {
+            errors.push(
+              this.createDocMessage(
+                `"@module ${nestModule}" is ambiguous. Matches: ${nestModuleDocs
+                  .map(d => d.id)
+                  .join(', ')}`,
+                doc
+              )
+            );
+            return;
+          }
 
-            if (nestModuleDocs.length === 0) {
-              errors.push(
-                createDocMessage(
-                  `"@module ${nestModule}" does not match a public Module`,
-                  doc
-                )
-              );
-              return;
-            }
+          const nestModuleDoc = nestModuleDocs[0];
+          const containerName = getContainerName(doc.docType);
+          const container = (nestModuleDoc[containerName] =
+            nestModuleDoc[containerName] || []);
+          container.push(doc);
 
-            if (nestModuleDocs.length > 1) {
-              errors.push(
-                createDocMessage(
-                  `"@module ${nestModule}" is ambiguous. Matches: ${nestModuleDocs
-                    .map(d => d.id)
-                    .join(', ')}`,
-                  doc
-                )
-              );
-              return;
-            }
-
-            const nestModuleDoc = nestModuleDocs[0];
-            const containerName = getContainerName(doc.docType);
-            const container = (nestModuleDoc[containerName] =
-              nestModuleDoc[containerName] || []);
-            container.push(doc);
-
-            doc.modules[index] = nestModuleDoc;
-          });
-        }
-      });
-
-      if (errors.length) {
-        errors.forEach(error => log.error(error));
-        throw new Error('Failed to process nestModule relationships.');
+          doc.modules[index] = nestModuleDoc;
+        });
       }
+    });
 
-      docs.forEach(doc => {
-        if (doc.docType === 'nestmodule') {
-          Object.keys(doc.nestmoduleoptions).forEach(key => {
-            const value = doc.nestmoduleoptions[key];
-            if (value && !Array.isArray(value)) {
-              doc.nestmoduleoptions[key] = [value];
-            }
-          });
-          exportDocTypes.forEach(type => {
-            const containerName = getContainerName(type);
-            const container = doc[containerName];
-            if (container) {
-              container.sort(byId);
-            }
-          });
-        }
-      });
+    if (errors.length) {
+      errors.forEach(error => this.log.error(error));
+      throw new Error('Failed to process nestModule relationships.');
     }
-  };
-};
 
-function getContainerName(docType) {
-  return docType + 's';
+    docs.forEach(d => {
+      if (d.docType === 'nestmodule') {
+        const doc = (d as unknown) as NestModuleDoc;
+        Object.keys(doc.nestmoduleoptions).forEach(key => {
+          const value = doc.nestmoduleoptions[key];
+          if (value && !Array.isArray(value)) {
+            doc.nestmoduleoptions[key] = [value];
+          }
+        });
+        this.exportDocTypes.forEach(type => {
+          const containerName = getContainerName(type);
+          const container = doc[containerName];
+          if (container) {
+            container.sort(byId);
+          }
+        });
+      }
+    });
+  }
+}
+
+export function processModuleDocs(
+  getDocFromAlias: any,
+  createDocMessage: CreateDocMessage,
+  log: Logger
+) {
+  return new ProcessModuleDocs(getDocFromAlias, createDocMessage, log);
 }

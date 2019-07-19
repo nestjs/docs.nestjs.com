@@ -1,3 +1,6 @@
+import { Processor } from 'dgeni';
+import { Doc } from './interfaces';
+
 const docTypes = [
   'member',
   'function-overload',
@@ -11,11 +14,14 @@ const docTypes = [
  * Remove docs that are contained in (owned by) another doc
  * so that they don't get rendered as files in themselves.
  */
-module.exports = function filterContainedDocs() {
-  return {
-    $runAfter: ['extra-docs-added'],
-    $runBefore: ['computing-paths', 'computeIdsProcessor'],
-    $process: docs =>
-      docs.filter(doc => docTypes.indexOf(doc.docType) === -1)
-  };
-};
+class FilterContainedDocs implements Processor {
+  $runAfter = ['extra-docs-added'];
+  $runBefore = ['computing-paths', 'computeIdsProcessor'];
+  $process(docs: Doc[]) {
+    return docs.filter(doc => docTypes.indexOf(doc.docType) === -1);
+  }
+}
+
+export function filterContainedDocs() {
+  return new FilterContainedDocs();
+}

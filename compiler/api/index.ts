@@ -8,7 +8,23 @@ import * as nunjucksPackage from 'dgeni-packages/nunjucks';
 import * as typeScriptPackage from 'dgeni-packages/typescript';
 import * as postProcessHtmlPackage from 'dgeni-packages/post-process-html';
 
-import { mergeExplicitSubpackages } from './processors';
+import {
+  mergeExplicitSubpackages,
+  fixInternalDocumentLinks,
+  addApiPage,
+  computeApiBreadCrumbs,
+  computeOutputPath,
+  extractDecoratedClasses,
+  filterContainedDocs,
+  generateApiListDoc,
+  markPrivateDocs,
+  processClassLikeMembers,
+  processDecorators,
+  processModuleDocs,
+  processPackages,
+  shortDescription,
+  removeInjectableConstructors,
+} from './processors';
 
 function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
   // Tell TypeScript how to load modules that start with with `@nestjs`
@@ -21,7 +37,10 @@ function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
   readTypeScriptModules.hidePrivateMembers = true;
 }
 
-function readFilesConfiguration(readFilesProcessor: any, packageContentFileReader: any) {
+function readFilesConfiguration(
+  readFilesProcessor: any,
+  packageContentFileReader: any
+) {
   readFilesProcessor.basePath = PROJECT_ROOT;
 
   readFilesProcessor.fileReaders.push(packageContentFileReader);
@@ -78,14 +97,19 @@ function API_DOC_TYPES(
   return API_DOC_TYPES_TO_RENDER;
 }
 
-function postProcessors(postProcessHtml: any, autoLinkCode: any, API_DOC_TYPES: string[], API_DOC_TYPES_TO_RENDER: string[]) {
+function postProcessors(
+  postProcessHtml: any,
+  autoLinkCode: any,
+  API_DOC_TYPES: string[],
+  API_DOC_TYPES_TO_RENDER: string[]
+) {
   autoLinkCode.docTypes = API_DOC_TYPES;
   postProcessHtml.docTypes = API_DOC_TYPES_TO_RENDER;
   autoLinkCode.codeElements = ['code'];
   postProcessHtml.plugins = [
     require('./post-processors/autolink-headings'),
     autoLinkCode,
-    require('./post-processors/codeFormatting'),
+    require('./post-processors/codeFormatting')
   ];
 }
 
@@ -113,7 +137,7 @@ function templateFinderConfiguration(
 
   computePathsProcessor.pathTemplates.push({
     docTypes: ['decorator'],
-    pathTemplate: 'decorator.template.html',
+    pathTemplate: 'decorator.template.html'
   });
 
   // Nunjucks and Angular conflict in their template bindings so change Nunjucks
@@ -132,7 +156,7 @@ const nestjs = new Package('nestjs', [
   jsdocPackage,
   nunjucksPackage,
   typeScriptPackage,
-  postProcessHtmlPackage,
+  postProcessHtmlPackage
 ])
   .factory(require('./readers/package-content'))
   .factory(require('./services/getDocFromAlias'))
@@ -141,21 +165,21 @@ const nestjs = new Package('nestjs', [
   .factory(API_DOC_TYPES_TO_RENDER)
   .factory(API_DOC_TYPES)
 
-  .processor(require('./processors/processPackages'))
-  .processor(require('./processors/generateApiListDoc'))
-  .processor(require('./processors/extractDecoratedClasses'))
-  .processor(require('./processors/processClassLikeMembers'))
-  .processor(require('./processors/filterContainedDocs'))
-  .processor(require('./processors/markPrivateDocs'))
-  .processor(require('./processors/shortDescription'))
-  .processor(require('./processors/removeInjectableConstructors'))
-  .processor(require('./processors/processModuleDocs'))
-  .processor(require('./processors/processDecorators'))
-  .processor(require('./processors/computeOutputPath'))
-  .processor(require('./processors/fixInternalDocumentLinks'))
-  .processor(require('./processors/computeApiBreadCrumbs'))
-  .processor(require('./processors/addApiPage'))
+  .processor(addApiPage)
+  .processor(computeApiBreadCrumbs)
+  .processor(computeOutputPath)
+  .processor(extractDecoratedClasses)
+  .processor(filterContainedDocs)
+  .processor(fixInternalDocumentLinks)
+  .processor(generateApiListDoc)
+  .processor(markPrivateDocs)
   .processor(mergeExplicitSubpackages)
+  .processor(processClassLikeMembers)
+  .processor(processDecorators)
+  .processor(processModuleDocs)
+  .processor(processPackages)
+  .processor(shortDescription)
+  .processor(removeInjectableConstructors)
 
   .config(typeScriptConfiguration)
   .config(readFilesConfiguration)

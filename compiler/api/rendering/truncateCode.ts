@@ -1,8 +1,10 @@
 module.exports = function() {
   return {
     name: 'truncateCode',
-    process: function(str, lines) {
-      if (lines === undefined) return str;
+    process: function(str: string, lines: number) {
+      if (lines === undefined) {
+        return str;
+      }
 
       const parts = str && str.split && str.split(/\r?\n/);
       if (parts && parts.length > lines) {
@@ -24,13 +26,13 @@ module.exports = function() {
  * @param {string[]} closers an array of chars that close a brack
  * @returns the balanced string
  */
-function balance(str, openers, closers) {
+function balance(str: string, openers: string[], closers: string[]) {
   const stack = [];
 
   // Add each open bracket to the stack, removing them when there is a matching closer
   str.split('').forEach(function(char) {
     const closerIndex = closers.indexOf(char);
-    if (closerIndex !== -1 && stack[stack.length-1] === closerIndex) {
+    if (closerIndex !== -1 && stack[stack.length - 1] === closerIndex) {
       stack.pop();
     } else {
       const openerIndex = openers.indexOf(char);
@@ -41,7 +43,7 @@ function balance(str, openers, closers) {
   });
 
   // Now the stack should contain all the unclosed brackets
-  while(stack.length) {
+  while (stack.length) {
     str += closers[stack.pop()];
   }
 

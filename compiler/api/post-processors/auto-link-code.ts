@@ -20,7 +20,7 @@ const textContent = require('hast-util-to-string');
  * Only text contained in these elements will be linked to.
  * Usually set to 'code' but also 'code-example' for angular.io.
  */
-module.exports = function autoLinkCode(getDocFromAlias) {
+module.exports = function autoLinkCode(getDocFromAlias: any) {
   autoLinkCodeImpl.docTypes = [];
   autoLinkCodeImpl.customFilters = [];
   autoLinkCodeImpl.codeElements = ['code'];
@@ -38,7 +38,7 @@ module.exports = function autoLinkCode(getDocFromAlias) {
             node.properties.className.indexOf('no-auto-link') === -1) &&
           ancestors.every(ancestor => !is(ancestor, 'a'))
         ) {
-          visit(node, 'text', (node, ancestors) => {
+          visit(node, 'text', (node: any, ancestors: any) => {
             // Only interested in text nodes that are not inside links
             if (ancestors.every(ancestor => !is(ancestor, 'a'))) {
               const parent = ancestors[ancestors.length - 1];

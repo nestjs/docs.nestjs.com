@@ -1,16 +1,24 @@
-module.exports = function fixInternalDocumentLinks() {
+import { Processor } from 'dgeni';
+import { RenderedDoc } from './interfaces';
 
-  const INTERNAL_LINK = /(<a [^>]*href=")(#[^"]*)/g;
+class FixInternalDocumentLinks implements Processor {
+  INTERNAL_LINK = /(<a [^>]*href=")(#[^"]*)/g;
+  $runAfter =  ['inlineTagProcessor'];
+  $runBefore = ['writeFilesProcessor'];
 
-  return {
-    $runAfter: ['inlineTagProcessor'],
-    $runBefore: ['writeFilesProcessor'],
-    $process: function(docs) {
-      docs.forEach(doc => {
-        doc.renderedContent = doc.renderedContent.replace(INTERNAL_LINK, (_, pre, hash) => {
-          return pre + doc.path + hash;
-        });
-      });
-    }
-  };
-};
+  $process(docs: RenderedDoc[]): void {
+    docs.forEach(doc => {
+      if (!doc.renderedContent) {
+        return;
+      }
+      doc.renderedContent = doc.renderedContent.replace(
+        this.INTERNAL_LINK,
+        (_, pre, hash) => pre + doc.path + hash
+      );
+    });
+  }
+}
+
+export function fixInternalDocumentLinks() {
+  return new FixInternalDocumentLinks();
+}

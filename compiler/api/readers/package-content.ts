@@ -1,3 +1,5 @@
+import { FileInfoDoc } from '../processors/interfaces';
+
 /**
  * @dgService
  * @description
@@ -16,7 +18,7 @@ module.exports = function packageContentFileReader() {
   return {
     name: 'packageContentFileReader',
     // defaultPattern: /PACKAGE\.md$/,
-    getDocs: fileInfo => [
+    getDocs: (fileInfo: FileInfoDoc) => [
       { docType: 'package-content', content: fileInfo.content, startingLine: 1 }
     ]
   };
