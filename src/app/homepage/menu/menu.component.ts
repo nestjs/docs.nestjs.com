@@ -151,6 +151,7 @@ export class MenuComponent implements OnInit {
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
         { title: 'Documentation', path: '/recipes/documentation' },
         { title: 'CRUD', path: '/recipes/crud' },
+        { title: 'Serve static', path: '/recipes/serve-static' },
       ],
     },
     {
