@@ -44,7 +44,7 @@ The `forRoot()` method accepts the same configuration object as `createConnectio
   "username": "root",
   "password": "root",
   "database": "test",
-  "entities": ["src/**/*.entity{.ts,.js}"],
+  "entities": ["dist/**/*.entity{.ts,.js}"],
   "synchronize": true
 }
 ```
