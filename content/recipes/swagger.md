@@ -135,7 +135,7 @@ export const ApiModelProperty: (metadata?: {
 }) => PropertyDecorator;
 ```
 
-> warning **Hint** There's an `@ApiModelPropertyOptional()` shortcut decorator which helps to avoid continuous typing `@ApiModelProperty(&#123 required: false &#125)`.
+> warning **Hint** There's an `@ApiModelPropertyOptional()` shortcut decorator which helps to avoid continuous typing `@ApiModelProperty(&#123 required: false &#125)`. There is also `@ApiResponseModelProperty()` shortcut decorator for response classes which only accepts `type` and `example` metadata parameters.
 
 Thanks to that we can simply set the **default** value, determine whether the property is required or explicitly set the type.
 
@@ -362,5 +362,6 @@ All of the available OpenAPI decorators has an `Api` prefix to be clearly distin
 | `@ApiUseTags()`               | Method / Controller |
 | `@ApiModelProperty()`         | Model               |
 | `@ApiModelPropertyOptional()` | Model               |
+| `@ApiResponseModelProperty()` | Model               |
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
