@@ -1,7 +1,7 @@
 import { Processor } from 'dgeni';
 import { Doc } from './interfaces';
 
-const attributesToTransfer = ['see', 'usageNotes', 'description', 'examples'];
+const attributesToTransfer = ['see', 'usageNotes', 'description'];
 
 function isMethod(doc) {
   return (
