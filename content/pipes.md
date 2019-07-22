@@ -17,7 +17,7 @@ In both cases, pipes operate on the `arguments` being processed by a <a href="co
 
 #### Built-in pipes
 
-Nest comes with two pipes available right out-of-the-box: `ValidationPipe`, `ParseIntPipe` and `ParseUUIDPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
+Nest comes with three pipes available right out-of-the-box: `ValidationPipe`, `ParseIntPipe` and `ParseUUIDPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
 
 Let's start with the `ValidationPipe`. Initially, we'll have it simply take an input value and immediately return the same value, behaving like an identity function.
 
