@@ -269,13 +269,7 @@ You can add as many filters with this technique as needed; simply add each to th
 In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
 
 ```typescript
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
