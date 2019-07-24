@@ -323,7 +323,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 }
 ```
 
-> warning **Warning** Method-scoped and Controller-scoped filters that extend the BaseExceptionFilter should not be instantiated with `new`. Instead, let the framework instantiate them automatically.
+> warning **Warning** Method-scoped and Controller-scoped filters that extend the `BaseExceptionFilter` should not be instantiated with `new`. Instead, let the framework instantiate them automatically.
 
 The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business** logic (e.g., handling various conditions).
 
