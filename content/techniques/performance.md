@@ -39,7 +39,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Note that Fastify, by default [listens only on the `localhost 127.0.0.1` interface](https://www.fastify.io/docs/latest/Getting-Started/#your-first-server), so you should specify `'0.0.0.0'` in the `listen()` call as shown above to accept requests from other hosts.
+Note that Fastify, by default listens only on the `localhost 127.0.0.1` interface ([read more](https://www.fastify.io/docs/latest/Getting-Started/#your-first-server)), so you should specify `'0.0.0.0'` in the `listen()` call as shown above to accept requests from other hosts.
 
 #### Platform specific packages
 
