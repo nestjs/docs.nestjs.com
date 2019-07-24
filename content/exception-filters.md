@@ -40,7 +40,7 @@ When the client calls this endpoint, the response looks like this:
 }
 ```
 
-The `HttpException` constructor takes two arguments which determine the JSON response body and the [HTTP response status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) respectively.  The first argument is of type `string | object`. Pass a string to customize the error message (as shown in the `GET` handler of the `CatsController` above). Pass a plain literal `object` with properties `status` (the status code to appear in the JSON response body) and `error` (the message string) in the first parameter, instead of a `string`, to completely override the response body.  The second constructor argument should be the actual HTTP response status code.  Here's an example overriding the entire response body:
+The `HttpException` constructor takes two arguments which determine the JSON response body and the [HTTP response status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) respectively. The first argument is of type `string | object`. Pass a string to customize the error message (as shown in the `GET` handler of the `CatsController` above). Pass a plain literal `object` with properties `status` (the status code to appear in the JSON response body) and `error` (the message string) in the first parameter, instead of a `string`, to completely override the response body. The second constructor argument should be the actual HTTP response status code. Here's an example overriding the entire response body:
 
 ```typescript
 @@filename(cats.controller)
@@ -64,7 +64,7 @@ Using the above, this is how the response would look:
 
 #### Exceptions hierarchy
 
-It is good practice to create your own **exceptions hierarchy**. This means that your custom HTTP exceptions should inherit from the base `HttpException` class. As a result, Nest will recognize your exceptions, and automatically take care of the error responses.  Let's implement such a custom exception:
+It is good practice to create your own **exceptions hierarchy**. This means that your custom HTTP exceptions should inherit from the base `HttpException` class. As a result, Nest will recognize your exceptions, and automatically take care of the error responses. Let's implement such a custom exception:
 
 ```typescript
 @@filename(forbidden.exception)
@@ -108,7 +108,7 @@ In order to reduce the need to write boilerplate code, Nest provides a set of us
 
 #### Exception filters
 
-While the base (built-in) exception filter can automatically handle many cases for you, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors.  **Exception filters** are designed for exactly this purpose.
+While the base (built-in) exception filter can automatically handle many cases for you, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors. **Exception filters** are designed for exactly this purpose.
 
 Let's create an exception filter which is responsible for catching exceptions that are an instance of the `HttpException` class, and implementing custom response logic for them.
 
@@ -158,7 +158,7 @@ export class HttpExceptionFilter {
 
 > info **Hint** All exception filters should implement the generic `ExceptionFilter<T>` interface. This requires you to provide the `catch(exception: T, host: ArgumentsHost)` method with its indicated signature. `T` indicates the type of the exception.
 
-The `@Catch(HttpException)` decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for exceptions of type `HttpException` and nothing else. The `@Catch()` decorator may take a single parameter, or a comma-separated list.  This lets you set up the filter for several types of exceptions at once.
+The `@Catch(HttpException)` decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for exceptions of type `HttpException` and nothing else. The `@Catch()` decorator may take a single parameter, or a comma-separated list. This lets you set up the filter for several types of exceptions at once.
 
 #### Arguments host
 
@@ -218,7 +218,7 @@ async create(createCatDto) {
 
 > info **Hint** Prefer applying filters by using classes instead of instances when possible. It reduces **memory usage** since Nest can easily reuse instances of the same class across your entire module.
 
-In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, making it method-scoped.  Exception filters can be scoped at different levels: method-scoped, controller-scoped, or global-scoped.  For example, to set up a filter as controller-scoped, you would do the following:
+In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, making it method-scoped. Exception filters can be scoped at different levels: method-scoped, controller-scoped, or global-scoped. For example, to set up a filter as controller-scoped, you would do the following:
 
 ```typescript
 @@filename(cats.controller)
@@ -260,10 +260,9 @@ import { APP_FILTER } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-> info **Hint** When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done?  Choose the module where the filter (`HttpExceptionFilter` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
+> info **Hint** When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done? Choose the module where the filter (`HttpExceptionFilter` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
 You can add as many filters with this technique as needed; simply add each to the providers array.
-
 
 #### Catch everything
 
@@ -279,9 +278,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request = ctx.getRequest();
 
-    const status = exception instanceof HttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
     response.status(status).json({
       statusCode: status,
@@ -323,11 +323,13 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 }
 ```
 
-> warning **Warning** Filters that extend base classes have to be instantiated by the framework itself (don't manually create instances using the `new` operator).
+> warning **Warning** Method-scoped and Controller-scoped filters that extend the `BaseExceptionFilter` should not be instantiated with `new`. Instead, let the framework instantiate them automatically.
 
-The above implementation is just a shell demonstrating the approach.  Your implementation of the extended exception filter would include your tailored **business** logic (e.g., handling various conditions).
+The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business** logic (e.g., handling various conditions).
 
-You can use a global filter that extends the base filter by injecting the `HttpServer` reference.
+Global filters **can** extend the base filter. This can be done in either of two ways.
+
+The first method is to inject the `HttpServer` reference when instantiating the custom global filter:
 
 ```typescript
 async function bootstrap() {
@@ -340,3 +342,5 @@ async function bootstrap() {
 }
 bootstrap();
 ```
+
+The second method is to use the `APP_FILTER` token <a href="exception-filters#binding-filters">as shown here</a>.
