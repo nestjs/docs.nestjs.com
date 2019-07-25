@@ -50,7 +50,7 @@ Nest middleware fully supports Dependency Injection. Just as with providers and 
 
 #### Applying middleware
 
-There is no place for middleware in the `@Module()` decorator. Instead, we set them up using the `configure()` method of the module class. Modules that include middleware have to implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `ApplicationModule` level.
+There is no place for middleware in the `@Module()` decorator. Instead, we set them up using the `configure()` method of the module class. Modules that include middleware have to implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `AppModule` level.
 
 ```typescript
 @@filename(app.module)
@@ -61,7 +61,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule implements NestModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
@@ -76,7 +76,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule {
+export class AppModule {
   configure(consumer) {
     consumer
       .apply(LoggerMiddleware)
@@ -96,7 +96,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule implements NestModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
@@ -111,7 +111,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule {
+export class AppModule {
   configure(consumer) {
     consumer
       .apply(LoggerMiddleware)
@@ -143,7 +143,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule implements NestModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
@@ -158,7 +158,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule {
+export class AppModule {
   configure(consumer) {
     consumer
       .apply(LoggerMiddleware)
@@ -195,7 +195,7 @@ export function logger(req, res, next) {
 };
 ```
 
-And use it within the `ApplicationModule`:
+And use it within the `AppModule`:
 
 ```typescript
 @@filename(app.module)
@@ -219,7 +219,7 @@ consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
 If we want to bind middleware to every registered route at once, we can use the `use()` method that is supplied by the `INestApplication` instance:
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.use(logger);
 await app.listen(3000);
 ```
