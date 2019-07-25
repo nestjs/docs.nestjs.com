@@ -233,7 +233,7 @@ To create a global-scoped filter, you would do the following:
 ```typescript
 @@filename(main)
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(3000);
 }
@@ -257,7 +257,7 @@ import { APP_FILTER } from '@nestjs/core';
     },
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 > info **Hint** When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done? Choose the module where the filter (`HttpExceptionFilter` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
@@ -333,7 +333,7 @@ The first method is to inject the `HttpServer` reference when instantiating the 
 
 ```typescript
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
