@@ -50,7 +50,7 @@ export class CatsModule {}
 
 > info **Hint** To create a module using the CLI, simply execute the `$ nest g module cats` command.
 
-Above, we defined the `CatsModule` in the `cats.module.ts` file, and moved everything related to this module into the `cats` directory. The last thing we need to do is import this module into the root module (the `ApplicationModule`, defined in the `app.module.ts` file).
+Above, we defined the `CatsModule` in the `cats.module.ts` file, and moved everything related to this module into the `cats` directory. The last thing we need to do is import this module into the root module (the `AppModule`, defined in the `app.module.ts` file).
 
 ```typescript
 @@filename(app.module)
@@ -60,7 +60,7 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [CatsModule],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 Here is how our directory structure looks now:
@@ -240,7 +240,7 @@ import { User } from './users/entities/user.entity';
 @Module({
   imports: [DatabaseModule.forRoot([User])],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 If you want to in turn re-export a dynamic module, you can omit the `forRoot()` method call in the exports array:
@@ -254,5 +254,5 @@ import { User } from './users/entities/user.entity';
   imports: [DatabaseModule.forRoot([User])],
   exports: [DatabaseModule],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
