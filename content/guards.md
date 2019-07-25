@@ -118,7 +118,7 @@ In order to set up a global guard, use the `useGlobalGuards()` method of the Nes
 
 ```typescript
 @@filename()
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.useGlobalGuards(new RolesGuard());
 ```
 
@@ -139,7 +139,7 @@ import { APP_GUARD } from '@nestjs/core';
     },
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 > info **Hint** When using this approach to perform dependency injection for the guard, note that regardless of the
