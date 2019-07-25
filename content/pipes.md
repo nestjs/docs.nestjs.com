@@ -309,7 +309,7 @@ Since the `ValidationPipe` was created to be as generic as possible, let's set i
 ```typescript
 @@filename(main)
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
@@ -333,7 +333,7 @@ import { APP_PIPE } from '@nestjs/core';
     },
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 > info **Hint** When using this approach to perform dependency injection for the pipe, note that regardless of the module where this construction is employed, the pipe is, in fact, global. Where should this be done? Choose the module where the pipe (`ValidationPipe` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
