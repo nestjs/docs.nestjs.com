@@ -1,30 +1,32 @@
 ### Model-View-Controller
 
-Nest, by default, makes use of [express](https://github.com/expressjs/express) library under the hood. Hence, every tutorial about MVC (Model-View-Controller) pattern in express concerns Nest as well. Firstly, let's scaffold a simple Nest application using [CLI](https://github.com/nestjs/nest-cli) tool:
+Nest, by default, makes use of the [Express](https://github.com/expressjs/express) library under the hood. Hence, every technique for using the MVC (Model-View-Controller) pattern in Express applies to Nest as well.
+
+First, let's scaffold a simple Nest application using the [CLI](https://github.com/nestjs/nest-cli) tool:
 
 ```bash
 $ npm i -g @nestjs/cli
 $ nest new project
 ```
 
-In order to create a MVC app, we have to install a [template engine](http://expressjs.com/en/guide/using-template-engines.html):
+In order to create an MVC app, we also need a [template engine](http://expressjs.com/en/guide/using-template-engines.html) to render our HTML views:
 
 ```bash
 $ npm install --save hbs
 ```
 
-We decided to use a `hbs` engine, though, you can use whatever fits your requirements. Once the installation process is completed, we need to configure the express instance using following code:
+We've used the `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)) engine, though you can use whatever fits your requirements. Once the installation process is complete, we need to configure the express instance using the following code:
 
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
-    ApplicationModule,
+    AppModule,
   );
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
@@ -37,11 +39,11 @@ bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
 import { join } from 'path';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(
-    ApplicationModule,
+    AppModule,
   );
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
@@ -53,9 +55,11 @@ async function bootstrap() {
 bootstrap();
 ```
 
-We told [express](https://github.com/expressjs/express) that the `public` directory will be used for storing static assets, `views` will contain templates, and a `hbs` template engine should be used to render an HTML output.
+We told [Express](https://github.com/expressjs/express) that the `public` directory will be used for storing static assets, `views` will contain templates, and the `hbs` template engine should be used to render HTML output.
 
-Now, let's create a `views` directory and `index.hbs` template inside it. In the template, we are gonna print a `message` passed from the controller:
+#### Template rendering with `@Render()` decorator
+
+Now, let's create a `views` directory and `index.hbs` template inside it. In the template, we'll print a `message` passed from the controller:
 
 ```html
 <!DOCTYPE html>
@@ -70,7 +74,7 @@ Now, let's create a `views` directory and `index.hbs` template inside it. In the
 </html>
 ```
 
-Afterward, open the `app.controller` file and replace the `root()` method with the following code:
+Next, open the `app.controller` file and replace the `root()` method with the following code:
 
 ```typescript
 @@filename(app.controller)
@@ -86,13 +90,15 @@ export class AppController {
 }
 ```
 
-> info **Hint** In fact, when Nest detects `@Res()` decorator, it injects library-specific `response` object. We can use such an object to dynamically render the template. Learn more about its abilities [here](http://expressjs.com/en/api.html).
+In this code, we are specifying the template to use in the `@Render()` decorator, and the return value of the route handler method is passed to the template for rendering. Notice that the return value is an object with a property `message`, matching the `message` placeholder we created in the template.
 
-While the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello world!` message.
+While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
 #### Dynamic template rendering
 
-If the application logic must dynamically decide which template to render, then we should use `@Res()` decorator:
+If the application logic must dynamically decide which template to render, then we should use the `@Res()` decorator, and supply the view name in our route handler, rather than in the `@Render()` decorator:
+
+> info **Hint** When Nest detects the `@Res()` decorator, it injects the library-specific `response` object. We can use this object to dynamically render the template. Learn more about the `response` object API [here](http://expressjs.com/en/api.html).
 
 ```typescript
 @@filename(app.controller)
@@ -120,24 +126,24 @@ A working example is available [here](https://github.com/nestjs/nest/tree/master
 
 #### Fastify
 
-As mentioned in this [chapter](/techniques/http-performance), we are able to use any compatible HTTP provider together with Nest. One of them is a [fastify](https://github.com/fastify/fastify) library. In order to create a MVC application with fastify, we have to install following packages:
+As mentioned in this [chapter](/techniques/http-performance), we are able to use any compatible HTTP provider together with Nest. One such library is [Fastify](https://github.com/fastify/fastify). In order to create an MVC application with Fastify, we have to install the following packages:
 
 ```bash
 $ npm i --save fastify point-of-view handlebars
 ```
 
-The next steps cover almost the same stuff as in case of express library (with small differences). Once the installation process is completed, we need to open `main.ts` file and update its contents:
+The next steps cover almost the same process used with Express, with minor differences specific to the platform. Once the installation process is complete, open the `main.ts` file and update its contents:
 
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
-    ApplicationModule,
+    AppModule,
     new FastifyAdapter(),
   );
   app.useStaticAssets({
@@ -156,11 +162,11 @@ bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule, new FastifyAdapter());
+  const app = await NestFactory.create(AppModule, new FastifyAdapter());
   app.useStaticAssets({
     root: join(__dirname, '..', 'public'),
     prefix: '/public/',
@@ -176,7 +182,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-The API is different a little but the idea that sits behind those methods calls remains the same. Also, we have to ensure that the template name passed into the `@Render()` decorators include a file extension.
+The Fastify API is slightly different but the end result of those methods calls remains the same. One difference to notice with Fastify is that the template name passed into the `@Render()` decorator must include a file extension.
 
 ```typescript
 @@filename(app.controller)
@@ -192,7 +198,7 @@ export class AppController {
 }
 ```
 
-While the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello world!` message.
+While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
 #### Example
 
