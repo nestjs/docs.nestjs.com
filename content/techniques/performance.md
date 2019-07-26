@@ -55,6 +55,18 @@ async function bootstrap() {
 
 Keep in mind that when you use the `FastifyAdapter`, Nest uses Fastify as the **HTTP provider**. This means that each recipe that relies on Express may no longer work. You should, instead, use Fastify equivalent packages.
 
+#### Redirect response
+
+Fastify handles redirect responses slightly differently than Express. To do a proper redirect with Fastify, return both the status code and the URL, as follows:
+
+```typescript
+@Get()
+index (@Res() res) {
+  // send 302 redirect to /login
+  res.status(302).redirect('/login');
+}
+```
+
 #### Fastify options
 
 You can pass options into the Fastify constructor through the `FastifyAdapter` constructor. For example:
