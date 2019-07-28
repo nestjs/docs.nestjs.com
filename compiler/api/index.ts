@@ -24,6 +24,7 @@ import {
   processPackages,
   shortDescription,
   removeInjectableConstructors,
+  processPipes,
 } from './processors';
 
 function typeScriptConfiguration(readTypeScriptModules: any, tsParser: any) {
@@ -180,6 +181,7 @@ const nestjs = new Package('nestjs', [
   .processor(processPackages)
   .processor(shortDescription)
   .processor(removeInjectableConstructors)
+  .processor(processPipes)
 
   .config(typeScriptConfiguration)
   .config(readFilesConfiguration)
@@ -191,6 +193,13 @@ const nestjs = new Package('nestjs', [
     computePathsProcessor.pathTemplates.push({
       docTypes: ['decorator'],
       pathTemplate: 'decorator.template.html',
+      outputPathTemplate: '${path}'
+    });
+  })
+  .config(function(computePathsProcessor) {
+    computePathsProcessor.pathTemplates.push({
+      docTypes: ['pipe'],
+      pathTemplate: 'pipe.template.html',
       outputPathTemplate: '${path}'
     });
   });

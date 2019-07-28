@@ -13,3 +13,4 @@ export * from './processModuleDocs';
 export * from './processPackages';
 export * from './shortDescription';
 export * from './removeInjectableConstructors';
+export * from './processPipes';

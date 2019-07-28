@@ -9,10 +9,12 @@ class RemoveInjectableConstructors implements Processor {
     docs.forEach(doc => {
       if (
         doc.constructorDoc &&
-        doc.decorators &&
-        doc.decorators.some(
-          decorator => this.injectableDecorators.indexOf(decorator.name) !== -1
-        )
+        ((doc.decorators &&
+          doc.decorators.some(
+            decorator =>
+              this.injectableDecorators.indexOf(decorator.name) !== -1
+          )) ||
+          doc.docType === 'pipe')
       ) {
         delete doc.constructorDoc;
       }
