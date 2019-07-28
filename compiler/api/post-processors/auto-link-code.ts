@@ -82,7 +82,7 @@ module.exports = function autoLinkCode(getDocFromAlias: any) {
   }
   function foundValidDoc(docs) {
     return (
-      docs.length === 1 &&
+      docs.length >= 1 &&
       !docs[0].internal &&
       autoLinkCodeImpl.docTypes.indexOf(docs[0].docType) !== -1
     );
