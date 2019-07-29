@@ -823,6 +823,6 @@ To use above decorator in your resolver, be sure to include it as a parameter of
 @Query(returns => User)
 @UseGuards(GqlAuthGuard)
 whoAmI(@CurrentUser() user: User) {
-  return this.userService.findByUsername(user.username);
+  return this.userService.findById(user.id);
 }
 ```
