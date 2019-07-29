@@ -29,7 +29,7 @@
 
 {%- macro renderDecoratorSyntax(member, truncateLines) -%}
     {%- if member.accessibility !== 'public' %}{$ member.accessibility $} {% endif -%}
-    <span class="member-name">@{$ member.name $}</span>{$ member.typeParameters | escape $}{% if not member.isGetAccessor %}{$ params.paramList(member, truncateLines) | trim $}{% endif %}
+    <span class="member-name">@{$ member.name $}</span>{$ member.typeParameters | escape $}{% if not member.isGetAccessor %}{$ params.paramList(member.parameters, truncateLines) | trim $}{% endif %}
     {%- if member.isOptional  %}?{% endif -%}
 {%- endmacro -%}
 
@@ -40,7 +40,7 @@
     {%- if member.accessibility !== 'public' %}{$ member.accessibility $} {% endif -%}
     {%- if member.isAbstract %}abstract {% endif -%}
     {%- if member.isStatic %}static {% endif -%}
-    <span class="member-name">{$ member.name $}</span>{$ member.typeParameters | escape $}{% if not member.isGetAccessor %}{$ params.paramList(member, truncateLines) | trim $}{% endif %}
+    <span class="member-name">{$ member.name $}</span>{$ member.typeParameters | escape $}{% if not member.isGetAccessor %}{$ params.paramList(member.parameters, truncateLines) | trim $}{% endif %}
     {%- if member.isOptional  %}?{% endif -%}
     {$ params.returnType(member.type) | trim | truncateCode(truncateLines) $}
 {%- endmacro -%}
