@@ -119,8 +119,8 @@ We'll start with the validation of the provided environment variables. You can t
 Install Joi and it's types (for **TypeScript** users):
 
 ```bash
-$ npm install --save joi
-$ npm install --save-dev @types/joi
+$ npm install --save @hapi/joi
+$ npm install --save-dev @types/hapi__joi
 ```
 
 Once the packages are installed, we can move to our `ConfigService`.
