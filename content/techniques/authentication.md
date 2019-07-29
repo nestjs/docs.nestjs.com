@@ -820,11 +820,9 @@ export const CurrentUser = createParamDecorator(
 To use above decorator in your resolver, be sure to include it as a parameter of your query or mutation:
 
 ```typescript
-import { CurrentUser } from './user.decorator';
-
 @Query(returns => User)
-  @UseGuards(GqlAuthGuard)
-  whoami(@CurrentUser() user: User) {
-    return this.userService.findByUsername(user.username);
-  }
+@UseGuards(GqlAuthGuard)
+whoAmI(@CurrentUser() user: User) {
+  return this.userService.findByUsername(user.username);
+}
 ```
