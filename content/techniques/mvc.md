@@ -57,7 +57,7 @@ bootstrap();
 
 We told [Express](https://github.com/expressjs/express) that the `public` directory will be used for storing static assets, `views` will contain templates, and the `hbs` template engine should be used to render HTML output.
 
-#### Template rendering with `@Render()` decorator
+#### Template rendering
 
 Now, let's create a `views` directory and `index.hbs` template inside it. In the template, we'll print a `message` passed from the controller:
 
