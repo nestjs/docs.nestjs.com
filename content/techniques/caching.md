@@ -38,10 +38,8 @@ export class AppController {
 }
 ```
 
-> warning**Warning** Only `GET` endpoints are cached.
-
-> warning **Warning** HTTP server routes that inject the native response object (`@Res()`) cannot use the Cache Interceptor. See
-> <a href="https://docs.nestjs.com/interceptors#response-mapping">Response Mapping</a> for more details.
+> warning**Warning** Only `GET` endpoints are cached. Also, HTTP server routes that inject the native response object (`@Res()`) cannot use the Cache Interceptor. See
+> <a href="https://docs.nestjs.com/interceptors#response-mapping">response mapping</a> for more details.
 
 #### Global cache
 
