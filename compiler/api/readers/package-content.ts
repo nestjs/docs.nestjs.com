@@ -1,0 +1,25 @@
+import { FileInfoDoc } from '../processors/interfaces';
+
+/**
+ * @dgService
+ * @description
+ * This file reader will pull the contents from a text file that will be used
+ * as the description of a package.
+ *
+ * The doc will initially have the form:
+ * ```
+ * {
+ *   content: 'the content of the file',
+ *   startingLine: 1
+ * }
+ * ```
+ */
+module.exports = function packageContentFileReader() {
+  return {
+    name: 'packageContentFileReader',
+    // defaultPattern: /PACKAGE\.md$/,
+    getDocs: (fileInfo: FileInfoDoc) => [
+      { docType: 'package-content', content: fileInfo.content, startingLine: 1 }
+    ]
+  };
+};

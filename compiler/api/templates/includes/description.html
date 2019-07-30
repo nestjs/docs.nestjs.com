@@ -1,0 +1,6 @@
+{% if doc.description %}
+<section class="description">
+  <h3><span>Description</span></h3>
+  {$ doc.description | trimBlankLines | marked $}
+</section>
+{% endif %}

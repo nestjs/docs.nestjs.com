@@ -1,0 +1,12 @@
+{% extends 'export-base.template.html' %}
+
+{% block overview %}
+  <section class="{$ doc.docType $}-overview">
+    <pre class="language-typescript"><code class="language-typescript">
+type {$ doc.name $}{$ doc.typeParameters | escape $}{% if doc.typeDefinition %} = {$ doc.typeDefinition | escape $}{% endif %};</code></pre>
+  </section>
+{% endblock %}
+
+{% block details %}
+  {% include "includes/description.html" %}
+{% endblock %}

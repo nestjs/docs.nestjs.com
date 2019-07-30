@@ -30,7 +30,7 @@ export class BasePageComponent implements AfterViewChecked {
     this.initHljs();
   }
 
-  private initHljs() {
+  protected initHljs() {
     if (this.isHljsInitialized) {
       return;
     }

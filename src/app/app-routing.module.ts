@@ -168,6 +168,10 @@ const routes: Routes = [
         loadChildren: () =>
           import('./homepage/pages/cli/cli.module').then(m => m.CliModule),
       },
+      {
+        path: 'api',
+        loadChildren: './homepage/api/api.module#ApiModule',
+      }
     ],
   },
   {

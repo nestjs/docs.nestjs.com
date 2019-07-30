@@ -6,3 +6,73 @@ $grey-color: #404040;
 $darkgrey-color: #272727;
 $black-color: #151515;
 $red-color: #ed2945;
+$blue-color: #2196F3;
+$dark-blue-color: #0D47A1;
+$pink-color: #D81B60;
+$amber-color: #FFA000;
+$orange-color: #fb8c00;
+$green-color: #4CAF50;
+$teal-color: #009688;
+$purple-color: #8E24AA;
+$light-green-color: #7CB342;
+$blue-grey-color: #546E7A;
+
+
+$api-symbols: (
+  all: (
+    content: ' ',
+    background: $white-color
+  ),
+  class: (
+    content: 'C',
+    background: $dark-blue-color
+  ),
+  const: (
+    content: 'K',
+    background: $grey-color
+  ),
+  decorator: (
+    content: '@',
+    background: $blue-color
+  ),
+  enum: (
+    content: 'E',
+    background: $amber-color
+  ),
+  function: (
+    content: 'F',
+    background: $green-color
+  ),
+  interface: (
+    content: 'I',
+    background: $teal-color
+  ),
+  let: (
+    content: 'K',
+    background: $grey-color
+  ),
+  nestmodule: (
+    content: 'M',
+    background: $red-color
+  ),
+  injectable: (
+    content: 'I',
+    background: $orange-color
+  ),
+  package: (
+    content: 'Pk',
+    background: $purple-color
+  ),
+  pipe: (
+    content: 'P',
+    background: $blue-grey-color
+  ),
+  type-alias: (
+    content: 'T',
+    background: $light-green-color
+  ),
+  var: (
+    content: 'K',
+    background: $grey-color
+  ),
+);
