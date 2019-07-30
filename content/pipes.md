@@ -130,15 +130,23 @@ It turns out that this is a case ideally suited for a **Pipe**. So let's go ahea
 
 There are several approaches available for object validation. One common approach is to use **schema-based** validation. The [Joi](https://github.com/hapijs/joi) library allows you to create schemas in a pretty straightforward way, with a readable API. Let's look at a pipe that makes use of Joi-based schemas.
 
+Start by installing the required package:
+
+```bash
+$ npm install --save @hapi/joi
+$ npm install --save-dev @types/hapi__joi
+```
+
 In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `Joi.validate()` method, which validates our incoming argument against the provided schema.
 
 As noted earlier, a **validation pipe** either returns the value unchanged, or throws an exception.
 
 In the next section, you'll see how we supply the appropriate schema for a given controller method using the `@UsePipes()` decorator.
 
+
 ```typescript
 @@filename()
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 
 @Injectable()
@@ -154,7 +162,7 @@ export class JoiValidationPipe implements PipeTransform {
   }
 }
 @@switch
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
@@ -405,7 +413,7 @@ async findOne(id) {
 }
 ```
 
-> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options.  
+> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options.
 
 With this in place, `ParseIntPipe` or `ParseUUIDPipe` will be executed before the request reaches the corresponding handler, ensuring that it will always receive an integer or uuid (according on the used pipe) for the `id` parameter.
 
