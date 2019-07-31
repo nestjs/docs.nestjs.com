@@ -6,9 +6,7 @@
 
 	Prism.plugins.KeepMarkup = true;
 
-  console.log(Prism);
 	Prism.hooks.add('before-highlight', function (env) {
-    console.log('GETTING CALLED');
 		if (!env.element.children.length) {
 			return;
 		}
@@ -44,7 +42,6 @@
 	});
 
 	Prism.hooks.add('after-highlight', function (env) {
-    console.log('asdasdfasdf');
 		if(env.keepMarkup && env.keepMarkup.length) {
 
 			var walk = function (elt, nodeState) {

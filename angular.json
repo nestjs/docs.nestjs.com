@@ -19,8 +19,7 @@
             "assets": ["src/assets", "src/favicon.ico", "src/_redirects", "src/generated"],
             "styles": ["src/styles.scss"],
             "scripts": [
-              "src/assets/js/prism.js",
-              "src/assets/js/prism-keep-markup.js"
+              "src/assets/js/prism.js"
             ]
           },
           "configurations": {

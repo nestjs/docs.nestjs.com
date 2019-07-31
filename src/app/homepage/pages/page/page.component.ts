@@ -1,4 +1,5 @@
 declare var Prism;
+import 'prismjs/plugins/keep-markup/prism-keep-markup';
 import {
   AfterViewChecked,
   ApplicationRef,
