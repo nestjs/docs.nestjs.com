@@ -1,0 +1,14 @@
+{% block content %}
+<div class="content" #contentReference>
+  <div class="github-links">
+    <a
+      href="https://github.com/nestjs/docs.nestjs.com/edit/master/{$ doc.fileInfo.projectRelativePath $}"
+      aria-label="Suggest Edits"
+      title="Suggest Edits"
+    >
+      <i class="material-icons" aria-hidden="true" role="img">mode_edit</i>
+    </a>
+  </div>
+  {$ doc.description | nestjsmarked $}
+</div>
+{% endblock %}
