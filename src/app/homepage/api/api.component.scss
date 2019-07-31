@@ -33,3 +33,12 @@
 .short-description p {
   margin: 0;
 }
+
+pre.language-typescript a {
+  font-weight: initial;
+  color: #f7f7f7;
+  &:hover {
+    text-decoration: underline;
+    color: #f7f7f7;
+  }
+}
