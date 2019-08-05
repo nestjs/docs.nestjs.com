@@ -1,6 +1,6 @@
 ### Validation
 
-The validation is an essential functionality of any existing web application. To automatically validate incoming requests, we leverage [class-validator](https://github.com/typestack/class-validator) package which built-in `ValidationPipe` makes use of underneath. The `ValidationPipe` provides a convenient method to validate incoming client payloads with a variety of powerful validation rules.
+Validation is an essential function for any web application. To automatically validate incoming requests, we leverage [class-validator](https://github.com/typestack/class-validator) package which built-in `ValidationPipe` makes use of underneath. The `ValidationPipe` provides a convenient method to validate incoming client payloads with a variety of powerful validation rules.
 
 #### Overview
 
@@ -88,8 +88,8 @@ Error messages help a lot in order to comprehend what was wrong with the data se
 ```typescript
 app.useGlobalPipes(
   new ValidationPipe({
-    disableErrorMessages: true,
-  }),
+    disableErrorMessages: true
+  })
 );
 ```
 
@@ -102,8 +102,8 @@ Quite frequently, we would like only predefined (whitelisted) properties to be p
 ```typescript
 app.useGlobalPipes(
   new ValidationPipe({
-    whitelist: true,
-  }),
+    whitelist: true
+  })
 );
 ```
 
@@ -116,8 +116,8 @@ The `ValidationPipe` doesn't automatically transform your payloads to the corres
 ```typescript
 app.useGlobalPipes(
   new ValidationPipe({
-    transform: true,
-  }),
+    transform: true
+  })
 );
 ```
 
