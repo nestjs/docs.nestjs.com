@@ -83,9 +83,10 @@ For demonstration purposes, we are going to integrate the [ws](https://github.co
 ```typescript
 @@filename(ws-adapter)
 import * as WebSocket from 'ws';
-import { WebSocketAdapter, MessageMappingProperties, INestApplicationContext } from '@nestjs/common';
-import { Observable, fromEvent, empty } from 'rxjs';
-import { mergeMap, filter, tap } from 'rxjs/operators';
+import { WebSocketAdapter, INestApplicationContext } from '@nestjs/common';
+import { MessageMappingProperties } from "@nestjs/websockets";
+import { Observable, fromEvent, EMPTY } from 'rxjs';
+import { mergeMap, filter } from 'rxjs/operators';
 
 export class WsAdapter implements WebSocketAdapter {
   constructor(private readonly app: INestApplicationContext) {}
@@ -121,7 +122,7 @@ export class WsAdapter implements WebSocketAdapter {
       handler => handler.message === message.event,
     );
     if (!messageHandler) {
-      return empty;
+      return EMPTY;
     }
     return process(messageHandler.callback(message.data));
   }
