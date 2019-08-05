@@ -753,10 +753,12 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
-angular2-highlight-js@6.0.1-alpha:
-  version "6.0.1-alpha"
-  resolved "https://registry.yarnpkg.com/angular2-highlight-js/-/angular2-highlight-js-6.0.1-alpha.tgz#a49450457a000ec19cc6fe52311db02ec9188e3b"
-  integrity sha512-xghWwojNUYBK2X/GcsrLS0Py9/3JbyeEbeNGkH9Imh4K+psKcD2a4AatB+hZZraHJ/B8YrDT+vkpgoIeZ6cCpw==
+angular2-highlight-js@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/angular2-highlight-js/-/angular2-highlight-js-8.0.1.tgz#35b9e9906109f83abb9e6eef3c67a70a9925527d"
+  integrity sha512-ORiIxJ7A8evS3gGf5Wfx5ecyEYJqa6WZ0GUBzXv9fGHNsAm8pGet7ZZt8pOB/V3srBWUrcdcDvy8jTi8rLNRWA==
+  dependencies:
+    tslib "^1.9.0"
 
 ansi-colors@4.1.0:
   version "4.1.0"
