@@ -84,7 +84,7 @@ For demonstration purposes, we are going to integrate the [ws](https://github.co
 @@filename(ws-adapter)
 import * as WebSocket from 'ws';
 import { WebSocketAdapter, INestApplicationContext } from '@nestjs/common';
-import { MessageMappingProperties } from "@nestjs/websockets";
+import { MessageMappingProperties } from '@nestjs/websockets';
 import { Observable, fromEvent, EMPTY } from 'rxjs';
 import { mergeMap, filter } from 'rxjs/operators';
 
