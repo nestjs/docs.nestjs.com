@@ -57,7 +57,7 @@ Using the above, this is how the response would look:
 
 ```json
 {
-  "statusCode": 403,
+  "status": 403,
   "error": "This is a custom message"
 }
 ```
