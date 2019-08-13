@@ -1,4 +1,4 @@
-# Transforms Overview
+# Transforms overview
 
 All the content that is rendered by the docs.nestjs.com application, and some of its
 configuration files, are generated from source files by [Dgeni](https://github.com/angular/dgeni).
@@ -35,5 +35,5 @@ The **nestjs-content-package** manages this content further.
 
 ## Templates
 
-All the templates for the docs.nestjs.com dgeni transformations are stoted in the `tools/transforms/templates`
+All the templates for the docs.nestjs.com dgeni transformations are stored in the `tools/transforms/templates`
 folder. See the [README](./templates/README.md).
