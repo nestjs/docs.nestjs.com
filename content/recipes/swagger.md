@@ -135,7 +135,7 @@ export const ApiModelProperty: (metadata?: {
 }) => PropertyDecorator;
 ```
 
-> warning **Hint** There's an `@ApiModelPropertyOptional()` shortcut decorator which helps to avoid continuous typing `@ApiModelProperty(&#123 required: false &#125)`.
+> warning **Hint** There's an `@ApiModelPropertyOptional()` shortcut decorator which helps to avoid continuous typing `{{"@ApiModelProperty({ required: false })"}}`.
 
 Thanks to that we can simply set the **default** value, determine whether the property is required or explicitly set the type.
 
