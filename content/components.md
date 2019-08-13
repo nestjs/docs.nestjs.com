@@ -176,7 +176,7 @@ import { CatsService } from './cats/cats.service';
   controllers: [CatsController],
   providers: [CatsService],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 Nest will now be able to resolve the dependencies of the `CatsController` class.

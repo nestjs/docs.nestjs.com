@@ -433,7 +433,7 @@ export class CatsController {
 
 With the above controller fully defined, Nest still doesn't know that `CatsController` exists and as a result won't create an instance of this class.
 
-Controllers always belong to a module, which is why we include the `controllers` array within the `@Module()` decorator. Since we haven't yet defined any other modules except the root `ApplicationModule`, we'll use that to introduce the `CatsController`:
+Controllers always belong to a module, which is why we include the `controllers` array within the `@Module()` decorator. Since we haven't yet defined any other modules except the root `AppModule`, we'll use that to introduce the `CatsController`:
 
 ```typescript
 @@filename(app.module)
@@ -443,7 +443,7 @@ import { CatsController } from './cats/cats.controller';
 @Module({
   controllers: [CatsController],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 We attached the metadata to the module class using the `@Module()` decorator, and Nest can now easily reflect which controllers have to be mounted.

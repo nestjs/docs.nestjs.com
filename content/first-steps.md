@@ -46,19 +46,19 @@ The `main.ts` includes an async function, which will **bootstrap** our applicati
 @@filename(main)
 
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 }
 bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 }
 bootstrap();
@@ -82,7 +82,7 @@ Whichever platform is used, it exposes its own application interface. These are 
 When you pass a type to the `NestFactory.create()` method, as in the example below, the `app` object will have methods available exclusively for that specific platform. Note, however, you don't **need** to specify a type **unless** you actually want to access the underlying platform API.
 
 ```typescript
-const app = await NestFactory.create<NestExpressApplication>(ApplicationModule);
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
 ```
 
 #### Running the application

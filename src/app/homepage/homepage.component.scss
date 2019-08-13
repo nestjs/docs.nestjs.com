@@ -336,6 +336,19 @@
   }
 }
 
+.github-links {
+  float: right;
+  margin-top: 24px;
+
+  .material-icons {
+    font-size: 20px;
+    color: $black-color;
+    &:hover {
+      color: $red-color;
+    }
+  }
+}
+
 .toc-wrapper {
   @include media(large) {
     display: none;
