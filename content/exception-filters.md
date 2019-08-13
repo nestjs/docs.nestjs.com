@@ -40,7 +40,27 @@ When the client calls this endpoint, the response looks like this:
 }
 ```
 
-The `HttpException` constructor takes two arguments which determine the JSON response body and the [HTTP response status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) respectively. The first argument is of type `string | object`. Pass a string to customize the error message (as shown in the `GET` handler of the `CatsController` above). Pass a plain literal `object` with properties `status` (the status code to appear in the JSON response body) and `error` (the message string) in the first parameter, instead of a `string`, to completely override the response body. The second constructor argument should be the actual HTTP response status code. Here's an example overriding the entire response body:
+The `HttpException` constructor takes two required arguments which determine the
+response:
+
+- The `response` argument defines the JSON response body.  It can be a `string`
+or an `object` as described below.
+- The `status` argument defines the [HTTP status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
+
+By default, the JSON response body contains two properties:
+- `statusCode`: defaults to the HTTP status code provided in the `status` argument
+- `message`: a short description of the HTTP error based on the `status`
+
+To override just the message portion of the JSON response body, supply a string
+in the `response` argument.
+
+To override the entire JSON response body, pass an object in the `response` argument.
+Nest will serialize the object and return it as the JSON response body.
+
+The second constructor argument - `status` - should be a valid HTTP status code.
+Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
+
+Here's an example overriding the entire response body:
 
 ```typescript
 @@filename(cats.controller)
