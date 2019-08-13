@@ -22,9 +22,10 @@ First we need to install the required packages. Passport provides a strategy cal
 
 ```bash
 $ npm install --save @nestjs/passport passport passport-local
+$ npm install --save-dev @types/passport-local
 ```
 
-> Warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building.
+> Warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as show above with `@types/passport-local`, which provides assistance while writing TypeScript code.
 
 #### Implementing Passport strategies
 
@@ -227,7 +228,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(username: string, password: string): any {
+  async validate(username: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(username, password);
     if (!user) {
       throw new UnauthorizedException();
@@ -263,7 +264,7 @@ We've followed the recipe described earlier for all Passport strategies. In our 
 
 We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
 
-Most of the validation work is done in our `AuthService` (with the help of our `UserService`), so this method is quite straightforward. The `validate()` method for **any** Passport strategy will follow a similar pattern, varying only in the details of how credentials are represented. If a user is found and the credentials are valid, the user is returned so Passport can complete its tasks (e.g., creating the `user` property on the `Request` object), and the request handling pipeline can continue. If it's not found, we throw an exception and let our <a href="exceptions">exceptions layer</a> handle it.
+Most of the validation work is done in our `AuthService` (with the help of our `UserService`), so this method is quite straightforward. The `validate()` method for **any** Passport strategy will follow a similar pattern, varying only in the details of how credentials are represented. If a user is found and the credentials are valid, the user is returned so Passport can complete its tasks (e.g., creating the `user` property on the `Request` object), and the request handling pipeline can continue. If it's not found, we throw an exception and let our <a href="exception-filters">exceptions layer</a> handle it.
 
 Typically, the only significant difference in the `validate()` method for each strategy is **how** you determine if a user exists and is valid. For example, in a JWT strategy, depending on requirements, we may evaluate whether the `userId` carried in the decoded token matches a record in our user database, or matches a list of revoked tokens. Hence, this pattern of sub-classing and implementing strategy-specific validation is consistent, elegant and extensible.
 
@@ -370,9 +371,10 @@ We'll need to install a couple more packages to support our JWT requirements:
 
 ```bash
 $ npm install @nestjs/jwt passport-jwt
+$ npm install @types/passport-jwt --save-dev
 ```
 
-The `@nest/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy.
+The `@nest/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy and `@types/passport-jwt` provides the TypeScript type definitions.
 
 Let's take a closer look at how a `POST /api/login` request is handled. We've decorated the route using the built-in `AuthGuard` provided by the passport-local strategy. This means that:
 

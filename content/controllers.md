@@ -103,11 +103,10 @@ The request object represents the HTTP request and has properties for the reques
   <tbody>
     <tr>
       <td><code>@Request()</code></td>
-      <td><code>req</code></td>
-    </tr>
+      <td><code>req</code></td></tr>
     <tr>
       <td><code>@Response()</code></td>
-      <td><code>res</code></td>
+      <td><code>res</code><span class="table-code-asterisk">*</span></td>
     </tr>
     <tr>
       <td><code>@Next()</code></td>
@@ -135,6 +134,8 @@ The request object represents the HTTP request and has properties for the reques
     </tr>
   </tbody>
 </table>
+
+<sup>\* </sup>As noted in the **Library-specific** section above, there are two flavors of the `Response` object. The _standard_ one is accessed with the `@Response()` decorator. You can access the underlying native platform `Response` object with the `@Res()` decorator. Please be sure to understand the differences by reviewing that section.
 
 > info **Hint** To learn how to create your own custom decorators, visit [this](/custom-decorators) chapter.
 

@@ -1,6 +1,6 @@
 ### Validation
 
-The validation is an essential functionality of any existing web application. To automatically validate incoming requests, we leverage [class-validator](https://github.com/typestack/class-validator) package which built-in `ValidationPipe` makes use of underneath. The `ValidationPipe` provides a convenient method to validate incoming client payloads with a variety of powerful validation rules.
+Validation is an essential function for any web application. To automatically validate incoming requests, we leverage [class-validator](https://github.com/typestack/class-validator) package which built-in `ValidationPipe` makes use of underneath. The `ValidationPipe` provides a convenient method to validate incoming client payloads with a variety of powerful validation rules.
 
 #### Overview
 
