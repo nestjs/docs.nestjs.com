@@ -3,7 +3,7 @@
 This document gives an overview of the tools we use to generate the content for the
 docs.nestjs.com website.
 
-# transforms
+# Transforms
 
 All the content that is rendered by the docs.nestjs.com application, and some of its
 configuration files, are generated from source files by [Dgeni](https://github.com/angular/dgeni).
