@@ -45,10 +45,10 @@ response:
 
 - The `response` argument defines the JSON response body.  It can be a `string`
 or an `object` as described below.
-- The `status` argument defines the [HTTP status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+- The `status` argument defines the [HTTP status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
 
 By default, the JSON response body contains two properties:
-- `statusCode`: defaults to the Http Status Code provided in the `status` argument
+- `statusCode`: defaults to the HTTP status code provided in the `status` argument
 - `message`: a short description of the HTTP error based on the `status`
 
 To override just the message portion of the JSON response body, supply a string
