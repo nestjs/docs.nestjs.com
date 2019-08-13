@@ -2,7 +2,6 @@ import { Dgeni } from 'dgeni';
 import { resolve } from 'path';
 
 const argv = require('yargs').argv;
-
 const packagePaths = argv._;
 
 const packages = packagePaths.map(packagePath => {

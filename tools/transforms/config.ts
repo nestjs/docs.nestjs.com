@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 
-
 export const PROJECT_ROOT = resolve(__dirname, '../../');
 export const CONTENTS_PATH = resolve(PROJECT_ROOT, 'content');
 

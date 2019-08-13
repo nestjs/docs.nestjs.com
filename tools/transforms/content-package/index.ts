@@ -1,14 +1,14 @@
 import { Package } from 'dgeni';
-import { ContentFileReader, contentFileReader } from './readers';
-import {
-  extractContentTitleProcessor,
-  computeOutputPathProcessor,
-  computeWhoUsesProcessor
-} from './processors';
-import { renderNestJSMarkdown } from './services';
-import { nestjsMarkedNunjucksTag } from './rendering/tags/nestjsmarked';
-import { nestjsMarkedNunjucksFilter } from './rendering/filters/nestjsmarked';
 import { Document } from '../shared';
+import {
+  computeOutputPathProcessor,
+  computeWhoUsesProcessor,
+  extractContentTitleProcessor,
+} from './processors';
+import { ContentFileReader, contentFileReader } from './readers';
+import { nestjsMarkedNunjucksFilter } from './rendering/filters/nestjs-marked';
+import { nestjsMarkedNunjucksTag } from './rendering/tags/nestjs-marked';
+import { renderNestJSMarkdown } from './services';
 
 export default new Package('content', [])
   .factory(contentFileReader)
@@ -28,11 +28,11 @@ export default new Package('content', [])
     (
       templateEngine: any,
       nestjsMarkedNunjucksTag: any,
-      nestjsMarkedNunjucksFilter: any
+      nestjsMarkedNunjucksFilter: any,
     ) => {
       templateEngine.tags.push(nestjsMarkedNunjucksTag);
       templateEngine.filters.push(nestjsMarkedNunjucksFilter);
-    }
+    },
   )
 
   .config(computeIdsProcessor => {
@@ -49,9 +49,9 @@ export default new Package('content', [])
             .replace(/\.\w*$/, '')
         );
       },
-      getAliases: (doc: Document) => [doc.id]
+      getAliases: (doc: Document) => [doc.id],
     });
   });
 
-export * from './readers';
 export * from './processors';
+export * from './readers';
