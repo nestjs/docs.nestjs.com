@@ -118,6 +118,11 @@ function readAndCompile(path: string, done: (filename?: string) => void) {
       return done();
     }
     const html = `<div class="content" #contentReference>
+      <div class="github-links">
+        <a href="https://github.com/nestjs/docs.nestjs.com/edit/master/${path}" aria-label="Suggest Edits" title="Suggest Edits">
+          <i class="material-icons" aria-hidden="true" role="img">mode_edit</i>
+        </a>
+      </div>
       ${marked(data.toString(), { renderer })}
     </div>`;
 

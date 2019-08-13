@@ -118,7 +118,7 @@ As mentioned, the construction above attaches the interceptor to every handler d
 In order to set up a global interceptor, we use the `useGlobalInterceptors()` method of the Nest application instance:
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.useGlobalInterceptors(new LoggingInterceptor());
 ```
 
@@ -137,7 +137,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     },
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 > info **Hint** When using this approach to perform dependency injection for the interceptor, note that regardless of the

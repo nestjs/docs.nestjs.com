@@ -103,11 +103,10 @@ The request object represents the HTTP request and has properties for the reques
   <tbody>
     <tr>
       <td><code>@Request()</code></td>
-      <td><code>req</code></td>
-    </tr>
+      <td><code>req</code></td></tr>
     <tr>
       <td><code>@Response()</code></td>
-      <td><code>res</code></td>
+      <td><code>res</code><span class="table-code-asterisk">*</span></td>
     </tr>
     <tr>
       <td><code>@Next()</code></td>
@@ -135,6 +134,8 @@ The request object represents the HTTP request and has properties for the reques
     </tr>
   </tbody>
 </table>
+
+<sup>\* </sup>As noted in the **Library-specific** section above, there are two flavors of the `Response` object. The _standard_ one is accessed with the `@Response()` decorator. You can access the underlying native platform `Response` object with the `@Res()` decorator. Please be sure to understand the differences by reviewing that section.
 
 > info **Hint** To learn how to create your own custom decorators, visit [this](/custom-decorators) chapter.
 
@@ -433,7 +434,7 @@ export class CatsController {
 
 With the above controller fully defined, Nest still doesn't know that `CatsController` exists and as a result won't create an instance of this class.
 
-Controllers always belong to a module, which is why we include the `controllers` array within the `@Module()` decorator. Since we haven't yet defined any other modules except the root `ApplicationModule`, we'll use that to introduce the `CatsController`:
+Controllers always belong to a module, which is why we include the `controllers` array within the `@Module()` decorator. Since we haven't yet defined any other modules except the root `AppModule`, we'll use that to introduce the `CatsController`:
 
 ```typescript
 @@filename(app.module)
@@ -443,7 +444,7 @@ import { CatsController } from './cats/cats.controller';
 @Module({
   controllers: [CatsController],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 We attached the metadata to the module class using the `@Module()` decorator, and Nest can now easily reflect which controllers have to be mounted.

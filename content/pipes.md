@@ -17,7 +17,7 @@ In both cases, pipes operate on the `arguments` being processed by a <a href="co
 
 #### Built-in pipes
 
-Nest comes with two pipes available right out-of-the-box: `ValidationPipe`, `ParseIntPipe` and `ParseUUIDPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
+Nest comes with three pipes available right out-of-the-box: `ValidationPipe`, `ParseIntPipe` and `ParseUUIDPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
 
 Let's start with the `ValidationPipe`. Initially, we'll have it simply take an input value and immediately return the same value, behaving like an identity function.
 
@@ -130,15 +130,23 @@ It turns out that this is a case ideally suited for a **Pipe**. So let's go ahea
 
 There are several approaches available for object validation. One common approach is to use **schema-based** validation. The [Joi](https://github.com/hapijs/joi) library allows you to create schemas in a pretty straightforward way, with a readable API. Let's look at a pipe that makes use of Joi-based schemas.
 
+Start by installing the required package:
+
+```bash
+$ npm install --save @hapi/joi
+$ npm install --save-dev @types/hapi__joi
+```
+
 In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `Joi.validate()` method, which validates our incoming argument against the provided schema.
 
 As noted earlier, a **validation pipe** either returns the value unchanged, or throws an exception.
 
 In the next section, you'll see how we supply the appropriate schema for a given controller method using the `@UsePipes()` decorator.
 
+
 ```typescript
 @@filename()
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 
 @Injectable()
@@ -154,7 +162,7 @@ export class JoiValidationPipe implements PipeTransform {
   }
 }
 @@switch
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
@@ -309,7 +317,7 @@ Since the `ValidationPipe` was created to be as generic as possible, let's set i
 ```typescript
 @@filename(main)
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
@@ -333,7 +341,7 @@ import { APP_PIPE } from '@nestjs/core';
     },
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 > info **Hint** When using this approach to perform dependency injection for the pipe, note that regardless of the module where this construction is employed, the pipe is, in fact, global. Where should this be done? Choose the module where the pipe (`ValidationPipe` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
@@ -405,7 +413,7 @@ async findOne(id) {
 }
 ```
 
-> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options.  
+> info **Hint** When using `ParseUUIDPipe()` you are parsing UUID in version 3, 4 or 5, if you only requires a specific version of UUID you can pass a version in the pipe options.
 
 With this in place, `ParseIntPipe` or `ParseUUIDPipe` will be executed before the request reaches the corresponding handler, ensuring that it will always receive an integer or uuid (according on the used pipe) for the `id` parameter.
 

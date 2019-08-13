@@ -124,3 +124,4 @@ src/app/homepage/pages/techniques/sql/sql.component.html
 src/app/homepage/pages/controllers/controllers.component.html
 src/app/homepage/pages/pipes/pipes.component.html
 src/app/homepage/pages/recipes/crud/crud.component.html
+src/app/homepage/pages/recipes/serve-static/serve-static.component.html
