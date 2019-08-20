@@ -26,6 +26,16 @@
       }
     }
 
+    .dev-to-icon {
+      fill: #fff;
+      position: relative;
+      top: 12px;
+
+      &:hover {
+        fill: $red-color;
+      }
+    }
+
     &:first-of-type {
       font-size: 20px;
     }
