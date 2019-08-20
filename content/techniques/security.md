@@ -45,6 +45,8 @@ Cross-site request forgery (known as CSRF or XSRF) is a type of malicious exploi
 $ npm i --save csurf
 ```
 
+> warning **Warning** As explained on the [csurf middleware page](https://github.com/expressjs/csurf#csurf), the csurf module requires either a session middleware or cookie-parser to be initialized first.  Please see that documentation for further instructions.
+
 Once the installation is completed, apply it as a global middleware.
 
 ```typescript
