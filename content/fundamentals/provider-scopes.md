@@ -68,7 +68,7 @@ Imagine the following chain: `CatsController <- CatsService <- CatsRepository`. 
 
 #### Request provider
 
-In the HTTP application, using request-scoped providers gives you a capability to inject an original request reference.
+In the HTTP application, using request-scoped providers gives you the capability to inject an original request reference.
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
