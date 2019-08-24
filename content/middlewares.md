@@ -139,6 +139,7 @@ The `MiddlewareConsumer` is a helper class. It provides several built-in methods
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { CatsModule } from './cats/cats.module';
+import { CatsController } from './cats/cats.controller.ts';
 
 @Module({
   imports: [CatsModule],
@@ -154,6 +155,7 @@ export class AppModule implements NestModule {
 import { Module } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { CatsModule } from './cats/cats.module';
+import { CatsController } from './cats/cats.controller.ts';
 
 @Module({
   imports: [CatsModule],
