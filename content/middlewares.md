@@ -167,9 +167,9 @@ export class AppModule {
 }
 ```
 
-> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="middleware#multiple-middleware">multiple middlewares</a>.
+> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="/middleware#multiple-middleware">multiple middlewares</a>.
 
-Quite often we might want to **exclude** certain routes from having the middleware applied. When defining middleware with a class (as we have been doing so far, as opposed to using the alternative <a href="middleware#functional-middleware">functional middleware</a>), we can easily exclude certain routes with the `exclude()` method. This method takes one or more objects identifying the `path` and `method` to be excluded, as shown below:
+Quite often we might want to **exclude** certain routes from having the middleware applied. When defining middleware with a class (as we have been doing so far, as opposed to using the alternative <a href="/middleware#functional-middleware">functional middleware</a>), we can easily exclude certain routes with the `exclude()` method. This method takes one or more objects identifying the `path` and `method` to be excluded, as shown below:
 
 ```typescript
 consumer
