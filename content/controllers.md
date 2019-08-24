@@ -48,7 +48,7 @@ This method will return a 200 status code and the associated response, which in 
     <td>Standard (recommended)</td>
     <td>
       Using this built-in method, when a request handler returns a JavaScript object or array, it will <strong>automatically</strong>
-      be serialized to JSON. When it returns a JavaScript primitive type (e.g., string, number, boolean), however, Nest will send just the value without attempting to serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
+      be serialized to JSON. When it returns a JavaScript primitive type (e.g., `string`, `number`, `boolean`), however, Nest will send just the value without attempting to serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
       <br />
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
       requests which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
