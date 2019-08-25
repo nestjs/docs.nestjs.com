@@ -64,7 +64,7 @@ We're done with the service so let's create a **controller**:
 ```typescript
 @@filename(heroes.controller)
 import { Controller } from '@nestjs/common';
-import { Crud } from '@nestjsx/crud';
+import { Crud, CrudController } from '@nestjsx/crud';
 import { Hero } from './hero.entity';
 import { HeroesService } from './heroes.service';
 
@@ -74,7 +74,7 @@ import { HeroesService } from './heroes.service';
   },
 })
 @Controller('heroes')
-export class HeroesController {
+export class HeroesController implements CrudController<Hero> {
   constructor(public service: HeroesService) {}
 }
 ```
