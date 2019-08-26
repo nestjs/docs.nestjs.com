@@ -220,6 +220,38 @@ create() {
 
 > info **Hint** Import `Header` from the `@nestjs/common` package.
 
+#### Redirection
+
+To redirect a response to a specific URL, you can either use a `@Redirect()` decorator or a library-specific response object (and call `res.redirect()` directly).
+
+`@Redirect()` takes a required `url` argument, and an optional `statusCode` argument. The `statusCode` defaults to `302` (`Found`) if omitted.
+
+```typescript
+@Get()
+@Redirect('https://nestjs.com', 301)
+```
+
+Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object from the route handler method with the shape:
+
+```json
+{
+  "url": string,
+  "statusCode": number
+}
+```
+
+Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
+
+```typescript
+@Get('docs')
+@Redirect('https://docs.nestjs.com', 302)
+getDocs(@Query('version') version) {
+  if (version && version === '5') {
+    return { url: 'https://docs.nestjs.com/v5/' };
+  }
+}
+```
+
 #### Route parameters
 
 Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1)` to get cat with id `1`). In order to define routes with parameters, we can add route parameter **tokens** in the path of the route to capture the dynamic value at that position in the request URL. The route parameter token in the `@Get()` decorator example below demonstrates this usage. Route parameters declared in this way can be accessed using the `@Param()` decorator, which should be added to the method signature.
