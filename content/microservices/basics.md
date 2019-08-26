@@ -181,11 +181,11 @@ ClientsModule.register([
 Once the module has been imported, we can inject `MATH_SERVICE` using the `@Inject()` decorator.
 
 ```typescript
+
 constructor(
-  constructor(
-    @Inject('MATH_SERVICE') private readonly client: ClientProxy,
-  ) {}
-)
+  @Inject('MATH_SERVICE') private readonly client: ClientProxy,
+) {}
+
 ```
 
 > info **Hint** The `ClientProxy` class is imported from the `@nestjs/microservices` package.
