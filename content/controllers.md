@@ -135,7 +135,7 @@ The request object represents the HTTP request and has properties for the reques
   </tbody>
 </table>
 
-<sup>\* </sup>As noted in the **Library-specific** section above, there are two flavors of the `Response` object. The _standard_ one is accessed with the `@Response()` decorator. You can access the underlying native platform `Response` object with the `@Res()` decorator. Please be sure to understand the differences by reviewing that section.
+<sup>\* </sup>As noted in the **Library-specific** section above, there are two flavors of the `response` object. The _standard_ one is accessed with the `@Response()` decorator. You can access the underlying native platform `response` object with the `@Res()` decorator. Please be sure to understand the differences by reviewing that section.
 
 > info **Hint** To learn how to create your own custom decorators, visit [this](/custom-decorators) chapter.
 
@@ -203,6 +203,8 @@ create() {
 }
 ```
 
+> info **Hint** Import `HttpCode` from the `@nestjs/common` package.
+
 Often, your status code isn't static but depends on various factors. In that case, you can use a library-specific **response** (inject using `@Res()`) object (or, in case of an error, throw an exception).
 
 #### Headers
@@ -216,6 +218,8 @@ create() {
   return 'This action adds a new cat';
 }
 ```
+
+> info **Hint** Import `Header` from the `@nestjs/common` package.
 
 #### Route parameters
 
@@ -238,6 +242,8 @@ findOne(params) {
 ```
 
 `@Param()` is used to decorate a method parameter (`params` in the example above), and makes the **route** parameters available as properties of that decorated method parameter inside the body of the method. As seen in the code above, we can access the `id` parameter by referencing `params.id`. You can also pass in a particular parameter token to the decorator, and then reference the route parameter directly by name in the method body.
+
+> info **Hint** Import `Param` from the `@nestjs/common` package.
 
 ```typescript
 @@filename()
