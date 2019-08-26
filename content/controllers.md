@@ -39,27 +39,26 @@ export class CatsController {
 
 The `@Get()` HTTP request method decorator before the `findAll()` method tells Nest to create a handler for a specific endpoint for HTTP requests. The endpoint corresponds to the HTTP request method (GET in this case) and the route path. What is the route path? The route path for a handler is determined by concatenating the (optional) prefix declared for the controller, and any path specified in the request decorator. Since we've declared a prefix for every route ( `cats`), and haven't added any path information in the decorator, Nest will map `GET /cats` requests to this handler. As mentioned, the path includes both the optional controller path prefix **and** any path string declared in the request method decorator. For example, a path prefix of `customers` combined with the decorator `@Get('profile')` would produce a route mapping for requests like `GET /customers/profile`.
 
-In our example above, when a GET request is made to this endpoint, Nest routes the request to our user-defined `findAll()` method. Note that the method name we choose here is completely arbitrary. We obviously must declare a method to bind the route to, but Nest doesn't attach any significance to the method name chosen. This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
+In our example above, when a GET request is made to this endpoint, Nest routes the request to our user-defined `findAll()` method. Note that the method name we choose here is completely arbitrary. We obviously must declare a method to bind the route to, but Nest doesn't attach any significance to the method name chosen.
+
+This method will return a 200 status code and the associated response, which in this case is just a string. Why does that happen? To explain, we'll first introduce the concept that Nest employs two **different** options for manipulating responses:
 
 <table>
   <tr>
     <td>Standard (recommended)</td>
     <td>
       Using this built-in method, when a request handler returns a JavaScript object or array, it will <strong>automatically</strong>
-      be serialized to JSON. When it returns a string, however, Nest will send just a string without attempting to
-      serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
+      be serialized to JSON. When it returns a JavaScript primitive type (e.g., `string`, `number`, `boolean`), however, Nest will send just the value without attempting to serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
       <br />
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
-      requests
-      which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
+      requests which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
       decorator at a handler-level (see <a href='controllers#status-code'>Status codes</a>).
     </td>
   </tr>
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>,
-      which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
+      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
     </td>
   </tr>
 </table>
@@ -105,8 +104,8 @@ The request object represents the HTTP request and has properties for the reques
       <td><code>@Request()</code></td>
       <td><code>req</code></td></tr>
     <tr>
-      <td><code>@Response()</code></td>
-      <td><code>res</code><span class="table-code-asterisk">*</span></td>
+      <td><code>@Response(), @Res()</code><span class="table-code-asterisk">*</span></td>
+      <td><code>res</code></td>
     </tr>
     <tr>
       <td><code>@Next()</code></td>
@@ -135,7 +134,7 @@ The request object represents the HTTP request and has properties for the reques
   </tbody>
 </table>
 
-<sup>\* </sup>As noted in the **Library-specific** section above, there are two flavors of the `response` object. The _standard_ one is accessed with the `@Response()` decorator. You can access the underlying native platform `response` object with the `@Res()` decorator. Please be sure to understand the differences by reviewing that section.
+<sup>\* </sup>For compatibility with typings across underlying HTTP platforms (e.g., Express and Fastify), Nest provides `@Res()` and `@Response()` decorators. `@Res()` is simply an alias for `@Response()`. Both directly expose the underlying native platform `response` object interface. When using them, you should also import the typings for the underlying library (e.g., `@types/express`) to take full advantage. Note that when you inject either `@Res()` or `@Response()` in a method handler, you put Nest into **Library-specific mode** for that handler, and you become responsible for managing the response. When doing so, you must issue some kind of response by making a call on the `response` object (e.g., `res.json(...)` or `res.send(...)`), or the HTTP server will hang.
 
 > info **Hint** To learn how to create your own custom decorators, visit [this](/custom-decorators) chapter.
 
