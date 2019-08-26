@@ -309,7 +309,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-To specify a return model for the requests, one has to create a class, annotate all properties with the `@ApiModelProperty()` Decorator and has to use the `type` property of the Response Decorators.
+To specify a return model for the requests, one has to create a class and annotate all properties with the `@ApiModelProperty()` decorator.
 
 ```typescript
 export class Cat {
@@ -324,12 +324,14 @@ export class Cat {
 }
 ```
 
+Afterward, `Cat` model has to be used in combination with the `type` property of the response decorators.
+
 ```typescript
 @ApiUseTags('cats')
 @Controller('cats')
 export class CatsController {
   @Post()
-  @ApiCreatedResponse({ description: 'The record has been successfully created.', type: Cat})
+  @ApiCreatedResponse({ description: 'The record has been successfully created.', type: Cat })
   async create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
     return this.catsService.create(createCatDto);
   }
@@ -337,6 +339,7 @@ export class CatsController {
 ```
 
 Let's open the browser and verify the generated `Cat` model:
+
 <figure><img src="/assets/swagger-response-type.png" /></figure>
 
 #### Authentication
