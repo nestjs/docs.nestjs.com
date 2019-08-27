@@ -119,11 +119,12 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Basics', path: '/microservices/basics' },
-        { title: 'Redis', path: '/microservices/redis' },
+        { title: 'gRPC', path: '/microservices/grpc' },
+        { title: 'Kafka', path: '/microservices/kafka' },
         { title: 'MQTT', path: '/microservices/mqtt' },
         { title: 'NATS', path: '/microservices/nats' },
         { title: 'RabbitMQ', path: '/microservices/rabbitmq' },
-        { title: 'gRPC', path: '/microservices/grpc' },
+        { title: 'Redis', path: '/microservices/redis' },
         {
           title: 'Exception filters',
           path: '/microservices/exception-filters',
