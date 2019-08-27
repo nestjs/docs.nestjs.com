@@ -48,7 +48,7 @@
     "ng2-progressbar": "1.3.0",
     "ngx-markdown": "8.1.0",
     "ngx-perfect-scrollbar": "8.0.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "1.19.1",
     "prismjs": "1.17.1",
     "rxjs": "6.5.2",
     "rxjs-compat": "6.5.2",
