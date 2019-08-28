@@ -27,9 +27,9 @@
 
 ## Description
 
-This project is built on top of [Angular CLI](https://github.com/angular/angular-cli). Repository contains [docs.nestjs.com](https://docs.nestjs.com) source code, the official Nest documentation.
+This project is built on top of the [Angular CLI](https://github.com/angular/angular-cli). It uses the [Dgeni documentation generator](https://github.com/angular/dgeni) to compile source documentation in markdown format into the published format. The Repository contains [docs.nestjs.com](https://docs.nestjs.com) source code, the official Nest documentation.
 
-## Developing
+## Installing
 
 Install project dependencies and start a local server with the following terminal commands:
 
@@ -40,11 +40,15 @@ $ npm run start
 
 Navigate to [`http://localhost:4200/`](http://localhost:4200/).
 
-All pages are written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory. Run `npm run markdown:watch` to compile them to HTML files on file change.
+All pages are written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory.
 
 ## Build
 
-Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use `npm run build:prod` for a production build.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.
+
+To run build in _watch mode_, run `npm run build:watch`. Any content changes will be recompiled and rebuilt, and the content served at [`http://localhost:4200/`](http://localhost:4200/).
+
+Use `npm run build:prod` for a production build.
 
 ## Support
 
@@ -58,4 +62,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## License
 
-  Nest is [MIT licensed](LICENSE).
+Nest is [MIT licensed](LICENSE).
