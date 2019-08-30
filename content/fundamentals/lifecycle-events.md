@@ -1,23 +1,30 @@
 ### Lifecycle Events
 
-Every application element has a lifecycle managed by Nest. Nest offers **lifecycle hooks** that provide visibility into key life moments and the
-ability to act when they occur.
+A Nest application, as well as every application element, has a lifecycle managed by Nest. Nest provides **lifecycle hooks** that give visibility into key lifecycle events, and the ability to act (run registered code on your `module`, `injectable` or `controller`) when they occur.
 
 #### Lifecycle sequence
 
-After creating a injectable/controller by calling its constructor, Nest calls the lifecycle hook methods in the following sequence at specific moments:
+The following diagram depicts the sequence of key application lifecycle events, from the time the application is bootstrapped until the node process exits. The green colored boxes show events where lifecycle hook methods can be inserted. We can divide the overall lifecycle into three phases: **initializing**, **running** and **terminating**. Using this lifecycle, you can plan for appropriate initialization of modules and services, manage active connections, and gracefully shutdown your application when it receives a termination signal.
 
-|                          |                                                                                             |
-| ------------------------ | ------------------------------------------------------------------------------------------- |
-| `OnModuleInit`           | Called once the host module has been initialized                                            |
-| `OnApplicationBootstrap` | Called once the application has fully started and is bootstrapped                          |
-| `OnModuleDestroy`        | Cleanup just before Nest destroys the host module (`app.close()` method has been evaluated) |
-| `OnApplicationShutdown`  | Responds to the system signals (when application gets shutdown by e.g. `SIGTERM`)           |
+<figure><img align="left" src="/assets/lifecycle-events.png" /></figure>
 
+<p style="clear: both;"></p>
+
+#### Lifecycle events
+
+Lifecycle events happen during application bootstrapping and shutdown. When lifecycle hooks are enabled, Nest calls registered lifecycle hook methods on `modules`, `injectables` and `controllers` at each of the following lifecycle events. As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
+
+| Lifecycle hook method         | Lifecycle event triggering the hook method call                                                                                                                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onModuleInit()`              | Called once the host module's dependencies have been resolved.                                                                                                                                                    |
+| `onApplicationBootstrap()`    | Called once all modules have been initialized, but before listening for connections.                                                                                                                              |
+| `onModuleDestroy()`           | Called after a termination signal (e.g., `SIGTERM`) has been received.                                                                                                                                            |
+| `beforeApplicationShutdown()` | Called after all `onModuleDestroy()` handlers have completed (Promises resolved or rejected);<br />once complete (Promises resolved or rejected), all existing connections will be closed (`app.close()` called). |
+| `onApplicationShutdown()`     | Called after connections close (`app.close()` resolves).                                                                                                                                                          |
 
 #### Usage
 
-Each lifecycle hook is represented by interface. Interfaces are technically optional because they do not exist anyway after TypeScript compilation. Nonetheless, it's a good practice to use them in order to benefit from strong typing and editor tooling.
+Each lifecycle hook is represented by an interface. Interfaces are technically optional because they do not exist after TypeScript compilation. Nonetheless, it's good practice to use them in order to benefit from strong typing and editor tooling. To register a lifecycle hook, implement the appropriate interface. For example, to register a method to be called during module initialization on a particular class (e.g., Controller, Provider or Module), implement the `OnModuleInit` interface by supplying an `onModuleInit()` method, as shown below:
 
 ```typescript
 @@filename()
@@ -40,7 +47,9 @@ export class UsersService {
 }
 ```
 
-Additionally, both `OnModuleInit` and `OnApplicationBootstrap` hooks allow you to defer the application initialization process (return a `Promise` or mark the method as `async`).
+#### Asynchronous initialization
+
+Both the `OnModuleInit` and `OnApplicationBootstrap` hooks allow you to defer the application initialization process (return a `Promise` or mark the method as `async` and `await` an asynchronous method completion in the method body).
 
 ```typescript
 @@filename()
@@ -52,13 +61,12 @@ async onModuleInit() {
   await this.fetch();
 }
 ```
-#### OnApplicationShutdown
 
-The `OnApplicationShutdown` responds to the system signals (when application gets shutdown by e.g. `SIGTERM`).
-Use this hook to gracefully shutdown a Nest application. This feature is often used with [Kubernetes](https://kubernetes.io/),
-[Heroku](https://www.heroku.com/) or similar services.
+#### Application shutdown
 
-To use this hook you must activate a listener which listens to shutdown signals.
+The `beforeApplicationShutdown()` and `onApplicationShutdown()` hooks are called in the **terminating** phase (in response to system signals such as `SIGTERM`). This feature is often used with [Kubernetes](https://kubernetes.io/), [Heroku](https://www.heroku.com/) or similar services.
+
+To use these hooks you must activate a listener which listens to shutdown signals.
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -66,16 +74,14 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // Starts listening to shutdown hooks
+  // Starts listening for shutdown hooks
   app.enableShutdownHooks();
   await app.listen(3000);
 }
 bootstrap();
 ```
 
-If the application receives a signal it will call the `onApplicationShutdown` function of your
-`Injectable` with the corresponding signal as first parameter. If your function does return a
-promise, it will not shutdown your Nest application until the promise is resolved or rejected.
+When the application receives a termination signal it will call any registered `beforeApplicationShutdown()`, then `onApplicationShutdown()` methods (in the sequence described above) with the corresponding signal as the first parameter. If a registered function awaits an asynchronous call (returns a promise), Nest will not continue in the sequence until the promise is resolved or rejected.
 
 ```typescript
 @@filename()
