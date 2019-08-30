@@ -1,16 +1,14 @@
 ### Database (TypeORM)
 
-In order to reduce a boilerplate necessary to start the adventure with any database, Nest comes with the ready to use `@nestjs/typeorm` package. We have selected [TypeORM](https://github.com/typeorm/typeorm) because it's definitely the most mature Object Relational Mapper (ORM) available so far. Since it's written in TypeScript, it works pretty well with the Nest framework.
+For integrating with SQL and NoSQL databases, Nest provides the `@nestjs/typeorm` package. Nest uses [TypeORM](https://github.com/typeorm/typeorm) because it's the most mature Object Relational Mapper (ORM) available for TypeScript. Since it's written in TypeScript, it integrates well with the Nest framework.
 
-Firstly, we need to install all of the required dependencies:
+To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but TypeORM provides support for many relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, SQLite, and even NoSQL databases like MongoDB. The procedure we walk through in this chapter will be the same for any [database supported by TypeORM](https://typeorm.io/#/). You'll simply need to install the associated client API libraries for your selected database.
 
 ```bash
 $ npm install --save @nestjs/typeorm typeorm mysql
 ```
 
-> info **Notice** In this chapter we'll use a MySQL database, but **TypeORM** provides a support for a lot of different databases such as PostgreSQL, SQLite, and even MongoDB (NoSQL).
-
-Once the installation process is completed, we can import the `TypeOrmModule` into the root `ApplicationModule`.
+Once the installation process is complete, we can import the `TypeOrmModule` into the root `AppModule`.
 
 ```typescript
 @@filename(app.module)
@@ -31,10 +29,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
-The `forRoot()` method accepts the same configuration object as `createConnection()` from the [TypeORM](https://github.com/typeorm/typeorm) package. Futhermore, instead of passing anything to `forRoot()`, we can create an `ormconfig.json` file in the project root directory.
+The `forRoot()` method accepts the same configuration object as `createConnection()` from the [TypeORM](https://typeorm.io/#/connection-options) package. Alternatively, rather than passing a configuration object to `forRoot()`, we can create an `ormconfig.json` file in the project root directory.
 
 ```json
 {
@@ -49,7 +47,7 @@ The `forRoot()` method accepts the same configuration object as `createConnectio
 }
 ```
 
-Then, we can simply leave the parenthesis empty:
+Then, we can call `forRoot()` without any options:
 
 ```typescript
 @@filename(app.module)
@@ -59,10 +57,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [TypeOrmModule.forRoot()],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
-Afterward, the `Connection` and `EntityManager` will be available to inject across entire project (without importing any module elsewhere), for example, in this way:
+Once this is done, the TypeORM `Connection` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
 
 ```typescript
 @@filename(app.module)
@@ -71,7 +69,7 @@ import { Connection } from 'typeorm';
 @Module({
   imports: [TypeOrmModule.forRoot(), PhotoModule],
 })
-export class ApplicationModule {
+export class AppModule {
   constructor(private readonly connection: Connection) {}
 }
 @@switch
@@ -81,7 +79,7 @@ import { Connection } from 'typeorm';
 @Module({
   imports: [TypeOrmModule.forRoot(), PhotoModule],
 })
-export class ApplicationModule {
+export class AppModule {
   constructor(connection) {
     this.connection = connection;
   }
@@ -90,9 +88,9 @@ export class ApplicationModule {
 
 #### Repository pattern
 
-The [TypeORM](https://github.com/typeorm/typeorm) supports the repository design pattern, so each entity has its own Repository. These repositories can be obtained from the database connection.
+[TypeORM](https://github.com/typeorm/typeorm) supports the repository design pattern, so each entity has its own Repository. These repositories can be obtained from the database connection.
 
-Firstly, we need at least one entity. We're gonna reuse the `Photo` entity from the official documentation.
+To continue the example, we need at least one entity. We'll use the `Photo` entity from the official TypeORM documentation.
 
 ```typescript
 @@filename(photo.entity)
@@ -120,7 +118,7 @@ export class Photo {
 }
 ```
 
-The `Photo` entity belongs to the `photo` directory. This directory represents the `PhotoModule`. It's your decision where you're gonna keep your model files. From our point of view, the best way's to hold them near their **domain**, in the corresponding module directory.
+The `Photo` entity belongs to the `photo` directory. This directory represents the `PhotoModule`. It's your decision where to keep your model files. We recommend creating them near their **domain**, in the corresponding module directory.
 
 Let's have a look at the `PhotoModule`:
 
@@ -140,7 +138,7 @@ import { Photo } from './photo.entity';
 export class PhotoModule {}
 ```
 
-This module uses `forFeature()` method to define which repositories shall be registered in the current scope. Thanks to that we can inject the `PhotoRepository` to the `PhotoService` using the `@InjectRepository()` decorator:
+This module uses the `forFeature()` method to define which repositories are registered in the current scope. With that, we can inject the `PhotoRepository` into the `PhotoService` using the `@InjectRepository()` decorator:
 
 ```typescript
 @@filename(photo.service)
@@ -178,13 +176,13 @@ export class PhotoService {
 }
 ```
 
-> warning **Notice** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
+> warning **Notice** Don't forget to import the `PhotoModule` into the root `AppModule`.
 
 #### Multiple databases
 
-Some of your projects may require multiple database connections. Fortunately, this can also be achieved with this module. To work with multiple connections, the first thing to do is to create those connections. In this case, the connection naming becomes **mandatory**.
+Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, connection naming becomes **mandatory**.
 
-Say you have a `Person` entity and an `Album` entity, each stored in their own database.
+Suppose you have a `Person` entity and an `Album` entity, each stored in their own database.
 
 ```typescript
 const defaultOptions = {
@@ -217,12 +215,12 @@ const defaultOptions = {
     }),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
-> warning **Notice** If you don't set any `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they simply get overridden.
+> warning **Notice** If you don't set the `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-At this point, you have each of your `Photo`, `Person` and `Album` entities registered in their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` function and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
+At this point, you have each of your `Photo`, `Person` and `Album` entities registered with their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` function and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
 
 ```typescript
 @Module({
@@ -232,7 +230,7 @@ At this point, you have each of your `Photo`, `Person` and `Album` entities regi
     TypeOrmModule.forFeature([Album], 'albumsConnection'),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 You can also inject the `Connection` or `EntityManager` for a given connection:
@@ -244,14 +242,14 @@ export class PersonService {
     @InjectConnection('personsConnection')
     private readonly connection: Connection,
     @InjectEntityManager('personsConnection')
-    private readonly entityManager: EntityManager,
+    private readonly entityManager: EntityManager
   ) {}
 }
 ```
 
 #### Testing
 
-When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent and their execution process quick as possible. But our classes might depend on repositories that are pulled from the connection instance. What then? The solution is to create fake repositories. In order to achieve that, we should set up [custom providers](/fundamentals/custom-providers). In fact, each registered repository is represented by a `EntityNameRepository` token, where `EntityName` is a name of your entity class.
+When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the connection instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
 
 The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which returns a prepared token based on a given entity.
 
@@ -268,11 +266,11 @@ The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which 
 export class PhotoModule {}
 ```
 
-Now a hardcoded `mockRepository` will be used as a `PhotoRepository`. Whenever any provider asks for `PhotoRepository` using an `@InjectRepository()` decorator, Nest will use a registered `mockRepository` object.
+Now a substitute `mockRepository` will be used as the `PhotoRepository`. Whenever any class asks for `PhotoRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
 
 #### Custom repository
 
-TypeORM provides a feature called **custom repositories**. To learn more about it, visit [this](http://typeorm.io/#/custom-repository) page. Basically, custom repositories allow you to extend a base repository class, and enrich it with a couple of special methods.
+TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](http://typeorm.io/#/custom-repository).
 
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
@@ -281,9 +279,9 @@ In order to create your custom repository, use the `@EntityRepository()` decorat
 export class AuthorRepository extends Repository<Author> {}
 ```
 
-> info **Hint** Both `@EntityRepository()` and `Repository` are exposed from `typeorm` package.
+> info **Hint** Both `@EntityRepository()` and `Repository` are imported from the `typeorm` package.
 
-Once the class is created, the next step is to hand over the instantiation responsibility to Nest. For this, we have to pass `AuthorRepository` class to the `TypeOrm.forFeature()` method.
+Once the class is created, the next step is to delegate instantiation responsibility to Nest. For this, we have to pass the`AuthorRepository` class to the `TypeOrm.forFeature()` method.
 
 ```typescript
 @Module({
@@ -305,9 +303,9 @@ export class AuthorService {
 
 #### Async configuration
 
-Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use `forRootAsync()` method, that provides a couple of various ways to deal with async data.
+You may want to pass your repository module options asynchronously instead of statically. In this case, use the `forRootAsync()` method, which provides several ways to deal with async configuration.
 
-First possible approach is to use a factory function:
+One approach is to use a factory function:
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -324,7 +322,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
+Our factory behaves like any other [asynchronous provider](https://docs.nestjs.com/fundamentals/async-providers) (e.g., it can be `async` and it's able to inject dependencies through `inject`).
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -343,7 +341,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Alternatively, you are able to use a class instead of a factory.
+Alternatively, you can use the `useClass` syntax:
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -351,7 +349,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Above construction will instantiate `TypeOrmConfigService` inside `TypeOrmModule` and will leverage it to create options object. The `TypeOrmConfigService` has to implement `TypeOrmOptionsFactory` interface.
+The construction above will instantiate `TypeOrmConfigService` inside `TypeOrmModule` and use it to provide an options object by calling `createTypeOrmOptions()`. Note that this means that the `TypeOrmConfigService` has to implement the `TypeOrmOptionsFactory` interface, as shown below:
 
 ```typescript
 @Injectable()
@@ -380,7 +378,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-It works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an already created `ConfigService`, instead of instantiating it on its own.
+This construction works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
 #### Example
 
