@@ -120,6 +120,8 @@ export class AppModule {
 }
 ```
 
+> info **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
+
 #### Route wildcards
 
 Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
