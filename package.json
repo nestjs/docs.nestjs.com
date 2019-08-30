@@ -25,7 +25,7 @@
     "@angular/common": "8.2.3",
     "@angular/compiler": "8.2.3",
     "@angular/core": "8.2.3",
-    "@angular/flex-layout": "8.0.0-beta.26",
+    "@angular/flex-layout": "8.0.0-beta.27",
     "@angular/forms": "8.2.3",
     "@angular/material": "8.1.4",
     "@angular/platform-browser": "8.2.3",
