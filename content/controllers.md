@@ -254,7 +254,7 @@ getDocs(@Query('version') version) {
 
 #### Route parameters
 
-Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1)` to get cat with id `1`). In order to define routes with parameters, we can add route parameter **tokens** in the path of the route to capture the dynamic value at that position in the request URL. The route parameter token in the `@Get()` decorator example below demonstrates this usage. Route parameters declared in this way can be accessed using the `@Param()` decorator, which should be added to the method signature.
+Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1)` to get cat with id `1`. In order to define routes with parameters, we can add route parameter **tokens** in the path of the route to capture the dynamic value at that position in the request URL. The route parameter token in the `@Get()` decorator example below demonstrates this usage. Route parameters declared in this way can be accessed using the `@Param()` decorator, which should be added to the method signature.
 
 ```typescript
 @@filename()
