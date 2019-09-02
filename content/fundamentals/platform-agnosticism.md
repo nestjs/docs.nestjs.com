@@ -4,7 +4,7 @@ Nest is a platform-agnostic framework. This means you can develop **reusable log
 
 #### Build once, use everywhere
 
-The **OVERVIEW** section of the documentation primarily shows coding techniques using HTTP server frameworks (e.g., apps providing a REST API or providing an MVC-style server-side rendered app). However, all those building blocks can be used on top of different transport layers ([microservices](/microservices/basics) or [websockets](/websockets/gateways)).
+The **Overview** section of the documentation primarily shows coding techniques using HTTP server frameworks (e.g., apps providing a REST API or providing an MVC-style server-side rendered app). However, all those building blocks can be used on top of different transport layers ([microservices](/microservices/basics) or [websockets](/websockets/gateways)).
 
 Furthermore, Nest comes with a dedicated [GraphQL](/graphql/quick-start) module. You can use GraphQL as your API layer interchangeably with providing a REST API.
 
