@@ -1,14 +1,12 @@
 ### Custom providers
 
-#### Dependency injection
-
-In earlier chapters, we touched on various aspects of _Dependency Injection (DI)_ and how it is used in Nest. One example of this is the [constructor based dependency injection](https://docs.nestjs.com/providers#dependency-injection) used to inject instances (often service providers) into classes. You won't be surprised to learn that Dependency Injection is built in to the Nest core in a fundamental way. So far, we've only explored one main pattern. As your application grows more complex, you may need to take advantage of the full features of the DI system, so let's explore them in more detail.
+In earlier chapters, we touched on various aspects of **Dependency Injection (DI)** and how it is used in Nest. One example of this is the [constructor based](https://docs.nestjs.com/providers#dependency-injection) dependency injection used to inject instances (often service providers) into classes. You won't be surprised to learn that Dependency Injection is built in to the Nest core in a fundamental way. So far, we've only explored one main pattern. As your application grows more complex, you may need to take advantage of the full features of the DI system, so let's explore them in more detail.
 
 #### DI fundamentals
 
-Dependency injection is an [inversion of control (IoC)](https://en.wikipedia.org/wiki/Inversion_of_control) technique wherein you delegate instantiation of dependencies to the _IoC container_ (in our case, the NestJS runtime system), instead of doing it in your own code imperatively. Let's examine what's happening in this example from the [Providers chapter](https://docs.nestjs.com/providers).
+Dependency injection is an [inversion of control (IoC)](https://en.wikipedia.org/wiki/Inversion_of_control) technique wherein you delegate instantiation of dependencies to the IoC container (in our case, the NestJS runtime system), instead of doing it in your own code imperatively. Let's examine what's happening in this example from the [Providers chapter](https://docs.nestjs.com/providers).
 
-First, we define a _provider_. The `@Injectable()` decorator marks the `CatsService` class as a provider.
+First, we define a provider. The `@Injectable()` decorator marks the `CatsService` class as a provider.
 
 ```typescript
 @@filename(cats.service)
@@ -18,10 +16,6 @@ import { Cat } from './interfaces/cat.interface';
 @Injectable()
 export class CatsService {
   private readonly cats: Cat[] = [];
-
-  create(cat: Cat) {
-    this.cats.push(cat);
-  }
 
   findAll(): Cat[] {
     return this.cats;
@@ -36,10 +30,6 @@ export class CatsService {
     this.cats = [];
   }
 
-  create(cat) {
-    this.cats.push(cat);
-  }
-
   findAll() {
     return this.cats;
   }
@@ -50,8 +40,7 @@ Then we request that Nest inject the provider into our controller class:
 
 ```typescript
 @@filename(cats.controller)
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
+import { Controller, Get } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
 
@@ -59,18 +48,13 @@ import { Cat } from './interfaces/cat.interface';
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
-  @Post()
-  async create(@Body() createCatDto: CreateCatDto) {
-    this.catsService.create(createCatDto);
-  }
-
   @Get()
   async findAll(): Promise<Cat[]> {
     return this.catsService.findAll();
   }
 }
 @@switch
-import { Controller, Get, Post, Body, Bind, Dependencies } from '@nestjs/common';
+import { Controller, Get, Bind, Dependencies } from '@nestjs/common';
 import { CatsService } from './cats.service';
 
 @Controller('cats')
@@ -78,12 +62,6 @@ import { CatsService } from './cats.service';
 export class CatsController {
   constructor(catsService) {
     this.catsService = catsService;
-  }
-
-  @Post()
-  @Bind(Body())
-  async create(createCatDto) {
-    this.catsService.create(createCatDto);
   }
 
   @Get()
@@ -112,13 +90,13 @@ What exactly is happening under the covers to make this work? There are three ke
 
 1. In `cats.service.ts`, the `@Injectable()` decorator declares the `CatsService` class as a class that can be managed by the Nest IoC container.
 
-2. In `cats.controller.ts`, `CatsController` declares a dependency on the `CatsService` **token** with constructor injection:
+2. In `cats.controller.ts`, `CatsController` declares a dependency on the `CatsService` token with constructor injection:
 
 ```typescript
   constructor(private readonly catsService: CatsService)
 ```
 
-3. In `app.module.ts`, we associate the **token** `CatsService` with the **class** `CatsService` from the `cats.service.ts` file. We'll <a href="/fundamentals/custom-providers#standard-providers">see below</a> exactly how this association (also called _registration_) occurs.
+3. In `app.module.ts`, we associate the token `CatsService` with the class `CatsService` from the `cats.service.ts` file. We'll <a href="/fundamentals/custom-providers#standard-providers">see below</a> exactly how this association (also called _registration_) occurs.
 
 When the Nest IoC container instantiates a `CatsController`, it first looks for any dependencies\*. When it finds the `CatsService` dependency, it performs a lookup on the `CatsService` token, which returns the `CatsService` class, per the registration step (#3 above). Assuming `SINGLETON` scope (the default behavior), Nest will then either create an instance of `CatsService`, cache it, and return it, or if one is already cached, return the existing instance.
 
@@ -135,11 +113,7 @@ Let's take a closer look at the `@Module()` decorator. In `app.module`, we decla
 })
 ```
 
-The `providers` property takes an array of `providers`. So far, we've supplied those providers via a list of class names. In fact, the syntax
-
-`providers: [CatsService]`
-
-is short-hand for the more complete syntax:
+The `providers` property takes an array of `providers`. So far, we've supplied those providers via a list of class names. In fact, the syntax `providers: [CatsService]` is short-hand for the more complete syntax:
 
 ```typescript
 providers: [
@@ -150,7 +124,7 @@ providers: [
 ];
 ```
 
-Now that we see this explicit construction, we can understand the registration process. Here, we are clearly associating the **token** `CatsService` with the **class** `CatsService`. The short-hand notation is merely a convenience to simplify the most common use-case, where the token is used to request an instance of a class by the same name.
+Now that we see this explicit construction, we can understand the registration process. Here, we are clearly associating the token `CatsService` with the class `CatsService`. The short-hand notation is merely a convenience to simplify the most common use-case, where the token is used to request an instance of a class by the same name.
 
 #### Custom providers
 
@@ -160,7 +134,7 @@ What happens when your requirements go beyond those offered by _Standard provide
 - You want to re-use an existing class in a second dependency
 - You want to override a class with a mock version for testing
 
-Nest allows you to define _Custom providers_ to handle these cases. It provides several ways to define custom providers. Let's walk through them.
+Nest allows you to define Custom providers to handle these cases. It provides several ways to define custom providers. Let's walk through them.
 
 #### Value providers: `useValue`
 
@@ -259,7 +233,7 @@ Also, we have used the `ConfigService` class name as our token. For any class th
 The `useFactory` syntax allows for creating providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
 
 1. The factory function can accept (optional) arguments.
-2. The (optional) `inject` property accepts an array of _providers_ that Nest will resolve and pass as arguments to the factory function during the instantiation process. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order.
+2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order.
 
 The example below demonstrates this.
 
@@ -324,12 +298,8 @@ const configFactory = {
   provide: 'CONFIG',
   useFactory: () => {
     return process.env.NODE_ENV === 'development'
-      ? {
-          /* development config object */
-        }
-      : {
-          /* production config object */
-        };
+      ? devConfig
+      : prodConfig;
   },
 };
 
@@ -337,13 +307,6 @@ const configFactory = {
   providers: [configFactory],
 })
 export class AppModule {}
-```
-
-```typescript
-@Injectable()
-export class CatsService {
-  constructor(@Inject('CONFIG') config: Config) {}
-}
 ```
 
 #### Export custom provider
