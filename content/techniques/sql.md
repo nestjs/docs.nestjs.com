@@ -2,7 +2,7 @@
 
 For integrating with SQL and NoSQL databases, Nest provides the `@nestjs/typeorm` package. Nest uses [TypeORM](https://github.com/typeorm/typeorm) because it's the most mature Object Relational Mapper (ORM) available for TypeScript. Since it's written in TypeScript, it integrates well with the Nest framework.
 
-To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but TypeORM provides support for many relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, SQLite, and even NoSQL databases like MongoDB. The procedure we walk through in this chapter will be the same for any [database supported by TypeORM](https://typeorm.io/#/). You'll simply need to install the associated client API libraries for your selected database.
+To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but TypeORM provides support for many relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, SQLite, and even NoSQL databases like MongoDB. The procedure we walk through in this chapter will be the same for any database supported by TypeORM. You'll simply need to install the associated client API libraries for your selected database.
 
 ```bash
 $ npm install --save @nestjs/typeorm typeorm mysql
