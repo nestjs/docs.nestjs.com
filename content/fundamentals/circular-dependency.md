@@ -1,6 +1,6 @@
 ### Circular dependency
 
-A circular dependency occurs when two classes depend on each other. For example, class A needs class B, and class B also needs class A. Circular dependencies can arise in Nest between modules and between providers. While circular dependencies should be avoided where possible, you can't always do so. Nest enables resolving **circular dependencies** using a technique called _forward referencing_.
+A circular dependency occurs when two classes depend on each other. For example, class A needs class B, and class B also needs class A. Circular dependencies can arise in Nest between modules and between providers. While circular dependencies should be avoided where possible, you can't always do so. Nest enables resolving circular dependencies using a technique called **forward referencing**.
 
 #### Forward reference
 
