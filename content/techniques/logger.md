@@ -1,6 +1,6 @@
 ### Logger
 
-Nest comes with a default implementation of internal `Logger` that is used during the instantiation process and also, in several different situations, such as **occurred exception**, and so on. But sometimes, you might want to disable logging entirely, or provide a custom implementation and handle messages on your own. In order to turn off a logger, we use a Nest's options object.
+Nest comes with a default implementation of internal `Logger` which is used during the instantiation process as well as in several different situations, such as **occurred exception**, and so forth. However, sometimes you might want to either disable logging entirely or provide a custom implementation and handle messages on your own. In order to turn off a logger, we use the Nest application options object.
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
@@ -9,7 +9,16 @@ const app = await NestFactory.create(ApplicationModule, {
 await app.listen(3000);
 ```
 
-Nevertheless, we could want to use a different logger under the hood, instead of disabling a whole logging mechanism. In order to do that, we have to pass an object that fulfills `LoggerService` interface. An example could be a built-in `console`.
+You can also enable only certain types of logging:
+
+```typescript
+const app = await NestFactory.create(ApplicationModule, {
+  logger: ['error', 'warn'],
+});
+await app.listen(3000);
+```
+
+In some scenarios, we might want to use a different logger under the hood. In order to do that, we have to pass an object that fulfills `LoggerService` interface. An example could be a built-in `console`.
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
