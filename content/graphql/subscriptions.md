@@ -67,6 +67,33 @@ commentAdded() {
 }
 ```
 
+If you need to access some of the injected providers (e.g. use external service to validate the data), you can use the following construction:
+
+```typescript
+@Subscription('commentAdded', {
+  resolve(this: AuthorResolver, value) {
+    // "this" refers to an instance of "AuthorResolver" 
+    return value;
+  }
+})
+commentAdded() {
+  return pubSub.asyncIterator('commentAdded');
+}
+```
+
+Likewise with filters.
+
+```typescript
+@Subscription('commentAdded', {
+  filter(this: AuthorResolver, payload, variables) {
+    return payload.commentAdded.repositoryName === variables.repoFullName;
+  }
+})
+commentAdded() {
+  return pubSub.asyncIterator('commentAdded');
+}
+```
+
 #### Type definitions
 
 The last step is to update type definitions file.
