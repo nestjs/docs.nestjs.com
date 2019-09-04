@@ -107,6 +107,11 @@
       "logo": "/assets/logo/nothing.svg",
       "url": "https://nothing.ch/",
       "width": "110px"
+    },
+    {
+      "logo": "/assets/logo/amfam.png",
+      "url": "https://www.amfam.com",
+      "width": "110px"
     }
   ],
   "Body": [
