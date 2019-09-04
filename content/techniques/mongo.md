@@ -58,7 +58,7 @@ import { CatSchema } from './schemas/cat.schema';
 export class CatsModule {}
 ```
 
-This module uses `forFeature()` method to define which models shall be registered in the current scope. Thanks to that, we can inject the `CatModel` to the `CatsService` using the `@InjectModel()` decorator:
+This module uses `forFeature()` method to define which models shall be registered in the current scope. If you want to use the models in another module, you have to add MongooseModule to the `exports` section and import the `CatsModule` in the other module. Thanks to that, we can inject the `CatModel` to the `CatsService` using the `@InjectModel()` decorator:
 
 ```typescript
 @@filename(cats.service)
