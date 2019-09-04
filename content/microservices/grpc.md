@@ -53,7 +53,7 @@ There are a bunch of available options that determine a transporter behavior.
       <code>@grpc/proto-loader</code> options. They are well-described
       <a
         href="https://github.com/grpc/grpc-node/tree/master/packages/grpc-protobufjs#usage"
-        target="blank"
+        target="_blank"
         >here</a
       >.
     </td>
@@ -67,7 +67,7 @@ There are a bunch of available options that determine a transporter behavior.
     <td>
       Server credentials (<a
         href="https://grpc.io/grpc/node/grpc.ServerCredentials.html"
-        target="blank"
+        target="_blank"
         >read more</a
       >)
     </td>

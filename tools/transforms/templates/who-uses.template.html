@@ -5,7 +5,7 @@
 
 <div class="companies-wrapper">
   {% for company in doc.whoUses.Header %}
-    <a class="company-logo" href="{$ company.url $}" target="blank"><img src="{$ company.logo $}"
+    <a class="company-logo" href="{$ company.url $}" target="_blank" rel="nofollow"><img src="{$ company.logo $}"
       {% if company.width %} style="width: {$ company.width $}" {% endif %} /></a>
   {% endfor %}
 
@@ -13,13 +13,13 @@
 <table class="companies-list">
   {% for company in doc.whoUses.Body %}
     <tr>
-        <td><a href="{$ company $}" target="blank">{$ company $}</a></td>
+        <td><a href="{$ company $}" target="_blank" rel="nofollow">{$ company $}</a></td>
       </tr>
   {% endfor %}
 </table>
 <p>
   and a lot more but we don't have enough time to update above list. Feel free to create a <a href="https://github.com/nestjs/docs.nestjs.com/pulls"
-    target="blank">pull
+    target="_blank">pull
     request</a> though!
 </p>
 {% endblock %}

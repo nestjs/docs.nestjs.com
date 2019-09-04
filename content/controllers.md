@@ -58,7 +58,7 @@ This method will return a 200 status code and the associated response, which in 
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
+      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
     </td>
   </tr>
 </table>
