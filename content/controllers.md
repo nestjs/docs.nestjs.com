@@ -290,29 +290,6 @@ findOne(id) {
 }
 ```
 
-#### Routes order
-
-Be aware that route registration **order** (the order each route's method appears in a class) matters. Assume that you have a route that returns cats by identifier (`cats/:id`). If you register another endpoint **below it** in the class definition which returns all cats at once (`cats`), a `GET /cats` request will never hit that second handler as desired because all path parameters are optional. See the following example:
-
-```typescript
-@Controller('cats')
-export class CatsController {
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a #${id} cat`;
-  }
-
-  @Get()
-  findAll() {
-    // This endpoint will never get called
-    // because the "/cats" request is going
-    // to be captured by the "/cats/:id" route handler
-  }
-}
-```
-
-In order to avoid such side-effects, simply move the `findAll()` declaration (including its decorator) above `findOne()`.
-
 #### Scopes
 
 For people coming from different programming language backgrounds, it might be unexpected to learn that in Nest, almost everything is shared across incoming requests. We have a connection pool to the database, singleton services with global state, etc. Remember that Node.js doesn't follow the request/response Multi-Threaded Stateless Model in which every request is processed by a separate thread. Hence, using singleton instances is fully **safe** for our applications.
