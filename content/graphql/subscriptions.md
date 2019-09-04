@@ -86,6 +86,7 @@ Likewise with filters.
 ```typescript
 @Subscription('commentAdded', {
   filter(this: AuthorResolver, payload, variables) {
+    // "this" refers to an instance of "AuthorResolver" 
     return payload.commentAdded.repositoryName === variables.repoFullName;
   }
 })
