@@ -14,6 +14,7 @@ Once the installation process is complete, we can import the `TypeOrmModule` int
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [ join(__dirname + '/**/*.entity{.ts,.js}') ],
       synchronize: true,
     }),
   ],
@@ -349,7 +350,7 @@ TypeOrmModule.forRootAsync({
     username: 'root',
     password: 'root',
     database: 'test',
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    entities: [ join(__dirname + '/**/*.entity{.ts,.js}') ],
     synchronize: true,
   }),
 });
@@ -367,7 +368,7 @@ TypeOrmModule.forRootAsync({
     username: configService.getString('USERNAME'),
     password: configService.getString('PASSWORD'),
     database: configService.getString('DATABASE'),
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    entities: [ join(__dirname + '/**/*.entity{.ts,.js}') ],
     synchronize: true,
   }),
   inject: [ConfigService],
@@ -395,7 +396,7 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [ join(__dirname + '/**/*.entity{.ts,.js}') ],
       synchronize: true,
     };
   }
