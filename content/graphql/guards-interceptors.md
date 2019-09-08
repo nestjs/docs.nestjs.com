@@ -1,8 +1,8 @@
 ### Tooling
 
-In the GraphQL world, a lot of articles complain how to handle stuff like **authentication**, or **side-effects** of operations. Should we put it inside the business logic? Shall we use a higher-order function to enhance queries and mutations as well, for example, with an authorization logic? Or maybe use [schema directives](https://www.apollographql.com/docs/apollo-server/v2/features/directives.html). There is no single answer anyway.
+In the GraphQL world, a lot of articles contemplate how to handle stuff like **authentication**, or **side-effects** of operations. Should we put it inside the business logic? Shall we use a higher-order function to enhance queries and mutations as well, for example, with authorization logic? Or maybe use [schema directives](https://www.apollographql.com/docs/apollo-server/v2/features/directives.html). There is no single answer.
 
-Nest ecosystem is trying to help with this issue using existing features like [guards](/guards) and [interceptors](/interceptors). The idea behind them is to reduce redundancy and also, supply you with tooling that helps creating well-structured, readable, and consistent applications.
+Nest ecosystem is trying to help with this issue using existing features like [guards](/guards) and [interceptors](/interceptors). The idea behind them is to reduce redundancy and also, supply you with tooling that helps create well-structured, readable, and consistent applications.
 
 #### Overview
 
@@ -43,7 +43,7 @@ export class AuthGuard implements CanActivate {
 }
 ```
 
-`GqlExecutionContext` exposes corresponding methods for each argument, like `getArgs()`, `getContext()`, and so on. Now we can effortlessly pick up every argument specific for currently processed request.
+`GqlExecutionContext` exposes corresponding methods for each argument, like `getArgs()`, `getContext()`, and so on. Now we can effortlessly pick up every argument specific for the currently processed request.
 
 #### Exception filters
 
@@ -61,7 +61,7 @@ export class HttpExceptionFilter implements GqlExceptionFilter {
 
 > info **Hint** Both `GqlExceptionFilter` and `GqlArgumentsHost` are imported from the `@nestjs/graphql` package.
 
-However, you don't have an access to the native `response` object in this case (as in the HTTP app).
+However, you don't have access to the native `response` object in this case (as in the HTTP app).
 
 #### Custom decorators
 
