@@ -73,7 +73,7 @@ li {
   &.opened {
     .arrow-icon {
       @include transform(rotate(-90deg));
-      color: $red-color;
+      fill: $red-color;
     }
   }
 }

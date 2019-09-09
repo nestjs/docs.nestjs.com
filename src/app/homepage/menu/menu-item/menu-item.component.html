@@ -5,7 +5,17 @@
 >
   <div class="heading" (click)="toggle()">
     <h3>{{ title }}</h3>
-    <i class="fa fa-angle-right arrow-icon"></i>
+    <svg
+      class="arrow-icon"
+      width="20"
+      height="20"
+      viewBox="0 0 1792 1792"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M1171 960q0 13-10 23l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23z"
+      />
+    </svg>
   </div>
   <ul [@openCloseAnimation]="isOpen" class="sub-nav">
     <li *ngFor="let item of children">
@@ -20,7 +30,10 @@
         </i>
         {{ item.title }}
       </a>
-      <a *ngIf="!!item.externalUrl" href="{{ item.externalUrl }}" target="_blank"
+      <a
+        *ngIf="!!item.externalUrl"
+        href="{{ item.externalUrl }}"
+        target="_blank"
         ><i class="material-icons" *ngIf="item.icon">
           {{ item.icon }}
         </i>

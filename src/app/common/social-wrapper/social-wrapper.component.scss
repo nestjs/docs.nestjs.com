@@ -12,14 +12,13 @@
     display: inline-block;
     vertical-align: middle;
     color: #fff;
-    font-size: 20px;
+    font-size: 18px;
     margin-left: 15px;
     cursor: pointer;
 
     .discord-icon {
       fill: #fff;
       position: relative;
-      top: 3px;
 
       &:hover {
         fill: $red-color;

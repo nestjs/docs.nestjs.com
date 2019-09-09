@@ -18,6 +18,7 @@ import { MigrationComponent } from './homepage/pages/migration/migration.compone
 import { ModulesComponent } from './homepage/pages/modules/modules.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
+import { RedirectGuard } from './shared/guards/redirect.guard';
 
 const routes: Routes = [
   {
@@ -105,7 +106,13 @@ const routes: Routes = [
       {
         path: 'consulting',
         component: EnterpriseComponent,
-        data: { title: 'Official Consulting & Support' },
+        resolve: {
+          url: 'externalUrlRedirectResolver',
+        },
+        canActivate: [RedirectGuard],
+        data: {
+          externalUrl: 'https://enterprise.nestjs.com',
+        },
       },
       {
         path: 'enterprise',
@@ -186,6 +193,7 @@ const routes: Routes = [
       preloadingStrategy: PreloadAllModules,
     }),
   ],
+  providers: [RedirectGuard],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

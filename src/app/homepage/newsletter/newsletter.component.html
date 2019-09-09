@@ -1,0 +1,40 @@
+<div class="newsletter-wrapper">
+  <div class="signup">
+    <div class="envelope-bg">
+      <i class="far fa-envelope"></i>
+    </div>
+    <div class="hgroup">
+      <h3>Join our Newsletter</h3>
+      <p>
+        Subscribe to stay up to date with the latest Nest updates, features, and
+        videos!
+      </p>
+    </div>
+    <div class="newsletter-form">
+      <form
+        class="form-wrapper"
+        (submit)="addToNewsletter($event, email.value)"
+      >
+        <input
+          id="newsletter-email"
+          class="form-control"
+          name="email"
+          type="email"
+          placeholder="Email address.."
+          required
+          [disabled]="isDisabled"
+          #email
+        />
+        <button
+          type="submit"
+          class="signup-button"
+          [disabled]="isDisabled"
+          [class.btn-success]="isEmailAdded"
+        >
+          <i class="far fa-paper-plane"></i>
+          <i class="icon-success fas fa-check-circle"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

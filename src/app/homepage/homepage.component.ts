@@ -85,6 +85,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   checkViewportBoundaries() {
     const nativeElement: HTMLElement = this.elementRef.nativeElement;
     const footerRef: HTMLElement = nativeElement.querySelector('app-footer');
+    const newsletterRef: HTMLElement = nativeElement.querySelector(
+      '.newsletter-wrapper',
+    );
     const carbonRef = nativeElement.querySelector('#carbonads');
     if (!footerRef || !carbonRef) {
       return;
@@ -97,11 +100,13 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const isPositionFixed =
       window.pageYOffset + window.innerHeight <
-      footerRef.offsetTop - footerRef.offsetHeight;
+      newsletterRef.offsetTop -
+        footerRef.offsetHeight +
+        newsletterRef.offsetHeight;
 
     if (!isPositionFixed) {
       this.renderer.setStyle(carbonRef, 'position', 'absolute');
-      this.renderer.setStyle(carbonRef, 'bottom', '210px');
+      this.renderer.setStyle(carbonRef, 'bottom', '350px');
     } else {
       this.renderer.removeStyle(carbonRef, 'position');
       this.renderer.removeStyle(carbonRef, 'bottom');
