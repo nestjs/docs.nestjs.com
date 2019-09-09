@@ -47,6 +47,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/async-providers',
         },
         {
+          title: 'Dynamic modules',
+          path: '/fundamentals/dynamic-modules',
+        },
+        {
           title: 'Circular dependency',
           path: '/fundamentals/circular-dependency',
         },
@@ -56,7 +60,7 @@ export class MenuComponent implements OnInit {
         },
         {
           title: 'Lifecycle events',
-          path: '/fundamentals/lifecycle-events'
+          path: '/fundamentals/lifecycle-events',
         },
         {
           title: 'Platform agnosticism',
@@ -195,7 +199,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -216,7 +220,7 @@ export class MenuComponent implements OnInit {
     ) {
       const { path } = firstChild.url[0];
       const index = this.items.findIndex(
-        ({ title }) => title.toLowerCase() === path,
+        ({ title }) => title.toLowerCase() === path
       );
       if (index < 0) {
         return;
