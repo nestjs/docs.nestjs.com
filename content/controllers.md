@@ -48,7 +48,7 @@ This method will return a 200 status code and the associated response, which in 
     <td>Standard (recommended)</td>
     <td>
       Using this built-in method, when a request handler returns a JavaScript object or array, it will <strong>automatically</strong>
-      be serialized to JSON. When it returns a JavaScript primitive type (e.g., `string`, `number`, `boolean`), however, Nest will send just the value without attempting to serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
+      be serialized to JSON. When it returns a JavaScript primitive type (e.g., <code>string</code>, <code>number</code>, <code>boolean</code>), however, Nest will send just the value without attempting to serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
       <br />
       <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
       requests which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
@@ -58,7 +58,7 @@ This method will return a 200 status code and the associated response, which in 
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" target="blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
+      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
     </td>
   </tr>
 </table>
@@ -220,9 +220,41 @@ create() {
 
 > info **Hint** Import `Header` from the `@nestjs/common` package.
 
+#### Redirection
+
+To redirect a response to a specific URL, you can either use a `@Redirect()` decorator or a library-specific response object (and call `res.redirect()` directly).
+
+`@Redirect()` takes a required `url` argument, and an optional `statusCode` argument. The `statusCode` defaults to `302` (`Found`) if omitted.
+
+```typescript
+@Get()
+@Redirect('https://nestjs.com', 301)
+```
+
+Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object from the route handler method with the shape:
+
+```json
+{
+  "url": string,
+  "statusCode": number
+}
+```
+
+Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
+
+```typescript
+@Get('docs')
+@Redirect('https://docs.nestjs.com', 302)
+getDocs(@Query('version') version) {
+  if (version && version === '5') {
+    return { url: 'https://docs.nestjs.com/v5/' };
+  }
+}
+```
+
 #### Route parameters
 
-Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1)` to get cat with id `1`). In order to define routes with parameters, we can add route parameter **tokens** in the path of the route to capture the dynamic value at that position in the request URL. The route parameter token in the `@Get()` decorator example below demonstrates this usage. Route parameters declared in this way can be accessed using the `@Param()` decorator, which should be added to the method signature.
+Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1` to get cat with id `1`). In order to define routes with parameters, we can add route parameter **tokens** in the path of the route to capture the dynamic value at that position in the request URL. The route parameter token in the `@Get()` decorator example below demonstrates this usage. Route parameters declared in this way can be accessed using the `@Param()` decorator, which should be added to the method signature.
 
 ```typescript
 @@filename()
@@ -257,29 +289,6 @@ findOne(id) {
   return `This action returns a #${id} cat`;
 }
 ```
-
-#### Routes order
-
-Be aware that route registration **order** (the order each route's method appears in a class) matters. Assume that you have a route that returns cats by identifier (`cats/:id`). If you register another endpoint **below it** in the class definition which returns all cats at once (`cats`), a `GET /cats` request will never hit that second handler as desired because all path parameters are optional. See the following example:
-
-```typescript
-@Controller('cats')
-export class CatsController {
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a #${id} cat`;
-  }
-
-  @Get()
-  findAll() {
-    // This endpoint will never get called
-    // because the "/cats" request is going
-    // to be captured by the "/cats/:id" route handler
-  }
-}
-```
-
-In order to avoid such side-effects, simply move the `findAll()` declaration (including its decorator) above `findOne()`.
 
 #### Scopes
 

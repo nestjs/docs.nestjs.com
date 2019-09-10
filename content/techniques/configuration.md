@@ -1,12 +1,16 @@
 ### Configuration
 
-The applications used to run in different **environments**. Depending on an environment, various sets of configuration variables should be used. For example, that's very likely that local environment relies on specific database credentials, valid solely for local db instance. In order to solve this issue, we used to take advantage of `.env` files, that hold key-value pairs, where each key represents a particular value since this approach is very convenient.
+Applications are often run in different **environments**. Depending on the environment, different configuration settings should be used. For example, usually the local environment relies on specific database credentials, valid only for the local DB instance. The production environment would use a separate set of DB credentials. Since configuration variables change, best practice is to [store configuration variables](https://12factor.net/config)  in the environment.
 
-But when we use a `process` global object, it's difficult to keep our tests clean since tested class may directly use it. Another way is to create an abstraction layer, a `ConfigModule` that exposes a `ConfigService` with loaded configuration variables.
+Externally defined environment variables are visible inside Node.js through the `process.env` global. We could try to solve the problem of multiple environments by setting the environment variables separately in each environment.  This can quickly get unwieldy, especially in the development and testing environments where these values need to be easily mocked and/or changed.
+
+In Node.js applications, it's common to use `.env` files, holding key-value pairs where each key represents a particular value, to represent each environment.  Running an app in different environments is then just a matter of swapping in the correct `.env` file.
+
+A good approach for using this technique in Nest is to create a `ConfigModule` that exposes a `ConfigService` which loads the appropriate `.env` file, depending on the `$NODE_ENV` environment variable.
 
 #### Installation
 
-Certain platforms automatically attach our environment variables to the `process.env` global. However, in the local environment, we have to manually take care of it. In order to parse our environment files, we'll use a [dotenv](https://github.com/motdotla/dotenv) package.
+In order to parse our environment files, we'll use the [dotenv](https://github.com/motdotla/dotenv) package.
 
 ```bash
 $ npm i --save dotenv
@@ -15,10 +19,10 @@ $ npm i --save-dev @types/dotenv
 
 #### Service
 
-Firstly, let's create a `ConfigService` class.
+First, we create a `ConfigService` class that will perform the necessary `.env` file parsing and provide an interface for reading configuration variables.
 
 ```typescript
-@@filename()
+@@filename(config/config.service.ts)
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
@@ -48,9 +52,9 @@ export class ConfigService {
 }
 ```
 
-This class takes a single argument, a `filePath`, which is a path to your `.env` file. The `get()` method is provided to enable access to a private `envConfig` object that holds each property defined inside an environment file.
+This class takes a single argument, a `filePath`, which is a path to your `.env` file. The `get()` method enables access to a private `envConfig` object that holds each property defined in the parsed environment file.
 
-The last step is to create a `ConfigModule`.
+The next step is to create a `ConfigModule`.
 
 ```typescript
 @@filename()
@@ -61,7 +65,7 @@ import { ConfigService } from './config.service';
   providers: [
     {
       provide: ConfigService,
-      useValue: new ConfigService(`${process.env.NODE_ENV}.env`),
+      useValue: new ConfigService(`${process.env.NODE_ENV || 'development'}.env`),
     },
   ],
   exports: [ConfigService],
@@ -69,7 +73,11 @@ import { ConfigService } from './config.service';
 export class ConfigModule {}
 ```
 
-The `ConfigModule` registers a `ConfigService` and exports it as well. Additionally, we passed a path to the `.env` file. This path will be different depending on actual execution environment. Now you can simply inject `ConfigService` anywhere, and pull out a particular value based on a passed key. Sample `.env` file could look like below:
+The `ConfigModule` registers a `ConfigService` and exports it for visibility in other consuming modules. Additionally, we used the `useValue` syntax (see [Custom providers](/fundamentals/custom-providers)) to pass the path to the `.env` file. This path will be different depending on the actual execution environment as contained in the `NODE_ENV` environment variable (e.g., `'development'`, `'production'`, etc.).
+
+Now you can simply inject `ConfigService` anywhere, and retrieve a particular configuration value based on a passed key.
+
+A sample `development.env` file could look like this:
 
 ```typescript
 DATABASE_USER = test
@@ -78,7 +86,7 @@ DATABASE_PASSWORD = test
 
 #### Using the ConfigService
 
-To access **environment variables** from our `ConfigService` we need to inject it. Therefore we firstly need to import the module.
+To access **environment variables** from our `ConfigService`, we first need to inject it. Therefore we need to import the `ConfigModule` into the module that will use it.
 
 ```typescript
 @@filename(app.module)
@@ -88,10 +96,13 @@ To access **environment variables** from our `ConfigService` we need to inject i
 })
 ```
 
-Afterward, you can inject it using an injection token. By default, the token is equal to the class name (in our example `ConfigService`).
+Then we can inject it using standard constructor injection, and use it in our class:
 
 ```typescript
 @@filename(app.service)
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from './config/config.service';
+
 @Injectable()
 export class AppService {
   private isAuthEnabled: boolean;
@@ -102,28 +113,27 @@ export class AppService {
 }
 ```
 
-> info **Hint** Instead of importing `ConfigModule` in all your modules, you can also declare `ConfigModule` as a global module.
+> info **Hint** Instead of importing `ConfigModule` in each module, you can alternatively declare `ConfigModule` as a [global module](https://docs.nestjs.com/modules#global-modules).
 
 #### Advanced configuration
 
-We just implemented a basic `ConfigService`. However, this approach has a couple of disadvantages, which we'll address now:
-
+We just implemented a basic `ConfigService`. However, this simple version has a couple of disadvantages, which we'll address now:
 - missing names & types for the environment variables (no IntelliSense)
-- a lack of **validation** of the provided `.env` file
-- the env file provides booleans as string (`'true'`), and thus have to cast them to a `boolean` every time
+- no validation of the provided `.env` file
+- the service treat a `boolean` value as a `string` (`'true'`), so we subsequently have to cast them to `boolean` after retrieving them
 
 #### Validation
 
-We'll start with the validation of the provided environment variables. You can throw an error if required environment variables haven't been provided or if they don't meet your predefined requirements. For this purpose, we are going to use the npm package [Joi](https://github.com/hapijs/joi). With Joi, you define an object schema and validate JavaScript objects against it.
+We'll start with validation of the provided environment variables. A good technique is to throw an exception if required environment variables haven't been provided or if they don't meet certain validation rules. For this purpose, we are going to use the [Joi](https://github.com/hapijs/joi) npm package. With Joi, you define an object schema and validate JavaScript objects against it.
 
-Install Joi and it's types (for **TypeScript** users):
+Install Joi (and its types, for **TypeScript** users):
 
 ```bash
 $ npm install --save @hapi/joi
 $ npm install --save-dev @types/hapi__joi
 ```
 
-Once the packages are installed, we can move to our `ConfigService`.
+Now we can utilize Joi validation features in our `ConfigService`.
 
 ```typescript
 @@filename(config.service)
@@ -168,11 +178,11 @@ export class ConfigService {
 }
 ```
 
-Since we set default values for `NODE_ENV` and `PORT` the validation will not fail if we don't provide these variables in the environment file. Nevertheless, we need to explicitly provide `API_AUTH_ENABLED`. The validation will also throw an error if we have variables in our .env file which aren't part of the schema. Additionally, Joi tries to convert the env strings into the right type.
+Since we set default values for `NODE_ENV` and `PORT` the validation will not fail if we don't provide these variables in the environment file. Conversely, because there's no default value, our `env` file needs to explicitly provide `API_AUTH_ENABLED`. The validation step will also throw an exception if we have variables in our `.env` file which aren't part of the schema. Finally, Joi tries to convert the string values from the `.env` file into the right type, solving our "booleans as strings" problem from above.
 
-#### Class properties
+#### Custom getter functions
 
-For each config property, we have to add a getter function.
+We already defined a generic `get()` method to retrieve a configuration value by key.  We may also add `getter` functions to enable a little more natural coding style:
 
 ```typescript
 @@filename(config.service)
@@ -181,9 +191,7 @@ get isApiAuthEnabled(): boolean {
 }
 ```
 
-#### Usage example
-
-Now we can directly access the class properties.
+Now we can use the getter function as follows:
 
 ```typescript
 @@filename(app.service)
@@ -196,3 +204,7 @@ export class AppService {
   }
 }
 ```
+
+#### Example
+
+A complete working example based on this chapter can be found [here](https://github.com/nestjs/nest/tree/master/sample/25-configuration).

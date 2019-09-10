@@ -12,16 +12,16 @@
 .logo-wrapper {
   svg,
   img {
-    width: 110px;
+    width: 42px;
     height: 50px;
   }
 }
 .container {
   @extend .transition;
   @extend .box-sizing;
-  //@include transform(translateX(265px));
-  margin-left: 265px;
-  width: calc(100% - 265px);
+  //@include transform(translateX(250px));
+  margin-left: 250px;
+  width: calc(100% - 250px);
   padding: 85px 85px 0;
   display: inline-block;
   vertical-align: top;
@@ -35,9 +35,9 @@
   }
 
   @include media(large) {
-    //@include transform(translateX(265px));
-    margin-left: 265px;
-    width: calc(100% - 265px);
+    //@include transform(translateX(250px));
+    margin-left: 250px;
+    width: calc(100% - 250px);
     padding: 85px 50px 0;
     &.wide {
       width: 100%;
@@ -340,8 +340,8 @@
   float: right;
   margin-top: 24px;
 
-  .material-icons {
-    font-size: 20px;
+  svg {
+    font-size: 17px;
     color: $black-color;
     &:hover {
       color: $red-color;

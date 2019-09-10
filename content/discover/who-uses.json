@@ -5,11 +5,6 @@
       "url": "https://valor-software.com/"
     },
     {
-      "logo": "/assets/logo/rewe.svg",
-      "url": "https://rewe-digital.com/",
-      "width": "180px"
-    },
-    {
       "logo": "/assets/logo/roche-logo.png",
       "url": "https://roche.com",
       "width": "90px"
@@ -22,6 +17,19 @@
     {
       "logo": "/assets/logo/capgemini.svg",
       "url": "https://capgemini.com"
+    },
+    {
+      "logo": "/assets/logo/societe-generale-logo.png",
+      "url": "https://www.societegenerale.fr/"
+    },
+    {
+      "logo": "/assets/logo/rewe.svg",
+      "url": "https://rewe-digital.com/",
+      "width": "180px"
+    },
+    {
+      "logo": "/assets/logo/sitepen.svg",
+      "url": "https://sitepen.com"
     },
     {
       "logo": "https://nestjs.com/img/gojob-logo.png",

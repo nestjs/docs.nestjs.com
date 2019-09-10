@@ -1,6 +1,8 @@
 ### Asynchronous providers
 
-When the application start has to be delayed until some **asynchronous tasks** will be finished, for example, until the connection with the database will be established, you should consider using asynchronous providers. In order to create an `async` provider, we use the `useFactory`. The factory has to return a `Promise` (thus `async` functions fit as well).
+At times, the application start should be delayed until one or more **asynchronous tasks** are completed. For example, you may not want to start accepting requests until the connection with the database has been established. You can achieve this using _asynchronous providers_.
+
+The syntax for this is to use `async/await` with the `useFactory` syntax. The factory returns a `Promise`, and the factory function can `await` asynchronous tasks. Nest will await resolution of the promise before instantiating any class that depends on (injects) such a provider.
 
 ```typescript
 {
@@ -12,10 +14,12 @@ When the application start has to be delayed until some **asynchronous tasks** w
 }
 ```
 
-> info **Hint** Learn more about the custom providers syntax [here](/fundamentals/custom-providers).
+> info **Hint** Learn more about custom provider syntax [here](/fundamentals/custom-providers).
 
 #### Injection
 
-The asynchronous providers can be simply injected to other components by their tokens (in the above case, by the `ASYNC_CONNECTION` token). Each class that depends on the asynchronous provider will be instantiated once the async provider is **already resolved**.
+Asynchronous providers are injected to other components by their tokens, like any other provider. In the example above, you would use the construct `@Inject('ASYNC_CONNECTION')`.
 
-The above example is for demonstration purposes. If you're looking for more detailed one, [see here](/recipes/sql-typeorm).
+#### Example
+
+[The TypeORM recipe](/recipes/sql-typeorm) has a more substantial example of an asynchronous provider.

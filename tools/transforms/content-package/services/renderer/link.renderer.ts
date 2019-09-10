@@ -21,7 +21,7 @@ export function applyLinkRenderer(renderer: Renderer) {
         text
       ) as string;
 
-      baseLink = `${baseLink.substr(0, 2)} target='_blank'${baseLink.substr(
+      baseLink = `${baseLink.substr(0, 2)} rel='nofollow' target='_blank'${baseLink.substr(
         2
       )}`;
       return baseLink;

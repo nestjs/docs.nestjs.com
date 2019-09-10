@@ -1,0 +1,5 @@
+{
+  "watch": ["content"],
+  "ext": "md",
+  "exec": "npm run docs"
+}

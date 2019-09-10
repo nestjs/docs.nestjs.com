@@ -1,5 +1,5 @@
-import { BasePageComponent } from '../../page/page.component';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-who-uses',
@@ -31,6 +31,10 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/capgemini.svg',
       url: 'https://capgemini.com',
+    },
+    {
+      logo: '/assets/logo/societe-generale-logo.png',
+      url: 'https://www.societegenerale.fr/',
     },
     {
       logo: 'https://nestjs.com/img/gojob-logo.png',
@@ -102,12 +106,12 @@ export class WhoUsesComponent extends BasePageComponent {
     {
       logo: '/assets/logo/crowdlinker.svg',
       url: 'https://crowdlinker.com/',
-      width: '110px'
+      width: '110px',
     },
     {
       logo: '/assets/logo/nothing.svg',
       url: 'https://nothing.ch/',
-      width: '110px'
+      width: '110px',
     },
   ];
 

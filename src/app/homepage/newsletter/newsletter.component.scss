@@ -1,0 +1,153 @@
+@import '../../../scss/variables.scss';
+@import '../../../scss/utils.scss';
+
+.newsletter-wrapper {
+  background: #e8e8e8;
+  padding: 40px 85px;
+  overflow: hidden;
+  position: relative;
+  margin: 0 -85px;
+  width: auto;
+
+  @include media(large) {
+    margin: 0 -50px;
+    padding: 40px 50px;
+  }
+
+  @include media(medium) {
+    margin: 0 -20px;
+    padding: 40px 20px;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.newsletter-wrapper h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #111;
+}
+
+.newsletter-wrapper p {
+  font-size: 15px;
+  margin: 0;
+  color: #7b7b7b;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.newsletter-wrapper .hgroup,
+.newsletter-form {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.newsletter-form {
+  text-align: right;
+  width: 40%;
+  position: relative;
+  margin-top: 5px;
+}
+
+.newsletter-wrapper .hgroup {
+  width: 60%;
+  float: left;
+  position: relative;
+}
+
+.newsletter-form .form-control {
+  border: 0;
+  font-size: 13px;
+  height: 40px;
+  padding: 10px 20px;
+  background: #fdfdfd;
+  width: calc(100% - 70px);
+  box-shadow: -2px 2px 3px gainsboro;
+  border-radius: 3px;
+  max-width: 100%;
+  vertical-align: middle;
+  box-sizing: border-box;
+  outline: 0;
+}
+
+.newsletter-form button {
+  background: #ed1543;
+  height: 40px;
+  padding: 10px 18px;
+  border: 0;
+  color: #fff;
+  margin-left: -45px;
+  font-size: 14px;
+  vertical-align: middle;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  transition: all 200ms ease-in-out;
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: 0;
+}
+
+.newsletter-form button:hover,
+.newsletter-form button[disabled] {
+  background: #111111;
+}
+
+.newsletter-form button .icon-success {
+  display: none;
+}
+
+.newsletter-form .btn-success .fa-paper-plane {
+  display: none;
+}
+
+.newsletter-form .btn-success[disabled] {
+  background: #d3e6d4;
+  color: #1dd81c;
+  pointer-events: none;
+}
+.newsletter-form .btn-success .icon-success {
+  display: inline-block;
+}
+
+.newsletter-wrapper .envelope-bg {
+  font-size: 180px;
+  position: absolute;
+  margin-top: -50px;
+  margin-left: 60px;
+  color: #dedede;
+  z-index: 0;
+  transform: rotate(-30deg);
+}
+
+@media (max-width: 1020px) {
+  .newsletter-wrapper .hgroup,
+  .newsletter-form {
+    width: 50%;
+  }
+}
+
+@media (max-width: 990px) {
+  .newsletter-wrapper .hgroup,
+  .newsletter-form {
+    width: 100%;
+  }
+  .newsletter-wrapper .hgroup {
+    float: none;
+    text-align: center;
+  }
+  .newsletter-form {
+    margin-top: 30px;
+    text-align: center;
+  }
+  .newsletter-form .form-control {
+    margin-left: 0;
+  }
+  .newsletter-wrapper .envelope-bg {
+    font-size: 280px;
+  }
+  .newsletter-form .form-control {
+    width: 100%;
+    max-width: 400px;
+  }
+}
