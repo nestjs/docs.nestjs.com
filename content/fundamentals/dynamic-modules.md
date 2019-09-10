@@ -4,11 +4,11 @@ The [Modules chapter](/modules) covers the basics of Nest modules, and includes 
 
 #### Introduction
 
-Most application code examples in the **Overview** section of the documentation make use of regular, or _static_, modules. Modules define groups of components like [providers](/providers) and [controllers](/controllers) that fit together as a modular part of an overall application. They provide an execution context, or _scope_, for these components. For example, providers defined in a module are visible to other members of the module without the need to export them. When a provider needs to be visible outside of a module, it is first _exported_ from its host module, and then _imported_ into its consuming module.
+Most application code examples in the **Overview** section of the documentation make use of regular, or _static_, modules. Modules define groups of components like [providers](/providers) and [controllers](/controllers) that fit together as a modular part of an overall application. They provide an execution context, or scope, for these components. For example, providers defined in a module are visible to other members of the module without the need to export them. When a provider needs to be visible outside of a module, it is first _exported_ from its host module, and then _imported_ into its consuming module.
 
 Let's walk through a familiar example.
 
-First, we'll define a `UsersModule` to provide and export a `UsersService`. `UsersModule` is the _host_ module for `UsersService`.
+First, we'll define a `UsersModule` to provide and export a `UsersService`. `UsersModule` is the **host** module for `UsersService`.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -51,15 +51,15 @@ export class AuthService {
 }
 ```
 
-We'll refer to this as _static_ module binding. All the information Nest needs to wire together the modules has already been declared in the host and consuming modules. Let's unpack what's happening during this process. Nest makes `UsersService` available inside `AuthModule` by:
+We'll refer to this as **static** module binding. All the information Nest needs to wire together the modules has already been declared in the host and consuming modules. Let's unpack what's happening during this process. Nest makes `UsersService` available inside `AuthModule` by:
 
-1. Instantiating `UsersModule`, including transitively importing other modules that `UsersModule` itself consumes, and transitively resolving any dependencies ([see Custom providers](https://docs.nestjs.com/fundamentals/custom-providers)).
+1. Instantiating `UsersModule`, including transitively importing other modules that `UsersModule` itself consumes, and transitively resolving any dependencies (see [Custom providers](https://docs.nestjs.com/fundamentals/custom-providers)).
 2. Instantiating `AuthModule`, and making `UsersModule`'s exported providers available to components in `AuthModule` (just as if they had been declared in `AuthModule`).
 3. Injecting an instance of `UsersService` in `AuthService`.
 
 #### Dynamic module use case
 
-With static module binding, there's no opportunity for the consuming module to **influence how providers from the host module are configured**. Why does this matter? Consider the case where we have a general purpose module that needs to behave differently in different use cases. This is analogous to the concept of a "plugin" in many systems, where a generic facility requires some configuration before it can be used by a consumer.
+With static module binding, there's no opportunity for the consuming module to **influence** how providers from the host module are configured. Why does this matter? Consider the case where we have a general purpose module that needs to behave differently in different use cases. This is analogous to the concept of a "plugin" in many systems, where a generic facility requires some configuration before it can be used by a consumer.
 
 A good example with Nest is a **configuration module**. Many applications find it useful to externalize configuration details by using a configuration module. This makes it easy to dynamically change the application settings in different deployments: e.g., a development database for developers, a staging database for the staging/testing environment, etc. By delegating the management of configuration parameters to a configuration module, the application source code remains independent of configuration parameters.
 
@@ -76,7 +76,6 @@ Our requirement is to make `ConfigModule` accept an `options` object to customiz
 Dynamic modules give us the ability to pass parameters into the module being imported so we can change its behavior. Let's see how this works. It's helpful if we start from the end-goal of how this might look from the consuming module's perspective, and then work backwards. First, let's quickly review the example of _statically_ importing the `ConfigModule` (i.e., an approach which has no ability to influence the behavior of the imported module). Pay close attention to the `imports` array in the `@Module()` decorator:
 
 ```typescript
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -93,7 +92,6 @@ export class AppModule {}
 Let's consider what a _dynamic module_ import, where we're passing in a configuration object, might look like. Compare the difference in the `imports` array between these two examples:
 
 ```typescript
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -115,9 +113,9 @@ export class AppModule {}
 
 Let's see what's happening in the dynamic example above. What are the moving parts?
 
-1. `ConfigModule` is a normal class, so we can infer that it must have a **static method** called `register()`. We know it's static because we're calling it on the `ConfigModule` **class**, not on an **instance** of the class. Note: this method, which we will create soon, can have any arbitrary name, but by convention we should call it either `forRoot()` or `register()`.
+1. `ConfigModule` is a normal class, so we can infer that it must have a **static method** called `register()`. We know it's static because we're calling it on the `ConfigModule` class, not on an **instance** of the class. Note: this method, which we will create soon, can have any arbitrary name, but by convention we should call it either `forRoot()` or `register()`.
 2. The `register()` method is defined by us, so we can accept any input arguments we like. In this case, we're going to accept a simple `options` object with suitable properties, which is the typical case.
-3. We can infer that the `register()` method must return something _like_ a `module` since its return value appears in the familiar `imports` list, which we've seen so far includes a list of modules.
+3. We can infer that the `register()` method must return something like a `module` since its return value appears in the familiar `imports` list, which we've seen so far includes a list of modules.
 
 In fact, what our `register()` method will return is a `DynamicModule`. This construction demonstrates use of the dynamic module API we were referring to earlier. To understand this better, let's take a look at the `DynamicModule` interface from `@nestjs/common`.
 
@@ -163,7 +161,6 @@ There are still a few things to cover to help make the picture complete:
 Armed with this understanding, we can now look at what our dynamic `ConfigModule` declaration must look like. Let's take a crack at it.
 
 ```typescript
-// src/config/config.module.ts
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigService } from './config.service';
 
@@ -181,7 +178,7 @@ export class ConfigModule {
 
 It should now be clear how the pieces tie together. Calling `ConfigModule.register()` returns a `DynamicModule` object with properties which are essentially the same as those that, thus far, we've provided as metadata via the `@Module()` decorator.
 
-> warning: **Hint** import `DynamicModule` from `@nestjs/common`.
+> info **Hint** Import `DynamicModule` from `@nestjs/common`.
 
 Our dynamic module isn't very interesting yet, however, as we haven't introduced any capability to **configure** it as we said we would like to do. Let's address that next.
 
@@ -190,7 +187,6 @@ Our dynamic module isn't very interesting yet, however, as we haven't introduced
 The obvious solution for customizing the behavior of the `ConfigModule` is to pass it an `options` object in the static `register()` method, as we guessed above. Let's look once again at our consuming module's `imports` property:
 
 ```typescript
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -213,12 +209,9 @@ export class AppModule {}
 That nicely handles passing an `options` object to our dynamic module. How do we then use that `options` object in the `ConfigModule`? Let's consider that for a minute. We know that our `ConfigModule` is basically a host for providing and exporting an injectable service - the `ConfigService` - for use by other providers. It's actually our `ConfigService` that needs to read the `options` object to customize its behavior. Let's assume for the moment that we know how to somehow get the `options` from the `register()` method into the `ConfigService`. With that assumption, we can make a few changes to the service to customize its behavior based on the properties from the `options` object. (**Note**: for the time being, since we _haven't_ actually determined how to pass it in, we'll just hard-code `options`. We'll fix this in a minute).
 
 ```typescript
-// src/config/config.service.ts
 import { Injectable } from '@nestjs/common';
-
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-
 import { EnvConfig } from './interfaces';
 
 @Injectable()
@@ -230,10 +223,7 @@ export class ConfigService {
       folder: './config',
     };
 
-    const filePath = `${
-      process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
-    }.env`;
-
+    const filePath = `${process.env.NODE_ENV || 'development'}.env`;
     const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
   }
@@ -246,12 +236,11 @@ export class ConfigService {
 
 Now our `ConfigService` knows how to find the `.env` file in the folder we've specified in `options`.
 
-Our remaining task is to somehow _inject_ the `options` object from the `register()` step into our `ConfigService`. And of course, we'll use _dependency injection_ to do it. This is a key point, so make sure you understand it. Our `ConfigModule` is providing `ConfigService`. `ConfigService` in turn _depends on_ the `options` object that is only supplied at run-time. So, at run-time, we'll need to first bind the `options` object to the Nest IoC container, and then have Nest inject it into our `ConfigService`. Remember from the **Custom providers** chapter that [providers can include any value, not just services](https://docs.nestjs.com/fundamentals/custom-providers#non-service-based-providers), so we're fine using dependency injection to handle a simple `options` object.
+Our remaining task is to somehow inject the `options` object from the `register()` step into our `ConfigService`. And of course, we'll use _dependency injection_ to do it. This is a key point, so make sure you understand it. Our `ConfigModule` is providing `ConfigService`. `ConfigService` in turn depends on the `options` object that is only supplied at run-time. So, at run-time, we'll need to first bind the `options` object to the Nest IoC container, and then have Nest inject it into our `ConfigService`. Remember from the **Custom providers** chapter that providers can [include any value](https://docs.nestjs.com/fundamentals/custom-providers#non-service-based-providers) not just services, so we're fine using dependency injection to handle a simple `options` object.
 
 Let's tackle binding the options object to the IoC container first. We do this in our static `register()` method. Remember that we are dynamically constructing a module, and one of the properties of a module is its list of providers. So what we need to do is define our options object as a provider. This will make it injectable into the `ConfigService`, which we'll take advantage of in the next step. In the code below, pay attention to the `providers` array:
 
 ```typescript
-// src/config/config.module.ts
 import { DynamicModule, Module } from '@nestjs/common';
 
 import { ConfigService } from './config.service';
@@ -276,7 +265,6 @@ export class ConfigModule {
 Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider into the `ConfigService`. Recall that when we define a provider using a non-class token we need to use the `@Inject()` decorator [as described here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
 
 ```typescript
-// src/config/config.service.ts
 import { Injectable, Inject } from '@nestjs/common';
 
 import * as dotenv from 'dotenv';
@@ -303,10 +291,9 @@ export class ConfigService {
 }
 ```
 
-One final note: for simplicity we used a string-based injection token (`'CONFIG_OPTIONS'`) above, but best practice is to define it as a constant (or Symbol) in a separate file, and import that file. For example:
+One final note: for simplicity we used a string-based injection token (`'CONFIG_OPTIONS'`) above, but best practice is to define it as a constant (or `Symbol`) in a separate file, and import that file. For example:
 
 ```typescript
-// src/config/constants.ts
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
 ```
 
