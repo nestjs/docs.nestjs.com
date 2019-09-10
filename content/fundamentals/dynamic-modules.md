@@ -117,42 +117,25 @@ Let's see what's happening in the dynamic example above. What are the moving par
 2. The `register()` method is defined by us, so we can accept any input arguments we like. In this case, we're going to accept a simple `options` object with suitable properties, which is the typical case.
 3. We can infer that the `register()` method must return something like a `module` since its return value appears in the familiar `imports` list, which we've seen so far includes a list of modules.
 
-In fact, what our `register()` method will return is a `DynamicModule`. This construction demonstrates use of the dynamic module API we were referring to earlier. To understand this better, let's take a look at the `DynamicModule` interface from `@nestjs/common`.
+In fact, what our `register()` method will return is a `DynamicModule`. This construction demonstrates use of the dynamic module API we were referring to earlier.
 
-```typescript
-interface DynamicModule extends ModuleMetadata {
-  module: Type<any>;
-}
-```
-
-Just so we can see the full interface, let's imagine we could collapse it so it included the inherited properties from `ModuleMetadata`, which it extends. Our full interface for a `DynamicModule` thus looks like this:
+To understand this better, let's take a look at a slightly simplified version of the `DynamicModule` interface from `@nestjs/common`. We've simplified the interface slightly to highlight the important elements.
 
 ```typescript
 interface DynamicModule {
   module: Type<any>;
-  imports?: Array<
-    Type<any> | DynamicModule | Promise<DynamicModule> | ForwardReference
-  >;
+  imports?: Array<Type<any> | DynamicModule | Promise<DynamicModule>>;
   controllers?: Type<any>[];
   providers?: Provider[];
-  exports?: Array<
-    | DynamicModule
-    | Promise<DynamicModule>
-    | string
-    | symbol
-    | Provider
-    | ForwardReference
-    | Abstract<any>
-    | Function
-  >;
+  exports?: Array<DynamicModule | Promise<DynamicModule>>;
 }
 ```
 
-Looking at this, we should be able to easily see how the interface of a `DynamicModule` corresponds to the [metadata properties](/modules) associated with a normal (what we've been calling _static_) module. Aside from the additional `module` property, which we'll deal with shortly, the other properties map 1 to 1 with the properties in our familiar `@Module()` decorator. From this we can see that dynamic modules share the exact same properties (plus the additional `module` property) as statically declared modules.
+Looking at this, we should be able to easily see how the interface of a `DynamicModule` corresponds to the [metadata properties](/modules) associated with a normal (what we've been calling _static_) module. Aside from the additional required `module` property, which we'll discuss shortly, the other (optional) properties map 1 to 1 with the properties in the familiar `@Module()` decorator. In short, dynamic modules share the exact same properties (plus the additional `module` property) as statically declared modules.
 
 What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Modules` decorator, we specify them programmatically.
 
-There are still a few things to cover to help make the picture complete:
+There are still a few details to cover to help make the picture complete:
 
 1. We can now state that the `@Module()` decorator's `imports` property can take not only a class name (e.g., `imports: [UsersModule]`), but also a function **returning** a dynamic module (e.g., `imports: [ConfigModule.register(...)]`).
 2. A dynamic module has an additional property, called `module`, which serves as its name. The value of the `module` property should be the same as the class name of the module. See the example below.
@@ -176,7 +159,7 @@ export class ConfigModule {
 }
 ```
 
-It should now be clear how the pieces tie together. Calling `ConfigModule.register()` returns a `DynamicModule` object with properties which are essentially the same as those that, thus far, we've provided as metadata via the `@Module()` decorator.
+It should now be clear how the pieces tie together. Calling `ConfigModule.register()` returns a `DynamicModule` object with properties which are essentially the same as those that, until now, we've provided as metadata via the `@Module()` decorator.
 
 > info **Hint** Import `DynamicModule` from `@nestjs/common`.
 
@@ -277,10 +260,7 @@ export class ConfigService {
   private readonly envConfig: EnvConfig;
 
   constructor(@Inject('CONFIG_OPTIONS') private options) {
-    const filePath = `${
-      process.env.NODE_ENV ? process.env.NODE_ENV : 'development'
-    }.env`;
-
+    const filePath = `${process.env.NODE_ENV || 'development'}.env`;
     const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
   }
