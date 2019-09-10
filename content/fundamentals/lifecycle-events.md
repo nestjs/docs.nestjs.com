@@ -12,7 +12,7 @@ The following diagram depicts the sequence of key application lifecycle events, 
 
 #### Lifecycle events
 
-Lifecycle events happen during application bootstrapping and shutdown. When lifecycle hooks are enabled, Nest calls registered lifecycle hook methods on `modules`, `injectables` and `controllers` at each of the following lifecycle events. As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
+Lifecycle events happen during application bootstrapping and shutdown. Nest calls registered lifecycle hook methods on `modules`, `injectables` and `controllers` at each of the following lifecycle events (**shutdown hooks** need to be enabled first, as described [below](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)). As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
 
 | Lifecycle hook method         | Lifecycle event triggering the hook method call                                                                                                                                                                   |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
