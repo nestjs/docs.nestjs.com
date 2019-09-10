@@ -30,7 +30,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 
 #### Options
 
-There are a bunch of available options that determine a transporter behavior.
+There are a several options that determine the transporter's behavior.
 
 <table>
   <tr>
@@ -80,3 +80,10 @@ There are a bunch of available options that determine a transporter behavior.
   </tr>
 </table>
 
+### Overview
+
+
+### Message Pattern
+
+
+### More

@@ -99,6 +99,11 @@
       "logo": "/assets/logo/nothing.svg",
       "url": "https://nothing.ch/",
       "width": "110px"
+    },
+    {
+      "logo": "/assets/logo/patrocinium.png",
+      "url": "https://www.patrocinium.com/",
+      "width": "140px"
     }
   ],
   "Body": [

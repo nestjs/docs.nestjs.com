@@ -19,8 +19,8 @@ $ npm i --save kafkajs</code></pre>
 <p>In order to switch to <strong>Kafka</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: app7c9d22c3d19166c902b4fcb5c61c127e83a3faba.isJsActive }}
-<app-tabs #app7c9d22c3d19166c902b4fcb5c61c127e83a3faba></app-tabs>
+  {{ 'main' | extension: appa3c8a2ed219f87040714d6f9f11c5f525ba0e7a1.isJsActive }}
+<app-tabs #appa3c8a2ed219f87040714d6f9f11c5f525ba0e7a1></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.KAFKA,
@@ -33,7 +33,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
 info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from the <code>@nestjs/microservices</code> package.
 </blockquote>
 <h4 appAnchor id="options"><span>Options</span></h4>
-<p>There are a bunch of available options that determine a transporter behavior.</p>
+<p>There are a several options that determine the transporter&#39;s behavior.</p>
 <table>
   <tr>
     <td><code>client</code></td>
@@ -80,7 +80,8 @@ info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from 
         >here</a
       >.</td>
   </tr>
-
 </table>
+
+
 </div>
 
