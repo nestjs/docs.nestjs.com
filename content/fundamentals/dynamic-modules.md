@@ -98,13 +98,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 
 @Module({
-  imports: [
-    ConfigModule.register(
-      {
-        folder: './config'
-      },
-    }),
-  ],
+  imports: [ConfigModule.register({ folder: './config' })],
   controllers: [AppController],
   providers: [AppService],
 })
@@ -117,29 +111,27 @@ Let's see what's happening in the dynamic example above. What are the moving par
 2. The `register()` method is defined by us, so we can accept any input arguments we like. In this case, we're going to accept a simple `options` object with suitable properties, which is the typical case.
 3. We can infer that the `register()` method must return something like a `module` since its return value appears in the familiar `imports` list, which we've seen so far includes a list of modules.
 
-In fact, what our `register()` method will return is a `DynamicModule`. This construction demonstrates use of the dynamic module API we were referring to earlier.
-
-To understand this better, let's take a look at a slightly simplified version of the `DynamicModule` interface from `@nestjs/common`. We've simplified the interface slightly to highlight the important elements.
+In fact, what our `register()` method will return is a `DynamicModule`. A dynamic module is nothing more than a module created at run-time, with the same exact properties as a static module, plus one additional property called `module`. Let's quickly review a sample static module declaration, paying close attention to the module options passed in to the decorator:
 
 ```typescript
-interface DynamicModule {
-  module: Type<any>;
-  imports?: Array<Type<any> | DynamicModule | Promise<DynamicModule>>;
-  controllers?: Type<any>[];
-  providers?: Provider[];
-  exports?: Array<DynamicModule | Promise<DynamicModule>>;
-}
+@Module({
+  imports: [DogsService],
+  controllers: [CatsController],
+  providers: [CatsService],
+  exports: [CatsService]
+})
 ```
 
-Looking at this, we should be able to easily see how the interface of a `DynamicModule` corresponds to the [metadata properties](/modules) associated with a normal (what we've been calling _static_) module. Aside from the additional required `module` property, which we'll discuss shortly, the other (optional) properties map 1 to 1 with the properties in the familiar `@Module()` decorator. In short, dynamic modules share the exact same properties (plus the additional `module` property) as statically declared modules.
+Dynamic modules must return an object with the exact same interface, plus one additional property called `module`. The `module` property serves as the name of the module, and should be the same as the class name of the module, as shown in the example below.
+
+> info **Hint** For a dynamic module, all properties of the module options object are optional **except** `module`.
 
 What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Modules` decorator, we specify them programmatically.
 
-There are still a few details to cover to help make the picture complete:
+There are still a couple of details to cover to help make the picture complete:
 
-1. We can now state that the `@Module()` decorator's `imports` property can take not only a class name (e.g., `imports: [UsersModule]`), but also a function **returning** a dynamic module (e.g., `imports: [ConfigModule.register(...)]`).
-2. A dynamic module has an additional property, called `module`, which serves as its name. The value of the `module` property should be the same as the class name of the module. See the example below.
-3. A dynamic module can itself import other modules. We won't do so in this example, but if the dynamic module depends on providers from other modules, you would import them using the optional `imports` property. Again, this is exactly analogous to the way you'd declare metadata for a static module using the `@Module()` decorator.
+1. We can now state that the `@Module()` decorator's `imports` property can take not only a module class name (e.g., `imports: [UsersModule]`), but also a function **returning** a dynamic module (e.g., `imports: [ConfigModule.register(...)]`).
+2. A dynamic module can itself import other modules. We won't do so in this example, but if the dynamic module depends on providers from other modules, you would import them using the optional `imports` property. Again, this is exactly analogous to the way you'd declare metadata for a static module using the `@Module()` decorator.
 
 Armed with this understanding, we can now look at what our dynamic `ConfigModule` declaration must look like. Let's take a crack at it.
 
@@ -159,7 +151,7 @@ export class ConfigModule {
 }
 ```
 
-It should now be clear how the pieces tie together. Calling `ConfigModule.register()` returns a `DynamicModule` object with properties which are essentially the same as those that, until now, we've provided as metadata via the `@Module()` decorator.
+It should now be clear how the pieces tie together. Calling `ConfigModule.register(...)` returns a `DynamicModule` object with properties which are essentially the same as those that, until now, we've provided as metadata via the `@Module()` decorator.
 
 > info **Hint** Import `DynamicModule` from `@nestjs/common`.
 
@@ -176,13 +168,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 
 @Module({
-  imports: [
-    ConfigModule.register(
-      {
-        folder: './config'
-      },
-    }),
-  ],
+  imports: [ConfigModule.register({ folder: './config' })],
   controllers: [AppController],
   providers: [AppService],
 })
@@ -202,9 +188,7 @@ export class ConfigService {
   private readonly envConfig: EnvConfig;
 
   constructor() {
-    const options = {
-      folder: './config',
-    };
+    const options = { folder: './config' };
 
     const filePath = `${process.env.NODE_ENV || 'development'}.env`;
     const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
