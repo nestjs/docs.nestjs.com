@@ -53,3 +53,15 @@ const tasksService = app.select(TasksModule).get(TasksService, { strict: true })
 </table>
 
 > info **Hint** In non-strict mode, the root module is selected by default. In order to select any other module, you need to go through entire modules tree (step by step).
+
+If you want the node application to close after the script finishes (useful for CRON jobs), add `await app.close()` to the end of your `bootstrap` function:
+
+```typescript
+@@filename()
+async function bootstrap() {
+  const app = await NestFactory.createApplicationContext(ApplicationModule);
+  // application logic...
+  await app.close();
+}
+bootstrap();
+```
