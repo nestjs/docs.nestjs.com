@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { AsyncComponentsComponent } from './async-components/async-components.component';
+import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
 import { DependencyInjectionComponent } from './dependency-injection/dependency-injection.component';
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
@@ -11,6 +12,11 @@ import { UnitTestingComponent } from './unit-testing/unit-testing.component';
 import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 
 const routes: Routes = [
+  {
+    path: 'dynamic-modules',
+    component: DynamicModulesComponent,
+    data: { title: 'Dynamic modules' },
+  },
   {
     path: 'dependency-injection',
     redirectTo: 'custom-providers',
@@ -70,6 +76,7 @@ const routes: Routes = [
     AsyncComponentsComponent,
     PlatformAgnosticismComponent,
     DependencyInjectionComponent,
+    DynamicModulesComponent,
     UnitTestingComponent,
     CircularDependencyComponent,
     ProviderScopesComponent,
