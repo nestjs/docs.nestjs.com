@@ -6,21 +6,21 @@
       aria-label="Suggest Edits"
       title="Suggest Edits"
     >
-      <i class="material-icons" aria-hidden="true" role="img">mode_edit</i>
+      <i class="fas fa-edit"></i>
     </a>
   </div>
   <h3 id="kafka">Kafka</h3>
-<p>The <a target='_blank' href="https://kafka.apache.org/">Kafka</a> is an open source, distributed streaming platform.</p>
+<p><a rel='nofollow' target='_blank' href="https://kafka.apache.org/">Kafka</a> is an open source, distributed streaming platform.</p>
 <h4 appAnchor id="installation"><span>Installation</span></h4>
 <p>Before we start, we have to install required package:</p>
 <pre><code class="language-bash">
 $ npm i --save kafkajs</code></pre>
-<h4 appAnchor id="overview"><span>Overview</span></h4>
+<h4 appAnchor id="transporter"><span>Transporter</span></h4>
 <p>In order to switch to <strong>Kafka</strong> transporter, we need to modify an options object passed to the <code>createMicroservice()</code> method.</p>
 
 <span class="filename">
-  {{ 'main' | extension: appa3c8a2ed219f87040714d6f9f11c5f525ba0e7a1.isJsActive }}
-<app-tabs #appa3c8a2ed219f87040714d6f9f11c5f525ba0e7a1></app-tabs>
+  {{ 'main' | extension: appf5e1a7116c44afed692cf9165cd3751fba657257.isJsActive }}
+<app-tabs #appf5e1a7116c44afed692cf9165cd3751fba657257></app-tabs>
 </span><pre><code class="language-typescript">
 const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
   transport: Transport.KAFKA,
@@ -40,6 +40,7 @@ info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from 
     <td>Client configuration options. They are well-described
       <a
         href="https://kafka.js.org/docs/configuration"
+        rel="nofollow"
         target="blank"
         >here</a
       >.</td>
@@ -49,6 +50,7 @@ info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from 
     <td>Consumer configuration options. They are well-described
       <a
         href="https://kafka.js.org/docs/consuming#a-name-options-a-options"
+        rel="nofollow"
         target="blank"
         >here</a
       >.</td>
@@ -58,6 +60,7 @@ info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from 
     <td>Run configuration options. They are well-described
       <a
         href="https://kafka.js.org/docs/consuming"
+        rel="nofollow"
         target="blank"
         >here</a
       >.</td>
@@ -67,6 +70,7 @@ info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from 
     <td>Producer configuration options. They are well-described
       <a
         href="https://kafka.js.org/docs/producing#options"
+        rel="nofollow"
         target="blank"
         >here</a
       >.</td>
@@ -76,12 +80,91 @@ info "><strong>Hint</strong> <code>Transport</code> enumerator is imported from 
     <td>Send configuration options. They are well-described
       <a
         href="https://kafka.js.org/docs/producing#options"
+        rel="nofollow"
         target="blank"
         >here</a
       >.</td>
   </tr>
 </table>
 
+<h4 appAnchor id="client"><span>Client</span></h4>
+<p>In order to create a client instance, we need to use <code>@Client()</code> decorator.</p>
+
+<span class="filename">
+  {{ 'hero.controller' | extension: appf666181fb1448379f310c8fe96aef07be89d498e.isJsActive }}
+<app-tabs #appf666181fb1448379f310c8fe96aef07be89d498e></app-tabs>
+</span><pre><code class="language-typescript">
+@Client(&#123;
+  transport: Transport.KAFKA,
+  options: &#123;
+    client: &#123;
+      clientId: &#39;hero&#39;,
+      brokers: [&#39;localhost:9092&#39;],
+    &#125;,
+    consumer: &#123;
+      groupId: &#39;hero-consumer&#39;
+    &#125;
+  &#125;,
+&#125;)
+client: ClientKafka;</code></pre><p>There is a small difference compared to the previous examples. Instead of the <code>ClientProxy</code> class, we use the <code>ClientKafka</code> that provides a <code>subscribeToResponseOf()</code> method. The <code>subscribeToResponseOf()</code> method takes a request topic name as an argument and adds the derived reply topic name to a collection of reply topics.  This method is required when implementing the message pattern.</p>
+
+<span class="filename">
+  {{ 'hero.controller' | extension: app1dbe552e88f31e7f18bdf4add9834fc39450a4e0.isJsActive }}
+<app-tabs #app1dbe552e88f31e7f18bdf4add9834fc39450a4e0></app-tabs>
+</span><pre><code class="language-typescript">
+onModuleInit() &#123;
+  this.client.subscribeToResponseOf(&#39;hero.kill.dragon&#39;);
+&#125;</code></pre><p>If the <code>KafkaClient</code> is provided asynchronously to the controller, the <code>subscribeToResponseOf()</code> method must be called before calling the <code>connect()</code> method.</p>
+<h4 appAnchor id="serialization"><span>Serialization</span></h4>
+<h4 appAnchor id="naming-conventions"><span>Naming Conventions</span></h4>
+<p>The Kafka microservice components append a description of their respective role onto the <code>client.clientId</code> and <code>consumer.groupId</code> options to prevent collisions between Nest microservice client and server components.  By default the <code>ClientKafka</code> components appends <code>-client</code> and the <code>ServerKafka</code> components appends <code>-server</code> to both of these options.</p>
+
+<span class="filename">
+  {{ 'main' | extension: app6edbcd6da474572118c67592d25aa285f1ef378b.isJsActive }}
+<app-tabs #app6edbcd6da474572118c67592d25aa285f1ef378b></app-tabs>
+</span><pre><code class="language-typescript">
+const app = await NestFactory.createMicroservice(ApplicationModule, &#123;
+  transport: Transport.KAFKA,
+  options: &#123;
+    client: &#123;
+      clientId: &#39;hero&#39;, // hero-server
+      brokers: [&#39;localhost:9092&#39;],
+    &#125;,
+    consumer: &#123;
+      groupId: &#39;hero-consumer&#39; // hero-consumer-server
+    &#125;
+  &#125;,
+&#125;);</code></pre>
+<span class="filename">
+  {{ 'hero.controller' | extension: appb9d0370af0e1ee03b6875f222d7ee3904408b7cd.isJsActive }}
+<app-tabs #appb9d0370af0e1ee03b6875f222d7ee3904408b7cd></app-tabs>
+</span><pre><code class="language-typescript">
+@Client(&#123;
+  transport: Transport.KAFKA,
+  options: &#123;
+    client: &#123;
+      clientId: &#39;hero&#39;, // hero-client
+      brokers: [&#39;localhost:9092&#39;],
+    &#125;,
+    consumer: &#123;
+      groupId: &#39;hero-consumer&#39; // hero-consumer-client
+    &#125;
+  &#125;,
+&#125;)
+client: ClientKafka;</code></pre><blockquote class="
+info "><strong>Hint</strong> Kafka client and consumer naming conventions can be customized by extending <code>KafkaClient</code> and <code>KafkaServer</code> in your own custom provider and overriding the constructor.
+</blockquote>
+<p>Since the Kafka microservice message pattern utilizes two topics for the request and reply channels, a reply pattern should be derived from the request topic.  By default, the name of reply topic is the composite of the request topic name with <code>.reply</code> appended.</p>
+
+<span class="filename">
+  {{ 'hero.controller' | extension: app2cd63276c6ec64d9b4790e6c24c658eb557ba468.isJsActive }}
+<app-tabs #app2cd63276c6ec64d9b4790e6c24c658eb557ba468></app-tabs>
+</span><pre><code class="language-typescript">
+onModuleInit() &#123;
+  this.client.subscribeToResponseOf(&#39;hero.get&#39;); // entity.get.reply
+&#125;</code></pre><blockquote class="
+info "><strong>Hint</strong> Kafka reply topic naming conventions can be customized by extending <code>KafkaClient</code> in your own custom provider and overriding the <code>getResponsePatternName</code> method.
+</blockquote>
 
 </div>
 
