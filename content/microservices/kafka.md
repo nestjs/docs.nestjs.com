@@ -117,6 +117,14 @@ onModuleInit() {
 
 If the `KafkaClient` is provided asynchronously to the controller, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
 
+```typescript
+@@filename(hero.controller)
+async onModuleInit() {
+  this.client.subscribeToResponseOf('hero.kill.dragon');
+  await this.client.connect();
+}
+```
+
 #### Serialization
 
 
