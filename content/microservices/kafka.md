@@ -22,7 +22,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
     client: {
       brokers: ['localhost:9092'],
     }
-  },
+  }
 });
 ```
 
@@ -86,7 +86,6 @@ There are a several options that determine the transporter's behavior.
 </table>
 
 #### Client
-
 In order to create a client instance, we need to use `@Client()` decorator.
 
 ```typescript
@@ -101,7 +100,7 @@ In order to create a client instance, we need to use `@Client()` decorator.
     consumer: {
       groupId: 'hero-consumer'
     }
-  },
+  }
 })
 client: ClientKafka;
 ```
@@ -125,8 +124,102 @@ async onModuleInit() {
 }
 ```
 
-#### Serialization
+#### Message Pattern
 
+
+#### Incoming
+Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of the `Buffer` type.  Nest then parses these values by transforming the buffers into strings.  If the string is "object like", Nest attempts to parse the string as `JSON`.  The parsed object is then passed to it's the associated handler with the following properties.
+
+```typescript
+interface IncomingMessage {
+  topic: string;
+  partition: number;
+  timestamp: string;
+  size: number;
+  attributes: number;
+  offset: string;
+  key: any;
+  value: any;
+  headers: Record<string, any>;
+}
+```
+
+#### Outgoing
+Nest sends outgoing Kafka messages after a serialization process when publishing events or sending messages.  This occurs on arguments passed to the client `emit()` and `send()` methods or on values returned from a `@MessagePattern` method. This serialization "stringifies" objects that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+
+```typescript
+@@filename(hero.controller)
+@Controller()
+export class HeroService {
+  @MessagePattern('hero.kill.dragon')
+  killDragon(message: any): any {
+    const dragonId = message.value.dragonId;
+    const items = [
+      { id: 1, name: 'Mythical Sword' },
+      { id: 2, name: 'Key to Dungeon' },
+    ];
+    
+    return items;
+  }
+}
+```
+
+
+Outgoing messages can also be keyed by passing an object with the `key` and `value` properties.  Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
+
+```typescript
+@@filename(hero.controller)
+@Controller()
+export class HeroService {
+  @MessagePattern('hero.kill.dragon')
+  killDragon(message: any): any {
+    const realm = 'Nest';
+    const heroId = message.value.heroId;
+    const dragonId = message.value.dragonId;
+
+    const items = [
+      { id: 1, name: 'Mythical Sword' },
+      { id: 2, name: 'Key to Dungeon' },
+    ];
+    
+    return {
+      headers: {
+        realm
+      },
+      key: heroId,
+      value: items
+    }
+  }
+}
+```
+
+Additionally, messages passed in this format can also contain custom headers set in the `headers` hash property.  Header hash property values must be either a type of `string` or `Buffer`.
+
+```typescript
+@@filename(hero.controller)
+@Controller()
+export class HeroService {
+  @MessagePattern('hero.kill.dragon')
+  killDragon(message: any): any {
+    const realm = 'Nest';
+    const heroId = message.value.heroId;
+    const dragonId = message.value.dragonId;
+
+    const items = [
+      { id: 1, name: 'Mythical Sword' },
+      { id: 2, name: 'Key to Dungeon' },
+    ];
+    
+    return {
+      headers: {
+        realm
+      },
+      key: heroId,
+      value: items
+    }
+  }
+}
+```
 
 #### Naming Conventions
 The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components.  By default the `ClientKafka` components appends `-client` and the `ServerKafka` components appends `-server` to both of these options.
@@ -142,8 +235,8 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
     },
     consumer: {
       groupId: 'hero-consumer' // hero-consumer-server
-    }
-  },
+    },
+  }
 });
 ```
 
@@ -159,7 +252,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
     consumer: {
       groupId: 'hero-consumer' // hero-consumer-client
     }
-  },
+  }
 })
 client: ClientKafka;
 ```
@@ -171,7 +264,7 @@ Since the Kafka microservice message pattern utilizes two topics for the request
 ```typescript
 @@filename(hero.controller)
 onModuleInit() {
-  this.client.subscribeToResponseOf('hero.get'); // entity.get.reply
+  this.client.subscribeToResponseOf('hero.get'); // hero.get.reply
 }
 ```
 > info **Hint** Kafka reply topic naming conventions can be customized by extending `KafkaClient` in your own custom provider and overriding the `getResponsePatternName` method.
