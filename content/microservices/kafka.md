@@ -125,7 +125,11 @@ async onModuleInit() {
 ```
 
 #### Message Pattern
+The Kafka microservice message pattern utilizes two topics for the request and reply channels.  The `KafkaClient` sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message.  This requires the `KafkaClient` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
 
+Subsequently, you need to have at least one reply topic partition for every Nest application running.  For example, if you are running 4 Nest applications but the reply topic only has 3 partitions then 1 of the Nest applications will error out when trying to send a message.
+
+When new `KafkaClient` instances are launched they join the consumer group and ask for a partition.  This triggers a rebalance of partitions assigned to consumers belonging to the consumer group.  Normally, this would be done in a round robin partitioner that assigns partitions to a sorted list of the consumer names within the consumer group.  However, using this partitioning method a new consumer could join the consumer group and fall where within the sorted list of consumer names because the consumer name is random set on application launch.  To circumvent this problem, the `KafkaClient` consumer uses round robin partitioner that assigns partitions to a sorted list of consumer high-resolution timestamps (`process.hrtime()`).
 
 #### Incoming
 Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of the `Buffer` type.  Nest then parses these values by transforming the buffers into strings.  If the string is "object like", Nest attempts to parse the string as `JSON`.  The parsed object is then passed to it's the associated handler with the following properties.
@@ -163,7 +167,6 @@ export class HeroService {
   }
 }
 ```
-
 
 Outgoing messages can also be keyed by passing an object with the `key` and `value` properties.  Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 
@@ -212,7 +215,7 @@ export class HeroService {
     
     return {
       headers: {
-        realm
+        kafka_nestRealm: realm
       },
       key: heroId,
       value: items
