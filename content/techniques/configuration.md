@@ -22,7 +22,7 @@ $ npm i --save-dev @types/dotenv
 First, we create a `ConfigService` class that will perform the necessary `.env` file parsing and provide an interface for reading configuration variables.
 
 ```typescript
-@@filename(config/config.service.ts)
+@@filename(config/config.service)
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
