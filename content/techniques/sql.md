@@ -1,4 +1,12 @@
-### Database (TypeORM)
+### Database
+
+Nest is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. You have a number of options available to you, depending on your preferences. At the most general level, connecting Nest to a database is simply a matter of loading an appropriate Node.js driver for the database, just as you would with [Express](https://expressjs.com/en/guide/database-integration.html) or Fastify.
+
+You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/), [Knex.js](http://knexjs.org/) and [TypeORM](https://github.com/typeorm/typeorm), to operate at a higher level of abstraction.
+
+For convenience, Nest also provides tight integration with TypeORM out-of-the box with `@nestjs/typeorm`, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
+
+### TypeORM Integration
 
 For integrating with SQL and NoSQL databases, Nest provides the `@nestjs/typeorm` package. Nest uses [TypeORM](https://github.com/typeorm/typeorm) because it's the most mature Object Relational Mapper (ORM) available for TypeScript. Since it's written in TypeScript, it integrates well with the Nest framework.
 
@@ -194,7 +202,7 @@ import { Photo } from './photo.entity';
 export class PhotoModule {}
 ```
 
-Now if we import `PhotoModule` in `PhotoHttpModule`, we can use `@InjectRepository(Photo)` in the providers of the latter module. 
+Now if we import `PhotoModule` in `PhotoHttpModule`, we can use `@InjectRepository(Photo)` in the providers of the latter module.
 
 ```typescript
 @@filename(photo-http.module)
