@@ -80,8 +80,8 @@ Now you can simply inject `ConfigService` anywhere, and retrieve a particular co
 A sample `development.env` file could look like this:
 
 ```typescript
-DATABASE_USER = test;
-DATABASE_PASSWORD = test;
+DATABASE_USER = test
+DATABASE_PASSWORD = test
 ```
 
 #### Using the ConfigService
