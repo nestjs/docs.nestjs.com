@@ -222,6 +222,7 @@ export class ConfigModule {
           provide: 'CONFIG_OPTIONS',
           useValue: options,
         },
+        ConfigService,
       ],
       exports: [ConfigService],
     };
