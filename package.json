@@ -67,7 +67,7 @@
     "@types/marked": "0.6.5",
     "@types/node": "12.7.5",
     "@types/rimraf": "2.0.2",
-    "chokidar": "3.0.2",
+    "chokidar": "3.1.0",
     "codelyzer": "5.1.0",
     "concurrently": "4.1.2",
     "jasmine-core": "3.4.0",
