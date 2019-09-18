@@ -105,7 +105,7 @@ In order to create a client instance, we need to use `@Client()` decorator.
 client: ClientKafka;
 ```
 
-There is a small difference compared to other microservices. Instead of the `ClientProxy` class, we use the `ClientKafka` that provides a `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request topic name as an argument and adds the derived reply topic name to a collection of reply topics.  This method is required when implementing the message pattern.
+There is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientKafka` that provides a `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request topic name as an argument and adds the derived reply topic name to a collection of reply topics.  This method is required when implementing the message pattern.
 
 ```typescript
 @@filename(hero.controller)
@@ -114,7 +114,7 @@ onModuleInit() {
 }
 ```
 
-If the `ClientKafka` is provided asynchronously to the controller, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
+If the `KafkaClient` is provided asynchronously to the controller, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
 
 ```typescript
 @@filename(hero.controller)
@@ -125,11 +125,11 @@ async onModuleInit() {
 ```
 
 #### Message Pattern
-The Kafka microservice message pattern utilizes two topics for the request and reply channels.  The `ClientKafka` sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message.  This requires the `ClientKafka` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
+The Kafka microservice message pattern utilizes two topics for the request and reply channels.  The `KafkaClient` sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message.  This requires the `KafkaClient` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
 
 Subsequently, you need to have at least one reply topic partition for every Nest application running.  For example, if you are running 4 Nest applications but the reply topic only has 3 partitions then 1 of the Nest applications will error out when trying to send a message.
 
-When new `ClientKafka` instances are launched they join the consumer group and ask for a partition.  This triggers a rebalance of partitions assigned to consumers belonging to the consumer group.  Normally, this would be done in a round robin partitioner that assigns topic partitions to a collection of consumers sorted by consumer names.  However, when using this partitioning method, a new consumer could join the consumer group and be placed anywhere within the collection of consumers sorted by consumer names because the consumer name is randomly set on application launch.  To circumvent this problem, the `ClientKafka` consumer uses round robin partitioner that assigns topic partitions to a collection of consumers sorted by a consumer's high-resolution timestamps (`process.hrtime()`) that is set on application launch.
+When new `KafkaClient` instances are launched they join the consumer group and ask for a partition.  This triggers a rebalance of partitions assigned to consumers belonging to the consumer group.  Normally, this would be done in a round robin partitioner that assigns partitions to a sorted list of the consumer names within the consumer group.  However, using this partitioning method a new consumer could join the consumer group and fall where within the sorted list of consumer names because the consumer name is random set on application launch.  To circumvent this problem, the `KafkaClient` consumer uses round robin partitioner that assigns partitions to a sorted list of consumer high-resolution timestamps (`process.hrtime()`).
 
 #### Incoming
 Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of the `Buffer` type.  Nest then parses these values by transforming the buffers into strings.  If the string is "object like", Nest attempts to parse the string as `JSON`.  The parsed object is then passed to it's the associated handler with the following properties.
@@ -259,7 +259,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 })
 client: ClientKafka;
 ```
-> info **Hint** Kafka client and consumer naming conventions can be customized by extending `ClientKafka` and `KafkaServer` in your own custom provider and overriding the constructor.
+> info **Hint** Kafka client and consumer naming conventions can be customized by extending `KafkaClient` and `KafkaServer` in your own custom provider and overriding the constructor.
 
 
 Since the Kafka microservice message pattern utilizes two topics for the request and reply channels, a reply pattern should be derived from the request topic.  By default, the name of reply topic is the composite of the request topic name with `.reply` appended.
@@ -270,4 +270,4 @@ onModuleInit() {
   this.client.subscribeToResponseOf('hero.get'); // hero.get.reply
 }
 ```
-> info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+> info **Hint** Kafka reply topic naming conventions can be customized by extending `KafkaClient` in your own custom provider and overriding the `getResponsePatternName` method.
