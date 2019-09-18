@@ -127,3 +127,4 @@ src/app/homepage/pages/pipes/pipes.component.html
 src/app/homepage/pages/recipes/crud/crud.component.html
 src/app/homepage/pages/recipes/serve-static/serve-static.component.html
 src/app/homepage/pages/discover/who-uses/who-uses.component.html
+src/app/homepage/pages/fundamentals/dynamic-modules/dynamic-modules.component.html

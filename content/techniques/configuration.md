@@ -22,7 +22,7 @@ $ npm i --save-dev @types/dotenv
 First, we create a `ConfigService` class that will perform the necessary `.env` file parsing and provide an interface for reading configuration variables.
 
 ```typescript
-@@filename(config/config.service.ts)
+@@filename(config/config.service)
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
@@ -160,15 +160,14 @@ export class ConfigService {
   private validateInput(envConfig: EnvConfig): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
-        .valid(['development', 'production', 'test', 'provision'])
+        .valid('development', 'production', 'test', 'provision')
         .default('development'),
       PORT: Joi.number().default(3000),
       API_AUTH_ENABLED: Joi.boolean().required(),
     });
 
-    const { error, value: validatedEnvConfig } = Joi.validate(
+    const { error, value: validatedEnvConfig } = envVarsSchema.validate(
       envConfig,
-      envVarsSchema,
     );
     if (error) {
       throw new Error(`Config validation error: ${error.message}`);
