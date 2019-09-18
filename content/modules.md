@@ -185,7 +185,9 @@ The `@Global()` decorator makes the module global-scoped. Global modules should 
 
 #### Dynamic modules
 
-The Nest module system includes a feature called **dynamic modules**. This feature enables you to easily create customizable modules. Following is an example of such a dynamic module, a `DatabaseModule`:
+The Nest module system includes a powerful feature called **dynamic modules**. This feature enables you to easily create customizable modules that can register and configure providers dynamically. Dynamic modules are covered extensively [here](/fundamentals/dynamic-modules). In this chapter, we'll give a brief overview to complete the introduction to modules.
+
+Following is an example of a dynamic module definition for a `DatabaseModule`:
 
 ```typescript
 @@filename()
@@ -228,9 +230,9 @@ export class DatabaseModule {
 
 > info **Hint** The `forRoot()` method may return a dynamic module either synchronously or asynchronously (i.e., via a `Promise`).
 
-This module defines the `Connection` provider by default, but additionally - depending on the `entities` and `options` objects passed to it - exposes a collection of providers, for example, repositories. Note that the dynamic module **extends** (rather than overrides) the base module metadata. That's how both the statically declared `Connection` provider **and** the dynamically configured repository providers are exported from the module.
+This module defines the `Connection` provider by default (in the `@Module()` decorator metadata), but additionally - depending on the `entities` and `options` objects passed into the `forRoot()` method - exposes a collection of providers, for example, repositories. Note that the properties returned by the dynamic module **extend** (rather than override) the base module metadata defined in the `@Module()` decorator. That's how both the statically declared `Connection` provider **and** the dynamically generated repository providers are exported from the module.
 
-This substantial feature is useful when you need to register and configure providers dynamically. Once defined in this way, the `DatabaseModule` can be imported and configured in the following manner:
+Once defined as above, the `DatabaseModule` can be imported and configured in the following manner:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -256,3 +258,5 @@ import { User } from './users/entities/user.entity';
 })
 export class AppModule {}
 ```
+
+The [Dynamic modules](/fundamentals/dynamic-modules) chapter covers this topic in greater detail, and includes a [working example](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
