@@ -111,7 +111,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-However, generating type definitions on each application start may not be necessary. Instead, we might prefer to have full control, produce typings only when a dedicated command has been executed. In this case, we can create our own script, let's say `generate-typings.ts`:
+However, generating type definitions on each application start may not be necessary. Instead, we might prefer to have full control, produce typings only when a dedicated command has been executed. In this case, we can create our own script, let's say `src/generate-typings.ts`:
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
@@ -125,10 +125,10 @@ definitionsFactory.generate({
 });
 ```
 
-Afterward, simply run your file:
+Afterward, simply run your file from your project's root directory:
 
 ```bash
-ts-node generate-typings
+ts-node src/generate-typings
 ```
 
 > info **Hint** You can also compile a script beforehand and use `node` executable instead.
