@@ -84,10 +84,10 @@ export class CatsService {
 @@switch
 import { Model } from 'mongoose';
 import { Injectable, Dependencies } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { getModelToken } from '@nestjs/mongoose';
 
 @Injectable()
-@Dependencies(InjectModel('Cat'))
+@Dependencies(getModelToken('Cat'))
 export class CatsService {
   constructor(catModel) {
     this.catModel = catModel;
