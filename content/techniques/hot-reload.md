@@ -59,7 +59,7 @@ In order to enable **HMR**, we have to open Nest application entry file (which i
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 
   if (module.hot) {
