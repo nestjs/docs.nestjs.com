@@ -137,7 +137,7 @@ $ npm install --save @hapi/joi
 $ npm install --save-dev @types/hapi__joi
 ```
 
-In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `Joi.validate()` method, which validates our incoming argument against the provided schema.
+In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.validate()` method, which validates our incoming argument against the provided schema.
 
 As noted earlier, a **validation pipe** either returns the value unchanged, or throws an exception.
 
@@ -146,7 +146,6 @@ In the next section, you'll see how we supply the appropriate schema for a given
 
 ```typescript
 @@filename()
-import * as Joi from '@hapi/joi';
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 
 @Injectable()
@@ -154,7 +153,7 @@ export class JoiValidationPipe implements PipeTransform {
   constructor(private readonly schema: Object) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
-    const { error } = Joi.validate(value, this.schema);
+    const { error } = this.schema.validate(value);
     if (error) {
       throw new BadRequestException('Validation failed');
     }
@@ -162,7 +161,6 @@ export class JoiValidationPipe implements PipeTransform {
   }
 }
 @@switch
-import * as Joi from '@hapi/joi';
 import { Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
@@ -172,7 +170,7 @@ export class JoiValidationPipe {
   }
 
   transform(value, metadata) {
-    const { error } = Joi.validate(value, this.schema);
+    const { error } = this.schema.validate(value);
     if (error) {
       throw new BadRequestException('Validation failed');
     }
