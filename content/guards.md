@@ -47,11 +47,11 @@ Every guard must implement a `canActivate()` function. This function should retu
 - if it returns `true`, the request will be processed.
 - if it returns `false`, Nest will deny the request.
 
-The `canActivate()` function takes a single argument, the `ExecutionContext` instance. The `ExecutionContext` inherits from `ArgumentsHost`. We saw `ArgumentsHost` before in the exception filters chapter. There, we saw that it's a wrapper around arguments that have been passed to the **original** handler, and contains different arguments arrays based on the type of the application. You can refer back to [the exception filters chapter](https://docs.nestjs.com/exception-filters#arguments-host) for more on this topic.
-
 #### Execution context
 
-By extending `ArgumentsHost`, `ExecutionContext` provides additional details about the current execution process. Here's what it looks like:
+The `canActivate()` function takes a single argument, the `ExecutionContext` instance. The `ExecutionContext` inherits from `ArgumentsHost`. We saw `ArgumentsHost` previously in the exception filters chapter. In the sample above, we we are just using the same helper methods defined on `ArgumentsHost` that we used earlier, to get a reference to the `Request` object. You can refer back to the *Arguments host* section of [the exception filters chapter](https://docs.nestjs.com/exception-filters#arguments-host) for more on this topic.
+
+By extending `ArgumentsHost`, `ExecutionContext` also adds several new helper methods that provide additional details about the current execution process. These details can be helpful in building more generic guards that can work across a broad set of controllers, methods, and execution contexts.  Here's what the additional methods on `ExecutionContext` look like:
 
 ```typescript
 export interface ExecutionContext extends ArgumentsHost {
