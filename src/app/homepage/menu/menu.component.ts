@@ -163,6 +163,7 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Overview', path: '/cli/overview' },
+        { title: 'Workspaces', path: '/cli/workspaces' },
         { title: 'Usage', path: '/cli/usages' },
       ],
     },
