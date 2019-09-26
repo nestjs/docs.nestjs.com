@@ -1,69 +1,153 @@
-### Usage
+### CLI command reference
 
-In order to provide a great user-experience, the CLI commands share the same command schema.
+#### nest new
+
+Creates a new (standard mode) Nest project.
+
+<code>nest **new** \<name\> [options]</code>
+
+<code>nest **n** `<name`> [options]</code>
+
+##### Description
+
+Creates and initializes a new Nest project.  Prompts for package manager.
+
+- Creates a folder with the given `<name>`
+- Populates the folder with configuration files
+- Creates sub-folders for source code (`/src`) and end-to-end tests (`/test`)
+- Populates the sub-folders with default files for app components and tests
+
+##### Arguments
+
+| Argument | Description                 |
+| -------- | --------------------------- |
+| `<name>` | The name of the new project |
+
+##### Options
+
+| Option                                | Description                                                                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                         |
+| `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                             |
+| `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                      |
+| `--package-manager [package-manager]` | Specify package manager.  Use `npm` or `yarn`.  Package manager must be installed globally.<br/> Alias: `-p`     |
+| `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                    |
+| `--collection [collectionName]`       | Specify schematics collection.  Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
+
+#### nest generate
+
+Generates and/or modifies files based on a schematic
+
+<code>nest **generate** \<schematic\> \<name\> [options]</code>
+
+<code>nest **g** \<schematic\> \<name\> [options]</code>
+
+##### Arguments
+
+| Argument      | Description                                                                                               |
+| ------------- | --------------------------------------------------------------------------------------------------------- |
+| `<schematic>` | The `schematic` or `collection:schematic` to generate.  See the table below for the available schematics. |
+| `<name>`      | The name of the generated component.                                                                      |
+
+##### Schematics
+
+| Name          | Alias | Description                                                                                         |
+| ------------- | ----- | --------------------------------------------------------------------------------------------------- |
+| `application` |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
+| `library`     | `lib` | Generate a new library within a monorepo (converting to monorepo if it's a standard structure).     |
+| `class`       | `cl`  | Generate a new class.                                                                               |
+| `controller`  | `co`  | Generate a controller declaration.                                                                  |
+| `decorator`   | `d`   | Generate a custom decorator.                                                                        |
+| `filter`      | `f`   | Generate a filter declaration.                                                                      |
+| `gateway`     | `ga`  | Generate a gateway declaration.                                                                     |
+| `guard`       | `gu`  | Generate a guard declaration.                                                                       |
+| `interface`   |       | Generate an interface.                                                                              |
+| `interceptor` | `in`  | Generate an interceptor declaration.                                                                |
+| `middleware`  | `mi`  | Generate a middleware declaration.                                                                  |
+| `module`      | `mo`  | Generate a module declaration.                                                                      |
+| `pipe`        | `pi`  | Generate a pipe declaration.                                                                        |
+| `provider`    | `pr`  | Generate a provider declaration.                                                                    |
+| `resolver`    | `r`   | Generate a resolver declaration.                                                                    |
+| `service`     | `s`   | Generate a service declaration.                                                                     |
+
+##### Options
+
+| Option                          | Description                                                                                                      |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                     | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d `                        |
+| `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                        |
+| `--flat`                        | Do not generate a folder for the element.                                                                        |
+| `--collection [collectionName]` | Specify schematics collection.  Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
+
+#### nest build
+Compiles an application or workspace into an output folder.
+
+<code>nest **build** \<name\> [options]</code>
+
+##### Arguments
+
+| Argument | Description                       |
+| -------- | --------------------------------- |
+| `<name>` | The name of the project to build. |
+
+##### Options
+
+| Option          | Description                                     |
+| --------------- | ----------------------------------------------- |
+| `--path [path]` | Path to `tsconfig` file. <br/>Alias `-p`        |
+| `--watch`       | Run in watch mode (live-reload) <br/>Alias `-w` |
+| `--webpack`     | Use webpack for compilation.                    |
+| `--webpackPath` | Path to webpack configuration.                  |
+
+#### nest start
+Compiles and runs an application (or default project in a workspace).
+
+<code>nest **start** \<name\> [options]</code>
+
+##### Arguments
+
+| Argument | Description                     |
+| -------- | ------------------------------- |
+| `<name>` | The name of the project to run. |
+
+##### Options
+
+| Option               | Description                                             |
+| -------------------- | ------------------------------------------------------- |
+| `--path [path]`      | Path to `tsconfig` file. <br/>Alias `-p`                |
+| `--watch`            | Run in watch mode (live-reload) <br/>Alias `-w`         |
+| `--debug [hostport]` | Run in debug mode (with --inspect flag) <br/>Alias `-d` |
+| `--webpack`          | Use webpack for compilation.                            |
+| `--webpackPath`      | Path to webpack configuration.                          |
+
+
+#### nest add
+Imports a library that has been packaged as a **nest library**, running its install schematic.
+
+<code>nest **add** \<name\> [options]</code>
+
+##### Arguments
+
+| Argument | Description                        |
+| -------- | ---------------------------------- |
+| `<name>` | The name of the library to import. |
+
+
+#### nest update
+Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version.
+
+##### Options
+
+| Option    | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| `--force` | Do **upgrade** instead of update <br/>Alias `-f`                         |
+| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-wt` |  |
+
+#### nest info
+Displays information about installed nest packages and other helpful system info. For example:
+
 
 ```bash
-$ nest [command] [...options]
-```
-
-#### Options
-
-Each command accepts a set of **options** that are listed below:
-
-- **\--dry-run**: allows to simulate the command execution in order to verify how it will affect your working directory
-- **\--no-spec**: allows to turn off the generation of spec files (only applies to the `generate` command)
-- **\--flat**: allows to turn off the generation of the dedicated directory (only applies to the `generate` command)
-
-#### new (alias: n)
-
-The **new** command scaffolds the Nest project based on the [typescript-starter](https://github.com/nestjs/typescript-starter) as well as install the required packages. The CLI will ask you for missing information - the application name (if not specified) and a package manager that you want to use to install dependencies.
-
-```bash
-$ nest new my-awesome-app
-```
-
-#### generate (alias: g)
-
-The **generate** command generates a Nest architecture component.
-
-| Option    | Description                                                | Required | Default value |
-| --------- | ---------------------------------------------------------- | -------- | ------------- |
-| schematic | The schematic name from the list below.                    | true     | N/A           |
-| name      | The name of the generated Nest architecture component.     | false    | N/A           |
-| path      | The path from to generate the Nest architecture component. | false    | src           |
-
-A list of available architecture components:
-
-- `class` (alias: cl)
-- `controller` (alias: co)
-- `decorator` (alias: d)
-- `filter` (alias: f)
-- `gateway` (alias: ga)
-- `guard` (alias: gu)
-- `interface` (alias: -)
-- `interceptor` (alias: in)
-- `library` (alias: lib)
-- `middleware` (alias: mi)
-- `module` (alias: mo)
-- `pipe` (alias: pi)
-- `provider` (alias: pr)
-- `resolver` (alias: r)
-- `service` (alias: s)
-
-Example usage:
-
-```bash
-$ nest generate service users
-OR
-$ nest g s users
-```
-
-#### info (alias: i)
-
-The **info** command will display your project information.
-
-```bash
-$ nest info
  _   _             _      ___  _____  _____  _     _____
 | \ | |           | |    |_  |/  ___|/  __ \| |   |_   _|
 |  \| |  ___  ___ | |_     | |\ `--. | /  \/| |     | |
@@ -76,9 +160,9 @@ OS Version : macOS High Sierra
 NodeJS Version : v8.9.0
 YARN Version : 1.5.1
 [Nest Information]
-microservices version : 5.0.0
-websockets version : 5.0.0
-testing version : 5.0.0
-common version : 5.0.0
-core version : 5.0.0
+microservices version : 6.0.0
+websockets version : 6.0.0
+testing version : 6.0.0
+common version : 6.0.0
+core version : 6.0.0
 ```

@@ -61,6 +61,7 @@ src/app/homepage/pages/support/support.component.html
 src/app/homepage/pages/cli/usages/usages.component.html
 src/app/homepage/pages/cli/overview/overview.component.html
 src/app/homepage/pages/cli/workspaces/workspaces.component.html
+src/app/homepage/pages/cli/libraries/libraries.component.html
 src/app/homepage/pages/faq/global-prefix/global-prefix.component.html
 src/app/homepage/pages/faq/http-adapter/http-adapter.component.html
 src/app/homepage/pages/faq/hybrid-application/hybrid-application.component.html

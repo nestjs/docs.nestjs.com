@@ -164,6 +164,7 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Overview', path: '/cli/overview' },
         { title: 'Workspaces', path: '/cli/workspaces' },
+        { title: 'Libraries', path: '/cli/libraries' },
         { title: 'Usage', path: '/cli/usages' },
       ],
     },

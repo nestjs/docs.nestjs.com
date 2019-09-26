@@ -5,6 +5,7 @@ import { SharedModule } from './../../../shared/shared.module';
 import { CliOverviewComponent } from './overview/overview.component';
 import { CliUsagesComponent } from './usages/usages.component';
 import { CliWorkspacesComponent } from './workspaces/workspaces.component';
+import { CliLibrariesComponent } from './libraries/libaries.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,13 @@ const routes: Routes = [
     },
   },
   {
+    path: 'libraries',
+    component: CliLibrariesComponent,
+    data: {
+      title: 'Libraries - CLI',
+    },
+  },
+  {
     path: 'usages',
     component: CliUsagesComponent,
     data: {
@@ -36,6 +44,7 @@ const routes: Routes = [
     CliOverviewComponent,
     CliWorkspacesComponent,
     CliUsagesComponent,
+    CliLibrariesComponent,
   ],
 })
 export class CliModule {}
