@@ -29,10 +29,15 @@ Alternatively, to install the TypeScript starter project with **Git**:
 $ git clone https://github.com/nestjs/typescript-starter.git project
 $ cd project
 $ npm install
-$ npm run start
 ```
 
-Open your browser and navigate to `http://localhost:3000/`.
+To run the project, use the following command (make sure you're in the project folder):
+
+```bash
+$ nest start
+```
+
+Open your browser and navigate to [http://localhost:3000/](http://localhost:3000).
 
 To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
 
