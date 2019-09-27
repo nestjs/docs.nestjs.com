@@ -102,14 +102,14 @@ export class AppModule {}
 Notice above that we've used a path alias of `@app` in the ES module `import` line, which was the `prefix` we supplied with the `nest g library` command above. Under the covers, Nest handles this through tsconfig path mapping.  When adding a library, Nest updates the global (monorepo) `tsconfig.json` file's `"paths"` key like this:
 
 ```javascript
-    "paths": {
-      "@app/my-library": [
+"paths": {
+    "@app/my-library": [
         "libs/my-library/src"
-      ],
-      "@app/my-library/*": [
+    ],
+    "@app/my-library/*": [
         "libs/my-library/src/*"
-      ]
-    }
+    ]
+}
 ```
 
 So, in a nutshell, the combination of the monorepo and library features has made it easy and intuitive to include library modules into applications.
