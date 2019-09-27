@@ -143,6 +143,16 @@ export class MenuComponent implements OnInit {
       path: '/application-context',
     },
     {
+      title: 'CLI',
+      isOpened: false,
+      children: [
+        { title: 'Overview', path: '/cli/overview' },
+        { title: 'Workspaces', path: '/cli/workspaces' },
+        { title: 'Libraries', path: '/cli/libraries' },
+        { title: 'Usage', path: '/cli/usages' },
+      ],
+    },
+    {
       title: 'Recipes',
       isOpened: false,
       children: [
@@ -156,14 +166,6 @@ export class MenuComponent implements OnInit {
         { title: 'Documentation', path: '/recipes/documentation' },
         { title: 'CRUD', path: '/recipes/crud' },
         { title: 'Serve static', path: '/recipes/serve-static' },
-      ],
-    },
-    {
-      title: 'CLI',
-      isOpened: false,
-      children: [
-        { title: 'Overview', path: '/cli/overview' },
-        { title: 'Usage', path: '/cli/usages' },
       ],
     },
     {

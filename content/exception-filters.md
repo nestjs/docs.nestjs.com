@@ -6,7 +6,7 @@ Nest comes with a built-in **exceptions layer** which is responsible for process
   <img src="/assets/Filter_1.png" />
 </figure>
 
-Out of the box, this action is performed by a built-in **global exception filter**, which handles exceptions of type `HttpException` (and subclasses of it). When an exception is **unrecognized** (is neither `HttpException` nor a class that inherits from `HttpException`), the client receives the following default JSON response:
+Out of the box, this action is performed by a built-in **global exception filter**, which handles exceptions of type `HttpException` (and subclasses of it). When an exception is **unrecognized** (is neither `HttpException` nor a class that inherits from `HttpException`), the built-in exception filter generates the following default JSON response:
 
 ```json
 {
@@ -15,11 +15,11 @@ Out of the box, this action is performed by a built-in **global exception filter
 }
 ```
 
-#### Base exceptions
+#### Throwing standard exceptions
 
-The built-in `HttpException` class is exposed from the `@nestjs/common` package.
+Nest provides a built-in `HttpException` class, exposed from the `@nestjs/common` package. For typical HTTP REST/GraphQL API based applications, it's best practice to send standard HTTP response objects when certain error conditions occur.
 
-In the `CatsController`, we have a `findAll()` method (a `GET` route handler). Let's assume that this route handler throws an exception for some reason. To demonstrate this, we'll hard-code it as follows:
+For example, in the `CatsController`, we have a `findAll()` method (a `GET` route handler). Let's assume that this route handler throws an exception for some reason. To demonstrate this, we'll hard-code it as follows:
 
 ```typescript
 @@filename(cats.controller)
@@ -82,9 +82,9 @@ Using the above, this is how the response would look:
 }
 ```
 
-#### Exceptions hierarchy
+#### Custom exceptions
 
-It is good practice to create your own **exceptions hierarchy**. This means that your custom HTTP exceptions should inherit from the base `HttpException` class. As a result, Nest will recognize your exceptions, and automatically take care of the error responses. Let's implement such a custom exception:
+In many cases, you will not need to write custom exceptions, and can use the built-in Nest HTTP exception, as described in the next section. If you do need to create customized exceptions, it's good practice to create your own **exceptions hierarchy**, where your custom exceptions inherit from the base `HttpException` class. With this approach, Nest will recognize your exceptions, and automatically take care of the error responses. Let's implement such a custom exception:
 
 ```typescript
 @@filename(forbidden.exception)
@@ -105,9 +105,9 @@ async findAll() {
 }
 ```
 
-#### HTTP exceptions
+#### Built-in HTTP exceptions
 
-In order to reduce the need to write boilerplate code, Nest provides a set of usable exceptions that inherit from the core `HttpException`. All of them are exposed from the `@nestjs/common` package:
+Nest provides a set of standard exceptions that inherit from the base `HttpException`. These are exposed from the `@nestjs/common` package, and represent many of the most common HTTP exceptions:
 
 - `BadRequestException`
 - `UnauthorizedException`
@@ -128,9 +128,9 @@ In order to reduce the need to write boilerplate code, Nest provides a set of us
 
 #### Exception filters
 
-While the base (built-in) exception filter can automatically handle many cases for you, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors. **Exception filters** are designed for exactly this purpose.
+While the base (built-in) exception filter can automatically handle many cases for you, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors. **Exception filters** are designed for exactly this purpose. They let you control the exact flow of control and the content of the response sent back to the client.
 
-Let's create an exception filter which is responsible for catching exceptions that are an instance of the `HttpException` class, and implementing custom response logic for them.
+Let's create an exception filter that is responsible for catching exceptions which are an instance of the `HttpException` class, and implementing custom response logic for them.  To do this, we'll need to access the underlying platform `Request` and `Response` objects.  We'll access the `Request` object so we can pull out the original `url` and include that in the logging information.  We'll use the `Response` object to take direct control of the response that is sent, using the `response.json()` method.
 
 ```typescript
 @@filename(http-exception.filter)
@@ -182,19 +182,16 @@ The `@Catch(HttpException)` decorator binds the required metadata to the excepti
 
 #### Arguments host
 
-Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a wrapper around the arguments that have been passed to the **original** request handler (where the exception originated). It contains a specific arguments array based on the type of the application (and platform which is being used). Here's what an `ArgumentsHost` looks like:
+Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a powerful utility object that we'll examine further in other chapters*.  In this context, its main purpose is to provide us with a reference to the `Request` and `Response` objects that are being passed to the original request handler (in the controller where the exception originates). In this context, we've used some helper methods on `ArgumentsHost` to get the desired `Request` and `Response` objects.
+
+The `host.switchToHttp()` helper call returns us an `HttpArgumentsHost` object.  The `HttpArgumentsHost` object, in turn, has two useful methods. We use these methods to extract the desired objects, also using the Express type assertions in this case to return native Express typed objects:
 
 ```typescript
-export interface ArgumentsHost {
-  getArgs<T extends Array<any> = any[]>(): T;
-  getArgByIndex<T = any>(index: number): T;
-  switchToRpc(): RpcArgumentsHost;
-  switchToHttp(): HttpArgumentsHost;
-  switchToWs(): WsArgumentsHost;
-}
+const response = ctx.getResponse<Response>();
+const request = ctx.getRequest<Request>();
 ```
 
-The `ArgumentsHost` supplies us with a set of convenience methods that help to pick the correct arguments from the underlying array, across different application contexts. In other words, `ArgumentsHost` is nothing more than an **array of arguments**. For example, when the filter is used within the HTTP application context, `ArgumentsHost` will contain a `[request, response]` array. However, when the current context is a web sockets application, it will contain a `[client, data]` array, as appropriate to that context. This approach enables you to access any argument that would eventually be passed to the original handler in your custom `catch()` method.
+\*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and Sockets). Later, we'll see how we can access the appropriate underlying arguments for **any** execution context with the power of `ArgumentsHost` and its helper functions.  This will allow us to write generic exception filters that operate across all contexts.
 
 #### Binding filters
 

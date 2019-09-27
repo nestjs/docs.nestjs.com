@@ -1,10 +1,10 @@
 ### Configuration
 
-Applications are often run in different **environments**. Depending on the environment, different configuration settings should be used. For example, usually the local environment relies on specific database credentials, valid only for the local DB instance. The production environment would use a separate set of DB credentials. Since configuration variables change, best practice is to [store configuration variables](https://12factor.net/config)  in the environment.
+Applications are often run in different **environments**. Depending on the environment, different configuration settings should be used. For example, usually the local environment relies on specific database credentials, valid only for the local DB instance. The production environment would use a separate set of DB credentials. Since configuration variables change, best practice is to [store configuration variables](https://12factor.net/config) in the environment.
 
-Externally defined environment variables are visible inside Node.js through the `process.env` global. We could try to solve the problem of multiple environments by setting the environment variables separately in each environment.  This can quickly get unwieldy, especially in the development and testing environments where these values need to be easily mocked and/or changed.
+Externally defined environment variables are visible inside Node.js through the `process.env` global. We could try to solve the problem of multiple environments by setting the environment variables separately in each environment. This can quickly get unwieldy, especially in the development and testing environments where these values need to be easily mocked and/or changed.
 
-In Node.js applications, it's common to use `.env` files, holding key-value pairs where each key represents a particular value, to represent each environment.  Running an app in different environments is then just a matter of swapping in the correct `.env` file.
+In Node.js applications, it's common to use `.env` files, holding key-value pairs where each key represents a particular value, to represent each environment. Running an app in different environments is then just a matter of swapping in the correct `.env` file.
 
 A good approach for using this technique in Nest is to create a `ConfigModule` that exposes a `ConfigService` which loads the appropriate `.env` file, depending on the `$NODE_ENV` environment variable.
 
@@ -22,7 +22,7 @@ $ npm i --save-dev @types/dotenv
 First, we create a `ConfigService` class that will perform the necessary `.env` file parsing and provide an interface for reading configuration variables.
 
 ```typescript
-@@filename(config/config.service.ts)
+@@filename(config/config.service)
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
@@ -118,6 +118,7 @@ export class AppService {
 #### Advanced configuration
 
 We just implemented a basic `ConfigService`. However, this simple version has a couple of disadvantages, which we'll address now:
+
 - missing names & types for the environment variables (no IntelliSense)
 - no validation of the provided `.env` file
 - the service treat a `boolean` value as a `string` (`'true'`), so we subsequently have to cast them to `boolean` after retrieving them
@@ -160,15 +161,14 @@ export class ConfigService {
   private validateInput(envConfig: EnvConfig): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
-        .valid(['development', 'production', 'test', 'provision'])
+        .valid('development', 'production', 'test', 'provision')
         .default('development'),
       PORT: Joi.number().default(3000),
       API_AUTH_ENABLED: Joi.boolean().required(),
     });
 
-    const { error, value: validatedEnvConfig } = Joi.validate(
+    const { error, value: validatedEnvConfig } = envVarsSchema.validate(
       envConfig,
-      envVarsSchema,
     );
     if (error) {
       throw new Error(`Config validation error: ${error.message}`);
@@ -182,7 +182,7 @@ Since we set default values for `NODE_ENV` and `PORT` the validation will not fa
 
 #### Custom getter functions
 
-We already defined a generic `get()` method to retrieve a configuration value by key.  We may also add `getter` functions to enable a little more natural coding style:
+We already defined a generic `get()` method to retrieve a configuration value by key. We may also add `getter` functions to enable a little more natural coding style:
 
 ```typescript
 @@filename(config.service)
@@ -204,7 +204,3 @@ export class AppService {
   }
 }
 ```
-
-#### Example
-
-A complete working example based on this chapter can be found [here](https://github.com/nestjs/nest/tree/master/sample/25-configuration).
