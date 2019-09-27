@@ -45,21 +45,21 @@ We've constructed a *standard mode* structure, with a folder structure that look
 </div>
 
 The `nest-cli.json` file looks like this:
-```json
+```javascript
 {
   "collection": "@nestjs/schematics",
   "sourceRoot": "src"
 }
 ```
 
-We can convert this to a *monorepo mode* structure as follows:
+We can convert this to a monorepo mode structure as follows:
 
 ```bash
 cd my-project
 nest generate app my-app
 ```
 
-At this point, `nest` **converts** the existing structure to a **monorepo mode** structure.  This results in a few important changes.  The folder structure now looks like this:
+At this point, `nest` converts the existing structure to a **monorepo mode** structure.  This results in a few important changes.  The folder structure now looks like this:
 
 <div class="file-tree">
   <div class="item">apps</div>
@@ -97,7 +97,7 @@ The `nest` schematic has reorganized the code - moving each **application** proj
 
 The `nest-cli.json` file contains details describing the workspace.  It now looks like this:
 
-```json
+```javascript
 {
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/my-project/src",
@@ -129,9 +129,9 @@ The `nest-cli.json` file contains details describing the workspace.  It now look
   }
 }
 ```
-> info **Warning** The conversion of a standard mode structure to monorepo only works for projects that have followed the canonical Nest project structure.  Specifically, during conversion, the schematic attempts to relocate the `src` and `test` folders beneath the `apps` folder in the root.  If a project does not use this structure, the conversion will fail or produce unreliable results.
+> error **Warning** The conversion of a standard mode structure to monorepo only works for projects that have followed the canonical Nest project structure.  Specifically, during conversion, the schematic attempts to relocate the `src` and `test` folders beneath the `apps` folder in the root.  If a project does not use this structure, the conversion will fail or produce unreliable results.
 
-### Workspace projects
+#### Workspace projects
 
 A mono repo uses the concept of a workspace to manage its member entities. Workspaces are composed of **projects**.  A project may be either:
 - an **application**: a full Nest application including a `main.ts` file to bootstrap the application. Aside from compile and build considerations, an application-type project within a workspace is functionally identical to an application within a *standard mode* structure.
@@ -165,18 +165,18 @@ Workspaces have additional workspace-wide properties that help hide the complexi
 #### Compiler options
 
 Notice that by default, `compilerOptions` is set as follows:
-```json
-  "compilerOptions": {
-    "webpack": true,
-    "tsConfigPath": "apps/my-project/tsconfig.app.json"
-  }
+```javascript
+"compilerOptions": {
+  "webpack": true,
+  "tsConfigPath": "apps/my-project/tsconfig.app.json"
+}
 ```
 
 The `webpack` property, when true (the default), uses [webpack](https://webpack.js.org/) to compile and bundle the code.  This is one key difference between monorepo mode and standard mode.  Standard mode uses `tsc` for compilation by default.  The reason for this difference is that webpack can have significant advantages in build times and in producing a single file bundling all project components together.  If you wish to generate individual files, set `webpack` to `false`, which will cause the build process to use `tsc`.
 
 The `tsConfigPath` property points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).
 
-### Projects
+#### Projects
 
 As stated, workspaces are composed of projects, which may be of the **application** or **library** type.  These are discussed below.
 
@@ -186,7 +186,7 @@ Application-type projects, or what we might informally refer to as just "applica
 
 Let's look inside the `tsconfig.app.json` of the `my-app` project that we built in the last step:
 
-```json
+```javascript
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
