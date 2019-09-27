@@ -90,7 +90,7 @@ const app = await NestFactory.create<NestExpressApplication>(AppModule);
 Once the installation process is complete, you can run the following command at your OS command prompt to start the application listening for inbound HTTP requests:
 
 ```bash
-$ npm run start
+$ nest start
 ```
 
-This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
+This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to [http://localhost:3000/](http://localhost:3000). You should see the `Hello World!` message.
