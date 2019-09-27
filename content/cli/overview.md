@@ -62,7 +62,9 @@ Read the sections on [Workspaces](/cli/workspaces) and [Libraries](/cli/librarie
 
 All `nest` commands follow the same format:
 
-`nest commandOrAlias requiredArg [optionalArg] [options]`
+```bash
+nest commandOrAlias requiredArg [optionalArg] [options]`
+```
 
 For example:
 
