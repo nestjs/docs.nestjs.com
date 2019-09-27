@@ -4,9 +4,10 @@
 
 Creates a new (standard mode) Nest project.
 
-<code>nest **new** \<name\> [options]</code>
-
-<code>nest **n** `<name`> [options]</code>
+```bash
+$ nest new <name> [options]
+$ nest n <name> [options]
+```
 
 ##### Description
 
@@ -38,9 +39,10 @@ Creates and initializes a new Nest project.  Prompts for package manager.
 
 Generates and/or modifies files based on a schematic
 
-<code>nest **generate** \<schematic\> \<name\> [options]</code>
-
-<code>nest **g** \<schematic\> \<name\> [options]</code>
+```bash
+$ nest generate <schematic> <name> [options]
+$ nest g <schematic> <name> [options]
+```
 
 ##### Arguments
 
@@ -82,7 +84,9 @@ Generates and/or modifies files based on a schematic
 #### nest build
 Compiles an application or workspace into an output folder.
 
-<code>nest **build** \<name\> [options]</code>
+```bash
+$ nest build <name> [options]
+```
 
 ##### Arguments
 
@@ -102,7 +106,9 @@ Compiles an application or workspace into an output folder.
 #### nest start
 Compiles and runs an application (or default project in a workspace).
 
-<code>nest **start** \<name\> [options]</code>
+```bash
+$ nest start <name> [options]
+```
 
 ##### Arguments
 
@@ -122,9 +128,12 @@ Compiles and runs an application (or default project in a workspace).
 
 
 #### nest add
+
 Imports a library that has been packaged as a **nest library**, running its install schematic.
 
-<code>nest **add** \<name\> [options]</code>
+```bash
+$ nest add <name> [options]
+```
 
 ##### Arguments
 
