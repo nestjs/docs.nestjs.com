@@ -22,42 +22,37 @@ To get started with creating a library, run the following command:
 nest g library my-library
 ```
 
-When you run the command, the `library` schematic prompts you for an `alias` for the library:
+When you run the command, the `library` schematic prompts you for a prefix (AKA alias) for the library:
 ```bash
 What prefix would you like to use for the library (default: @app)?
 ```
 
-This creates a new project in your workspace called `my-library`.  A library-type project, like an application-type project, is generated into a named folder using a schematic.  Libraries are managed under the `libs` folder of the monorepo root.  Nest creates the `libs` folder the first time a library is created.  After running the above command, the `nest-cli.json` file looks like this
+This creates a new project in your workspace called `my-library`.
+A library-type project, like an application-type project, is generated into a named folder using a schematic.  Libraries are managed under the `libs` folder of the monorepo root.  Nest creates the `libs` folder the first time a library is created.
+
+The files generated for a library are slightly different from those generated for an application.  Here is the contents of the `libs` folder after executing the command above:
+
+<div class="file-tree">
+  <div class="item">libs</div>
+  <div class="children">
+    <div class="item">my-library</div>
+    <div class="children">
+      <div class="item">src</div>
+      <div class="children">
+        <div class="item">my-library.service.ts</div>
+        <div class="item">my-library.module.ts</div>
+        <div class="item">index.ts</div>
+      </div>
+      <div class="item">tsconfig.lib.json</div>
+    </div>
+  </div>
+</div>
+
+The `nest-cli.json` file will have a new entry for the library under the `"projects"` key:
 
 ```javascript
+...
 {
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/my-project/src",
-  "monorepo": true,
-  "root": "apps/my-project",
-  "compilerOptions": {
-    "webpack": true,
-    "tsConfigPath": "apps/my-project/tsconfig.app.json"
-  },
-  "projects": {
-    "my-project": {
-      "type": "application",
-      "root": "apps/my-project",
-      "entryFile": "main",
-      "sourceRoot": "apps/my-project/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/my-project/tsconfig.app.json"
-      }
-    },
-    "my-app": {
-      "type": "application",
-      "root": "apps/my-app",
-      "entryFile": "main",
-      "sourceRoot": "apps/my-app/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/my-app/tsconfig.app.json"
-      }
-    },
     "my-library": {
       "type": "library",
       "root": "libs/my-library",
@@ -66,91 +61,29 @@ This creates a new project in your workspace called `my-library`.  A library-typ
       "compilerOptions": {
         "tsConfigPath": "libs/my-library/tsconfig.lib.json"
       }
-    }
-  }
 }
+...
 ```
 
-Notice two differences between libraries and apps:
-- the `type` property is set to `library` instead of `application`
-- the `entryFile` property is set to `index` instead of `main`
+There are two differences in `nest-cli.json` metadata between libraries and applications:
+- the `"type"` property is set to `"library"` instead of `"application"`
+- the `"entryFile"` property is set to `"index"` instead of `"main"`
 
 These differences key the build process to handle libraries appropriately.  For example, a library exports its functions through the `index.js` file.
 
-The monorepo file structure now looks like this:
+As with application-type projects, libraries each have their own `tsconfig.lib.json` file that extends the root (monorepo-wide) `tsconfig.json` file. You can modify this file, if necessary, to provide library-specific compiler options.
 
-<div class="file-tree">
-  <div class="item">apps</div>
-    <div class="children">
-      <div class="item">my-app</div>
-      <div class="children">
-        <div class="item">src</div>
-        <div class="children">
-          <div class="item">app.controller.ts</div>
-          <div class="item">app.service.ts</div>
-          <div class="item">app.module.ts</div>
-          <div class="item">main.ts</div>
-        </div>
-        <div class="item">tsconfig.app.json</div>
-      </div>
-      <div class="item">my-project</div>
-      <div class="children">
-        <div class="item">src</div>
-        <div class="children">
-          <div class="item">app.controller.ts</div>
-          <div class="item">app.service.ts</div>
-          <div class="item">app.module.ts</div>
-          <div class="item">main.ts</div>
-        </div>
-        <div class="item">tsconfig.app.json</div>
-      </div>
-    </div>
-  <div class="item">libs</div>
-    <div class="children">
-      <div class="item">my-library</div>
-      <div class="children">
-        <div class="item">src</div>
-        <div class="children">
-          <div class="item">index.ts</div>
-          <div class="item">my-library.service.ts</div>
-          <div class="item">my-library.module.ts</div>
-        </div>
-        <div class="item">tsconfig.lib.json</div>
-      </div>
-    </div>
-  <div class="item">nest-cli.json</div>
-  <div class="item">package.json</div>
-  <div class="item">tsconfig.json</div>
-  <div class="item">tslint.json</div>
-</div>
-
-As seen above, the library has its own `tsconfig.lib.json` file.  Its contents look like:
-
-```javascript
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "declaration": true,
-    "outDir": "../../dist/libs/my-library"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
-}
-```
-
-You can build the library with CLI command:
+You can build the library with the CLI command:
 
 ```bash
 nest build my-library
 ```
 
-Building the library is controlled with the `tsconfig.lib.json` file that was automatically generated with the library.
-
 #### Using libraries
 
-With the several configuration metadata files shown above in place, using libraries is straightforward.  How would we import `MyLibraryService` from the `my-library` library into the `my-project` application?
+With the automatically generated configuration files in place, using libraries is straightforward.  How would we import `MyLibraryService` from the `my-library` library into the `my-project` application?
 
-Using library modules is the same as using any other Nest module.  What the monorepo does is manage paths in a way that importing libraries and generating builds is now transparent.  To use `my-library.service.ts`, we need to import its declaring module.  We can modify `my-project/src/app.module.ts` as follows to import `MyLibraryModule`.
+First, note that using library modules is the same as using any other Nest module.  What the monorepo does is manage paths in a way that importing libraries and generating builds is now transparent.  To use `MyLibraryService`, we need to import its declaring module.  We can modify `my-project/src/app.module.ts` as follows to import `MyLibraryModule`.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -166,6 +99,19 @@ import { MyLibraryModule } from '@app/my-library';
 export class AppModule {}
 ```
 
-Notice above that we've used a path alias of `@app` in the ES module `import` line, which was the `prefix` we supplied with the `nest g library` command above.  So, in a nutshell, the combination of the monorepo and library features has made it easy and intuitive to include library modules into applications.
+Notice above that we've used a path alias of `@app` in the ES module `import` line, which was the `prefix` we supplied with the `nest g library` command above. Under the covers, Nest handles this through tsconfig path mapping.  When adding a library, Nest updates the global (monorepo) `tsconfig.json` file's `"paths"` key like this:
 
-This same mechanism enables building and deploying applications that compose libraries.  Once you've imported the `MyLibraryModule`, running `nest build` handles all the module resolution automatically and bundles the app along with any library dependencies, for deployment.  The default compiler for a monorepo is **webpack**, so the resulting distribution file is a single file that bundles all of the transpiled JavaScript files into a single file.  You can also switch to `tsc` as described <a href="https://docs.nestjs.com/cli/workspaces#compiler-options">here</a>.
+```javascript
+    "paths": {
+      "@app/my-library": [
+        "libs/my-library/src"
+      ],
+      "@app/my-library/*": [
+        "libs/my-library/src/*"
+      ]
+    }
+```
+
+So, in a nutshell, the combination of the monorepo and library features has made it easy and intuitive to include library modules into applications.
+
+This same mechanism enables building and deploying applications that compose libraries.  Once you've imported the `MyLibraryModule`, running `nest build` handles all the module resolution automatically and bundles the app along with any library dependencies, for deployment.  The default compiler for a monorepo is **webpack**, so the resulting distribution file is a single file that bundles all of the transpiled JavaScript files into a single file.  You can also switch to `tsc` as described <a href="https://docs.nestjs.com/cli/workspaces#global-compiler-options">here</a>.

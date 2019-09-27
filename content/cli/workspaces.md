@@ -44,14 +44,6 @@ We've constructed a *standard mode* structure, with a folder structure that look
   <div class="item">tslint.json</div>
 </div>
 
-The `nest-cli.json` file looks like this:
-```javascript
-{
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
-}
-```
-
 We can convert this to a monorepo mode structure as follows:
 
 ```bash
@@ -93,9 +85,48 @@ At this point, `nest` converts the existing structure to a **monorepo mode** str
   <div class="item">tslint.json</div>
 </div>
 
-The `nest` schematic has reorganized the code - moving each **application** project under the `apps` folder, and adding a project-specific `tsconfig.app.json` file.  Our original `my-project` app has become the **default project** for the monorepo, and is now a peer with the just-added `my-app`, located under the `apps` folder.
+The `nest` schematic has reorganized the code - moving each **application** project under the `apps` folder, and adding a project-specific `tsconfig.app.json` file in each project's root folder.  Our original `my-project` app has become the **default project** for the monorepo, and is now a peer with the just-added `my-app`, located under the `apps` folder.  We'll cover default projects below.
 
-The `nest-cli.json` file contains details describing the workspace.  It now looks like this:
+> error **Warning** The conversion of a standard mode structure to monorepo only works for projects that have followed the canonical Nest project structure.  Specifically, during conversion, the schematic attempts to relocate the `src` and `test` folders beneath the `apps` folder in the root.  If a project does not use this structure, the conversion will fail or produce unreliable results.
+
+#### Workspace projects
+
+A mono repo uses the concept of a workspace to manage its member entities. Workspaces are composed of **projects**.  A project may be either:
+- an **application**: a full Nest application including a `main.ts` file to bootstrap the application. Aside from compile and build considerations, an application-type project within a workspace is functionally identical to an application within a *standard mode* structure.
+- a **library**: a library is a way of packaging a general purpose set of features (modules, providers, controllers, etc.) that can be used within other projects.  A library cannot run on its own, and has no `main.ts` file.  Read more about libraries [here](/cli/libraries).
+
+All workspaces have a **default project** (which should be an application-type project).  This is defined by the top-level `"root"` property in the `nest-cli.json` file, which points at the root of the default project (see <a href="/cli/workspaces#workspace-properties">workspace properties</a> below for more details).  Usually, this is the **standard mode** application you started with, and later converted to a monorepo using `nest generate app`.  When you follow these steps, this property is populated automatically.
+
+Default projects are used by `nest` commands like `nest build` and `nest start` when a project name is not supplied.
+
+For example, in the above monorepo structure, running
+```bash
+$ nest start
+```
+
+will start up the `my-project` app.  To start `my-app`, we'd use:
+
+```bash
+$ nest start my-app
+```
+
+#### Applications
+
+Application-type projects, or what we might informally refer to as just "applications", are complete Nest applications that you can run and deploy.  You generate an application-type project with `nest generate app`.
+
+This command automatically generates a project skeleton, including the standard `src` and `test` folders from the [typescript starter](https://github.com/nestjs/typescript-starter). Unlike standard mode, an application project in a monorepo does not have any of the package dependency (`package.json`) or other project configuration artifacts like `.prettierrc` and `tslint.json`. Instead, the monorepo-wide dependencies and config files are used.
+
+However, the schematic does generate a project-specific `tsconfig.app.json` file in the root folder of the project.  This config file automatically sets appropriate build options, including setting the compilation output folder properly.  The file extends the top-level (monorepo) `tsconfig.json` file, so you can manage global settings monorepo-wide, but override them if needed at the project level.
+
+#### Libraries
+
+As mentioned, library-type projects, or simply "libraries", are packages of Nest components that need to be composed into applications in order to run.  You generate a library-type project with `nest generate library`. Deciding what belongs in a library is an architectural design decision.  We discuss libraries in depth in the [libraries](/cli/libraries) chapter.
+
+#### Workspace properties
+
+Nest keeps the metadata needed to organize, build and deploy workspace projects in the `nest-cli.json` file. Nest automatically adds to and updates this file as you add projects, so you usually do not have to think about it or edit its contents.  However, there are some settings you may want to change manually, so it's helpful to have an overview understanding of the file.
+
+After running the steps above to create a monorepo, our `nest-cli.json` file looks like this:
 
 ```javascript
 {
@@ -129,42 +160,24 @@ The `nest-cli.json` file contains details describing the workspace.  It now look
   }
 }
 ```
-> error **Warning** The conversion of a standard mode structure to monorepo only works for projects that have followed the canonical Nest project structure.  Specifically, during conversion, the schematic attempts to relocate the `src` and `test` folders beneath the `apps` folder in the root.  If a project does not use this structure, the conversion will fail or produce unreliable results.
 
-#### Workspace projects
+The file is divided into sections:
+- a global monorepo section with top-level properties controlling monorepo-wide settings
+- a top level property (`"projects"`) with metadata about each project
 
-A mono repo uses the concept of a workspace to manage its member entities. Workspaces are composed of **projects**.  A project may be either:
-- an **application**: a full Nest application including a `main.ts` file to bootstrap the application. Aside from compile and build considerations, an application-type project within a workspace is functionally identical to an application within a *standard mode* structure.
-- a **library**: a library is a way of packaging a general purpose set of features (modules, providers, controllers, etc.) that can be used within other projects.  A library cannot run on its own, and has no `main.ts` file.  Read more about libraries [here](/cli/libraries).
+The monorepo-wide properties are as follows:
 
-All workspaces have a **default project** (which should be an application-type project).  In the `nest-cli.json` file above, the default project is `my-project`.  This is defined by the top-level `"root"` property, which points at the root of the default project.  Usually, this is the **standard mode** application you started with, and later converted to a monorepo using `nest generate app`.  When you follow these steps, this property is populated automatically for you with information about the standard mode project you started with.
+- `"collection"`: points at the collection of schematics used to generate components; you generally should not change this value
+- `"sourceRoot"`: points at the root of the source code for the *default project*
+- `"monorepo"`: for a monorepo mode structure, this value is always `true`
+- `"root"`: points at the project root of the *default project*
+- `"compilerOptions"`: a map with keys specifying compiler options and values specifying the option setting
 
-Default projects are used by `nest` commands like `nest build` and `nest start` when a project name is not supplied.
+#### Global compiler options
 
-For example, in the above structure, running
-```bash
-$ nest start
-```
+These properties specify the compiler to use, and some default information used by commands like `nest start` and `nest build`.
 
-will start up the `my-project` app.  To start `my-app`, we'd use:
-
-```bash
-$ nest start my-app
-```
-
-#### Workspace global properties
-
-Workspaces have additional workspace-wide properties that help hide the complexity of working in a multi-project environment.  These are reflected in the following top-level properties of the `nest-cli.json` file:
-
-- `collection`: points at the collection of schematics used to generate components; you generally should not change this value
-- `sourceRoot`: points at the root of the source code for the *default project*
-- `monorepo`: for a monorepo mode structure, this value is always `true`
-- `root`: points at the project root of the *default project*
-- `compilerOptions`: a map with keys specifying compiler options and values specifying the option setting
-
-#### Compiler options
-
-Notice that by default, `compilerOptions` is set as follows:
+Default `compilerOptions` are set as follows:
 ```javascript
 "compilerOptions": {
   "webpack": true,
@@ -172,36 +185,39 @@ Notice that by default, `compilerOptions` is set as follows:
 }
 ```
 
-The `webpack` property, when true (the default), uses [webpack](https://webpack.js.org/) to compile and bundle the code.  This is one key difference between monorepo mode and standard mode.  Standard mode uses `tsc` for compilation by default.  The reason for this difference is that webpack can have significant advantages in build times and in producing a single file bundling all project components together.  If you wish to generate individual files, set `webpack` to `false`, which will cause the build process to use `tsc`.
+The `"webpack"` property, when true (the default), uses [webpack](https://webpack.js.org/) to compile and bundle the code.  This is one key difference between monorepo mode and standard mode.  Standard mode uses `tsc` for compilation by default.  The reason for this difference is that webpack can have significant advantages in build times and in producing a single file bundling all project components together.  If you wish to generate individual files, set `"webpack"` to `false`, which will cause the build process to use `tsc`.
 
-The `tsConfigPath` property points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).
-
-#### Projects
-
-As stated, workspaces are composed of projects, which may be of the **application** or **library** type.  These are discussed below.
-
-#### Applications
-
-Application-type projects, or what we might informally refer to as just "applications", are complete Nest applications that you can run and deploy.  You generate an application-type project with `nest generate app`.
-
-Let's look inside the `tsconfig.app.json` of the `my-app` project that we built in the last step:
+You can configure webpack options by adding a `webpack.config.js` file in the root folder.  This can contain [standard webpack configuration options](https://webpack.js.org/configuration/).  For example, to tell webpack to bundle `node_modules` (which are excluded by default), you would add the following to `webpack.config.js`:
 
 ```javascript
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "declaration": false,
-    "outDir": "../../dist/apps/my-app"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+module.exports = {
+  externals: []
 }
 ```
 
-The `nest` command automatically generated this for us, and it takes care of setting up proper compilation.  It automatically configures settings so that the compiler can resolve module references and the build artifacts are placed in an appropriate folder.
+You can place these webpack options in a different file, and inform Nest by setting the `"compilerOptions"` property's `"webpackConfigPath"` key to the name of the file.  For example:
 
-#### Libraries
+```javascript
+"compilerOptions": {
+  "webpack": true,
+  "tsConfigPath": "apps/my-project/tsconfig.app.json"
+  "webpackConfigPath": "apps/my-project/webpack.config.js"
+}
+```
 
-As mentioned, library-type projects, or simply "libraries", are packages of Nest components that need to be composed into applications in order to run.  You generate a library-type project with `nest generate library`.
+Since the webpack config file is a JavaScript file, you can even expose a function that takes default options and returns a modified object:
 
-Deciding what belongs in a library is an architectural design decision.  We discuss libraries in depth in the [libraries](/cli/libraries) chapter.
+```javascript
+export default function(options) {
+   return {
+      ...options,
+      externals: [],
+   }
+}
+```
+
+The `"tsConfigPath"` property points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).
+
+#### Project properties
+
+You generally should not edit these properties, as they are used by Nest to locate projects and their configuration options within the monorepo.
