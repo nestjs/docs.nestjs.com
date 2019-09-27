@@ -21,7 +21,6 @@ $ npm i --save @nestjs/platform-fastify
 Once the Fastify platform is installed, we can use the `FastifyAdapter`.
 
 ```typescript
-// src/main.ts
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -62,7 +61,6 @@ Fastify handles redirect responses slightly differently than Express. To do a pr
 ```typescript
 @Get()
 index (@Res() res) {
-  // send 302 redirect to /login
   res.status(302).redirect('/login');
 }
 ```
