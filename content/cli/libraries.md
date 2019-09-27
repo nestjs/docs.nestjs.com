@@ -6,13 +6,13 @@ Nest [modules](/modules) are useful for providing an execution context that enab
 
 For sharing code within closely organized groups (e.g., within company/project boundaries), it can be useful to have a more lightweight approach to sharing components.  Monorepo's have arisen as a construct to enable that, and within a monorepo, a **library** provides a way to share code in an easy, lightweight fashion.  In a Nest monorepo, using libraries enables easy assembly of applications that share components.  In fact, this encourages decomposition of monolithic applications and development processes to focus on building and composing modular components.
 
-### Nest libraries
+#### Nest libraries
 
 A Nest library is a Nest project that differs from an application in that it cannot run on its own. A library must be imported into a containing application in order for its code to execute.  The built-in support for libraries described in this section is only available for **monorepos** (standard mode projects can achieve similar functionality using npm packages).
 
 For example, an organization may develop an `AuthModule` that manages authentication by implementing company policies that govern all internal applications.  Rather than build that module separately for each application, or physically packaging the code with npm and requiring each project to install it, a monorepo can define this module as a library.  When organized this way, all consumers of the library module can see an up-to-date version of the `AuthModule` as it is committed.  This can have significant benefits for coordinating component development and assembly, and simplifying end-to-end testing.
 
-### Creating libraries
+#### Creating libraries
 
 Any functionality that is suitable for re-use is a candidate for being managed as a library.  Deciding what should be a library, and what should be part of an application, is an architectural design decision.  Creating libraries involves more than simply copying code from an existing application to a new library.  When packaged as a library, the library code must be decoupled from the application.  This may require **more** time up front and force some design decisions that you may not face with more tightly coupled code.  But this additional effort can pay off when the library can be used to enable more rapid application assembly across multiple applications.
 
@@ -29,7 +29,7 @@ What prefix would you like to use for the library (default: @app)?
 
 This creates a new project in your workspace called `my-library`.  A library-type project, like an application-type project, is generated into a named folder using a schematic.  Libraries are managed under the `libs` folder of the monorepo root.  Nest creates the `libs` folder the first time a library is created.  After running the above command, the `nest-cli.json` file looks like this
 
-```json
+```javascript
 {
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/my-project/src",
@@ -126,7 +126,7 @@ The monorepo file structure now looks like this:
 
 As seen above, the library has its own `tsconfig.lib.json` file.  Its contents look like:
 
-```json
+```javascript
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
@@ -138,37 +138,6 @@ As seen above, the library has its own `tsconfig.lib.json` file.  Its contents l
 }
 ```
 
-And finally, the global (monorepo) `tsconfig.json` file now looks like this:
-
-```json
-{
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "paths": {
-      "@app/my-library": [
-        "libs/my-library/src"
-      ],
-      "@app/my-library/*": [
-        "libs/my-library/src/*"
-      ]
-    }
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
-}
-```
-
 You can build the library with CLI command:
 
 ```bash
@@ -177,7 +146,7 @@ nest build my-library
 
 Building the library is controlled with the `tsconfig.lib.json` file that was automatically generated with the library.
 
-### Using libraries
+#### Using libraries
 
 With the several configuration metadata files shown above in place, using libraries is straightforward.  How would we import `MyLibraryService` from the `my-library` library into the `my-project` application?
 
