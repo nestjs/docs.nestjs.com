@@ -8,7 +8,7 @@ It's important to note that virtually all of Nest's features are independent of 
 
 Also, you can easily switch from **standard mode** to **monorepo mode** at any time, so you can delay this decision until the benefits of one or the other approach become more clear.
 
-### Standard mode
+#### Standard mode
 
 When you run `nest new`, a new **project** is created for you using a built-in schematic. Nest does the following:
 
@@ -18,7 +18,7 @@ When you run `nest new`, a new **project** is created for you using a built-in s
 
 From there, you can modify the starter files, add new components, add dependencies (e.g., `npm install`), and otherwise develop your application as covered in the rest of this documentation.
 
-### Monorepo mode
+#### Monorepo mode
 
 To enable monorepo mode, you start with a *standard mode* structure, and add **projects**.  A project can be a full **application** (which you add to the workspace with the command `nest generate app`) or a **library** (which you add to the workspace with the command `nest generate library`). We'll discuss the details of these specific types of project components below.  The key point to note now is that it is the **act of adding a project** to an existing standard mode structure that **converts it** to monorepo mode.  Let's look at an example.
 
