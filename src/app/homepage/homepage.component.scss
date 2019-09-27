@@ -219,12 +219,14 @@
 }
 
 .toc-wrapper,
-.content {
+.content,
+.companies-wrapper {
   display: inline-block;
   vertical-align: top;
 }
 
-.content {
+.content,
+.companies-wrapper {
   width: calc(100% - 220px);
   @media print {
     width: 100%;
