@@ -8,7 +8,7 @@ The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface t
 
 Install the CLI using **npm**.
 
-> info **Warning** you should use the `-g` option to install `@nestjs/cli` globally, as some of its functions operate outside of the context of a `package.json` file.
+> info **Warning** You should use the `-g` option to install `@nestjs/cli` globally, as some of its functions operate outside of the context of a `package.json` file.
 
 ```bash
 $ npm install -g @nestjs/cli
