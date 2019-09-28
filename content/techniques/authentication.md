@@ -25,7 +25,7 @@ $ npm install --save @nestjs/passport passport passport-local
 $ npm install --save-dev @types/passport-local
 ```
 
-> Warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as show above with `@types/passport-local`, which provides assistance while writing TypeScript code.
+> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as show above with `@types/passport-local`, which provides assistance while writing TypeScript code.
 
 #### Implementing Passport strategies
 
@@ -735,9 +735,11 @@ Ensure the app is running, and test the routes using `cURL`.
 $ # GET /api/me
 $ curl http://localhost:3000/api/me
 $ # result -> {"statusCode":401,"error":"Unauthorized"}
+
 $ # POST /api/login
 $ curl -X POST http://localhost:3000/api/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"
 $ # result -> {"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm... }
+
 $ # GET /api/me using access_token returned from previous step as bearer code
 $ curl http://localhost:3000/api/me -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm..."
 $ # result -> {"userId":1,"username":"john"}
