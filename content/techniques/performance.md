@@ -60,7 +60,7 @@ Fastify handles redirect responses slightly differently than Express. To do a pr
 
 ```typescript
 @Get()
-index (@Res() res) {
+index(@Res() res) {
   res.status(302).redirect('/login');
 }
 ```
