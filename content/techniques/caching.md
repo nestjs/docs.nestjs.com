@@ -70,6 +70,7 @@ You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Mi
 ```typescript
 @@filename()
 @CacheKey('events')
+@CacheTTL(20)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage('events')
 handleEvent(client: Client, data: string[]): Observable<string[]> {
@@ -77,6 +78,7 @@ handleEvent(client: Client, data: string[]): Observable<string[]> {
 }
 @@switch
 @CacheKey('events')
+@CacheTTL(20)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage('events')
 handleEvent(client, data) {
@@ -84,13 +86,13 @@ handleEvent(client, data) {
 }
 ```
 
-> info **Hint** The `@CacheKey()` decorator is imported from `@nestjs/common` package.
+> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from `@nestjs/common` package.
 
-However, the additional `@CacheKey()` decorator is required in order to specify a key used to subsequently store and retrieve cached data. Also, please note that you **shouldn't cache everything**. Actions which perform some business operations rather than simply querying the data should never be cached.
+However, the additional `@CacheKey()` decorator is required in order to specify a key used to subsequently store and retrieve cached data. Furthermore, the `@CacheTTL()` decorator allows setting a cache expiration time (TTL) that overrides the global cache interceptor default, allowing users to override cache durations on a per method basis. Also, please note that you **shouldn't cache everything**. Actions which perform some business operations rather than simply querying the data should never be cached.
 
 #### Customize caching
 
-All cached data has its own expiration time (TTL). To customize default values, pass the options object to the `register()` method.
+All cached data has its own expiration time (TTL) that may be overriden with the `@CacheTTL()` decorator. To customize default values, pass the options object to the `register()` method.
 
 ```typescript
 CacheModule.register({
