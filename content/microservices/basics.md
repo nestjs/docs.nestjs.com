@@ -14,11 +14,11 @@ $ npm i --save @nestjs/microservices
 
 #### Overview
 
-In general, Nest supports several built-in transporters. They are based on the **request-response** and **event-based** paradigms, and a whole communication logic is hidden behind an abstraction layer. This makes it easy to switch between transporters without changing the line of code. However, the request-response paradigm doesn't make too much sense with streaming platforms supplied with log based persistence, such as [Kafka](https://docs.confluent.io/3.0.0/streams/) or [NATS streaming](https://github.com/nats-io/node-nats-streaming) as they are designed to solve a different range of issues. Nonetheless, they can still be used with either **event-based** (unidirectional) communication or [application context](/application-context) feature.
+Generally, Nest supports several built-in transporters which responsibility is to transfer messages between different services. Almost every existing transporter supports both **request-response** and **event-based** strategies. In order to make it easy to switch between transporters (without changing a single line of code), the communication logic is hidden behind an abstraction layer. Hence, if at some point you decide to switch to another message broker, the migration process should be fairly easy.
 
 #### Getting started
 
-In order to create a microservice, we use `createMicroservice()` method of the `NestFactory` class.
+In order to create a microservice, we use the `createMicroservice()` method of the `NestFactory` class.
 
 ```typescript
 @@filename(main)
@@ -35,9 +35,9 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> info **Hint** A microservice is listening to messages through **TCP** protocol by default.
+> info **Hint** All microservices are listening to messages through **TCP** protocol by default.
 
-A second argument of the `createMicroservice()` method is an options object. This object may have two members:
+The second argument of the `createMicroservice()` method is an `options` object. This object may consist of two members:
 
 <table>
   <tr>
@@ -74,13 +74,13 @@ A second argument of the `createMicroservice()` method is an options object. Thi
 
 #### Patterns
 
-Microservices recognize both messages and events through patterns. A pattern is a plain value, for example, a literal object or a string. Eventually, every pattern is being serialized, so it can be sent over the network along with the data. Hence, the receiver can easily associate the incoming message with the corresponding handler.
+Microservices recognize both messages and events by patterns. A pattern is a plain value, for example, a literal object or a string. Eventually, every pattern is being serialized so it can be sent over the network along with the data. Hence, the consumer can easily associate the incoming message with the corresponding handler.
 
 #### Request-response
 
-The request-response communication mechanism is useful when you have to **exchange** messages among various, external services. Additionally, with this paradigm, you can be sure that the service has actually received the message.
+The request-response communication mechanism is useful when you have to **exchange** messages among various, external services. Additionally, with this paradigm, you can be certain that the service has actually received the message (without the built-in ACKs feature). However, the request-response paradigm doesn't make too much sense with streaming platforms supplied with log based persistence, such as [Kafka](https://docs.confluent.io/3.0.0/streams/) or [NATS streaming](https://github.com/nats-io/node-nats-streaming) as they are designed to solve a different range of issues.
 
-In order to enable services to exchange data over the network, Nest creates two channels in which one is responsible for transferring the data while the other listens to the incoming response. However, it's not always the case. For instance, platforms as [NATS](https://nats.io/) provide such a feature out-of-the-box so we don't have to do it on our own.
+In order to enable services to exchange data over the network, Nest creates two channels in which one is responsible for transferring the data while the other is waiting for the incoming response. It's not always the case though. For instance, platforms such as [NATS](https://nats.io/) provide this feature out-of-the-box and therefore, we don't have to do it manually.
 
 Basically, to create a message handler (based on the request-response paradigm), we use the `@MessagePattern()` decorator which is imported from the `@nestjs/microservices` package.
 
@@ -147,7 +147,7 @@ Above message handler will respond **3 times** (with each item from the array).
 
 #### Event-based
 
-While the request-response method is great when you have to constantly exchange messages between services, it brings too much unnecessary overhead that is completely useless when you just want to publish **events** (without waiting for a response). For instance, you would like to simply notify another service that a certain situation has happened in this part of the system. Thus, we provide a support for event-based communication as well.
+While the request-response method is great when you have to constantly exchange messages between services, it brings too much unnecessary overhead that is useless when you just want to publish **events** (without waiting for a response). For instance, you would like to simply notify another service that a certain situation has happened in this part of the system. Thus, we provide a support for event-based communication as well.
 
 In order to create an event handler, we use the `@EventPattern()` decorator which is imported from the `@nestjs/microservices` package.
 
@@ -166,9 +166,31 @@ async handleUserCreated(data) {
 
 The `handleUserCreated()` method is listening to `user_created` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
 
+#### Decorators
+
+In more sophisticated scenarios, you may want to read more information about the incoming request. For example, in case of NATS and wilcard subscriptions, you may want to get the original subject that producer has sent message to. Likewise, in Kafka you may want to access the message headers. In order to accomplish that, you can use built-in decorators as follows:
+
+```typescript
+@@filename()
+@MessagePattern('time.us.*')
+getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
+  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  return new Date().toLocaleTimeString(...);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('time.us.*')
+getDate(data, context) {
+  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  return new Date().toLocaleTimeString(...);
+}
+```
+
+> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are exported from `@nestjs/microservices`.
+
 #### Client
 
-In order to either exchange messages or publish events to the Nest microservice, we use the `ClientProxy` class which instance can be created in a few ways. Firstly, we may import the `ClientsModule` which exposes static `register()` method. This method takes an array as a parameter in which every element has a `name` (which is a sort of the microservice identifier) as well as microservice-specific options (it's the same object as this one passed in to the `createMicroservice()` method).
+In order to either exchange messages or publish events to the Nest microservice, we use the `ClientProxy` class which instance can be created in several ways. Firstly, we can import the `ClientsModule` which exposes the static `register()` method. This method takes an array as a parameter in which every element has a `name` (which is a sort of the microservice identifier) as well as microservice-specific options (it's the same object as this one passed in to the `createMicroservice()` method).
 
 ```typescript
 ClientsModule.register([
@@ -190,7 +212,7 @@ constructor(
 
 > info **Hint** The `ClientProxy` class is imported from the `@nestjs/microservices` package.
 
-Nonetheless, this approach doesn't allow us to asynchronously fetch the microservice configuration. In this case, we can directly use `ClientProxyFactory` to register a [custom provider](/techniques/custom-providers) (which is a client instance):
+Nonetheless, this approach doesn't allow us to asynchronously fetch the microservice configuration. In this case, we can directly leverage `ClientProxyFactory` to register a [custom provider](/techniques/custom-providers) (which is a client instance):
 
 ```typescript
 {
@@ -246,7 +268,7 @@ accumulate() {
 }
 ```
 
-The `send()` method takes two arguments, `pattern` and `payload`. The `pattern` has to be equal to this one defined in the `@MessagePattern()` decorator while `payload` is a message that we want to transmit to another microservice.
+The `send()` method takes two arguments, `pattern` and `payload`. The `pattern` has to be equal to this one defined in the `@MessagePattern()` decorator while `payload` is a message that we want to transmit to another microservice. Also, this method returns a cold `Observable`, which means that you have to explicitly subscribe to a stream in order to begin the process of transferring the message.
 
 #### Publishing events
 
@@ -263,4 +285,33 @@ async publish() {
 }
 ```
 
-The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern` has to be equal to this one defined in the `@EventPattern()` decorator while `payload` is an event payload that we want to transmit to another microservice.
+The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern` has to be equal to this one defined in the `@EventPattern()` decorator while `payload` is an event payload that we want to transmit to another microservice. Also, this method returns a hot `Observable` (in opposite to a cold `Observable` returned by `send()`), which means that you don't have to explicitly subscribe to a stream and the proxy will immediately try to deliver an event.
+
+#### Scopes
+
+For people coming from different programming language backgrounds, it might be unexpected to learn that in Nest, almost everything is shared across incoming requests. We have a connection pool to the database, singleton services with global state, etc. Remember that Node.js doesn't follow the request/response Multi-Threaded Stateless Model in which every request is processed by a separate thread. Hence, using singleton instances is fully **safe** for our applications.
+
+However, there are edge-cases when request-based lifetime of the controller may be the desired behavior, for instance per-request caching in GraphQL applications, request tracking or multi-tenancy. Learn how to control scopes [here](/fundamentals/injection-scopes).
+
+Every request-scoped controller and provider can inject `RequestContext` using `@Inject()` decorator in combination with `CONTEXT` token:
+
+```typescript
+import { Injectable, Scope, Inject } from '@nestjs/common';
+import { CONTEXT, RequestContext } from '@nestjs/microservices';
+
+@Injectable({ scope: Scope.REQUEST })
+export class CatsService {
+  constructor(@Inject(CONTEXT) private readonly ctx: RequestContext) {}
+}
+```
+
+`RequestContext` object consist of two properties:
+
+```typescript
+export interface RequestContext<T = any> {
+  pattern: string | Record<string, any>;
+  data: T;
+}
+```
+
+In which `data` is a value sent through the network (from producer to consumer), whereas `pattern` is a pattern used to identify an appropriate handler to handle the incoming message.
