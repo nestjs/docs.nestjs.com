@@ -32,7 +32,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [],
       synchronize: true,
     }),
   ],
@@ -50,10 +50,12 @@ The `forRoot()` method accepts the same configuration object as `createConnectio
   "username": "root",
   "password": "root",
   "database": "test",
-  "entities": ["src/**/*.entity{.ts,.js}"],
+  "entities": ["dist/**/*.entity{.ts,.js}"],
   "synchronize": true
 }
 ```
+
+> warning **Warning** Static glob paths (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
 
 Then, we can call `forRoot()` without any options:
 
@@ -128,7 +130,32 @@ export class Photo {
 
 The `Photo` entity belongs to the `photo` directory. This directory represents the `PhotoModule`. It's your decision where to keep your model files. We recommend creating them near their **domain**, in the corresponding module directory.
 
-Let's have a look at the `PhotoModule`:
+To begin using `Photo` entity, we need to let TypeORM know about it by inserting it into the `entities` array (unless you use a static glob path):
+
+```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Photo } from './photo/photo.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'test',
+      entities: [Photo],
+      synchronize: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Let's have a look at the `PhotoModule` now:
 
 ```typescript
 @@filename(photo.module)
@@ -283,7 +310,7 @@ export class PersonService {
     @InjectConnection('personsConnection')
     private readonly connection: Connection,
     @InjectEntityManager('personsConnection')
-    private readonly entityManager: EntityManager
+    private readonly entityManager: EntityManager,
   ) {}
 }
 ```
