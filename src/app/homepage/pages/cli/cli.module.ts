@@ -23,6 +23,10 @@ const routes: Routes = [
     },
   },
   {
+    path: 'workspaces',
+    redirectTo: 'monorepo',
+  },
+  {
     path: 'libraries',
     component: CliLibrariesComponent,
     data: {
