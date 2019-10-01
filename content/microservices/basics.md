@@ -215,7 +215,7 @@ constructor(
 
 > info **Hint** The `ClientsModule` and `ClientProxy` classes are imported from the `@nestjs/microservices` package.
 
-As is often the case, we may need to fetch the microservice configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can use the `ClientProxyFactory` class to register a [custom provider](/techniques/custom-providers) (which provides a `ClientProxy` instance):
+As is sometimes the case, we may need to fetch the microservice configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can use the `ClientProxyFactory` class to register a [custom provider](/techniques/custom-providers) (which provides a `ClientProxy` instance):
 
 ```typescript
 {
