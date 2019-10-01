@@ -122,7 +122,7 @@ export class MenuComponent implements OnInit {
       title: 'Microservices',
       isOpened: false,
       children: [
-        { title: 'Basics', path: '/microservices/basics' },
+        { title: 'Overview', path: '/microservices/basics' },
         { title: 'Redis', path: '/microservices/redis' },
         { title: 'MQTT', path: '/microservices/mqtt' },
         { title: 'NATS', path: '/microservices/nats' },
