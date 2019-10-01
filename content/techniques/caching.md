@@ -63,36 +63,9 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class ApplicationModule {}
 ```
 
-#### WebSockets & Microservices
-
-You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of the transport method that is being used).
-
-```typescript
-@@filename()
-@CacheKey('events')
-@CacheTTL(20)
-@UseInterceptors(CacheInterceptor)
-@SubscribeMessage('events')
-handleEvent(client: Client, data: string[]): Observable<string[]> {
-  return [];
-}
-@@switch
-@CacheKey('events')
-@CacheTTL(20)
-@UseInterceptors(CacheInterceptor)
-@SubscribeMessage('events')
-handleEvent(client, data) {
-  return [];
-}
-```
-
-> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from `@nestjs/common` package.
-
-However, the additional `@CacheKey()` decorator is required in order to specify a key used to subsequently store and retrieve cached data. Furthermore, the `@CacheTTL()` decorator allows setting a cache expiration time (TTL) that overrides the global cache interceptor default, allowing users to override cache durations on a per method basis. Also, please note that you **shouldn't cache everything**. Actions which perform some business operations rather than simply querying the data should never be cached.
-
 #### Customize caching
 
-All cached data has its own expiration time (TTL) that may be overriden with the `@CacheTTL()` decorator. To customize default values, pass the options object to the `register()` method.
+All cached data has its own expiration time (TTL). To customize default values, pass the options object to the `register()` method.
 
 ```typescript
 CacheModule.register({
@@ -100,6 +73,52 @@ CacheModule.register({
   max: 10, // maximum number of items in cache
 });
 ```
+
+#### WebSockets & Microservices
+
+You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of the transport method that is being used).
+
+```typescript
+@@filename()
+@CacheKey('events')
+@UseInterceptors(CacheInterceptor)
+@SubscribeMessage('events')
+handleEvent(client: Client, data: string[]): Observable<string[]> {
+  return [];
+}
+@@switch
+@CacheKey('events')
+@UseInterceptors(CacheInterceptor)
+@SubscribeMessage('events')
+handleEvent(client, data) {
+  return [];
+}
+```
+
+> info **Hint** The `@CacheKey()` decorator is imported from `@nestjs/common` package.
+
+However, the additional `@CacheKey()` decorator is required in order to specify a key used to subsequently store and retrieve cached data. Also, please note that you **shouldn't cache everything**. Actions which perform some business operations rather than simply querying the data should never be cached.
+
+Additionally, you may specify a cache expiration time (TTL) by using the `@CacheTTL()` decorator, which will override the global default TTL value.
+
+```typescript
+@@filename()
+@CacheTTL(10) // seconds
+@UseInterceptors(CacheInterceptor)
+handleEvent(client: Client, data: string[]): Observable<string[]> {
+  return [];
+}
+@@switch
+@CacheTTL(10) // seconds
+@UseInterceptors(CacheInterceptor)
+handleEvent(client, data) {
+  return [];
+}
+```
+
+> info **Hint** The `@CacheTTL()` decorator is imported from `@nestjs/common` package.
+
+The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator. This allows you to set custom cache expiration times (TTL) on a per-method basis, overriding global defaults whether or not a corresponding `@CacheKey()` is specified.
 
 #### Different stores
 
