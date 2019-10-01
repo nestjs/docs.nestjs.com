@@ -242,11 +242,11 @@ client: ClientProxy;
 
 Using the `@Client()` decorator is not the preferred technique, as it is harder to test and harder to share a client instance.
 
-The `ClientProxy` is **lazy**. It doesn't initiate a connection immediately. Instead, it will be established before the first microservice call, and then reused across each subsequent call. However, if you want to delay the application bootstrapping process until a connection is established, you can manually initiate a connection using the `ClientProxy` object's `connect()` method inside the `OnModuleInit` lifecycle hook.
+The `ClientProxy` is **lazy**. It doesn't initiate a connection immediately. Instead, it will be established before the first microservice call, and then reused across each subsequent call. However, if you want to delay the application bootstrapping process until a connection is established, you can manually initiate a connection using the `ClientProxy` object's `connect()` method inside the `OnApplicationBootstrap` lifecycle hook.
 
 ```typescript
 @@filename()
-async onModuleInit() {
+async onApplicationBootstrap() {
   await this.client.connect();
 }
 ```
