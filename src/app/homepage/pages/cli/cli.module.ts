@@ -6,6 +6,7 @@ import { CliLibrariesComponent } from './libraries/libaries.component';
 import { CliOverviewComponent } from './overview/overview.component';
 import { CliUsagesComponent } from './usages/usages.component';
 import { CliWorkspacesComponent } from './workspaces/workspaces.component';
+import { CliScriptsComponent } from './scripts/scripts.component';
 
 const routes: Routes = [
   {
@@ -40,6 +41,13 @@ const routes: Routes = [
       title: 'Usage - CLI',
     },
   },
+  {
+    path: 'scripts',
+    component: CliScriptsComponent,
+    data: {
+      title: 'Scripts - CLI',
+    },
+  },
 ];
 
 @NgModule({
@@ -49,6 +57,7 @@ const routes: Routes = [
     CliWorkspacesComponent,
     CliUsagesComponent,
     CliLibrariesComponent,
+    CliScriptsComponent,
   ],
 })
 export class CliModule {}
