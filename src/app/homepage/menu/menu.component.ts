@@ -150,6 +150,7 @@ export class MenuComponent implements OnInit {
         { title: 'Workspaces', path: '/cli/monorepo' },
         { title: 'Libraries', path: '/cli/libraries' },
         { title: 'Usage', path: '/cli/usages' },
+        { title: 'Scripts', path: '/cli/scripts' },
       ],
     },
     {
