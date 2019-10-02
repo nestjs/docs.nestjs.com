@@ -31,7 +31,7 @@ To create, build and run a new basic Nest project in development mode, go to the
 ```bash
 $ nest new my-nest-project
 $ cd my-nest-project
-$ nest start --watch
+$ npm run start:dev
 ```
 
 In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. With the `--watch` flag, the app will automatically recompile and reload when you change any of the source files.
