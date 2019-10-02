@@ -34,7 +34,7 @@ $ cd my-nest-project
 $ npm run start:dev
 ```
 
-In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. With the `--watch` flag, the app will automatically recompile and reload when you change any of the source files.
+In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. The app will automatically recompile and reload when you change any of the source files.
 
 #### Project structure
 
