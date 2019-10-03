@@ -54,7 +54,22 @@ handleEvent(data) {
 
 > info **Hint** `@SubscribeMessage()` and `@MessageBody()` decorators are imported from `@nestjs/websockets` package.
 
-The `handleEvent()` function takes two arguments. First one is a platform-specific [socket instance](https://socket.io/docs/server-api/#socket) and the second one is the data received from the client.
+In case you don't want to use decorators, the following code will be valid as well:
+
+```typescript
+@@filename(events.gateway)
+@SubscribeMessage('events')
+handleEvent(client: Socket, data: string): string {
+  return data;
+}
+@@switch
+@SubscribeMessage('events')
+handleEvent(client, data) {
+  return data;
+}
+```
+
+In the example above, the `handleEvent()` function takes two arguments. The first one is a platform-specific [socket instance](https://socket.io/docs/server-api/#socket), while the second one is the data received from the client. This approach is not recommended though, because it requires mocking the `socket` instance in each unit test.
 
 Once the `events` message is received, the handler sends an acknowledgment with the same data that was sent over the network. In addition, it's possible to emit messages using a library-specific approach, for example, by making use of `client.emit()` method. In order to access a connected socket instance, use `@ConnectedSocket()` decorator.
 
