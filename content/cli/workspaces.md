@@ -214,7 +214,7 @@ You can place these webpack options in a different file, and inform Nest by sett
 Since the webpack config file is a JavaScript file, you can even expose a function that takes default options and returns a modified object:
 
 ```javascript
-export default function(options) {
+module.exports = function(options) {
   return {
     ...options,
     externals: [],
