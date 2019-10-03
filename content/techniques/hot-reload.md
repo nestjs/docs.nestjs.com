@@ -2,9 +2,90 @@
 
 The highest impact on your application's bootstrapping process has a **TypeScript compilation**. But the question is, do we have to recompile a whole project each time when change occurs? Not at all. That's why [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement) significantly decreases an amount of time necessary to instantiate your application.
 
+> warning **Warning** Note that `webpack` won't automatically copy your assets (e.g. `graphql` files) to the `dist` folder. Similary, `webpack` is not compatible with glob static paths (e.g. `entities` property in `TypeOrmModule`).
+
+### With CLI
+
+If you are using [Nest CLI](http://localhost:4200/cli/overview), the configuration process should be pretty straighforward. CLI wraps `webpack` underneath, which means that you only have to apply an additional `HotModuleReplacementPlugin`.
+
 #### Installation
 
-Firstly, let's install required packages:
+First install the required package:
+
+```bash
+$ npm i --save-dev webpack-node-externals
+```
+
+#### Configuration
+
+Once the installation is complete, create a `webpack.config.js` file in the root directory of your application.
+
+```typescript
+const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
+
+export default function(options) {
+  return {
+    ...options,
+    entry: ['webpack/hot/poll?100', './src/main.ts'],
+    watch: true,
+    externals: [
+      nodeExternals({
+        whitelist: ['webpack/hot/poll?100'],
+      }),
+    ],
+    plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
+  };
+}
+```
+
+This function takes the original object containing default webpack configuration and returns a modified one with an applied `HotModuleReplacementPlugin` plugin.
+
+#### Hot-Module Replacement
+
+In order to enable **HMR**, we have to open the application entry file (`main.ts`) and add a few webpack-related instructions.
+
+```typescript
+declare const module: any;
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
+}
+bootstrap();
+```
+
+To simplify the execution process, add two scripts to your `package.json` file.
+
+```json
+"build": "nest build --watch --webpack"
+"start": "node dist/main",
+```
+
+Now simply open your command line and run the following command:
+
+```bash
+$ npm run webpack
+```
+
+Once webpack started **watching files**, run another command in a separate command line window:
+
+```bash
+$ npm run start
+```
+
+### Without CLI
+
+If you are not using [Nest CLI](http://localhost:4200/cli/overview), the configuration will be slightly more complex (will require more manual steps).
+
+#### Installation
+
+First install the required packages:
 
 ```bash
 $ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader
@@ -12,7 +93,7 @@ $ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader
 
 #### Configuration
 
-Then, we need to create a `webpack.config.js` which is a webpack's configuration file, and put it in the root directory.
+Once the installation is complete, create a `webpack.config.js` file in the root directory of your application.
 
 ```typescript
 const webpack = require('webpack');
@@ -53,7 +134,7 @@ This configuration tells webpack few essential things about our application. Whe
 
 #### Hot-Module Replacement
 
-In order to enable **HMR**, we have to open Nest application entry file (which is `main.ts`) and add few critical things.
+In order to enable **HMR**, we have to open the application entry file (`main.ts`) and add a few webpack-related instructions.
 
 ```typescript
 declare const module: any;
@@ -70,20 +151,20 @@ async function bootstrap() {
 bootstrap();
 ```
 
-And that's all. To simplify execution process, add those two lines into your `scripts` inside `package.json` file.
+To simplify the execution process, add two scripts to your `package.json` file.
 
 ```json
-"start": "node dist/server",
 "webpack": "webpack --config webpack.config.js"
+"start": "node dist/server",
 ```
 
-Now simply open your command line and run below command:
+Now simply open your command line and run the following command:
 
 ```bash
 $ npm run webpack
 ```
 
-Once webpack started to **watch files**, run another command in the another command line window:
+Once webpack started **watching files**, run another command in a separate command line window:
 
 ```bash
 $ npm run start
