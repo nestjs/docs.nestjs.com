@@ -42,10 +42,11 @@ blockquote {
   margin: 35px 0;
   background: #f9eff1;
   padding: 20px;
+  border-radius: 3px;
 
   &::before {
     height: 100%;
-    width: 5px;
+    width: 4px;
     content: '';
     background: $red-color;
     display: block;
@@ -53,6 +54,8 @@ blockquote {
     top: 0;
     bottom: 0;
     left: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
   }
 
   strong {
