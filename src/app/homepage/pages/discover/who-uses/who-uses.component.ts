@@ -140,7 +140,7 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://smartexlab.com/',
     'https://automama.ru/',
     'https://iflix.com/',
-    'https://framework.watch',
+    'https://frontendwatch.com/',
     'https://mobilejazz.com/',
     'https://cgiandi.com/',
     'https://www.titlex.com.au/',
