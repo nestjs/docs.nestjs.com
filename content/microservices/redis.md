@@ -75,7 +75,7 @@ The `options` object is specific to the chosen transporter. The <strong>REDIS</s
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
-    <td>Number of times to retry messag</td>
+    <td>Number of times to retry message</td>
   </tr>
   <tr>
     <td><code>retryDelay</code></td>
