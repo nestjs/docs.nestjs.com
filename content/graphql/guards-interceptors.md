@@ -1,6 +1,6 @@
 ### Tooling
 
-In the GraphQL world, a lot of articles contemplate how to handle stuff like **authentication**, or **side-effects** of operations. Should we put it inside the business logic? Shall we use a higher-order function to enhance queries and mutations as well, for example, with authorization logic? Or maybe use [schema directives](https://www.apollographql.com/docs/apollo-server/v2/features/directives.html). There is no single answer.
+In the GraphQL world, a lot of articles contemplate how to handle stuff like **authentication**, or **side-effects** of operations. Should we put it inside the business logic? Shall we use a higher-order function to enhance queries and mutations as well, for example, with authorization logic? Or maybe use [schema directives](https://www.apollographql.com/docs/apollo-server/schema/directives/). There is no single answer.
 
 Nest ecosystem is trying to help with this issue using existing features like [guards](/guards) and [interceptors](/interceptors). The idea behind them is to reduce redundancy and also, supply you with tooling that helps create well-structured, readable, and consistent applications.
 
