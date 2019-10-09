@@ -14,7 +14,7 @@ $ npm i --save redis
 
 #### Overview
 
-In order to use Redis transporter, a different options object has to be passed to the `createMicroservice()` method.
+To use the Redis transporter, pass the following options object to the `createMicroservice()` method:
 
 ```typescript
 @@filename(main)
