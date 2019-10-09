@@ -2513,6 +2513,11 @@ commander@^2.12.1:
   version "2.18.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.18.0.tgz#2bf063ddee7c7891176981a2cc798e5754bc6970"
 
+commander@^2.19.0:
+  version "2.20.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.1.tgz#3863ce3ca92d0831dcf2a102f5fb4b5926afd0f9"
+  integrity sha512-cCuLsMhJeWQ/ZpsFTbE765kvVfoeSddc4nU3up4fV+fDBcfUXnbITJ+JzhkdjzOqhURjZgujxaioam4RM9yGUg==
+
 commander@^2.20.0, commander@~2.20.0:
   version "2.20.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
@@ -5127,6 +5132,13 @@ karma@4.3.0:
     tmp "0.0.33"
     useragent "2.3.0"
 
+katex@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.11.1.tgz#df30ca40c565c9df01a466a00d53e079e84ffaa2"
+  integrity sha512-5oANDICCTX0NqYIyAiFCCwjQ7ERu3DQG2JFHLbYOf+fXaMoH8eg/zOq5WSYJsKMi/QebW+Eh3gSM+oss1H/bww==
+  dependencies:
+    commander "^2.19.0"
+
 killable@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.1.tgz#4c8ce441187a061c7474fb87ca08e2a638194892"
@@ -5724,12 +5736,13 @@ ng2-src-directive@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/ng2-src-directive/-/ng2-src-directive-0.0.10.tgz#1c1f722ca78b44a3169bcc1bbf9e51ea5931dd3b"
 
-ngx-markdown@8.1.1:
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.1.1.tgz#7d377fcb91dbf0578db12da71b866d12d5aa5fd5"
-  integrity sha512-WL2KJXwQBQeFD1TfJeWZGi8DUqS2ZeNJOFWO7PjrsOnDrU1ISWewk6NZbNATN58UlswrzNqHk6lrXpRA0yJPtg==
+ngx-markdown@8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.2.0.tgz#4ad622d8222946735f107942015a8a2c80e4a192"
+  integrity sha512-4sWz08Hjqvz35OGtSUcfnO9grkkC7+agRlsVZxi2xpYbkmFiRk7cMKGVfRFe+tqzjOxKi1j3BwUG+x2tAGpVlA==
   dependencies:
     "@types/marked" "^0.6.5"
+    katex "^0.11.1"
     marked "^0.7.0"
     prismjs "^1.16.0"
     tslib "^1.9.0"
