@@ -46,7 +46,7 @@ Other options to create a client (either `ClientProxyFactory` or `@Client()`) ca
 
 #### Context
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. In Redis, you can access `RedisContext` object.
+In more sophisticated scenarios, you may want to access more information about the incoming request. In Redis, you can access the `RedisContext` object.
 
 ```typescript
 @@filename()
