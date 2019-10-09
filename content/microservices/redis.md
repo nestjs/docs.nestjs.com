@@ -28,7 +28,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 
 > info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
 
-Likewise, to create a client instance, we need to pass the options object which has the same properties we saw above in the `createMicroservice()` method.
+Likewise, to create a client instance, we need to pass an options object with the same properties we saw above in the `createMicroservice()` method.
 
 ```typescript
 ClientsModule.register([
