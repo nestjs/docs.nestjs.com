@@ -81,6 +81,8 @@ $ nest g <schematic> <name> [options]
 | `--flat`                        | Do not generate a folder for the element.                                                                        |
 | `--collection [collectionName]` | Specify schematics collection.  Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
 
+| `--no-spec`                     | Disable spec files generation |
+
 #### nest build
 Compiles an application or workspace into an output folder.
 
