@@ -22,21 +22,21 @@ $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 
 #### Overview
 
-In general, each gateway is listening to the same port as **HTTP server** is running on, unless your app is not a web application, or you have changed the port manually. This default behavior can be modified by passing an argument to the `@WebSocketGateway(80)` decorator where `80` is a chosen port number. You can also set a [namespace](https://socket.io/docs/rooms-and-namespaces/) used by the gateway using the following construction:
+In general, each gateway is listening on the same port as the **HTTP server**, unless your app is not a web application, or you have changed the port manually. This default behavior can be modified by passing an argument to the `@WebSocketGateway(80)` decorator where `80` is a chosen port number. You can also set a [namespace](https://socket.io/docs/rooms-and-namespaces/) used by the gateway using the following construction:
 
 ```typescript
 @WebSocketGateway(80, { namespace: 'events' })
 ```
 
-> **Warning** Gateways won't be instantiated until you put them inside the `providers` array of any existing module.
+> **Warning** Gateways aren't instantiated until they are referenced in the providers array of an existing module.
 
-The `namespace` is not a sole available option. You can pass any other property that is mentioned [here](https://socket.io/docs/server-api/). Those properties will be passed to the socket constructor during the instantiation process.
+You can pass any supported [option](https://socket.io/docs/server-api/) to the socket constructor with the second argument to the `@WebSocketGateway()` decorator, as shown below:
 
 ```typescript
 @WebSocketGateway(81, { transports: ['websocket'] })
 ```
 
-Alright, the gateway is listening now, but we are not subscribing to the incoming messages yet. Let's create a handler that will subscribe to the `events` messages and respond to the user with the exact same data.
+The gateway is now listening, but we have not yet subscribed to any incoming messages. Let's create a handler that will subscribe to the `events` messages and respond to the user with the exact same data.
 
 ```typescript
 @@filename(events.gateway)
@@ -54,7 +54,7 @@ handleEvent(data) {
 
 > info **Hint** `@SubscribeMessage()` and `@MessageBody()` decorators are imported from `@nestjs/websockets` package.
 
-In case you don't want to use decorators, the following code will be valid as well:
+If you would prefer not to use decorators, the following code is functionally equivalent:
 
 ```typescript
 @@filename(events.gateway)
