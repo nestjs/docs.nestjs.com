@@ -6,7 +6,7 @@ The highest impact on your application's bootstrapping process has a **TypeScrip
 
 ### With CLI
 
-If you are using [Nest CLI](http://localhost:4200/cli/overview), the configuration process should be pretty straighforward. CLI wraps `webpack` underneath, which means that you only have to apply an additional `HotModuleReplacementPlugin`.
+If you are using the [Nest CLI](http://localhost:4200/cli/overview), the configuration process is pretty straighforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -39,11 +39,11 @@ export default function(options) {
 }
 ```
 
-This function takes the original object containing default webpack configuration and returns a modified one with an applied `HotModuleReplacementPlugin` plugin.
+This function takes the original object containing the default webpack configuration and returns a modified one with an applied `HotModuleReplacementPlugin` plugin.
 
 #### Hot-Module Replacement
 
-In order to enable **HMR**, we have to open the application entry file (`main.ts`) and add a few webpack-related instructions.
+In order to enable **HMR**, open the application entry file (`main.ts`) and add several webpack-related instructions, as shown below:
 
 ```typescript
 declare const module: any;
@@ -73,7 +73,7 @@ Now simply open your command line and run the following command:
 $ npm run webpack
 ```
 
-Once webpack started **watching files**, run another command in a separate command line window:
+Once webpack has started **watching files**, run the following command in a separate command line window:
 
 ```bash
 $ npm run start
@@ -81,7 +81,7 @@ $ npm run start
 
 ### Without CLI
 
-If you are not using [Nest CLI](http://localhost:4200/cli/overview), the configuration will be slightly more complex (will require more manual steps).
+If you are not using the [Nest CLI](http://localhost:4200/cli/overview), the configuration will be slightly more complex (will require more manual steps).
 
 #### Installation
 
@@ -164,7 +164,7 @@ Now simply open your command line and run the following command:
 $ npm run webpack
 ```
 
-Once webpack started **watching files**, run another command in a separate command line window:
+Once webpack has started **watching files**, run the following command in a separate command line window:
 
 ```bash
 $ npm run start
