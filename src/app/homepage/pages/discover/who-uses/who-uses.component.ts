@@ -19,6 +19,11 @@ export class WhoUsesComponent extends BasePageComponent {
       width: '180px',
     },
     {
+      logo: '/assets/logo/fairness.svg',
+      url: 'https://fairness.coop',
+      width: '180px',
+    },
+    {
       logo: '/assets/logo/roche-logo.png',
       url: 'https://roche.com',
       width: '90px',
@@ -147,6 +152,7 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://codengage.com/',
     'https://budacode.com/',
     'https://blueanchor.io/',
+    'https://fairness.coop/',
     'https://www.easymetrics.com/',
     'https://getapollo.io/',
     'https://big-bench.com/',
