@@ -190,11 +190,11 @@ These properties specify the compiler to use as well as various options that aff
 | `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                    |
 | `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode).  See below for details.                                  |
 
-##### Specified compiler
+#### Specified compiler
 
 The reason for the different default compilers is that for larger projects (e.g., more typical in a monorepo) webpack can have significant advantages in build times and in producing a single file bundling all project components together. If you wish to generate individual files, set `"webpack"` to `false`, which will cause the build process to use `tsc`.
 
-##### Webpack options
+#### Webpack options
 
 The webpack options file can contain standard [webpack configuration options](https://webpack.js.org/configuration/). For example, to tell webpack to bundle `node_modules` (which are excluded by default), add the following to `webpack.config.js`:
 
@@ -215,7 +215,7 @@ module.exports = function(options) {
 }
 ```
 
-##### Assets
+#### Assets
 
 TypeScript compilation automatically distributes compiler output (`.js` and `.d.ts` files) to the specified output directory.  It can also be convenient to distribute non-TypeScript files, such as `.graphql` files, `images`, `.html` files and other assets.  This allows you to treat `nest build` (and any initial compilation step) as a lightweight **development build** step, where you may be editing non-TypeScript files and iteratively compiling and testing.
 
