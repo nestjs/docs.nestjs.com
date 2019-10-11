@@ -24,7 +24,7 @@ Once the installation is complete, create a `webpack.config.js` file in the root
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
-export default function(options) {
+module.exports = function(options) {
   return {
     ...options,
     entry: ['webpack/hot/poll?100', './src/main.ts'],
@@ -70,7 +70,7 @@ To simplify the execution process, add two scripts to your `package.json` file.
 Now simply open your command line and run the following command:
 
 ```bash
-$ npm run webpack
+$ npm run build
 ```
 
 Once webpack has started **watching files**, run the following command in a separate command line window:
