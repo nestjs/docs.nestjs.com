@@ -53,9 +53,9 @@ The `value` is the currently processed argument (before it is received by the ro
 
 ```typescript
 export interface ArgumentMetadata {
-  readonly type: 'body' | 'query' | 'param' | 'custom';
-  readonly metatype?: Type<any>;
-  readonly data?: string;
+  type: 'body' | 'query' | 'param' | 'custom';
+  metatype?: Type<any>;
+  data?: string;
 }
 ```
 
