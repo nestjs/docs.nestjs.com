@@ -87,9 +87,9 @@ At this point, `nest` converts the existing structure to a **monorepo mode** str
   <div class="item">tslint.json</div>
 </div>
 
-The `nest` schematic has reorganized the code - moving each **application** project under the `apps` folder, and adding a project-specific `tsconfig.app.json` file in each project's root folder. Our original `my-project` app has become the **default project** for the monorepo, and is now a peer with the just-added `my-app`, located under the `apps` folder. We'll cover default projects below.
+The `generate app` schematic has reorganized the code - moving each **application** project under the `apps` folder, and adding a project-specific `tsconfig.app.json` file in each project's root folder. Our original `my-project` app has become the **default project** for the monorepo, and is now a peer with the just-added `my-app`, located under the `apps` folder. We'll cover default projects below.
 
-> error **Warning** The conversion of a standard mode structure to monorepo only works for projects that have followed the canonical Nest project structure. Specifically, during conversion, the schematic attempts to relocate the `src` and `test` folders beneath the `apps` folder in the root. If a project does not use this structure, the conversion will fail or produce unreliable results.
+> error **Warning** The conversion of a standard mode structure to monorepo only works for projects that have followed the canonical Nest project structure. Specifically, during conversion, the schematic attempts to relocate the `src` and `test` folders in a project folder beneath the `apps` folder in the root. If a project does not use this structure, the conversion will fail or produce unreliable results.
 
 #### Workspace projects
 
@@ -98,7 +98,7 @@ A mono repo uses the concept of a workspace to manage its member entities. Works
 - an **application**: a full Nest application including a `main.ts` file to bootstrap the application. Aside from compile and build considerations, an application-type project within a workspace is functionally identical to an application within a _standard mode_ structure.
 - a **library**: a library is a way of packaging a general purpose set of features (modules, providers, controllers, etc.) that can be used within other projects. A library cannot run on its own, and has no `main.ts` file. Read more about libraries [here](/cli/libraries).
 
-All workspaces have a **default project** (which should be an application-type project). This is defined by the top-level `"root"` property in the `nest-cli.json` file, which points at the root of the default project (see <a href="/cli/monorepo#workspace-properties">workspace properties</a> below for more details). Usually, this is the **standard mode** application you started with, and later converted to a monorepo using `nest generate app`. When you follow these steps, this property is populated automatically.
+All workspaces have a **default project** (which should be an application-type project). This is defined by the top-level `"root"` property in the `nest-cli.json` file, which points at the root of the default project (see <a href="/cli/monorepo#cli-properties">CLI properties</a> below for more details). Usually, this is the **standard mode** application you started with, and later converted to a monorepo using `nest generate app`. When you follow these steps, this property is populated automatically.
 
 Default projects are used by `nest` commands like `nest build` and `nest start` when a project name is not supplied.
 
@@ -126,9 +126,9 @@ However, the schematic does generate a project-specific `tsconfig.app.json` file
 
 As mentioned, library-type projects, or simply "libraries", are packages of Nest components that need to be composed into applications in order to run. You generate a library-type project with `nest generate library`. Deciding what belongs in a library is an architectural design decision. We discuss libraries in depth in the [libraries](/cli/libraries) chapter.
 
-#### Workspace properties
+#### CLI properties
 
-Nest keeps the metadata needed to organize, build and deploy workspace projects in the `nest-cli.json` file. Nest automatically adds to and updates this file as you add projects, so you usually do not have to think about it or edit its contents. However, there are some settings you may want to change manually, so it's helpful to have an overview understanding of the file.
+Nest keeps the metadata needed to organize, build and deploy both standard and monorepo structured projects in the `nest-cli.json` file. Nest automatically adds to and updates this file as you add projects, so you usually do not have to think about it or edit its contents. However, there are some settings you may want to change manually, so it's helpful to have an overview understanding of the file.
 
 After running the steps above to create a monorepo, our `nest-cli.json` file looks like this:
 
@@ -167,48 +167,41 @@ After running the steps above to create a monorepo, our `nest-cli.json` file loo
 
 The file is divided into sections:
 
-- a global monorepo section with top-level properties controlling monorepo-wide settings
-- a top level property (`"projects"`) with metadata about each project
+- a global section with top-level properties controlling standard and monorepo-wide settings
+- a top level property (`"projects"`) with metadata about each project.  This section is present only for monorepo-mode structures.
 
-The monorepo-wide properties are as follows:
+The top-level properties are as follows:
 
 - `"collection"`: points at the collection of schematics used to generate components; you generally should not change this value
-- `"sourceRoot"`: points at the root of the source code for the _default project_
-- `"monorepo"`: for a monorepo mode structure, this value is always `true`
-- `"root"`: points at the project root of the _default project_
-- `"compilerOptions"`: a map with keys specifying compiler options and values specifying the option setting
+- `"sourceRoot"`: points at the root of the source code for the single project in standard mode structures, or the _default project_ in monorepo mode structures
+- `"compilerOptions"`: a map with keys specifying compiler options and values specifying the option setting; see details below
+- `"monorepo"`: (monorepo only) for a monorepo mode structure, this value is always `true`
+- `"root"`: (monorepo only) points at the project root of the _default project_
 
 #### Global compiler options
 
-These properties specify the compiler to use, and some default information used by commands like `nest start` and `nest build`.
+These properties specify the compiler to use as well as various options that affect **any** compilation step, whether as part of `nest build` or `nest start`, and regardless of the compiler, whether `tsc` or webpack.
 
-Default `compilerOptions` are set as follows:
+| Property Name       | Property Value Type | Description                                                                                                                                                                                                                              |
+| ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `webpack `          | boolean             | If `true`, use [webpack compiler](https://webpack.js.org/).  If `false` or not present, use `tsc`.  In monorepo mode, the default is `true` (use webpack), in standard mode, the default is `false` (use `tsc`).  See below for details. |
+| `tsConfigPath`      | string              | (**monorepo only**) Points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).            |
+| `webpackConfigPath` | string              | Points at a webpack options file.  If not specified, Nest looks for the file `webpack.config.js`.  See below for more details.                                                                                                           |
+| `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                    |
+| `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode).  See below for details.                                  |
 
-```javascript
-"compilerOptions": {
-  "webpack": true,
-  "tsConfigPath": "apps/my-project/tsconfig.app.json"
-}
-```
+#### Specified compiler
 
-The `"webpack"` property, when true (the default), uses [webpack](https://webpack.js.org/) to compile and bundle the code. This is one key difference between monorepo mode and standard mode. Standard mode uses `tsc` for compilation by default. The reason for this difference is that webpack can have significant advantages in build times and in producing a single file bundling all project components together. If you wish to generate individual files, set `"webpack"` to `false`, which will cause the build process to use `tsc`.
+The reason for the different default compilers is that for larger projects (e.g., more typical in a monorepo) webpack can have significant advantages in build times and in producing a single file bundling all project components together. If you wish to generate individual files, set `"webpack"` to `false`, which will cause the build process to use `tsc`.
 
-You can configure webpack options by adding a `webpack.config.js` file in the root folder. This can contain [standard webpack configuration options](https://webpack.js.org/configuration/). For example, to tell webpack to bundle `node_modules` (which are excluded by default), you would add the following to `webpack.config.js`:
+#### Webpack options
+
+The webpack options file can contain standard [webpack configuration options](https://webpack.js.org/configuration/). For example, to tell webpack to bundle `node_modules` (which are excluded by default), add the following to `webpack.config.js`:
 
 ```javascript
 module.exports = {
   externals: [],
 };
-```
-
-You can place these webpack options in a different file, and inform Nest by setting the `"compilerOptions"` property's `"webpackConfigPath"` key to the name of the file. For example:
-
-```javascript
-"compilerOptions": {
-  "webpack": true,
-  "tsConfigPath": "apps/my-project/tsconfig.app.json"
-  "webpackConfigPath": "apps/my-project/webpack.config.js"
-}
 ```
 
 Since the webpack config file is a JavaScript file, you can even expose a function that takes default options and returns a modified object:
@@ -222,8 +215,29 @@ module.exports = function(options) {
 }
 ```
 
-The `"tsConfigPath"` property points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).
+#### Assets
+
+TypeScript compilation automatically distributes compiler output (`.js` and `.d.ts` files) to the specified output directory.  It can also be convenient to distribute non-TypeScript files, such as `.graphql` files, `images`, `.html` files and other assets.  This allows you to treat `nest build` (and any initial compilation step) as a lightweight **development build** step, where you may be editing non-TypeScript files and iteratively compiling and testing.
+
+The value of the `assets` key should be an array of elements specifying the files to be distributed.  The elements can be simple strings with `glob`-like file specs, for example:
+
+```typescript
+"assets": ["**/*.graphql"]
+```
+
+For finer control, the elements can be objects with the following keys:
+- `"include"`: `glob`-like file specifications for the assets to be distributed
+- `"exclude"`: `glob`-like file specifications for assets to be **excluded** from the `include` list
+- `"outDir"`: a string specifying the path (relative to the root folder) where the assets should be distributed.  Defaults to the same output directory configured for compiler output.
+
+For example:
+
+```typescript
+"assets": [
+  { "include": "**/*.graphql", "exclude": "**/omitted.graphql" },
+]
+```
 
 #### Project properties
 
-You generally should not edit these properties, as they are used by Nest to locate projects and their configuration options within the monorepo.
+This element exists only for monorepo-mode structures. You generally should not edit these properties, as they are used by Nest to locate projects and their configuration options within the monorepo.

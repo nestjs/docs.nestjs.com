@@ -4,9 +4,9 @@ The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface t
 
 #### Installation
 
-Install the CLI using **npm**.
+**Note**: In this guide we describe using [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install packages, including the Nest CLI.  Other package managers may be used at your discretion.  With npm, you have several options available for managing how your OS command line resolves the location of the `nest` CLI binary file.  Here, we describe installing the `nest` binary globally using the `-g` option.  This provides a measure of convenience, and is the approach we assume throughout the documentation.  Note that installing **any** `npm` package globally leaves the responsibility of ensuring they're running the correct version up to the user.  It also means that if you have different projects, each will run the **same** version of the CLI.  A reasonable alternative is to use the [npx](https://github.com/npm/npx) program (or similar features with other package managers) to ensure that you run a **managed version** of the Nest CLI.  We recommend you consult the [npx documentation](https://github.com/npm/npx) and/or your DevOps support staff for more information.
 
-> info **Warning** You should use the `-g` option to install `@nestjs/cli` globally, as some of its functions operate outside of the context of a `package.json` file.
+Install the CLI globally using the `npm install -g` command (see the **Note** above for details about global installs).
 
 ```bash
 $ npm install -g @nestjs/cli
