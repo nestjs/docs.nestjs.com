@@ -74,6 +74,26 @@ CacheModule.register({
 });
 ```
 
+#### Global cache overrides
+
+While global cache is enabled, cache entries are stored under a `CacheKey` that is auto-generated based on the route path. You may override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis, allowing customized caching strategies for individual controller methods. This may be most relevant while using [different cache stores.](https://docs.nestjs.com/techniques/caching#different-stores)
+
+```typescript
+@Controller()
+export class AppController {
+  @CacheKey('custom_key') // Custom cache key
+  @CacheTTL(20) // 20 second TTL
+  findAll(): string[] {
+    return [];
+  }
+}
+```
+
+> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/common` package.
+
+The `@CacheKey()` decorator may be used with or without a corresponding `@CacheTTL()` decorator and vice versa. One may choose to override only the `@CacheKey()` or only the `@CacheTTL()`. Settings that are not overriden with a decorator will use the default values as registered globally (see [Customize caching](https://docs.nestjs.com/techniques/caching#customize-caching)).
+
+
 #### WebSockets & Microservices
 
 You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of the transport method that is being used).
@@ -95,34 +115,32 @@ handleEvent(client, data) {
 }
 ```
 
-> info **Hint** The `@CacheKey()` decorator is imported from `@nestjs/common` package.
-
 However, the additional `@CacheKey()` decorator is required in order to specify a key used to subsequently store and retrieve cached data. Also, please note that you **shouldn't cache everything**. Actions which perform some business operations rather than simply querying the data should never be cached.
 
 Additionally, you may specify a cache expiration time (TTL) by using the `@CacheTTL()` decorator, which will override the global default TTL value.
 
 ```typescript
 @@filename()
-@CacheTTL(10) // seconds
+@CacheTTL(10)
 @UseInterceptors(CacheInterceptor)
+@SubscribeMessage('events')
 handleEvent(client: Client, data: string[]): Observable<string[]> {
   return [];
 }
 @@switch
-@CacheTTL(10) // seconds
+@CacheTTL(10)
 @UseInterceptors(CacheInterceptor)
+@SubscribeMessage('events')
 handleEvent(client, data) {
   return [];
 }
 ```
 
-> info **Hint** The `@CacheTTL()` decorator is imported from `@nestjs/common` package.
-
-The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator. This allows you to set custom cache expiration times (TTL) on a per-method basis, overriding global defaults whether or not a corresponding `@CacheKey()` is specified.
+> info **Hint** The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator. 
 
 #### Different stores
 
-This service take advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines)). To set up the Redis store, simple pass the package together with corresponding options to the `register()` method.
+This service take advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simple pass the package together with corresponding options to the `register()` method.
 
 ```typescript
 import * as redisStore from 'cache-manager-redis-store';
