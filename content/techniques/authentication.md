@@ -263,15 +263,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object.
 
 We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
-To change this behavior, you can add the following to your constructor:
-```typescript
-constructor(private readonly authService: AuthService) {
-    super({
-        usernameField: 'email',
-        passwordField: 'password',
-    });
-}
-```
 
 Most of the validation work is done in our `AuthService` (with the help of our `UserService`), so this method is quite straightforward. The `validate()` method for **any** Passport strategy will follow a similar pattern, varying only in the details of how credentials are represented. If a user is found and the credentials are valid, the user is returned so Passport can complete its tasks (e.g., creating the `user` property on the `Request` object), and the request handling pipeline can continue. If it's not found, we throw an exception and let our <a href="exception-filters">exceptions layer</a> handle it.
 
@@ -794,6 +785,18 @@ Any standard Passport customization options can be passed the same way, using th
 ```typescript
 PassportModule.register({ session: true });
 ```
+
+You can also pass strategies some parameters in their constructors to configure them.
+For the local strategy you can pass e.g.:
+```typescript
+constructor(private readonly authService: AuthService) {
+    super({
+        usernameField: 'email',
+        passwordField: 'password',
+    });
+}
+```
+Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for parameter names.
 
 #### Named strategies
 
