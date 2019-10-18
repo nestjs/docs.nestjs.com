@@ -786,7 +786,7 @@ Any standard Passport customization options can be passed the same way, using th
 PassportModule.register({ session: true });
 ```
 
-You can also pass strategies some parameters in their constructors to configure them.
+You can also pass strategies an options object in their constructors to configure them.
 For the local strategy you can pass e.g.:
 ```typescript
 constructor(private readonly authService: AuthService) {
@@ -796,7 +796,7 @@ constructor(private readonly authService: AuthService) {
     });
 }
 ```
-Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for parameter names.
+Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for property names.
 
 #### Named strategies
 
