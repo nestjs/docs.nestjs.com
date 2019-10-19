@@ -1,6 +1,8 @@
 ### Logger
 
-Nest comes with a default implementation of internal `Logger` which is used during the instantiation process as well as in several different situations, such as **occurred exception**, and so forth. However, sometimes you might want to either disable logging entirely or provide a custom implementation and handle messages on your own. In order to turn off a logger, we use the Nest application options object.
+Nest comes with a built-in `Logger` which is used during application bootstrapping and several other circumstances, such as displaying caught exceptions. You can take more control of logging by, for example, disabling logging entirely or providing a custom implementation of the logger to handle messages on your own.
+
+To disable logging, set the `logger` property to `false` in the (optional) options object passed as the second argument to the `NestFactory.create()` method.
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
@@ -9,7 +11,7 @@ const app = await NestFactory.create(ApplicationModule, {
 await app.listen(3000);
 ```
 
-You can also enable only certain types of logging:
+You can enable specific logging levels by setting the `logger` property to an array of strings specifying the log levels to display:
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
@@ -18,7 +20,11 @@ const app = await NestFactory.create(ApplicationModule, {
 await app.listen(3000);
 ```
 
-In some scenarios, we might want to use a different logger under the hood. In order to do that, we have to pass an object that fulfills `LoggerService` interface. An example could be a built-in `console`.
+Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
+
+#### Custom logger
+
+You can provide a custom logger implementation by passing an object that fulfills the `LoggerService` interface in the `logger` property. For example, you can tell Nest to use the built-in `console` function as follows.
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
@@ -27,21 +33,31 @@ const app = await NestFactory.create(ApplicationModule, {
 await app.listen(3000);
 ```
 
-But it's not an apt idea. However, we can create our own logger easily.
+Creating your own logger is straightforward. Simply implement each of the `LoggerService` methods as shown below.
 
 ```typescript
 import { LoggerService } from '@nestjs/common';
 
 export class MyLogger implements LoggerService {
-  log(message: string) {}
-  error(message: string, trace: string) {}
-  warn(message: string) {}
-  debug(message: string) {}
-  verbose(message: string) {}
+  log(message: string) {
+    /* your implementation */
+  }
+  error(message: string, trace: string) {
+    /* your implementation */
+  }
+  warn(message: string) {
+    /* your implementation */
+  }
+  debug(message: string) {
+    /* your implementation */
+  }
+  verbose(message: string) {
+    /* your implementation */
+  }
 }
 ```
 
-Then, we can apply `MyLogger` instance directly:
+Then, supply an instance of `MyLogger` via the `logger` property of the options object.
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
@@ -52,7 +68,7 @@ await app.listen(3000);
 
 #### Extend built-in logger
 
-Lot of use cases require creating your own logger. You don't have to entirely reinvent the wheel though. Simply extend built-in `Logger` class to partially override the default implementation, and use `super` to delegate the call to the parent class.
+Rather than writing a logger from scratch, you may be able to meet your needs by extending the built-in `Logger` class and overriding select behavior of the default implementation. Be sure to call `super` to delegate the call to the parent (built-in) class.
 
 ```typescript
 import { Logger } from '@nestjs/common';
@@ -67,7 +83,7 @@ export class MyLogger extends Logger {
 
 #### Dependency injection
 
-If you want to enable dependency injection in your logger, you have to make the `MyLogger` class a part of the real application. For instance, you can create a `LoggerModule`.
+To enable dependency injection in your custom logger, create an injectable class that implements `LoggerService`. For example, you can create a `LoggerModule` as shown below.
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -80,7 +96,7 @@ import { MyLogger } from './my-logger.service.ts';
 export class LoggerModule {}
 ```
 
-Once `LoggerModule` is imported anywhere, the framework will take charge of creating an instance of your logger. Now, to use the same instance of a logger across the whole app, including bootstrapping and error handling stuff, use following construction:
+Assuming you want to use `MyLogger` throughout the application, you'll import `LoggerModule` in at least one module, and Nest will take care of instantiating it. Then, to tell Nest to use the same instance of `MyLogger` across the whole app, including bootstrapping and error handling, use the following construction:
 
 ```typescript
 const app = await NestFactory.create(ApplicationModule, {
@@ -90,4 +106,4 @@ app.useLogger(app.get(MyLogger));
 await app.listen(3000);
 ```
 
-The only downside of this solution is that your first initialization messages won't be handled by your logger instance, though, it shouldn't really matter at this point.
+Note that this construction will still use the default logger for initialization messages.
