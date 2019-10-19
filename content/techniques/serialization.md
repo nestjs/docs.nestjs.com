@@ -1,14 +1,14 @@
 ### Serialization
 
-Serializers provides clean abstraction layer towards **data manipulation** before sending the actual response. For instance, sensitive data like user's password should be always excluded from the eventual response. Furthermore, certain properties might require additional transformation, let's say, we don't want to send the whole database entity. Instead, we would like to pick only `id` and `name`. The rest should be automatically stripped. Unluckily, manually mapping all entities may bring a lot of confusion.
+Serialization is a process that happens before objects are returned in a network response. This is an appropriate place to provide rules for transforming and sanitizing the data to be returned to the client. For example, sensitive data like passwords should always be excluded from the response. Or, certain properties might require additional transformation, such as sending only a subset of properties of an entity. Performing these transformations manually can be tedious and error prone, and can leave you uncertain that all cases have been covered.
 
 #### Overview
 
-In order to provide a straightforward way to carry out these operations, Nest comes with the `ClassSerializerInterceptor` class. It uses [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. Basically, the `ClassSerializerInterceptor` takes the value returned from the method and call `classToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer) package.
+Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `classToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer). In doing so, it can apply rules expressed by `class-transformer` decorators on an entity/DTO class, as described below.
 
 #### Exclude properties
 
-Let's assume that we want to automatically exclude a `password` property from the following entity:
+Let's assume that we want to automatically exclude a `password` property from a user entity. We annotate the entity as follows:
 
 ```typescript
 import { Exclude } from 'class-transformer';
@@ -27,7 +27,7 @@ export class UserEntity {
 }
 ```
 
-Then, return the instance of this class directly from the controller's method.
+Now consider a controller with a method handler that returns an instance of this class.
 
 ```typescript
 @UseInterceptors(ClassSerializerInterceptor)
@@ -42,9 +42,9 @@ findOne(): UserEntity {
 }
 ```
 
-> info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common` package.
+> info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
-Now, when you call this endpoint, you'll receive a following response:
+When this endpoint is requested, the client receives the following response:
 
 ```json
 {
@@ -54,9 +54,11 @@ Now, when you call this endpoint, you'll receive a following response:
 }
 ```
 
+Note that the interceptor can be applied application-wide (as covered [here](https://docs.nestjs.com/interceptors#binding-interceptors)). The combination of the interceptor and the entity class declaration ensures that **any** method that returns a `UserEntity` will be sure to remove the `password` property. This gives you a measure of centralized enforcement of this business rule.
+
 #### Expose properties
 
-If you want to expose earlier precalculated property, simply use `@Expose()` decorator.
+You can use the `@Expose()` decorator to provide alias names for properties, or to execute a function to calculate a property value (analogous to **getter** functions), as shown below.
 
 ```typescript
 @Expose()
@@ -67,7 +69,7 @@ get fullName(): string {
 
 #### Transform
 
-You can perform additional data transformation using `@Transform()` decorator. For example, you want to pick a name of the `RoleEntity` instead of returning the whole object.
+You can perform additional data transformation using the `@Transform()` decorator. For example, the following construct returns the name property of the `RoleEntity` instead of returning the whole object.
 
 ```typescript
 @Transform(role => role.name)
@@ -76,7 +78,7 @@ role: RoleEntity;
 
 #### Pass options
 
-The transform options may vary depending on the certain factors. In order to override default settings, use `@SerializeOptions()` decorator.
+You may want to modify the default behavior of the transformation functions. To override default settings, pass them in an `options` object with the `@SerializeOptions()` decorator.
 
 ```typescript
 @SerializeOptions({
@@ -88,14 +90,14 @@ findOne(): UserEntity {
 }
 ```
 
-> info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common` package.
+> info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common`.
 
-These options will be passed as a second argument of the `classToPlain()` function.
+Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `classToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
 
-#### Websockets & Microservices
+#### WebSockets & Microservices
 
-All these guidelines concern both WebSockets as well as microservices, regardless of transport method that is being used.
+While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ClassSerializerInterceptor` works the same for WebSockets and Microservices, regardless of the transport method that is used.
 
 #### Learn more
 
-In order to read more about available decorators, options, visit this [page](https://github.com/typestack/class-transformer).
+Read more about available decorators and options as provided by the `class-transformer` package [here](https://github.com/typestack/class-transformer).
