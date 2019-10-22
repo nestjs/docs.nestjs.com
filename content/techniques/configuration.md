@@ -115,6 +115,20 @@ export class AppService {
 
 > info **Hint** Instead of importing `ConfigModule` in each module, you can alternatively declare `ConfigModule` as a [global module](https://docs.nestjs.com/modules#global-modules).
 
+#### Using the Config Service in `main.ts`
+While our config is a stored in a service, it can still be used in the main.ts file.  
+This way, you can use it to store variables such as the application port or the CORS host.
+
+To access it, you must use `app.get`, followed by the name of your service:
+```
+const config = app.get("ConfigService");
+```
+
+You can then use it as usual, by calling the `get` method with your key:
+```
+const port = config.get("PORT");
+```
+
 #### Advanced configuration
 
 We just implemented a basic `ConfigService`. However, this simple version has a couple of disadvantages, which we'll address now:
