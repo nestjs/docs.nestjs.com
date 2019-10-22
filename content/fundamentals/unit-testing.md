@@ -222,7 +222,7 @@ The compiled module has several methods well described in the following table:
 <table>
     <tr>
       <td>
-        <code>createNestApplicaton()</code>
+        <code>createNestApplication()</code>
       </td>
       <td>
         Creates a Nest instance based on a given module (returns <code>INestApplication</code>).
