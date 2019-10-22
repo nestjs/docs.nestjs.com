@@ -27,7 +27,7 @@ import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
 export class ConfigService {
-  private readonly envConfig: { [key: string]: string };
+  private readonly envConfig: Record<string, string>;
 
   constructor(filePath: string) {
     this.envConfig = dotenv.parse(fs.readFileSync(filePath))
@@ -142,9 +142,7 @@ import * as dotenv from 'dotenv';
 import * as Joi from '@hapi/joi';
 import * as fs from 'fs';
 
-export interface EnvConfig {
-  [key: string]: string;
-}
+export type EnvConfig = Record<string, string>;
 
 export class ConfigService {
   private readonly envConfig: EnvConfig;
