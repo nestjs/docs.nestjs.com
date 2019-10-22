@@ -120,12 +120,12 @@ While our config is a stored in a service, it can still be used in the main.ts f
 This way, you can use it to store variables such as the application port or the CORS host.
 
 To access it, you must use `app.get`, followed by the name of your service:
-```
+```typescript
 const config = app.get("ConfigService");
 ```
 
 You can then use it as usual, by calling the `get` method with your key:
-```
+```typescript
 const port = config.get("PORT");
 ```
 
