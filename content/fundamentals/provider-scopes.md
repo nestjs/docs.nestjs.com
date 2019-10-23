@@ -46,11 +46,11 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `scop
 }
 ```
 
-> Info **Hint** Import the `Scope` enum from `@nestjs/common`
-
-> Info **Hint** Singleton scope is used by default, and need not be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
+> info **Hint** Import the `Scope` enum from `@nestjs/common`
 
 > warning **Notice** Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times.
+
+Singleton scope is used by default, and need not be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
 
 #### Controller scope
 
