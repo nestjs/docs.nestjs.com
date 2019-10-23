@@ -1,14 +1,14 @@
 ### Validation
 
-Validation is an essential function for any web application. To automatically validate incoming requests, we leverage [class-validator](https://github.com/typestack/class-validator) package which built-in `ValidationPipe` makes use of underneath. The `ValidationPipe` provides a convenient method to validate incoming client payloads with a variety of powerful validation rules.
+It is best practice to validate the correctness of any data sent into a web application. To automatically validate incoming requests, Nest provides a built-in `ValidationPipe`, which makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
 #### Overview
 
-In [Pipes](/pipes) chapter, we went through the process of building a simplified validation pipe. To better understand what we're doing under the hood, we heavily recommend to read this article. Here, we'll mainly focus on the real use-cases instead.
+In the [Pipes](/pipes) chapter, we went through the process of building a simple validation pipe to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and using some of its advanced customization features.
 
 #### Auto-validation
 
-For the sake of this tutorial, we'll bind `ValidationPipe` to the whole application, thus, all endpoints will be automatically protected from the incorrect data.
+We'll start by binding `ValidationPipe` at the application level, thus ensuring all endpoints are protected from receiving incorrect data.
 
 ```typescript
 async function bootstrap() {
@@ -28,7 +28,7 @@ create(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
-Then, add a few validation rules in our `CreateUserDto`.
+Now we can add a few validation rules in our `CreateUserDto`. We do this using decorators provided by the `class-validator` package, described in detail [here](https://github.com/typestack/class-validator#validation-decorators). In this fashion, any route that uses the `CreateUserDto` will automatically enforce these validation rules.
 
 ```typescript
 import { IsEmail, IsNotEmpty } from 'class-validator';
@@ -42,7 +42,7 @@ export class CreateUserDto {
 }
 ```
 
-Now, when someone requests our endpoint with an invalid `email`, the application would respond with a `400 Bad Request` code and the following response body.
+With these rules in place, if a request hits our endpoint with an invalid `email` property in the request body, the application will automatically respond with a `400 Bad Request` code, along with the following response body:
 
 ```json
 {
@@ -61,7 +61,7 @@ Now, when someone requests our endpoint with an invalid `email`, the application
 }
 ```
 
-Obviously, the response body is not a sole use-case for the`ValidationPipe`. Imagine, that we would like to accept `:id` in the endpoint path. Only numbers shall be valid though. This is pretty simple as well.
+In addition to validating request bodies, the `ValidationPipe` can be used with other request object properties as well. Imagine that we would like to accept `:id` in the endpoint path. To ensure that only numbers are accepted for this request parameter, we can use the following construct:
 
 ```typescript
 @Get(':id')
@@ -70,7 +70,7 @@ findOne(@Param() params: FindOneParams) {
 }
 ```
 
-And `FindOneParams` looks like below.
+`FindOneParams`, like a DTO, is simply a class that defines validation rules using `class-validator`. It would look like this:
 
 ```typescript
 import { IsNumberString } from 'class-validator';
@@ -83,48 +83,50 @@ export class FindOneParams {
 
 #### Disable detailed errors
 
-Error messages help a lot in order to comprehend what was wrong with the data sent through the network. However, in some production environments, you might want to disable detailed errors.
+Error messages can be helpful to explain what was incorrect in a request. However, some production environments prefer to disable detailed errors. Do this by passing an options object to the `ValidationPipe`:
 
 ```typescript
 app.useGlobalPipes(
   new ValidationPipe({
     disableErrorMessages: true,
-  }),
+  })
 );
 ```
 
-Now, error messages won't be populated to the end user.
+As a result, detailed error messages won't be displayed in the response body.
 
 #### Stripping properties
 
-Quite frequently, we would like only predefined (whitelisted) properties to be passed on. For instance, if we expect `email` and `password` properties, when someone sends `age`, this property should be stripped and not available in the DTO. To enable such behavior, set `whitelist` to `true`.
+Our `ValidationPipe` can also filter out properties that should not be received by the method handler. In this case, we can **whitelist** the acceptable properties, and any property not included in the whitelist is automatically stripped from the resulting object. For example, if our handler expects `email` and `password` properties, but a request also includes an `age` property, this property can be automatically removed from the resulting DTO. To enable such behavior, set `whitelist` to `true`.
 
 ```typescript
 app.useGlobalPipes(
   new ValidationPipe({
     whitelist: true,
-  }),
+  })
 );
 ```
 
-This setting will enable auto-stripping of non-whitelisted (without any decorator on top of them) properties. However, if you want to stop the request processing entirely, and return an error response to the user, use `forbidNonWhitelisted` in combination with `whitelist`.
+When set to true, this will automatically remove non-whitelisted properties (those without any decorator in the validation class).
 
-#### Auto payload transforming
+Alternatively, you can stop the request from processing when non-whitelisted properties are present, and return an error response to the user. To enable this, set the `forbidNonWhitelisted` option property to `true`, in combination with setting `whitelist` to `true`.
 
-The `ValidationPipe` doesn't automatically transform your payloads to the corresponding DTO classes. If you take a look at either `createUserDto` or `findOneParams` in your controller methods, you will notice that they're not actual instances of these classes. To enable auto-transformation, set `transform` to `true`.
+#### Transform payload objects
+
+Payloads coming in over the network are plain JavaScript objects. The `ValidationPipe` can automatically transform payloads to be objects typed according to their DTO classes. To enable auto-transformation, set `transform` to `true`.
 
 ```typescript
 app.useGlobalPipes(
   new ValidationPipe({
     transform: true,
-  }),
+  })
 );
 ```
 
-#### Websockets & Microservices
+#### WebSockets & Microservices
 
-All these guidelines concern both WebSockets as well as microservices, regardless of transport method that is being used.
+While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ValidationPipe` works the same for WebSockets and microservices, regardless of the transport method that is used.
 
 #### Learn more
 
-In order to read more about custom validators, error messages, and available decorators, visit this [page](https://github.com/typestack/class-validator).
+Read more about custom validators, error messages, and available decorators as provided by the `class-validator` package [here](https://github.com/typestack/class-validator).
