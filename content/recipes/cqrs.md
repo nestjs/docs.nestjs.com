@@ -187,7 +187,7 @@ export class KillDragonHandler {
 }
 ```
 
-Now everything works as expected. Notice that we need to `commit()` events since they're not being dispatched immediately. Obviosuly, an object doesn't have to exist upfront. We can easily merge type context as well:
+Now everything works as expected. Notice that we need to `commit()` events since they're not being dispatched immediately. Obviously, an object doesn't have to exist upfront. We can easily merge type context as well:
 
 ```typescript
 const HeroModel = this.publisher.mergeContext(Hero);

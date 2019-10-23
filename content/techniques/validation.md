@@ -123,7 +123,7 @@ app.useGlobalPipes(
 
 #### Websockets & Microservices
 
-All these guidelines cornern both WebSockets as well as microservices, regardless of transport method that is being used.
+All these guidelines concern both WebSockets as well as microservices, regardless of transport method that is being used.
 
 #### Learn more
 

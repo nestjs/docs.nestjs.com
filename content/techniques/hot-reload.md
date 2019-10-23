@@ -6,7 +6,7 @@ The highest impact on your application's bootstrapping process has a **TypeScrip
 
 ### With CLI
 
-If you are using the [Nest CLI](http://localhost:4200/cli/overview), the configuration process is pretty straighforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
+If you are using the [Nest CLI](http://localhost:4200/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
 
 #### Installation
 
