@@ -8,6 +8,8 @@ Multer is middleware for handling `multipart/form-data`, which is primarily used
 
 #### Basic example
 
+> info **Notice** If you use `FastifyAdapter`, you also need to register the `fastify-multipart` plugin like this `app.register(require('fastify-multipart'));`
+
 When we want to upload a single file, we simply tie `FileInterceptor()` to the handler, and then, pull outs `file` from the `request` using `@UploadedFile()` decorator.
 
 ```typescript
@@ -26,7 +28,7 @@ uploadFile(file) {
 }
 ```
 
-> info **Hint** `FileInterceptor()` decorator is exported from `@nestjs/platform-express` package while `@UploadedFile()` from `@nestjs/common`.
+> info **Hint** `FileInterceptor()` decorator is exported from `@nestjs/platform-express` or `@nestjs/platform-fastify` package while `@UploadedFile()` from `@nestjs/common`.
 
 The `FileInterceptor()` takes two arguments, a `fieldName` (points to field from HTML form that holds a file) and optional `options` object. These `MulterOptions` are equivalent to those passed into multer constructor (more details [here](https://github.com/expressjs/multer#multeropts))
 
@@ -50,7 +52,7 @@ uploadFile(files) {
 }
 ```
 
-> info **Hint** `FilesInterceptor()` decorator is exported from `@nestjs/platform-express` package while `@UploadedFiles()` from `@nestjs/common`.
+> info **Hint** `FilesInterceptor()` decorator is exported from `@nestjs/platform-express` or `@nestjs/platform-fastify` package while `@UploadedFiles()` from `@nestjs/common`.
 
 #### Multiple files
 
@@ -104,7 +106,7 @@ To customize [multer](https://github.com/expressjs/multer) behavior, you can reg
 
 ```typescript
 MulterModule.register({
-  dest: '/upload',
+  dest: '/upload'
 });
 ```
 
@@ -117,8 +119,8 @@ First possible approach is to use a factory function:
 ```typescript
 MulterModule.registerAsync({
   useFactory: () => ({
-    dest: '/upload',
-  }),
+    dest: '/upload'
+  })
 });
 ```
 
@@ -128,9 +130,9 @@ Obviously, our factory behaves like every other one (might be `async` and is abl
 MulterModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    dest: configService.getString('MULTER_DEST'),
+    dest: configService.getString('MULTER_DEST')
   }),
-  inject: [ConfigService],
+  inject: [ConfigService]
 });
 ```
 
@@ -138,7 +140,7 @@ Alternatively, you are able to use class instead of a factory.
 
 ```typescript
 MulterModule.registerAsync({
-  useClass: MulterConfigService,
+  useClass: MulterConfigService
 });
 ```
 
@@ -149,7 +151,7 @@ Above construction will instantiate `MulterConfigService` inside `MulterModule` 
 class MulterConfigService implements MulterOptionsFactory {
   createMulterOptions(): MulterModuleOptions {
     return {
-      dest: '/upload',
+      dest: '/upload'
     };
   }
 }
@@ -160,7 +162,7 @@ In order to prevent the creation of `MulterConfigService` inside `MulterModule` 
 ```typescript
 MulterModule.registerAsync({
   imports: [ConfigModule],
-  useExisting: ConfigService,
+  useExisting: ConfigService
 });
 ```
 
