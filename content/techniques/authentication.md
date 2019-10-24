@@ -790,10 +790,10 @@ You can also pass strategies an options object in their constructors to configur
 For the local strategy you can pass e.g.:
 ```typescript
 constructor(private readonly authService: AuthService) {
-    super({
-        usernameField: 'email',
-        passwordField: 'password',
-    });
+  super({
+    usernameField: 'email',
+    passwordField: 'password',
+  });
 }
 ```
 Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for property names.
