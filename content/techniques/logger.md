@@ -85,26 +85,7 @@ As shown in the **Custom logger** section above, pass an instance of your extend
 
 #### Use built-in logger
 
-To use the built-in logger **in your own code**, you can simply import the `Logger` class and call its static methods, as shown below.
-
-```typescript
-import { Injectable, Logger } from '@nestjs/common';
-
-@Injectable()
-export class CatsService {
-  private readonly cats: Cat[] = [];
-
-  findAll(): Cat[] {
-    Logger.warn('About to return cats!');
-    return this.cats;
-  }
-}
-```
-
-You can alternatively instantiate the `Logger` in your class, and take advantage of its optional constructor arguments which allow you to pass in:
-
-- `context`: a string displayed in the log output, used to identify the context of a message; see example below
-- `isTimestampEnabled`: a boolean flag that controls display of an elapsed time in the log output; defaults to false
+To use the built-in logger **in your own code**, simply instantiate the `Logger` in your class, and take advantage of its optional `context` constructor argument, which allows you to pass in a string to uniquely identify the logging context. The context string will automatically be appended to your log message:
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
@@ -121,7 +102,7 @@ export class CatsService {
 }
 ```
 
-If you've created a custom logger, or extended the base `Logger` class, and you instantiate the `Logger` class in some feature class (as shown above), your static method calls on the `Logger` class access the customized logger class. With this construction, you get consistent customized logging behavior for both Nest system messages (bootstrap, error handling, etc.), and your own log messages (e.g., `this.logger.warn(...)` in the example above).
+If you've created a custom logger, or extended the base `Logger` class, and you instantiate the `Logger` class in some feature class (as shown above), your method calls on the `Logger` class access the customized logger class. With this construction, you get consistent customized logging behavior for both Nest system messages (bootstrap, error handling, etc.), and your own log messages (e.g., `this.logger.warn(...)` in the example above).
 
 #### Dependency injection
 
