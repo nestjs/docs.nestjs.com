@@ -1,14 +1,14 @@
 ### Mongo
 
-There are two ways of dealing with the MongoDB database. You can either use an [ORM](https://github.com/typeorm/typeorm) that provides a MongoDB support or [Mongoose](http://mongoosejs.com) which is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool. If you wanna stay with the **ORM** you can follow these steps. Otherwise, we'll use the dedicated `@nestjs/mongoose` package.
+Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](http://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
 
-Firstly, we need to install all of the required dependencies:
+Start by installing the required dependencies:
 
 ```bash
 $ npm install --save @nestjs/mongoose mongoose
 ```
 
-Once the installation process is completed, we can import the `MongooseModule` into the root `ApplicationModule`.
+Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
 
 ```typescript
 @@filename(app.module)
@@ -18,10 +18,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [MongooseModule.forRoot('mongodb://localhost/nest')],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
-The `forRoot()` method accepts the same configuration object as `mongoose.connect()` from the [Mongoose](http://mongoosejs.com) package.
+The `forRoot()` method accepts the same configuration object as `mongoose.connect()` from the Mongoose package, as described [here](https://mongoosejs.com/docs/connections.html).
 
 #### Model injection
 
@@ -38,9 +38,9 @@ export const CatSchema = new mongoose.Schema({
 });
 ```
 
-The `CatsSchema` belongs to the `cats` directory. This directory represents the `CatsModule`. It's your decision where you gonna keep your schema files. From our point of view, the best way's to hold them nearly their **domain**, in the appropriate module directory.
+The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them them near their related **domain** objects, in the appropriate module directory.
 
-Let's have a look at the `CatsModule`:
+Let's look at the `CatsModule`:
 
 ```typescript
 @@filename(cats.module)
@@ -58,7 +58,9 @@ import { CatSchema } from './schemas/cat.schema';
 export class CatsModule {}
 ```
 
-This module uses `forFeature()` method to define which models shall be registered in the current scope. If you want to use the models in another module, you have to add MongooseModule to the `exports` section and import the `CatsModule` in the other module. Thanks to that, we can inject the `CatModel` to the `CatsService` using the `@InjectModel()` decorator:
+The `MongooseModule` provides the `forFeature()` method to configure the module, including defining which models should be registered in the current scope. If you also want to use the models in another module, add MongooseModule to the `exports` section of `CatsModule` and import `CatsModule` in the other module.
+
+Once you've registered the schema, you can inject a `Cat` model into the `CatsService` using the `@InjectModel()` decorator:
 
 ```typescript
 @@filename(cats.service)
@@ -106,9 +108,9 @@ export class CatsService {
 
 #### Testing
 
-When it comes to unit test our application, we usually want to avoid any database connection, making our test suits independent and their execution process quick as possible. But our classes might depend on models that are pulled from the connection instance. What's then? The solution is to create fake models. In order to achieve that, we should set up [custom providers](/fundamentals/custom-providers) . In fact, each registered model is represented by `NameModel` token, where `Name` is a model's name.
+When unit testing an application, we usually want to avoid any database connection, making our test suites simpler to set up and faster to execute. But our classes might depend on models that are pulled from the connection instance. How do we resolve these classes? The solution is to create mock models.
 
-The `@nestjs/mongoose` package exposes `getModelToken()` function that returns prepared token based on a given model's name.
+To make this easier, the `@nestjs/mongoose` package exposes a `getModelToken()` function that returns a prepared [injection token](https://docs.nestjs.com/fundamentals/custom-providers#di-fundamentals) based on a token name. Using this token, you can easily provide a mock implementation using any of the standard [custom provider](/fundamentals/custom-providers) techniques, including `useClass`, `useValue`, and `useFactory`. For example:
 
 ```typescript
 @Module({
@@ -123,13 +125,13 @@ The `@nestjs/mongoose` package exposes `getModelToken()` function that returns p
 export class CatsModule {}
 ```
 
-Now a hardcoded `catModel` will be used as a `Model<Cat>`. Whenever any provider asks for `Model<Cat>` using an `@InjectModel()` decorator, Nest will use a registered `catModel` object.
+In this example, a hardcoded `catModel` (object instance) will be provided whenever any consumer injects a `Model<Cat>` using an `@InjectModel()` decorator.
 
 #### Async configuration
 
-Quite often you might want to asynchronously pass your module options instead of passing them beforehand. In such case, use `forRootAsync()` method, that provides a couple of various ways to deal with async data.
+When you need to pass module options asynchronously instead of statically, use the `forRootAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
 
-First possible approach is to use a factory function:
+One technique is to use a factory function:
 
 ```typescript
 MongooseModule.forRootAsync({
@@ -139,7 +141,7 @@ MongooseModule.forRootAsync({
 });
 ```
 
-Obviously, our factory behaves like every other one (might be `async` and is able to inject dependencies through `inject`).
+Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory), our factory function can be `async` and can inject dependencies through `inject`.
 
 ```typescript
 MongooseModule.forRootAsync({
@@ -151,7 +153,7 @@ MongooseModule.forRootAsync({
 });
 ```
 
-Alternatively, you are able to use class instead of a factory.
+Alternatively, you can configure the `MongooseModule` using a class instead of a factory, as shown below:
 
 ```typescript
 MongooseModule.forRootAsync({
@@ -159,7 +161,7 @@ MongooseModule.forRootAsync({
 });
 ```
 
-Above construction will instantiate `MongooseConfigService` inside `MongooseModule` and will leverage it to create options object. The `MongooseConfigService` has to implement `MongooseOptionsFactory` interface.
+The construction above instantiates `MongooseConfigService` inside `MongooseModule`, using it to create the required options object. Note that in this example, the `MongooseConfigService` has to implement the `MongooseOptionsFactory` interface, as shown below. The `MongooseModule` will call the `createMongooseOptions()` method on the instantiated object of the supplied class.
 
 ```typescript
 @Injectable()
@@ -172,7 +174,7 @@ class MongooseConfigService implements MongooseOptionsFactory {
 }
 ```
 
-In order to prevent the creation of `MongooseConfigService` inside `MongooseModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
+If you want to reuse an existing options provider instead of creating a private copy inside the `MongooseModule`, use the `useExisting` syntax.
 
 ```typescript
 MongooseModule.forRootAsync({
@@ -180,8 +182,6 @@ MongooseModule.forRootAsync({
   useExisting: ConfigService,
 });
 ```
-
-It works the same as `useClass` with one critical difference - `MongooseModule` will lookup imported modules to reuse already created `ConfigService`, instead of instantiating it on its own.
 
 #### Example
 

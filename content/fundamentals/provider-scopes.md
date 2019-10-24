@@ -1,33 +1,33 @@
 ### Injection scopes
 
-For the people coming from different languages, it might be awkward that in Nest almost everything is shared across the incoming requests. We have a connection pool to the database, singleton services with a global state etc. Generally, Node.js doesn't follow request/response Multi-Threaded Stateless Model in which every request is being processed by the separate thread. Hence, using singleton instances is fully **safe** for our applications.
+For people coming from different programming language backgrounds, it might be unexpected to learn that in Nest, almost everything is shared across incoming requests. We have a connection pool to the database, singleton services with global state, etc. Remember that Node.js doesn't follow the request/response Multi-Threaded Stateless Model in which every request is processed by a separate thread. Hence, using singleton instances is fully **safe** for our applications.
 
-However, there are edge-cases when request-based lifetime of the controller may be an intentional behavior, for instance per-request cache in GraphQL applications, request tracking or multi-tenancy. How can we handle them?
+However, there are edge-cases when request-based lifetime may be the desired behavior, for instance per-request caching in GraphQL applications, request tracking, and multi-tenancy. Injection scopes provide a mechanism to obtain the desired provider lifetime behavior.
 
-#### Scopes
+#### Provider scope
 
-Basically, every provider can act as a singleton, be request-scoped, and be switched to the transient mode. See the following table to get familiar with the differences between them.
+A provider can have any of the following scopes:
 
 <table>
   <tr>
     <td><code>SINGLETON</code></td>
-    <td>Each provider can be <strong>shared</strong> across multiple classes. The provider lifetime is strictly tied to the application lifecycle. Once the application has bootstrapped, all providers are already instantiated. The singleton scope is being used by default.</td>
+    <td>A single instance of the provider is shared across the entire application. The instance lifetime is tied directly to the application lifecycle. Once the application has bootstrapped, all singleton providers have been instantiated. Singleton scope is used by default.</td>
   </tr>
   <tr>
     <td><code>REQUEST</code></td>
-    <td>A new instance of the provider is going to be exclusively created for every incoming <strong>request</strong> and garbage collected after the request processing is completed.</td>
+    <td>A new instance of the provider is created exclusively for each incoming <strong>request</strong>.  The instance is garbage-collected after the request has completed processing.</td>
   </tr>
   <tr>
     <td><code>TRANSIENT</code></td>
-    <td>Transient providers cannot be shared between providers. Every time when another provider asks the Nest container for particular transient provider, the container will create a new, dedicated instance.</td>
+    <td>Transient providers are not shared across consumers. Each consumer that injects a transient provider will receive a new, dedicated instance.</td>
   </tr>
 </table>
 
-> info **Hint** Using a singleton scope is always the **recommended** way. Sharing providers among requests leads to lower memory consumption and thus to better performance of your application (no requirement to instantiate class every time).
+> info **Hint** Using singleton scope is **recommended** for most use cases. Sharing providers across consumers and across requests means that an instance can be cached and its initialization occurs only once, during application startup.
 
 #### Usage
 
-In order to switch to another injection scope, you have to pass an argument to the `@Injectable()` decorator:
+Specify injection scope by passing the `scope` property to the `@Injectable()` decorator options object:
 
 ```typescript
 import { Injectable, Scope } from '@nestjs/common';
@@ -36,7 +36,7 @@ import { Injectable, Scope } from '@nestjs/common';
 export class CatsService {}
 ```
 
-In the case of [custom providers](/fundamentals/custom-providers), you have to set an extra `scope` property:
+Similarly, for [custom providers](/fundamentals/custom-providers), set the `scope` property in the long-hand form for a provider registration:
 
 ```typescript
 {
@@ -46,7 +46,17 @@ In the case of [custom providers](/fundamentals/custom-providers), you have to s
 }
 ```
 
-And when it comes to controllers, pass the `ControllerOptions` object:
+> info **Hint** Import the `Scope` enum from `@nestjs/common`
+
+> warning **Notice** Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times.
+
+Singleton scope is used by default, and need not be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
+
+#### Controller scope
+
+Controllers can also have scope, which applies to all request method handlers declared in that controller. Like provider scope, the scope of a controller declares its lifetime. For a request-scoped controller, a new instance is created for each inbound request, and garbage-collected when the request has completed processing.
+
+Declare controller scope with the `scope` property of the `ControllerOptions` object:
 
 ```typescript
 @Controller({
@@ -56,19 +66,15 @@ And when it comes to controllers, pass the `ControllerOptions` object:
 export class CatsController {}
 ```
 
-> warning **Notice** Gateways should never rely on request-scoped providers because they act as singletons. One gateway encapsulates a real socket inside and cannot be instantiated multiple times.
+#### Scope hierarchy
 
-#### Per-request injection
+Scope bubbles up the injection chain. A controller that depends on a request-scoped provider will, itself, be request-scoped.
 
-The request-scoped providers have to be used very carefully. Keep in mind that the scope actually bubbles up in the **injection chain**. If your controller depends on a provider which is request-scoped, it means that your controller is actually request-scoped as well.
-
-Imagine the following chain: `CatsController <- CatsService <- CatsRepository`. If your `CatsService` is request-scoped (and the rest are, theoretically, singletons), the `CatsController` would become request-scoped too (because request-scoped instance have to be injected into a newly created controller), whereas `CatsRepository` would remain as a singleton.
-
-> **Warning** The circular dependencies in this case will lead to very painful side-effects and thus, you should certainly avoid creating them.
+Imagine the following dependency graph: `CatsController <- CatsService <- CatsRepository`. If `CatsService` is request-scoped (and the others are default singletons), the `CatsController` will become request-scoped as it is dependent on the injected service. The `CatsRepository`, which is not dependent, would remain singleton-scoped.
 
 #### Request provider
 
-In the HTTP application, using request-scoped providers gives you the capability to inject an original request reference.
+In an HTTP server-based application (e.g., using `@nestjs/platform-express` or `@nestjs/platform-fastify`), you may want to access a reference to the original request object when using request-scoped providers. You can do this by injecting the `REQUEST` object.
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -81,7 +87,7 @@ export class CatsService {
 }
 ```
 
-However, this functionality doesn't work with either micro services or GraphQL applications. In [GraphQL](/graphql/quick-start) applications, you can inject `CONTEXT` instead.
+Because of underlying platform/protocol differences, you access the inbound request slightly differently for Microservice or GraphQL applications. In [GraphQL](/graphql/quick-start) applications, you inject `CONTEXT` instead of `REQUEST`:
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -93,8 +99,8 @@ export class CatsService {
 }
 ```
 
-Afterwards, you can configure your `context` value (in the `GraphQLModule`) to contain `request` as its property.
+You then configure your `context` value (in the `GraphQLModule`) to contain `request` as its property.
 
 #### Performance
 
-Using request-scoped providers will obviously affect application performance. Even though Nest is trying to cache as much metadata as possible, it will still have to create an instance of your class on each request. Hence, it will slow down your average response time and overall benchmarking result. If your provider doesn't necessarily need to be request-scoped, you should rather stick with the singleton scope.
+Using request-scoped providers will have an impact on application performance. While Nest tries to cache as much metadata as possible, it will still have to create an instance of your class on each request. Hence, it will slow down your average response time and overall benchmarking result. Unless a provider must be request-scoped, it is strongly recommended that you use the default singleton scope.
