@@ -131,7 +131,7 @@ async findOne(firstName) {
 }
 ```
 
-You can use this same decorator with different keys to access different properties.  If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
+You can use this same decorator with different keys to access different properties. If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
 
 #### Working with pipes
 
@@ -150,3 +150,32 @@ async findOne(user) {
   console.log(user);
 }
 ```
+
+#### Decorators composition
+
+Nest provides a helper method to compose different decorators, for example, supposing that want to combine all decorators related to authentication this could be defined as:
+
+```typescript
+import { applyDecorators, NestCustomDecorator } from "@nestjs/core";
+
+export function Auth(roles: UserRole | UserRole[]): NestCustomDecorator {
+  return applyDecorators(
+    SetMetadata("roles", Array.isArray(roles) ? roles : [roles]),
+    UseGuards(AuthGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: "Unauthorized" })
+  );
+}
+```
+
+And used as:
+
+```typescript
+import { Auth } from '../auth/auth.decorator';
+
+@Get('')
+@Auth('admin')
+myAuthMethod() { [...] }
+```
+
+Applying all four decorators at once.
