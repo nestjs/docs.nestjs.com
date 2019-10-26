@@ -155,15 +155,17 @@ Another feature that is worth mentioning is "relations". In your CRUD controller
   model: {
     type: Hero,
   },
-  join: {
-    profile: {
-      exclude: ['secret'],
-    },
-    faction: {
-      eager: true,
-      only: ['name'],
-    },
-  },
+  query: {
+    join: {
+      profile: {
+        exclude: ['secret'],
+      },
+      faction: {
+        eager: true,
+        only: ['name'],
+      },
+    }
+  }  
 })
 @Controller('heroes')
 export class HeroesController {
