@@ -35,6 +35,7 @@ import { BasePageComponent } from './homepage/pages/page/page.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { SharedModule } from './shared/shared.module';
+import { ResourcesComponent } from './homepage/pages/resources/resources.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -72,6 +73,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     CustomDecoratorsComponent,
     ApplicationContextComponent,
     MigrationComponent,
+    ResourcesComponent,
     SupportComponent,
     WhoUsesComponent,
     EnterpriseComponent,
