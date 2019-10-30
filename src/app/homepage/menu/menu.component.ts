@@ -112,6 +112,7 @@ export class MenuComponent implements OnInit {
           title: 'Other features',
           path: '/graphql/tooling',
         },
+        { title: 'Federation', path: '/graphql/federation' },
       ],
     },
     {
