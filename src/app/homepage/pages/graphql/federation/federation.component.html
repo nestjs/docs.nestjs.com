@@ -36,39 +36,38 @@ extend type Query &#123;
 &#125;</code></pre>
 <p>Our resolver has one extra method: <code>resolveReference</code>. It&#39;ll called by the Apollo Gateway whenever a related resource requires a User instance. We&#39;ll see an example of this in the Posts service later on. Please note the <code>@ResolveReference</code> decorator.</p>
 <pre><code class="language-typescript">
-import &#123; Args, Query, Resolver, ResolveReference &#125; from &#39;@nestjs/graphql&#39;;
-import &#123; UsersService &#125; from &#39;./users.service&#39;;
+import &#123; Args, Query, Resolver, ResolveReference &#125; from &quot;@nestjs/graphql&quot;;
+import &#123; UsersService &#125; from &quot;./users.service&quot;;
 
-@Resolver(&#39;User&#39;)
+@Resolver(&quot;User&quot;)
 export class UsersResolvers &#123;
   constructor(private readonly usersService: UsersService) &#123;&#125;
 
   @Query()
-  getUser(@Args(&#39;id&#39;) id: string) &#123;
+  getUser(@Args(&quot;id&quot;) id: string) &#123;
     return this.usersService.findById(id);
   &#125;
 
   @ResolveReference()
-  resolveReference(reference: &#123; __typename: string, id: string &#125;) &#123;
+  resolveReference(reference: &#123; __typename: string; id: string &#125;) &#123;
     return this.usersService.findById(reference.id);
   &#125;
 &#125;</code></pre>
 <p>Finally, we hook it everything up in a module together with a <code>GraphQLFederationModule</code>. This module accepts the same options as the regular <code>GraphQLModule</code>.</p>
 <pre><code class="language-typescript">
-import &#123; Module &#125; from &#39;@nestjs/common&#39;;
-import &#123; GraphQLFederationModule &#125; from &#39;@nestjs/graphql&#39;;
-import &#123; UsersResolvers &#125; from &#39;./users.resolvers&#39;;
+import &#123; Module &#125; from &quot;@nestjs/common&quot;;
+import &#123; GraphQLFederationModule &#125; from &quot;@nestjs/graphql&quot;;
+import &#123; UsersResolvers &#125; from &quot;./users.resolvers&quot;;
 
 @Module(&#123;
   imports: [
     GraphQLFederationModule.forRoot(&#123;
-      typePaths: [&#39;**/*.graphql&#39;],
-    &#125;),
+      typePaths: [&quot;**/*.graphql&quot;]
+    &#125;)
   ],
   providers: [UsersResolvers]
 &#125;)
-export class AppModule &#123;&#125;
-</code></pre>
+export class AppModule &#123;&#125;</code></pre>
 <h4 appAnchor id="federated-example-posts"><span>Federated example: Posts</span></h4>
 <p>The Posts service references the User type in its schema by marking it with the <code>extend</code> keyword. It also adds one property to the User type. Note the <code>@key</code> directive used for matching instances of User, and the <code>@external</code> directive indicating that the <code>id</code> field is managed elsewhere.</p>
 <pre><code class="language-java">
@@ -89,35 +88,34 @@ extend type Query &#123;
 &#125;</code></pre>
 <p>Our resolver has one method of interest here: <code>getUser</code>. It returns a reference containing <code>__typename</code> and any additional properties your application needs to resolve the reference, in this case only an <code>id</code>. The <code>__typename</code> is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance; The User service discussed above will be called on the <code>resolveReference</code> method.</p>
 <pre><code class="language-typescript">
-import &#123; Query, Resolver, Parent, ResolveProperty &#125; from &#39;@nestjs/graphql&#39;;
-import &#123; PostsService &#125; from &#39;./posts.service&#39;;
-import &#123; Post &#125; from &#39;./posts.interfaces&#39;;
+import &#123; Query, Resolver, Parent, ResolveProperty &#125; from &quot;@nestjs/graphql&quot;;
+import &#123; PostsService &#125; from &quot;./posts.service&quot;;
+import &#123; Post &#125; from &quot;./posts.interfaces&quot;;
 
-@Resolver(&#39;Post&#39;)
+@Resolver(&quot;Post&quot;)
 export class PostsResolvers &#123;
   constructor(private readonly postsService: PostsService) &#123;&#125;
 
-  @Query(&#39;getPosts&#39;)
+  @Query(&quot;getPosts&quot;)
   getPosts() &#123;
     return this.postsService.findAll();
   &#125;
 
-  @ResolveProperty(&#39;user&#39;)
+  @ResolveProperty(&quot;user&quot;)
   getUser(@Parent() post: Post) &#123;
-    return &#123; __typename: &#39;User&#39;, id: post.userId &#125;;
+    return &#123; __typename: &quot;User&quot;, id: post.userId &#125;;
   &#125;
-&#125;
-</code></pre>
+&#125;</code></pre>
 <p>The Posts service has virtually the same module, but is included below for the sake of completeness</p>
 <pre><code class="language-typescript">
-import &#123; Module &#125; from &#39;@nestjs/common&#39;;
-import &#123; GraphQLFederationModule &#125; from &#39;@nestjs/graphql&#39;;
-import &#123; PostsResolvers &#125; from &#39;./posts.resolvers&#39;;
+import &#123; Module &#125; from &quot;@nestjs/common&quot;;
+import &#123; GraphQLFederationModule &#125; from &quot;@nestjs/graphql&quot;;
+import &#123; PostsResolvers &#125; from &quot;./posts.resolvers&quot;;
 
 @Module(&#123;
   imports: [
     GraphQLFederationModule.forRoot(&#123;
-      typePaths: [&#39;**/*.graphql&#39;],
+      typePaths: [&quot;**/*.graphql&quot;],
     &#125;),
   ],
   providers: [PostsResolvers]
@@ -127,8 +125,8 @@ export class AppModule &#123;&#125;</code></pre>
 <p>First make sure you install the optional dependency for the gateway: <code>npm install --save @apollo/gateway</code>.</p>
 <p>Our gateway only needs a list of endpoints and will auto-discover the schemas from there. The code for our gateway is therefore very short:</p>
 <pre><code class="language-typescript">
-import &#123; Module &#125; from &#39;@nestjs/common&#39;;
-import &#123; GraphQLGatewayModule &#125; from &#39;@nestjs/graphql&#39;;
+import &#123; Module &#125; from &quot;@nestjs/common&quot;;
+import &#123; GraphQLGatewayModule &#125; from &quot;@nestjs/graphql&quot;;
 
 @Module(&#123;
   imports: [
@@ -139,8 +137,8 @@ import &#123; GraphQLGatewayModule &#125; from &#39;@nestjs/graphql&#39;;
       &#125;,
       gateway: &#123;
         serviceList: [
-          &#123; name: &#39;users&#39;, url: &#39;http://user-service/graphql&#39; &#125;,
-          &#123; name: &#39;posts&#39;, url: &#39;http://post-service/graphql&#39; &#125;,
+          &#123; name: &quot;users&quot;, url: &quot;http://user-service/graphql&quot; &#125;,
+          &#123; name: &quot;posts&quot;, url: &quot;http://post-service/graphql&quot; &#125;,
         ],
       &#125;,
     &#125;),
@@ -150,22 +148,24 @@ export class AppModule &#123;&#125;</code></pre>
 <blockquote class="
 warn "><strong>Warning</strong> Apollo recommends that you don&#39;t rely on the service discovery in a production environment but use their <a rel='nofollow' target='_blank' href="https://www.apollographql.com/docs/graph-manager/federation/">Graph Manager</a> instead
 </blockquote>
-<h4 appAnchor id="build-service"><span>Build Service</span></h4>
-<p>You can customize the requests between the gateway and federated services using a build service. You can easily extend the default <code>RemoteGraphQLDataSource</code> and implement one of the hooks. Please refer to <a rel='nofollow' target='_blank' href="https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/#remotegraphqldatasource">Apollo Docs on RemoteGraphQLDataSource</a> for more information about the possibilities.</p>
+<h4 appAnchor id="sharing-context"><span>Sharing context</span></h4>
+<p>You can customize the requests between the gateway and federated services using a build service. This allows you to share context about the request. You can easily extend the default <code>RemoteGraphQLDataSource</code> and implement one of the hooks. Please refer to <a rel='nofollow' target='_blank' href="https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/#remotegraphqldatasource">Apollo Docs on RemoteGraphQLDataSource</a> for more information about the possibilities.</p>
 <pre><code class="language-typescript">
-import &#123; Module &#125; from &#39;@nestjs/common&#39;;
-import &#123; GRAPHQL_GATEWAY_BUILD_SERVICE, GraphQLGatewayModule &#125; from &#39;@nestjs/graphql&#39;;
-import &#123; RemoteGraphQLDataSource &#125; from &#39;@apollo/gateway&#39;;
+import &#123; Module &#125; from &quot;@nestjs/common&quot;;
+import &#123; GRAPHQL_GATEWAY_BUILD_SERVICE, GraphQLGatewayModule &#125; from &quot;@nestjs/graphql&quot;;
+import &#123; RemoteGraphQLDataSource &#125; from &quot;@apollo/gateway&quot;;
+
+class AuthenticatedDataSource extends RemoteGraphQLDataSource &#123;
+  willSendRequest(&#123; request, context &#125;) &#123;
+    request.http.headers.set(&#39;x-user-id&#39;, context.userId);
+  &#125;
+&#125;
 
 @Module(&#123;
-  providers: [
-    &#123;
-      provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
-      useValue: (&#123; name, url &#125;) =&gt; &#123;
-        return new RemoteGraphQLDataSource(&#123; url &#125;);
-      &#125;,
-    &#125;,
-  ],
+  providers: [&#123;
+    provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
+    useFactory: (&#123; name, url &#125;) =&gt; new AuthenticatedDataSource(&#123; url &#125;),
+  &#125;],
   exports: [GRAPHQL_GATEWAY_BUILD_SERVICE],
 &#125;)
 class BuildServiceModule &#123;&#125;
@@ -185,7 +185,7 @@ class BuildServiceModule &#123;&#125;
 &#125;)
 export class AppModule &#123;&#125;</code></pre>
 <h4 appAnchor id="async-configuration"><span>Async configuration</span></h4>
-<p>Both the Federation and Gateway modules support asynchronous initialisation using the same <code>forRootAsync</code> that&#39;s documented in <a routerLink="/graphql/quickstart#async-configuration">Quick start</a></p>
+<p>Both the Federation and Gateway modules support asynchronous initialisation using the same <code>forRootAsync</code> that&#39;s documented in <a routerLink="/graphql/quick-start#async-configuration">Quick start</a></p>
 
 </div>
 
