@@ -46,6 +46,10 @@ Nest provides a set of useful **param decorators** that you can use together wit
       <td><code>@Headers(param?: string)</code></td>
       <td><code>req.headers</code> / <code>req.headers[param]</code></td>
     </tr>
+    <tr>
+      <td><code>@Ip()</code></td>
+      <td><code>req.ip</code></td>
+    </tr>
   </tbody>
 </table>
 
