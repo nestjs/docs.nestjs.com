@@ -185,4 +185,4 @@ MongooseModule.forRootAsync({
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/14-mongoose-base).
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).
