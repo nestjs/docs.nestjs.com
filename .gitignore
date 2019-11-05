@@ -96,7 +96,7 @@ src/app/homepage/pages/recipes/terminus/terminus.component.html
 src/app/homepage/pages/techniques/caching/caching.component.html
 src/app/homepage/pages/techniques/configuration/configuration.component.html
 src/app/homepage/pages/techniques/file-upload/file-upload.component.html
-src/app/homepage/pages/techniques/hot-reload/hot-reload.component.html
+# src/app/homepage/pages/techniques/hot-reload/hot-reload.component.html
 src/app/homepage/pages/techniques/compression/compression.component.html
 src/app/homepage/pages/techniques/http-module/http-module.component.html
 src/app/homepage/pages/techniques/logger/logger.component.html
