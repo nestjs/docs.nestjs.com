@@ -6,7 +6,7 @@ The highest impact on your application's bootstrapping process has a **TypeScrip
 
 ### With CLI
 
-If you are using the [Nest CLI](http://localhost:4200/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
+If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -81,7 +81,7 @@ $ npm run start
 
 ### Without CLI
 
-If you are not using the [Nest CLI](http://localhost:4200/cli/overview), the configuration will be slightly more complex (will require more manual steps).
+If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration will be slightly more complex (will require more manual steps).
 
 #### Installation
 
