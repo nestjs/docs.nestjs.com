@@ -245,7 +245,7 @@ Swagger module provides a way to support multiple specifications. In other words
 
 In order to allow `SwaggerModule` to support multi-spec, your application must be written with modular approach. The `createDocument()` method takes in a 3rd argument: `extraOptions` which is an object where a property `include` expects an array of modules.
 
-You can setup mltiple specifications support as shown below:
+You can setup multiple specifications support as shown below:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
