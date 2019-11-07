@@ -60,7 +60,7 @@ While the application is running, open your browser and navigate to `http://loca
 
 As you may noticed, the `SwaggerModule` automatically reflects all of your endpoints. Also, in order to display the Swagger UI, `@nestjs/swagger` makes use of either `swagger-ui-express` or `fastify-swagger` depending on the platform.
 
-> info **Hint** If you want to download generated Swagger JSON file, you can navigatet to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Hint** If you want to download generated Swagger JSON file, you can navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
 #### Route parameters
 
