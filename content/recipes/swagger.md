@@ -310,7 +310,7 @@ While `http://localhost:3000/api/dogs` will expose a Swagger UI for your dogs:
 
 #### Tags
 
-In order to attach a controller to a specific tag, use `@ApiTags(...tags)` decorator.
+In order to attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 
 ```typescript
 @ApiTags('cats')
