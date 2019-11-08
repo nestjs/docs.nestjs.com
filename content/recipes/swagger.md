@@ -525,7 +525,16 @@ All of the available OpenAPI decorators has an `Api` prefix to be easily disting
 
 TypeScript metadata reflaction system has several limitations, which make it impossible to, for instance, determine what properties a class consist of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at the compilation time. Hence, we created a plugin that enhances TypeScript compilation process to reduce the boilerplate code.
 
-If you use [Nest CLI](/cli/overview), simply open `nest-cli.json` and add `plugins` configuration:
+Swagger plugin will automatically:
+
+- annotate all DTO properties with `@ApiProperty` unless `@ApiHideProperty` is used
+- set `required` property depending on the question mark (e.g. `name?: string` = `required: false`)
+- set `type` or `enum` property depending on the type (supports arrays as well)
+- set `default` property based on the assigned default value
+- set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
+- add response decorator to every endpoint with a proper status and `type` (response model)
+
+In order to enable plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add `plugins` configuration:
 
 ```javascript
 {
