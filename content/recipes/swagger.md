@@ -60,7 +60,7 @@ While the application is running, open your browser and navigate to `http://loca
 
 As you may noticed, the `SwaggerModule` automatically reflects all of your endpoints. Also, in order to display the Swagger UI, `@nestjs/swagger` makes use of either `swagger-ui-express` or `fastify-swagger` depending on the platform.
 
-> info **Hint** If you want to download generated Swagger JSON file, you can navigatet to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Hint** If you want to download generated Swagger JSON file, you can navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
 #### Route parameters
 
@@ -245,7 +245,7 @@ Swagger module provides a way to support multiple specifications. In other words
 
 In order to allow `SwaggerModule` to support multi-spec, your application must be written with modular approach. The `createDocument()` method takes in a 3rd argument: `extraOptions` which is an object where a property `include` expects an array of modules.
 
-You can setup mltiple specifications support as shown below:
+You can setup multiple specifications support as shown below:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -310,7 +310,7 @@ While `http://localhost:3000/api/dogs` will expose a Swagger UI for your dogs:
 
 #### Tags
 
-In order to attach a controller to a specific tag, use `@ApiTags(...tags)` decorator.
+In order to attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 
 ```typescript
 @ApiTags('cats')
