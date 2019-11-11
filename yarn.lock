@@ -1020,10 +1020,10 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.146.tgz#de0d2c8610012f12a6a796455054cbc654f8fecf"
   integrity sha512-JzJcmQ/ikHSv7pbvrVNKJU5j9jL9VLf3/gqs048CEnBVVVEv4kve3vLxoPHGvclutS+Il4SBIuQQ087m1eHffw==
 
-"@types/marked@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.7.0.tgz#b9de675412d26515b069ad478cf43165816d1d90"
-  integrity sha512-UcrlF5NyA7DwckjJeE7xUfEB83i4a3KsS+dH7/gqWKJnTnUOW0W0eL52EhtB6+nKw9LTX/IS5nsK3wDhjZ1GAA==
+"@types/marked@0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.7.1.tgz#2f56cb2aa942efde23bd2beb9e07f4b6ddd25563"
+  integrity sha512-QMgeCgUMyNKfteIzmVuFcyGXORiD67fbEQbwbfJLIn+HejcyaQm0H00q66PJz8bMb8Ve4JrsJ2JXuStyZ4DjZg==
 
 "@types/marked@^0.6.5":
   version "0.6.5"
