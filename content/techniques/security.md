@@ -8,16 +8,16 @@ In this chapter you will learn some techniques that will allow you to increase t
 
 ```bash
 $ npm i --save helmet
+$ npm install @types/helmet
 ```
 
 Once the installation is completed, apply it as a global middleware.
 
 ```typescript
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 // somewhere in your initialization file
 app.use(helmet());
 ```
-
 #### CORS
 
 Cross-origin resource sharing (CORS) is a mechanism that allows resources to be requested from another domain. Under the hood, Nest makes use of [cors](https://github.com/expressjs/cors) package, that provides a bunch of options that you may customize based on your requirements. In order to enable CORS, you have to call `enableCors()` method.
