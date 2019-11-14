@@ -125,8 +125,8 @@ import { PostsResolvers } from "./posts.resolvers";
 @Module({
   imports: [
     GraphQLFederationModule.forRoot({
-      typePaths: ["**/*.graphql"],
-    }),
+      typePaths: ["**/*.graphql"]
+    })
   ],
   providers: [PostsResolvers]
 })
@@ -148,16 +148,16 @@ import { GraphQLGatewayModule } from "@nestjs/graphql";
     GraphQLGatewayModule.forRoot({
       server: {
         // ... Apollo server options
-        cors: true,
+        cors: true
       },
       gateway: {
         serviceList: [
           { name: "users", url: "http://user-service/graphql" },
-          { name: "posts", url: "http://post-service/graphql" },
-        ],
-      },
-    }),
-  ],
+          { name: "posts", url: "http://post-service/graphql" }
+        ]
+      }
+    })
+  ]
 })
 export class AppModule {}
 ```
@@ -172,18 +172,29 @@ You can customize the requests between the gateway and federated services using 
 import { Module } from "@nestjs/common";
 import { GRAPHQL_GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from "@nestjs/graphql";
 import { RemoteGraphQLDataSource } from "@apollo/gateway";
+import { decode } from 'jsonwebtoken';
 
 class AuthenticatedDataSource extends RemoteGraphQLDataSource {
-  willSendRequest({ request, context }) {
+  async willSendRequest({ request, context }) {
+    const { userId } = await decode(context.jwt);
     request.http.headers.set('x-user-id', context.userId);
   }
 }
 
 @Module({
-  providers: [{
-    provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
-    useFactory: ({ name, url }) => new AuthenticatedDataSource({ url }),
-  }],
+  providers: [
+    {
+      provide: AuthenticatedDataSource
+      useValue: AuthenticatedDataSource
+    },
+    {
+      provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
+      useFactory: (AuthenticatedDataSource) => {
+        return ({ name, url }) => new AuthenticatedDataSource({ url });
+      },
+      inject: [AuthenticatedDataSource]
+    }
+  ],
   exports: [GRAPHQL_GATEWAY_BUILD_SERVICE],
 })
 class BuildServiceModule {}
@@ -195,6 +206,11 @@ class BuildServiceModule {}
         gateway: {
           serviceList: [/* services */],
         },
+        server: {
+          context: ({ req }) => ({
+            jwt: req.headers.authorization
+          })
+        }
       }),
       imports: [BuildServiceModule],
       inject: [GRAPHQL_GATEWAY_BUILD_SERVICE],
