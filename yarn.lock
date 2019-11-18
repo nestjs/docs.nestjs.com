@@ -1040,10 +1040,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.12.2.tgz#d7f302e74b10e9801d52852137f652d9ee235da8"
   integrity sha512-c82MtnqWB/CqqK7/zit74Ob8H1dBdV7bK+BcErwtXbe0+nUGkgzq5NTDmRW/pAv2lFtmeNmW95b0zK2hxpeklg==
 
-"@types/node@12.12.8":
-  version "12.12.8"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.8.tgz#dab418655af39ce2fa99286a0bed21ef8072ac9d"
-  integrity sha512-XLla8N+iyfjvsa0KKV+BP/iGSoTmwxsu5Ci5sM33z9TjohF72DEz95iNvD6pPmemvbQgxAv/909G73gUn8QR7w==
+"@types/node@12.12.9":
+  version "12.12.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.9.tgz#0b5ae05516b757cbff2e82c04500190aef986c7b"
+  integrity sha512-kV3w4KeLsRBW+O2rKhktBwENNJuqAUQHS3kf4ia2wIaF/MN6U7ANgTsx7tGremcA0Pk3Yh0Hl0iKiLPuBdIgmw==
 
 "@types/rimraf@2.0.3":
   version "2.0.3"
