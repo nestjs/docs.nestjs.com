@@ -99,6 +99,21 @@ CacheModule.register({
 });
 ```
 
+To set expiration date on each route, we'll have to use `@CacheTTL()` decorator like this
+
+```typescript
+@Controller()
+export class AppController {
+
+  @Get()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(3000)
+  findAll(): string {
+    return new Date().toString();
+  }
+}
+```
+
 #### Different stores
 
 This service take advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines)). To set up the Redis store, simple pass the package together with corresponding options to the `register()` method.
