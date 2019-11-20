@@ -42,6 +42,7 @@ export class HeroesGameService {
   }
 }
 ```
+> info **Hint** `CommandBus` is not part of any default packages. Install the `@nestjs/cqrs` package using `npm install --save @nestjs/cqrs`
 
 Here's a sample service that dispatches `KillDragonCommand`. Let's see how the command looks like:
 
