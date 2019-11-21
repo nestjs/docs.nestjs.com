@@ -20,7 +20,7 @@
 To start creating CRUD functionality we have to install all required dependencies:
 
 ```bash
-npm i --save @nestjsx/crud @nestjsx/crud-typeorm class-transformer class-validator
+npm i --save @nestjsx/crud @nestjsx/crud-typeorm typeorm class-transformer class-validator
 ```
 
 Assuming that you already have some **entities** in your project:
