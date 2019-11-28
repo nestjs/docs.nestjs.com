@@ -3083,10 +3083,10 @@ dezalgo@^1.0.0:
     asap "^2.0.0"
     wrappy "1"
 
-dgeni-packages@0.28.1:
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/dgeni-packages/-/dgeni-packages-0.28.1.tgz#281c68876ba39741bf15bd28ddb83d8bd8f1754a"
-  integrity sha512-w44ZYsHsyZiwutRNBpK03EOeQCCap+ulrhgjKk845JjcacnOW3rf9JHE7B1FFPOh+YsIQmcgx8ldLaIwcR9ZaA==
+dgeni-packages@0.28.2:
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/dgeni-packages/-/dgeni-packages-0.28.2.tgz#04ad9a4e824942baba82a872452ea90d17be1c7f"
+  integrity sha512-W8GsMjILSPOfbjxyXgUD/T20isQ0ojw4HChrN6NwXIQtFJioNPRX4WeIOAZxw0S77S4vbXh4wfOs9wof5sIh+Q==
   dependencies:
     canonical-path "^1.0.0"
     catharsis "^0.8.1"
