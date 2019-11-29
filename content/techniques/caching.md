@@ -81,8 +81,8 @@ While global cache is enabled, cache entries are stored under a `CacheKey` that 
 ```typescript
 @Controller()
 export class AppController {
-  @CacheKey('custom_key') // Custom cache key
-  @CacheTTL(20) // 20 second TTL
+  @CacheKey('custom_key')
+  @CacheTTL(20)
   findAll(): string[] {
     return [];
   }
