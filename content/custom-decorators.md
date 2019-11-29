@@ -151,31 +151,29 @@ async findOne(user) {
 }
 ```
 
-#### Decorators composition
+#### Decorator composition
 
-Nest provides a helper method to compose different decorators, for example, supposing that want to combine all decorators related to authentication this could be defined as:
+Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
 
 ```typescript
-import { applyDecorators, NestCustomDecorator } from "@nestjs/core";
+import { applyDecorators } from '@nestjs/core';
 
-export function Auth(roles: UserRole | UserRole[]): NestCustomDecorator {
+export function Auth(...roles: Role[]) {
   return applyDecorators(
-    SetMetadata("roles", Array.isArray(roles) ? roles : [roles]),
-    UseGuards(AuthGuard),
+    SetMetadata('roles', roles),
+    UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: "Unauthorized" })
+    ApiUnauthorizedResponse({ description: 'Unauthorized"' })
   );
 }
 ```
 
-And used as:
+You can then use this custom `@Auth()` decorator as follows:
 
 ```typescript
-import { Auth } from '../auth/auth.decorator';
-
-@Get('')
+@Get('users')
 @Auth('admin')
-myAuthMethod() { [...] }
+findAllUsers() { [...] }
 ```
 
-Applying all four decorators at once.
+This has the effect of applying all four decorators with a single declaration.
