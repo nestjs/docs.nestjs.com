@@ -608,7 +608,7 @@ export interface PluginOptions {
   </tr>
   <tr>
     <td><code>classValidatorShim</code></td>
-    <td><code>false</code></td>
+    <td><code>true</code></td>
     <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
   </tr>
 </table>
