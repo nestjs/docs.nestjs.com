@@ -160,7 +160,7 @@ async findOne(user) {
 Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
 
 ```typescript
-import { applyDecorators } from '@nestjs/core';
+import { applyDecorators } from '@nestjs/common';
 
 export function Auth(...roles: Role[]) {
   return applyDecorators(
@@ -177,7 +177,7 @@ You can then use this custom `@Auth()` decorator as follows:
 ```typescript
 @Get('users')
 @Auth('admin')
-findAllUsers() { [...] }
+findAllUsers() {}
 ```
 
 This has the effect of applying all four decorators with a single declaration.
