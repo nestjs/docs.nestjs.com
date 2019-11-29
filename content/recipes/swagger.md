@@ -387,6 +387,9 @@ To specify a return model for a request, we must create a class and annotate all
 ```typescript
 export class Cat {
   @ApiProperty()
+  id: number;
+
+  @ApiProperty()
   name: string;
 
   @ApiProperty()
