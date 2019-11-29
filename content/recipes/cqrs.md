@@ -11,6 +11,14 @@ In most cases, there are no reasons to make small and medium-sized applications 
 
 Hence, we provide a lightweight [CQRS module](https://github.com/nestjs/cqrs) which elements are described below.
 
+#### Installation
+
+First install the required package:
+
+```bash
+$ npm install --save @nestjs/cqrs
+```
+
 #### Commands
 
 In order to make the application easier to understand, each change has to be preceded by **Command**. When any command is dispatched, the application has to react on it. Commands can be dispatched from the services (or directly from the controllers/gateways) and consumed in corresponding **Command Handlers**.
