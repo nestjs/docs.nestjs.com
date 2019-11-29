@@ -12,8 +12,8 @@
   <app-menu [class.opened]="isSidebarOpened" perfectScrollbar></app-menu>
   <div class="container" [class.wide]="!isSidebarOpened">
     <div class="page-wrapper">
-      <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
       <app-toc [contentReference]="contentRef"></app-toc>
+      <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
     </div>
     <div class="sponsors-wrapper">
       <div class="sponsors-container">

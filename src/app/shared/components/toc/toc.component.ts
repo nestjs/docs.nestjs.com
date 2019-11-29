@@ -135,14 +135,8 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
       pageWrapperHeight - tocWrapperHeight - this.scrollTopOffset;
   }
 
-  navigateToAnchor(elementRef: HTMLElement) {
-    if (elementRef) {
-      elementRef.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-      this.findCurrentHeading();
-    }
+  currentURL(): string {
+    return window.location.href.split('#')[0];
   }
 
   checkViewportBoundaries() {
