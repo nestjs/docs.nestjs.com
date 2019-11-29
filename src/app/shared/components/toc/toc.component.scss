@@ -1,5 +1,5 @@
-@import '../../../../scss/utils.scss';
-@import '../../../../scss/variables.scss';
+@import "../../../../scss/utils.scss";
+@import "../../../../scss/variables.scss";
 
 .toc-wrapper {
   width: 250px;
@@ -19,7 +19,7 @@
     padding: 0;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 10px;
@@ -36,7 +36,6 @@
     font-size: 14px;
     line-height: 24px;
     margin-bottom: 6px;
-    cursor: pointer;
 
     &:hover {
       color: $red-color;
@@ -60,7 +59,7 @@
       @include radius(50%);
       @include transform(translateY(-50%));
 
-      content: '';
+      content: "";
       background: #fdfdfd;
       border: 2px solid #efefef;
       left: -4px;
@@ -75,5 +74,18 @@
       top: auto;
       bottom: 0;
     }
+  }
+
+  a {
+    color: #404040;
+    font-weight: normal;
+    &:hover {
+      color: $red-color;
+    }
+  }
+
+  .current a {
+    font-weight: 600;
+    color: $red-color;
   }
 }
