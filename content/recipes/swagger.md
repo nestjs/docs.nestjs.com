@@ -23,21 +23,21 @@ $ npm install --save @nestjs/swagger fastify-swagger
 Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
 
 ```typescript
-import { NestFactory } from "@nestjs/core";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import { ApplicationModule } from "./app.module";
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
   const options = new DocumentBuilder()
-    .setTitle("Cats example")
-    .setDescription("The cats API description")
-    .setVersion("1.0")
-    .addTag("cats")
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
@@ -62,13 +62,13 @@ While the application is running, open your browser and navigate to `http://loca
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
-As you may noticed, the `SwaggerModule` automatically reflects all of your endpoints. Also, in order to display the Swagger UI, `@nestjs/swagger` makes use of either `swagger-ui-express` or `fastify-swagger` depending on the platform.
+The `SwaggerModule` automatically reflects all of your endpoints. Also, in order to display the Swagger UI, `@nestjs/swagger` makes use of either `swagger-ui-express` or `fastify-swagger` depending on the platform.
 
-> info **Hint** If you want to download generated Swagger JSON file, you can navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
 #### Route parameters
 
-When inspecting defined controllers, the `SwaggerModule` searches for all `@Body()`, `@Query()`, and `@Param()` decorators in route handlers. Hence, the valid document can be created. In addition, the module creates corresponding **models definitions** by taking advantage of the reflection. Look at the following code:
+The `SwaggerModule` searches for all `@Body()`, `@Query()`, and `@Param()` decorators in route handlers to generate the API document. It also creates corresponding model definitions by taking advantage of reflection. Consider the following code:
 
 ```typescript
 @Post()
@@ -83,10 +83,10 @@ Based on the `CreateCatDto`, the module definition will be created:
 
 <figure><img src="/assets/swagger-dto.png" /></figure>
 
-As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties visible to the `SwaggerModule`, we have to either annotate them with `@ApiProperty()` decorator or use a CLI plugin (read more in the **Plugin** section):
+As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties visible to the `SwaggerModule`, we have to either annotate them with the `@ApiProperty()` decorator or use a CLI plugin (read more in the **Plugin** section) which will do it automatically:
 
 ```typescript
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCatDto {
   @ApiProperty()
@@ -99,6 +99,8 @@ export class CreateCatDto {
   breed: string;
 }
 ```
+
+> info **Hint** Consider using the Swagger plugin (see **Plugin** section) which will automatically do it for you.
 
 Let's open the browser and verify the generated `CreateCatDto` model:
 
@@ -115,9 +117,9 @@ In addition, the `@ApiProperty()` decorator allows setting various [Schema Objec
 age: number;
 ```
 
-> info **Hint** Instead of explicitly typing `{{"@ApiProperty({ required: false })"}}` you can use `@ApiPropertyOptional()` short-hand decorator.
+> info **Hint** Instead of explicitly typing the `{{"@ApiProperty({ required: false })"}}` you can use `@ApiPropertyOptional()` short-hand decorator.
 
-In order to explicitly set the type of the property, use `type` key:
+In order to explicitly set the type of the property, use the `type` key:
 
 ```typescript
 @ApiProperty({
@@ -128,24 +130,24 @@ age: number;
 
 #### Enums
 
-To be able for `SwaggerModule` to identify an `enum`, we have to manually set the `enum` property on `@ApiProperty` with an array of values.
+To identify an `enum`, we must manually set the `enum` property on the `@ApiProperty` with an array of values.
 
 ```typescript
 @ApiProperty({ enum: ['Admin', 'Moderator', 'User']})
 role: UserRole;
 ```
 
-You can also define a real `UserRole` enum instead as following:
+Alternatively, define an actual TypeScript enum as follows:
 
 ```typescript
 export enum UserRole {
-  Admin = "Admin",
-  Moderator = "Moderator",
-  User = "User"
+  Admin = 'Admin',
+  Moderator = 'Moderator',
+  User = 'User',
 }
 ```
 
-Enums can be used by itself with the `@Query()` parameter decorator in combination with the `@ApiQuery()` decorator.
+You can then use the enum directly with the `@Query()` parameter decorator in combination with the `@ApiQuery()` decorator.
 
 ```typescript
 @ApiQuery({ name: 'role', enum: UserRole })
@@ -160,18 +162,18 @@ With `isArray` set to **true**, the `enum` can be selected as a **multi-select**
 
 #### Arrays
 
-We have to manually indicate a type when the property is an array:
+When the property is an array, we must manually indicate the array type as shown below:
 
 ```typescript
 @ApiProperty({ type: [String] })
 names: string[];
 ```
 
-Simply put your type as the first element of an array (as shown above) or set an `isArray` property to `true`.
+Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
 
 #### Circular dependencies
 
-When you have cross-references between your classes, ensure to use lazy functions in order to provide a module with a type information lazily.
+When you have circular dependencies between classes, use a lazy function to provide the `SwaggerModule` with type information:
 
 ```typescript
 @ApiProperty({ type: () => Node })
@@ -180,7 +182,7 @@ node: Node;
 
 #### Generics and interfaces
 
-TypeScript does not store any metadata about generics and interfaces. Hence, if you use them to define your DTOs, we may not be able to properly generate model definitons at the runtime.
+Since TypeScript does not store metadata about generics or interfaces, when you use them in your DTOs, `SwaggerModule` may not be able to properly generate model definitions at runtime.
 
 #### Raw definitions
 
@@ -199,7 +201,7 @@ In some specific scenarios (e.g. deeply nested arrays, matrices), you may want t
 coords: number[][];
 ```
 
-Likewise, in order to define your input/output content manually in controller classes, use `schema` property:
+Likewise, in order to define your input/output content manually in controller classes, use the `schema` property:
 
 ```typescript
 @ApiBody({
@@ -218,7 +220,7 @@ async create(@Body() coords: number[][]) {}
 
 #### Extra models
 
-In order to define additional models that should be inspected by Swagger module, use `@ApiExtraModels()` decorator:
+In order to define additional models that should be inspected by Swagger module, use the `@ApiExtraModels()` decorator:
 
 ```typescript
 @ApiExtraModels(ExtraModel)
@@ -241,20 +243,20 @@ pet: Cat | Dog;
 
 > info **Hint** `getSchemaPath()` function is imported from `@nestjs/swagger`.
 
-Both `Cat` and `Dog` has to be defined as extra models using `@ApiExtraModels()` decorator (at the class-level).
+Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
 
 #### Multiple specifications
 
-Swagger module provides a way to support multiple specifications. In other words, you can serve different documentations with different UIs on different endpoints.
+The `SwaggerModule` provides a way to support multiple specifications. In other words, you can serve different documentation, with different UIs, on different endpoints.
 
-In order to allow `SwaggerModule` to support multi-spec, your application must be written with modular approach. The `createDocument()` method takes in a 3rd argument: `extraOptions` which is an object where a property `include` expects an array of modules.
+To support multiple specifications, your application must be written with a modular approach. The `createDocument()` method takes in a 3rd argument, `extraOptions`, which is an object with a the property `include`. The `include` property has a value which is an array of modules.
 
 You can setup multiple specifications support as shown below:
 
 ```typescript
-import { NestFactory } from "@nestjs/core";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import { ApplicationModule } from "./app.module";
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ApplicationModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
@@ -270,28 +272,28 @@ async function bootstrap() {
    */
 
   const options = new DocumentBuilder()
-    .setTitle("Cats example")
-    .setDescription("The cats API description")
-    .setVersion("1.0")
-    .addTag("cats")
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
     .build();
 
   const catDocument = SwaggerModule.createDocument(app, options, {
-    include: [CatsModule]
+    include: [CatsModule],
   });
-  SwaggerModule.setup("api/cats", app, catDocument);
+  SwaggerModule.setup('api/cats', app, catDocument);
 
   const secondOptions = new DocumentBuilder()
-    .setTitle("Dogs example")
-    .setDescription("The dogs API description")
-    .setVersion("1.0")
-    .addTag("dogs")
+    .setTitle('Dogs example')
+    .setDescription('The dogs API description')
+    .setVersion('1.0')
+    .addTag('dogs')
     .build();
 
   const dogDocument = SwaggerModule.createDocument(app, secondOptions, {
-    include: [DogsModule]
+    include: [DogsModule],
   });
-  SwaggerModule.setup("api/dogs", app, dogDocument);
+  SwaggerModule.setup('api/dogs', app, dogDocument);
 
   await app.listen(3000);
 }
@@ -304,34 +306,34 @@ Now you can start your server with the following command:
 $ npm run start
 ```
 
-Navigate to `http://localhost:3000/api/cats` to see Swagger UI for your cats:
+Navigate to `http://localhost:3000/api/cats` to see the Swagger UI for cats:
 
 <figure><img src="/assets/swagger-cats.png" /></figure>
 
-While `http://localhost:3000/api/dogs` will expose a Swagger UI for your dogs:
+In turn, `http://localhost:3000/api/dogs` will expose the Swagger UI for dogs:
 
 <figure><img src="/assets/swagger-dogs.png" /></figure>
 
 #### Tags
 
-In order to attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
+To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 
 ```typescript
-@ApiTags("cats")
-@Controller("cats")
+@ApiTags('cats')
+@Controller('cats')
 export class CatsController {}
 ```
 
 #### Headers
 
-In order to define custom headers that are expected as part of the request, use `@ApiHeader()`.
+To define custom headers that are expected as part of the request, use `@ApiHeader()`.
 
 ```typescript
 @ApiHeader({
-  name: "Authorization",
-  description: "Auth token"
+  name: 'Authorization',
+  description: 'Auth token',
 })
-@Controller("cats")
+@Controller('cats')
 export class CatsController {}
 ```
 
@@ -380,7 +382,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-To specify a return model for the requests, one has to create a class and annotate all properties with the `@ApiProperty()` decorator.
+To specify a return model for a request, we must create a class and annotate all properties with the `@ApiProperty()` decorator.
 
 ```typescript
 export class Cat {
@@ -395,16 +397,16 @@ export class Cat {
 }
 ```
 
-Then, `Cat` model has to be used in combination with the `type` property of the response decorator.
+Then, `Cat` model must be used in combination with the `type` property of the response decorator.
 
 ```typescript
-@ApiTags("cats")
-@Controller("cats")
+@ApiTags('cats')
+@Controller('cats')
 export class CatsController {
   @Post()
   @ApiCreatedResponse({
-    description: "The record has been successfully created.",
-    type: Cat
+    description: 'The record has been successfully created.',
+    type: Cat,
   })
   async create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
     return this.catsService.create(createCatDto);
@@ -416,22 +418,32 @@ Let's open the browser and verify the generated `Cat` model:
 
 <figure><img src="/assets/swagger-response-type.png" /></figure>
 
-#### Security
+#### Global prefix
 
-To define which security mechanisms should be used for specific operation, use `@ApiSecurity()` decorator.
+To ignore a global prefix for routes set through `setGlobalPrefix()`, use `ignoreGlobalPrefix`:
 
 ```typescript
-@ApiSecurity("basic")
-@Controller("cats")
+const document = SwaggerModule.createDocument(app, options, {
+  ignoreGlobalPrefix: true,
+});
+```
+
+#### Security
+
+To define which security mechanisms should be used for a specific operation, use the `@ApiSecurity()` decorator.
+
+```typescript
+@ApiSecurity('basic')
+@Controller('cats')
 export class CatsController {}
 ```
 
 Before you run your application, remember to add the security definition to your base document using `DocumentBuilder`:
 
 ```typescript
-const options = new DocumentBuilder().addSecurity("basic", {
-  type: "http",
-  scheme: "basic"
+const options = new DocumentBuilder().addSecurity('basic', {
+  type: 'http',
+  scheme: 'basic',
 });
 ```
 
@@ -439,11 +451,11 @@ Some of the most popular authentication techniques are predefined (e.g. `basic` 
 
 #### Basic authentication
 
-In order to enable basic authentication, use `@ApiBasicAuth()`.
+To enable basic authentication, use `@ApiBasicAuth()`.
 
 ```typescript
 @ApiBasicAuth()
-@Controller("cats")
+@Controller('cats')
 export class CatsController {}
 ```
 
@@ -455,11 +467,11 @@ const options = new DocumentBuilder().addBasicAuth();
 
 #### Bearer authentication
 
-In order to enable bearer authentication, use `@ApiBearerAuth()`.
+To enable bearer authentication, use `@ApiBearerAuth()`.
 
 ```typescript
 @ApiBearerAuth()
-@Controller("cats")
+@Controller('cats')
 export class CatsController {}
 ```
 
@@ -471,11 +483,11 @@ const options = new DocumentBuilder().addBearerAuth();
 
 #### OAuth2 authentication
 
-In order to enable OAuth2, use `@ApiOAuth2()`.
+To enable OAuth2, use `@ApiOAuth2()`.
 
 ```typescript
-@ApiOAuth2(["pets:write"])
-@Controller("cats")
+@ApiOAuth2(['pets:write'])
+@Controller('cats')
 export class CatsController {}
 ```
 
@@ -487,7 +499,7 @@ const options = new DocumentBuilder().addOAuth2();
 
 #### File upload
 
-You can enable file upload for a specific method with the `@ApiBody` decorator together with `@ApiConsumes()`. Here's a full example using [File Upload](/techniques/file-upload) technique:
+You can enable file upload for a specific method with the `@ApiBody` decorator together with `@ApiConsumes()`. Here's a full example using the [File Upload](/techniques/file-upload) technique:
 
 ```typescript
 @UseInterceptors(FileInterceptor('file'))
@@ -502,7 +514,7 @@ uploadFile(@UploadedFile() file) {}
 
 #### Decorators
 
-All of the available OpenAPI decorators has an `Api` prefix to be easily distinguishable from the core decorators. Below is a full list of the exported decorators with a defined use-level (where can be applied).
+All of the available OpenAPI decorators have an `Api` prefix to distinguish them from the core decorators. Below is a full list of the exported decorators along with a designation of the level at which the decorator may be applied.
 
 |                          |                     |
 | ------------------------ | ------------------- |
