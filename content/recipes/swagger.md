@@ -20,33 +20,37 @@ $ npm install --save @nestjs/swagger fastify-swagger
 
 #### Bootstrap
 
-Once the installation process is complete, open `main.ts` file and initialize Swagger using the `SwaggerModule` class:
+Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
 
 ```typescript
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { ApplicationModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
 
   const options = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
-    .setVersion('1.0')
-    .addTag('cats')
+    .setTitle("Cats example")
+    .setDescription("The cats API description")
+    .setVersion("1.0")
+    .addTag("cats")
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup("api", app, document);
 
   await app.listen(3000);
 }
 bootstrap();
 ```
 
-The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties like title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a base Swagger options.
+The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object.
 
-Once we create a document, we can call `setup()` method. It accepts a **(1)** path to mount Swagger UI, **(2)** an application instance, and **(3)** the document that describes an API.
+Once we create a document, we can call `setup()` method. It accepts:
+
+1. the path to mount the Swagger UI
+2. an application instance
+3. the document object instantiated above
 
 Now you can run the following command to start the HTTP server:
 
@@ -54,7 +58,7 @@ Now you can run the following command to start the HTTP server:
 $ npm run start
 ```
 
-While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see Swagger UI.
+While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see the Swagger UI.
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
@@ -82,7 +86,7 @@ Based on the `CreateCatDto`, the module definition will be created:
 As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties visible to the `SwaggerModule`, we have to either annotate them with `@ApiProperty()` decorator or use a CLI plugin (read more in the **Plugin** section):
 
 ```typescript
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateCatDto {
   @ApiProperty()
@@ -135,9 +139,9 @@ You can also define a real `UserRole` enum instead as following:
 
 ```typescript
 export enum UserRole {
-  Admin = 'Admin',
-  Moderator = 'Moderator',
-  User = 'User',
+  Admin = "Admin",
+  Moderator = "Moderator",
+  User = "User"
 }
 ```
 
@@ -248,9 +252,9 @@ In order to allow `SwaggerModule` to support multi-spec, your application must b
 You can setup multiple specifications support as shown below:
 
 ```typescript
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { ApplicationModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule);
@@ -266,28 +270,28 @@ async function bootstrap() {
    */
 
   const options = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
-    .setVersion('1.0')
-    .addTag('cats')
+    .setTitle("Cats example")
+    .setDescription("The cats API description")
+    .setVersion("1.0")
+    .addTag("cats")
     .build();
 
   const catDocument = SwaggerModule.createDocument(app, options, {
-    include: [CatsModule],
+    include: [CatsModule]
   });
-  SwaggerModule.setup('api/cats', app, catDocument);
+  SwaggerModule.setup("api/cats", app, catDocument);
 
   const secondOptions = new DocumentBuilder()
-    .setTitle('Dogs example')
-    .setDescription('The dogs API description')
-    .setVersion('1.0')
-    .addTag('dogs')
+    .setTitle("Dogs example")
+    .setDescription("The dogs API description")
+    .setVersion("1.0")
+    .addTag("dogs")
     .build();
 
   const dogDocument = SwaggerModule.createDocument(app, secondOptions, {
-    include: [DogsModule],
+    include: [DogsModule]
   });
-  SwaggerModule.setup('api/dogs', app, dogDocument);
+  SwaggerModule.setup("api/dogs", app, dogDocument);
 
   await app.listen(3000);
 }
@@ -313,8 +317,8 @@ While `http://localhost:3000/api/dogs` will expose a Swagger UI for your dogs:
 In order to attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 
 ```typescript
-@ApiTags('cats')
-@Controller('cats')
+@ApiTags("cats")
+@Controller("cats")
 export class CatsController {}
 ```
 
@@ -324,10 +328,10 @@ In order to define custom headers that are expected as part of the request, use 
 
 ```typescript
 @ApiHeader({
-  name: 'Authorization',
-  description: 'Auth token',
+  name: "Authorization",
+  description: "Auth token"
 })
-@Controller('cats')
+@Controller("cats")
 export class CatsController {}
 ```
 
@@ -394,13 +398,13 @@ export class Cat {
 Then, `Cat` model has to be used in combination with the `type` property of the response decorator.
 
 ```typescript
-@ApiTags('cats')
-@Controller('cats')
+@ApiTags("cats")
+@Controller("cats")
 export class CatsController {
   @Post()
   @ApiCreatedResponse({
-    description: 'The record has been successfully created.',
-    type: Cat,
+    description: "The record has been successfully created.",
+    type: Cat
   })
   async create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
     return this.catsService.create(createCatDto);
@@ -417,17 +421,17 @@ Let's open the browser and verify the generated `Cat` model:
 To define which security mechanisms should be used for specific operation, use `@ApiSecurity()` decorator.
 
 ```typescript
-@ApiSecurity('basic')
-@Controller('cats')
+@ApiSecurity("basic")
+@Controller("cats")
 export class CatsController {}
 ```
 
 Before you run your application, remember to add the security definition to your base document using `DocumentBuilder`:
 
 ```typescript
-const options = new DocumentBuilder().addSecurity('basic', {
-  type: 'http',
-  scheme: 'basic',
+const options = new DocumentBuilder().addSecurity("basic", {
+  type: "http",
+  scheme: "basic"
 });
 ```
 
@@ -439,7 +443,7 @@ In order to enable basic authentication, use `@ApiBasicAuth()`.
 
 ```typescript
 @ApiBasicAuth()
-@Controller('cats')
+@Controller("cats")
 export class CatsController {}
 ```
 
@@ -455,7 +459,7 @@ In order to enable bearer authentication, use `@ApiBearerAuth()`.
 
 ```typescript
 @ApiBearerAuth()
-@Controller('cats')
+@Controller("cats")
 export class CatsController {}
 ```
 
@@ -470,8 +474,8 @@ const options = new DocumentBuilder().addBearerAuth();
 In order to enable OAuth2, use `@ApiOAuth2()`.
 
 ```typescript
-@ApiOAuth2(['pets:write'])
-@Controller('cats')
+@ApiOAuth2(["pets:write"])
+@Controller("cats")
 export class CatsController {}
 ```
 
@@ -523,18 +527,18 @@ All of the available OpenAPI decorators has an `Api` prefix to be easily disting
 
 #### Plugin
 
-TypeScript metadata reflaction system has several limitations, which make it impossible to, for instance, determine what properties a class consist of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at the compilation time. Hence, we created a plugin that enhances TypeScript compilation process to reduce the boilerplate code.
+TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
 
-Swagger plugin will automatically:
+The Swagger plugin will automatically:
 
 - annotate all DTO properties with `@ApiProperty` unless `@ApiHideProperty` is used
-- set `required` property depending on the question mark (e.g. `name?: string` = `required: false`)
-- set `type` or `enum` property depending on the type (supports arrays as well)
-- set `default` property based on the assigned default value
+- set the `required` property depending on the question mark (e.g. `name?: string` will set `required: false`)
+- set the `type` or `enum` property depending on the type (supports arrays as well)
+- set the `default` property based on the assigned default value
 - set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
-- add response decorator to every endpoint with a proper status and `type` (response model)
+- add a response decorator to every endpoint with a proper status and `type` (response model)
 
-In order to enable plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add `plugins` configuration:
+In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
 
 ```javascript
 {
@@ -551,7 +555,7 @@ In order to enable plugin, simply open `nest-cli.json` (if you use [Nest CLI](/c
 }
 ```
 
-You can use `options` to customize the behavior of the plugin. The `options` has to fulfill the following interface:
+You can use `options` to customize the behavior of the plugin. The `options` property has to fulfill the following interface:
 
 ```typescript
 export interface PluginOptions {
@@ -584,7 +588,7 @@ export interface PluginOptions {
   </tr>
 </table>
 
-If you don't use a CLI but rather have a custom `webpack` configuration, you can still use this plugin in combination with `ts-loader`:
+If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
 
 ```javascript
 getCustomTransformers: (program: any) => ({
@@ -594,7 +598,7 @@ getCustomTransformers: (program: any) => ({
 
 #### Migration to 4.0
 
-If you used `@nestjs/swagger@3.*` so far, note the following breaking/API changes.
+If you're currently using `@nestjs/swagger@3.*`, note the following breaking/API changes in version 4.0.
 
 The following decorators have been changed/renamed:
 
