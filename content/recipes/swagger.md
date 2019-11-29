@@ -560,22 +560,32 @@ In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "@nestjs/swagger/plugin",
-        "options": {}
-      }
-    ]
+    "plugins": ["@nestjs/swagger/plugin"]
   }
 }
 ```
 
-You can use `options` to customize the behavior of the plugin. The `options` property has to fulfill the following interface:
+You can use the `options` property to customize the behavior of the plugin.
+
+```javascript
+{
+"plugins": [
+  {
+    "name": "@nestjs/swagger/plugin",
+    "options": {
+      "classValidatorShim": false
+    }
+  }
+]
+}
+```
+
+The `options` property has to fulfill the following interface:
 
 ```typescript
 export interface PluginOptions {
-  dtoFileNameSuffix?: string;
-  controllerFileNameSuffix?: string;
+  dtoFileNameSuffix?: string[];
+  controllerFileNameSuffix?: string[];
   classValidatorShim?: boolean;
 }
 ```
@@ -588,7 +598,7 @@ export interface PluginOptions {
   </tr>
   <tr>
     <td><code>dtoFileNameSuffix</code></td>
-    <td><code>.dto.ts</code></td>
+    <td><code>['.dto.ts', '.entity.ts']</code></td>
     <td>DTO (Data Transfer Object) files suffix</td>
   </tr>
   <tr>
