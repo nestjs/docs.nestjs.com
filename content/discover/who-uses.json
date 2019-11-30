@@ -107,6 +107,11 @@
       "logo": "/assets/logo/nothing.svg",
       "url": "https://nothing.ch/",
       "width": "110px"
+    },
+    {
+      "logo": "/assets/logo/creatorsdaily.svg",
+      "url": "https://creatorsdaily.com",
+      "width": "130px"
     }
   ],
   "Body": [
@@ -145,6 +150,7 @@
     "https://getapollo.io/",
     "https://big-bench.com/",
     "https://www.qingtui.cn/",
-    "https://www.rosebayconsult.com/"
+    "https://www.rosebayconsult.com/",
+    "https://creatorsdaily.com"
   ]
 }

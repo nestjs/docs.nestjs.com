@@ -113,6 +113,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://nothing.ch/',
       width: '110px',
     },
+    {
+      logo: '/assets/logo/creatorsdaily.svg',
+      url: 'https://creatorsdaily.com',
+      width: '130px',
+    },
   ];
 
   readonly companiesUrls = [
@@ -151,5 +156,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://getapollo.io/',
     'https://big-bench.com/',
     'https://www.qingtui.cn/',
+    'https://creatorsdaily.com',
   ];
 }
