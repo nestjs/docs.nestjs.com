@@ -24,10 +24,10 @@ To instantiate a microservice, use the `createMicroservice()` method of the `Nes
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice(ApplicationModule, {
+  const app = await NestFactory.createMicroservice(AppModule, {
     transport: Transport.TCP,
   });
   app.listen(() => console.log('Microservice is listening'));
