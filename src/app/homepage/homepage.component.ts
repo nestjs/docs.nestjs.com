@@ -58,6 +58,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkWindowWidth(window.innerWidth);
+    this.contentRef.appendChild(this.createDocSearchScriptTag())
   }
 
   ngOnDestroy() {
@@ -140,5 +141,21 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       '//cdn.carbonads.com/carbon.js?serve=CK7I653M&placement=nestjscom';
     scriptTag.id = '_carbonads_js';
     return scriptTag;
+  }
+
+  createDocSearchScriptTag(): HTMLScriptElement {
+    const scriptTag = document.createElement("script");
+    scriptTag.type = "text/javascript";
+    scriptTag.src = "https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js";
+    scriptTag.async = true
+    scriptTag.onload = () => {
+      (window as any).docsearch({
+        apiKey: '9ea53de1a6911255834352bbbe4d3417',
+        indexName: 'nestjs',
+        inputSelector: '#q',
+        debug: false // Set debug to true if you want to inspect the dropdown
+      })
+    };
+    return scriptTag
   }
 }
