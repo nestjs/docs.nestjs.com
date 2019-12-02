@@ -8,11 +8,12 @@ import {
   OnDestroy,
   OnInit,
   Renderer2,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { BasePageComponent } from './pages/page/page.component';
 
 @Component({
@@ -20,7 +21,7 @@ import { BasePageComponent } from './pages/page/page.component';
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   isSidebarOpened = true;
@@ -35,7 +36,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly cd: ChangeDetectorRef,
     private readonly router: Router,
     private readonly elementRef: ElementRef,
-    private readonly renderer: Renderer2,
+    private readonly renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +59,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkWindowWidth(window.innerWidth);
-    this.contentRef.appendChild(this.createDocSearchScriptTag())
+    this.contentRef.appendChild(this.createDocSearchScriptTag());
   }
 
   ngOnDestroy() {
@@ -87,7 +88,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     const nativeElement: HTMLElement = this.elementRef.nativeElement;
     const footerRef: HTMLElement = nativeElement.querySelector('app-footer');
     const newsletterRef: HTMLElement = nativeElement.querySelector(
-      '.newsletter-wrapper',
+      '.newsletter-wrapper'
     );
     const carbonRef = nativeElement.querySelector('#carbonads');
     if (!footerRef || !carbonRef) {
@@ -144,18 +145,19 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createDocSearchScriptTag(): HTMLScriptElement {
-    const scriptTag = document.createElement("script");
-    scriptTag.type = "text/javascript";
-    scriptTag.src = "https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js";
-    scriptTag.async = true
+    const scriptTag = document.createElement('script');
+    scriptTag.type = 'text/javascript';
+    scriptTag.src =
+      'https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js';
+    scriptTag.async = true;
     scriptTag.onload = () => {
       (window as any).docsearch({
-        apiKey: '9ea53de1a6911255834352bbbe4d3417',
+        apiKey: environment.algoliaApiKey,
         indexName: 'nestjs',
-        inputSelector: '#q',
-        debug: false // Set debug to true if you want to inspect the dropdown
-      })
+        inputSelector: '#search',
+        debug: false
+      });
     };
-    return scriptTag
+    return scriptTag;
   }
 }
