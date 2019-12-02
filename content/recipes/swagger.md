@@ -544,6 +544,8 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 
 TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
 
+> warning **Hint** This plugin is **opt-in**. If you prefer, you can declare all decorators manually, or only specific decorators where you need them.
+
 The Swagger plugin will automatically:
 
 - annotate all DTO properties with `@ApiProperty` unless `@ApiHideProperty` is used
@@ -552,6 +554,42 @@ The Swagger plugin will automatically:
 - set the `default` property based on the assigned default value
 - set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
 - add a response decorator to every endpoint with a proper status and `type` (response model)
+
+Previously, if you wanted to provide an interactive experience with the Swagger UI,
+you had to duplicate a lot of code to let the package knows how your models/components should be declared in the specification. For example, you could define a simple `CreateUserDto` class as follows:
+
+```typescript
+export class CreateUserDto {
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  password: string;
+
+  @ApiProperty({ enum: RoleEnum, default: [], isArray: true })
+  roles: RoleEnum[] = [];
+
+  @ApiProperty({ required: false, default: true })
+  isEnabled?: boolean = true;
+}
+```
+
+While it's not a big deal with medium-sized projects, it becomes pretty verbose & clunky once you have a large set of classes.
+
+Now, with the Swagger plugin enabled, the above class definition can be declared simply:
+
+```typescript
+export class CreateUserDto {
+  email: string;
+  password: string;
+  roles: RoleEnum[] = [];
+  isEnabled?: boolean = true;
+}
+```
+
+The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Hence, you no longer have to struggle with `@ApiProperty` decorators scattered throughout the entire project.
+
+> warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@ApiProperty()`.
 
 In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
 
