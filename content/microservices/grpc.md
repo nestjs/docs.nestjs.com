@@ -237,32 +237,25 @@ call() {
 
 A full working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
-<<<<<<< HEAD
 #### gRPC Streaming
 
-=======
-### gRPC Streaming
->>>>>>> 89852b581e418843cc7a74915dd9ce872790d3ed
-GRPC on it's own supports long-term live connections more known as `streams`. 
+GRPC on it's own supports long-term live connections more known as `streams`.
 Streams can be a very useful instrument for such service cases as Chatting, Observations
 or Chunk-data transfers. You can find more details in the official documentation ([here](https://grpc.io/docs/guides/concepts/)).
 
 Nest supports GRPC stream handlers in two possible ways:
-- RxJS `Subject` + `Observable` handler: can be useful to write 
-responses right inside of a Controller method or to be passed down
-to `Subject`/`Observable` consumer
-- Pure GRPC call stream handler: can be useful to be passed
-to some executor which will handle the rest of dispatch for
-the Node standard `Duplex` stream handler.
 
-<<<<<<< HEAD
+- RxJS `Subject` + `Observable` handler: can be useful to write
+  responses right inside of a Controller method or to be passed down
+  to `Subject`/`Observable` consumer
+- Pure GRPC call stream handler: can be useful to be passed
+  to some executor which will handle the rest of dispatch for
+  the Node standard `Duplex` stream handler.
+
 #### Subject strategy
+
 `@GrpcStreamMethod()` decorator will provide the function parameter as RxJS `Observable`.
 
-=======
-#### GrpcStreamMethod decorator
-This decorator will provide the function parameter as RxJS Observable.
->>>>>>> 89852b581e418843cc7a74915dd9ce872790d3ed
 ```typescript
 // Set decorator with selecting a Service definition from protobuf package
 // the string is matching to: package proto_example.orders.OrdersService
@@ -280,18 +273,14 @@ handleStream(messages: Observable<any>): Observable<any> {
   return subject.asObservable();
 }
 ```
+
 For support full-duplex interaction with `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable`
 from the controller method.
 
-<<<<<<< HEAD
-#### Pure GRPC call stream handler 
+#### Call stream handler
 
 `@GrpcStreamCall()` decorator will provide function parameter as `grpc.ServerDuplexStream`, which
-=======
-#### GrpcStreamCall decorator
-This decorator will provide function parameter as `grpc.ServerDuplexStream`, which
->>>>>>> 89852b581e418843cc7a74915dd9ce872790d3ed
-supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`, 
+supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`,
 full documentation on available methods can be found [here](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
 
 ```typescript
@@ -310,187 +299,7 @@ handleStream(stream: any) {
   });
 }
 ```
-This decorator do not require any specific return parameter to be provided. 
+
+This decorator do not require any specific return parameter to be provided.
 It is expected that stream will be handled in the way like any other standard
 stream type.
-<<<<<<< HEAD
-=======
-
-Protobuf interfaces used in this example: [Protobuf example with Service Stream Definitions](https://github.com/nestjs/nest/blob/master/integration/microservices/src/grpc-advanced/proto/orders/service.proto)
-<br>
-GRPC controller used in this example: [Advanced gRPC controller with NestJS](https://github.com/nestjs/nest/blob/master/integration/microservices/src/grpc-advanced/advanced.grpc.controller.ts)
-
-### Advanced Protobuf and GRPC cases with Nest
-
-#### Nested packages in protobuf files and caveats
-
-Sometimes API requires a more than a common sophisticated set of entities
-to be established for having a better approach on generated code examples.
-Let's describe below approximate folder structure with examples of proto files.
-```bash
-_
- |
- |-example
- |     |
- |     |-orders
- |     |      |
- |     |      |-service.proto
- |     |      |-message.proto
- |     |
- |     |-common
- |     |      |-item_types.proto
- |     |      |-shipment_types.proto
- |     |
- |     |-root.proto
-```
-Folder structure described above have few caveats that need to be mention before we
-will move into describing file contents. 
-
-For NestJS this file-structure can be loaded with just pointing on the single file:
-`service_name.proto` which need to have import statements for all of the files which 
-will be required for this service definition to work correctly.
-
-#### Contents of our example file-tree
-
-<table style="table-layout: fixed; width:100%; font-size: 0.8em; line-height: 1.8em;">
-
-<tr>
-<td>
-example/orders/service.proto
-</td>
-<td>
-example/orders/message.proto
-</td>
-</tr>
-
-<tr>
-
-<td style="overflow-x:scroll">
-<pre style="overflow: inherit;">
-syntax = "proto3";
-import "orders/message.proto";
-package proto_example.orders;
-&nbsp;
-service OrderService &#123;
-    rpc Find&#40;Order&#41; returns &#40;Order&#41;;
-    rpc Sync&#40;stream Order&#41; returns &#40;stream Order&#41;;
-    rpc SyncCall&#40;stream Order&#41; returns &#40;stream Order&#41;;
-&#125;
-</pre>
-</td>
-
-<td style="overflow-x:scroll">
-<pre style="overflow: inherit;">
-syntax = "proto3";
-package proto_example.orders;
-import public "common/item_types.proto";
-import public "common/shipment_types.proto";
-&nbsp;
-message Order &#123;
-    int32 id = 1;
-    repeated common.items.ItemType itemTypes = 2;
-    common.shipments.ShipmentType shipmentType = 3;
-&#125;
-</pre>
-</td>
-
-</tr>
-
-<tr>
-<td>
-example/common/item_types.proto
-</td>
-<td>
-example/common/shipment_types.proto
-</td>
-</tr>
-
-<tr>
-
-<td style="overflow-x:scroll">
-<pre style="overflow: inherit;">
-syntax = "proto3";
-package proto_example.common.items;
-&nbsp;
-enum ItemType &#123;
-    DEFAULT = 0;
-    SUPERIOR = 1;
-    FLAWLESS = 2;
-&#125;
-</pre>
-</td>
-
-<td style="overflow-x:scroll">
-<pre style="overflow: inherit;">
-syntax = "proto3";
-package proto_example.common.shipments;
-&nbsp;
-message ShipmentType &#123;
-    string from = 1;
-    string to = 2;
-    string carrier = 3;
-&#125;
-</pre>
-</td>
-
-</tr>
-
-<tr>
-<td>
-example/root.proto
-</td>
-<td>
- &nbsp;
-</td>
-</tr>
-
-<tr>
-
-<td style="overflow-x:scroll">
-<pre style="overflow: inherit;">
-syntax = "proto3";
-package proto_example;
-import public "orders/service.proto";
-</pre>
-</td>
-
-<td></td>
-
-</tr>
-
-</table>
-
-> **Important** information: Several pin-points need to be noted for file-examples above:\
-1) All `import` statements are lack of `./` or `../` relative directory symbols,
-that is default behavior when designing protobuf with compatibility for other
-platforms than Node.\
-2) All references to classes which were imported happened through calling their
-namespace before their name, example: `common.shipments.ShipmentType`\
-3) All `import` statements started relative to proto `root` folder name
-
-#### How to define configuration loader statement for successful initialization of such structure
-
-To load this set of proto-files within one shot we need to adjust our loader
-descriptor for a few tiny changes:
-
-```javascript
-{
-  transport: Transport.GRPC,
-  options: {
-    package: 'proto_example',
-    protoPath: 'root.proto',
-    loader: {
-      includeDirs: [Path.join(__dirname, 'example')]
-    }
-  }
-}
-```
-Related to simplified set of options in the beginning of this
-article here are few important changes:
-- `options.loader.includeDirs` is introduced and need to point to the root of `proto`
-files directory, in our case it is a directory with name `example`
-- `options.protoPath` now points to single file which imports all `service` files presented
-for certain implementation type, in our example it is `root.proto`.
-
-Protobuf interfaces used in this example: [Protobuf example with nested namespaces](https://github.com/nestjs/nest/blob/master/integration/microservices/src/grpc-advanced/proto)
->>>>>>> 89852b581e418843cc7a74915dd9ce872790d3ed
