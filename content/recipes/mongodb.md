@@ -63,7 +63,7 @@ Now we can inject the `Connection` object using `@Inject()` decorator. Each clas
 With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
 
 ```typescript
-@@filename(schemas/cats.schema)
+@@filename(schemas/cat.schema)
 import * as mongoose from 'mongoose';
 
 export const CatSchema = new mongoose.Schema({
