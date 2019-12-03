@@ -227,6 +227,14 @@ In order to define additional models that should be inspected by Swagger module,
 export class CreateCatDto {}
 ```
 
+Then, you can get the reference (`$ref`) to your model using `getSchemaPath(ExtraModel)`:
+
+```typescript
+'application/vnd.api+json': {
+   schema: { $ref: getSchemaPath(ExtraModel) },
+},
+```
+
 #### oneOf, anyOf, allOf
 
 In order to combine schemas, you can use `oneOf`, `anyOf` or `allOf` keywords ([read more](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/)).
