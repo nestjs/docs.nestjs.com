@@ -1,5 +1,5 @@
-@import "../../../scss/variables.scss";
-@import "../../../scss/utils.scss";
+@import '../../../scss/variables.scss';
+@import '../../../scss/utils.scss';
 
 :host {
   background: $black-color;
@@ -240,7 +240,7 @@ header {
     }
 
     &::after {
-      content: "";
+      content: '';
       display: block;
       background: #246081;
       height: 2px;
@@ -293,7 +293,7 @@ header {
   span,
   &::after,
   &::before {
-    content: "";
+    content: '';
     background: #fff;
     display: block;
     height: 2px;
@@ -331,7 +331,7 @@ header {
   border-bottom: 2px solid #414141;
   padding: 5px 20px 5px 28px;
   color: #fff;
-  font-family: "Source Sans Pro", "Helvetica Neue", sans-serif;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
   font-size: 14px;
   outline: 0 !important;
   transition: all 90ms ease-in-out;
@@ -365,7 +365,7 @@ header {
 
   &::after,
   &::before {
-    content: "";
+    content: '';
     background: $red-color;
     display: block;
     height: 2px;
