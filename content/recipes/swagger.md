@@ -625,7 +625,6 @@ In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI
 You can use the `options` property to customize the behavior of the plugin.
 
 ```javascript
-{
 "plugins": [
   {
     "name": "@nestjs/swagger/plugin",
@@ -634,7 +633,6 @@ You can use the `options` property to customize the behavior of the plugin.
     }
   }
 ]
-}
 ```
 
 The `options` property has to fulfill the following interface:
