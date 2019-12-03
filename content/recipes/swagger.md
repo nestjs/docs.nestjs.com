@@ -182,7 +182,18 @@ node: Node;
 
 #### Generics and interfaces
 
-Since TypeScript does not store metadata about generics or interfaces, when you use them in your DTOs, `SwaggerModule` may not be able to properly generate model definitions at runtime.
+Since TypeScript does not store metadata about generics or interfaces, when you use them in your DTOs, `SwaggerModule` may not be able to properly generate model definitions at runtime. For instance, below code won't be correctly inspected by the Swagger module:
+
+```typescript
+createBulk(@Body() usersDto: CreateUserDto[])
+```
+
+In order to overcome this limitation, you can set the type explicitly:
+
+```typescript
+@ApiBody({ type: [CreateUserDto] })
+createBulk(@Body() usersDto: CreateUserDto[])
+```
 
 #### Raw definitions
 
