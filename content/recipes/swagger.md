@@ -527,11 +527,19 @@ You can enable file upload for a specific method with the `@ApiBody` decorator t
 @UseInterceptors(FileInterceptor('file'))
 @ApiConsumes('multipart/form-data')
 @ApiBody({
-  name: 'file',
   description: 'List of cats',
-  schema: { type: 'string', format: 'binary' }
+  type: FileUploadDto,
 })
 uploadFile(@UploadedFile() file) {}
+```
+
+Where `FileUploadDto` is defined as follows:
+
+```typescript
+class FileUploadDto {
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: any;
+}
 ```
 
 #### Decorators
