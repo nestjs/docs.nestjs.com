@@ -119,7 +119,7 @@ export class AppService {
 While our config is a stored in a service, it can still be used in the main.ts file.  
 This way, you can use it to store variables such as the application port or the CORS host.
 
-To access it, you must use `app.get`, followed by the name of your service:
+To access it, you must use `app.get`, followed by the service:
 ```typescript
 const config = app.get(ConfigService);
 ```
