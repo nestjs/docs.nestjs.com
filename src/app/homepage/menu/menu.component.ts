@@ -165,7 +165,7 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
         { title: 'Documentation', path: '/recipes/documentation' },
-        { title: 'CRUD', path: '/recipes/crud' },
+        { title: 'CRUD utilities', path: '/recipes/crud-utilities' },
         { title: 'Serve static', path: '/recipes/serve-static' },
       ],
     },
@@ -202,7 +202,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   ngOnInit() {
@@ -223,7 +223,7 @@ export class MenuComponent implements OnInit {
     ) {
       const { path } = firstChild.url[0];
       const index = this.items.findIndex(
-        ({ title }) => title.toLowerCase() === path
+        ({ title }) => title.toLowerCase() === path,
       );
       if (index < 0) {
         return;
