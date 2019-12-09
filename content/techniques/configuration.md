@@ -6,87 +6,109 @@ Externally defined environment variables are visible inside Node.js through the 
 
 In Node.js applications, it's common to use `.env` files, holding key-value pairs where each key represents a particular value, to represent each environment. Running an app in different environments is then just a matter of swapping in the correct `.env` file.
 
-A good approach for using this technique in Nest is to create a `ConfigModule` that exposes a `ConfigService` which loads the appropriate `.env` file, depending on the `$NODE_ENV` environment variable.
+A good approach for using this technique in Nest is to create a `ConfigModule` that exposes a `ConfigService` which loads the appropriate `.env` file, depending on the `$NODE_ENV` environment variable. For convenience, Nest also provides `@nestjs/config` package out-of-the box which we'll cover in the current chapter.
 
 #### Installation
 
-In order to parse our environment files, we'll use the [dotenv](https://github.com/motdotla/dotenv) package.
+To begin using it, we first install the required dependency.
 
 ```bash
-$ npm i --save dotenv
-$ npm i --save-dev @types/dotenv
+$ npm i --save @nestjs/config
 ```
 
-#### Service
+> info **Hint** The `@nestjs/config` package internally uses [dotenv](https://github.com/motdotla/dotenv).
 
-First, we create a `ConfigService` class that will perform the necessary `.env` file parsing and provide an interface for reading configuration variables.
+#### Getting started
 
-```typescript
-@@filename(config/config.service)
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-
-export class ConfigService {
-  private readonly envConfig: Record<string, string>;
-
-  constructor(filePath: string) {
-    this.envConfig = dotenv.parse(fs.readFileSync(filePath))
-  }
-
-  get(key: string): string {
-    return this.envConfig[key];
-  }
-}
-@@switch
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-
-export class ConfigService {
-  constructor(filePath) {
-    this.envConfig = dotenv.parse(fs.readFileSync(filePath))
-  }
-
-  get(key) {
-    return this.envConfig[key];
-  }
-}
-```
-
-This class takes a single argument, a `filePath`, which is a path to your `.env` file. The `get()` method enables access to a private `envConfig` object that holds each property defined in the parsed environment file.
-
-The next step is to create a `ConfigModule`.
+Once the installation process is complete, we can import the `ConfigModule` into the root `AppModule`.
 
 ```typescript
-@@filename()
+@@filename(app.module)
 import { Module } from '@nestjs/common';
-import { ConfigService } from './config.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  providers: [
-    {
-      provide: ConfigService,
-      useValue: new ConfigService(`${process.env.NODE_ENV || 'development'}.env`),
-    },
-  ],
-  exports: [ConfigService],
+  imports: [ConfigModule.forRoot()],
 })
-export class ConfigModule {}
+export class AppModule {}
 ```
 
-The `ConfigModule` registers a `ConfigService` and exports it for visibility in other consuming modules. Additionally, we used the `useValue` syntax (see [Custom providers](/fundamentals/custom-providers)) to pass the path to the `.env` file. This path will be different depending on the actual execution environment as contained in the `NODE_ENV` environment variable (e.g., `'development'`, `'production'`, etc.).
+This module will perform the necessary `.env` file parsing and register the `ConfigService` which provides an interface for reading configuration variables. The `ConfigService` defines the `get()` method that enables access to a private object that holds each property defined in the parsed environment file.
 
-Now you can simply inject `ConfigService` anywhere, and retrieve a particular configuration value based on a passed key.
+A sample `.env` file could look like this:
 
-A sample `development.env` file could look like this:
-
-```typescript
+```json
 DATABASE_USER = test
 DATABASE_PASSWORD = test
 ```
 
-#### Using the ConfigService
+#### Custom env file path
 
-To access **environment variables** from our `ConfigService`, we first need to inject it. Therefore we need to import the `ConfigModule` into the module that will use it.
+By default, the package looks for the `.env` file in the root directory of the application. If you want to specify another path for the `.env`, set the `envFilePath` property as follows:
+
+```typescript
+ConfigModule.forRoot({
+  envFilePath: '.development.env',
+});
+```
+
+#### Disable env variables loading
+
+If you don't want to load `.env` file automatically, set the `ignoreEnvFile` property to `true` as follows:
+
+```typescript
+ConfigModule.forRoot({
+  ignoreEnvFile: true,
+});
+```
+
+#### Use module globally
+
+Instead of importing `ConfigModule` in each module, you can alternatively declare `ConfigModule` as a [global module](https://docs.nestjs.com/modules#global-modules).
+
+```typescript
+ConfigModule.forRoot({
+  isGlobal: true,
+});
+```
+
+Now you can simply inject `ConfigService` anywhere, and retrieve a particular configuration value based on a passed key without importing `ConfigModule` beforehand.
+
+#### Custom configuration files
+
+For more complex projects, you may prefer to define multiple configuration files with nested objects to define groups of related configurations (e.g. database configuration related values). Grouping files makes it easier to understand all the configuration needed to setup the project. In addition, they allow you to automatically cast process environment variables to appropriate types (since every `process.env` gives a `string`) and set the default values for specific properties (e.g. fallback to port `3000`).
+
+```typescript
+@@filename(config/configuration)
+export default {
+  port: process.env.PORT || 3000,
+  database: {
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT || 5432
+  }
+}
+```
+
+We can load this file using the `load` property of the `ConfigModule.forRoot()` method:
+
+```typescript
+import configuration from './config/configuration';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      load: [configuration],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+> info **Notice** We can load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`).
+
+#### Using the `ConfigService`
+
+To access configuration values from our `ConfigService`, we first need to inject it. Therefore we need to import the `ConfigModule` into the module that will use it, unless you set the `isGlobal` property (in the options object passed into the `ConfigModule.forRoot()` method) to `true`.
 
 ```typescript
 @@filename(app.module)
@@ -96,36 +118,69 @@ To access **environment variables** from our `ConfigService`, we first need to i
 })
 ```
 
-Then we can inject it using standard constructor injection, and use it in our class:
+Then we can inject it using standard constructor injection:
 
 ```typescript
-@@filename(app.service)
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from './config/config.service';
-
-@Injectable()
-export class AppService {
-  private isAuthEnabled: boolean;
-  constructor(config: ConfigService) {
-    // Please take note that this check is case sensitive!
-    this.isAuthEnabled = config.get('IS_AUTH_ENABLED') === 'true';
-  }
-}
+constructor(private readonly configService: ConfigService) {}
 ```
 
-> info **Hint** Instead of importing `ConfigModule` in each module, you can alternatively declare `ConfigModule` as a [global module](https://docs.nestjs.com/modules#global-modules).
+And use it in our class:
 
-#### Advanced configuration
+```typescript
+// get the environment variable
+const dbUser = this.configService.get<string>('DATABASE_USER');
 
-We just implemented a basic `ConfigService`. However, this simple version has a couple of disadvantages, which we'll address now:
+// get the custom configuration values
+const dbHost = this.configService.get<string>('database.host');
+```
 
-- missing names & types for the environment variables (no IntelliSense)
-- no validation of the provided `.env` file
-- the service treat a `boolean` value as a `string` (`'true'`), so we subsequently have to cast them to `boolean` after retrieving them
+As you may noticed, we can use `configService.get()` method to either get a specific environment variable (based on the variable name) or use the dot notation to traverse nested object of our custom configuration file. In addition, we can pass the second argument to define a default value, which will be used when the key doesn't exist.
 
-#### Validation
+```typescript
+// use "localhost" when "database.host" is not defined
+const dbHost = this.configService.get<string>('database.host', 'localhost');
+```
 
-We'll start with validation of the provided environment variables. A good technique is to throw an exception if required environment variables haven't been provided or if they don't meet certain validation rules. For this purpose, we are going to use the [Joi](https://github.com/hapijs/joi) npm package. With Joi, you define an object schema and validate JavaScript objects against it.
+#### Configuration namespaces
+
+The `ConfigModule` allows you to define multiple custom configuration files. However, if you define the configuration under the same key (e.g. `host`) in multiple files, they will collide with each other.
+
+To avoid overwriting the configuration keys, you can use `registerAs()` function to define a namespace as follows:
+
+```typescript
+@@filename(config/database.config)
+export default registerAs('database', {
+  host: process.env.DATABASE_HOST,
+  port: process.env.DATABASE_PORT || 5432
+});
+```
+
+> info **Hint** The `registerAs` function is exported from the `@nestjs/config` package.
+
+Now, to get the `host` value from the `database` namespace, you can use a dot notation:
+
+```typescript
+const dbHost = this.configService.get<string>('database.host');
+```
+
+Where `database` is the name of the namespace (first argument passed into the `registerAs` function).
+
+#### Partial registration
+
+In more sophisticated scenarios, you may have a complex project structure in which the configuration files are located in multiple, different directories. In order to avoid referencing all these files in the root module (`AppModule`), we can use a technique called **partial registration**. With the partial registration, you can register a configuration within a feature module as follows:
+
+```typescript
+import databaseConfig from './config/database.config';
+
+@Module({
+  imports: [ConfigModule.forFeature(databaseConfig)],
+})
+export class DatabaseModule {}
+```
+
+#### Schema validation
+
+A good technique is to throw an exception if required environment variables haven't been provided or if they don't meet certain validation rules. For this purpose, we are going to use the [Joi](https://github.com/hapijs/joi) npm package. With Joi, you define an object schema and validate JavaScript objects against it.
 
 Install Joi (and its types, for **TypeScript** users):
 
@@ -134,58 +189,54 @@ $ npm install --save @hapi/joi
 $ npm install --save-dev @types/hapi__joi
 ```
 
-Now we can utilize Joi validation features in our `ConfigService`.
+Now we can define a Joi validation schema.
 
 ```typescript
 @@filename(config.service)
-import * as dotenv from 'dotenv';
 import * as Joi from '@hapi/joi';
-import * as fs from 'fs';
 
-export type EnvConfig = Record<string, string>;
-
-export class ConfigService {
-  private readonly envConfig: EnvConfig;
-
-  constructor(filePath: string) {
-    const config = dotenv.parse(fs.readFileSync(filePath));
-    this.envConfig = this.validateInput(config);
-  }
-
-  /**
-   * Ensures all needed variables are set, and returns the validated JavaScript object
-   * including the applied default values.
-   */
-  private validateInput(envConfig: EnvConfig): EnvConfig {
-    const envVarsSchema: Joi.ObjectSchema = Joi.object({
-      NODE_ENV: Joi.string()
-        .valid('development', 'production', 'test', 'provision')
-        .default('development'),
-      PORT: Joi.number().default(3000),
-      API_AUTH_ENABLED: Joi.boolean().required(),
-    });
-
-    const { error, value: validatedEnvConfig } = envVarsSchema.validate(
-      envConfig,
-    );
-    if (error) {
-      throw new Error(`Config validation error: ${error.message}`);
-    }
-    return validatedEnvConfig;
-  }
-}
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test', 'provision')
+          .default('development'),
+        PORT: Joi.number().default(3000),
+      }),
+    }),
+  ],
+})
+export class AppModule {}
 ```
 
-Since we set default values for `NODE_ENV` and `PORT` the validation will not fail if we don't provide these variables in the environment file. Conversely, because there's no default value, our `env` file needs to explicitly provide `API_AUTH_ENABLED`. The validation step will also throw an exception if we have variables in our `.env` file which aren't part of the schema. Finally, Joi tries to convert the string values from the `.env` file into the right type, solving our "booleans as strings" problem from above.
+Since we set default values for `NODE_ENV` and `PORT` the validation will not fail if we don't provide these variables in the environment file. The validation step will throw an exception if we have variables in our `.env` file which aren't part of the schema. Finally, Joi tries to convert the string values from the `.env` file into the right type.
 
 #### Custom getter functions
 
-We already defined a generic `get()` method to retrieve a configuration value by key. We may also add `getter` functions to enable a little more natural coding style:
+`ConfigService` defines a generic `get()` method to retrieve a configuration value by key. We may also add `getter` functions to enable a little more natural coding style:
 
 ```typescript
-@@filename(config.service)
-get isApiAuthEnabled(): boolean {
-  return Boolean(this.envConfig.API_AUTH_ENABLED);
+@@filename()
+@Injectable()
+export class ApiConfigService {
+  constructor(private configService: ConfigService) {}
+
+  get isAuthEnabled(): boolean {
+    return Boolean(this.configService.get('AUTH_ENABLED');
+  }
+}
+@@switch
+@Dependencies(ConfigService)
+@Injectable()
+export class ApiConfigService {
+  constructor(configService) {
+    this.configService = configService;
+  }
+
+  get isAuthEnabled() {
+    return Boolean(this.configService.get('AUTH_ENABLED');
+  }
 }
 ```
 
@@ -195,9 +246,19 @@ Now we can use the getter function as follows:
 @@filename(app.service)
 @Injectable()
 export class AppService {
-  constructor(config: ConfigService) {
-    if (config.isApiAuthEnabled) {
-      // Authorization is enabled
+  constructor(apiConfigService: ApiConfigService) {
+    if (apiConfigService.isAuthEnabled) {
+      // Authentication is enabled
+    }
+  }
+}
+@@switch
+@Dependencies(ApiConfigService)
+@Injectable()
+export class AppService {
+  constructor(apiConfigService) {
+    if (apiConfigService.isAuthEnabled) {
+      // Authentication is enabled
     }
   }
 }
