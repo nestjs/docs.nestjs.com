@@ -2,7 +2,7 @@
 
 ##### This chapter applies only to TypeScript
 
-[CRUD](https://github.com/nestjsx/crud) package (`@nestjsx/crud`) helps you create CRUD controllers and services with ease and provides a bunch of the features for your RESTful API out of the box:
+[CRUD](https://github.com/nestjsx/crud) is a community package (`@nestjsx/crud`) that helps you creating CRUD controllers and services with ease and provides a bunch of features for your RESTful API out-of-the-box:
 
 * Database agnostic extendable CRUD controller
 * Query string parsing with filtering, pagination, sorting, relations, nested relations, cache, etc.
