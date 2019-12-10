@@ -307,26 +307,40 @@ The possibility of manipulating the stream using RxJS operators gives us many ca
 
 ```typescript
 @@filename(timeout.interceptor)
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, RequestTimeoutException } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { timeout } from 'rxjs/operators';
+import { timeout, race, from } from 'rxjs/operators';
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(timeout(5000))
+   return race(
+      next.handle(),
+      from(new Promise(res => setTimeout(res, 5000))
+        .then(() => {
+            throw new RequestTimeoutException()
+        })
+      )
+    )
   }
 }
 @@switch
-import { Injectable } from '@nestjs/common';
-import { timeout } from 'rxjs/operators';
+import { Injectable, RequestTimeoutException } from '@nestjs/common';
+import { timeout, race, from } from 'rxjs/operators';
 
 @Injectable()
 export class TimeoutInterceptor {
   intercept(context, next) {
-    return next.handle().pipe(timeout(5000))
+  return race(
+      next.handle(),
+      from(new Promise(res => setTimeout(res, 5000))
+        .then(() => {
+            throw new RequestTimeoutException()
+        })
+      )
+    )
   }
 }
 ```
 
-After 5 seconds, request processing will be canceled.
+After 5 seconds, request processing will be canceled. You can also add custom logic in timeout Promise (e.g. release resources).
