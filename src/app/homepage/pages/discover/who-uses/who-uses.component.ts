@@ -113,6 +113,11 @@ export class WhoUsesComponent extends BasePageComponent {
       url: 'https://nothing.ch/',
       width: '110px',
     },
+    {
+      logo: '/assets/logo/swissdevjobs-devops-logo.png',
+      url: 'https://swissdevjobs.ch/jobs/Dev-Ops/All',
+      width: '65px',
+    },
   ];
 
   readonly companiesUrls = [
