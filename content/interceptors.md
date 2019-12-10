@@ -308,39 +308,42 @@ The possibility of manipulating the stream using RxJS operators gives us many ca
 ```typescript
 @@filename(timeout.interceptor)
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, RequestTimeoutException } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { timeout, race, from } from 'rxjs/operators';
+import { Observable, throwError, TimeoutError } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-   return race(
-      next.handle(),
-      from(new Promise(res => setTimeout(res, 5000))
-        .then(() => {
-            throw new RequestTimeoutException()
-        })
-      )
-    )
-  }
-}
+    return next.handle().pipe(
+      timeout(5000),
+      catchError(err => {
+        if (err instanceof TimeoutError) {
+          return throwError(new RequestTimeoutException());
+        }
+        return throwError(err);
+      }),
+    );
+  };
+};
 @@switch
 import { Injectable, RequestTimeoutException } from '@nestjs/common';
-import { timeout, race, from } from 'rxjs/operators';
+import { Observable, throwError, TimeoutError } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
 
 @Injectable()
-export class TimeoutInterceptor {
+export class TimeoutInterceptor implements NestInterceptor {
   intercept(context, next) {
-  return race(
-      next.handle(),
-      from(new Promise(res => setTimeout(res, 5000))
-        .then(() => {
-            throw new RequestTimeoutException()
-        })
-      )
-    )
-  }
-}
+    return next.handle().pipe(
+      timeout(5000),
+      catchError(err => {
+        if (err instanceof TimeoutError) {
+          return throwError(new RequestTimeoutException());
+        }
+        return throwError(err);
+      }),
+    );
+  };
+};
 ```
 
-After 5 seconds, request processing will be canceled. You can also add custom logic in timeout Promise (e.g. release resources).
+After 5 seconds, request processing will be canceled. You can also add custom logic before throwing `RequestTimeoutException` (e.g. release resources).
