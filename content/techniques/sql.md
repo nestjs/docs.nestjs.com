@@ -55,7 +55,7 @@ The `forRoot()` method accepts the same configuration object as `createConnectio
 }
 ```
 
-> warning **Warning** Static glob paths (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
+> warning **Warning** Static glob paths (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack hot reloading](https://docs.nestjs.com/techniques/hot-reload).
 
 Then, we can call `forRoot()` without any options:
 
