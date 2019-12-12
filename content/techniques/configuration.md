@@ -106,6 +106,19 @@ export class AppModule {}
 
 > info **Notice** We can load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`).
 
+In addition, you can inject the `ConfigService` instance to your configuration factory:
+
+```typescript
+@@filename(config/configuration)
+export default (configService: ConfigService) => ({
+  port: process.env.PORT || 3000,
+  database: {
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT || 5432
+  }
+});
+```
+
 #### Using the `ConfigService`
 
 To access configuration values from our `ConfigService`, we first need to inject it. Therefore we need to import the `ConfigModule` into the module that will use it, unless you set the `isGlobal` property (in the options object passed into the `ConfigModule.forRoot()` method) to `true`.
