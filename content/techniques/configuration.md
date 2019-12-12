@@ -80,13 +80,13 @@ For more complex projects, you may prefer to define multiple configuration files
 
 ```typescript
 @@filename(config/configuration)
-export default {
+export default () => ({
   port: process.env.PORT || 3000,
   database: {
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT || 5432
   }
-}
+});
 ```
 
 We can load this file using the `load` property of the `ConfigModule.forRoot()` method:
@@ -149,10 +149,10 @@ To avoid overwriting the configuration keys, you can use `registerAs()` function
 
 ```typescript
 @@filename(config/database.config)
-export default registerAs('database', {
+export default registerAs('database', () => ({
   host: process.env.DATABASE_HOST,
   port: process.env.DATABASE_PORT || 5432
-});
+}));
 ```
 
 > info **Hint** The `registerAs` function is exported from the `@nestjs/config` package.
