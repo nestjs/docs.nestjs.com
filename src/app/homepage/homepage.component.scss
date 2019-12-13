@@ -1,5 +1,5 @@
-@import "../../scss/utils.scss";
-@import "../../scss/variables.scss";
+@import '../../scss/utils.scss';
+@import '../../scss/variables.scss';
 
 .container-fluid {
   position: relative;
@@ -99,7 +99,7 @@
       @include opacity(1);
     }
     &::before {
-      content: "";
+      content: '';
       display: block;
       position: relative;
       width: 0;
@@ -396,6 +396,11 @@
 #carbonads span {
   display: block;
   overflow: hidden;
+}
+
+#carbonads_1,
+#carbonads_2 {
+  display: none;
 }
 
 .carbon-img {
