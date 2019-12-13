@@ -6,7 +6,7 @@ Externally defined environment variables are visible inside Node.js through the 
 
 In Node.js applications, it's common to use `.env` files, holding key-value pairs where each key represents a particular value, to represent each environment. Running an app in different environments is then just a matter of swapping in the correct `.env` file.
 
-A good approach for using this technique in Nest is to create a `ConfigModule` that exposes a `ConfigService` which loads the appropriate `.env` file, depending on the `$NODE_ENV` environment variable. For convenience, Nest also provides `@nestjs/config` package out-of-the box which we'll cover in the current chapter.
+A good approach for using this technique in Nest is to create a `ConfigModule` that exposes a `ConfigService` which loads the appropriate `.env` file. While you may choose to write such a module yourself, for convenience Nest provides the `@nestjs/config` package out-of-the box. We'll cover this package in the current chapter.
 
 #### Installation
 
@@ -20,7 +20,7 @@ $ npm i --save @nestjs/config
 
 #### Getting started
 
-Once the installation process is complete, we can import the `ConfigModule` into the root `AppModule`.
+Once the installation process is complete, we can import the `ConfigModule`. Typically, we'll import it into the root `AppModule` and control its behavior using the `.forRoot()` static method. During this step, environment variable key/value pairs are parsed and resolved. Later, we'll see several options for accessing the `ConfigService` class of the `ConfigModule` in our other feature modules.
 
 ```typescript
 @@filename(app.module)
@@ -33,18 +33,18 @@ import { ConfigModule } from '@nestjs/config';
 export class AppModule {}
 ```
 
-This module will perform the necessary `.env` file parsing and register the `ConfigService` which provides an interface for reading configuration variables. The `ConfigService` defines the `get()` method that enables access to a private object that holds each property defined in the parsed environment file.
+The above code will load and parse a `.env` file from the default location (the project root directory), merge key/value pairs from the `.env` file with environment variables assigned to `process.env`, and store the result in a private structure that you can access through the `ConfigService`. The `forRoot()` method registers the `ConfigService` provider, which provides a `get()` method for reading these parsed/merged configuration variables. Since `@nestjs/config` relies on [dotenv](https://github.com/motdotla/dotenv), it uses that package's rules for resolving conflicts in environment variable names. When a key exists both in the runtime environment as an environment variable (e.g., via OS shell exports like `export DATABASE_USER=test`) and in a `.env` file, the runtime environment variable takes precedence.
 
-A sample `.env` file could look like this:
+A sample `.env` file looks something like this:
 
 ```json
-DATABASE_USER = test
-DATABASE_PASSWORD = test
+DATABASE_USER=test
+DATABASE_PASSWORD=test
 ```
 
 #### Custom env file path
 
-By default, the package looks for the `.env` file in the root directory of the application. If you want to specify another path for the `.env`, set the `envFilePath` property as follows:
+By default, the package looks for a `.env` file in the root directory of the application. To specify another path for the `.env` file, set the `envFilePath` property of an (optional) options object you pass to `forRoot()`, as follows:
 
 ```typescript
 ConfigModule.forRoot({
@@ -54,7 +54,7 @@ ConfigModule.forRoot({
 
 #### Disable env variables loading
 
-If you don't want to load `.env` file automatically, set the `ignoreEnvFile` property to `true` as follows:
+If you don't want to load the `.env` file, but instead would like to simply access environment variables from the runtime environment (as with OS shell exports like `export DATABASE_USER=test`), set the options object's `ignoreEnvFile` property to `true`, as follows:
 
 ```typescript
 ConfigModule.forRoot({
@@ -64,7 +64,7 @@ ConfigModule.forRoot({
 
 #### Use module globally
 
-Instead of importing `ConfigModule` in each module, you can alternatively declare `ConfigModule` as a [global module](https://docs.nestjs.com/modules#global-modules).
+When you want to use `ConfigModule` in other modules, you'll need to import it (as is standard with any Nest module). Alternatively, declare it as a [global module](https://docs.nestjs.com/modules#global-modules) by setting the options object's `isGlobal` property to `true`, as shown below. In that case, you will not need to import `ConfigModule` in other modules once it's been loaded in the root module (e.g., `AppModule`).
 
 ```typescript
 ConfigModule.forRoot({
@@ -72,24 +72,24 @@ ConfigModule.forRoot({
 });
 ```
 
-Now you can simply inject `ConfigService` anywhere, and retrieve a particular configuration value based on a passed key without importing `ConfigModule` beforehand.
-
 #### Custom configuration files
 
-For more complex projects, you may prefer to define multiple configuration files with nested objects to define groups of related configurations (e.g. database configuration related values). Grouping files makes it easier to understand all the configuration needed to setup the project. In addition, they allow you to automatically cast process environment variables to appropriate types (since every `process.env` gives a `string`) and set the default values for specific properties (e.g. fallback to port `3000`).
+For more complex projects, you may utilize custom configuration files to return nested configuration objects. This allows you to group related configuration settings by function (e.g., database-related settings), and to store related settings in individual files to help manage them independently.
+
+A custom configuration file exports a factory function that returns a configuration object. The configuration object can be any arbitrarily nested plain JavaScript object. The `process.env` object will contain the fully resolved environment variable key/value pairs (with `.env` file and externally defined variables resolved and merged as described <a href="techniques/configuration#getting-started">above</a>). Since you control the returned configuration object, you can add any required logic to cast values to an appropriate type, set default values, etc. For example:
 
 ```typescript
 @@filename(config/configuration)
 export default () => ({
-  port: process.env.PORT || 3000,
+  port: parseInt(process.env.PORT, 10) || 3000,
   database: {
     host: process.env.DATABASE_HOST,
-    port: process.env.DATABASE_PORT || 5432
+    port: parseInt(process.env.DATABASE_PORT, 10) || 5432
   }
 });
 ```
 
-We can load this file using the `load` property of the `ConfigModule.forRoot()` method:
+We load this file using the `load` property of the options object we pass to the `ConfigModule.forRoot()` method:
 
 ```typescript
 import configuration from './config/configuration';
@@ -104,14 +104,14 @@ import configuration from './config/configuration';
 export class AppModule {}
 ```
 
-> info **Notice** We can load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`).
+> info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
 #### Using the `ConfigService`
 
-To access configuration values from our `ConfigService`, we first need to inject it. Therefore we need to import the `ConfigModule` into the module that will use it, unless you set the `isGlobal` property (in the options object passed into the `ConfigModule.forRoot()` method) to `true`.
+To access configuration values from our `ConfigService`, we first need to inject `ConfigService`. As with any provider, we first need to import its containing module - the `ConfigModule` - into the module that will use it (unless you set the `isGlobal` property in the options object passed to the `ConfigModule.forRoot()` method to `true`). Import it into a feature module as shown below.
 
 ```typescript
-@@filename(app.module)
+@@filename(feature.module)
 @Module({
   imports: [ConfigModule],
   ...
@@ -127,14 +127,14 @@ constructor(private readonly configService: ConfigService) {}
 And use it in our class:
 
 ```typescript
-// get the environment variable
+// get an environment variable
 const dbUser = this.configService.get<string>('DATABASE_USER');
 
-// get the custom configuration values
+// get a custom configuration value
 const dbHost = this.configService.get<string>('database.host');
 ```
 
-As you may noticed, we can use `configService.get()` method to either get a specific environment variable (based on the variable name) or use the dot notation to traverse nested object of our custom configuration file. In addition, we can pass the second argument to define a default value, which will be used when the key doesn't exist.
+As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>, as shown in the second example above. The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
 
 ```typescript
 // use "localhost" when "database.host" is not defined
@@ -143,9 +143,7 @@ const dbHost = this.configService.get<string>('database.host', 'localhost');
 
 #### Configuration namespaces
 
-The `ConfigModule` allows you to define multiple custom configuration files. However, if you define the configuration under the same key (e.g. `host`) in multiple files, they will collide with each other.
-
-To avoid overwriting the configuration keys, you can use `registerAs()` function to define a namespace as follows:
+The `ConfigModule` allows you to define and load multiple custom configuration files, as shown in <a href="techniques/configuration#custom-configuration-files">Custom configuration files</a> above. You can manage complex configuration object hierarchies with nested configuration objects as shown in that section. Alternatively, you can return a simple 2-level "namespaced" configuration object with the `registerAs()` function as follows:
 
 ```typescript
 @@filename(config/database.config)
@@ -155,19 +153,34 @@ export default registerAs('database', () => ({
 }));
 ```
 
+As with custom configuration files, inside your `registerAs()` factory function, the `process.env` object will contain the fully resolved environment variable key/value pairs (with `.env` file and externally defined variables resolved and merged as described <a href="techniques/configuration#getting-started">above</a>).
+
 > info **Hint** The `registerAs` function is exported from the `@nestjs/config` package.
 
-Now, to get the `host` value from the `database` namespace, you can use a dot notation:
+Load a namespaced configuration with the `load` property of the `forRoot()` method's options object, in the same way you load a custom configuration file:
+
+```typescript
+import database from './config/database.config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      load: [database],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Now, to get the `host` value from the `database` namespace, use dot notation. Use `'database'` as the prefix to the property name, corresponding to the name of the namespace (passed as the first argument to the `registerAs()` function):
 
 ```typescript
 const dbHost = this.configService.get<string>('database.host');
 ```
 
-Where `database` is the name of the namespace (first argument passed into the `registerAs` function).
-
 #### Partial registration
 
-In more sophisticated scenarios, you may have a complex project structure in which the configuration files are located in multiple, different directories. In order to avoid referencing all these files in the root module (`AppModule`), we can use a technique called **partial registration**. With the partial registration, you can register a configuration within a feature module as follows:
+Thus far, we've processed configuration files in our root module (e.g., `AppModule`), with the `forRoot()` method. Perhaps you have a more complex project structure, with feature-specific configuration files located in multiple different directories. Rather than load all these files in the root module, the `@nestjs/config` package provides a feature called **partial registration**, which references only the configuration files associated with each feature module. Use the `forFeature()` static method within a feature module to perform this partial registration, as follows:
 
 ```typescript
 import databaseConfig from './config/database.config';
@@ -178,9 +191,11 @@ import databaseConfig from './config/database.config';
 export class DatabaseModule {}
 ```
 
+> info **Warning** In some circumstances, you may need to access properties loaded via partial registration using the `onModuleInit()` hook, rather than in a constructor. This is because the `forFeature()` method is run during module initialization, and the order of module initialization is indeterminate. If you access values loaded this way by another module, in a constructor, the module that the configuration depends upon may not yet have initialized. The `onModuleInit()` method runs only after all modules it depends upon have been initialized, so this technique is safe.
+
 #### Schema validation
 
-A good technique is to throw an exception if required environment variables haven't been provided or if they don't meet certain validation rules. For this purpose, we are going to use the [Joi](https://github.com/hapijs/joi) npm package. With Joi, you define an object schema and validate JavaScript objects against it.
+It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables use of the [Joi](https://github.com/hapijs/joi) npm package to support this type of validation. With Joi, you define an object schema and validate JavaScript objects against it.
 
 Install Joi (and its types, for **TypeScript** users):
 
@@ -189,7 +204,7 @@ $ npm install --save @hapi/joi
 $ npm install --save-dev @types/hapi__joi
 ```
 
-Now we can define a Joi validation schema.
+Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
 @@filename(config.service)
@@ -210,7 +225,39 @@ import * as Joi from '@hapi/joi';
 export class AppModule {}
 ```
 
-Since we set default values for `NODE_ENV` and `PORT` the validation will not fail if we don't provide these variables in the environment file. The validation step will throw an exception if we have variables in our `.env` file which aren't part of the schema. Finally, Joi tries to convert the string values from the `.env` file into the right type.
+By default, all schema keys are considered optional. Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). Alternatively, we can use the `required()` validation method to require that a value must be defined in the environment (`.env` file or process environment). In this case, the validation step will throw an exception if we don't provide the variable in the environment. See [Joi validation methods](https://hapi.dev/family/joi/?v=16.1.8#anycachecache) for more on how to construct validation schemas.
+
+By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://hapi.dev/family/joi/?v=16.1.8#anyvalidvalues---aliases-equal). For example, to reverse the two settings above, pass options like this:
+
+```typescript
+@@filename(config.service)
+import * as Joi from '@hapi/joi';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test', 'provision')
+          .default('development'),
+        PORT: Joi.number().default(3000),
+      }),
+      validationOptions: {
+        allowUnknowns: false,
+        abortEarly: true,
+      },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+The `@nestjs/config` package uses default settings of:
+
+- `allowUnknowns`: controls whether or not to allow unknown keys in the environment variables. Default is `true`
+- `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
+
+Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
 
 #### Custom getter functions
 
