@@ -5,6 +5,7 @@ import { SharedModule } from '../../../shared/shared.module';
 import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudComponent } from './crud/crud.component';
 import { DocumentationComponent } from './documentation/documentation.component';
+import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
@@ -64,6 +65,11 @@ const routes: Routes = [
     redirectTo: 'crud-utilities',
   },
   {
+    path: 'hot-reload',
+    component: HotReloadComponent,
+    data: { title: 'Hot reload' },
+  },
+  {
     path: 'serve-static',
     component: ServeStaticComponent,
     data: { title: 'Serve Static' },
@@ -79,6 +85,7 @@ const routes: Routes = [
     SwaggerComponent,
     PrismaComponent,
     CqrsComponent,
+    HotReloadComponent,
     TerminusComponent,
     DocumentationComponent,
     CrudComponent,

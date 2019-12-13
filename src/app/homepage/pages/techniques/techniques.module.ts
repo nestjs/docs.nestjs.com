@@ -7,7 +7,6 @@ import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
-import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { HttpModuleComponent } from './http-module/http-module.component';
 import { LoggerComponent } from './logger/logger.component';
 import { MongoComponent } from './mongo/mongo.component';
@@ -74,11 +73,6 @@ const routes: Routes = [
     data: { title: 'Performance (Fastify)' },
   },
   {
-    path: 'hot-reload',
-    component: HotReloadComponent,
-    data: { title: 'Hot reload (Webpack)' },
-  },
-  {
     path: 'http-module',
     component: HttpModuleComponent,
     data: { title: 'HTTP module' },
@@ -98,6 +92,10 @@ const routes: Routes = [
     component: CompressionComponent,
     data: { title: 'Compression' },
   },
+  {
+    path: 'hot-reload',
+    redirectTo: '/recipes/hot-reload',
+  },
 ];
 
 @NgModule({
@@ -112,7 +110,6 @@ const routes: Routes = [
     PerformanceComponent,
     FileUploadComponent,
     HttpModuleComponent,
-    HotReloadComponent,
     ConfigurationComponent,
     CompressionComponent,
     ValidationComponent,
