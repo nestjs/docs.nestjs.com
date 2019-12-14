@@ -96,13 +96,13 @@ src/app/homepage/pages/recipes/terminus/terminus.component.html
 src/app/homepage/pages/techniques/caching/caching.component.html
 src/app/homepage/pages/techniques/configuration/configuration.component.html
 src/app/homepage/pages/techniques/file-upload/file-upload.component.html
-src/app/homepage/pages/techniques/hot-reload/hot-reload.component.html
 src/app/homepage/pages/techniques/compression/compression.component.html
 src/app/homepage/pages/techniques/http-module/http-module.component.html
 src/app/homepage/pages/techniques/logger/logger.component.html
 src/app/homepage/pages/techniques/mongo/mongo.component.html
 src/app/homepage/pages/techniques/performance/performance.component.html
 src/app/homepage/pages/techniques/mvc/mvc.component.html
+src/app/homepage/pages/techniques/queues/queues.component.html
 src/app/homepage/pages/techniques/security/security.component.html
 src/app/homepage/pages/techniques/serialization/serialization.component.html
 src/app/homepage/pages/techniques/validation/validation.component.html
@@ -129,6 +129,7 @@ src/app/homepage/pages/controllers/controllers.component.html
 src/app/homepage/pages/pipes/pipes.component.html
 src/app/homepage/pages/recipes/crud/crud.component.html
 src/app/homepage/pages/recipes/serve-static/serve-static.component.html
+src/app/homepage/pages/recipes/hot-reload/hot-reload.component.html
 src/app/homepage/pages/discover/who-uses/who-uses.component.html
 src/app/homepage/pages/fundamentals/dynamic-modules/dynamic-modules.component.html
 
