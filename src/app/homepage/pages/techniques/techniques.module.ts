@@ -12,6 +12,7 @@ import { LoggerComponent } from './logger/logger.component';
 import { MongoComponent } from './mongo/mongo.component';
 import { MvcComponent } from './mvc/mvc.component';
 import { PerformanceComponent } from './performance/performance.component';
+import { QueuesComponent } from './queues/queues.component';
 import { SecurityComponent } from './security/security.component';
 import { SerializationComponent } from './serialization/serialization.component';
 import { SqlComponent } from './sql/sql.component';
@@ -93,6 +94,11 @@ const routes: Routes = [
     data: { title: 'Compression' },
   },
   {
+    path: 'queues',
+    component: QueuesComponent,
+    data: { title: 'Queues' },
+  },
+  {
     path: 'hot-reload',
     redirectTo: '/recipes/hot-reload',
   },
@@ -106,6 +112,7 @@ const routes: Routes = [
     MongoComponent,
     AuthenticationComponent,
     SecurityComponent,
+    QueuesComponent,
     LoggerComponent,
     PerformanceComponent,
     FileUploadComponent,
