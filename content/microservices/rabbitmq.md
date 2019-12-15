@@ -1,10 +1,10 @@
 ### RabbitMQ
 
-The [RabbitMQ](https://www.rabbitmq.com/) is the most widely deployed open source message broker.
+[RabbitMQ](https://www.rabbitmq.com/) is an open-source and lightweight message broker which supports multiple messaging protocols. It can be deployed in distributed and federated configurations to meet high-scale, high-availability requirements. In addition, it's the most widely deployed message broker, used worldwide at small startups and large enterprises.
 
 #### Installation
 
-Before we start, we have to install required packages:
+To start building RabbitMQ-based microservices, first install the required packages:
 
 ```bash
 $ npm i --save amqplib amqp-connection-manager
@@ -12,7 +12,7 @@ $ npm i --save amqplib amqp-connection-manager
 
 #### Transporter
 
-In order to switch to **RabbitMQ** transporter, we need to modify an options object passed to the `createMicroservice()` method.
+To use the RabbitMQ transporter, pass the following options object to the `createMicroservice()` method:
 
 ```typescript
 @@filename(main)
@@ -21,16 +21,129 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
   options: {
     urls: [`amqp://localhost:5672`],
     queue: 'cats_queue',
-    queueOptions: { durable: false },
+    queueOptions: {
+      durable: false
+    },
   },
 });
 ```
 
-> info **Hint** `Transport` enumerator is imported from the `@nestjs/microservices` package.
+> info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
+
+Likewise, to create a client instance, we need to pass an options object with the same properties we saw above in the `createMicroservice()` method.
+
+```typescript
+ClientsModule.register([
+  {
+    name: 'MATH_SERVICE',
+    transport: Transport.RMQ,
+    options: {
+      urls: [`amqp://localhost:5672`],
+      queue: 'cats_queue',
+      queueOptions: {
+        durable: false
+      },
+    },
+  },
+]),
+```
+
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
+
+#### Context
+
+In more sophisticated scenarios, you may want to access more information about the incoming request. In RabbitMQ, you can access the `RmqContext` object.
+
+```typescript
+@@filename()
+@MessagePattern('notifications')
+getNotifications(@Payload() data: number[], @Ctx() context: RmqContext) {
+  console.log(`Pattern: ${context.getPattern()}`);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('notifications')
+getNotifications(data, context) {
+  console.log(`Pattern: ${context.getPattern()}`);
+}
+```
+
+> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from `@nestjs/microservices`.
+
+In addition, if you want to access the original RabbitMQ message (with the `properties`, `fields`, and `content`), use the `getMessage()` method of the `RmqContext` object, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('notifications')
+getNotifications(@Payload() data: number[], @Ctx() context: RmqContext) {
+  console.log(context.getMessage());
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('notifications')
+getNotifications(data, context) {
+  console.log(context.getMessage());
+}
+```
+
+In order to retrieve a reference to the RabbitMQ [channel](https://www.rabbitmq.com/channels.html), use the `getChannelRef` method of the `RmqContext` object, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('notifications')
+getNotifications(@Payload() data: number[], @Ctx() context: RmqContext) {
+  console.log(context.getChannelRef());
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('notifications')
+getNotifications(data, context) {
+  console.log(context.getChannelRef());
+}
+```
+
+#### Message acknowledgment
+
+In order to make sure a message is never lost, RabbitMQ supports [message acknowledgments])https://www.rabbitmq.com/confirms.html_. An acknowledgement is sent back by the consumer to tell RabbitMQ that a particular message has been received, processed and that RabbitMQ is free to delete it. If a consumer dies (its channel is closed, connection is closed, or TCP connection is lost) without sending an ack, RabbitMQ will understand that a message wasn't processed fully and will re-queue it.
+
+To enable manual acknowledgment mode, set the `noAck` property to `false`:
+
+```typescript
+options: {
+  urls: [`amqp://localhost:5672`],
+  queue: 'cats_queue',
+  noAck: false,
+  queueOptions: {
+    durable: false
+  },
+},
+```
+
+When manual consumer acknowledgments are turned on, we must send a proper acknowledgment from the worker to signal that we are done with a task.
+
+```typescript
+@@filename()
+@MessagePattern('notifications')
+getNotifications(@Payload() data: number[], @Ctx() context: RmqContext) {
+  const channel = context.getChannelRef();
+  const originalMsg = context.getMessage();
+
+  channel.ack(originalMsg);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('notifications')
+getNotifications(data, context) {
+  const channel = context.getChannelRef();
+  const originalMsg = context.getMessage();
+
+  channel.ack(originalMsg);
+}
+```
 
 #### Options
 
-There are a bunch of available options that determine a transporter behavior.
+The `options` object is specific to the chosen transporter. The <strong>RabbitMQ</strong> transporter exposes the properties described below.
 
 <table>
   <tr>
@@ -48,6 +161,10 @@ There are a bunch of available options that determine a transporter behavior.
   <tr>
     <td><code>isGlobalPrefetchCount</code></td>
     <td>Enables per channel prefetching</td>
+  </tr>
+  <tr>
+    <td><code>noAck</code></td>
+    <td>If `false`, manual acknowledgment mode enabled</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>

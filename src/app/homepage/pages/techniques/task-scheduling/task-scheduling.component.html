@@ -1,0 +1,131 @@
+
+<div class="content" #contentReference>
+  <div class="github-links">
+    <a
+      href="https://github.com/nestjs/docs.nestjs.com/edit/master/content/techniques/task-scheduling.md"
+      aria-label="Suggest Edits"
+      title="Suggest Edits"
+    >
+      <i class="fas fa-edit"></i>
+    </a>
+  </div>
+  <h3 id="task-scheduling">Task Scheduling</h3>
+<p>Task scheduling allows you to schedule arbitrary functions for execution at specific dates/times.
+For scheduling, Nest provides integration with the <a rel='nofollow' target='_blank' href="https://github.com/kelektiv/node-cron">cron</a> package out-of-the box with <code>@nestjs/schedule</code>, which we&#39;ll cover in the current chapter.</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>To begin using it, we first install the required dependencies.</p>
+<pre><code class="language-bash">
+$ npm install --save @nestjs/schedule</code></pre>
+<p>Once the installation process is complete, we can import the <code>ScheduleModule</code> into the root <code>AppModule</code>.</p>
+
+<span class="filename">
+  {{ 'app.module' | extension: app443b6231860ebe3b60aafa59a894441186542a82.isJsActive }}
+<app-tabs #app443b6231860ebe3b60aafa59a894441186542a82></app-tabs>
+</span><pre><code class="language-typescript">
+import &#123; Module &#125; from &#39;@nestjs/common&#39;;
+import &#123; ScheduleModule &#125; from &#39;@nestjs/schedule&#39;;
+
+@Module(&#123;
+  imports: [
+    ScheduleModule.forRoot()
+  ],
+&#125;)
+export class AppModule &#123;&#125;</code></pre><p>The <code>.forRoot()</code> call will register all the Cron jobs, timeouts, and intervals defined within your app when the <code>onApplicationBootstrap</code> lifecycle hook occurs.</p>
+<h4 appAnchor id="cron-jobs"><span>Cron jobs</span></h4>
+<p>A Cron is a time-based job scheduler, which allows to schedule an arbitrary function to run automatically at a certain date or time. To define a Cron job, use the <code>@Cron</code> decorator, as follows:</p>
+<pre><code class="language-typescript">
+import &#123; Injectable, Logger &#125; from &#39;@nestjs/common&#39;;
+import &#123; Cron &#125; from &#39;@nestjs/schedule&#39;;
+
+@Injectable()
+export class TasksService &#123;
+  private readonly logger = new Logger(TasksService.name);
+
+  @Cron(&#39;45 * * * * *&#39;)
+  handleCron() &#123;
+    this.logger.debug(&#39;Called when the second is 45&#39;);
+  &#125;
+&#125;</code></pre>
+<p>The <code>handleCron</code> method will be called every time when the second is <code>45</code>. The <code>@Cron</code> decorator supports all the <a rel='nofollow' target='_blank' href="http://crontab.org/">cron patterns</a>:</p>
+<ul>
+<li>Asterisk (e.g. <code>*</code>)</li>
+<li>Ranges (e.g. <code>1-3,5</code>)</li>
+<li>Steps (e.g. <code>*/2</code>)</li>
+</ul>
+<p>In addition, it allows you to supply a <code>Date</code> object. In the example above, we passed <code>45 * * * * *.</code> argument to the decorator. These parameters have different meanings when used:</p>
+<pre class="language-javascript"><code class="language-javascript">
+* * * * * *
+| | | | | |
+| | | | | day of week
+| | | | month
+| | | day of month
+| | hour
+| minute
+second (optional)
+</code></pre>
+
+<h4 appAnchor id="named-cron-jobs"><span>Named Cron jobs</span></h4>
+<p>If you want to control your Cron job from outside your function, you must use <strong>named Cron jobs</strong> mechanism. To define a Cron job with a specified name, use the following construction:</p>
+<pre><code class="language-typescript">
+@Cron(&#39;* * 8 * * *&#39;, &#123;
+  name: &#39;notifications&#39;,
+&#125;)
+triggerNotifications() &#123;&#125;</code></pre>
+<p>Now, you can get a reference to the <code>CronJob</code> instance with the <code>SchedulersRegistry</code>. First, inject it using standard constructor injection:</p>
+<pre><code class="language-typescript">
+constructor(private readonly schedulersRegistry: SchedulersRegistry) &#123;&#125;</code></pre>
+<p>And use it in our class:</p>
+<pre><code class="language-typescript">
+const job = this.schedulersRegistry.getCron(&#39;notifications&#39;);
+
+job.stop();
+console.log(job.lastDate());</code></pre>
+<h4 appAnchor id="intervals"><span>Intervals</span></h4>
+<p>To define a function which should run with a specified interval, use the <code>@Interval()</code> decorator.</p>
+<pre><code class="language-typescript">
+@Interval(10000)
+handleInterval() &#123;
+  this.logger.debug(&#39;Called every 10 seconds&#39;);
+&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> This mechanism uses the <code>setInterval()</code> function under the hood.
+</blockquote>
+<h4 appAnchor id="named-intervals"><span>Named intervals</span></h4>
+<p>If you want to control your interval from outside your function, you must use <strong>named intervals</strong> mechanism. To define an interval with a specified name, use the following construction:</p>
+<pre><code class="language-typescript">
+@Interval(&#39;notifications&#39;, 2500)
+handleInterval() &#123;&#125;</code></pre>
+<p>Now, you can get an interval ID with the <code>SchedulersRegistry</code>. First, inject it using standard constructor injection:</p>
+<pre><code class="language-typescript">
+constructor(private readonly schedulersRegistry: SchedulersRegistry) &#123;&#125;</code></pre>
+<p>And use it in our class:</p>
+<pre><code class="language-typescript">
+const intervalId = this.schedulersRegistry.getInterval(&#39;notifications&#39;);
+clearInterval(intervalId);</code></pre>
+<h4 appAnchor id="timeouts"><span>Timeouts</span></h4>
+<p>To define a function which should run with a specified timeout, use the <code>@Timeout()</code> decorator.</p>
+<pre><code class="language-typescript">
+@Timeout(5000)
+handleTimeout() &#123;
+  this.logger.debug(&#39;Called once after 5 seconds&#39;);
+&#125;</code></pre>
+<blockquote class="
+info "><strong>Hint</strong> This mechanism uses the <code>setTimeout()</code> function under the hood.
+</blockquote>
+<h4 appAnchor id="named-timeouts"><span>Named timeouts</span></h4>
+<p>If you want to control your timeout from outside your function, you must use <strong>named timeouts</strong> mechanism. To define a timeout with a specified name, use the following construction:</p>
+<pre><code class="language-typescript">
+@Timeout(&#39;notifications&#39;, 2500)
+handleTimeout() &#123;&#125;</code></pre>
+<p>Now, you can get a timeout ID with the <code>SchedulersRegistry</code>. First, inject it using standard constructor injection:</p>
+<pre><code class="language-typescript">
+constructor(private readonly schedulersRegistry: SchedulersRegistry) &#123;&#125;</code></pre>
+<p>And use it in our class:</p>
+<pre><code class="language-typescript">
+const timeoutId = this.schedulersRegistry.getTimeout(&#39;notifications&#39;);
+clearTimeout(timeoutId);</code></pre>
+<h4 appAnchor id="example"><span>Example</span></h4>
+<p>A working example is available <a rel='nofollow' target='_blank' href="https://github.com/nestjs/nest/tree/master/sample/27-scheduling">here</a>.</p>
+
+</div>
+

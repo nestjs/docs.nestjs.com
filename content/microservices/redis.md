@@ -42,7 +42,7 @@ ClientsModule.register([
 ]),
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](/microservices/basics#client).
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
 
 #### Context
 
@@ -51,13 +51,13 @@ In more sophisticated scenarios, you may want to access more information about t
 ```typescript
 @@filename()
 @MessagePattern('notifications')
-getDate(@Payload() data: number[], @Ctx() context: RedisContext) {
+getNotifications(@Payload() data: number[], @Ctx() context: RedisContext) {
   console.log(`Channel: ${context.getChannel()}`);
 }
 @@switch
 @Bind(Payload(), Ctx())
 @MessagePattern('notifications')
-getDate(data, context) {
+getNotifications(data, context) {
   console.log(`Channel: ${context.getChannel()}`);
 }
 ```

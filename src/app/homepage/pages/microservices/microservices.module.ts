@@ -33,7 +33,7 @@ const routes: Routes = [
   {
     path: 'nats',
     component: NatsComponent,
-    data: { title: 'Nats - Microservices' },
+    data: { title: 'NATS - Microservices' },
   },
   {
     path: 'grpc',

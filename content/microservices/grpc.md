@@ -1,10 +1,10 @@
 ### gRPC
 
-The [gRPC](https://github.com/grpc/grpc-node) is a high-performance, open-source universal RPC framework.
+[gRPC](https://github.com/grpc/grpc-node) is a modern open source high performance RPC framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication
 
 #### Installation
 
-Before we start, we have to install required package:
+To start building gRPC-based microservices, first install the required packages:
 
 ```bash
 $ npm i --save grpc @grpc/proto-loader
@@ -12,7 +12,7 @@ $ npm i --save grpc @grpc/proto-loader
 
 #### Transporter
 
-In order to switch to **gRPC** transporter, we need to modify an options object passed to the `createMicroservice()` method.
+To use the gRPC transporter, pass the following options object to the `createMicroservice()` method:
 
 ```typescript
 @@filename(main)
@@ -25,11 +25,11 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 });
 ```
 
-> info **Hint** The `join()` function is imported from `path` package, while `Transport` enum is coming from `@nestjs/microservices`.
+> info **Hint** The `join()` function is imported from the `path` package, while the `Transport` enum from the `@nestjs/microservices` package.
 
 #### Options
 
-There are a bunch of available options that determine a transporter behavior.
+The `options` object is specific to the chosen transporter. The <strong>gRPC</strong> transporter exposes the properties described below.
 
 <table>
   <tr>
@@ -78,7 +78,7 @@ There are a bunch of available options that determine a transporter behavior.
 
 #### Overview
 
-In general, a `package` property sets a [protobuf](https://developers.google.com/protocol-buffers/docs/proto) package name, while `protoPath` is a path to the `.proto` definitions file. The `hero.proto` file is structured using protocol buffer language.
+In general, the `package` property sets a [protobuf](https://developers.google.com/protocol-buffers/docs/proto) package name, while the`protoPath` is a path to the `.proto` definitions file. The `hero.proto` file is structured using protocol buffer language.
 
 ```typescript
 syntax = "proto3";
@@ -99,7 +99,7 @@ message Hero {
 }
 ```
 
-In the above example, we defined a `HeroService` that exposes a `FindOne()` gRPC handler which expects `HeroById` as an input and returns a `Hero` message. In order to define a handler that fulfills this protobuf definition, we have to use a `@GrpcMethod()` decorator. The previously known `@MessagePattern()` is no longer useful.
+In the above example, we defined the `HeroService` that exposes the `FindOne()` gRPC handler which in turn expects `HeroById` as an input arguments and returns the `Hero` message. In order to define a handler that fulfills this protobuf definition, we have to use the `@GrpcMethod()` decorator. The previously introduced `@MessagePattern()` decorator is useless with gRPC-based microservices.
 
 ```typescript
 @@filename(hero.controller)
@@ -122,11 +122,11 @@ findOne(data, metadata) {
 }
 ```
 
-> info **Hint** The `@GrpcMethod()` decorator is imported from `@nestjs/microservices` package.
+> info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package.
 
-The `HeroService` is a service name, while `FindOne` points to a `FindOne()` gRPC handler. The corresponding `findOne()` method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request's metadata.
+The `HeroService` is a service name, while `findOne` points to the `FindOne()` gRPC handler. The corresponding `findOne()` method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request's metadata.
 
-Furthermore, the `FindOne` is actually redundant here. If you don't pass a second argument to the `@GrpcMethod()`, Nest will automatically use the method name with the capitalized first letter, for example, `findOne` -> `FindOne`.
+In addition, the `FindOne` string is not required. If you don't pass a second argument to the `@GrpcMethod()` decorator, Nest will automatically use the method name with the capitalized first letter (e.g. `findOne` -> `FindOne`).
 
 ```typescript
 @@filename(hero.controller)
@@ -155,7 +155,7 @@ export class HeroService {
 }
 ```
 
-Likewise, you might not pass any argument. In this case, Nest would use a class name.
+Likewise, you may not pass any argument. In this case, Nest would use a class name.
 
 ```typescript
 @@filename(hero.controller)
@@ -186,7 +186,24 @@ export class HeroService {
 
 #### Client
 
-In order to create a client instance, we need to use `@Client()` decorator.
+To create a client instance, we need to pass an options object with the same properties we saw above in the `createMicroservice()` method.
+
+```typescript
+ClientsModule.register([
+  {
+    name: 'HERO_SERVICE',
+    transport: Transport.GRPC,
+    options: {
+      package: 'hero',
+      protoPath: join(__dirname, 'hero/hero.proto'),
+    },
+  },
+]),
+```
+
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
+
+You can use the `@Client()` decorator instead, as follows:
 
 ```typescript
 @Client({
@@ -199,7 +216,7 @@ In order to create a client instance, we need to use `@Client()` decorator.
 client: ClientGrpc;
 ```
 
-There is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientGrpc` that provides a `getService()` method. The `getService()` generic method takes service name as an argument and returns its instance if available.
+Notice that there is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientGrpc` class that provides the `getService()` method. The `getService()` generic method takes a service name as an argument and returns its instance (if available).
 
 ```typescript
 @@filename(hero.controller)
@@ -212,7 +229,7 @@ onModuleInit() {
 }
 ```
 
-The `heroService` object exposes the same set of methods that have been defined inside `.proto` file. Note, all of them are **lowercased** (in order to follow the natural convention). Basically, our gRPC `HeroService` definition contains `FindOne()` function. It means that `heroService` instance will provide the `findOne()` method.
+The `heroService` object exposes the same set of methods that are defined inside the `.proto` file. Note, all methods are **lowercased** (in order to follow the natural convention of the language). Basically, our gRPC `HeroService` definition contains the `FindOne()` function. It means that `heroService` instance will provide the `findOne()` method.
 
 ```typescript
 interface HeroService {
@@ -220,7 +237,7 @@ interface HeroService {
 }
 ```
 
-All service methods return `Observable`. Since Nest supports [RxJS](https://github.com/reactivex/rxjs) streams and works pretty well with them, we can return them within HTTP handler as well.
+A message handler is also able to return an `Observable`, in which case the result values will be emitted until the stream is completed.
 
 ```typescript
 @@filename(hero.controller)
