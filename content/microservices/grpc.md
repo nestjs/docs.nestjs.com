@@ -186,7 +186,7 @@ export class HeroService {
 
 #### Client
 
-To create a client instance, we need to pass an options object with the same properties we saw above in the `createMicroservice()` method.
+To create a client instance, use the `ClientsModule`.
 
 ```typescript
 ClientsModule.register([

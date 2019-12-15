@@ -50,6 +50,41 @@ ClientsModule.register([
 
 Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
 
+#### Options
+
+The `options` object is specific to the chosen transporter. The <strong>RabbitMQ</strong> transporter exposes the properties described below.
+
+<table>
+  <tr>
+    <td><code>urls</code></td>
+    <td>Connection urls</td>
+  </tr>
+  <tr>
+    <td><code>queue</code></td>
+    <td>Queue name which your server will listen to</td>
+  </tr>
+  <tr>
+    <td><code>prefetchCount</code></td>
+    <td>Sets the prefetch count for the channel</td>
+  </tr>
+  <tr>
+    <td><code>isGlobalPrefetchCount</code></td>
+    <td>Enables per channel prefetching</td>
+  </tr>
+  <tr>
+    <td><code>noAck</code></td>
+    <td>If `false`, manual acknowledgment mode enabled</td>
+  </tr>
+  <tr>
+    <td><code>queueOptions</code></td>
+    <td>Additional queue options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue" rel="nofollow" target="_blank">here</a></td>
+  </tr>
+  <tr>
+    <td><code>socketOptions</code></td>
+    <td>Additional socket options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a></td>
+  </tr>
+</table>
+
 #### Context
 
 In more sophisticated scenarios, you may want to access more information about the incoming request. In RabbitMQ, you can access the `RmqContext` object.
@@ -68,7 +103,7 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from the `@nestjs/microservices`.
 
 In addition, if you want to access the original RabbitMQ message (with the `properties`, `fields`, and `content`), use the `getMessage()` method of the `RmqContext` object, as follows:
 
@@ -140,38 +175,3 @@ getNotifications(data, context) {
   channel.ack(originalMsg);
 }
 ```
-
-#### Options
-
-The `options` object is specific to the chosen transporter. The <strong>RabbitMQ</strong> transporter exposes the properties described below.
-
-<table>
-  <tr>
-    <td><code>urls</code></td>
-    <td>Connection urls</td>
-  </tr>
-  <tr>
-    <td><code>queue</code></td>
-    <td>Queue name which your server will listen to</td>
-  </tr>
-  <tr>
-    <td><code>prefetchCount</code></td>
-    <td>Sets the prefetch count for the channel</td>
-  </tr>
-  <tr>
-    <td><code>isGlobalPrefetchCount</code></td>
-    <td>Enables per channel prefetching</td>
-  </tr>
-  <tr>
-    <td><code>noAck</code></td>
-    <td>If `false`, manual acknowledgment mode enabled</td>
-  </tr>
-  <tr>
-    <td><code>queueOptions</code></td>
-    <td>Additional queue options. They are well-described <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue" rel="nofollow" target="_blank">here</a></td>
-  </tr>
-  <tr>
-    <td><code>socketOptions</code></td>
-    <td>Additional socket options. They are well-described <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a></td>
-  </tr>
-</table>

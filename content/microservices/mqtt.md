@@ -44,6 +44,10 @@ ClientsModule.register([
 
 Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
 
+#### Options
+
+The `options` object is specific to the chosen transporter. The <strong>MQTT</strong> transporter exposes the properties described [here](https://github.com/mqttjs/MQTT.js/#mqttclientstreambuilder-options).
+
 #### Context
 
 In more sophisticated scenarios, you may want to access more information about the incoming request. In MQTT, you can access the `MqttContext` object.
@@ -62,7 +66,7 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `MqttContext` are imported from `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()` and `MqttContext` are imported from the `@nestjs/microservices`.
 
 In addition, if you want to access the original mqtt [packet](https://github.com/mqttjs/mqtt-packet), use the `getPacket()` method of the `MqttContext` object, as follows:
 
@@ -79,7 +83,3 @@ getNotifications(data, context) {
   console.log(context.getPacket());
 }
 ```
-
-#### Options
-
-The `options` object is specific to the chosen transporter. The <strong>MQTT</strong> transporter exposes the properties described [here](https://github.com/mqttjs/MQTT.js/#mqttclientstreambuilder-options).

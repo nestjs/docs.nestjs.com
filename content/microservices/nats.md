@@ -42,6 +42,11 @@ ClientsModule.register([
 
 Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
 
+#### Options
+
+The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/node-nats#connect-options).
+Additionally, there is an extra `queue` property which allows you specifying a name of the queue that your server should subscribe to (leave `undefined` to ignore this setting).
+
 #### Request-response
 
 For the **request-response message style** ([read more](https://docs.nestjs.com/microservices/basics#request-response)), NATS transporter uses [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism provided out-of-the-box. request is published on a given subject with a reply subject, and responders listen on that subject and send responses to the reply subject. Reply subjects are usually a subject called an `_INBOX` that will be directed back to the requestor dynamically, regardless of location of either party.
@@ -83,9 +88,4 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from `@nestjs/microservices`.
-
-#### Options
-
-The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/node-nats#connect-options).
-Additionally, there is an extra `queue` property which allows you specifying a name of the queue that your server should subscribe to (leave `undefined` to ignore this setting).
+> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from the `@nestjs/microservices`.

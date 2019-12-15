@@ -44,26 +44,6 @@ ClientsModule.register([
 
 Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
 
-#### Context
-
-In more sophisticated scenarios, you may want to access more information about the incoming request. In Redis, you can access the `RedisContext` object.
-
-```typescript
-@@filename()
-@MessagePattern('notifications')
-getNotifications(@Payload() data: number[], @Ctx() context: RedisContext) {
-  console.log(`Channel: ${context.getChannel()}`);
-}
-@@switch
-@Bind(Payload(), Ctx())
-@MessagePattern('notifications')
-getNotifications(data, context) {
-  console.log(`Channel: ${context.getChannel()}`);
-}
-```
-
-> info **Hint** `@Payload()`, `@Ctx()` and `RedisContext` are imported from `@nestjs/microservices`.
-
 #### Options
 
 The `options` object is specific to the chosen transporter. The <strong>REDIS</strong> transporter exposes the properties described below.
@@ -82,3 +62,23 @@ The `options` object is specific to the chosen transporter. The <strong>REDIS</s
     <td>Delay between message retry attempts (ms)</td>
   </tr>
 </table>
+
+#### Context
+
+In more sophisticated scenarios, you may want to access more information about the incoming request. In Redis, you can access the `RedisContext` object.
+
+```typescript
+@@filename()
+@MessagePattern('notifications')
+getNotifications(@Payload() data: number[], @Ctx() context: RedisContext) {
+  console.log(`Channel: ${context.getChannel()}`);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('notifications')
+getNotifications(data, context) {
+  console.log(`Channel: ${context.getChannel()}`);
+}
+```
+
+> info **Hint** `@Payload()`, `@Ctx()` and `RedisContext` are imported from the `@nestjs/microservices`.

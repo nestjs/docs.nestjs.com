@@ -1,18 +1,24 @@
 ### Kafka
 
-[Kafka](https://kafka.apache.org/) is an open source, distributed streaming platform.
+[Kafka](https://kafka.apache.org/) is an open source, distributed streaming platform which has three key capabilities:
+
+- Publish and subscribe to streams of records, similar to a message queue or enterprise messaging system.
+- Store streams of records in a fault-tolerant durable way.
+- Process streams of records as they occur.
+
+The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. It integrates very well with Apache Storm and Spark for real-time streaming data analysis.
 
 #### Installation
 
-First we need to install the required packages.
+To start building Kafka-based microservices, first install the required package:
 
 ```bash
 $ npm i --save kafkajs
 ```
 
-#### Transporter
+#### Overview
 
-To use the **Kafka** transporter, we need to pass an `options` object to the `createMicroservice()` method.
+To use the Kafka transporter, pass the following options object to the `createMicroservice()` method:
 
 ```typescript
 @@filename(main)
@@ -26,71 +32,92 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 });
 ```
 
-> info **Hint** `Transport` enum is imported from the `@nestjs/microservices` package.
+> info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
 
 #### Options
 
-There are several options that determine the transporter's behavior.
+The `options` object is specific to the chosen transporter. The <strong>Kafka</strong> transporter exposes the properties described below.
 
 <table>
   <tr>
     <td><code>client</code></td>
-    <td>Client configuration options. They are well-described
+    <td>Client configuration options (read more 
       <a
         href="https://kafka.js.org/docs/configuration"
         rel="nofollow"
         target="blank"
         >here</a
-      >.</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>consumer</code></td>
-    <td>Consumer configuration options. They are well-described
+    <td>Consumer configuration options (read more 
       <a
         href="https://kafka.js.org/docs/consuming#a-name-options-a-options"
         rel="nofollow"
         target="blank"
         >here</a
-      >.</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>run</code></td>
-    <td>Run configuration options. They are well-described
+    <td>Run configuration options (read more 
       <a
         href="https://kafka.js.org/docs/consuming"
         rel="nofollow"
         target="blank"
         >here</a
-      >.</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>producer</code></td>
-    <td>Producer configuration options. They are well-described
+    <td>Producer configuration options (read more 
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
         target="blank"
         >here</a
-      >.</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>send</code></td>
-    <td>Send configuration options. They are well-described
+    <td>Send configuration options (read more 
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
         target="blank"
         >here</a
-      >.</td>
+      >)</td>
   </tr>
 </table>
 
 #### Client
 
-To create a client instance, we use the `@Client()` decorator.
+To create a client instance, use the `ClientsModule`.
 
 ```typescript
-@@filename(hero.controller)
+ClientsModule.register([
+  {
+    name: 'HERO_SERVICE',
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: 'hero',
+        brokers: ['localhost:9092'],
+      },
+      consumer: {
+        groupId: 'hero-consumer'
+      }
+    }
+  },
+]),
+```
+
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
+
+You can use the `@Client()` decorator instead, as follows:
+
+```typescript
 @Client({
   transport: Transport.KAFKA,
   options: {
@@ -106,7 +133,7 @@ To create a client instance, we use the `@Client()` decorator.
 client: ClientKafka;
 ```
 
-There is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientKafka` class, which provides a `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
+There is a small difference compared to the previous examples. Instead of the `ClientProxy` class, we use the `ClientKafka` class, which provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
 
 ```typescript
 @@filename(hero.controller)
@@ -115,7 +142,7 @@ onModuleInit() {
 }
 ```
 
-If the `ClientKafka` is provided asynchronously to the controller, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
+If the `ClientKafka` is created asynchronously, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
 
 ```typescript
 @@filename(hero.controller)
@@ -131,29 +158,15 @@ The Kafka microservice message pattern utilizes two topics for the request and r
 
 Subsequently, you need to have at least one reply topic partition for every Nest application running. For example, if you are running 4 Nest applications but the reply topic only has 3 partitions, then 1 of the Nest applications will error out when trying to send a message.
 
-When new `ClientKafka` instances are launched they join the consumer group and subscribe to their respective topics.  This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
+When new `ClientKafka` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
 
-Normally, topic partitions are assigned using round robin partitioner that assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch.  However, when a new consumer joins the consumer group, the new consumer be positioned anywhere within the collection of consumers.  This creates a condition where preexisting consumers would be assigned different partitions when the preexisting consumer is positioned after the new consumer.  Subsequently, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
+Normally, topic partitions are assigned using round robin partitioner that assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch. However, when a new consumer joins the consumer group, the new consumer be positioned anywhere within the collection of consumers. This creates a condition where preexisting consumers would be assigned different partitions when the preexisting consumer is positioned after the new consumer. Subsequently, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
 
-To prevent the `ClientKafka` consumers from losing response messages a custom partitioner is utilized.  This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
+To prevent the `ClientKafka` consumers from losing response messages a custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
 
 #### Incoming
 
-Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of the `Buffer` type. Nest then parses these values by transforming the buffers into strings. If the string is "object like", Nest attempts to parse the string as `JSON`. The parsed object is then passed to its associated handler with the following properties.
-
-```typescript
-interface IncomingMessage {
-  topic: string;
-  partition: number;
-  timestamp: string;
-  size: number;
-  attributes: number;
-  offset: string;
-  key: any;
-  value: any;
-  headers: Record<string, any>;
-}
-```
+Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of the `Buffer` type. Nest then parses these values by transforming the buffers into strings. If the string is "object like", Nest attempts to parse the string as `JSON`. The `value` is then passed to its associated handler.
 
 #### Outgoing
 
@@ -162,31 +175,32 @@ Nest sends outgoing Kafka messages after a serialization process when publishing
 ```typescript
 @@filename(hero.controller)
 @Controller()
-export class HeroService {
+export class HeroController {
   @MessagePattern('hero.kill.dragon')
-  killDragon(message: any): any {
-    const dragonId = message.value.dragonId;
+  killDragon(@Payload() message: KillDragonMessage): any {
+    const dragonId = message.dragonId;
     const items = [
       { id: 1, name: 'Mythical Sword' },
       { id: 2, name: 'Key to Dungeon' },
     ];
-
     return items;
   }
 }
 ```
+
+> info **Hint** `@Payload()` is imported from the `@nestjs/microservices`.
 
 Outgoing messages can also be keyed by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 
 ```typescript
 @@filename(hero.controller)
 @Controller()
-export class HeroService {
+export class HeroController {
   @MessagePattern('hero.kill.dragon')
-  killDragon(message: any): any {
+  killDragon(@Payload() message: KillDragonMessage): any {
     const realm = 'Nest';
-    const heroId = message.value.heroId;
-    const dragonId = message.value.dragonId;
+    const heroId = message.heroId;
+    const dragonId = message.dragonId;
 
     const items = [
       { id: 1, name: 'Mythical Sword' },
@@ -209,12 +223,12 @@ Additionally, messages passed in this format can also contain custom headers set
 ```typescript
 @@filename(hero.controller)
 @Controller()
-export class HeroService {
+export class HeroController {
   @MessagePattern('hero.kill.dragon')
-  killDragon(message: any): any {
+  killDragon(@Payload() message: KillDragonMessage): any {
     const realm = 'Nest';
-    const heroId = message.value.heroId;
-    const dragonId = message.value.dragonId;
+    const heroId = message.heroId;
+    const dragonId = message.dragonId;
 
     const items = [
       { id: 1, name: 'Mythical Sword' },
@@ -229,6 +243,60 @@ export class HeroService {
       value: items
     }
   }
+}
+```
+
+#### Context
+
+In more sophisticated scenarios, you may want to access more information about the incoming request. In Kafka, you can access the `KafkaContext` object.
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('hero.kill.dragon')
+killDragon(message, context) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+```
+
+> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from the `@nestjs/microservices`.
+
+In addition, if you want to access the original Kafka `IncomingMessage` object, use the `getMessage()` method of the `KafkaContext` object, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  const originalMessage = context.getMessage();
+  const { headers, partition, timestamp } = originalMessage;
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('hero.kill.dragon')
+killDragon(message, context) {
+  const originalMessage = context.getMessage();
+  const { headers, partition, timestamp } = originalMessage;
+}
+```
+
+Where the `IncomingMessage` fulfils the following interface:
+
+```typescript
+interface IncomingMessage {
+  topic: string;
+  partition: number;
+  timestamp: string;
+  size: number;
+  attributes: number;
+  offset: string;
+  key: any;
+  value: any;
+  headers: Record<string, any>;
 }
 ```
 
@@ -251,6 +319,8 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
   }
 });
 ```
+
+And for the client:
 
 ```typescript
 @@filename(hero.controller)
