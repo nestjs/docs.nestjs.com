@@ -81,6 +81,8 @@ src/app/homepage/pages/graphql/scalars/scalars.component.html
 src/app/homepage/pages/graphql/subscriptions/subscriptions.component.html
 src/app/homepage/pages/microservices/exception-filters/exception-filters.component.html
 src/app/homepage/pages/microservices/grpc/grpc.component.html
+src/app/homepage/pages/microservices/basics/basics.component.html
+src/app/homepage/pages/microservices/kafka/kafka.component.html
 src/app/homepage/pages/microservices/guards/guards.component.html
 src/app/homepage/pages/microservices/mqtt/mqtt.component.html
 src/app/homepage/pages/microservices/interceptors/interceptors.component.html
@@ -121,7 +123,6 @@ src/app/homepage/pages/modules/modules.component.html
 src/app/homepage/pages/fundamentals/unit-testing/unit-testing.component.html
 src/app/homepage/pages/graphql/quick-start/quick-start.component.html
 src/app/homepage/pages/graphql/resolvers-map/resolvers-map.component.html
-src/app/homepage/pages/microservices/basics/basics.component.html
 src/app/homepage/pages/recipes/cqrs/cqrs.component.html
 src/app/homepage/pages/recipes/swagger/swagger.component.html
 src/app/homepage/pages/techniques/authentication/authentication.component.html
