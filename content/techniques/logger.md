@@ -10,9 +10,9 @@ Nest comes with a built-in text-based logger which is used during application bo
 
 You can also make use of the built-in logger, or create your own custom implementation, to log your own application-level events and messages.
 
-For more advanced logging functionality, you can make use of any `Node.js` logging package, such as [Winston](https://github.com/winstonjs/winston), to implement a completely custom, production grade logging system.
+For more advanced logging functionality, you can make use of any Node.js logging package, such as [Winston](https://github.com/winstonjs/winston), to implement a completely custom, production grade logging system.
 
-#### Basic logger customization
+#### Basic customization
 
 To disable logging, set the `logger` property to `false` in the (optional) Nest application options object passed as the second argument to the `NestFactory.create()` method.
 
@@ -34,7 +34,7 @@ await app.listen(3000);
 
 Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
 
-#### Custom logger implementation
+#### Custom implementation
 
 You can provide a custom logger implementation to be used by Nest for system logging by setting the value of the `logger` property to an object that fulfills the `LoggerService` interface. For example, you can tell Nest to use the built-in global JavaScript `console` object (which implements the `LoggerService` interface), as follows:
 
@@ -97,7 +97,7 @@ export class MyLogger extends Logger {
 
 You can use such an extended logger in your feature modules as described in the <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> section below.
 
-You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the <a href="techniques/logger#custom-logger-implementation">Custom logger implementation</a> section above), or by using the technique shown in the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below. If you do so, you should take care to call `super`, as shown in the sample code above, to delegate the specific log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
+You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the <a href="techniques/logger#custom-logger-implementation">Custom implementation</a> section above), or by using the technique shown in the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below. If you do so, you should take care to call `super`, as shown in the sample code above, to delegate the specific log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
 
 #### Dependency injection
 
@@ -201,4 +201,4 @@ await app.listen(3000);
 
 #### Use external logger
 
-Production applications often have specific logging requirements, including advanced filtering, formatting and centralized logging. Nest's built-in logger is used for monitoring Nest system behavior, and can also be useful for basic formatted text logging in your feature modules while in development, but production applications often take advantage of dedicated logging modules like [Winston](https://github.com/winstonjs/winston). As with any standard `Node.js` application, you can take full advantage of such modules in Nest.
+Production applications often have specific logging requirements, including advanced filtering, formatting and centralized logging. Nest's built-in logger is used for monitoring Nest system behavior, and can also be useful for basic formatted text logging in your feature modules while in development, but production applications often take advantage of dedicated logging modules like [Winston](https://github.com/winstonjs/winston). As with any standard Node.js application, you can take full advantage of such modules in Nest.
