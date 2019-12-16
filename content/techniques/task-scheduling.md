@@ -1,7 +1,6 @@
 ### Task Scheduling
 
-Task scheduling allows you to schedule arbitrary functions for execution at specific dates/times.
-For scheduling, Nest provides integration with the [cron](https://github.com/kelektiv/node-cron) package out-of-the box with `@nestjs/schedule`, which we'll cover in the current chapter.
+Task scheduling allows you to schedule arbitrary code (methods/functions) to execute at a fixed date/time, at recurring intervals, or once after a specified interval.  In the Linux world, this is often handled by packages like [cron](https://en.wikipedia.org/wiki/Cron) at the OS level.  For Node.js apps, there are several packages that emulate cron-like functionality.  Nest provides the `@nestjs/schedule` package, which integrates with the popular Node.js [node-cron](https://github.com/kelektiv/node-cron) package. We'll cover this package in the current chapter.
 
 #### Installation
 
@@ -11,7 +10,7 @@ To begin using it, we first install the required dependencies.
 $ npm install --save @nestjs/schedule
 ```
 
-Once the installation process is complete, we can import the `ScheduleModule` into the root `AppModule`.
+To activate job scheduling, register all scheduled jobs (we'll see how to define these shortly) by importing the `ScheduleModule` into the root `AppModule`, and running the `forRoot()` static method.
 
 ```typescript
 @@filename(app.module)
@@ -26,11 +25,15 @@ import { ScheduleModule } from '@nestjs/schedule';
 export class AppModule {}
 ```
 
-The `.forRoot()` call will register all the Cron jobs, timeouts, and intervals defined within your app when the `onApplicationBootstrap` lifecycle hook occurs.
+The `.forRoot()` call registers all the scheduled jobs (<a href="techniques/task-scheduling#cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#timeouts">timeouts</a>, and <a href="techniques/task-scheduling#intervals">intervals</a>) that are defined within your app.  Registration occurs when the `onApplicationBootstrap` lifecycle hook occurs, ensuring that all modules have loaded and declared any scheduled jobs.
 
 #### Cron jobs
 
-A Cron is a time-based job scheduler, which allows to schedule an arbitrary function to run automatically at a certain date or time. To define a Cron job, use the `@Cron` decorator, as follows:
+A cron job schedules an arbitrary function (method call) to run automatically. Cron jobs can run:
+- Once, at a specified date/time.
+- On a recurring basis; recurring jobs can run at a specified instant within a specified interval (for example, once per hour, once per week, once every 5 minutes)
+
+Define a cron job with the `@Cron()` decorator preceding the method declaration containing the code to be executed, as follows:
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
@@ -42,20 +45,19 @@ export class TasksService {
 
   @Cron('45 * * * * *')
   handleCron() {
-    this.logger.debug('Called when the second is 45');
+    this.logger.debug('Called when the current second is 45');
   }
 }
 ```
 
-The `handleCron` method will be called every time when the second is `45`. The `@Cron` decorator supports all the [cron patterns](http://crontab.org/):
+In this example, the `handleCron()` method will be called each time the current second is `45`. In other words, the method will be run once per minute, at the 45 second mark.
 
+The `@Cron` decorator supports all standard [cron patterns](http://crontab.org/):
 - Asterisk (e.g. `*`)
 - Ranges (e.g. `1-3,5`)
 - Steps (e.g. `*/2`)
 
-In addition, it allows you to supply a `Date` object.
-
-In the example above, we passed `45 * * * * *.` argument to the decorator. These parameters have different meanings when used:
+In the example above, we passed `45 * * * * *` to the decorator. The following key shows how each position in the cron pattern string is interpreted:
 
 <pre class="language-javascript"><code class="language-javascript">
 * * * * * *
@@ -68,9 +70,40 @@ In the example above, we passed `45 * * * * *.` argument to the decorator. These
 second (optional)
 </code></pre>
 
-#### Named Cron jobs
+Some sample cron patterns are:
 
-If you want to control your Cron job from outside your function, you must use **named Cron jobs** mechanism. To define a Cron job with a specified name, use the following construction:
+<table>
+  <tbody>
+    <tr>
+      <td>* * * * * *<code></code></td>
+      <td>every second</td>
+    </tr>
+    <tr>
+      <td>45 * * * * *<code></code></td>
+      <td>every minute, on the 45th second</td>
+    </tr>
+    <tr>
+      <td>* 10 * * * *<code></code></td>
+      <td>every hour, at the start of the 10th minute</td>
+    </tr>
+    <tr>
+      <td>0 */30 9-17 * * *<code></code></td>
+      <td>every 30 minutes between 9am and 5pm</td>
+    </tr>
+   <tr>
+      <td>0 30 11 * * 1-5<code></code></td>
+      <td>Monday to Friday at 11:30am</td>
+    </tr>
+  </tbody>
+</table>
+
+Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator.  Doing so causes the job to execute exactly once, at the specified date.
+
+> info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date.  For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
+
+#### Cron job API
+
+To access and control a cron job after it's been declared, associate a name with the job, then retrieve the job by name using the `SchedulerRegistry` API. To define a cron job name, pass the `name` property in an optional options object as the second argument of the decorator, as shown below:
 
 ```typescript
 @Cron('* * 8 * * *', {
@@ -79,24 +112,34 @@ If you want to control your Cron job from outside your function, you must use **
 triggerNotifications() {}
 ```
 
-Now, you can get a reference to the `CronJob` instance with the `SchedulersRegistry`. First, inject it using standard constructor injection:
+You can obtain a reference to the `CronJob` instance from anywhere in your code using the `SchedulerRegistry` API. First, inject `SchedulerRegistry` using standard constructor injection:
 
 ```typescript
-constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 ```
 
-And use it in our class:
+Then use it in a class as follows:
 
 ```typescript
-const job = this.schedulersRegistry.getCron('notifications');
+const job = this.schedulerRegistry.getCron('notifications');
 
 job.stop();
 console.log(job.lastDate());
 ```
 
+The `getCron()` method returns the named cron job.  The job object has the following methods associated with it:
+- `stop()` - stops a job that is scheduled to run.
+- `start()` - restarts a job that has been stopped.
+- `setTime(time: CronTime)` - stops a job, sets a new time for it, and then starts it
+- `lastDate()` - returns a string representation of the last date a job executed
+- `nextDates(count: number)` - returns an array (size `count`) of `moment` objects representing upcoming job execution dates.
+
+> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form.  For example, `console.log('next job date:', job.nextDates(1)[0].toDate())`
+
+
 #### Intervals
 
-To define a function which should run with a specified interval, use the `@Interval()` decorator.
+To define a method which should run at a specified interval, use the `@Interval()` decorator.
 
 ```typescript
 @Interval(10000)
@@ -106,6 +149,8 @@ handleInterval() {
 ```
 
 > info **Hint** This mechanism uses the `setInterval()` function under the hood.
+
+> info **Hint** You can also utilize a cron job to schedule recurring jobs.
 
 #### Named intervals
 
