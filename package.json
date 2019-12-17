@@ -65,7 +65,7 @@
     "@types/jasminewd2": "2.0.8",
     "@types/lodash": "4.14.149",
     "@types/marked": "0.7.2",
-    "@types/node": "12.12.18",
+    "@types/node": "12.12.19",
     "@types/rimraf": "2.0.3",
     "chokidar": "3.3.1",
     "codelyzer": "5.2.0",
