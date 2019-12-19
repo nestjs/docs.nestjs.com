@@ -124,6 +124,7 @@ src/app/homepage/pages/microservices/basics/basics.component.html
 src/app/homepage/pages/recipes/cqrs/cqrs.component.html
 src/app/homepage/pages/recipes/swagger/swagger.component.html
 src/app/homepage/pages/techniques/authentication/authentication.component.html
+src/app/homepage/pages/techniques/task-scheduling/task-scheduling.component.html
 src/app/homepage/pages/techniques/sql/sql.component.html
 src/app/homepage/pages/controllers/controllers.component.html
 src/app/homepage/pages/pipes/pipes.component.html
