@@ -1,7 +1,6 @@
 ### Task Scheduling
 
-Task scheduling allows you to schedule arbitrary functions for execution at specific dates/times.
-For scheduling, Nest provides integration with the [cron](https://github.com/kelektiv/node-cron) package out-of-the box with `@nestjs/schedule`, which we'll cover in the current chapter.
+Task scheduling allows you to schedule arbitrary code (methods/functions) to execute at a fixed date/time, at recurring intervals, or once after a specified interval. In the Linux world, this is often handled by packages like [cron](https://en.wikipedia.org/wiki/Cron) at the OS level. For Node.js apps, there are several packages that emulate cron-like functionality. Nest provides the `@nestjs/schedule` package, which integrates with the popular Node.js [node-cron](https://github.com/kelektiv/node-cron) package. We'll cover this package in the current chapter.
 
 #### Installation
 
@@ -11,7 +10,7 @@ To begin using it, we first install the required dependencies.
 $ npm install --save @nestjs/schedule
 ```
 
-Once the installation process is complete, we can import the `ScheduleModule` into the root `AppModule`.
+To activate job scheduling, import the `ScheduleModule` into the root `AppModule` and run the `forRoot()` static method as shown below:
 
 ```typescript
 @@filename(app.module)
@@ -26,11 +25,16 @@ import { ScheduleModule } from '@nestjs/schedule';
 export class AppModule {}
 ```
 
-The `.forRoot()` call will register all the Cron jobs, timeouts, and intervals defined within your app when the `onApplicationBootstrap` lifecycle hook occurs.
+The `.forRoot()` call initializes the scheduler and registers any declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a> and <a href="techniques/task-scheduling#declarative-intervals">intervals</a> that exist within your app. Registration occurs when the `onApplicationBootstrap` lifecycle hook occurs, ensuring that all modules have loaded and declared any scheduled jobs.
 
-#### Cron jobs
+#### Declarative cron jobs
 
-A Cron is a time-based job scheduler, which allows to schedule an arbitrary function to run automatically at a certain date or time. To define a Cron job, use the `@Cron` decorator, as follows:
+A cron job schedules an arbitrary function (method call) to run automatically. Cron jobs can run:
+
+- Once, at a specified date/time.
+- On a recurring basis; recurring jobs can run at a specified instant within a specified interval (for example, once per hour, once per week, once every 5 minutes)
+
+Declare a cron job with the `@Cron()` decorator preceding the method definition containing the code to be executed, as follows:
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
@@ -42,20 +46,20 @@ export class TasksService {
 
   @Cron('45 * * * * *')
   handleCron() {
-    this.logger.debug('Called when the second is 45');
+    this.logger.debug('Called when the current second is 45');
   }
 }
 ```
 
-The `handleCron` method will be called every time when the second is `45`. The `@Cron` decorator supports all the [cron patterns](http://crontab.org/):
+In this example, the `handleCron()` method will be called each time the current second is `45`. In other words, the method will be run once per minute, at the 45 second mark.
+
+The `@Cron()` decorator supports all standard [cron patterns](http://crontab.org/):
 
 - Asterisk (e.g. `*`)
 - Ranges (e.g. `1-3,5`)
 - Steps (e.g. `*/2`)
 
-In addition, it allows you to supply a `Date` object.
-
-In the example above, we passed `45 * * * * *.` argument to the decorator. These parameters have different meanings when used:
+In the example above, we passed `45 * * * * *` to the decorator. The following key shows how each position in the cron pattern string is interpreted:
 
 <pre class="language-javascript"><code class="language-javascript">
 * * * * * *
@@ -68,9 +72,38 @@ In the example above, we passed `45 * * * * *.` argument to the decorator. These
 second (optional)
 </code></pre>
 
-#### Named Cron jobs
+Some sample cron patterns are:
 
-If you want to control your Cron job from outside your function, you must use **named Cron jobs** mechanism. To define a Cron job with a specified name, use the following construction:
+<table>
+  <tbody>
+    <tr>
+      <td>* * * * * *<code></code></td>
+      <td>every second</td>
+    </tr>
+    <tr>
+      <td>45 * * * * *<code></code></td>
+      <td>every minute, on the 45th second</td>
+    </tr>
+    <tr>
+      <td>* 10 * * * *<code></code></td>
+      <td>every hour, at the start of the 10th minute</td>
+    </tr>
+    <tr>
+      <td>0 */30 9-17 * * *<code></code></td>
+      <td>every 30 minutes between 9am and 5pm</td>
+    </tr>
+   <tr>
+      <td>0 30 11 * * 1-5<code></code></td>
+      <td>Monday to Friday at 11:30am</td>
+    </tr>
+  </tbody>
+</table>
+
+Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator. Doing so causes the job to execute exactly once, at the specified date.
+
+> info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
+
+You can access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>. To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in an optional options object as the second argument of the decorator, as shown below:
 
 ```typescript
 @Cron('* * 8 * * *', {
@@ -79,24 +112,9 @@ If you want to control your Cron job from outside your function, you must use **
 triggerNotifications() {}
 ```
 
-Now, you can get a reference to the `CronJob` instance with the `SchedulersRegistry`. First, inject it using standard constructor injection:
+#### Declarative intervals
 
-```typescript
-constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
-```
-
-And use it in our class:
-
-```typescript
-const job = this.schedulersRegistry.getCron('notifications');
-
-job.stop();
-console.log(job.lastDate());
-```
-
-#### Intervals
-
-To define a function which should run with a specified interval, use the `@Interval()` decorator.
+To declare that a method should run at a (recurring) specified interval, prefix the method definition with the `@Interval()` decorator. Pass the interval value, as a number in milliseconds, to the decorator as shown below:
 
 ```typescript
 @Interval(10000)
@@ -105,33 +123,22 @@ handleInterval() {
 }
 ```
 
-> info **Hint** This mechanism uses the `setInterval()` function under the hood.
+> info **Hint** This mechanism uses the JavaScript `setInterval()` function under the hood.
 
-#### Named intervals
+> info **Hint** You can also utilize a cron job to schedule recurring jobs.
 
-If you want to control your interval from outside your function, you must use **named intervals** mechanism. To define an interval with a specified name, use the following construction:
+If you want to control your declarative interval from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>, associate the interval with a name using the following construction:
 
 ```typescript
 @Interval('notifications', 2500)
 handleInterval() {}
 ```
 
-Now, you can get an interval ID with the `SchedulersRegistry`. First, inject it using standard constructor injection:
+The <a href="techniques/task-scheduling#dynamic-intervals">Dynamic API</a> also enables **creating** dynamic intervals, where the interval's properties are defined at runtime, and **listing and deleting** them.
 
-```typescript
-constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
-```
+#### Declarative timeouts
 
-And use it in our class:
-
-```typescript
-const intervalId = this.schedulersRegistry.getInterval('notifications');
-clearInterval(intervalId);
-```
-
-#### Timeouts
-
-To define a function which should run with a specified timeout, use the `@Timeout()` decorator.
+To declare that a method should run (once) at a specified timeout, prefix the method definition with the `@Timeout()` decorator. Pass the relative time offset (in milliseconds), from application startup, to the decorator as shown below:
 
 ```typescript
 @Timeout(5000)
@@ -140,28 +147,208 @@ handleTimeout() {
 }
 ```
 
-> info **Hint** This mechanism uses the `setTimeout()` function under the hood.
+> info **Hint** This mechanism uses the JavaScript `setTimeout()` function under the hood.
 
-#### Named timeouts
-
-If you want to control your timeout from outside your function, you must use **named timeouts** mechanism. To define a timeout with a specified name, use the following construction:
+If you want to control your declarative timeout from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>, associate the timeout with a name using the following construction:
 
 ```typescript
 @Timeout('notifications', 2500)
 handleTimeout() {}
 ```
 
-Now, you can get a timeout ID with the `SchedulersRegistry`. First, inject it using standard constructor injection:
+The <a href="techniques/task-scheduling#dynamic-timeouts">Dynamic API</a> also enables **creating** dynamic timeouts, where the timeout's properties are defined at runtime, and **listing and deleting** them.
+
+#### Dynamic schedule module API
+
+The `@nestjs/schedule` module provides a dynamic API that enables managing declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a> and <a href="techniques/task-scheduling#declarative-intervals">intervals</a>. The API also enables creating and managing **dynamic** cron jobs, timeouts and intervals, where the properties are defined at runtime.
+
+#### Dynamic cron jobs
+
+Obtain a reference to a `CronJob` instance by name from anywhere in your code using the `SchedulerRegistry` API. First, inject `SchedulerRegistry` using standard constructor injection:
 
 ```typescript
-constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 ```
 
-And use it in our class:
+> info **Hint** Import the `SchedulerRegistry` from the `@nestjs/schedule` package.
+
+Then use it in a class as follows. Assume a cron job was created with the following declaration:
 
 ```typescript
-const timeoutId = this.schedulersRegistry.getTimeout('notifications');
-clearTimeout(timeoutId);
+@Cron('* * 8 * * *', {
+  name: 'notifications',
+})
+triggerNotifications() {}
+```
+
+Access this job using the following:
+
+```typescript
+const job = this.schedulerRegistry.getCronJob('notifications');
+
+job.stop();
+console.log(job.lastDate());
+```
+
+The `getCronJob()` method returns the named cron job. The returned `CronJob` object has the following methods:
+
+- `stop()` - stops a job that is scheduled to run.
+- `start()` - restarts a job that has been stopped.
+- `setTime(time: CronTime)` - stops a job, sets a new time for it, and then starts it
+- `lastDate()` - returns a string representation of the last date a job executed
+- `nextDates(count: number)` - returns an array (size `count`) of `moment` objects representing upcoming job execution dates.
+
+> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form. For example, `console.log('next job date:', job.nextDates(1)[0].toDate())`
+
+**Create** a new cron job dynamically using the `SchedulerRegistry.addCronJob()` method, as follows:
+
+```typescript
+addCronJob(name: string, seconds: string) {
+  const job = new CronJob(`${seconds} * * * * *`, () => {
+    this.logger.warn(`time (${seconds}) for job ${name} to run!`);
+  });
+
+  this.scheduler.addCronJob(name, job);
+  job.start();
+
+  this.logger.warn(
+    `job ${name} added for each minute at ${seconds} seconds!`,
+  );
+}
+```
+
+In this code, we use the `CronJob` object from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (just like the <a href="techniques/task-scheduling#declarative-cron-jobs">`@Cron()` decorator</a>) as its first argument, and a callback to be executed when the cron timer fires as its second argument. The `SchedulerRegistry.addCronJob()` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
+
+> info **Hint** Remember to inject the `SchedulerRegistry` before accessing it. Import `CronJob` from the `cron` package.
+
+**Delete** a named cron job using the `SchedulerRegistry.deleteCronJob()` method, as follows:
+
+```typescript
+deleteCron(name: string) {
+  this.scheduler.deleteCronJob(name);
+  this.logger.warn(`job ${name} deleted!`);
+}
+```
+
+**List** all cron jobs using the `SchedulerRegistry.getCronJobs()` method as follows:
+
+```typescript
+getCrons() {
+  const jobs = this.scheduler.getCronJobs();
+  jobs.forEach((value, key, map) => {
+    let next;
+    try {
+      next = value.nextDates().toDate();
+    } catch (e) {
+      next = 'error: next fire date is in the past!';
+    }
+    this.logger.log(`job: ${key} -> next: ${next}`);
+  });
+}
+```
+
+The `getCronJobs()` method returns a `map`. In this code, we iterate over the map and attempt to access the `nextDates()` method of each `CronJob`. In the `CronJob` API, if a job has already fired and has no future firing dates, it throws an exception.
+
+#### Dynamic intervals
+
+Obtain a reference to an interval with the `SchedulerRegistry.getInterval()` method. As above, inject `SchedulerRegistry` using standard constructor injection:
+
+```typescript
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
+```
+
+And use it as follows:
+
+```typescript
+const interval = this.schedulerRegistry.getInterval('notifications');
+clearInterval(interval);
+```
+
+**Create** a new interval dynamically using the `SchedulerRegistry.addInterval()` method, as follows:
+
+```typescript
+addInterval(name: string, seconds: string) {
+  const callback = () => {
+    this.logger.warn(`Interval ${name} executing at time (${seconds})!`);
+  });
+
+  const interval = setInterval(callback, seconds);
+  this.scheduler.addInterval(name, (interval as unknown) as number);
+}
+```
+
+In this code, we create a standard JavaScript interval, then pass it to the `ScheduleRegistry.addInterval()` method.
+That method takes two arguments: a name for the interval, and the interval itself. Note that we need to perform the above casting (`(interval as unknown) as number`) due to the API type definitions.
+
+**Delete** a named interval using the `SchedulerRegistry.deleteInterval()` method, as follows:
+
+```typescript
+deleteInterval(name: string) {
+  this.scheduler.deleteInterval(name);
+  this.logger.warn(`Interval ${name} deleted!`);
+}
+```
+
+**List** all intervals using the `SchedulerRegistry.getIntervals()` method as follows:
+
+```typescript
+getIntervals() {
+  const intervals = this.scheduler.getIntervals();
+  intervals.forEach(key => {
+    this.logger.log(`interval: ${key}`);
+  });
+}
+```
+
+#### Dynamic timeouts
+
+Obtain a reference to a timeout with the `SchedulerRegistry.getTimeout()` method. As above, inject `SchedulerRegistry` using standard constructor injection:
+
+```typescript
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
+```
+
+And use it as follows:
+
+```typescript
+const timeout = this.schedulerRegistry.getTimeout('notifications');
+clearTimeout(timeout);
+```
+
+**Create** a new timeout dynamically using the `SchedulerRegistry.addTimeout()` method, as follows:
+
+```typescript
+addTimeout(name: string, seconds: string) {
+  const callback = () => {
+    this.logger.warn(`Timeout ${name} executing after (${seconds})!`);
+  });
+
+  const timeout = setTimeout(callback, seconds);
+  this.scheduler.addTimeout(name, (timeout as unknown) as number);
+}
+```
+
+In this code, we create a standard JavaScript timeout, then pass it to the `ScheduleRegistry.addTimeout()` method.
+That method takes two arguments: a name for the timeout, and the timeout itself. Note that we need to perform the above casting (`(timeout as unknown) as number`) due to the API type definitions.
+
+**Delete** a named timeout using the `SchedulerRegistry.deleteTimeout()` method, as follows:
+
+```typescript
+deleteTimeout(name: string) {
+  this.scheduler.deleteTimeout(name);
+  this.logger.warn(`Timeout ${name} deleted!`);
+}
+```
+
+**List** all timeouts using the `SchedulerRegistry.getTimeouts()` method as follows:
+
+```typescript
+getTimeouts() {
+  const timeouts = this.scheduler.getTimeouts();
+  timeouts.forEach(key => {
+    this.logger.log(`timeout: ${key}`);
+  });
+}
 ```
 
 #### Example
