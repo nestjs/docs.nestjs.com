@@ -77,23 +77,23 @@ Some sample cron patterns are:
 <table>
   <tbody>
     <tr>
-      <td>* * * * * *<code></code></td>
+      <td><code>* * * * * *</code></td>
       <td>every second</td>
     </tr>
     <tr>
-      <td>45 * * * * *<code></code></td>
+      <td><code>45 * * * * *</code></td>
       <td>every minute, on the 45th second</td>
     </tr>
     <tr>
-      <td>* 10 * * * *<code></code></td>
+      <td><code>* 10 * * * *</code></td>
       <td>every hour, at the start of the 10th minute</td>
     </tr>
     <tr>
-      <td>0 */30 9-17 * * *<code></code></td>
+      <td><code>0 */30 9-17 * * *</code></td>
       <td>every 30 minutes between 9am and 5pm</td>
     </tr>
    <tr>
-      <td>0 30 11 * * 1-5<code></code></td>
+      <td><code>0 30 11 * * 1-5</code></td>
       <td>Monday to Friday at 11:30am</td>
     </tr>
   </tbody>
@@ -123,9 +123,7 @@ handleInterval() {
 }
 ```
 
-> info **Hint** This mechanism uses the JavaScript `setInterval()` function under the hood.
-
-> info **Hint** You can also utilize a cron job to schedule recurring jobs.
+> info **Hint** This mechanism uses the JavaScript `setInterval()` function under the hood. You can also utilize a cron job to schedule recurring jobs.
 
 If you want to control your declarative interval from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>, associate the interval with a name using the following construction:
 
@@ -198,7 +196,7 @@ The `getCronJob()` method returns the named cron job. The returned `CronJob` obj
 - `lastDate()` - returns a string representation of the last date a job executed
 - `nextDates(count: number)` - returns an array (size `count`) of `moment` objects representing upcoming job execution dates.
 
-> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form. For example, `console.log('next job date:', job.nextDates(1)[0].toDate())`
+> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form. 
 
 **Create** a new cron job dynamically using the `SchedulerRegistry.addCronJob()` method, as follows:
 
@@ -217,9 +215,9 @@ addCronJob(name: string, seconds: string) {
 }
 ```
 
-In this code, we use the `CronJob` object from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (just like the <a href="techniques/task-scheduling#declarative-cron-jobs">`@Cron()` decorator</a>) as its first argument, and a callback to be executed when the cron timer fires as its second argument. The `SchedulerRegistry.addCronJob()` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
+In this code, we use the `CronJob` object from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (just like the `@Cron()` <a href="techniques/task-scheduling#declarative-cron-jobs">decorator</a>) as its first argument, and a callback to be executed when the cron timer fires as its second argument. The `SchedulerRegistry.addCronJob()` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
 
-> info **Hint** Remember to inject the `SchedulerRegistry` before accessing it. Import `CronJob` from the `cron` package.
+> warning **Warning** Remember to inject the `SchedulerRegistry` before accessing it. Import `CronJob` from the `cron` package.
 
 **Delete** a named cron job using the `SchedulerRegistry.deleteCronJob()` method, as follows:
 
@@ -273,12 +271,12 @@ addInterval(name: string, seconds: string) {
   });
 
   const interval = setInterval(callback, seconds);
-  this.scheduler.addInterval(name, (interval as unknown) as number);
+  this.scheduler.addInterval(name, interval);
 }
 ```
 
 In this code, we create a standard JavaScript interval, then pass it to the `ScheduleRegistry.addInterval()` method.
-That method takes two arguments: a name for the interval, and the interval itself. Note that we need to perform the above casting (`(interval as unknown) as number`) due to the API type definitions.
+That method takes two arguments: a name for the interval, and the interval itself. 
 
 **Delete** a named interval using the `SchedulerRegistry.deleteInterval()` method, as follows:
 
@@ -294,9 +292,7 @@ deleteInterval(name: string) {
 ```typescript
 getIntervals() {
   const intervals = this.scheduler.getIntervals();
-  intervals.forEach(key => {
-    this.logger.log(`interval: ${key}`);
-  });
+  intervals.forEach(key => this.logger.log(`Interval: ${key}`));
 }
 ```
 
@@ -324,12 +320,12 @@ addTimeout(name: string, seconds: string) {
   });
 
   const timeout = setTimeout(callback, seconds);
-  this.scheduler.addTimeout(name, (timeout as unknown) as number);
+  this.scheduler.addTimeout(name, timeout);
 }
 ```
 
 In this code, we create a standard JavaScript timeout, then pass it to the `ScheduleRegistry.addTimeout()` method.
-That method takes two arguments: a name for the timeout, and the timeout itself. Note that we need to perform the above casting (`(timeout as unknown) as number`) due to the API type definitions.
+That method takes two arguments: a name for the timeout, and the timeout itself. 
 
 **Delete** a named timeout using the `SchedulerRegistry.deleteTimeout()` method, as follows:
 
@@ -345,9 +341,7 @@ deleteTimeout(name: string) {
 ```typescript
 getTimeouts() {
   const timeouts = this.scheduler.getTimeouts();
-  timeouts.forEach(key => {
-    this.logger.log(`timeout: ${key}`);
-  });
+  timeouts.forEach(key => this.logger.log(`Timeout: ${key}`));
 }
 ```
 
