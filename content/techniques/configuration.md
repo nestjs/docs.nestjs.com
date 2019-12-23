@@ -243,7 +243,7 @@ import * as Joi from '@hapi/joi';
         PORT: Joi.number().default(3000),
       }),
       validationOptions: {
-        allowUnknowns: false,
+        allowUnknown: false,
         abortEarly: true,
       },
     }),
@@ -254,7 +254,7 @@ export class AppModule {}
 
 The `@nestjs/config` package uses default settings of:
 
-- `allowUnknowns`: controls whether or not to allow unknown keys in the environment variables. Default is `true`
+- `allowUnknown`: controls whether or not to allow unknown keys in the environment variables. Default is `true`
 - `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
 
 Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
