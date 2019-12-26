@@ -12,11 +12,11 @@ $ npm i --save grpc @grpc/proto-loader
 
 #### Transporter
 
-To use the gRPC transporter, pass the following options object to the `createMicroservice()` method:
+To use the gRPC transporter, pass the appropriate options object to the `createMicroservice()` method. In the following example, we'll set up a hero service. The `options` object provides metadata about that service; its properties are described <a href="microservices/grpc#options">below</a>.
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.GRPC,
   options: {
     package: 'hero',
@@ -25,7 +25,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 });
 ```
 
-> info **Hint** The `join()` function is imported from the `path` package, while the `Transport` enum from the `@nestjs/microservices` package.
+> info **Hint** The `join()` function is imported from the `path` package; the `Transport` enum is imported from the `@nestjs/microservices` package.
 
 #### Options
 
@@ -34,34 +34,34 @@ The `options` object is specific to the chosen transporter. The <strong>gRPC</st
 <table>
   <tr>
     <td><code>url</code></td>
-    <td>Connection url</td>
+    <td>Connection url.</td>
   </tr>
   <tr>
     <td><code>protoLoader</code></td>
-    <td>NPM package name (if you want to use another proto-loader)</td>
+    <td>NPM package name (if you want to use another proto-loader).</td>
   </tr>
   <tr>
     <td><code>protoPath</code></td>
     <td>
       Absolute (or relative to the root dir) path to the
-      <code>.proto</code> file
+      <code>.proto</code> file.
     </td>
   </tr>
   <tr>
     <td><code>loader</code></td>
     <td>
-      <code>@grpc/proto-loader</code> options. They are well-described
+      <code>@grpc/proto-loader</code> options. See
       <a
         href="https://github.com/grpc/grpc-node/tree/master/packages/grpc-protobufjs#usage"
         rel="nofollow"
         target="_blank"
         >here</a
-      >.
+      > for more details.
     </td>
   </tr>
   <tr>
     <td><code>package</code></td>
-    <td>Protobuf package name</td>
+    <td>Protobuf package name.</td>
   </tr>
   <tr>
     <td><code>credentials</code></td>
@@ -70,15 +70,15 @@ The `options` object is specific to the chosen transporter. The <strong>gRPC</st
         href="https://grpc.io/grpc/node/grpc.ServerCredentials.html"
         rel="nofollow"
         target="_blank"
-        >read more</a
-      >)
+        >read more here</a
+      >).
     </td>
   </tr>
 </table>
 
-#### Overview
+#### Sample gRPC microservice
 
-In general, the `package` property sets a [protobuf](https://developers.google.com/protocol-buffers/docs/proto) package name, while the`protoPath` is a path to the `.proto` definitions file. The `hero.proto` file is structured using protocol buffer language.
+Let's set up a sample gRPC service called `HeroService`. In the above `options` object, the`protoPath` property sets a path to the `.proto` definitions file `hero.proto`. The `hero.proto` file is structured using protocol buffer language. Here's what it looks like:
 
 ```typescript
 syntax = "proto3";
@@ -99,7 +99,9 @@ message Hero {
 }
 ```
 
-In the above example, we defined the `HeroService` that exposes the `FindOne()` gRPC handler which in turn expects `HeroById` as an input arguments and returns the `Hero` message. In order to define a handler that fulfills this protobuf definition, we have to use the `@GrpcMethod()` decorator. The previously introduced `@MessagePattern()` decorator is useless with gRPC-based microservices.
+Our `HeroService` exposes a `FindOne()` gRPC handler. This handler expects an input argument of type `HeroById` and returns a `Hero` message. To define a handler that fulfills this protobuf definition, we use the `@GrpcMethod()` decorator in a controller, as shown below.
+
+> info **Hint** The previously introduced <a href="microservices/basics#request-response"> `@MessagePattern()` decorator</a> is not used with gRPC-based microservices.
 
 ```typescript
 @@filename(hero.controller)
@@ -124,15 +126,17 @@ findOne(data, metadata) {
 
 > info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package.
 
-The `HeroService` is a service name, while `findOne` points to the `FindOne()` gRPC handler. The corresponding `findOne()` method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request's metadata.
+The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroService'`), corresponding to the `HeroService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroService` in `hero.proto`.
 
-In addition, the `FindOne` string is not required. If you don't pass a second argument to the `@GrpcMethod()` decorator, Nest will automatically use the method name with the capitalized first letter (e.g. `findOne` -> `FindOne`).
+The decorated `findOne()` handler method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request metadata.
+
+Both decorator arguments are optional. If called without the second argument (e.g., `'FindOne'`), Nest will automatically associate the rpc method with the service method based on converting the method handler name to upper camel case (e.g., the `findOne` handler is associated with the `FindOne` rpc call definition).
 
 ```typescript
 @@filename(hero.controller)
 @Controller()
 export class HeroService {
-  @GrpcMethod()
+  @GrpcMethod('HeroService')
   findOne(data: HeroById, metadata: any): Hero {
     const items = [
       { id: 1, name: 'John' },
@@ -144,7 +148,7 @@ export class HeroService {
 @@switch
 @Controller()
 export class HeroService {
-  @GrpcMethod()
+  @GrpcMethod('HeroService)
   findOne(data, metadata) {
     const items = [
       { id: 1, name: 'John' },
@@ -155,7 +159,7 @@ export class HeroService {
 }
 ```
 
-Likewise, you may not pass any argument. In this case, Nest would use a class name.
+You can also omit the first argument. In this case, Nest automatically associates the handler with the service definition from the proto definitions file based on the class name. For example, in the following, class `HeroService` is used to associate its handler methods with the `HeroService` service definition in the `hero.proto` file based on the matching of the name `'HeroService'`.
 
 ```typescript
 @@filename(hero.controller)
