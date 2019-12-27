@@ -83,6 +83,7 @@ export class MenuComponent implements OnInit {
         { title: 'Task scheduling', path: '/techniques/task-scheduling' },
         { title: 'Compression', path: '/techniques/compression' },
         { title: 'Security', path: '/techniques/security' },
+        { title: 'Queues', path: '/techniques/queues' },
         { title: 'Logger', path: '/techniques/logger' },
         { title: 'File upload', path: '/techniques/file-upload' },
         { title: 'HTTP module', path: '/techniques/http-module' },
