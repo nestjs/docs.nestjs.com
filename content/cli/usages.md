@@ -11,7 +11,7 @@ $ nest n <name> [options]
 
 ##### Description
 
-Creates and initializes a new Nest project.  Prompts for package manager.
+Creates and initializes a new Nest project. Prompts for package manager.
 
 - Creates a folder with the given `<name>`
 - Populates the folder with configuration files
@@ -26,14 +26,14 @@ Creates and initializes a new Nest project.  Prompts for package manager.
 
 ##### Options
 
-| Option                                | Description                                                                                                      |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                         |
-| `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                             |
-| `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                      |
-| `--package-manager [package-manager]` | Specify package manager.  Use `npm` or `yarn`.  Package manager must be installed globally.<br/> Alias: `-p`     |
-| `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                    |
-| `--collection [collectionName]`       | Specify schematics collection.  Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
+| Option                                | Description                                                                                                     |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                        |
+| `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                            |
+| `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                     |
+| `--package-manager [package-manager]` | Specify package manager. Use `npm` or `yarn`. Package manager must be installed globally.<br/> Alias: `-p`      |
+| `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                   |
+| `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
 
 #### nest generate
 
@@ -46,10 +46,10 @@ $ nest g <schematic> <name> [options]
 
 ##### Arguments
 
-| Argument      | Description                                                                                               |
-| ------------- | --------------------------------------------------------------------------------------------------------- |
-| `<schematic>` | The `schematic` or `collection:schematic` to generate.  See the table below for the available schematics. |
-| `<name>`      | The name of the generated component.                                                                      |
+| Argument      | Description                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------- |
+| `<schematic>` | The `schematic` or `collection:schematic` to generate. See the table below for the available schematics. |
+| `<name>`      | The name of the generated component.                                                                     |
 
 ##### Schematics
 
@@ -74,16 +74,16 @@ $ nest g <schematic> <name> [options]
 
 ##### Options
 
-| Option                          | Description                                                                                                      |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `--dry-run`                     | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d `                        |
-| `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                        |
-| `--flat`                        | Do not generate a folder for the element.                                                                        |
-| `--collection [collectionName]` | Specify schematics collection.  Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
-
-| `--no-spec`                     | Disable spec files generation |
+| Option                          | Description                                                                                                     |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                     | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                        |
+| `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                       |
+| `--flat`                        | Do not generate a folder for the element.                                                                       |
+| `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
+| `--no-spec`                     | Disable spec files generation                                                                                   |
 
 #### nest build
+
 Compiles an application or workspace into an output folder.
 
 ```bash
@@ -98,14 +98,17 @@ $ nest build <name> [options]
 
 ##### Options
 
-| Option          | Description                                     |
-| --------------- | ----------------------------------------------- |
-| `--path [path]` | Path to `tsconfig` file. <br/>Alias `-p`        |
-| `--watch`       | Run in watch mode (live-reload) <br/>Alias `-w` |
-| `--webpack`     | Use webpack for compilation.                    |
-| `--webpackPath` | Path to webpack configuration.                  |
+| Option            | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| `--path [path]`   | Path to `tsconfig` file. <br/>Alias `-p`               |
+| `--config [path]` | Path to `nest-cli` configuration file. <br/>Alias `-c` |
+| `--watch`         | Run in watch mode (live-reload) <br/>Alias `-w`        |
+| `--webpack`       | Use webpack for compilation.                           |
+| `--webpackPath`   | Path to webpack configuration.                         |
+| `--tsc`           | Force use `tsc` for compilation.                       |
 
 #### nest start
+
 Compiles and runs an application (or default project in a workspace).
 
 ```bash
@@ -123,11 +126,13 @@ $ nest start <name> [options]
 | Option               | Description                                             |
 | -------------------- | ------------------------------------------------------- |
 | `--path [path]`      | Path to `tsconfig` file. <br/>Alias `-p`                |
+| `--config [path]`    | Path to `nest-cli` configuration file. <br/>Alias `-c`  |
 | `--watch`            | Run in watch mode (live-reload) <br/>Alias `-w`         |
 | `--debug [hostport]` | Run in debug mode (with --inspect flag) <br/>Alias `-d` |
 | `--webpack`          | Use webpack for compilation.                            |
 | `--webpackPath`      | Path to webpack configuration.                          |
-
+| `--tsc`              | Force use `tsc` for compilation.                        |
+| `--exec [binary]`    | Binary to run (default: `node`). <br/>Alias `-e`        |
 
 #### nest add
 
@@ -143,8 +148,8 @@ $ nest add <name> [options]
 | -------- | ---------------------------------- |
 | `<name>` | The name of the library to import. |
 
-
 #### nest update
+
 Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version.
 
 ##### Options
@@ -155,8 +160,8 @@ Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to th
 | `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-wt` |  |
 
 #### nest info
-Displays information about installed nest packages and other helpful system info. For example:
 
+Displays information about installed nest packages and other helpful system info. For example:
 
 ```bash
  _   _             _      ___  _____  _____  _     _____

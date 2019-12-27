@@ -108,7 +108,7 @@ Let's get started by creating a service which will represent our custom health i
 @@filename(dog.health)
 import { Injectable } from '@nestjs/common';
 import { HealthCheckError } from '@godaddy/terminus';
-import { HealthIndicatorResult } from '@nestjs/terminus';
+import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
 
 export interface Dog {
   name: string;
@@ -163,8 +163,8 @@ The next thing we need to do is registering the health indicator as a provider.
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { TerminusOptions } from './terminus-options.service';
-import { DogHealthIndicator } from './dog.health.ts';
+import { TerminusOptionsService } from './terminus-options.service';
+import { DogHealthIndicator } from './dog.health';
 
 @Module({
   imports: [
@@ -192,6 +192,7 @@ import {
   TerminusModuleOptions
 } from '@nestjs/terminus';
 import { Injectable } from '@nestjs/common';
+import { DogHealthIndicator } from './dog.health';
 
 @Injectable()
 export class TerminusOptionsService implements TerminusOptionsFactory {
@@ -212,7 +213,7 @@ export class TerminusOptionsService implements TerminusOptionsFactory {
   }
 }
 @@switch
-import { DogHealthIndicator } from '../dog/dog.health';
+import { DogHealthIndicator } from './dog.health';
 import { Injectable, Dependencies } from '@nestjs/common';
 
 @Injectable()

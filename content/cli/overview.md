@@ -82,7 +82,7 @@ Most commands, and some options, have aliases. Try running `nest new --help` to 
 
 Run `nest <command> --help` for any of the following commands to see command-specific options.
 
-See [usage](/cli/usage) for detailed descriptions for each command.
+See [usage](/cli/usages) for detailed descriptions for each command.
 
 | Command    | Alias | Description                                                                                           |
 | ---------- | ----- | ----------------------------------------------------------------------------------------------------- |

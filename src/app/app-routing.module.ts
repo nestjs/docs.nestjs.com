@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { environment } from '../environments/environment';
 import { HomepageComponent } from './homepage/homepage.component';
 import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
 import { ComponentsComponent } from './homepage/pages/components/components.component';
@@ -187,7 +186,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      enableTracing: !environment.production,
+      // enableTracing: !environment.production,
       scrollPositionRestoration: 'enabled',
       anchorScrolling: 'enabled',
       preloadingStrategy: PreloadAllModules,

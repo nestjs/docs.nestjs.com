@@ -786,6 +786,18 @@ Any standard Passport customization options can be passed the same way, using th
 PassportModule.register({ session: true });
 ```
 
+You can also pass strategies an options object in their constructors to configure them.
+For the local strategy you can pass e.g.:
+```typescript
+constructor(private readonly authService: AuthService) {
+  super({
+    usernameField: 'email',
+    passwordField: 'password',
+  });
+}
+```
+Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for property names.
+
 #### Named strategies
 
 When implementing a strategy, you can provide a name for it by passing a second argument to the `PassportStrategy` function. If you don't do this, each strategy will have a default name (e.g., 'jwt' for jwt-strategy):

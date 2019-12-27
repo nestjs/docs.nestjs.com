@@ -131,6 +131,10 @@ The request object represents the HTTP request and has properties for the reques
       <td><code>@Headers(name?: string)</code></td>
       <td><code>req.headers</code> / <code>req.headers[name]</code></td>
     </tr>
+    <tr>
+      <td><code>@Ip()</code></td>
+      <td><code>req.ip</code></td>
+    </tr>
   </tbody>
 </table>
 

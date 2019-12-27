@@ -76,18 +76,18 @@ export class MenuComponent implements OnInit {
         { title: 'Authentication', path: '/techniques/authentication' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
-        { title: 'File upload', path: '/techniques/file-upload' },
+        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
-        { title: 'Logger', path: '/techniques/logger' },
-        { title: 'Security', path: '/techniques/security' },
-        { title: 'Configuration', path: '/techniques/configuration' },
+        { title: 'Task scheduling', path: '/techniques/task-scheduling' },
         { title: 'Compression', path: '/techniques/compression' },
+        { title: 'Security', path: '/techniques/security' },
+        { title: 'Logger', path: '/techniques/logger' },
+        { title: 'File upload', path: '/techniques/file-upload' },
         { title: 'HTTP module', path: '/techniques/http-module' },
         { title: 'Model-View-Controller', path: '/techniques/mvc' },
         { title: 'Performance (Fastify)', path: '/techniques/performance' },
-        { title: 'Hot reload (Webpack)', path: '/techniques/hot-reload' },
       ],
     },
     {
@@ -103,7 +103,6 @@ export class MenuComponent implements OnInit {
           title: 'Tooling',
           path: '/graphql/tooling',
         },
-        // { title: 'Schema stitching', path: '/graphql/schema-stitching' },
       ],
     },
     {
@@ -165,7 +164,8 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
         { title: 'Documentation', path: '/recipes/documentation' },
-        { title: 'CRUD', path: '/recipes/crud' },
+        { title: 'CRUD utilities', path: '/recipes/crud-utilities' },
+        { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'Serve static', path: '/recipes/serve-static' },
       ],
     },
@@ -202,7 +202,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   ngOnInit() {
@@ -223,7 +223,7 @@ export class MenuComponent implements OnInit {
     ) {
       const { path } = firstChild.url[0];
       const index = this.items.findIndex(
-        ({ title }) => title.toLowerCase() === path
+        ({ title }) => title.toLowerCase() === path,
       );
       if (index < 0) {
         return;
