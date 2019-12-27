@@ -51,7 +51,7 @@
     "ngx-perfect-scrollbar": "8.0.0",
     "nodemon": "2.0.2",
     "prismjs": "1.17.1",
-    "rxjs": "6.5.3",
+    "rxjs": "6.5.4",
     "rxjs-compat": "6.5.3",
     "yargs": "15.0.2",
     "zone.js": "0.10.2"
