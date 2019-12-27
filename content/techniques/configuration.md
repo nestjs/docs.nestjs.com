@@ -207,7 +207,7 @@ $ npm install --save-dev @types/hapi__joi
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
-@@filename(config.service)
+@@filename(app.module)
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -230,7 +230,7 @@ By default, all schema keys are considered optional. Here, we set default values
 By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://hapi.dev/family/joi/?v=16.1.8#anyvalidvalues---aliases-equal). For example, to reverse the two settings above, pass options like this:
 
 ```typescript
-@@filename(config.service)
+@@filename(app.module)
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -270,7 +270,7 @@ export class ApiConfigService {
   constructor(private configService: ConfigService) {}
 
   get isAuthEnabled(): boolean {
-    return Boolean(this.configService.get('AUTH_ENABLED');
+    return Boolean(this.configService.get('AUTH_ENABLED'));
   }
 }
 @@switch
@@ -282,7 +282,7 @@ export class ApiConfigService {
   }
 
   get isAuthEnabled() {
-    return Boolean(this.configService.get('AUTH_ENABLED');
+    return Boolean(this.configService.get('AUTH_ENABLED'));
   }
 }
 ```
