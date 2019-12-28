@@ -13,7 +13,7 @@ If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the confi
 First install the required package:
 
 ```bash
-$ npm i --save-dev webpack-node-externals
+$ npm i --save-dev webpack-node-externals webpack-shell-plugin
 ```
 
 #### Configuration
@@ -23,6 +23,7 @@ Once the installation is complete, create a `webpack.config.js` file in the root
 ```typescript
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const webpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = function(options) {
   return {
@@ -34,7 +35,11 @@ module.exports = function(options) {
         whitelist: ['webpack/hot/poll?100'],
       }),
     ],
-    plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
+    plugins: [
+      ...options.plugins,
+      new webpackShellPlugin({ onBuildEnd: ['npm run start'] }),
+      new webpack.HotModuleReplacementPlugin(),
+    ],
   };
 };
 ```
@@ -73,11 +78,7 @@ Now simply open your command line and run the following command:
 $ npm run build
 ```
 
-Once webpack has started **watching files**, run the following command in a separate command line window:
-
-```bash
-$ npm run start
-```
+Once webpack has started **watching files**, it automatically starts a nest project
 
 ### Without CLI
 
@@ -88,7 +89,7 @@ If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the c
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader
+$ npm i --save-dev webpack webpack-cli webpack-node-externals webpack-shell-plugin ts-loader
 ```
 
 #### Configuration
@@ -99,6 +100,7 @@ Once the installation is complete, create a `webpack.config.js` file in the root
 const webpack = require('webpack');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const webpackShellPlugin = require('webpack-shell-plugin');
 
 module.exports = {
   entry: ['webpack/hot/poll?100', './src/main.ts'],
@@ -122,7 +124,10 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new webpackShellPlugin({ onBuildEnd: ['npm run start'] }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'server.js',
@@ -164,10 +169,6 @@ Now simply open your command line and run the following command:
 $ npm run webpack
 ```
 
-Once webpack has started **watching files**, run the following command in a separate command line window:
-
-```bash
-$ npm run start
-```
+Once webpack has started **watching files**, it automatically starts a nest project
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
