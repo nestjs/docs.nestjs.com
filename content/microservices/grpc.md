@@ -229,9 +229,9 @@ Once registered, we can inject the configured `ClientGrpc` object with `@Inject(
 ```typescript
 @Injectable()
 export class AppService implements OnModuleInit {
-  constructor(@Inject('HERO_PACKAGE') private readonly client: ClientGrpc) {}
-
   private heroService: HeroService;
+
+  constructor(@Inject('HERO_PACKAGE') private readonly client: ClientGrpc) {}
 
   onModuleInit() {
     this.heroService = this.client.getService<HeroService>('HeroService');
