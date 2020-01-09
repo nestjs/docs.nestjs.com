@@ -8,7 +8,7 @@ Middleware is executed in a particular sequence.  First, Nest runs globally boun
 
 #### Guard
 
-Guard execution stats with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound.  For example:
+Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound.  For example:
 
 ```typescript
 @useGuards(Guard1, Guard2)
