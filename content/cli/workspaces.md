@@ -175,6 +175,7 @@ The top-level properties are as follows:
 - `"collection"`: points at the collection of schematics used to generate components; you generally should not change this value
 - `"sourceRoot"`: points at the root of the source code for the single project in standard mode structures, or the _default project_ in monorepo mode structures
 - `"compilerOptions"`: a map with keys specifying compiler options and values specifying the option setting; see details below
+- `"generateOptions"`: a map with keys specifying global generate options and values specifying the option setting; see details below
 - `"monorepo"`: (monorepo only) for a monorepo mode structure, this value is always `true`
 - `"root"`: (monorepo only) points at the project root of the _default project_
 
@@ -189,6 +190,76 @@ These properties specify the compiler to use as well as various options that aff
 | `webpackConfigPath` | string              | Points at a webpack options file.  If not specified, Nest looks for the file `webpack.config.js`.  See below for more details.                                                                                                           |
 | `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                    |
 | `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode).  See below for details.                                  |
+
+#### Global generate options
+
+These properties specify the default generate options for when running the `nest generate` command.
+
+| Property Name       | Property Value Type | Description                                                                                                                                                                                                                              |
+| ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `spec`              | boolean *or* object | If assigned to a boolean it can be specified as either `true` or `false` to respectively enable or disable `spec` generation by default, if not specified otherwise in the cli, or in the specific project `generateOptions`. If assigned to an object, each key represents a schematic name, and the boolean value represents if the default spec generation is enabled / disabled for that specific schematic. |
+
+Below is given an example of global generate options, both with spec being a boolean and as an object
+
+```javascript
+{
+  "generateOptions": {
+    "spec": false
+  },
+  ...
+}
+```
+
+or 
+
+```javascript
+{
+  "generateOptions": {
+    "spec": {
+      "service": false
+    }
+  },
+  ...
+}
+```
+
+> error **Warning** Specifying the `spec` as an object, the key for the generation schematic does currently not support automatic alias handling. This means that specifying a key as for example `service: false` and trying to generate a service via the alias `s`, the spec would still be generated. To make sure both the normal schematic name and the alias works, specify both the normal command name as well as the alias, as seen below.
+>
+>```javascript
+> {
+>   "generateOptions": {
+>     "spec": {
+>       "service": false,
+>       "s": false
+>     }
+>   },
+>   ...
+> }
+> ```
+
+#### Project specific generate options
+
+As well as being able to write global generate options, project specific generate options is also available. The project specific generate options follow the exact same format as the global generate options, but are specified directly on each project.
+
+Project specific generate options overwrite global generate options.
+
+```javascript
+{
+  "projects": {
+    "cats-project": {
+      "generateOptions": {
+        "spec": {
+          "service": false
+        }
+      },
+      ...
+    }
+  },
+  ...
+}
+```
+
+> notice **Notice** Project specific generate options overwrite global generate options, meaning that any options set on the project specific generate options take a high precedence than options set in the global generate options. Directly specifying generate specific options on the CLI take the highest precedence than both project specific options and global generate options.
 
 #### Specified compiler
 
