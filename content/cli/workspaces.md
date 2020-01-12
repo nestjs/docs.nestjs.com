@@ -193,13 +193,13 @@ These properties specify the compiler to use as well as various options that aff
 
 #### Global generate options
 
-These properties specify the default generate options for when running the `nest generate` command.
+These properties specify the default generate options to be used by the `nest generate` command.
 
 | Property Name       | Property Value Type | Description                                                                                                                                                                                                                              |
 | ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `spec`              | boolean *or* object | If assigned to a boolean it can be specified as either `true` or `false` to respectively enable or disable `spec` generation by default, if not specified otherwise in the cli, or in the specific project `generateOptions`. If assigned to an object, each key represents a schematic name, and the boolean value represents if the default spec generation is enabled / disabled for that specific schematic. |
+| `spec`              | boolean *or* object | If the value is boolean, a value of `true` enables `spec` generation by default and a value of `false` disables it. A flag passed on the CLI command line overrides this setting, as does a project-specific `generateOptions` setting (more below). If the value is an object, each key represents a schematic name, and the boolean value determines whether the default spec generation is enabled / disabled for that specific schematic. |
 
-Below is given an example of global generate options, both with spec being a boolean and as an object
+The following example uses a boolean value to specify that spec file generation should be disabled by default for all projects:
 
 ```javascript
 {
@@ -210,7 +210,7 @@ Below is given an example of global generate options, both with spec being a boo
 }
 ```
 
-or 
+In the following example, `spec` file generation is disabled only for `service` schematics (e.g., `nest generate service...`):
 
 ```javascript
 {
@@ -223,7 +223,7 @@ or
 }
 ```
 
-> error **Warning** Specifying the `spec` as an object, the key for the generation schematic does currently not support automatic alias handling. This means that specifying a key as for example `service: false` and trying to generate a service via the alias `s`, the spec would still be generated. To make sure both the normal schematic name and the alias works, specify both the normal command name as well as the alias, as seen below.
+> error **Warning** When Specifying the `spec` as an object, the key for the generation schematic does not currently support automatic alias handling. This means that specifying a key as for example `service: false` and trying to generate a service via the alias `s`, the spec would still be generated. To make sure both the normal schematic name and the alias work as intended, specify both the normal command name as well as the alias, as seen below.
 >
 >```javascript
 > {
@@ -237,11 +237,11 @@ or
 > }
 > ```
 
-#### Project specific generate options
+#### Project-specific generate options
 
-As well as being able to write global generate options, project specific generate options is also available. The project specific generate options follow the exact same format as the global generate options, but are specified directly on each project.
+In addition to providing global generate options, you may also specify project-specific generate options. The project specific generate options follow the exact same format as the global generate options, but are specified directly on each project.
 
-Project specific generate options overwrite global generate options.
+Project-specific generate options override global generate options.
 
 ```javascript
 {
@@ -259,7 +259,7 @@ Project specific generate options overwrite global generate options.
 }
 ```
 
-> notice **Notice** Project specific generate options overwrite global generate options, meaning that any options set on the project specific generate options take a high precedence than options set in the global generate options. Directly specifying generate specific options on the CLI take the highest precedence than both project specific options and global generate options.
+> notice **Notice** The order of precedence for generate options is as follows. Options specified on the CLI command line take precedence over project-specific options. Project-specific options override global options.
 
 #### Specified compiler
 
