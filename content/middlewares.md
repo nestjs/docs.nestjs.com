@@ -132,6 +132,8 @@ forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
 
 The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
+> info **Hint** Route wildcards do not work with fastify platform applications, since fastify [does not support wildcard routes](https://github.com/nestjs/nest/issues/972#issuecomment-516707805).
+
 #### Middleware consumer
 
 The `MiddlewareConsumer` is a helper class. It provides several built-in methods to manage middleware. All of them can be simply **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method can take a single string, multiple strings, a `RouteInfo` object, a controller class and even multiple controller classes. In most cases you'll probably just pass a list of **controllers** separated by commas. Below is an example with a single controller:
