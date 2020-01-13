@@ -28,13 +28,13 @@ export class AuthorResolver {
 
   @Query('author')
   async getAuthor(@Args('id') id: number) {
-    return await this.authorsService.findOneById(id);
+    return this.authorsService.findOneById(id);
   }
 
   @ResolveProperty('posts')
   async getPosts(@Parent() author) {
     const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
+    return this.postsService.findAll({ authorId: id });
   }
 
   @Subscription()
@@ -145,13 +145,13 @@ export class AuthorResolver {
 
   @Query(returns => Author, { name: 'author' })
   async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
-    return await this.authorsService.findOneById(id);
+    return this.authorsService.findOneById(id);
   }
 
   @ResolveProperty('posts')
   async getPosts(@Parent() author) {
     const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
+    return this.postsService.findAll({ authorId: id });
   }
 
   @Subscription(returns => Comment)

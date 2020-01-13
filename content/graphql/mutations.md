@@ -16,17 +16,17 @@ export class AuthorResolver {
 
   @Query('author')
   async getAuthor(@Args('id') id: number) {
-    return await this.authorsService.findOneById(id);
+    return this.authorsService.findOneById(id);
   }
 
   @Mutation()
   async upvotePost(@Args('postId') postId: number) {
-    return await this.postsService.upvoteById({ id: postId });
+    return this.postsService.upvoteById({ id: postId });
   }
 
   @ResolveProperty('posts')
   async getPosts(@Parent() { id }) {
-    return await this.postsService.findAll({ authorId: id });
+    return this.postsService.findAll({ authorId: id });
   }
 }
 ```
@@ -76,18 +76,18 @@ export class AuthorResolver {
 
   @Query(returns => Author, { name: 'author' })
   async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
-    return await this.authorsService.findOneById(id);
+    return this.authorsService.findOneById(id);
   }
 
   @Mutation(returns => Post)
   async upvotePost(@Args({ name: 'postId', type: () => Int }) postId: number) {
-    return await this.postsService.upvoteById({ id: postId });
+    return this.postsService.upvoteById({ id: postId });
   }
 
   @ResolveProperty('posts')
   async getPosts(@Parent() author) {
     const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
+    return this.postsService.findAll({ authorId: id });
   }
 }
 ```

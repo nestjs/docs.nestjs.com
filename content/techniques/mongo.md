@@ -76,11 +76,11 @@ export class CatsService {
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
-    return await createdCat.save();
+    return createdCat.save();
   }
 
   async findAll(): Promise<Cat[]> {
-    return await this.catModel.find().exec();
+    return this.catModel.find().exec();
   }
 }
 @@switch
@@ -97,11 +97,11 @@ export class CatsService {
 
   async create(createCatDto) {
     const createdCat = new this.catModel(createCatDto);
-    return await createdCat.save();
+    return createdCat.save();
   }
 
   async findAll() {
-    return await this.catModel.find().exec();
+    return this.catModel.find().exec();
   }
 }
 ```
