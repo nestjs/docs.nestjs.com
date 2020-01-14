@@ -305,6 +305,7 @@ One approach is to use a factory function:
 
 ```typescript
 BullModule.registerQueueAsync({
+  name: 'audio',
   useFactory: () => ({
     redis: {
       host: 'localhost',
@@ -318,6 +319,7 @@ Our factory behaves like any other [asynchronous provider](https://docs.nestjs.c
 
 ```typescript
 BullModule.registerQueueAsync({
+  name: 'audio',
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
     redis: {
@@ -333,6 +335,7 @@ Alternatively, you can use the `useClass` syntax:
 
 ```typescript
 BullModule.registerQueueAsync({
+  name: 'audio',
   useClass: BullConfigService,
 });
 ```
@@ -357,6 +360,7 @@ In order to prevent the creation of `BullConfigService` inside `BullModule` and 
 
 ```typescript
 BullModule.registerQueueAsync({
+  name: 'audio',
   imports: [ConfigModule],
   useExisting: ConfigService,
 });
