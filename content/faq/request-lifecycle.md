@@ -11,10 +11,9 @@ Middleware is executed in a particular sequence.  First, Nest runs globally boun
 Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound.  For example:
 
 ```typescript
-@useGuards(Guard1, Guard2)
+@UseGuards(Guard1, Guard2)
 @Controller('cats')
 export class CatsController {
-
   constructor(private readonly catsService: CatsService) {}
 
   @UseGuards(Guard3)
@@ -41,12 +40,15 @@ Pipes follow the standard global to controller to route bound sequence, with the
 @UsePipes(GeneralValidationPipe)
 @Controller('cats')
 export class CatsController {
-
   constructor(private readonly catsService: CatsService) {}
 
-  @usePipes(RouteSpecificPipe)
+  @UsePipes(RouteSpecificPipe)
   @Patch(':id')
-  updateCat(@Body() body: UpdateCatDTO, @Param() params: UpdateCatParams, @Query() query: UpdateCatQuery) {
+  updateCat(
+    @Body() body: UpdateCatDTO, 
+    @Param() params: UpdateCatParams, 
+    @Query() query: UpdateCatQuery,
+  ) {
     return this.catsService.updateCat(body, params, query);
   }
 }
@@ -64,23 +66,23 @@ Filters are the only component that do not resolve global first. Instead, filter
 
 In general, the request lifecycle looks like the following: 
 
-1. incoming request
-1. globally bound middleware
-1. module bound middleware
-1. global guards
-1. controller guards
-1. route guards
-1. global interceptors (pre-controller)
-1. controller interceptors (pre-controller)
-1. route interceptors (pre-controller)
-1. global pipes
-1. controller pipes
-1. route pipes
-1. route parameter pipes
-1. controller (method handler)
-1. service (if exists)
-1. route interceptor (post-request)
-1. controller interceptor (post-request)
-1. global interceptor (post-request)
-1. filters (route, then controller, then global) 
-1. server response
+1. Incoming request
+1. Globally bound middleware
+1. Module bound middleware
+1. Global guards
+1. Controller guards
+1. Route guards
+1. Global interceptors (pre-controller)
+1. Controller interceptors (pre-controller)
+1. Route interceptors (pre-controller)
+1. Global pipes
+1. Controller pipes
+1. Route pipes
+1. Route parameter pipes
+1. Controller (method handler)
+1. Service (if exists)
+1. Route interceptor (post-request)
+1. Controller interceptor (post-request)
+1. Global interceptor (post-request)
+1. Exception filters (route, then controller, then global) 
+1. Server response
