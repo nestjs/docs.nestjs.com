@@ -114,7 +114,7 @@ To access configuration values from our `ConfigService`, we first need to inject
 @@filename(feature.module)
 @Module({
   imports: [ConfigModule],
-  ...
+  // ...
 })
 ```
 
@@ -204,6 +204,8 @@ $ npm install --save @hapi/joi
 $ npm install --save-dev @types/hapi__joi
 ```
 
+> warning **Notice** The latest version of `@hapi/joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their documentation](https://hapi.dev/family/joi/?v=17.0.2#install) & this [github issue](https://github.com/hapijs/joi/issues/2266#issuecomment-571667769).
+
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
@@ -225,9 +227,9 @@ import * as Joi from '@hapi/joi';
 export class AppModule {}
 ```
 
-By default, all schema keys are considered optional. Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). Alternatively, we can use the `required()` validation method to require that a value must be defined in the environment (`.env` file or process environment). In this case, the validation step will throw an exception if we don't provide the variable in the environment. See [Joi validation methods](https://hapi.dev/family/joi/?v=16.1.8#anycachecache) for more on how to construct validation schemas.
+By default, all schema keys are considered optional. Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). Alternatively, we can use the `required()` validation method to require that a value must be defined in the environment (`.env` file or process environment). In this case, the validation step will throw an exception if we don't provide the variable in the environment. See [Joi validation methods](https://hapi.dev/family/joi/?v=17.0.2#example) for more on how to construct validation schemas.
 
-By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://hapi.dev/family/joi/?v=16.1.8#anyvalidvalues---aliases-equal). For example, to reverse the two settings above, pass options like this:
+By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://hapi.dev/family/joi/api/?v=17.0.2#anyvalidvalues---aliases-equal). For example, to reverse the two settings above, pass options like this:
 
 ```typescript
 @@filename(app.module)
@@ -310,3 +312,29 @@ export class AppService {
   }
 }
 ```
+
+#### Expandable Variables
+
+The `@nestjs/config` package allows you to take advantage of the **"Expandable Variables"** functionality. You can use your exisiting `.env` variables to declare new variables within `.env` itself. For eg:
+
+```
+APP_URL=mywebsite.com
+SUPPORT_EMAIL=support@${APP_URL}
+```
+
+This can simply be done using the `expandVariables` _(boolean)_ option in the `ConfigModule` like this:
+
+```typescript
+@@filename(app.module)
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      // ...
+      expandVariables: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+This will convert the value of the variable `SUPPORT_EMAIL` to `support@mywebsite.com` and make it available in `process.env` as `process.env.SUPPORT_EMAIL`.
