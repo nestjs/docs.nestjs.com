@@ -104,10 +104,9 @@ export class CatsService {
 }
 ```
 
-#### Connection Injection
+#### Connection
 
-Maybe sometime you will need the native [Mongoose Connection](https://mongoosejs.com/docs/api.html#Connection)
-(for an integration with an external library, or to use the native API). In such cases, use the `@InjectConnection` decorator:
+At times you may need to access the native [Mongoose Connection](https://mongoosejs.com/docs/api.html#Connection) object. For example, you may want to make native API calls on the connection object. You can inject the Mongoose Connection by using the `@InjectConnection()` decorator as follows:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -116,10 +115,9 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectConnection() private readonly connection: Connection) {}
-
-  // ...
-
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+  ) {}
 }
 ```
 
