@@ -178,6 +178,7 @@ export class MenuComponent implements OnInit {
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
+        { title: 'Request Lifecycle', path: '/faq/request-lifecycle' },
         {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
