@@ -264,7 +264,7 @@ killDragon(message, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from the `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()` and `KafkaContext` are imported from the `@nestjs/microservices`.
 
 In addition, if you want to access the original Kafka `IncomingMessage` object, use the `getMessage()` method of the `KafkaContext` object, as follows:
 
