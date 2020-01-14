@@ -317,10 +317,12 @@ export class AppService {
 
 The `@nestjs/config` package allows you to take advantage of the **"Expandable Variables"** functionality. You can use your exisiting `.env` variables to declare new variables within `.env` itself. For eg:
 
-```
+```json
 APP_URL=mywebsite.com
 SUPPORT_EMAIL=support@${APP_URL}
 ```
+
+> info **Hint** `@nestjs/config` package internally uses [dotenv-expand](https://github.com/motdotla/dotenv-expand).
 
 This can simply be done using the `expandVariables` _(boolean)_ option in the `ConfigModule` like this:
 
