@@ -106,6 +106,23 @@ export class CatsService {
 }
 ```
 
+#### Connection
+
+At times you may need to access the native [Mongoose Connection](https://mongoosejs.com/docs/api.html#Connection) object. For example, you may want to make native API calls on the connection object. You can inject the Mongoose Connection by using the `@InjectConnection()` decorator as follows:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+
+@Injectable()
+export class CatsService {
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+  ) {}
+}
+```
+
 #### Testing
 
 When unit testing an application, we usually want to avoid any database connection, making our test suites simpler to set up and faster to execute. But our classes might depend on models that are pulled from the connection instance. How do we resolve these classes? The solution is to create mock models.
