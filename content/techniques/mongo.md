@@ -123,6 +123,56 @@ export class CatsService {
 }
 ```
 
+#### Multiple databases
+
+Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, connection naming becomes **mandatory**.
+
+```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost/test', {
+      connectionName: 'cats',
+    }),
+    MongooseModule.forRoot('mongodb://localhost/users', {
+      connectionName: 'users',
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+> warning **Notice** Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
+
+With this setup, you have to tell the `MongooseModule.forFeature()` function which connection should be used. 
+
+```typescript
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }], 'cats'),
+  ],
+})
+export class AppModule {}
+```
+
+You can also inject the `Connection` for a given connection:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+
+@Injectable()
+export class CatsService {
+  constructor(
+    @InjectConnection('cats') private readonly connection: Connection,
+  ) {}
+}
+```
+
 #### Testing
 
 When unit testing an application, we usually want to avoid any database connection, making our test suites simpler to set up and faster to execute. But our classes might depend on models that are pulled from the connection instance. How do we resolve these classes? The solution is to create mock models.
