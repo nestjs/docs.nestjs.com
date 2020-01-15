@@ -120,7 +120,7 @@ export class AppModule {
 }
 ```
 
-> info **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
+> warning **Warning** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
 
 #### Route wildcards
 
