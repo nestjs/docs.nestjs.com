@@ -315,16 +315,18 @@ export class AppService {
 
 #### Expandable Variables
 
-The `@nestjs/config` package allows you to take advantage of the **"Expandable Variables"** functionality. You can use your exisiting `.env` variables to declare new variables within `.env` itself. For eg:
+The `@nestjs/config` package supports environment variable expansion. With this technique, you can create nested environment variables, where one variable is referred to within the definition of another. For example:
 
 ```json
 APP_URL=mywebsite.com
 SUPPORT_EMAIL=support@${APP_URL}
 ```
 
+With this construction, the variable `SUPPORT_EMAIL` resolves to `'support@mywebsite.com'`. Note the use of the `${...}` syntax to trigger resolving the value of the variable `APP_URL` inside the definition of `SUPPORT_EMAIL`.
+
 > info **Hint** `@nestjs/config` package internally uses [dotenv-expand](https://github.com/motdotla/dotenv-expand).
 
-This can simply be done using the `expandVariables` _(boolean)_ option in the `ConfigModule` like this:
+Enable environment variable expansion using the `expandVariables` property in the options object passed to the `forRoot()` method of the `ConfigModule`, as shown below:
 
 ```typescript
 @@filename(app.module)
@@ -338,5 +340,3 @@ This can simply be done using the `expandVariables` _(boolean)_ option in the `C
 })
 export class AppModule {}
 ```
-
-This will convert the value of the variable `SUPPORT_EMAIL` to `support@mywebsite.com` and make it available in `process.env` as `process.env.SUPPORT_EMAIL`.
