@@ -322,7 +322,7 @@ APP_URL=mywebsite.com
 SUPPORT_EMAIL=support@${APP_URL}
 ```
 
-With this construction, the variable `SUPPORT_EMAIL` resolves to `'support@mywebsite.com'`. Note the use of the `${...}` syntax to trigger resolving the value of the variable `APP_URL` inside the definition of `SUPPORT_EMAIL`.
+With this construction, the variable `SUPPORT_EMAIL` resolves to `'support@mywebsite.com'`. Note the use of the `${{ '{' }}...{{ '}' }}` syntax to trigger resolving the value of the variable `APP_URL` inside the definition of `SUPPORT_EMAIL`.
 
 > info **Hint** `@nestjs/config` package internally uses [dotenv-expand](https://github.com/motdotla/dotenv-expand).
 
