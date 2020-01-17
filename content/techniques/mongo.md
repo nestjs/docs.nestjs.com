@@ -117,9 +117,7 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class CatsService {
-  constructor(
-    @InjectConnection() private readonly connection: Connection,
-  ) {}
+  constructor(@InjectConnection() private readonly connection: Connection) {}
 }
 ```
 
@@ -147,7 +145,7 @@ export class AppModule {}
 
 > warning **Notice** Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-With this setup, you have to tell the `MongooseModule.forFeature()` function which connection should be used. 
+With this setup, you have to tell the `MongooseModule.forFeature()` function which connection should be used.
 
 ```typescript
 @Module({
@@ -171,6 +169,94 @@ export class CatsService {
     @InjectConnection('cats') private readonly connection: Connection,
   ) {}
 }
+```
+
+#### Hooks (middleware)
+
+Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
+
+```typescript
+@Module({
+  imports: [
+    MongooseModule.forFeatureAsync([
+      {
+        name: 'Cat',
+        useFactory: () => {
+          const schema = CatsSchema;
+          schema.pre('save', () => console.log('Hello from pre save'));
+          return schema;
+        },
+      },
+    ]),
+  ],
+})
+export class AppModule {}
+```
+
+Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory), our factory function can be `async` and can inject dependencies through `inject`.
+
+```typescript
+@Module({
+  imports: [
+    MongooseModule.forFeatureAsync([
+      {
+        name: 'Cat',
+        import [ConfigModule],
+        useFactory: (configService: ConfigService) => {
+          const schema = CatsSchema;
+          schema.pre('save', () =>
+            console.log(`${configService.getString('APP_NAME')}: Hello from pre save`),
+          );
+          return schema;
+        },
+        inject: [ConfigService],
+      }
+    ]),
+  ],
+})
+export class AppModule {}
+```
+
+#### Plugins
+
+To register a [plugin](https://mongoosejs.com/docs/plugins.html) for a given schema, use the `forFeatureAsync()` method.
+
+```typescript
+@Module({
+  imports: [
+    MongooseModule.forFeatureAsync([
+      {
+        name: 'Cat',
+        useFactory: () => {
+          const schema = CatsSchema;
+          schema.plugin(require('mongoose-autopopulate'));
+          return schema;
+        },
+      },
+    ]),
+  ],
+})
+export class AppModule {}
+```
+
+To register a plugin for all schemas at once, call the `.plugin()` method of the `Connection` object. You should access the connection before models are created; to do this, use the `connectionFactory`:
+
+```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost/test', {
+      connectionFactory: (connection) => {
+        connection.plugin(require('mongoose-autopopulate'));
+        return connection;
+      }
+    }),
+  ],
+})
+export class AppModule {}
 ```
 
 #### Testing
