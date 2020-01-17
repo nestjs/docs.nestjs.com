@@ -173,7 +173,7 @@ export class CatsService {
 
 #### Hooks (middleware)
 
-Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. In order to register a hook **before** model registration, use the `forFeatureAsync()` method.
+Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
 
 ```typescript
 @Module({
@@ -239,7 +239,7 @@ To register a [plugin](https://mongoosejs.com/docs/plugins.html) for a given sch
 export class AppModule {}
 ```
 
-To register a plugin for all schemas at once, call the `.plugin()` method of the `Connection` object. In order to access the connection before models are created, use the `connectionFactory`:
+To register a plugin for all schemas at once, call the `.plugin()` method of the `Connection` object. You should access the connection before models are created; to do this, use the `connectionFactory`:
 
 ```typescript
 @@filename(app.module)
