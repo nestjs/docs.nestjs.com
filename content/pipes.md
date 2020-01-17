@@ -385,13 +385,13 @@ We can simply tie this pipe to the selected param as shown below:
 @@filename()
 @Get(':id')
 async findOne(@Param('id', new ParseIntPipe()) id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 @@switch
 @Get(':id')
 @Bind(Param('id', new ParseIntPipe()))
 async findOne(id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 ```
 
@@ -401,13 +401,13 @@ If you prefer you can use the `ParseUUIDPipe` which is responsible for parsing a
 @@filename()
 @Get(':id')
 async findOne(@Param('id', new ParseUUIDPipe()) id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 @@switch
 @Get(':id')
 @Bind(Param('id', new ParseUUIDPipe()))
 async findOne(id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 ```
 

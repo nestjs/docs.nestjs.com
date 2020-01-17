@@ -144,7 +144,7 @@ export class UsersResolver {
 
   @Query('users')
   async getUsers(@Args() args, @Info() info): Promise<User[]> {
-    return await this.prisma.query.users(args, info);
+    return this.prisma.query.users(args, info);
   }
 }
 ```
