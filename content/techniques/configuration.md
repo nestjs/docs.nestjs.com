@@ -313,7 +313,7 @@ export class AppService {
 }
 ```
 
-#### Expandable Variables
+#### Expandable variables
 
 The `@nestjs/config` package supports environment variable expansion. With this technique, you can create nested environment variables, where one variable is referred to within the definition of another. For example:
 
@@ -324,7 +324,7 @@ SUPPORT_EMAIL=support@${APP_URL}
 
 With this construction, the variable `SUPPORT_EMAIL` resolves to `'support@mywebsite.com'`. Note the use of the `${{ '{' }}...{{ '}' }}` syntax to trigger resolving the value of the variable `APP_URL` inside the definition of `SUPPORT_EMAIL`.
 
-> info **Hint** `@nestjs/config` package internally uses [dotenv-expand](https://github.com/motdotla/dotenv-expand).
+> info **Hint** For this feature, `@nestjs/config` package internally uses [dotenv-expand](https://github.com/motdotla/dotenv-expand).
 
 Enable environment variable expansion using the `expandVariables` property in the options object passed to the `forRoot()` method of the `ConfigModule`, as shown below:
 
