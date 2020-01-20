@@ -9,12 +9,12 @@ import { SocialWrapperComponent } from '../common/social-wrapper/social-wrapper.
 import { TocComponent } from '../shared/components/toc/toc.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('HomepageComponent', () => {
   beforeEach(async(() => {
     return TestBed.configureTestingModule({
-      imports: [RouterTestingModule, NoopAnimationsModule],
+      imports: [RouterTestingModule, BrowserAnimationsModule],
       declarations: [
         FooterComponent,
         HeaderComponent,
