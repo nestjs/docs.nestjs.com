@@ -8,7 +8,7 @@ import {
   OnDestroy,
   OnInit,
   Renderer2,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
@@ -21,7 +21,7 @@ import { BasePageComponent } from './pages/page/page.component';
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   isSidebarOpened = true;
@@ -36,10 +36,13 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly cd: ChangeDetectorRef,
     private readonly router: Router,
     private readonly elementRef: ElementRef,
-    private readonly renderer: Renderer2
+    private readonly renderer: Renderer2,
   ) {}
 
   ngOnInit(): void {
+    if (!Array.isArray(this.router.events)) {
+      return;
+    }
     this.router.events
       .filter(e => e instanceof NavigationEnd)
       .subscribe(() => {
@@ -59,7 +62,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkWindowWidth(window.innerWidth);
-    this.contentRef.appendChild(this.createDocSearchScriptTag());
+    if (this.contentRef) {
+      this.contentRef.appendChild(this.createDocSearchScriptTag());
+    }
   }
 
   ngOnDestroy() {
@@ -88,7 +93,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     const nativeElement: HTMLElement = this.elementRef.nativeElement;
     const footerRef: HTMLElement = nativeElement.querySelector('app-footer');
     const newsletterRef: HTMLElement = nativeElement.querySelector(
-      '.newsletter-wrapper'
+      '.newsletter-wrapper',
     );
     const carbonRef = nativeElement.querySelector('#carbonads');
     if (!footerRef || !carbonRef) {
@@ -155,7 +160,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
         apiKey: environment.algoliaApiKey,
         indexName: 'nestjs',
         inputSelector: '#search',
-        debug: false
+        debug: false,
       });
     };
     return scriptTag;
