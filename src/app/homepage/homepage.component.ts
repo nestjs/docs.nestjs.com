@@ -68,6 +68,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    if (!this.scrollSubscription) {
+      return;
+    }
     this.scrollSubscription.unsubscribe();
   }
 
