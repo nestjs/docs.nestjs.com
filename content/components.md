@@ -56,7 +56,7 @@ Our `CatsService` is a basic class with one property and two methods. The only n
 export interface Cat {
   name: string;
   age: number;
-  breed: string;
+  bread: string;
 }
 ```
 
