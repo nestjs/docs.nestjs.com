@@ -157,5 +157,6 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://getapollo.io/',
     'https://big-bench.com/',
     'https://www.qingtui.cn/',
+    'https://creatorsdaily.com',
   ];
 }
