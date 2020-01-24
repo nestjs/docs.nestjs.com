@@ -152,6 +152,7 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://codengage.com/',
     'https://budacode.com/',
     'https://blueanchor.io/',
+    'https://fairness.coop/',
     'https://www.easymetrics.com/',
     'https://getapollo.io/',
     'https://big-bench.com/',
