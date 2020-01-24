@@ -112,12 +112,7 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/nothing.svg',
       url: 'https://nothing.ch/',
       width: '110px',
-    },
-    {
-      logo: '/assets/logo/creatorsdaily.svg',
-      url: 'https://creatorsdaily.com',
-      width: '130px',
-    },
+    }
   ];
 
   readonly companiesUrls = [
