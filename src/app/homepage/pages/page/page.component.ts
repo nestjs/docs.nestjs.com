@@ -1,10 +1,10 @@
-declare var Prism;
 import {
   AfterViewChecked,
   ApplicationRef,
   Component,
   ElementRef,
 } from '@angular/core';
+import * as Prism from 'prismjs';
 
 @Component({
   selector: 'app-base-page',
@@ -31,7 +31,7 @@ export class BasePageComponent implements AfterViewChecked {
   }
 
   private initHljs() {
-    if (this.isHljsInitialized) {
+    if (this.isHljsInitialized || !this.el) {
       return;
     }
     const tags = this.el.nativeElement.querySelectorAll('code');

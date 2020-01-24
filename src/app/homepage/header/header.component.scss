@@ -94,7 +94,25 @@ header {
   position: relative;
   float: right;
   padding: 14px 25px;
-  margin-right: 80px;
+
+  @media (min-width: 1500px) {
+    margin-right: 80px;
+  }
+
+  @media (max-width: 1499px) {
+    li:first-of-type {
+      display: none;
+    }
+    .search-wrapper {
+      margin-right: 0;
+    }
+  }
+
+  @media (max-width: 1250px) {
+    .search-wrapper {
+      display: none;
+    }
+  }
 
   @include media(large) {
     margin-right: 0;
@@ -102,9 +120,20 @@ header {
   }
 
   @include media(normal) {
-    display: none;
+    ul {
+      display: none !important;
+    }
+
+    .search-wrapper {
+      display: inline-block;
+    }
   }
 
+  @include media(small) {
+    .search-wrapper {
+      display: none;
+    }
+  }
   ul {
     display: inline-block;
     vertical-align: middle;
@@ -279,5 +308,76 @@ header {
 .desktop-nav-icon {
   @include media(large) {
     display: none;
+  }
+}
+
+.search-wrapper {
+  margin-right: 2em;
+  height: 100%;
+  display: inline-block;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  margin-top: 7px;
+  color: #a5a5a5;
+  font-size: 14px;
+}
+
+.search-input {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #414141;
+  padding: 5px 20px 5px 28px;
+  color: #fff;
+  font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  outline: 0 !important;
+  transition: all 90ms ease-in-out;
+  width: 165px;
+
+  &:active,
+  &:focus {
+    border-bottom-color: $red-color;
+    width: 190px;
+  }
+}
+
+.search-input::placeholder {
+  color: #a5a5a5;
+  opacity: 1;
+}
+
+.close-icon {
+  position: absolute;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  top: 10px;
+  cursor: pointer;
+  visibility: hidden;
+  transition: all 90ms ease-in-out;
+
+  &.visible {
+    visibility: visible;
+  }
+
+  &::after,
+  &::before {
+    content: '';
+    background: $red-color;
+    display: block;
+    height: 2px;
+    position: absolute;
+    width: 15px;
+  }
+
+  &::after {
+    transform: rotate(45deg) translateY(3px);
+  }
+
+  &::before {
+    transform: rotate(-45deg) translateY(3px);
   }
 }

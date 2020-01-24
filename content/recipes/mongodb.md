@@ -63,7 +63,7 @@ Now we can inject the `Connection` object using `@Inject()` decorator. Each clas
 With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
 
 ```typescript
-@@filename(schemas/cats.schema)
+@@filename(schemas/cat.schema)
 import * as mongoose from 'mongoose';
 
 export const CatSchema = new mongoose.Schema({
@@ -121,11 +121,11 @@ export class CatsService {
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
-    return await createdCat.save();
+    return createdCat.save();
   }
 
   async findAll(): Promise<Cat[]> {
-    return await this.catModel.find().exec();
+    return this.catModel.find().exec();
   }
 }
 @@switch
@@ -140,11 +140,11 @@ export class CatsService {
 
   async create(createCatDto) {
     const createdCat = new this.catModel(createCatDto);
-    return await createdCat.save();
+    return createdCat.save();
   }
 
   async findAll() {
-    return await this.catModel.find().exec();
+    return this.catModel.find().exec();
   }
 }
 ```

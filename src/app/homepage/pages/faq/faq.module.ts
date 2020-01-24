@@ -6,6 +6,7 @@ import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
+import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,11 @@ const routes: Routes = [
     component: HttpAdapterComponent,
     data: { title: 'HTTP adapter - FAQ' },
   },
+  {
+    path: 'request-lifecycle',
+    component: RequestLifecycleComponent,
+    data: { title: 'Request Lifecycle - FAQ' },
+  },
 ];
 
 @NgModule({
@@ -37,6 +43,7 @@ const routes: Routes = [
     HybridApplicationComponent,
     MultipleServersComponent,
     HttpAdapterComponent,
+    RequestLifecycleComponent,
   ],
 })
 export class FaqModule {}

@@ -35,7 +35,7 @@ import { Injectable } from '@nestjs/common';
 export class AuthGuard {
   async canActivate(context) {
     const request = context.switchToHttp().getRequest();
-    return await validateRequest(request);
+    return validateRequest(request);
   }
 }
 ```
@@ -209,7 +209,6 @@ Let's now go back and tie this together with our `RolesGuard`. Currently, it sim
 ```typescript
 @@filename(roles.guard)
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()

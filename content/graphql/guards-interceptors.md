@@ -12,7 +12,7 @@ You can use either [guards](/guards), [interceptors](/interceptors), [filters](/
 @Query('author')
 @UseGuards(AuthGuard)
 async getAuthor(@Args('id', ParseIntPipe) id: number) {
-  return await this.authorsService.findOneById(id);
+  return this.authorsService.findOneById(id);
 }
 ```
 
@@ -22,7 +22,7 @@ As you can see, GraphQL works pretty well with both guards and pipes. Thanks to 
 @Mutation()
 @UseInterceptors(EventsInterceptor)
 async upvotePost(@Args('postId') postId: number) {
-  return await this.postsService.upvoteById({ id: postId });
+  return this.postsService.upvoteById({ id: postId });
 }
 ```
 

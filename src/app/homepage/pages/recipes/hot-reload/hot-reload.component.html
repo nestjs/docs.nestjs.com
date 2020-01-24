@@ -1,0 +1,138 @@
+
+<div class="content" #contentReference>
+  <div class="github-links">
+    <a
+      href="https://github.com/nestjs/docs.nestjs.com/edit/master/content/recipes/hot-reload.md"
+      aria-label="Suggest Edits"
+      title="Suggest Edits"
+    >
+      <i class="fas fa-edit"></i>
+    </a>
+  </div>
+  <h3 id="hot-reload">Hot Reload</h3>
+<p>The highest impact on your application&#39;s bootstrapping process has a <strong>TypeScript compilation</strong>. But the question is, do we have to recompile a whole project each time when change occurs? Not at all. That&#39;s why <a rel='nofollow' target='_blank' href="https://github.com/webpack/webpack">webpack</a> HMR (Hot-Module Replacement) significantly decreases an amount of time necessary to instantiate your application.</p>
+<blockquote class="
+warning "><strong>Warning</strong> Note that <code>webpack</code> won&#39;t automatically copy your assets (e.g. <code>graphql</code> files) to the <code>dist</code> folder. Similary, <code>webpack</code> is not compatible with glob static paths (e.g. <code>entities</code> property in <code>TypeOrmModule</code>).
+</blockquote>
+<h3 id="with-cli">With CLI</h3>
+<p>If you are using the <a rel='nofollow' target='_blank' href="https://docs.nestjs.com/cli/overview">Nest CLI</a>, the configuration process is pretty straightforward. The CLI wraps <code>webpack</code>, which allows use the <code>HotModuleReplacementPlugin</code>.</p>
+<h4 appAnchor id="installation"><span>Installation</span></h4>
+<p>First install the required package:</p>
+<pre><code class="language-bash">
+$ npm i --save-dev webpack-node-externals</code></pre>
+<h4 appAnchor id="configuration"><span>Configuration</span></h4>
+<p>Once the installation is complete, create a <code>webpack.config.js</code> file in the root directory of your application.</p>
+<pre><code class="language-typescript">
+const webpack = require(&#39;webpack&#39;);
+const nodeExternals = require(&#39;webpack-node-externals&#39;);
+
+module.exports = function(options) &#123;
+  return &#123;
+    ...options,
+    entry: [&#39;webpack/hot/poll?100&#39;, &#39;./src/main.ts&#39;],
+    watch: true,
+    externals: [
+      nodeExternals(&#123;
+        whitelist: [&#39;webpack/hot/poll?100&#39;],
+      &#125;),
+    ],
+    plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
+  &#125;;
+&#125;;</code></pre>
+<p>This function takes the original object containing the default webpack configuration and returns a modified one with an applied <code>HotModuleReplacementPlugin</code> plugin.</p>
+<h4 appAnchor id="hot-module-replacement"><span>Hot-Module Replacement</span></h4>
+<p>In order to enable <strong>HMR</strong>, open the application entry file (<code>main.ts</code>) and add several webpack-related instructions, as shown below:</p>
+<pre><code class="language-typescript">
+declare const module: any;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+
+  if (module.hot) &#123;
+    module.hot.accept();
+    module.hot.dispose(() =&gt; app.close());
+  &#125;
+&#125;
+bootstrap();</code></pre>
+<p>To simplify the execution process, add two scripts to your <code>package.json</code> file.</p>
+<pre><code class="language-json">
+&quot;build&quot;: &quot;nest build --watch --webpack&quot;
+&quot;start&quot;: &quot;node dist/main&quot;,</code></pre>
+<p>Now simply open your command line and run the following command:</p>
+<pre><code class="language-bash">
+$ npm run build</code></pre>
+<p>Once webpack has started <strong>watching files</strong>, run the following command in a separate command line window:</p>
+<pre><code class="language-bash">
+$ npm run start</code></pre>
+<h3 id="without-cli">Without CLI</h3>
+<p>If you are not using the <a rel='nofollow' target='_blank' href="https://docs.nestjs.com/cli/overview">Nest CLI</a>, the configuration will be slightly more complex (will require more manual steps).</p>
+<h4 appAnchor id="installation-1"><span>Installation</span></h4>
+<p>First install the required packages:</p>
+<pre><code class="language-bash">
+$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader</code></pre>
+<h4 appAnchor id="configuration-1"><span>Configuration</span></h4>
+<p>Once the installation is complete, create a <code>webpack.config.js</code> file in the root directory of your application.</p>
+<pre><code class="language-typescript">
+const webpack = require(&#39;webpack&#39;);
+const path = require(&#39;path&#39;);
+const nodeExternals = require(&#39;webpack-node-externals&#39;);
+
+module.exports = &#123;
+  entry: [&#39;webpack/hot/poll?100&#39;, &#39;./src/main.ts&#39;],
+  watch: true,
+  target: &#39;node&#39;,
+  externals: [
+    nodeExternals(&#123;
+      whitelist: [&#39;webpack/hot/poll?100&#39;],
+    &#125;),
+  ],
+  module: &#123;
+    rules: [
+      &#123;
+        test: /.tsx?$/,
+        use: &#39;ts-loader&#39;,
+        exclude: /node_modules/,
+      &#125;,
+    ],
+  &#125;,
+  mode: &#39;development&#39;,
+  resolve: &#123;
+    extensions: [&#39;.tsx&#39;, &#39;.ts&#39;, &#39;.js&#39;],
+  &#125;,
+  plugins: [new webpack.HotModuleReplacementPlugin()],
+  output: &#123;
+    path: path.join(__dirname, &#39;dist&#39;),
+    filename: &#39;server.js&#39;,
+  &#125;,
+&#125;;</code></pre>
+<p>This configuration tells webpack few essential things about our application. Where sits an entry file, which directory should be used to hold <strong>compiled</strong> files, and also, what kind of loader we want to use in order to compile source files. Basically, you shouldn&#39;t worry to much, you don&#39;t need to understand the content of this file at all.</p>
+<h4 appAnchor id="hot-module-replacement-1"><span>Hot-Module Replacement</span></h4>
+<p>In order to enable <strong>HMR</strong>, we have to open the application entry file (<code>main.ts</code>) and add a few webpack-related instructions.</p>
+<pre><code class="language-typescript">
+declare const module: any;
+
+async function bootstrap() &#123;
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+
+  if (module.hot) &#123;
+    module.hot.accept();
+    module.hot.dispose(() =&gt; app.close());
+  &#125;
+&#125;
+bootstrap();</code></pre>
+<p>To simplify the execution process, add two scripts to your <code>package.json</code> file.</p>
+<pre><code class="language-json">
+&quot;webpack&quot;: &quot;webpack --config webpack.config.js&quot;
+&quot;start&quot;: &quot;node dist/server&quot;,</code></pre>
+<p>Now simply open your command line and run the following command:</p>
+<pre><code class="language-bash">
+$ npm run webpack</code></pre>
+<p>Once webpack has started <strong>watching files</strong>, run the following command in a separate command line window:</p>
+<pre><code class="language-bash">
+$ npm run start</code></pre>
+<p>A working example is available <a rel='nofollow' target='_blank' href="https://github.com/nestjs/nest/tree/master/sample/08-webpack">here</a>.</p>
+
+</div>
+

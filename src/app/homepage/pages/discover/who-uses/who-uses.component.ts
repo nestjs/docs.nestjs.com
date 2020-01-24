@@ -112,7 +112,12 @@ export class WhoUsesComponent extends BasePageComponent {
       logo: '/assets/logo/nothing.svg',
       url: 'https://nothing.ch/',
       width: '110px',
-    }
+    },
+    {
+      logo: '/assets/logo/swissdevjobs-devops-logo.png',
+      url: 'https://swissdevjobs.ch/jobs/Dev-Ops/All',
+      width: '65px',
+    },
   ];
 
   readonly companiesUrls = [
@@ -147,6 +152,7 @@ export class WhoUsesComponent extends BasePageComponent {
     'https://codengage.com/',
     'https://budacode.com/',
     'https://blueanchor.io/',
+    'https://fairness.coop/',
     'https://www.easymetrics.com/',
     'https://getapollo.io/',
     'https://big-bench.com/',

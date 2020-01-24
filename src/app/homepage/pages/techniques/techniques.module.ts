@@ -7,15 +7,16 @@ import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
-import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { HttpModuleComponent } from './http-module/http-module.component';
 import { LoggerComponent } from './logger/logger.component';
 import { MongoComponent } from './mongo/mongo.component';
 import { MvcComponent } from './mvc/mvc.component';
 import { PerformanceComponent } from './performance/performance.component';
+import { QueuesComponent } from './queues/queues.component';
 import { SecurityComponent } from './security/security.component';
 import { SerializationComponent } from './serialization/serialization.component';
 import { SqlComponent } from './sql/sql.component';
+import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
 
 const routes: Routes = [
@@ -74,11 +75,6 @@ const routes: Routes = [
     data: { title: 'Performance (Fastify)' },
   },
   {
-    path: 'hot-reload',
-    component: HotReloadComponent,
-    data: { title: 'Hot reload (Webpack)' },
-  },
-  {
     path: 'http-module',
     component: HttpModuleComponent,
     data: { title: 'HTTP module' },
@@ -94,9 +90,23 @@ const routes: Routes = [
     data: { title: 'Security' },
   },
   {
+    path: 'task-scheduling',
+    component: TaskSchedulingComponent,
+    data: { title: 'Task Scheduling' },
+  },
+  {
     path: 'compression',
     component: CompressionComponent,
     data: { title: 'Compression' },
+  },
+  {
+    path: 'queues',
+    component: QueuesComponent,
+    data: { title: 'Queues' },
+  },
+  {
+    path: 'hot-reload',
+    redirectTo: '/recipes/hot-reload',
   },
 ];
 
@@ -108,11 +118,12 @@ const routes: Routes = [
     MongoComponent,
     AuthenticationComponent,
     SecurityComponent,
+    QueuesComponent,
     LoggerComponent,
+    TaskSchedulingComponent,
     PerformanceComponent,
     FileUploadComponent,
     HttpModuleComponent,
-    HotReloadComponent,
     ConfigurationComponent,
     CompressionComponent,
     ValidationComponent,

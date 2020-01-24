@@ -1,27 +1,32 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { HomepageComponent } from './homepage.component';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MenuComponent } from './menu/menu.component';
 import { MenuItemComponent } from './menu/menu-item/menu-item.component';
+import { SocialWrapperComponent } from '../common/social-wrapper/social-wrapper.component';
+import { TocComponent } from '../shared/components/toc/toc.component';
+import { NewsletterComponent } from './newsletter/newsletter.component';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('HomepageComponent', () => {
   beforeEach(async(() => {
     return TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
+      imports: [RouterTestingModule, BrowserAnimationsModule],
       declarations: [
         FooterComponent,
         HeaderComponent,
+        SocialWrapperComponent,
         MenuComponent,
         MenuItemComponent,
-        HomepageComponent
-      ]
-    })
-    .compileComponents();
+        TocComponent,
+        NewsletterComponent,
+        HomepageComponent,
+      ],
+      providers: [HttpClient, HttpHandler],
+    }).compileComponents();
   }));
 
   let fixture: ComponentFixture<HomepageComponent>;
@@ -32,7 +37,7 @@ describe('HomepageComponent', () => {
     fixture.detectChanges();
   });
 
-  xit('should be created', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });

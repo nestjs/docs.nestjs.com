@@ -1,17 +1,17 @@
-### CRUD
+### CRUD utilities
 
 ##### This chapter applies only to TypeScript
 
-[CRUD](https://github.com/nestjsx/crud) package (`@nestjsx/crud`) helps you create CRUD controllers and services with ease and provides a bunch of the features for your RESTful API out of the box:
+[CRUD](https://github.com/nestjsx/crud) is a community package (`@nestjsx/crud`) that helps you creating CRUD controllers and services with ease and provides a bunch of features for your RESTful API out-of-the-box:
 
-* Database agnostic extendable CRUD controller
-* Query string parsing with filtering, pagination, sorting, relations, nested relations, cache, etc.
-* Framework agnostic package with query builder for frontend usage
-* Query, path params and DTO validation
-* Overriding controller methods with ease
-* Tiny but powerful configuration (including global configuration)
-* Additional helper decorators
-* Swagger documentation
+- Database agnostic extendable CRUD controller
+- Query string parsing with filtering, pagination, sorting, relations, nested relations, cache, etc.
+- Framework agnostic package with query builder for frontend usage
+- Query, path params and DTO validation
+- Overriding controller methods with ease
+- Tiny but powerful configuration (including global configuration)
+- Additional helper decorators
+- Swagger documentation
 
 > warning **Notice** So far, `@nestjsx/crud` only supports `TypeORM`, but other ORMs like `Sequelize` and `Mongoose` will be included in the near future. So in this article, you'll learn how to create CRUD controllers and services using `TypeORM`. We assume that you have already successfully installed and set up the `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
 
@@ -97,17 +97,18 @@ import { HeroesController } from './heroes.controller';
 })
 export class HeroesModule {}
 ```
+
 > warning **Notice** Do not forget to import the `HeroesModule` into the root `ApplicationModule`.
 
 Afterwards, your Nest application will have these newly created endpoints:
 
-* `GET /heroes` - get many heroes.
-* `GET /heroes/:id` - get one hero.
-* `POST /heroes/bulk` - create many heroes.
-* `POST /heroes` - create one hero.
-* `PATCH /heroes/:id` - update one hero.
-* `PUT /heroes/:id` - replace one hero.
-* `DELETE /heroes/:id` - delete one hero.
+- `GET /heroes` - get many heroes.
+- `GET /heroes/:id` - get one hero.
+- `POST /heroes/bulk` - create many heroes.
+- `POST /heroes` - create one hero.
+- `PATCH /heroes/:id` - update one hero.
+- `PUT /heroes/:id` - replace one hero.
+- `DELETE /heroes/:id` - delete one hero.
 
 #### Filtering and pagination
 
@@ -183,7 +184,7 @@ You can find more information about relations in the project's [WiKi](https://gi
 
 #### Path params validation
 
-By default, [CRUD](https://github.com/nestjsx/crud) will create a slug with the name `id` and will be validating it as a `number`. 
+By default, [CRUD](https://github.com/nestjsx/crud) will create a slug with the name `id` and will be validating it as a `number`.
 
 But there is a possibility to change this behavior. Assume, your entity has a primary column `_id` - a UUID string - and you need to use it as a slug for your endpoints. With these options it's easy to do:
 
@@ -256,11 +257,9 @@ You can disable or enable only some particular routes that are being generated b
   routes: {
     only: ['getManyBase'],
     getManyBase: {
-      decorators: [
-        UseGuards(HeroAuthGuard)
-      ]
-    }
-  }
+      decorators: [UseGuards(HeroAuthGuard)],
+    },
+  },
 })
 @Controller('heroes')
 export class HeroesController {

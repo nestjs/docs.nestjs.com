@@ -1,4 +1,4 @@
-### Hot Reload (Webpack)
+### Hot Reload
 
 The highest impact on your application's bootstrapping process has a **TypeScript compilation**. But the question is, do we have to recompile a whole project each time when change occurs? Not at all. That's why [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement) significantly decreases an amount of time necessary to instantiate your application.
 
@@ -36,7 +36,7 @@ module.exports = function(options) {
     ],
     plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
   };
-}
+};
 ```
 
 This function takes the original object containing the default webpack configuration and returns a modified one with an applied `HotModuleReplacementPlugin` plugin.

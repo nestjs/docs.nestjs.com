@@ -101,6 +101,17 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
       .subscribe(() => this.init());
   }
 
+  navigateToAnchor($event: MouseEvent, elementRef: HTMLElement) {
+    if (elementRef) {
+      $event.preventDefault();
+      elementRef.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+      this.findCurrentHeading();
+    }
+  }
+
   findCurrentHeading() {
     const marginOffset = 15;
     const selectHeading = (i: number) => {
