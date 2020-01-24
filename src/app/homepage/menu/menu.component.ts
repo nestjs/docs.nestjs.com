@@ -208,6 +208,9 @@ export class MenuComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (!Array.isArray(this.router.events)) {
+      return;
+    }
     this.router.events
       .filter(event => event instanceof NavigationEnd)
       .subscribe(event => this.toggleCategory());
