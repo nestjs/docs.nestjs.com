@@ -292,35 +292,19 @@ findOne(id) {
 
 #### Sub-Domain Routing
 
-The `@Controller` decorator can take a `host` option to require that the HTTP host of the incoming requests matches some specific value. In the following example, all three routes match the same path (`/`) but two of them only respond to specific host names:
+The `@Controller` decorator can take a `host` option to require that the HTTP host of the incoming requests matches some specific value.
 
 ```typescript
 @Controller({ host: 'admin.example.com' })
 export class AdminController {
   @Get()
   index(): string {
-    return "Admin page";
-  }
-}
-
-@Controller({ host: 'mobile.example.com' })
-export class MobileController {
-  @Get()
-  index(): string {
-    return "Mobile page";
-  }
-}
-
-@Controller()
-export class AppController {
-  @Get()
-  index(): string {
-    return "Default page";
+    return 'Admin page';
   }
 }
 ```
 
-##### Host parameters
+> warning **Warning** Since **Fastify** lacks support for nested routers, when using sub-domain routing, the (default) Express adapter should be used instead.
 
 Similar to a route `path`, the `hosts` option can use tokens to capture the dynamic value at that position in the host name.  The host parameter token in the `@Controller()` decorator example below demonstrates this usage.  Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
 
@@ -334,19 +318,6 @@ export class AccountController {
   }
 }
 ```
-
-##### Host matching order
-
-Routes are evaluated in the order in which they are configured.  This means that controllers with static `host` options should be configured first and controllers without `host` options need to be configured last:
-
-```typescript
-@Module({
-  controllers: [AdminController, AccountController, AppController],
-})
-export class AppModule {}
-```
-
-> warning **Warning** Since **Fastify** lacks support for nested routers, when using sub-domain routing, the (default) Express routing should be used instead.
 
 #### Scopes
 
