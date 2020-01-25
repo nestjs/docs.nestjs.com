@@ -116,9 +116,9 @@ Let's focus in on the `createCatDto` body parameter. Its type is `CreateCatDto`:
 ```typescript
 @@filename(create-cat.dto)
 export class CreateCatDto {
-  readonly name: string;
-  readonly age: number;
-  readonly breed: string;
+  name: string;
+  age: number;
+  breed: string;
 }
 ```
 
@@ -219,13 +219,13 @@ import { IsString, IsInt } from 'class-validator';
 
 export class CreateCatDto {
   @IsString()
-  readonly name: string;
+  name: string;
 
   @IsInt()
-  readonly age: number;
+  age: number;
 
   @IsString()
-  readonly breed: string;
+  breed: string;
 }
 ```
 
