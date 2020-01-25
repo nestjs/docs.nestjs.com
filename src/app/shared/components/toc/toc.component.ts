@@ -103,11 +103,6 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
 
   navigateToAnchor($event: MouseEvent, elementRef: HTMLElement) {
     if (elementRef) {
-      $event.preventDefault();
-      elementRef.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
       this.findCurrentHeading();
     }
   }
