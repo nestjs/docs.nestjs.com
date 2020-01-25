@@ -99,6 +99,25 @@ Some sample cron patterns are:
   </tbody>
 </table>
 
+The `@nestjs/schedule` package provides a convenience enum with commonly used cron patterns. You can use this enum as follows:
+
+```typescript
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+@Injectable()
+export class TasksService {
+  private readonly logger = new Logger(TasksService.name);
+
+  @Cron(CronExpression.EVERY_45_SECONDS)
+  handleCron() {
+    this.logger.debug('Called every 45 seconds');
+  }
+}
+```
+
+In this example, the `handleCron()` method will be called every `45` seconds.
+
 Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator. Doing so causes the job to execute exactly once, at the specified date.
 
 > info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
