@@ -1,13 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HeaderComponent } from './header.component';
+import { SocialWrapperComponent } from '../../common/social-wrapper/social-wrapper.component';
 
 describe('HeaderComponent', () => {
   beforeEach(async(() => {
     return TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ]
-    })
-    .compileComponents();
+      declarations: [HeaderComponent, SocialWrapperComponent],
+    }).compileComponents();
   }));
 
   let fixture: ComponentFixture<HeaderComponent>;

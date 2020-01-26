@@ -131,6 +131,10 @@ The request object represents the HTTP request and has properties for the reques
       <td><code>@Headers(name?: string)</code></td>
       <td><code>req.headers</code> / <code>req.headers[name]</code></td>
     </tr>
+    <tr>
+      <td><code>@Ip()</code></td>
+      <td><code>req.ip</code></td>
+    </tr>
   </tbody>
 </table>
 
@@ -287,6 +291,34 @@ findOne(@Param('id') id): string {
 @Bind(Param('id'))
 findOne(id) {
   return `This action returns a #${id} cat`;
+}
+```
+
+#### Sub-Domain Routing
+
+The `@Controller` decorator can take a `host` option to require that the HTTP host of the incoming requests matches some specific value.
+
+```typescript
+@Controller({ host: 'admin.example.com' })
+export class AdminController {
+  @Get()
+  index(): string {
+    return 'Admin page';
+  }
+}
+```
+
+> **Warning** Since **Fastify** lacks support for nested routers, when using sub-domain routing, the (default) Express adapter should be used instead.
+
+Similar to a route `path`, the `hosts` option can use tokens to capture the dynamic value at that position in the host name.  The host parameter token in the `@Controller()` decorator example below demonstrates this usage.  Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
+
+```typescript
+@Controller({ host: ':account.example.com' })
+export class AccountController { 
+  @Get()
+  getInfo(@HostParam('account') account: string) {
+    return account;
+  }
 }
 ```
 

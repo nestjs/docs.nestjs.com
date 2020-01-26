@@ -3,15 +3,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { CqrsComponent } from './cqrs/cqrs.component';
+import { CrudComponent } from './crud/crud.component';
 import { DocumentationComponent } from './documentation/documentation.component';
+import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
+import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { TerminusComponent } from './terminus/terminus.component';
-import { CrudComponent } from './crud/crud.component';
-import {ServeStaticComponent} from './serve-static/serve-static.component';
 
 const routes: Routes = [
   {
@@ -55,9 +56,18 @@ const routes: Routes = [
     data: { title: 'Documentation (Compodoc)' },
   },
   {
-    path: 'crud',
+    path: 'crud-utilities',
     component: CrudComponent,
-    data: { title: 'CRUD' },
+    data: { title: 'CRUD utilities' },
+  },
+  {
+    path: 'crud',
+    redirectTo: 'crud-utilities',
+  },
+  {
+    path: 'hot-reload',
+    component: HotReloadComponent,
+    data: { title: 'Hot reload' },
   },
   {
     path: 'serve-static',
@@ -75,6 +85,7 @@ const routes: Routes = [
     SwaggerComponent,
     PrismaComponent,
     CqrsComponent,
+    HotReloadComponent,
     TerminusComponent,
     DocumentationComponent,
     CrudComponent,

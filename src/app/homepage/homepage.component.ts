@@ -13,6 +13,7 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { BasePageComponent } from './pages/page/page.component';
 
 @Component({
@@ -39,6 +40,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    if (!Array.isArray(this.router.events)) {
+      return;
+    }
     this.router.events
       .filter(e => e instanceof NavigationEnd)
       .subscribe(() => {
@@ -58,9 +62,15 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.checkWindowWidth(window.innerWidth);
+    if (this.contentRef) {
+      this.contentRef.appendChild(this.createDocSearchScriptTag());
+    }
   }
 
   ngOnDestroy() {
+    if (!this.scrollSubscription) {
+      return;
+    }
     this.scrollSubscription.unsubscribe();
   }
 
@@ -139,6 +149,23 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     scriptTag.src =
       '//cdn.carbonads.com/carbon.js?serve=CK7I653M&placement=nestjscom';
     scriptTag.id = '_carbonads_js';
+    return scriptTag;
+  }
+
+  createDocSearchScriptTag(): HTMLScriptElement {
+    const scriptTag = document.createElement('script');
+    scriptTag.type = 'text/javascript';
+    scriptTag.src =
+      'https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js';
+    scriptTag.async = true;
+    scriptTag.onload = () => {
+      (window as any).docsearch({
+        apiKey: environment.algoliaApiKey,
+        indexName: 'nestjs',
+        inputSelector: '#search',
+        debug: false,
+      });
+    };
     return scriptTag;
   }
 }

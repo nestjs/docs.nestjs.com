@@ -55,7 +55,7 @@ The `forRoot()` method accepts the same configuration object as `createConnectio
 }
 ```
 
-> warning **Warning** Static glob paths (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
+> warning **Warning** Static glob paths (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack hot reloading](https://docs.nestjs.com/techniques/hot-reload).
 
 Then, we can call `forRoot()` without any options:
 
@@ -195,11 +195,11 @@ export class PhotoService {
 }
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Photo } from './photo.entity';
 
 @Injectable()
-@Dependencies(InjectRepository(Photo))
+@Dependencies(getRepositoryToken(Photo))
 export class PhotoService {
   constructor(photoRepository) {
     this.photoRepository = photoRepository;

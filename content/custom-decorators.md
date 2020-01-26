@@ -46,6 +46,10 @@ Nest provides a set of useful **param decorators** that you can use together wit
       <td><code>@Headers(param?: string)</code></td>
       <td><code>req.headers</code> / <code>req.headers[param]</code></td>
     </tr>
+    <tr>
+      <td><code>@Ip()</code></td>
+      <td><code>req.ip</code></td>
+    </tr>
   </tbody>
 </table>
 
@@ -131,7 +135,7 @@ async findOne(firstName) {
 }
 ```
 
-You can use this same decorator with different keys to access different properties.  If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
+You can use this same decorator with different keys to access different properties. If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
 
 #### Working with pipes
 
@@ -150,3 +154,30 @@ async findOne(user) {
   console.log(user);
 }
 ```
+
+#### Decorator composition
+
+Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
+
+```typescript
+import { applyDecorators } from '@nestjs/common';
+
+export function Auth(...roles: Role[]) {
+  return applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(AuthGuard, RolesGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized"' })
+  );
+}
+```
+
+You can then use this custom `@Auth()` decorator as follows:
+
+```typescript
+@Get('users')
+@Auth('admin')
+findAllUsers() {}
+```
+
+This has the effect of applying all four decorators with a single declaration.

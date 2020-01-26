@@ -4,6 +4,10 @@
 @import './scss/variables.scss';
 @import './scss/utils.scss';
 
+:root {
+  scroll-behavior: smooth;
+}
+
 body {
   font-size: 16px;
   font-weight: 400;
@@ -99,7 +103,7 @@ figure {
   }
 
   img {
-    max-width: 100%;
+    max-width: 900px;
     height: auto;
     box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
   }

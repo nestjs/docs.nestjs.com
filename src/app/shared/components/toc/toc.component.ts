@@ -101,6 +101,12 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
       .subscribe(() => this.init());
   }
 
+  navigateToAnchor($event: MouseEvent, elementRef: HTMLElement) {
+    if (elementRef) {
+      this.findCurrentHeading();
+    }
+  }
+
   findCurrentHeading() {
     const marginOffset = 15;
     const selectHeading = (i: number) => {
@@ -135,14 +141,8 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
       pageWrapperHeight - tocWrapperHeight - this.scrollTopOffset;
   }
 
-  navigateToAnchor(elementRef: HTMLElement) {
-    if (elementRef) {
-      elementRef.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-      this.findCurrentHeading();
-    }
+  currentURL(): string {
+    return window.location.href.split('#')[0];
   }
 
   checkViewportBoundaries() {

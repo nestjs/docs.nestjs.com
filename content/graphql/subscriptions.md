@@ -28,13 +28,13 @@ export class AuthorResolver {
 
   @Query('author')
   async getAuthor(@Args('id') id: number) {
-    return await this.authorsService.findOneById(id);
+    return this.authorsService.findOneById(id);
   }
 
   @ResolveProperty('posts')
   async getPosts(@Parent() author) {
     const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
+    return this.postsService.findAll({ authorId: id });
   }
 
   @Subscription()
@@ -145,13 +145,13 @@ export class AuthorResolver {
 
   @Query(returns => Author, { name: 'author' })
   async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
-    return await this.authorsService.findOneById(id);
+    return this.authorsService.findOneById(id);
   }
 
   @ResolveProperty('posts')
   async getPosts(@Parent() author) {
     const { id } = author;
-    return await this.postsService.findAll({ authorId: id });
+    return this.postsService.findAll({ authorId: id });
   }
 
   @Subscription(returns => Comment)
@@ -168,7 +168,7 @@ In order to filter out specific events based on context and arguments, we can se
   filter: (payload, variables) =>
     payload.commentAdded.repositoryName === variables.repoFullName,
 })
-commentAdded() {
+commentAdded(@Args({ name: 'repoFullName', type: () => String }) repoFullName: string ) {
   return pubSub.asyncIterator('commentAdded');
 }
 ```

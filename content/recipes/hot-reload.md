@@ -1,4 +1,4 @@
-### Hot Reload (Webpack)
+### Hot Reload
 
 The highest impact on your application's bootstrapping process has a **TypeScript compilation**. But the question is, do we have to recompile a whole project each time when change occurs? Not at all. That's why [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement) significantly decreases an amount of time necessary to instantiate your application.
 
@@ -6,7 +6,7 @@ The highest impact on your application's bootstrapping process has a **TypeScrip
 
 ### With CLI
 
-If you are using the [Nest CLI](http://localhost:4200/cli/overview), the configuration process is pretty straighforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
+If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -36,7 +36,7 @@ module.exports = function(options) {
     ],
     plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
   };
-}
+};
 ```
 
 This function takes the original object containing the default webpack configuration and returns a modified one with an applied `HotModuleReplacementPlugin` plugin.
@@ -81,7 +81,7 @@ $ npm run start
 
 ### Without CLI
 
-If you are not using the [Nest CLI](http://localhost:4200/cli/overview), the configuration will be slightly more complex (will require more manual steps).
+If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration will be slightly more complex (will require more manual steps).
 
 #### Installation
 

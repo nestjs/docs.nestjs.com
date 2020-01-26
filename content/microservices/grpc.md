@@ -239,19 +239,21 @@ A full working example is available [here](https://github.com/nestjs/nest/tree/m
 
 #### gRPC Streaming
 
-GRPC on it's own supports long-term live connections more known as `streams`. 
+GRPC on it's own supports long-term live connections more known as `streams`.
 Streams can be a very useful instrument for such service cases as Chatting, Observations
 or Chunk-data transfers. You can find more details in the official documentation ([here](https://grpc.io/docs/guides/concepts/)).
 
 Nest supports GRPC stream handlers in two possible ways:
-- RxJS `Subject` + `Observable` handler: can be useful to write 
-responses right inside of a Controller method or to be passed down
-to `Subject`/`Observable` consumer
+
+- RxJS `Subject` + `Observable` handler: can be useful to write
+  responses right inside of a Controller method or to be passed down
+  to `Subject`/`Observable` consumer
 - Pure GRPC call stream handler: can be useful to be passed
-to some executor which will handle the rest of dispatch for
-the Node standard `Duplex` stream handler.
+  to some executor which will handle the rest of dispatch for
+  the Node standard `Duplex` stream handler.
 
 #### Subject strategy
+
 `@GrpcStreamMethod()` decorator will provide the function parameter as RxJS `Observable`.
 
 ```typescript
@@ -271,13 +273,14 @@ handleStream(messages: Observable<any>): Observable<any> {
   return subject.asObservable();
 }
 ```
+
 For support full-duplex interaction with `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable`
 from the controller method.
 
-#### Pure GRPC call stream handler 
+#### Call stream handler
 
 `@GrpcStreamCall()` decorator will provide function parameter as `grpc.ServerDuplexStream`, which
-supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`, 
+supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`,
 full documentation on available methods can be found [here](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
 
 ```typescript
@@ -296,6 +299,7 @@ handleStream(stream: any) {
   });
 }
 ```
-This decorator do not require any specific return parameter to be provided. 
+
+This decorator do not require any specific return parameter to be provided.
 It is expected that stream will be handled in the way like any other standard
 stream type.

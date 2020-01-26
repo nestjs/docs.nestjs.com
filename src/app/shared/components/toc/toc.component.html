@@ -4,9 +4,13 @@
       *ngFor="let item of headings; trackBy: trackById; let index = index"
       [attr.id]="item.id"
       [class.current]="index === activeId"
-      (click)="navigateToAnchor(item.elementRef)"
     >
-      {{ item.textContent }}
+      <a
+        href="{{ currentURL() }}#{{ item.elementRef.id }}"
+        (click)="navigateToAnchor($event, item.elementRef)"
+      >
+        {{ item.textContent }}
+      </a>
     </li>
   </ul>
 </div>
