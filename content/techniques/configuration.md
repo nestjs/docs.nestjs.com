@@ -340,3 +340,18 @@ Enable environment variable expansion using the `expandVariables` property in th
 })
 export class AppModule {}
 ```
+
+#### Using in the `main.ts`
+While our config is a stored in a service, it can still be used in the `main.ts` file. This way, you can use it to store variables such as the application port or the CORS host.
+
+To access it, you must use the `app.get()` method, followed by the service reference:
+
+```typescript
+const configService = app.get(ConfigService);
+```
+
+You can then use it as usual, by calling the `get` method with the configuration key:
+
+```typescript
+const port = config.get('PORT');
+```
