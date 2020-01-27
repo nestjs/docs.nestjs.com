@@ -4,9 +4,9 @@ A Nest application, as well as every application element, has a lifecycle manage
 
 #### Lifecycle sequence
 
-The following diagram depicts the sequence of key application lifecycle events, from the time the application is bootstrapped until the node process exits. The green colored boxes show events where lifecycle hook methods can be inserted. We can divide the overall lifecycle into three phases: **initializing**, **running** and **terminating**. Using this lifecycle, you can plan for appropriate initialization of modules and services, manage active connections, and gracefully shutdown your application when it receives a termination signal.
+The following diagram depicts the sequence of key application lifecycle events, from the time the application is bootstrapped until the node process exits. We can divide the overall lifecycle into three phases: **initializing**, **running** and **terminating**. Using this lifecycle, you can plan for appropriate initialization of modules and services, manage active connections, and gracefully shutdown your application when it receives a termination signal.
 
-<figure><img align="left" src="/assets/lifecycle-events.png" /></figure>
+<figure><img src="/assets/lifecycle-events.png" /></figure>
 
 <p style="clear: both;"></p>
 
