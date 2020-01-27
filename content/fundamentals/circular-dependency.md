@@ -64,37 +64,4 @@ export class CommonModule {}
 
 #### Module reference
 
-Nest provides the `ModuleRef` class to navigate the internal list of providers and obtain a reference to any provider by class name. `ModuleRef` can be injected into a class in the normal way:
-
-```typescript
-@@filename(cats.service)
-@Injectable()
-export class CatsService implements OnModuleInit {
-  private service: Service;
-  constructor(private readonly moduleRef: ModuleRef) {}
-
-  onModuleInit() {
-    this.service = this.moduleRef.get(Service);
-  }
-}
-@@switch
-@Injectable()
-@Dependencies(ModuleRef)
-export class CatsService {
-  constructor(moduleRef) {
-    this.moduleRef = moduleRef;
-  }
-
-  onModuleInit() {
-    this.service = this.moduleRef.get(Service);
-  }
-}
-```
-
-> info **Hint** The `ModuleRef` class is imported from the `@nestjs/core` package.
-
-The module reference has a `get()` method which retrieves a provider available in the **current** module by class name. To retrieve a provider from the global context (anywhere in the application), pass the `{{ '{' }} strict: false {{ '}' }}` option as a second argument to `get()`.
-
-```typescript
-this.moduleRef.get(Service, { strict: false });
-```
+Alternatively, you can use `ModuleRef` class to dynamically instantiate one side of the relationship. Learn more about module references [here](/fundamentals/module-ref).
