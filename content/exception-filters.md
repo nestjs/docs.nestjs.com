@@ -43,11 +43,12 @@ When the client calls this endpoint, the response looks like this:
 The `HttpException` constructor takes two required arguments which determine the
 response:
 
-- The `response` argument defines the JSON response body.  It can be a `string`
-or an `object` as described below.
+- The `response` argument defines the JSON response body. It can be a `string`
+  or an `object` as described below.
 - The `status` argument defines the [HTTP status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status).
 
 By default, the JSON response body contains two properties:
+
 - `statusCode`: defaults to the HTTP status code provided in the `status` argument
 - `message`: a short description of the HTTP error based on the `status`
 
@@ -130,7 +131,7 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 
 While the base (built-in) exception filter can automatically handle many cases for you, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors. **Exception filters** are designed for exactly this purpose. They let you control the exact flow of control and the content of the response sent back to the client.
 
-Let's create an exception filter that is responsible for catching exceptions which are an instance of the `HttpException` class, and implementing custom response logic for them.  To do this, we'll need to access the underlying platform `Request` and `Response` objects.  We'll access the `Request` object so we can pull out the original `url` and include that in the logging information.  We'll use the `Response` object to take direct control of the response that is sent, using the `response.json()` method.
+Let's create an exception filter that is responsible for catching exceptions which are an instance of the `HttpException` class, and implementing custom response logic for them. To do this, we'll need to access the underlying platform `Request` and `Response` objects. We'll access the `Request` object so we can pull out the original `url` and include that in the logging information. We'll use the `Response` object to take direct control of the response that is sent, using the `response.json()` method.
 
 ```typescript
 @@filename(http-exception.filter)
@@ -182,16 +183,9 @@ The `@Catch(HttpException)` decorator binds the required metadata to the excepti
 
 #### Arguments host
 
-Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a powerful utility object that we'll examine further in other chapters*.  In this context, its main purpose is to provide us with a reference to the `Request` and `Response` objects that are being passed to the original request handler (in the controller where the exception originates). In this context, we've used some helper methods on `ArgumentsHost` to get the desired `Request` and `Response` objects.
+Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a powerful utility object that we'll examine further in other chapters\*. In this context, its main purpose is to provide us with a reference to the `Request` and `Response` objects that are being passed to the original request handler (in the controller where the exception originates). In this context, we've used some helper methods on `ArgumentsHost` to get the desired `Request` and `Response` objects. Learn more about `ArgumentsHost` [here](/fundamentals/execution-context).
 
-The `host.switchToHttp()` helper call returns us an `HttpArgumentsHost` object.  The `HttpArgumentsHost` object, in turn, has two useful methods. We use these methods to extract the desired objects, also using the Express type assertions in this case to return native Express typed objects:
-
-```typescript
-const response = ctx.getResponse<Response>();
-const request = ctx.getRequest<Request>();
-```
-
-\*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and Sockets). Later, we'll see how we can access the appropriate underlying arguments for **any** execution context with the power of `ArgumentsHost` and its helper functions.  This will allow us to write generic exception filters that operate across all contexts.
+\*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and Sockets). Later, we'll see how we can access the appropriate underlying arguments for **any** execution context with the power of `ArgumentsHost` and its helper functions. This will allow us to write generic exception filters that operate across all contexts.
 
 #### Binding filters
 
@@ -286,7 +280,13 @@ You can add as many filters with this technique as needed; simply add each to th
 In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
 
 ```typescript
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {

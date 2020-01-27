@@ -3,13 +3,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { AsyncComponentsComponent } from './async-components/async-components.component';
-import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
 import { DependencyInjectionComponent } from './dependency-injection/dependency-injection.component';
+import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
+import { ExecutionContextComponent } from './execution-context/execution-context.component';
+import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
-import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 
 const routes: Routes = [
   {
@@ -59,6 +60,11 @@ const routes: Routes = [
     data: { title: 'Injection scopes' },
   },
   {
+    path: 'execution-context',
+    component: ExecutionContextComponent,
+    data: { title: 'Execution context' },
+  },
+  {
     path: 'lifecycle-events',
     component: LifecycleEventsComponent,
     data: { title: 'Lifecycle events' },
@@ -79,6 +85,7 @@ const routes: Routes = [
     DynamicModulesComponent,
     UnitTestingComponent,
     CircularDependencyComponent,
+    ExecutionContextComponent,
     ProviderScopesComponent,
     LifecycleEventsComponent,
   ],
