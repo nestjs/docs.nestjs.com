@@ -41,53 +41,53 @@ The `options` object is specific to the chosen transporter. The <strong>Kafka</s
 <table>
   <tr>
     <td><code>client</code></td>
-    <td>Client configuration options (read more 
+    <td>Client configuration options (read more
       <a
         href="https://kafka.js.org/docs/configuration"
         rel="nofollow"
         target="blank"
         >here</a
-      >)</td>
+      >).</td>
   </tr>
   <tr>
     <td><code>consumer</code></td>
-    <td>Consumer configuration options (read more 
+    <td>Consumer configuration options (read more
       <a
         href="https://kafka.js.org/docs/consuming#a-name-options-a-options"
         rel="nofollow"
         target="blank"
         >here</a
-      >)</td>
+      >).</td>
   </tr>
   <tr>
     <td><code>run</code></td>
-    <td>Run configuration options (read more 
+    <td>Run configuration options (read more
       <a
         href="https://kafka.js.org/docs/consuming"
         rel="nofollow"
         target="blank"
         >here</a
-      >)</td>
+      >).</td>
   </tr>
   <tr>
     <td><code>producer</code></td>
-    <td>Producer configuration options (read more 
+    <td>Producer configuration options (read more
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
         target="blank"
         >here</a
-      >)</td>
+      >).</td>
   </tr>
   <tr>
     <td><code>send</code></td>
-    <td>Send configuration options (read more 
+    <td>Send configuration options (read more
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
         target="blank"
         >here</a
-      >)</td>
+      >).</td>
   </tr>
 </table>
 
