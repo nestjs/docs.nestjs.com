@@ -89,13 +89,13 @@ describe('CatsController', () => {
   let catsService: CatsService;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
         controllers: [CatsController],
         providers: [CatsService],
       }).compile();
 
-    catsService = module.get<CatsService>(CatsService);
-    catsController = module.get<CatsController>(CatsController);
+    catsService = moduleRef.get<CatsService>(CatsService);
+    catsController = moduleRef.get<CatsController>(CatsController);
   });
 
   describe('findAll', () => {
@@ -117,13 +117,13 @@ describe('CatsController', () => {
   let catsService;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
         controllers: [CatsController],
         providers: [CatsService],
       }).compile();
 
-    catsService = module.get(CatsService);
-    catsController = module.get(CatsController);
+    catsService = moduleRef.get(CatsService);
+    catsController = moduleRef.get(CatsController);
   });
 
   describe('findAll', () => {
@@ -139,7 +139,22 @@ describe('CatsController', () => {
 
 The `Test` class is useful for providing an application execution context that essentially mocks the full Nest runtime, but gives you hooks that make it easy to manage class instances, including mocking and overriding. The `Test` class has a `createTestingModule()` method that takes a module metadata object as its argument (the same object you pass to the `@Module()` decorator). This method returns a `TestingModule` instance which in turn provides a few methods. For unit tests, the important one is the `compile()` method. This method bootstraps a module with its dependencies (similar to the way an application is bootstrapped in the conventional `main.ts` file using `NestFactory.create()`), and returns a module that is ready for testing.
 
-> info **Hint** The `compile()` method is **asynchronous** and therefore has to be awaited. Once the module is compiled you can retrieve any instance it declares (controllers and providers) using the `get()` method.
+> info **Hint** The `compile()` method is **asynchronous** and therefore has to be awaited. Once the module is compiled you can retrieve any **static** instance it declares (controllers and providers) using the `get()` method.
+
+In addition, `TestingModule` inherits from the [module reference](/fundamentals/module-ref) class. Consequently, to dynamically resolve scoped provider (transient or request-scoped), you must use the `resolve()` method (`get()` method can only retrieve static instances).
+
+```typescript
+const moduleRef = await Test.createTestingModule({
+  controllers: [CatsController],
+  providers: [CatsService],
+}).compile();
+
+catsService = await moduleRef.resolve(CatsService);
+```
+
+> warning **Warning** Every time when you call this method, it will return an exclusive instance from a separate **DI container sub-tree**. Thus, if you call this method more than once and compare instance references, you will see that they are not equal. Read more [here](/fundamentals/module-ref).
+
+> info **Hint** Learn more about the module reference features [here](/fundamentals/module-ref).
 
 Instead of using the production version of any provider, you can override it with a [custom provider](/fundamentals/custom-providers) for testing purposes. For example, you can mock a database service instead of connecting to a live database. We'll cover overrides in the next section, but they're available for unit tests as well.
 
@@ -160,14 +175,14 @@ describe('Cats', () => {
   let catsService = { findAll: () => ['test'] };
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       imports: [CatsModule],
     })
       .overrideProvider(CatsService)
       .useValue(catsService)
       .compile();
 
-    app = module.createNestApplication();
+    app = moduleRef.createNestApplication();
     await app.init();
   });
 
@@ -196,14 +211,14 @@ describe('Cats', () => {
   let catsService = { findAll: () => ['test'] };
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       imports: [CatsModule],
     })
       .overrideProvider(CatsService)
       .useValue(catsService)
       .compile();
 
-    app = module.createNestApplication();
+    app = moduleRef.createNestApplication();
     await app.init();
   });
 
@@ -224,7 +239,7 @@ describe('Cats', () => {
 
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
 
-We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats`' coming in over the network.
+We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
 
 In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override guards, interceptors, filters and pipes with the`overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
 
@@ -261,7 +276,14 @@ The compiled module has several useful methods, as described in the following ta
       <code>get()</code>
     </td>
     <td>
-      Retrieves an instance of a controller or provider (including guards, filters, etc.) available in the application context.
+      Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
+    </td>
+  <tr>
+     <td>
+      <code>resolve()</code>
+    </td>
+    <td>
+      Retrieves a dynamically created scoped-instance (request or transient) of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
   </tr>
   <tr>
@@ -275,3 +297,26 @@ The compiled module has several useful methods, as described in the following ta
 </table>
 
 > info **Hint** Keep your e2e test files inside the `e2e` directory. The testing files should have a `.e2e-spec` or `.e2e-test` suffix.
+
+#### Testing request-scoped instances
+
+[Request-scoped](/fundamentals/injection-scope) providers are created exclusively for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
+
+As we aleady know (based on the sections above), the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, we can pass a unique context identifier to control the lifecycle of a DI sub-tree.
+
+Consequently, if we generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests, we'll be able to retrieve instances created for a tested request.
+
+To accomplish this, use `jest.spyOn()` on the `ContextIdFactory`:
+
+```typescript
+const contextId = ContextIdFactory.create();
+jest
+  .spyOn(ContextIdFactory, 'getByRequest')
+  .mockImplementation(() => contextId);
+```
+
+Now, we can use the `contextId` to access a DI sub-tree generated for any subsequent request.
+
+```typescript
+catsService = await moduleRef.resolve(CatsService, contextId);
+```

@@ -86,7 +86,7 @@ export class CatsService {
 }
 ```
 
-The `resolve()` method will create an unique context identifier. That means, every time when you call this method, it will return an exclusive instance from a separate **DI container sub-tree**. Thus, if you call this method more than once and compare instance references, you will see that they are not equal.
+The `resolve()` method will create a unique context identifier. Consequently, every time when you call this method, it will return an exclusive instance from a separate **DI container sub-tree**. Thus, if you call this method more than once and compare instance references, you will see that they are not equal.
 
 ```typescript
 @@filename(cats.service)
@@ -120,7 +120,7 @@ export class CatsService {
 }
 ```
 
-In order to create a context identifier and hence, share the generated DI sub-tree, use the `createContextId()` function.
+In order to create a context identifier and hence, share the generated DI sub-tree, use the `ContextIdFactory` class.
 
 ```typescript
 @@filename(cats.service)
@@ -129,7 +129,7 @@ export class CatsService implements OnModuleInit {
   constructor(private readonly moduleRef: ModuleRef) {}
 
   async onModuleInit() {
-    const contextId = createContextId();
+    const contextId = ContextIdFactory.create();
     const transientServices = await Promise.all([
       this.moduleRef.resolve(TransientService, contextId),
       this.moduleRef.resolve(TransientService, contextId),
@@ -146,7 +146,7 @@ export class CatsService {
   }
 
   async onModuleInit() {
-    const contextId = createContextId();
+    const contextId = ContextIdFactory.create();
     const transientServices = await Promise.all([
       this.moduleRef.resolve(TransientService, contextId),
       this.moduleRef.resolve(TransientService, contextId),
@@ -156,7 +156,38 @@ export class CatsService {
 }
 ```
 
-> info **Hint** The `createContextId()` function is imported from the `@nestjs/core` package.
+> info **Hint** The `ContextIdFactory` class is imported from the `@nestjs/core` package.
+
+#### Getting current sub-tree
+
+Occasionally, you may want to resolve an instance of a request-scoped provider within a **request context**. Let's say that `CatsService` is request-scoped and you want to resolve the `CatsRepository` instance which is also marked as a request-scoped provider. In order to share a context-aware DI sub-tree, you must obtain the current context identifier instead of generating a new one with `ContextIdFactory.create()` function. To obtain the current context id, inject the request object using `@Inject()` decorator.
+
+```typescript
+@@filename(cats.service)
+@Injectable()
+export class CatsService {
+  constructor(
+    @Inject(REQUEST) private readonly request: Record<string, unknown>,
+  ) {}
+}
+@@switch
+@Injectable()
+@Dependencies(REQUEST)
+export class CatsService {
+  constructor(request) {
+    this.request = request;
+  }
+}
+```
+
+> info **Hint** Learn more about the request provider [here](https://docs.nestjs.com/fundamentals/injection-scopes#request-provider).
+
+Now, use the `getByRequest()` method of `ContextIdFactory` class to create a context id based on the request object:
+
+```typescript
+const contextId = ContextIdFactory.getByRequest(this.request);
+const catsRepository = await this.moduleRef.resolve(CatsRepository);
+```
 
 #### Instantiating classes dynamically
 
