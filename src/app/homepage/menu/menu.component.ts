@@ -51,12 +51,16 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/dynamic-modules',
         },
         {
+          title: 'Injection scopes',
+          path: '/fundamentals/injection-scopes',
+        },
+        {
           title: 'Circular dependency',
           path: '/fundamentals/circular-dependency',
         },
         {
-          title: 'Injection scopes',
-          path: '/fundamentals/injection-scopes',
+          title: 'Module reference',
+          path: '/fundamentals/module-ref',
         },
         {
           title: 'Lifecycle events',
@@ -178,7 +182,7 @@ export class MenuComponent implements OnInit {
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
-        { title: 'Request Lifecycle', path: '/faq/request-lifecycle' },
+        { title: 'Request lifecycle', path: '/faq/request-lifecycle' },
         {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
