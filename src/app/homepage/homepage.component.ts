@@ -40,9 +40,6 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    if (!Array.isArray(this.router.events)) {
-      return;
-    }
     this.router.events
       .filter(e => e instanceof NavigationEnd)
       .subscribe(() => {
