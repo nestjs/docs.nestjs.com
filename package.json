@@ -81,7 +81,7 @@
     "karma-jasmine-html-reporter": "1.5.1",
     "marked": "0.7.0",
     "protractor": "6.0.0",
-    "rimraf": "3.0.0",
+    "rimraf": "3.0.1",
     "ts-node": "8.6.2",
     "tslint": "5.20.1",
     "typescript": "3.4.1",
