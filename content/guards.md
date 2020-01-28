@@ -243,7 +243,7 @@ export class RolesGuard {
 
 > warning **Warning** The logic inside the `matchRoles()` function can be as simple or sophisticated as needed. The main point of this example is to show how guards fit into the request/response cycle.
 
-You can refer to the **Reflection and metadata** section of the [execution context](/fundamentals/execution-context) chapter for more on this topic (`Reflector`).
+Refer to the <a href="https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata">Reflection and metadata</a> section of the **Execution context** chapter for more details on utilizing `Reflector` in a context-sensitive way.
 
 When a user with insufficient privileges requests an endpoint, Nest automatically returns the following response:
 
