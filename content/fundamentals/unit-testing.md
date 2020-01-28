@@ -141,7 +141,7 @@ The `Test` class is useful for providing an application execution context that e
 
 > info **Hint** The `compile()` method is **asynchronous** and therefore has to be awaited. Once the module is compiled you can retrieve any **static** instance it declares (controllers and providers) using the `get()` method.
 
-In addition, `TestingModule` inherits from the [module reference](/fundamentals/module-ref) class. Consequently, to dynamically resolve scoped provider (transient or request-scoped), you must use the `resolve()` method (`get()` method can only retrieve static instances).
+`TestingModule` inherits from the [module reference](/fundamentals/module-ref) class, and therefore its ability to dynamically resolve scoped providers (transient or request-scoped). Do this with the `resolve()` method (the `get()` method can only retrieve static instances).
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
@@ -152,7 +152,7 @@ const moduleRef = await Test.createTestingModule({
 catsService = await moduleRef.resolve(CatsService);
 ```
 
-> warning **Warning** Every time when you call this method, it will return an exclusive instance from a separate **DI container sub-tree**. Thus, if you call this method more than once and compare instance references, you will see that they are not equal. Read more [here](/fundamentals/module-ref).
+> warning **Warning** The `resolve()` method returns a unique instance of the provider, from its own **DI container sub-tree**. Each sub-tree has a unique context identifier. Thus, if you call this method more than once and compare instance references, you will see that they are not equal.
 
 > info **Hint** Learn more about the module reference features [here](/fundamentals/module-ref).
 
@@ -283,7 +283,7 @@ The compiled module has several useful methods, as described in the following ta
       <code>resolve()</code>
     </td>
     <td>
-      Retrieves a dynamically created scoped-instance (request or transient) of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
+      Retrieves a dynamically created scoped instance (request or transient) of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
   </tr>
   <tr>
@@ -300,11 +300,11 @@ The compiled module has several useful methods, as described in the following ta
 
 #### Testing request-scoped instances
 
-[Request-scoped](/fundamentals/injection-scope) providers are created exclusively for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
+[Request-scoped](/fundamentals/injection-scope) providers are created uniquely for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
 
-As we aleady know (based on the sections above), the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, we can pass a unique context identifier to control the lifecycle of a DI sub-tree.
+We know (based on the sections above) that the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, as described <a href="https://docs.nestjs/com/fundamentals/module-ref#resolving-scoped-providers">here</a>, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
 
-Consequently, if we generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests, we'll be able to retrieve instances created for a tested request.
+The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. In this way we'll be able to retrieve instances created for a tested request.
 
 To accomplish this, use `jest.spyOn()` on the `ContextIdFactory`:
 
@@ -315,7 +315,7 @@ jest
   .mockImplementation(() => contextId);
 ```
 
-Now, we can use the `contextId` to access a DI sub-tree generated for any subsequent request.
+Now we can use the `contextId` to access a single generated DI container sub-tree for any subsequent request.
 
 ```typescript
 catsService = await moduleRef.resolve(CatsService, contextId);
