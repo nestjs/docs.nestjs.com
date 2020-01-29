@@ -35,19 +35,24 @@ The `options` object is specific to the chosen transporter. The <strong>MQTT</st
 
 Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a MQTT `ClientProxy` instance.
 
-One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method.
+One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
 
 ```typescript
-ClientsModule.register([
-  {
-    name: 'MATH_SERVICE',
-    transport: Transport.MQTT,
-    options: {
-      host: 'localhost',
-      port: 1883,
-    }
-  },
-]),
+@Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'MATH_SERVICE',
+        transport: Transport.MQTT,
+        options: {
+          host: 'localhost',
+          port: 1883,
+        }
+      },
+    ]),
+  ]
+  ...
+})
 ```
 
 Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.

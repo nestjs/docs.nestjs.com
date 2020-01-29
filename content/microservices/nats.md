@@ -35,18 +35,23 @@ Additionally, there is a `queue` property which allows you to specify the name o
 
 Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a NATS `ClientProxy` instance.
 
-One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method.
+One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
 
 ```typescript
-ClientsModule.register([
-  {
-    name: 'MATH_SERVICE',
-    transport: Transport.NATS,
-    options: {
-      url: 'nats://localhost:4222',
-    }
-  },
-]),
+@Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'MATH_SERVICE',
+        transport: Transport.NATS,
+        options: {
+          url: 'nats://localhost:4222',
+        }
+      },
+    ]),
+  ]
+  ...
+})
 ```
 
 Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
