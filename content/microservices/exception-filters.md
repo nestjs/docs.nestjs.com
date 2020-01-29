@@ -1,6 +1,6 @@
 ### Exception filters
 
-The only difference between the HTTP exception filter layer and the corresponding microservices layer is that instead of throwing `HttpException`, you should instead use `RpcException`.
+The only difference between the HTTP exception filter layer and the corresponding microservices layer is that instead of throwing `HttpException`, you should use `RpcException`.
 
 ```typescript
 throw new RpcException('Invalid credentials.');
