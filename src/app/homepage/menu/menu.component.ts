@@ -59,6 +59,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/injection-scopes',
         },
         {
+          title: 'Execution context',
+          path: '/fundamentals/execution-context',
+        },
+        {
           title: 'Lifecycle events',
           path: '/fundamentals/lifecycle-events',
         },
