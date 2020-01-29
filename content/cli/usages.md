@@ -80,6 +80,7 @@ $ nest g <schematic> <name> [options]
 | `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                       |
 | `--flat`                        | Do not generate a folder for the element.                                                                       |
 | `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
+| `--spec`                        | Enforce spec files generation (default)                                                                                   |
 | `--no-spec`                     | Disable spec files generation                                                                                   |
 
 #### nest build

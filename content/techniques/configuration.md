@@ -114,7 +114,7 @@ To access configuration values from our `ConfigService`, we first need to inject
 @@filename(feature.module)
 @Module({
   imports: [ConfigModule],
-  ...
+  // ...
 })
 ```
 
@@ -204,10 +204,12 @@ $ npm install --save @hapi/joi
 $ npm install --save-dev @types/hapi__joi
 ```
 
+> warning **Notice** The latest version of `@hapi/joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their documentation](https://hapi.dev/family/joi/?v=17.0.2#install) & this [github issue](https://github.com/hapijs/joi/issues/2266#issuecomment-571667769).
+
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
-@@filename(config.service)
+@@filename(app.module)
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -225,12 +227,12 @@ import * as Joi from '@hapi/joi';
 export class AppModule {}
 ```
 
-By default, all schema keys are considered optional. Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). Alternatively, we can use the `required()` validation method to require that a value must be defined in the environment (`.env` file or process environment). In this case, the validation step will throw an exception if we don't provide the variable in the environment. See [Joi validation methods](https://hapi.dev/family/joi/?v=16.1.8#anycachecache) for more on how to construct validation schemas.
+By default, all schema keys are considered optional. Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). Alternatively, we can use the `required()` validation method to require that a value must be defined in the environment (`.env` file or process environment). In this case, the validation step will throw an exception if we don't provide the variable in the environment. See [Joi validation methods](https://hapi.dev/family/joi/?v=17.0.2#example) for more on how to construct validation schemas.
 
-By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://hapi.dev/family/joi/?v=16.1.8#anyvalidvalues---aliases-equal). For example, to reverse the two settings above, pass options like this:
+By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://hapi.dev/family/joi/api/?v=17.0.2#anyvalidvalues---aliases-equal). For example, to reverse the two settings above, pass options like this:
 
 ```typescript
-@@filename(config.service)
+@@filename(app.module)
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -243,7 +245,7 @@ import * as Joi from '@hapi/joi';
         PORT: Joi.number().default(3000),
       }),
       validationOptions: {
-        allowUnknowns: false,
+        allowUnknown: false,
         abortEarly: true,
       },
     }),
@@ -254,7 +256,7 @@ export class AppModule {}
 
 The `@nestjs/config` package uses default settings of:
 
-- `allowUnknowns`: controls whether or not to allow unknown keys in the environment variables. Default is `true`
+- `allowUnknown`: controls whether or not to allow unknown keys in the environment variables. Default is `true`
 - `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
 
 Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
@@ -270,7 +272,7 @@ export class ApiConfigService {
   constructor(private configService: ConfigService) {}
 
   get isAuthEnabled(): boolean {
-    return Boolean(this.configService.get('AUTH_ENABLED');
+    return Boolean(this.configService.get('AUTH_ENABLED'));
   }
 }
 @@switch
@@ -282,7 +284,7 @@ export class ApiConfigService {
   }
 
   get isAuthEnabled() {
-    return Boolean(this.configService.get('AUTH_ENABLED');
+    return Boolean(this.configService.get('AUTH_ENABLED'));
   }
 }
 ```
@@ -309,4 +311,47 @@ export class AppService {
     }
   }
 }
+```
+
+#### Expandable variables
+
+The `@nestjs/config` package supports environment variable expansion. With this technique, you can create nested environment variables, where one variable is referred to within the definition of another. For example:
+
+```json
+APP_URL=mywebsite.com
+SUPPORT_EMAIL=support@${APP_URL}
+```
+
+With this construction, the variable `SUPPORT_EMAIL` resolves to `'support@mywebsite.com'`. Note the use of the `${{ '{' }}...{{ '}' }}` syntax to trigger resolving the value of the variable `APP_URL` inside the definition of `SUPPORT_EMAIL`.
+
+> info **Hint** For this feature, `@nestjs/config` package internally uses [dotenv-expand](https://github.com/motdotla/dotenv-expand).
+
+Enable environment variable expansion using the `expandVariables` property in the options object passed to the `forRoot()` method of the `ConfigModule`, as shown below:
+
+```typescript
+@@filename(app.module)
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      // ...
+      expandVariables: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+#### Using in the `main.ts`
+While our config is a stored in a service, it can still be used in the `main.ts` file. This way, you can use it to store variables such as the application port or the CORS host.
+
+To access it, you must use the `app.get()` method, followed by the service reference:
+
+```typescript
+const configService = app.get(ConfigService);
+```
+
+You can then use it as usual, by calling the `get` method with the configuration key:
+
+```typescript
+const port = config.get('PORT');
 ```

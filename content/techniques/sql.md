@@ -195,11 +195,11 @@ export class PhotoService {
 }
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Photo } from './photo.entity';
 
 @Injectable()
-@Dependencies(InjectRepository(Photo))
+@Dependencies(getRepositoryToken(Photo))
 export class PhotoService {
   constructor(photoRepository) {
     this.photoRepository = photoRepository;

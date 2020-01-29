@@ -116,9 +116,9 @@ Let's focus in on the `createCatDto` body parameter. Its type is `CreateCatDto`:
 ```typescript
 @@filename(create-cat.dto)
 export class CreateCatDto {
-  readonly name: string;
-  readonly age: number;
-  readonly breed: string;
+  name: string;
+  age: number;
+  breed: string;
 }
 ```
 
@@ -205,7 +205,7 @@ async create(createCatDto) {
 
 Let's look at an alternate implementation of our validation technique.
 
-Nest works well with the [class-validator](https://github.com/pleerock/class-validator) library. This amazing library allows you to use decorator-based validation. Decorator-based validation is extremely powerful, especially when combined with Nest's **Pipe** capabilities since we have access to the `metatype` of the processed property. Before we start, we need to install the required packages:
+Nest works well with the [class-validator](https://github.com/typestack/class-validator) library. This amazing library allows you to use decorator-based validation. Decorator-based validation is extremely powerful, especially when combined with Nest's **Pipe** capabilities since we have access to the `metatype` of the processed property. Before we start, we need to install the required packages:
 
 ```bash
 $ npm i --save class-validator class-transformer
@@ -219,13 +219,13 @@ import { IsString, IsInt } from 'class-validator';
 
 export class CreateCatDto {
   @IsString()
-  readonly name: string;
+  name: string;
 
   @IsInt()
-  readonly age: number;
+  age: number;
 
   @IsString()
-  readonly breed: string;
+  breed: string;
 }
 ```
 
@@ -385,13 +385,13 @@ We can simply tie this pipe to the selected param as shown below:
 @@filename()
 @Get(':id')
 async findOne(@Param('id', new ParseIntPipe()) id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 @@switch
 @Get(':id')
 @Bind(Param('id', new ParseIntPipe()))
 async findOne(id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 ```
 
@@ -401,13 +401,13 @@ If you prefer you can use the `ParseUUIDPipe` which is responsible for parsing a
 @@filename()
 @Get(':id')
 async findOne(@Param('id', new ParseUUIDPipe()) id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 @@switch
 @Get(':id')
 @Bind(Param('id', new ParseUUIDPipe()))
 async findOne(id) {
-  return await this.catsService.findOne(id);
+  return this.catsService.findOne(id);
 }
 ```
 

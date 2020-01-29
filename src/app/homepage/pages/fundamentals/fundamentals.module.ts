@@ -3,13 +3,15 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { AsyncComponentsComponent } from './async-components/async-components.component';
-import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
 import { DependencyInjectionComponent } from './dependency-injection/dependency-injection.component';
+import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
+import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
+import { ModuleRefComponent } from './module-reference/module-reference.component';
+import { ExecutionContextComponent } from './execution-context/execution-context.component';
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
-import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 
 const routes: Routes = [
   {
@@ -41,6 +43,11 @@ const routes: Routes = [
     data: { title: 'Async providers' },
   },
   {
+    path: 'module-ref',
+    component: ModuleRefComponent,
+    data: { title: 'Module reference' },
+  },
+  {
     path: 'unit-testing',
     redirectTo: 'testing',
   },
@@ -57,6 +64,11 @@ const routes: Routes = [
     path: 'injection-scopes',
     component: ProviderScopesComponent,
     data: { title: 'Injection scopes' },
+  },
+  {
+    path: 'execution-context',
+    component: ExecutionContextComponent,
+    data: { title: 'Execution context' },
   },
   {
     path: 'lifecycle-events',
@@ -79,8 +91,10 @@ const routes: Routes = [
     DynamicModulesComponent,
     UnitTestingComponent,
     CircularDependencyComponent,
+    ExecutionContextComponent,
     ProviderScopesComponent,
     LifecycleEventsComponent,
+    ModuleRefComponent,
   ],
 })
 export class FundamentalsModule {}

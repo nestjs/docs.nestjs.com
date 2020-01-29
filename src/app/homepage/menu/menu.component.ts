@@ -46,12 +46,20 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/dynamic-modules',
         },
         {
+          title: 'Injection scopes',
+          path: '/fundamentals/injection-scopes',
+        },
+        {
           title: 'Circular dependency',
           path: '/fundamentals/circular-dependency',
         },
         {
-          title: 'Injection scopes',
-          path: '/fundamentals/injection-scopes',
+          title: 'Module reference',
+          path: '/fundamentals/module-ref',
+        },
+        {
+          title: 'Execution context',
+          path: '/fundamentals/execution-context',
         },
         {
           title: 'Lifecycle events',
@@ -75,8 +83,10 @@ export class MenuComponent implements OnInit {
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
+        { title: 'Task scheduling', path: '/techniques/task-scheduling' },
         { title: 'Compression', path: '/techniques/compression' },
         { title: 'Security', path: '/techniques/security' },
+        { title: 'Queues', path: '/techniques/queues' },
         { title: 'Logger', path: '/techniques/logger' },
         { title: 'File upload', path: '/techniques/file-upload' },
         { title: 'HTTP module', path: '/techniques/http-module' },
@@ -172,6 +182,7 @@ export class MenuComponent implements OnInit {
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
+        { title: 'Request lifecycle', path: '/faq/request-lifecycle' },
         {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
@@ -201,6 +212,9 @@ export class MenuComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (!Array.isArray(this.router.events)) {
+      return;
+    }
     this.router.events
       .filter(event => event instanceof NavigationEnd)
       .subscribe(event => this.toggleCategory());

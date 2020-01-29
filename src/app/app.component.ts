@@ -19,6 +19,9 @@ export class AppComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    if (!Array.isArray(this.router.events)) {
+      return;
+    }
     this.router.events
       .filter(ev => ev instanceof NavigationEnd)
       .subscribe((ev: NavigationEnd) => {
