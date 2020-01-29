@@ -1,6 +1,6 @@
 ### NATS
 
-[NATS](https://nats.io) is a simple, secure and high performance open source messaging system for cloud native applications, IoT messaging, and microservices architectures. The NATS server is written in the Go programming language, but client libraries to interact with the server are available for dozens of major programming languages. NATS supports both At Most Once and At Least Once Delivery. It can run anywhere, from large servers and cloud instances, through edge gateways and even Internet of Things devices.
+[NATS](https://nats.io) is a simple, secure and high performance open source messaging system for cloud native applications, IoT messaging, and microservices architectures. The NATS server is written in the Go programming language, but client libraries to interact with the server are available for dozens of major programming languages. NATS supports both **At Most Once** and **At Least Once** delivery. It can run anywhere, from large servers and cloud instances, through edge gateways and even Internet of Things devices.
 
 #### Installation
 
@@ -26,7 +26,16 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 
 > info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
 
-Likewise, to create a client instance, we need to pass an options object with the same properties we saw above in the `createMicroservice()` method.
+#### Options
+
+The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/node-nats#connect-options).
+Additionally, there is a `queue` property which allows you to specify the name of the queue that your server should subscribe to (leave `undefined` to ignore this setting). Read more about NATS queue groups <a href="https://docs.nestjs.com/microservices/nats#queue-groups">below</a>.
+
+#### Client
+
+Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a NATS `ClientProxy` instance.
+
+One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method.
 
 ```typescript
 ClientsModule.register([
@@ -40,20 +49,15 @@ ClientsModule.register([
 ]),
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
-
-#### Options
-
-The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/node-nats#connect-options).
-Additionally, there is an extra `queue` property which allows you specifying a name of the queue that your server should subscribe to (leave `undefined` to ignore this setting).
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
 
 #### Request-response
 
-For the **request-response message style** ([read more](https://docs.nestjs.com/microservices/basics#request-response)), NATS transporter uses [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism provided out-of-the-box. request is published on a given subject with a reply subject, and responders listen on that subject and send responses to the reply subject. Reply subjects are usually a subject called an `_INBOX` that will be directed back to the requestor dynamically, regardless of location of either party.
+For the **request-response message style** ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter uses NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. A request is published on a given subject with a reply subject, and responders listen on that subject and send responses to the reply subject. Reply subjects are usually a subject called an `_INBOX` that will be directed back to the requestor dynamically, regardless of location of either party.
 
 #### Event-based
 
-For the **event-based message style** ([read more](https://docs.nestjs.com/microservices/basics#event-based)), NATS transporter uses [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism provided out-of-the-box. A publisher sends a message on a subject and any active subscriber listening on that subject receives the message. Subscribers can also register interest in wildcard subjects that work a bit like a regular expression (but only a bit). This one-to-many pattern is sometimes called fan-out.
+For the **event-based message style** ([read more](https://docs.nestjs.com/microservices/basics#event-based)), the NATS transporter uses NATS built-in [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism. A publisher sends a message on a subject and any active subscriber listening on that subject receives the message. Subscribers can also register interest in wildcard subjects that work a bit like a regular expression. This one-to-many pattern is sometimes called fan-out.
 
 #### Queue groups
 
@@ -72,7 +76,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 
 #### Context
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. In NATS, you can access the `NatsContext` object.
+In more sophisticated scenarios, you may want to access more information about the incoming request. When using the NATS transporter, you can access the `NatsContext` object.
 
 ```typescript
 @@filename()
@@ -88,4 +92,4 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from the `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from the `@nestjs/microservices` package.

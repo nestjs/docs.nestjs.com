@@ -109,7 +109,7 @@ export class MathController {
 }
 ```
 
-In the above code, the `accumulate()` **message handler** listens for messages that fulfill the `cmd: 'sum'` pattern. The message handler takes a single argument, the `data` passed from the client. In this case, the data is an array of numbers which are to be accumulated.
+In the above code, the `accumulate()` **message handler** listens for messages that fulfill the `{{ '{' }} cmd: 'sum' {{ '}' }}` message pattern. The message handler takes a single argument, the `data` passed from the client. In this case, the data is an array of numbers which are to be accumulated.
 
 #### Asynchronous responses
 
@@ -166,7 +166,7 @@ async handleUserCreated(data) {
 }
 ```
 
-The `handleUserCreated()` **event handler** listens for the `user_created` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
+The `handleUserCreated()` **event handler** listens for the `'user_created'` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
 
 #### Decorators
 
@@ -206,7 +206,7 @@ ClientsModule.register([
 ]),
 ```
 
-Once the module has been imported, we can inject `'MATH_SERVICE'` using the `@Inject()` decorator.
+Once the module has been imported, we can inject an instance of the `ClientProxy` configured as specified via the `'MATH_SERVICE'` transporter options shown above, using the `@Inject()` decorator.
 
 ```typescript
 constructor(
@@ -216,7 +216,7 @@ constructor(
 
 > info **Hint** The `ClientsModule` and `ClientProxy` classes are imported from the `@nestjs/microservices` package.
 
-As is sometimes the case, we may need to fetch the microservice configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can use the `ClientProxyFactory` class to register a [custom provider](/techniques/custom-providers) (which provides a `ClientProxy` instance):
+As is sometimes the case, we may need to fetch the microservice configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can use the `ClientProxyFactory` class to register a [custom provider](/techniques/custom-providers) (which provides a customized `ClientProxy` instance):
 
 ```typescript
 {
@@ -272,7 +272,7 @@ accumulate() {
 }
 ```
 
-The `send()` method takes two arguments, `pattern` and `payload`. The `pattern` should match the one defined in a `@MessagePattern()` decorator. The `payload` is a message that we want to transmit to the remote microservice. This method returns a **cold `Observable`**, which means that you have to explicitly subscribe to it before the message will be sent.
+The `send()` method takes two arguments, `pattern` and `payload`. The `pattern` should match one defined in a `@MessagePattern()` decorator. The `payload` is a message that we want to transmit to the remote microservice. This method returns a **cold `Observable`**, which means that you have to explicitly subscribe to it before the message will be sent.
 
 #### Publishing events
 
@@ -289,7 +289,7 @@ async publish() {
 }
 ```
 
-The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern`should match the one defined in an `@EventPattern()` decorator. The `payload` is an event payload that we want to transmit to the remote microservice. This method returns a **hot `Observable`** (unlike the cold `Observable` returned by `send()`), which means that whether or not you explicitly subscribe to the observable, the proxy will immediately try to deliver the event.
+The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern`should match one defined in an `@EventPattern()` decorator. The `payload` is an event payload that we want to transmit to the remote microservice. This method returns a **hot `Observable`** (unlike the cold `Observable` returned by `send()`), which means that whether or not you explicitly subscribe to the observable, the proxy will immediately try to deliver the event.
 
 #### Scopes
 

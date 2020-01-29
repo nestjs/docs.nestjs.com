@@ -14,7 +14,7 @@ To start building gRPC-based microservices, first install the required packages:
 $ npm i --save grpc @grpc/proto-loader
 ```
 
-#### Transporter
+#### Overview
 
 Like other Nest microservices transport layer implementations, you select the gRPC transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method. In the following example, we'll set up a hero service. The `options` property provides metadata about that service; its properties are described <a href="microservices/grpc#options">below</a>.
 

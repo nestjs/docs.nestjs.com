@@ -1,12 +1,13 @@
 ### Guards
 
-There is no difference between microservices guards and the [regular guards](/guards). The only thing you should be aware of is that instead of throwing `HttpException`, you should use the `RpcException`.
+There is no fundamental difference between microservices guards and [regular HTTP application guards](/guards).
+The only difference is that instead of throwing `HttpException`, you should instead use `RpcException`.
 
 > info **Hint** The `RpcException` class is exposed from `@nestjs/microservices` package.
 
 #### Binding guards
 
-Here is an example that makes use of a method-scoped guard (class-scoped works too):
+The following example uses a method-scoped guard. Just as with HTTP based applications, you can also use controller-scoped guards (i.e., prefix the controller class with a `@UseGuards()` decorator).
 
 ```typescript
 @@filename()
