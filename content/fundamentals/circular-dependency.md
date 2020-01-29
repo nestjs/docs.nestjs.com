@@ -1,6 +1,10 @@
 ### Circular dependency
 
-A circular dependency occurs when two classes depend on each other. For example, class A needs class B, and class B also needs class A. Circular dependencies can arise in Nest between modules and between providers. While circular dependencies should be avoided where possible, you can't always do so. Nest enables resolving circular dependencies using a technique called **forward referencing**.
+A circular dependency occurs when two classes depend on each other. For example, class A needs class B, and class B also needs class A. Circular dependencies can arise in Nest between modules and between providers.
+
+While circular dependencies should be avoided where possible, you can't always do so. In such cases, Nest enables resolving circular dependencies between providers in two ways. In this chapter, we describe using **forward referencing** as one technique, and using the **ModuleRef** class to retrieve a provider instance from the DI container as another.
+
+We also describe resolving circular dependencies between modules.
 
 #### Forward reference
 
@@ -50,9 +54,13 @@ export class CommonService {
 
 > warning **Warning** The order of instantiation is indeterminate. Make sure your code does not depend on which constructor is called first.
 
+#### ModuleRef class alternative
+
+An alternative to using `forwardRef()` is to refactor your code and use the `ModuleRef` class to retrieve a provider on one side of the (otherwise) circular relationship. Learn more about the `ModuleRef` utility class [here](/fundamentals/module-ref).
+
 #### Module forward reference
 
-In order to resolve circular dependencies between modules, use the same `forwardRef()` utility on both sides of the modules association. For example:
+In order to resolve circular dependencies between modules, use the same `forwardRef()` utility function on both sides of the modules association. For example:
 
 ```typescript
 @@filename(common.module)
@@ -61,7 +69,3 @@ In order to resolve circular dependencies between modules, use the same `forward
 })
 export class CommonModule {}
 ```
-
-#### Module reference
-
-Alternatively, you can use `ModuleRef` class to dynamically instantiate one side of the relationship. Learn more about module references [here](/fundamentals/module-ref).
