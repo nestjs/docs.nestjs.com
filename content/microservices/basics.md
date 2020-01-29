@@ -225,9 +225,7 @@ At times we may need to fetch the transporter configuration from another service
 
 ```typescript
 @Module({
-  ...
   providers: [
-    ...
     {
       provide: 'MATH_SERVICE',
       useFactory: (configService: ConfigService) => {
