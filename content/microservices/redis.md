@@ -1,6 +1,6 @@
 ### Redis
 
-[Redis](https://redis.io/) transporter implements the publish/subscribe messaging paradigm and leverages [Pub/Sub](https://redis.io/topics/pubsub) feature of Redis. Published messages are categorized in channels, without knowing what subscribers (if any) will eventually receive the message. Each microservice can subscribe to any number of channels. In addition, more than one channel can be subscribed to at a time. Messages exchanged through channels are **fire-and-forget**, which means that if a message is published and there are no subscribers interested in it, the message is removed and cannot be recovered. Thus, you don't have a guarantee that either messages or events will be handled by at least one service. A single message can be subscribed to (and received) by multiple subscribers.
+The [Redis](https://redis.io/) transporter implements the publish/subscribe messaging paradigm and leverages the [Pub/Sub](https://redis.io/topics/pubsub) feature of Redis. Published messages are categorized in channels, without knowing what subscribers (if any) will eventually receive the message. Each microservice can subscribe to any number of channels. In addition, more than one channel can be subscribed to at a time. Messages exchanged through channels are **fire-and-forget**, which means that if a message is published and there are no subscribers interested in it, the message is removed and cannot be recovered. Thus, you don't have a guarantee that either messages or events will be handled by at least one service. A single message can be subscribed to (and received) by multiple subscribers.
 
 <figure><img src="/assets/Redis_1.png" /></figure>
 
@@ -28,25 +28,9 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 
 > info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
 
-Likewise, to create a client instance, we need to pass an options object with the same properties we saw above in the `createMicroservice()` method.
-
-```typescript
-ClientsModule.register([
-  {
-    name: 'MATH_SERVICE',
-    transport: Transport.REDIS,
-    options: {
-      url: 'redis://localhost:6379',
-    }
-  },
-]),
-```
-
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them [here](https://docs.nestjs.com/microservices/basics#client).
-
 #### Options
 
-The `options` object is specific to the chosen transporter. The <strong>REDIS</strong> transporter exposes the properties described below.
+The `options` property is specific to the chosen transporter. The <strong>Redis</strong> transporter exposes the properties described below.
 
 <table>
   <tr>
@@ -63,9 +47,34 @@ The `options` object is specific to the chosen transporter. The <strong>REDIS</s
   </tr>
 </table>
 
+#### Client
+
+Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a Redis `ClientProxy` instance.
+
+One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+
+```typescript
+@Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'MATH_SERVICE',
+        transport: Transport.REDIS,
+        options: {
+          url: 'redis://localhost:6379',
+        }
+      },
+    ]),
+  ]
+  ...
+})
+```
+
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+
 #### Context
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. In Redis, you can access the `RedisContext` object.
+In more sophisticated scenarios, you may want to access more information about the incoming request. When using the Redis transporter, you can access the `RedisContext` object.
 
 ```typescript
 @@filename()
@@ -81,4 +90,4 @@ getNotifications(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()` and `RedisContext` are imported from the `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()` and `RedisContext` are imported from the `@nestjs/microservices` package.
