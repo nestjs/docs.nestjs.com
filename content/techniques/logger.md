@@ -143,10 +143,10 @@ We can combine several of the techniques above to provide consistent behavior an
 [Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
 ```
 
-2. We inject a [transient](fundamentals/injection-scopes) instance of the `Logger` into our feature modules so that each one has its own custom context.
+2. We inject a [transient](/fundamentals/injection-scopes) instance of the `Logger` into our feature modules so that each one has its own custom context.
 3. We supply this extended logger for Nest to use for system logging.
 
-To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `Logger` class, specifying a [transient](fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `Logger` in each feature module. In this example, we do not extend the individual `Logger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
+To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `Logger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `Logger` in each feature module. In this example, we do not extend the individual `Logger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
 
 ```typescript
 import { Injectable, Scope, Logger } from '@nestjs/common';
