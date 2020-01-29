@@ -18,7 +18,12 @@ $ npm i --save @nestjs/microservices
 
 #### Getting started
 
-To instantiate a microservice, use the `createMicroservice()` method of the `NestFactory` class:
+There are two options to instantiate a microservice
+
+- Create a microservice-only-server
+- Attach a microservice to an express / fastify adapter
+
+To create a microservice-only-server, use the `createMicroservice()` method of the `NestFactory` class:
 
 ```typescript
 @@filename(main)
@@ -31,6 +36,28 @@ async function bootstrap() {
     transport: Transport.TCP,
   });
   app.listen(() => console.log('Microservice is listening'));
+}
+bootstrap();
+```
+
+To connect a microservice to an existing server, use the `connectMicroservice()` method of the `NestFactory` class and start the connected Microservices with `startAllMicroservices()`:
+
+```typescript
+@@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { Transport } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.connectMicroservice({
+    transport: Transport.TCP,
+  })
+
+  app.startAllMicroservices(() => console.log('Microservices are listening'))
+
+  app.listen(() => console.log('Server is listening'));
 }
 bootstrap();
 ```
