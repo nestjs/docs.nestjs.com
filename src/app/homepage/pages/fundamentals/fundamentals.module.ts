@@ -8,6 +8,7 @@ import { DependencyInjectionComponent } from './dependency-injection/dependency-
 import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
 import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
 import { ModuleRefComponent } from './module-reference/module-reference.component';
+import { ExecutionContextComponent } from './execution-context/execution-context.component';
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
@@ -65,6 +66,11 @@ const routes: Routes = [
     data: { title: 'Injection scopes' },
   },
   {
+    path: 'execution-context',
+    component: ExecutionContextComponent,
+    data: { title: 'Execution context' },
+  },
+  {
     path: 'lifecycle-events',
     component: LifecycleEventsComponent,
     data: { title: 'Lifecycle events' },
@@ -85,6 +91,7 @@ const routes: Routes = [
     DynamicModulesComponent,
     UnitTestingComponent,
     CircularDependencyComponent,
+    ExecutionContextComponent,
     ProviderScopesComponent,
     LifecycleEventsComponent,
     ModuleRefComponent,

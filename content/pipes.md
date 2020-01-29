@@ -205,7 +205,7 @@ async create(createCatDto) {
 
 Let's look at an alternate implementation of our validation technique.
 
-Nest works well with the [class-validator](https://github.com/pleerock/class-validator) library. This amazing library allows you to use decorator-based validation. Decorator-based validation is extremely powerful, especially when combined with Nest's **Pipe** capabilities since we have access to the `metatype` of the processed property. Before we start, we need to install the required packages:
+Nest works well with the [class-validator](https://github.com/typestack/class-validator) library. This amazing library allows you to use decorator-based validation. Decorator-based validation is extremely powerful, especially when combined with Nest's **Pipe** capabilities since we have access to the `metatype` of the processed property. Before we start, we need to install the required packages:
 
 ```bash
 $ npm i --save class-validator class-transformer

@@ -1008,10 +1008,10 @@
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.4.2.tgz#49f672de24043b3c1fb919901fd3cd36f027bc93"
   integrity sha512-SaSSGOzwUnBEn64c+HTyVTJhRf8F1CXZLnxYx2ww3UrgGBmEEw38RSux2l3fYiT9brVLP67DU5omWA6V9OHI5Q==
 
-"@types/jasmine@3.5.1":
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.5.1.tgz#e417aa74738aa9e9285016abbfcae68d5be0f827"
-  integrity sha512-5ZxOWKc0AgTeMcYCnV4RxTZZAClWaHKPR6n14LvUj8ywKDhOfI+YgdtNLXiW4kQmtxS3i1HXVbfAot+pqpJE2A==
+"@types/jasmine@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.5.2.tgz#9ff982e0ddca82f65e5d85a3f0584e9e6b92c47b"
+  integrity sha512-7hrdBDFWlTb4EhrXYRyC7i3L2kKCV0TqYbzuV+gwyPNF2V4SSHw2Vs223ai26W4tEg+t4e9Wfi1vW6JLubYPiw==
 
 "@types/jasminewd2@2.0.8":
   version "2.0.8"
@@ -1025,15 +1025,10 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"
   integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
 
-"@types/marked@0.7.2":
+"@types/marked@0.7.2", "@types/marked@^0.7.0":
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.7.2.tgz#1393f076773b55cc7078c0fbeb86a497c69db97e"
   integrity sha512-A3EDyNaq6OCcpaOia2HQ/tu2QYt8DKuj4ExP21VU3cU3HTo2FLslvbqa2T1vux910RHvuSVqpwKnnykSFcRWOA==
-
-"@types/marked@^0.6.5":
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.6.5.tgz#3cf2a56ef615dad24aaf99784ef90a9eba4e29d8"
-  integrity sha512-6kBKf64aVfx93UJrcyEZ+OBM5nGv4RLsI6sR1Ar34bpgvGVRoyTgpxn4ZmtxOM5aDTAaaznYuYUH8bUX3Nk3YA==
 
 "@types/minimatch@*":
   version "3.0.3"
@@ -1049,6 +1044,11 @@
   version "12.12.21"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.21.tgz#aa44a6363291c7037111c47e4661ad210aded23f"
   integrity sha512-8sRGhbpU+ck1n0PGAUgVrWrWdjSW2aqNeyC15W88GRsMpSwzv6RJGlLhE7s2RhVSOdyDmxbqlWSeThq4/7xqlA==
+
+"@types/prismjs@1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@types/prismjs/-/prismjs-1.16.0.tgz#4328c9f65698e59f4feade8f4e5d928c748fd643"
+  integrity sha512-mEyuziLrfDCQ4juQP1k706BUU/c8OGn/ZFl69AXXY6dStHClKX4P+N8+rhqpul1vRDA2VOygzMRSJJZHyDEOfw==
 
 "@types/rimraf@2.0.3":
   version "2.0.3"
@@ -2643,10 +2643,10 @@ concat-stream@^1.5.0:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concurrently@5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/concurrently/-/concurrently-5.0.2.tgz#4d2911018c0f15ddec34a8e668fc48dced7f3b1e"
-  integrity sha512-iUNVI6PzKO0RVXV9pHWM0khvEbELxf3XLIoChaV6hHyoIaJuxQWZiOwlNysnJX5khsfvIK66+OJqRdbYrdsR1g==
+concurrently@5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/concurrently/-/concurrently-5.1.0.tgz#05523986ba7aaf4b58a49ddd658fab88fa783132"
+  integrity sha512-9ViZMu3OOCID3rBgU31mjBftro2chOop0G2u1olq1OuwRBVRw/GxHTg80TVJBUTJfoswMmEUeuOg1g1yu1X2dA==
   dependencies:
     chalk "^2.4.2"
     date-fns "^2.0.1"
@@ -5190,7 +5190,7 @@ karma@4.4.1:
     tmp "0.0.33"
     useragent "2.3.0"
 
-katex@^0.11.1:
+katex@^0.11.0:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/katex/-/katex-0.11.1.tgz#df30ca40c565c9df01a466a00d53e079e84ffaa2"
   integrity sha512-5oANDICCTX0NqYIyAiFCCwjQ7ERu3DQG2JFHLbYOf+fXaMoH8eg/zOq5WSYJsKMi/QebW+Eh3gSM+oss1H/bww==
@@ -5794,13 +5794,13 @@ ng2-src-directive@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/ng2-src-directive/-/ng2-src-directive-0.0.10.tgz#1c1f722ca78b44a3169bcc1bbf9e51ea5931dd3b"
 
-ngx-markdown@8.2.1:
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.2.1.tgz#53bafde382aa69ae6787abf0d72bf63bc028105a"
-  integrity sha512-59LG8rEoOwDsZyyJckp+QDnW/c5wMaRpNkb6TWktlBVTfQKyAYHr6BuSskVbZ4y8nsj54UQg0CDFLBOfUiqOwA==
+ngx-markdown@8.2.2:
+  version "8.2.2"
+  resolved "https://registry.yarnpkg.com/ngx-markdown/-/ngx-markdown-8.2.2.tgz#fecd41d17b062bae1b16e9b1173d2142fc5bc026"
+  integrity sha512-wo2M2LIiLsuLqvmpeKwk8CDiT0qkxMdyNyCeypwJRcrfkzb6qjWEycA8i9VBBXwFze+8rS2BZn1YXrdezGi/3w==
   dependencies:
-    "@types/marked" "^0.6.5"
-    katex "^0.11.1"
+    "@types/marked" "^0.7.0"
+    katex "^0.11.0"
     marked "^0.7.0"
     prismjs "^1.16.0"
     tslib "^1.9.0"
@@ -7215,6 +7215,13 @@ rimraf@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-3.0.0.tgz#614176d4b3010b75e5c390eb0ee96f6dc0cebb9b"
   integrity sha512-NDGVxTsjqfunkds7CqsOiEnxln4Bo7Nddl3XhS4pXg5OzwkLqJ971ZVAAnB+DDLnF76N+VnDEiBHaVV8I06SUg==
+  dependencies:
+    glob "^7.1.3"
+
+rimraf@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-3.0.1.tgz#48d3d4cb46c80d388ab26cd61b1b466ae9ae225a"
+  integrity sha512-IQ4ikL8SjBiEDZfk+DFVwqRK8md24RWMEJkdSlgNLkyyAImcjf8SWvU1qFMDOb4igBClbTQ/ugPqXcRwdFTxZw==
   dependencies:
     glob "^7.1.3"
 

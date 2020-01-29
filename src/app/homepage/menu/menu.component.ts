@@ -63,6 +63,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/module-ref',
         },
         {
+          title: 'Execution context',
+          path: '/fundamentals/execution-context',
+        },
+        {
           title: 'Lifecycle events',
           path: '/fundamentals/lifecycle-events',
         },
