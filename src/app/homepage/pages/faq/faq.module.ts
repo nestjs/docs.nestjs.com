@@ -32,7 +32,7 @@ const routes: Routes = [
   {
     path: 'request-lifecycle',
     component: RequestLifecycleComponent,
-    data: { title: 'Request Lifecycle - FAQ' },
+    data: { title: 'Request lifecycle - FAQ' },
   },
 ];
 

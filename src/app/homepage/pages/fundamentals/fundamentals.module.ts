@@ -6,8 +6,9 @@ import { AsyncComponentsComponent } from './async-components/async-components.co
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
 import { DependencyInjectionComponent } from './dependency-injection/dependency-injection.component';
 import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
-import { ExecutionContextComponent } from './execution-context/execution-context.component';
 import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
+import { ModuleRefComponent } from './module-reference/module-reference.component';
+import { ExecutionContextComponent } from './execution-context/execution-context.component';
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
@@ -40,6 +41,11 @@ const routes: Routes = [
     path: 'async-providers',
     component: AsyncComponentsComponent,
     data: { title: 'Async providers' },
+  },
+  {
+    path: 'module-ref',
+    component: ModuleRefComponent,
+    data: { title: 'Module reference' },
   },
   {
     path: 'unit-testing',
@@ -88,6 +94,7 @@ const routes: Routes = [
     ExecutionContextComponent,
     ProviderScopesComponent,
     LifecycleEventsComponent,
+    ModuleRefComponent,
   ],
 })
 export class FundamentalsModule {}
