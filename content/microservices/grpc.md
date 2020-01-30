@@ -311,7 +311,7 @@ Nest supports GRPC stream handlers in two possible ways:
 
 #### Streaming sample
 
-Let's define our sample gRPC service called `HelloService`. The `hello.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
+Let's define a new sample gRPC service called `HelloService`. The `hello.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
 
 ```typescript
 // hello/hello.proto
@@ -333,7 +333,7 @@ message HelloResponse {
 }
 ```
 
-> info **Hint** The `LotsOfReplies` method can be simply implemented with the `@GrpcMethod` decorator (as in the examples above) since the returned stream can emit multiple values.
+> info **Hint** The `LotsOfGreetings` method can be simply implemented with the `@GrpcMethod` decorator (as in the examples above) since the returned stream can emit multiple values.
 
 Based on this `.proto` file, let's define the `HelloService` interface:
 
@@ -356,7 +356,7 @@ interface HelloResponse {
 
 #### Subject strategy
 
-The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `Observable`. Hence, we can receive and process multiple messages.
+The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `Observable`. Thus, we can receive and process multiple messages.
 
 ```typescript
 @GrpcStreamMethod()
@@ -376,9 +376,9 @@ bidiHello(messages: Observable<any>): Observable<any> {
 }
 ```
 
-> info **Hint** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable` from the controller method.
+> info **Hint** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, the controller method must return an RxJS `Observable`.
 
-According to the service definition (in the `.proto` file), the `BidiHello` method is supposed to be streaming requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplySubject` class.
+According to the service definition (in the `.proto` file), the `BidiHello` method should stream requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplySubject` class.
 
 ```typescript
 const helloService = this.client.getService<HelloService>('HelloService');
@@ -391,7 +391,7 @@ helloRequest$.complete();
 return helloService.bidiHello(helloRequest$);
 ```
 
-In the example above, we wrote two messages down to the stream (`next()` calls) and notified the service that we've completed sending the data (`complete()` call).
+In the example above, we wrote two messages to the stream (`next()` calls) and notified the service that we've completed sending the data (`complete()` call).
 
 #### Call stream handler
 
@@ -415,7 +415,7 @@ bidiHello(requestStream: any) {
 
 > info **Hint** This decorator does not require any specific return parameter to be provided. It is expected that the stream will be handled similar to any other standard stream type.
 
-In the example above, we used the `write()` method to write objects down to the response stream. The callback passed into the `.on()` method as a second parameter will be called every time when our service receives a new chunk of data.
+In the example above, we used the `write()` method to write objects to the response stream. The callback passed into the `.on()` method as a second parameter will be called every time our service receives a new chunk of data.
 
 Let's implement the `LotsOfGreetings` method.
 
