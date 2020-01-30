@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -135,6 +130,7 @@ export class MenuComponent implements OnInit {
         { title: 'MQTT', path: '/microservices/mqtt' },
         { title: 'NATS', path: '/microservices/nats' },
         { title: 'RabbitMQ', path: '/microservices/rabbitmq' },
+        { title: 'Kafka', path: '/microservices/kafka' },
         { title: 'gRPC', path: '/microservices/grpc' },
         {
           title: 'Exception filters',

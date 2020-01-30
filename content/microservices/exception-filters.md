@@ -1,6 +1,6 @@
 ### Exception filters
 
-The only difference between HTTP exception filter layer and corresponding microservices layer is that instead of throwing `HttpException`, you should rather use `RpcException`.
+The only difference between the HTTP exception filter layer and the corresponding microservices layer is that instead of throwing `HttpException`, you should use `RpcException`.
 
 ```typescript
 throw new RpcException('Invalid credentials.');
@@ -8,7 +8,7 @@ throw new RpcException('Invalid credentials.');
 
 > info **Hint** The `RpcException` class is imported from the `@nestjs/microservices` package.
 
-Nest will handle thrown exception and as a result, returns the `error` object with the following structure:
+With the sample above, Nest will handle the thrown exception and return the `error` object with the following structure:
 
 ```json
 {
@@ -19,7 +19,7 @@ Nest will handle thrown exception and as a result, returns the `error` object wi
 
 #### Filters
 
-The exception filters work in the same fashion as the primary ones, with a one, small difference. The `catch()` method has to return an `Observable`.
+Microservice exception filters behave similarly to HTTP exception filters, with one small difference. The `catch()` method must return an `Observable`.
 
 ```typescript
 @@filename(rpc-exception.filter)
@@ -45,9 +45,9 @@ export class ExceptionFilter {
 }
 ```
 
-> **Warning** It is impossible to set up the microservice exception filters globally when the hybrid application feature is being used.
+> **Warning** You cannot set up global microservice exception filters when using a [hybrid application](/faq/hybrid-application).
 
-Here is an example that makes use of a manually instantiated method-scoped filter (class-scoped works too):
+The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
 
 ```typescript
 @@filename()
@@ -66,9 +66,9 @@ accumulate(data) {
 
 #### Inheritance
 
-Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. There might be use-cases though when you would like to reuse an already implemented, **core exception filter**, and override the behavior based on certain factors.
+Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the **core exception filter**, and override the behavior based on certain factors.
 
-In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call inherited `catch()` method. Besides, `HttpServer` reference has to be injected and passed to the `super()` call.
+In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call the inherited `catch()` method.
 
 ```typescript
 @@filename()
@@ -93,4 +93,4 @@ export class AllExceptionsFilter extends BaseRpcExceptionFilter {
 }
 ```
 
-Obviously, you should enhance above implementation with your tailored **business** logic (e.g. add various conditions).
+The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business logic** (e.g., handling various conditions).
