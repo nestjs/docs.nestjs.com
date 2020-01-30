@@ -9,8 +9,10 @@ The `GraphQLModule` is nothing more than a wrapper around the [Apollo](https://w
 Firstly, we need to install the required packages:
 
 ```bash
-$ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql
+$ npm i --save @nestjs/graphql graphql-tools graphql
 ```
+
+And depending on what you have (Express or FastifyE), you need to install `apollo-server-express` or `apollo-server-fastify`.
 
 #### Overview
 
