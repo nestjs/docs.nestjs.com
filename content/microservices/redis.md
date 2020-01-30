@@ -39,11 +39,11 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
-    <td>Number of times to retry message</td>
+    <td>Number of times to retry message (default: `0`)</td>
   </tr>
   <tr>
     <td><code>retryDelay</code></td>
-    <td>Delay between message retry attempts (ms)</td>
+    <td>Delay between message retry attempts (ms) (default: `0`)</td>
   </tr>
 </table>
 
