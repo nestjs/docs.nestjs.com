@@ -58,11 +58,11 @@ Other options to create a client (either `ClientProxyFactory` or `@Client()`) ca
 
 #### Request-response
 
-For the **request-response message style** ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter uses NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. A request is published on a given subject with a reply subject, and responders listen on that subject and send responses to the reply subject. Reply subjects are usually a subject called an `_INBOX` that will be directed back to the requestor dynamically, regardless of location of either party.
+For the **request-response** message style ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter uses NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. A request is published on a given subject with a reply subject, and responders listen on that subject and send responses to the reply subject. Reply subjects are usually a subject called an `_INBOX` that will be directed back to the requestor dynamically, regardless of location of either party.
 
 #### Event-based
 
-For the **event-based message style** ([read more](https://docs.nestjs.com/microservices/basics#event-based)), the NATS transporter uses NATS built-in [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism. A publisher sends a message on a subject and any active subscriber listening on that subject receives the message. Subscribers can also register interest in wildcard subjects that work a bit like a regular expression. This one-to-many pattern is sometimes called fan-out.
+For the **event-based** message style ([read more](https://docs.nestjs.com/microservices/basics#event-based)), the NATS transporter uses NATS built-in [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism. A publisher sends a message on a subject and any active subscriber listening on that subject receives the message. Subscribers can also register interest in wildcard subjects that work a bit like a regular expression. This one-to-many pattern is sometimes called fan-out.
 
 #### Queue groups
 
