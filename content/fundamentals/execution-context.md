@@ -72,11 +72,11 @@ export interface WsArgumentsHost {
   /**
    * Returns the data object.
    */
-  getData<T = any>(): T;
+  getData<T>(): T;
   /**
    * Returns the client object.
    */
-  getClient<T = any>(): T;
+  getClient<T>(): T;
 }
 ```
 
@@ -87,12 +87,12 @@ export interface RpcArgumentsHost {
   /**
    * Returns the data object.
    */
-  getData<T = any>(): T;
+  getData<T>(): T;
 
   /**
    * Returns the context object.
    */
-  getContext<T = any>(): T;
+  getContext<T>(): T;
 }
 ```
 
@@ -235,26 +235,22 @@ Consider the following scenario, where you've supplied `'roles'` metadata at bot
 @Roles('user')
 @Controller('cats')
 export class CatsController {
-  ...
   @Post()
   @Roles('admin')
   async create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
   }
-  ...
 }
 @@switch
 @Roles('user')
 @Controller('cats')
 export class CatsController {}
-  ...
   @Post()
   @Roles('admin')
   @Bind(Body())
   async create(createCatDto) {
     this.catsService.create(createCatDto);
   }
-  ...
 }
 ```
 
