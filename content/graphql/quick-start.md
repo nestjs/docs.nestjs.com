@@ -12,7 +12,7 @@ Firstly, we need to install the required packages:
 $ npm i --save @nestjs/graphql graphql-tools graphql
 ```
 
-And depending on what you have (Express or FastifyE), you need to install `apollo-server-express` or `apollo-server-fastify`.
+And depending on what you have (Express or Fastify), you need to install `apollo-server-express` or `apollo-server-fastify`.
 
 #### Overview
 
