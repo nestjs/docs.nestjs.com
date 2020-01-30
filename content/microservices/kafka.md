@@ -8,6 +8,8 @@
 
 The Kafka project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. It integrates very well with Apache Storm and Spark for real-time streaming data analysis.
 
+**Kafka transporter is experimental.**
+
 #### Installation
 
 To start building Kafka-based microservices, first install the required package:
