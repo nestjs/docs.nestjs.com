@@ -108,7 +108,7 @@ Our `HeroService` exposes a `FindOne()` method. This method expects an input arg
 
 Next, we need to implement the service. To define a handler that fulfills this definition, we use the `@GrpcMethod()` decorator in a controller, as shown below. This decorator provides the metadata needed to declare a method as a gRPC service method.
 
-> info **Hint** The <a href="microservices/basics#request-response">`@MessagePattern()` decorator</a> introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
+> info **Hint** The `@MessagePattern()` decorator (<a href="microservices/basics#request-response">read more</a>) introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
 
 ```typescript
 @@filename(hero.controller)
