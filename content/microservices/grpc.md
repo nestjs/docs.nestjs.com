@@ -309,49 +309,124 @@ Nest supports GRPC stream handlers in two possible ways:
 - RxJS `Subject` + `Observable` handler: can be useful to write responses right inside of a Controller method or to be passed down to `Subject`/`Observable` consumer
 - Pure GRPC call stream handler: can be useful to be passed to some executor which will handle the rest of dispatch for the Node standard `Duplex` stream handler.
 
-#### Subject strategy
+#### Streaming sample
 
-The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `Observable`.
+Let's define our sample gRPC service called `HelloService`. The `hello.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
 
 ```typescript
-// Set decorator with selecting a Service definition from protobuf package
-// the string is matching to: package proto_example.orders.OrdersService
-@GrpcStreamMethod('orders.OrderService')
-handleStream(messages: Observable<any>): Observable<any> {
+// hello/hello.proto
+syntax = "proto3";
+
+package hello;
+
+service HelloService {
+  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse)
+  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse)
+}
+
+message HelloRequest {
+  string greeting = 1;
+}
+
+message HelloResponse {
+  string reply = 1;
+}
+```
+
+> info **Hint** The `LotsOfReplies` method can be simply implemented with the `@GrpcMethod` decorator (as in the examples above) since the returned stream can emit multiple values.
+
+Based on this `.proto` file, let's define the `HelloService` interface:
+
+```typescript
+interface HelloService {
+  bidiHello(upstream: Observable<HelloRequest>): Observable<HelloResponse>;
+  lotsOfGreetings(
+    upstream: Observable<HelloRequest>,
+  ): Observable<HelloResponse>;
+}
+
+interface HelloRequest {
+  greeting: string;
+}
+
+interface HelloResponse {
+  reply: string;
+}
+```
+
+#### Subject strategy
+
+The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `Observable`. Hence, we can receive and process multiple messages.
+
+```typescript
+@GrpcStreamMethod()
+bidiHello(messages: Observable<any>): Observable<any> {
   const subject = new Subject();
-  messages.subscribe(message => {
+
+  const onNext = message => {
     console.log(message);
     subject.next({
-      shipmentType: {
-        carrier: 'test-carrier',
-      },
+      reply: 'Hello, world!'
     });
-  });
+  };
+  const onComplete = () => subject.complete();
+  messages.subscribe(onNext, null, onComplete);
+
   return subject.asObservable();
 }
 ```
 
-For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable` from the controller method.
+> info **Hint** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, it is required to return an RxJS `Observable` from the controller method.
+
+According to the service definition (in the `.proto` file), the `BidiHello` method is supposed to be streaming requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplySubject` class.
+
+```typescript
+const helloService = this.client.getService<HelloService>('HelloService');
+const helloRequest$ = new ReplySubject<HelloRequest>();
+
+helloRequest$.next({ greeting: 'Hello (1)!' });
+helloRequest$.next({ greeting: 'Hello (2)!' });
+helloRequest$.complete();
+
+return helloService.bidiHello(helloRequest$);
+```
+
+In the example above, we wrote two messages down to the stream (`next()` calls) and notified the service that we've completed sending the data (`complete()` call).
 
 #### Call stream handler
 
-The `@GrpcStreamCall()` decorator provides the function parameter as `grpc.ServerDuplexStream`, which supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`. Full documentation on available methods can be found [here](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
+When the method return value is defined as `stream`, the `@GrpcStreamCall()` decorator provides the function parameter as `grpc.ServerDuplexStream`, which supports standard methods like `.on('data', callback)`, `.write(message)` or `.cancel()`. Full documentation on available methods can be found [here](https://grpc.github.io/grpc/node/grpc-ClientDuplexStream.html).
+
+Alternatively, when the method return value is not a `stream`, the `@GrpcStreamCall()` decorator provides two function parameters, respectively `grpc.ServerReadableStream` (read more [here](https://grpc.github.io/grpc/node/grpc-ServerReadableStream.html)) and `callback`.
+
+Let's start with implementing the `BidiHello` which should support a full-duplex interaction.
 
 ```typescript
-// Set decorator with selecting a Service definition from protobuf package
-// the string is matching to: package proto_example.orders.OrdersService
-@GrpcStreamCall('orders.OrderService')
-handleStream(stream: any) {
-  stream.on('data', (msg: any) => {
-    console.log(msg);
-    // Answer here or anywhere else using stream reference
-    stream.write({
-      shipmentType: {
-        carrier: 'test-carrier',
-      },
+@GrpcStreamCall()
+bidiHello(requestStream: any) {
+  requestStream.on('data', message => {
+    console.log(message);
+    requestStream.write({
+      reply: 'Hello, world!'
     });
   });
 }
 ```
 
-This decorator does not require any specific return parameter to be provided. It is expected that the stream will be handled similar to any other standard stream type.
+> info **Hint** This decorator does not require any specific return parameter to be provided. It is expected that the stream will be handled similar to any other standard stream type.
+
+In the example above, we used the `write()` method to write objects down to the response stream. The callback passed into the `.on()` method as a second parameter will be called every time when our service receives a new chunk of data.
+
+Let's implement the `LotsOfGreetings` method.
+
+```typescript
+@GrpcStreamCall()
+lotsOfGreetings(requestStream: any, callback: (err: unknown, value: HelloResponse) => void) {
+  requestStream.on('data', message => {
+    console.log(message);
+  });
+  requestStream.on('end', () => callback(null, { reply: 'Hello, world!' }));
+}
+```
+
+Here we used the `callback` function to send the response once processing of the `requestStream` has been completed.
