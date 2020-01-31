@@ -120,7 +120,7 @@ export class AppModule {
 }
 ```
 
-> warning **Warning** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
+> info  **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
 
 #### Route wildcards
 
@@ -132,7 +132,7 @@ forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
 
 The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
-> info **Hint** Route wildcards do not work with fastify platform applications, since fastify [does not support wildcard routes](https://github.com/nestjs/nest/issues/972#issuecomment-516707805).
+> warning **Warning** Route wildcards do not work with fastify platform applications, since fastify [does not support wildcard routes](https://github.com/nestjs/nest/issues/972#issuecomment-516707805).
 
 #### Middleware consumer
 
