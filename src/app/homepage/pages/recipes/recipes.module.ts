@@ -13,12 +13,18 @@ import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { TerminusComponent } from './terminus/terminus.component';
+import { TypeormMigrationComponent } from './typeorm-migration/typeorm-migration.component';
 
 const routes: Routes = [
   {
     path: 'sql-typeorm',
     component: SqlTypeormComponent,
     data: { title: 'SQL (TypeORM)' },
+  },
+  {
+    path: 'typeorm-migration',
+    component: TypeormMigrationComponent,
+    data: { title: 'TypeORM migration' },
   },
   {
     path: 'mongodb',
@@ -80,6 +86,7 @@ const routes: Routes = [
   imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [
     SqlTypeormComponent,
+    TypeormMigrationComponent,
     SqlSequelizeComponent,
     MongodbComponent,
     SwaggerComponent,

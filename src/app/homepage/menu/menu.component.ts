@@ -162,6 +162,7 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
+        { title: 'TypeORM migration', path: '/recipes/typeorm-migration' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
         { title: 'CQRS', path: '/recipes/cqrs' },
