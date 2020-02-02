@@ -5,12 +5,17 @@ export function applyLinkRenderer(renderer: Renderer) {
 
   const link = (href: string, title: string, text: string) => {
     if (!href.includes('http') && !href.includes('mailto')) {
-      return (originalLinkRenderer.call(
+      const link = (originalLinkRenderer.call(
         renderer,
         href,
         title,
         text
-      ) as string).replace('href', 'routerLink');
+      ) as string);
+
+      if (link.includes('#')) {
+        return link;
+      }
+      return link.replace('href', 'routerLink');
     }
 
     if (href.includes('http') && !href.includes('mailto')) {
