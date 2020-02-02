@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { BannerCoursesComponent } from './components/banner-courses/banner-courses.component';
 import { BannerEnterpriseComponent } from './components/banner-enterprise/banner-enterprise.component';
@@ -9,6 +9,7 @@ import { HeaderAnchorDirective } from './directives/header-anchor.directive';
 import { ExtensionPipe } from './pipes/extension.pipe';
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, PerfectScrollbarModule],
   declarations: [
     ExtensionPipe,
