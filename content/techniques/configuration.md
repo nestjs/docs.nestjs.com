@@ -353,5 +353,5 @@ const configService = app.get(ConfigService);
 You can then use it as usual, by calling the `get` method with the configuration key:
 
 ```typescript
-const port = config.get('PORT');
+const port = app.get('PORT');
 ```
