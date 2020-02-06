@@ -1,12 +1,12 @@
 ### Hot Reload
 
-The highest impact on your application's bootstrapping process has a **TypeScript compilation**. But the question is, do we have to recompile a whole project each time when change occurs? Not at all. That's why [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement) significantly decreases an amount of time necessary to instantiate your application.
+The highest impact on your application's bootstrapping process is **TypeScript compilation**. Fortunately, with [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement), we don't need to recompile the entire project each time a change occurs. This significantly decreases the amount of time necessary to instantiate your application, and makes iterative development a lot easier.
 
-> warning **Warning** Note that `webpack` won't automatically copy your assets (e.g. `graphql` files) to the `dist` folder. Similary, `webpack` is not compatible with glob static paths (e.g. `entities` property in `TypeOrmModule`).
+> warning **Warning** Note that `webpack` won't automatically copy your assets (e.g. `graphql` files) to the `dist` folder. Similarly, `webpack` is not compatible with glob static paths (e.g., the `entities` property in `TypeOrmModule`).
 
 ### With CLI
 
-If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use the `HotModuleReplacementPlugin`.
+If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use of the `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -47,7 +47,7 @@ This function takes the original object containing the default webpack configura
 
 #### Hot-Module Replacement
 
-In order to enable **HMR**, open the application entry file (`main.ts`) and add several webpack-related instructions, as shown below:
+To enable **HMR**, open the application entry file (`main.ts`) and add the following webpack-related instructions:
 
 ```typescript
 declare const module: any;
@@ -134,11 +134,11 @@ module.exports = {
 };
 ```
 
-This configuration tells webpack few essential things about our application. Where sits an entry file, which directory should be used to hold **compiled** files, and also, what kind of loader we want to use in order to compile source files. Basically, you shouldn't worry to much, you don't need to understand the content of this file at all.
+This configuration tells webpack a few essential things about your application: location of the entry file, which directory should be used to hold **compiled** files, and what kind of loader we want to use to compile source files. Generally, you should be able to use this file as-is, even if you don't fully understand all of the options.
 
 #### Hot-Module Replacement
 
-In order to enable **HMR**, we have to open the application entry file (`main.ts`) and add a few webpack-related instructions.
+To enable **HMR**, open the application entry file (`main.ts`) and add the following webpack-related instructions:
 
 ```typescript
 declare const module: any;

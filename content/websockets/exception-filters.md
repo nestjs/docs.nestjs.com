@@ -1,6 +1,6 @@
 ### Exception filters
 
-The only difference between the HTTP [exception filter](/exception-filters) layer and the corresponding web sockets layer is that instead of throwing `HttpException`, you should rather use `WsException`.
+The only difference between the HTTP [exception filter](/exception-filters) layer and the corresponding web sockets layer is that instead of throwing `HttpException`, you should instead use `WsException`.
 
 ```typescript
 throw new WsException('Invalid credentials.');
