@@ -164,7 +164,13 @@ GraphQLModule.forRoot({
 }),
 ```
 
-The `autoSchemaFile` indicates a path where your automatically generated schema will be created. Additionally, you can pass the `buildSchemaOptions` property - an options object which will be passed in to the `buildSchema()` function (from the `type-graphql` package).
+The `autoSchemaFile` indicates a path where your automatically generated schema will be created. Additionally, you can pass the `buildSchemaOptions` property - an options object which will be passed in to the `buildSchema()` function (from the `type-graphql` package). Alternatively, the schema can be generated on the fly in the memory. To enable this, set the `autoSchemaFile` property to `true`:
+
+```typescript
+GraphQLModule.forRoot({
+  autoSchemaFile: true,
+}),
+```
 
 A fully working sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-type-graphql).
 

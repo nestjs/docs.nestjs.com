@@ -36,7 +36,11 @@ module.exports = function(options) &#123;
         whitelist: [&#39;webpack/hot/poll?100&#39;],
       &#125;),
     ],
-    plugins: [...options.plugins, new webpack.HotModuleReplacementPlugin()],
+    plugins: [
+      ...options.plugins,
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
+    ],
   &#125;;
 &#125;;</code></pre>
 <p>This function takes the original object containing the default webpack configuration and returns a modified one with an applied <code>HotModuleReplacementPlugin</code> plugin.</p>

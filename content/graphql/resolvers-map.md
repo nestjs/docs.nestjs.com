@@ -218,7 +218,7 @@ export class AuthorResolver {
     return this.authorsService.findOneById(id);
   }
 
-  @ResolveProperty('posts')
+  @ResolveProperty('posts', returns => [Post])
   async getPosts(@Parent() author) {
     const { id } = author;
     return this.postsService.findAll({ authorId: id });

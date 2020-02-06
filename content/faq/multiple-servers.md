@@ -1,6 +1,6 @@
 ### HTTPS
 
-In order to create application that uses HTTPS protocol, we have to pass an options object:
+To create an application that uses HTTPS protocol, pass an options object to the `create()` method of the `NestFactory` class:
 
 ```typescript
 const httpsOptions = {
@@ -13,7 +13,7 @@ const app = await NestFactory.create(ApplicationModule, {
 await app.listen(3000);
 ```
 
-If using Fastify create the `app` like this:
+If you use the `FastifyAdapter`, create the application as follows:
 
 ```typescript
 const app = await NestFactory.create<NestFastifyApplication>(
@@ -24,7 +24,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
 
 #### Multiple simultaneous servers
 
-A full control over the library instance gives a simple way to create a several multiple simultaneous servers that are listening on different ports.
+A full control over the library instance gives a simple way to create several multiple simultaneous servers that are listening on different ports.
 
 ```typescript
 const httpsOptions = {
@@ -44,3 +44,5 @@ https.createServer(httpsOptions, server).listen(443);
 ```
 
 > info **Hint** The `ExpressAdapter` is imported from the `@nestjs/platform-express` package.
+
+> **Warning** This recipe does not work with the [GraphQL Subscriptions](/graphql/subscriptions).

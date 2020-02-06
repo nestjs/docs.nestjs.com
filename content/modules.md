@@ -232,7 +232,20 @@ export class DatabaseModule {
 
 This module defines the `Connection` provider by default (in the `@Module()` decorator metadata), but additionally - depending on the `entities` and `options` objects passed into the `forRoot()` method - exposes a collection of providers, for example, repositories. Note that the properties returned by the dynamic module **extend** (rather than override) the base module metadata defined in the `@Module()` decorator. That's how both the statically declared `Connection` provider **and** the dynamically generated repository providers are exported from the module.
 
-Once defined as above, the `DatabaseModule` can be imported and configured in the following manner:
+If you want to register a dynamic module in the global scope, set the `global` property to `true`.
+
+```typescript
+{
+  global: true,
+  module: DatabaseModule,
+  providers: providers,
+  exports: providers,
+}
+```
+
+> warning **Warning** As mentioned above, making everything global **is not a good design decision**.
+
+The `DatabaseModule` can be imported and configured in the following manner:
 
 ```typescript
 import { Module } from '@nestjs/common';

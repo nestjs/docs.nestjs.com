@@ -349,8 +349,8 @@ To define custom headers that are expected as part of the request, use `@ApiHead
 
 ```typescript
 @ApiHeader({
-  name: 'Authorization',
-  description: 'Auth token',
+  name: 'X-MyHeader',
+  description: 'Custom header',
 })
 @Controller('cats')
 export class CatsController {}

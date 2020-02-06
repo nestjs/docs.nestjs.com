@@ -42,6 +42,8 @@ findOne(): UserEntity {
 }
 ```
 
+> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
+
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
 When this endpoint is requested, the client receives the following response:
@@ -86,7 +88,7 @@ You may want to modify the default behavior of the transformation functions. To 
 })
 @Get()
 findOne(): UserEntity {
-  return {};
+  return new UserEntity();
 }
 ```
 
@@ -94,7 +96,7 @@ findOne(): UserEntity {
 
 Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `classToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
 
-#### WebSockets & Microservices
+#### WebSockets and Microservices
 
 While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ClassSerializerInterceptor` works the same for WebSockets and Microservices, regardless of the transport method that is used.
 
