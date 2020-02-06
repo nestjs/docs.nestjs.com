@@ -1,6 +1,6 @@
 ### Interceptors
 
-There is no difference between [regular interceptors](/interceptors) and the web sockets interceptors. Here is an example that makes use of a manually instantiated method-scoped interceptor (class-scoped works too):
+There is no difference between [regular interceptors](/interceptors) and web sockets interceptors. The following example uses a manually instantiated method-scoped interceptor. Just as with HTTP based applications, you can also use controller-scoped interceptors (i.e., prefix the controller class with a `@UseInterceptors()` decorator).
 
 ```typescript
 @@filename()
