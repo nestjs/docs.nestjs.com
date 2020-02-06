@@ -108,7 +108,7 @@ export class AppModule {}
 
 #### Using the `ConfigService`
 
-To access configuration values from our `ConfigService`, we first need to inject `ConfigService`. As with any provider, we first need to import its containing module - the `ConfigModule` - into the module that will use it (unless you set the `isGlobal` property in the options object passed to the `ConfigModule.forRoot()` method to `true`). Import it into a feature module as shown below.
+To access configuration values from our `ConfigService`, we first need to inject `ConfigService`. As with any provider, we need to import its containing module - the `ConfigModule` - into the module that will use it (unless you set the `isGlobal` property in the options object passed to the `ConfigModule.forRoot()` method to `true`). Import it into a feature module as shown below.
 
 ```typescript
 @@filename(feature.module)
