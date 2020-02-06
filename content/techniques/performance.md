@@ -43,7 +43,7 @@ By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read m
 ```typescript
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
-    ApplicationModule,
+    AppModule,
     new FastifyAdapter()
   );
   await app.listen(3000, '0.0.0.0');
