@@ -1,16 +1,18 @@
 ### Security
 
-In this chapter you will learn some techniques that will allow you to increase the security of your applications.
+In this chapter we cover various techniques that help you to increase the security of your applications.
 
 #### Helmet
 
-[Helmet](https://github.com/helmetjs/helmet) can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately. Generally, Helmet is just a collection of 12 smaller middleware functions that set security-related HTTP headers (read [more](https://github.com/helmetjs/helmet#how-it-works)). Firstly, install the required package:
+[Helmet](https://github.com/helmetjs/helmet) can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately. Generally, Helmet is just a collection of 12 smaller middleware functions that set security-related HTTP headers (read [more](https://github.com/helmetjs/helmet#how-it-works)).
+
+Start by installing the required package:
 
 ```bash
 $ npm i --save helmet
 ```
 
-Once the installation is completed, apply it as a global middleware.
+Once the installation is complete, apply it as a global middleware.
 
 ```typescript
 import * as helmet from 'helmet';
@@ -20,34 +22,36 @@ app.use(helmet());
 
 #### CORS
 
-Cross-origin resource sharing (CORS) is a mechanism that allows resources to be requested from another domain. Under the hood, Nest makes use of [cors](https://github.com/expressjs/cors) package, that provides a bunch of options that you may customize based on your requirements. In order to enable CORS, you have to call `enableCors()` method.
+Cross-origin resource sharing (CORS) is a mechanism that allows resources to be requested from another domain. Under the hood, Nest makes use of the Express [cors](https://github.com/expressjs/cors) package. This package provides various options that you can customize based on your requirements. To enable CORS, call the `enableCors()` method on the Nest application object.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.enableCors();
 await app.listen(3000);
 ```
 
-Also, you can pass a configuration object as a parameter of this function. The available properties are exhaustively described in the official [cors](https://github.com/expressjs/cors) repository. A different way is to use a Nest options object:
+The `enableCors()` method takes an optional configuration object argument. The available properties of this object are described in the official [CORS](https://github.com/expressjs/cors#configuration-options) documentation.
+
+Alternatively, enable CORS via the `create()` method's options object. Set the `cors` property to `true` to enable CORS with default settings. Alternatively, pass a [CORS configuration object](https://github.com/expressjs/cors#configuration-options) as the `cors` property value to customize its behavior.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, { cors: true });
+const app = await NestFactory.create(AppModule, { cors: true });
 await app.listen(3000);
 ```
 
-Instead of passing a boolean value, you can use a cors configuration object as well (read [more](https://github.com/expressjs/cors#configuration-options)).
-
 #### CSRF
 
-Cross-site request forgery (known as CSRF or XSRF) is a type of malicious exploit of a website where **unauthorized** commands are transmitted from a user that the web application trusts. To mitigate this kind of attacks you can use the [csurf](https://github.com/expressjs/csurf) package. Firstly, install the required package:
+Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website where **unauthorized** commands are transmitted from a user that the web application trusts. To mitigate this kind of attack you can use the [csurf](https://github.com/expressjs/csurf) package.
+
+Start by installing the required package:
 
 ```bash
 $ npm i --save csurf
 ```
 
-> warning **Warning** As explained on the [csurf middleware page](https://github.com/expressjs/csurf#csurf), the csurf module requires either a session middleware or cookie-parser to be initialized first.  Please see that documentation for further instructions.
+> warning **Warning** As explained on the [csurf middleware page](https://github.com/expressjs/csurf#csurf), the csurf module requires either session middleware or a cookie-parser to be initialized first. Please see that documentation for further instructions.
 
-Once the installation is completed, apply it as a global middleware.
+Once the installation is complete, apply the csurf middleware as global middleware.
 
 ```typescript
 import * as csurf from 'csurf';
@@ -57,13 +61,15 @@ app.use(csurf());
 
 #### Rate limiting
 
-To protect your applications from brute-force attacks, you have to implement some kind of rate-limiting. Luckily, there is a bunch of various middleware available on the NPM already. One of them is [express-rate-limit](https://github.com/nfriedly/express-rate-limit).
+A common technique to protect applications from brute-force attacks is **rate-limiting**. Many Express packages exist to provide a rate-limiting feature. A popular one is [express-rate-limit](https://github.com/nfriedly/express-rate-limit).
+
+Start by installing the required package:
 
 ```bash
 $ npm i --save express-rate-limit
 ```
 
-Once the installation is completed, apply it as a global middleware.
+Once the installation is complete, apply the rate-limiter as global middleware.
 
 ```typescript
 import * as rateLimit from 'express-rate-limit';
@@ -76,4 +82,4 @@ app.use(
 );
 ```
 
-> info **Hint** If you work with `FastifyAdapter`, consider using [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) instead.
+> info **Hint** If you use the `FastifyAdapter`, consider using [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) instead.

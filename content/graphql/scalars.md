@@ -1,16 +1,18 @@
 ### Scalars
 
-The GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean` and `ID`. However, sometimes you may need to support custom atomic data types (e.g. `Date`).
+GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean` and `ID`. In addition to these built-in types, you may need to support custom atomic data types (e.g., `Date`).
 
 #### Schema first
 
-In order to define a custom scalar (read more about scalars [here](https://www.apollographql.com/docs/graphql-tools/scalars.html)), we have to create a type definition and a dedicated resolver as well. Here (as in the official documentation), we’ll take the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type. Firstly, let's install the package:
+To define a custom scalar (read more about scalars [here](https://www.apollographql.com/docs/graphql-tools/scalars.html)), create a type definition and a dedicated resolver. Here (as in the official documentation), we’ll use the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type.
+
+Start by install the package:
 
 ```bash
 $ npm i --save graphql-type-json
 ```
 
-Once the package is installed, we have to pass a custom resolver to the `forRoot()` method:
+Once the package is installed, we pass a custom resolver to the `forRoot()` method:
 
 ```typescript
 import * as GraphQLJSON from 'graphql-type-json';
@@ -26,7 +28,7 @@ import * as GraphQLJSON from 'graphql-type-json';
 export class ApplicationModule {}
 ```
 
-Now we can use `JSON` scalar in our type definitions:
+Now we can use the `JSON` scalar in our type definitions:
 
 ```java
 scalar JSON
@@ -36,7 +38,7 @@ type Foo {
 }
 ```
 
-Another form of defining the scalar type is to create a simple class. Let's say that we would like to enhance our schema with the `Date` type.
+Another method to define a scalar type is to create a simple class. Assume we want to enhance our schema with the `Date` type.
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
@@ -63,7 +65,7 @@ export class DateScalar implements CustomScalar<number, Date> {
 }
 ```
 
-Afterward, we need to register `DateScalar` as a provider.
+With this in place, register `DateScalar` as a provider.
 
 ```typescript
 @Module({
@@ -72,7 +74,7 @@ Afterward, we need to register `DateScalar` as a provider.
 export class CommonModule {}
 ```
 
-And now we are able to use `Date` scalar in our type definitions.
+Now we can use the `Date` scalar in type definitions.
 
 ```java
 scalar Date
@@ -80,7 +82,7 @@ scalar Date
 
 #### Code first
 
-In order to create a `Date` scalar, simply create a new class.
+To create a `Date` scalar, simply create a new class.
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
@@ -107,7 +109,7 @@ export class DateScalar implements CustomScalar<number, Date> {
 }
 ```
 
-Once it's ready, register `DateScalar` as a provider.
+With this in place, register `DateScalar` as a provider.
 
 ```typescript
 @Module({
@@ -116,7 +118,7 @@ Once it's ready, register `DateScalar` as a provider.
 export class CommonModule {}
 ```
 
-Now you can use `Date` type in your classes.
+Now we can use the `Date` type in our classes.
 
 ```typescript
 @Field()

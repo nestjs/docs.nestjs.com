@@ -1,8 +1,10 @@
 ### CRUD utilities
 
-##### This chapter applies only to TypeScript
+> warning **Notice** This chapter applies only to TypeScript.
 
-[CRUD](https://github.com/nestjsx/crud) is a community package (`@nestjsx/crud`) that helps you creating CRUD controllers and services with ease and provides a bunch of features for your RESTful API out-of-the-box:
+#### Overview
+
+[CRUD](https://github.com/nestjsx/crud) is a **community package** (`@nestjsx/crud`) that helps you create database-centric Create/Read/Update/Delete (CRUD) controllers and services with ease, and provides a rich set of features for your RESTful API out-of-the-box:
 
 - Database agnostic extendable CRUD controller
 - Query string parsing with filtering, pagination, sorting, relations, nested relations, cache, etc.
@@ -13,11 +15,13 @@
 - Additional helper decorators
 - Swagger documentation
 
-> warning **Notice** So far, `@nestjsx/crud` only supports `TypeORM`, but other ORMs like `Sequelize` and `Mongoose` will be included in the near future. So in this article, you'll learn how to create CRUD controllers and services using `TypeORM`. We assume that you have already successfully installed and set up the `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
+> warning **Notice** Currently `@nestjsx/crud` only supports `TypeORM`. Other ORMs like `Sequelize` and `Mongoose` will be included in the near future.
+
+In this chapter, you'll get an overview of how to create CRUD controllers and services using `TypeORM`. Complete documentation is available at the project's [wiki](https://github.com/nestjsx/crud/wiki/Home). We assume that you have already successfully installed and set up the `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
 
 #### Getting started
 
-To start creating CRUD functionality we have to install all required dependencies:
+Start by installing all required dependencies:
 
 ```bash
 npm i --save @nestjsx/crud @nestjsx/crud-typeorm typeorm class-transformer class-validator
@@ -42,7 +46,7 @@ export class Hero {
 }
 ```
 
-The first step we need to do is to create a **service**:
+The first step is to create a **service**:
 
 ```typescript
 @@filename(heroes.service)
@@ -59,7 +63,7 @@ export class HeroesService extends TypeOrmCrudService<Hero> {
 }
 ```
 
-We're done with the service so let's create a **controller**:
+The next step is to create a **controller**:
 
 ```typescript
 @@filename(heroes.controller)
@@ -100,7 +104,7 @@ export class HeroesModule {}
 
 > warning **Notice** Do not forget to import the `HeroesModule` into the root `ApplicationModule`.
 
-Afterwards, your Nest application will have these newly created endpoints:
+At this point, your application will have these newly created endpoints:
 
 - `GET /heroes` - get many heroes.
 - `GET /heroes/:id` - get one hero.
@@ -112,13 +116,20 @@ Afterwards, your Nest application will have these newly created endpoints:
 
 #### Filtering and pagination
 
-[CRUD](https://github.com/nestjsx/crud) provides rich tools for filtering and pagination. Example request:
+[CRUD](https://github.com/nestjsx/crud) provides rich tools for filtering and pagination. Here's a sample HTTP REST request:
 
-> info **Request** GET /heroes?**select**=name&**filter**=power||gt||90&**sort**=name,ASC&**page**=1&**limit**=3
+```bash
+GET /heroes?select=name&filter=power||gt||90&sort=name,ASC&page=1&limit=3
+```
 
-In this example, we requested the list of heroes and selected `name` attribute only, where the `power` of a hero is greater than 90, and set a result limit to 3 within page 1, and sorted by `name` in `ASC` order.
+In this example, we:
 
-The response object will be similar to this one:
+- requested the list of heroes and selected only the `name` attribute
+- filtered the list to include heroes with a `power` greater than 90
+- limited the result set to 3 within page 1
+- sorted by `name` in `ASC` order
+
+The response object would look like this:
 
 ```json
 {
@@ -143,13 +154,13 @@ The response object will be similar to this one:
 }
 ```
 
-> warning **Notice** Primary columns persist in the resource response object whether they were requested or not. In our case, it's an `id` column.
+> warning **Notice** Primary columns persist in the resource response object whether they were requested or not. In our example, this is the `id` column.
 
 The complete list of query params and filter operators can be found in the project's [Wiki](https://github.com/nestjsx/crud/wiki/Requests).
 
 #### Relations
 
-Another feature that is worth mentioning is "relations". In your CRUD controller, you can specify the list of entity's relations which are allowed to fetch within your API calls:
+**Relations** is another powerful feature. In your CRUD controller, you can specify the list of an entity's relations which are allowed to fetch within your API calls:
 
 ```typescript
 @Crud({
@@ -176,17 +187,15 @@ After specifying allowed relations in the `@Crud()` decorator options, you can m
 
 > info **Request** GET /heroes/25?**join**=profile||address,bio
 
-The response will contain a hero object with a joined profile which will have `address` and `bio` columns selected.
+The response will contain a hero object with a joined profile which includes the `address` and `bio` columns.
 
-Also, the response will contain a `faction` object with the `name` column selected because it was set to `eager: true` and thus persists in every response.
+The response will also contain a `faction` object with the `name` column selected because it was set to `eager: true` (and thus persists in every response).
 
 You can find more information about relations in the project's [WiKi](https://github.com/nestjsx/crud/wiki/Controllers#join).
 
 #### Path params validation
 
-By default, [CRUD](https://github.com/nestjsx/crud) will create a slug with the name `id` and will be validating it as a `number`.
-
-But there is a possibility to change this behavior. Assume, your entity has a primary column `_id` - a UUID string - and you need to use it as a slug for your endpoints. With these options it's easy to do:
+By default, [CRUD](https://github.com/nestjsx/crud) creates a slug with the name `id` and validates it as a `number`. You can modify this behavior if desired. Assume, your entity has a primary column `_id` - a UUID string - and you need to use it as a slug for your endpoints. This can be done with the following options:
 
 ```typescript
 @Crud({
@@ -211,9 +220,9 @@ For more params options please see the project's [Wiki](https://github.com/nestj
 
 #### Request body validation
 
-Request body validation is performed out of the box by applying Nest `ValidationPipe` on each POST, PUT, PATCH request. We use `model.type` from `@Crud()` decorator options as a DTO that describes validation rules.
+Request body validation is performed out-of-the-box by applying the standard Nest `ValidationPipe` on each POST, PUT or PATCH request. The `model.type` from the `@Crud()` decorator options is used as a DTO that describes validation rules.
 
-In order to do that properly we use [validation groups](https://github.com/typestack/class-validator#validation-groups):
+To do that properly we use [validation groups](https://github.com/typestack/class-validator#validation-groups):
 
 ```typescript
 @@filename(hero.entity)
@@ -243,11 +252,11 @@ export class Hero {
 }
 ```
 
-> warning **Notice** The full support of separate DTO classes for `create` and `update` actions is one of the main priorities for the next [CRUD](https://github.com/nestjsx/crud) release.
+> warning **Notice** Full support of separate DTO classes for `create` and `update` actions is one of the main priorities for the next [CRUD](https://github.com/nestjsx/crud) release.
 
 #### Routes options
 
-You can disable or enable only some particular routes that are being generated by applying `@Crud()` decorator:
+You can disable or enable generation of specific routes by passing the `routes` options property to the `@Crud()` decorator:
 
 ```typescript
 @Crud({
@@ -267,8 +276,8 @@ export class HeroesController {
 }
 ```
 
-Also, you can apply any method decorators by passing them to the specific route `decorators` array. This is convenient when you want to add some decorators without overriding base methods.
+You can apply any method decorators by passing them to the specific route `decorators` array. This is convenient when you want to add some decorators without overriding base methods.
 
 #### Documentation
 
-The examples in this chapter cover only some of the [CRUD](https://github.com/nestjsx/crud) features. You can find answers to many more usage questions on the project's [Wiki](https://github.com/nestjsx/crud/wiki/Home) page.
+The examples in this chapter cover only some of the [CRUD](https://github.com/nestjsx/crud) features. You can find complete documentation on the project's [Wiki](https://github.com/nestjsx/crud/wiki/Home) page.
