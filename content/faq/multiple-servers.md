@@ -43,6 +43,6 @@ http.createServer(server).listen(3000);
 https.createServer(httpsOptions, server).listen(443);
 ```
 
-> info **Hint** The `ExpressAdapter` is imported from the `@nestjs/platform-express` package.
+> info **Hint** The `ExpressAdapter` is imported from the `@nestjs/platform-express` package, while `http` and `https` are native Node.js packages.
 
 > **Warning** This recipe does not work with [GraphQL Subscriptions](/graphql/subscriptions).
