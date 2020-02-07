@@ -251,7 +251,7 @@ class AuthorArgs {
 }
 ```
 
-> info **Hint** Both `@Field()` and `@ArgsType()` decorators are imported from the `type-graphql` package, while `@Min()` comes from the `class-validator`.
+> info **Hint** `Int` and both decorators `@Field()` and `@ArgsType()` are imported from the `type-graphql` package, while `@Min()` comes from the `class-validator`.
 
 You may also notice that such classes play very well with the `ValidationPipe` (read [more](/techniques/validation)).
 
