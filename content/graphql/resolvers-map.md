@@ -237,7 +237,7 @@ However, the `number` type doesn't give `type-graphql` enough information about 
 Moreover, you can create a dedicated `AuthorArgs` class:
 
 ```typescript
-@Args() id: AuthorArgs
+@Args() args: AuthorArgs
 ```
 
 With the following body:
