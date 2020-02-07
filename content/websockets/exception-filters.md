@@ -19,7 +19,7 @@ With the sample above, Nest will handle the thrown exception and emit the `excep
 
 #### Filters
 
-Web sockets exception filters behave equivalently to HTTP exception filters. The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
+Web sockets exception filters behave equivalently to HTTP exception filters. The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use gateway-scoped filters (i.e., prefix the gateway class with a `@UseFilters()` decorator).
 
 ```typescript
 @UseFilters(new WsExceptionFilter())

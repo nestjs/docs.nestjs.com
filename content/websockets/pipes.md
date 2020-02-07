@@ -6,7 +6,7 @@ There is no fundamental difference between [regular pipes](/pipes) and microserv
 
 #### Binding pipes
 
-The following example uses a manually instantiated method-scoped pipe. Just as with HTTP based applications, you can also use controller-scoped pipes (i.e., prefix the controller class with a `@UsePipes()` decorator).
+The following example uses a manually instantiated method-scoped pipe. Just as with HTTP based applications, you can also use gateway-scoped pipes (i.e., prefix the gateway class with a `@UsePipes()` decorator).
 
 ```typescript
 @@filename()
