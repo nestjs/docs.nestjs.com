@@ -1,6 +1,6 @@
 ### HTTPS
 
-To create an application that uses HTTPS protocol, pass an options object to the `create()` method of the `NestFactory` class:
+To create an application that uses HTTPS protocol, set the `httpsOptions` property in the options passed to the `create()` method of the `NestFactory` class:
 
 ```typescript
 const httpsOptions = {
@@ -45,4 +45,4 @@ https.createServer(httpsOptions, server).listen(443);
 
 > info **Hint** The `ExpressAdapter` is imported from the `@nestjs/platform-express` package.
 
-> **Warning** This recipe does not work with the [GraphQL Subscriptions](/graphql/subscriptions).
+> **Warning** This recipe does not work with [GraphQL Subscriptions](/graphql/subscriptions).

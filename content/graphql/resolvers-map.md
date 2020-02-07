@@ -1,10 +1,10 @@
 ### Resolvers
 
-Typically, you have to create a resolvers map manually. The `@nestjs/graphql` package, on the other hand, generate resolvers map automatically using the metadata provided by the decorators. In order to learn the library basics, we'll create a simple authors API.
+Typically, you create a resolvers map manually. The `@nestjs/graphql` package, on the other hand, generates a resolvers map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
 
 #### Schema first
 
-As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we have to manually define our types in SDL (read [more](http://graphql.org/learn/schema/#type-language)).
+As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we manually define our types in SDL (read [more](http://graphql.org/learn/schema/#type-language)).
 
 ```java
 type Author {
@@ -25,7 +25,7 @@ type Query {
 }
 ```
 
-Our GraphQL schema contains single query exposed - `author(id: Int!): Author`. Now, let's create an `AuthorResolver`.
+Our GraphQL schema contains a single exposed query - `author(id: Int!): Author`. Now, let's create an `AuthorResolver`.
 
 ```typescript
 @Resolver('Author')
@@ -48,7 +48,7 @@ export class AuthorResolver {
 }
 ```
 
-> info **Hint** If you use the `@Resolver()` decorator, you don't have to mark a class as an `@Injectable()`, otherwise, it's necessary.
+> info **Hint** If you use the `@Resolver()` decorator, you don't have to mark a class as an `@Injectable()`.
 
 The `@Resolver()` decorator does not affect queries and mutations (neither `@Query()` nor `@Mutation()` decorators). It only informs Nest that each `@ResolveProperty()` inside this particular class has a parent, which is an `Author` type in this case (`Author.posts` relation). Basically, instead of setting `@Resolver()` at the top of the class, this can be done close to the method:
 
@@ -61,9 +61,9 @@ async posts(@Parent() author) {
 }
 ```
 
-However, if you have multiple `@ResolveProperty()` inside one class, you would have to add `@Resolver()` to all of them which is not necessarily a good practice (creates an extra overhead).
+However, if you have multiple `@ResolveProperty()` decorators inside one class, you must add `@Resolver()` to all of them, which is not necessarily a good practice (as it creates extra overhead).
 
-Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by moving the real names between the parentheses of the decorator.
+Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
 
 ```typescript
 @Resolver('Author')
@@ -90,7 +90,7 @@ export class AuthorResolver {
 
 #### Typings
 
-Assuming that we have enabled the typings generation feature (with `outputAs: 'class'`) in the [previous](/graphql/quick-start) chapter, once you run our application it should generate the following file:
+Assuming that we have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it should generate the following file:
 
 ```typescript
 export class Author {
@@ -111,7 +111,7 @@ export abstract class IQuery {
 }
 ```
 
-Classes allow you using **decorators** which makes them extremely useful in terms of the validation purposes (read [more](/techniques/validation)). For example:
+Generating classes (instead of interfaces) allows you to use **decorators**, which makes them extremely useful for validation purposes (read [more](/techniques/validation)). For example:
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
@@ -123,9 +123,9 @@ export class CreatePostInput {
 }
 ```
 
-> warning **Notice** To enable auto-validation of your inputs (and parameters), you have to use `ValidationPipe`. Read more about validation [here](/techniques/validation) or more specifically about pipes [here](/pipes).
+> warning **Notice** To enable auto-validation of your inputs (and parameters), use `ValidationPipe`. Read more about validation [here](/techniques/validation) or more specifically about pipes [here](/pipes).
 
-Nonetheless, if you add your decorators directly into the automatically generated file, they will be **thrown away** on each consecutive change. Hence, you should rather create a separate file and simply extend the generated class.
+However, if you add decorators directly to the automatically generated file, they will be **overwritten** each time the file is generated. Instead, create a separate file and simply extend the generated class.
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
@@ -140,7 +140,7 @@ export class CreatePostInput extends Post {
 
 #### Code first
 
-In the code first approach, we don't have to write SDL by hand. Instead we'll only use decorators.
+In the code first approach, we don't write SDL by hand. Instead we use decorators.
 
 ```typescript
 import { Field, Int, ObjectType } from 'type-graphql';
@@ -180,7 +180,7 @@ export class Post {
 }
 ```
 
-Since our models are ready, we can move to the resolver class.
+With our models in place, we can move to the resolver class.
 
 ```typescript
 @Resolver(of => Author)
@@ -203,7 +203,7 @@ export class AuthorResolver {
 }
 ```
 
-Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by moving the real names to the decorators.
+Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
 
 ```typescript
 @Resolver(of => Author)
@@ -226,13 +226,13 @@ export class AuthorResolver {
 }
 ```
 
-Usually, you won't have to pass such an object into the `@Args()` decorator. For example, if your identifier's type would be a string, the following construction would be sufficient:
+Usually, you won't have to pass such an object into the `@Args()` decorator. For example, if your identifier's type is string, the following construction would be sufficient:
 
 ```typescript
 @Args('id') id: string
 ```
 
-However, the `number` type doesn't give `type-graphql` enough information about the expected GraphQL representation (`Int` vs `Float`) and thus, we have to **explicitly** pass the type reference.
+However, the `number` type doesn't give `type-graphql` enough information about the expected GraphQL representation (`Int` vs. `Float`). Thus we have to **explicitly** pass the type reference.
 
 Moreover, you can create a dedicated `AuthorArgs` class:
 
@@ -282,7 +282,7 @@ You may note that we refer to the following arguments using dedicated decorators
 
 #### Module
 
-Once we're done here, we have to register the `AuthorResolver` somewhere, for example inside the newly created `AuthorsModule`.
+Once we're done here, we have to provide the `AuthorResolver` somewhere. For example, we can do this in the newly created `AuthorsModule`.
 
 ```typescript
 @Module({
@@ -292,6 +292,6 @@ Once we're done here, we have to register the `AuthorResolver` somewhere, for ex
 export class AuthorsModule {}
 ```
 
-The `GraphQLModule` will take care of reflecting the metadata and transforming class into the correct resolvers map automatically. The only thing that you should be aware of is that you need to import this module somewhere, therefore Nest will know that `AuthorsModule` truly exists.
+The `GraphQLModule` will take care of reflecting the metadata and transforming classes into the correct resolvers map automatically. The only thing you need to be aware of is that you need to import this module somewhere, so Nest will be able to utilize `AuthorsModule`.
 
 > info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
