@@ -167,7 +167,7 @@ export function Auth(...roles: Role[]) {
     SetMetadata('roles', roles),
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Unauthorized"' })
+    ApiUnauthorizedResponse({ description: 'Unauthorized"' }),
   );
 }
 ```
@@ -181,3 +181,5 @@ findAllUsers() {}
 ```
 
 This has the effect of applying all four decorators with a single declaration.
+
+> warning **Warning** The `@ApiHideProperty()` decorator from the `@nestjs/swagger` package is not composable and won't work properly with the `applyDecorators` function.

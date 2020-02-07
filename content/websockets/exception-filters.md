@@ -1,6 +1,6 @@
 ### Exception filters
 
-The only difference between [HTTP exception filter](/exception-filters) layer and corresponding web sockets layer is that instead of throwing `HttpException`, you should rather use `WsException`.
+The only difference between the HTTP [exception filter](/exception-filters) layer and the corresponding web sockets layer is that instead of throwing `HttpException`, you should instead use `WsException`.
 
 ```typescript
 throw new WsException('Invalid credentials.');
@@ -8,7 +8,7 @@ throw new WsException('Invalid credentials.');
 
 > info **Hint** The `WsException` class is imported from the `@nestjs/websockets` package.
 
-Nest will handle thrown exception and as a result, emits the `exception` message with the following structure:
+With the sample above, Nest will handle the thrown exception and emit the `exception` message with the following structure:
 
 ```typescript
 {
@@ -19,7 +19,7 @@ Nest will handle thrown exception and as a result, emits the `exception` message
 
 #### Filters
 
-The **custom filters** feature is supported as well and works equivalently. Here is an example that makes use of a manually instantiated method-scope filter (class-scoped works too):
+Web sockets exception filters behave equivalently to HTTP exception filters. The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
 
 ```typescript
 @UseFilters(new WsExceptionFilter())
@@ -32,9 +32,9 @@ onEvent(client, data: any): WsResponse<any> {
 
 #### Inheritance
 
-Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. There might be use-cases though when you would like to reuse an already implemented, **core exception filter**, and override the behavior based on certain factors.
+Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the **core exception filter**, and override the behavior based on certain factors.
 
-In order to delegate exception processing to the base filter, you need to extend `BaseWsExceptionFilter` and call inherited `catch()` method.
+In order to delegate exception processing to the base filter, you need to extend `BaseWsExceptionFilter` and call the inherited `catch()` method.
 
 ```typescript
 @@filename()
@@ -59,4 +59,4 @@ export class AllExceptionsFilter extends BaseWsExceptionFilter {
 }
 ```
 
-Obviously, you should enhance above implementation with your tailored **business** logic (e.g. add various conditions).
+The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business logic** (e.g., handling various conditions).

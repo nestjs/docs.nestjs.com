@@ -143,7 +143,7 @@ const dbHost = this.configService.get<string>('database.host', 'localhost');
 
 #### Configuration namespaces
 
-The `ConfigModule` allows you to define and load multiple custom configuration files, as shown in <a href="techniques/configuration#custom-configuration-files">Custom configuration files</a> above. You can manage complex configuration object hierarchies with nested configuration objects as shown in that section. Alternatively, you can return a simple 2-level "namespaced" configuration object with the `registerAs()` function as follows:
+The `ConfigModule` allows you to define and load multiple custom configuration files, as shown in <a href="techniques/configuration#custom-configuration-files">Custom configuration files</a> above. You can manage complex configuration object hierarchies with nested configuration objects as shown in that section. Alternatively, you can return a "namespaced" configuration object with the `registerAs()` function as follows:
 
 ```typescript
 @@filename(config/database.config)
@@ -160,12 +160,12 @@ As with custom configuration files, inside your `registerAs()` factory function,
 Load a namespaced configuration with the `load` property of the `forRoot()` method's options object, in the same way you load a custom configuration file:
 
 ```typescript
-import database from './config/database.config';
+import databaseConfig from './config/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [database],
+      load: [databaseConfig],
     }),
   ],
 })
@@ -177,6 +177,17 @@ Now, to get the `host` value from the `database` namespace, use dot notation. Us
 ```typescript
 const dbHost = this.configService.get<string>('database.host');
 ```
+
+A reasonable alternative is to inject the `database` namespace directly. This allows us to benefit from strong typing:
+
+```typescript
+constructor(
+  @Inject(databaseConfig.KEY)
+  private databaseConfig: ConfigType<typeof databaseConfig>,
+) {}
+```
+
+> info **Hint** The `ConfigType` is exported from the `@nestjs/config` package.
 
 #### Partial registration
 
@@ -342,6 +353,7 @@ export class AppModule {}
 ```
 
 #### Using in the `main.ts`
+
 While our config is a stored in a service, it can still be used in the `main.ts` file. This way, you can use it to store variables such as the application port or the CORS host.
 
 To access it, you must use the `app.get()` method, followed by the service reference:

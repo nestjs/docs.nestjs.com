@@ -1,5 +1,5 @@
-@import "../../../../scss/utils.scss";
-@import "../../../../scss/variables.scss";
+@import '../../../../scss/utils.scss';
+@import '../../../../scss/variables.scss';
 
 .toc-wrapper {
   width: 250px;
@@ -9,6 +9,7 @@
   top: 90px;
   right: 20px;
   max-height: 350px;
+  max-height: calc(100vh - 350px);
 
   @media print {
     display: none;
@@ -19,7 +20,7 @@
     padding: 0;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       left: 0;
       top: 10px;
@@ -59,7 +60,7 @@
       @include radius(50%);
       @include transform(translateY(-50%));
 
-      content: "";
+      content: '';
       background: #fdfdfd;
       border: 2px solid #efefef;
       left: -4px;

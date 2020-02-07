@@ -1,12 +1,12 @@
 ### Pipes
 
-There is no difference between web sockets **pipes** and the [regular pipes](/pipes). The only thing you should be aware of is that instead of throwing `HttpException`, you should use the `WsException`. Besides, all pipes will be applied only to the `data` parameter (because either validating or transforming `client` instance sounds awkward).
+There is no fundamental difference between [regular pipes](/pipes) and microservices pipes. The only difference is that instead of throwing `HttpException`, you should use `WsException`. In addition, all pipes will be only applied to the `data` parameter (because validating or transforming `client` instance is useless).
 
 > info **Hint** The `WsException` class is exposed from `@nestjs/websockets` package.
 
 #### Binding pipes
 
-Here is an example that makes use of a manually instantiated method-scoped pipe (class-scoped works too):
+The following example uses a manually instantiated method-scoped pipe. Just as with HTTP based applications, you can also use controller-scoped pipes (i.e., prefix the controller class with a `@UsePipes()` decorator).
 
 ```typescript
 @@filename()
