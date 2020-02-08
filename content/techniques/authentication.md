@@ -370,8 +370,8 @@ We're ready to move on to the JWT portion of our auth system. Let's review and r
 We'll need to install a couple more packages to support our JWT requirements:
 
 ```bash
-$ npm install @nestjs/jwt passport-jwt
-$ npm install @types/passport-jwt --save-dev
+$ npm install --save @nestjs/jwt passport-jwt
+$ npm install --save-dev @types/passport-jwt
 ```
 
 The `@nestjs/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy and `@types/passport-jwt` provides the TypeScript type definitions.
