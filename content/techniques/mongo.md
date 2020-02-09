@@ -58,7 +58,7 @@ import { CatSchema } from './schemas/cat.schema';
 export class CatsModule {}
 ```
 
-The `MongooseModule` provides the `forFeature()` method to configure the module, including defining which models should be registered in the current scope. If you also want to use the models in another module, add MongooseModule to the `exports` section of `CatsModule` and import `CatsModule` in the other module.
+The `MongooseModule` provides the `forFeature()` method to configure the module, including defining which models should be registered in the current scope. If you also want to use the models in another module, add MongooseModule to the `exports` section of `CatsModule` and import `CatsModule` in the other module.  
 
 Once you've registered the schema, you can inject a `Cat` model into the `CatsService` using the `@InjectModel()` decorator:
 
@@ -105,6 +105,19 @@ export class CatsService {
   }
 }
 ```
+
+Also, don't forget to `extend` your `Cat` interface declaration from mongoose `Document`:
+
+```typescript
+import { Document } from 'mongoose';
+
+export interface Cat extends Document {
+  readonly name: string;
+  readonly age: number;
+  readonly breed: string;
+}
+```
+
 
 #### Connection
 
