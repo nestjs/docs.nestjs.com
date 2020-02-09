@@ -1,6 +1,6 @@
 ### Subscriptions
 
-Subscription is just another GraphQL operation type like Query and Mutation. It allows creating real-time subscriptions over a bidirectional transport layer, mainly over websockets. Read more about the subscriptions [here](https://www.apollographql.com/docs/graphql-subscriptions). Below is a `commentAdded` subscription example, copied directly from the official [Apollo](https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema.html) documentation:
+Subscription is another GraphQL operation type, like Query and Mutation. It allows creating real-time subscriptions over a bi-directional transport layer, mainly over websockets. Read more about subscriptions [here](https://www.apollographql.com/docs/graphql-subscriptions). Below is a `commentAdded` subscription example, copied directly from the official [Apollo](https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema.html) documentation.
 
 ```typescript
 Subscription: {
@@ -10,7 +10,7 @@ Subscription: {
 }
 ```
 
-> warning **Notice** The `pubsub` is an instance of `PubSub` class. Read more about it [here](https://www.apollographql.com/docs/graphql-subscriptions/setup.html).
+> warning **Notice** The `pubSub` object is an instance of the `PubSub` class. Read more about it [here](https://www.apollographql.com/docs/graphql-subscriptions/setup.html).
 
 #### Schema first
 
@@ -44,7 +44,7 @@ export class AuthorResolver {
 }
 ```
 
-In order to filter out specific events based on context and arguments, we can set a `filter` property.
+To filter out specific events based on context and arguments, set the `filter` property.
 
 ```typescript
 @Subscription('commentAdded', {
@@ -67,12 +67,12 @@ commentAdded() {
 }
 ```
 
-If you need to access some of the injected providers (e.g. use external service to validate the data), you can use the following construction:
+If you need to access injected providers (e.g., use an external service to validate the data), use the following construction:
 
 ```typescript
 @Subscription('commentAdded', {
   resolve(this: AuthorResolver, value) {
-    // "this" refers to an instance of "AuthorResolver" 
+    // "this" refers to an instance of "AuthorResolver"
     return value;
   }
 })
@@ -81,12 +81,12 @@ commentAdded() {
 }
 ```
 
-Likewise with filters.
+The same construction works with filters:
 
 ```typescript
 @Subscription('commentAdded', {
   filter(this: AuthorResolver, payload, variables) {
-    // "this" refers to an instance of "AuthorResolver" 
+    // "this" refers to an instance of "AuthorResolver"
     return payload.commentAdded.repositoryName === variables.repoFullName;
   }
 })
@@ -97,7 +97,7 @@ commentAdded() {
 
 #### Type definitions
 
-The last step is to update type definitions file.
+The last step is to update the type definitions file.
 
 ```java
 type Author {
@@ -127,11 +127,11 @@ type Subscription {
 }
 ```
 
-Well done. We created a single `commentAdded(repoFullName: String!): Comment` subscription. You can find a full sample implementation [here](https://github.com/nestjs/nest/blob/master/sample/12-graphql-apollo).
+Wit this, we've created a single `commentAdded(repoFullName: String!): Comment` subscription. You can find a full sample implementation [here](https://github.com/nestjs/nest/blob/master/sample/12-graphql-apollo).
 
 #### Code first
 
-To create a subscription using the class-first approach, we'll make use of the `@Subscription()` decorator.
+To create a subscription using the code-first approach, we'll make use of the `@Subscription()` decorator.
 
 ```typescript
 const pubSub = new PubSub();
@@ -161,7 +161,7 @@ export class AuthorResolver {
 }
 ```
 
-In order to filter out specific events based on context and arguments, we can set a `filter` property.
+To filter out specific events based on context and arguments, set the `filter` property.
 
 ```typescript
 @Subscription(returns => Comment, {
@@ -186,7 +186,7 @@ commentAdded() {
 
 #### PubSub
 
-We used a local `PubSub` instance here. Instead, we should define `PubSub` as a **provider**, inject it through the constructor (using `@Inject()` decorator), and reuse it among the whole application. You can read more about Nest custom providers [here](/fundamentals/custom-providers).
+We used a local `PubSub` instance above. The preferred approach is to define `PubSub` as a [provider](/fundamentals/custom-providers) and inject it through the constructor (using the `@Inject()` decorator). This allows us to re-use the instance across the whole application.
 
 ```typescript
 {
@@ -197,7 +197,7 @@ We used a local `PubSub` instance here. Instead, we should define `PubSub` as a 
 
 #### Module
 
-In order to enable subscriptions, we have to set `installSubscriptionHandlers` property to `true`.
+To enable subscriptions, set the `installSubscriptionHandlers` property to `true`.
 
 ```typescript
 GraphQLModule.forRoot({
@@ -206,4 +206,4 @@ GraphQLModule.forRoot({
 }),
 ```
 
-To customize the subscriptions server (e.g. change port), you can use `subscriptions` property (read [more](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)).
+To customize the subscriptions server (e.g., change the listener port), use the `subscriptions` options property (read [more](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)).

@@ -1,9 +1,9 @@
 ### Hybrid application
 
-The hybrid application is an application that listens to HTTP requests, as well as makes use of the connected microservices. The `INestApplication` can be combined with the endless number of the `INestMicroservice` instances through `connectMicroservice()` method.
+A hybrid application is one that both listens for HTTP requests, as well as makes use of connected microservices. The `INestApplication` instance can be connected with `INestMicroservice` instances through the `connectMicroservice()` method. To connect multiple microservice instances, simply pass additional microservice configuration objects as arguments in a comma-separated list.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 const microservice = app.connectMicroservice({
   transport: Transport.TCP,
 });

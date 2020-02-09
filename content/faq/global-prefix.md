@@ -1,8 +1,8 @@
 ### Global prefix
 
-In order to set a prefix for each route registered in the HTTP application at once, you can use the `setGlobalPrefix()` method of the `INestApplication` instance.
+To set a prefix for **every route** registered in an HTTP application, use the `setGlobalPrefix()` method of the `INestApplication` instance.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.setGlobalPrefix('v1');
 ```

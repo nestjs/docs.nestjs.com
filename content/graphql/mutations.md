@@ -1,6 +1,6 @@
 ### Mutations
 
-In GraphQL, in order to modify the server-side data, we use mutations (read more [here](http://graphql.org/learn/queries/#mutations)). The official [Apollo](https://www.apollographql.com/docs/graphql-tools/generate-schema.html) documentation shares an `upvotePost()` mutation example. This mutation allows to increase a post `votes` property value. In order to create an equivalent mutation in Nest, we'll make use of the `@Mutation()` decorator.
+In GraphQL, we use mutations to modify server-side data (read more [here](http://graphql.org/learn/queries/#mutations)). The official [Apollo](https://www.apollographql.com/docs/graphql-tools/generate-schema.html) documentation uses an `upvotePost()` mutation example. This mutation implements a method to increase a post's `votes` property value. To create an equivalent mutation in Nest, we'll make use of the `@Mutation()` decorator.
 
 #### Schema first
 
@@ -31,7 +31,7 @@ export class AuthorResolver {
 }
 ```
 
-Notice that we assumed that the business logic has been moved to the `PostsService` (respectively querying post and incrementing `votes` property).
+Note that we assumed above that the business logic has been moved to the `PostsService` (querying the post and incrementing its `votes` property).
 
 #### Type definitions
 
@@ -60,7 +60,7 @@ type Mutation {
 }
 ```
 
-The `upvotePost(postId: Int!): Post` mutation should be available now.
+The `upvotePost(postId: Int!): Post` mutation is now available to be called as part of our application's GraphQL API.
 
 #### Code first
 
@@ -92,9 +92,9 @@ export class AuthorResolver {
 }
 ```
 
-The `upvotePost()` takes the `postId` (`Int`) as an input parameter and returns an updated `Post` entity. For the same reasons as in the [resolvers](/graphql/resolvers-map) section, we have to explicitly set the expected type.
+The `upvotePost()` method takes `postId` (`Int`) as an argument and returns an updated `Post` entity. For the reasons explained in the [resolvers](/graphql/resolvers-map) section, we have to explicitly set the expected type.
 
-If the mutation has to take an object as a parameter, we can create an input type.
+If the mutation needs to take an object as an argument, we can create an input type.
 
 ```typescript
 @InputType()
@@ -105,7 +105,7 @@ export class UpvotePostInput {
 
 > info **Hint** Both `@InputType()` and `@Field()` are imported from the `type-graphql` package.
 
-And then use it in the resolver class:
+We can then use this type in the resolver class:
 
 ```typescript
 @Mutation(returns => Post)

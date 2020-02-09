@@ -1,16 +1,16 @@
 ### Compression
 
-Compression can greatly decrease the size of the response body and hence increase the speed of a web app. Use the [compression](https://github.com/expressjs/compression) middleware to enable gzip compression.
+Compression can greatly decrease the size of the response body, thereby increasing the speed of a web app. Use the [compression](https://github.com/expressjs/compression) middleware package to enable gzip compression.
 
 #### Installation
 
-Firstly, install the required package:
+First install the required package:
 
 ```bash
 $ npm i --save compression
 ```
 
-Once the installation is completed, apply it as a global middleware.
+Once the installation is complete, apply the compression middleware as global middleware.
 
 ```typescript
 import * as compression from 'compression';
@@ -18,6 +18,6 @@ import * as compression from 'compression';
 app.use(compression());
 ```
 
-> info **Hint** If you work with `FastifyAdapter`, consider using [fastify-compress](https://github.com/fastify/fastify-compress) instead.
+> info **Hint** If using the `FastifyAdapter`, consider using [fastify-compress](https://github.com/fastify/fastify-compress) instead.
 
-For a **high-traffic** website in production, the best way to put compression in place is to implement it at a reverse proxy level. In that case, you do not need to use compression middleware.
+For **high-traffic** websites in production, it is strongly recommended to offload compression from the application server - typically in a reverse proxy (e.g., Nginx). In that case, you should not use compression middleware.
