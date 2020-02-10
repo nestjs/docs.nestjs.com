@@ -1,10 +1,10 @@
 ### Application context
 
-There are several ways of mounting the Nest application. You can create either a web app, microservice or just a Nest **application context**. Nest context is a wrapper around the Nest container, which holds all instantiated classes. We can grab an existing instance from within any imported module directly using application object. Hence, you can take advantage of the Nest framework everywhere, including **CRON** jobs and even build a **CLI** on top of it.
+There are several ways of mounting a Nest application. You can create a web app, a microservice or just a bare Nest **application context** (without any network listeners). The Nest application context is a wrapper around the Nest **IoC container**, which holds all instantiated classes. We can obtain a reference to any existing instance from within any imported module directly using the application context object. Thus, you can take advantage of the Nest framework anywhere, including, for example, scripted **CRON** jobs. You can even build a **CLI** on top of it.
 
 #### Getting started
 
-In order to create a Nest application context, we use the following syntax:
+To create a Nest application context, use the following construction:
 
 ```typescript
 @@filename()
@@ -15,7 +15,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Afterward, Nest allows you to pick any instance registered within Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of usable methods, which we want to call from within CRON job.
+The application context object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of methods that we want to call from within a CRON job.
 
 ```typescript
 @@filename()
@@ -23,13 +23,15 @@ const app = await NestFactory.create(ApplicationModule);
 const tasksService = app.get(TasksService);
 ```
 
-And that's it. To grab `TasksService` instance we had to use `get()` method. We didn't have to go through entire modules tree, the `get()` method act like a **query** that search for an instance in each registered module automatically. However, if you prefer a strict context checking, you can always switch to it using `strict: true` options object that has to be passed as the second argument of `get()` method. Then, you have to go through all modules to pick up a particular instance from the selected context.
+To access the `TasksService` instance we the use `get()` method. The `get()` method acts like a **query** that searches for an instance in each registered module. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
 
 ```typescript
 @@filename()
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
+
+Following is a summary of the methods available for retrieving instance references from the application context object.
 
 <table>
   <tr>
@@ -37,8 +39,7 @@ const tasksService = app.select(TasksModule).get(TasksService, { strict: true })
       <code>get()</code>
     </td>
     <td>
-      Retrieves an instance of either controller or provider (including guards, filters, and so on) available in the application
-      context.
+      Retrieves an instance of a controller or provider (including guards, filters, and so on) available in the application context.
     </td>
   </tr>
   <tr>
@@ -46,15 +47,14 @@ const tasksService = app.select(TasksModule).get(TasksService, { strict: true })
       <code>select()</code>
     </td>
     <td>
-      Navigates through the modules graph, for example, to pull out a specific instance from the selected module (used together with
-      enabled strict mode).
+      Navigates through the modules graph to pull out a specific instance from the selected module (used together with strict mode as described above).
     </td>
   </tr>
 </table>
 
-> info **Hint** In non-strict mode, the root module is selected by default. In order to select any other module, you need to go through entire modules tree (step by step).
+> info **Hint** In non-strict mode, the root module is selected by default. To select any other module, you need to navigate the modules graph manually, step by step.
 
-If you want the node application to close after the script finishes (useful for CRON jobs), add `await app.close()` to the end of your `bootstrap` function:
+If you want the node application to close after the script finishes (e.g., for a script running CRON jobs), add `await app.close()` to the end of your `bootstrap` function:
 
 ```typescript
 @@filename()
