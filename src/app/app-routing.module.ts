@@ -83,9 +83,13 @@ const routes: Routes = [
         data: { title: 'Custom decorators' },
       },
       {
-        path: 'application-context',
+        path: 'standalone-applications',
         component: ApplicationContextComponent,
-        data: { title: 'Application context' },
+        data: { title: 'Standalone applications' },
+      },
+      {
+        path: 'application-context',
+        redirectTo: 'standalone-applications',
       },
       {
         path: 'discover/companies',

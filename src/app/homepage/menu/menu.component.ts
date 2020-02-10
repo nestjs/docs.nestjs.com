@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -142,7 +147,7 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
-      title: 'Application context',
+      title: 'Standalone apps',
       isOpened: false,
       path: '/application-context',
     },
