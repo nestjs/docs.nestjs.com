@@ -1,10 +1,10 @@
-### Application context
+### Standalone applications
 
-There are several ways of mounting a Nest application. You can create a web app, a microservice or just a bare Nest **application context** (without any network listeners). The Nest application context is a wrapper around the Nest **IoC container**, which holds all instantiated classes. We can obtain a reference to any existing instance from within any imported module directly using the application context object. Thus, you can take advantage of the Nest framework anywhere, including, for example, scripted **CRON** jobs. You can even build a **CLI** on top of it.
+There are several ways of mounting a Nest application. You can create a web app, a microservice or just a bare Nest **standalone application** (without any network listeners). The Nest standalone application is a wrapper around the Nest **IoC container**, which holds all instantiated classes. We can obtain a reference to any existing instance from within any imported module directly using the standalone application object. Thus, you can take advantage of the Nest framework anywhere, including, for example, scripted **CRON** jobs. You can even build a **CLI** on top of it.
 
 #### Getting started
 
-To create a Nest application context, use the following construction:
+To create a Nest standalone application, use the following construction:
 
 ```typescript
 @@filename()
@@ -15,7 +15,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-The application context object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of methods that we want to call from within a CRON job.
+The standalone application object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of methods that we want to call from within a CRON job.
 
 ```typescript
 @@filename()
@@ -31,7 +31,7 @@ const app = await NestFactory.create(AppModule);
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
-Following is a summary of the methods available for retrieving instance references from the application context object.
+Following is a summary of the methods available for retrieving instance references from the standalone application object.
 
 <table>
   <tr>
