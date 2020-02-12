@@ -44,16 +44,16 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
     <td><code>protoPath</code></td>
     <td>
       Absolute (or relative to the root dir) path to the
-      <code>.proto</code> file. Required.
+      <code>.proto</code> file. Required
     </td>
   </tr>
   <tr>
     <td><code>url</code></td>
-    <td>Connection url.  String in the format <code>ip address/dns name:port</code> (for example, <code>'localhost:50051'</code>) defining the address/port on which the transporter establishes a connection.  Optional.  Defaults to <code>'localhost:5000'</code>.</td>
+    <td>Connection url.  String in the format <code>ip address/dns name:port</code> (for example, <code>'localhost:50051'</code>) defining the address/port on which the transporter establishes a connection.  Optional.  Defaults to <code>'localhost:5000'</code></td>
   </tr>
   <tr>
     <td><code>protoLoader</code></td>
-    <td>NPM package name for the utility to load <code>.proto</code> files.  Optional.  Defaults to <code>'@grpc/proto-loader'</code>.</td>
+    <td>NPM package name for the utility to load <code>.proto</code> files.  Optional.  Defaults to <code>'@grpc/proto-loader'</code></td>
   </tr>
   <tr>
     <td><code>loader</code></td>
@@ -64,7 +64,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
         rel="nofollow"
         target="_blank"
         >here</a
-      > for more details.
+      > for more details
     </td>
   </tr>
   <tr>
@@ -75,7 +75,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
         rel="nofollow"
         target="_blank"
         >Read more here</a
-      >.
+      >
     </td>
   </tr>
 </table>
