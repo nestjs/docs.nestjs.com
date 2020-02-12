@@ -677,6 +677,7 @@ To begin using it, we first install the required dependencies. In this chapter, 
 
 ```bash
 $ npm install --save @nestjs/sequelize sequelize sequelize-typescript mysql2
+$ npm install --save-dev @types/sequelize
 ```
 
 Once the installation process is complete, we can import the `SequelizeModule` into the root `AppModule`.
