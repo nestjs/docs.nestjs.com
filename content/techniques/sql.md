@@ -4,7 +4,7 @@ Nest is database agnostic, allowing you to easily integrate with any SQL or NoSQ
 
 You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](http://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)) and [TypeORM](https://github.com/typeorm/typeorm), to operate at a higher level of abstraction.
 
-For convenience, Nest also provides tight integration with TypeORM out-of-the box with `@nestjs/typeorm` and Sequelize with `@nestjs/sequelize`, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
+For convenience, Nest provides tight integration with TypeORM and Sequelize out-of-the-box with the `@nestjs/typeorm` and `@nestjs/sequelize` packages respectively, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
 
 ### TypeORM Integration
 
@@ -57,9 +57,11 @@ The `forRoot()` method supports all the configuration properties exposed by the 
   </tr>
   <tr>
     <td><code>keepConnectionAlive</code></td>
-    <td>If <code>true</code>, connection will not be closed on the application shutdown (default: <code>false</code>)</td>
+    <td>If <code>true</code>, connection will not be closed on application shutdown (default: <code>false</code>)</td>
   </tr>
 </table>
+
+> info **Hint** Learn more about the connection options [here](https://typeorm.io/#/connection-options).
 
 Alternatively, rather than passing a configuration object to `forRoot()`, we can create an `ormconfig.json` file in the project root directory.
 
@@ -76,10 +78,6 @@ Alternatively, rather than passing a configuration object to `forRoot()`, we can
 }
 ```
 
-> info **Hint** Learn more about the connection options [here](https://typeorm.io/#/connection-options).
-
-> warning **Warning** Static glob paths (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
-
 Then, we can call `forRoot()` without any options:
 
 ```typescript
@@ -93,7 +91,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-> warning **Warning** Notice that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any extra properties supported by the `forRoot()` method itself (e.g., `autoLoadEntities` and `retryDelay`) won't be applied.
+> warning **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
+
+> warning **Warning** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied.
 
 Once this is done, the TypeORM `Connection` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
 
@@ -123,9 +123,9 @@ export class AppModule {
 
 #### Repository pattern
 
-[TypeORM](https://github.com/typeorm/typeorm) supports the repository design pattern, so each entity has its own Repository. These repositories can be obtained from the database connection.
+[TypeORM](https://github.com/typeorm/typeorm) supports the **repository design pattern**, so each entity has its own repository. These repositories can be obtained from the database connection.
 
-To continue the example, we need at least one entity. We'll define the `User` entity.
+To continue the example, we need at least one entity. Let's define the `User` entity.
 
 ```typescript
 @@filename(user.entity)
@@ -147,11 +147,11 @@ export class User {
 }
 ```
 
-> info **Hint** Learn more about entities in the [official documentation](https://typeorm.io/#/entities).
+> info **Hint** Learn more about entities in the [TypeORM documentation](https://typeorm.io/#/entities).
 
-The `User` entity belongs to the `users` directory. This directory represents the `UsersModule`. It's your decision where to keep your model files. We recommend creating them near their **domain**, in the corresponding module directory.
+The `User` entity file sits in the `users` directory. This directory contains all files related to the `UsersModule`. You can decide where to keep your model files, however, we recommend creating them near their **domain**, in the corresponding module directory.
 
-To begin using `User` entity, we need to let TypeORM know about it by inserting it into the `entities` array (unless you use a static glob path):
+To begin using the `User` entity, we need to let TypeORM know about it by inserting it into the `entities` array in the module `forRoot()` method options (unless you use a static glob path):
 
 ```typescript
 @@filename(app.module)
@@ -176,7 +176,7 @@ import { User } from './users/user.entity';
 export class AppModule {}
 ```
 
-Let's have a look at the `UsersModule` now:
+Next, let's look at the `UsersModule`:
 
 ```typescript
 @@filename(users.module)
@@ -194,7 +194,7 @@ import { User } from './user.entity';
 export class UsersModule {}
 ```
 
-This module uses the `forFeature()` method to define which repositories are registered in the current scope. With that, we can inject the `UsersRepository` into the `UsersService` using the `@InjectRepository()` decorator:
+This module uses the `forFeature()` method to define which repositories are registered in the current scope. With that in place, we can inject the `UsersRepository` into the `UsersService` using the `@InjectRepository()` decorator:
 
 ```typescript
 @@filename(users.service)
@@ -285,26 +285,26 @@ export class UserHttpModule {}
 
 ### Relations
 
-Relationships are the established associations between two or more tables. Relationships are based on common fields from more than one table, often involving primary and foreign keys.
+Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
 
-There are essentially three types of relationships:
+There are three types of relations:
 
 <table>
   <tr>
     <td><code>One-to-one</code></td>
-    <td>Every row in the primary table has one and only one associated row in the foreign table</td>
+    <td>Every row in the primary table has one and only one associated row in the foreign table.  Use the <code>@OneToOne()</code> decorator to define this type of relation.</td>
   </tr>
   <tr>
-    <td><code>Many-to-one</code></td>
-    <td>Every row in the primary table has one or more related rows in the foreign table</td>
+    <td><code>One-to-many / Many-to-one</code></td>
+    <td>Every row in the primary table has one or more related rows in the foreign table. Use the <code>@OneToMany()</code> and <code>@ManyToOne()</code> decorators to define this type of relation.</td>
   </tr>
   <tr>
     <td><code>Many-to-many</code></td>
-    <td>Every row in the primary table has many related rows in the foreign table, and every record in the foreign table has many related rows in the primary table</td>
+    <td>Every row in the primary table has many related rows in the foreign table, and every record in the foreign table has many related rows in the primary table. Use the <code>@ManyToMany()</code> decorator to define this type of relation.</td>
   </tr>
 </table>
 
-To define relationships in entities, use corresponding **decorators**. For example, to define that every `User` can have multiple photos, use the `@OneToMany()` decorator.
+To define relations in entities, use the corresponding **decorators**. For example, to define that each `User` can have multiple photos, use the `@OneToMany()` decorator.
 
 ```typescript
 @@filename(user.entity)
@@ -330,13 +330,13 @@ export class User {
 }
 ```
 
-> info **Hint** To learn more about relations in TypeORM, visit the [official documentation](https://typeorm.io/#/relations).
+> info **Hint** To learn more about relations in TypeORM, visit the [TypeORM documentation](https://typeorm.io/#/relations).
 
 #### Auto-load entities
 
-Manually adding entities to the `entities` array of the connection options can be tedious. In addition, referencing entities from the root module is breaking domain boundaries and causes leaking implementation details to other parts of the application. Thus, to solve this issue, static glob paths can be used (e.g. `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`). However, glob paths are not supported by webpack so if you are building your application within a monorepo, you won't be able to use them.
+Manually adding entities to the `entities` array of the connection options can be tedious. In addition, referencing entities from the root module breaks application domain boundaries and causes leaking implementation details to other parts of the application. To solve this issue, static glob paths can be used (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`).
 
-To address this issue, an alternative solution is provided. To automatically load entities, set the `autoLoadEntities` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
+Note, however, that glob paths are not supported by webpack, so if you are building your application within a monorepo, you won't be able to use them. To address this issue, an alternative solution is provided. To automatically load entities, set the `autoLoadEntities` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
 
 ```typescript
 @@filename(app.module)
@@ -354,15 +354,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-Now, every entity registered through the `forFeature()` method will be automatically added to the `entities` array of the configuration object.
+With that option specified, every entity registered through the `forFeature()` method will be automatically added to the `entities` array of the configuration object.
 
-> warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but only referenced from the entity (relationship), won't be included.
+> warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but are only referenced from the entity (via a relationship), won't be included by way of the `autoLoadEntities` setting.
 
 #### Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
-There are many different strategies to handle [TypeORM transactions](https://typeorm.io/#/transactions). We recommend using the `QueryRunner` class because it gives a full control over the transaction.
+There are many different strategies to handle [TypeORM transactions](https://typeorm.io/#/transactions). We recommend using the `QueryRunner` class because it gives full control over the transaction.
 
 First, we need to inject the `Connection` object into a class in the normal way:
 
@@ -389,16 +389,16 @@ async createMany(users: User[]) {
 
     await queryRunner.commitTransaction();
   } catch (err) {
-    // since we have errors lets rollback changes we made
+    // since we have errors lets rollback the changes we made
     await queryRunner.rollbackTransaction();
   } finally {
-    // you need to release query runner which is manually created:
+    // you need to release a queryRunner which was manually instantiated
     await queryRunner.release();
   }
 }
 ```
 
-> info **Hint** Note that the `connection` is used only to create the `QueryRunner`. However, to test this class it would be necessary to mock the entire `Connection` object (which exposes several methods). Hence, it's recommended to create a helper factory class (e.g., `QueryRunnerFactory`) and define an interface with a limited set of methods required to maintain transactions. In this case, mocking these methods would become pretty straighforward.
+> info **Hint** Note that the `connection` is used only to create the `QueryRunner`. However, to test this class would require mocking the entire `Connection` object (which exposes several methods). Thus, we recommend using a helper factory class (e.g., `QueryRunnerFactory`) and defining an interface with a limited set of methods required to maintain transactions. This technique makes mocking these methods pretty straightforward.
 
 Alternatively, you can use the callback-style approach with the `transaction` method of the `Connection` object ([read more](https://typeorm.io/#/transactions/creating-and-using-transactions)).
 
@@ -411,7 +411,7 @@ async createMany(users: User[]) {
 }
 ```
 
-Using decorators to control the transaction (`@Transaction()` and `@TransactionManager`) is not recommended.
+Using decorators to control the transaction (`@Transaction()` and `@TransactionManager()`) is not recommended.
 
 #### Subscribers
 
@@ -462,13 +462,13 @@ import { UserSubscriber } from './user.subscriber';
 export class UsersModule {}
 ```
 
-> info **Hint** Learn more about the entity subscribers [here](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber).
+> info **Hint** Learn more about entity subscribers [here](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber).
 
 #### Migrations
 
 [Migrations](https://typeorm.io/#/migrations) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/#/migrations/creating-a-new-migration).
 
-Migration classes are separate from Nest application. Their lifecycle is maintained by TypeORM CLI. Therefore, you are not able to leverage the dependency injection and any other Nest specific feature. To learn more about migrations, follow the guide in the [official documentation](https://typeorm.io/#/migrations/creating-a-new-migration).
+Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the TypeORM CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [TypeORM documentation](https://typeorm.io/#/migrations/creating-a-new-migration).
 
 #### Multiple databases
 
@@ -506,7 +506,7 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-At this point, you have `User` and `Album` entities registered with their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` function and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
+At this point, you have `User` and `Album` entities registered with their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
 
 ```typescript
 @Module({
@@ -754,7 +754,7 @@ export class AppService {
 
 #### Models
 
-Sequelize implements the Active Record pattern. Hence, to interact with the database, you can use model classes directly. To continue the example, we need at least one model. We'll define the `User` model.
+Sequelize implements the Active Record pattern. With this pattern, you use model classes directly to interact with the database. To continue the example, we need at least one model. Let's define the `User` model.
 
 ```typescript
 @@filename(user.model)
@@ -775,9 +775,9 @@ export class User extends Model<User> {
 
 > info **Hint** Learn more about the available decorators [here](https://github.com/RobinBuschmann/sequelize-typescript#column).
 
-The `User` model belongs to the `users` directory. This directory represents the `UsersModule`. It's your decision where to keep your model files. We recommend creating them near their **domain**, in the corresponding module directory.
+The `User` model file sits in the `users` directory. This directory contains all files related to the `UsersModule`. You can decide where to keep your model files, however, we recommend creating them near their **domain**, in the corresponding module directory.
 
-To begin using `User` model, we need to let Sequelize know about it by inserting it into the `models` array:
+To begin using the `User` model, we need to let Sequelize know about it by inserting it into the `models` array in the module `forRoot()` method options:
 
 ```typescript
 @@filename(app.module)
@@ -801,7 +801,7 @@ import { User } from './users/user.model';
 export class AppModule {}
 ```
 
-Let's have a look at the `UsersModule` now:
+Next, let's look at the `UsersModule`:
 
 ```typescript
 @@filename(users.module)
@@ -819,7 +819,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-This module uses the `forFeature()` method to define which models are registered in the current scope. With that, we can inject the `UserMoel` into the `UsersService` using the `@InjectModel()` decorator:
+This module uses the `forFeature()` method to define which models are registered in the current scope. With that in place, we can inject the `UserModel` into the `UsersService` using the `@InjectModel()` decorator:
 
 ```typescript
 @@filename(users.service)
@@ -919,9 +919,9 @@ export class UserHttpModule {}
 
 ### Relations
 
-Relationships are the established associations between two or more tables. Relationships are based on common fields from more than one table, often involving primary and foreign keys.
+Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
 
-There are essentially three types of relationships:
+There are three types of relations:
 
 <table>
   <tr>
@@ -929,7 +929,7 @@ There are essentially three types of relationships:
     <td>Every row in the primary table has one and only one associated row in the foreign table</td>
   </tr>
   <tr>
-    <td><code>Many-to-one</code></td>
+    <td><code>One-to-many / Many-to-one</code></td>
     <td>Every row in the primary table has one or more related rows in the foreign table</td>
   </tr>
   <tr>
@@ -938,7 +938,7 @@ There are essentially three types of relationships:
   </tr>
 </table>
 
-To define relationships in entities, use corresponding **decorators**. For example, to define that every `User` can have multiple photos, use the `@HasMany()` decorator.
+To define relations in entities, use the corresponding **decorators**. For example, to define that each `User` can have multiple photos, use the `@HasMany()` decorator.
 
 ```typescript
 @@filename(user.entity)
@@ -965,7 +965,7 @@ export class User extends Model<User> {
 
 #### Auto-load models
 
-Manually adding models to the `models` array of the connection options can be tedious. In addition, referencing models from the root module is breaking domain boundaries and causes leaking implementation details to other parts of the application. To address this issue, an alternative solution is provided. To automatically load models, set the `autoLoadModels` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
+Manually adding models to the `models` array of the connection options can be tedious. In addition, referencing models from the root module breaks application domain boundaries and causes leaking implementation details to other parts of the application. To solve this issue, automatically load models by setting the `autoLoadModels` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
 
 ```typescript
 @@filename(app.module)
@@ -983,15 +983,15 @@ import { SequelizeModule } from '@nestjs/sequelize';
 export class AppModule {}
 ```
 
-Now, every entity registered through the `forFeature()` method will be automatically added to the `models` array of the configuration object.
+With that option specified, every model registered through the `forFeature()` method will be automatically added to the `models` array of the configuration object.
 
-> warning **Warning** Note that models that aren't registered through the `forFeature()` method, but only referenced from the model (association), won't be included.
+> warning **Warning** Note that models that aren't registered through the `forFeature()` method, but are only referenced from the model (via an association), won't be included.
 
 #### Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
-There are many different strategies to handle [Sequelize transactions](https://sequelize.org/v5/manual/transactions.html). Below we will show you a sample implementation of a managed transaction (auto-callback).
+There are many different strategies to handle [Sequelize transactions](https://sequelize.org/v5/manual/transactions.html). Below is a sample implementation of a managed transaction (auto-callback).
 
 First, we need to inject the `Sequelize` object into a class in the normal way:
 
@@ -1028,13 +1028,13 @@ async createMany() {
 }
 ```
 
-> info **Hint** Note that the `Sequelize` instance is used only to start the transaction. However, to test this class it would be necessary to mock the entire `Sequelize` object (which exposes several methods). Hence, it's recommended to create a helper factory class (e.g., `TransactionRunner`) and define an interface with a limited set of methods required to maintain transactions. In this case, mocking these methods would become pretty straighforward.
+> info **Hint** Note that the `Sequelize` instance is used only to start the transaction. However, to test this class would require mocking the entire `Sequelize` object (which exposes several methods). Thus, we recommend using a helper factory class (e.g., `TransactionRunner`) and defining an interface with a limited set of methods required to maintain transactions. This technique makes mocking these methods pretty straightforward.
 
 #### Migrations
 
 [Migrations](https://sequelize.org/v5/manual/migrations.html) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, Sequelize provides a dedicated [CLI](https://sequelize.org/v5/manual/migrations.html#the-cli).
 
-Migration classes are separate from Nest application. Their lifecycle is maintained by Sequelize CLI. Therefore, you are not able to leverage the dependency injection and any other Nest specific feature. To learn more about migrations, follow the guide in the [official documentation](https://sequelize.org/v5/manual/migrations.html#the-cli).
+Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the Sequelize CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [Sequelize documentation](https://sequelize.org/v5/manual/migrations.html#the-cli).
 
 #### Multiple databases
 
@@ -1072,7 +1072,7 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-At this point, you have `User` and `Album` models registered with their own connection. With this setup, you have to tell the `SequelizeModule.forFeature()` function and the `@InjectModel()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
+At this point, you have `User` and `Album` models registered with their own connection. With this setup, you have to tell the `SequelizeModule.forFeature()` method and the `@InjectModel()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
 
 ```typescript
 @Module({
@@ -1098,9 +1098,9 @@ export class AlbumsService {
 
 #### Testing
 
-When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the connection instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<ModelName>Model` token, where `EntityName` is the name of your entity class.
+When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on models that are pulled from the connection instance. How do we handle that? The solution is to create mock models. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered model is automatically represented by a `<ModelName>Model` token, where `ModelName` is the name of your model class.
 
-The `@nestjs/sequelize` package exposes the `getModelToken()` function which returns a prepared token based on a given entity.
+The `@nestjs/sequelize` package exposes the `getModelToken()` function which returns a prepared token based on a given model.
 
 ```typescript
 @Module({
@@ -1119,7 +1119,7 @@ Now a substitute `mockModel` will be used as the `UserModel`. Whenever any class
 
 #### Async configuration
 
-You may want to pass your repository module options asynchronously instead of statically. In this case, use the `forRootAsync()` method, which provides several ways to deal with async configuration.
+You may want to pass your `SequelizeModule` options asynchronously instead of statically. In this case, use the `forRootAsync()` method, which provides several ways to deal with async configuration.
 
 One approach is to use a factory function:
 
