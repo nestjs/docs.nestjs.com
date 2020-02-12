@@ -64,11 +64,11 @@ The second argument of the `createMicroservice()` method is an `options` object.
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
-    <td>Number of times to retry message (default: `0`)</td>
+    <td>Number of times to retry message (default: <code>0</code>)</td>
   </tr>
   <tr>
     <td><code>retryDelay</code></td>
-    <td>Delay between message retry attempts (ms) (default: `0`)</td>
+    <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
   </tr>
 </table>
 

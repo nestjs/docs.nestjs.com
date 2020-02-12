@@ -53,15 +53,15 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>noAck</code></td>
-    <td>If `false`, manual acknowledgment mode enabled</td>
+    <td>If <code>false</code>, manual acknowledgment mode enabled</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
-    <td>Additional queue options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue" rel="nofollow" target="_blank">here</a></td>
+    <td>Additional queue options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
   <tr>
     <td><code>socketOptions</code></td>
-    <td>Additional socket options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a></td>
+    <td>Additional socket options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
 </table>
 

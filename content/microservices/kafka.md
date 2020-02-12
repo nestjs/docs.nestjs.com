@@ -49,7 +49,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         rel="nofollow"
         target="blank"
         >here</a
-      >).</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>consumer</code></td>
@@ -59,7 +59,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         rel="nofollow"
         target="blank"
         >here</a
-      >).</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>run</code></td>
@@ -69,7 +69,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         rel="nofollow"
         target="blank"
         >here</a
-      >).</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>producer</code></td>
@@ -79,7 +79,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         rel="nofollow"
         target="blank"
         >here</a
-      >).</td>
+      >)</td>
   </tr>
   <tr>
     <td><code>send</code></td>
@@ -89,7 +89,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         rel="nofollow"
         target="blank"
         >here</a
-      >).</td>
+      >)</td>
   </tr>
 </table>
 

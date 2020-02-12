@@ -123,10 +123,6 @@ header {
     ul {
       display: none !important;
     }
-
-    .search-wrapper {
-      display: inline-block;
-    }
   }
 
   @include media(small) {
