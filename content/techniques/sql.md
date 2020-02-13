@@ -965,7 +965,7 @@ export class User extends Model<User> {
 
 #### Auto-load models
 
-Manually adding models to the `models` array of the connection options can be tedious. In addition, referencing models from the root module breaks application domain boundaries and causes leaking implementation details to other parts of the application. To solve this issue, automatically load models by setting the `autoLoadModels` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
+Manually adding models to the `models` array of the connection options can be tedious. In addition, referencing models from the root module breaks application domain boundaries and causes leaking implementation details to other parts of the application. To solve this issue, automatically load models by setting both `autoLoadModels` and `synchronize` properties of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
 
 ```typescript
 @@filename(app.module)
@@ -977,6 +977,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
     SequelizeModule.forRoot({
       ...
       autoLoadModels: true,
+      synchronize: true,
     }),
   ],
 })
