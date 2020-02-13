@@ -37,7 +37,7 @@ Note that we assumed above that the business logic has been moved to the `PostsS
 
 The last step is to add our mutation to the existing types definition.
 
-```java
+```graphql
 type Author {
   id: Int!
   firstName: String

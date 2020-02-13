@@ -6,7 +6,7 @@ Typically, you create a resolvers map manually. The `@nestjs/graphql` package, o
 
 As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we manually define our types in SDL (read [more](http://graphql.org/learn/schema/#type-language)).
 
-```java
+```graphql
 type Author {
   id: Int!
   firstName: String

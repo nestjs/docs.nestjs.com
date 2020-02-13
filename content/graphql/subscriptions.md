@@ -99,7 +99,7 @@ commentAdded() {
 
 The last step is to update the type definitions file.
 
-```java
+```graphql
 type Author {
   id: Int!
   firstName: String

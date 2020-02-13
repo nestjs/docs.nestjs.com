@@ -30,7 +30,7 @@ export class ApplicationModule {}
 
 Now we can use the `JSON` scalar in our type definitions:
 
-```java
+```graphql
 scalar JSON
 
 type Foo {
@@ -76,7 +76,7 @@ export class CommonModule {}
 
 Now we can use the `Date` scalar in type definitions.
 
-```java
+```graphql
 scalar Date
 ```
 

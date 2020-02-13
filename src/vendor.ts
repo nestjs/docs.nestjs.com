@@ -1,5 +1,6 @@
 import 'prismjs/prism';
 import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-graphql';
 
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/delay';

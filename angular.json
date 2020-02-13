@@ -18,8 +18,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": ["src/assets", "src/favicon.ico", "src/_redirects"],
-            "styles": ["src/styles.scss"],
-            "scripts": ["src/assets/js/prism.js"]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -73,7 +72,6 @@
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "scripts": ["src/assets/js/prism.js"],
             "styles": ["src/styles.scss"],
             "assets": ["src/assets", "src/favicon.ico"]
           }
