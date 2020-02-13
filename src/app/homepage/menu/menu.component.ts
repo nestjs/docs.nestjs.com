@@ -209,6 +209,10 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       path: '/support',
     },
+    {
+      title: 'T-Shirts and Accessories',
+      externalUrl: 'https://nestjs.threadless.com/',
+    },
   ];
 
   constructor(

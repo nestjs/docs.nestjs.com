@@ -377,3 +377,9 @@ header {
     transform: rotate(-45deg) translateY(3px);
   }
 }
+
+@media (max-width: 1300px) {
+  .shop-link {
+    display: none !important;
+  }
+}
