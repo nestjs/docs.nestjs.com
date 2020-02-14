@@ -1,10 +1,6 @@
 {
   "Header": [
     {
-      "logo": "https://nestjs.com/img/valor-software.png",
-      "url": "https://valor-software.com/"
-    },
-    {
       "logo": "/assets/logo/roche-logo.png",
       "url": "https://roche.com",
       "width": "90px"
@@ -26,6 +22,30 @@
       "logo": "/assets/logo/rewe.svg",
       "url": "https://rewe-digital.com/",
       "width": "180px"
+    },
+    {
+      "logo": "/assets/logo/decathlon.png",
+      "url": "https://www.decathlon.com/"
+    },
+    {
+      "logo": "/assets/logo/autodesk.png",
+      "url": "https://www.autodesk.com/"
+    },
+    {
+      "logo": "/assets/logo/neo4j.png",
+      "url": "https://www.neo4j.com/"
+    },
+    {
+      "logo": "/assets/logo/shipt.png",
+      "url": "https://www.shipt.com/"
+    },
+    {
+      "logo": "/assets/logo/sanofi.png",
+      "url": "https://www.sanofi.com/"
+    },
+    {
+      "logo": "https://nestjs.com/img/valor-software.png",
+      "url": "https://valor-software.com/"
     },
     {
       "logo": "/assets/logo/sitepen.svg",
@@ -58,6 +78,10 @@
       "logo": "/assets/logo/cultura-colectiva.png",
       "url": "https://culturacolectiva.com",
       "width": "90px"
+    },
+    {
+      "logo": "https://nestjs.com/img/trilon.png",
+      "url": "https://trilon.io"
     },
     {
       "logo": "/assets/logo/architectnow.png",
@@ -152,6 +176,9 @@
     "https://www.qingtui.cn/",
     "https://www.rosebayconsult.com/",
     "https://www.patrocinium.com/",
-    "https://creatorsdaily.com"
+    "https://creatorsdaily.com",
+    "https://autoscar.com.br",
+    "https://www.mediktiv.com",
+    "https://harmonize.health"
   ]
 }

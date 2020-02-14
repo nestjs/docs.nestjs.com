@@ -5,4 +5,5 @@ If you are using Nest and would you like to be listed here, see this [thread](ht
 We are willing to put your logo here!
 
 #### Companies
+
 According to our knowledge, all the following companies have built awesome projects on top of our framework:

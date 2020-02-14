@@ -12,7 +12,7 @@ Passport has a rich ecosystem of [strategies](http://www.passportjs.org/packages
 
 In this chapter, we'll implement a complete end-to-end authentication solution for a RESTful API server using these powerful and flexible modules. You can use the concepts described here to implement any Passport strategy to customize your authentication scheme. You can follow the steps in this chapter to build this complete example. You can find a repository with a completed sample app [here](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
 
-#### Authentication Requirements
+#### Authentication requirements
 
 Let's flesh out our requirements. For this use case, clients will start by authenticating with a username and password. Once authenticated, the server will issue a JWT that can be sent as a [bearer token in an authorization header](https://tools.ietf.org/html/rfc6750) on subsequent requests to prove authentication. We'll also create a protected route that is accessible only to requests that contain a valid JWT.
 
@@ -770,7 +770,7 @@ import { JwtStrategy } from './jwt.strategy';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
-    UsersModule
+    UsersModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
@@ -788,6 +788,7 @@ PassportModule.register({ session: true });
 
 You can also pass strategies an options object in their constructors to configure them.
 For the local strategy you can pass e.g.:
+
 ```typescript
 constructor(private readonly authService: AuthService) {
   super({
@@ -796,6 +797,7 @@ constructor(private readonly authService: AuthService) {
   });
 }
 ```
+
 Take a look at the official [Passport Website](http://www.passportjs.org/docs/oauth/) for property names.
 
 #### Named strategies
