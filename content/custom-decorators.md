@@ -108,7 +108,7 @@ Let's define a decorator that takes a property name as key, and returns the asso
 @@filename(user.decorator)
 import { createParamDecorator } from '@nestjs/common';
 
-export const User = createParamDecorator<string>((data: string, req) => {
+export const User = createParamDecorator((data: string, req) => {
   return data ? req.user && req.user[data] : req.user;
 });
 @@switch
@@ -136,7 +136,8 @@ async findOne(firstName) {
 ```
 
 You can use this same decorator with different keys to access different properties. If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
-> info **Hint** The `createParamDecorator<T>` is a generic in which `T` can be used to indicate the valid types of the data argument, if no type T is set it will assume `any`;
+
+> Info **Hint** For typescript users, note that `createParamDecorator<T>()` is a generic. This means you can explicitly enforce type safety, for example `createParamDecorator<string>((data, req) => ...)`. Alternatively, specify a parameter type in the factory function, for example `createParamDecorator((data: string, req) => ...)`. If you omit both, the type for `data` will be `any`.
 
 #### Working with pipes
 
@@ -168,7 +169,7 @@ export function Auth(...roles: Role[]) {
     SetMetadata('roles', roles),
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Unauthorized"' })
+    ApiUnauthorizedResponse({ description: 'Unauthorized"' }),
   );
 }
 ```
