@@ -169,7 +169,7 @@ export function Auth(...roles: Role[]) {
     SetMetadata('roles', roles),
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Unauthorized"' }),
+    ApiUnauthorizedResponse({ description: 'Unauthorized"' })
   );
 }
 ```
