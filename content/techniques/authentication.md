@@ -314,6 +314,8 @@ The answer is straightforward: by using another, slightly different type of Guar
 
 The second case enumerated above (logged in user) simply relies on the standard type of Guard we already discussed to enable access to protected routes for logged in users.
 
+<app-banner-courses></app-banner-courses>
+
 #### Login route
 
 With the strategy in place, we can now implement a bare-bones `/auth/login` route, and apply the built-in Guard to initiate the passport-local flow.
@@ -673,6 +675,8 @@ export class AuthModule {}
 ```
 
 By importing the same secret used when we signed the JWT, we ensure that the **verify** phase performed by Passport, and the **sign** phase performed in our AuthService, use a common secret.
+
+<app-banner-enterprise></app-banner-enterprise>
 
 #### Implement protected route and JWT strategy guards
 

@@ -147,7 +147,7 @@
     font-size: 280px;
   }
   .newsletter-form .form-control {
-    width: 100%;
     max-width: 400px;
+    width: calc(100% - 10px);
   }
 }

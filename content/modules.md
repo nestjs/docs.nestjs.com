@@ -111,6 +111,8 @@ export class CatsModule {}
 
 Now any module that imports the `CatsModule` has access to the `CatsService` and will share the same instance with all other modules that import it as well.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Module re-exporting
 
 As seen above, Modules can export their internal providers. In addition, they can re-export modules that they import. In the example below, the `CommonModule` is both imported into **and** exported from the `CoreModule`, making it available for other modules which import this one.

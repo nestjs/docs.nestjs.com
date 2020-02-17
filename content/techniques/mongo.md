@@ -280,6 +280,8 @@ export class CatsModule {}
 
 In this example, a hardcoded `catModel` (object instance) will be provided whenever any consumer injects a `Model<Cat>` using an `@InjectModel()` decorator.
 
+<app-banner-courses></app-banner-courses>
+
 #### Async configuration
 
 When you need to pass module options asynchronously instead of statically, use the `forRootAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.

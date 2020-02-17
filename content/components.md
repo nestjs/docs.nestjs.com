@@ -123,6 +123,8 @@ constructor(private readonly catsService: CatsService) {}
 
 Providers normally have a lifetime ("scope") synchronized with the application lifecycle. When the application is bootstrapped, every dependency must be resolved, and therefore every provider has to be instantiated. Similarly, when the application shuts down, each provider will be destroyed. However, there are ways to make your provider lifetime **request-scoped** as well. You can read more about these techniques [here](/fundamentals/injection-scopes).
 
+<app-banner-courses></app-banner-courses>
+
 #### Custom providers
 
 Nest has a built-in inversion of control ("IoC") container that resolves relationships between providers. This feature underlies the dependency injection feature described above, but is in fact far more powerful than what we've described so far. The `@Injectable()` decorator is only the tip of the iceberg, and is not the only way to define providers. In fact, you can use plain values, classes, and either asynchronous or synchronous factories. More examples are provided [here](/fundamentals/dependency-injection).
@@ -139,7 +141,7 @@ import { Injectable, Optional, Inject } from '@nestjs/common';
 @Injectable()
 export class HttpService<T> {
   constructor(
-    @Optional() @Inject('HTTP_OPTIONS') private readonly httpClient: T
+    @Optional() @Inject('HTTP_OPTIONS') private readonly httpClient: T,
   ) {}
 }
 ```

@@ -20,6 +20,8 @@ The syntax for this is to use `async/await` with the `useFactory` syntax. The fa
 
 Asynchronous providers are injected to other components by their tokens, like any other provider. In the example above, you would use the construct `@Inject('ASYNC_CONNECTION')`.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Example
 
 [The TypeORM recipe](/recipes/sql-typeorm) has a more substantial example of an asynchronous provider.

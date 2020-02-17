@@ -153,6 +153,8 @@ handleInterval() {}
 
 The <a href="techniques/task-scheduling#dynamic-intervals">Dynamic API</a> also enables **creating** dynamic intervals, where the interval's properties are defined at runtime, and **listing and deleting** them.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Declarative timeouts
 
 To declare that a method should run (once) at a specified timeout, prefix the method definition with the `@Timeout()` decorator. Pass the relative time offset (in milliseconds), from application startup, to the decorator as shown below:
@@ -215,7 +217,7 @@ The `getCronJob()` method returns the named cron job. The returned `CronJob` obj
 - `lastDate()` - returns a string representation of the last date a job executed
 - `nextDates(count: number)` - returns an array (size `count`) of `moment` objects representing upcoming job execution dates.
 
-> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form. 
+> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form.
 
 **Create** a new cron job dynamically using the `SchedulerRegistry.addCronJob()` method, as follows:
 
@@ -295,7 +297,7 @@ addInterval(name: string, seconds: string) {
 ```
 
 In this code, we create a standard JavaScript interval, then pass it to the `ScheduleRegistry.addInterval()` method.
-That method takes two arguments: a name for the interval, and the interval itself. 
+That method takes two arguments: a name for the interval, and the interval itself.
 
 **Delete** a named interval using the `SchedulerRegistry.deleteInterval()` method, as follows:
 
@@ -344,7 +346,7 @@ addTimeout(name: string, seconds: string) {
 ```
 
 In this code, we create a standard JavaScript timeout, then pass it to the `ScheduleRegistry.addTimeout()` method.
-That method takes two arguments: a name for the timeout, and the timeout itself. 
+That method takes two arguments: a name for the timeout, and the timeout itself.
 
 **Delete** a named timeout using the `SchedulerRegistry.deleteTimeout()` method, as follows:
 

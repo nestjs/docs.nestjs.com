@@ -59,9 +59,11 @@ export class ApplicationModule {}
 
 As mentioned, these options will be forwarded to the `ApolloServer` constructor.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Playground
 
-The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the GraphQL server itself. With your application running in the background, open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration).  You should see the GraphQL playground, as shown below.
+The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the GraphQL server itself. With your application running in the background, open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You should see the GraphQL playground, as shown below.
 
 <figure>
   <img src="/assets/playground.png" alt="" />

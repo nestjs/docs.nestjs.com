@@ -67,6 +67,8 @@ The challenge is that the configuration module itself, since it's generic (simil
 
 In other words, dynamic modules provide an API for importing one module into another, and customizing the properties and behavior of that module when it is imported, as opposed to using the static bindings we've seen so far.
 
+<app-banner-shop></app-banner-shop>
+
 #### Config module example
 
 We'll be using the basic version of the example code from the [configuration chapter](https://docs.nestjs.com/techniques/configuration#service) for this section. The completed version as of the end of this chapter is available as a working [example here](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).

@@ -109,7 +109,7 @@ export class MenuComponent implements OnInit {
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
         {
-          title: 'Tooling',
+          title: 'Other features',
           path: '/graphql/tooling',
         },
       ],

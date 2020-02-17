@@ -213,6 +213,8 @@ server: Server;
 
 Nest will automatically assign the server instance to this property once it is ready to use.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/02-gateways).

@@ -89,7 +89,7 @@ Error messages can be helpful to explain what was incorrect in a request. Howeve
 app.useGlobalPipes(
   new ValidationPipe({
     disableErrorMessages: true,
-  })
+  }),
 );
 ```
 
@@ -103,13 +103,15 @@ Our `ValidationPipe` can also filter out properties that should not be received 
 app.useGlobalPipes(
   new ValidationPipe({
     whitelist: true,
-  })
+  }),
 );
 ```
 
 When set to true, this will automatically remove non-whitelisted properties (those without any decorator in the validation class).
 
 Alternatively, you can stop the request from processing when non-whitelisted properties are present, and return an error response to the user. To enable this, set the `forbidNonWhitelisted` option property to `true`, in combination with setting `whitelist` to `true`.
+
+<app-banner-courses></app-banner-courses>
 
 #### Transform payload objects
 
@@ -119,7 +121,7 @@ Payloads coming in over the network are plain JavaScript objects. The `Validatio
 app.useGlobalPipes(
   new ValidationPipe({
     transform: true,
-  })
+  }),
 );
 ```
 

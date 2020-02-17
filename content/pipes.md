@@ -126,6 +126,8 @@ We want to ensure that any incoming request to the create method contains a vali
 
 It turns out that this is a case ideally suited for a **Pipe**. So let's go ahead and build one.
 
+<app-banner-courses></app-banner-courses>
+
 #### Object schema validation
 
 There are several approaches available for object validation. One common approach is to use **schema-based** validation. The [Joi](https://github.com/hapijs/joi) library allows you to create schemas in a pretty straightforward way, with a readable API. Let's look at a pipe that makes use of Joi-based schemas.
@@ -142,7 +144,6 @@ In the code sample below, we create a simple class that takes a schema as a `con
 As noted earlier, a **validation pipe** either returns the value unchanged, or throws an exception.
 
 In the next section, you'll see how we supply the appropriate schema for a given controller method using the `@UsePipes()` decorator.
-
 
 ```typescript
 @@filename()

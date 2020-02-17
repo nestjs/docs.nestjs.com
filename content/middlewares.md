@@ -180,12 +180,14 @@ consumer
   .apply(LoggerMiddleware)
   .exclude(
     { path: 'cats', method: RequestMethod.GET },
-    { path: 'cats', method: RequestMethod.POST }
+    { path: 'cats', method: RequestMethod.POST },
   )
   .forRoutes(CatsController);
 ```
 
 With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the two passed to the `exclude()` method. Please note that the `exclude()` method **does not work** with functional middleware (middleware defined in a function rather than in a class; see below for more details). In addition, this method doesn't exclude paths from more generic routes (e.g., wildcards). If you need that level of control, you should put your paths-restriction logic directly into the middleware and, for example, access the request's URL to conditionally apply the middleware logic.
+
+<app-banner-shop></app-banner-shop>
 
 #### Functional middleware
 

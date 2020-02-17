@@ -53,10 +53,7 @@ By default, the JSON response body contains two properties:
 - `message`: a short description of the HTTP error based on the `status`
 
 To override just the message portion of the JSON response body, supply a string
-in the `response` argument.
-
-To override the entire JSON response body, pass an object in the `response` argument.
-Nest will serialize the object and return it as the JSON response body.
+in the `response` argument. To override the entire JSON response body, pass an object in the `response` argument. Nest will serialize the object and return it as the JSON response body.
 
 The second constructor argument - `status` - should be a valid HTTP status code.
 Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
@@ -186,6 +183,8 @@ The `@Catch(HttpException)` decorator binds the required metadata to the excepti
 Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a powerful utility object that we'll examine further in the [execution context chapter](/fundamentals/execution-context)\*. In this code sample, we use it to obtain a reference to the `Request` and `Response` objects that are being passed to the original request handler (in the controller where the exception originates). In this code sample, we've used some helper methods on `ArgumentsHost` to get the desired `Request` and `Response` objects. Learn more about `ArgumentsHost` [here](/fundamentals/execution-context).
 
 \*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and WebSockets). In the execution context chapter we'll see how we can access the appropriate <a href="https://docs.nestjs.com/fundamentals/execution-context#host-methods">underlying arguments</a> for **any** execution context with the power of `ArgumentsHost` and its helper functions. This will allow us to write generic exception filters that operate across all contexts.
+
+<app-banner-courses></app-banner-courses>
 
 #### Binding filters
 

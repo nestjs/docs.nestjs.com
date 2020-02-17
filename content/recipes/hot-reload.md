@@ -10,19 +10,20 @@ If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the confi
 
 #### Installation
 
-First install the required package:
+First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack-node-externals
+$ npm i --save-dev webpack-node-externals start-server-webpack-plugin
 ```
 
 #### Configuration
 
-Once the installation is complete, create a `webpack.config.js` file in the root directory of your application.
+Once the installation is complete, create a `webpack-hmr.config.js` file in the root directory of your application.
 
 ```typescript
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const StartServerPlugin = require('start-server-webpack-plugin');
 
 module.exports = function(options) {
   return {
@@ -38,6 +39,7 @@ module.exports = function(options) {
       ...options.plugins,
       new webpack.HotModuleReplacementPlugin(),
       new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
+      new StartServerPlugin({ name: 'main.js' }),
     ],
   };
 };
@@ -64,23 +66,16 @@ async function bootstrap() {
 bootstrap();
 ```
 
-To simplify the execution process, add two scripts to your `package.json` file.
+To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"build": "nest build --watch --webpack"
-"start": "node dist/main",
+"start:dev": "nest build --watch --webpack --webpackPath webpack-hmr.config.js"
 ```
 
 Now simply open your command line and run the following command:
 
 ```bash
-$ npm run build
-```
-
-Once webpack has started **watching files**, run the following command in a separate command line window:
-
-```bash
-$ npm run start
+$ npm run start:dev
 ```
 
 ### Without CLI
@@ -92,7 +87,7 @@ If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the c
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader
+$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader start-server-webpack-plugin
 ```
 
 #### Configuration
@@ -103,6 +98,7 @@ Once the installation is complete, create a `webpack.config.js` file in the root
 const webpack = require('webpack');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const StartServerPlugin = require('start-server-webpack-plugin');
 
 module.exports = {
   entry: ['webpack/hot/poll?100', './src/main.ts'],
@@ -126,7 +122,10 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new StartServerPlugin({ name: 'main.js' }),
+  ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'server.js',
@@ -155,23 +154,16 @@ async function bootstrap() {
 bootstrap();
 ```
 
-To simplify the execution process, add two scripts to your `package.json` file.
+To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"webpack": "webpack --config webpack.config.js"
-"start": "node dist/server",
+"start:dev": "webpack --config webpack.config.js"
 ```
 
 Now simply open your command line and run the following command:
 
 ```bash
-$ npm run webpack
-```
-
-Once webpack has started **watching files**, run the following command in a separate command line window:
-
-```bash
-$ npm run start
+$ npm run start:dev
 ```
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).

@@ -171,6 +171,8 @@ names: string[];
 
 Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Circular dependencies
 
 When you have circular dependencies between classes, use a lazy function to provide the `SwaggerModule` with type information:
@@ -471,6 +473,8 @@ const options = new DocumentBuilder().addSecurity('basic', {
 
 Some of the most popular authentication techniques are predefined (e.g. `basic` and `bearer`) and therefore you don't have to define security mechanisms manually as shown above.
 
+<app-banner-courses></app-banner-courses>
+
 #### Basic authentication
 
 To enable basic authentication, use `@ApiBasicAuth()`.
@@ -716,6 +720,8 @@ The following methods have been added:
 - `addBasicAuth`
 - `addSecurity`
 - `addSecurityRequirements`
+
+<app-banner-shop></app-banner-shop>
 
 #### Example
 

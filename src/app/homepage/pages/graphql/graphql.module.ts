@@ -43,7 +43,7 @@ const routes: Routes = [
   {
     path: 'tooling',
     component: GuardsInterceptorsComponent,
-    data: { title: 'GraphQL - Tooling' },
+    data: { title: 'GraphQL - Other features' },
   },
   {
     path: 'schema-stitching',

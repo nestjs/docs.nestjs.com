@@ -65,6 +65,8 @@ This method will return a 200 status code and the associated response, which in 
 
 > warning **Warning** You cannot use both approaches at the same time. Nest detects when the handler is using either `@Res()` or `@Next()`, indicating you have chosen the library-specific option. If both approaches are used at the same time, the Standard approach is **automatically disabled** for this single route and will no longer work as expected.
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Request object
 
 Handlers often need access to the client **request** details. Nest provides access to the [request object](http://expressjs.com/en/api.html#req) of the underlying platform (Express by default). We can access the request object by instructing Nest to inject it by adding the `@Req()` decorator to the handler's signature.
@@ -377,9 +379,9 @@ Let's create the `CreateCatDto` class:
 ```typescript
 @@filename(create-cat.dto)
 export class CreateCatDto {
-  readonly name: string;
-  readonly age: number;
-  readonly breed: string;
+  name: string;
+  age: number;
+  breed: string;
 }
 ```
 
@@ -494,6 +496,8 @@ export class AppModule {}
 ```
 
 We attached the metadata to the module class using the `@Module()` decorator, and Nest can now easily reflect which controllers have to be mounted.
+
+<app-banner-shop></app-banner-shop>
 
 #### Appendix: Library-specific approach
 

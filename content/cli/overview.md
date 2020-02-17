@@ -4,7 +4,7 @@ The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface t
 
 #### Installation
 
-**Note**: In this guide we describe using [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install packages, including the Nest CLI.  Other package managers may be used at your discretion.  With npm, you have several options available for managing how your OS command line resolves the location of the `nest` CLI binary file.  Here, we describe installing the `nest` binary globally using the `-g` option.  This provides a measure of convenience, and is the approach we assume throughout the documentation.  Note that installing **any** `npm` package globally leaves the responsibility of ensuring they're running the correct version up to the user.  It also means that if you have different projects, each will run the **same** version of the CLI.  A reasonable alternative is to use the [npx](https://github.com/npm/npx) program (or similar features with other package managers) to ensure that you run a **managed version** of the Nest CLI.  We recommend you consult the [npx documentation](https://github.com/npm/npx) and/or your DevOps support staff for more information.
+**Note**: In this guide we describe using [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install packages, including the Nest CLI. Other package managers may be used at your discretion. With npm, you have several options available for managing how your OS command line resolves the location of the `nest` CLI binary file. Here, we describe installing the `nest` binary globally using the `-g` option. This provides a measure of convenience, and is the approach we assume throughout the documentation. Note that installing **any** `npm` package globally leaves the responsibility of ensuring they're running the correct version up to the user. It also means that if you have different projects, each will run the **same** version of the CLI. A reasonable alternative is to use the [npx](https://github.com/npm/npx) program (or similar features with other package managers) to ensure that you run a **managed version** of the Nest CLI. We recommend you consult the [npx documentation](https://github.com/npm/npx) and/or your DevOps support staff for more information.
 
 Install the CLI globally using the `npm install -g` command (see the **Note** above for details about global installs).
 
@@ -55,6 +55,8 @@ You can use either mode to manage multiple projects. Here's a quick summary of t
 | Libraries                                            | Managed manually, usually via npm packaging                        | Built-in support, including path management and bundling   |
 
 Read the sections on [Workspaces](/cli/monorepo) and [Libraries](/cli/libraries) for more detailed information to help you decide which mode is most suitable for you.
+
+<app-banner-courses></app-banner-courses>
 
 ### CLI command syntax
 

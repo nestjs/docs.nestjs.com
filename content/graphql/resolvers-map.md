@@ -255,6 +255,8 @@ class AuthorArgs {
 
 You may also notice that such classes play very well with the `ValidationPipe` (read [more](/techniques/validation)).
 
+<app-banner-shop></app-banner-shop>
+
 #### Decorators
 
 You may note that we refer to the following arguments using dedicated decorators. Below is a comparison of the provided decorators and the plain Apollo parameters they represent.

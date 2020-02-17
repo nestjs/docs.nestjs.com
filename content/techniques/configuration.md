@@ -106,6 +106,8 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Using the `ConfigService`
 
 To access configuration values from our `ConfigService`, we first need to inject `ConfigService`. As with any provider, we need to import its containing module - the `ConfigModule` - into the module that will use it (unless you set the `isGlobal` property in the options object passed to the `ConfigModule.forRoot()` method to `true`). Import it into a feature module as shown below.
@@ -271,6 +273,8 @@ The `@nestjs/config` package uses default settings of:
 - `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
 
 Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
+
+<app-banner-shop></app-banner-shop>
 
 #### Custom getter functions
 
