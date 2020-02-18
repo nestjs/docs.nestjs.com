@@ -137,7 +137,7 @@ async findOne(firstName) {
 
 You can use this same decorator with different keys to access different properties. If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
 
-> Info **Hint** For typescript users, note that `createParamDecorator<T>()` is a generic. This means you can explicitly enforce type safety, for example `createParamDecorator<string>((data, req) => ...)`. Alternatively, specify a parameter type in the factory function, for example `createParamDecorator((data: string, req) => ...)`. If you omit both, the type for `data` will be `any`.
+> info **Hint** For TypeScript users, note that `createParamDecorator<T>()` is a generic. This means you can explicitly enforce type safety, for example `createParamDecorator<string>((data, req) => ...)`. Alternatively, specify a parameter type in the factory function, for example `createParamDecorator((data: string, req) => ...)`. If you omit both, the type for `data` will be `any`.
 
 #### Working with pipes
 
