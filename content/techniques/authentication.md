@@ -362,7 +362,7 @@ $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "passwo
 $ # result -> {"userId":1,"username":"john"}
 ```
 
-While this works, it's not good practice to pass the strategy name directly to the `AuthGuard()`. Instead, create your own class, as shown below:
+While this works, passing the strategy name directly to the `AuthGuard()` introduces magic strings in the codebase. Instead, we recommend creating your own class, as shown below:
 
 ```typescript
 @@filename(auth/local-auth.guard)
@@ -697,7 +697,7 @@ export class AuthModule {}
 
 By importing the same secret used when we signed the JWT, we ensure that the **verify** phase performed by Passport, and the **sign** phase performed in our AuthService, use a common secret.
 
-Finally, we define the `JwtAuthGuard` class which extends the `AuthGuard` to avoid using magic strings in the codebase.
+Finally, we define the `JwtAuthGuard` class which extends the built-in `AuthGuard`:
 
 ```typescript
 @@filename(auth/jwt-auth.guard)
@@ -822,7 +822,7 @@ The passport API is based on registering strategies to the global instance of th
 
 However, there are ways to dynamically resolve request-scoped providers within the strategy. For this, we leverage the [module reference](/fundamentals/module-ref) feature.
 
-First, open the `local.strategy.ts` file and inject the `ModuleRef` using a normal way:
+First, open the `local.strategy.ts` file and inject the `ModuleRef` in the normal way:
 
 ```typescript
 constructor(private readonly moduleRef: ModuleRef) {
@@ -834,15 +834,9 @@ constructor(private readonly moduleRef: ModuleRef) {
 
 > info **Hint** The `ModuleRef` class is imported from the `@nestjs/core` package.
 
-Next, make sure to set the `passReqToCallback` configuration property to `true`.
+Be sure to set the `passReqToCallback` configuration property to `true`, as shown above.
 
-```typescript
-super({
-  passReqToCallback: true,
-});
-```
-
-Request instance is required to obtain the current context identifier instead of generating a new one.
+In the next step, the request instance will be used to obtain the current context identifier, instead of generating a new one (read more about request context [here](/fundamentals/module-ref#getting-current-sub-tree)).
 
 Now, inside the `validate()` method of the `LocalStrategy` class, use the `getByRequest()` method of the `ContextIdFactory` class to create a context id based on the request object, and pass this to the `resolve()` call:
 
