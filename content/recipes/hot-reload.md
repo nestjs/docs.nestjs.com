@@ -124,7 +124,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new StartServerPlugin({ name: 'main.js' }),
+    new StartServerPlugin({ name: 'server.js' }),
   ],
   output: {
     path: path.join(__dirname, 'dist'),
