@@ -193,7 +193,7 @@ CatInformation:
 The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Check the following snippet out: 
 
 ```typescript
-// client-side code
+// generated client-side code
 export class CatDetail {
   ...
    breed: CatDetailEnum;
