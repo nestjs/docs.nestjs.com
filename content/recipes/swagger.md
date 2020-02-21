@@ -546,6 +546,14 @@ class FileUploadDto {
 }
 ```
 
+#### Extensions
+
+To add an Extension to a request use the `@ApiExtension()` decorator. The extension name must be prefixed with `x-`.
+
+```typescript
+@ApiExtension('x-foo', { hello: 'world' })
+```
+
 #### Decorators
 
 All of the available OpenAPI decorators have an `Api` prefix to distinguish them from the core decorators. Below is a full list of the exported decorators along with a designation of the level at which the decorator may be applied.
@@ -570,6 +578,7 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiProperty()`         | Model               |
 | `@ApiPropertyOptional()` | Model               |
 | `@ApiHideProperty()`     | Model               |
+| `@ApiExtension()`        | Method              |
 
 #### Plugin
 
