@@ -16,8 +16,6 @@ If you use fastify, install `fastify-swagger` instead of `swagger-ui-express`:
 $ npm install --save @nestjs/swagger fastify-swagger
 ```
 
-> warning **Warning** The techniques in this section require TypeScript, and are not available if your app is written using vanilla JavaScript.
-
 #### Bootstrap
 
 Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
