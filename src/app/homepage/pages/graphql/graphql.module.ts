@@ -14,27 +14,27 @@ const routes: Routes = [
   {
     path: 'quick-start',
     component: QuickStartComponent,
-    data: { title: 'GraphQL - Quick Start' },
+    data: { title: 'GraphQL + TypeScript' },
   },
   {
     path: 'resolvers-map',
     component: ResolversMapComponent,
-    data: { title: 'GraphQL - Resolvers Map' },
+    data: { title: 'GraphQL + TypeScript - Resolvers Map' },
   },
   {
     path: 'mutations',
     component: MutationsComponent,
-    data: { title: 'GraphQL - Mutations' },
+    data: { title: 'GraphQL + TypeScript - Mutations' },
   },
   {
     path: 'scalars',
     component: ScalarsComponent,
-    data: { title: 'GraphQL - Scalars' },
+    data: { title: 'GraphQL + TypeScript - Scalars' },
   },
   {
     path: 'subscriptions',
     component: SubscriptionsComponent,
-    data: { title: 'GraphQL - Subscriptions' },
+    data: { title: 'GraphQL + TypeScript - Subscriptions' },
   },
   {
     path: 'guards-interceptors',
@@ -43,7 +43,7 @@ const routes: Routes = [
   {
     path: 'tooling',
     component: GuardsInterceptorsComponent,
-    data: { title: 'GraphQL - Other features' },
+    data: { title: 'GraphQL + TypeScript - Other features' },
   },
   {
     path: 'schema-stitching',

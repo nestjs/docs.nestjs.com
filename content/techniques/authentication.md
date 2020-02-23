@@ -362,6 +362,27 @@ $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "passwo
 $ # result -> {"userId":1,"username":"john"}
 ```
 
+While this works, passing the strategy name directly to the `AuthGuard()` introduces magic strings in the codebase. Instead, we recommend creating your own class, as shown below:
+
+```typescript
+@@filename(auth/local-auth.guard)
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class LocalAuthGuard extends AuthGuard('local') {}
+```
+
+Now, we can update the `/auth/login` route handler and use the `LocalAuthGuard` instead:
+
+```typescript
+@UseGuards(LocalAuthGuard)
+@Post('auth/login')
+async login(@Request() req) {
+  return req.user;
+}
+```
+
 #### JWT functionality
 
 We're ready to move on to the JWT portion of our auth system. Let's review and refine our requirements:
@@ -524,14 +545,14 @@ Now we can update the `/auth/login` route to return a JWT.
 ```typescript
 @@filename(app.controller)
 import { Controller, Request, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {
     return this.authService.login(req.user);
@@ -539,14 +560,14 @@ export class AppController {
 }
 @@switch
 import { Controller, Bind, Request, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   @Bind(Req())
   async login(req) {
@@ -676,7 +697,16 @@ export class AuthModule {}
 
 By importing the same secret used when we signed the JWT, we ensure that the **verify** phase performed by Passport, and the **sign** phase performed in our AuthService, use a common secret.
 
-<app-banner-enterprise></app-banner-enterprise>
+Finally, we define the `JwtAuthGuard` class which extends the built-in `AuthGuard`:
+
+```typescript
+@@filename(auth/jwt-auth.guard)
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}
+```
 
 #### Implement protected route and JWT strategy guards
 
@@ -687,20 +717,21 @@ Open the `app.controller.ts` file and update it as shown below:
 ```typescript
 @@filename(app.controller)
 import { Controller, Get, Request, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
@@ -708,21 +739,22 @@ export class AppController {
 }
 @@switch
 import { Controller, Bind, Get, Request, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   @Bind(Req())
   async login(req) {
     return this.authService.login(req.user);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   @Bind(Req())
   getProfile(req) {
@@ -753,6 +785,8 @@ Note that in the `AuthModule`, we configured the JWT to have an expiration of `6
 
 We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server. You can find a complete version of the code in this chapter [here]().
 
+<app-banner-enterprise></app-banner-enterprise>
+
 #### Default strategy
 
 In our `AppController`, we pass the name of the strategy in the `@AuthGuard()` decorator. We need to do this because we've introduced **two** Passport strategies (passport-local and passport-jwt), both of which supply implementations of various Passport components. Passing the name disambiguates which implementation we're linking to. When multiple strategies are included in an application, we can declare a default strategy so that we no longer have to pass the name in the `@AuthGuard` decorator if using that default strategy. Here's how to register a default strategy when importing the `PassportModule`. This code would go in the `AuthModule`:
@@ -780,6 +814,75 @@ import { JwtStrategy } from './jwt.strategy';
   exports: [AuthService],
 })
 export class AuthModule {}
+```
+
+#### Request-scoped strategies
+
+The passport API is based on registering strategies to the global instance of the library. Therefore strategies are not designed to have request-dependent options or to be dynamically instantiated per request (read more about the [request-scoped](/fundamentals/injection-scopes) providers). When you configure your strategy to be request-scoped, Nest will never instantiate it since it's not tied to any specific route. There is no physical way to determine which "request-scoped" strategies should be executed per request.
+
+However, there are ways to dynamically resolve request-scoped providers within the strategy. For this, we leverage the [module reference](/fundamentals/module-ref) feature.
+
+First, open the `local.strategy.ts` file and inject the `ModuleRef` in the normal way:
+
+```typescript
+constructor(private readonly moduleRef: ModuleRef) {
+  super({
+    passReqToCallback: true,
+  });
+}
+```
+
+> info **Hint** The `ModuleRef` class is imported from the `@nestjs/core` package.
+
+Be sure to set the `passReqToCallback` configuration property to `true`, as shown above.
+
+In the next step, the request instance will be used to obtain the current context identifier, instead of generating a new one (read more about request context [here](/fundamentals/module-ref#getting-current-sub-tree)).
+
+Now, inside the `validate()` method of the `LocalStrategy` class, use the `getByRequest()` method of the `ContextIdFactory` class to create a context id based on the request object, and pass this to the `resolve()` call:
+
+```typescript
+async validate(
+  request: Request,
+  username: string,
+  password: string,
+) {
+  const contextId = ContextIdFactory.getByRequest(request);
+  // "AuthService" is a request-scoped provider
+  const authService = await this.moduleRef.resolve(AuthService, contextId);
+  ...
+}
+```
+
+In the example above, the `resolve()` method will asynchronously return the request-scoped instance of the `AuthService` provider (we assumed that `AuthService` is marked as a request-scoped provider).
+
+#### Extending guards
+
+In most cases, using a provided `AuthGuard` class is sufficient. However, there might be use-cases when you would like to simply extend the default error handling or authentication logic. For this, you can extend the built-in class and override methods within a sub-class.
+
+```typescript
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  canActivate(context: ExecutionContext) {
+    // Add your custom authentication logic here
+    // for example, call super.logIn(request) to establish a session.
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user, info) {
+    // You can throw an exception based on either "info" or "err" arguments
+    if (err || !user) {
+      throw err || new UnauthorizedException();
+    }
+    return user;
+  }
+}
 ```
 
 #### Customize Passport

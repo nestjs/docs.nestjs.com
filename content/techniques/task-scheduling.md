@@ -289,7 +289,7 @@ clearInterval(interval);
 addInterval(name: string, seconds: string) {
   const callback = () => {
     this.logger.warn(`Interval ${name} executing at time (${seconds})!`);
-  });
+  };
 
   const interval = setInterval(callback, seconds);
   this.scheduler.addInterval(name, interval);
