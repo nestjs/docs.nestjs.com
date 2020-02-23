@@ -174,7 +174,6 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
         { title: 'Documentation', path: '/recipes/documentation' },
-        { title: 'CRUD utilities', path: '/recipes/crud-utilities' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'Serve static', path: '/recipes/serve-static' },
       ],

@@ -57,12 +57,11 @@ const routes: Routes = [
   },
   {
     path: 'crud-utilities',
-    component: CrudComponent,
-    data: { title: 'CRUD utilities' },
+    redirectTo: '/controllers',
   },
   {
     path: 'crud',
-    redirectTo: 'crud-utilities',
+    redirectTo: '/controllers',
   },
   {
     path: 'hot-reload',
