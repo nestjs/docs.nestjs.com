@@ -1,7 +1,5 @@
 ### OpenAPI (Swagger)
 
-> warning **Warning** The techniques in this section require TypeScript, and are not available if your app is written using vanilla JavaScript.
-
 The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows generating such a specification by leveraging decorators.
 
 #### Installation
@@ -100,7 +98,7 @@ export class CreateCatDto {
 }
 ```
 
-> info **Hint** Consider using the Swagger plugin (see **Plugin** section) which will automatically do it for you.
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically do it for you.
 
 Let's open the browser and verify the generated `CreateCatDto` model:
 
@@ -280,6 +278,8 @@ When the property is an array, we must manually indicate the array type as shown
 names: string[];
 ```
 
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect arrays.
+
 Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
 
 <app-banner-enterprise></app-banner-enterprise>
@@ -292,6 +292,8 @@ When you have circular dependencies between classes, use a lazy function to prov
 @ApiProperty({ type: () => Node })
 node: Node;
 ```
+
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect circular dependencies.
 
 #### Generics and interfaces
 

@@ -287,7 +287,7 @@ export class ApiConfigService {
   constructor(private configService: ConfigService) {}
 
   get isAuthEnabled(): boolean {
-    return Boolean(this.configService.get('AUTH_ENABLED'));
+    return this.configService.get('AUTH_ENABLED') === 'true';
   }
 }
 @@switch
@@ -299,7 +299,7 @@ export class ApiConfigService {
   }
 
   get isAuthEnabled() {
-    return Boolean(this.configService.get('AUTH_ENABLED'));
+    return this.configService.get('AUTH_ENABLED') === 'true';
   }
 }
 ```
