@@ -162,7 +162,7 @@ With `isArray` set to **true**, the `enum` can be selected as a **multi-select**
 
 #### Enums Schema
 
-By default, `enum` property will add a raw definition of [Enum](https://swagger.io/docs/specification/data-models/enums/) on the `parameter`.
+By default, the `enum` property will add a raw definition of [Enum](https://swagger.io/docs/specification/data-models/enums/) on the `parameter`.
 
 ```yaml
 CatDetail:
@@ -190,7 +190,7 @@ CatInformation:
     ...
 ```
 
-The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Check the following snippet out: 
+The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Consider the following code snippet: 
 
 ```typescript
 // generated client-side code
@@ -240,7 +240,7 @@ export class CatInformation {
 }
 ```
 
-`enumName` allows `nestjs/swagger` to be able to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` reusable. The specification will look like the following:
+`enumName` enables `nestjs/swagger` to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` reusable. The specification will look like the following:
 
 ```yaml
 CatDetail:
@@ -269,7 +269,7 @@ CatBreed:
     - Siamese
 ```
 
-> info **Hint** Any **decorator** that takes in `enum` as a property will also take in `enumName`.
+> info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
 
 #### Arrays
 
