@@ -6,7 +6,7 @@ GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean
 
 To define a custom scalar (read more about scalars [here](https://www.apollographql.com/docs/graphql-tools/scalars.html)), create a type definition and a dedicated resolver. Here (as in the official documentation), we’ll use the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type.
 
-Start by install the package:
+Start by installing the package:
 
 ```bash
 $ npm i --save graphql-type-json
