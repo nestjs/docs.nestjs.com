@@ -30,7 +30,7 @@ extend type Query {
 }
 ```
 
-Our resolver has one extra method: `resolveReference`. It'll called by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
+Our resolver has one extra method: `resolveReference`. It's called by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
 
 ```typescript
 import { Args, Query, Resolver, ResolveReference } from "@nestjs/graphql";
