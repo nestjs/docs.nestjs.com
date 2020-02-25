@@ -23,10 +23,10 @@ Once the installation process is complete, open the `main.ts` file and initializ
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
 
   const options = new DocumentBuilder()
     .setTitle('Cats example')
@@ -279,10 +279,10 @@ You can setup multiple specifications support as shown below:
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
 
   /**
    * createDocument(application, configurationOptions, extraOptions);
