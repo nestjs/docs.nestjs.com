@@ -2,7 +2,7 @@
 
 [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) offers a means of splitting your monolith GraphQL server into independent microservices. It consists of two components: A gateway and one or more federated microservices. Each microservice holds part of the schema and the gateway merges the schemas into one single schema that can be consumed by the client.
 
-To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260cf525d21), Federation is designed with these core principles
+To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260cf525d21), Federation is designed with these core principles:
 
 - **Building a graph should be declarative.** With federation, you compose a graph declaratively from within your schema instead of writing imperative schema stitching code.
 - **Code should be separated by concern, not by types.** Often no single team controls every aspect of an important type like a User or Product, so the definition of these types should be distributed across teams and codebases, rather than centralized.
@@ -11,13 +11,13 @@ To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260
 
 > warn **Note** Apollo Federation currently does not support subscriptions, and only the "Schema first" approach is currently supported due to limitations with the decorators not yet supporting GraphQL directives<sup>[1](https://github.com/MichalLytek/type-graphql/issues/351)</sup>
 
-In the next example, we'll set up a demo application with a gateway and two federated endpoints; a user- and posts service.
+In the next example, we'll set up a demo application with a gateway and two federated endpoints: a user- and posts service.
 
 #### Federated example: Users
 
-First make sure you install the optional dependency for federation: `npm install --save @apollo/federation`.
+First install the optional dependency for federation: `npm install --save @apollo/federation`.
 
-The User service has a simple schema. Note the `@key` directive, it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we `extend` the Query type.
+The User service has a simple schema. Note the `@key` directive, it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we extend the Query type.
 
 ```java
 type User @key(fields: "id") {
@@ -52,7 +52,7 @@ export class UsersResolvers {
 }
 ```
 
-Finally, we hook it everything up in a module together with a `GraphQLFederationModule`. This module accepts the same options as the regular `GraphQLModule`.
+Finally, we hook everything up in a module together with a `GraphQLFederationModule`. This module accepts the same options as the regular `GraphQLModule`.
 
 ```typescript
 import { Module } from "@nestjs/common";
@@ -92,7 +92,7 @@ extend type Query {
 }
 ```
 
-Our resolver has one method of interest here: `getUser`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance; The User service discussed above will be called on the `resolveReference` method.
+Our resolver has one method of interest here: `getUser`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance. The User service discussed above will be called on the `resolveReference` method.
 
 ```typescript
 import { Query, Resolver, Parent, ResolveProperty } from "@nestjs/graphql";
@@ -115,7 +115,7 @@ export class PostsResolvers {
 }
 ```
 
-The Posts service has virtually the same module, but is included below for the sake of completeness
+The Posts service has virtually the same module, but is included below for the sake of completeness:
 
 ```typescript
 import { Module } from "@nestjs/common";
@@ -135,7 +135,7 @@ export class AppModule {}
 
 #### Federated example: Gateway
 
-First make sure you install the optional dependency for the gateway: `npm install --save @apollo/gateway`.
+First install the optional dependency for the gateway: `npm install --save @apollo/gateway`.
 
 Our gateway only needs a list of endpoints and will auto-discover the schemas from there. The code for our gateway is therefore very short:
 
@@ -162,7 +162,7 @@ import { GraphQLGatewayModule } from "@nestjs/graphql";
 export class AppModule {}
 ```
 
-> warn **Warning** Apollo recommends that you don't rely on the service discovery in a production environment but use their [Graph Manager](https://www.apollographql.com/docs/graph-manager/federation/) instead
+> warn **Warning** Apollo recommends that you don't rely on the service discovery in a production environment but use their [Graph Manager](https://www.apollographql.com/docs/graph-manager/federation/) instead.
 
 #### Sharing context
 
@@ -222,4 +222,4 @@ export class AppModule {}
 
 #### Async configuration
 
-Both the Federation and Gateway modules support asynchronous initialisation using the same `forRootAsync` that's documented in [Quick start](/graphql/quick-start#async-configuration)
+Both the Federation and Gateway modules support asynchronous initialization using the same `forRootAsync` that's documented in [Quick start](/graphql/quick-start#async-configuration)
