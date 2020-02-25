@@ -72,6 +72,16 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
       >)</td>
   </tr>
   <tr>
+    <td><code>subscribe</code></td>
+    <td>Subscribe configuration options (read more
+      <a
+        href="https://kafka.js.org/docs/consuming#frombeginning"
+        rel="nofollow"
+        target="blank"
+        >here</a
+      >)</td>
+  </tr>
+  <tr>
     <td><code>producer</code></td>
     <td>Producer configuration options (read more
       <a
