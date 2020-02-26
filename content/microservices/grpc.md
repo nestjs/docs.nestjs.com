@@ -177,7 +177,7 @@ You can also omit the first `@GrpcMethod()` argument. In this case, Nest automat
 ```typescript
 @@filename(hero.controller)
 @Controller()
-export class HeroService {
+export class HeroController {
   @GrpcMethod()
   findOne(data: HeroById, metadata: any): Hero {
     const items = [
