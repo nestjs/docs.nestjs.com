@@ -161,7 +161,7 @@ export class HeroController {
 @@switch
 @Controller()
 export class HeroController {
-  @GrpcMethod('HeroService)
+  @GrpcMethod('HeroService')
   findOne(data, metadata) {
     const items = [
       { id: 1, name: 'John' },
