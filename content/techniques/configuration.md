@@ -52,6 +52,16 @@ ConfigModule.forRoot({
 });
 ```
 
+You can also specify multiple paths for `.env` files like this:
+
+```typescript
+ConfigModule.forRoot({
+  envFilePath: ['.env.development.local', '.env.development'],
+});
+```
+
+If a variable is found in multiple files, the first one takes precedence.
+
 #### Disable env variables loading
 
 If you don't want to load the `.env` file, but instead would like to simply access environment variables from the runtime environment (as with OS shell exports like `export DATABASE_USER=test`), set the options object's `ignoreEnvFile` property to `true`, as follows:
