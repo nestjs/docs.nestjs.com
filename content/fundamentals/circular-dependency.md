@@ -52,7 +52,7 @@ export class CommonService {
 }
 ```
 
-> warning **Warning** The order of instantiation is indeterminate. Make sure your code does not depend on which constructor is called first.
+> warning **Warning** The order of instantiation is indeterminate. Make sure your code does not depend on which constructor is called first. When you need to perform some actions in the constructor, you will get problems in conjunction with `forwardRef()`, better use the [Lifecycle events](/fundamentals/circular-dependency) instead.
 
 #### ModuleRef class alternative
 
