@@ -369,3 +369,10 @@ getTimeouts() {
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/27-scheduling).
+
+#### Usage in production
+In production usually there is more than one instance of your application. When your job is started with @nestjs/schedule it runs in every process of your application. It means that if you send a message via email this message will be sent as many times as number of instances of your application. There are two ways to solve this problem:
+ * to take a mutex (lock) in every process instance of your nestjs application;  
+ * not to run scheduled functions inside of apllication instances and use something like kubernetes cronJob for this purpose; 
+
+Npm module nest-schedule implements approach with locks as it is described in its npm [documentation](https://www.npmjs.com/package/nest-schedule)  
