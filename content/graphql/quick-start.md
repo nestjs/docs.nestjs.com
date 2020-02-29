@@ -1,4 +1,4 @@
-## Harnessing the power of TypeScript & GraphQL with NestJS
+## Harnessing the power of TypeScript & GraphQL
 
 [GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. 
 
@@ -16,7 +16,7 @@ $ npm i --save @nestjs/graphql graphql-tools graphql
 
 And depending on what you use (Express or Fastify), you need to install `apollo-server-express` or `apollo-server-fastify`.
 
-#### GraphQL Overview
+#### Overview
 
 Nest offers two ways of building GraphQL applications, the **schema first** and the **code first** methods.
 
@@ -24,7 +24,7 @@ In the **schema first** approach, the source of truth is a GraphQL SDL (Schema D
 
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
 
-### Getting started with GraphQL & TypeScript
+#### Getting started with GraphQL & TypeScript
 
 Once the packages are installed, we can import the `GraphQLModule` and configure it with the `forRoot()` static method.
 
