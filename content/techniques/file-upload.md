@@ -4,6 +4,14 @@ To handle file uploading, Nest provides a built-in module based on the [multer](
 
 > warning **Warning** Multer cannot process data which is not in the supported multipart format (`multipart/form-data`). Also, note that this package is not compatible with the `FastifyAdapter`.
 
+#### Installation
+
+To begin using it, we first install the required dependency.
+
+```bash
+$ npm i --save @nestjs/platform-express
+```
+
 #### Basic example
 
 To upload a single file, simply tie the `FileInterceptor()` interceptor to the route handler and extract `file` from the `request` using the `@UploadedFile()` decorator.
@@ -117,6 +125,8 @@ uploadFile(files) {
 You can specify multer options in the file interceptors as described above. To set default options, you can call the static `register()` method when you import the `MulterModule`, passing in supported options. You can use all options listed [here](https://github.com/expressjs/multer#multeropts).
 
 ```typescript
+import { MulterModule } from '@nestjs/platform-express';
+
 MulterModule.register({
   dest: '/upload',
 });
