@@ -54,7 +54,7 @@
     "rxjs": "6.5.4",
     "rxjs-compat": "6.5.4",
     "tslib": "1.11.1",
-    "yargs": "15.1.0",
+    "yargs": "15.2.0",
     "zone.js": "0.10.2"
   },
   "devDependencies": {
