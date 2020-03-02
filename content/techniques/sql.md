@@ -614,7 +614,7 @@ Our factory behaves like any other [asynchronous provider](https://docs.nestjs.c
 ```typescript
 TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
+  useFactory: (configService: ConfigService) => ({
     type: 'mysql',
     host: configService.get<string>('HOST'),
     port: configService.get<string>('PORT'),
@@ -1149,7 +1149,7 @@ Our factory behaves like any other [asynchronous provider](https://docs.nestjs.c
 ```typescript
 SequelizeModule.forRootAsync({
   imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
+  useFactory: (configService: ConfigService) => ({
     dialect: 'mysql',
     host: configService.get<string>('HOST'),
     port: configService.get<string>('PORT'),
