@@ -122,7 +122,7 @@ MulterModule.register({
 });
 ```
 
-> info **Hint** The `MulterModule()` decorator is exported from the `@nestjs/platform-express` package.
+> info **Hint** The `MulterModule` class is exported from the `@nestjs/platform-express` package.
 
 #### Async configuration
 
