@@ -122,6 +122,8 @@ MulterModule.register({
 });
 ```
 
+> info **Hint** The `MulterModule()` decorator is exported from the `@nestjs/platform-express` package.
+
 #### Async configuration
 
 When you need to set `MulterModule` options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
