@@ -4,22 +4,26 @@
 
 To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260cf525d21), Federation is designed with these core principles:
 
-- **Building a graph should be declarative.** With federation, you compose a graph declaratively from within your schema instead of writing imperative schema stitching code.
-- **Code should be separated by concern, not by types.** Often no single team controls every aspect of an important type like a User or Product, so the definition of these types should be distributed across teams and codebases, rather than centralized.
-- **The graph should be simple for clients to consume.** Together, federated services can form a complete, product-focused graph that accurately reflects how it’s being consumed on the client.
-- **It’s just GraphQL, using only spec-compliant features of the language.** Any language, not just JavaScript, can implement federation.
+- Building a graph should be **declarative.** With federation, you compose a graph declaratively from within your schema instead of writing imperative schema stitching code.
+- Code should be separated by **concern**, not by types. Often no single team controls every aspect of an important type like a User or Product, so the definition of these types should be distributed across teams and codebases, rather than centralized.
+- The graph should be simple for clients to consume. Together, federated services can form a complete, product-focused graph that accurately reflects how it’s being consumed on the client.
+- It’s just **GraphQL**, using only spec-compliant features of the language. Any language, not just JavaScript, can implement federation.
 
-> warn **Note** Apollo Federation currently does not support subscriptions, and only the "Schema first" approach is currently supported due to limitations with the decorators not yet supporting GraphQL directives<sup>[1](https://github.com/MichalLytek/type-graphql/issues/351)</sup>
+> warning **Note** Apollo Federation currently does not support subscriptions, and only the schema-first approach is currently supported due to limitations with the decorators not yet supporting GraphQL directives<sup>[1](https://github.com/MichalLytek/type-graphql/issues/351)</sup>
 
 In the next example, we'll set up a demo application with a gateway and two federated endpoints: a user- and posts service.
 
 #### Federated example: Users
 
-First install the optional dependency for federation: `npm install --save @apollo/federation`.
+First install the optional dependency for federation: 
+
+```bash
+$ npm install --save @apollo/federation`
+```
 
 The User service has a simple schema. Note the `@key` directive, it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we extend the Query type.
 
-```java
+```graphql
 type User @key(fields: "id") {
   id: ID!
   name: String!
@@ -74,7 +78,7 @@ export class AppModule {}
 
 The Posts service references the User type in its schema by marking it with the `extend` keyword. It also adds one property to the User type. Note the `@key` directive used for matching instances of User, and the `@external` directive indicating that the `id` field is managed elsewhere.
 
-```java
+```graphql
 type Post @key(fields: "id") {
   id: ID!
   title: String!
@@ -162,7 +166,7 @@ import { GraphQLGatewayModule } from "@nestjs/graphql";
 export class AppModule {}
 ```
 
-> warn **Warning** Apollo recommends that you don't rely on the service discovery in a production environment but use their [Graph Manager](https://www.apollographql.com/docs/graph-manager/federation/) instead.
+> info **Hint** Apollo recommends that you don't rely on the service discovery in a production environment but use their [Graph Manager](https://www.apollographql.com/docs/graph-manager/federation/) instead.
 
 #### Sharing context
 
