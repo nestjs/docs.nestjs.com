@@ -614,13 +614,13 @@ Our factory behaves like any other [asynchronous provider](https://docs.nestjs.c
 ```typescript
 TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
+  useFactory: (configService: ConfigService) => ({
     type: 'mysql',
-    host: configService.getString('HOST'),
-    port: configService.getString('PORT'),
-    username: configService.getString('USERNAME'),
-    password: configService.getString('PASSWORD'),
-    database: configService.getString('DATABASE'),
+    host: configService.get<string>('HOST'),
+    port: configService.get<string>('PORT'),
+    username: configService.get<string>('USERNAME'),
+    password: configService.get<string>('PASSWORD'),
+    database: configService.get<string>('DATABASE'),
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
   }),
@@ -1149,13 +1149,13 @@ Our factory behaves like any other [asynchronous provider](https://docs.nestjs.c
 ```typescript
 SequelizeModule.forRootAsync({
   imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
+  useFactory: (configService: ConfigService) => ({
     dialect: 'mysql',
-    host: configService.getString('HOST'),
-    port: configService.getString('PORT'),
-    username: configService.getString('USERNAME'),
-    password: configService.getString('PASSWORD'),
-    database: configService.getString('DATABASE'),
+    host: configService.get<string>('HOST'),
+    port: configService.get<string>('PORT'),
+    username: configService.get<string>('USERNAME'),
+    password: configService.get<string>('PASSWORD'),
+    database: configService.get<string>('DATABASE'),
     models: [],
   }),
   inject: [ConfigService],
