@@ -252,7 +252,8 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 ```typescript
 {
   "statusCode": 403,
-  "message": "Forbidden resource"
+  "message": "Forbidden",
+  "error": "Forbidden resource"
 }
 ```
 

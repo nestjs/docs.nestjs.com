@@ -170,8 +170,8 @@ export class MenuComponent implements OnInit {
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
-        { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
+        { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
         { title: 'Documentation', path: '/recipes/documentation' },
@@ -205,13 +205,13 @@ export class MenuComponent implements OnInit {
       children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
     {
+      title: 'T-Shirts and Hoodies',
+      externalUrl: 'https://nestjs.threadless.com/',
+    },
+    {
       title: 'Support us',
       isOpened: false,
       path: '/support',
-    },
-    {
-      title: 'T-Shirts and Accessories',
-      externalUrl: 'https://nestjs.threadless.com/',
     },
   ];
 

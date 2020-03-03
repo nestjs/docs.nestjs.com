@@ -16,6 +16,13 @@ To use the NATS transporter, pass the following options object to the `createMic
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+  transport: Transport.NATS,
+  options: {
+    url: 'nats://localhost:4222',
+  },
+});
+@@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.NATS,
   options: {

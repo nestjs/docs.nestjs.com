@@ -23,7 +23,22 @@ To instantiate a microservice, use the `createMicroservice()` method of the `Nes
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+    },
+  );
+  app.listen(() => console.log('Microservice is listening'));
+}
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -32,7 +47,6 @@ async function bootstrap() {
   });
   app.listen(() => console.log('Microservice is listening'));
 }
-bootstrap();
 ```
 
 > info **Hint** Microservices use the **TCP** transport layer by default.

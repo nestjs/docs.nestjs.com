@@ -211,7 +211,6 @@ Let's tackle binding the options object to the IoC container first. We do this i
 
 ```typescript
 import { DynamicModule, Module } from '@nestjs/common';
-
 import { ConfigService } from './config.service';
 
 @Module({})
@@ -235,11 +234,9 @@ export class ConfigModule {
 Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider into the `ConfigService`. Recall that when we define a provider using a non-class token we need to use the `@Inject()` decorator [as described here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
 
 ```typescript
-import { Injectable, Inject } from '@nestjs/common';
-
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-
+import { Injectable, Inject } from '@nestjs/common';
 import { EnvConfig } from './interfaces';
 
 @Injectable()

@@ -132,6 +132,8 @@ forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
 
 The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
+> warning **Warning** The `fastify` package is using the latest version of the `path-to-regexp` package which no longer supports wildcard asterisks `*`. Instead, you must use parameters instead (`(.*)` or `:splat*`).
+
 #### Middleware consumer
 
 The `MiddlewareConsumer` is a helper class. It provides several built-in methods to manage middleware. All of them can be simply **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method can take a single string, multiple strings, a `RouteInfo` object, a controller class and even multiple controller classes. In most cases you'll probably just pass a list of **controllers** separated by commas. Below is an example with a single controller:
@@ -173,7 +175,9 @@ export class AppModule {
 
 > info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="/middleware#multiple-middleware">multiple middlewares</a>.
 
-Quite often we might want to **exclude** certain routes from having the middleware applied. When defining middleware with a class (as we have been doing so far, as opposed to using the alternative <a href="/middleware#functional-middleware">functional middleware</a>), we can easily exclude certain routes with the `exclude()` method. This method takes one or more objects identifying the `path` and `method` to be excluded, as shown below:
+#### Excluding routes
+
+Quite often we might want to **exclude** certain routes from having the middleware applied. We can easily exclude certain routes with the `exclude()` method. This method can take a single string, multiple strings, or a `RouteInfo` object identifying routes to be excluded, as shown below:
 
 ```typescript
 consumer
@@ -181,11 +185,14 @@ consumer
   .exclude(
     { path: 'cats', method: RequestMethod.GET },
     { path: 'cats', method: RequestMethod.POST },
+    'cats/(.*)',
   )
   .forRoutes(CatsController);
 ```
 
-With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the two passed to the `exclude()` method. Please note that the `exclude()` method **does not work** with functional middleware (middleware defined in a function rather than in a class; see below for more details). In addition, this method doesn't exclude paths from more generic routes (e.g., wildcards). If you need that level of control, you should put your paths-restriction logic directly into the middleware and, for example, access the request's URL to conditionally apply the middleware logic.
+> info **Hint** The `exclude()` method supports wildcard parameters `path-to-regexp` (read more [here](https://github.com/pillarjs/path-to-regexp#parameters)).
+
+With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the three passed to the `exclude()` method.
 
 <app-banner-shop></app-banner-shop>
 

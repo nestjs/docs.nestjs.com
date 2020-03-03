@@ -28,7 +28,7 @@ In general, each gateway is listening on the same port as the **HTTP server**, u
 @WebSocketGateway(80, { namespace: 'events' })
 ```
 
-> **Warning** Gateways aren't instantiated until they are referenced in the providers array of an existing module.
+> warning **Warning** Gateways are not instantiated until they are referenced in the providers array of an existing module.
 
 You can pass any supported [option](https://socket.io/docs/server-api/) to the socket constructor with the second argument to the `@WebSocketGateway()` decorator, as shown below:
 

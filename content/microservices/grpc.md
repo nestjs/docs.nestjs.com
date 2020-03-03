@@ -20,6 +20,14 @@ Like other Nest microservices transport layer implementations, you select the gR
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.GRPC,
+  options: {
+    package: 'hero',
+    protoPath: join(__dirname, 'hero/hero.proto'),
+  },
+});
+@@switch
 const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.GRPC,
   options: {

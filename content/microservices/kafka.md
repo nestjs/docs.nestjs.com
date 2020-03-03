@@ -24,6 +24,15 @@ Like other Nest microservices transport layer implementations, you select the Ka
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    }
+  }
+});
+@@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.KAFKA,
   options: {

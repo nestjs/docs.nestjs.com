@@ -201,16 +201,18 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
     MongooseModule.forFeatureAsync([
       {
         name: 'Cat',
-        import [ConfigModule],
+        imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
           const schema = CatsSchema;
           schema.pre('save', () =>
-            console.log(`${configService.getString('APP_NAME')}: Hello from pre save`),
+            console.log(
+              `${configService.getString('APP_NAME')}: Hello from pre save`,
+            ),
           );
           return schema;
         },
         inject: [ConfigService],
-      }
+      },
     ]),
   ],
 })
