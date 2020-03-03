@@ -158,6 +158,80 @@ With `isArray` set to **true**, the `enum` can be selected as a **multi-select**
 
 <figure><img src="/assets/enum_query_array.gif" /></figure>
 
+#### Enums schema
+
+By default, the `enum` property will add a raw definition of [Enum](https://swagger.io/docs/specification/data-models/enums/) on the `parameter`.
+
+```yaml
+CatDetail:
+  type: 'object'
+  properties:
+    ...
+    - breed:
+        type: 'string'
+        enum:
+          - Persian
+          - Tabby
+          - Siamese
+```
+
+The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Consider the following code snippet: 
+
+```typescript
+// generated client-side code
+export class CatDetail {
+   breed: CatDetailEnum;
+}
+
+export class CatInformation {
+  breed: CatInformationEnum;
+}
+
+export enum CatDetailEnum {
+  Persian = 'Persian',
+  Tabby = 'Tabby',
+  Siamese = 'Siamese'
+}
+
+export enum CatInformationEnum {
+  Persian = 'Persian',
+  Tabby = 'Tabby',
+  Siamese = 'Siamese'
+}
+```
+
+> info **Hint** The above snippet is generated using a tool called [NSwag](https://github.com/RicoSuter/NSwag).
+
+You can see that now you have two `enums` that are exactly the same. 
+To address this issue, you can pass an `enumName` next to `enum` property in your decorator.
+
+```typescript
+export class CatDetail {
+   @ApiProperty({ enum: CatBreed, enumName: 'CatBreed' })
+   breed: CatBreed;
+}
+```
+
+`enumName` enables `nestjs/swagger` to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` reusable. The specification will look like the following:
+
+```yaml
+CatDetail:
+  type: 'object'
+  properties:
+    ...
+    - breed:
+        schema:
+          $ref: '#/components/schemas/CatBreed'
+CatBreed:
+  type: string
+  enum:
+    - Persian
+    - Tabby
+    - Siamese
+```
+
+> info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
+
 #### Arrays
 
 When the property is an array, we must manually indicate the array type as shown below:
