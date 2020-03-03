@@ -21,14 +21,14 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "9.0.2",
-    "@angular/cdk": "9.0.1",
+    "@angular/cdk": "9.1.0",
     "@angular/common": "9.0.2",
     "@angular/compiler": "9.0.2",
     "@angular/core": "9.0.2",
     "@angular/flex-layout": "8.0.0-beta.27",
     "@angular/forms": "9.0.2",
     "@angular/http": "7.2.16",
-    "@angular/material": "9.0.1",
+    "@angular/material": "9.1.0",
     "@angular/platform-browser": "9.0.2",
     "@angular/platform-browser-dynamic": "9.0.2",
     "@angular/router": "9.0.2",
@@ -53,16 +53,16 @@
     "prismjs": "1.19.0",
     "rxjs": "6.5.4",
     "rxjs-compat": "6.5.4",
-    "tslib": "1.11.0",
+    "tslib": "1.11.1",
     "yargs": "15.1.0",
     "zone.js": "0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "0.900.3",
-    "@angular/cli": "9.0.3",
+    "@angular-devkit/build-angular": "0.900.4",
+    "@angular/cli": "9.0.4",
     "@angular/compiler-cli": "9.0.2",
     "@angular/language-service": "9.0.2",
-    "@types/jasmine": "3.5.6",
+    "@types/jasmine": "3.5.7",
     "@types/jasminewd2": "2.0.8",
     "@types/lodash": "4.14.149",
     "@types/marked": "0.7.2",
@@ -86,6 +86,6 @@
     "ts-node": "8.6.2",
     "tslint": "5.20.1",
     "typescript": "3.7.5",
-    "uuid": "3.4.0"
+    "uuid": "7.0.1"
   }
 }

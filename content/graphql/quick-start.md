@@ -1,8 +1,10 @@
-### Quick start
+## Harnessing the power of TypeScript & GraphQL
 
-GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module.
+[GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. 
 
-The `GraphQLModule` is a wrapper around the [Apollo](https://www.apollographql.com/) server. We use this proven GraphQL package to provide a way to use GraphQL with Nest.
+GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you get end-to-end typing.
+
+In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` is a wrapper around the [Apollo](https://www.apollographql.com/) server. We use this proven GraphQL package to provide a way to use GraphQL with Nest.
 
 #### Installation
 
@@ -22,7 +24,7 @@ In the **schema first** approach, the source of truth is a GraphQL SDL (Schema D
 
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
 
-#### Getting started
+#### Getting started with GraphQL & TypeScript
 
 Once the packages are installed, we can import the `GraphQLModule` and configure it with the `forRoot()` static method.
 

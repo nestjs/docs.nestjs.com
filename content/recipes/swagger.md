@@ -23,10 +23,10 @@ Once the installation process is complete, open the `main.ts` file and initializ
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
 
   const options = new DocumentBuilder()
     .setTitle('Cats example')
@@ -158,6 +158,80 @@ With `isArray` set to **true**, the `enum` can be selected as a **multi-select**
 
 <figure><img src="/assets/enum_query_array.gif" /></figure>
 
+#### Enums schema
+
+By default, the `enum` property will add a raw definition of [Enum](https://swagger.io/docs/specification/data-models/enums/) on the `parameter`.
+
+```yaml
+CatDetail:
+  type: 'object'
+  properties:
+    ...
+    - breed:
+        type: 'string'
+        enum:
+          - Persian
+          - Tabby
+          - Siamese
+```
+
+The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Consider the following code snippet: 
+
+```typescript
+// generated client-side code
+export class CatDetail {
+   breed: CatDetailEnum;
+}
+
+export class CatInformation {
+  breed: CatInformationEnum;
+}
+
+export enum CatDetailEnum {
+  Persian = 'Persian',
+  Tabby = 'Tabby',
+  Siamese = 'Siamese'
+}
+
+export enum CatInformationEnum {
+  Persian = 'Persian',
+  Tabby = 'Tabby',
+  Siamese = 'Siamese'
+}
+```
+
+> info **Hint** The above snippet is generated using a tool called [NSwag](https://github.com/RicoSuter/NSwag).
+
+You can see that now you have two `enums` that are exactly the same. 
+To address this issue, you can pass an `enumName` next to `enum` property in your decorator.
+
+```typescript
+export class CatDetail {
+   @ApiProperty({ enum: CatBreed, enumName: 'CatBreed' })
+   breed: CatBreed;
+}
+```
+
+`enumName` enables `nestjs/swagger` to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` reusable. The specification will look like the following:
+
+```yaml
+CatDetail:
+  type: 'object'
+  properties:
+    ...
+    - breed:
+        schema:
+          $ref: '#/components/schemas/CatBreed'
+CatBreed:
+  type: string
+  enum:
+    - Persian
+    - Tabby
+    - Siamese
+```
+
+> info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
+
 #### Arrays
 
 When the property is an array, we must manually indicate the array type as shown below:
@@ -279,10 +353,10 @@ You can setup multiple specifications support as shown below:
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApplicationModule } from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
 
   /**
    * createDocument(application, configurationOptions, extraOptions);
@@ -548,6 +622,14 @@ class FileUploadDto {
 }
 ```
 
+#### Extensions
+
+To add an Extension to a request use the `@ApiExtension()` decorator. The extension name must be prefixed with `x-`.
+
+```typescript
+@ApiExtension('x-foo', { hello: 'world' })
+```
+
 #### Decorators
 
 All of the available OpenAPI decorators have an `Api` prefix to distinguish them from the core decorators. Below is a full list of the exported decorators along with a designation of the level at which the decorator may be applied.
@@ -572,6 +654,7 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiProperty()`         | Model               |
 | `@ApiPropertyOptional()` | Model               |
 | `@ApiHideProperty()`     | Model               |
+| `@ApiExtension()`        | Method              |
 
 #### Plugin
 
