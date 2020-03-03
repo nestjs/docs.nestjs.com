@@ -9,6 +9,7 @@ import { ResolversMapComponent } from './resolvers-map/resolvers-map.component';
 import { ScalarsComponent } from './scalars/scalars.component';
 import { SchemaStitchingComponent } from './schema-stitching/schema-stitching.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { FederationComponent } from './federation/federation.component';
 
 const routes: Routes = [
   {
@@ -50,6 +51,11 @@ const routes: Routes = [
     component: SchemaStitchingComponent,
     data: { title: 'GraphQL - Schema Stitching' },
   },
+  {
+    path: 'federation',
+    component: FederationComponent,
+    data: { title: 'GraphQL - Federation' },
+  },
 ];
 
 @NgModule({
@@ -62,6 +68,7 @@ const routes: Routes = [
     SchemaStitchingComponent,
     GuardsInterceptorsComponent,
     ScalarsComponent,
+    FederationComponent,
   ],
 })
 export class GraphqlModule {}
