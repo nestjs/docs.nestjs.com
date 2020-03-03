@@ -170,32 +170,32 @@ You can customize the requests between the gateway and federated services using 
 
 ```typescript
 import { Module } from "@nestjs/common";
-import { GRAPHQL_GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from "@nestjs/graphql";
+import { GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from "@nestjs/graphql";
 import { RemoteGraphQLDataSource } from "@apollo/gateway";
 import { decode } from 'jsonwebtoken';
 
 class AuthenticatedDataSource extends RemoteGraphQLDataSource {
   async willSendRequest({ request, context }) {
     const { userId } = await decode(context.jwt);
-    request.http.headers.set('x-user-id', context.userId);
+    request.http.headers.set('x-user-id', userId);
   }
 }
 
 @Module({
   providers: [
     {
-      provide: AuthenticatedDataSource
+      provide: AuthenticatedDataSource,
       useValue: AuthenticatedDataSource
     },
     {
-      provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
+      provide: GATEWAY_BUILD_SERVICE,
       useFactory: (AuthenticatedDataSource) => {
         return ({ name, url }) => new AuthenticatedDataSource({ url });
       },
       inject: [AuthenticatedDataSource]
     }
   ],
-  exports: [GRAPHQL_GATEWAY_BUILD_SERVICE],
+  exports: [GATEWAY_BUILD_SERVICE],
 })
 class BuildServiceModule {}
 
@@ -213,7 +213,7 @@ class BuildServiceModule {}
         }
       }),
       imports: [BuildServiceModule],
-      inject: [GRAPHQL_GATEWAY_BUILD_SERVICE],
+      inject: [GATEWAY_BUILD_SERVICE],
     }),
   ],
 })
