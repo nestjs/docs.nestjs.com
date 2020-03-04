@@ -132,7 +132,7 @@ forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
 
 The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
-> warning **Warning** The `fastify` package is using the latest version of the `path-to-regexp` package which no longer supports wildcard asterisks `*`. Instead, you must use parameters instead (`(.*)` or `:splat*`).
+> warning **Warning** The `fastify` package is using the latest version of the `path-to-regexp` package which no longer supports wildcard asterisks `*`. Instead, you must use parameters (e.g., `(.*)`, `:splat*`).
 
 #### Middleware consumer
 

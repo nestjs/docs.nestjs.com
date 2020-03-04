@@ -47,6 +47,7 @@ async function bootstrap() {
   });
   app.listen(() => console.log('Microservice is listening'));
 }
+bootstrap();
 ```
 
 > info **Hint** Microservices use the **TCP** transport layer by default.

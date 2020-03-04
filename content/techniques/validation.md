@@ -189,7 +189,6 @@ findByIds(
   @Query('id', new ParseArrayPipe({ items: Number, separator: ',' }))
   ids: number[],
 ) {
-  console.log(ids);
   return 'This action return users by ids';
 }
 ```
