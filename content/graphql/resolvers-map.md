@@ -399,3 +399,116 @@ export class AuthorsModule {}
 The `GraphQLModule` will take care of reflecting the metadata and transforming classes into the correct resolvers map automatically. The only thing you need to be aware of is that you need to import this module somewhere, so Nest will be able to utilize `AuthorsModule`.
 
 > info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+
+#### CLI Plugin
+
+TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
+
+> warning **Hint** This plugin is **opt-in**. If you prefer, you can declare all decorators manually, or only specific decorators where you need them.
+
+The GraphQL plugin will automatically:
+
+- annotate all input object, object type and args classes properties with `@Field` unless `@HideField` is used
+- set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
+- set the `type` property depending on the type (supports arrays as well)
+
+Previously, you had to duplicate a lot of code to let the package knows how your type should be declared in GrapgQL. For example, you could define a simple `CreateUserInput` class as follows:
+
+```typescript
+export class CreateUserInput {
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+
+  @Field(type => [RoleEnum])
+  roles: RoleEnum[] = [];
+
+  @ApiProperty({ nullable: true })
+  isEnabled?: boolean;
+}
+```
+
+While it's not a big deal with medium-sized projects, it becomes pretty verbose & clunky once you have a large set of classes.
+
+Now, with the GraphQL plugin enabled, the above class definition can be declared simply:
+
+```typescript
+export class CreateUserInput {
+  email: string;
+  password: string;
+  roles: RoleEnum[] = [];
+  isEnabled?: boolean = true;
+}
+```
+
+The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Hence, you no longer have to struggle with `@Field` decorators scattered throughout the entire project.
+
+> warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@Field()`.
+
+In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
+
+```javascript
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "plugins": ["@nestjs/graphql/plugin"]
+  }
+}
+```
+
+You can use the `options` property to customize the behavior of the plugin.
+
+```javascript
+"plugins": [
+  {
+    "name": "@nestjs/swagger/graphql",
+    "options": {
+      "classValidatorShim": false
+    }
+  }
+]
+```
+
+The `options` property has to fulfill the following interface:
+
+```typescript
+export interface PluginOptions {
+  dtoFileNameSuffix?: string[];
+  controllerFileNameSuffix?: string[];
+  classValidatorShim?: boolean;
+}
+```
+
+<table>
+  <tr>
+    <th>Option</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>dtoFileNameSuffix</code></td>
+    <td><code>['.dto.ts', '.entity.ts']</code></td>
+    <td>DTO (Data Transfer Object) files suffix</td>
+  </tr>
+  <tr>
+    <td><code>controllerFileNameSuffix</code></td>
+    <td><code>.controller.ts</code></td>
+    <td>Controller files suffix</td>
+  </tr>
+  <tr>
+    <td><code>classValidatorShim</code></td>
+    <td><code>true</code></td>
+    <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
+  </tr>
+</table>
+
+If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
+
+```javascript
+getCustomTransformers: (program: any) => ({
+  before: [require('@nestjs/swagger/plugin').before({}, program)]
+}),
+```
