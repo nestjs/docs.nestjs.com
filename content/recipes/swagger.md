@@ -350,7 +350,7 @@ type Pet = Cat | Dog;
       { $ref: getSchemaPath(Dog) },
     ],
   },
-});
+})
 pets: Pet[];
 ```
 
