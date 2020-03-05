@@ -20,7 +20,7 @@ Next, inject `HttpService` using normal constructor injection.
 @@filename()
 @Injectable()
 export class CatsService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private httpService: HttpService) {}
 
   findAll(): Observable<AxiosResponse<Cat[]>> {
     return this.httpService.get('http://localhost:3000/cats');

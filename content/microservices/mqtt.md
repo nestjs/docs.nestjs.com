@@ -100,3 +100,21 @@ getNotifications(data, context) {
   console.log(context.getPacket());
 }
 ```
+
+#### Wildcards
+
+A subscription may be to an explicit topic, or it may include wildcards. Two wildcards are available, `+` and `#`. `+` is a single-level wildcard, while `#` is a multi-level wildcard which covers many topic levels.
+
+```typescript
+@@filename()
+@MessagePattern('sensors/+/temperature/+')
+getTemperature(@Ctx() context: MqttContext) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+@@switch
+@Bind(Ctx())
+@MessagePattern('sensors/+/temperature/+')
+getTemperature(context) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+```

@@ -105,3 +105,23 @@ getNotifications(data, context) {
 ```
 
 > info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from the `@nestjs/microservices` package.
+
+#### Wildcards
+
+A subscription may be to an explicit subject, or it may include wildcards.
+
+```typescript
+@@filename()
+@MessagePattern('time.us.*')
+getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
+  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  return new Date().toLocaleTimeString(...);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('time.us.*')
+getDate(data, context) {
+  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  return new Date().toLocaleTimeString(...);
+}
+```

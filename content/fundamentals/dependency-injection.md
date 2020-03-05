@@ -46,7 +46,7 @@ import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private catsService: CatsService) {}
 
   @Get()
   async findAll(): Promise<Cat[]> {
@@ -93,7 +93,7 @@ What exactly is happening under the covers to make this work? There are three ke
 2. In `cats.controller.ts`, `CatsController` declares a dependency on the `CatsService` token with constructor injection:
 
 ```typescript
-  constructor(private readonly catsService: CatsService)
+  constructor(private catsService: CatsService)
 ```
 
 3. In `app.module.ts`, we associate the token `CatsService` with the class `CatsService` from the `cats.service.ts` file. We'll <a href="/fundamentals/custom-providers#standard-providers">see below</a> exactly how this association (also called _registration_) occurs.

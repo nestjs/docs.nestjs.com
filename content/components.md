@@ -71,7 +71,7 @@ import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private catsService: CatsService) {}
 
   @Post()
   async create(@Body() createCatDto: CreateCatDto) {
@@ -107,7 +107,7 @@ export class CatsController {
 }
 ```
 
-The `CatsService` is **injected** through the class constructor. Notice the use of the `private readonly` syntax. This shorthand allows us to both declare and initialize the `catsService` member immediately in the same location.
+The `CatsService` is **injected** through the class constructor. Notice the use of the `private` syntax. This shorthand allows us to both declare and initialize the `catsService` member immediately in the same location.
 
 #### Dependency injection
 
@@ -116,7 +116,7 @@ Nest is built around the strong design pattern commonly known as **Dependency in
 In Nest, thanks to TypeScript capabilities, it's extremely easy to manage dependencies because they are resolved just by type. In the example below, Nest will resolve the `catsService` by creating and returning an instance of `CatsService` (or, in the normal case of a singleton, returning the existing instance if it has already been requested elsewhere). This dependency is resolved and passed to your controller's constructor (or assigned to the indicated property):
 
 ```typescript
-constructor(private readonly catsService: CatsService) {}
+constructor(private catsService: CatsService) {}
 ```
 
 #### Scopes
@@ -140,9 +140,7 @@ import { Injectable, Optional, Inject } from '@nestjs/common';
 
 @Injectable()
 export class HttpService<T> {
-  constructor(
-    @Optional() @Inject('HTTP_OPTIONS') private readonly httpClient: T,
-  ) {}
+  constructor(@Optional() @Inject('HTTP_OPTIONS') private httpClient: T) {}
 }
 ```
 

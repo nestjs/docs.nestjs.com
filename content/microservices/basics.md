@@ -232,7 +232,7 @@ Once the module has been imported, we can inject an instance of the `ClientProxy
 
 ```typescript
 constructor(
-  @Inject('MATH_SERVICE') private readonly client: ClientProxy,
+  @Inject('MATH_SERVICE') private client: ClientProxy,
 ) {}
 ```
 
@@ -334,7 +334,7 @@ import { CONTEXT, RequestContext } from '@nestjs/microservices';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CatsService {
-  constructor(@Inject(CONTEXT) private readonly ctx: RequestContext) {}
+  constructor(@Inject(CONTEXT) private ctx: RequestContext) {}
 }
 ```
 

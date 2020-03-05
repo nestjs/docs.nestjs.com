@@ -184,7 +184,7 @@ To access the route's role(s) (custom metadata), we'll use the `Reflector` helpe
 @@filename(roles.guard)
 @Injectable()
 export class RolesGuard {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
 }
 @@switch
 @Injectable()

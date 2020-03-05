@@ -28,7 +28,7 @@ async upvotePost(@Args('postId') postId: number) {
 
 #### Execution context
 
-Since GraphQL receives a different type of data in the incoming request, the [`ExecutionContext`](https://docs.nestjs.com/fundamentals/execution-context) received by both guards and interceptors is somewhat different with GraphQL vs. REST. GraphQL resolvers have a distinct set of arguments: `root`, `args`, `context`, and `info`. Thus guards and interceptors must transform the generic `ExecutionContext` to a `GqlExecutionContext`. This is straightforward:
+Since GraphQL receives a different type of data in the incoming request, the [execution context](https://docs.nestjs.com/fundamentals/execution-context) received by both guards and interceptors is somewhat different with GraphQL vs. REST. GraphQL resolvers have a distinct set of arguments: `root`, `args`, `context`, and `info`. Thus guards and interceptors must transform the generic `ExecutionContext` to a `GqlExecutionContext`. This is straightforward:
 
 ```typescript
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
@@ -65,11 +65,12 @@ Note that unlike the REST case, you don't use the native `response` object to ge
 
 #### Custom decorators
 
-As mentioned, the [custom decorators](/custom-decorators) feature works as expected with GraphQL resolvers. The only difference is that the factory function takes an array of GraphQL request arguments as its second argument, instead of a single `request` object (as with REST applications).
+As mentioned, the [custom decorators](/custom-decorators) feature works as expected with GraphQL resolvers.
 
 ```typescript
 export const User = createParamDecorator(
-  (data, [root, args, ctx, info]) => ctx.user,
+  (data: unknown, ctx: ExecutionContext) =>
+    GqlExecutionContext.create(ctx).getContext().user,
 );
 ```
 

@@ -239,7 +239,7 @@ Once registered, we can inject the configured `ClientGrpc` object with `@Inject(
 export class AppService implements OnModuleInit {
   private heroService: HeroService;
 
-  constructor(@Inject('HERO_PACKAGE') private readonly client: ClientGrpc) {}
+  constructor(@Inject('HERO_PACKAGE') private client: ClientGrpc) {}
 
   onModuleInit() {
     this.heroService = this.client.getService<HeroService>('HeroService');

@@ -1,6 +1,216 @@
 ### Resolvers
 
-Typically, you create a resolvers map manually. The `@nestjs/graphql` package, on the other hand, generates a resolvers map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
+Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/) operation (a query, mutation, or subscription) into data. They either return the same type of data we specify in our schema or a promise for that data. Typically, you create a resolvers map manually. The `@nestjs/graphql` package, on the other hand, generates a resolvers map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
+
+#### Code first
+
+In the code first approach, we don't write GraphQL SDL by hand. Instead we use TypeScript decorators. The `@nestjs/graphql` package will then read the metadata defined through these decorators and automatically generate the schema for you.
+
+Most of the definitions in a GraphQL schema are **object types**. Each object type you define should represent an object that an application client might need to interact with. For example, our example app needs to be able to fetch a list of authors and their posts, so we should define the `Author` type and `Post` type to support this functionality.
+
+```typescript
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Post } from './post';
+
+@ObjectType()
+export class Author {
+  @Field(type => Int)
+  id: number;
+
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
+
+  @Field(type => [Post])
+  posts: Post[];
+}
+```
+
+> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Hence, it's required to use the `@Field` decorator or use a [CLI plugin](/graphql/resolvers-map#plugin).
+
+The `Author` object type has a collection of fields. Each field has a type. A field's type can be either an object type or a scalar type. A scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value. In addition to GraphQL's built-in scalar types, you can define custom scalar types.
+
+The `Author` object type will result in generating the following part of the GraphQL schema in SDL:
+
+```graphql
+type Author {
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post]
+}
+```
+
+The `@Field()` decorator allows you specificying if a field is nullable (each field is non-nullable by default), providing a type function, and setting description or marking field as deprecated:
+
+```typescript
+@Field({ description: `Book title`, deprecationReason: 'Not useful in v2 schema' })
+title: string;
+```
+
+> info **Hint** You can also add the description or deprecate the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
+
+When the field is an array, we must manually indicate the array type as shown below:
+
+```typescript
+@Field(type => [Post])
+posts: Post[];
+```
+
+> info **Hint** With `[ ]`, we can determine the depth of the array. For example, using `[[Int]]` would represent an integer matrix.
+
+To declare that the array isn't nullable unlike its items, set the `nullable` property to `'items'` as shown below:
+
+```typescript
+@Field(type => [Post], { nullable: 'items' })
+posts: Post[];
+```
+
+> info **Hint** If both the array and its items are nullable, use the `'itemsAndList'` instead.
+
+Now when the `Author` model is created, let's define the `Post` object type.
+
+```typescript
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
+export class Post {
+  @Field(type => Int)
+  id: number;
+
+  @Field()
+  title: string;
+
+  @Field(type => Int, { nullable: true })
+  votes?: number;
+}
+```
+
+The `Post` object type will result in generating the following part of the GraphQL schema in SDL:
+
+```graphql
+type Post {
+  id: Int!
+  title: String!
+  votes: Int
+}
+```
+
+We've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To resolve that, we need to define a resolver class
+
+```typescript
+@Resolver(of => Author)
+export class AuthorResolver {
+  constructor(
+    private authorsService: AuthorsService,
+    private postsService: PostsService,
+  ) {}
+
+  @Query(returns => Author)
+  async author(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.authorsService.findOneById(id);
+  }
+
+  @ResolveField()
+  async posts(@Parent() author: Author) {
+    const { id } = author;
+    return this.postsService.findAll({ authorId: id });
+  }
+}
+```
+
+> info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
+
+> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how resolvers can interact with other providers.
+
+In the example above, we created the `AuthorResolver` which defines one query and one field resolver. Note that to create a resolver, we must annotate the class with the `@Resolver()` decorator. The argument passed in to the `@Resolver()` decorator is optional, but since we have also defined a field resolver (for the `posts` property of the `Author` object type), it's required to indicate which class is a parent for this particular field resolver (`Author.posts` relation). In addition, we defined a first query to get the author object based on the `id` sent over the network. Queries enable clients to fetch data, but not to **modify** data. To specify that the method is a query handler, use the `@Query()` decorator.
+
+Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
+
+```typescript
+@Resolver(of => Author)
+export class AuthorResolver {
+  constructor(
+    private authorsService: AuthorsService,
+    private postsService: PostsService,
+  ) {}
+
+  @Query(returns => Author, { name: 'author' })
+  async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.authorsService.findOneById(id);
+  }
+
+  @ResolveField('posts', returns => [Post])
+  async getPosts(@Parent() author: Author) {
+    const { id } = author;
+    return this.postsService.findAll({ authorId: id });
+  }
+}
+```
+
+The `AuthorResolver` resolver will result in generating the following part of the GraphQL schema in SDL:
+
+```graphql
+type Query {
+  author(id: Int!): Author
+}
+```
+
+Also, usually, you won't have to pass such an object into the `@Args()` decorator. For example, if your identifier's type is string, the following construction would be sufficient:
+
+```typescript
+@Args('id') id: string
+```
+
+However, the `number` type doesn't give us enough information about the expected GraphQL representation (`Int` vs. `Float`). Thus we have to **explicitly** pass the type reference.
+
+In addition, all queries can take multiple arguments. Let's imagine that we want to fetch an author based on its `firstName` and `lastName`. In this case, we can call `@Args` twice:
+
+```typescript
+getAuthor(
+  @Args('firstName', { nullable: true }) firstName?: string,
+  @Args('lastName', { defaultValue: '' }) lastName?: string,
+) {}
+```
+
+> info **Hint** Note that we can pass a second argument which is the options object. The options object allows us to specify a default value, description, deprecation reason, or if a field is nullable.
+
+With inline `@Args()` calls, the code becomes bloated. Instead, you can create a dedicated `GetAuthorArgs` class:
+
+```typescript
+@Args() args: GetAuthorArgs
+```
+
+With the following body:
+
+```typescript
+import { MinLength } from 'class-validator';
+import { Field, ArgsType } from '@nestjs/graphql';
+
+@ArgsType()
+class GetByIdArgs {
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ defaultValue: '' })
+  @MinLength(3)
+  lastName: string;
+}
+```
+
+> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers-map#plugin).
+
+This will result in generating the following part of the GraphQL schema in SDL:
+
+```graphql
+type Query {
+  author(firstName: String, lastName: String = ''): Author
+}
+```
+
+You may also notice that such classes play very well with the `ValidationPipe` (read [more](/techniques/validation)).
 
 #### Schema first
 
@@ -25,14 +235,14 @@ type Query {
 }
 ```
 
-Our GraphQL schema contains a single exposed query - `author(id: Int!): Author`. Now, let's create an `AuthorResolver`.
+Our GraphQL schema contains a single exposed query - `author(id: Int!): Author`. Now, let's create an `AuthorResolver` class.
 
 ```typescript
 @Resolver('Author')
 export class AuthorResolver {
   constructor(
-    private readonly authorsService: AuthorsService,
-    private readonly postsService: PostsService,
+    private authorsService: AuthorsService,
+    private postsService: PostsService,
   ) {}
 
   @Query()
@@ -40,7 +250,7 @@ export class AuthorResolver {
     return this.authorsService.findOneById(id);
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async posts(@Parent() author) {
     const { id } = author;
     return this.postsService.findAll({ authorId: id });
@@ -48,20 +258,24 @@ export class AuthorResolver {
 }
 ```
 
-> info **Hint** If you use the `@Resolver()` decorator, you don't have to mark a class as an `@Injectable()`.
+> info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
-The `@Resolver()` decorator does not affect queries and mutations (neither `@Query()` nor `@Mutation()` decorators). It only informs Nest that each `@ResolveProperty()` inside this particular class has a parent, which is an `Author` type in this case (`Author.posts` relation). Basically, instead of setting `@Resolver()` at the top of the class, this can be done close to the method:
+> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how resolvers can interact with other providers.
+
+The `@Resolver()` decorator does not affect queries and mutations (neither `@Query()` nor `@Mutation()` decorators). It only informs Nest that each `@ResolveField()` inside this particular class has a parent, which is an `Author` type in this case (`Author.posts` relation). Basically, instead of setting `@Resolver()` at the top of the class, this can be done close to the method:
 
 ```typescript
 @Resolver('Author')
-@ResolveProperty()
+@ResolveField()
 async posts(@Parent() author) {
   const { id } = author;
   return this.postsService.findAll({ authorId: id });
 }
 ```
 
-However, if you have multiple `@ResolveProperty()` decorators inside one class, you must add `@Resolver()` to all of them, which is not necessarily a good practice (as it creates extra overhead).
+> warning **Warning** Using the `@Resolver` decorator at the method-level is not supported with the **code first** approach.
+
+However, if you have multiple `@ResolveField()` decorators inside one class, you must add `@Resolver()` to all of them, which is not necessarily a good practice (as it creates extra overhead).
 
 Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
 
@@ -69,8 +283,8 @@ Conventionally, we would use something like `getAuthor()` or `getPosts()` as met
 @Resolver('Author')
 export class AuthorResolver {
   constructor(
-    private readonly authorsService: AuthorsService,
-    private readonly postsService: PostsService,
+    private authorsService: AuthorsService,
+    private postsService: PostsService,
   ) {}
 
   @Query('author')
@@ -78,7 +292,7 @@ export class AuthorResolver {
     return this.authorsService.findOneById(id);
   }
 
-  @ResolveProperty('posts')
+  @ResolveField('posts')
   async getPosts(@Parent() author) {
     const { id } = author;
     return this.postsService.findAll({ authorId: id });
@@ -86,11 +300,9 @@ export class AuthorResolver {
 }
 ```
 
-> info **Hint** The `@Resolver()` decorator can be used at the method-level as well.
+#### Generating types
 
-#### Typings
-
-Assuming that we have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it should generate the following file:
+Assuming that we use the schema first approach and we have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it should generate the following file:
 
 ```typescript
 export class Author {
@@ -111,7 +323,7 @@ export abstract class IQuery {
 }
 ```
 
-Generating classes (instead of interfaces) allows you to use **decorators**, which makes them extremely useful for validation purposes (read [more](/techniques/validation)). For example:
+Generating classes (instead of interfaces) allows you to use **decorators** in combination with the schema first approach, which makes them extremely useful for validation purposes (read [more](/techniques/validation)). For example:
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
@@ -138,125 +350,6 @@ export class CreatePostInput extends Post {
 }
 ```
 
-#### Code first
-
-In the code first approach, we don't write SDL by hand. Instead we use decorators.
-
-```typescript
-import { Field, Int, ObjectType } from 'type-graphql';
-import { Post } from './post';
-
-@ObjectType()
-export class Author {
-  @Field(type => Int)
-  id: number;
-
-  @Field({ nullable: true })
-  firstName?: string;
-
-  @Field({ nullable: true })
-  lastName?: string;
-
-  @Field(type => [Post])
-  posts: Post[];
-}
-```
-
-`Author` model has been created. Now, let's create the missing `Post` class.
-
-```typescript
-import { Field, Int, ObjectType } from 'type-graphql';
-
-@ObjectType()
-export class Post {
-  @Field(type => Int)
-  id: number;
-
-  @Field()
-  title: string;
-
-  @Field(type => Int, { nullable: true })
-  votes?: number;
-}
-```
-
-With our models in place, we can move to the resolver class.
-
-```typescript
-@Resolver(of => Author)
-export class AuthorResolver {
-  constructor(
-    private readonly authorsService: AuthorsService,
-    private readonly postsService: PostsService,
-  ) {}
-
-  @Query(returns => Author)
-  async author(@Args({ name: 'id', type: () => Int }) id: number) {
-    return this.authorsService.findOneById(id);
-  }
-
-  @ResolveProperty()
-  async posts(@Parent() author) {
-    const { id } = author;
-    return this.postsService.findAll({ authorId: id });
-  }
-}
-```
-
-Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
-
-```typescript
-@Resolver(of => Author)
-export class AuthorResolver {
-  constructor(
-    private readonly authorsService: AuthorsService,
-    private readonly postsService: PostsService,
-  ) {}
-
-  @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
-    return this.authorsService.findOneById(id);
-  }
-
-  @ResolveProperty('posts', returns => [Post])
-  async getPosts(@Parent() author) {
-    const { id } = author;
-    return this.postsService.findAll({ authorId: id });
-  }
-}
-```
-
-Usually, you won't have to pass such an object into the `@Args()` decorator. For example, if your identifier's type is string, the following construction would be sufficient:
-
-```typescript
-@Args('id') id: string
-```
-
-However, the `number` type doesn't give `type-graphql` enough information about the expected GraphQL representation (`Int` vs. `Float`). Thus we have to **explicitly** pass the type reference.
-
-Moreover, you can create a dedicated `AuthorArgs` class:
-
-```typescript
-@Args() args: AuthorArgs
-```
-
-With the following body:
-
-```typescript
-@ArgsType()
-class AuthorArgs {
-  @Field(type => Int)
-  @Min(1)
-  id: number;
-}
-```
-
-> info **Hint** `Int` and both decorators `@Field()` and `@ArgsType()` are imported from the `type-graphql` package, while `@Min()` comes from the `class-validator`.
-
-You may also notice that such classes play very well with the `ValidationPipe` (read [more](/techniques/validation)).
-
-<app-banner-shop></app-banner-shop>
-
 #### Decorators
 
 You may note that we refer to the following arguments using dedicated decorators. Below is a comparison of the provided decorators and the plain Apollo parameters they represent.
@@ -281,6 +374,15 @@ You may note that we refer to the following arguments using dedicated decorators
     </tr>
   </tbody>
 </table>
+
+These arguments have the following meanings:
+
+- `context`: an object shared by all resolvers in a particular query, and is typically used to contain per-request state.
+- `info`: an object that contains information about the execution state of the query.
+- `args`: an object with the arguments passed into the field in the query.
+- `root`: an object that contains the result returned from the resolver on the parent field, or, in the case of a top-level `Query` field, the `rootValue` passed from the server configuration.
+
+<app-banner-shop></app-banner-shop>
 
 #### Module
 

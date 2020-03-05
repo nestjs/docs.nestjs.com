@@ -44,7 +44,7 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
   /*
     Implementation that makes use of this.usersService
   */

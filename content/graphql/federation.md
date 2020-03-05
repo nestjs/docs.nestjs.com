@@ -9,7 +9,7 @@ To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260
 - The graph should be simple for clients to consume. Together, federated services can form a complete, product-focused graph that accurately reflects how it’s being consumed on the client.
 - It’s just **GraphQL**, using only spec-compliant features of the language. Any language, not just JavaScript, can implement federation.
 
-> warning **Note** Apollo Federation currently does not support subscriptions, and only the schema-first approach is currently supported due to limitations with the decorators not yet supporting GraphQL directives<sup>[1](https://github.com/MichalLytek/type-graphql/issues/351)</sup>
+> warning **Warning** Apollo Federation currently does not support subscriptions.
 
 In the next example, we'll set up a demo application with a gateway and two federated endpoints: a user- and posts service.
 
@@ -42,7 +42,7 @@ import { UsersService } from './users.service';
 
 @Resolver('User')
 export class UsersResolvers {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   @Query()
   getUser(@Args('id') id: string) {
@@ -105,7 +105,7 @@ import { Post } from './posts.interfaces';
 
 @Resolver('Post')
 export class PostsResolvers {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private postsService: PostsService) {}
 
   @Query('getPosts')
   getPosts() {

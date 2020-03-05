@@ -104,10 +104,15 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Quick start', path: '/graphql/quick-start' },
-        { title: 'Resolvers', path: '/graphql/resolvers-map' },
+        { title: 'Resolvers', path: '/graphql/resolvers' },
         { title: 'Mutations', path: '/graphql/mutations' },
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
+        { title: 'Directives', path: '/graphql/directives' },
+        { title: 'Plugins', path: '/graphql/plugins' },
+        { title: 'Interfaces', path: '/graphql/interfaces' },
+        { title: 'Unions', path: '/graphql/unions' },
+        { title: 'Enums', path: '/graphql/enums' },
         {
           title: 'Other features',
           path: '/graphql/tooling',

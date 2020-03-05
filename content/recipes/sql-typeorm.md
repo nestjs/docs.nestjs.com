@@ -119,7 +119,7 @@ import { Photo } from './photo.entity';
 export class PhotoService {
   constructor(
     @Inject('PHOTO_REPOSITORY')
-    private readonly photoRepository: Repository<Photo>,
+    private photoRepository: Repository<Photo>,
   ) {}
 
   async findAll(): Promise<Photo[]> {

@@ -25,7 +25,7 @@ In this model, each action is called a **Command**. When a command is dispatched
 @@filename(heroes-game.service)
 @Injectable()
 export class HeroesGameService {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(private commandBus: CommandBus) {}
 
   async killDragon(heroId: string, killDragonDto: KillDragonDto) {
     return this.commandBus.execute(
@@ -74,7 +74,7 @@ The `CommandBus` is a **stream** of commands. It delegates commands to the equiv
 @@filename(kill-dragon.handler)
 @CommandHandler(KillDragonCommand)
 export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
-  constructor(private readonly repository: HeroRepository) {}
+  constructor(private repository: HeroRepository) {}
 
   async execute(command: KillDragonCommand) {
     const { heroId, dragonId } = command;
@@ -130,7 +130,7 @@ Events are asynchronous. They are dispatched either by **models** or directly us
 ```typescript
 @@filename(hero.model)
 export class Hero extends AggregateRoot {
-  constructor(private readonly id: string) {
+  constructor(private id: string) {
     super();
   }
 
@@ -160,8 +160,8 @@ The `apply()` method does not dispatch events yet because there's no relationshi
 @CommandHandler(KillDragonCommand)
 export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
   constructor(
-    private readonly repository: HeroRepository,
-    private readonly publisher: EventPublisher,
+    private repository: HeroRepository,
+    private publisher: EventPublisher,
   ) {}
 
   async execute(command: KillDragonCommand) {
@@ -214,7 +214,7 @@ Each event can have multiple **Event Handlers**.
 @@filename(hero-killed-dragon.handler)
 @EventsHandler(HeroKilledDragonEvent)
 export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEvent> {
-  constructor(private readonly repository: HeroRepository) {}
+  constructor(private repository: HeroRepository) {}
 
   handle(event: HeroKilledDragonEvent) {
     // logic

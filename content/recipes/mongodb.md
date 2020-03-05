@@ -116,7 +116,7 @@ import { CreateCatDto } from './dto/create-cat.dto';
 export class CatsService {
   constructor(
     @Inject('CAT_MODEL')
-    private readonly catModel: Model<Cat>,
+    private catModel: Model<Cat>,
   ) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
