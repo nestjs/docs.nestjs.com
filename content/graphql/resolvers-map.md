@@ -28,7 +28,7 @@ export class Author {
 }
 ```
 
-> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Hence, it's required to use the `@Field` decorator or use a [CLI plugin](/graphql/resolvers-map#plugin).
+> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Hence, it's required to use the `@Field` decorator or use a [CLI plugin](/graphql/resolvers#cli-plugin).
 
 The `Author` object type has a collection of fields. Each field has a type. A field's type can be either an object type or a scalar type. A scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value. In addition to GraphQL's built-in scalar types, you can define custom scalar types.
 
@@ -200,7 +200,7 @@ class GetByIdArgs {
 }
 ```
 
-> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers-map#plugin).
+> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
 
 This will result in generating the following part of the GraphQL schema in SDL:
 
@@ -412,21 +412,22 @@ The GraphQL plugin will automatically:
 - set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
 - set the `type` property depending on the type (supports arrays as well)
 
-Previously, you had to duplicate a lot of code to let the package knows how your type should be declared in GrapgQL. For example, you could define a simple `CreateUserInput` class as follows:
+Previously, you had to duplicate a lot of code to let the package knows how your type should be declared in GrapgQL. For example, you could define a simple `Author` class as follows:
 
 ```typescript
-export class CreateUserInput {
-  @Field()
-  email: string;
+@ObjectType()
+export class Author {
+  @Field(type => Int)
+  id: number;
 
-  @Field()
-  password: string;
+  @Field({ nullable: true })
+  firstName?: string;
 
-  @Field(type => [RoleEnum])
-  roles: RoleEnum[] = [];
+  @Field({ nullable: true })
+  lastName?: string;
 
-  @ApiProperty({ nullable: true })
-  isEnabled?: boolean;
+  @Field(type => [Post])
+  posts: Post[];
 }
 ```
 
@@ -435,11 +436,13 @@ While it's not a big deal with medium-sized projects, it becomes pretty verbose 
 Now, with the GraphQL plugin enabled, the above class definition can be declared simply:
 
 ```typescript
-export class CreateUserInput {
-  email: string;
-  password: string;
-  roles: RoleEnum[] = [];
-  isEnabled?: boolean = true;
+@ObjectType()
+export class Author {
+  @Field(type => Int)
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  posts: Post[];
 }
 ```
 
@@ -466,7 +469,7 @@ You can use the `options` property to customize the behavior of the plugin.
   {
     "name": "@nestjs/swagger/graphql",
     "options": {
-      "classValidatorShim": false
+      "typeFileNameSuffix": [".input.ts", ".args.ts"]
     }
   }
 ]
@@ -476,9 +479,7 @@ The `options` property has to fulfill the following interface:
 
 ```typescript
 export interface PluginOptions {
-  dtoFileNameSuffix?: string[];
-  controllerFileNameSuffix?: string[];
-  classValidatorShim?: boolean;
+  typeFileNameSuffix?: string[];
 }
 ```
 
@@ -489,19 +490,9 @@ export interface PluginOptions {
     <th>Description</th>
   </tr>
   <tr>
-    <td><code>dtoFileNameSuffix</code></td>
-    <td><code>['.dto.ts', '.entity.ts']</code></td>
-    <td>DTO (Data Transfer Object) files suffix</td>
-  </tr>
-  <tr>
-    <td><code>controllerFileNameSuffix</code></td>
-    <td><code>.controller.ts</code></td>
-    <td>Controller files suffix</td>
-  </tr>
-  <tr>
-    <td><code>classValidatorShim</code></td>
-    <td><code>true</code></td>
-    <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
+    <td><code>typeFileNameSuffix</code></td>
+    <td><code>['.input.ts', '.args.ts', '.entity.ts']</code></td>
+    <td>GraphQL types files suffix</td>
   </tr>
 </table>
 
@@ -509,6 +500,6 @@ If you don't use the CLI but instead have a custom `webpack` configuration, you 
 
 ```javascript
 getCustomTransformers: (program: any) => ({
-  before: [require('@nestjs/swagger/plugin').before({}, program)]
+  before: [require('@nestjs/graphql/plugin').before({}, program)]
 }),
 ```

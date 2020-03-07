@@ -39,7 +39,7 @@ export class UpvotePostInput {
 }
 ```
 
-> info **Hint** The `@InputType()` takes an options object as an argument, so you can, for example, specify the input type's description.
+> info **Hint** The `@InputType()` takes an options object as an argument, so you can, for example, specify the input type's description. Also, due to TypeScript's metadata reflection system limitations, it's required to use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
 
 To declare an input type, use the `@InputType()` decorator.
 
