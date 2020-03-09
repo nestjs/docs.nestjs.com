@@ -98,7 +98,7 @@ type Post {
 }
 ```
 
-We've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class
+We've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class:
 
 ```typescript
 @Resolver(of => Author)
