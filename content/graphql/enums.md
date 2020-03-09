@@ -7,7 +7,7 @@ Enumeration types are a special kind of scalar that is restricted to a particula
 
 #### Code first
 
-To define a GraphQL enum type, simply create a TypeScript enum.
+When using the code first approach, you define a GraphQL enum type by simply creating a TypeScript enum.
 
 ```typescript
 export enum AllowedColor {
@@ -25,7 +25,7 @@ registerEnumType(AllowedColor, {
 });
 ```
 
-Now, we can reference the `AllowedColor` in our types:
+Now you can reference the `AllowedColor` in our types:
 
 ```typescript
 @Field(type => AllowedColor)
@@ -54,7 +54,7 @@ enum AllowedColor {
 }
 ```
 
-Then, you can use the typings generation feature (as shown in the [quick start](/graphql/quick-start) chapter) to generate corresponding TypeScript definitions:
+Then you can use the typings generation feature (as shown in the [quick start](/graphql/quick-start) chapter) to generate corresponding TypeScript definitions:
 
 ```typescript
 export enum AllowedColor {

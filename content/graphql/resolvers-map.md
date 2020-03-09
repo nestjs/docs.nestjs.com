@@ -6,7 +6,7 @@ Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/)
 
 In the code first approach, we don't write GraphQL SDL by hand. Instead we use TypeScript decorators. The `@nestjs/graphql` package will then read the metadata defined through these decorators and automatically generate the schema for you.
 
-Most of the definitions in a GraphQL schema are **object types**. Each object type you define should represent an object that an application client might need to interact with. For example, our example app needs to be able to fetch a list of authors and their posts, so we should define the `Author` type and `Post` type to support this functionality.
+Most of the definitions in a GraphQL schema are **object types**. Each object type you define should represent an object that an application client might need to interact with. For example, our sample API needs to be able to fetch a list of authors and their posts, so we should define the `Author` type and `Post` type to support this functionality.
 
 ```typescript
 import { Field, Int, ObjectType } from '@nestjs/graphql';
@@ -28,7 +28,7 @@ export class Author {
 }
 ```
 
-> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Hence, it's required to use the `@Field` decorator or use a [CLI plugin](/graphql/resolvers#cli-plugin).
+> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Thus, we must either use the `@Field` decorator or use a [CLI plugin](/graphql/resolvers#cli-plugin).
 
 The `Author` object type has a collection of fields. Each field has a type. A field's type can be either an object type or a scalar type. A scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value. In addition to GraphQL's built-in scalar types, you can define custom scalar types.
 
@@ -43,14 +43,14 @@ type Author {
 }
 ```
 
-The `@Field()` decorator allows you specificying if a field is nullable (each field is non-nullable by default), providing a type function, and setting description or marking field as deprecated:
+The `@Field()` decorator allows specifying whether a field is nullable (each field is non-nullable by default), providing a type function, setting a description, or marking a field as deprecated:
 
 ```typescript
 @Field({ description: `Book title`, deprecationReason: 'Not useful in v2 schema' })
 title: string;
 ```
 
-> info **Hint** You can also add the description or deprecate the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
+> info **Hint** You can also add a description to, or deprecate, the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
 
 When the field is an array, we must manually indicate the array type as shown below:
 
@@ -61,16 +61,16 @@ posts: Post[];
 
 > info **Hint** With `[ ]`, we can determine the depth of the array. For example, using `[[Int]]` would represent an integer matrix.
 
-To declare that the array isn't nullable unlike its items, set the `nullable` property to `'items'` as shown below:
+To declare that the array's items (not the array itself) are nullable, set the `nullable` property to `'items'` as shown below:
 
 ```typescript
 @Field(type => [Post], { nullable: 'items' })
 posts: Post[];
 ```
 
-> info **Hint** If both the array and its items are nullable, use the `'itemsAndList'` instead.
+> info **Hint** If both the array and its items are nullable, use the `'itemsAndList'` property instead.
 
-Now when the `Author` model is created, let's define the `Post` object type.
+Now that the `Author` object type is created, let's define the `Post` object type.
 
 ```typescript
 import { Field, Int, ObjectType } from '@nestjs/graphql';
@@ -98,7 +98,7 @@ type Post {
 }
 ```
 
-We've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To resolve that, we need to define a resolver class
+We've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class
 
 ```typescript
 @Resolver(of => Author)
@@ -125,7 +125,7 @@ export class AuthorResolver {
 
 > warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how resolvers can interact with other providers.
 
-In the example above, we created the `AuthorResolver` which defines one query and one field resolver. Note that to create a resolver, we must annotate the class with the `@Resolver()` decorator. The argument passed in to the `@Resolver()` decorator is optional, but since we have also defined a field resolver (for the `posts` property of the `Author` object type), it's required to indicate which class is a parent for this particular field resolver (`Author.posts` relation). In addition, we defined a first query to get the author object based on the `id` sent over the network. Queries enable clients to fetch data, but not to **modify** data. To specify that the method is a query handler, use the `@Query()` decorator.
+In the example above, we created the `AuthorResolver` which defines one query and one field resolver. Note that to create a resolver, we must annotate the class with the `@Resolver()` decorator. The argument passed in to the `@Resolver()` decorator is optional, but since we have also defined a field resolver (for the `posts` property of the `Author` object type), it's required to indicate which class is a parent for this particular field resolver (`Author.posts` relation). In addition, we defined a first query to get the author object based on the `id` sent in the request. Queries enable clients to fetch data, but not to **modify** data. To specify that the method is a query handler, use the `@Query()` decorator.
 
 Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
 
@@ -158,7 +158,7 @@ type Query {
 }
 ```
 
-Also, usually, you won't have to pass such an object into the `@Args()` decorator. For example, if your identifier's type is string, the following construction would be sufficient:
+Usually you won't have to pass an object into the `@Args()` decorator as with the `getAuthor()` method above. For example, if an identifier's type is string, the following construction would be sufficient:
 
 ```typescript
 @Args('id') id: string
@@ -175,7 +175,7 @@ getAuthor(
 ) {}
 ```
 
-> info **Hint** Note that we can pass a second argument which is the options object. The options object allows us to specify a default value, description, deprecation reason, or if a field is nullable.
+> info **Hint** Note that we can pass a second argument to the `@Args()` decorator, which is an options object. The options object allows us to specify a default value, description, deprecation reason, or if a field is nullable.
 
 With inline `@Args()` calls, the code becomes bloated. Instead, you can create a dedicated `GetAuthorArgs` class:
 
@@ -200,7 +200,7 @@ class GetByIdArgs {
 }
 ```
 
-> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
+> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
 
 This will result in generating the following part of the GraphQL schema in SDL:
 
@@ -302,7 +302,7 @@ export class AuthorResolver {
 
 #### Generating types
 
-Assuming that we use the schema first approach and we have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it should generate the following file:
+Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it should generate the following file:
 
 ```typescript
 export class Author {
@@ -352,7 +352,7 @@ export class CreatePostInput extends Post {
 
 #### Decorators
 
-You may note that we refer to the following arguments using dedicated decorators. Below is a comparison of the provided decorators and the plain Apollo parameters they represent.
+We refer to several arguments using dedicated decorators. Below is a comparison of the provided decorators and the plain Apollo parameters they represent.
 
 <table>
   <tbody>
@@ -377,16 +377,16 @@ You may note that we refer to the following arguments using dedicated decorators
 
 These arguments have the following meanings:
 
-- `context`: an object shared by all resolvers in a particular query, and is typically used to contain per-request state.
+- `root`: an object that contains the result returned from the resolver on the parent field, or, in the case of a top-level `Query` field, the `rootValue` passed from the server configuration.
+- `context`: an object shared by all resolvers in a particular query; typically used to contain per-request state.
 - `info`: an object that contains information about the execution state of the query.
 - `args`: an object with the arguments passed into the field in the query.
-- `root`: an object that contains the result returned from the resolver on the parent field, or, in the case of a top-level `Query` field, the `rootValue` passed from the server configuration.
 
 <app-banner-shop></app-banner-shop>
 
 #### Module
 
-Once we're done here, we have to provide the `AuthorResolver` somewhere. For example, we can do this in the newly created `AuthorsModule`.
+Once we're done with the above steps, we have to provide the `AuthorResolver` somewhere (for dependency injection). For example, we can do this in the newly created `AuthorsModule`.
 
 ```typescript
 @Module({
@@ -412,7 +412,7 @@ The GraphQL plugin will automatically:
 - set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
 - set the `type` property depending on the type (supports arrays as well)
 
-Previously, you had to duplicate a lot of code to let the package knows how your type should be declared in GrapgQL. For example, you could define a simple `Author` class as follows:
+Previously, you had to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
 
 ```typescript
 @ObjectType()
@@ -431,7 +431,7 @@ export class Author {
 }
 ```
 
-While it's not a big deal with medium-sized projects, it becomes pretty verbose & clunky once you have a large set of classes.
+While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
 
 Now, with the GraphQL plugin enabled, the above class definition can be declared simply:
 
@@ -446,11 +446,11 @@ export class Author {
 }
 ```
 
-The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Hence, you no longer have to struggle with `@Field` decorators scattered throughout the entire project.
+The plugin adds appropriate decorators on-the-fly based on the **Abstract Syntax Tree**. Thus, you won't have to struggle with `@Field` decorators scattered throughout the code.
 
-> warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@Field()`.
+> warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, simply set them explicitly via `@Field()`.
 
-In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
+To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
 
 ```javascript
 {

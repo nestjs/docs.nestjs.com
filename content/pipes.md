@@ -17,7 +17,7 @@ In both cases, pipes operate on the `arguments` being processed by a <a href="co
 
 #### Built-in pipes
 
-Nest comes with five pipes available right out-of-the-box:
+Nest comes with five pipes available out-of-the-box:
 
 - `ValidationPipe`
 - `ParseIntPipe`

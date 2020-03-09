@@ -1,10 +1,10 @@
 ### Migration guide
 
-This article provides a set of guidelines for migrating from 6 to the latest 7 version.
+This article provides a set of guidelines for migrating from Nest version 6 to version 7.
 
 #### Custom route decorators
 
-[Custom decorators](/custom-decorators) API has been unified for all types of applications. Now, whether you're creating GraphQL application or REST API, the factory passed into the `createParamDecorator()` function will take the `ExecutionContext` (read more [here](/fundamentals/execution-context)) object as a second argument.
+The [Custom decorators](/custom-decorators) API has been unified for all types of applications. Now, whether you're creating a GraphQL application or a REST API, the factory passed into the `createParamDecorator()` function will take the `ExecutionContext` (read more [here](/fundamentals/execution-context)) object as a second argument.
 
 ```typescript
 @@filename()
@@ -43,7 +43,7 @@ export const User = createParamDecorator((data, ctx) => {
 
 #### Microservices
 
-To avoid code duplication, the `MicroserviceOptions` interface has been removed from the `@nestjs/common` package. Therefore, now when you're creating a microservice (through either `createMicroservice()` or `connectMicroservice()` method), you should pass the type generic parameter to get the code autocompletion.
+To avoid code duplication, the `MicroserviceOptions` interface has been removed from the `@nestjs/common` package. Therefore, now when you're creating a microservice (through either `createMicroservice()` or `connectMicroservice()` method), you should pass the type generic parameter to get code autocompletion.
 
 ```typescript
 @@filename()
@@ -64,13 +64,13 @@ const app = await NestFactory.createMicroservice(AppModule);
 
 #### GraphQL
 
-In the v6 major release of NestJS, we introduced the code-first approach as a compatibility layer between the `type-graphql` package and the `@nestjs/graphql` module. Eventually, our team decided to reimplement all the features from scratch due to a lack of flexibility. To avoid numerous breaking changes, the public API is backward-compatible and may resemble `type-graphql`.
+In the version 6 major release of NestJS, we introduced the code-first approach as a compatibility layer between the `type-graphql` package and the `@nestjs/graphql` module. Eventually, our team decided to reimplement all the features from scratch due to a lack of flexibility. To avoid numerous breaking changes, the public API is backward-compatible and may resemble `type-graphql`.
 
 In order to migrate your existing application, simply rename all the `type-graphql` imports to the `@nestjs/graphql`.
 
 #### HTTP exceptions body
 
-Previosuly, the generated response bodies for the `HttpException` class and other exceptions derived from it (e.g., `BadRequestException` or `NotFoundException`) were incosistent. In the latest major release, these exception responses will follow the same structure.
+Previously, the generated response bodies for the `HttpException` class and other exceptions derived from it (e.g., `BadRequestException` or `NotFoundException`) were inconsistent. In the latest major release, these exception responses will follow the same structure.
 
 ```typescript
 /*
@@ -93,7 +93,7 @@ Previosuly, the generated response bodies for the `HttpException` class and othe
 
 #### Validation errors schema
 
-In the past releases, the `ValidationPipe` was throwing an array of the `ValidationError` objects returned by the `class-validator` package. Now, `ValidationPipe` will map errors to a list of plain strings representing error messages.
+In past releases, the `ValidationPipe` threw an array of the `ValidationError` objects returned by the `class-validator` package. Now, `ValidationPipe` will map errors to a list of plain strings representing error messages.
 
 ```typescript
 // Before
@@ -146,11 +146,11 @@ By default, every path parameter and query parameter comes over the network as a
 
 To enable the request-response message type, Nest creates two logical channels - one is responsible for transferring the data while the other waits for incoming responses. For some underlying transports, such as NATS, this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels.
 
-Let's say that we have a single message handler `@MessagePattern('getUsers')`. In the past, Nest built two channels from this pattern: `getUsers_ack` (for requests) and `getUsers_res` (for responses). Now, Nest will build `getUsers` (for requests) and `getUsers.reply` (for responses) instead. Also, for MQTT transport strategy, the response channel would be `getUsers/reply` (to avoid conflicts with topic wildcards).
+Let's say that we have a single message handler `@MessagePattern('getUsers')`. In the past, Nest built two channels from this pattern: `getUsers_ack` (for requests) and `getUsers_res` (for responses). With version 7, this naming scheme changes. Now Nest will build `getUsers` (for requests) and `getUsers.reply` (for responses) instead. Also, specifically for the MQTT transport strategy, the response channel would be `getUsers/reply` (to avoid conflicts with topic wildcards).
 
 #### Deprecations
 
-All deprecations (from 5 to 6 version) have been finally removed (e.g., the deprecated `@ReflectMetadata` decorator).
+All deprecations (from Nest version 5 to version 6) have been finally removed (e.g., the deprecated `@ReflectMetadata` decorator).
 
 #### Node.js
 

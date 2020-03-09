@@ -25,7 +25,7 @@ import { AppController } from './app.controller';
 export class ApplicationModule {}
 ```
 
-> warning **Warning** In [GraphQL](/graphql/quick-start) applications, interceptors are executed separately for each field resolver. Hence, `CacheModule` (which uses interceptors to cache responses) will not work properly.
+> warning **Warning** In [GraphQL](/graphql/quick-start) applications, interceptors are executed separately for each field resolver. Thus, `CacheModule` (which uses interceptors to cache responses) will not work properly.
 
 Then just tie the `CacheInterceptor` where you want to cache data.
 
