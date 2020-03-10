@@ -136,6 +136,11 @@
       "logo": "/assets/logo/swissdevjobs-devops-logo.png",
       "url": "https://swissdevjobs.ch/jobs/Dev-Ops/All",
       "width": "65px"
+    },
+    {
+      "logo": "/assets/logo/zeoagency.svg",
+      "url": "https://zeo.org/tr/",
+      "width": "80px"
     }
   ],
   "Body": [
