@@ -1,6 +1,6 @@
 ### Federation
 
-[Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) offers a means of splitting your monolith GraphQL server into independent microservices. It consists of two components: A gateway and one or more federated microservices. Each microservice holds part of the schema and the gateway merges the schemas into one single schema that can be consumed by the client.
+[Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) offers a means of splitting your monolithic GraphQL server into independent microservices. It consists of two components: a gateway and one or more federated microservices. Each microservice holds part of the schema and the gateway merges the schemas into a single schema that can be consumed by the client.
 
 To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260cf525d21), Federation is designed with these core principles:
 
@@ -11,7 +11,7 @@ To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260
 
 > warning **Warning** Apollo Federation currently does not support subscriptions.
 
-In the next example, we'll set up a demo application with a gateway and two federated endpoints: a user- and posts service.
+In the next example, we'll set up a demo application with a gateway and two federated endpoints: a Users service and a Posts service.
 
 #### Federated example: Users
 
@@ -21,7 +21,7 @@ First install the optional dependency for federation:
 $ npm install --save @apollo/federation
 ```
 
-The User service has a simple schema. Note the `@key` directive, it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we extend the Query type.
+The User service has a simple schema. Note the `@key` directive: it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we extend the `Query` type.
 
 ```graphql
 type User @key(fields: "id") {
@@ -96,7 +96,7 @@ extend type Query {
 }
 ```
 
-Our resolver has one method of interest here: `getUser`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance. The User service discussed above will be called on the `resolveReference` method.
+Our resolver has one method of interest here: `getUser`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance. The Users service discussed above will be called on the `resolveReference` method.
 
 ```typescript
 import { Query, Resolver, Parent, ResolveProperty } from '@nestjs/graphql';

@@ -8,11 +8,11 @@ It is best practice to validate the correctness of any data sent into a web appl
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
 
-Let's start with the built-in `ValidationPipe`, which makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
+The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
 #### Overview
 
-In the [Pipes](/pipes) chapter, we went through the process of building simple pipes to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and using some of its advanced customization features.
+In the [Pipes](/pipes) chapter, we went through the process of building simple pipes to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and show how to use some of its advanced customization features.
 
 #### Auto-validation
 
@@ -142,7 +142,7 @@ By default, every path parameter and query parameter comes over the network as a
 
 In the above section, we showed how the `ValidationPipe` can implicitly transform query and path parameters based on the expected type. However, this feature requires having auto-transformation enabled.
 
-Alternatively (with the auto-transformation disabled), you can explicitly cast values using the `ParseIntPipe` or `ParseBoolPipe` (note that `ParseStringPipe` is not needed because, as mentioned earlier, every path parameter and query parameter comes over the network as a `string` by default).
+Alternatively (with auto-transformation disabled), you can explicitly cast values using the `ParseIntPipe` or `ParseBoolPipe` (note that `ParseStringPipe` is not needed because, as mentioned earlier, every path parameter and query parameter comes over the network as a `string` by default).
 
 ```typescript
 @Get(':id')
@@ -160,7 +160,7 @@ findOne(
 
 #### Parsing and validating arrays
 
-TypeScript does not store metadata about generics or interfaces, so when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data. For instance, below code won't be correctly validated:
+TypeScript does not store metadata about generics or interfaces, so when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data. For instance, in the following code, `createUserDtos` won't be correctly validated:
 
 ```typescript
 @Post()
@@ -181,7 +181,7 @@ createBulk(
 }
 ```
 
-In addition, the `ParseArrayPipe` may come in handy when parsing query parameters. Let's define the `findByIds()` method that returns users based on identifiers passed as query parameters.
+In addition, the `ParseArrayPipe` may come in handy when parsing query parameters. Let's consider a `findByIds()` method that returns users based on identifiers passed as query parameters.
 
 ```typescript
 @Get()
@@ -189,15 +189,14 @@ findByIds(
   @Query('id', new ParseArrayPipe({ items: Number, separator: ',' }))
   ids: number[],
 ) {
-  return 'This action return users by ids';
+  return 'This action returns users by ids';
 }
 ```
 
-And test this endpoint using `cURL`:
+This construction validates the incoming query parameters from an HTTP `GET` request like the following:
 
 ```bash
-$ # GET /?ids=1,2,3
-$ curl http://localhost:3000/?ids=1,2,3
+GET /?ids=1,2,3
 ```
 
 #### WebSockets and Microservices

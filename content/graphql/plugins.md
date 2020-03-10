@@ -39,7 +39,7 @@ Nest will automatically instantiate a plugin and apply it to the Apollo Server.
 
 #### Using plugins
 
-There are several plugins provided out-of-the-box. To use an existing plugin, simply import it and add to the `plugins` array:
+There are several plugins provided out-of-the-box. To use an existing plugin, simply import it and add it to the `plugins` array:
 
 ```typescript
 GraphQLModule.forRoot({
