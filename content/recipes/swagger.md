@@ -338,7 +338,7 @@ In order to combine schemas, you can use `oneOf`, `anyOf` or `allOf` keywords ([
 pet: Cat | Dog;
 ```
 
-If you want to define a polymorphic array (i.e. an array whose members span multiple schemas), you should use a raw definition (see above) to define your type by hand.
+If you want to define a polymorphic array (i.e., an array whose members span multiple schemas), you should use a raw definition (see above) to define your type by hand.
 ```typescript
 type Pet = Cat | Dog;
 
