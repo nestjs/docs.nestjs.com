@@ -80,7 +80,7 @@ $ nest g <schematic> <name> [options]
 | `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                       |
 | `--flat`                        | Do not generate a folder for the element.                                                                       |
 | `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
-| `--spec`                        | Enforce spec files generation (default)                                                                                   |
+| `--spec`                        | Enforce spec files generation (default)                                                                         |
 | `--no-spec`                     | Disable spec files generation                                                                                   |
 
 #### nest build
@@ -129,6 +129,7 @@ $ nest start <name> [options]
 | `--path [path]`      | Path to `tsconfig` file. <br/>Alias `-p`                |
 | `--config [path]`    | Path to `nest-cli` configuration file. <br/>Alias `-c`  |
 | `--watch`            | Run in watch mode (live-reload) <br/>Alias `-w`         |
+| `--watchAssets`      | Run in watch non-ts file mode.                          |
 | `--debug [hostport]` | Run in debug mode (with --inspect flag) <br/>Alias `-d` |
 | `--webpack`          | Use webpack for compilation.                            |
 | `--webpackPath`      | Path to webpack configuration.                          |
