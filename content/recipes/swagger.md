@@ -671,6 +671,8 @@ The Swagger plugin will automatically:
 - set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
 - add a response decorator to every endpoint with a proper status and `type` (response model)
 
+Please, note that your filenames **must have** one of the following suffixes: `['.dto.ts', '.entity.ts']` (e.g., `create-user.dto.ts`) in order to be analysed by the plugin.
+
 Previously, if you wanted to provide an interactive experience with the Swagger UI,
 you had to duplicate a lot of code to let the package knows how your models/components should be declared in the specification. For example, you could define a simple `CreateUserDto` class as follows:
 
