@@ -313,7 +313,7 @@ For example:
 ]
 ```
 
-> error **Warning** setting `watchAssets` in a top-level `compilerOptions` property overrides any `watchAssets` settings within the `assets` property.
+> error **Warning** Setting `watchAssets` in a top-level `compilerOptions` property overrides any `watchAssets` settings within the `assets` property.
 
 #### Project properties
 
