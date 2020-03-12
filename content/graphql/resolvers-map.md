@@ -412,6 +412,8 @@ The GraphQL plugin will automatically:
 - set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
 - set the `type` property depending on the type (supports arrays as well)
 
+Please, note that your filenames **must have** one of the following suffixes: `['.input.ts', '.args.ts', '.entity.ts']` (e.g., `author.entity.ts`) in order to be analysed by the plugin.
+
 Previously, you had to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
 
 ```typescript
