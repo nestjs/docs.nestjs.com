@@ -190,7 +190,7 @@ These properties specify the compiler to use as well as various options that aff
 | `webpackConfigPath` | string              | Points at a webpack options file. If not specified, Nest looks for the file `webpack.config.js`. See below for more details.                                                                                                          |
 | `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                 |
 | `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode). See below for details.                                |
-| `watchAssets`       | boolean             | If `true`, run in watch-mode, watching all non-TypeScript assets. (see [Assets](cli/monorepo#assets) below for more details).                                                                                                         |
+| `watchAssets`       | boolean             | If `true`, run in watch-mode, watching **all** non-TypeScript assets. (For more fine-grained control of the assets to watch, see [Assets](cli/monorepo#assets) section below).                                                        |
 
 #### Global generate options
 
@@ -298,8 +298,6 @@ The value of the `assets` key should be an array of elements specifying the file
 "watchAssets": true,
 ```
 
-> info **Hint** To enable watch mode (live-reload) for assets during development, use the `watchAssets` option (see [Global compiler options](cli/monorepo#global-compiler-options) above for more details).
-
 For finer control, the elements can be objects with the following keys:
 
 - `"include"`: `glob`-like file specifications for the assets to be distributed
@@ -314,6 +312,8 @@ For example:
   { "include": "**/*.graphql", "exclude": "**/omitted.graphql", "watchAssets": true },
 ]
 ```
+
+> error **Warning** setting `watchAssets` in a top-level `compilerOptions` property overrides any `watchAssets` settings within the `assets` property.
 
 #### Project properties
 
