@@ -168,7 +168,7 @@ After running the steps above to create a monorepo, our `nest-cli.json` file loo
 The file is divided into sections:
 
 - a global section with top-level properties controlling standard and monorepo-wide settings
-- a top level property (`"projects"`) with metadata about each project.  This section is present only for monorepo-mode structures.
+- a top level property (`"projects"`) with metadata about each project. This section is present only for monorepo-mode structures.
 
 The top-level properties are as follows:
 
@@ -183,21 +183,22 @@ The top-level properties are as follows:
 
 These properties specify the compiler to use as well as various options that affect **any** compilation step, whether as part of `nest build` or `nest start`, and regardless of the compiler, whether `tsc` or webpack.
 
-| Property Name       | Property Value Type | Description                                                                                                                                                                                                                              |
-| ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `webpack `          | boolean             | If `true`, use [webpack compiler](https://webpack.js.org/).  If `false` or not present, use `tsc`.  In monorepo mode, the default is `true` (use webpack), in standard mode, the default is `false` (use `tsc`).  See below for details. |
-| `tsConfigPath`      | string              | (**monorepo only**) Points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).            |
-| `webpackConfigPath` | string              | Points at a webpack options file.  If not specified, Nest looks for the file `webpack.config.js`.  See below for more details.                                                                                                           |
-| `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                    |
-| `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode).  See below for details.                                  |
+| Property Name       | Property Value Type | Description                                                                                                                                                                                                                           |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `webpack`           | boolean             | If `true`, use [webpack compiler](https://webpack.js.org/). If `false` or not present, use `tsc`. In monorepo mode, the default is `true` (use webpack), in standard mode, the default is `false` (use `tsc`). See below for details. |
+| `tsConfigPath`      | string              | (**monorepo only**) Points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).         |
+| `webpackConfigPath` | string              | Points at a webpack options file. If not specified, Nest looks for the file `webpack.config.js`. See below for more details.                                                                                                          |
+| `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                 |
+| `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode). See below for details.                                |
+| `watchAssets`       | boolean             | If `true`, run in watch-mode, watching **all** non-TypeScript assets. (For more fine-grained control of the assets to watch, see [Assets](cli/monorepo#assets) section below).                                                        |
 
 #### Global generate options
 
 These properties specify the default generate options to be used by the `nest generate` command.
 
-| Property Name       | Property Value Type | Description                                                                                                                                                                                                                              |
-| ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `spec`              | boolean *or* object | If the value is boolean, a value of `true` enables `spec` generation by default and a value of `false` disables it. A flag passed on the CLI command line overrides this setting, as does a project-specific `generateOptions` setting (more below). If the value is an object, each key represents a schematic name, and the boolean value determines whether the default spec generation is enabled / disabled for that specific schematic. |
+| Property Name | Property Value Type | Description                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `spec`        | boolean _or_ object | If the value is boolean, a value of `true` enables `spec` generation by default and a value of `false` disables it. A flag passed on the CLI command line overrides this setting, as does a project-specific `generateOptions` setting (more below). If the value is an object, each key represents a schematic name, and the boolean value determines whether the default spec generation is enabled / disabled for that specific schematic. |
 
 The following example uses a boolean value to specify that spec file generation should be disabled by default for all projects:
 
@@ -225,7 +226,7 @@ In the following example, `spec` file generation is disabled only for `service` 
 
 > error **Warning** When specifying the `spec` as an object, the key for the generation schematic does not currently support automatic alias handling. This means that specifying a key as for example `service: false` and trying to generate a service via the alias `s`, the spec would still be generated. To make sure both the normal schematic name and the alias work as intended, specify both the normal command name as well as the alias, as seen below.
 >
->```javascript
+> ```javascript
 > {
 >   "generateOptions": {
 >     "spec": {
@@ -283,31 +284,36 @@ module.exports = function(options) {
     ...options,
     externals: [],
   };
-}
+};
 ```
 
 #### Assets
 
-TypeScript compilation automatically distributes compiler output (`.js` and `.d.ts` files) to the specified output directory.  It can also be convenient to distribute non-TypeScript files, such as `.graphql` files, `images`, `.html` files and other assets.  This allows you to treat `nest build` (and any initial compilation step) as a lightweight **development build** step, where you may be editing non-TypeScript files and iteratively compiling and testing.
+TypeScript compilation automatically distributes compiler output (`.js` and `.d.ts` files) to the specified output directory. It can also be convenient to distribute non-TypeScript files, such as `.graphql` files, `images`, `.html` files and other assets. This allows you to treat `nest build` (and any initial compilation step) as a lightweight **development build** step, where you may be editing non-TypeScript files and iteratively compiling and testing.
 
-The value of the `assets` key should be an array of elements specifying the files to be distributed.  The elements can be simple strings with `glob`-like file specs, for example:
+The value of the `assets` key should be an array of elements specifying the files to be distributed. The elements can be simple strings with `glob`-like file specs, for example:
 
 ```typescript
-"assets": ["**/*.graphql"]
+"assets": ["**/*.graphql"],
+"watchAssets": true,
 ```
 
 For finer control, the elements can be objects with the following keys:
+
 - `"include"`: `glob`-like file specifications for the assets to be distributed
 - `"exclude"`: `glob`-like file specifications for assets to be **excluded** from the `include` list
-- `"outDir"`: a string specifying the path (relative to the root folder) where the assets should be distributed.  Defaults to the same output directory configured for compiler output.
+- `"outDir"`: a string specifying the path (relative to the root folder) where the assets should be distributed. Defaults to the same output directory configured for compiler output.
+- `"watchAssets"`: boolean; if `true`, run in watch mode watching specified assets
 
 For example:
 
 ```typescript
 "assets": [
-  { "include": "**/*.graphql", "exclude": "**/omitted.graphql" },
+  { "include": "**/*.graphql", "exclude": "**/omitted.graphql", "watchAssets": true },
 ]
 ```
+
+> error **Warning** Setting `watchAssets` in a top-level `compilerOptions` property overrides any `watchAssets` settings within the `assets` property.
 
 #### Project properties
 
