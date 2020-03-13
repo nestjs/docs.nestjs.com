@@ -206,7 +206,7 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
@@ -252,7 +252,8 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 ```typescript
 {
   "statusCode": 403,
-  "message": "Forbidden resource"
+  "message": "Forbidden",
+  "error": "Forbidden resource"
 }
 ```
 

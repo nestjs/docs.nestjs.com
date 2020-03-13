@@ -151,7 +151,7 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne(username);
@@ -224,7 +224,7 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly authService: AuthService) {
+  constructor(private authService: AuthService) {
     super();
   }
 
@@ -415,8 +415,8 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private usersService: UsersService,
+    private jwtService: JwtService
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -550,7 +550,7 @@ import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -565,7 +565,7 @@ import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -723,7 +723,7 @@ import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -745,7 +745,7 @@ import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -825,7 +825,7 @@ However, there are ways to dynamically resolve request-scoped providers within t
 First, open the `local.strategy.ts` file and inject the `ModuleRef` in the normal way:
 
 ```typescript
-constructor(private readonly moduleRef: ModuleRef) {
+constructor(private moduleRef: ModuleRef) {
   super({
     passReqToCallback: true,
   });
@@ -897,7 +897,7 @@ You can also pass strategies an options object in their constructors to configur
 For the local strategy you can pass e.g.:
 
 ```typescript
-constructor(private readonly authService: AuthService) {
+constructor(private authService: AuthService) {
   super({
     usernameField: 'email',
     passwordField: 'password',

@@ -65,11 +65,14 @@ In order to make your code more readable and transparent, you can create a `@Use
 
 ```typescript
 @@filename(user.decorator)
-import { createParamDecorator } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const User = createParamDecorator((data, req) => {
-  return req.user;
-});
+export const User = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.user;
+  },
+);
 ```
 
 Then, you can simply use it wherever it fits your requirements.
@@ -106,16 +109,24 @@ Let's define a decorator that takes a property name as key, and returns the asso
 
 ```typescript
 @@filename(user.decorator)
-import { createParamDecorator } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const User = createParamDecorator((data: string, req) => {
-  return data ? req.user && req.user[data] : req.user;
-});
+export const User = createParamDecorator(
+  (data: string, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    const user = request.user;
+
+    return data ? user && user[data] : user;
+  },
+);
 @@switch
 import { createParamDecorator } from '@nestjs/common';
 
-export const User = createParamDecorator((data, req) => {
-  return data ? req.user && req.user[data] : req.user;
+export const User = createParamDecorator((data, ctx) => {
+  const request = ctx.switchToHttp().getRequest();
+  const user = request.user;
+
+  return data ? user && user[data] : user;
 });
 ```
 
@@ -137,7 +148,7 @@ async findOne(firstName) {
 
 You can use this same decorator with different keys to access different properties. If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
 
-> info **Hint** For TypeScript users, note that `createParamDecorator<T>()` is a generic. This means you can explicitly enforce type safety, for example `createParamDecorator<string>((data, req) => ...)`. Alternatively, specify a parameter type in the factory function, for example `createParamDecorator((data: string, req) => ...)`. If you omit both, the type for `data` will be `any`.
+> info **Hint** For TypeScript users, note that `createParamDecorator<T>()` is a generic. This means you can explicitly enforce type safety, for example `createParamDecorator<string>((data, ctx) => ...)`. Alternatively, specify a parameter type in the factory function, for example `createParamDecorator((data: string, ctx) => ...)`. If you omit both, the type for `data` will be `any`.
 
 #### Working with pipes
 

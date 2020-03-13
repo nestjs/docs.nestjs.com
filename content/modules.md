@@ -140,7 +140,7 @@ import { CatsService } from './cats.service';
   providers: [CatsService],
 })
 export class CatsModule {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private catsService: CatsService) {}
 }
 @@switch
 import { Module, Dependencies } from '@nestjs/common';

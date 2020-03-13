@@ -17,7 +17,15 @@ In both cases, pipes operate on the `arguments` being processed by a <a href="co
 
 #### Built-in pipes
 
-Nest comes with three pipes available right out-of-the-box: `ValidationPipe`, `ParseIntPipe` and `ParseUUIDPipe`. They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build them from scratch.
+Nest comes with five pipes available out-of-the-box:
+
+- `ValidationPipe`
+- `ParseIntPipe`
+- `ParseBoolPipe`
+- `ParseArrayPipe`
+- `ParseUUIDPipe`
+
+They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build `ValidationPipe` and `ParseIntPipe` from scratch.
 
 Let's start with the `ValidationPipe`. Initially, we'll have it simply take an input value and immediately return the same value, behaving like an identity function.
 
@@ -54,7 +62,7 @@ The `value` is the currently processed argument (before it is received by the ro
 ```typescript
 export interface ArgumentMetadata {
   type: 'body' | 'query' | 'param' | 'custom';
-  metatype?: Type<any>;
+  metatype?: Type<unknown>;
   data?: string;
 }
 ```
@@ -151,7 +159,7 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {
-  constructor(private readonly schema: Object) {}
+  constructor(private schema: Object) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
     const { error } = this.schema.validate(value);

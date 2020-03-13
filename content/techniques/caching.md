@@ -25,6 +25,8 @@ import { AppController } from './app.controller';
 export class ApplicationModule {}
 ```
 
+> warning **Warning** In [GraphQL](/graphql/quick-start) applications, interceptors are executed separately for each field resolver. Thus, `CacheModule` (which uses interceptors to cache responses) will not work properly.
+
 Then just tie the `CacheInterceptor` where you want to cache data.
 
 ```typescript
@@ -93,8 +95,7 @@ export class AppController {
 
 The `@CacheKey()` decorator may be used with or without a corresponding `@CacheTTL()` decorator and vice versa. One may choose to override only the `@CacheKey()` or only the `@CacheTTL()`. Settings that are not overridden with a decorator will use the default values as registered globally (see [Customize caching](https://docs.nestjs.com/techniques/caching#customize-caching)).
 
-
-#### WebSockets & Microservices
+#### WebSockets and Microservices
 
 You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of the transport method that is being used).
 
@@ -136,7 +137,7 @@ handleEvent(client, data) {
 }
 ```
 
-> info **Hint** The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator. 
+> info **Hint** The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator.
 
 #### Different stores
 

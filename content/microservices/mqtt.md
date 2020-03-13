@@ -16,6 +16,14 @@ To use the MQTT transporter, pass the following options object to the `createMic
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+  transport: Transport.MQTT,
+  options: {
+    host: 'localhost',
+    port: 1883,
+  },
+});
+@@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.MQTT,
   options: {
@@ -90,5 +98,23 @@ getNotifications(@Payload() data: number[], @Ctx() context: MqttContext) {
 @MessagePattern('notifications')
 getNotifications(data, context) {
   console.log(context.getPacket());
+}
+```
+
+#### Wildcards
+
+A subscription may be to an explicit topic, or it may include wildcards. Two wildcards are available, `+` and `#`. `+` is a single-level wildcard, while `#` is a multi-level wildcard which covers many topic levels.
+
+```typescript
+@@filename()
+@MessagePattern('sensors/+/temperature/+')
+getTemperature(@Ctx() context: MqttContext) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+@@switch
+@Bind(Ctx())
+@MessagePattern('sensors/+/temperature/+')
+getTemperature(context) {
+  console.log(`Topic: ${context.getTopic()}`);
 }
 ```

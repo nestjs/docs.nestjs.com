@@ -85,7 +85,7 @@ import { Request } from 'express';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CatsService {
-  constructor(@Inject(REQUEST) private readonly request: Request) {}
+  constructor(@Inject(REQUEST) private request: Request) {}
 }
 ```
 
@@ -97,7 +97,7 @@ import { CONTEXT } from '@nestjs/graphql';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CatsService {
-  constructor(@Inject(CONTEXT) private readonly context) {}
+  constructor(@Inject(CONTEXT) private context) {}
 }
 ```
 

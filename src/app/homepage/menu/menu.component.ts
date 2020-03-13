@@ -104,10 +104,15 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Quick start', path: '/graphql/quick-start' },
-        { title: 'Resolvers', path: '/graphql/resolvers-map' },
+        { title: 'Resolvers', path: '/graphql/resolvers' },
         { title: 'Mutations', path: '/graphql/mutations' },
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
+        { title: 'Directives', path: '/graphql/directives' },
+        { title: 'Plugins', path: '/graphql/plugins' },
+        { title: 'Interfaces', path: '/graphql/interfaces' },
+        { title: 'Unions', path: '/graphql/unions' },
+        { title: 'Enums', path: '/graphql/enums' },
         {
           title: 'Other features',
           path: '/graphql/tooling',
@@ -170,8 +175,8 @@ export class MenuComponent implements OnInit {
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
-        { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
+        { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
         { title: 'Documentation', path: '/recipes/documentation' },
@@ -205,13 +210,13 @@ export class MenuComponent implements OnInit {
       children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
     {
+      title: 'T-Shirts and Hoodies',
+      externalUrl: 'https://nestjs.threadless.com/',
+    },
+    {
       title: 'Support us',
       isOpened: false,
       path: '/support',
-    },
-    {
-      title: 'T-Shirts and Accessories',
-      externalUrl: 'https://nestjs.threadless.com/',
     },
   ];
 

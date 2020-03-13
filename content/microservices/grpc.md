@@ -20,6 +20,14 @@ Like other Nest microservices transport layer implementations, you select the gR
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.GRPC,
+  options: {
+    package: 'hero',
+    protoPath: join(__dirname, 'hero/hero.proto'),
+  },
+});
+@@switch
 const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.GRPC,
   options: {
@@ -231,7 +239,7 @@ Once registered, we can inject the configured `ClientGrpc` object with `@Inject(
 export class AppService implements OnModuleInit {
   private heroService: HeroService;
 
-  constructor(@Inject('HERO_PACKAGE') private readonly client: ClientGrpc) {}
+  constructor(@Inject('HERO_PACKAGE') private client: ClientGrpc) {}
 
   onModuleInit() {
     this.heroService = this.client.getService<HeroService>('HeroService');

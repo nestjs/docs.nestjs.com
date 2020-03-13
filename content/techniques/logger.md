@@ -180,7 +180,7 @@ import { MyLogger } from './my-logger.service';
 export class CatsService {
   private readonly cats: Cat[] = [];
 
-  constructor(private readonly myLogger: MyLogger) {
+  constructor(private myLogger: MyLogger) {
     this.myLogger.setContext('CatsService');
   }
 

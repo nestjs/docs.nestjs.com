@@ -72,7 +72,7 @@ import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel('Cat') private readonly catModel: Model<Cat>) {}
+  constructor(@InjectModel('Cat') private catModel: Model<Cat>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -117,7 +117,7 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(@InjectConnection() private connection: Connection) {}
 }
 ```
 
@@ -165,9 +165,7 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class CatsService {
-  constructor(
-    @InjectConnection('cats') private readonly connection: Connection,
-  ) {}
+  constructor(@InjectConnection('cats') private connection: Connection) {}
 }
 ```
 
@@ -201,16 +199,18 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
     MongooseModule.forFeatureAsync([
       {
         name: 'Cat',
-        import [ConfigModule],
+        imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
           const schema = CatsSchema;
           schema.pre('save', () =>
-            console.log(`${configService.getString('APP_NAME')}: Hello from pre save`),
+            console.log(
+              `${configService.getString('APP_NAME')}: Hello from pre save`,
+            ),
           );
           return schema;
         },
         inject: [ConfigService],
-      }
+      },
     ]),
   ],
 })

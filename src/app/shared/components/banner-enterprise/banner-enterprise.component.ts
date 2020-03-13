@@ -6,6 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [
     `
       .banner {
+        background-color: #111;
         background-image: url('/assets/banners/enterprise.jpg');
       }
       .banner ul {

@@ -1,8 +1,6 @@
 ## Harnessing the power of TypeScript & GraphQL
 
-[GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. 
-
-GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you get end-to-end typing.
+[GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you end-to-end typing.
 
 In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` is a wrapper around the [Apollo](https://www.apollographql.com/) server. We use this proven GraphQL package to provide a way to use GraphQL with Nest.
 
@@ -20,9 +18,9 @@ And depending on what you use (Express or Fastify), you need to install `apollo-
 
 Nest offers two ways of building GraphQL applications, the **schema first** and the **code first** methods.
 
-In the **schema first** approach, the source of truth is a GraphQL SDL (Schema Definition Language) SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.
-
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
+
+In the **schema first** approach, the source of truth is a GraphQL SDL (Schema Definition Language) SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.
 
 #### Getting started with GraphQL & TypeScript
 
@@ -80,6 +78,28 @@ GraphQLModule.forRoot({
   include: [CatsModule],
 }),
 ```
+
+#### Code first
+
+In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema.
+
+To use the code first approach, start by adding the `autoSchemaFile` property to the options object.
+
+```typescript
+GraphQLModule.forRoot({
+  autoSchemaFile: 'schema.gql',
+}),
+```
+
+The `autoSchemaFile` property value is the path where your automatically generated schema will be created. Alternatively, the schema can be generated on-the-fly in memory. To enable this, set the `autoSchemaFile` property to `true`:
+
+```typescript
+GraphQLModule.forRoot({
+  autoSchemaFile: true,
+}),
+```
+
+A fully working sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first).
 
 #### Schema first
 
@@ -149,35 +169,7 @@ definitionsFactory.generate({
 });
 ```
 
-A fully working sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-apollo).
-
-#### Code first
-
-In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema.
-
-Nest uses the powerful [type-graphql](https://typegraphql.ml/) library under the hood to provide this functionality. To start using it, first install the package.
-
-```bash
-$ npm i type-graphql
-```
-
-Once installation is complete, we can add the `autoSchemaFile` property to the options object.
-
-```typescript
-GraphQLModule.forRoot({
-  autoSchemaFile: 'schema.gql',
-}),
-```
-
-The `autoSchemaFile` property value is the path where your automatically generated schema will be created. Additionally, you can pass the `buildSchemaOptions` property - an options object which will be passed in to the `buildSchema()` function (from the `type-graphql` package). Alternatively, the schema can be generated on-the-fly in memory. To enable this, set the `autoSchemaFile` property to `true`:
-
-```typescript
-GraphQLModule.forRoot({
-  autoSchemaFile: true,
-}),
-```
-
-A fully working sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-type-graphql).
+A fully working sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first).
 
 #### Async configuration
 

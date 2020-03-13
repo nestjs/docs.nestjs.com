@@ -105,7 +105,7 @@ import { Connection } from 'typeorm';
   imports: [TypeOrmModule.forRoot(), UsersModule],
 })
 export class AppModule {
-  constructor(private readonly connection: Connection) {}
+  constructor(private connection: Connection) {}
 }
 @@switch
 import { Connection } from 'typeorm';
@@ -207,7 +207,7 @@ import { User } from './user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private usersRepository: Repository<User>,
   ) {}
 
   findAll(): Promise<User[]> {
@@ -369,7 +369,7 @@ First, we need to inject the `Connection` object into a class in the normal way:
 ```typescript
 @Injectable()
 export class UsersService {
-  constructor(private readonly connection: Connection) {}
+  constructor(private connection: Connection) {}
 }
 ```
 
@@ -527,9 +527,9 @@ You can also inject the `Connection` or `EntityManager` for a given connection:
 export class AlbumsService {
   constructor(
     @InjectConnection('albumsConnection')
-    private readonly connection: Connection,
+    private connection: Connection,
     @InjectEntityManager('albumsConnection')
-    private readonly entityManager: EntityManager,
+    private entityManager: EntityManager,
   ) {}
 }
 ```
@@ -584,7 +584,7 @@ Afterward, simply inject the repository using the following construction:
 ```typescript
 @Injectable()
 export class AuthorService {
-  constructor(private readonly authorRepository: AuthorRepository) {}
+  constructor(private authorRepository: AuthorRepository) {}
 }
 ```
 
@@ -741,7 +741,7 @@ import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly sequelize: Sequelize) {}
+  constructor(private sequelize: Sequelize) {}
 }
 @@switch
 import { Injectable } from '@nestjs/common';
@@ -835,7 +835,7 @@ import { User } from './user.model';
 export class UsersService {
   constructor(
     @InjectModel(User)
-    private readonly userModel: typeof User,
+    private userModel: typeof User,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -1003,7 +1003,7 @@ First, we need to inject the `Sequelize` object into a class in the normal way:
 ```typescript
 @Injectable()
 export class UsersService {
-  constructor(private readonly sequelize: Sequelize) {}
+  constructor(private sequelize: Sequelize) {}
 }
 ```
 
@@ -1098,7 +1098,7 @@ You can also inject the `Sequelize` instance for a given connection:
 export class AlbumsService {
   constructor(
     @InjectConnection('albumsConnection')
-    private readonly sequelize: Sequelize,
+    private sequelize: Sequelize,
   ) {}
 }
 ```

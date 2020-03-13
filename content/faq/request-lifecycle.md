@@ -1,20 +1,20 @@
 ### Request lifecycle
 
-Nest applications handle requests and produce responses in a sequence we refer to as the **request lifecycle**.  With the use of middleware, pipes, guards, and interceptors, it can be challenging to track down where a particular piece of code executes during the request lifecycle, especially as global, controller level, and route level components come into play. In general, a request flows through middleware to guards, then to interceptors, then to pipes and finally back to interceptors on the return path (as the response is generated).
+Nest applications handle requests and produce responses in a sequence we refer to as the **request lifecycle**. With the use of middleware, pipes, guards, and interceptors, it can be challenging to track down where a particular piece of code executes during the request lifecycle, especially as global, controller level, and route level components come into play. In general, a request flows through middleware to guards, then to interceptors, then to pipes and finally back to interceptors on the return path (as the response is generated).
 
 #### Middleware
 
-Middleware is executed in a particular sequence.  First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works.
+Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works.
 
 #### Guard
 
-Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound.  For example:
+Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound. For example:
 
 ```typescript
 @UseGuards(Guard1, Guard2)
 @Controller('cats')
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private catsService: CatsService) {}
 
   @UseGuards(Guard3)
   @Get()
@@ -40,13 +40,13 @@ Pipes follow the standard global to controller to route bound sequence, with the
 @UsePipes(GeneralValidationPipe)
 @Controller('cats')
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private catsService: CatsService) {}
 
   @UsePipes(RouteSpecificPipe)
   @Patch(':id')
   updateCat(
-    @Body() body: UpdateCatDTO, 
-    @Param() params: UpdateCatParams, 
+    @Body() body: UpdateCatDTO,
+    @Param() params: UpdateCatParams,
     @Query() query: UpdateCatQuery,
   ) {
     return this.catsService.updateCat(body, params, query);
@@ -64,7 +64,7 @@ Filters are the only component that do not resolve global first. Instead, filter
 
 #### Summary
 
-In general, the request lifecycle looks like the following: 
+In general, the request lifecycle looks like the following:
 
 1. Incoming request
 1. Globally bound middleware
@@ -84,5 +84,5 @@ In general, the request lifecycle looks like the following:
 1. Route interceptor (post-request)
 1. Controller interceptor (post-request)
 1. Global interceptor (post-request)
-1. Exception filters (route, then controller, then global) 
+1. Exception filters (route, then controller, then global)
 1. Server response

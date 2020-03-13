@@ -1,10 +1,18 @@
 ### Validation
 
-It is best practice to validate the correctness of any data sent into a web application. To automatically validate incoming requests, Nest provides a built-in `ValidationPipe`, which makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
+It is best practice to validate the correctness of any data sent into a web application. To automatically validate incoming requests, Nest provides several pipes available right out-of-the-box:
+
+- `ValidationPipe`
+- `ParseIntPipe`
+- `ParseBoolPipe`
+- `ParseArrayPipe`
+- `ParseUUIDPipe`
+
+The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
 #### Overview
 
-In the [Pipes](/pipes) chapter, we went through the process of building a simple validation pipe to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and using some of its advanced customization features.
+In the [Pipes](/pipes) chapter, we went through the process of building simple pipes to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and show how to use some of its advanced customization features.
 
 #### Auto-validation
 
@@ -28,6 +36,8 @@ create(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
+> info **Hint** Since TypeScript does not store metadata about **generics or interfaces**, when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data.
+
 Now we can add a few validation rules in our `CreateUserDto`. We do this using decorators provided by the `class-validator` package, described in detail [here](https://github.com/typestack/class-validator#validation-decorators). In this fashion, any route that uses the `CreateUserDto` will automatically enforce these validation rules.
 
 ```typescript
@@ -47,17 +57,8 @@ With these rules in place, if a request hits our endpoint with an invalid `email
 ```json
 {
   "statusCode": 400,
-  "error": "Bad Request",
-  "message": [
-    {
-      "target": {},
-      "property": "email",
-      "children": [],
-      "constraints": {
-        "isEmail": "email must be an email"
-      }
-    }
-  ]
+  "message": "Bad Request",
+  "error": ["email must be an email"]
 }
 ```
 
@@ -125,7 +126,80 @@ app.useGlobalPipes(
 );
 ```
 
-#### WebSockets & Microservices
+With the auto-transformation option enabled, the `ValidationPipe` will also perform conversion of primitive types. In the following example, the `findOne()` method takes one argument which represents an extracted `id` path parameter:
+
+```typescript
+@Get(':id')
+findOne(@Param('id') id: number) {
+  console.log(typeof id === 'number'); // true
+  return 'This action returns a user';
+}
+```
+
+By default, every path parameter and query parameter comes over the network as a `string`. In the above example, we specified the `id` type as a `number` (in the method signature). Therefore, the `ValidationPipe` will try to automatically convert a string identifier to a number.
+
+#### Explicit conversion
+
+In the above section, we showed how the `ValidationPipe` can implicitly transform query and path parameters based on the expected type. However, this feature requires having auto-transformation enabled.
+
+Alternatively (with auto-transformation disabled), you can explicitly cast values using the `ParseIntPipe` or `ParseBoolPipe` (note that `ParseStringPipe` is not needed because, as mentioned earlier, every path parameter and query parameter comes over the network as a `string` by default).
+
+```typescript
+@Get(':id')
+findOne(
+  @Param('id', ParseIntPipe) id: number,
+  @Query('sort', ParseBoolPipe) sort: boolean,
+) {
+  console.log(typeof id === 'number'); // true
+  console.log(typeof sort === 'boolean'); // true
+  return 'This action returns a user';
+}
+```
+
+> info **Hint** The `ParseIntPipe` and `ParseBoolPipe` are exported from the `@nestjs/common` package.
+
+#### Parsing and validating arrays
+
+TypeScript does not store metadata about generics or interfaces, so when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data. For instance, in the following code, `createUserDtos` won't be correctly validated:
+
+```typescript
+@Post()
+createBulk(@Body() createUserDtos: CreateUserDto[]) {
+  return 'This action adds new users';
+}
+```
+
+To validate the array, create a dedicated class which contains a property that wraps the array, or use the `ParseArrayPipe`.
+
+```typescript
+@Post()
+createBulk(
+  @Body(new ParseArrayPipe({ items: CreateUserDto }))
+  createUserDtos: CreateUserDto[],
+) {
+  return 'This action adds new users';
+}
+```
+
+In addition, the `ParseArrayPipe` may come in handy when parsing query parameters. Let's consider a `findByIds()` method that returns users based on identifiers passed as query parameters.
+
+```typescript
+@Get()
+findByIds(
+  @Query('id', new ParseArrayPipe({ items: Number, separator: ',' }))
+  ids: number[],
+) {
+  return 'This action returns users by ids';
+}
+```
+
+This construction validates the incoming query parameters from an HTTP `GET` request like the following:
+
+```bash
+GET /?ids=1,2,3
+```
+
+#### WebSockets and Microservices
 
 While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ValidationPipe` works the same for WebSockets and microservices, regardless of the transport method that is used.
 

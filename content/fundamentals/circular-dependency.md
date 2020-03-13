@@ -16,7 +16,7 @@ A **forward reference** allows Nest to reference classes which aren't yet define
 export class CatsService {
   constructor(
     @Inject(forwardRef(() => CommonService))
-    private readonly commonService: CommonService,
+    private commonService: CommonService,
   ) {}
 }
 @@switch
@@ -39,7 +39,7 @@ That covers one side of the relationship. Now let's do the same with `CommonServ
 export class CommonService {
   constructor(
     @Inject(forwardRef(() => CatsService))
-    private readonly catsService: CatsService,
+    private catsService: CatsService,
   ) {}
 }
 @@switch

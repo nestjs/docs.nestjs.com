@@ -16,6 +16,17 @@ To use the RabbitMQ transporter, pass the following options object to the `creat
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+  transport: Transport.RMQ,
+  options: {
+    urls: ['amqp://localhost:5672'],
+    queue: 'cats_queue',
+    queueOptions: {
+      durable: false
+    },
+  },
+});
+@@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.RMQ,
   options: {

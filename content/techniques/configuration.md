@@ -133,7 +133,7 @@ To access configuration values from our `ConfigService`, we first need to inject
 Then we can inject it using standard constructor injection:
 
 ```typescript
-constructor(private readonly configService: ConfigService) {}
+constructor(private configService: ConfigService) {}
 ```
 
 And use it in our class:

@@ -89,7 +89,7 @@ import { Observable, fromEvent, EMPTY } from 'rxjs';
 import { mergeMap, filter } from 'rxjs/operators';
 
 export class WsAdapter implements WebSocketAdapter {
-  constructor(private readonly app: INestApplicationContext) {}
+  constructor(private app: INestApplicationContext) {}
 
   create(port: number, options: any = {}): any {
     return new ws.Server({ port, ...options });
