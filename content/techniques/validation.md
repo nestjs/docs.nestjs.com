@@ -57,8 +57,8 @@ With these rules in place, if a request hits our endpoint with an invalid `email
 ```json
 {
   "statusCode": 400,
-  "message": "Bad Request",
-  "error": ["email must be an email"]
+  "error": "Bad Request",
+  "message": ["email must be an email"]
 }
 ```
 

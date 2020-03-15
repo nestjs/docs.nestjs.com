@@ -86,8 +86,8 @@ Previously, the generated response bodies for the `HttpException` class and othe
 // After
 {
   "statusCode": 403,
-  "message": "Forbidden",
-  "error": "Forbidden resource"
+  "message": "Forbidden resource",
+  "error": "Forbidden"
 }
 ```
 
@@ -115,8 +115,8 @@ In past releases, the `ValidationPipe` threw an array of the `ValidationError` o
 // After
 {
   "statusCode": 400,
-  "message": "Bad Request",
-  "error": ["email must be an email"]
+  "message": ["email must be an email"],
+  "error": "Bad Request"
 }
 ```
 
