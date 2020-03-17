@@ -1,6 +1,6 @@
 ### Resolvers
 
-Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/) operation (a query, mutation, or subscription) into data. They either return the same type of data we specify in our schema or a promise for that data. Typically, you create a resolvers map manually. The `@nestjs/graphql` package, on the other hand, generates a resolvers map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
+Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/) operation (a query, mutation, or subscription) into data. They return the same shape of data we specify in our schema -- either synchronously or as a promise that resolves to a result of that shape. Typically, you create a **resolvers map** manually. The `@nestjs/graphql` package, on the other hand, generates a resolvers map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
 
 #### Code first
 
@@ -214,7 +214,7 @@ You may also notice that such classes play very well with the `ValidationPipe` (
 
 #### Schema first
 
-As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we manually define our types in SDL (read [more](http://graphql.org/learn/schema/#type-language)).
+As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we manually define our types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following type definitions:
 
 ```graphql
 type Author {
@@ -235,7 +235,7 @@ type Query {
 }
 ```
 
-Our GraphQL schema contains a single exposed query - `author(id: Int!): Author`. Now, let's create an `AuthorResolver` class.
+This schema exposes a single query - `author(id: Int!): Author`. Let's create an `AuthorResolver` class that resolves author queries:
 
 ```typescript
 @Resolver('Author')
@@ -260,9 +260,9 @@ export class AuthorResolver {
 
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
-> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how resolvers can interact with other providers.
+> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
 
-The `@Resolver()` decorator does not affect queries and mutations (neither `@Query()` nor `@Mutation()` decorators). It only informs Nest that each `@ResolveField()` inside this particular class has a parent, which is an `Author` type in this case (`Author.posts` relation). Basically, instead of setting `@Resolver()` at the top of the class, this can be done close to the method:
+The `@Resolver()` decorator is used to inform Nest that each `@ResolveField()` method inside the class has a parent (the `Author` type in this case). The `@Resolver()` decorator **does not** affect queries (`@Query()` decorator) or mutations (`@Mutation()` decorator). Alternatively, instead of setting `@Resolver()` at the top of the class, this can be done for each method:
 
 ```typescript
 @Resolver('Author')
@@ -273,11 +273,28 @@ async posts(@Parent() author) {
 }
 ```
 
-> warning **Warning** Using the `@Resolver` decorator at the method-level is not supported with the **code first** approach.
+In this case (`@Resolver()` decorator at the method level), if you have multiple `@ResolveField()` decorators inside a class, you must add `@Resolver()` to all of them. This is not considered the best practice (as it creates extra overhead).
 
-However, if you have multiple `@ResolveField()` decorators inside one class, you must add `@Resolver()` to all of them, which is not necessarily a good practice (as it creates extra overhead).
+> warning **Warning** Using the `@Resolver` decorator at the method level is not supported with the **code first** approach.
 
-Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
+In the above examples, the `@Query()` and `@ResolveField()` decorators are associated with the types based on the method name. For example, consider the following construction from the example above:
+
+```typescript
+  @Query()
+  async author(@Args('id') id: number) {
+    return this.authorsService.findOneById(id);
+  }
+```
+
+This generates the resolver map entry for the author query in our schema (because the method name `author` matches the `author` field in the `Query` type):
+
+```graphql
+type Query {
+  author(id: Int!): Author
+}
+```
+
+Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping names as arguments of the decorator, as shown below
 
 ```typescript
 @Resolver('Author')
@@ -323,7 +340,7 @@ export abstract class IQuery {
 }
 ```
 
-Generating classes (instead of interfaces) allows you to use **decorators** in combination with the schema first approach, which makes them extremely useful for validation purposes (read [more](/techniques/validation)). For example:
+Generating classes (instead of the default technique of generating interfaces) allows you to use declarative validation **decorators** in combination with the schema first approach, which is an extremely useful technique (read [more](/techniques/validation)). For example, you could add these `class-validator` decorators to the generated `CreatePostInput` class as shown below:
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
@@ -386,7 +403,7 @@ These arguments have the following meanings:
 
 #### Module
 
-Once we're done with the above steps, we have to provide the `AuthorResolver` somewhere (for dependency injection). For example, we can do this in the newly created `AuthorsModule`.
+Once we're done with the above steps, we have to provide the `AuthorResolver` somewhere (list it as a `provider` in some module, for dependency injection). For example, we can do this in an `AuthorsModule`, which can also provide other services needed in this context.
 
 ```typescript
 @Module({
@@ -412,7 +429,7 @@ The GraphQL plugin will automatically:
 - set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
 - set the `type` property depending on the type (supports arrays as well)
 
-Please, note that your filenames **must have** one of the following suffixes: `['.input.ts', '.args.ts', '.entity.ts']` (e.g., `author.entity.ts`) in order to be analysed by the plugin.
+Please, note that your filenames **must have** one of the following suffixes: `['.input.ts', '.args.ts', '.entity.ts']` (e.g., `author.entity.ts`) in order to be analyzed by the plugin.
 
 Previously, you had to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
 

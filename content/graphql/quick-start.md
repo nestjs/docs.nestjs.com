@@ -16,7 +16,7 @@ And depending on what you use (Express or Fastify), you need to install `apollo-
 
 #### Overview
 
-Nest offers two ways of building GraphQL applications, the **schema first** and the **code first** methods.
+Nest offers two ways of building GraphQL applications, the **code first** and the **schema first** methods.
 
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
 
@@ -36,7 +36,7 @@ import { GraphQLModule } from '@nestjs/graphql';
     GraphQLModule.forRoot({}),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying Apollo instance (read more about available settings [here](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)). For example, if you want to disable the `playground` and turn off `debug` mode, pass the following options:
@@ -54,16 +54,18 @@ import { GraphQLModule } from '@nestjs/graphql';
     }),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 As mentioned, these options will be forwarded to the `ApolloServer` constructor.
 
 <app-banner-enterprise></app-banner-enterprise>
 
-#### Playground
+#### GraphQL playground
 
-The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the GraphQL server itself. With your application running in the background, open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You should see the GraphQL playground, as shown below.
+The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the GraphQL server itself. To see the playground running, you need a basic GraphQL server configured and running. To see it now, you can install the [working example here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first). Alternatively, if you're following along with these code samples, once you've complete the steps in the [Resolvers chapter](/graphql/resolvers-map), you can access the playground.
+
+With that in place, and with your application running in the background, open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You should see the GraphQL playground, as shown below.
 
 <figure>
   <img src="/assets/playground.png" alt="" />
@@ -111,9 +113,9 @@ GraphQLModule.forRoot({
 }),
 ```
 
-The `typePaths` property indicates where the `GraphQLModule` should look for GraphQL files. These files will be combined in memory; this allows you to split your schemas into several files and locate them near their resolvers.
+The `typePaths` property indicates where the `GraphQLModule` should look for GraphQL SDL schema definition files. These files will be combined in memory; this allows you to split your schemas into several files and locate them near their resolvers.
 
-Creating GraphQL types and corresponding TypeScript definitions is redundant and tedious. It leaves us without a single source of truth -- each change made within SDL forces us to adjust interfaces as well. To address this, the `@nestjs/graphql` package can automatically generate TS definitions from the abstract syntax tree (AST). To enable this feature, add the `definitions` options property when configuring the `GraphQLModule`.
+You will typically need to have TypeScript definitions (classes and interfaces) that correspond to GraphQL types. Creating the corresponding TypeScript definitions is redundant and tedious. It leaves us without a single source of truth -- each change made within SDL forces us to adjust TypeScript definitions as well. To address this, the `@nestjs/graphql` package can automatically generate TypeScript definitions from the abstract syntax tree ([AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)). To enable this feature, add the `definitions` options property when configuring the `GraphQLModule`.
 
 ```typescript
 GraphQLModule.forRoot({
@@ -124,7 +126,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-The path property of the `definitions` object (e.g., `src/graphql.ts` above) indicates where to save TypeScript output. By default, all types are generated as interfaces. To generate classes instead, specify the `outputAs` property with a value of `'class'`.
+The path property of the `definitions` object (e.g., `src/graphql.ts` above) indicates where to save generated TypeScript output. By default, all types are generated as interfaces. To generate classes instead, specify the `outputAs` property with a value of `'class'`.
 
 ```typescript
 GraphQLModule.forRoot({
