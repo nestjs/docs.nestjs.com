@@ -109,7 +109,7 @@ In addition, the `@ApiProperty()` decorator allows setting various [Schema Objec
 ```typescript
 @ApiProperty({
   description: 'The age of a cat',
-  min: 1,
+  minimum: 1,
   default: 1,
 })
 age: number;
