@@ -939,13 +939,17 @@ GraphQLModule.forRoot({
 });
 ```
 
-To get the current authenticated user in your graphql resolver, you can define a User decorator:
+To get the current authenticated user in your graphql resolver, you can define a `@CurrentUser()` decorator:
 
 ```typescript
-import { createParamDecorator } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 export const CurrentUser = createParamDecorator(
-  (data, [root, args, ctx, info]) => ctx.req.user,
+  (data: unknown, context: ExecutionContext) => {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req.user;
+  },
 );
 ```
 
