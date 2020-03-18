@@ -4,7 +4,7 @@ Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/)
 
 #### Code first
 
-In the code first approach, we don't write GraphQL SDL by hand. Instead we use TypeScript decorators. The `@nestjs/graphql` package will then read the metadata defined through these decorators and automatically generate the schema for you.
+In the code first approach, we don't create our GraphQL schema by writing GraphQL SDL by hand. Instead we use TypeScript decorators to generate the SDL from TypeScript class definitions. The `@nestjs/graphql` package reads the metadata defined through the decorators and automatically generates the schema for you.
 
 Most of the definitions in a GraphQL schema are **object types**. Each object type you define should represent a domain object that an application client might need to interact with. For example, our sample API needs to be able to fetch a list of authors and their posts, so we should define the `Author` type and `Post` type to support this functionality.
 
@@ -43,11 +43,20 @@ export class Author {
 
 > info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Because of these limitations, we must either explicitly use the `@Field` decorator in our schema definition classes, or use a [CLI plugin](/graphql/resolvers#cli-plugin) to generate these for us.
 
-The `Author` object type, like any class, is made of a collection of fields, with each field declaring a type. The types correspond to [GraphQL types](https://graphql.org/learn/schema/). A field's GraphQL type can be either an object type or a scalar type. A scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value.
+The `Author` object type, like any class, is made of a collection of fields, with each field declaring a type. The types correspond to [GraphQL types](https://graphql.org/learn/schema/). A field's GraphQL type can be either an object type or a scalar type. A GraphQL scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value.
 
 > info **Hint** In addition to GraphQL's built-in scalar types, you can define custom scalar types.
 
-The above `Author` object type definition will generate the SDL we showed above.
+The above `Author` object type definition will cause Nest to **generate** the SDL we showed above:
+
+```graphql
+type Author {
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post]
+}
+```
 
 The `@Field()` decorator accepts a type function (e.g., `type => Int`), and optionally an object with the following keys:
 
@@ -254,11 +263,11 @@ type Query {
 }
 ```
 
-You may also notice that such classes play very well with the `ValidationPipe` (read [more](/techniques/validation)).
+You may also notice that arguments classes like `GetAuthorArgs` play very well with the `ValidationPipe` (read [more](/techniques/validation)).
 
 #### Schema first
 
-As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we manually define our types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following type definitions:
+As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following type definitions:
 
 ```graphql
 type Author {
@@ -279,7 +288,7 @@ type Query {
 }
 ```
 
-This schema exposes a single query - `author(id: Int!): Author`. Let's create an `AuthorResolver` class that resolves author queries:
+This schema exposes a single query - `author(id: Int!): Author`. Let's now create an `AuthorResolver` class that resolves author queries:
 
 ```typescript
 @Resolver('Author')
@@ -330,7 +339,7 @@ In the above examples, the `@Query()` and `@ResolveField()` decorators are assoc
   }
 ```
 
-This generates the resolver map entry for the author query in our schema (because the method name `author` matches the `author` field in the `Query` type):
+This generates the resolver map entry for the author query in our schema (the query type entry uses the same name as the method name):
 
 ```graphql
 type Query {
@@ -461,6 +470,8 @@ The `GraphQLModule` will take care of reflecting the metadata and transforming c
 
 > info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
 
+> info **Hint** It is helpful to organize your code by what we can call your **domain model** (similar to the way you would organize entry points in a REST API). In this approach, keep your models (`ObjectType` classes), resolvers and services together within a Nest module representing the domain model. Keep all of these components in a single folder per module. When you do this, and use the [Nest CLI](/cli/overview) to generate each element, Nest will wire all of these parts together automatically for you.
+
 #### CLI Plugin
 
 TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
@@ -475,7 +486,7 @@ The GraphQL plugin will automatically:
 
 Please, note that your filenames **must have** one of the following suffixes: `['.input.ts', '.args.ts', '.entity.ts']` (e.g., `author.entity.ts`) in order to be analyzed by the plugin.
 
-Previously, you had to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
+With what we've learned so far, you have to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
 
 ```typescript
 @ObjectType()
