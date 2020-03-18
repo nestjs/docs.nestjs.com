@@ -8,6 +8,19 @@ In the code first approach, we don't write GraphQL SDL by hand. Instead we use T
 
 Most of the definitions in a GraphQL schema are **object types**. Each object type you define should represent an object that an application client might need to interact with. For example, our sample API needs to be able to fetch a list of authors and their posts, so we should define the `Author` type and `Post` type to support this functionality.
 
+In the schema first approach, we'd define such a schema with SDL like this:
+
+```graphql
+type Author {
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post]
+}
+```
+
+In the code first approach, on the other hand, we start by defining TypeScript classes and using TypeScript decorators to annotate the fields of those classes. The equivalent of the above SDL in the code first approach is:
+
 ```typescript
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Post } from './post';
@@ -32,18 +45,15 @@ export class Author {
 
 The `Author` object type has a collection of fields. Each field has a type. A field's type can be either an object type or a scalar type. A scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value. In addition to GraphQL's built-in scalar types, you can define custom scalar types.
 
-The `Author` object type will result in generating the following part of the GraphQL schema in SDL:
+The above `Author` object type definition will generate the SDL we showed above.
 
-```graphql
-type Author {
-  id: Int!
-  firstName: String
-  lastName: String
-  posts: [Post]
-}
-```
+The `@Field()` decorator accepts an optional function returning a type (e.g., `type => Int`), and optionally an object with the following keys:
 
-The `@Field()` decorator allows specifying whether a field is nullable (each field is non-nullable by default), providing a type function, setting a description, or marking a field as deprecated:
+- `nullable`: for specifying whether a field is nullable (in SDL, each field is non-nullable by default)
+- `description`: for setting a field description
+- `deprecationReason`: for marking a field as deprecated
+
+It also accepts a type function. For example:
 
 ```typescript
 @Field({ description: `Book title`, deprecationReason: 'Not useful in v2 schema' })
@@ -52,7 +62,7 @@ title: string;
 
 > info **Hint** You can also add a description to, or deprecate, the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
 
-When the field is an array, we must manually indicate the array type as shown below:
+When the field is an array, we must manually indicate the array type in the decorator type function, as shown below:
 
 ```typescript
 @Field(type => [Post])
@@ -68,7 +78,7 @@ To declare that the array's items (not the array itself) are nullable, set the `
 posts: Post[];
 ```
 
-> info **Hint** If both the array and its items are nullable, use the `'itemsAndList'` property instead.
+> info **Hint** If both the array and its items are nullable, set `nullable` to `'itemsAndList'` instead.
 
 Now that the `Author` object type is created, let's define the `Post` object type.
 
@@ -98,7 +108,9 @@ type Post {
 }
 ```
 
-We've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class:
+### Code first resolver
+
+At this point, we've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class:
 
 ```typescript
 @Resolver(of => Author)
@@ -123,11 +135,30 @@ export class AuthorResolver {
 
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
-> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how resolvers can interact with other providers.
+> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
 
-In the example above, we created the `AuthorResolver` which defines one query and one field resolver. Note that to create a resolver, we must annotate the class with the `@Resolver()` decorator. The argument passed in to the `@Resolver()` decorator is optional, but since we have also defined a field resolver (for the `posts` property of the `Author` object type), it's required to indicate which class is a parent for this particular field resolver (`Author.posts` relation). In addition, we defined a first query to get the author object based on the `id` sent in the request. Queries enable clients to fetch data, but not to **modify** data. To specify that the method is a query handler, use the `@Query()` decorator.
+In the example above, we created the `AuthorResolver` which defines one query and one field resolver function. We can define multiple `@Query()` resolver functions, and they will be aggregated into a single Query type definition in the generated SDL and the appropriate keys in the resolver map. This allows you to create queries close to the models and services that they use, and to keep them well organized in modules.
 
-Conventionally, we would use something like `getAuthor()` or `getPosts()` as method names. We can easily do this by passing the real names as arguments of the decorator.
+Note that to create a resolver, we must annotate the class with the `@Resolver()` decorator. The argument passed in to the `@Resolver()` decorator is optional, but since we have also defined a field resolver (for the `posts` property of the `Author` object type), it's required to indicate which class is a parent for this particular field resolver (`Author.posts` relation). In addition, we defined a first query to get the author object based on the `id` sent in the request. Queries enable clients to fetch data, but not to **modify** data. To specify that the method is a query handler, use the `@Query()` decorator.
+
+In the above examples, the `@Query()` and `@ResolveField()` decorators are associated with the types based on the method name. For example, consider the following construction from the example above:
+
+```typescript
+  @Query(returns => Author)
+  async author(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.authorsService.findOneById(id);
+  }
+```
+
+This generates the resolver map entry for the author query in our schema (because the method name `author` matches the `author` field in the `Query` type):
+
+```graphql
+type Query {
+  author(id: Int!): Author
+}
+```
+
+Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping names as arguments of the decorator, as shown below
 
 ```typescript
 @Resolver(of => Author)
