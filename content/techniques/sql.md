@@ -735,7 +735,7 @@ The `forRoot()` method supports all the configuration properties exposed by the 
 Once this is done, the `Sequelize` object will be available to inject across the entire project (without needing to import any modules), for example:
 
 ```typescript
-@@filename(app.module)
+@@filename(app.service)
 import { Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 
