@@ -1,6 +1,6 @@
 ### Resolvers
 
-Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/) operation (a query, mutation, or subscription) into data. They return the same shape of data we specify in our schema -- either synchronously or as a promise that resolves to a result of that shape. Typically, you create a **resolvers map** manually. The `@nestjs/graphql` package, on the other hand, generates a resolvers map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
+Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/) operation (a query, mutation, or subscription) into data. They return the same shape of data we specify in our schema -- either synchronously or as a promise that resolves to a result of that shape. Typically, you create a **resolver map** manually. The `@nestjs/graphql` package, on the other hand, generates a resolver map automatically using the metadata provided by the decorators. To demonstrate the library basics, we'll create a simple authors API.
 
 #### Code first
 
@@ -156,7 +156,7 @@ In this example, we defined a query handler to get the author object based on th
 
 We can define multiple `@Query()` resolver functions (both within this class, and in any other resolver class), and they will be aggregated into a single **Query type** definition in the generated SDL along with the appropriate entries in the resolver map. This allows you to define queries close to the models and services that they use, and to keep them well organized in modules.
 
-In the above examples, the `@Query()` decorator generates a query type name based on the method name. For example, consider the following construction from the example above:
+In the above examples, the `@Query()` decorator generates a GraphQL schema query type name based on the method name. For example, consider the following construction from the example above:
 
 ```typescript
   @Query(returns => Author)
@@ -165,7 +165,7 @@ In the above examples, the `@Query()` decorator generates a query type name base
   }
 ```
 
-This generates the following resolver map entry for the author query in our schema (the query type entry uses the same name as the method name):
+This generates the following entry for the author query in our schema (the query type uses the same name as the method name):
 
 ```graphql
 type Query {
@@ -267,7 +267,9 @@ You may also notice that arguments classes like `GetAuthorArgs` play very well w
 
 #### Schema first
 
-As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following type definitions:
+As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
+
+> info **Hint** For convenience in this chapter, we've aggregated all of the SDL in one location (e.g., one `.graphql` file, as shown below). In practice, you may find it appropriate to organize your code in a modular fashion. For example, it can be helpful to create individual SDL files with type definitions representing each domain entity, along with related services, resolver code, and the Nest module definition class, in a dedicated directory for that entity. Nest will aggregate all the individual schema type definitions at run time.
 
 ```graphql
 type Author {
@@ -288,7 +290,9 @@ type Query {
 }
 ```
 
-This schema exposes a single query - `author(id: Int!): Author`. Let's now create an `AuthorResolver` class that resolves author queries:
+### Schema first resolver
+
+The schema above exposes a single query - `author(id: Int!): Author`. Let's now create an `AuthorResolver` class that resolves author queries:
 
 ```typescript
 @Resolver('Author')
@@ -315,7 +319,7 @@ export class AuthorResolver {
 
 > warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
 
-The `@Resolver()` decorator is used to inform Nest that each `@ResolveField()` method inside the class has a parent (the `Author` type in this case). The `@Resolver()` decorator **does not** affect queries (`@Query()` decorator) or mutations (`@Mutation()` decorator). Alternatively, instead of setting `@Resolver()` at the top of the class, this can be done for each method:
+The `@Resolver()` decorator is required. It takes an optional string argument with the name of a class. This class name is required whenever the class includes `@ResolveField()` decorators to inform Nest that the decorated method is associated with a parent type (the `Author` type in our current example). Alternatively, instead of setting `@Resolver()` at the top of the class, this can be done for each method:
 
 ```typescript
 @Resolver('Author')
@@ -328,9 +332,11 @@ async posts(@Parent() author) {
 
 In this case (`@Resolver()` decorator at the method level), if you have multiple `@ResolveField()` decorators inside a class, you must add `@Resolver()` to all of them. This is not considered the best practice (as it creates extra overhead).
 
+> info **Hint** Any class name argument passed to `@Resolver()` **does not** affect queries (`@Query()` decorator) or mutations (`@Mutation()` decorator).
+
 > warning **Warning** Using the `@Resolver` decorator at the method level is not supported with the **code first** approach.
 
-In the above examples, the `@Query()` and `@ResolveField()` decorators are associated with the types based on the method name. For example, consider the following construction from the example above:
+In the above examples, the `@Query()` and `@ResolveField()` decorators are associated with GraphQL schema types based on the method name. For example, consider the following construction from the example above:
 
 ```typescript
   @Query()
@@ -339,7 +345,7 @@ In the above examples, the `@Query()` and `@ResolveField()` decorators are assoc
   }
 ```
 
-This generates the resolver map entry for the author query in our schema (the query type entry uses the same name as the method name):
+This generates the following entry for the author query in our schema (the query type uses the same name as the method name):
 
 ```graphql
 type Query {
@@ -347,7 +353,7 @@ type Query {
 }
 ```
 
-Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping names as arguments of the decorator, as shown below
+Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping name as an argument to the decorator, as shown below:
 
 ```typescript
 @Resolver('Author')
@@ -372,7 +378,7 @@ export class AuthorResolver {
 
 #### Generating types
 
-Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it should generate the following file:
+Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it will generate the following file (in the location you specified in the `GraphQLModule.forRoot()` method. For example, in `src/graphql.ts`)
 
 ```typescript
 export class Author {
@@ -393,7 +399,7 @@ export abstract class IQuery {
 }
 ```
 
-Generating classes (instead of the default technique of generating interfaces) allows you to use declarative validation **decorators** in combination with the schema first approach, which is an extremely useful technique (read [more](/techniques/validation)). For example, you could add these `class-validator` decorators to the generated `CreatePostInput` class as shown below:
+By generating classes (instead of the default technique of generating interfaces), you can use declarative validation **decorators** in combination with the schema first approach, which is an extremely useful technique (read [more](/techniques/validation)). For example, you could add `class-validator` decorators to the generated `CreatePostInput` class as shown below to enforce minimum and maximum string lengths on the `title` field:
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
@@ -405,7 +411,7 @@ export class CreatePostInput {
 }
 ```
 
-> warning **Notice** To enable auto-validation of your inputs (and parameters), use `ValidationPipe`. Read more about validation [here](/techniques/validation) or more specifically about pipes [here](/pipes).
+> warning **Notice** To enable auto-validation of your inputs (and parameters), use `ValidationPipe`. Read more about validation [here](/techniques/validation) and more specifically about pipes [here](/pipes).
 
 However, if you add decorators directly to the automatically generated file, they will be **overwritten** each time the file is generated. Instead, create a separate file and simply extend the generated class.
 
@@ -420,9 +426,9 @@ export class CreatePostInput extends Post {
 }
 ```
 
-#### Decorators
+#### GraphQL resolver argument decorators
 
-We refer to several arguments using dedicated decorators. Below is a comparison of the provided decorators and the plain Apollo parameters they represent.
+We can access the standard GraphQL resolver arguments using dedicated decorators. Below is a comparison of the Nest decorators and the plain Apollo parameters they represent.
 
 <table>
   <tbody>
@@ -456,7 +462,11 @@ These arguments have the following meanings:
 
 #### Module
 
-Once we're done with the above steps, we have to provide the `AuthorResolver` somewhere (list it as a `provider` in some module, for dependency injection). For example, we can do this in an `AuthorsModule`, which can also provide other services needed in this context.
+Once we're done with the above steps, we have declaratively specified all the information needed by the `GraphQLModule` to generate a resolver map. The `GraphQLModule` uses reflection to introspect the meta data provided via the decorators, and transforms classes into the correct resolver map automatically.
+
+The only other thing you need to take care of is to **provide** (i.e., list as a `provider` in some module) the resolver class(es) (`AuthorResolver`), and importing the module (`AuthorsModule`) somewhere, so Nest will be able to utilize it.
+
+For example, we can do this in an `AuthorsModule`, which can also provide other services needed in this context. Be sure to import `AuthorsModule` somewhere (e.g., in the root module, or some other module imported by the root module).
 
 ```typescript
 @Module({
@@ -466,11 +476,9 @@ Once we're done with the above steps, we have to provide the `AuthorResolver` so
 export class AuthorsModule {}
 ```
 
-The `GraphQLModule` will take care of reflecting the metadata and transforming classes into the correct resolvers map automatically. The only thing you need to be aware of is that you need to import this module somewhere, so Nest will be able to utilize `AuthorsModule`.
-
 > info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
 
-> info **Hint** It is helpful to organize your code by what we can call your **domain model** (similar to the way you would organize entry points in a REST API). In this approach, keep your models (`ObjectType` classes), resolvers and services together within a Nest module representing the domain model. Keep all of these components in a single folder per module. When you do this, and use the [Nest CLI](/cli/overview) to generate each element, Nest will wire all of these parts together automatically for you.
+> info **Hint** It is helpful to organize your code by your so-called **domain model** (similar to the way you would organize entry points in a REST API). In this approach, keep your models (`ObjectType` classes), resolvers and services together within a Nest module representing the domain model. Keep all of these components in a single folder per module. When you do this, and use the [Nest CLI](/cli/overview) to generate each element, Nest will wire all of these parts together automatically for you.
 
 #### CLI Plugin
 
