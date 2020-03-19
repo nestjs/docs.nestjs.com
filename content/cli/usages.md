@@ -129,7 +129,7 @@ $ nest start <name> [options]
 | `--path [path]`         | Path to `tsconfig` file. <br/>Alias `-p`                                                                             |
 | `--config [path]`       | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                               |
 | `--watch`               | Run in watch mode (live-reload) <br/>Alias `-w`                                                                      |
-| `--preserveWatchOutput` | Keep outdated console output in watch mode instead of clearing the screen.                                           |
+| `--preserveWatchOutput` | Keep outdated console output in watch mode instead of clearing the screen. (`tsc` watch mode only)                   |
 | `--watchAssets`         | Run in watch mode (live-reload), watching non-TS files (assets). See [Assets](cli/monorepo#assets) for more details. |
 | `--debug [hostport]`    | Run in debug mode (with --inspect flag) <br/>Alias `-d`                                                              |
 | `--webpack`             | Use webpack for compilation.                                                                                         |
