@@ -12,7 +12,7 @@ Start by installing the required packages:
 $ npm i --save @nestjs/graphql graphql-tools graphql
 ```
 
-And depending on what you use (Express or Fastify), you need to install `apollo-server-express` or `apollo-server-fastify`.
+Depending on what underlying platform you use (Express or Fastify), you must also install either `apollo-server-express` or `apollo-server-fastify`.
 
 #### Overview
 
@@ -20,7 +20,7 @@ Nest offers two ways of building GraphQL applications, the **code first** and th
 
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
 
-In the **schema first** approach, the source of truth is GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions based on the GraphQL schemas (using either classes or interfaces) to reduce redundancy.
+In the **schema first** approach, the source of truth is GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions (using either classes or interfaces) based on the GraphQL schemas to reduce the need to write redundant boilerplate code.
 
 #### Getting started with GraphQL & TypeScript
 
@@ -105,7 +105,7 @@ A fully working code first sample is available [here](https://github.com/nestjs/
 
 #### Schema first
 
-To use the schema first approach, start by adding a `typePaths` property to the options object.
+To use the schema first approach, start by adding a `typePaths` property to the options object. The `typePaths` property indicates where the `GraphQLModule` should look for GraphQL SDL schema definition files you'll be writing. These files will be combined in memory; this allows you to split your schemas into several files and locate them near their resolvers.
 
 ```typescript
 GraphQLModule.forRoot({
@@ -113,9 +113,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-The `typePaths` property indicates where the `GraphQLModule` should look for GraphQL SDL schema definition files you'll be writing. These files will be combined in memory; this allows you to split your schemas into several files and locate them near their resolvers.
-
-You will typically also need to have TypeScript definitions (classes and interfaces) that correspond to the GraphQL SDL types. Creating the corresponding TypeScript definitions by hand is redundant and tedious. It leaves us without a single source of truth -- each change made within SDL forces us to adjust TypeScript definitions as well. To address this, the `@nestjs/graphql` package can automatically generate TypeScript definitions from the abstract syntax tree ([AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)). To enable this feature, add the `definitions` options property when configuring the `GraphQLModule`.
+You will typically also need to have TypeScript definitions (classes and interfaces) that correspond to the GraphQL SDL types. Creating the corresponding TypeScript definitions by hand is redundant and tedious. It leaves us without a single source of truth -- each change made within SDL forces us to adjust TypeScript definitions as well. To address this, the `@nestjs/graphql` package can **automatically generate** TypeScript definitions from the abstract syntax tree ([AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)). To enable this feature, add the `definitions` options property when configuring the `GraphQLModule`.
 
 ```typescript
 GraphQLModule.forRoot({
