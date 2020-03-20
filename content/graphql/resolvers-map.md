@@ -95,6 +95,7 @@ posts: Post[];
 Now that the `Author` object type is created, let's define the `Post` object type.
 
 ```typescript
+@@filename(posts/models/post.model)
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
