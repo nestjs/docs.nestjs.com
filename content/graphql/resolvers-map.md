@@ -22,6 +22,7 @@ type Author {
 In this case, using the code first approach, we define schemas using TypeScript classes and using TypeScript decorators to annotate the fields of those classes. The equivalent of the above SDL in the code first approach is:
 
 ```typescript
+@@filename(authors/models/author.model)
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Post } from './post';
 
@@ -124,8 +125,9 @@ type Post {
 At this point, we've defined the objects that exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class. We'll start with the example below.
 
 ```typescript
+@@filename(authors/authors.resolver)
 @Resolver(of => Author)
-export class AuthorResolver {
+export class AuthorsResolver {
   constructor(
     private authorsService: AuthorsService,
     private postsService: PostsService,
@@ -148,7 +150,7 @@ export class AuthorResolver {
 
 > warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
 
-In the example above, we created the `AuthorResolver` which defines one query and one field resolver function. To create a resolver, we create a class with resolver functions as methods, and we annotate the class with the `@Resolver()` decorator.
+In the example above, we created the `AuthorsResolver` which defines one query and one field resolver function. To create a resolver, we create a class with resolver functions as methods, and we annotate the class with the `@Resolver()` decorator.
 
 The argument passed to the `@Resolver()` decorator is optional. However, in our case, since we have also defined a **field resolver** (for the `posts` property of the `Author` object type), it becomes required; in that case, the value is used to indicate which class is the parent type (i.e., the corresponding `ObjectType` class name) for any field resolver defined within this class.
 
@@ -173,11 +175,14 @@ type Query {
 }
 ```
 
+> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+
 Conventionally, we prefer to decouple these names; for example, we prefer to use a name like `getAuthor()` for our query handler method, but still use `author` for our query type name. The same applies to our field resolvers. We can easily do this by passing the mapping names as arguments of the `@Query()` and `@ResolveField()` decorators, as shown below:
 
 ```typescript
+@@filename(authors/authors.resolver)
 @Resolver(of => Author)
-export class AuthorResolver {
+export class AuthorsResolver {
   constructor(
     private authorsService: AuthorsService,
     private postsService: PostsService,
@@ -206,10 +211,10 @@ type Query {
 
 The `@Query()` decorator's options object (where we pass `{{ '{' }}name: 'author'{{ '}' }}` above) accepts a number of keys:
 
-- name: name of the query; a `string`
-- description: a description that will be used to generate GraphQL schema documentation (e.g., in GraphQL playground); a `string`
-- deprecationReason: sets query metadata to show the query as deprecated (e.g., in GraphQL playground); a `string`
-- nullable: whether the query can return a null data response; `boolean` or `'items'` or `'itemsAndList'` (see above for details of `'items'` and `'itemsAndList'`)
+- `name`: name of the query; a `string`
+- `description`: a description that will be used to generate GraphQL schema documentation (e.g., in GraphQL playground); a `string`
+- `deprecationReason`: sets query metadata to show the query as deprecated (e.g., in GraphQL playground); a `string`
+- `nullable`: whether the query can return a null data response; `boolean` or `'items'` or `'itemsAndList'` (see above for details of `'items'` and `'itemsAndList'`)
 
 Usually you won't have to pass an object into the `@Args()` decorator as seen with the `getAuthor()` method above. For example, if an identifier's type is string, the following construction is sufficient:
 
@@ -236,9 +241,10 @@ With inline `@Args()` calls, code like the example above becomes bloated. Instea
 @Args() args: GetAuthorArgs
 ```
 
-Create the `GetAuthorArgs()` class using `@ArgsType()` as shown below:
+Create the `GetAuthorArgs` class using `@ArgsType()` as shown below:
 
 ```typescript
+@@filename(authors/dto/get-author.args)
 import { MinLength } from 'class-validator';
 import { Field, ArgsType } from '@nestjs/graphql';
 
@@ -292,11 +298,16 @@ type Query {
 
 ### Schema first resolver
 
-The schema above exposes a single query - `author(id: Int!): Author`. Let's now create an `AuthorResolver` class that resolves author queries:
+The schema above exposes a single query - `author(id: Int!): Author`.
+
+> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+
+Let's now create an `AuthorsResolver` class that resolves author queries:
 
 ```typescript
+@@filename(authors/authors.resolver)
 @Resolver('Author')
-export class AuthorResolver {
+export class AuthorsResolver {
   constructor(
     private authorsService: AuthorsService,
     private postsService: PostsService,
@@ -356,8 +367,9 @@ type Query {
 Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping name as an argument to the decorator, as shown below:
 
 ```typescript
+@@filename(authors/authors.resolver.ts)
 @Resolver('Author')
-export class AuthorResolver {
+export class AuthorsResolver {
   constructor(
     private authorsService: AuthorsService,
     private postsService: PostsService,
@@ -381,6 +393,7 @@ export class AuthorResolver {
 Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it will generate the following file (in the location you specified in the `GraphQLModule.forRoot()` method. For example, in `src/graphql.ts`)
 
 ```typescript
+@@filename(graphql.ts)
 export class Author {
   id: number;
   firstName?: string;
@@ -426,7 +439,7 @@ export class CreatePostInput extends Post {
 }
 ```
 
-#### GraphQL resolver argument decorators
+#### GraphQL argument decorators
 
 We can access the standard GraphQL resolver arguments using dedicated decorators. Below is a comparison of the Nest decorators and the plain Apollo parameters they represent.
 
@@ -464,19 +477,18 @@ These arguments have the following meanings:
 
 Once we're done with the above steps, we have declaratively specified all the information needed by the `GraphQLModule` to generate a resolver map. The `GraphQLModule` uses reflection to introspect the meta data provided via the decorators, and transforms classes into the correct resolver map automatically.
 
-The only other thing you need to take care of is to **provide** (i.e., list as a `provider` in some module) the resolver class(es) (`AuthorResolver`), and importing the module (`AuthorsModule`) somewhere, so Nest will be able to utilize it.
+The only other thing you need to take care of is to **provide** (i.e., list as a `provider` in some module) the resolver class(es) (`AuthorsResolver`), and importing the module (`AuthorsModule`) somewhere, so Nest will be able to utilize it.
 
 For example, we can do this in an `AuthorsModule`, which can also provide other services needed in this context. Be sure to import `AuthorsModule` somewhere (e.g., in the root module, or some other module imported by the root module).
 
 ```typescript
+@@filename(authors/authors.module)
 @Module({
   imports: [PostsModule],
-  providers: [AuthorsService, AuthorResolver],
+  providers: [AuthorsService, AuthorsResolver],
 })
 export class AuthorsModule {}
 ```
-
-> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
 
 > info **Hint** It is helpful to organize your code by your so-called **domain model** (similar to the way you would organize entry points in a REST API). In this approach, keep your models (`ObjectType` classes), resolvers and services together within a Nest module representing the domain model. Keep all of these components in a single folder per module. When you do this, and use the [Nest CLI](/cli/overview) to generate each element, Nest will wire all of these parts together (locating files in appropriate folders, generating entries in `provider` and `imports` arrays, etc.) automatically for you.
 
@@ -497,6 +509,7 @@ Please, note that your filenames **must have** one of the following suffixes: `[
 With what we've learned so far, you have to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
 
 ```typescript
+@@filename(authors/models/author.model)
 @ObjectType()
 export class Author {
   @Field(type => Int)
@@ -518,6 +531,7 @@ While not a significant issue with medium-sized projects, it becomes verbose & h
 Now, with the GraphQL plugin enabled, the above class definition can be declared simply:
 
 ```typescript
+@@filename(authors/models/author.model)
 @ObjectType()
 export class Author {
   @Field(type => Int)
