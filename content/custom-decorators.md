@@ -68,9 +68,8 @@ In order to make your code more readable and transparent, you can create a `@Use
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const User = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    return request.user;
+  (data: never, { user }: Request) => {
+    return user;
   },
 );
 ```
@@ -112,20 +111,14 @@ Let's define a decorator that takes a property name as key, and returns the asso
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const User = createParamDecorator(
-  (data: string, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    const user = request.user;
-
+  (data: keyof Request['user'], { user }: Request) => {
     return data ? user && user[data] : user;
   },
 );
 @@switch
 import { createParamDecorator } from '@nestjs/common';
 
-export const User = createParamDecorator((data, ctx) => {
-  const request = ctx.switchToHttp().getRequest();
-  const user = request.user;
-
+export const User = createParamDecorator((data, { user }) => {
   return data ? user && user[data] : user;
 });
 ```
