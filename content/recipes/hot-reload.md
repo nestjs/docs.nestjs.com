@@ -28,7 +28,7 @@ const StartServerPlugin = require('start-server-webpack-plugin');
 module.exports = function(options) {
   return {
     ...options,
-    entry: ['webpack/hot/poll?100', './src/main.ts'],
+    entry: ['webpack/hot/poll?100', options.entry],
     watch: true,
     externals: [
       nodeExternals({
@@ -39,7 +39,7 @@ module.exports = function(options) {
       ...options.plugins,
       new webpack.HotModuleReplacementPlugin(),
       new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
-      new StartServerPlugin({ name: 'main.js' }),
+      new StartServerPlugin({ name: options.output.filename }),
     ],
   };
 };
