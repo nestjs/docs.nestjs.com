@@ -16,7 +16,7 @@ Depending on what underlying platform you use (Express or Fastify), you must als
 
 #### Overview
 
-Nest offers two ways of building GraphQL applications, the **code first** and the **schema first** methods.
+Nest offers two ways of building GraphQL applications, the **code first** and the **schema first** methods. You should choose the one that works best for you. Most of the chapters in this GraphQL section are divided into two main parts: one you should follow if you adopt **code first**, and the other to be used if you adopt **schema first**.
 
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
 
