@@ -167,10 +167,10 @@ We can define multiple `@Query()` resolver functions (both within this class, an
 In the above examples, the `@Query()` decorator generates a GraphQL schema query type name based on the method name. For example, consider the following construction from the example above:
 
 ```typescript
-  @Query(returns => Author)
-  async author(@Args({ name: 'id', type: () => Int }) id: number) {
-    return this.authorsService.findOneById(id);
-  }
+@Query(returns => Author)
+async author(@Args({ name: 'id', type: () => Int }) id: number) {
+  return this.authorsService.findOneById(id);
+}
 ```
 
 This generates the following entry for the author query in our schema (the query type uses the same name as the method name):
@@ -356,10 +356,10 @@ In this case (`@Resolver()` decorator at the method level), if you have multiple
 In the above examples, the `@Query()` and `@ResolveField()` decorators are associated with GraphQL schema types based on the method name. For example, consider the following construction from the example above:
 
 ```typescript
-  @Query()
-  async author(@Args('id') id: number) {
-    return this.authorsService.findOneById(id);
-  }
+@Query()
+async author(@Args('id') id: number) {
+  return this.authorsService.findOneById(id);
+}
 ```
 
 This generates the following entry for the author query in our schema (the query type uses the same name as the method name):
@@ -510,7 +510,7 @@ The GraphQL plugin will automatically:
 - set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
 - set the `type` property depending on the type (supports arrays as well)
 
-Please, note that your filenames **must have** one of the following suffixes in order to be analyzed by the plugin: `['.input.ts', '.args.ts', '.entity.ts']` (e.g., `author.entity.ts`). If you are using a different suffix, you can adjust the plugin's behavior by specifying the `typeFileNameSuffix` option (see below).
+Please, note that your filenames **must have** one of the following suffixes in order to be analyzed by the plugin: `['.input.ts', '.args.ts', '.entity.ts', '.model.ts']` (e.g., `author.entity.ts`). If you are using a different suffix, you can adjust the plugin's behavior by specifying the `typeFileNameSuffix` option (see below).
 
 With what we've learned so far, you have to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
 
@@ -593,7 +593,7 @@ export interface PluginOptions {
   </tr>
   <tr>
     <td><code>typeFileNameSuffix</code></td>
-    <td><code>['.input.ts', '.args.ts', '.entity.ts']</code></td>
+    <td><code>['.input.ts', '.args.ts', '.entity.ts', '.model.ts']</code></td>
     <td>GraphQL types files suffix</td>
   </tr>
 </table>
