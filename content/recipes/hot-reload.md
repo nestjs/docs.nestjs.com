@@ -28,7 +28,7 @@ const StartServerPlugin = require('start-server-webpack-plugin');
 module.exports = function(options) {
   return {
     ...options,
-    entry: ['webpack/hot/poll?100', './src/main.ts'],
+    entry: ['webpack/hot/poll?100', options.entry],
     watch: true,
     externals: [
       nodeExternals({
@@ -39,7 +39,7 @@ module.exports = function(options) {
       ...options.plugins,
       new webpack.HotModuleReplacementPlugin(),
       new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
-      new StartServerPlugin({ name: 'main.js' }),
+      new StartServerPlugin({ name: options.output.filename }),
     ],
   };
 };
@@ -69,7 +69,7 @@ bootstrap();
 To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"start:dev": "nest build --watch --webpack --webpackPath webpack-hmr.config.js"
+"start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js"
 ```
 
 Now simply open your command line and run the following command:
