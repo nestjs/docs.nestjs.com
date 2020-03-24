@@ -5,7 +5,6 @@ Like many type systems, GraphQL supports interfaces. An **Interface** is an abst
 #### Code first
 
 When using the code first approach, you define a GraphQL interface by creating an abstract class annotated with the `@InterfaceType()` decorator exported from the `@nestjs/graphql`.
-o
 
 ```typescript
 import { Field, ID, InterfaceType } from '@nestjs/graphql';
