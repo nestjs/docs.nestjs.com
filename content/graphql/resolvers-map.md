@@ -6,6 +6,8 @@ Resolvers provide the instructions for turning a [GraphQL](https://graphql.org/)
 
 In the code first approach, we don't follow the typical process of creating our GraphQL schema by writing GraphQL SDL by hand. Instead, we use TypeScript decorators to generate the SDL from TypeScript class definitions. The `@nestjs/graphql` package reads the metadata defined through the decorators and automatically generates the schema for you.
 
+#### Object types
+
 Most of the definitions in a GraphQL schema are **object types**. Each object type you define should represent a domain object that an application client might need to interact with. For example, our sample API needs to be able to fetch a list of authors and their posts, so we should define the `Author` type and `Post` type to support this functionality.
 
 If we were using the schema first approach, we'd define such a schema with SDL like this:
@@ -42,9 +44,9 @@ export class Author {
 }
 ```
 
-> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. Because of these limitations, we must either explicitly use the `@Field` decorator in our schema definition classes, or use a [CLI plugin](/graphql/resolvers#cli-plugin) to generate these for us.
+> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible, for instance, to determine what properties a class consists of or recognize whether a given property is optional or required. Because of these limitations, we must either explicitly use the `@Field()` decorator in our schema definition classes to provide metadata about each field's GraphQL type and optionality, or use a [CLI plugin](/graphql/resolvers#cli-plugin) to generate these for us.
 
-The `Author` object type, like any class, is made of a collection of fields, with each field declaring a type. The types correspond to [GraphQL types](https://graphql.org/learn/schema/). A field's GraphQL type can be either another object type or a scalar type. A GraphQL scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value.
+The `Author` object type, like any class, is made of a collection of fields, with each field declaring a type. A field's type corresponds to a [GraphQL type](https://graphql.org/learn/schema/). A field's GraphQL type can be either another object type or a scalar type. A GraphQL scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value.
 
 > info **Hint** In addition to GraphQL's built-in scalar types, you can define custom scalar types (read [more](/graphql/scalars)).
 
@@ -61,7 +63,7 @@ type Author {
 
 The `@Field()` decorator accepts an optional type function (e.g., `type => Int`), and optionally an options object.
 
-The type function is required when there's the potential for ambiguity between the TypeScript type system and the GraphQL type system. Specifically: it is **not** required for `string` and `boolean` types; it **is** required for arrays, numbers (which must be mapped to either an `Int` or a `Float`) and object types. The type function should simply return the desired GraphQL type (as shown in various examples in these chapters).
+The type function is required when there's the potential for ambiguity between the TypeScript type system and the GraphQL type system. Specifically: it is **not** required for `string` and `boolean` types; it **is** required for arrays, numbers (which must be mapped to either a GraphQL `Int` or `Float`) and object types. The type function should simply return the desired GraphQL type (as shown in various examples in these chapters).
 
 The options object can have any of the following key/value pairs:
 
@@ -78,14 +80,14 @@ title: string;
 
 > info **Hint** You can also add a description to, or deprecate, the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
 
-When the field is an array, we must manually indicate the array type in the decorator type function, as shown below:
+When the field is an array, we must manually indicate the array type in the `Field()` decorator's type function, as shown below:
 
 ```typescript
 @Field(type => [Post])
 posts: Post[];
 ```
 
-> info **Hint** With `[ ]`, we can indicate the depth of the array. For example, using `[[Int]]` would represent an integer matrix.
+> info **Hint** Using array bracket notation (`[ ]`), we can indicate the depth of the array. For example, using `[[Int]]` would represent an integer matrix.
 
 To declare that an array's items (not the array itself) are nullable, set the `nullable` property to `'items'` as shown below:
 
@@ -128,7 +130,7 @@ type Post {
 
 ### Code first resolver
 
-At this point, we've defined the objects (type definitions) that can exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to define a resolver class. In the code first method, defining a resolver class both defines resolver functions **and** generates the **Query type**. This will be clear as we work through the example below:
+At this point, we've defined the objects (type definitions) that can exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to create a resolver class. In the code first method, a resolver class both defines resolver functions **and** generates the **Query type**. This will be clear as we work through the example below:
 
 ```typescript
 @@filename(authors/authors.resolver)
@@ -140,7 +142,7 @@ export class AuthorsResolver {
   ) {}
 
   @Query(returns => Author)
-  async author(@Args({ name: 'id', type: () => Int }) id: number) {
+  async author(@Args('id', { type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
 
@@ -154,21 +156,27 @@ export class AuthorsResolver {
 
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
-> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
+You can define multiple resolver classes. Nest will combine these at run time. See the [module](/graphql/resolvers#module) section below for more on code organization.
 
-In the example above, we created the `AuthorsResolver` which defines one query resolver function and one field resolver function. To create a resolver, we create a class with resolver functions as methods, and we annotate the class with the `@Resolver()` decorator.
+> warning **Note** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
 
-The argument passed to the `@Resolver()` decorator is optional. However, in our case, since the class includes a **field resolver** function (for the `posts` property of the `Author` object type), it becomes required; in that case, the value is used to indicate which class is the parent type (i.e., the corresponding `ObjectType` class name) for any field resolver defined within this class.
+In the example above, we created the `AuthorsResolver` which defines one query resolver function and one field resolver function. To create a resolver, we create a class with resolver functions as methods, and annotate the class with the `@Resolver()` decorator.
 
 In this example, we defined a query handler to get the author object based on the `id` sent in the request. To specify that the method is a query handler, use the `@Query()` decorator.
 
+The argument passed to the `@Resolver()` decorator is optional, but comes into play when our graph becomes non-trivial. It's used to supply a parent object used by field resolver functions as they traverse down through an object graph.
+
+In our example, since the class includes a **field resolver** function (for the `posts` property of the `Author` object type), we **must** supply the `@Resolver()` decorator with a value to indicate which class is the parent type (i.e., the corresponding `ObjectType` class name) for all field resolvers defined within this class. As should be clear from the example, when writing a field resolver function, it's necessary to access the parent object (the object the field being resolved is a member of). In this example, we populate an author's posts array with a field resolver that calls a service which takes the author's `id` as an argument. Hence the need to identify the parent object in the `@Resolver()` decorator. Note the corresponding use of the `@Parent()` method parameter decorator to then extract a reference to that parent object in the field resolver.
+
 We can define multiple `@Query()` resolver functions (both within this class, and in any other resolver class), and they will be aggregated into a single **Query type** definition in the generated SDL along with the appropriate entries in the resolver map. This allows you to define queries close to the models and services that they use, and to keep them well organized in modules.
+
+#### Query type names
 
 In the above examples, the `@Query()` decorator generates a GraphQL schema query type name based on the method name. For example, consider the following construction from the example above:
 
 ```typescript
 @Query(returns => Author)
-async author(@Args({ name: 'id', type: () => Int }) id: number) {
+async author(@Args('id', { type: () => Int }) id: number) {
   return this.authorsService.findOneById(id);
 }
 ```
@@ -195,7 +203,7 @@ export class AuthorsResolver {
   ) {}
 
   @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
+  async getAuthor(@Args('id', {type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
 
@@ -215,6 +223,8 @@ type Query {
 }
 ```
 
+#### Query decorator options
+
 The `@Query()` decorator's options object (where we pass `{{ '{' }}name: 'author'{{ '}' }}` above) accepts a number of key/value pairs:
 
 - `name`: name of the query; a `string`
@@ -222,24 +232,43 @@ The `@Query()` decorator's options object (where we pass `{{ '{' }}name: 'author
 - `deprecationReason`: sets query metadata to show the query as deprecated (e.g., in GraphQL playground); a `string`
 - `nullable`: whether the query can return a null data response; `boolean` or `'items'` or `'itemsAndList'` (see above for details of `'items'` and `'itemsAndList'`)
 
-Usually your `@Args()` decorator will be simple, and not require an object argument as seen with the `getAuthor()` method above. For example, if an identifier's type is string, the following construction is sufficient:
+### Args decorator options
+
+Use the `@Args()` decorator to extract arguments from a request for use in the method handler. This works in a very similar fashion to [REST route parameter argument extraction](/controllers#route-parameters).
+
+Usually your `@Args()` decorator will be simple, and not require an object argument as seen with the `getAuthor()` method above. For example, if an identifier's type is string, the following construction is sufficient, and simply plucks the named field from the inbound GraphQL request for use as a method argument.
 
 ```typescript
 @Args('id') id: string
 ```
 
-However, in this case, the `number` type is used, and it presents a challenge. The `number` TypeScript type doesn't give us enough information about the expected GraphQL representation (e.g., `Int` vs. `Float`). Thus we have to **explicitly** pass the type reference.
+In the `getAuthor()` case, the `number` type is used, which presents a challenge. The `number` TypeScript type doesn't give us enough information about the expected GraphQL representation (e.g., `Int` vs. `Float`). Thus we have to **explicitly** pass the type reference. We do that by passing a second argument to the `Args()` decorator, containing argument options, as shown below:
+
+```typescript
+  @Query(returns => Author, { name: 'author' })
+  async getAuthor(@Args('id', { type: () => Int }) id: number) {
+    return this.authorsService.findOneById(id);
+  }
+```
+
+The options object allows us to specify the following optional key value pairs:
+
+- `type`: a function returning the GraphQL type
+- `defaultValue`: a default value; `any`
+- `description`: description metadata; `string`
+- `deprecationReason`: to deprecate a field and provide meta data describing why; `string`
+- `nullable`: whether the field is nullable
 
 Query handler methods can take multiple arguments. Let's imagine that we want to fetch an author based on its `firstName` and `lastName`. In this case, we can call `@Args` twice:
 
 ```typescript
 getAuthor(
-  @Args('firstName', { nullable: true }) firstName?: string,
-  @Args('lastName', { defaultValue: '' }) lastName?: string,
+  @Args( 'firstName', { nullable: true }) firstName?: string,
+  @Args( 'lastName', { defaultValue: '' }) lastName?: string,
 ) {}
 ```
 
-> info **Hint** Note that we can pass a second argument to the `@Args()` decorator, which is an options object. The options object allows us to specify a default value (`'defaultValue'` key), description (`'description'` key, ), deprecation reason (`'deprecationReason'` key), or if a field is nullable (`'nullable'` key).
+#### Dedicated arguments class
 
 With inline `@Args()` calls, code like the example above becomes bloated. Instead, you can create a dedicated `GetAuthorArgs` arguments class and access it in the handler method as follows:
 
@@ -265,7 +294,7 @@ class GetAuthorArgs {
 }
 ```
 
-> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
+> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate type and optionality, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
 
 This will result in generating the following part of the GraphQL schema in SDL:
 
@@ -334,7 +363,7 @@ export class AuthorsResolver {
 
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
-> warning **Warning** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
+> warning **Note** The logic inside the `AuthorsService` and `PostsService` classes can be as simple or sophisticated as needed. The main point of this example is to show how to construct resolvers and how they can interact with other providers.
 
 The `@Resolver()` decorator is required. It takes an optional string argument with the name of a class. This class name is required whenever the class includes `@ResolveField()` decorators to inform Nest that the decorated method is associated with a parent type (the `Author` type in our current example). Alternatively, instead of setting `@Resolver()` at the top of the class, this can be done for each method:
 
