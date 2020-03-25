@@ -338,6 +338,23 @@ In order to combine schemas, you can use `oneOf`, `anyOf` or `allOf` keywords ([
 pet: Cat | Dog;
 ```
 
+If you want to define a polymorphic array (i.e., an array whose members span multiple schemas), you should use a raw definition (see above) to define your type by hand.
+
+```typescript
+type Pet = Cat | Dog;
+
+@ApiProperty({
+  type: 'array',
+  items: {
+    oneOf: [
+      { $ref: getSchemaPath(Cat) },
+      { $ref: getSchemaPath(Dog) },
+    ],
+  },
+})
+pets: Pet[];
+```
+
 > info **Hint** `getSchemaPath()` function is imported from `@nestjs/swagger`.
 
 Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
