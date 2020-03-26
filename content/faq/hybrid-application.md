@@ -11,3 +11,13 @@ const microservice = app.connectMicroservice({
 await app.startAllMicroservicesAsync();
 await app.listen(3001);
 ```
+
+#### Sharing configuration
+By default hybrid application will not inherit global pipes, interceptors, guards & filters.
+You'll need to set inheritAppConfig in the second argument as follow:
+
+```typescript
+const microservice = app.connectMicroservice({
+  transport: Transport.TCP
+}, { inheritAppConfig: true });
+```
