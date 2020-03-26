@@ -507,7 +507,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>errorHttpStatusCode</code></td>
     <td><code>number</code></td>
-    <td>Takes an HTTP status code and returns an exception object to be thrown. (Default: <code>400</code> or <code>HttpStatus.BAD_REQUEST</code>)</td>
+    <td>This setting allows you to specify which exception type will be used in case of an error (e.g., if you pass 404, it would call <code>throw new NotFoundException()</code>)</td>
   </tr>
   <tr>
     <td><code>exceptionFactory</code></td>
