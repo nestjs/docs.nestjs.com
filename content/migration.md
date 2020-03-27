@@ -66,7 +66,10 @@ const app = await NestFactory.createMicroservice(AppModule);
 
 In the version 6 major release of NestJS, we introduced the code-first approach as a compatibility layer between the `type-graphql` package and the `@nestjs/graphql` module. Eventually, our team decided to reimplement all the features from scratch due to a lack of flexibility. To avoid numerous breaking changes, the public API is backward-compatible and may resemble `type-graphql`.
 
-In order to migrate your existing application, simply rename all the `type-graphql` imports to the `@nestjs/graphql`.
+In order to migrate your existing application, simply rename all the `type-graphql` imports to the `@nestjs/graphql`. If you used more advanced features, you might need to also:
+
+- use `Type` (imported from `@nestjs/common`) instead of `ClassType` (imported from `type-graphql`)
+- move methods that require `@Args()` from object types (classes annotated with `@ObjectType()` decorator) under resolver classes (and use `@ResolveField()` decorator instead of `@Field()`)
 
 #### HTTP exceptions body
 
