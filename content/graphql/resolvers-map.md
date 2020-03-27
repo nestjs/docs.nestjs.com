@@ -203,7 +203,7 @@ export class AuthorsResolver {
   ) {}
 
   @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args('id', {type: () => Int }) id: number) {
+  async getAuthor(@Args('id', { type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
 
