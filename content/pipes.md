@@ -505,6 +505,11 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td>If set to true, validation errors will not be returned to the client.</td>
   </tr>
   <tr>
+    <td><code>errorHttpStatusCode</code></td>
+    <td><code>number</code></td>
+    <td>This setting allows you to specify which exception type will be used in case of an error. By default it throws <code>BadRequestException</code>.</td>
+  </tr>
+  <tr>
     <td><code>exceptionFactory</code></td>
     <td><code>Function</code></td>
     <td>Takes an array of the validation errors and returns an exception object to be thrown.</td>
