@@ -1,6 +1,6 @@
 ### SQL (Sequelize)
 
-#### This chapter applies only to TypeScript
+##### This chapter applies only to TypeScript
 
 > **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **Sequelize** package from scratch using custom components. As a consequence, this technique contains a lot of overhead that you can avoid by using the dedicated, out-of-the-box `@nestjs/sequelize` package. To learn more, see [here](/techniques/database#sequelize-integration).
 
