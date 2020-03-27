@@ -128,7 +128,7 @@ type Post {
 }
 ```
 
-### Code first resolver
+#### Code first resolver
 
 At this point, we've defined the objects (type definitions) that can exist in our data graph, but clients don't yet have a way to interact with those objects. To address that, we need to create a resolver class. In the code first method, a resolver class both defines resolver functions **and** generates the **Query type**. This will be clear as we work through the example below:
 
@@ -232,7 +232,7 @@ The `@Query()` decorator's options object (where we pass `{{ '{' }}name: 'author
 - `deprecationReason`: sets query metadata to show the query as deprecated (e.g., in GraphQL playground); a `string`
 - `nullable`: whether the query can return a null data response; `boolean` or `'items'` or `'itemsAndList'` (see above for details of `'items'` and `'itemsAndList'`)
 
-### Args decorator options
+#### Args decorator options
 
 Use the `@Args()` decorator to extract arguments from a request for use in the method handler. This works in a very similar fashion to [REST route parameter argument extraction](/controllers#route-parameters).
 
@@ -331,7 +331,7 @@ type Query {
 }
 ```
 
-### Schema first resolver
+#### Schema first resolver
 
 The schema above exposes a single query - `author(id: Int!): Author`.
 
