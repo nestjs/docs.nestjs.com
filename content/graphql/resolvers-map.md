@@ -245,10 +245,10 @@ Usually your `@Args()` decorator will be simple, and not require an object argum
 In the `getAuthor()` case, the `number` type is used, which presents a challenge. The `number` TypeScript type doesn't give us enough information about the expected GraphQL representation (e.g., `Int` vs. `Float`). Thus we have to **explicitly** pass the type reference. We do that by passing a second argument to the `Args()` decorator, containing argument options, as shown below:
 
 ```typescript
-  @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args('id', { type: () => Int }) id: number) {
-    return this.authorsService.findOneById(id);
-  }
+@Query(returns => Author, { name: 'author' })
+async getAuthor(@Args('id', { type: () => Int }) id: number) {
+  return this.authorsService.findOneById(id);
+}
 ```
 
 The options object allows us to specify the following optional key value pairs:
