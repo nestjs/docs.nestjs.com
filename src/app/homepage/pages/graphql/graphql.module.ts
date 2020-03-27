@@ -7,11 +7,13 @@ import { EnumsComponent } from './enums/enums.component';
 import { FederationComponent } from './federation/federation.component';
 import { GuardsInterceptorsComponent } from './guards-interceptors/guards-interceptors.component';
 import { InterfacesComponent } from './interfaces/interfaces.component';
+import { MappedTypesComponent } from './mapped-types/mapped-types.component';
 import { MutationsComponent } from './mutations/mutations.component';
 import { PluginsComponent } from './plugins/plugins.component';
 import { QuickStartComponent } from './quick-start/quick-start.component';
 import { ResolversMapComponent } from './resolvers-map/resolvers-map.component';
 import { ScalarsComponent } from './scalars/scalars.component';
+import { SchemaGeneratorComponent } from './schema-generator/schema-generator.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { UnionsComponent } from './unions/unions.component';
 
@@ -84,6 +86,16 @@ const routes: Routes = [
     component: InterfacesComponent,
     data: { title: 'GraphQL + TypeScript - Interfaces' },
   },
+  {
+    path: 'mapped-types',
+    component: MappedTypesComponent,
+    data: { title: 'GraphQL + TypeScript - Mapped types' },
+  },
+  {
+    path: 'schema-generator',
+    component: SchemaGeneratorComponent,
+    data: { title: 'GraphQL + TypeScript - Schema generator' },
+  },
 ];
 
 @NgModule({
@@ -99,6 +111,8 @@ const routes: Routes = [
     PluginsComponent,
     GuardsInterceptorsComponent,
     ScalarsComponent,
+    SchemaGeneratorComponent,
+    MappedTypesComponent,
     FederationComponent,
   ],
 })
