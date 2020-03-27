@@ -20,7 +20,7 @@ $ npm i --save kafkajs
 
 #### Overview
 
-Like other Nest microservices transport layer implementations, you select the Kafka transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
+Like other Nest microservice transport layer implementations, you select the Kafka transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
 
 ```typescript
 @@filename(main)

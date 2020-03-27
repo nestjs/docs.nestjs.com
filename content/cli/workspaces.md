@@ -93,7 +93,7 @@ The `generate app` schematic has reorganized the code - moving each **applicatio
 
 #### Workspace projects
 
-A mono repo uses the concept of a workspace to manage its member entities. Workspaces are composed of **projects**. A project may be either:
+A monorepo uses the concept of a workspace to manage its member entities. Workspaces are composed of **projects**. A project may be either:
 
 - an **application**: a full Nest application including a `main.ts` file to bootstrap the application. Aside from compile and build considerations, an application-type project within a workspace is functionally identical to an application within a _standard mode_ structure.
 - a **library**: a library is a way of packaging a general purpose set of features (modules, providers, controllers, etc.) that can be used within other projects. A library cannot run on its own, and has no `main.ts` file. Read more about libraries [here](/cli/libraries).
