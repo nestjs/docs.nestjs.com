@@ -66,6 +66,8 @@ async onModuleInit() {
 
 The `beforeApplicationShutdown()` and `onApplicationShutdown()` hooks are called in the **terminating** phase (in response to system signals such as `SIGTERM`). This feature is often used with [Kubernetes](https://kubernetes.io/), [Heroku](https://www.heroku.com/) or similar services.
 
+> warning **warning** Due to inherent platform limitations, NestJS has limited support for Windows. You can expect SIGINT to work, as well as SIGBREAK and to some extent SIGHUP. However SIGTERM will never work on Windows because killing a process in the task manager is unconditional, i.e., there's no way for an application to detect or prevent it. [Here's some relevant documentation](http://docs.libuv.org/en/v1.x/signal.html) from libuv to learn more about what SIGINT, SIGBREAK etc. signify and what's supported on Windows. Also, see Node.js [documentation of Process Signal Events](https://nodejs.org/api/process.html#process_signal_events)
+
 To use these hooks you must activate a listener which listens to shutdown signals.
 
 ```typescript
