@@ -15,7 +15,7 @@ The following diagram depicts the sequence of key application lifecycle events, 
 Lifecycle events happen during application bootstrapping and shutdown. Nest calls registered lifecycle hook methods on `modules`, `injectables` and `controllers` at each of the following lifecycle events (**shutdown hooks** need to be enabled first, as described [below](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)). As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
 
 | Lifecycle hook method         | Lifecycle event triggering the hook method call                                                                                                                                                                   |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `onModuleInit()`              | Called once the host module's dependencies have been resolved.                                                                                                                                                    |
 | `onApplicationBootstrap()`    | Called once all modules have been initialized, but before listening for connections.                                                                                                                              |
 | `onModuleDestroy()`           | Called after a termination signal (e.g., `SIGTERM`) has been received.                                                                                                                                            |
@@ -82,6 +82,8 @@ async function bootstrap() {
 }
 bootstrap();
 ```
+
+> info **Info** `enableShutdownHooks` is disabled by default because the application could run into memory leak issues in case multiple Nest instances are running (e.g. testing). Node.js would warn you, in case you have too many listeners running in parallel and prevent you from having major memory leaks.
 
 When the application receives a termination signal it will call any registered `beforeApplicationShutdown()`, then `onApplicationShutdown()` methods (in the sequence described above) with the corresponding signal as the first parameter. If a registered function awaits an asynchronous call (returns a promise), Nest will not continue in the sequence until the promise is resolved or rejected.
 
