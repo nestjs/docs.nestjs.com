@@ -156,10 +156,11 @@ In the next section, you'll see how we supply the appropriate schema for a given
 ```typescript
 @@filename()
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { ObjectSchema } from '@hapi/joi';
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {
-  constructor(private schema: Object) {}
+  constructor(private schema: ObjectSchema) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
     const { error } = this.schema.validate(value);
