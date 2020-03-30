@@ -92,9 +92,9 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Mapped types' },
   },
   {
-    path: 'schema-generator',
+    path: 'generating-sdl',
     component: SchemaGeneratorComponent,
-    data: { title: 'GraphQL + TypeScript - Schema generator' },
+    data: { title: 'GraphQL + TypeScript - Generating SDL' },
   },
 ];
 

@@ -114,7 +114,7 @@ export class MenuComponent implements OnInit {
         { title: 'Unions', path: '/graphql/unions' },
         { title: 'Enums', path: '/graphql/enums' },
         { title: 'Mapped types', path: '/graphql/mapped-types' },
-        { title: 'Schema generator', path: '/graphql/schema-generator' },
+        { title: 'Generating SDL', path: '/graphql/generating-sdl' },
         {
           title: 'Other features',
           path: '/graphql/tooling',

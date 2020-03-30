@@ -1,8 +1,8 @@
-### Schema generator
+### Generating SDL
 
 ##### This chapter applies only to code first approach
 
-To manually build (without running an application) a GraphQL schema, use the `GraphQLSchemaBuilderModule`.
+To manually generate (without running an application, connecting to the database, hooking up resolvers, etc.) a GraphQL SDL, use the `GraphQLSchemaBuilderModule`.
 
 ```typescript
 async function generateSchema() {
