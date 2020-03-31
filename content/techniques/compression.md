@@ -37,3 +37,13 @@ import * as compression from 'fastify-compress';
 // somewhere in your initialization file
 app.register(compression);
 ```
+
+By default, `fastify-compress` will compress Brotli payloads on the fly on Node >= 11.7.0 when browsers indicate support for the encoding. While Brotli is quite efficient in terms of compression ratio, it's also quite slow, and the slowness becomes obvious when e.g. serving responses from Nest's cache. Due to this, you may want to tell `fastify-compress` to only use deflate and gzip to compress responses; you'll end up with larger responses but they'll be delivered much more quickly.
+
+To specify encodings, provide a second argument to `app.register`:
+
+```typescript
+app.register(compression, { encodings: ['gzip', 'deflate'] });
+```
+
+The above tells `fastify-compress` to only use gzip and deflate encodings, preferring gzip if the client supports both.
