@@ -1,8 +1,12 @@
 ### Compression
 
-Compression can greatly decrease the size of the response body, thereby increasing the speed of a web app. Use the [compression](https://github.com/expressjs/compression) middleware package to enable gzip compression.
+Compression can greatly decrease the size of the response body, thereby increasing the speed of a web app.
 
-#### Installation
+For **high-traffic** websites in production, it is strongly recommended to offload compression from the application server - typically in a reverse proxy (e.g., Nginx). In that case, you should not use compression middleware.
+
+#### Use with Express (default)
+
+Use the [compression](https://github.com/expressjs/compression) middleware package to enable gzip compression.
 
 First install the required package:
 
@@ -10,7 +14,7 @@ First install the required package:
 $ npm i --save compression
 ```
 
-Once the installation is complete, apply the compression middleware as global middleware.
+Once the installation is complete, apply the compression middleware as a global middleware.
 
 ```typescript
 import * as compression from 'compression';
@@ -18,6 +22,18 @@ import * as compression from 'compression';
 app.use(compression());
 ```
 
-> info **Hint** If using the `FastifyAdapter`, consider using [fastify-compress](https://github.com/fastify/fastify-compress) instead.
+#### Use with Fastify
 
-For **high-traffic** websites in production, it is strongly recommended to offload compression from the application server - typically in a reverse proxy (e.g., Nginx). In that case, you should not use compression middleware.
+If using the `FastifyAdapter`, you'll want to use [fastify-compress](https://github.com/fastify/fastify-compress):
+
+```bash
+$ npm i --save fastify-compress
+```
+
+Once the installation is complete, apply the fastify-compress middleware as a global middleware.
+
+```typescript
+import * as compression from 'fastify-compress';
+// somewhere in your initialization file
+app.register(compression);
+```
