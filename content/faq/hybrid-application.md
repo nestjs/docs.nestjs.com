@@ -16,18 +16,18 @@ To connect multiple microservice instances, issue the call to `connectMicroservi
 
 ```typescript
 const app = await NestFactory.create(AppModule);
-// microservice 1
-const ms1 = app.connectMicroservice({
+// microservice #1
+const microserviceTcp = app.connectMicroservice<MicroserviceOptions>({
   transport: Transport.TCP,
   options: {
     port: 3001,
   },
 });
-// microservice 2
-const ms2 = app.connectMicroservice({
-  transport: Transport.TCP,
+// microservice #2
+const microserviceRedis = app.connectMicroservice<MicroserviceOptions>({
+  transport: Transport.REDIS,
   options: {
-    port: 3002,
+    url: 'redis://localhost:6379',
   },
 });
 
