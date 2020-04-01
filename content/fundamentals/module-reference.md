@@ -191,17 +191,32 @@ const catsRepository = await this.moduleRef.resolve(CatsRepository, contextId);
 
 #### Instantiating classes dynamically
 
-To dynamically instantiate a class that wasn't previously registered as a provider, use the module reference's `create()` method.
+To dynamically instantiate a class that wasn't previously registered as a provider but depends on other providers use the module reference's `create()` method.
+
+```typescript
+@@filename(cat)
+@Injectable({scope: Scope.TRANSIENT})
+export class Cat {
+  private name: string;
+
+  constructor(private logger: Logger) {}
+  
+  init(name: string) {
+    this.name = name;
+  }
+}
+```
 
 ```typescript
 @@filename(cats.service)
 @Injectable()
 export class CatsService implements OnModuleInit {
-  private catsFactory: CatsFactory;
+  private myCat: Cat;
   constructor(private moduleRef: ModuleRef) {}
 
   async onModuleInit() {
-    this.catsFactory = await this.moduleRef.create(CatsFactory);
+    this.myCat = await this.moduleRef.create(Cat);
+    this.myCat.init('Meowth');
   }
 }
 @@switch
@@ -213,7 +228,8 @@ export class CatsService {
   }
 
   async onModuleInit() {
-    this.catsFactory = await this.moduleRef.create(CatsFactory);
+    this.myCat = await this.moduleRef.create(Cat);
+    this.myCat.init('Meowth');
   }
 }
 ```
