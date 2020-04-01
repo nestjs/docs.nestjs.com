@@ -203,3 +203,11 @@ This is how our directory structure should look now:
 <div class="item">main.ts</div>
 </div>
 </div>
+
+#### Get / Instantiate providers dynamically
+To get existing or instantiate providers dynamically you can use [Module reference](https://docs.nestjs.com/fundamentals/module-ref).
+
+#### Get providers inside bootstrap()
+To get providers within the `bootsrap()` function, e.g. for standalone applications without controllers, see [Standalone applications](https://docs.nestjs.com/standalone-applications)
+
+#### Get / Instantiate providers dynamically
