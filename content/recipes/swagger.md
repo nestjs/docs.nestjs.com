@@ -616,6 +616,22 @@ Before you run your application, remember to add the security definition to your
 const options = new DocumentBuilder().addOAuth2();
 ```
 
+#### Cookie authentication
+
+To enable cookie authentication, use `@ApiCookieAuth()`.
+
+```typescript
+@ApiCookieAuth()
+@Controller('cats')
+export class CatsController {}
+```
+
+Before you run your application, remember to add the security definition to your base document using `DocumentBuilder`:
+
+```typescript
+const options = new DocumentBuilder().addCookieAuth('optional-session-id');
+```
+
 #### File upload
 
 You can enable file upload for a specific method with the `@ApiBody` decorator together with `@ApiConsumes()`. Here's a full example using the [File Upload](/techniques/file-upload) technique:
