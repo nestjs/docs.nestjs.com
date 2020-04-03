@@ -69,10 +69,7 @@ Sometimes a backend forces a different value for an enum internally than in the 
 ```typescript
 @Resolver('AllowedColor')
 export class AllowedColorResolver {
-  @ResolveField('RED')
-  getRedColor() {
-    return '#f00';
-  }
+  [AllowedColor.RED]: '#f00'; 
 }
 ```
 
