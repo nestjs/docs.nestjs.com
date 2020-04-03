@@ -239,7 +239,7 @@ export class CreateCatDto {
 }
 ```
 
-> Info **Hint** Read more about the class-validator decorators [here](https://github.com/typestack/class-validator#usage).
+> info **Hint** Read more about the class-validator decorators [here](https://github.com/typestack/class-validator#usage).
 
 Now we can create a `ValidationPipe` class.
 
