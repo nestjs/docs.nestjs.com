@@ -68,6 +68,170 @@ In the version 6 major release of NestJS, we introduced the code-first approach 
 
 In order to migrate your existing application, simply rename all the `type-graphql` imports to the `@nestjs/graphql`.
 
+#### Terminus
+
+In the version 7 major release of `@nestjs/terminus`, a new simplified API has been introduced
+to run health checks. The previously required peer dependency [`@godaddy/terminus`](https://github.com/godaddy/terminus) has been removed, which allows us to integrate our health checks automatically into Swagger! Read more about the removal of `@godaddy/terminus` [here](https://github.com/nestjs/terminus/issues/340).
+
+##### Healthchecks
+
+For most users, the biggest change will be the removal of the `TerminusModule.forRootAsync` function. With the next major version, this function will be completely removed.
+To migrate to the new API, you will need to create a new controller, which will handle your health checks.
+
+```typescript
+@@filename()
+// Before
+@Injectable()
+export class TerminusOptionsService implements TerminusOptionsFactory {
+  constructor(
+    private dns: DNSHealthIndicator,
+  ) {}
+
+  createTerminusOptions(): TerminusModuleOptions {
+    const healthEndpoint: TerminusEndpoint = {
+      url: '/health',
+      healthIndicators: [
+        async () => this.dns.pingCheck('google', 'https://google.com'),
+      ],
+    };
+    return {
+      endpoints: [healthEndpoint],
+    };
+  }
+}
+
+@Module({
+  imports: [
+    TerminusModule.forRootAsync({
+      useClass: TerminusOptionsService
+    })
+  ]
+})
+export class AppModule { }
+
+// After
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private dns: DNSHealthIndicator,
+  ) { }
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.dns.pingCheck('google', 'https://google.com'),
+    ]);
+  }
+}
+
+@Module({
+  imports: [
+    TerminusModule
+  ]
+})
+export class AppModule { }
+
+@@switch
+
+// Before
+@Injectable()
+@Dependencies(DNSHealthIndicator)
+export class TerminusOptionsService {
+  constructor(
+    private dns,
+  ) {}
+
+  createTerminusOptions() {
+    const healthEndpoint = {
+      url: '/health',
+      healthIndicators: [
+        async () => this.dns.pingCheck('google', 'https://google.com'),
+      ],
+    };
+    return {
+      endpoints: [healthEndpoint],
+    };
+  }
+}
+
+@Module({
+  imports: [
+    TerminusModule.forRootAsync({
+      useClass: TerminusOptionsService
+    })
+  ]
+})
+export class AppModule { }
+
+// After
+@Controller('/health')
+@Dependencies(HealthCheckService, DNSHealthIndicator)
+export class HealthController {
+  constructor(
+    private health,
+    private dns,
+  ) { }
+
+  @Get('/')
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.dns.pingCheck('google', 'https://google.com'),
+    ])
+  }
+}
+
+@Module({
+  controllers: [
+    HealthController
+  ],
+  imports: [
+    TerminusModule
+  ]
+})
+export class AppModule { }
+```
+
+> warning **Warning** If you have set a [Global Prefix](faq#global-prefix) in your Nest application and you have not used the `useGlobalPrefix` Terminus option, the URL of your health check will change! Make sure to update the reference to that URL, or use the legacy Terminus API until [nestjs/nest#963](https://github.com/nestjs/nest/issues/963) is fixed.
+
+If there is a problem with the new NestJS Terminus API, make sure you report it on [the repository](https://github.com/nestjs/terminus/issues). If you are forced to use the legacy API, you can also disable deprecation messages for the time being.
+
+```typescript
+TerminusModule.forRootAsync({
+  useFactory: () => ({
+    disableDeprecationWarnings: true,
+    endpoints: [
+      // ...
+    ]
+  })
+}
+```
+
+You should enable shutdown hooks in your `main.ts`. The Terminus integration will listen on POSIX signals such as SIGTERM. See the [Application shutdown chapter](fundamentals/lifecycle-events#application-shutdown) for more information. When enabled, the health check route(s) will automatically respond with a Service Unavailable (503) HTTP error response when the server is shutting down.
+
+##### Custom Health Indicators
+
+With the removal of `@godaddy/terminus`, you will need to update your `import` statements
+to use `@nestjs/terminus` instead. Most notable is the import of the `HealthCheckError`.
+
+```typescript
+@@filename(custom.health)
+// Before
+import { HealthCheckError } from '@godaddy/terminus';
+// After
+import { HealthCheckError } from '@nestjs/terminus';
+```
+
+##### Dependencies
+
+Once you have fully migrated, make sure you uninstall `@godaddy/terminus`.
+
+```bash
+npm uninstall --save @godaddy/terminus
+```
+
 #### HTTP exceptions body
 
 Previously, the generated response bodies for the `HttpException` class and other exceptions derived from it (e.g., `BadRequestException` or `NotFoundException`) were inconsistent. In the latest major release, these exception responses will follow the same structure.
