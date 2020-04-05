@@ -171,6 +171,16 @@ definitionsFactory.generate({
 
 A fully working schema first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first).
 
+#### Accessing generated schema
+
+To access the generated schema (in either code first or schema first approach), use the `GraphQLHost` class:
+
+```typescript
+const { schema } = app.get(GraphQLSchemaHost);
+```
+
+> info **Hint** Make sure to call the `GraphQLSchemaHost#schema` getter when the application is already initialized (after the `onModuleInit` hook triggered by either `app.listen()` or `app.init()` method.
+
 #### Async configuration
 
 When you need to pass module options asynchronously instead of statically, use the `forRootAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.

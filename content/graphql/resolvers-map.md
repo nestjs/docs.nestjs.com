@@ -306,6 +306,133 @@ type Query {
 
 > info **Hint** Note that arguments classes like `GetAuthorArgs` play very well with the `ValidationPipe` (read [more](/techniques/validation)).
 
+#### Class inheritance
+
+Args:
+
+```typescript
+@ArgsType()
+class PaginationArgs {
+  @Field(type => Int)
+  offset: number = 0;
+
+  @Field(type => Int)
+  limit: number = 10;
+}
+```
+
+```typescript
+@ArgsType()
+class GetAuthorArgs extends PaginationArgs {
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ defaultValue: '' })
+  @MinLength(3)
+  lastName: string;
+}
+```
+
+Object types:
+
+```typescript
+@ObjectType()
+class Character {
+  @Field(type => Int)
+  id: number;
+
+  @Field()
+  name: string;
+}
+```
+
+```typescript
+@ObjectType()
+class Warrior extends Character {
+  @Field()
+  level: number;
+}
+```
+
+Resolver inheritance (creating base resolver):
+
+```typescript
+function BaseResolver<T extends Type<unknown>>(classRef: T): any {
+  @Resolver({ isAbstract: true })
+  abstract class BaseResolverHost {
+    @Query(type => [classRef], { name: `findAll${classRef.name}` })
+    async findAll(): Promise<T[]> {
+      return [];
+    }
+  }
+  return BaseResolverHost;
+}
+```
+
+- explicit return type `any` is required: otherwise TypeScript complains about the usage of private class definition (recommended: define an interface instead of `any`)
+- `Type` is imported from the `@nestjs/common` package
+- `isAbstract: true` indicates that SDL shouldn't be generated for this class (you can set this for other types as well, e.g., object type)
+
+```typescript
+@Resolver(of => Recipe)
+export class RecipesResolver extends BaseResolver(Recipe) {
+  constructor(private recipesService: RecipesService) {
+    super();
+  }
+}
+```
+
+Generated SDL:
+
+```graphql
+type Query {
+  findAllRecipe: [Recipe!]!
+}
+```
+
+#### Generics
+
+Cursor-based pagination example:
+
+```typescript
+import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { Type } from '@nestjs/common';
+
+export function Paginated<T>(classRef: Type<T>) {
+  @ObjectType(`${classRef.name}Edge`)
+  abstract class EdgeType {
+    @Field(type => String)
+    cursor: string;
+
+    @Field(type => classRef)
+    node: T;
+  }
+
+  @ObjectType({ isAbstract: true })
+  abstract class PaginatedType {
+    @Field(type => [EdgeType], { nullable: true })
+    edges: EdgeType[];
+
+    @Field(type => [classRef], { nullable: true })
+    nodes: T[];
+
+    @Field(type => Int)
+    totalCount: number;
+
+    @Field()
+    hasNextPage: boolean;
+  }
+  return PaginatedType;
+}
+```
+
+No reason to explain everything in detail. We can link this doc: https://graphql.org/learn/pagination/#pagination-and-edges
+
+```typescript
+@ObjectType()
+class PaginatedAuthor extends Paginated(Author) {}
+```
+
 #### Schema first
 
 As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
@@ -526,6 +653,8 @@ export class AuthorsModule {}
 ```
 
 > info **Hint** It is helpful to organize your code by your so-called **domain model** (similar to the way you would organize entry points in a REST API). In this approach, keep your models (`ObjectType` classes), resolvers and services together within a Nest module representing the domain model. Keep all of these components in a single folder per module. When you do this, and use the [Nest CLI](/cli/overview) to generate each element, Nest will wire all of these parts together (locating files in appropriate folders, generating entries in `provider` and `imports` arrays, etc.) automatically for you.
+
+/////// MAYBE LET'S CREATE A SEPARATE CHAPTER(PAGE) FOR THIS? [CLI plugin]
 
 #### CLI Plugin
 
