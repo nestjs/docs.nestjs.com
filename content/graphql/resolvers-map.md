@@ -308,18 +308,22 @@ type Query {
 
 #### Class inheritance
 
-Args:
+You can use standard TypeScript class inheritance to create base classes with generic utility type features (fields and field properties, validations, etc.) that can be extended. For example, you may have a set of pagination related arguments that always include the standard `offset` and `limit` fields, but also other index fields that are type-specific. You can set up a class hierarchy as shown below.
+
+Base `@ArgsType()` class:
 
 ```typescript
 @ArgsType()
 class PaginationArgs {
-  @Field(type => Int)
+  @Field((type) => Int)
   offset: number = 0;
 
-  @Field(type => Int)
+  @Field((type) => Int)
   limit: number = 10;
 }
 ```
+
+Type specific sub-class of the base `@ArgsType()` class:
 
 ```typescript
 @ArgsType()
@@ -333,18 +337,20 @@ class GetAuthorArgs extends PaginationArgs {
 }
 ```
 
-Object types:
+The same approach can be taken with `@ObjectType()` objects. Define generic properties on the base class:
 
 ```typescript
 @ObjectType()
 class Character {
-  @Field(type => Int)
+  @Field((type) => Int)
   id: number;
 
   @Field()
   name: string;
 }
 ```
+
+Add type-specific properties on sub-classes:
 
 ```typescript
 @ObjectType()
@@ -354,13 +360,13 @@ class Warrior extends Character {
 }
 ```
 
-Resolver inheritance (creating base resolver):
+You can use inheritance with a resolver as well. You can ensure type safety by combining inheritance and TypeScript generics. For example, to create a base class with a generic `findAll` query, use a construction like this:
 
 ```typescript
 function BaseResolver<T extends Type<unknown>>(classRef: T): any {
   @Resolver({ isAbstract: true })
   abstract class BaseResolverHost {
-    @Query(type => [classRef], { name: `findAll${classRef.name}` })
+    @Query((type) => [classRef], { name: `findAll${classRef.name}` })
     async findAll(): Promise<T[]> {
       return [];
     }
@@ -369,12 +375,16 @@ function BaseResolver<T extends Type<unknown>>(classRef: T): any {
 }
 ```
 
-- explicit return type `any` is required: otherwise TypeScript complains about the usage of private class definition (recommended: define an interface instead of `any`)
+Note the following:
+
+- an explicit return type (`any` above) is required: otherwise TypeScript complains about the usage of a private class definition. Recommended: define an interface instead of using `any`.
 - `Type` is imported from the `@nestjs/common` package
-- `isAbstract: true` indicates that SDL shouldn't be generated for this class (you can set this for other types as well, e.g., object type)
+- The `isAbstract: true` property indicates that SDL (Schema Definition Language statements) shouldn't be generated for this class. Note, you can set this property for other types as well to suppress SDL generation.
+
+Here's how you could generate a concrete sub-class of the `BaseResolver`:
 
 ```typescript
-@Resolver(of => Recipe)
+@Resolver((of) => Recipe)
 export class RecipesResolver extends BaseResolver(Recipe) {
   constructor(private recipesService: RecipesService) {
     super();
@@ -382,7 +392,7 @@ export class RecipesResolver extends BaseResolver(Recipe) {
 }
 ```
 
-Generated SDL:
+This construct would generated the following SDL:
 
 ```graphql
 type Query {
@@ -392,7 +402,7 @@ type Query {
 
 #### Generics
 
-Cursor-based pagination example:
+We saw one use of generics above. This powerful TypeScript feature can be used to create useful abstractions. For example, here's a sample cursor-based pagination implementation based on [this documentation](https://graphql.org/learn/pagination/#pagination-and-edges):
 
 ```typescript
 import { Field, ObjectType, Int } from '@nestjs/graphql';
@@ -401,22 +411,22 @@ import { Type } from '@nestjs/common';
 export function Paginated<T>(classRef: Type<T>) {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-    @Field(type => String)
+    @Field((type) => String)
     cursor: string;
 
-    @Field(type => classRef)
+    @Field((type) => classRef)
     node: T;
   }
 
   @ObjectType({ isAbstract: true })
   abstract class PaginatedType {
-    @Field(type => [EdgeType], { nullable: true })
+    @Field((type) => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
-    @Field(type => [classRef], { nullable: true })
+    @Field((type) => [classRef], { nullable: true })
     nodes: T[];
 
-    @Field(type => Int)
+    @Field((type) => Int)
     totalCount: number;
 
     @Field()
@@ -426,7 +436,7 @@ export function Paginated<T>(classRef: Type<T>) {
 }
 ```
 
-No reason to explain everything in detail. We can link this doc: https://graphql.org/learn/pagination/#pagination-and-edges
+With the above base class defined, we can now easily create specialized types that inherit this behavior. For example:
 
 ```typescript
 @ObjectType()

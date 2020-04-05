@@ -173,13 +173,13 @@ A fully working schema first sample is available [here](https://github.com/nestj
 
 #### Accessing generated schema
 
-To access the generated schema (in either code first or schema first approach), use the `GraphQLHost` class:
+To access the generated schema (in either the code first or schema first approach), use the `GraphQLSchemaHost` class:
 
 ```typescript
 const { schema } = app.get(GraphQLSchemaHost);
 ```
 
-> info **Hint** Make sure to call the `GraphQLSchemaHost#schema` getter when the application is already initialized (after the `onModuleInit` hook triggered by either `app.listen()` or `app.init()` method.
+> info **Hint** You must call the `GraphQLSchemaHost#schema` getter after the application has been initialized (after the `onModuleInit` hook has been triggered by either the `app.listen()` or `app.init()` method).
 
 #### Async configuration
 
