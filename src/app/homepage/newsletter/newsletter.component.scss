@@ -1,8 +1,7 @@
-@import '../../../scss/variables.scss';
 @import '../../../scss/utils.scss';
 
 .newsletter-wrapper {
-  background: #e8e8e8;
+  background: var(--background-3dp);
   padding: 40px 85px;
   overflow: hidden;
   position: relative;
@@ -26,13 +25,13 @@
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 4px;
-  color: #111;
+  color: var(--color-1dp);
 }
 
 .newsletter-wrapper p {
   font-size: 15px;
   margin: 0;
-  color: #7b7b7b;
+  color: var(--color);
   font-weight: 500;
   line-height: 22px;
 }
@@ -115,7 +114,7 @@
   position: absolute;
   margin-top: -50px;
   margin-left: 60px;
-  color: #dedede;
+  color: rgba(0,0,0,0.1);
   z-index: 0;
   transform: rotate(-30deg);
 }

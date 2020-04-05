@@ -1,10 +1,9 @@
-@import '../../../scss/variables.scss';
 @import '../../../scss/utils.scss';
 
 :host {
   @extend .transition;
   @extend .box-sizing;
-  background: $black-color;
+  background: var(--header-background);
   display: block;
   padding: 40px 0;
   margin: 0 -85px;
@@ -35,10 +34,10 @@ footer {
 
   a {
     @extend .transition;
-    color: $red-color;
+    color: var(--primary);
     font-weight: 600;
     &:hover {
-      color: $red-color;
+      color: var(--primary);
     }
   }
 
@@ -65,7 +64,6 @@ footer {
     @extend .transition;
     display: inline-block;
     vertical-align: middle;
-    color: $silver-color;
     font-size: 20px;
     margin-left: 15px;
     cursor: pointer;
@@ -74,7 +72,7 @@ footer {
       font-size: 20px;
     }
     &:hover {
-      color: $red-color;
+      color: var(--primary);
     }
   }
 

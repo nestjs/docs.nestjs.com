@@ -1,5 +1,4 @@
 @import '../../../../scss/utils.scss';
-@import '../../../../scss/variables.scss';
 
 .toc-wrapper {
   width: 250px;
@@ -39,17 +38,17 @@
     margin-bottom: 6px;
 
     &:hover {
-      color: $red-color;
+      color: var(--primary);
     }
   }
 
   .current {
-    color: $red-color;
+    color: var(--primary);
     font-weight: 600;
 
     &::before {
-      background: $red-color;
-      border-color: $red-color;
+      background: var(--primary);
+      border-color: var(--primary);
       border-width: 1px;
       left: -3px;
     }
@@ -78,15 +77,15 @@
   }
 
   a {
-    color: #404040;
+    color: var(--color);
     font-weight: normal;
     &:hover {
-      color: $red-color;
+      color: var(--primary);
     }
   }
 
   .current a {
     font-weight: 600;
-    color: $red-color;
+    color: var(--primary);
   }
 }
