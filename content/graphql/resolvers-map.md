@@ -315,10 +315,10 @@ Base `@ArgsType()` class:
 ```typescript
 @ArgsType()
 class PaginationArgs {
-  @Field((type) => Int)
+  @Field(type => Int)
   offset: number = 0;
 
-  @Field((type) => Int)
+  @Field(type => Int)
   limit: number = 10;
 }
 ```
@@ -342,7 +342,7 @@ The same approach can be taken with `@ObjectType()` objects. Define generic prop
 ```typescript
 @ObjectType()
 class Character {
-  @Field((type) => Int)
+  @Field(type => Int)
   id: number;
 
   @Field()
@@ -366,7 +366,7 @@ You can use inheritance with a resolver as well. You can ensure type safety by c
 function BaseResolver<T extends Type<unknown>>(classRef: T): any {
   @Resolver({ isAbstract: true })
   abstract class BaseResolverHost {
-    @Query((type) => [classRef], { name: `findAll${classRef.name}` })
+    @Query(type => [classRef], { name: `findAll${classRef.name}` })
     async findAll(): Promise<T[]> {
       return [];
     }
@@ -411,22 +411,22 @@ import { Type } from '@nestjs/common';
 export function Paginated<T>(classRef: Type<T>) {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-    @Field((type) => String)
+    @Field(type => String)
     cursor: string;
 
-    @Field((type) => classRef)
+    @Field(type => classRef)
     node: T;
   }
 
   @ObjectType({ isAbstract: true })
   abstract class PaginatedType {
-    @Field((type) => [EdgeType], { nullable: true })
+    @Field(type => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
-    @Field((type) => [classRef], { nullable: true })
+    @Field(type => [classRef], { nullable: true })
     nodes: T[];
 
-    @Field((type) => Int)
+    @Field(type => Int)
     totalCount: number;
 
     @Field()

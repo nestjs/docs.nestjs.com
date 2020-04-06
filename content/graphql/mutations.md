@@ -50,8 +50,6 @@ async upvotePost(
 ) {}
 ```
 
-// Should we add note about Inheritance here? (input types inheritance)
-
 #### Schema first
 
 Let's extend our `AuthorResolver` used in the previous section (see [resolvers](/graphql/resolvers)).

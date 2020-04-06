@@ -27,7 +27,7 @@ const schema = await gqlSchemaFactory.create([
 ]);
 ```
 
-It also allows several options:
+It also takes a second optional argument with an options object:
 
 ```typescript
 const schema = await gqlSchemaFactory.create([RecipesResolver], {
@@ -35,3 +35,7 @@ const schema = await gqlSchemaFactory.create([RecipesResolver], {
   orphanedTypes: [],
 });
 ```
+
+- `skipCheck`: ignore schema validation; boolean, defaults to `false`
+- `orphanedTypes`: list of classes that are not explicitly referenced (not part of the object graph) to be generated.  Normally, if a class is declared but isn't otherwise referenced in the graph, it's omitted.  The property value is an array of class references.
+

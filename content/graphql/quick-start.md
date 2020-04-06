@@ -173,7 +173,9 @@ A fully working schema first sample is available [here](https://github.com/nestj
 
 #### Accessing generated schema
 
-To access the generated schema (in either the code first or schema first approach), use the `GraphQLSchemaHost` class:
+In some circumstances (for example end-to-end tests), you may want to get a reference to the generated schema object. In end-to-end tests, you can then run queries using the `graphql` object without using any HTTP listeners.
+
+You can access the generated schema (in either the code first or schema first approach), using the `GraphQLSchemaHost` class:
 
 ```typescript
 const { schema } = app.get(GraphQLSchemaHost);

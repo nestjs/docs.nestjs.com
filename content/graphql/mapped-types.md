@@ -4,7 +4,7 @@
 
 As you build out features like CRUD (Create/Read/Update/Delete) it's often useful to construct variants on a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
 
-#### Partial: PartialType() function
+#### Partial
 
 When building input validation types (also called DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
 
@@ -42,7 +42,7 @@ The `PartialType()` function takes an optional second argument that is a referen
 export class UpdateUserInput extends PartialType(User, ObjectType) {}
 ```
 
-#### Pick: PickType() function
+#### Pick
 
 The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
 
@@ -69,7 +69,7 @@ export class UpdateEmailInput extends PickType(CreateUserInput, ['email']) {}
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/graphql` package.
 
-#### Omit: OmitType() function
+#### Omit
 
 The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
 
