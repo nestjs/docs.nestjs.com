@@ -50,7 +50,7 @@
     "ngx-markdown": "9.0.0",
     "ngx-perfect-scrollbar": "9.0.0",
     "nodemon": "2.0.2",
-    "prismjs": "1.19.0",
+    "prismjs": "1.20.0",
     "rxjs": "6.5.4",
     "rxjs-compat": "6.5.5",
     "tslib": "1.11.1",
