@@ -211,4 +211,3 @@ Thus far, we've discussed how Nest automatically handles most of the details of 
  To get existing instances, or instantiate providers dynamically, you can use [Module reference](https://docs.nestjs.com/fundamentals/module-ref).
  
  To get providers within the `bootstrap()` function (for example for standalone applications without controllers, or to utilize a configuration service during bootstrapping) see [Standalone applications](https://docs.nestjs.com/standalone-applications).
-To get existing or instantiate providers dynamically you can use [Module reference](https://docs.nestjs.com/fundamentals/module-ref).
