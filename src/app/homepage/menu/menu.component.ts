@@ -114,6 +114,7 @@ export class MenuComponent implements OnInit {
         { title: 'Unions', path: '/graphql/unions' },
         { title: 'Enums', path: '/graphql/enums' },
         { title: 'Mapped types', path: '/graphql/mapped-types' },
+        { title: 'CLI Plugin', path: '/graphql/cli-plugin' },
         { title: 'Generating SDL', path: '/graphql/generating-sdl' },
         {
           title: 'Other features',
@@ -229,8 +230,8 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.router.events
-      .filter(event => event instanceof NavigationEnd)
-      .subscribe(event => this.toggleCategory());
+      .filter((event) => event instanceof NavigationEnd)
+      .subscribe((event) => this.toggleCategory());
 
     this.toggleCategory();
   }

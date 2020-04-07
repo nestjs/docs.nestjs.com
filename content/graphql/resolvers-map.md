@@ -44,7 +44,7 @@ export class Author {
 }
 ```
 
-> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible, for instance, to determine what properties a class consists of or recognize whether a given property is optional or required. Because of these limitations, we must either explicitly use the `@Field()` decorator in our schema definition classes to provide metadata about each field's GraphQL type and optionality, or use a [CLI plugin](/graphql/resolvers#cli-plugin) to generate these for us.
+> info **Hint** TypeScript's metadata reflection system has several limitations which make it impossible, for instance, to determine what properties a class consists of or recognize whether a given property is optional or required. Because of these limitations, we must either explicitly use the `@Field()` decorator in our schema definition classes to provide metadata about each field's GraphQL type and optionality, or use a [CLI plugin](/graphql/cli-plugin) to generate these for us.
 
 The `Author` object type, like any class, is made of a collection of fields, with each field declaring a type. A field's type corresponds to a [GraphQL type](https://graphql.org/learn/schema/). A field's GraphQL type can be either another object type or a scalar type. A GraphQL scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value.
 
@@ -294,7 +294,7 @@ class GetAuthorArgs {
 }
 ```
 
-> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate type and optionality, or use a [CLI plugin](/graphql/resolvers#cli-plugin).
+> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate type and optionality, or use a [CLI plugin](/graphql/cli-plugin).
 
 This will result in generating the following part of the GraphQL schema in SDL:
 
@@ -315,10 +315,10 @@ Base `@ArgsType()` class:
 ```typescript
 @ArgsType()
 class PaginationArgs {
-  @Field(type => Int)
+  @Field((type) => Int)
   offset: number = 0;
 
-  @Field(type => Int)
+  @Field((type) => Int)
   limit: number = 10;
 }
 ```
@@ -342,7 +342,7 @@ The same approach can be taken with `@ObjectType()` objects. Define generic prop
 ```typescript
 @ObjectType()
 class Character {
-  @Field(type => Int)
+  @Field((type) => Int)
   id: number;
 
   @Field()
@@ -366,7 +366,7 @@ You can use inheritance with a resolver as well. You can ensure type safety by c
 function BaseResolver<T extends Type<unknown>>(classRef: T): any {
   @Resolver({ isAbstract: true })
   abstract class BaseResolverHost {
-    @Query(type => [classRef], { name: `findAll${classRef.name}` })
+    @Query((type) => [classRef], { name: `findAll${classRef.name}` })
     async findAll(): Promise<T[]> {
       return [];
     }
@@ -411,22 +411,22 @@ import { Type } from '@nestjs/common';
 export function Paginated<T>(classRef: Type<T>) {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-    @Field(type => String)
+    @Field((type) => String)
     cursor: string;
 
-    @Field(type => classRef)
+    @Field((type) => classRef)
     node: T;
   }
 
   @ObjectType({ isAbstract: true })
   abstract class PaginatedType {
-    @Field(type => [EdgeType], { nullable: true })
+    @Field((type) => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
-    @Field(type => [classRef], { nullable: true })
+    @Field((type) => [classRef], { nullable: true })
     nodes: T[];
 
-    @Field(type => Int)
+    @Field((type) => Int)
     totalCount: number;
 
     @Field()
@@ -663,113 +663,3 @@ export class AuthorsModule {}
 ```
 
 > info **Hint** It is helpful to organize your code by your so-called **domain model** (similar to the way you would organize entry points in a REST API). In this approach, keep your models (`ObjectType` classes), resolvers and services together within a Nest module representing the domain model. Keep all of these components in a single folder per module. When you do this, and use the [Nest CLI](/cli/overview) to generate each element, Nest will wire all of these parts together (locating files in appropriate folders, generating entries in `provider` and `imports` arrays, etc.) automatically for you.
-
-/////// MAYBE LET'S CREATE A SEPARATE CHAPTER(PAGE) FOR THIS? [CLI plugin]
-
-#### CLI Plugin
-
-TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
-
-> warning **Hint** This plugin is **opt-in**. If you prefer, you can declare all decorators manually, or only specific decorators where you need them.
-
-The GraphQL plugin will automatically:
-
-- annotate all input object, object type and args classes properties with `@Field` unless `@HideField` is used
-- set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
-- set the `type` property depending on the type (supports arrays as well)
-
-Please, note that your filenames **must have** one of the following suffixes in order to be analyzed by the plugin: `['.input.ts', '.args.ts', '.entity.ts', '.model.ts']` (e.g., `author.entity.ts`). If you are using a different suffix, you can adjust the plugin's behavior by specifying the `typeFileNameSuffix` option (see below).
-
-With what we've learned so far, you have to duplicate a lot of code to let the package know how your type should be declared in GraphQL. For example, you could define a simple `Author` class as follows:
-
-```typescript
-@@filename(authors/models/author.model)
-@ObjectType()
-export class Author {
-  @Field(type => Int)
-  id: number;
-
-  @Field({ nullable: true })
-  firstName?: string;
-
-  @Field({ nullable: true })
-  lastName?: string;
-
-  @Field(type => [Post])
-  posts: Post[];
-}
-```
-
-While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
-
-Now, with the GraphQL plugin enabled, the above class definition can be declared simply:
-
-```typescript
-@@filename(authors/models/author.model)
-@ObjectType()
-export class Author {
-  @Field(type => Int)
-  id: number;
-  firstName?: string;
-  lastName?: string;
-  posts: Post[];
-}
-```
-
-The plugin adds appropriate decorators on-the-fly based on the **Abstract Syntax Tree**. Thus, you won't have to struggle with `@Field` decorators scattered throughout the code.
-
-> warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, simply set them explicitly via `@Field()`.
-
-To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
-
-```javascript
-{
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "plugins": ["@nestjs/graphql/plugin"]
-  }
-}
-```
-
-You can use the `options` property to customize the behavior of the plugin.
-
-```javascript
-"plugins": [
-  {
-    "name": "@nestjs/graphql/plugin",
-    "options": {
-      "typeFileNameSuffix": [".input.ts", ".args.ts"]
-    }
-  }
-]
-```
-
-The `options` property has to fulfill the following interface:
-
-```typescript
-export interface PluginOptions {
-  typeFileNameSuffix?: string[];
-}
-```
-
-<table>
-  <tr>
-    <th>Option</th>
-    <th>Default</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td><code>typeFileNameSuffix</code></td>
-    <td><code>['.input.ts', '.args.ts', '.entity.ts', '.model.ts']</code></td>
-    <td>GraphQL types files suffix</td>
-  </tr>
-</table>
-
-If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
-
-```javascript
-getCustomTransformers: (program: any) => ({
-  before: [require('@nestjs/graphql/plugin').before({}, program)]
-}),
-```

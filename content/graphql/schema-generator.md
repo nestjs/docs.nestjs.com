@@ -17,6 +17,8 @@ async function generateSchema() {
 
 > info **Hint** The `GraphQLSchemaBuilderModule` and `GraphQLSchemaFactory` are imported from the `@nestjs/graphql` package. The `printSchema` function is imported from the `graphql` package.
 
+#### Usage
+
 The `gqlSchemaFactory.create()` method takes an array of resolver class references. For example:
 
 ```typescript
@@ -37,5 +39,4 @@ const schema = await gqlSchemaFactory.create([RecipesResolver], {
 ```
 
 - `skipCheck`: ignore schema validation; boolean, defaults to `false`
-- `orphanedTypes`: list of classes that are not explicitly referenced (not part of the object graph) to be generated.  Normally, if a class is declared but isn't otherwise referenced in the graph, it's omitted.  The property value is an array of class references.
-
+- `orphanedTypes`: list of classes that are not explicitly referenced (not part of the object graph) to be generated. Normally, if a class is declared but isn't otherwise referenced in the graph, it's omitted. The property value is an array of class references.

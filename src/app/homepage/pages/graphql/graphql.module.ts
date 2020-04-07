@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { DirectivesComponent } from './directives/directives.component';
 import { EnumsComponent } from './enums/enums.component';
 import { FederationComponent } from './federation/federation.component';
@@ -92,6 +93,11 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Mapped types' },
   },
   {
+    path: 'cli-plugin',
+    component: CliPluginComponent,
+    data: { title: 'GraphQL + TypeScript - CLI Plugin' },
+  },
+  {
     path: 'generating-sdl',
     component: SchemaGeneratorComponent,
     data: { title: 'GraphQL + TypeScript - Generating SDL' },
@@ -113,6 +119,7 @@ const routes: Routes = [
     ScalarsComponent,
     SchemaGeneratorComponent,
     MappedTypesComponent,
+    CliPluginComponent,
     FederationComponent,
   ],
 })
