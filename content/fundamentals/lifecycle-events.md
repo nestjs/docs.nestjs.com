@@ -15,7 +15,7 @@ The following diagram depicts the sequence of key application lifecycle events, 
 Lifecycle events happen during application bootstrapping and shutdown. Nest calls registered lifecycle hook methods on `modules`, `injectables` and `controllers` at each of the following lifecycle events (**shutdown hooks** need to be enabled first, as described [below](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)). As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
 
 | Lifecycle hook method         | Lifecycle event triggering the hook method call                                                                                                                                                                   |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `onModuleInit()`              | Called once the host module's dependencies have been resolved.                                                                                                                                                    |
 | `onApplicationBootstrap()`    | Called once all modules have been initialized, but before listening for connections.                                                                                                                              |
 | `onModuleDestroy()`           | Called after a termination signal (e.g., `SIGTERM`) has been received.                                                                                                                                            |
@@ -66,6 +66,8 @@ async onModuleInit() {
 
 The `beforeApplicationShutdown()` and `onApplicationShutdown()` hooks are called in the **terminating** phase (in response to system signals such as `SIGTERM`). This feature is often used with [Kubernetes](https://kubernetes.io/), [Heroku](https://www.heroku.com/) or similar services.
 
+> warning **warning** Due to inherent platform limitations, NestJS has limited support for application shutdown hooks on Windows. You can expect `SIGINT` to work, as well as `SIGBREAK` and to some extent `SIGHUP` - [read more](https://nodejs.org/api/process.html#process_signal_events). However `SIGTERM` will never work on Windows because killing a process in the task manager is unconditional, "i.e., there's no way for an application to detect or prevent it". Here's some [relevant documentation](http://docs.libuv.org/en/v1.x/signal.html) from libuv to learn more about how `SIGINT`, `SIGBREAK` and others are handled on Windows. Also, see Node.js documentation of [Process Signal Events](https://nodejs.org/api/process.html#process_signal_events)
+
 To use these hooks you must activate a listener which listens to shutdown signals.
 
 ```typescript
@@ -80,6 +82,8 @@ async function bootstrap() {
 }
 bootstrap();
 ```
+
+> info **Info** `enableShutdownHooks` consumes memory by starting listeners. In cases where you are running multiple Nest apps in a single Node process (e.g., when running parallel tests with Jest), Node may complain about excessive listener processes. For this reason, `enableShutdownHooks` is not enabled by default. Be aware of this condition when you are running multiple instances in a single Node process.
 
 When the application receives a termination signal it will call any registered `beforeApplicationShutdown()`, then `onApplicationShutdown()` methods (in the sequence described above) with the corresponding signal as the first parameter. If a registered function awaits an asynchronous call (returns a promise), Nest will not continue in the sequence until the promise is resolved or rejected.
 

@@ -64,13 +64,22 @@ export enum AllowedColor {
 }
 ```
 
-Sometimes a backend forces a different value for an enum internally than in the public API. In this example the API contains `RED`, however in resolvers we may use `#f00` instead (read more [here](https://www.apollographql.com/docs/apollo-server/schema/scalars-enums/#internal-values)). To accomplish this, declare a resolver class for the `AllowedColor` enum:
+Sometimes a backend forces a different value for an enum internally than in the public API. In this example the API contains `RED`, however in resolvers we may use `#f00` instead (read more [here](https://www.apollographql.com/docs/apollo-server/schema/scalars-enums/#internal-values)). To accomplish this, declare a resolver object for the `AllowedColor` enum:
 
 ```typescript
-@Resolver('AllowedColor')
-export class AllowedColorResolver {
-  [AllowedColor.RED]: '#f00'; 
+export const allowedColorResolver: Record<keyof typeof AllowedColor, any> = {
+  RED: '#f00',
 }
 ```
 
 > info **Hint** All decorators are exported from the `@nestjs/graphql` package.
+
+Then use this resolver object together with the `resolvers` property of the `GraphQLModule#forRoot()` method, as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  resolvers: {
+    AllowedColor: allowedColorResolver,
+  },
+})
+```
