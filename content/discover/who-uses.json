@@ -141,6 +141,11 @@
       "logo": "/assets/logo/zeoagency.svg",
       "url": "https://zeo.org/tr/",
       "width": "80px"
+    },
+    {
+      "logo": "/assets/logo/valueadd.png",
+      "url": "https://valueadd.pl/",
+      "width": "120px"
     }
   ],
   "Body": [

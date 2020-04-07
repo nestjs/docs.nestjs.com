@@ -17,7 +17,7 @@ The `GraphQLISODateTime` (e.g. `2019-12-03T09:54:33Z`) is used by default to rep
 ```typescript
 GraphQLModule.forRoot({
   buildSchemaOptions: {
-    dateScalarMode: 'timestamp'.
+    dateScalarMode: 'timestamp',
   }
 }),
 ```

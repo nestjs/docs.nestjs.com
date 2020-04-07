@@ -1,8 +1,8 @@
 ### Generating SDL
 
-##### This chapter applies only to code first approach
+> warning **Warning** This chapter applies only to the code first approach.
 
-To manually generate (without running an application, connecting to the database, hooking up resolvers, etc.) a GraphQL SDL, use the `GraphQLSchemaBuilderModule`.
+To manually generate a GraphQL SDL schema (i.e., without running an application, connecting to the database, hooking up resolvers, etc.), use the `GraphQLSchemaBuilderModule`.
 
 ```typescript
 async function generateSchema() {
@@ -15,9 +15,9 @@ async function generateSchema() {
 }
 ```
 
-> info **Hint** The `GraphQLSchemaBuilderModule` and `GraphQLSchemaFactory` are imported the `@nestjs/graphql` package, while the `printSchema` function is imported from the `graphql` package.
+> info **Hint** The `GraphQLSchemaBuilderModule` and `GraphQLSchemaFactory` are imported from the `@nestjs/graphql` package. The `printSchema` function is imported from the `graphql` package.
 
-Multiple resolvers:
+The `gqlSchemaFactory.create()` method takes an array of resolver class references. For example:
 
 ```typescript
 const schema = await gqlSchemaFactory.create([
@@ -27,7 +27,7 @@ const schema = await gqlSchemaFactory.create([
 ]);
 ```
 
-Passing options:
+It also takes a second optional argument with an options object:
 
 ```typescript
 const schema = await gqlSchemaFactory.create([RecipesResolver], {
@@ -35,3 +35,7 @@ const schema = await gqlSchemaFactory.create([RecipesResolver], {
   orphanedTypes: [],
 });
 ```
+
+- `skipCheck`: ignore schema validation; boolean, defaults to `false`
+- `orphanedTypes`: list of classes that are not explicitly referenced (not part of the object graph) to be generated.  Normally, if a class is declared but isn't otherwise referenced in the graph, it's omitted.  The property value is an array of class references.
+

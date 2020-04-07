@@ -55,7 +55,7 @@ $ nest g <schematic> <name> [options]
 
 | Name          | Alias | Description                                                                                         |
 | ------------- | ----- | --------------------------------------------------------------------------------------------------- |
-| `application` |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
+| `app`         |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
 | `library`     | `lib` | Generate a new library within a monorepo (converting to monorepo if it's a standard structure).     |
 | `class`       | `cl`  | Generate a new class.                                                                               |
 | `controller`  | `co`  | Generate a controller declaration.                                                                  |

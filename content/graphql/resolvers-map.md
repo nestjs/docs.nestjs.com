@@ -203,7 +203,7 @@ export class AuthorsResolver {
   ) {}
 
   @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args('id', {type: () => Int }) id: number) {
+  async getAuthor(@Args('id', { type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
 
@@ -236,7 +236,7 @@ The `@Query()` decorator's options object (where we pass `{{ '{' }}name: 'author
 
 Use the `@Args()` decorator to extract arguments from a request for use in the method handler. This works in a very similar fashion to [REST route parameter argument extraction](/controllers#route-parameters).
 
-Usually your `@Args()` decorator will be simple, and not require an object argument as seen with the `getAuthor()` method above. For example, if an identifier's type is string, the following construction is sufficient, and simply plucks the named field from the inbound GraphQL request for use as a method argument.
+Usually your `@Args()` decorator will be simple, and not require an object argument as seen with the `getAuthor()` method above. For example, if the type of an identifier is string, the following construction is sufficient, and simply plucks the named field from the inbound GraphQL request for use as a method argument.
 
 ```typescript
 @Args('id') id: string
@@ -245,10 +245,10 @@ Usually your `@Args()` decorator will be simple, and not require an object argum
 In the `getAuthor()` case, the `number` type is used, which presents a challenge. The `number` TypeScript type doesn't give us enough information about the expected GraphQL representation (e.g., `Int` vs. `Float`). Thus we have to **explicitly** pass the type reference. We do that by passing a second argument to the `Args()` decorator, containing argument options, as shown below:
 
 ```typescript
-  @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args('id', { type: () => Int }) id: number) {
-    return this.authorsService.findOneById(id);
-  }
+@Query(returns => Author, { name: 'author' })
+async getAuthor(@Args('id', { type: () => Int }) id: number) {
+  return this.authorsService.findOneById(id);
+}
 ```
 
 The options object allows us to specify the following optional key value pairs:
@@ -308,7 +308,9 @@ type Query {
 
 #### Class inheritance
 
-Args:
+You can use standard TypeScript class inheritance to create base classes with generic utility type features (fields and field properties, validations, etc.) that can be extended. For example, you may have a set of pagination related arguments that always include the standard `offset` and `limit` fields, but also other index fields that are type-specific. You can set up a class hierarchy as shown below.
+
+Base `@ArgsType()` class:
 
 ```typescript
 @ArgsType()
@@ -320,6 +322,8 @@ class PaginationArgs {
   limit: number = 10;
 }
 ```
+
+Type specific sub-class of the base `@ArgsType()` class:
 
 ```typescript
 @ArgsType()
@@ -333,7 +337,7 @@ class GetAuthorArgs extends PaginationArgs {
 }
 ```
 
-Object types:
+The same approach can be taken with `@ObjectType()` objects. Define generic properties on the base class:
 
 ```typescript
 @ObjectType()
@@ -346,6 +350,8 @@ class Character {
 }
 ```
 
+Add type-specific properties on sub-classes:
+
 ```typescript
 @ObjectType()
 class Warrior extends Character {
@@ -354,7 +360,7 @@ class Warrior extends Character {
 }
 ```
 
-Resolver inheritance (creating base resolver):
+You can use inheritance with a resolver as well. You can ensure type safety by combining inheritance and TypeScript generics. For example, to create a base class with a generic `findAll` query, use a construction like this:
 
 ```typescript
 function BaseResolver<T extends Type<unknown>>(classRef: T): any {
@@ -369,12 +375,16 @@ function BaseResolver<T extends Type<unknown>>(classRef: T): any {
 }
 ```
 
-- explicit return type `any` is required: otherwise TypeScript complains about the usage of private class definition (recommended: define an interface instead of `any`)
+Note the following:
+
+- an explicit return type (`any` above) is required: otherwise TypeScript complains about the usage of a private class definition. Recommended: define an interface instead of using `any`.
 - `Type` is imported from the `@nestjs/common` package
-- `isAbstract: true` indicates that SDL shouldn't be generated for this class (you can set this for other types as well, e.g., object type)
+- The `isAbstract: true` property indicates that SDL (Schema Definition Language statements) shouldn't be generated for this class. Note, you can set this property for other types as well to suppress SDL generation.
+
+Here's how you could generate a concrete sub-class of the `BaseResolver`:
 
 ```typescript
-@Resolver(of => Recipe)
+@Resolver((of) => Recipe)
 export class RecipesResolver extends BaseResolver(Recipe) {
   constructor(private recipesService: RecipesService) {
     super();
@@ -382,7 +392,7 @@ export class RecipesResolver extends BaseResolver(Recipe) {
 }
 ```
 
-Generated SDL:
+This construct would generated the following SDL:
 
 ```graphql
 type Query {
@@ -392,7 +402,7 @@ type Query {
 
 #### Generics
 
-Cursor-based pagination example:
+We saw one use of generics above. This powerful TypeScript feature can be used to create useful abstractions. For example, here's a sample cursor-based pagination implementation based on [this documentation](https://graphql.org/learn/pagination/#pagination-and-edges):
 
 ```typescript
 import { Field, ObjectType, Int } from '@nestjs/graphql';
@@ -426,7 +436,7 @@ export function Paginated<T>(classRef: Type<T>) {
 }
 ```
 
-No reason to explain everything in detail. We can link this doc: https://graphql.org/learn/pagination/#pagination-and-edges
+With the above base class defined, we can now easily create specialized types that inherit this behavior. For example:
 
 ```typescript
 @ObjectType()
