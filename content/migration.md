@@ -74,9 +74,7 @@ In order to migrate your existing application, simply rename all the `type-graph
 #### Terminus
 
 In the version 7 major release of `@nestjs/terminus`, a new simplified API has been introduced
-to run health checks. The previously required peer dependency [`@godaddy/terminus`](https://github.com/godaddy/terminus) has been removed, which allows us to integrate our health checks automatically into Swagger! Read more about the removal of `@godaddy/terminus` [here](https://github.com/nestjs/terminus/issues/340).
-
-##### Healthchecks
+to run health checks. The previously required peer dependency `@godaddy/terminus` has been removed, which allows us to integrate our health checks automatically into Swagger! Read more about the removal of `@godaddy/terminus` [here](https://github.com/nestjs/terminus/issues/340).
 
 For most users, the biggest change will be the removal of the `TerminusModule.forRootAsync` function. With the next major version, this function will be completely removed.
 To migrate to the new API, you will need to create a new controller, which will handle your health checks.
@@ -197,9 +195,9 @@ export class HealthController {
 export class AppModule { }
 ```
 
-> warning **Warning** If you have set a [Global Prefix](faq#global-prefix) in your Nest application and you have not used the `useGlobalPrefix` Terminus option, the URL of your health check will change! Make sure to update the reference to that URL, or use the legacy Terminus API until [nestjs/nest#963](https://github.com/nestjs/nest/issues/963) is fixed.
+> warning **Warning** If you have set a [Global Prefix](faq#global-prefix) in your Nest application and you have not used the `useGlobalPrefix` Terminus option, the URL of your health check will change. Make sure to update the reference to that URL, or use the legacy Terminus API until [nestjs/nest#963](https://github.com/nestjs/nest/issues/963) is fixed.
 
-If there is a problem with the new NestJS Terminus API, make sure you report it on [the repository](https://github.com/nestjs/terminus/issues). If you are forced to use the legacy API, you can also disable deprecation messages for the time being.
+If you are forced to use the legacy API, you can also disable deprecation messages for the time being.
 
 ```typescript
 TerminusModule.forRootAsync({
@@ -212,9 +210,7 @@ TerminusModule.forRootAsync({
 }
 ```
 
-You should enable shutdown hooks in your `main.ts`. The Terminus integration will listen on POSIX signals such as SIGTERM. See the [Application shutdown chapter](fundamentals/lifecycle-events#application-shutdown) for more information. When enabled, the health check route(s) will automatically respond with a Service Unavailable (503) HTTP error response when the server is shutting down.
-
-##### Custom Health Indicators
+You should enable shutdown hooks in your `main.ts` file. The Terminus integration will listen on POSIX signals such as SIGTERM (see the [Application shutdown chapter](fundamentals/lifecycle-events#application-shutdown) for more information). When enabled, the health check route(s) will automatically respond with a Service Unavailable (503) HTTP error response when the server is shutting down.
 
 With the removal of `@godaddy/terminus`, you will need to update your `import` statements
 to use `@nestjs/terminus` instead. Most notable is the import of the `HealthCheckError`.
@@ -226,8 +222,6 @@ import { HealthCheckError } from '@godaddy/terminus';
 // After
 import { HealthCheckError } from '@nestjs/terminus';
 ```
-
-##### Dependencies
 
 Once you have fully migrated, make sure you uninstall `@godaddy/terminus`.
 
@@ -291,7 +285,7 @@ If you prefer the previous approach, you can restore it by setting the `exceptio
 
 ```typescript
 new ValidationPipe({
-  exceptionFactory: errors => new BadRequestException(errors),
+  exceptionFactory: (errors) => new BadRequestException(errors),
 });
 ```
 
