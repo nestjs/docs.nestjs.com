@@ -192,7 +192,7 @@ export class CreateCatDto {
 }
 ```
 
-y default, all of these fields are required. To create a type with the same fields, but with each one optional, use `PartialType()` passing the class reference (`CreateCatDto`) as an argument:
+By default, all of these fields are required. To create a type with the same fields, but with each one optional, use `PartialType()` passing the class reference (`CreateCatDto`) as an argument:
 
 ```typescript
 export class UpdateCatDto extends PartialType(CreateCatDto) {}
