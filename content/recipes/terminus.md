@@ -1,114 +1,137 @@
-### Health checks (Terminus)
+### Healthchecks (Terminus)
 
-The [terminus](https://github.com/godaddy/terminus) offers hooks to react on graceful shutdowns and supports you creating proper [Kubernetes](https://kubernetes.io/) readiness / liveness checks for any HTTP application. The module [@nestjs/terminus](https://github.com/nestjs/terminus) integrates the terminus library with the Nest ecosystem.
+The NestJS **Terminus** integration supports you with **readiness / liveness** health checks. Healthchecks are very important when it comes to complex
+backend setups. In a nutshell, a health check in the realm of web development usually consists of a special address, for example, `https://my-website.com/health/readiness`.
+A service, or a component of your infrastructure (e.g., Kubernetes) checks this address continuously. Depending on the HTTP status code returned from a `GET` request to this address the service will take action when it receives an "unhealthy" response.
+Since the definition of "healthy" or "unhealthy" varies with the type of service you provide, the NestJS **Terminus** integration supports you with a
+set of **health indicators**.
+
+As an example, if your web server uses MongoDB to store its data, it would be crucial information whether MongoDB is still up and running.
+In that case, you can make use of the `MongooseHealthIndicator`. If configured correctly - more on that later - your health check address will return
+a healthy or unhealthy HTTP status code, depending on whether MongoDB is running.
 
 #### Getting started
 
-To get started with `@nestjs/terminus` we need to install the required dependencies.
+To get started with `@nestjs/terminus` we need to install the required dependency.
 
 ```bash
-$ npm install --save @nestjs/terminus @godaddy/terminus
+$ npm install --save @nestjs/terminus
 ```
 
-#### Setting up a health check
+#### Setting up a Healthcheck
 
-A health check represents a summary of **health indicators**. A health indicator executes a check of a service, whether it is in a healthy state or not. A health check is positive, if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, [@nestjs/terminus](https://github.com/nestjs/terminus) provides a set of predefined health indicators, such as:
+A health check represents a summary of **health indicators**. A health indicator executes a check of a service, whether it is in a healthy or unhealthy state. A health check is positive if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, [@nestjs/terminus](https://github.com/nestjs/terminus) provides a set of predefined indicators, such as:
 
 - `DNSHealthIndicator`
 - `TypeOrmHealthIndicator`
 - `MongooseHealthIndicator`
 - `MicroserviceHealthIndicator`
+- `GRPCHealthIndicator`
 - `MemoryHealthIndicator`
 - `DiskHealthIndicator`
 
-#### DNS Health Check
 
-The first step to get started with our first health check, is to setup a service which will associate health indicators to an endpoint.
-
-```typescript
-@@filename(terminus-options.service)
-import {
-  TerminusEndpoint,
-  TerminusOptionsFactory,
-  DNSHealthIndicator,
-  TerminusModuleOptions
-} from '@nestjs/terminus';
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
-export class TerminusOptionsService implements TerminusOptionsFactory {
-  constructor(
-    private readonly dns: DNSHealthIndicator,
-  ) {}
-
-  createTerminusOptions(): TerminusModuleOptions {
-    const healthEndpoint: TerminusEndpoint = {
-      url: '/health',
-      healthIndicators: [
-        async () => this.dns.pingCheck('google', 'https://google.com'),
-      ],
-    };
-    return {
-      endpoints: [healthEndpoint],
-    };
-  }
-}
-@@switch
-import { Injectable, Dependencies } from '@nestjs/common';
-import { DNSHealthIndicator } from '@nestjs/terminus';
-
-@Injectable()
-@Dependencies(DNSHealthIndicator)
-export class TerminusOptionsService {
-  constructor(dns) {
-    this.dns = dns;
-  }
-
-  createTerminusOptions() {
-    const healthEndpoint = {
-      url: '/health',
-      healthIndicators: [
-        async () => this.dns.pingCheck('google', 'https://google.com'),
-      ],
-    };
-    return {
-      endpoints: [healthEndpoint],
-    };
-  }
-}
-```
-
-Once we have set up our `TerminusOptionsService`, we can import the `TerminusModule` into the root `ApplicationModule`. The `TerminusOptionsService` will provide the settings, which in turn will be used by the `TerminusModule`.
+To get started with our first health check, we need to import the `TerminusModule` into our `AppModule`.
 
 ```typescript
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { TerminusOptionsService } from './terminus-options.service';
 
 @Module({
-  imports: [
-    TerminusModule.forRootAsync({
-      useClass: TerminusOptionsService,
-    }),
-  ],
+  imports: [TerminusModule]
 })
-export class ApplicationModule { }
+export class AppModule { }
 ```
 
-> info **Hint** If done correctly, Nest will expose the defined health check(s), which are reachable through a GET request to the defined route. For example `curl -X GET 'http://localhost:3000/health'`
+Our healthcheck(s) can be executed using a [controller](/controllers), which can be easily setup using the [NestJS CLI](cli/overview).
+
+```bash
+$ nest generate controller health
+```
+
+> info **Info** It is highly recommended to enable shutdown hooks in your application. The Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown)
+
+#### DNS Healthcheck
+
+Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check. 
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private dns: DNSHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, DNSHealthIndicator)
+export class HealthController {
+  constructor(
+    private health,
+    private dns,
+  ) { }
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+    ])
+  }
+}
+```
+
+Our health check will now send a *GET*-request to the `https://docs.nestjs.com` address. If
+we get a healthy response from that address, our route at `http://localhost:3000/health` will return
+the following object with a 200 status code.
+
+```json
+{
+  "status": "ok",
+  "info": {
+    "nestjs-docs": {
+      "status": "up"
+    }
+  },
+  "error": {},
+  "details": {
+    "nestjs-docs": {
+      "status": "up"
+    }
+  }
+}
+```
+
+The interface of this response object can be accessed from the `@nestjs/terminus` package with the `HealthCheckResult` interface.
+
+|           |                                                                                                                                                                                             |                                      |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+| `status`  | If any health indicator failed the status will be `'error'`. If the NestJS app is shutting down but still accepting HTTP requests, the health check will have the `'shutting_down'` status. | `'error' \| 'ok' \| 'shutting_down'` |
+| `info`    | Object containing information of each health indicator which is of status `'up'`, or in other words "healthy".                                                                              | `object`                             |
+| `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
+| `details` | Object containing all information of each health indicator                                                                                                                                  | `object`                             |
 
 #### Custom health indicator
 
-In some cases, the predefined health indicators provided by `@nestjs/terminus` do not cover all of your health check requirements. In this case you can set up a custom health indicator according to your needs.
+In some cases, the predefined health indicators provided by `@nestjs/terminus` do not cover all of your health check requirements. In that case, you can set up a custom health indicator according to your needs.
 
-Let's get started by creating a service which will represent our custom health indicator. To get a basic understanding how a health indicator is structured, we will create an example `DogHealthIndicator`. This health indicator should have the state "up", if every `Dog` object has the type `goodboy`, otherwise it will throw an error, which then the health indicator will be seen as "down".
+Let's get started by creating a service that will represent our custom indicator. To get a basic understanding of how an indicator is structured, we will create an example `DogHealthIndicator`. This service should have the state `'up'` if every `Dog` object has the type `'goodboy'`. If that condition is not satisfied it then it should throw an error.
 
 ```typescript
 @@filename(dog.health)
 import { Injectable } from '@nestjs/common';
-import { HealthCheckError } from '@godaddy/terminus';
-import { HealthIndicator, HealthIndicatorResult } from '@nestjs/terminus';
+import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus';
 
 export interface Dog {
   name: string;
@@ -117,7 +140,7 @@ export interface Dog {
 
 @Injectable()
 export class DogHealthIndicator extends HealthIndicator {
-  private readonly dogs: Dog[] = [
+  private dogs: Dog[] = [
     { name: 'Fido', type: 'goodboy' },
     { name: 'Rex', type: 'badboy' },
   ];
@@ -163,125 +186,60 @@ The next thing we need to do is registering the health indicator as a provider.
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { TerminusOptionsService } from './terminus-options.service';
 import { DogHealthIndicator } from './dog.health';
 
 @Module({
-  imports: [
-    TerminusModule.forRootAsync({
-      imports: [ApplicationModule],
-      useClass: TerminusOptionsService,
-    }),
-  ],
-  providers: [DogHealthIndicator],
-  exports: [DogHealthIndicator],
+  controllers: [HealthController],
+  imports: [TerminusModule],
+  providers: [DogHealthIndicator]
 })
-export class ApplicationModule { }
+export class AppModule { }
 ```
 
-> info **Hint** In a real world application the `DogHealthIndicator` should be provided in a separate module, for example `DogsModule`, which then will be imported by the `ApplicationModule`. But keep in mind to add the `DogHealthIndicator` to the `exports` array of the `DogModule` and add the `DogModule` in `imports` array of the `TerminusModule.forRootAsync()` parameter object.
+> info **Hint** In a real-world application the `DogHealthIndicator` should be provided in a separate module, for example, `DogModule`, which then will be imported by the `AppModule`.
 
-The last required thing to do is to add the now available health indicator in the required health check endpoint. For that we go back to our `TerminusOptionsService` and implement it to the `/health` endpoint.
+The last required step is to add the now available health indicator in the required health check endpoint. For that, we go back to our `HealthController` and add it to our `check` function.
 
 ```typescript
-@@filename(terminus-options.service)
-import {
-  TerminusEndpoint,
-  TerminusOptionsFactory,
-  DNSHealthIndicator,
-  TerminusModuleOptions
-} from '@nestjs/terminus';
+@@filename(health.controller)
+import { HealthCheckService } from '@nestjs/terminus';
 import { Injectable } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()
-export class TerminusOptionsService implements TerminusOptionsFactory {
+export class HealthController {
   constructor(
-    private readonly dogHealthIndicator: DogHealthIndicator
+    private health: HealthCheckService,
+    private dogHealthIndicator: DogHealthIndicator
   ) {}
 
-  createTerminusOptions(): TerminusModuleOptions {
-    const healthEndpoint: TerminusEndpoint = {
-      url: '/health',
-      healthIndicators: [
-        async () => this.dogHealthIndicator.isHealthy('dog'),
-      ],
-    };
-    return {
-      endpoints: [healthEndpoint],
-    };
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.dogHealthIndicator.isHealthy('dog'),
+    ])
   }
 }
 @@switch
+import { HealthCheckService } from '@nestjs/terminus';
+import { Injectable } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
-import { Injectable, Dependencies } from '@nestjs/common';
 
 @Injectable()
-@Dependencies(DogHealthIndicator)
-export class TerminusOptionsService {
-  constructor(dogHealthIndicator) {
-    this.dogHealthIndicator = dogHealthIndicator;
-  }
+@Dependencies(HealthCheckService, DogHealthIndicator)
+export class HealthController {
+  constructor(
+    private health,
+    private dogHealthIndicator
+  ) {}
 
-  createTerminusOptions() {
-    const healthEndpoint = {
-      url: '/health',
-      healthIndicators: [
-        async () => this.dogHealthIndicator.isHealthy('dog'),
-      ],
-    };
-    return {
-      endpoints: [healthEndpoint],
-    };
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.dogHealthIndicator.isHealthy('dog'),
+    ])
   }
 }
 ```
-
-If everything has been done correctly, the `/health` endpoint should respond with a `503` response code and the following data.
-
-```json
-{
-  "status": "error",
-  "error": {
-    "dog": {
-      "status": "down",
-      "badboys": 1
-    }
-  }
-}
-```
-
-You can view working examples in the `@nestjs/terminus` [repository](https://github.com/nestjs/terminus/tree/master/sample).
-
-
-#### Custom Logger
-
-The `Terminus` module automatically logs every error during a health check request. By default, it will use the globally defined Nest logger.
-You can read more about the global logger in the [Logger chapter](https://docs.nestjs.com/techniques/logger).
-In some cases, you want to handle the logs of `Terminus` explicitly. In this case, the `TerminusModule.forRoot[Async]` function offers an option
-for a custom logger.
-
-```typescript
-
-TerminusModule.forRootAsync({
-  logger: (message: string, error: Error) => console.error(message, error),
-  endpoints: [
-    ...
-  ]
-})
-
-```
-
-The logger can also be disabled by setting the logger option to `null`.
-
-```typescript
-
-TerminusModule.forRootAsync({
-  logger: null,
-  endpoints: [
-    ...
-  ]
-})
-
-```
-
