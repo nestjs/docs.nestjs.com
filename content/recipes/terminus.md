@@ -50,7 +50,7 @@ Our healthcheck(s) can be executed using a [controller](/controllers), which can
 $ nest generate controller health
 ```
 
-> info **Info** It is highly recommended to enable shutdown hooks in your application. The Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown)
+> info **Info** It is highly recommended to enable shutdown hooks in your application. The Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown).
 
 #### DNS Healthcheck
 
@@ -126,7 +126,7 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 
 In some cases, the predefined health indicators provided by `@nestjs/terminus` do not cover all of your health check requirements. In that case, you can set up a custom health indicator according to your needs.
 
-Let's get started by creating a service that will represent our custom indicator. To get a basic understanding of how an indicator is structured, we will create an example `DogHealthIndicator`. This service should have the state `'up'` if every `Dog` object has the type `'goodboy'`. If that condition is not satisfied it then it should throw an error.
+Let's get started by creating a service that will represent our custom indicator. To get a basic understanding of how an indicator is structured, we will create an example `DogHealthIndicator`. This service should have the state `'up'` if every `Dog` object has the type `'goodboy'`. If that condition is not satisfied then it should throw an error.
 
 ```typescript
 @@filename(dog.health)
@@ -180,7 +180,7 @@ export class DogHealthIndicator extends HealthIndicator {
 }
 ```
 
-The next thing we need to do is registering the health indicator as a provider.
+The next thing we need to do is register the health indicator as a provider.
 
 ```typescript
 @@filename(app.module)
