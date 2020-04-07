@@ -94,7 +94,7 @@ We can generate a derived type that has every property **except** `email` as sho
 export class UpdateUserInput extends OmitType(CreateUserInput, ['email']) {}
 ```
 
-> info **Hint** The `PickType()` function is imported from the `@nestjs/graphql` package.
+> info **Hint** The `OmitType()` function is imported from the `@nestjs/graphql` package.
 
 #### Composition
 
