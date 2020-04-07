@@ -38,7 +38,7 @@ export class Author {
 
 While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
 
-Now, with the GraphQL plugin enabled, the above class definition can be declared simply:
+By enabling the GraphQL plugin, the above class definition can be declared simply:
 
 ```typescript
 @@filename(authors/models/author.model)
