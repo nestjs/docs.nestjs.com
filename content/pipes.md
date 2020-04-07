@@ -156,10 +156,11 @@ In the next section, you'll see how we supply the appropriate schema for a given
 ```typescript
 @@filename()
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { ObjectSchema } from '@hapi/joi';
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {
-  constructor(private schema: Object) {}
+  constructor(private schema: ObjectSchema) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
     const { error } = this.schema.validate(value);
@@ -238,7 +239,7 @@ export class CreateCatDto {
 }
 ```
 
-> Info **Hint** Read more about the class-validator decorators [here](https://github.com/typestack/class-validator#usage).
+> info **Hint** Read more about the class-validator decorators [here](https://github.com/typestack/class-validator#usage).
 
 Now we can create a `ValidationPipe` class.
 
@@ -444,97 +445,5 @@ We leave the implementation of this pipe to the reader, but note that like all o
 
 #### The built-in ValidationPipe
 
-Fortunately, you don't have to build these pipes on your own since the `ValidationPipe` and the `ParseIntPipe` are provided by Nest out-of-the-box. (Keep in mind that `ValidationPipe` requires both `class-validator` and `class-transformer` packages to be installed).
+Fortunately, you don't have to build these pipes on your own since the `ValidationPipe` (along with `ParseIntPipe`, `ParseBoolPipe`, `ParseArrayPipe` and `ParseUUIDPipe`) are provided by Nest out-of-the-box.  The built-in `ValidationPipe` offers more options than in the sample we built in this chapter, which has been kept basic for the sake of illustrating the basic mechanics of a pipe. You can find full details, along with lots of examples [here](/techniques/validation).
 
-The built-in `ValidationPipe` offers more options than in the sample we built in this chapter, which has been kept basic for the sake of illustrating the basic mechanics of a pipe. You can find lots of examples [here](/techniques/validation).
-
-One such option is `transform`. Recall the earlier discussion about deserialized body objects being vanilla JavaScript objects (i.e., not having our DTO type). So far, we've used the pipe to validate our payload. You may recall that in the process, we used `class-transform` to temporarily convert our plain object into a typed object so that we could do the validation. The built-in ValidationPipe can also, optionally, return this converted object. We enable this behavior by passing in a configuration object to the pipe. For this option, pass a config object with the field `transform` with a value `true` as shown below:
-
-```typescript
-@@filename(cats.controller)
-@Post()
-@UsePipes(new ValidationPipe({ transform: true }))
-async create(@Body() createCatDto: CreateCatDto) {
-  this.catsService.create(createCatDto);
-}
-```
-
-> info **Hint** The `ValidationPipe` is imported from the `@nestjs/common` package.
-
-Because this pipe is based on the `class-validator` and `class-transformer` libraries, there are many additional options available. Like the `transform` option above, you configure these settings via a configuration object passed to the pipe. Following are the built-in options:
-
-```typescript
-export interface ValidationPipeOptions extends ValidatorOptions {
-  transform?: boolean;
-  disableErrorMessages?: boolean;
-  exceptionFactory?: (errors: ValidationError[]) => any;
-}
-```
-
-In addition to these, all `class-validator` options (inherited from the `ValidatorOptions` interface) are available:
-
-<table>
-  <tr>
-    <th>Option</th>
-    <th>Type</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td><code>skipMissingProperties</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, validator will skip validation of all properties that are missing in the validating object.</td>
-  </tr>
-  <tr>
-    <td><code>whitelist</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, validator will strip validated (returned) object of any properties that do not use any validation decorators.</td>
-  </tr>
-  <tr>
-    <td><code>forbidNonWhitelisted</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, instead of stripping non-whitelisted properties validator will throw an exception.</td>
-  </tr>
-  <tr>
-    <td><code>forbidUnknownValues</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, attempts to validate unknown objects fail immediately.</td>
-  </tr>
-  <tr>
-    <td><code>disableErrorMessages</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, validation errors will not be returned to the client.</td>
-  </tr>
-  <tr>
-    <td><code>errorHttpStatusCode</code></td>
-    <td><code>number</code></td>
-    <td>This setting allows you to specify which exception type will be used in case of an error. By default it throws <code>BadRequestException</code>.</td>
-  </tr>
-  <tr>
-    <td><code>exceptionFactory</code></td>
-    <td><code>Function</code></td>
-    <td>Takes an array of the validation errors and returns an exception object to be thrown.</td>
-  </tr>
-  <tr>
-    <td><code>groups</code></td>
-    <td><code>string[]</code></td>
-    <td>Groups to be used during validation of the object.</td>
-  </tr>
-  <tr>
-    <td><code>dismissDefaultMessages</code></td>
-    <td><code>boolean</code></td>
-    <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code>        if
-      its not explicitly set.</td>
-  </tr>
-  <tr>
-    <td><code>validationError.target</code></td>
-    <td><code>boolean</code></td>
-    <td>Indicates if target should be exposed in <code>ValidationError</code></td>
-  </tr>
-  <tr>
-    <td><code>validationError.value</code></td>
-    <td><code>boolean</code></td>
-    <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
-  </tr>
-</table>
-
-> info **Notice** Find more information about the `class-validator` package in its [repository](https://github.com/typestack/class-validator).

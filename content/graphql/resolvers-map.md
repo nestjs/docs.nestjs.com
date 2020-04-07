@@ -203,7 +203,7 @@ export class AuthorsResolver {
   ) {}
 
   @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args('id', {type: () => Int }) id: number) {
+  async getAuthor(@Args('id', { type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
 
@@ -236,7 +236,7 @@ The `@Query()` decorator's options object (where we pass `{{ '{' }}name: 'author
 
 Use the `@Args()` decorator to extract arguments from a request for use in the method handler. This works in a very similar fashion to [REST route parameter argument extraction](/controllers#route-parameters).
 
-Usually your `@Args()` decorator will be simple, and not require an object argument as seen with the `getAuthor()` method above. For example, if an identifier's type is string, the following construction is sufficient, and simply plucks the named field from the inbound GraphQL request for use as a method argument.
+Usually your `@Args()` decorator will be simple, and not require an object argument as seen with the `getAuthor()` method above. For example, if the type of an identifier is string, the following construction is sufficient, and simply plucks the named field from the inbound GraphQL request for use as a method argument.
 
 ```typescript
 @Args('id') id: string
@@ -245,10 +245,10 @@ Usually your `@Args()` decorator will be simple, and not require an object argum
 In the `getAuthor()` case, the `number` type is used, which presents a challenge. The `number` TypeScript type doesn't give us enough information about the expected GraphQL representation (e.g., `Int` vs. `Float`). Thus we have to **explicitly** pass the type reference. We do that by passing a second argument to the `Args()` decorator, containing argument options, as shown below:
 
 ```typescript
-  @Query(returns => Author, { name: 'author' })
-  async getAuthor(@Args('id', { type: () => Int }) id: number) {
-    return this.authorsService.findOneById(id);
-  }
+@Query(returns => Author, { name: 'author' })
+async getAuthor(@Args('id', { type: () => Int }) id: number) {
+  return this.authorsService.findOneById(id);
+}
 ```
 
 The options object allows us to specify the following optional key value pairs:

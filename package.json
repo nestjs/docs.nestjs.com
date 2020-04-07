@@ -51,8 +51,8 @@
     "ngx-perfect-scrollbar": "9.0.0",
     "nodemon": "2.0.2",
     "prismjs": "1.19.0",
-    "rxjs": "6.5.4",
-    "rxjs-compat": "6.5.4",
+    "rxjs": "6.5.5",
+    "rxjs-compat": "6.5.5",
     "tslib": "1.11.1",
     "yargs": "15.3.1",
     "zone.js": "0.10.3"
@@ -83,9 +83,9 @@
     "marked": "0.8.2",
     "protractor": "6.0.0",
     "rimraf": "3.0.2",
-    "ts-node": "8.8.1",
+    "ts-node": "8.8.2",
     "tslint": "5.20.1",
     "typescript": "3.7.5",
-    "uuid": "7.0.2"
+    "uuid": "7.0.3"
   }
 }

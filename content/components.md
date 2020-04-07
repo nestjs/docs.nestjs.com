@@ -203,3 +203,11 @@ This is how our directory structure should look now:
 <div class="item">main.ts</div>
 </div>
 </div>
+
+#### Manual instantiation
+
+Thus far, we've discussed how Nest automatically handles most of the details of resolving dependencies.  In certain circumstances, you may need to step outside of the built-in Dependency Injection system and manually retrieve or instantiate providers. We briefly discuss two such topics below.
+
+ To get existing instances, or instantiate providers dynamically, you can use [Module reference](https://docs.nestjs.com/fundamentals/module-ref).
+ 
+ To get providers within the `bootstrap()` function (for example for standalone applications without controllers, or to utilize a configuration service during bootstrapping) see [Standalone applications](https://docs.nestjs.com/standalone-applications).
