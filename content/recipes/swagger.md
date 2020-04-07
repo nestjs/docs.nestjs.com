@@ -126,6 +126,138 @@ In order to explicitly set the type of the property, use the `type` key:
 age: number;
 ```
 
+#### Arrays
+
+When the property is an array, we must manually indicate the array type as shown below:
+
+```typescript
+@ApiProperty({ type: [String] })
+names: string[];
+```
+
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect arrays.
+
+Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
+
+<app-banner-enterprise></app-banner-enterprise>
+
+#### Circular dependencies
+
+When you have circular dependencies between classes, use a lazy function to provide the `SwaggerModule` with type information:
+
+```typescript
+@ApiProperty({ type: () => Node })
+node: Node;
+```
+
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect circular dependencies.
+
+#### Generics and interfaces
+
+Since TypeScript does not store metadata about generics or interfaces, when you use them in your DTOs, `SwaggerModule` may not be able to properly generate model definitions at runtime. For instance, the following code won't be correctly inspected by the Swagger module:
+
+```typescript
+createBulk(@Body() usersDto: CreateUserDto[])
+```
+
+In order to overcome this limitation, you can set the type explicitly:
+
+```typescript
+@ApiBody({ type: [CreateUserDto] })
+createBulk(@Body() usersDto: CreateUserDto[])
+```
+
+#### Mapped types
+
+As you build out features like **CRUD** (Create/Read/Update/Delete) it's often useful to construct variants on a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
+
+When building input validation types (also called DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
+
+Nest provides the `PartialType()` utility function to make this task easier and minimize boilerplate.
+
+The `PartialType()` function returns a type (class) with all the properties of the input type set to optional. For example, suppose we have a **create** type as follows:
+
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateCatDto {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  age: number;
+
+  @ApiProperty()
+  breed: string;
+}
+```
+
+By default, all of these fields are required. To create a type with the same fields, but with each one optional, use `PartialType()` passing the class reference (`CreateCatDto`) as an argument:
+
+```typescript
+export class UpdateCatDto extends PartialType(CreateCatDto) {}
+```
+
+> info **Hint** The `PartialType()` function is imported from the `@nestjs/swagger` package.
+
+The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
+
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateCatDto {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  age: number;
+
+  @ApiProperty()
+  breed: string;
+}
+```
+
+We can pick a set of properties from this class using the `PickType()` utility function:
+
+```typescript
+export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age']) {}
+```
+
+> info **Hint** The `PickType()` function is imported from the `@nestjs/swagger` package.
+
+The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
+
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateCatDto {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  age: number;
+
+  @ApiProperty()
+  breed: string;
+}
+```
+
+We can generate a derived type that has every property **except** `name` as shown below. In this construct, the second argument to `OmitType` is an array of property names.
+
+```typescript
+export class UpdateCatDto extends OmitType(CreateCatDto, ['name']) {}
+```
+
+> info **Hint** The `OmitType()` function is imported from the `@nestjs/swagger` package.
+
+The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateCatDto` type except for `name`, and those properties will be set to optional:
+
+```typescript
+export class UpdateCatDto extends PartialType(
+  OmitType(CreateCatDto, ['name']),
+) {}
+```
+
 #### Enums
 
 To identify an `enum`, we must manually set the `enum` property on the `@ApiProperty` with an array of values.
@@ -163,24 +295,20 @@ With `isArray` set to **true**, the `enum` can be selected as a **multi-select**
 By default, the `enum` property will add a raw definition of [Enum](https://swagger.io/docs/specification/data-models/enums/) on the `parameter`.
 
 ```yaml
-CatDetail:
-  type: 'object'
-  properties:
-    ...
-    - breed:
-        type: 'string'
-        enum:
-          - Persian
-          - Tabby
-          - Siamese
+- breed:
+    type: 'string'
+    enum:
+      - Persian
+      - Tabby
+      - Siamese
 ```
 
-The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Consider the following code snippet: 
+The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Consider the following code snippet:
 
 ```typescript
 // generated client-side code
 export class CatDetail {
-   breed: CatDetailEnum;
+  breed: CatDetailEnum;
 }
 
 export class CatInformation {
@@ -190,29 +318,29 @@ export class CatInformation {
 export enum CatDetailEnum {
   Persian = 'Persian',
   Tabby = 'Tabby',
-  Siamese = 'Siamese'
+  Siamese = 'Siamese',
 }
 
 export enum CatInformationEnum {
   Persian = 'Persian',
   Tabby = 'Tabby',
-  Siamese = 'Siamese'
+  Siamese = 'Siamese',
 }
 ```
 
 > info **Hint** The above snippet is generated using a tool called [NSwag](https://github.com/RicoSuter/NSwag).
 
-You can see that now you have two `enums` that are exactly the same. 
+You can see that now you have two `enums` that are exactly the same.
 To address this issue, you can pass an `enumName` next to `enum` property in your decorator.
 
 ```typescript
 export class CatDetail {
-   @ApiProperty({ enum: CatBreed, enumName: 'CatBreed' })
-   breed: CatBreed;
+  @ApiProperty({ enum: CatBreed, enumName: 'CatBreed' })
+  breed: CatBreed;
 }
 ```
 
-`enumName` enables `nestjs/swagger` to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` reusable. The specification will look like the following:
+The `enumName` property enables `@nestjs/swagger` to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` enum reusable. The specification will look like the following:
 
 ```yaml
 CatDetail:
@@ -231,47 +359,6 @@ CatBreed:
 ```
 
 > info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
-
-#### Arrays
-
-When the property is an array, we must manually indicate the array type as shown below:
-
-```typescript
-@ApiProperty({ type: [String] })
-names: string[];
-```
-
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect arrays.
-
-Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
-
-<app-banner-enterprise></app-banner-enterprise>
-
-#### Circular dependencies
-
-When you have circular dependencies between classes, use a lazy function to provide the `SwaggerModule` with type information:
-
-```typescript
-@ApiProperty({ type: () => Node })
-node: Node;
-```
-
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect circular dependencies.
-
-#### Generics and interfaces
-
-Since TypeScript does not store metadata about generics or interfaces, when you use them in your DTOs, `SwaggerModule` may not be able to properly generate model definitions at runtime. For instance, below code won't be correctly inspected by the Swagger module:
-
-```typescript
-createBulk(@Body() usersDto: CreateUserDto[])
-```
-
-In order to overcome this limitation, you can set the type explicitly:
-
-```typescript
-@ApiBody({ type: [CreateUserDto] })
-createBulk(@Body() usersDto: CreateUserDto[])
-```
 
 #### Raw definitions
 
