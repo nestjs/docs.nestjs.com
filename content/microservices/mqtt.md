@@ -19,16 +19,14 @@ To use the MQTT transporter, pass the following options object to the `createMic
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
   transport: Transport.MQTT,
   options: {
-    host: 'localhost',
-    port: 1883,
+    url: 'mqtt://localhost:1883',
   },
 });
 @@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.MQTT,
   options: {
-    host: 'localhost',
-    port: 1883,
+    url: 'mqtt://localhost:1883',
   },
 });
 ```
@@ -53,8 +51,7 @@ One method for creating an instance is to use use the `ClientsModule`. To create
         name: 'MATH_SERVICE',
         transport: Transport.MQTT,
         options: {
-          host: 'localhost',
-          port: 1883,
+          url: 'mqtt://localhost:1883',
         }
       },
     ]),
