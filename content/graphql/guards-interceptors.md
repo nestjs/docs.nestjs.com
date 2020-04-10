@@ -86,7 +86,7 @@ async upvotePost(
 
 > info **Hint** In the above example, we have assumed that the `user` object is assigned to the context of your GraphQL application.
 
-#### Interceptors at the `@ResoleField()` method level
+#### Interceptors at the `@ResolveField()` method level
 
 In a GraphQL context, interceptors [do not access the full GraphQL response](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only get the response of the `@Query()`/`@Mutation()` method, but not the complete response with the resolved fields. You can tell Nest to execute interceptors (as well as guards and filters) for methods annotated `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`:
 
@@ -96,11 +96,11 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> **Warning** Enabling interceptors for field resolvers can cause performance issues when you are returning lots of records and your field resolver is executed thousands of times. For this reason, when you enable `fieldResolverEnhancers`, we advise you to skip execution of interceptors that are not strictly necessary for your field resolvers. You can do this using the following helper method:
+> **Warning** Enabling interceptors for field resolvers can cause performance issues when you are returning lots of records and your field resolver is executed thousands of times. For this reason, when you enable `fieldResolverEnhancers`, we advise you to skip execution of interceptors that are not strictly necessary for your field resolvers. You can do this using the following helper function:
 
 ```typescript
 export function isResolvingGraphQLField(context: ExecutionContext): boolean {
-  if (context.getType().toString() === 'graphql') {
+  if (context.getType<GqlContextType>().toString() === 'graphql') {
     const gqlContext = GqlExecutionContext.create(context);
     const info = gqlContext.getInfo();
     const parentType = info.parentType.name;
