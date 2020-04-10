@@ -33,8 +33,6 @@ export class AuthorResolver {
 }
 ```
 
-The current implementation also requires that the method handler name match the `triggerName`. That is, in the code sample above, the method name `commentAdded()` must match the `triggerName` passed in to `pubSub.asyncIterator('commentAdded')`.
-
 > info **Hint** All decorators are exported from the `@nestjs/graphql` package, while the `PubSub` class is exported from the `graphql-subscriptions` package.
 
 > warning **Note** `PubSub` is a class that exposes a simple `publish` and `subscribe API`. Read more about it [here](https://www.apollographql.com/docs/graphql-subscriptions/setup.html). Note that the Apollo docs warn that the default implementation is not suitable for production (read more [here](https://github.com/apollographql/graphql-subscriptions#getting-started-with-your-first-subscription)). Production apps should use a `PubSub` implementation backed by an external store (read more [here](https://github.com/apollographql/graphql-subscriptions#pubsub-implementations)).
