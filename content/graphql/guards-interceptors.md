@@ -100,7 +100,7 @@ GraphQLModule.forRoot({
 
 ```typescript
 export function isResolvingGraphQLField(context: ExecutionContext): boolean {
-  if (context.getType<GqlContextType>().toString() === 'graphql') {
+  if (context.getType<GqlContextType>() === 'graphql') {
     const gqlContext = GqlExecutionContext.create(context);
     const info = gqlContext.getInfo();
     const parentType = info.parentType.name;
