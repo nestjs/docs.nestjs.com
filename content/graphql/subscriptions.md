@@ -45,6 +45,21 @@ type Subscription {
 }
 ```
 
+Note that subscriptions, by definition, return an object with a single top level property whose key is the name of the subscription. This name is either inherited from the name of the subscription handler method (i.e., `commentAdded` above), or is provided explicitly by passing an option with the key `name` as the second argument to the `@Subscription()` decorator, as shown below.
+
+```typescript
+  @Subscription(returns => Comment, {
+    name: 'commentAdded',
+  })
+  addCommentHandler() {
+    return pubSub.asyncIterator('commentAdded');
+  }
+```
+
+This construct produces the same SDL as the previous code sample, but allows us to decouple the method name from the subscription.
+
+### Publishing
+
 Now, to publish the event, we use the `PubSub#publish` method. This is often used within a mutation to trigger a client-side update when a part of the object graph has changed. For example:
 
 ```typescript
@@ -60,7 +75,7 @@ async addComment(
 }
 ```
 
-The `PubSub#publish` method takes a `triggerName` (again, think of this as an event topic name) as the first parameter, and an event payload as the second parameter. Note that the subscription, by definition, returns a value and that value has a shape. Look again at the generated SDL for our `commentAdded` subscription:
+The `PubSub#publish` method takes a `triggerName` (again, think of this as an event topic name) as the first parameter, and an event payload as the second parameter. As mentioned, the subscription, by definition, returns a value and that value has a shape. Look again at the generated SDL for our `commentAdded` subscription:
 
 ```graphql
 type Subscription {
@@ -68,18 +83,7 @@ type Subscription {
 }
 ```
 
-This tells us that the subscription must return an object with a property name of `commentAdded` that has a value which is a `Comment` object. The important point to note is that the payload of the `PubSub#publish` method must correspond to the shape of the value expected to return from the subscription. So, in our example above, the `pubSub.publish('commentAdded', {{ '{' }} commentAdded: newComment {{ '}' }})` statement publishes a `commentAdded` event with the appropriately shaped payload. If these shapes don't match, your subscription will fail during the GraphQL validation phase.
-
-The above requirement can create undesired coupling between the `@Subscription()` method handler name (`commentAdded()`) and the event payload. To specify a name for the subscription that is independent of the method handler name, use the `name` option in the `@Subscription()` decorator:
-
-```typescript
-  @Subscription(returns => Comment, {
-    name: 'commentAdded',
-  })
-  addCommentHandler() {
-    return pubSub.asyncIterator('commentAdded');
-  }
-```
+This tells us that the subscription must return an object with a top-level property name of `commentAdded` that has a value which is a `Comment` object. The important point to note is that the shape of the event payload emitted by the `PubSub#publish` method must correspond to the shape of the value expected to return from the subscription. So, in our example above, the `pubSub.publish('commentAdded', {{ '{' }} commentAdded: newComment {{ '}' }})` statement publishes a `commentAdded` event with the appropriately shaped payload. If these shapes don't match, your subscription will fail during the GraphQL validation phase.
 
 ### Filtering subscriptions
 
@@ -107,6 +111,8 @@ commentAdded() {
   return pubSub.asyncIterator('commentAdded');
 }
 ```
+
+> warning **Note** If you use the `resolve` option, you should return the unwrapped payload (e.g., with our example, return a `newComment` object directly, not a `{{ '{' }} commentAdded: newComment {{ '}' }}` object).
 
 If you need to access injected providers (e.g., use an external service to validate the data), use the following construction.
 
