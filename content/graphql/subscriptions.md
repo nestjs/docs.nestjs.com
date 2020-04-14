@@ -16,9 +16,9 @@ GraphQLModule.forRoot({
 
 #### Code first
 
-To create a subscription using the code first approach, we'll make use of the `@Subscription()` decorator and the `PubSub` class from the `graphql-subscriptions` package, which provides a simple **publish/subscribe API**.
+To create a subscription using the code first approach, we use the `@Subscription()` decorator and the `PubSub` class from the `graphql-subscriptions` package, which provides a simple **publish/subscribe API**.
 
-The subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterator`. This method takes a single argument, the `triggerName` which corresponds to an event topic name.
+The following subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterator`. This method takes a single argument, the `triggerName`, which corresponds to an event topic name.
 
 ```typescript
 const pubSub = new PubSub();
@@ -33,8 +33,6 @@ export class AuthorResolver {
 }
 ```
 
-The current implementation also requires that the method handler name match the `triggerName`. That is, in the code sample above, the method name `commentAdded()` must match the `triggerName` passed in to `pubSub.asyncIterator('commentAdded')`.
-
 > info **Hint** All decorators are exported from the `@nestjs/graphql` package, while the `PubSub` class is exported from the `graphql-subscriptions` package.
 
 > warning **Note** `PubSub` is a class that exposes a simple `publish` and `subscribe API`. Read more about it [here](https://www.apollographql.com/docs/graphql-subscriptions/setup.html). Note that the Apollo docs warn that the default implementation is not suitable for production (read more [here](https://github.com/apollographql/graphql-subscriptions#getting-started-with-your-first-subscription)). Production apps should use a `PubSub` implementation backed by an external store (read more [here](https://github.com/apollographql/graphql-subscriptions#pubsub-implementations)).
@@ -47,7 +45,22 @@ type Subscription {
 }
 ```
 
-To publish the event, use the `PubSub#publish` method. This is often used within a mutation to trigger a client-side update when a part of the object graph has changed. For example:
+Note that subscriptions, by definition, return an object with a single top level property whose key is the name of the subscription. This name is either inherited from the name of the subscription handler method (i.e., `commentAdded` above), or is provided explicitly by passing an option with the key `name` as the second argument to the `@Subscription()` decorator, as shown below.
+
+```typescript
+  @Subscription(returns => Comment, {
+    name: 'commentAdded',
+  })
+  addCommentHandler() {
+    return pubSub.asyncIterator('commentAdded');
+  }
+```
+
+This construct produces the same SDL as the previous code sample, but allows us to decouple the method name from the subscription.
+
+### Publishing
+
+Now, to publish the event, we use the `PubSub#publish` method. This is often used within a mutation to trigger a client-side update when a part of the object graph has changed. For example:
 
 ```typescript
 @@filename(posts/posts.resolver)
@@ -57,10 +70,22 @@ async addComment(
   @Args('comment', { type: () => Comment }) comment: CommentInput,
 ) {
   const newComment = this.commentsService.addComment({ id: postId, comment });
-  pubSub.publish('commentAdded', newComment);
+  pubSub.publish('commentAdded', { commentAdded: newComment });
   return newComment;
 }
 ```
+
+The `PubSub#publish` method takes a `triggerName` (again, think of this as an event topic name) as the first parameter, and an event payload as the second parameter. As mentioned, the subscription, by definition, returns a value and that value has a shape. Look again at the generated SDL for our `commentAdded` subscription:
+
+```graphql
+type Subscription {
+  commentAdded(): Comment!
+}
+```
+
+This tells us that the subscription must return an object with a top-level property name of `commentAdded` that has a value which is a `Comment` object. The important point to note is that the shape of the event payload emitted by the `PubSub#publish` method must correspond to the shape of the value expected to return from the subscription. So, in our example above, the `pubSub.publish('commentAdded', {{ '{' }} commentAdded: newComment {{ '}' }})` statement publishes a `commentAdded` event with the appropriately shaped payload. If these shapes don't match, your subscription will fail during the GraphQL validation phase.
+
+### Filtering subscriptions
 
 To filter out specific events, set the `filter` property to a filter function. This function acts similar to the function passed to an array `filter`. It takes two arguments: `payload` containing the event payload (as sent by the event publisher), and `variables` taking any arguments passed in during the subscription request. It returns a boolean determining whether this event should be published to client listeners.
 
@@ -74,6 +99,8 @@ commentAdded(@Args('title') title: string) {
 }
 ```
 
+### Mutating subscription payloads
+
 To mutate the published event payload, set the `resolve` property to a function. The function receives the event payload (as sent by the event publisher) and returns the appropriate value.
 
 ```typescript
@@ -84,6 +111,8 @@ commentAdded() {
   return pubSub.asyncIterator('commentAdded');
 }
 ```
+
+> warning **Note** If you use the `resolve` option, you should return the unwrapped payload (e.g., with our example, return a `newComment` object directly, not a `{{ '{' }} commentAdded: newComment {{ '}' }}` object).
 
 If you need to access injected providers (e.g., use an external service to validate the data), use the following construction.
 
