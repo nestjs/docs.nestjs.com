@@ -30,7 +30,7 @@ If using the `FastifyAdapter`, you'll want to use [fastify-compress](https://git
 $ npm i --save fastify-compress
 ```
 
-Once the installation is complete, apply the fastify-compress middleware as a global middleware.
+Once the installation is complete, apply the fastify-compress middleware as global middleware.
 
 ```typescript
 import * as compression from 'fastify-compress';
