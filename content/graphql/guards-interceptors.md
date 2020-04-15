@@ -96,7 +96,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> **Warning** Enabling interceptors for field resolvers can cause performance issues when you are returning lots of records and your field resolver is executed thousands of times. For this reason, when you enable `fieldResolverEnhancers`, we advise you to skip execution of interceptors that are not strictly necessary for your field resolvers. You can do this using the following helper function:
+> **Warning** Enabling enhancers for field resolvers can cause performance issues when you are returning lots of records and your field resolver is executed thousands of times. For this reason, when you enable `fieldResolverEnhancers`, we advise you to skip execution of enhancers that are not strictly necessary for your field resolvers. You can do this using the following helper function:
 
 ```typescript
 export function isResolvingGraphQLField(context: ExecutionContext): boolean {
