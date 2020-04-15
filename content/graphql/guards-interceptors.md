@@ -86,7 +86,7 @@ async upvotePost(
 
 > info **Hint** In the above example, we have assumed that the `user` object is assigned to the context of your GraphQL application.
 
-#### Interceptors at the `@ResolveField()` method level
+#### Execute enhancers at the field/method level
 
 In a GraphQL context, interceptors [do not access the full GraphQL response](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only get the response of the `@Query()`/`@Mutation()` method, but not the complete response with the resolved fields. You can tell Nest to execute interceptors (as well as guards and filters) for methods annotated `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`:
 
