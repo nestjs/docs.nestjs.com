@@ -132,7 +132,7 @@ export class UpdateUserInput extends IntersectionType(CreateUserInput, Additiona
 
 > info **Hint** The `IntersectionType()` function is imported from the `@nestjs/graphql` package.
 
-The `IntersectionType()` function takes an optional third argument that is a reference to the decorator factory of the type being extended. It will use the first one's decorator, if we didn't pass `InputType` as the third argument. If you want to extend a class decorated with `@ObjectType`, pass `ObjectType` as the third argument. For example:
+The `IntersectionType()` function takes an optional third argument that is a reference to the decorator factory of the type being extended. If you don't pass a type as the third argument, it will use the first argument's decorator factory type. If you want to extend a class decorated with `@ObjectType`, pass `ObjectType` as the third argument. For example:
 
 ```typescript
 @InputType()
