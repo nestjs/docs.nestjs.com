@@ -115,7 +115,6 @@ class CreateUserInput {
 
 @ObjectType()
 export class AdditionalUserInfo {
-
   @Field()
   nickname: string;
 
