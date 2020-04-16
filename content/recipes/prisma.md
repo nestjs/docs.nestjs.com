@@ -1,6 +1,6 @@
 ### Prisma
 
-[Prisma](https://www.prisma.io/) turns your database into a GraphQL API and enables the use of GraphQL as a universal query language for all databases. Instead of writing SQL or using a NoSQL API, you can query your database with GraphQL. In this chapter we won't go into details about Prisma, so head over to their website and have a look what [features](https://www.prisma.io/features/) are available.
+[Prisma](https://www.prisma.io/) turns your database into a GraphQL API and enables the use of GraphQL as a universal query language for all databases. Instead of writing SQL or using a NoSQL API, you can query your database with GraphQL. In this chapter we won't go into details about Prisma, so head over to their website and have a look what features are available.
 
 > warning **Notice** In this article, you'll learn how to integrate `Prisma` into the Nest framework. We assume that you are already familiar with the GraphQL concepts and the `@nestjs/graphql` module.
 
