@@ -124,7 +124,7 @@ export class AdditionalUserInfo {
 }
 ```
 
-We can generate a new type that combines all properties in both two types.
+We can generate a new type that combines all properties in both types.
 
 ```typescript
 @InputType()
