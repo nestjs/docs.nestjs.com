@@ -250,6 +250,37 @@ export class UpdateCatDto extends OmitType(CreateCatDto, ['name']) {}
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/swagger` package.
 
+The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
+
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateCatDto {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  age: number;
+
+  @ApiProperty()
+  breed: string;
+}
+
+export class AdditionalCatInfo {
+  @ApiProperty()
+  color: string;
+}
+```
+
+We can generate a new type that combines all properties in both types.
+
+```typescript
+export class UpdateCatDto extends IntersectionType(CreateCatDto, AdditionalCatInfo) {}
+```
+
+> info **Hint** The `IntersectionType()` function is imported from the `@nestjs/swagger` package.
+
+
 The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateCatDto` type except for `name`, and those properties will be set to optional:
 
 ```typescript
