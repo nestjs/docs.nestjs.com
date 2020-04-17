@@ -86,7 +86,7 @@ async upvotePost(
 
 > info **Hint** In the above example, we have assumed that the `user` object is assigned to the context of your GraphQL application.
 
-#### Execute enhancers at the field/method level
+#### Execute enhancers at the field resolver level
 
 In the GraphQL context, Nest does not run **enhancers** (the generic name for interceptors, guards and filters) at the field level [see this issue](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only run for the top level `@Query()`/`@Mutation()` method. You can tell Nest to execute interceptors, guards or filters for methods annotated with `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`.  Pass it a list of `'interceptors'`, `'guards'`, and/or `'filters'` as appropriate:
 
