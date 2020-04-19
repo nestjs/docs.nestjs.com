@@ -53,6 +53,7 @@ export class CatsService {
 Our `CatsService` is a basic class with one property and two methods. The only new feature is that it uses the `@Injectable()` decorator. The `@Injectable()` decorator attaches metadata, which tells Nest that this class is a Nest provider. By the way, this example also uses a `Cat` interface, which probably looks something like this:
 
 ```typescript
+@@filename(interfaces/cat.interface)
 export interface Cat {
   name: string;
   age: number;
