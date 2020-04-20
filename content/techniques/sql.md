@@ -229,7 +229,7 @@ import { User } from './user.entity';
 
 @Injectable()
 @Dependencies(getRepositoryToken(User))
-export class UserService {
+export class UsersService {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;
   }
@@ -272,13 +272,13 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectRepositor
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
 import { UsersModule } from './user.module';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [UsersModule],
-  providers: [UserService],
-  controllers: [UserController]
+  providers: [UsersService],
+  controllers: [UsersController]
 })
 export class UserHttpModule {}
 ```
@@ -543,7 +543,7 @@ The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which 
 ```typescript
 @Module({
   providers: [
-    UserService,
+    UsersService,
     {
       provide: getRepositoryToken(User),
       useValue: mockRepository,
@@ -553,7 +553,7 @@ The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which 
 export class UsersModule {}
 ```
 
-Now a substitute `mockRepository` will be used as the `UserRepository`. Whenever any class asks for `UserRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
+Now a substitute `mockRepository` will be used as the `UsersRepository`. Whenever any class asks for `UsersRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
 
 #### Custom repository
 
@@ -862,7 +862,7 @@ import { User } from './user.model';
 
 @Injectable()
 @Dependencies(getModelToken(User))
-export class UserService {
+export class UsersService {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;
   }
@@ -910,13 +910,13 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectModel(Use
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
 import { UsersModule } from './user.module';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [UsersModule],
-  providers: [UserService],
-  controllers: [UserController]
+  providers: [UsersService],
+  controllers: [UsersController]
 })
 export class UserHttpModule {}
 ```
@@ -1112,7 +1112,7 @@ The `@nestjs/sequelize` package exposes the `getModelToken()` function which ret
 ```typescript
 @Module({
   providers: [
-    UserService,
+    UsersService,
     {
       provide: getModelToken(User),
       useValue: mockModel,
