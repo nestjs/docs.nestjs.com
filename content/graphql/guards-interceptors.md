@@ -85,3 +85,27 @@ async upvotePost(
 ```
 
 > info **Hint** In the above example, we have assumed that the `user` object is assigned to the context of your GraphQL application.
+
+#### Execute enhancers at the field resolver level
+
+In the GraphQL context, Nest does not run **enhancers** (the generic name for interceptors, guards and filters) at the field level [see this issue](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only run for the top level `@Query()`/`@Mutation()` method. You can tell Nest to execute interceptors, guards or filters for methods annotated with `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`.  Pass it a list of `'interceptors'`, `'guards'`, and/or `'filters'` as appropriate:
+
+```typescript
+GraphQLModule.forRoot({
+  fieldResolverEnhancers: ['interceptors']
+}),
+```
+
+> **Warning** Enabling enhancers for field resolvers can cause performance issues when you are returning lots of records and your field resolver is executed thousands of times. For this reason, when you enable `fieldResolverEnhancers`, we advise you to skip execution of enhancers that are not strictly necessary for your field resolvers. You can do this using the following helper function:
+
+```typescript
+export function isResolvingGraphQLField(context: ExecutionContext): boolean {
+  if (context.getType<GqlContextType>() === 'graphql') {
+    const gqlContext = GqlExecutionContext.create(context);
+    const info = gqlContext.getInfo();
+    const parentType = info.parentType.name;
+    return parentType !== 'Query' && parentType !== 'Mutation';
+  }
+  return false;
+}
+```
