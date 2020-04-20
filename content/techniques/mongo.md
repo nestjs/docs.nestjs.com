@@ -205,7 +205,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
           const schema = CatsSchema;
           schema.pre('save', () =>
             console.log(
-              `${configService.getString('APP_NAME')}: Hello from pre save`,
+              `${configService.get<string>('APP_NAME')}: Hello from pre save`,
             ),
           );
           return schema;
@@ -303,7 +303,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
 MongooseModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    uri: configService.getString('MONGODB_URI'),
+    uri: configService.get<string>('MONGODB_URI'),
   }),
   inject: [ConfigService],
 });
