@@ -32,7 +32,7 @@ $ npm install
 $ npm run start
 ```
 
-Open your browser and navigate to `http://localhost:3000/`.
+Open your browser and navigate to [`http://localhost:3000/`](http://localhost:3000/).
 
 To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
 
