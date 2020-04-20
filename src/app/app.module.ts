@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
@@ -35,6 +35,7 @@ import { BasePageComponent } from './homepage/pages/page/page.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { SharedModule } from './shared/shared.module';
+import { CustomElementsModule } from './custom-elements/custom-elements.module';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -42,6 +43,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 };
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -49,6 +51,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientModule,
     PerfectScrollbarModule,
     SharedModule,
+    CustomElementsModule,
   ],
   declarations: [
     AppComponent,

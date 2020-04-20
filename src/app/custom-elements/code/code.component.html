@@ -1,0 +1,19 @@
+<div class="code-wrapper" [ngClass]="{ 'has-switcher': hasSwitcher }">
+  <div class="filename" *ngIf="hasSwitcher">
+    <span> {{ filename }}{{ isJsActive ? '.js' : '.ts' }} </span>
+    <div class="tabs-wrapper">
+      <span class="tab" [class.active]="isJsActive" (click)="isJsActive = true">
+        JS
+      </span>
+      <span
+        class="tab active"
+        [class.active]="!isJsActive"
+        (click)="isJsActive = false"
+      >
+        TS
+      </span>
+    </div>
+  </div>
+  <slot name="ts" *ngIf="!isJsActive"></slot>
+  <slot name="js" *ngIf="isJsActive"></slot>
+</div>
