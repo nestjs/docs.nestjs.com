@@ -237,16 +237,16 @@ Once registered, we can inject the configured `ClientGrpc` object with `@Inject(
 ```typescript
 @Injectable()
 export class AppService implements OnModuleInit {
-  private heroService: HeroesService;
+  private heroesService: HeroesService;
 
   constructor(@Inject('HERO_PACKAGE') private client: ClientGrpc) {}
 
   onModuleInit() {
-    this.heroService = this.client.getService<HeroesService>('HeroesService');
+    this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
   getHero(): Observable<string> {
-    return this.heroService.findOne({ id: 1 });
+    return this.heroesService.findOne({ id: 1 });
   }
 }
 ```
@@ -267,23 +267,23 @@ export class AppService implements OnModuleInit {
   })
   client: ClientGrpc;
 
-  private heroService: HeroesService;
+  private heroesService: HeroesService;
 
   onModuleInit() {
-    this.heroService = this.client.getService<HeroesService>('HeroesService');
+    this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
   getHero(): Observable<string> {
-    return this.heroService.findOne({ id: 1 });
+    return this.heroesService.findOne({ id: 1 });
   }
 }
 ```
 
 Finally, for more complex scenarios, we can inject a dynamically configured client using the `ClientProxyFactory` class as described <a href="/microservices/basics#client">here</a>.
 
-In either case, we end up with a reference to our `HeroesService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroService` looks and acts like a local provider.
+In either case, we end up with a reference to our `HeroesService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroesService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroesService` looks and acts like a local provider.
 
-Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroesService` definition contains the `FindOne()` function, the `heroService` instance will provide the `findOne()` method.
+Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroesService` definition contains the `FindOne()` function, the `heroesService` instance will provide the `findOne()` method.
 
 ```typescript
 interface HeroesService {
@@ -297,12 +297,12 @@ A message handler is also able to return an `Observable`, in which case the res
 @@filename(heroes.controller)
 @Get()
 call(): Observable<any> {
-  return this.heroService.findOne({ id: 1 });
+  return this.heroesService.findOne({ id: 1 });
 }
 @@switch
 @Get()
 call() {
-  return this.heroService.findOne({ id: 1 });
+  return this.heroesService.findOne({ id: 1 });
 }
 ```
 
