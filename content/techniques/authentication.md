@@ -915,7 +915,7 @@ When implementing a strategy, you can provide a name for it by passing a second 
 export class JwtStrategy extends PassportStrategy(Strategy, 'myjwt')
 ```
 
-Then, you refer to this via a decorator like `@AuthGuard('myjwt')`.
+Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
