@@ -789,7 +789,7 @@ We've now completed our JWT authentication implementation. JavaScript clients (s
 
 #### Default strategy
 
-In our `AppController`, we pass the name of the strategy in the `@AuthGuard()` decorator. We need to do this because we've introduced **two** Passport strategies (passport-local and passport-jwt), both of which supply implementations of various Passport components. Passing the name disambiguates which implementation we're linking to. When multiple strategies are included in an application, we can declare a default strategy so that we no longer have to pass the name in the `@AuthGuard` decorator if using that default strategy. Here's how to register a default strategy when importing the `PassportModule`. This code would go in the `AuthModule`:
+In our `AppController`, we pass the name of the strategy in the `AuthGuard()` function. We need to do this because we've introduced **two** Passport strategies (passport-local and passport-jwt), both of which supply implementations of various Passport components. Passing the name disambiguates which implementation we're linking to. When multiple strategies are included in an application, we can declare a default strategy so that we no longer have to pass the name in the `AuthGuard` function if using that default strategy. Here's how to register a default strategy when importing the `PassportModule`. This code would go in the `AuthModule`:
 
 ```typescript
 import { Module } from '@nestjs/common';
