@@ -25,7 +25,6 @@
     "@angular/common": "9.1.2",
     "@angular/compiler": "9.1.2",
     "@angular/core": "9.1.2",
-    "@angular/elements": "9.1.2",
     "@angular/flex-layout": "8.0.0-beta.27",
     "@angular/forms": "9.1.2",
     "@angular/http": "7.2.16",

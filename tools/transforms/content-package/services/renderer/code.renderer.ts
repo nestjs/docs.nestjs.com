@@ -18,8 +18,9 @@ export function applyCodeRenderer(renderer: Renderer) {
     const filenameIndex = code.indexOf(filenameKey);
     if (filenameIndex >= 0) {
       return replaceFilename(
-        (text) =>
-          renderer.code(text, language, isEscaped),
+        (text, directiveRef) =>
+          // @ts-ignore
+          renderer.code(text, language, isEscaped, directiveRef),
         code,
         filenameKey,
         filenameIndex

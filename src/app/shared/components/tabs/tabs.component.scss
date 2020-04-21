@@ -1,0 +1,41 @@
+@import './../../../../scss/utils.scss';
+
+.tabs-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  /*@include media(medium) {
+    position: static;
+    margin: 15px -20px -15px;
+    
+    .tab {
+      float: none;
+      display: inline-block;
+      margin: 0 !important;
+    }
+  }*/
+}
+
+.tab {
+  color: #dfdfdf;
+  cursor: pointer;
+  margin: 0;
+  float: right;
+  font-weight: 600;
+  height: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+
+  &:hover:not(.active) {
+    color: #efefef;
+    // background: #232323;
+  }
+  &.active {
+    // color: #fff;
+    // background: #1d1d1d;
+    display: none;
+  }
+}
