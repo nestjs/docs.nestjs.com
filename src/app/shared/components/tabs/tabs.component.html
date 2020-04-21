@@ -1,0 +1,8 @@
+<div class="tabs-wrapper">
+  <span class="tab" [class.active]="isJsActive" (click)="isJsActive = true">
+    JS
+  </span>
+  <span class="tab active" [class.active]="!isJsActive" (click)="isJsActive = false">
+    TS
+  </span>
+</div>
