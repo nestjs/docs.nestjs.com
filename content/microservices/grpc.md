@@ -330,8 +330,8 @@ syntax = "proto3";
 package hello;
 
 service HelloService {
-  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse)
-  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse)
+  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse);
+  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse);
 }
 
 message HelloRequest {
@@ -392,7 +392,7 @@ According to the service definition (in the `.proto` file), the `BidiHello` meth
 
 ```typescript
 const helloService = this.client.getService<HelloService>('HelloService');
-const helloRequest$ = new ReplySubject<HelloRequest>();
+const helloRequest$ = new ReplaySubject<HelloRequest>();
 
 helloRequest$.next({ greeting: 'Hello (1)!' });
 helloRequest$.next({ greeting: 'Hello (2)!' });
