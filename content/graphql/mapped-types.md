@@ -35,11 +35,11 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {}
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/graphql` package.
 
-The `PartialType()` function takes an optional second argument that is a reference to the decorator factory of the type being extended. In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator. We didn't need to pass `InputType` as the second argument since it's the default value. If you want to extend a class decorated with `@ObjectType`, pass `ObjectType` as the second argument. For example:
+The `PartialType()` function takes an optional second argument that is a reference to a decorator factory.  This argument can be used to change the decorator function applied to the resulting (*child*) class.  If not specified, the child class effectively uses the same decorator as the *parent* class (the class referenced in the first argument).  In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator.  Since we want `UpdateUserInput` to also be treated as if it were decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types are different, (e.g., the parent is decorated with `@ObjectType`), we would  pass `InputType` as the second argument. For example:
 
 ```typescript
 @InputType()
-export class UpdateUserInput extends PartialType(User, ObjectType) {}
+export class UpdateUserInput extends PartialType(User, InputType) {}
 ```
 
 #### Pick
