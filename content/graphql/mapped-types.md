@@ -96,6 +96,49 @@ export class UpdateUserInput extends OmitType(CreateUserInput, ['email']) {}
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/graphql` package.
 
+#### Intersection
+
+The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
+
+```typescript
+@InputType()
+class CreateUserInput {
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+
+  @Field()
+  firstName: string;
+}
+
+@ObjectType()
+export class AdditionalUserInfo {
+  @Field()
+  nickname: string;
+
+  @Field()
+  avatar: string;
+}
+```
+
+We can generate a new type that combines all properties in both types.
+
+```typescript
+@InputType()
+export class UpdateUserInput extends IntersectionType(CreateUserInput, AdditionalUserInfo) {}
+```
+
+> info **Hint** The `IntersectionType()` function is imported from the `@nestjs/graphql` package.
+
+The `IntersectionType()` function takes an optional third argument that is a reference to the decorator factory of the type being extended. If you don't pass a type as the third argument, it will use the first argument's decorator factory type. If you want to extend a class decorated with `@ObjectType`, pass `ObjectType` as the third argument. For example:
+
+```typescript
+@InputType()
+export class UpdateUserInput extends IntersectionType(CreateUserInput, AdditionalUserInfo, ObjectType) {}
+```
+
 #### Composition
 
 The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateUserInput` type except for `email`, and those properties will be set to optional:
