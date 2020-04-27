@@ -24,6 +24,7 @@ Nest comes with five pipes available out-of-the-box:
 - `ParseBoolPipe`
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
+- `DefaultValuePipe`
 
 They're exported from the `@nestjs/common` package. In order to better understand how they work, let's build `ValidationPipe` and `ParseIntPipe` from scratch.
 
@@ -442,6 +443,21 @@ findOne(userEntity) {
 ```
 
 We leave the implementation of this pipe to the reader, but note that like all other transformation pipes, it receives an input value (an `id`) and returns an output value (a `UserEntity` object). This can make your code more declarative and [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) by abstracting boilerplate code out of your handler and into a common pipe.
+
+#### Providing defaults
+
+`Parse*` pipes expect a parameter's value to be defined. They throw an exception upon recieving `null` or `undefined` values. To allow an endpoint to accept parameter absence in queries we have to provide a default value which would get injected before `Parse*` pipes operate on these values. The `DefaultValuePipe` was introduced into Nest for that purpose.
+
+```typescript
+@@filename()
+@Get()
+async findMany(
+  @Query('activeOnly', new DefaultValuePipe(false), new ParseBoolPipe()) activeOnly: boolean,
+  @Query('page', new DefaultValuePipe(0), new ParseIntPipe()) page: number,
+) {
+  return this.catsService.find({ activeOnly, page });
+}
+```
 
 #### The built-in ValidationPipe
 
