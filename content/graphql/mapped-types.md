@@ -108,18 +108,15 @@ class CreateUserInput {
 
   @Field()
   password: string;
-
-  @Field()
-  firstName: string;
 }
 
 @ObjectType()
 export class AdditionalUserInfo {
   @Field()
-  nickname: string;
-
+  firstName: string;
+  
   @Field()
-  avatar: string;
+  lastName: string;
 }
 ```
 
