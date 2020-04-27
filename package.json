@@ -71,7 +71,7 @@
     "@types/rimraf": "3.0.0",
     "chokidar": "3.4.0",
     "codelyzer": "5.2.2",
-    "concurrently": "5.1.0",
+    "concurrently": "5.2.0",
     "jasmine-core": "3.5.0",
     "jasmine-spec-reporter": "5.0.2",
     "karma": "5.0.2",
