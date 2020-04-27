@@ -146,6 +146,11 @@
       "logo": "/assets/logo/valueadd.png",
       "url": "https://valueadd.pl/",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/bedu.svg",
+      "url": "https://bedu.org",
+      "width": "100px"
     }
   ],
   "Body": [
