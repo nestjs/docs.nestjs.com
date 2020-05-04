@@ -35,7 +35,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {}
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/graphql` package.
 
-The `PartialType()` function takes an optional second argument that is a reference to a decorator factory.  This argument can be used to change the decorator function applied to the resulting (*child*) class.  If not specified, the child class effectively uses the same decorator as the *parent* class (the class referenced in the first argument).  In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator.  Since we want `UpdateUserInput` to also be treated as if it were decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types are different, (e.g., the parent is decorated with `@ObjectType`), we would  pass `InputType` as the second argument. For example:
+The `PartialType()` function takes an optional second argument that is a reference to a decorator factory.  This argument can be used to change the decorator function applied to the resulting (child) class.  If not specified, the child class effectively uses the same decorator as the **parent** class (the class referenced in the first argument). In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator.  Since we want `UpdateUserInput` to also be treated as if it were decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types are different, (e.g., the parent is decorated with `@ObjectType`), we would  pass `InputType` as the second argument. For example:
 
 ```typescript
 @InputType()
@@ -108,18 +108,15 @@ class CreateUserInput {
 
   @Field()
   password: string;
-
-  @Field()
-  firstName: string;
 }
 
 @ObjectType()
 export class AdditionalUserInfo {
   @Field()
-  nickname: string;
-
+  firstName: string;
+  
   @Field()
-  avatar: string;
+  lastName: string;
 }
 ```
 
@@ -131,13 +128,6 @@ export class UpdateUserInput extends IntersectionType(CreateUserInput, Additiona
 ```
 
 > info **Hint** The `IntersectionType()` function is imported from the `@nestjs/graphql` package.
-
-The `IntersectionType()` function takes an optional third argument that is a reference to the decorator factory of the type being extended. If you don't pass a type as the third argument, it will use the first argument's decorator factory type. If you want to extend a class decorated with `@ObjectType`, pass `ObjectType` as the third argument. For example:
-
-```typescript
-@InputType()
-export class UpdateUserInput extends IntersectionType(CreateUserInput, AdditionalUserInfo, ObjectType) {}
-```
 
 #### Composition
 
