@@ -940,7 +940,7 @@ The following decorators have been changed/renamed:
 - `@ApiImplicitParam` is now `@ApiParam`
 - `@ApiImplicitBody` is now `@ApiBody`
 - `@ApiImplicitHeader` is now `@ApiHeader`
-- `@ApiOperation({{ '{' }} title: 'test' {{ '}' }})` is now`@ApiOperation({{ '{' }} summary: 'test' {{ '}' }})`
+- `@ApiOperation({{ '{' }} title: 'test' {{ '}' }})` is now `@ApiOperation({{ '{' }} summary: 'test' {{ '}' }})`
 - `@ApiUseTags` is now `@ApiTags`
 
 `DocumentBuilder` breaking changes (updated method signatures):
@@ -950,7 +950,7 @@ The following decorators have been changed/renamed:
 - `addOAuth2`
 - `setContactEmail` is now `setContact`
 - `setHost` has been removed
-- `setSchemes` has been removed
+- `setSchemes` has been removed (use the `addServer` instead, e.g., `addServer('http://')`)
 
 The following methods have been added:
 
