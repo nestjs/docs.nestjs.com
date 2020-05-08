@@ -151,6 +151,11 @@
       "logo": "/assets/logo/bedu.svg",
       "url": "https://bedu.org",
       "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/accelery.svg",
+      "url": "https://accerlery.be",
+      "width": "100px"
     }
   ],
   "Body": [
