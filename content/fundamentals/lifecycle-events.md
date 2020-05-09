@@ -24,7 +24,7 @@ In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onAp
 | `beforeApplicationShutdown()`\* | Called after all `onModuleDestroy()` handlers have completed (Promises resolved or rejected);<br />once complete (Promises resolved or rejected), all existing connections will be closed (`app.close()` called). |
 | `onApplicationShutdown()`\*     | Called after connections close (`app.close()` resolves.                                                                                                                                                           |
 
-\* For those events, if you're not calling `app.close()` explicitly, you must opt-in to make them work with system's signals: see `Shutdown application` section below.
+\* For these events, if you're not calling `app.close()` explicitly, you must opt-in to make them work with system signals such as `SIGTERM`.  See [Application shutdown](#application-shutdown) below.
 
 #### Usage
 
@@ -70,7 +70,7 @@ async onModuleInit() {
 
 The `onModuleDestroy()`, `beforeApplicationShutdown()` and `onApplicationShutdown()` hooks are called in the terminating phase (in response to an explicit call to `app.close()` or upon receipt of system signals such as SIGTERM if opted-in). This feature is often used with [Kubernetes](https://kubernetes.io/) to manage containers' lifecycles, by [Heroku](https://www.heroku.com/) for dynos or similar services.
 
-Disabled by default for performances optimizations, to use these hooks **you must enable them** by calling `enableShutdownHooks()`, which listens to shutdown signals:
+Shutdown hook listeners consume system resources, so they are disabled by default. To use shutdown hooks, you **must enable listeners** by calling `enableShutdownHooks()`:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
