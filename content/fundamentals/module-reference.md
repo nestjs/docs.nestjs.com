@@ -189,9 +189,9 @@ const contextId = ContextIdFactory.getByRequest(this.request);
 const catsRepository = await this.moduleRef.resolve(CatsRepository, contextId);
 ```
 
-#### Instantiating classes dynamically
+#### Instantiating custom classes dynamically
 
-To dynamically instantiate a class that wasn't previously registered as a provider, use the module reference's `create()` method.
+To dynamically instantiate a class that **wasn't previously registered** as a **provider**, use the module reference's `create()` method.
 
 ```typescript
 @@filename(cats.service)
