@@ -1,5 +1,3 @@
-import * as crypto from 'crypto';
-
 export function escapeBrackets(text: string): string {
   text = text.replace(new RegExp('{', 'g'), '&#123;');
   text = text.replace(new RegExp('}', 'g'), '&#125;');
@@ -17,27 +15,18 @@ export function appendEmptyLine(text: string) {
 }
 
 export function replaceFilename(
-  renderer: (code: string, directiveRef: string) => string,
+  renderer: (code: string) => string,
   text: string,
   filenameKey: string,
   filenameIndex: number,
 ) {
   const startIndex = filenameIndex + filenameKey.length;
   const endIndex = text.indexOf(')');
-  const directiveRef = `app` + crypto.randomBytes(20).toString('hex');
   const filename = text.slice(startIndex + 1, endIndex);
-  return (
-    `
-<span class="filename">` +
-    (filename.length > 0
-      ? `
-  {{ '${filename}' | extension: ${directiveRef}.isJsActive }}`
-      : '') +
-    `
-<app-tabs #${directiveRef}></app-tabs>
-</span>` +
-    renderer(text.slice(endIndex + 1), directiveRef).trim()
-  );
+  return `
+<code-element ${filename.length ? `filename="${filename}"` : ''}>${renderer(
+    text.slice(endIndex + 1).trim(),
+  )}</code-element>`;
 }
 
 export function parseSwitcher(
@@ -49,12 +38,14 @@ export function parseSwitcher(
 ) {
   const tsCode = text.slice(0, switchIndex).trim();
   const jsCode = text.slice(switchIndex + switchKey.length, text.length).trim();
-  const wrapCondition = (snippet: string, lang: 'ts' | 'js') =>
-    elementKey
-      ? snippet.slice(0, 4) +
-        ` [class.hide]="${lang === 'js' ? '!' : ''}${elementKey}.isJsActive"` +
-        snippet.slice(4, snippet.length)
-      : snippet;
+
+  const wrapCondition = (htmlSnippet: string, lang: 'ts' | 'js'): string => {
+    // The beginning of the pre-Tag (<pre)
+    const beginPreTag = htmlSnippet.slice(0, 4);
+    const endPreTag = htmlSnippet.slice(4, htmlSnippet.length);
+    return `${beginPreTag} slot=${lang}${endPreTag}`;
+  };
+
   return (
     wrapCondition(renderer(tsCode, 'typescript'), 'ts') +
     wrapCondition(renderer(jsCode, 'typescript'), 'js')
