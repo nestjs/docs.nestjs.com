@@ -451,11 +451,11 @@ We leave the implementation of this pipe to the reader, but note that like all o
 ```typescript
 @@filename()
 @Get()
-async findMany(
-  @Query('activeOnly', new DefaultValuePipe(false), new ParseBoolPipe()) activeOnly: boolean,
-  @Query('page', new DefaultValuePipe(0), new ParseIntPipe()) page: number,
+async findAll(
+  @Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
+  @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
 ) {
-  return this.catsService.find({ activeOnly, page });
+  return this.catsService.findAll({ activeOnly, page });
 }
 ```
 
