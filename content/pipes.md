@@ -446,7 +446,7 @@ We leave the implementation of this pipe to the reader, but note that like all o
 
 #### Providing defaults
 
-`Parse*` pipes expect a parameter's value to be defined. They throw an exception upon recieving `null` or `undefined` values. To allow an endpoint to accept parameter absence in queries we have to provide a default value which would get injected before `Parse*` pipes operate on these values. The `DefaultValuePipe` was introduced into Nest for that purpose.
+`Parse*` pipes expect a parameter's value to be defined. They throw an exception upon receiving `null` or `undefined` values. To allow an endpoint to accept parameter absence in queries we have to provide a default value which would get injected before `Parse*` pipes operate on these values. The `DefaultValuePipe` was introduced into Nest for that purpose.
 
 ```typescript
 @@filename()
