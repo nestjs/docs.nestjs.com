@@ -408,7 +408,7 @@ We saw one use of generics above. This powerful TypeScript feature can be used t
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
-export function Paginated<T>(classRef: Type<T>) {
+export function Paginated<T>(classRef: Type<T>): any {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
     @Field((type) => String)
