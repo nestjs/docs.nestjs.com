@@ -64,7 +64,7 @@ We can pick a set of properties from this class using the `PickType()` utility f
 
 ```typescript
 @InputType()
-export class UpdateEmailInput extends PickType(CreateUserInput, ['email']) {}
+export class UpdateEmailInput extends PickType(CreateUserInput, ['email'] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/graphql` package.
@@ -91,7 +91,7 @@ We can generate a derived type that has every property **except** `email` as sho
 
 ```typescript
 @InputType()
-export class UpdateUserInput extends OmitType(CreateUserInput, ['email']) {}
+export class UpdateUserInput extends OmitType(CreateUserInput, ['email'] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/graphql` package.
@@ -136,6 +136,6 @@ The type mapping utility functions are composable. For example, the following wi
 ```typescript
 @InputType()
 export class UpdateUserInput extends PartialType(
-  OmitType(CreateUserInput, ['email']),
+  OmitType(CreateUserInput, ['email'] as const),
 ) {}
 ```
