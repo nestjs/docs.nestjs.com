@@ -220,7 +220,7 @@ export class CreateCatDto {
 We can pick a set of properties from this class using the `PickType()` utility function:
 
 ```typescript
-export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age']) {}
+export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/swagger` package.
@@ -245,7 +245,7 @@ export class CreateCatDto {
 We can generate a derived type that has every property **except** `name` as shown below. In this construct, the second argument to `OmitType` is an array of property names.
 
 ```typescript
-export class UpdateCatDto extends OmitType(CreateCatDto, ['name']) {}
+export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/swagger` package.
@@ -282,7 +282,7 @@ The type mapping utility functions are composable. For example, the following wi
 
 ```typescript
 export class UpdateCatDto extends PartialType(
-  OmitType(CreateCatDto, ['name']),
+  OmitType(CreateCatDto, ['name'] as const),
 ) {}
 ```
 
