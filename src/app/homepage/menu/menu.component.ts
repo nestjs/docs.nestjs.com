@@ -153,6 +153,7 @@ export class MenuComponent implements OnInit {
         { title: 'Pipes', path: '/microservices/pipes' },
         { title: 'Guards', path: '/microservices/guards' },
         { title: 'Interceptors', path: '/microservices/interceptors' },
+        { title: 'Timeout', path: '/microservices/timeout' },
       ],
     },
     {
