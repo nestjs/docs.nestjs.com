@@ -197,27 +197,6 @@ export class AppService {
 }
 ```
 
-Storage in Redis cache can be also be verified by [redis-cli](https://redis.io/topics/rediscli) or Redis's desktop client such as [Redis desktop manager](https://redisdesktop.com/).
-
-As this method `getHello()` of `AppService.ts` file is returning `Promise<string>`, return type of controller using this service should also be changed:
-
-```typescript
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): Promise<string> {
-    return this.appService.getHello();
-  }
-}
-```
-
-Visit [docs](https://github.com/dabroek/node-cache-manager-redis-store) of Redis store for full list API usage.
-
 #### Adjust tracking
 
 By default, Nest uses the request URL (in an HTTP app) or cache key (in websockets and microservices apps, set through the `@CacheKey()` decorator) to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different factors, for example, using HTTP headers (e.g. `Authorization` to properly identify `profile` endpoints).
