@@ -151,11 +151,6 @@
       "logo": "/assets/logo/bedu.svg",
       "url": "https://bedu.org",
       "width": "100px"
-    },
-    {
-      "logo": "/assets/logo/accelery.svg",
-      "url": "https://accerlery.be",
-      "width": "100px"
     }
   ],
   "Body": [
@@ -199,6 +194,7 @@
     "https://creatorsdaily.com",
     "https://autoscar.com.br",
     "https://www.mediktiv.com",
-    "https://harmonize.health"
+    "https://harmonize.health",
+    "https://accerlery.be"
   ]
 }
