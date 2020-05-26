@@ -1,6 +1,6 @@
 ### Timeout
 
-Sometimes, microservices are down or not available. For such cases, a timeout is required. If the microservice does not respond to the request within a certain time, an Exception is thrown, which can be caught and an error message will be displayed.
+Sometimes, microservices are down or not available. You can handle these cases using the `RxJS` timeout operator in the call. If the microservice does not respond to the request within a certain time, an Exception is thrown, which can be caught and handled appropriately.
 
 To solve this problem you have to install [rxjs](https://github.com/ReactiveX/rxjs) package:
 
