@@ -67,14 +67,17 @@ In the example above, we pass a class (`ParseIntPipe`), not an instance, leaving
 
 ```typescript
 @Get(':id')
-async findOne(@Param('id', new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number) {
+async findOne(
+  @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
+  id: number,
+) {
   return this.catsService.findOne(id);
 }
 ```
 
-Binding the other transformation pipes (all of the **Parse\*** pipes) works similarly. These pipes all work in the context of validating route parameters, querystring parameters and request body values.
+Binding the other transformation pipes (all of the **Parse\*** pipes) works similarly. These pipes all work in the context of validating route parameters, query string parameters and request body values.
 
-For example with a querystring parameter:
+For example with a query string parameter:
 
 ```typescript
 @Get()
@@ -83,28 +86,19 @@ async findOne(@Query('id', ParseIntPipe) id: number) {
 }
 ```
 
-With a request body, we use a construct like:
-
-```typescript
-@Post()
-async update(@Body('id', ParseIntPipe) id: number, @Body('isFriendly', ParseBoolPipe) isFriendly: boolean) {
-  return this.catsService.update({id, isFriendly});
-}
-```
-
 Here's an example of using the `ParseUUIDPipe` to parse a string parameter and validate if is a UUID.
 
 ```typescript
 @@filename()
-@Get(':id')
-async findOne(@Param('id', new ParseUUIDPipe()) id) {
-  return this.catsService.findOne(id);
+@Get(':uuid')
+async findOne(@Param('uuid', new ParseUUIDPipe()) uuid: string) {
+  return this.catsService.findOne(uuid);
 }
 @@switch
-@Get(':id')
-@Bind(Param('id', new ParseUUIDPipe()))
-async findOne(id) {
-  return this.catsService.findOne(id);
+@Get(':uuid')
+@Bind(Param('uuid', new ParseUUIDPipe()))
+async findOne(uuid) {
+  return this.catsService.findOne(uuid);
 }
 ```
 
@@ -114,7 +108,7 @@ Above we've seen examples of binding the various `Parse*` family of built-in pip
 
 > info **Hint** Also, see [Validation techniques](/techniques/validation) for extensive examples of validation pipes.
 
-### Custom pipes
+#### Custom pipes
 
 As mentioned, you can build your own custom pipes. While Nest provides a robust built-in `ParseIntPipe` and `ValidationPipe`, let's build simple custom versions of each from scratch to see how custom pipes are constructed.
 
