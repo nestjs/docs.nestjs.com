@@ -14,7 +14,6 @@ import { MicroservicesPipesComponent } from './pipes/pipes.component';
 import { RabbitMQComponent } from './rabbitmq/rabbitmq.component';
 import { KafkaComponent } from './kafka/kafka.component';
 import { RedisComponent } from './redis/redis.component';
-import { MicroservicesTimeoutComponent } from './timeout/timeout.component';
 
 const routes: Routes = [
   {
@@ -77,11 +76,6 @@ const routes: Routes = [
     component: CustomTransportComponent,
     data: { title: 'Custom Transport - Microservices' },
   },
-  {
-    path: 'timeout',
-    component: MicroservicesTimeoutComponent,
-    data: { title: 'Timeout - Microservices' },
-  },
 ];
 
 @NgModule({
@@ -94,7 +88,6 @@ const routes: Routes = [
     MicroservicesPipesComponent,
     MicroservicesInterceptorsComponent,
     MicroservicesGuardsComponent,
-    MicroservicesTimeoutComponent,
     MqttComponent,
     GrpcComponent,
     RabbitMQComponent,
