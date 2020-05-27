@@ -48,7 +48,7 @@ This ensures that one of the following two conditions is true: either the parame
 For example, assume the route is called like:
 
 ```bash
-GET localhost:3000/a
+GET localhost:3000/abc
 ```
 
 Nest will throw an exception like this:
