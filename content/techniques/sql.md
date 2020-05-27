@@ -364,7 +364,7 @@ A database transaction symbolizes a unit of work performed within a database man
 
 There are many different strategies to handle [TypeORM transactions](https://typeorm.io/#/transactions). We recommend using the `QueryRunner` class because it gives full control over the transaction.
 
-First, we need to inject the `Connection` object into a class in the normal way:
+First, we need to inject the `Connection` object into a class in the normal way (in custom repositories we need to inject `EntityManager`):
 
 ```typescript
 @Injectable()
