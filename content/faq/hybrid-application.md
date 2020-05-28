@@ -13,7 +13,7 @@ await app.listen(3001);
 ```
 
 #### Sharing configuration
-By default hybrid application will not inherit global pipes, interceptors, guards & filters.
+By default a hybrid application will not inherit global pipes, interceptors, guards & filters configured for the main (HTTP-based) application.
 You'll need to set inheritAppConfig in the second argument as follow:
 
 ```typescript
