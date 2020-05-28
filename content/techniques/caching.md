@@ -161,7 +161,7 @@ import { AppController } from './app.controller';
 export class ApplicationModule {}
 ```
 
-##### Redis cache `set` and `get` example
+#### Redis cache `set` and `get` example
 
 First install the type dependency:
 
