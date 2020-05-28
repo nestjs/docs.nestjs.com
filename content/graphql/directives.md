@@ -10,10 +10,10 @@ A directive is an identifier preceded by a `@` character, optionally followed by
 
 #### Custom directives
 
-To create a custom schema directive, declare a class which extends the `SchemaDirectiveVisitor` class exported from the `apollo-server` package.
+To create a custom schema directive, declare a class which extends the `SchemaDirectiveVisitor` class exported from the `apollo-server-express` package.
 
 ```typescript
-import { SchemaDirectiveVisitor } from 'apollo-server';
+import { SchemaDirectiveVisitor } from 'apollo-server-express';
 import { defaultFieldResolver, GraphQLField } from 'graphql';
 
 export class UpperCaseDirective extends SchemaDirectiveVisitor {
