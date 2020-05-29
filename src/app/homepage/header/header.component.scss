@@ -103,12 +103,23 @@ header {
     li:first-of-type {
       display: none;
     }
+    
     .search-wrapper {
       margin-right: 0;
     }
   }
 
   @media (max-width: 1250px) {
+    padding: 14px 5px;
+  }
+
+  @media (max-width: 1150px) {
+    ul {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 555px) {
     .search-wrapper {
       display: none;
     }
