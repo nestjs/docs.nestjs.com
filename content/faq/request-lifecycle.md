@@ -6,7 +6,7 @@ Nest applications handle requests and produce responses in a sequence we refer t
 
 Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works.
 
-#### Guard
+#### Guards
 
 Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound. For example:
 
