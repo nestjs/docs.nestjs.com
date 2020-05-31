@@ -354,29 +354,21 @@ The `data` property is the message payload sent by the message producer. The `pa
 
 Sometimes, microservices are down or not available. You can handle these cases using the `RxJS` timeout operator in the call. If the microservice does not respond to the request within a certain time, an Exception is thrown, which can be caught and handled appropriately.
 
-To solve this problem you have to install [rxjs](https://github.com/ReactiveX/rxjs) package:
-
-```bash
-npm install rxjs
-```
-
-Then just use the `timeout` operator in the pipe:
+To solve this problem you have to use [rxjs](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
 
 ```typescript
 @@filename()
-import { timeout } from 'rxjs/operators';
-// ...
 this.client
       .send<TResult, TInput>(pattern, data)
       .pipe(timeout(5000))
       .toPromise();
 @@switch
-import { timeout } from 'rxjs/operators';
-// ...
 this.client
       .send(pattern, data)
       .pipe(timeout(5000))
       .toPromise();
 ```
+
+> info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.
 
 After 5 seconds, if the microservice isn't responding, it will throw an error.
