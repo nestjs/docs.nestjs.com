@@ -360,7 +360,7 @@ To solve this problem you have to install [rxjs](https://github.com/ReactiveX/rx
 npm install rxjs
 ```
 
-Then just add a call of timeout method to the pipe:
+Then just use the `timeout` operator in the pipe:
 
 ```typescript
 @@filename()
