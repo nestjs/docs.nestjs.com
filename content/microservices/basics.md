@@ -379,7 +379,4 @@ this.client
       .toPromise();
 ```
 
-After 5 seconds, if microservice isn't responding, it will throw an error:
-```bash
-[Nest] 17544   - 05/24/2020, 8:08:27 AM   [ExceptionsHandler] Timeout has occurred +5009ms
-```
+After 5 seconds, if the microservice isn't responding, it will throw an error.
