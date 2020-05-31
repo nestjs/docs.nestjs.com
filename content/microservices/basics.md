@@ -350,7 +350,7 @@ export interface RequestContext<T = any> {
 The `data` property is the message payload sent by the message producer. The `pattern` property is the pattern used to identify an appropriate handler to handle the incoming message.
 
 
-### Timeout
+### Handling timeouts
 
 Sometimes, microservices are down or not available. You can handle these cases using the `RxJS` timeout operator in the call. If the microservice does not respond to the request within a certain time, an Exception is thrown, which can be caught and handled appropriately.
 
