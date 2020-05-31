@@ -58,7 +58,7 @@ Note that subscriptions, by definition, return an object with a single top level
 
 This construct produces the same SDL as the previous code sample, but allows us to decouple the method name from the subscription.
 
-### Publishing
+#### Publishing
 
 Now, to publish the event, we use the `PubSub#publish` method. This is often used within a mutation to trigger a client-side update when a part of the object graph has changed. For example:
 
@@ -85,7 +85,7 @@ type Subscription {
 
 This tells us that the subscription must return an object with a top-level property name of `commentAdded` that has a value which is a `Comment` object. The important point to note is that the shape of the event payload emitted by the `PubSub#publish` method must correspond to the shape of the value expected to return from the subscription. So, in our example above, the `pubSub.publish('commentAdded', {{ '{' }} commentAdded: newComment {{ '}' }})` statement publishes a `commentAdded` event with the appropriately shaped payload. If these shapes don't match, your subscription will fail during the GraphQL validation phase.
 
-### Filtering subscriptions
+#### Filtering subscriptions
 
 To filter out specific events, set the `filter` property to a filter function. This function acts similar to the function passed to an array `filter`. It takes two arguments: `payload` containing the event payload (as sent by the event publisher), and `variables` taking any arguments passed in during the subscription request. It returns a boolean determining whether this event should be published to client listeners.
 
@@ -99,7 +99,7 @@ commentAdded(@Args('title') title: string) {
 }
 ```
 
-### Mutating subscription payloads
+#### Mutating subscription payloads
 
 To mutate the published event payload, set the `resolve` property to a function. The function receives the event payload (as sent by the event publisher) and returns the appropriate value.
 
