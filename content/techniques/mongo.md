@@ -63,7 +63,7 @@ The `@Prop()` decorator defines a property in the document. For example, in the 
 tags: string[];
 ```
 
-Also, `@Prop()` decorator alternatively accepts an options object argument ([read more](https://mongoosejs.com/docs/schematypes.html#schematype-options) about the available options). With this, you can indicate whether a property is required or not, specify a default value, or mark it as immutable. For example:
+Alternatively, the `@Prop()` decorator accepts an options object argument ([read more](https://mongoosejs.com/docs/schematypes.html#schematype-options) about the available options). With this, you can indicate whether a property is required or not, specify a default value, or mark it as immutable. For example:
 
 ```typescript
 @Prop({ required: true })
