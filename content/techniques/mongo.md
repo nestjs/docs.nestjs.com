@@ -28,7 +28,7 @@ The `forRoot()` method accepts the same configuration object as `mongoose.connec
 
 With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Each schema maps to a MongoDB collection and defines the shape of the documents within that collection. Schemas are used to define [Models](https://mongoosejs.com/docs/models.html). Models are responsible for creating and reading documents from the underlying MongoDB database.
 
-Schemas can be created with NestJS decorators, or with Mongoose itself manually. Using decorators to create schemas greatly reduce boilerplate and improve overall code readability.
+Schemas can be created with NestJS decorators, or with Mongoose itself manually. Using decorators to create schemas greatly reduces boilerplate and improves overall code readability.
 
 Let's define the `CatSchema`:
 
