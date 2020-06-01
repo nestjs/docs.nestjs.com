@@ -14,7 +14,7 @@ To attach custom metadata for a field, use the `@Extensions()` decorator exporte
 password: string;
 ```
 
-In the example above, we defined the `role` metadata with the value of `Role.ADMIN` in which `Role` is just a simple enum that groups all the user roles available in our system.
+In the example above, we assigned the `role` metadata property the value of `Role.ADMIN`.  `Role` is a simple TypeScript enum that groups all the user roles available in our system.
 
 Similarly, you can use the `@Extensions()` on the class-level and method-level (e.g., on the query handler).
 
