@@ -71,7 +71,7 @@ For demonstration purposes, we specified the maximum allowed complexity as `20`.
 
 #### Field-level complexity
 
-With this in place, we can start defining complexity for certain fields by specyfing the `complexity` property in the options object passed into the `@Field()` decorator, as follows:
+With this plugin in place, we can now define the complexity for any field by specifying the `complexity` property in the options object passed into the `@Field()` decorator, as follows:
 
 ```typescript
 @Field({ complexity: 3 })
