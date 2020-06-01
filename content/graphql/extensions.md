@@ -57,7 +57,7 @@ export class FieldRolesGuard implements CanActivate {
 }
 ```
 
-> warning **Warning** For the **illustration purposes**, we assumed that **every** resolver returns either the `GraphQLObjectType` or `GraphQLNonNull` that wraps the object type. In the real-world application, you should cover other cases (scalars, etc.). Note that using this particular implementation can lead to unexpected errors (e.g., missing `getFields()` method).
+> warning **Warning** For illustration purposes, we assumed that **every** resolver returns either the `GraphQLObjectType` or `GraphQLNonNull` that wraps the object type. In a real-world application, you should cover other cases (scalars, etc.). Note that using this particular implementation can lead to unexpected errors (e.g., missing `getFields()` method).
 
 In the example above, we've used the [graphql-fields](https://github.com/robrichard/graphql-fields) package that turns the `GraphQLResolveInfo` object into an object that consist of the requested fields. We used this specific library to make the presented example somewhat simpler.
 
