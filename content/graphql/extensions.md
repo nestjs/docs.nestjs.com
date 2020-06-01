@@ -6,7 +6,7 @@ Extensions is an **advanced, low-level feature** that lets you define arbitrary 
 
 #### Adding custom metadata
 
-To attach a custom metadata for a field, use the `@Extensions()` decorator exported from the `@nestjs/graphql` package.
+To attach custom metadata for a field, use the `@Extensions()` decorator exported from the `@nestjs/graphql` package.
 
 ```typescript
 @Field()
