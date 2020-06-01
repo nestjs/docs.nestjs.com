@@ -20,7 +20,7 @@ import * as helmet from 'helmet';
 app.use(helmet());
 ```
 
-> info **Hint** Note that `app.use(helmet())` must come before other setup (or at least before any other config that may call `app.use()`). The order that middleware/routes are defined matters. If you use middleware like `helmet`/`cors` after you define a route, then that middleware will not apply to that route, it will only apply to middleware defined after the route.
+> info **Hint** Note that `app.use(helmet())` must come before other calls to `app.use()` or setup functions that may call `app.use()`). This is due to the way the underlying platform (e.g., Express) works, where the order that middleware/routes are defined matters. If you use middleware like `helmet` or `cors` after you define a route, then that middleware will not apply to that route, it will only apply to middleware defined after the route.
 
 #### CORS
 
