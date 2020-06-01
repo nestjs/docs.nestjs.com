@@ -22,7 +22,7 @@ Note, in addition to setting metadata on fields, you can use the `@Extensions()`
 
 The logic that leverages the custom metatada can be as complex as needed. For example, you can create a simple interceptor that stores/logs events per method invocation, or create a sophisticated guard that **analyzes requested fields**, iterates through the `GraphQLObjectType` definition, and matches the roles required to retrieve specific fields with the caller permissions (field-level permissions system).
 
-For this, let's define the `FieldRolesGuard`:
+Let's define a `FieldRolesGuard` that implements a basic version of such a field-level permissions system.
 
 ```typescript
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
