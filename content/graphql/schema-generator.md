@@ -29,7 +29,16 @@ const schema = await gqlSchemaFactory.create([
 ]);
 ```
 
-It also takes a second optional argument with an options object:
+It also takes a second optional argument with an array of scalar classes:
+
+```typescript
+const schema = await gqlSchemaFactory.create(
+  [RecipesResolver, AuthorsResolver, PostsResolvers],
+  [DurationScalar, DateScalar],
+);
+```
+
+Lastly, you can pass an options object:
 
 ```typescript
 const schema = await gqlSchemaFactory.create([RecipesResolver], {

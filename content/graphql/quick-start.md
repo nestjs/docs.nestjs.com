@@ -169,6 +169,24 @@ definitionsFactory.generate({
 });
 ```
 
+To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  emitTypenameField: true,
+});
+```
+
+To generate resolvers (queries, mutations, subscriptions) as plain fields without arguments, enable the `skipResolverArgs` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  skipResolverArgs: true,
+});
+```
+
 A fully working schema first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first).
 
 #### Accessing generated schema
