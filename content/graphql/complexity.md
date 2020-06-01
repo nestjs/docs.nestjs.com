@@ -62,7 +62,7 @@ export class ComplexityPlugin implements ApolloServerPlugin {
 }
 ```
 
-For the demonstration purposes, we specified the maximum allowed complexity as `20`. In the example above, we used 2 estimators, the `simpleEstimator` and `fieldExtensionsEstimator`.
+For demonstration purposes, we specified the maximum allowed complexity as `20`. In the example above, we used 2 estimators, the `simpleEstimator` and the `fieldExtensionsEstimator`.
 
 - `simpleEstimator`: the simple estimator returns a fixed complexity for each field
 - `fieldExtensionsEstimator`: the field extensions estimator extracts the complexity value for each field of your schema
