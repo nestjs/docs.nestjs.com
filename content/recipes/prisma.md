@@ -135,7 +135,7 @@ Importing `PrismaModule` makes exported `PrismaService` available in the `UsersM
 ```typescript
 @@filename(users.resolver)
 import { Query, Resolver, Args, Info } from '@nestjs/graphql';
-import { User } from '@prisma/cli';
+import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Resolver()
