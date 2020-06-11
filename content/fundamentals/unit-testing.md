@@ -322,3 +322,6 @@ Now we can use the `contextId` to access a single generated DI container sub-tre
 ```typescript
 catsService = await moduleRef.resolve(CatsService, contextId);
 ```
+
+#### Applying Plugins
+Currently, Nest CLI plugins do not apply to E2E tests. You can find a solution in [this](https://github.com/nestjs/graphql/issues/810#issuecomment-618308354) comment.

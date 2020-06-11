@@ -2,6 +2,8 @@
 
 > warning **Warning** This chapter applies only to the code first approach.
 
+> warning **Warning** By default, Nest CLI plugins do not apply to E2E tests. For more info, see [Applying Plugins](/fundamentals/testing#applying-plugins)
+
 TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
 
 > info **Hint** This plugin is **opt-in**. If you prefer, you can declare all decorators manually, or only specific decorators where you need them.
