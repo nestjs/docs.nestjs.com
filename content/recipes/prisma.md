@@ -19,7 +19,7 @@ Prisma works by introspecting your database to understand your data structures. 
 1.  Install the Prisma CLI - `npm install -g @prisma/client`
 2.  Initialize prisma in your project - `prisma init`
 
-If you find yourself in trouble jump over to their [Quick Start](https://v1.prisma.io/docs/1.34/get-started/01-setting-up-prisma-existing-database-JAVASCRIPT-a003/) section for further details. Eventually you should see two new files in your project directory, `schema.prisma` introspection file and and .env file:
+If you find yourself in trouble jump over to their [Quick Start](https://v1.prisma.io/docs/1.34/get-started/01-setting-up-prisma-existing-database-JAVASCRIPT-a003/) section for further details. Eventually you should see two new files in your project directory, `schema.prisma` introspection file and and `.env` file:
 
 ```
 generator client {
