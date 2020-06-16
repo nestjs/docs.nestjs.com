@@ -73,7 +73,7 @@ This will autogenerate the database access client/methods, which we can later ac
 
 #### Integration
 
-Almost done. Now, let's create a module for our Prisma integration.
+Now, let's create a module for our Prisma integration.
 
 ```typescript
 @@filename(prisma.service)
