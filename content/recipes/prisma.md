@@ -63,7 +63,7 @@ model User {
 }
 ```
 
-2.  Now you generate database access client with Prisma CLI - 
+2.  Next, generate database access client with Prisma CLI - 
 
 ```bash
 $ prisma generate
