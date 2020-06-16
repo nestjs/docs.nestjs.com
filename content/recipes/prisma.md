@@ -14,7 +14,7 @@ $ npm install --save @prisma/client
 
 #### Setup Prisma
 
-Prisma works by introspecting your database to understand your data structures. It then maps these to a schema file which models those structures. You then use prisma to generate the type-safe database access client, which exposes the easy-to-use crud operations to your database (e.g. prisma.user.findOne({ where: { id: "someid" } })).
+Prisma works by introspecting your database to understand your data structures. It then maps these to a schema file which models those structures. You then use prisma to generate the type-safe database access client, which exposes easy-to-use crud operations to your database (e.g., `prisma.user.findOne({{ '{' }} where: {{ '{' }} id: "someid" {{ '}' }} {{ '}' }})`).
 
 1.  Install the Prisma CLI - `npm install -g @prisma/client`
 2.  Initialize prisma in your project - `prisma init`
