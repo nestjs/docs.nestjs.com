@@ -37,7 +37,7 @@ datasource db {
 
 Now you use the prisma cli to introspect your database and generate the type-safe database client.
 
-1. Introspect your database - **must have running db**
+1. Introspect your database - **must have a running db**
 
 ```bash
 $ prisma introspect
