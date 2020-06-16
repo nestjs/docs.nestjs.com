@@ -1,6 +1,6 @@
 ### Prisma
 
-[Prisma](https://www.prisma.io/) provides access to your database via a powerful type-safe database client. Instead of writing SQL or using a NoSQL API, you can query your database with auto-generated crud operations exposed in the Prisma package (e.g. prisma.user.findOne({ where: { id: "someid" } })). In this chapter we won't go into details about Prisma, so head over to their website and have a look what features are available.
+[Prisma](https://www.prisma.io/) provides access to your database via a powerful type-safe database client. Instead of writing SQL or using a NoSQL API, you can query your database with auto-generated crud operations exposed in the Prisma package (e.g., `prisma.user.findOne({{ '{' }} where: {{ '{' }} id: "someid" {{ '}' }} {{ '}' }}))`. In this chapter we won't go into details about Prisma, so head over to [their website](https://www.prisma.io/) and have a look at what features are available.
 
 > warning **Notice** In this article, you'll learn how to integrate `Prisma` into the Nest framework. We assume that you **have a instance of postgres running**, are already familiar with the GraphQL concepts and the `@nestjs/graphql` module.
 
