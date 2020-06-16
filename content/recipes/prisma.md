@@ -6,7 +6,7 @@
 
 #### Dependencies
 
-Firstly, we need to install the required packages:
+First, we need to install the required packages:
 
 ```bash
 $ npm install --save @prisma/client
