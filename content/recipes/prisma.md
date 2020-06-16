@@ -43,7 +43,7 @@ Now you use the prisma cli to introspect your database and generate the type-saf
 $ prisma introspect
 ```
 
-Your `prisma.schema` file should be updated with the results of the introspection (note - might be different for your database).
+Your `prisma.schema` file should be updated with the results of the introspection (note - generated code might be different for your database).
 
 ```
 generator client {
