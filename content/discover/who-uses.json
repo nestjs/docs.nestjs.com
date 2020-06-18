@@ -151,6 +151,11 @@
       "logo": "/assets/logo/bedu.svg",
       "url": "https://bedu.org",
       "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/shopback.png",
+      "url": "https://shopback.com",
+      "width": "100px"
     }
   ],
   "Body": [
@@ -195,6 +200,7 @@
     "https://autoscar.com.br",
     "https://www.mediktiv.com",
     "https://harmonize.health",
-    "https://accerlery.be"
+    "https://accerlery.be",
+    "https://shopback.com"
   ]
 }
