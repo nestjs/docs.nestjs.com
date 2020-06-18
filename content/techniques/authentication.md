@@ -260,7 +260,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 }
 ```
 
-We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object. Notice passport-local strategy looking for **username** and **password** field in the request body by default, you can change the default behaviour using options object: `super({ usernameField: 'email' })`.
+We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object.
+
+> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body.  Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`.  See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
 
 We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
 
