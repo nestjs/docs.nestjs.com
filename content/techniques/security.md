@@ -15,7 +15,7 @@ $ npm i --save helmet
 Once the installation is complete, apply it as a global middleware.
 
 ```typescript
-import helmet from 'helmet';
+import * as helmet from 'helmet';
 // somewhere in your initialization file
 app.use(helmet());
 ```
