@@ -154,7 +154,8 @@
     },
     {
       "logo": "/assets/logo/shopback.png",
-      "url": "https://shopback.com"
+      "url": "https://shopback.com",
+      "width": "100px"
     },
     {
       "logo": "/assets/logo/facile.png",
