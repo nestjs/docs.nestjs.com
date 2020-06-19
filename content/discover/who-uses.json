@@ -153,6 +153,10 @@
       "width": "100px"
     },
     {
+      "logo": "/assets/logo/shopback.png",
+      "url": "https://shopback.com"
+    },
+    {
       "logo": "/assets/logo/facile.png",
       "url": "https://www.facile.it",
       "width": "100px"
@@ -201,6 +205,7 @@
     "https://www.mediktiv.com",
     "https://harmonize.health",
     "https://accerlery.be",
-    "https://www.facile.it"
+    "https://www.facile.it",
+    "https://shopback.com"
   ]
 }

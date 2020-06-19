@@ -195,7 +195,7 @@ A reasonable alternative is to inject the `database` namespace directly. This al
 ```typescript
 constructor(
   @Inject(databaseConfig.KEY)
-  private databaseConfig: ConfigType<typeof databaseConfig>,
+  private dbConfig: ConfigType<typeof databaseConfig>,
 ) {}
 ```
 

@@ -9,7 +9,7 @@ In this chapter, we assume a basic understanding of GraphQL, and focus on how to
 Start by installing the required packages:
 
 ```bash
-$ npm i --save @nestjs/graphql graphql-tools graphql
+$ npm i @nestjs/graphql graphql-tools graphql
 ```
 
 Depending on what underlying platform you use (Express or Fastify), you must also install either `apollo-server-express` or `apollo-server-fastify`.
@@ -166,6 +166,24 @@ definitionsFactory.generate({
   path: join(process.cwd(), 'src/graphql.ts'),
   outputAs: 'class',
   watch: true,
+});
+```
+
+To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  emitTypenameField: true,
+});
+```
+
+To generate resolvers (queries, mutations, subscriptions) as plain fields without arguments, enable the `skipResolverArgs` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  skipResolverArgs: true,
 });
 ```
 

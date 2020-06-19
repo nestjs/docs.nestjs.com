@@ -1,0 +1,39 @@
+name: Lighthouse
+
+on:
+  pull_request:
+    paths-ignore:
+    - 'content/**/*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      # Build needs around 400 seconds on Netlify.
+      # We can not rely on "Waiting for 200", since the user
+      # might push another commit to an existing PR, meaning
+      # the deploy preview is already online.
+      - name: Sleep 400 seconds
+        run: sleep 400
+      - name: Waiting for 200 from the Netlify Preview
+        uses: jakepartusch/wait-for-netlify-action@v1
+        id: wait-for-netflify-preview
+        with:
+          site_name: 'docs-nestjs'
+          max_timeout: 600
+      - name: Run Lighthouse on urls and validate with lighthouserc
+        uses: treosh/lighthouse-ci-action@v2
+        with:
+          urls: |
+            ${{ steps.wait-for-netflify-preview.outputs.url }}
+            ${{ steps.wait-for-netflify-preview.outputs.url }}/first-steps
+          runs: 5
+          configPath: './lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
