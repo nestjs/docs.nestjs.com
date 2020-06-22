@@ -47,7 +47,7 @@
     "@angular/cli": "9.1.9",
     "@angular/compiler-cli": "9.1.11",
     "@angular/language-service": "9.1.11",
-    "@types/jasmine": "3.5.10",
+    "@types/jasmine": "3.5.11",
     "@types/jasminewd2": "2.0.8",
     "@types/lodash": "4.14.155",
     "@types/marked": "0.7.4",
