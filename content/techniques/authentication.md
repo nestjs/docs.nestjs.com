@@ -884,7 +884,63 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
     return user;
   }
+
+  getAuthenticateOptions(context: ExecutionContext) {
+    // Here you can add specify additional dynamic options to be provided
+    // to the passport.authenticate function.
+      return {};
+  }
 }
+```
+##### Facebook Guard Example
+Authentication using providers like Facebook can add some additional complexity to your application.  You may wish to provide dynamic state information which is maintained between the request to your app and the callback from Facebook.  A common case is when you want to dynamically specify the referer in the state so that you know where the user originated the login request from.  When the callback is executed then you can the retrieve the referer URL from the state and redirect the user back to their original location.
+
+
+```typescript
+import { Injectable, ExecutionContext } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import querystring from 'querystring';
+
+@Injectable()
+export class FacebookAuthGuard extends AuthGuard('facebook') {
+  constructor() {
+    super({
+      authType: 'rerequest',
+    });
+  }
+
+  getAuthenticateOptions(context: ExecutionContext) {
+    // Retrieve the referer from the request so we can specify it in the Facebook login state
+    const req = context.switchToHttp().getRequest();
+    
+    return {
+      state: `referer=${req.headers.referer}`,
+    };
+  }
+
+  handleRequest(err, user, info, context) {
+    // Here we will use the referer that we originally specified in the state when we
+    // initiated the Facebook login request.  If the login failed, the we'll redirect
+    // the user back to that referer URL along with a code to indicate why the login
+    // failed.
+
+    const req = context.switchToHttp().getRequest();
+    const res = context.switchToHttp().getResponse();
+
+    const parsedState = querystring.parse(req.query.state);
+
+    const referer = parsedState.referer as string;
+
+    if (err) {
+      return res.redirect(`${referer}?code=1`);
+    } else if (!user) {
+      return res.redirect(`${referer}?code=2`);
+    }
+
+    return user;
+  }
+}
+
 ```
 
 #### Customize Passport
