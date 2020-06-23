@@ -58,7 +58,7 @@ Read the sections on [Workspaces](/cli/monorepo) and [Libraries](/cli/libraries)
 
 <app-banner-courses></app-banner-courses>
 
-### CLI command syntax
+#### CLI command syntax
 
 All `nest` commands follow the same format:
 
@@ -80,7 +80,7 @@ $ nest n my-nest-project -d
 
 Most commands, and some options, have aliases. Try running `nest new --help` to see these options and aliases, and to confirm your understanding of the above constructs.
 
-### Command overview
+#### Command overview
 
 Run `nest <command> --help` for any of the following commands to see command-specific options.
 

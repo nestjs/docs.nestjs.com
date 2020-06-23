@@ -174,6 +174,24 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'OpenAPI',
+      isOpened: false,
+      children: [
+        { title: 'Introduction', path: '/openapi/introduction' },
+        {
+          title: 'Types and Parameters',
+          path: '/openapi/types-and-parameters',
+        },
+        { title: 'Operations', path: '/openapi/operations' },
+        { title: 'Security', path: '/openapi/security' },
+        { title: 'Mapped Types', path: '/openapi/mapped-types' },
+        { title: 'Decorators', path: '/openapi/decorators' },
+        { title: 'CLI Plugin', path: '/openapi/cli-plugin' },
+        { title: 'Other features', path: '/openapi/other-features' },
+        { title: 'Migration guide', path: '/openapi/migration-guide' },
+      ],
+    },
+    {
       title: 'Recipes',
       isOpened: false,
       children: [

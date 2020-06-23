@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-swagger',
-  templateUrl: './swagger.component.html',
+  selector: 'app-openapi-security',
+  templateUrl: './security.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SwaggerComponent extends BasePageComponent {}
+export class OpenApiSecurityComponent extends BasePageComponent {}
