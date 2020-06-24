@@ -78,7 +78,7 @@ export class AppModule {}
 
 ##### Code first
 
-The code-first Federation is very similar to a regular code-first GraphQL. We simply add some extra decorators to the User entity.
+Code first federation is very similar to regular code first GraphQL. We simply add some extra decorators to the `User` entity.
 
 ```ts
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
@@ -98,7 +98,7 @@ export class User {
 }
 ```
 
-Our resolver has one extra method: `resolveReference`. It's called by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
+Our resolver has one extra method: `resolveReference`. It's called by the Apollo Gateway whenever a related resource requires a `User` instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
 
 ```ts
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
@@ -141,7 +141,7 @@ export class AppModule {}
 
 #### Federated example: Posts
 
-Our Post microservice serves aggregated posts via a `getPosts` query, but also extends our User type with `user.posts`
+Our Post service serves aggregated posts via a `getPosts` query, but also extends our `User` type with `user.posts`
 
 ##### Schema first
 
@@ -208,7 +208,7 @@ export class AppModule {}
 
 ##### Code first
 
-We will need to create a class representing our User entity. Even though it lives in another microservice, we will be using and extending it. Note the `@extends` and `@external` directives
+We will need to create a class representing our `User` entity. Even though it lives in another service, we will be using and extending it. Note the `@extends` and `@external` directives.
 
 ```ts
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
@@ -231,7 +231,7 @@ export class User {
 }
 ```
 
-We create the resolver for our extension on the User entity as follows:
+We create the resolver for our extension on the `User` entity as follows:
 
 ```ts
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
@@ -250,7 +250,7 @@ export class UserResolver {
 }
 ```
 
-We also need to create our Post entity
+We also need to create our `Post` entity:
 
 ```ts
 import { Directive, Field, ID, Int, ObjectType } from '@nestjs/graphql';
@@ -277,7 +277,7 @@ export class Post {
 }
 ```
 
-And its resolver
+And its resolver:
 
 ```ts
 import { Query, Args, ResolveReference, Resolver } from '@nestjs/graphql';
@@ -306,7 +306,7 @@ export class PostResolver {
 }
 ```
 
-And finally tie it together in a module. Note the schema build options, where we specify that User is an outside type.
+And finally tie it together in a module. Note the schema build options, where we specify that `User` is an outside type.
 
 ```ts
 import { Module } from '@nestjs/common';
