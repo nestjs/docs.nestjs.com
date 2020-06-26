@@ -18,7 +18,7 @@ The Swagger plugin will automatically:
 Please, note that your filenames **must have** one of the following suffixes: `['.dto.ts', '.entity.ts']` (e.g., `create-user.dto.ts`) in order to be analysed by the plugin.
 
 Previously, if you wanted to provide an interactive experience with the Swagger UI,
-you had to duplicate a lot of code to let the package knows how your models/components should be declared in the specification. For example, you could define a simple `CreateUserDto` class as follows:
+you had to duplicate a lot of code to let the package know how your models/components should be declared in the specification. For example, you could define a simple `CreateUserDto` class as follows:
 
 ```typescript
 export class CreateUserDto {
