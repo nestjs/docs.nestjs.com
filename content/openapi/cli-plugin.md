@@ -17,6 +17,8 @@ The Swagger plugin will automatically:
 
 Please, note that your filenames **must have** one of the following suffixes: `['.dto.ts', '.entity.ts']` (e.g., `create-user.dto.ts`) in order to be analysed by the plugin.
 
+If you are using a different suffix, you can adjust the plugin's behavior by specifying the `dtoFileNameSuffix` option (see below).
+
 Previously, if you wanted to provide an interactive experience with the Swagger UI,
 you had to duplicate a lot of code to let the package know how your models/components should be declared in the specification. For example, you could define a simple `CreateUserDto` class as follows:
 
