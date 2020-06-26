@@ -14,7 +14,7 @@ const document = SwaggerModule.createDocument(app, options, {
 
 The `SwaggerModule` provides a way to support multiple specifications. In other words, you can serve different documentation, with different UIs, on different endpoints.
 
-To support multiple specifications, your application must be written with a modular approach. The `createDocument()` method takes in a 3rd argument, `extraOptions`, which is an object with a the property `include`. The `include` property has a value which is an array of modules.
+To support multiple specifications, your application must be written with a modular approach. The `createDocument()` method takes a 3rd argument, `extraOptions`, which is an object with a property named `include`. The `include` property takes a value which is an array of modules.
 
 You can setup multiple specifications support as shown below:
 
