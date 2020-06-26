@@ -92,7 +92,7 @@ export class Cat {
 }
 ```
 
-Then, `Cat` model must be used in combination with the `type` property of the response decorator.
+Then the `Cat` model can be used in combination with the `type` property of the response decorator.
 
 ```typescript
 @ApiTags('cats')
