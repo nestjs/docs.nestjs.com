@@ -17,7 +17,7 @@ const options = new DocumentBuilder().addSecurity('basic', {
 });
 ```
 
-Some of the most popular authentication techniques are predefined (e.g. `basic` and `bearer`) and therefore you don't have to define security mechanisms manually as shown above.
+Some of the most popular authentication techniques are built-in (e.g., `basic` and `bearer`) and therefore you don't have to define security mechanisms manually as shown above.
 
 #### Basic authentication
 
