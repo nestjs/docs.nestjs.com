@@ -49,7 +49,7 @@ In addition, the `@ApiProperty()` decorator allows setting various [Schema Objec
 age: number;
 ```
 
-> info **Hint** Instead of explicitly typing the `{{"@ApiProperty({ required: false })"}}` you can use `@ApiPropertyOptional()` short-hand decorator.
+> info **Hint** Instead of explicitly typing the `{{"@ApiProperty({ required: false })"}}` you can use the `@ApiPropertyOptional()` short-hand decorator.
 
 In order to explicitly set the type of the property, use the `type` key:
 
