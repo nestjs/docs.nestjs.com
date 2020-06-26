@@ -29,7 +29,7 @@ async function bootstrap() {
   /**
    * createDocument(application, configurationOptions, extraOptions);
    *
-   * createDocument method takes in an optional 3rd argument "extraOptions"
+   * createDocument method takes an optional 3rd argument "extraOptions"
    * which is an object with "include" property where you can pass an Array
    * of Modules that you want to include in that Swagger Specification
    * E.g: CatsModule and DogsModule will have two separate Swagger Specifications which
