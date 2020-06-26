@@ -40,7 +40,7 @@ export class CreateUserDto {
 
 While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
 
-Now, with the Swagger plugin enabled, the above class definition can be declared simply:
+By enabling the Swagger plugin, the above class definition can be declared simply:
 
 ```typescript
 export class CreateUserDto {
