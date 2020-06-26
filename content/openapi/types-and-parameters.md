@@ -32,7 +32,7 @@ export class CreateCatDto {
 }
 ```
 
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically do it for you.
+> info **Hint** Instead of manually annotating each property, consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically provide this for you.
 
 Let's open the browser and verify the generated `CreateCatDto` model:
 
