@@ -9,7 +9,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-> info **Hint** To explicitly set the body definition use the `@ApiBody()` decorator (`@nestjs/swagger` package).
+> info **Hint** To explicitly set the body definition use the `@ApiBody()` decorator (imported from the `@nestjs/swagger` package).
 
 Based on the `CreateCatDto`, the module definition will be created:
 
