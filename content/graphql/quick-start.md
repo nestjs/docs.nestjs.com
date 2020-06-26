@@ -101,6 +101,15 @@ GraphQLModule.forRoot({
 }),
 ```
 
+By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically set the `sortSchema` property to `true`:
+
+```typescript
+GraphQLModule.forRoot({
+  autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+  sortSchema: true,
+}),
+```
+
 A fully working code first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first).
 
 #### Schema first
