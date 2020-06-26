@@ -239,7 +239,7 @@ async create(@Body() coords: number[][]) {}
 
 #### Extra models
 
-In order to define additional models that should be inspected by Swagger module, use the `@ApiExtraModels()` decorator:
+To define additional models that should be inspected by the Swagger module, use the `@ApiExtraModels()` decorator:
 
 ```typescript
 @ApiExtraModels(ExtraModel)
