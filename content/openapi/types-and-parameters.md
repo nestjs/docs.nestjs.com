@@ -84,7 +84,7 @@ When you have circular dependencies between classes, use a lazy function to prov
 node: Node;
 ```
 
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect circular dependencies.
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically detect circular dependencies.
 
 #### Generics and interfaces
 
