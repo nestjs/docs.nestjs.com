@@ -285,6 +285,6 @@ type Pet = Cat | Dog;
 pets: Pet[];
 ```
 
-> info **Hint** `getSchemaPath()` function is imported from `@nestjs/swagger`.
+> info **Hint** The `getSchemaPath()` function is imported from `@nestjs/swagger`.
 
 Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
