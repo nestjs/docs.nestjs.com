@@ -205,7 +205,7 @@ CatBreed:
 
 #### Raw definitions
 
-In some specific scenarios (e.g. deeply nested arrays, matrices), you may want to describe your type by hand.
+In some specific scenarios (e.g., deeply nested arrays, matrices), you may want to describe your type by hand.
 
 ```typescript
 @ApiProperty({
