@@ -11,7 +11,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 
 > info **Hint** To explicitly set the body definition use the `@ApiBody()` decorator (imported from the `@nestjs/swagger` package).
 
-Based on the `CreateCatDto`, the module definition will be created:
+Based on the `CreateCatDto`, the following model definition Swagger UI will be created:
 
 <figure><img src="/assets/swagger-dto.png" /></figure>
 
