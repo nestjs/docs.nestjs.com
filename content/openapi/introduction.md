@@ -44,7 +44,7 @@ bootstrap();
 
 The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object.
 
-Once we create a document, we can call `setup()` method. It accepts:
+Once we create a document, we can call the `setup()` method. It accepts:
 
 1. the path to mount the Swagger UI
 2. an application instance
