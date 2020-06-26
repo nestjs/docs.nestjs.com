@@ -256,7 +256,7 @@ Then, you can get the reference (`$ref`) to your model using `getSchemaPath(Extr
 
 #### oneOf, anyOf, allOf
 
-In order to combine schemas, you can use `oneOf`, `anyOf` or `allOf` keywords ([read more](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/)).
+To combine schemas, you can use the `oneOf`, `anyOf` or `allOf` keywords ([read more](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/)).
 
 ```typescript
 @ApiProperty({
