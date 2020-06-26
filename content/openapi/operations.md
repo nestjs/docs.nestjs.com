@@ -27,7 +27,7 @@ export class CatsController {}
 
 #### Responses
 
-To define a custom HTTP response, we use `@ApiResponse()` decorator.
+To define a custom HTTP response, use the `@ApiResponse()` decorator.
 
 ```typescript
 @Post()
