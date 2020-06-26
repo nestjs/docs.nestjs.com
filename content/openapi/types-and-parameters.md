@@ -15,7 +15,7 @@ Based on the `CreateCatDto`, the following model definition Swagger UI will be c
 
 <figure><img src="/assets/swagger-dto.png" /></figure>
 
-As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties visible to the `SwaggerModule`, we have to either annotate them with the `@ApiProperty()` decorator or use a CLI plugin (read more in the **Plugin** section) which will do it automatically:
+As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties visible to the `SwaggerModule`, we have to either annotate them with the `@ApiProperty()` decorator or use the CLI plugin (read more in the **Plugin** section) which will do it automatically:
 
 ```typescript
 import { ApiProperty } from '@nestjs/swagger';
