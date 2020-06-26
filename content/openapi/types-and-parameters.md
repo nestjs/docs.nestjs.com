@@ -69,7 +69,7 @@ When the property is an array, we must manually indicate the array type as shown
 names: string[];
 ```
 
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/recipes/swagger#plugin) section) which will automatically detect arrays.
+> info **Hint** Consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically detect arrays.
 
 Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
 
