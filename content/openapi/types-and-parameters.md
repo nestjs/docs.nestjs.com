@@ -174,7 +174,7 @@ export enum CatInformationEnum {
 > info **Hint** The above snippet is generated using a tool called [NSwag](https://github.com/RicoSuter/NSwag).
 
 You can see that now you have two `enums` that are exactly the same.
-To address this issue, you can pass an `enumName` next to `enum` property in your decorator.
+To address this issue, you can pass an `enumName` along with the `enum` property in your decorator.
 
 ```typescript
 export class CatDetail {
