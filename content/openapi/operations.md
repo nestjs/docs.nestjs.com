@@ -1,6 +1,6 @@
 ### Operations
 
-In OpenAPI terms, paths are endpoints (resources), such as `/users` or `/reports/summary/`, that your API exposes, and operations are the HTTP methods used to manipulate these paths, such as `GET`, `POST` or `DELETE`.
+In OpenAPI terms, paths are endpoints (resources), such as `/users` or `/reports/summary`, that your API exposes, and operations are the HTTP methods used to manipulate these paths, such as `GET`, `POST` or `DELETE`.
 
 #### Tags
 
