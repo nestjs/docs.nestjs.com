@@ -57,7 +57,7 @@ The plugin adds appropriate decorators on the fly based on the **Abstract Syntax
 
 #### Using the CLI plugin
 
-In order to enable the plugin, simply open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
+To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
 
 ```javascript
 {
