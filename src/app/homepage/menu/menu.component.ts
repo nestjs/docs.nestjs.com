@@ -228,6 +228,10 @@ export class MenuComponent implements OnInit {
       path: '/migration-guide',
     },
     {
+      title: 'Official courses',
+      externalUrl: 'https://courses.nestjs.com/',
+    },
+    {
       title: 'Discover',
       isOpened: false,
       children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
