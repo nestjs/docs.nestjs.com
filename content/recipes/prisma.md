@@ -1,8 +1,8 @@
-### Prisma
+### Prisma 1
 
-[Prisma](https://www.prisma.io/) turns your database into a GraphQL API and enables the use of GraphQL as a universal query language for all databases. Instead of writing SQL or using a NoSQL API, you can query your database with GraphQL. In this chapter we won't go into details about Prisma, so head over to their website and have a look what features are available.
+[Prisma 1](https://v1.prisma.io/docs/1.34) turns your database into a GraphQL API and enables the use of GraphQL as a universal query language for all databases. Instead of writing SQL or using a NoSQL API, you can query your database with GraphQL. In this chapter we won't go into details about Prisma so head over to their website and have a look what features are available.
 
-> warning **Notice** In this article, you'll learn how to integrate `Prisma` into the Nest framework. We assume that you are already familiar with the GraphQL concepts and the `@nestjs/graphql` module.
+> warning **Notice** In this article, you'll learn how to integrate `Prisma 1` into the Nest framework. We assume that you are already familiar with the GraphQL concepts and the `@nestjs/graphql` module.
 
 #### Dependencies
 
@@ -12,15 +12,15 @@ Firstly, we need to install the required packages:
 $ npm install --save prisma-binding
 ```
 
-#### Setup Prisma
+#### Setup Prisma 1
 
-While working with Prisma you can either host your own instance or use the [Prisma Cloud](https://www.prisma.io/cloud/). In this introduction we are going to use the demo server provided by Prisma.
+While working with Prisma 1 you can either host your own instance or use the [Prisma Cloud](https://www.prisma.io/cloud/). In this introduction we are going to use the demo server provided by Prisma.
 
-1.  Install the Prisma CLI `npm install -g prisma`
-2.  Create a new service `prisma init`, choose the demo server and follow the instructions
-3.  Deploy your service `prisma deploy`
+1.  Install the Prisma CLI `npm install -g prisma1`
+2.  Create a new service `prisma1 init`, choose the demo server and follow the instructions
+3.  Deploy your service `prisma1 deploy`
 
-If you find yourself in trouble jump over to their [Quick Start](https://www.prisma.io/docs/quickstart/) section for further details. Eventually you should see two new files in your project directory, `prisma.yaml` configuration file:
+If you find yourself in trouble jump over to their [Quick Start](https://v1.prisma.io/docs/1.34/get-started/01-setting-up-prisma-new-database-JAVASCRIPT-a002/) section for further details. Eventually you should see two new files in your project directory, `prisma.yaml` configuration file:
 
 ```yaml
 endpoint: https://us1.prisma.sh/nest-f6ec12/prisma/dev
