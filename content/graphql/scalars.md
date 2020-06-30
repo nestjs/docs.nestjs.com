@@ -78,7 +78,7 @@ $ npm i --save graphql-type-json
 Once the package is installed, we pass a custom resolver to the `forRoot()` method:
 
 ```typescript
-import * as GraphQLJSON from 'graphql-type-json';
+import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [
