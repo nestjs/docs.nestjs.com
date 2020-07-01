@@ -5,6 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu',
@@ -254,7 +255,7 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.router.events
-      .filter((event) => event instanceof NavigationEnd)
+      .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe((event) => this.toggleCategory());
 
     this.toggleCategory();
