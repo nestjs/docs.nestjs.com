@@ -161,6 +161,11 @@
       "logo": "/assets/logo/facile.png",
       "url": "https://www.facile.it",
       "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/interfacewerk.png",
+      "url": "https://interfacewerk.de",
+      "width": "130px"
     }
   ],
   "Body": [
