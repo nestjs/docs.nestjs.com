@@ -55,7 +55,7 @@
     "@types/prismjs": "1.16.0",
     "@types/rimraf": "3.0.0",
     "chokidar": "3.4.0",
-    "codelyzer": "5.2.2",
+    "codelyzer": "6.0.0",
     "concurrently": "5.2.0",
     "dgeni": "0.4.12",
     "dgeni-packages": "0.28.4",
