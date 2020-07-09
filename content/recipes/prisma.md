@@ -6,7 +6,7 @@ Prisma is used as an alternative to writing plain SQL, or using another database
 
 While Prisma is a _toolkit_ that contains _multiple_ tools, the focus of this guide will be on using [Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client). Prisma Client is an auto-generated and type-safe query builder that lets you read and write data in your database.
 
-> **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/).
+> **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/). There also is a great [`nestjs-prisma-starter`](https://github.com/fivethree-team/nestjs-prisma-starter) project available if you want to get started using NestJS with Prisma in production.
 
 #### Getting started
 
@@ -260,14 +260,14 @@ Note that this command automatically invokes the `prisma generate` command for y
 
 > **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
 
+
 ##### 7. Use Prisma Client in your NestJS services
 
 You're now able to send database queries with Prisma Client! If you want to learn about the possible queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
 
-
 When setting up your NestJS application, you'll want to abstract away the Prisma Client API for database queries within a _service_. To get started, you can create a new `PrismaService` that takes care of instantiating `PrismaClient` and connecting to your database.
 
-Inside the `src` dirtectory, create a new file called `prisma.service.ts` and add the following code to it:
+Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
@@ -291,7 +291,7 @@ export class PrismaService extends PrismaClient
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
-Still inside the `src` dirtectory, create a new file called `user.service.ts` and add the following code to it:
+Still inside the `src` directory, create a new file called `user.service.ts` and add the following code to it:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -361,7 +361,8 @@ Notice how you're using Prisma Client's generated types to ensure that the metho
 
 Now do the same for the `Post` model.
 
-Still inside the `src` dirtectory, create a new file called `post.service.ts` and add the following code to it:
+
+Still inside the `src` directory, create a new file called `post.service.ts` and add the following code to it:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -522,13 +523,14 @@ export class AppController {
 }
 ```
 
-This implements the following routes:
+This controller implements the following routes:
+
 
 ###### `GET`
 
 - `/post/:id`: Fetch a single post by its `id`
 - `/feed`: Fetch all _published_ posts
-- `/filterPosts?searchString={searchString}`: Filter posts by `title` or `content`
+- `/filterPosts/:searchString`: Filter posts by `title` or `content`
 
 ###### `POST`
 
@@ -549,6 +551,7 @@ This implements the following routes:
 ###### `DELETE`
 
 - `/post/:id`: Delete a post by its `id`
+
 
 #### Summary
 
