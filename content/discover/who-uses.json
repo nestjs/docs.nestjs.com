@@ -166,6 +166,11 @@
       "logo": "/assets/logo/interfacewerk.png",
       "url": "https://interfacewerk.de",
       "width": "130px"
+    },
+    {
+      "logo": "/assets/logo/ottonova.png",
+      "url": "https://www.ottonova.de",
+      "width": "130px"
     }
   ],
   "Body": [
@@ -212,6 +217,7 @@
     "https://harmonize.health",
     "https://accerlery.be",
     "https://www.facile.it",
-    "https://shopback.com"
+    "https://shopback.com",
+    "https://www.ottonova.de"
   ]
 }
