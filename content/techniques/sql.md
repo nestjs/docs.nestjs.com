@@ -582,9 +582,14 @@ export class AuthorModule {}
 Afterward, simply inject the repository using the following construction:
 
 ```typescript
+import { InjectRepository } from '@nestjs/typeorm';
+
 @Injectable()
 export class AuthorService {
-  constructor(private authorRepository: AuthorRepository) {}
+  constructor(
+    @InjectRepository(AuthorRepository)
+    private readonly authorRepository: AuthorRepository
+  ) {}
 }
 ```
 
