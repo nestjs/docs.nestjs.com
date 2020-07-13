@@ -101,7 +101,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically set the `sortSchema` property to `true`:
+By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically, set the `sortSchema` property to `true`:
 
 ```typescript
 GraphQLModule.forRoot({
