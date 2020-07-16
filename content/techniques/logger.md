@@ -34,6 +34,8 @@ await app.listen(3000);
 
 Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
 
+To disable log coloring you can set env var [`NO_COLOR=true`](https://no-color.org/) as `cli-color` package supports it.
+
 #### Custom implementation
 
 You can provide a custom logger implementation to be used by Nest for system logging by setting the value of the `logger` property to an object that fulfills the `LoggerService` interface. For example, you can tell Nest to use the built-in global JavaScript `console` object (which implements the `LoggerService` interface), as follows:
