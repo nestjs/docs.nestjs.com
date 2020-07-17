@@ -358,6 +358,63 @@ With that option specified, every entity registered through the `forFeature()` m
 
 > warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but are only referenced from the entity (via a relationship), won't be included by way of the `autoLoadEntities` setting.
 
+#### Separating entity definition
+
+You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
+
+```typescript
+import { EntitySchema } from 'typeorm';
+import { User } from './user.entity';
+
+export const UserSchema = new EntitySchema<User>({
+  name: 'User',
+  target: User,
+  columns: {
+    id: {
+      type: Number,
+      primary: true,
+      generated: true,
+    },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  relations: {
+    photos: {
+      type: 'one-to-many',
+      target: 'Photo', // the name of the PhotoSchema
+    },
+  },
+});
+```
+
+> warning error **Warning** If you provide the `target` option, the `name` option value has to be the same as the name of the target class.
+> If you do not provide the `target` you can use any name.
+
+Nest allows you to use an `EntitySchema` instance wherever an `Entity` is expected, for example:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserSchema } from './user.schema';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([UserSchema])],
+  providers: [UsersService],
+  controllers: [UsersController],
+})
+export class UsersModule {}
+```
+
 #### Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
