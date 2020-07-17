@@ -358,46 +358,45 @@ With that option specified, every entity registered through the `forFeature()` m
 
 > warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but are only referenced from the entity (via a relationship), won't be included by way of the `autoLoadEntities` setting.
 
-#### Separating Entity Definition
+#### Separating entity definition
 
-You can define an entity and its columns right in the model, using decorators. But some people prefer to define an entity and its columns inside separate files which are called ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
-
+You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
 
 ```typescript
 import { EntitySchema } from 'typeorm';
 import { User } from './user.entity';
 
 export const UserSchema = new EntitySchema<User>({
-    name: 'User',
-    target: User,
-    columns: {
-        id: {
-            type: Number,
-            primary: true,
-            generated: true
-        },
-        firstName: {
-            type: String
-        },
-        lastName: {
-            type: String
-        },
-        isActive: {
-            type: Boolean,
-            default: true
-        }
+  name: 'User',
+  target: User,
+  columns: {
+    id: {
+      type: Number,
+      primary: true,
+      generated: true,
     },
-    relations: {
-        photos: {
-            type: 'one-to-many',
-            target: 'Photo' // The name of the PhotoSchema
-        }
-    }
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  relations: {
+    photos: {
+      type: 'one-to-many',
+      target: 'Photo', // the name of the PhotoSchema
+    },
+  },
 });
 ```
-> error **Warning** If you provide the `target` option, the `name` option value has to be the same as the name of the target class.
-> If you do not provide the `target` you can use any name.
 
+> warning error **Warning** If you provide the `target` option, the `name` option value has to be the same as the name of the target class.
+> If you do not provide the `target` you can use any name.
 
 Nest allows you to use an `EntitySchema` instance wherever an `Entity` is expected, for example:
 
