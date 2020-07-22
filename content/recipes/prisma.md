@@ -41,13 +41,13 @@ See the [First steps](https://docs.nestjs.com/first-steps) page to learn more ab
 Start by installing the Prisma CLI as a development dependency in your project:
 
 ```bash
-npm install @prisma/cli --save-dev
+$ npm install @prisma/cli --save-dev
 ```
 
 As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
 
 ```bash
-npx prisma
+$ npx prisma
 ```
 
 <details><summary>Expand if you're using Yarn</summary>
@@ -55,13 +55,13 @@ npx prisma
 If you're using Yarn, then you can install the Prisma CLI as follows:
 
 ```bash
-yarn add @prisma/cli --dev
+$ yarn add @prisma/cli --dev
 ```
 
 Once installed, you can invoke it by prefixing it with `yarn`:
 
 ```bash
-yarn prisma
+$ yarn prisma
 ```
 
 </details>
@@ -69,7 +69,7 @@ yarn prisma
 Now create your initial Prisma setup using the `init` command of the Prisma CLI:
 
 ```bash
-npx prisma init
+$ npx prisma init
 ```
 
 This command created a new `prisma` directory with the following contents:
@@ -171,7 +171,7 @@ In this section, you'll create two new tables in your database. Run the followin
 **Mac OS / Linux**
 
 ```bash
-sqlite3 dev.db \
+$ sqlite3 dev.db \
 'CREATE TABLE "User" (
   "id"    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name"  TEXT,
@@ -190,7 +190,7 @@ CREATE TABLE "Post" (
 **Windows**
 
 ```bash
-sqlite3 ./prisma/dev.db 
+$ sqlite3 ./prisma/dev.db 
 CREATE TABLE "User" (
   "id"    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name"  TEXT,
@@ -214,7 +214,7 @@ Now that you created your database tables, you can _introspect_ the database to 
 To introspect your database, run the following command in your terminal:
 
 ```bash
-npx prisma introspect
+$ npx prisma introspect
 ```
 
 This reads your SQL schema and translates each table into a corresponding Prisma model. Your `schema.prisma` file now looks as follows:
@@ -253,7 +253,7 @@ With your Prisma models in place, you can install and generate Prisma Client.
 To install Prisma Client in your project, run the following command in your terminal:
 
 ```bash
-npm install @prisma/client
+$ npm install @prisma/client
 ```
 
 Note that this command automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
@@ -551,7 +551,6 @@ This controller implements the following routes:
 ###### `DELETE`
 
 - `/post/:id`: Delete a post by its `id`
-
 
 #### Summary
 
