@@ -44,7 +44,7 @@ Start by installing the Prisma CLI as a development dependency in your project:
 $ npm install @prisma/cli --save-dev
 ```
 
-As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
+In the following steps, we'll be utilizing the [Prisma CLI](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli). As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
 
 ```bash
 $ npx prisma
@@ -72,14 +72,14 @@ Now create your initial Prisma setup using the `init` command of the Prisma CLI:
 $ npx prisma init
 ```
 
-This command created a new `prisma` directory with the following contents:
+This command creates a new `prisma` directory with the following contents:
 
 - `schema.prisma`: Specifies your database connection and contains the database schema
-- `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in an environment variable
+- `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in a group of environment variables
 
 ##### 3. Create your SQLite database file and set the database connection
 
-SQLite databases are simple files, no server is required to use a SQLite database. You can therefore create a new SQLite database by manually creating a new file on your file system.
+SQLite databases are simple files; no server is required to use a SQLite database. You can therefore create a new SQLite database by manually creating a new file on your file system.
 
 Navigate into the new `prisma` directory and create a file called `dev.db` inside of it. 
 
@@ -209,7 +209,7 @@ Note that Prisma also features a _schema migration_ tool called [Prisma Migrate]
 
 ##### 5. Introspect your database to obtain your Prisma models in the Prisma schema
 
-Now that you created your database tables, you can _introspect_ the database to generate your [Prisma models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/models). After that, you will install and generate Prisma Client which will expose queries that are _tailored_ to these models.
+Now that you've created your database tables, you can _introspect_ the database to generate your [Prisma models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/models). After that, you will install and generate Prisma Client, which will expose queries that are _tailored_ to these models.
 
 To introspect your database, run the following command in your terminal:
 
@@ -256,7 +256,7 @@ To install Prisma Client in your project, run the following command in your term
 $ npm install @prisma/client
 ```
 
-Note that this command automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
+Note that during installation, Prisma automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
 
 > **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
 
@@ -357,7 +357,7 @@ export class UserService {
 }
 ```
 
-Notice how you're using Prisma Client's generated types to ensure that the methods that are exposed by your service are properly typed! You therefore save the boilerplate of typing your models and creating additional interface or DTO files.
+Notice how you're using Prisma Client's generated types to ensure that the methods that are exposed by your service are properly typed. You therefore save the boilerplate of typing your models and creating additional interface or DTO files.
 
 Now do the same for the `Post` model.
 
@@ -554,6 +554,6 @@ This controller implements the following routes:
 
 #### Summary
 
-In this guide, you learned how to implement a use NestJS together with Prisma to implement a REST API. The controller who implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
+In this recipe, you learned how to use Prisma along with NestJS to implement a REST API. The controller that implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
 
 If you want to learn more about Prisma, be sure to check out the [documentation](https://www.prisma.io/docs/). 
