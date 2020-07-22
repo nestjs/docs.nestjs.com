@@ -72,7 +72,7 @@ Now create your initial Prisma setup using the `init` command of the Prisma CLI:
 $ npx prisma init
 ```
 
-This command created a new `prisma` directory with the following contents:
+This command creates a new `prisma` directory with the following contents:
 
 - `schema.prisma`: Specifies your database connection and contains the database schema
 - `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in an environment variable
