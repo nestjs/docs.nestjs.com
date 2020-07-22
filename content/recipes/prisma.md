@@ -263,7 +263,7 @@ Note that this command automatically invokes the `prisma generate` command for y
 
 ##### 7. Use Prisma Client in your NestJS services
 
-You're now able to send database queries with Prisma Client! If you want to learn about the possible queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
+You're now able to send database queries with Prisma Client. If you want to learn more about building queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
 
 When setting up your NestJS application, you'll want to abstract away the Prisma Client API for database queries within a _service_. To get started, you can create a new `PrismaService` that takes care of instantiating `PrismaClient` and connecting to your database.
 
