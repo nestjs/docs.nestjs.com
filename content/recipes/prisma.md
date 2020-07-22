@@ -44,7 +44,7 @@ Start by installing the Prisma CLI as a development dependency in your project:
 $ npm install @prisma/cli --save-dev
 ```
 
-As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
+In the following steps, we'll be utilizing the [Prisma CLI](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli). As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
 
 ```bash
 $ npx prisma
