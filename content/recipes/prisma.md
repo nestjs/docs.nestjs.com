@@ -209,7 +209,7 @@ Note that Prisma also features a _schema migration_ tool called [Prisma Migrate]
 
 ##### 5. Introspect your database to obtain your Prisma models in the Prisma schema
 
-Now that you created your database tables, you can _introspect_ the database to generate your [Prisma models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/models). After that, you will install and generate Prisma Client which will expose queries that are _tailored_ to these models.
+Now that you've created your database tables, you can _introspect_ the database to generate your [Prisma models](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-schema/models). After that, you will install and generate Prisma Client, which will expose queries that are _tailored_ to these models.
 
 To introspect your database, run the following command in your terminal:
 
