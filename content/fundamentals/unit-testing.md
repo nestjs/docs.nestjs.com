@@ -256,30 +256,31 @@ Each of the override method types, in turn, returns the `TestingModule` instance
 The compiled module has several useful methods, as described in the following table:
 
 <table>
-    <tr>
-      <td>
-        <code>createNestApplication()</code>
-      </td>
-      <td>
-        Creates and returns a Nest application (<code>INestApplication</code> instance) based on the given module.
-        Note that you must manually initialize the application using the <code>init()</code> method.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>createNestMicroservice()</code>
-      </td>
-      <td>
-        Creates and returns a Nest microservice (<code>INestMicroservice</code> instance) based on the given module.
-      </td>
-    </tr>
-    <tr>
+  <tr>
+    <td>
+      <code>createNestApplication()</code>
+    </td>
+    <td>
+      Creates and returns a Nest application (<code>INestApplication</code> instance) based on the given module.
+      Note that you must manually initialize the application using the <code>init()</code> method.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>createNestMicroservice()</code>
+    </td>
+    <td>
+      Creates and returns a Nest microservice (<code>INestMicroservice</code> instance) based on the given module.
+    </td>
+  </tr>
+  <tr>
     <td>
       <code>get()</code>
     </td>
     <td>
       Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
+  </tr>
   <tr>
      <td>
       <code>resolve()</code>
