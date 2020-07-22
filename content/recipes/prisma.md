@@ -357,7 +357,7 @@ export class UserService {
 }
 ```
 
-Notice how you're using Prisma Client's generated types to ensure that the methods that are exposed by your service are properly typed! You therefore save the boilerplate of typing your models and creating additional interface or DTO files.
+Notice how you're using Prisma Client's generated types to ensure that the methods that are exposed by your service are properly typed. You therefore save the boilerplate of typing your models and creating additional interface or DTO files.
 
 Now do the same for the `Post` model.
 
