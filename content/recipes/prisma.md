@@ -75,7 +75,7 @@ $ npx prisma init
 This command creates a new `prisma` directory with the following contents:
 
 - `schema.prisma`: Specifies your database connection and contains the database schema
-- `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in an environment variable
+- `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in a group of environment variables
 
 ##### 3. Create your SQLite database file and set the database connection
 
