@@ -554,6 +554,6 @@ This controller implements the following routes:
 
 #### Summary
 
-In this guide, you learned how to implement a use NestJS together with Prisma to implement a REST API. The controller who implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
+In this recipe, you learned how to use Prisma along with NestJS to implement a REST API. The controller that implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
 
 If you want to learn more about Prisma, be sure to check out the [documentation](https://www.prisma.io/docs/). 
