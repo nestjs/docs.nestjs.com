@@ -79,7 +79,7 @@ This command creates a new `prisma` directory with the following contents:
 
 ##### 3. Create your SQLite database file and set the database connection
 
-SQLite databases are simple files, no server is required to use a SQLite database. You can therefore create a new SQLite database by manually creating a new file on your file system.
+SQLite databases are simple files; no server is required to use a SQLite database. You can therefore create a new SQLite database by manually creating a new file on your file system.
 
 Navigate into the new `prisma` directory and create a file called `dev.db` inside of it. 
 
