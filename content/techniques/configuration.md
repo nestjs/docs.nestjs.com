@@ -153,7 +153,7 @@ As shown above, use the `configService.get()` method to get a simple environment
 const dbHost = this.configService.get<string>('database.host', 'localhost');
 ```
 
-`ConfigService` has an optional generic to help prevent accessing a config property that does not exist.  Use it as shown below:
+`ConfigService` has an optional generic (type argument) to help prevent accessing a config property that does not exist. Use it as shown below:
 
 ```typescript
 interface EnvironmentVariables {
