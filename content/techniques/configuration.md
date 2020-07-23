@@ -161,6 +161,7 @@ interface EnvironmentVariables {
   TIMEOUT: string;
 }
 
+// somewhere in the code
 constructor(private configService: ConfigService<EnvironmentVariables>) {
   // This is valid
   const port = this.configService.get<number>('PORT');
