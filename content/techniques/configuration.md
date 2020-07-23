@@ -170,7 +170,7 @@ constructor(private configService: ConfigService<EnvironmentVariables>) {
 }
 ```
 
-> warning **Notice** If you have nested properties in your config like in the `database.host` example above then your interface will need to have a `'database.host': string;` property, otherwise a TypeScript error will be thrownx1.
+> warning **Notice** If you have nested properties in your config, like in the `database.host` example above,  the interface must have a matching `'database.host': string;` property.  Otherwise a TypeScript error will be thrown.
 
 #### Configuration namespaces
 
