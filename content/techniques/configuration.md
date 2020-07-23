@@ -153,6 +153,26 @@ As shown above, use the `configService.get()` method to get a simple environment
 const dbHost = this.configService.get<string>('database.host', 'localhost');
 ```
 
+`ConfigService` has an optional generic (type argument) to help prevent accessing a config property that does not exist. Use it as shown below:
+
+```typescript
+interface EnvironmentVariables {
+  PORT: number;
+  TIMEOUT: string;
+}
+
+// somewhere in the code
+constructor(private configService: ConfigService<EnvironmentVariables>) {
+  // this is valid
+  const port = this.configService.get<number>('PORT');
+  
+  // this is invalid as URL is not a property on the EnvironmentVariables interface
+  const url = this.configService.get<string>('URL');
+}
+```
+
+> warning **Notice** If you have nested properties in your config, like in the `database.host` example above,  the interface must have a matching `'database.host': string;` property.  Otherwise a TypeScript error will be thrown.
+
 #### Configuration namespaces
 
 The `ConfigModule` allows you to define and load multiple custom configuration files, as shown in <a href="techniques/configuration#custom-configuration-files">Custom configuration files</a> above. You can manage complex configuration object hierarchies with nested configuration objects as shown in that section. Alternatively, you can return a "namespaced" configuration object with the `registerAs()` function as follows:
