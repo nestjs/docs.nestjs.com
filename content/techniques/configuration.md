@@ -163,10 +163,10 @@ interface EnvironmentVariables {
 
 // somewhere in the code
 constructor(private configService: ConfigService<EnvironmentVariables>) {
-  // This is valid
+  // this is valid
   const port = this.configService.get<number>('PORT');
   
-  // This is invalid as URL is not a property on the EnvironmentVariables interface
+  // this is invalid as URL is not a property on the EnvironmentVariables interface
   const url = this.configService.get<string>('URL');
 }
 ```
