@@ -55,7 +55,7 @@ $ nest g <schematic> <name> [options]
 
 | Name          | Alias | Description                                                                                         |
 | ------------- | ----- | --------------------------------------------------------------------------------------------------- |
-| `application` |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
+| `app`         |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
 | `library`     | `lib` | Generate a new library within a monorepo (converting to monorepo if it's a standard structure).     |
 | `class`       | `cl`  | Generate a new class.                                                                               |
 | `controller`  | `co`  | Generate a controller declaration.                                                                  |
@@ -160,7 +160,7 @@ Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to th
 | Option    | Description                                                              |
 | --------- | ------------------------------------------------------------------------ |
 | `--force` | Do **upgrade** instead of update <br/>Alias `-f`                         |
-| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-wt` |  |
+| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |  |
 
 #### nest info
 

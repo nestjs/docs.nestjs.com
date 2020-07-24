@@ -338,7 +338,7 @@ clearTimeout(timeout);
 addTimeout(name: string, seconds: string) {
   const callback = () => {
     this.logger.warn(`Timeout ${name} executing after (${seconds})!`);
-  });
+  };
 
   const timeout = setTimeout(callback, seconds);
   this.scheduler.addTimeout(name, timeout);

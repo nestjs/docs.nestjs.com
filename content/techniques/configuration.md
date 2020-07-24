@@ -146,12 +146,32 @@ const dbUser = this.configService.get<string>('DATABASE_USER');
 const dbHost = this.configService.get<string>('database.host');
 ```
 
-As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>, as shown in the second example above. The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
+As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>), as shown in the second example above. The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
 
 ```typescript
 // use "localhost" when "database.host" is not defined
 const dbHost = this.configService.get<string>('database.host', 'localhost');
 ```
+
+`ConfigService` has an optional generic (type argument) to help prevent accessing a config property that does not exist. Use it as shown below:
+
+```typescript
+interface EnvironmentVariables {
+  PORT: number;
+  TIMEOUT: string;
+}
+
+// somewhere in the code
+constructor(private configService: ConfigService<EnvironmentVariables>) {
+  // this is valid
+  const port = this.configService.get<number>('PORT');
+  
+  // this is invalid as URL is not a property on the EnvironmentVariables interface
+  const url = this.configService.get<string>('URL');
+}
+```
+
+> warning **Notice** If you have nested properties in your config, like in the `database.host` example above,  the interface must have a matching `'database.host': string;` property.  Otherwise a TypeScript error will be thrown.
 
 #### Configuration namespaces
 
@@ -195,7 +215,7 @@ A reasonable alternative is to inject the `database` namespace directly. This al
 ```typescript
 constructor(
   @Inject(databaseConfig.KEY)
-  private databaseConfig: ConfigType<typeof databaseConfig>,
+  private dbConfig: ConfigType<typeof databaseConfig>,
 ) {}
 ```
 

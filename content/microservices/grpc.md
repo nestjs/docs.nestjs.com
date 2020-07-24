@@ -90,7 +90,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
 
 #### Sample gRPC service
 
-Let's define our sample gRPC service called `HeroService`. In the above `options` object, the`protoPath` property sets a path to the `.proto` definitions file `hero.proto`. The `hero.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
+Let's define our sample gRPC service called `HeroesService`. In the above `options` object, the`protoPath` property sets a path to the `.proto` definitions file `hero.proto`. The `hero.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
 
 ```typescript
 // hero/hero.proto
@@ -98,7 +98,7 @@ syntax = "proto3";
 
 package hero;
 
-service HeroService {
+service HeroesService {
   rpc FindOne (HeroById) returns (Hero) {}
 }
 
@@ -112,17 +112,17 @@ message Hero {
 }
 ```
 
-Our `HeroService` exposes a `FindOne()` method. This method expects an input argument of type `HeroById` and returns a `Hero` message (protocol buffers use `message` elements to define both parameter types and return types).
+Our `HeroesService` exposes a `FindOne()` method. This method expects an input argument of type `HeroById` and returns a `Hero` message (protocol buffers use `message` elements to define both parameter types and return types).
 
 Next, we need to implement the service. To define a handler that fulfills this definition, we use the `@GrpcMethod()` decorator in a controller, as shown below. This decorator provides the metadata needed to declare a method as a gRPC service method.
 
 > info **Hint** The `@MessagePattern()` decorator (<a href="microservices/basics#request-response">read more</a>) introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService', 'FindOne')
+export class HeroesController {
+  @GrpcMethod('HeroesService', 'FindOne')
   findOne(data: HeroById, metadata: any): Hero {
     const items = [
       { id: 1, name: 'John' },
@@ -133,8 +133,8 @@ export class HeroController {
 }
 @@switch
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService', 'FindOne')
+export class HeroesController {
+  @GrpcMethod('HeroesService', 'FindOne')
   findOne(data, metadata) {
     const items = [
       { id: 1, name: 'John' },
@@ -147,17 +147,17 @@ export class HeroController {
 
 > info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package.
 
-The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroService'`), corresponding to the `HeroService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroService` in the `hero.proto` file.
+The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroesService'`), corresponding to the `HeroesService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroesService` in the `hero.proto` file.
 
 The `findOne()` handler method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request metadata.
 
 Both `@GrpcMethod()` decorator arguments are optional. If called without the second argument (e.g., `'FindOne'`), Nest will automatically associate the `.proto` file rpc method with the handler based on converting the handler name to upper camel case (e.g., the `findOne` handler is associated with the `FindOne` rpc call definition). This is shown below.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService')
+export class HeroesController {
+  @GrpcMethod('HeroesService')
   findOne(data: HeroById, metadata: any): Hero {
     const items = [
       { id: 1, name: 'John' },
@@ -168,8 +168,8 @@ export class HeroController {
 }
 @@switch
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService')
+export class HeroesController {
+  @GrpcMethod('HeroesService')
   findOne(data, metadata) {
     const items = [
       { id: 1, name: 'John' },
@@ -180,12 +180,12 @@ export class HeroController {
 }
 ```
 
-You can also omit the first `@GrpcMethod()` argument. In this case, Nest automatically associates the handler with the service definition from the proto definitions file based on the **class** name where the handler is defined. For example, in the following code, class `HeroService` associates its handler methods with the `HeroService` service definition in the `hero.proto` file based on the matching of the name `'HeroService'`.
+You can also omit the first `@GrpcMethod()` argument. In this case, Nest automatically associates the handler with the service definition from the proto definitions file based on the **class** name where the handler is defined. For example, in the following code, class `HeroesService` associates its handler methods with the `HeroesService` service definition in the `hero.proto` file based on the matching of the name `'HeroesService'`.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroService {
+export class HeroesService {
   @GrpcMethod()
   findOne(data: HeroById, metadata: any): Hero {
     const items = [
@@ -197,7 +197,7 @@ export class HeroService {
 }
 @@switch
 @Controller()
-export class HeroService {
+export class HeroesService {
   @GrpcMethod()
   findOne(data, metadata) {
     const items = [
@@ -237,16 +237,16 @@ Once registered, we can inject the configured `ClientGrpc` object with `@Inject(
 ```typescript
 @Injectable()
 export class AppService implements OnModuleInit {
-  private heroService: HeroService;
+  private heroesService: HeroesService;
 
   constructor(@Inject('HERO_PACKAGE') private client: ClientGrpc) {}
 
   onModuleInit() {
-    this.heroService = this.client.getService<HeroService>('HeroService');
+    this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
   getHero(): Observable<string> {
-    return this.heroService.findOne({ id: 1 });
+    return this.heroesService.findOne({ id: 1 });
   }
 }
 ```
@@ -267,26 +267,26 @@ export class AppService implements OnModuleInit {
   })
   client: ClientGrpc;
 
-  private heroService: HeroService;
+  private heroesService: HeroesService;
 
   onModuleInit() {
-    this.heroService = this.client.getService<HeroService>('HeroService');
+    this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
   getHero(): Observable<string> {
-    return this.heroService.findOne({ id: 1 });
+    return this.heroesService.findOne({ id: 1 });
   }
 }
 ```
 
 Finally, for more complex scenarios, we can inject a dynamically configured client using the `ClientProxyFactory` class as described <a href="/microservices/basics#client">here</a>.
 
-In either case, we end up with a reference to our `HeroService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroService` looks and acts like a local provider.
+In either case, we end up with a reference to our `HeroesService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroesService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroesService` looks and acts like a local provider.
 
-Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroService` definition contains the `FindOne()` function, the `heroService` instance will provide the `findOne()` method.
+Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroesService` definition contains the `FindOne()` function, the `heroesService` instance will provide the `findOne()` method.
 
 ```typescript
-interface HeroService {
+interface HeroesService {
   findOne(data: { id: number }): Observable<any>;
 }
 ```
@@ -294,15 +294,15 @@ interface HeroService {
 A message handler is also able to return an `Observable`, in which case the result values will be emitted until the stream is completed.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Get()
 call(): Observable<any> {
-  return this.heroService.findOne({ id: 1 });
+  return this.heroesService.findOne({ id: 1 });
 }
 @@switch
 @Get()
 call() {
-  return this.heroService.findOne({ id: 1 });
+  return this.heroesService.findOne({ id: 1 });
 }
 ```
 
@@ -330,8 +330,8 @@ syntax = "proto3";
 package hello;
 
 service HelloService {
-  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse)
-  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse)
+  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse);
+  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse);
 }
 
 message HelloRequest {
@@ -392,7 +392,7 @@ According to the service definition (in the `.proto` file), the `BidiHello` meth
 
 ```typescript
 const helloService = this.client.getService<HelloService>('HelloService');
-const helloRequest$ = new ReplySubject<HelloRequest>();
+const helloRequest$ = new ReplaySubject<HelloRequest>();
 
 helloRequest$.next({ greeting: 'Hello (1)!' });
 helloRequest$.next({ greeting: 'Hello (2)!' });

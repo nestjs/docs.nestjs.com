@@ -171,7 +171,17 @@
   }
 
   .logo-sponsor {
-    width: 280px;
+    //width: 280px;
+    margin-top: 10px;
+    width: 180px;
+    filter: grayscale(1);
+    &:first-of-type {
+      margin-right: 30px;
+      margin-bottom: 10px;
+    }
+    &:hover {
+      filter: grayscale(0);
+    }
   }
 
   .logo-sponsor-small {

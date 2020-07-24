@@ -5,6 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu',
@@ -113,9 +114,14 @@ export class MenuComponent implements OnInit {
         { title: 'Interfaces', path: '/graphql/interfaces' },
         { title: 'Unions', path: '/graphql/unions' },
         { title: 'Enums', path: '/graphql/enums' },
+        { title: 'Mapped types', path: '/graphql/mapped-types' },
+        { title: 'Complexity', path: '/graphql/complexity' },
+        { title: 'Extensions', path: '/graphql/extensions' },
+        { title: 'CLI Plugin', path: '/graphql/cli-plugin' },
+        { title: 'Generating SDL', path: '/graphql/generating-sdl' },
         {
           title: 'Other features',
-          path: '/graphql/tooling',
+          path: '/graphql/other-features',
         },
         { title: 'Federation', path: '/graphql/federation' },
       ],
@@ -169,6 +175,24 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'OpenAPI',
+      isOpened: false,
+      children: [
+        { title: 'Introduction', path: '/openapi/introduction' },
+        {
+          title: 'Types and Parameters',
+          path: '/openapi/types-and-parameters',
+        },
+        { title: 'Operations', path: '/openapi/operations' },
+        { title: 'Security', path: '/openapi/security' },
+        { title: 'Mapped Types', path: '/openapi/mapped-types' },
+        { title: 'Decorators', path: '/openapi/decorators' },
+        { title: 'CLI Plugin', path: '/openapi/cli-plugin' },
+        { title: 'Other features', path: '/openapi/other-features' },
+        { title: 'Migration guide', path: '/openapi/migration-guide' },
+      ],
+    },
+    {
       title: 'Recipes',
       isOpened: false,
       children: [
@@ -205,6 +229,10 @@ export class MenuComponent implements OnInit {
       path: '/migration-guide',
     },
     {
+      title: 'Official courses',
+      externalUrl: 'https://courses.nestjs.com/',
+    },
+    {
       title: 'Discover',
       isOpened: false,
       children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
@@ -227,8 +255,8 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.router.events
-      .filter(event => event instanceof NavigationEnd)
-      .subscribe(event => this.toggleCategory());
+      .pipe(filter((ev) => ev instanceof NavigationEnd))
+      .subscribe((event) => this.toggleCategory());
 
     this.toggleCategory();
   }

@@ -20,6 +20,8 @@ import * as helmet from 'helmet';
 app.use(helmet());
 ```
 
+> info **Hint** Note that `app.use(helmet())` must come before other calls to `app.use()` or setup functions that may call `app.use()`). This is due to the way the underlying platform (e.g., Express) works, where the order that middleware/routes are defined matters. If you use middleware like `helmet` or `cors` after you define a route, then that middleware will not apply to that route, it will only apply to middleware defined after the route.
+
 #### CORS
 
 Cross-origin resource sharing (CORS) is a mechanism that allows resources to be requested from another domain. Under the hood, Nest makes use of the Express [cors](https://github.com/expressjs/cors) package. This package provides various options that you can customize based on your requirements. To enable CORS, call the `enableCors()` method on the Nest application object.
@@ -84,10 +86,10 @@ app.use(
 
 When there is a load balancer or reverse proxy between the server and the internet, Express may need to be configured to trust the headers set by the proxy in order to get the correct IP for the end user. To do so, first use the `NestExpressApplication` platform [interface](https://docs.nestjs.com/first-steps#platform) when creating your `app` instance, then enable the [trust proxy](https://expressjs.com/en/guide/behind-proxies.html) setting:
 
- ```typescript
+```typescript
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
 // see https://expressjs.com/en/guide/behind-proxies.html
-app.set('trust proxy', 1)
+app.set('trust proxy', 1);
 ```
 
 > info **Hint** If you use the `FastifyAdapter`, consider using [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) instead.
