@@ -44,3 +44,4 @@ To inherit these configuration properties from the main application, set the `in
 const microservice = app.connectMicroservice({
   transport: Transport.TCP
 }, { inheritAppConfig: true });
+```
