@@ -13,7 +13,7 @@ await app.listen(3001);
 ```
 
 #### Sharing configuration
-By default a hybrid application will not inherit global pipes, interceptors, guards & filters configured for the main (HTTP-based) application.
+By default a hybrid application will not inherit global pipes, interceptors, guards and filters configured for the main (HTTP-based) application.
 To inherit these properties from the main application, set the `inheritAppConfig` property in the second argument (an optional options object) of the `connectMicroservice()` call, as follow:
 
 ```typescript
