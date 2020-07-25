@@ -2,13 +2,23 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
+import { ComplexityComponent } from './complexity/complexity.component';
+import { DirectivesComponent } from './directives/directives.component';
+import { EnumsComponent } from './enums/enums.component';
+import { ExtensionsComponent } from './extensions/extensions.component';
+import { FederationComponent } from './federation/federation.component';
 import { GuardsInterceptorsComponent } from './guards-interceptors/guards-interceptors.component';
+import { InterfacesComponent } from './interfaces/interfaces.component';
+import { MappedTypesComponent } from './mapped-types/mapped-types.component';
 import { MutationsComponent } from './mutations/mutations.component';
+import { PluginsComponent } from './plugins/plugins.component';
 import { QuickStartComponent } from './quick-start/quick-start.component';
 import { ResolversMapComponent } from './resolvers-map/resolvers-map.component';
 import { ScalarsComponent } from './scalars/scalars.component';
-import { SchemaStitchingComponent } from './schema-stitching/schema-stitching.component';
+import { SchemaGeneratorComponent } from './schema-generator/schema-generator.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { UnionsComponent } from './unions/unions.component';
 
 const routes: Routes = [
   {
@@ -18,8 +28,12 @@ const routes: Routes = [
   },
   {
     path: 'resolvers-map',
+    redirectTo: 'resolvers',
+  },
+  {
+    path: 'resolvers',
     component: ResolversMapComponent,
-    data: { title: 'GraphQL + TypeScript - Resolvers Map' },
+    data: { title: 'GraphQL + TypeScript - Resolvers' },
   },
   {
     path: 'mutations',
@@ -38,17 +52,71 @@ const routes: Routes = [
   },
   {
     path: 'guards-interceptors',
-    redirectTo: 'tooling',
+    redirectTo: 'other-features',
   },
   {
     path: 'tooling',
+    redirectTo: 'other-features',
+  },
+  {
+    path: 'other-features',
     component: GuardsInterceptorsComponent,
     data: { title: 'GraphQL + TypeScript - Other features' },
   },
   {
-    path: 'schema-stitching',
-    component: SchemaStitchingComponent,
-    data: { title: 'GraphQL - Schema Stitching' },
+    path: 'federation',
+    component: FederationComponent,
+    data: { title: 'GraphQL + TypeScript - Federation' },
+  },
+  {
+    path: 'directives',
+    component: DirectivesComponent,
+    data: { title: 'GraphQL + TypeScript - Directives' },
+  },
+  {
+    path: 'complexity',
+    component: ComplexityComponent,
+    data: { title: 'GraphQL + TypeScript - Complexity' },
+  },
+  {
+    path: 'extensions',
+    component: ExtensionsComponent,
+    data: { title: 'GraphQL + TypeScript - Extensions' },
+  },
+  {
+    path: 'enums',
+    component: EnumsComponent,
+    data: { title: 'GraphQL + TypeScript - Enums' },
+  },
+  {
+    path: 'unions',
+    component: UnionsComponent,
+    data: { title: 'GraphQL + TypeScript - Unions' },
+  },
+  {
+    path: 'plugins',
+    component: PluginsComponent,
+    data: { title: 'GraphQL + TypeScript - Plugins' },
+  },
+  {
+    path: 'interfaces',
+    component: InterfacesComponent,
+    data: { title: 'GraphQL + TypeScript - Interfaces' },
+  },
+  {
+    path: 'mapped-types',
+    component: MappedTypesComponent,
+    data: { title: 'GraphQL + TypeScript - Mapped types' },
+  },
+  {
+    path: 'cli-plugin',
+    component: CliPluginComponent,
+    data: { title: 'GraphQL + TypeScript - CLI Plugin' },
+  },
+  {
+    path: 'generating-sdl',
+    component: SchemaGeneratorComponent,
+    data: { title: 'GraphQL + TypeScript - Generating SDL' },
   },
 ];
 
@@ -59,9 +127,18 @@ const routes: Routes = [
     ResolversMapComponent,
     MutationsComponent,
     SubscriptionsComponent,
-    SchemaStitchingComponent,
+    DirectivesComponent,
+    EnumsComponent,
+    UnionsComponent,
+    PluginsComponent,
     GuardsInterceptorsComponent,
     ScalarsComponent,
+    SchemaGeneratorComponent,
+    MappedTypesComponent,
+    CliPluginComponent,
+    FederationComponent,
+    ComplexityComponent,
+    ExtensionsComponent,
   ],
 })
 export class GraphqlModule {}

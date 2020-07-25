@@ -6,7 +6,7 @@ Nest provides the `ModuleRef` class to navigate the internal list of providers a
 @@filename(cats.service)
 @Injectable()
 export class CatsService {
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private moduleRef: ModuleRef) {}
 }
 @@switch
 @Injectable()
@@ -29,7 +29,7 @@ The `ModuleRef` instance (hereafter we'll refer to it as the **module reference*
 @Injectable()
 export class CatsService implements OnModuleInit {
   private service: Service;
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private moduleRef: ModuleRef) {}
 
   onModuleInit() {
     this.service = this.moduleRef.get(Service);
@@ -66,7 +66,7 @@ To dynamically resolve a scoped provider (transient or request-scoped), use the 
 @Injectable()
 export class CatsService implements OnModuleInit {
   private transientService: TransientService;
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private moduleRef: ModuleRef) {}
 
   async onModuleInit() {
     this.transientService = await this.moduleRef.resolve(TransientService);
@@ -92,7 +92,7 @@ The `resolve()` method returns a unique instance of the provider, from its own *
 @@filename(cats.service)
 @Injectable()
 export class CatsService implements OnModuleInit {
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private moduleRef: ModuleRef) {}
 
   async onModuleInit() {
     const transientServices = await Promise.all([
@@ -126,7 +126,7 @@ To generate a single instance across multiple `resolve()` calls, and ensure they
 @@filename(cats.service)
 @Injectable()
 export class CatsService implements OnModuleInit {
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private moduleRef: ModuleRef) {}
 
   async onModuleInit() {
     const contextId = ContextIdFactory.create();
@@ -167,7 +167,7 @@ Occasionally, you may want to resolve an instance of a request-scoped provider w
 @Injectable()
 export class CatsService {
   constructor(
-    @Inject(REQUEST) private readonly request: Record<string, unknown>,
+    @Inject(REQUEST) private request: Record<string, unknown>,
   ) {}
 }
 @@switch
@@ -189,16 +189,16 @@ const contextId = ContextIdFactory.getByRequest(this.request);
 const catsRepository = await this.moduleRef.resolve(CatsRepository, contextId);
 ```
 
-#### Instantiating classes dynamically
+#### Instantiating custom classes dynamically
 
-To dynamically instantiate a class that wasn't previously registered as a provider, use the module reference's `create()` method.
+To dynamically instantiate a class that **wasn't previously registered** as a **provider**, use the module reference's `create()` method.
 
 ```typescript
 @@filename(cats.service)
 @Injectable()
 export class CatsService implements OnModuleInit {
   private catsFactory: CatsFactory;
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private moduleRef: ModuleRef) {}
 
   async onModuleInit() {
     this.catsFactory = await this.moduleRef.create(CatsFactory);

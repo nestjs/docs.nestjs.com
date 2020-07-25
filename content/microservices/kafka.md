@@ -20,10 +20,19 @@ $ npm i --save kafkajs
 
 #### Overview
 
-Like other Nest microservices transport layer implementations, you select the Kafka transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
+Like other Nest microservice transport layer implementations, you select the Kafka transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
 
 ```typescript
 @@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    }
+  }
+});
+@@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.KAFKA,
   options: {
@@ -66,6 +75,16 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
     <td>Run configuration options (read more
       <a
         href="https://kafka.js.org/docs/consuming"
+        rel="nofollow"
+        target="blank"
+        >here</a
+      >)</td>
+  </tr>
+  <tr>
+    <td><code>subscribe</code></td>
+    <td>Subscribe configuration options (read more
+      <a
+        href="https://kafka.js.org/docs/consuming#frombeginning"
         rel="nofollow"
         target="blank"
         >here</a
@@ -149,7 +168,7 @@ client: ClientKafka;
 The `ClientKafka` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 onModuleInit() {
   this.client.subscribeToResponseOf('hero.kill.dragon');
 }
@@ -158,7 +177,7 @@ onModuleInit() {
 If the `ClientKafka` instance is created asynchronously, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 async onModuleInit() {
   this.client.subscribeToResponseOf('hero.kill.dragon');
   await this.client.connect();
@@ -186,9 +205,9 @@ Nest receives incoming Kafka messages as an object with `key`, `value`, and `hea
 Nest sends outgoing Kafka messages after a serialization process when publishing events or sending messages. This occurs on arguments passed to the `ClientKafka` `emit()` and `send()` methods or on values returned from a `@MessagePattern` method. This serialization "stringifies" objects that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
+export class HeroesController {
   @MessagePattern('hero.kill.dragon')
   killDragon(@Payload() message: KillDragonMessage): any {
     const dragonId = message.dragonId;
@@ -206,9 +225,9 @@ export class HeroController {
 Outgoing messages can also be keyed by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
+export class HeroesController {
   @MessagePattern('hero.kill.dragon')
   killDragon(@Payload() message: KillDragonMessage): any {
     const realm = 'Nest';
@@ -234,9 +253,9 @@ export class HeroController {
 Additionally, messages passed in this format can also contain custom headers set in the `headers` hash property. Header hash property values must be either of type `string` or type `Buffer`.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
+export class HeroesController {
   @MessagePattern('hero.kill.dragon')
   killDragon(@Payload() message: KillDragonMessage): any {
     const realm = 'Nest';
@@ -336,7 +355,7 @@ const app = await NestFactory.createMicroservice(ApplicationModule, {
 And for the client:
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Client({
   transport: Transport.KAFKA,
   options: {
@@ -357,7 +376,7 @@ client: ClientKafka;
 Since the Kafka microservice message pattern utilizes two topics for the request and reply channels, a reply pattern should be derived from the request topic. By default, the name of the reply topic is the composite of the request topic name with `.reply` appended.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 onModuleInit() {
   this.client.subscribeToResponseOf('hero.get'); // hero.get.reply
 }

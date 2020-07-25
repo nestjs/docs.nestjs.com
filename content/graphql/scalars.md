@@ -1,6 +1,69 @@
 ### Scalars
 
-GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean` and `ID`. In addition to these built-in types, you may need to support custom atomic data types (e.g., `Date`).
+A GraphQL object type has a name and fields, but at some point those fields have to resolve to some concrete data. That's where the scalar types come in: they represent the leaves of the query (read more [here](https://graphql.org/learn/schema/#scalar-types)). GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean` and `ID`. In addition to these built-in types, you may need to support custom atomic data types (e.g., `Date`).
+
+#### Code first
+
+The code-first approach ships with five scalars in which three of them are simple aliases for the existing GraphQL types.
+
+- `ID` (alias for `GraphQLID`) - represents a unique identifier, often used to refetch an object or as the key for a cache
+- `Int` (alias for `GraphQLInt`) - a signed 32‐bit integer
+- `Float` (alias for `GraphQLFloat`) - a signed double-precision floating-point value
+- `GraphQLISODateTime` - a date-time string at UTC (used by default to represent `Date` type)
+- `GraphQLTimestamp` - a numeric string which represents time and date as number of milliseconds from start of UNIX epoch
+
+The `GraphQLISODateTime` (e.g. `2019-12-03T09:54:33Z`) is used by default to represent the `Date` type. To use the `GraphQLTimestamp` instead, set the `dateScalarMode` of the `buildSchemaOptions` object to `'timestamp'` as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  buildSchemaOptions: {
+    dateScalarMode: 'timestamp',
+  }
+}),
+```
+
+In addition, you can create custom scalars. For example, to create a `Date` scalar, simply create a new class.
+
+```typescript
+import { Scalar, CustomScalar } from '@nestjs/graphql';
+import { Kind, ValueNode } from 'graphql';
+
+@Scalar('Date', type => Date)
+export class DateScalar implements CustomScalar<number, Date> {
+  description = 'Date custom scalar type';
+
+  parseValue(value: number): Date {
+    return new Date(value); // value from the client
+  }
+
+  serialize(value: Date): number {
+    return value.getTime(); // value sent to the client
+  }
+
+  parseLiteral(ast: ValueNode): Date {
+    if (ast.kind === Kind.INT) {
+      return new Date(ast.value);
+    }
+    return null;
+  }
+}
+```
+
+With this in place, register `DateScalar` as a provider.
+
+```typescript
+@Module({
+  providers: [DateScalar],
+})
+export class CommonModule {}
+```
+
+Now we can use the `Date` type in our classes.
+
+```typescript
+@Field()
+creationDate: Date;
+```
 
 #### Schema first
 
@@ -15,7 +78,7 @@ $ npm i --save graphql-type-json
 Once the package is installed, we pass a custom resolver to the `forRoot()` method:
 
 ```typescript
-import * as GraphQLJSON from 'graphql-type-json';
+import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [
@@ -78,49 +141,4 @@ Now we can use the `Date` scalar in type definitions.
 
 ```graphql
 scalar Date
-```
-
-#### Code first
-
-To create a `Date` scalar, simply create a new class.
-
-```typescript
-import { Scalar, CustomScalar } from '@nestjs/graphql';
-import { Kind, ValueNode } from 'graphql';
-
-@Scalar('Date', type => Date)
-export class DateScalar implements CustomScalar<number, Date> {
-  description = 'Date custom scalar type';
-
-  parseValue(value: number): Date {
-    return new Date(value); // value from the client
-  }
-
-  serialize(value: Date): number {
-    return value.getTime(); // value sent to the client
-  }
-
-  parseLiteral(ast: ValueNode): Date {
-    if (ast.kind === Kind.INT) {
-      return new Date(ast.value);
-    }
-    return null;
-  }
-}
-```
-
-With this in place, register `DateScalar` as a provider.
-
-```typescript
-@Module({
-  providers: [DateScalar],
-})
-export class CommonModule {}
-```
-
-Now we can use the `Date` type in our classes.
-
-```typescript
-@Field()
-creationDate: Date;
 ```

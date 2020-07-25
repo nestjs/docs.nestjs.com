@@ -55,7 +55,7 @@ $ nest g <schematic> <name> [options]
 
 | Name          | Alias | Description                                                                                         |
 | ------------- | ----- | --------------------------------------------------------------------------------------------------- |
-| `application` |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
+| `app`         |       | Generate a new application within a monorepo (converting to monorepo if it's a standard structure). |
 | `library`     | `lib` | Generate a new library within a monorepo (converting to monorepo if it's a standard structure).     |
 | `class`       | `cl`  | Generate a new class.                                                                               |
 | `controller`  | `co`  | Generate a controller declaration.                                                                  |
@@ -80,7 +80,7 @@ $ nest g <schematic> <name> [options]
 | `--project [project]`           | Project that element should be added to.<br/> Alias: `-p`                                                       |
 | `--flat`                        | Do not generate a folder for the element.                                                                       |
 | `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
-| `--spec`                        | Enforce spec files generation (default)                                                                                   |
+| `--spec`                        | Enforce spec files generation (default)                                                                         |
 | `--no-spec`                     | Disable spec files generation                                                                                   |
 
 #### nest build
@@ -124,16 +124,18 @@ $ nest start <name> [options]
 
 ##### Options
 
-| Option               | Description                                             |
-| -------------------- | ------------------------------------------------------- |
-| `--path [path]`      | Path to `tsconfig` file. <br/>Alias `-p`                |
-| `--config [path]`    | Path to `nest-cli` configuration file. <br/>Alias `-c`  |
-| `--watch`            | Run in watch mode (live-reload) <br/>Alias `-w`         |
-| `--debug [hostport]` | Run in debug mode (with --inspect flag) <br/>Alias `-d` |
-| `--webpack`          | Use webpack for compilation.                            |
-| `--webpackPath`      | Path to webpack configuration.                          |
-| `--tsc`              | Force use `tsc` for compilation.                        |
-| `--exec [binary]`    | Binary to run (default: `node`). <br/>Alias `-e`        |
+| Option                  | Description                                                                                                          |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `--path [path]`         | Path to `tsconfig` file. <br/>Alias `-p`                                                                             |
+| `--config [path]`       | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                               |
+| `--watch`               | Run in watch mode (live-reload) <br/>Alias `-w`                                                                      |
+| `--preserveWatchOutput` | Keep outdated console output in watch mode instead of clearing the screen. (`tsc` watch mode only)                   |
+| `--watchAssets`         | Run in watch mode (live-reload), watching non-TS files (assets). See [Assets](cli/monorepo#assets) for more details. |
+| `--debug [hostport]`    | Run in debug mode (with --inspect flag) <br/>Alias `-d`                                                              |
+| `--webpack`             | Use webpack for compilation.                                                                                         |
+| `--webpackPath`         | Path to webpack configuration.                                                                                       |
+| `--tsc`                 | Force use `tsc` for compilation.                                                                                     |
+| `--exec [binary]`       | Binary to run (default: `node`). <br/>Alias `-e`                                                                     |
 
 #### nest add
 
@@ -158,7 +160,7 @@ Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to th
 | Option    | Description                                                              |
 | --------- | ------------------------------------------------------------------------ |
 | `--force` | Do **upgrade** instead of update <br/>Alias `-f`                         |
-| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-wt` |  |
+| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |  |
 
 #### nest info
 

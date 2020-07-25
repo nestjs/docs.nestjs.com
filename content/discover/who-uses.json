@@ -41,7 +41,7 @@
     },
     {
       "logo": "/assets/logo/sanofi.png",
-      "url": "https://www.sanofi.com/"
+      "url": "https://github.com/Sanofi-IADC"
     },
     {
       "logo": "https://nestjs.com/img/valor-software.png",
@@ -136,6 +136,41 @@
       "logo": "/assets/logo/swissdevjobs-devops-logo.png",
       "url": "https://swissdevjobs.ch/jobs/Dev-Ops/All",
       "width": "65px"
+    },
+    {
+      "logo": "/assets/logo/zeoagency.svg",
+      "url": "https://zeo.org/tr/",
+      "width": "80px"
+    },
+    {
+      "logo": "/assets/logo/valueadd.png",
+      "url": "https://valueadd.pl/",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/bedu.svg",
+      "url": "https://bedu.org",
+      "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/shopback.png",
+      "url": "https://shopback.com",
+      "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/facile.png",
+      "url": "https://www.facile.it",
+      "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/interfacewerk.png",
+      "url": "https://interfacewerk.de",
+      "width": "130px"
+    },
+    {
+      "logo": "/assets/logo/ottonova.png",
+      "url": "https://www.ottonova.de",
+      "width": "130px"
     }
   ],
   "Body": [
@@ -179,6 +214,10 @@
     "https://creatorsdaily.com",
     "https://autoscar.com.br",
     "https://www.mediktiv.com",
-    "https://harmonize.health"
+    "https://harmonize.health",
+    "https://accerlery.be",
+    "https://www.facile.it",
+    "https://shopback.com",
+    "https://www.ottonova.de"
   ]
 }

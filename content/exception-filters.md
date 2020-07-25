@@ -67,7 +67,7 @@ async findAll() {
   throw new HttpException({
     status: HttpStatus.FORBIDDEN,
     error: 'This is a custom message',
-  }, 403);
+  }, HttpStatus.FORBIDDEN);
 }
 ```
 
@@ -115,11 +115,14 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `RequestTimeoutException`
 - `ConflictException`
 - `GoneException`
+- `HttpVersionNotSupportedException`
 - `PayloadTooLargeException`
 - `UnsupportedMediaTypeException`
 - `UnprocessableEntityException`
 - `InternalServerErrorException`
 - `NotImplementedException`
+- `ImATeapotException`
+- `MethodNotAllowedException`
 - `BadGatewayException`
 - `ServiceUnavailableException`
 - `GatewayTimeoutException`

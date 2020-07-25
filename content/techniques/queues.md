@@ -74,7 +74,7 @@ import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
 export class AudioService {
-  constructor(@InjectQueue('audio') private readonly audioQueue: Queue) {}
+  constructor(@InjectQueue('audio') private audioQueue: Queue) {}
 }
 ```
 

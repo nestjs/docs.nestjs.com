@@ -28,7 +28,7 @@ async upvotePost(@Args('postId') postId: number) {
 
 #### Execution context
 
-Since GraphQL receives a different type of data in the incoming request, the [`ExecutionContext`](https://docs.nestjs.com/fundamentals/execution-context) received by both guards and interceptors is somewhat different with GraphQL vs. REST. GraphQL resolvers have a distinct set of arguments: `root`, `args`, `context`, and `info`. Thus guards and interceptors must transform the generic `ExecutionContext` to a `GqlExecutionContext`. This is straightforward:
+Since GraphQL receives a different type of data in the incoming request, the [execution context](https://docs.nestjs.com/fundamentals/execution-context) received by both guards and interceptors is somewhat different with GraphQL vs. REST. GraphQL resolvers have a distinct set of arguments: `root`, `args`, `context`, and `info`. Thus guards and interceptors must transform the generic `ExecutionContext` to a `GqlExecutionContext`. This is straightforward:
 
 ```typescript
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
@@ -65,11 +65,12 @@ Note that unlike the REST case, you don't use the native `response` object to ge
 
 #### Custom decorators
 
-As mentioned, the [custom decorators](/custom-decorators) feature works as expected with GraphQL resolvers. The only difference is that the factory function takes an array of GraphQL request arguments as its second argument, instead of a single `request` object (as with REST applications).
+As mentioned, the [custom decorators](/custom-decorators) feature works as expected with GraphQL resolvers.
 
 ```typescript
 export const User = createParamDecorator(
-  (data, [root, args, ctx, info]) => ctx.user,
+  (data: unknown, ctx: ExecutionContext) =>
+    GqlExecutionContext.create(ctx).getContext().user,
 );
 ```
 
@@ -84,3 +85,27 @@ async upvotePost(
 ```
 
 > info **Hint** In the above example, we have assumed that the `user` object is assigned to the context of your GraphQL application.
+
+#### Execute enhancers at the field resolver level
+
+In the GraphQL context, Nest does not run **enhancers** (the generic name for interceptors, guards and filters) at the field level [see this issue](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only run for the top level `@Query()`/`@Mutation()` method. You can tell Nest to execute interceptors, guards or filters for methods annotated with `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`.  Pass it a list of `'interceptors'`, `'guards'`, and/or `'filters'` as appropriate:
+
+```typescript
+GraphQLModule.forRoot({
+  fieldResolverEnhancers: ['interceptors']
+}),
+```
+
+> **Warning** Enabling enhancers for field resolvers can cause performance issues when you are returning lots of records and your field resolver is executed thousands of times. For this reason, when you enable `fieldResolverEnhancers`, we advise you to skip execution of enhancers that are not strictly necessary for your field resolvers. You can do this using the following helper function:
+
+```typescript
+export function isResolvingGraphQLField(context: ExecutionContext): boolean {
+  if (context.getType<GqlContextType>() === 'graphql') {
+    const gqlContext = GqlExecutionContext.create(context);
+    const info = gqlContext.getInfo();
+    const parentType = info.parentType.name;
+    return parentType !== 'Query' && parentType !== 'Mutation';
+  }
+  return false;
+}
+```

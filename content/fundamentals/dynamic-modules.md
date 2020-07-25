@@ -4,7 +4,7 @@ The [Modules chapter](/modules) covers the basics of Nest modules, and includes 
 
 #### Introduction
 
-Most application code examples in the **Overview** section of the documentation make use of regular, or _static_, modules. Modules define groups of components like [providers](/providers) and [controllers](/controllers) that fit together as a modular part of an overall application. They provide an execution context, or scope, for these components. For example, providers defined in a module are visible to other members of the module without the need to export them. When a provider needs to be visible outside of a module, it is first _exported_ from its host module, and then _imported_ into its consuming module.
+Most application code examples in the **Overview** section of the documentation make use of regular, or static, modules. Modules define groups of components like [providers](/providers) and [controllers](/controllers) that fit together as a modular part of an overall application. They provide an execution context, or scope, for these components. For example, providers defined in a module are visible to other members of the module without the need to export them. When a provider needs to be visible outside of a module, it is first exported from its host module, and then imported into its consuming module.
 
 Let's walk through a familiar example.
 
@@ -44,7 +44,7 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
   /*
     Implementation that makes use of this.usersService
   */
@@ -211,7 +211,6 @@ Let's tackle binding the options object to the IoC container first. We do this i
 
 ```typescript
 import { DynamicModule, Module } from '@nestjs/common';
-
 import { ConfigService } from './config.service';
 
 @Module({})
@@ -235,11 +234,9 @@ export class ConfigModule {
 Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider into the `ConfigService`. Recall that when we define a provider using a non-class token we need to use the `@Inject()` decorator [as described here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
 
 ```typescript
-import { Injectable, Inject } from '@nestjs/common';
-
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-
+import { Injectable, Inject } from '@nestjs/common';
 import { EnvConfig } from './interfaces';
 
 @Injectable()

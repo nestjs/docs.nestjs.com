@@ -23,7 +23,22 @@ To instantiate a microservice, use the `createMicroservice()` method of the `Nes
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+    },
+  );
+  app.listen(() => console.log('Microservice is listening'));
+}
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -217,7 +232,7 @@ Once the module has been imported, we can inject an instance of the `ClientProxy
 
 ```typescript
 constructor(
-  @Inject('MATH_SERVICE') private readonly client: ClientProxy,
+  @Inject('MATH_SERVICE') private client: ClientProxy,
 ) {}
 ```
 
@@ -319,7 +334,7 @@ import { CONTEXT, RequestContext } from '@nestjs/microservices';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CatsService {
-  constructor(@Inject(CONTEXT) private readonly ctx: RequestContext) {}
+  constructor(@Inject(CONTEXT) private ctx: RequestContext) {}
 }
 ```
 

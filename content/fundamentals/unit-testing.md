@@ -256,30 +256,31 @@ Each of the override method types, in turn, returns the `TestingModule` instance
 The compiled module has several useful methods, as described in the following table:
 
 <table>
-    <tr>
-      <td>
-        <code>createNestApplication()</code>
-      </td>
-      <td>
-        Creates and returns a Nest application (<code>INestApplication</code> instance) based on the given module.
-        Note that you must manually initialize the application using the <code>init()</code> method.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>createNestMicroservice()</code>
-      </td>
-      <td>
-        Creates and returns a Nest microservice (<code>INestMicroservice</code> instance) based on the given module.
-      </td>
-    </tr>
-    <tr>
+  <tr>
+    <td>
+      <code>createNestApplication()</code>
+    </td>
+    <td>
+      Creates and returns a Nest application (<code>INestApplication</code> instance) based on the given module.
+      Note that you must manually initialize the application using the <code>init()</code> method.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>createNestMicroservice()</code>
+    </td>
+    <td>
+      Creates and returns a Nest microservice (<code>INestMicroservice</code> instance) based on the given module.
+    </td>
+  </tr>
+  <tr>
     <td>
       <code>get()</code>
     </td>
     <td>
       Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
+  </tr>
   <tr>
      <td>
       <code>resolve()</code>
@@ -302,9 +303,9 @@ The compiled module has several useful methods, as described in the following ta
 
 #### Testing request-scoped instances
 
-[Request-scoped](/fundamentals/injection-scope) providers are created uniquely for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
+[Request-scoped](/fundamentals/injection-scopes) providers are created uniquely for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
 
-We know (based on the sections above) that the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, as described <a href="https://docs.nestjs/com/fundamentals/module-ref#resolving-scoped-providers">here</a>, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
+We know (based on the sections above) that the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, as described <a href="https://docs.nestjs.com/fundamentals/module-ref#resolving-scoped-providers">here</a>, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
 
 The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. In this way we'll be able to retrieve instances created for a tested request.
 

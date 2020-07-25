@@ -46,7 +46,7 @@ import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(private catsService: CatsService) {}
 
   @Get()
   async findAll(): Promise<Cat[]> {
@@ -93,7 +93,7 @@ What exactly is happening under the covers to make this work? There are three ke
 2. In `cats.controller.ts`, `CatsController` declares a dependency on the `CatsService` token with constructor injection:
 
 ```typescript
-  constructor(private readonly catsService: CatsService)
+  constructor(private catsService: CatsService)
 ```
 
 3. In `app.module.ts`, we associate the token `CatsService` with the class `CatsService` from the `cats.service.ts` file. We'll <a href="/fundamentals/custom-providers#standard-providers">see below</a> exactly how this association (also called _registration_) occurs.
@@ -272,7 +272,7 @@ export class AppModule {}
 
 #### Alias providers: `useExisting`
 
-The `useExisting` syntax allows you to create aliases for existing providers. This creates two ways to access the same provider. In the example below, the (string-based) token `'AliasedLoggerService'` is an alias for the (class-based) token `LoggerService`. Assume we have two different dependencies, one for `'AlilasedLoggerService'` and one for `LoggerService`. If both dependencies are specified with `SINGLETON` scope, they'll both resolve to the same instance.
+The `useExisting` syntax allows you to create aliases for existing providers. This creates two ways to access the same provider. In the example below, the (string-based) token `'AliasedLoggerService'` is an alias for the (class-based) token `LoggerService`. Assume we have two different dependencies, one for `'AliasedLoggerService'` and one for `LoggerService`. If both dependencies are specified with `SINGLETON` scope, they'll both resolve to the same instance.
 
 ```typescript
 @Injectable()

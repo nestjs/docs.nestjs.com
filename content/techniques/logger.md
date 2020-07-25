@@ -135,6 +135,8 @@ Here we use the `get()` method on the `NestApplication` instance to retrieve the
 
 You can also inject this `MyLogger` provider in your feature classes, thus ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> below for more information.
 
+The only downside of this solution is that your first initialization messages won't be handled by your logger instance, though, it shouldn't really matter at this point.
+
 #### Using the logger for application logging
 
 We can combine several of the techniques above to provide consistent behavior and formatting across both Nest system logging and our own application event/message logging. In this section, we'll achieve this with the following steps:
@@ -180,7 +182,7 @@ import { MyLogger } from './my-logger.service';
 export class CatsService {
   private readonly cats: Cat[] = [];
 
-  constructor(private readonly myLogger: MyLogger) {
+  constructor(private myLogger: MyLogger) {
     this.myLogger.setContext('CatsService');
   }
 

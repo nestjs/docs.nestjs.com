@@ -21,7 +21,7 @@ To get a reference to the `HttpAdapterHost` from within the application context,
 ```typescript
 @@filename()
 export class CatsService {
-  constructor(private readonly adapterHost: HttpAdapterHost) {}
+  constructor(private adapterHost: HttpAdapterHost) {}
 }
 @@switch
 @Dependencies(HttpAdapterHost)

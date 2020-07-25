@@ -11,7 +11,6 @@ import { PrismaComponent } from './prisma/prisma.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
-import { SwaggerComponent } from './swagger/swagger.component';
 import { TerminusComponent } from './terminus/terminus.component';
 
 const routes: Routes = [
@@ -37,8 +36,7 @@ const routes: Routes = [
   },
   {
     path: 'swagger',
-    component: SwaggerComponent,
-    data: { title: 'OpenAPI (Swagger)' },
+    redirectTo: '/openapi/introduction',
   },
   {
     path: 'prisma',
@@ -81,7 +79,6 @@ const routes: Routes = [
     SqlTypeormComponent,
     SqlSequelizeComponent,
     MongodbComponent,
-    SwaggerComponent,
     PrismaComponent,
     CqrsComponent,
     HotReloadComponent,
