@@ -32,7 +32,7 @@ module.exports = function(options) {
     watch: true,
     externals: [
       nodeExternals({
-        allowlist: ['webpack/hot/poll?100'],
+        whitelist: ['webpack/hot/poll?100'],
       }),
     ],
     plugins: [
@@ -106,7 +106,7 @@ module.exports = {
   target: 'node',
   externals: [
     nodeExternals({
-      allowlist: ['webpack/hot/poll?100'],
+      whitelist: ['webpack/hot/poll?100'],
     }),
   ],
   module: {
