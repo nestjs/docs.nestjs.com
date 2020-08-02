@@ -108,14 +108,14 @@ import { User } from './user.entity.ts';
 export class UserController {
   @Get()
   @Render('users-list')
-  @WithAlias('hello')
+  @WithAlias('users')
   root(): User[] {
     return [ /* list of users */ ];
   }
   
   @Get('/:user')
   @Render('user')
-  @WithAlias('hello')
+  @WithAlias('user')
   getUser(): User {
     return { /* user */ }
   }
@@ -124,7 +124,7 @@ export class UserController {
 Once you have registered route aliases, you can access them via the `getUrl(routeAlias: string, routeParams?: object): string` method that is injected into the template render context.
 
 ```njk
-<a href="{{ getUrl('users-list') }}">Users</a>
+<a href="{{ getUrl('users') }}">Users</a>
 <a href="{{ getUrl('user', { user: user.id }) }}">User With Specific ID</a>
 ```
 
