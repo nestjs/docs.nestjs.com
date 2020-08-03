@@ -102,7 +102,7 @@ If the application logic must dynamically decide which template to render, then 
 
 ```typescript
 @@filename(app.controller)
-import { Get, Controller, Render } from '@nestjs/common';
+import { Get, Controller, Res, Render } from '@nestjs/common';
 import { Response } from 'express';
 import { AppService } from './app.service';
 
