@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { ErrorsComponent } from './errors/errors.component';
 import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
@@ -34,6 +35,11 @@ const routes: Routes = [
     component: RequestLifecycleComponent,
     data: { title: 'Request lifecycle - FAQ' },
   },
+  {
+    path: 'common-errors',
+    component: ErrorsComponent,
+    data: { title: 'Common Errors - FAQ' }
+  }
 ];
 
 @NgModule({
@@ -44,6 +50,7 @@ const routes: Routes = [
     MultipleServersComponent,
     HttpAdapterComponent,
     RequestLifecycleComponent,
+    ErrorsComponent,
   ],
 })
 export class FaqModule {}
