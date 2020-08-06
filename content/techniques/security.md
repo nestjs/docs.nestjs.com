@@ -6,7 +6,7 @@ In this chapter we cover various techniques that help you to increase the securi
 
 [Helmet](https://github.com/helmetjs/helmet) can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately. Generally, Helmet is just a collection of 14 smaller middleware functions that set security-related HTTP headers (read [more](https://github.com/helmetjs/helmet#how-it-works)).
 
-Start by installing the required package:
+Start by installing the required package. If you are using [Express](https://expressjs.com/) (default in Nest):
 
 ```bash
 $ npm i --save helmet
@@ -20,7 +20,23 @@ import * as helmet from 'helmet';
 app.use(helmet());
 ```
 
-> info **Hint** Note that `app.use(helmet())` must come before other calls to `app.use()` or setup functions that may call `app.use()`). This is due to the way the underlying platform (e.g., Express) works, where the order that middleware/routes are defined matters. If you use middleware like `helmet` or `cors` after you define a route, then that middleware will not apply to that route, it will only apply to middleware defined after the route.
+If you are using the `FastifyAdapter`, you'll need [fastify-helmet](https://github.com/fastify/fastify-helmet) instead:
+
+```bash
+$ npm i --save fastify-helmet
+```
+
+[fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Plugins/), i.e., by using `app.register()`:
+
+```typescript
+import * as helmet from 'fastify-helmet';
+// somewhere in your initialization file
+app.register(helmet);
+// or the following, but note that it's not type safe
+// app.getHttpAdapter().register(helmet);
+```
+
+> info **Hint** Note that applying `helmet` as global or registering it must come before other calls to `app.use()` or setup functions that may call `app.use()`). This is due to the way the underlying platform (i.e., Express or Fastify) works, where the order that middleware/routes are defined matters. If you use middleware like `helmet` or `cors` after you define a route, then that middleware will not apply to that route, it will only apply to middleware defined after the route.
 
 #### CORS
 
