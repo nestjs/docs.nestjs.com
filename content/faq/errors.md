@@ -1,6 +1,6 @@
 ### Common Errors
 
-During your development with NestJS, you may encounter a couple of errors as you learn the framework. 
+During your development with NestJS, you may encounter various errors as you learn the framework.
 
 #### Cannot Resolve Dependency
 
@@ -21,7 +21,7 @@ There are a few gotchas, that are common. One is putting a provider in an `impor
 
 #### Circular Dependency
 
-Occasionally you'll need to have [circular dependencies](/fundamentals/circular-dependency) in your application. Errors that arise from circular dependencies look like this:
+Occasionally you'll find it difficult to avoid [circular dependencies](/fundamentals/circular-dependency) in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
 
 ```bash
 Nest cannot create the <module> instance.
