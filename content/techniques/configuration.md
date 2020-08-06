@@ -146,7 +146,23 @@ const dbUser = this.configService.get<string>('DATABASE_USER');
 const dbHost = this.configService.get<string>('database.host');
 ```
 
-As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>), as shown in the second example above. The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
+As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>), as shown in the second example above.
+
+You can also get the whole nested custom configuration object using an interface as the type hint:
+
+```typescript
+interface DatabaseConfig {
+  host: string;
+  port: number;
+}
+
+const dbConfig = this.configService.get<DatabaseConfig>('database');
+
+// you can now use `dbConfig.port` and `dbConfig.host`
+const port = dbConfig.port;
+```
+
+The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
 
 ```typescript
 // use "localhost" when "database.host" is not defined
