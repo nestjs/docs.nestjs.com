@@ -6,7 +6,7 @@ You can enable Server-Sent events on a route with Nest. This can be used to push
 
 In this example, we set a route named `/sse` that will allow you to propagate real time updates. These events can be listened to using the Javascript [EventSource API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource). On the `/` route, for the sake of the example, we're logging the received data in the browser's console.
 
-Note the `@Sse` annotation that hooks the Server-Sent events mechanism on the choosed path:
+Note the `@Sse` decorator that hooks the Server-Sent events mechanism on the chosen path:
 
 ```
 @Controller()
@@ -41,4 +41,4 @@ export interface MessageEvent {
 }
 ```
 
-You can find a sample of a working example on [Nest repository](https://github.com/nestjs/nest/tree/master/sample/28-sse).
+You can find a working example in the [Nest repository](https://github.com/nestjs/nest/tree/master/sample/28-sse).
