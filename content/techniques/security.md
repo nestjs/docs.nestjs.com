@@ -6,7 +6,7 @@ In this chapter we cover various techniques that help you to increase the securi
 
 [Helmet](https://github.com/helmetjs/helmet) can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately. Generally, Helmet is just a collection of 14 smaller middleware functions that set security-related HTTP headers (read [more](https://github.com/helmetjs/helmet#how-it-works)).
 
-Start by installing the required package:
+Start by installing the required package. If you are using [Express](https://expressjs.com/) (default in Nest):
 
 ```bash
 $ npm i --save helmet
@@ -19,6 +19,24 @@ import * as helmet from 'helmet';
 // somewhere in your initialization file
 app.use(helmet());
 ```
+
+If you are using the `FastifyAdapter`, you'll need [fastify-helmet](https://github.com/fastify/fastify-helmet) instead:
+
+```bash
+$ npm i --save fastify-helmet
+```
+
+[fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Plugins/), i.e., by using `app.register()`:
+
+```typescript
+import * as helmet from 'fastify-helmet';
+// somewhere in your initialization file
+app.register(helmet);
+// or the following, but note that it's not type safe
+// app.getHttpAdapter().register(helmet);
+```
+
+> info **Hint** Note that applying `helmet` as global or registering it must come before other calls to `app.use()` or setup functions that may call `app.use()`). This is due to the way the underlying platform (i.e., Express or Fastify) works, where the order that middleware/routes are defined matters. If you use middleware like `helmet` or `cors` after you define a route, then that middleware will not apply to that route, it will only apply to middleware defined after the route.
 
 #### CORS
 
@@ -84,10 +102,10 @@ app.use(
 
 When there is a load balancer or reverse proxy between the server and the internet, Express may need to be configured to trust the headers set by the proxy in order to get the correct IP for the end user. To do so, first use the `NestExpressApplication` platform [interface](https://docs.nestjs.com/first-steps#platform) when creating your `app` instance, then enable the [trust proxy](https://expressjs.com/en/guide/behind-proxies.html) setting:
 
- ```typescript
+```typescript
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
 // see https://expressjs.com/en/guide/behind-proxies.html
-app.set('trust proxy', 1)
+app.set('trust proxy', 1);
 ```
 
 > info **Hint** If you use the `FastifyAdapter`, consider using [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) instead.

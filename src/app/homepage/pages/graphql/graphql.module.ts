@@ -3,8 +3,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
+import { ComplexityComponent } from './complexity/complexity.component';
 import { DirectivesComponent } from './directives/directives.component';
 import { EnumsComponent } from './enums/enums.component';
+import { ExtensionsComponent } from './extensions/extensions.component';
 import { FederationComponent } from './federation/federation.component';
 import { GuardsInterceptorsComponent } from './guards-interceptors/guards-interceptors.component';
 import { InterfacesComponent } from './interfaces/interfaces.component';
@@ -50,10 +52,14 @@ const routes: Routes = [
   },
   {
     path: 'guards-interceptors',
-    redirectTo: 'tooling',
+    redirectTo: 'other-features',
   },
   {
     path: 'tooling',
+    redirectTo: 'other-features',
+  },
+  {
+    path: 'other-features',
     component: GuardsInterceptorsComponent,
     data: { title: 'GraphQL + TypeScript - Other features' },
   },
@@ -66,6 +72,16 @@ const routes: Routes = [
     path: 'directives',
     component: DirectivesComponent,
     data: { title: 'GraphQL + TypeScript - Directives' },
+  },
+  {
+    path: 'complexity',
+    component: ComplexityComponent,
+    data: { title: 'GraphQL + TypeScript - Complexity' },
+  },
+  {
+    path: 'extensions',
+    component: ExtensionsComponent,
+    data: { title: 'GraphQL + TypeScript - Extensions' },
   },
   {
     path: 'enums',
@@ -121,6 +137,8 @@ const routes: Routes = [
     MappedTypesComponent,
     CliPluginComponent,
     FederationComponent,
+    ComplexityComponent,
+    ExtensionsComponent,
   ],
 })
 export class GraphqlModule {}

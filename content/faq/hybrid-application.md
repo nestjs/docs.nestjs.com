@@ -35,6 +35,17 @@ await app.startAllMicroservicesAsync();
 await app.listen(3001);
 ```
 
+#### Sharing configuration
+
+By default a hybrid application will not inherit global pipes, interceptors, guards and filters configured for the main (HTTP-based) application.
+To inherit these configuration properties from the main application, set the `inheritAppConfig` property in the second argument (an optional options object) of the `connectMicroservice()` call, as follow:
+
+```typescript
+const microservice = app.connectMicroservice({
+  transport: Transport.TCP
+}, { inheritAppConfig: true });
+```
+
 For bind `@MessagePattern()` only to one transport of microservices in hybrid application with multiple microservices can use second argument which should get value from `Transport` enum
 
 ```typescript
@@ -61,6 +72,5 @@ getTCPDate(data, context) {
   return new Date().toLocaleTimeString(...);
 }
 ```
-
 
 > info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.

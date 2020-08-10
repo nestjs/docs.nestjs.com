@@ -9,7 +9,7 @@ In this chapter, we assume a basic understanding of GraphQL, and focus on how to
 Start by installing the required packages:
 
 ```bash
-$ npm i --save @nestjs/graphql graphql-tools graphql
+$ npm i @nestjs/graphql graphql-tools graphql
 ```
 
 Depending on what underlying platform you use (Express or Fastify), you must also install either `apollo-server-express` or `apollo-server-fastify`.
@@ -101,6 +101,15 @@ GraphQLModule.forRoot({
 }),
 ```
 
+By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically, set the `sortSchema` property to `true`:
+
+```typescript
+GraphQLModule.forRoot({
+  autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+  sortSchema: true,
+}),
+```
+
 A fully working code first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first).
 
 #### Schema first
@@ -166,6 +175,24 @@ definitionsFactory.generate({
   path: join(process.cwd(), 'src/graphql.ts'),
   outputAs: 'class',
   watch: true,
+});
+```
+
+To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  emitTypenameField: true,
+});
+```
+
+To generate resolvers (queries, mutations, subscriptions) as plain fields without arguments, enable the `skipResolverArgs` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  skipResolverArgs: true,
 });
 ```
 
