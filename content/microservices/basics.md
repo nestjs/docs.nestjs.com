@@ -205,33 +205,6 @@ getDate(data, context) {
 }
 ```
 
-For bind `@MessagePattern()` only to one transport of microservices in hybrid application with multiple microservices can use second argument which should get value from `Transport` enum
-
-```typescript
-@@filename()
-@MessagePattern('time.us.*', Transport.NAST)
-getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
-  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
-  return new Date().toLocaleTimeString(...);
-}
-@MessagePattern({ cmd: 'time.us' }, Transport.TCP)
-getTCPDate(@Payload() data: number[]) {
-  return new Date().toLocaleTimeString(...);
-}
-@@switch
-@Bind(Payload(), Ctx())
-@MessagePattern('time.us.*', Transport.NAST)
-getDate(data, context) {
-  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
-  return new Date().toLocaleTimeString(...);
-}
-@Bind(Payload(), Ctx())
-@MessagePattern({ cmd: 'time.us' }, Transport.TCP)
-getTCPDate(data, context) {
-  return new Date().toLocaleTimeString(...);
-}
-```
-
 > info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.
 
 #### Client
