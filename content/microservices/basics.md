@@ -205,7 +205,7 @@ getDate(data, context) {
 }
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from `@nestjs/microservices`.
 
 #### Client
 

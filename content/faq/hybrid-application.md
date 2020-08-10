@@ -61,3 +61,6 @@ getTCPDate(data, context) {
   return new Date().toLocaleTimeString(...);
 }
 ```
+
+
+> info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.
