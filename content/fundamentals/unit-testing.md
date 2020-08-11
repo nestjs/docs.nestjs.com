@@ -239,6 +239,17 @@ describe('Cats', () => {
 });
 ```
 
+> info **Hint** If you're using [Fastify](/techniques/performance) as your HTTP adapter, it requires slightly different configuration:
+>
+> ```ts
+> app = moduleRef.createNestApplication<NestFastifyApplication>(
+>   new FastifyAdapter(),
+> );
+>
+> await app.init();
+> await app.getHttpAdapter().getInstance().ready();
+> ```
+
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
 
 We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
