@@ -43,7 +43,7 @@ async findOne(@Param('id', ParseIntPipe) id: number) {
 }
 ```
 
-This ensures that one of the following two conditions is true: either the parameter we receive in the `findOne()` method is a number (as expected in our call to `this.catsService.findOne())`), or an exception is thrown before the route handler is called.
+This ensures that one of the following two conditions is true: either the parameter we receive in the `findOne()` method is a number (as expected in our call to `this.catsService.findOne()`), or an exception is thrown before the route handler is called.
 
 For example, assume the route is called like:
 
