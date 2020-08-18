@@ -136,6 +136,8 @@ Then we can inject it using standard constructor injection:
 constructor(private configService: ConfigService) {}
 ```
 
+> info **Hint** The `ConfigService` is imported from the `@nestjs/config` package.
+
 And use it in our class:
 
 ```typescript
