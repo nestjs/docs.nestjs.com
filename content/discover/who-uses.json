@@ -89,6 +89,11 @@
       "width": "150px"
     },
     {
+      "logo": "/assets/logo/radity.png",
+      "url": "https://radity.com",
+      "width": "150px"
+    },
+    {
       "logo": "/assets/logo/iflix.svg",
       "url": "https://www.iflix.com",
       "width": "70px"
