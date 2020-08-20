@@ -171,6 +171,11 @@
       "logo": "/assets/logo/ottonova.png",
       "url": "https://www.ottonova.de",
       "width": "130px"
+    },
+    {
+      "logo": "/assets/logo/radity.png",
+      "url": "https://radity.com",
+      "width": "120px"
     }
   ],
   "Body": [
@@ -218,6 +223,7 @@
     "https://accerlery.be",
     "https://www.facile.it",
     "https://shopback.com",
-    "https://www.ottonova.de"
+    "https://www.ottonova.de",
+    "https://www.radity.com"
   ]
 }
