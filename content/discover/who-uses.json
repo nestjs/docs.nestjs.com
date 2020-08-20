@@ -176,6 +176,11 @@
       "logo": "/assets/logo/radity.png",
       "url": "https://radity.com",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/global-cto-forum.png",
+      "url": "https://globalctoforum.org/",
+      "width": "120px"
     }
   ],
   "Body": [
@@ -224,6 +229,7 @@
     "https://www.facile.it",
     "https://shopback.com",
     "https://www.ottonova.de",
-    "https://www.radity.com"
+    "https://www.radity.com",
+    "https://globalctoforum.org/"
   ]
 }
