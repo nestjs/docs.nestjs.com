@@ -42,7 +42,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object.
+The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
 Once we create a document, we can call the `setup()` method. It accepts:
 
@@ -63,6 +63,52 @@ While the application is running, open your browser and navigate to `http://loca
 The `SwaggerModule` automatically reflects all of your endpoints. Note that the Swagger UI is created using either `swagger-ui-express` or `fastify-swagger`, depending on the platform.
 
 > info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+
+### Document options
+
+When creating a document, it is possible to provide some extra options to finetune the library's behavior. These options should be of type `SwaggerDocumentOptions`, which can be the following:
+
+```TypeScript
+export interface SwaggerDocumentOptions {
+  /**
+   * List of modules to include in the specification
+   */
+  include?: Function[];
+
+  /**
+   * Additional, extra models that should be inspected and included in the specification
+   */
+  extraModels?: Function[];
+
+  /**
+   * If `true`, swagger will ignore the global prefix set through `setGlobalPrefix()` method
+   */
+  ignoreGlobalPrefix?: boolean;
+
+  /**
+   * If `true`, swagger will also load routes from the modules imported by `include` modules
+   */
+  deepScanRoutes?: boolean;
+
+  /**
+   * Custom operationIdFactory that will be used to generate the `operationId` based on the `controllerKey` and
+   * `methodKey`
+   * @default () => controllerKey_methodKey
+   */
+  operationIdFactory?: (controllerKey: string, methodKey: string) => string;
+}
+```
+
+For example, if you want to make sure that the library generates operation names like `createUser` instead of `UserController_createUser`, you can set the following:
+
+```TypeScript
+const document = SwaggerModule.createDocument(app, options, {
+  operationIdFactory = (
+    controllerKey: string,
+    methodKey: string
+  ) => `${methodKey}`;
+});
+```
 
 #### Example
 
