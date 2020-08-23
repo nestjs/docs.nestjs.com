@@ -40,20 +40,20 @@ Our resolver has one extra method: `resolveReference`. It's called by the Apollo
 
 ```typescript
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 
 @Resolver('User')
-export class UserResolver {
-  constructor(private userService: UserService) {}
+export class UsersResolvers {
+  constructor(private usersService: UsersService) {}
 
   @Query()
   getUser(@Args('id') id: string) {
-    return this.userService.findById(id);
+    return this.usersService.findById(id);
   }
 
   @ResolveReference()
   resolveReference(reference: { __typename: string; id: string }) {
-    return this.userService.findById(reference.id);
+    return this.usersService.findById(reference.id);
   }
 }
 ```
@@ -63,7 +63,7 @@ Finally, we hook everything up in a module together with a `GraphQLFederationMod
 ```typescript
 import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
-import { UserResolver } from './user.resolver';
+import { UsersResolvers } from './users.resolvers';
 
 @Module({
   imports: [
@@ -71,7 +71,7 @@ import { UserResolver } from './user.resolver';
       typePaths: ['**/*.graphql'],
     }),
   ],
-  providers: [UserResolver],
+  providers: [UsersResolvers],
 })
 export class AppModule {}
 ```
@@ -103,20 +103,20 @@ Our resolver has one extra method: `resolveReference`. It's called by the Apollo
 ```ts
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { User } from './user.entity';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 
 @Resolver(of => User)
-export class UserResolver {
-  constructor(private userService: UserService) {}
+export class UsersResolvers {
+  constructor(private usersService: UsersService) {}
 
   @Query(returns => User)
   getUser(@Args('id') id: string) {
-    return this.userService.findById(id);
+    return this.usersService.findById(id);
   }
 
   @ResolveReference()
   resolveReference(reference: { __typename: string; id: string }) {
-    return this.userService.findById(reference.id);
+    return this.usersService.findById(reference.id);
   }
 }
 ```
@@ -126,7 +126,7 @@ Finally, we hook everything up in a module together with a `GraphQLFederationMod
 ```typescript
 import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
-import { UserResolver } from './user.resolver';
+import { UsersResolvers } from './users.resolvers';
 
 @Module({
   imports: [
@@ -134,7 +134,7 @@ import { UserResolver } from './user.resolver';
       autoSchemaFile: true,
     }),
   ],
-  providers: [UserResolver],
+  providers: [UsersResolvers],
 })
 export class AppModule {}
 ```
@@ -240,7 +240,7 @@ import { Post } from './post.entity';
 import { User } from './user.entity';
 
 @Resolver(of => User)
-export class UserResolver {
+export class UsersResolvers {
   constructor(private readonly postService: PostService) {}
 
   @ResolveField(of => [Post])
@@ -313,7 +313,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
 import { User } from './user/user.entity';
 import { PostResolver } from './post.resolver';
-import { UserResolver } from './user.resolver';
+import { UsersResolvers } from './users.resolvers';
 
 @Module({
   imports: [
@@ -324,7 +324,7 @@ import { UserResolver } from './user.resolver';
       },
     }),
   ],
-  providers: [PostResolver, UserResolver],
+  providers: [PostResolver, UsersResolvers],
 })
 export class ApplicationModule {}
 ```
