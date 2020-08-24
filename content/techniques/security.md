@@ -108,4 +108,4 @@ const app = await NestFactory.create<NestExpressApplication>(AppModule);
 app.set('trust proxy', 1);
 ```
 
-> info **Hint** If you use the `FastifyAdapter`, consider using [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) instead.
+> info **Hint** If you use the `FastifyAdapter`, consider using [nestjs-fastify-rate-limiter](https://github.com/feednext/nestjs-fastify-rate-limiter) instead.
