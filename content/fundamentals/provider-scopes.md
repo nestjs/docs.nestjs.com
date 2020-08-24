@@ -10,7 +10,7 @@ A provider can have any of the following scopes:
 
 <table>
   <tr>
-    <td><code>DEFAULT</code> (Singleton)</td>
+    <td><code>DEFAULT</code></td>
     <td>A single instance of the provider is shared across the entire application. The instance lifetime is tied directly to the application lifecycle. Once the application has bootstrapped, all singleton providers have been instantiated. Singleton scope is used by default.</td>
   </tr>
   <tr>
