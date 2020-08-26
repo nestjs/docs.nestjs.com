@@ -110,12 +110,12 @@ export class UsersResolvers {
   constructor(private usersService: UsersService) {}
 
   @Query(returns => User)
-  getUser(@Args('id') id: string) {
+  getUser(@Args('id') id: number): User {
     return this.usersService.findById(id);
   }
 
   @ResolveReference()
-  resolveReference(reference: { __typename: string; id: string }) {
+  resolveReference(reference: { __typename: string; id: number }): User {
     return this.usersService.findById(reference.id);
   }
 }
@@ -127,6 +127,7 @@ Finally, we hook everything up in a module together with a `GraphQLFederationMod
 import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
 import { UsersResolvers } from './users.resolvers';
+import { UsersService } from './users.service'; // Not included in this example
 
 @Module({
   imports: [
@@ -134,7 +135,7 @@ import { UsersResolvers } from './users.resolvers';
       autoSchemaFile: true,
     }),
   ],
-  providers: [UsersResolvers],
+  providers: [UsersResolvers, UsersService],
 })
 export class AppModule {}
 ```
@@ -211,7 +212,7 @@ export class AppModule {}
 We will need to create a class representing our `User` entity. Even though it lives in another service, we will be using and extending it. Note the `@extends` and `@external` directives.
 
 ```ts
-import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import { Directive, ObjectType, Field, ID } from '@nestjs/graphql';
 import { Post } from './post.entity';
 
 @ObjectType()
@@ -223,10 +224,10 @@ export class User {
   public id: number;
 
   @Field(type => [Post])
-  public posts: Post[];
+  public posts?: Post[];
 
-  constructor(post: Partial<User>) {
-    Object.assign(this, post);
+  constructor(user: Partial<User>) {
+    Object.assign(this, user);
   }
 }
 ```
@@ -235,17 +236,17 @@ We create the resolver for our extension on the `User` entity as follows:
 
 ```ts
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { PostService } from './post.service';
+import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
 @Resolver(of => User)
 export class UsersResolvers {
-  constructor(private readonly postService: PostService) {}
+  constructor(private readonly postsService: PostsService) {}
 
   @ResolveField(of => [Post])
-  public posts(@Parent() user: User) {
-    return this.postService.forAuthor(user.id);
+  public posts(@Parent() user: User): Post[] {
+    return this.postsService.forAuthor(user.id);
   }
 }
 ```
@@ -269,7 +270,7 @@ export class Post {
   public authorId: number;
 
   @Field(type => User)
-  public user: User;
+  public user?: User;
 
   constructor(post: Partial<Post>) {
     Object.assign(this, post);
@@ -280,28 +281,28 @@ export class Post {
 And its resolver:
 
 ```ts
-import { Query, Args, ResolveReference, Resolver } from '@nestjs/graphql';
-import { PostService } from './post.service';
+import { Query, Args, ResolveField, Resolver, Parent } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
 @Resolver(of => Post)
-export class PostResolver {
-  constructor(private readonly postService: PostService) {}
+export class PostsResolvers {
+  constructor(private readonly postsService: PostsService) {}
 
   @Query(returns => Post)
-  public findPost(@Args('id') id: number) {
-    return this.postService.findOne(id);
+  public findPost(@Args('id') id: number): Post {
+    return this.postsService.findOne(id);
   }
 
   @Query(returns => [Post])
-  public getPosts() {
-    return this.postService.all();
+  public getPosts(): Post[] {
+    return this.postsService.all();
   }
 
   @ResolveField(of => User)
-  public user(@Parent() post) {
-    return { __typename: 'User', id: post.userId };
+  public user(@Parent() post: Post): any {
+    return { __typename: 'User', id: post.authorId };
   }
 }
 ```
@@ -311,9 +312,10 @@ And finally tie it together in a module. Note the schema build options, where we
 ```ts
 import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
-import { User } from './user/user.entity';
-import { PostResolver } from './post.resolver';
+import { User } from './user.entity';
+import { PostsResolvers } from './posts.resolvers';
 import { UsersResolvers } from './users.resolvers';
+import { PostsService } from './posts.service'; // Not included in example
 
 @Module({
   imports: [
@@ -324,9 +326,9 @@ import { UsersResolvers } from './users.resolvers';
       },
     }),
   ],
-  providers: [PostResolver, UsersResolvers],
+  providers: [PostsResolvers, UsersResolvers, PostsService],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 #### Federated example: Gateway
