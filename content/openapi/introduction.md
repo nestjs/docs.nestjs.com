@@ -62,7 +62,7 @@ While the application is running, open your browser and navigate to `http://loca
 
 The `SwaggerModule` automatically reflects all of your endpoints. Note that the Swagger UI is created using either `swagger-ui-express` or `fastify-swagger`, depending on the platform.
 
-> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api/openapi.json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
 #### Example
 

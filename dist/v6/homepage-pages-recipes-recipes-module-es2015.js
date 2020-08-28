@@ -3355,7 +3355,7 @@ SwaggerComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineC
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](100, " To generate and download a Swagger JSON file, navigate to ");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](101, "code");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](102, "http://localhost:3000/api-json");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](102, "http://localhost:3000/api/openapi.json");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](103, " in your browser (assuming that your Swagger documentation is available under ");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](104, "code");

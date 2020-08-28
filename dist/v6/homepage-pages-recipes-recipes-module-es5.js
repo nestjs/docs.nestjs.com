@@ -6895,7 +6895,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](101, "code");
 
-          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](102, "http://localhost:3000/api-json");
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](102, "http://localhost:3000/api/openapi.json");
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 
