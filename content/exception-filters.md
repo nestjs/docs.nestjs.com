@@ -363,3 +363,7 @@ bootstrap();
 ```
 
 The second method is to use the `APP_FILTER` token <a href="exception-filters#binding-filters">as shown here</a>.
+
+
+<a href="pipes">Next</a>.
+
