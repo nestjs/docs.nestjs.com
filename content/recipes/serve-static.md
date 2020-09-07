@@ -1,6 +1,6 @@
 ### Serve Static
 
-In order to serve static content like a Single Page Application (SPA) we can use the `ServeStaticModule` from the `@nestjs/serve-static` package.
+In order to serve static content like a Single Page Application (SPA) we can use the `ServeStaticModule` from the [`@nestjs/serve-static`](https://www.npmjs.com/package/@nestjs/serve-static) package.
 
 #### Installation
 
