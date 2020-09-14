@@ -539,7 +539,7 @@ type Query {
 Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping name as an argument to the decorator, as shown below:
 
 ```typescript
-@@filename(authors/authors.resolver.ts)
+@@filename(authors/authors.resolver)
 @Resolver('Author')
 export class AuthorsResolver {
   constructor(
@@ -565,7 +565,7 @@ export class AuthorsResolver {
 Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it will generate the following file (in the location you specified in the `GraphQLModule.forRoot()` method. For example, in `src/graphql.ts`)
 
 ```typescript
-@@filename(graphql.ts)
+@@filename(graphql)
 export class Author {
   id: number;
   firstName?: string;
