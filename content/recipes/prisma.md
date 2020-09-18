@@ -4,7 +4,7 @@
 
 Prisma is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](http://knexjs.org/)) or ORMs (like [TypeORM](http://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL and SQLite.
 
-While Prisma is a toolkit\_ that contains multiple tools, the focus of this guide will be on using [Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client). Prisma Client is an auto-generated and type-safe query builder that lets you read and write data in your database.
+While Prisma is a toolkit that contains multiple tools, the focus of this guide will be on using [Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client). Prisma Client is an auto-generated and type-safe query builder that lets you read and write data in your database.
 
 > info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/).
 
