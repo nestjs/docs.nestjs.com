@@ -989,6 +989,7 @@ export class AuthService {
 import { Injectable, Dependencies } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 
 @Dependencies(UsersService, JwtService)
 @Injectable()
