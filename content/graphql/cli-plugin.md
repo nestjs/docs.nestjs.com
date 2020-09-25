@@ -22,7 +22,7 @@ With what we've learned so far, you have to duplicate a lot of code to let the p
 @@filename(authors/models/author.model)
 @ObjectType()
 export class Author {
-  @Field(type => Int)
+  @Field(type => ID)
   id: number;
 
   @Field({ nullable: true })
@@ -44,7 +44,7 @@ By enabling the GraphQL plugin, the above class definition can be declared simpl
 @@filename(authors/models/author.model)
 @ObjectType()
 export class Author {
-  @Field(type => Int)
+  @Field(type => ID)
   id: number;
   firstName?: string;
   lastName?: string;
