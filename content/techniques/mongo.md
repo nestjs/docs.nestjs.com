@@ -70,6 +70,24 @@ Alternatively, the `@Prop()` decorator accepts an options object argument ([read
 name: string;
 ```
 
+In case if you want to specify relation to another model, later for pupulating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in different collection called `owners`, property should have type and ref. For example:
+
+```typescript
+import { Types } from 'mongoose';
+import { Owner } from '../owners/schemas/owner.schema';
+
+@Prop({type: Types.ObjectId, ref: Owner.name})
+owner: Owner;
+```
+
+In case if there are multiple owners, you property should be:
+
+```typescript
+@Prop({type: [Types.ObjectId], ref: Owner.name})
+owner: Owner[];
+```
+
+
 Finally, the **raw** schema definition can also be passed to the decorator. This is useful when, for example, a property represents a nested object which is not defined as a class. For this, use the `raw()` function from the `@nestjs/mongoose` package, as follows:
 
 ```typescript
