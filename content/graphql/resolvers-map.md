@@ -263,8 +263,8 @@ Query handler methods can take multiple arguments. Let's imagine that we want to
 
 ```typescript
 getAuthor(
-  @Args( 'firstName', { nullable: true }) firstName?: string,
-  @Args( 'lastName', { defaultValue: '' }) lastName?: string,
+  @Args('firstName', { nullable: true }) firstName?: string,
+  @Args('lastName', { defaultValue: '' }) lastName?: string,
 ) {}
 ```
 
