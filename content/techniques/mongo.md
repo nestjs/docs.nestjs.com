@@ -37,8 +37,10 @@ Let's define the `CatSchema`:
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+export type CatDocument = Cat & Document;
+
 @Schema()
-export class Cat extends Document {
+export class Cat {
   @Prop()
   name: string;
 
@@ -119,12 +121,12 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat } from './schemas/cat.schema';
+import { Cat, CatDocument } from './schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -257,7 +259,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
           const schema = CatsSchema;
           schema.pre('save', () =>
             console.log(
-              `${configService.get<string>('APP_NAME')}: Hello from pre save`,
+              `${configService.get('APP_NAME')}: Hello from pre save`,
             ),
           );
           return schema;
