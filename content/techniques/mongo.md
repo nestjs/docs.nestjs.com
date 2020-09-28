@@ -222,6 +222,23 @@ export class CatsService {
 }
 ```
 
+It's also possible to inject any `Connection` to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: CatsService,
+      useFactory: (catsConnection: Connection) => {
+        return new CatsService(catsConnection);
+      },
+      inject: [getConnectionToken('cats')],
+    },
+  ],
+})
+export class CatsModule {}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
