@@ -109,3 +109,41 @@ getCustomTransformers: (program: any) => ({
   before: [require('@nestjs/graphql/plugin').before({}, program)]
 }),
 ```
+
+#### Usage with `ts-jest`
+When using e2e tests with this plugin you probably will run into issue with compiling schema
+like `Object type <name> must define one or more fields.`
+
+This happens because jest configuration does not import `@nestjs/graphql/plugin` plugin anywhere. 
+
+To fix this, create the following file anywhere:
+```javascript
+const transformer = require('@nestjs/graphql/plugin');
+
+module.exports.name = 'nestjs-graphql-transformer';
+module.exports.version = 1;
+
+module.exports.factory = cs => {
+  return transformer.before(
+    {
+      // your @nestjs/graphql/plugin options(can be empty)
+    },
+    cs.tsCompiler.program,
+  );
+};
+```
+
+Then import it within yours `jest.config.js`
+```javascript
+module.exports = {
+  ...
+  globals: {
+    'ts-jest': {
+      astTransformers: {
+        before: ['<path to plugin>'],
+      },
+    },
+  },
+ ...
+}
+```
