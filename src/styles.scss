@@ -703,3 +703,12 @@ perfect-scrollbar.ps-show-active.ps-show-limits
     }
   }
 }
+
+.no-button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}

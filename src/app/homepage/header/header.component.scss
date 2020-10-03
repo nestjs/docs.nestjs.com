@@ -25,14 +25,9 @@ header {
   @extend .transition;
   height: 100%;
   width: 80px;
-  top: 0;
-  bottom: 0;
-  display: inline-block;
-  position: relative;
-  z-index: 10000;
+  outline-offset: -4px;
 
   &:hover {
-    cursor: pointer;
     background: #212121;
   }
   &.opened {
@@ -46,8 +41,6 @@ header {
     }
   }
   .nav-icon {
-    @extend .center-element;
-
     svg {
       width: 30px;
       height: 30px;
@@ -103,7 +96,7 @@ header {
     li:first-of-type {
       display: none;
     }
-    
+
     .search-wrapper {
       margin-right: 0;
     }
