@@ -208,6 +208,11 @@ export function logger(req: Request, res: Response, next: Function) {
   console.log(`Request...`);
   next();
 };
+@@switch
+export function logger(req, res, next) {
+  console.log(`Request...`);
+  next();
+};
 ```
 
 And use it within the `AppModule`:
