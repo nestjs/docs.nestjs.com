@@ -1,10 +1,10 @@
 ### Middleware
 
-Middleware is a function which is called **before** the route handler. Middleware functions have access to the [request](http://expressjs.com/en/4x/api.html#req) and [response](http://expressjs.com/en/4x/api.html#res) objects, and the `next()` middleware function in the application’s request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
+Middleware is a function which is called **before** the route handler. Middleware functions have access to the [request](https://expressjs.com/en/4x/api.html#req) and [response](https://expressjs.com/en/4x/api.html#res) objects, and the `next()` middleware function in the application’s request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
 
 <figure><img src="/assets/Middlewares_1.png" /></figure>
 
-Nest middleware are, by default, equivalent to [express](http://expressjs.com/en/guide/using-middleware.html) middleware. The following description from the official express documentation describes the capabilities of middleware:
+Nest middleware are, by default, equivalent to [express](https://expressjs.com/en/guide/using-middleware.html) middleware. The following description from the official express documentation describes the capabilities of middleware:
 
 <blockquote class="external">
   Middleware functions can perform the following tasks:

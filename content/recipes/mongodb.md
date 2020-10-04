@@ -2,7 +2,7 @@
 
 > **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **Mongoose** package from scratch using custom components. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/mongoose` package. To learn more, see [here](/techniques/mongodb).
 
-[Mongoose](http://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool.
+[Mongoose](https://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool.
 
 #### Getting started
 
@@ -60,7 +60,7 @@ Now we can inject the `Connection` object using `@Inject()` decorator. Each clas
 
 #### Model injection
 
-With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
+With Mongoose, everything is derived from a [Schema](https://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
 
 ```typescript
 @@filename(schemas/cat.schema)
