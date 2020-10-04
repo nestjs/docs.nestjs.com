@@ -126,6 +126,7 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `BadGatewayException`
 - `ServiceUnavailableException`
 - `GatewayTimeoutException`
+- `PreconditionFailedException`
 
 #### Exception filters
 
