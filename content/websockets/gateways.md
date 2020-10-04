@@ -128,6 +128,8 @@ handleEvent(data) {
 
 > info **Hint** The `WsResponse` interface is imported from `@nestjs/websockets` package.
 
+> warning **Warning** You should return a class instance that `implements WsResponse` if your `data` field relies on Nest's serialization, as it ignores plain JavaScript objects responses.
+
 In order to listen for the incoming response(s), the client has to apply another event listener.
 
 ```typescript
