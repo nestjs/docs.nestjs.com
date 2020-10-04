@@ -15,11 +15,11 @@ Nest provides a set of useful **param decorators** that you can use together wit
 <table>
   <tbody>
     <tr>
-      <td><code>@Request()</code></td>
+      <td><code>@Request(), @Req()</code></td>
       <td><code>req</code></td>
     </tr>
     <tr>
-      <td><code>@Response()</code></td>
+      <td><code>@Response(), @Res()</code></td>
       <td><code>res</code></td>
     </tr>
     <tr>
@@ -49,6 +49,10 @@ Nest provides a set of useful **param decorators** that you can use together wit
     <tr>
       <td><code>@Ip()</code></td>
       <td><code>req.ip</code></td>
+    </tr>
+    <tr>
+      <td><code>@HostParam()</code></td>
+      <td><code>req.hosts</code></td>
     </tr>
   </tbody>
 </table>
