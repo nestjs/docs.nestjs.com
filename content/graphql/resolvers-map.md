@@ -189,7 +189,7 @@ type Query {
 }
 ```
 
-> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+> info **Hint** Learn more about GraphQL queries [here](https://graphql.org/learn/queries/).
 
 Conventionally, we prefer to decouple these names; for example, we prefer to use a name like `getAuthor()` for our query handler method, but still use `author` for our query type name. The same applies to our field resolvers. We can easily do this by passing the mapping names as arguments of the `@Query()` and `@ResolveField()` decorators, as shown below:
 
@@ -445,7 +445,7 @@ class PaginatedAuthor extends Paginated(Author) {}
 
 #### Schema first
 
-As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
+As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](https://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
 
 > info **Hint** For convenience in this chapter, we've aggregated all of the SDL in one location (e.g., one `.graphql` file, as shown below). In practice, you may find it appropriate to organize your code in a modular fashion. For example, it can be helpful to create individual SDL files with type definitions representing each domain entity, along with related services, resolver code, and the Nest module definition class, in a dedicated directory for that entity. Nest will aggregate all the individual schema type definitions at run time.
 
@@ -472,7 +472,7 @@ type Query {
 
 The schema above exposes a single query - `author(id: Int!): Author`.
 
-> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+> info **Hint** Learn more about GraphQL queries [here](https://graphql.org/learn/queries/).
 
 Let's now create an `AuthorsResolver` class that resolves author queries:
 
