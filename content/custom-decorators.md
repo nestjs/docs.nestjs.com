@@ -173,6 +173,7 @@ async findOne(user) {
 Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
 
 ```typescript
+@@filename(auth.decorator)
 import { applyDecorators } from '@nestjs/common';
 
 export function Auth(...roles: Role[]) {
@@ -180,7 +181,18 @@ export function Auth(...roles: Role[]) {
     SetMetadata('roles', roles),
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Unauthorized"' }),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
+}
+@@switch
+import { applyDecorators } from '@nestjs/common';
+
+export function Auth(...roles) {
+  return applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(AuthGuard, RolesGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
   );
 }
 ```
