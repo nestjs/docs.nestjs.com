@@ -271,7 +271,7 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectRepositor
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
+import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
@@ -966,7 +966,7 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectModel(Use
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
+import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
