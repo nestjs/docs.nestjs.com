@@ -35,7 +35,7 @@
     "core-js": "2.6.11",
     "hammerjs": "2.0.8",
     "ngx-perfect-scrollbar": "10.0.1",
-    "nodemon": "2.0.4",
+    "nodemon": "2.0.6",
     "prismjs": "1.21.0",
     "rxjs": "6.6.2",
     "rxjs-compat": "6.6.3",
