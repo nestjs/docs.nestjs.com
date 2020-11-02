@@ -286,12 +286,12 @@ clearInterval(interval);
 **Create** a new interval dynamically using the `SchedulerRegistry.addInterval()` method, as follows:
 
 ```typescript
-addInterval(name: string, seconds: string) {
+addInterval(name: string, milliseconds: number) {
   const callback = () => {
-    this.logger.warn(`Interval ${name} executing at time (${seconds})!`);
+    this.logger.warn(`Interval ${name} executing at time (${milliseconds})!`);
   };
 
-  const interval = setInterval(callback, seconds);
+  const interval = setInterval(callback, milliseconds);
   this.scheduler.addInterval(name, interval);
 }
 ```
@@ -335,12 +335,12 @@ clearTimeout(timeout);
 **Create** a new timeout dynamically using the `SchedulerRegistry.addTimeout()` method, as follows:
 
 ```typescript
-addTimeout(name: string, seconds: string) {
+addTimeout(name: string, milliseconds: number) {
   const callback = () => {
-    this.logger.warn(`Timeout ${name} executing after (${seconds})!`);
+    this.logger.warn(`Timeout ${name} executing after (${milliseconds})!`);
   };
 
-  const timeout = setTimeout(callback, seconds);
+  const timeout = setTimeout(callback, milliseconds);
   this.scheduler.addTimeout(name, timeout);
 }
 ```
