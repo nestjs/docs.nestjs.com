@@ -64,6 +64,25 @@ The `SwaggerModule` automatically reflects all of your endpoints. Note that the 
 
 > info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (`swagger-ui-express`) or `http://localhost:3000/api/json` (`fastify-swagger`) in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
+> warning **Warning** When using `fastify-swagger` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as indicated below:
+```ts
+app.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: [`'self'`],
+      styleSrc: [`'self'`, `'unsafe-inline'`],
+      imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+      scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+    },
+  },
+})
+  
+// If you are not going to use CSP at all, you can use this:
+app.register(helmet, {
+    contentSecurityPolicy: false,
+})
+```
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
