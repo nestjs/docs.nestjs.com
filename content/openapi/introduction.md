@@ -58,6 +58,21 @@ $ npm run start
 
 While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see the Swagger UI.
 
+> warning **Warning** When using `fastify-swagger` and `fastify-helmet` cause content Security Policy conflicts. So make sure to update the helmet with following configration.
+
+```typescript
+app.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: [`'self'`],
+      styleSrc: [`'self'`, `'unsafe-inline'`],
+      imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+      scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+    },
+  },
+})
+```
+
 <figure><img src="/assets/swagger1.png" /></figure>
 
 The `SwaggerModule` automatically reflects all of your endpoints. Note that the Swagger UI is created using either `swagger-ui-express` or `fastify-swagger`, depending on the platform.
