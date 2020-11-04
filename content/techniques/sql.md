@@ -40,6 +40,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
+> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
+
 The `forRoot()` method supports all the configuration properties exposed by the `createConnection()` function from the [TypeORM](https://typeorm.io/#/connection-options) package. In addition, there are several extra configuration properties described below.
 
 <table>
