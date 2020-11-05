@@ -2,7 +2,7 @@
 
 During your development with NestJS, you may encounter various errors as you learn the framework.
 
-#### Cannot Resolve Dependency
+#### "Cannot resolve dependency" error
 
 Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
 
