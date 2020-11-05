@@ -70,7 +70,7 @@ Alternatively, the `@Prop()` decorator accepts an options object argument ([read
 name: string;
 ```
 
-In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in different collection called `owners`, the property should have type and ref. For example:
+In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in a different collection called `owners`, the property should have type and ref. For example:
 
 ```typescript
 import { Types } from 'mongoose';
