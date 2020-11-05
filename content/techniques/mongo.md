@@ -80,7 +80,7 @@ import { Owner } from '../owners/schemas/owner.schema';
 owner: Owner;
 ```
 
-In case if there are multiple owners, you property should be:
+In case there are multiple owners, your property configuration should look as follows:
 
 ```typescript
 @Prop({type: [Types.ObjectId], ref: Owner.name})
