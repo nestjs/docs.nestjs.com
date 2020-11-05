@@ -177,10 +177,6 @@ This should be suitable for most cases. But if you need more customization (like
 
 #### Injecting a custom logger
 
-Sometimes you may want to add custom methods to your logger class.
-In order to use these methods you'll have to inject a custom logger to your services.
-We can use a [transient](/fundamentals/injection-scopes) scope for the logger so that each one of our services has its own custom context.
-If we maintain the `LoggerService` interface in our custom logger, we can still set our logger globally with `app.useLogger`.
 
 To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `Logger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `Logger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
 
