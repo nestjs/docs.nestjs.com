@@ -169,11 +169,11 @@ In the default logger implementation, `context` is printed in the square bracket
 [Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
 ```
 
-If we supply a custom logger via `app.useLogger`, it will actually be used by Nest automatically.
-That means that our code remains implementation agnostic, while we can easily substitute the default logger for our custom one by calling `app.useLogger`.
-That way if we follow the steps from previous section and call `app.useLogger(app.get(MyLogger))`, the following calls to `this.logger.log` from `MyService` would result in calls to method `log` from `MyLogger` instance.
+If we supply a custom logger via `app.useLogger()`, it will actually be used by Nest internally. That means that our code remains implementation agnostic, while we can easily substitute the default logger for our custom one by calling `app.useLogger()`.
 
-This should be suitable for most cases. But if you need more customization for the Logger (like adding and calling custom methods), please follow to the next section. 
+That way if we follow the steps from the previous section and call `app.useLogger(app.get(MyLogger))`, the following calls to `this.logger.log()` from `MyService` would result in calls to method `log` from `MyLogger` instance.
+
+This should be suitable for most cases. But if you need more customization (like adding and calling custom methods), move to the next section. 
 
 #### Injecting a custom logger
 
