@@ -38,7 +38,7 @@ const routes: Routes = [
   {
     path: 'common-errors',
     component: ErrorsComponent,
-    data: { title: 'Common Errors - FAQ' }
+    data: { title: 'Common errors - FAQ' }
   }
 ];
 
