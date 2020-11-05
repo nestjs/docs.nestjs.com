@@ -148,8 +148,7 @@ You can also inject this `MyLogger` provider in your feature classes, thus ensur
 
 We can combine several of the techniques above to provide consistent behavior and formatting across both Nest system logging and our own application event/message logging.
 
-The best practice is to instantiate `Logger` class from `@nestjs/common` in each of our services. 
-We can supply our service name as the `context` argument in the `Logger` constructor, like so:
+A good practice is to instantiate `Logger` class from `@nestjs/common` in each of our services. We can supply our service name as the `context` argument in the `Logger` constructor, like so:
 
 ```typescript
 import { Logger, Injectable } from '@nestjs/common';
