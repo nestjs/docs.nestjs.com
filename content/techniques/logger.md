@@ -163,7 +163,7 @@ class MyService {
 }
 ```
 
-In the default logger `context` is printed in the square brackets, like `NestFactory` in the example below:
+In the default logger implementation, `context` is printed in the square brackets, like `NestFactory` in the example below:
 
 ```bash
 [Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
