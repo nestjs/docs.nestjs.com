@@ -246,8 +246,7 @@ app.useLogger(new MyLogger());
 await app.listen(3000);
 ```
 
-Be mindful that if you supply `logger: false` to `NestFactory.create`, nothing will be logged until you call `useLogger`, so you may miss some important initialization errors.
-If you don't mind that some of your initial messages will be logged with the default logger, you can just omit the `logger: false` option.
+Be mindful that if you supply `logger: false` to `NestFactory.create`, nothing will be logged until you call `useLogger`, so you may miss some important initialization errors. If you don't mind that some of your initial messages will be logged with the default logger, you can just omit the `logger: false` option.
 
 #### Use external logger
 
