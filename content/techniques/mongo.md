@@ -76,7 +76,7 @@ In case you want to specify relation to another model, later for populating, you
 import { Types } from 'mongoose';
 import { Owner } from '../owners/schemas/owner.schema';
 
-@Prop({type: Types.ObjectId, ref: Owner.name})
+@Prop({ type: Types.ObjectId, ref: Owner.name })
 owner: Owner;
 ```
 
