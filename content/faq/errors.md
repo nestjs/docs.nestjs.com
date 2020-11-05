@@ -1,4 +1,4 @@
-### Common Errors
+### Common errors
 
 During your development with NestJS, you may encounter various errors as you learn the framework.
 
