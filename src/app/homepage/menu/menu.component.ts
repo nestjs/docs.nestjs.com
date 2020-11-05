@@ -217,7 +217,7 @@ export class MenuComponent implements OnInit {
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
         { title: 'Request lifecycle', path: '/faq/request-lifecycle' },
-        { title: 'Common Errors', path: '/faq/common-errors' },
+        { title: 'Common errors', path: '/faq/common-errors' },
         {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
