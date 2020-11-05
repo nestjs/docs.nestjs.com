@@ -189,8 +189,6 @@ import { Injectable, Scope, Logger } from '@nestjs/common';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class MyLogger extends Logger {
-  // Implement custom methods or extend default methods here,
-  // for example:
   customLog() {
     this.log('Please feed the cat!');
   }
