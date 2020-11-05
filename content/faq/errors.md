@@ -19,7 +19,7 @@ Potential solutions:
 
 There are a few gotchas, that are common. One is putting a provider in an `imports` array. If this is the case, the error will have the provider's name where `<module>` should be.
 
-#### Circular Dependency
+#### "Circular dependency" error
 
 Occasionally you'll find it difficult to avoid [circular dependencies](/fundamentals/circular-dependency) in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
 
