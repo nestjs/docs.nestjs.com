@@ -30,8 +30,7 @@ import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'audio',
+    BullModule.forRoot({
       redis: {
         host: 'localhost',
         port: 6379,
@@ -42,26 +41,69 @@ import { BullModule } from '@nestjs/bull';
 export class AppModule {}
 ```
 
-The `registerQueue()` method is used to instantiate and/or register queues. Queues are shared across modules and processes that connect to the same underlying Redis database with the same credentials. Each queue is unique by its name property (see below). When sharing queues (across modules/processes), the first `registerQueue()` method to run both **instantiates** the queue and **registers** it for that module. Other modules (in the same or separate processes) simply **register** the queue. Queue registration creates an **injection token** that can be used to access the queue in a given Nest module.
+The `forRoot()` method is used to register a `bull` package configuration object that will be used by all queues registered in the application (unless specified otherwise). A configuration object consist of the following properties:
 
-For each queue, pass a configuration object containing the following properties:
-
-- `name: string` - A queue name, which will be used as both an injection token (for injecting the queue into controllers/providers), and as an argument to decorators to associate consumer classes and listeners with queues. Required.
 - `limiter: RateLimiter` - Options to control the rate at which the queue's jobs are processed. See [RateLimiter](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
 - `redis: RedisOpts` - Options to configure the Redis connection. See [RedisOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
 - `prefix: string` - Prefix for all queue keys. Optional.
 - `defaultJobOptions: JobOpts` - Options to control the default settings for new jobs. See [JobOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd) for more information. Optional.
 - `settings: AdvancedSettings` - Advanced Queue configuration settings. These should usually not be changed. See [AdvancedSettings](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
 
-As noted, the `name` property is required. The rest of the options are optional, providing detailed control over queue behavior. These are passed directly to the Bull `Queue` constructor. Read more about these options [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue). When registering a queue in a second or subsequent module, it is best practice to omit all options but the `name` property from the configuration object. These options should be specified only in the module that **instantiates** the queue.
+All the options are optional, providing detailed control over queue behavior. These are passed directly to the Bull `Queue` constructor. Read more about these options [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue).
+
+To register a queue, import the `BullModule#registerQueue()` dynamic module, as follows:
+
+```typescript
+BullModule.registerQueue({
+  name: 'audio',
+});
+```
 
 > info **Hint** Create multiple queues by passing multiple comma-separated configuration objects to the `registerQueue()` method.
+
+The `registerQueue()` method is used to instantiate and/or register queues. Queues are shared across modules and processes that connect to the same underlying Redis database with the same credentials. Each queue is unique by its name property. A queue name is used as both an injection token (for injecting the queue into controllers/providers), and as an argument to decorators to associate consumer classes and listeners with queues.
+
+You can also override some of the pre-configured options for a specific queue, as follows:
+
+```typescript
+BullModule.registerQueue({
+  name: 'audio',
+  redis: {
+    port: 6380,
+  },
+});
+```
 
 Since jobs are persisted in Redis, each time a specific named queue is instantiated (e.g., when an app is started/restarted), it attempts to process any old jobs that may exist from a previous unfinished session.
 
 Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. Controlling queue processing order is discussed <a href="techniques/queues#consumers">here</a>.
 
 <app-banner-enterprise></app-banner-enterprise>
+
+#### Named configurations
+
+If your queues connect to multiple different Redis instances, you can use a technique called **named configurations**. This feature allows you to register several configurations under specified keys, which then you can refer to in the queue options.
+
+For example, assuming that you have an additional Redis instance (apart from the default one) used by a few queues registered in your application, you can register its configuration as follows:
+
+```typescript
+BullModule.forRoot('alternative-config', {
+  redis: {
+    port: 6381,
+  },
+});
+```
+
+In the example above, `'alternative-config'` is just a configuration key (it can be any arbitrary string).
+
+With this in place, you can now point to this configuration in the `registerQueue()` options object:
+
+```typescript
+BullModule.registerQueue({
+  configKey: 'alternative-queue'
+  name: 'video',
+});
+```
 
 #### Producers
 
@@ -301,13 +343,12 @@ await audioQueue.resume();
 
 #### Async configuration
 
-You may want to pass your queue options asynchronously instead of statically. In this case, use the `registerQueueAsync()` method, which provides several ways to deal with async configuration.
+You may want to pass `bull` options asynchronously instead of statically. In this case, use the `forRootAsync()` method which provides several ways to deal with async configuration. Likewise, if you want to pass queue options asynchronously, use the `registerQueueAsync()` method.
 
 One approach is to use a factory function:
 
 ```typescript
-BullModule.registerQueueAsync({
-  name: 'audio',
+BullModule.forRootAsync({
   useFactory: () => ({
     redis: {
       host: 'localhost',
@@ -320,8 +361,7 @@ BullModule.registerQueueAsync({
 Our factory behaves like any other [asynchronous provider](https://docs.nestjs.com/fundamentals/async-providers) (e.g., it can be `async` and it's able to inject dependencies through `inject`).
 
 ```typescript
-BullModule.registerQueueAsync({
-  name: 'audio',
+BullModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
     redis: {
@@ -336,8 +376,7 @@ BullModule.registerQueueAsync({
 Alternatively, you can use the `useClass` syntax:
 
 ```typescript
-BullModule.registerQueueAsync({
-  name: 'audio',
+BullModule.forRootAsync({
   useClass: BullConfigService,
 });
 ```
@@ -361,8 +400,7 @@ class BullConfigService implements BullOptionsFactory {
 In order to prevent the creation of `BullConfigService` inside `BullModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
 
 ```typescript
-BullModule.registerQueueAsync({
-  name: 'audio',
+BullModule.forRootAsync({
   imports: [ConfigModule],
   useExisting: ConfigService,
 });
