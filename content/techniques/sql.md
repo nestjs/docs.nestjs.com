@@ -593,6 +593,23 @@ export class AlbumsService {
 }
 ```
 
+It's also possible to inject any `Connection` to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsConnection: Connection) => {
+        return new AlbumsService(albumsConnection);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
+```
+
 #### Testing
 
 When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the connection instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
@@ -1160,6 +1177,23 @@ export class AlbumsService {
     private sequelize: Sequelize,
   ) {}
 }
+```
+
+It's also possible to inject any `Sequelize` instance to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsSequelize: Sequelize) => {
+        return new AlbumsService(albumsSequelize);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
 ```
 
 #### Testing
