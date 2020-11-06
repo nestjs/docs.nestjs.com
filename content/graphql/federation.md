@@ -15,15 +15,15 @@ In the next example, we'll set up a demo application with a gateway and two fede
 
 #### Federated example: Users
 
-First install the optional dependency for federation:
+First, install the optional dependency for federation:
 
 ```bash
 $ npm install --save @apollo/federation
 ```
 
-##### Schema first
+#### Schema first
 
-The User service has a simple schema. Note the `@key` directive: it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we extend the `Query` type.
+The User service has a simple schema. Note the `@key` directive: it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also, note that we extend the `Query` type.
 
 ```graphql
 type User @key(fields: "id") {
@@ -36,7 +36,7 @@ extend type Query {
 }
 ```
 
-Our resolver has one extra method: `resolveReference`. It's called by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
+Our resolver has one extra method: `resolveReference()`. It's called by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference()` decorator.
 
 ```typescript
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
@@ -76,7 +76,7 @@ import { UsersResolvers } from './users.resolvers';
 export class AppModule {}
 ```
 
-##### Code first
+#### Code first
 
 Code first federation is very similar to regular code first GraphQL. We simply add some extra decorators to the `User` entity.
 
@@ -86,30 +86,26 @@ import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field(type => ID)
-  public id: number;
+  @Field((type) => ID)
+  id: number;
 
   @Field()
-  public name: string;
-
-  constructor(user: Partial<User>) {
-    Object.assign(this, user);
-  }
+  name: string;
 }
 ```
 
-Our resolver has one extra method: `resolveReference`. It's called by the Apollo Gateway whenever a related resource requires a `User` instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
+Our resolver has one extra method: `resolveReference()`. It's called by the Apollo Gateway whenever a related resource requires a `User` instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference()` decorator.
 
 ```ts
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Resolver(of => User)
+@Resolver((of) => User)
 export class UsersResolvers {
   constructor(private usersService: UsersService) {}
 
-  @Query(returns => User)
+  @Query((returns) => User)
   getUser(@Args('id') id: number): User {
     return this.usersService.findById(id);
   }
@@ -144,7 +140,7 @@ export class AppModule {}
 
 Our Post service serves aggregated posts via a `getPosts` query, but also extends our `User` type with `user.posts`
 
-##### Schema first
+#### Schema first
 
 The Posts service references the User type in its schema by marking it with the `extend` keyword. It also adds one property to the User type. Note the `@key` directive used for matching instances of User, and the `@external` directive indicating that the `id` field is managed elsewhere.
 
@@ -166,7 +162,7 @@ extend type Query {
 }
 ```
 
-Our resolver has one method of interest here: `getUser`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance. The Users service discussed above will be called on the `resolveReference` method.
+Our resolver has one method of interest here: `getUser()`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance. The Users service discussed above will be called on the `resolveReference()` method.
 
 ```typescript
 import { Query, Resolver, Parent, ResolveField } from '@nestjs/graphql';
@@ -219,16 +215,12 @@ import { Post } from './post.entity';
 @Directive('@extends')
 @Directive('@key(fields: "id")')
 export class User {
-  @Field(type => ID)
+  @Field((type) => ID)
   @Directive('@external')
-  public id: number;
+  id: number;
 
-  @Field(type => [Post])
-  public posts?: Post[];
-
-  constructor(user: Partial<User>) {
-    Object.assign(this, user);
-  }
+  @Field((type) => [Post])
+  posts?: Post[];
 }
 ```
 
@@ -240,11 +232,11 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver(of => User)
+@Resolver((of) => User)
 export class UsersResolvers {
   constructor(private readonly postsService: PostsService) {}
 
-  @ResolveField(of => [Post])
+  @ResolveField((of) => [Post])
   public posts(@Parent() user: User): Post[] {
     return this.postsService.forAuthor(user.id);
   }
@@ -260,21 +252,17 @@ import { User } from './user.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class Post {
-  @Field(type => ID)
-  public id: number;
+  @Field((type) => ID)
+  id: number;
 
   @Field()
-  public title: string;
+  title: string;
 
-  @Field(type => Int)
-  public authorId: number;
+  @Field((type) => Int)
+  authorId: number;
 
-  @Field(type => User)
-  public user?: User;
-
-  constructor(post: Partial<Post>) {
-    Object.assign(this, post);
-  }
+  @Field((type) => User)
+  user?: User;
 }
 ```
 
@@ -286,28 +274,28 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver(of => Post)
+@Resolver((of) => Post)
 export class PostsResolvers {
   constructor(private readonly postsService: PostsService) {}
 
-  @Query(returns => Post)
-  public findPost(@Args('id') id: number): Post {
+  @Query((returns) => Post)
+  findPost(@Args('id') id: number): Post {
     return this.postsService.findOne(id);
   }
 
-  @Query(returns => [Post])
-  public getPosts(): Post[] {
+  @Query((returns) => [Post])
+  getPosts(): Post[] {
     return this.postsService.all();
   }
 
-  @ResolveField(of => User)
-  public user(@Parent() post: Post): any {
+  @ResolveField((of) => User)
+  user(@Parent() post: Post): any {
     return { __typename: 'User', id: post.authorId };
   }
 }
 ```
 
-And finally tie it together in a module. Note the schema build options, where we specify that `User` is an outside type.
+And finally, tie it together in a module. Note the schema build options, where we specify that `User` is an outside type.
 
 ```ts
 import { Module } from '@nestjs/common';
@@ -333,7 +321,7 @@ export class AppModule {}
 
 #### Federated example: Gateway
 
-First install the optional dependency for the gateway: `npm install --save @apollo/gateway`.
+First, install the optional dependency for the gateway: `npm install --save @apollo/gateway`.
 
 Our gateway only needs a list of endpoints and will auto-discover the schemas from there. Therefore it is the same for code and schema first, and the code for our gateway is very short:
 
@@ -387,7 +375,7 @@ class AuthenticatedDataSource extends RemoteGraphQLDataSource {
     },
     {
       provide: GATEWAY_BUILD_SERVICE,
-      useFactory: AuthenticatedDataSource => {
+      useFactory: (AuthenticatedDataSource) => {
         return ({ name, url }) => new AuthenticatedDataSource({ url });
       },
       inject: [AuthenticatedDataSource],
