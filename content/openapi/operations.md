@@ -136,6 +136,15 @@ class FileUploadDto {
 }
 ```
 
+To handle multiple files uploading, you can define `FilesUploadDto` as follows:
+
+```typescript
+class FilesUploadDto {
+  @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
+  files: any[];
+}
+```
+
 #### Extensions
 
 To add an Extension to a request use the `@ApiExtension()` decorator. The extension name must be prefixed with `x-`.
