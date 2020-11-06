@@ -10,7 +10,7 @@ import { OpenApiMigrationGuideComponent } from './migration-guide/migration-guid
 import { OperationsComponent } from './operations/operations.component';
 import { OpenApiOtherFeaturesComponent } from './other-features/other-features.component';
 import { OpenApiSecurityComponent } from './security/security.component';
-import { ModelSchemaComponent } from './model-schema/model-schema.component';
+import { TypesAndParametersComponent } from './types-and-parameters/types-and-parameters.component';
 
 const routes: Routes = [
   {
@@ -19,15 +19,9 @@ const routes: Routes = [
     data: { title: 'OpenAPI (Swagger)' },
   },
   {
-    path: 'model-schema',
-    component: ModelSchemaComponent,
-    data: { title: 'Model Schema - OpenAPI' },
-  },
-  // Keep old route to not break existing bookmarks
-  {
     path: 'types-and-parameters',
-    component: ModelSchemaComponent,
-    data: { title: 'Model Schema - OpenAPI' },
+    component: TypesAndParametersComponent,
+    data: { title: 'Types and Parameters - OpenAPI' },
   },
   {
     path: 'operations',
@@ -69,7 +63,7 @@ const routes: Routes = [
 @NgModule({
   imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [
-    ModelSchemaComponent,
+    TypesAndParametersComponent,
     OpenApiMigrationGuideComponent,
     OpenApiOtherFeaturesComponent,
     OperationsComponent,

@@ -22,5 +22,4 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiProperty()`         | Model               |
 | `@ApiPropertyOptional()` | Model               |
 | `@ApiHideProperty()`     | Model               |
-| `@ApiSchema()`           | Model               |
 | `@ApiExtension()`        | Method              |
