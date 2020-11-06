@@ -136,11 +136,12 @@ class FileUploadDto {
 }
 ```
 
-To handle multiple files uploading, you can define `FileUploadDto` as follows:
-```
-class FileUploadDto {
+To handle multiple files uploading, you can define `FilesUploadDto` as follows:
+
+```typescript
+class FilesUploadDto {
   @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
-  file: any;
+  files: any[];
 }
 ```
 
