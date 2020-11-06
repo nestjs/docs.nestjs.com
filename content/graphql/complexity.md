@@ -87,7 +87,7 @@ title: string;
 
 #### Query/Mutation-level complexity
 
-Additionally, `@Query()` and `@Mutation()` may have a `complexity` property specified like so:
+In addition, `@Query()` and `@Mutation()` decorators may have a `complexity` property specified like so:
 
 ```typescript
 @Query({ complexity: (options: ComplexityEstimatorArgs) => options.args.count * options.childComplexity })
