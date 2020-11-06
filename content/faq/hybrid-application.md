@@ -35,7 +35,7 @@ await app.startAllMicroservicesAsync();
 await app.listen(3001);
 ```
 
-For bind `@MessagePattern()` only to one transport of microservices in hybrid application with multiple microservices can use second argument which should get value from `Transport` enum
+To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument of type `Transport` which is an enum with all the built-in transport strategies defined.
 
 ```typescript
 @@filename()
