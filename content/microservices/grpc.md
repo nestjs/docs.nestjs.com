@@ -123,7 +123,7 @@ Next, we need to implement the service. To define a handler that fulfills this d
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService', 'FindOne')
-  findOne(data: HeroById, metadata: any): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -135,7 +135,7 @@ export class HeroesController {
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService', 'FindOne')
-  findOne(data, metadata) {
+  findOne(data, metadata, call) {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -149,7 +149,9 @@ export class HeroesController {
 
 The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroesService'`), corresponding to the `HeroesService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroesService` in the `hero.proto` file.
 
-The `findOne()` handler method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request metadata.
+The `findOne()` handler method takes three arguments, the `data` passed from the caller, `metadata` that stores gRPC
+ request metadata and `call` to obtain the `GrpcCall` object properties such as `sendMetadata` for send metadata to client.
+
 
 Both `@GrpcMethod()` decorator arguments are optional. If called without the second argument (e.g., `'FindOne'`), Nest will automatically associate the `.proto` file rpc method with the handler based on converting the handler name to upper camel case (e.g., the `findOne` handler is associated with the `FindOne` rpc call definition). This is shown below.
 
@@ -158,7 +160,7 @@ Both `@GrpcMethod()` decorator arguments are optional. If called without the sec
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService')
-  findOne(data: HeroById, metadata: any): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -170,7 +172,7 @@ export class HeroesController {
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService')
-  findOne(data, metadata) {
+  findOne(data, metadata, call) {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -187,7 +189,7 @@ You can also omit the first `@GrpcMethod()` argument. In this case, Nest automat
 @Controller()
 export class HeroesService {
   @GrpcMethod()
-  findOne(data: HeroById, metadata: any): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -199,7 +201,7 @@ export class HeroesService {
 @Controller()
 export class HeroesService {
   @GrpcMethod()
-  findOne(data, metadata) {
+  findOne(data, metadata, call) {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -440,3 +442,71 @@ lotsOfGreetings(requestStream: any, callback: (err: unknown, value: HelloRespons
 ```
 
 Here we used the `callback` function to send the response once processing of the `requestStream` has been completed.
+
+#### gRPC Metadata
+
+gRPC metadata is additional data that may be useful during the processing of requests and responses, but is not part of the actual application data. Metadata may include authentication tokens, request identifiers and tags for monitoring purposes, and data information such as the number of records in a data set.
+
+To read the metadata in `@GrpcMethod()` use the second handler metadata argument, which returns the gRPC class `Metadata`.
+
+You can send metadata from `@GrpcMethod()` using the function `sendMetadata()` which is provided by the object `GrpcCall` in the third handler argument.
+
+```typescript
+@@filename(heroes.controller)
+@Controller()
+export class HeroesService {
+  @GrpcMethod()
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+    const srvMetadata = new Metadata();
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+
+    srvMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+    call.sendMetadata(srvMetadata);
+
+    return items.find(({ id }) => id === data.id);
+  }
+}
+@@switch
+@Controller()
+export class HeroesService {
+  @GrpcMethod()
+  findOne(data, metadata, call) {
+    const srvMetadata = new Metadata();
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+
+    srvMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+    call.sendMetadata(srvMetadata);
+
+    return items.find(({ id }) => id === data.id);
+  }
+}
+```
+> info **Hint** The classes `Metadata`, `ServerUnaryCall`, `ServerUnaryCall`, `ServerReadableStream` etc. are exported
+> from the
+> `grpc` package.
+
+The Grpc client can also send metadata if it is sent by the second parameter:
+
+```typescript
+getHero(): Observable<string> {
+  const srvMetadata = new Metadata();
+
+  srvMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+
+  return this.heroesService.findOne({ id: 1 }, srvMetadata);
+}
+```
+
+Stream can receive metadata using a `metadata` event:
+
+```typescript
+stream.on('metadata', (metadata: Metadata) => {
+  const getMeta = metadata.get('X-My-Meta');
+});
+```
