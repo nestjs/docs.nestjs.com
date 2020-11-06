@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { CqrsComponent } from './cqrs/cqrs.component';
-import { CrudComponent } from './crud/crud.component';
+import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { DocumentationComponent } from './documentation/documentation.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
@@ -55,11 +55,16 @@ const routes: Routes = [
   },
   {
     path: 'crud-utilities',
-    redirectTo: '/controllers',
+    redirectTo: '/recipes/crud-generator',
   },
   {
     path: 'crud',
-    redirectTo: '/controllers',
+    redirectTo: '/recipes/crud-generator',
+  },
+  {
+    path: 'crud-generator',
+    component: CrudGeneratorComponent,
+    data: { title: 'CRUD (resource) generators' },
   },
   {
     path: 'hot-reload',
@@ -84,7 +89,7 @@ const routes: Routes = [
     HotReloadComponent,
     TerminusComponent,
     DocumentationComponent,
-    CrudComponent,
+    CrudGeneratorComponent,
     ServeStaticComponent,
   ],
 })
