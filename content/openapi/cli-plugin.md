@@ -14,6 +14,8 @@ The Swagger plugin will automatically:
 - set the `default` property based on the assigned default value
 - set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
 - add a response decorator to every endpoint with a proper status and `type` (response model)
+- generate descriptions for properties and endpoints based on comments (if `introspectComments` set to `true`)
+- generate example values for properties based on comments (if `introspectComments` set to `true`)
 
 Please, note that your filenames **must have** one of the following suffixes: `['.dto.ts', '.entity.ts']` (e.g., `create-user.dto.ts`) in order to be analysed by the plugin.
 
@@ -55,6 +57,34 @@ The plugin adds appropriate decorators on the fly based on the **Abstract Syntax
 
 > warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@ApiProperty()`.
 
+#### Comments introspection
+
+With the comments introspection feature enabled, CLI plugin will generate descriptions and example values for properties based on comments.
+
+For example, given an example `isEnabled` property:
+
+```typescript
+/**
+ * A list of user's roles
+ * @example ['admin']
+ */
+@ApiProperty({
+  description: `A list of user's roles`,
+  example: ['admin'],
+})
+roles: RoleEnum[] = [];
+```
+
+You must duplicate both description and example values. With `introspectComments` enabled, the CLI plugin can extract these comments and automatically provide descriptions (and examples, if defined) for properties. Now, the above property can be declared simply as follows:
+
+```typescript
+/**
+ * A list of user's roles
+ * @example ['admin']
+ */
+roles: RoleEnum[] = [];
+```
+
 #### Using the CLI plugin
 
 To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
@@ -64,7 +94,7 @@ To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "plugins": ["@nestjs/swagger/plugin"]
+    "plugins": ["@nestjs/swagger"]
   }
 }
 ```
@@ -74,9 +104,10 @@ You can use the `options` property to customize the behavior of the plugin.
 ```javascript
 "plugins": [
   {
-    "name": "@nestjs/swagger/plugin",
+    "name": "@nestjs/swagger",
     "options": {
-      "classValidatorShim": false
+      "classValidatorShim": false,
+      "introspectComments": true
     }
   }
 ]
@@ -89,6 +120,7 @@ export interface PluginOptions {
   dtoFileNameSuffix?: string[];
   controllerFileNameSuffix?: string[];
   classValidatorShim?: boolean;
+  introspectComments?: boolean;
 }
 ```
 
@@ -112,6 +144,11 @@ export interface PluginOptions {
     <td><code>classValidatorShim</code></td>
     <td><code>true</code></td>
     <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
+  </tr>
+  <tr>
+  <td><code>introspectComments</code></td>
+    <td><code>false</code></td>
+    <td>If set to true, plugin will generate descriptions and example values for properties based on comments</td>
   </tr>
 </table>
 

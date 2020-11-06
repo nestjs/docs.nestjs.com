@@ -13,6 +13,7 @@ The GraphQL plugin will automatically:
 - annotate all input object, object type and args classes properties with `@Field` unless `@HideField` is used
 - set the `nullable` property depending on the question mark (e.g. `name?: string` will set `nullable: true`)
 - set the `type` property depending on the type (supports arrays as well)
+- generate descriptions for properties based on comments (if `introspectComments` set to `true`)
 
 Please, note that your filenames **must have** one of the following suffixes in order to be analyzed by the plugin: `['.input.ts', '.args.ts', '.entity.ts', '.model.ts']` (e.g., `author.entity.ts`). If you are using a different suffix, you can adjust the plugin's behavior by specifying the `typeFileNameSuffix` option (see below).
 
@@ -55,7 +56,34 @@ export class Author {
 The plugin adds appropriate decorators on-the-fly based on the **Abstract Syntax Tree**. Thus, you won't have to struggle with `@Field` decorators scattered throughout the code.
 
 > info **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, simply set them explicitly via `@Field()`.
+
+#### Comments introspection
+
+With the comments introspection feature enabled, CLI plugin will generate descriptions for fields based on comments.
+
+For example, given an example `roles` property:
+
+```typescript
+/**
+ * A list of user's roles
+ */
+@Field(() => [String], {
+  description: `A list of user's roles`
+})
+roles: string[];
+```
+
+You must duplicate description values. With `introspectComments` enabled, the CLI plugin can extract these comments and automatically provide descriptions for properties. Now, the above field can be declared simply as follows:
+
+```typescript
+/**
+ * A list of user's roles
+ */
+roles: string[];
+```
+
 #### Using the CLI plugin
+
 To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
 
 ```javascript
@@ -63,7 +91,7 @@ To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "plugins": ["@nestjs/graphql/plugin"]
+    "plugins": ["@nestjs/graphql"]
   }
 }
 ```
@@ -73,9 +101,10 @@ You can use the `options` property to customize the behavior of the plugin.
 ```javascript
 "plugins": [
   {
-    "name": "@nestjs/graphql/plugin",
+    "name": "@nestjs/graphql",
     "options": {
-      "typeFileNameSuffix": [".input.ts", ".args.ts"]
+      "typeFileNameSuffix": [".input.ts", ".args.ts"],
+      "introspectComments": true
     }
   }
 ]
@@ -86,6 +115,7 @@ The `options` property has to fulfill the following interface:
 ```typescript
 export interface PluginOptions {
   typeFileNameSuffix?: string[];
+  introspectComments?: boolean;
 }
 ```
 
@@ -99,6 +129,11 @@ export interface PluginOptions {
     <td><code>typeFileNameSuffix</code></td>
     <td><code>['.input.ts', '.args.ts', '.entity.ts', '.model.ts']</code></td>
     <td>GraphQL types files suffix</td>
+  </tr>
+  <tr>
+    <td><code>introspectComments</code></td>
+      <td><code>false</code></td>
+      <td>If set to true, plugin will generate descriptions for properties based on comments</td>
   </tr>
 </table>
 
