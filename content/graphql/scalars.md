@@ -22,13 +22,23 @@ GraphQLModule.forRoot({
 }),
 ```
 
+Likewise, the `GraphQLFloat` is used by default to represent the `number` type. To use the `GraphQLInt` instead, set the `numberScalarMode` of the `buildSchemaOptions` object to `'integer'` as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  buildSchemaOptions: {
+    numberScalarMode: 'integer',
+  }
+}),
+```
+
 In addition, you can create custom scalars. For example, to create a `Date` scalar, simply create a new class.
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
-@Scalar('Date', type => Date)
+@Scalar('Date', (type) => Date)
 export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
