@@ -64,6 +64,8 @@ The `SwaggerModule` automatically reflects all of your endpoints. Note that the 
 
 > info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (`swagger-ui-express`) or `http://localhost:3000/api/json` (`fastify-swagger`) in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
+> `const document` above is a serializable object conforming to [OpenAPI Document](https://swagger.io/specification/#openapi-document). Instead of hosting it via HTTP, you could also save it as a json / yaml file, and consume it in different ways.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
