@@ -41,7 +41,7 @@ export const databaseProviders = [
 
 > warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
 
-> warning **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
+> info **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
 
 Then, we need to export these providers to make them **accessible** for the rest of the application.
 
