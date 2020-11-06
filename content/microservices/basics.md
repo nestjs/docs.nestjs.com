@@ -97,7 +97,7 @@ The request-response message style is useful when you need to **exchange** messa
 
 To enable the request-response message type, Nest creates two logical channels - one is responsible for transferring the data while the other waits for incoming responses. For some underlying transports, such as [NATS](https://nats.io/), this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels. There can be overhead for this, so if you do not require a request-response message style, you should consider using the event-based method.
 
-To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package. This decorator is only registered for [controllers](https://docs.nestjs.com/controllers) since they are the entry points for your application: it would be bad practice to distribute `@MessagePattern()` decorators throughout the application code.
+To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package. This decorator should be used only within the [controller](https://docs.nestjs.com/controllers) classes since they are the entry points for your application. Using them inside providers won't have any effect as they are simply ignored by Nest runtime.
 
 ```typescript
 @@filename(math.controller)
