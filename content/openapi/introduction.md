@@ -42,6 +42,8 @@ async function bootstrap() {
 bootstrap();
 ```
 
+> info **Hint** `document` (returned by the `SwaggerModule#createDocument()` method) is a serializable object conforming to [OpenAPI Document](https://swagger.io/specification/#openapi-document). Instead of hosting it via HTTP, you could also save it as a JSON/YAML file, and consume it in different ways.
+
 The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
 Once we create a document, we can call the `setup()` method. It accepts:
@@ -62,7 +64,27 @@ While the application is running, open your browser and navigate to `http://loca
 
 The `SwaggerModule` automatically reflects all of your endpoints. Note that the Swagger UI is created using either `swagger-ui-express` or `fastify-swagger`, depending on the platform.
 
-> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (`swagger-ui-express`) or `http://localhost:3000/api/json` (`fastify-swagger`) in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+
+> warning **Warning** When using `fastify-swagger` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as shown below:
+>
+> ```typescript
+> app.register(helmet, {
+>   contentSecurityPolicy: {
+>     directives: {
+>       defaultSrc: [`'self'`],
+>       styleSrc: [`'self'`, `'unsafe-inline'`],
+>       imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+>       scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+>     },
+>   },
+> });
+>
+> // If you are not going to use CSP at all, you can use this:
+> app.register(helmet, {
+>   contentSecurityPolicy: false,
+> });
+> ```
 
 ### Document options
 

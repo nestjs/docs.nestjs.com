@@ -58,7 +58,7 @@ This method will return a 200 status code and the associated response, which in 
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library-specific (e.g., Express) <a href="http://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
+      We can use the library-specific (e.g., Express) <a href="https://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability (and the responsibility), to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>
     </td>
   </tr>
 </table>
@@ -69,7 +69,7 @@ This method will return a 200 status code and the associated response, which in 
 
 #### Request object
 
-Handlers often need access to the client **request** details. Nest provides access to the [request object](http://expressjs.com/en/api.html#req) of the underlying platform (Express by default). We can access the request object by instructing Nest to inject it by adding the `@Req()` decorator to the handler's signature.
+Handlers often need access to the client **request** details. Nest provides access to the [request object](https://expressjs.com/en/api.html#req) of the underlying platform (Express by default). We can access the request object by instructing Nest to inject it by adding the `@Req()` decorator to the handler's signature.
 
 ```typescript
 @@filename(cats.controller)
@@ -98,12 +98,12 @@ export class CatsController {
 
 > info **Hint** In order to take advantage of `express` typings (as in the `request: Request` parameter example above), install `@types/express` package.
 
-The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](http://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use dedicated decorators instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the plain platform-specific objects they represent.
+The request object represents the HTTP request and has properties for the request query string, parameters, HTTP headers, and body (read more [here](https://expressjs.com/en/api.html#req)). In most cases, it's not necessary to grab these properties manually. We can use dedicated decorators instead, such as `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the plain platform-specific objects they represent.
 
 <table>
   <tbody>
     <tr>
-      <td><code>@Request()</code></td>
+      <td><code>@Request(), @Req()</code></td>
       <td><code>req</code></td></tr>
     <tr>
       <td><code>@Response(), @Res()</code><span class="table-code-asterisk">*</span></td>
@@ -136,6 +136,10 @@ The request object represents the HTTP request and has properties for the reques
     <tr>
       <td><code>@Ip()</code></td>
       <td><code>req.ip</code></td>
+    </tr>
+    <tr>
+      <td><code>@HostParam()</code></td>
+      <td><code>req.hosts</code></td>
     </tr>
   </tbody>
 </table>
@@ -181,7 +185,7 @@ export class CatsController {
 }
 ```
 
-It's that simple. Nest provides the rest of the standard HTTP request endpoint decorators in the same fashion - `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head()`, and `@All()`. Each represents its respective HTTP request method.
+It's that simple. Nest provides decorators for all of the standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, and `@Head()`. In addition, `@All()` defines an endpoint that handles all of them.
 
 #### Route wildcards
 
@@ -502,7 +506,7 @@ We attached the metadata to the module class using the `@Module()` decorator, an
 
 #### Appendix: Library-specific approach
 
-So far we've discussed the Nest standard way of manipulating responses. The second way of manipulating the response is to use a library-specific [response object](http://expressjs.com/en/api.html#res). In order to inject a particular response object, we need to use the `@Res()` decorator. To show the differences, let's rewrite the `CatsController` to the following:
+So far we've discussed the Nest standard way of manipulating responses. The second way of manipulating the response is to use a library-specific [response object](https://expressjs.com/en/api.html#res). In order to inject a particular response object, we need to use the `@Res()` decorator. To show the differences, let's rewrite the `CatsController` to the following:
 
 ```typescript
 @@filename()

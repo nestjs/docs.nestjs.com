@@ -15,7 +15,7 @@ $ npm i -D @compodoc/compodoc
 Generate project documentation using the following command (npm 6 is required for `npx` support). See [the official documentation](https://compodoc.app/guides/usage.html) for more options.
 
 ```bash
-$ npx compodoc -p tsconfig.json -s
+$ npx @compodoc/compodoc -p tsconfig.json -s
 ```
 
 Open your browser and navigate to [http://localhost:8080](http://localhost:8080). You should see an initial Nest CLI project:

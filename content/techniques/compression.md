@@ -33,7 +33,7 @@ $ npm i --save fastify-compress
 Once the installation is complete, apply the fastify-compress middleware as global middleware.
 
 ```typescript
-import * as compression from 'fastify-compress';
+import compression from 'fastify-compress';
 // somewhere in your initialization file
 app.register(compression);
 ```

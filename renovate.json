@@ -1,4 +1,5 @@
 {
+  "labels": ["dependencies"],
   "semanticCommits": true,
   "packageRules": [{
     "depTypeList": ["devDependencies"],

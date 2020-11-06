@@ -25,7 +25,7 @@ $ npm install --save @nestjs/passport passport passport-local
 $ npm install --save-dev @types/passport-local
 ```
 
-> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as show above with `@types/passport-local`, which provides assistance while writing TypeScript code.
+> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as shown above with `@types/passport-local`, which provides assistance while writing TypeScript code.
 
 #### Implementing Passport strategies
 
@@ -246,8 +246,8 @@ import { AuthService } from './auth.service';
 @Dependencies(AuthService)
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(authService) {
-    this.authService = authService
     super();
+    this.authService = authService;
   }
 
   async validate(username, password) {
@@ -345,7 +345,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class AppController {
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
-  @Bind(Req())
+  @Bind(Request())
   async login(req) {
     return req.user;
   }
@@ -446,8 +446,7 @@ import { JwtService } from '@nestjs/jwt';
 @Dependencies(UsersService, JwtService)
 @Injectable()
 export class AuthService {
-  constructor(usersService, jwtService)
-  ) {
+  constructor(usersService, jwtService) {
     this.usersService = usersService;
     this.jwtService = jwtService;
   }
@@ -571,7 +570,7 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  @Bind(Req())
+  @Bind(Request())
   async login(req) {
     return this.authService.login(req.user);
   }
@@ -740,25 +739,28 @@ export class AppController {
   }
 }
 @@switch
-import { Controller, Bind, Get, Request, Post, UseGuards } from '@nestjs/common';
+import { Controller, Dependencies, Bind, Get, Request, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 
+@Dependencies(AuthService)
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService) {}
+  constructor(authService) {
+    this.authService = authService;
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  @Bind(Req())
+  @Bind(Request())
   async login(req) {
     return this.authService.login(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  @Bind(Req())
+  @Bind(Request())
   getProfile(req) {
     return req.user;
   }

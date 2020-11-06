@@ -1,6 +1,6 @@
 ### Mongo
 
-Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](http://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
+Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
 
 Start by installing the required dependencies:
 
@@ -37,8 +37,10 @@ Let's define the `CatSchema`:
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+export type CatDocument = Cat & Document;
+
 @Schema()
-export class Cat extends Document {
+export class Cat {
   @Prop()
   name: string;
 
@@ -70,6 +72,23 @@ Alternatively, the `@Prop()` decorator accepts an options object argument ([read
 name: string;
 ```
 
+In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in a different collection called `owners`, the property should have type and ref. For example:
+
+```typescript
+import { Types } from 'mongoose';
+import { Owner } from '../owners/schemas/owner.schema';
+
+@Prop({ type: Types.ObjectId, ref: Owner.name })
+owner: Owner;
+```
+
+In case there are multiple owners, your property configuration should look as follows:
+
+```typescript
+@Prop({ type: [Types.ObjectId], ref: Owner.name })
+owner: Owner[];
+```
+
 Finally, the **raw** schema definition can also be passed to the decorator. This is useful when, for example, a property represents a nested object which is not defined as a class. For this, use the `raw()` function from the `@nestjs/mongoose` package, as follows:
 
 ```typescript
@@ -90,7 +109,7 @@ export const CatSchema = new mongoose.Schema({
 });
 ```
 
-The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them them near their related **domain** objects, in the appropriate module directory.
+The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them near their related **domain** objects, in the appropriate module directory.
 
 Let's look at the `CatsModule`:
 
@@ -119,12 +138,12 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat } from './schemas/cat.schema';
+import { Cat, CatDocument } from './schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -222,6 +241,18 @@ export class CatsService {
 }
 ```
 
+To inject a given `Connection` to a custom provider (for example, factory provider), use the `getConnectionToken()` function passing the name of the connection as an argument.
+
+```typescript
+{
+  provide: CatsService,
+  useFactory: (catsConnection: Connection) => {
+    return new CatsService(catsConnection);
+  },
+  inject: [getConnectionToken('cats')],
+}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
@@ -257,7 +288,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
           const schema = CatsSchema;
           schema.pre('save', () =>
             console.log(
-              `${configService.get<string>('APP_NAME')}: Hello from pre save`,
+              `${configService.get('APP_NAME')}: Hello from pre save`,
             ),
           );
           return schema;

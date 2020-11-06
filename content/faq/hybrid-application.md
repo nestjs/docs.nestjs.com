@@ -35,6 +35,35 @@ await app.startAllMicroservicesAsync();
 await app.listen(3001);
 ```
 
+To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument of type `Transport` which is an enum with all the built-in transport strategies defined.
+
+```typescript
+@@filename()
+@MessagePattern('time.us.*', Transport.NAST)
+getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
+  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  return new Date().toLocaleTimeString(...);
+}
+@MessagePattern({ cmd: 'time.us' }, Transport.TCP)
+getTCPDate(@Payload() data: number[]) {
+  return new Date().toLocaleTimeString(...);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('time.us.*', Transport.NAST)
+getDate(data, context) {
+  console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
+  return new Date().toLocaleTimeString(...);
+}
+@Bind(Payload(), Ctx())
+@MessagePattern({ cmd: 'time.us' }, Transport.TCP)
+getTCPDate(data, context) {
+  return new Date().toLocaleTimeString(...);
+}
+```
+
+> info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.
+
 #### Sharing configuration
 
 By default a hybrid application will not inherit global pipes, interceptors, guards and filters configured for the main (HTTP-based) application.
