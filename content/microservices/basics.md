@@ -352,7 +352,7 @@ The `data` property is the message payload sent by the message producer. The `pa
 
 ### Handling timeouts
 
-Sometimes, microservices are down or not available. You can handle these cases using the `RxJS` timeout operator in the call. If the microservice does not respond to the request within a certain time, an Exception is thrown, which can be caught and handled appropriately.
+In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the `RxJS` timeout operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
 
 To solve this problem you have to use [rxjs](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
 
