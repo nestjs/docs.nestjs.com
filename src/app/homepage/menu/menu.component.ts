@@ -181,8 +181,8 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Introduction', path: '/openapi/introduction' },
         {
-          title: 'Types and Parameters',
-          path: '/openapi/types-and-parameters',
+          title: 'Model schema',
+          path: '/openapi/model-schema',
         },
         { title: 'Operations', path: '/openapi/operations' },
         { title: 'Security', path: '/openapi/security' },
