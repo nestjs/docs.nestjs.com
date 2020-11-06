@@ -145,13 +145,12 @@ export class HeroesController {
 }
 ```
 
-> info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package.
+> info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package, while `Metadata` and `ServerUnaryCall` from the `grpc` package.
 
 The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroesService'`), corresponding to the `HeroesService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroesService` in the `hero.proto` file.
 
 The `findOne()` handler method takes three arguments, the `data` passed from the caller, `metadata` that stores gRPC
- request metadata and `call` to obtain the `GrpcCall` object properties such as `sendMetadata` for send metadata to client.
-
+request metadata and `call` to obtain the `GrpcCall` object properties such as `sendMetadata` for send metadata to client.
 
 Both `@GrpcMethod()` decorator arguments are optional. If called without the second argument (e.g., `'FindOne'`), Nest will automatically associate the `.proto` file rpc method with the handler based on converting the handler name to upper camel case (e.g., the `findOne` handler is associated with the `FindOne` rpc call definition). This is shown below.
 
@@ -308,6 +307,21 @@ call() {
 }
 ```
 
+To send gRPC metadata (along with the request), you can pass a second argument, as follows:
+
+```typescript
+call(): Observable<any> {
+  const metadata = new Metadata();
+  metadata.add('Set-Cookie', 'yummy_cookie=choco');
+
+  return this.heroesService.findOne({ id: 1 }, metadata);
+}
+```
+
+> info **Hint** The `Metadata` class is imported from the `grpc` package.
+
+Please note that this would require updating the `HeroesService` interface that we've defined a few steps earlier.
+
 A full working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
 #### gRPC Streaming
@@ -372,7 +386,7 @@ The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `
 
 ```typescript
 @GrpcStreamMethod()
-bidiHello(messages: Observable<any>): Observable<any> {
+bidiHello(messages: Observable<any>, metadata: Metadata, call: ServerDuplexStream<any, any>): Observable<any> {
   const subject = new Subject();
 
   const onNext = message => {
@@ -388,7 +402,9 @@ bidiHello(messages: Observable<any>): Observable<any> {
 }
 ```
 
-> info **Hint** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, the controller method must return an RxJS `Observable`.
+> warning **Warning** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, the controller method must return an RxJS `Observable`.
+
+> info **Hint** The `Metadata` and `ServerUnaryCall` classes/interfaces are imported from the `grpc` package.
 
 According to the service definition (in the `.proto` file), the `BidiHello` method should stream requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplySubject` class.
 
@@ -445,11 +461,11 @@ Here we used the `callback` function to send the response once processing of the
 
 #### gRPC Metadata
 
-gRPC metadata is additional data that may be useful during the processing of requests and responses, but is not part of the actual application data. Metadata may include authentication tokens, request identifiers and tags for monitoring purposes, and data information such as the number of records in a data set.
+Metadata is information about a particular RPC call in the form of a list of key-value pairs, where the keys are strings and the values are typically strings but can be binary data. Metadata is opaque to gRPC itself - it lets the client provide information associated with the call to the server and vice versa. Metadata may include authentication tokens, request identifiers and tags for monitoring purposes, and data information such as the number of records in a data set.
 
-To read the metadata in `@GrpcMethod()` use the second handler metadata argument, which returns the gRPC class `Metadata`.
+To read the metadata in `@GrpcMethod()` handler, use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
 
-You can send metadata from `@GrpcMethod()` using the function `sendMetadata()` which is provided by the object `GrpcCall` in the third handler argument.
+To send back metadata from the handler, use the `ServerUnaryCall#sendMetadata()` method (third handler argument).
 
 ```typescript
 @@filename(heroes.controller)
@@ -457,14 +473,14 @@ You can send metadata from `@GrpcMethod()` using the function `sendMetadata()` w
 export class HeroesService {
   @GrpcMethod()
   findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
-    const srvMetadata = new Metadata();
+    const serverMetadata = new Metadata();
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
     ];
 
-    srvMetadata.add('Set-Cookie', 'yummy_cookie=choco');
-    call.sendMetadata(srvMetadata);
+    serverMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+    call.sendMetadata(serverMetadata);
 
     return items.find(({ id }) => id === data.id);
   }
@@ -474,39 +490,28 @@ export class HeroesService {
 export class HeroesService {
   @GrpcMethod()
   findOne(data, metadata, call) {
-    const srvMetadata = new Metadata();
+    const serverMetadata = new Metadata();
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
     ];
 
-    srvMetadata.add('Set-Cookie', 'yummy_cookie=choco');
-    call.sendMetadata(srvMetadata);
+    serverMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+    call.sendMetadata(serverMetadata);
 
     return items.find(({ id }) => id === data.id);
   }
 }
 ```
-> info **Hint** The classes `Metadata`, `ServerUnaryCall`, `ServerUnaryCall`, `ServerReadableStream` etc. are exported
-> from the
-> `grpc` package.
 
-The Grpc client can also send metadata if it is sent by the second parameter:
+Likewise, to read the metadata in handlers annotated with the `@GrpcStreamMethod()` handler ([subject strategy](microservices/grpc#subject-strategy)), use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
 
-```typescript
-getHero(): Observable<string> {
-  const srvMetadata = new Metadata();
+To send back metadata from the handler, use the `ServerDuplexStream#sendMetadata()` method (third handler argument).
 
-  srvMetadata.add('Set-Cookie', 'yummy_cookie=choco');
-
-  return this.heroesService.findOne({ id: 1 }, srvMetadata);
-}
-```
-
-Stream can receive metadata using a `metadata` event:
+To read metadata from within the [call stream handlers](microservices/grpc#call-stream-handler) (handlers annotated with `@GrpcStreamCall()` decorator), listen to the `metadata` event on the `requestStream` reference, as follows:
 
 ```typescript
-stream.on('metadata', (metadata: Metadata) => {
-  const getMeta = metadata.get('X-My-Meta');
+requestStream.on('metadata', (metadata: Metadata) => {
+  const meta = metadata.get('X-Meta');
 });
 ```
