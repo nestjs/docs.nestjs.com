@@ -222,22 +222,16 @@ export class CatsService {
 }
 ```
 
-It's also possible to inject any `Connection` to the providers:
+To inject a given `Connection` to a custom provider (for example, factory provider), use the `getConnectionToken()` function passing the name of the connection as an argument.
 
 ```typescript
-@Module({
-  providers: [
-    {
-      provide: CatsService,
-      useFactory: (catsConnection: Connection) => {
-        return new CatsService(catsConnection);
-      },
-      inject: [getConnectionToken('cats')],
-    },
-  ],
-})
-export class CatsModule {}
-```
+{
+  provide: CatsService,
+  useFactory: (catsConnection: Connection) => {
+    return new CatsService(catsConnection);
+  },
+  inject: [getConnectionToken('cats')],
+}
 
 #### Hooks (middleware)
 
