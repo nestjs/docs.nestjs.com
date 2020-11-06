@@ -251,6 +251,7 @@ To inject a given `Connection` to a custom provider (for example, factory provid
   },
   inject: [getConnectionToken('cats')],
 }
+```
 
 #### Hooks (middleware)
 
