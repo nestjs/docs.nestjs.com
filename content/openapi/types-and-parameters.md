@@ -288,3 +288,15 @@ pets: Pet[];
 > info **Hint** The `getSchemaPath()` function is imported from `@nestjs/swagger`.
 
 Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
+
+### Schema
+
+As you might have noticed the name of the generated model schema matches the name of the model class e.g. `CreateCatDto` will generate `CreateCatDto` schema. If you want to change the generated schema name then use `@ApiSchema()` decorator.
+
+For example:
+```typescript
+@ApiSchema({ name: 'CreateCatRequest' })
+class CreateCatDto {}
+```
+
+The above model will translate into schema with name `CreateCatRequest`.
