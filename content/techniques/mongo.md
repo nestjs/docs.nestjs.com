@@ -87,6 +87,8 @@ In case there are multiple owners, your property configuration should look as fo
 ```typescript
 @Prop({ type: [Types.ObjectId], ref: Owner.name })
 owner: Owner[];
+```
+
 Finally, the **raw** schema definition can also be passed to the decorator. This is useful when, for example, a property represents a nested object which is not defined as a class. For this, use the `raw()` function from the `@nestjs/mongoose` package, as follows:
 
 ```typescript
