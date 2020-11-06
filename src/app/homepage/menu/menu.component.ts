@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
+  OnInit
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -98,7 +98,8 @@ export class MenuComponent implements OnInit {
         { title: 'HTTP module', path: '/techniques/http-module' },
         { title: 'Model-View-Controller', path: '/techniques/mvc' },
         { title: 'Performance (Fastify)', path: '/techniques/performance' },
-      ],
+        { title: 'Server-Sent Events', path: '/techniques/server-sent-events' }
+      ], 
     },
     {
       title: 'GraphQL',
