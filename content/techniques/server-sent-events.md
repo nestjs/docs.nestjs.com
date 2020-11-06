@@ -1,38 +1,27 @@
 ### Server-Sent Events
 
-You can enable Server-Sent events on a route with Nest. This can be used to push real-time updates to your client using HTTP. More informations about this specification can be found [on the whatwg website](https://html.spec.whatwg.org/multipage/server-sent-events.html).
+Server-Sent Events (SSE) is a server push technology enabling a client to receive automatic updates from a server via HTTP connection. Each notification is sent as a block of text terminated by a pair of newlines (learn more [here](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)).
 
 #### Usage
 
-In this example, we set a route named `/sse` that will allow you to propagate real time updates. These events can be listened to using the Javascript [EventSource API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource). On the `/` route, for the sake of the example, we're logging the received data in the browser's console.
+To enable Server-Sent events on a route (route registered within a **controller class**), annotate the method handler with the `@Sse()` decorator.
 
-Note the `@Sse` decorator that hooks the Server-Sent events mechanism on the chosen path:
-
-```
-@Controller()
-export class AppController {
-  @Get()
-  getHello(): string {
-    return `
-    <script type="text/javascript">
-      const ee = new EventSource('/sse')
-      ee.onmessage = ({data}) => {
-        console.log('New message', JSON.parse(data))
-      }
-    </script>
-    `;
-  }
-
-  @Sse('/sse')
-  sse(): Observable<MessageEvent> {
-    return interval(1000).pipe(map((_) => ({ data: { hello: 'world' } })));
-  }
+```typescript
+@Sse('sse')
+sse(): Observable<MessageEvent> {
+  return interval(1000).pipe(map((_) => ({ data: { hello: 'world' } })));
 }
 ```
 
-The events are sent via an Observable emitting a `MessageEvent`. The MessageEvent should respect the following interface to match the specification:
+> info **Hint** The `@Sse()` decorator is imported from the `@nestjs/common`, while `Observable`, `interval`, `and map` are imported from the `rxjs` package.
 
-```
+> warning **Warning** Server-Sent Events routes must return an `Observable` stream.
+
+In the example above, we defined a route named `sse` that will allow us to propagate real-time updates. These events can be listened to using the [EventSource API](https://developer.mozilla.org/en-US/docs/Web/API/EventSource).
+
+The `sse` method returns an `Observable` that emits multiple `MessageEvent` (in this example, it emits a new `MessageEvent` every second). The `MessageEvent` object should respect the following interface to match the specification:
+
+```typescript
 export interface MessageEvent {
   data: string | object;
   id?: string;
@@ -41,4 +30,17 @@ export interface MessageEvent {
 }
 ```
 
-You can find a working example in the [Nest repository](https://github.com/nestjs/nest/tree/master/sample/28-sse).
+With this in place, we can now create an instance of the `EventSource` class in our client-side application, passing the `/see` (which is a route string matching what we have passed into the `@Sse()` decorator above) as a constructor argument.
+
+`EventSource` instance opens a persistent connection to an HTTP server, which sends events in `text/event-stream` format. The connection remains open until closed by calling `EventSource.close()`.
+
+Once the connection is opened, incoming messages from the server are delivered to your code in the form of events. If there is an event field in the incoming message, the triggered event is the same as the event field value. If no event field is present, then a generic `message` event is fired ([source](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)).
+
+```javascript
+const eventSource = new EventSource('/sse');
+eventSource.onmessage = ({ data }) => {
+  console.log('New message', JSON.parse(data));
+};
+```
+
+You can find a working example [here](https://github.com/nestjs/nest/tree/master/sample/28-sse).

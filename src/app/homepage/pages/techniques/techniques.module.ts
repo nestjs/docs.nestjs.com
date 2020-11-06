@@ -15,6 +15,7 @@ import { PerformanceComponent } from './performance/performance.component';
 import { QueuesComponent } from './queues/queues.component';
 import { SecurityComponent } from './security/security.component';
 import { SerializationComponent } from './serialization/serialization.component';
+import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
 import { SqlComponent } from './sql/sql.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
@@ -108,6 +109,11 @@ const routes: Routes = [
     path: 'hot-reload',
     redirectTo: '/recipes/hot-reload',
   },
+  {
+    path: 'server-sent-events',
+    component: ServerSentEventsComponent,
+    data: { title: 'Server-Sent Events' },
+  },
 ];
 
 @NgModule({
@@ -129,6 +135,7 @@ const routes: Routes = [
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
+    ServerSentEventsComponent
   ],
 })
 export class TechniquesModule {}
