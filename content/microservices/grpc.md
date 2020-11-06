@@ -487,6 +487,9 @@ export class HeroesService {
   }
 }
 ```
+> info **Hint** The classes `Metadata`, `ServerUnaryCall`, `ServerUnaryCall`, `ServerReadableStream` etc. are exported
+> from the
+> `grpc` package.
 
 The Grpc client can also send metadata if it is sent by the second parameter:
 
