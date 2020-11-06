@@ -103,7 +103,7 @@ For example, if you want to make sure that the library generates operation names
 
 ```TypeScript
 const document = SwaggerModule.createDocument(app, options, {
-  operationIdFactory = (
+  operationIdFactory: (
     controllerKey: string,
     methodKey: string
   ) => methodKey;
