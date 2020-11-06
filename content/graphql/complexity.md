@@ -92,6 +92,6 @@ Additionally, `@Query()` and `@Mutation()` may have a `complexity` property spec
 ```typescript
 @Query({ complexity: (options: ComplexityEstimatorArgs) => options.args.count * options.childComplexity })
 items(@Args('count') count: number) {
-  return itemsService.getItems({ count });
+  return this.itemsService.getItems({ count });
 }
 ```
