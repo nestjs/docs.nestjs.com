@@ -145,40 +145,46 @@ getCustomTransformers: (program: any) => ({
 }),
 ```
 
-#### Usage with `ts-jest`
-When using e2e tests with this plugin you probably will run into issue with compiling schema
-like `Object type <name> must define one or more fields.`
+#### Integration with `ts-jest` (e2e tests)
 
-This happens because jest configuration does not import `@nestjs/graphql/plugin` plugin anywhere. 
+When running e2e tests with this plugin enabled, you may run into issues with compiling schema. For example, one of the most common errors is:
 
-To fix this, create the following file anywhere:
+```json
+Object type <name> must define one or more fields.
+```
+
+This happens because `jest` configuration does not import `@nestjs/graphql/plugin` plugin anywhere.
+
+To fix this, create the following file in your e2e tests directory:
+
 ```javascript
 const transformer = require('@nestjs/graphql/plugin');
 
 module.exports.name = 'nestjs-graphql-transformer';
+// you should change the version number anytime you change the configuration below - otherwise, jest will not detect changes
 module.exports.version = 1;
 
-module.exports.factory = cs => {
+module.exports.factory = (cs) => {
   return transformer.before(
     {
-      // your @nestjs/graphql/plugin options(can be empty)
+      // @nestjs/graphql/plugin options (can be empty)
     },
     cs.tsCompiler.program,
   );
 };
 ```
 
-Then import it within yours `jest.config.js`
-```javascript
-module.exports = {
-  ...
-  globals: {
-    'ts-jest': {
-      astTransformers: {
-        before: ['<path to plugin>'],
-      },
-    },
-  },
- ...
+With this in place, import AST transformer within your `jest` configuration file. By default (in the starter application), e2e tests configuration file is located under the `test` folder and is named `jest-e2e.json`.
+
+```json
+{
+  ... // other configuration
+  "globals": {
+    "ts-jest": {
+      "astTransformers": {
+        "before": ["<path to the file created above>"],
+      }
+    }
+  }
 }
 ```
