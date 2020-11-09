@@ -159,3 +159,40 @@ getCustomTransformers: (program: any) => ({
   before: [require('@nestjs/swagger/plugin').before({}, program)]
 }),
 ```
+
+#### Usage with `ts-jest` in e2e tests
+
+You need to do the following steps in order to make `jest` e2e tests working with this plugin.
+This happens because `jest` configuration does not import `@nestjs/swagger/plugin` plugin anywhere. 
+
+To fix this, create the following file anywhere:
+```javascript
+const transformer = require('@nestjs/swagger/plugin');
+
+module.exports.name = 'nestjs-swagger-transformer';
+module.exports.version = 1; // you should change this anytime you change the configuration below
+
+module.exports.factory = cs => {
+  return transformer.before(
+    {
+      // your @nestjs/swagger/plugin options(can be empty)
+    },
+    cs.tsCompiler.program,
+  );
+};
+```
+
+Then import it within yours `jest.config.js`
+```javascript
+module.exports = {
+  ...
+  globals: {
+    'ts-jest': {
+      astTransformers: {
+        before: ['<path to plugin>'],
+      },
+    },
+  },
+ ...
+}
+```
