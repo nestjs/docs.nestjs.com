@@ -153,26 +153,26 @@ To add an Extension to a request use the `@ApiExtension()` decorator. The extens
 @ApiExtension('x-foo', { hello: 'world' })
 ```
 
-#### Advanced: Generics ApiResponse
+#### Advanced: Generic `ApiResponse`
 
-With the ability to provide **Raw Definition**, we can provide **Generics** schema for SwaggerUI. Assume we have the following *generics DTO*
+With the ability to provide [Raw Definitions](/openapi/types-and-parameters#raw-definitions), we can define Generic schema for Swagger UI. Assume we have the following DTO:
 
 ```ts
 export class PaginatedDto<TData> {
   @ApiProperty()
   total: number;
-  
+
   @ApiProperty()
   limit: number;
-  
+
   @ApiProperty()
   offset: number;
-  
+
   results: TData[];
 }
 ```
 
-We skip decorating `results` because we will be providing **Raw Definition** for it later. Now, let's assume we have the following `CatDto`
+We skip decorating `results` as we will be providing a raw definition for it later. Now, let's define another DTO and name it, for example, `CatDto`, as follows:
 
 ```ts
 export class CatDto {
@@ -187,56 +187,44 @@ export class CatDto {
 }
 ```
 
-Now, we can start providing a `PaginatedDto<CatDto>` on `CatController`
+With this in place, we can define a `PaginatedDto<CatDto>` response, as follows:
 
 ```ts
-@Controller(...)
-export class CatController {
-  
-  @Get()
-  @ApiOkResponse({
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatedDto) },
-        {
-          properties: {
-            results: {
-              type: 'array',
-              items: { $ref: getSchemaPath(CatDto) },
-            },
+@ApiOkResponse({
+  schema: {
+    allOf: [
+      { $ref: getSchemaPath(PaginatedDto) },
+      {
+        properties: {
+          results: {
+            type: 'array',
+            items: { $ref: getSchemaPath(CatDto) },
           },
         },
-      ],
-    },
-  })
-  async get(...): Promise<PaginatedDto<CatDto>> {
-    ...
-  }
-}
+      },
+    ],
+  },
+})
+async findAll(): Promise<PaginatedDto<CatDto>> {}
 ```
 
-We are not done. `PaginatedDto` isn't part of any controller by itself so `SwaggerModule` won't be able to scan it
-during initialization. But, `nestjs/swagger` provides an `ApiExtraModels()` decorator for such cases.
+In this example, we specify that the response will have allOf `PaginatedDto` and the `results` property will be of type `Array<CatDto>`.
+
+- `getSchemaPath()` function that returns the OpenAPI Schema path from within the OpenAPI Spec File for a given model.
+- `allOf` is a concept that OAS 3 provides to cover various Inheritance related use-cases.
+
+Lastly, since `PaginatedDto` is not directly referenced by any controller, the `SwaggerModule` will not be able to generate a corresponding model definition just yet. In this case, we must add it as an [Extra Model](/openapi/types-and-parameters#extra-models). For example, we can use the `@ApiExtraModels()` decorator on the controller level, as follows:
 
 ```ts
-@Controller(...)
+@Controller('cats')
 @ApiExtraModels(PaginatedDto)
-export class CatController {
-  ...
-}
+export class CatsController {}
 ```
 
-> info **Hint** You only need to use `ApiExtraModels` for a specific `Dto` once so find a place where it makes sense for you to do so.
-
-- `getSchemaPath()` returns the OpenAPI Schema path from within the OpenAPI Spec File that `ApiExtraModels` helps `nestjs/swagger` generates,
-or `nestjs/swagger` is able to scan automatically.
-- `allOf` is a concept that OpenAPI 3 has to cover Inheritance use-cases.
-
-In this case, we tell SwaggerUI that this response will have **allOf** `PaginatedDto` and the `results` property will be of type array and each item will be of type `CatDto`. 
-If you run the SwaggerUI now, you'd see the generated `swagger.json` for this specific endpoint like the following:
+If you run Swagger now, the generated `swagger.json` for this specific endpoint should have the followng response defined:
 
 ```json
-responses": {
+"responses": {
   "200": {
     "description": "",
     "content": {
@@ -261,10 +249,12 @@ responses": {
 }
 ```
 
-Now that we know it works, we can create a custom decorator for `PaginatedDto` as follow:
+To make it reusable, we can create a custom decorator for `PaginatedDto`, as follows:
 
 ```ts
-export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
   return applyDecorators(
     ApiOkResponse({
       schema: {
@@ -285,27 +275,25 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
 };
 ```
 
-then we can use `ApiPaginatedResponse` on our endpoint:
+> info **Hint** `Type<any>` interface and `applyDecorators` function are imported from the `@nestjs/common` package.
+
+With this in place, we can use the custom `@ApiPaginatedResponse()` decorator on our endpoint:
 
 ```ts
-@Get()
 @ApiPaginatedResponse(CatDto)
-async get(): Promise<PaginatedDto<CatDto>> {}
+async findAll(): Promise<PaginatedDto<CatDto>> {}
 ```
 
-You can modify `ApiPaginatedResponse` as you see fit, maybe make it more generics to handle non-array `results` or maybe different property name than `results`. 
-Knowing the capabilities of `nestjs/swagger` APIs, you can totally go wild with it and make sure your OpenAPI Spec is correct and covered.
+For client generation tools, this approach poses an ambiguity in how the `PaginatedResponse<TModel>` is being generated for the client. The following snippet is an example of a client generator result for the above `GET /` endpoint.
 
-For client generation tools, this approach poses an ambiguity in how this `PaginatedResponse<TModel>` is being generated for the client. The following snippet is an example of a client generator result of the above **GET** request:
-
-```ts
+```typescript
 // Angular
-get(): Observable<{ total: number, limit: number, offset: number, results: CatDto[] }>
+findAll(): Observable<{ total: number, limit: number, offset: number, results: CatDto[] }>
 ```
 
 As you can see, the **Return Type** here is ambiguous. To workaround this issue, you can add a `title` property to the `schema` for `ApiPaginatedResponse`:
 
-```ts
+```typescript
 export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
   return applyDecorators(
     ApiOkResponse({
@@ -324,5 +312,5 @@ Now the result of the client generator tool will become:
 
 ```ts
 // Angular
-get(): Observable<PaginatedResponseOfCatDto>
+findAll(): Observable<PaginatedResponseOfCatDto>
 ```
