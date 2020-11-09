@@ -256,22 +256,21 @@ export class DatabaseModule {}
 
 #### Schema validation
 
-It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables use of the [Joi](https://github.com/hapijs/joi) npm package to support this type of validation. With Joi, you define an object schema and validate JavaScript objects against it.
+It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables use of the [Joi](https://github.com/sideway/joi) npm package to support this type of validation. With Joi, you define an object schema and validate JavaScript objects against it.
 
-Install Joi (and its types, for **TypeScript** users):
+Install Joi:
 
 ```bash
-$ npm install --save @hapi/joi
-$ npm install --save-dev @types/hapi__joi
+$ npm install --save joi
 ```
 
-> warning **Notice** The latest version of `@hapi/joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their documentation](https://hapi.dev/family/joi/?v=17.0.2#install) & this [github issue](https://github.com/hapijs/joi/issues/2266#issuecomment-571667769).
+> warning **Notice** The latest version of Joi requires you to be running Node v12 or later. For older versions of node, please install Joi `v16.1.8` from `@hapi/joi` package (and its types, from `@types/hapi__joi` package for TypeScript users). This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their documentation](https://hapi.dev/family/joi/?v=17.0.2#install) & this [github issue](https://github.com/hapijs/joi/issues/2266#issuecomment-571667769).
 
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
 @@filename(app.module)
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
@@ -294,7 +293,7 @@ By default, unknown environment variables (environment variables whose keys are 
 
 ```typescript
 @@filename(app.module)
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
