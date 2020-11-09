@@ -34,7 +34,7 @@ Now, to implement the `Character` interface, use the `implements` key:
 
 ```typescript
 @ObjectType({
-  implements: [Character],
+  implements: () => [Character],
 })
 export class Human implements Character {
   id: string;
