@@ -4,6 +4,7 @@ Nest comes with a built-in text-based logger which is used during application bo
 
 - disable logging entirely
 - specify the log level of detail (e.g., display errors, warnings, debug information, etc.)
+- override timestamp in the default logger (e.g., use ISO8601 standard as date format)
 - completely override the default logger
 - customize the default logger by extending it
 - make use of dependency injection to simplify composing and testing your application
