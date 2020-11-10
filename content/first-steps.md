@@ -4,7 +4,7 @@ In this set of articles, you'll learn the **core fundamentals** of Nest. To get 
 
 #### Language
 
-We're in love with [TypeScript](http://www.typescriptlang.org/), but above all - we love [Node.js](https://nodejs.org/en/). That's why Nest is compatible with both TypeScript and **pure JavaScript**. Nest takes advantage of the latest language features, so to use it with vanilla JavaScript we need a [Babel](http://babeljs.io/) compiler.
+We're in love with [TypeScript](https://www.typescriptlang.org/), but above all - we love [Node.js](https://nodejs.org/en/). That's why Nest is compatible with both TypeScript and **pure JavaScript**. Nest takes advantage of the latest language features, so to use it with vanilla JavaScript we need a [Babel](https://babeljs.io/) compiler.
 
 We'll mostly use TypeScript in the examples we provide, but you can always **switch the code snippets** to vanilla JavaScript syntax (simply click to toggle the language button in the upper right hand corner of each snippet).
 
@@ -27,18 +27,22 @@ The `project` directory will be created, node modules and a few other boilerplat
   <div class="item">src</div>
   <div class="children">
     <div class="item">app.controller.ts</div>
+    <div class="item">app.controller.spec.ts</div>
     <div class="item">app.module.ts</div>
+    <div class="item">app.service.ts</div>
     <div class="item">main.ts</div>
   </div>
 </div>
 
 Here's a brief overview of those core files:
 
-|                     |                                                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `app.controller.ts` | Basic controller sample with a single route.                                                                        |
-| `app.module.ts`     | The root module of the application.                                                                                 |
-| `main.ts`           | The entry file of the application which uses the core function `NestFactory` to create a Nest application instance. |
+|                          |                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `app.controller.ts`      | A basic controller with a single route.                                                                             |
+| `app.controller.spec.ts` | The unit tests for the controller.                                                                                  |
+| `app.module.ts`          | The root module of the application.                                                                                 |
+| `app.service.ts`         | A basic service with a single method.                                                                               |
+| `main.ts`                | The entry file of the application which uses the core function `NestFactory` to create a Nest application instance. |
 
 The `main.ts` includes an async function, which will **bootstrap** our application:
 

@@ -25,7 +25,7 @@ $ npm install --save @nestjs/passport passport passport-local
 $ npm install --save-dev @types/passport-local
 ```
 
-> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as show above with `@types/passport-local`, which provides assistance while writing TypeScript code.
+> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as shown above with `@types/passport-local`, which provides assistance while writing TypeScript code.
 
 #### Implementing Passport strategies
 
@@ -246,8 +246,8 @@ import { AuthService } from './auth.service';
 @Dependencies(AuthService)
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(authService) {
-    this.authService = authService
     super();
+    this.authService = authService;
   }
 
   async validate(username, password) {
@@ -262,9 +262,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
 We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object.
 
+> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body.  Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`.  See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
+
 We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
 
-Most of the validation work is done in our `AuthService` (with the help of our `UserService`), so this method is quite straightforward. The `validate()` method for **any** Passport strategy will follow a similar pattern, varying only in the details of how credentials are represented. If a user is found and the credentials are valid, the user is returned so Passport can complete its tasks (e.g., creating the `user` property on the `Request` object), and the request handling pipeline can continue. If it's not found, we throw an exception and let our <a href="exception-filters">exceptions layer</a> handle it.
+Most of the validation work is done in our `AuthService` (with the help of our `UsersService`), so this method is quite straightforward. The `validate()` method for **any** Passport strategy will follow a similar pattern, varying only in the details of how credentials are represented. If a user is found and the credentials are valid, the user is returned so Passport can complete its tasks (e.g., creating the `user` property on the `Request` object), and the request handling pipeline can continue. If it's not found, we throw an exception and let our <a href="exception-filters">exceptions layer</a> handle it.
 
 Typically, the only significant difference in the `validate()` method for each strategy is **how** you determine if a user exists and is valid. For example, in a JWT strategy, depending on requirements, we may evaluate whether the `userId` carried in the decoded token matches a record in our user database, or matches a list of revoked tokens. Hence, this pattern of sub-classing and implementing strategy-specific validation is consistent, elegant and extensible.
 
@@ -343,7 +345,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class AppController {
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
-  @Bind(Req())
+  @Bind(Request())
   async login(req) {
     return req.user;
   }
@@ -393,8 +395,8 @@ We're ready to move on to the JWT portion of our auth system. Let's review and r
 We'll need to install a couple more packages to support our JWT requirements:
 
 ```bash
-$ npm install @nestjs/jwt passport-jwt
-$ npm install @types/passport-jwt --save-dev
+$ npm install --save @nestjs/jwt passport-jwt
+$ npm install --save-dev @types/passport-jwt
 ```
 
 The `@nestjs/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy and `@types/passport-jwt` provides the TypeScript type definitions.
@@ -444,8 +446,7 @@ import { JwtService } from '@nestjs/jwt';
 @Dependencies(UsersService, JwtService)
 @Injectable()
 export class AuthService {
-  constructor(usersService, jwtService)
-  ) {
+  constructor(usersService, jwtService) {
     this.usersService = usersService;
     this.jwtService = jwtService;
   }
@@ -569,7 +570,7 @@ export class AppController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  @Bind(Req())
+  @Bind(Request())
   async login(req) {
     return this.authService.login(req.user);
   }
@@ -738,25 +739,28 @@ export class AppController {
   }
 }
 @@switch
-import { Controller, Bind, Get, Request, Post, UseGuards } from '@nestjs/common';
+import { Controller, Dependencies, Bind, Get, Request, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 
+@Dependencies(AuthService)
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService) {}
+  constructor(authService) {
+    this.authService = authService;
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  @Bind(Req())
+  @Bind(Request())
   async login(req) {
     return this.authService.login(req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  @Bind(Req())
+  @Bind(Request())
   getProfile(req) {
     return req.user;
   }
@@ -789,7 +793,7 @@ We've now completed our JWT authentication implementation. JavaScript clients (s
 
 #### Default strategy
 
-In our `AppController`, we pass the name of the strategy in the `@AuthGuard()` decorator. We need to do this because we've introduced **two** Passport strategies (passport-local and passport-jwt), both of which supply implementations of various Passport components. Passing the name disambiguates which implementation we're linking to. When multiple strategies are included in an application, we can declare a default strategy so that we no longer have to pass the name in the `@AuthGuard` decorator if using that default strategy. Here's how to register a default strategy when importing the `PassportModule`. This code would go in the `AuthModule`:
+In our `AppController`, we pass the name of the strategy in the `AuthGuard()` function. We need to do this because we've introduced **two** Passport strategies (passport-local and passport-jwt), both of which supply implementations of various Passport components. Passing the name disambiguates which implementation we're linking to. When multiple strategies are included in an application, we can declare a default strategy so that we no longer have to pass the name in the `AuthGuard` function if using that default strategy. Here's how to register a default strategy when importing the `PassportModule`. This code would go in the `AuthModule`:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -915,7 +919,7 @@ When implementing a strategy, you can provide a name for it by passing a second 
 export class JwtStrategy extends PassportStrategy(Strategy, 'myjwt')
 ```
 
-Then, you refer to this via a decorator like `@AuthGuard('myjwt')`.
+Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
@@ -959,6 +963,6 @@ To use above decorator in your resolver, be sure to include it as a parameter of
 @Query(returns => User)
 @UseGuards(GqlAuthGuard)
 whoAmI(@CurrentUser() user: User) {
-  return this.userService.findById(user.id);
+  return this.usersService.findById(user.id);
 }
 ```

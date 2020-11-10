@@ -90,7 +90,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
 
 #### Sample gRPC service
 
-Let's define our sample gRPC service called `HeroService`. In the above `options` object, the`protoPath` property sets a path to the `.proto` definitions file `hero.proto`. The `hero.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
+Let's define our sample gRPC service called `HeroesService`. In the above `options` object, the`protoPath` property sets a path to the `.proto` definitions file `hero.proto`. The `hero.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
 
 ```typescript
 // hero/hero.proto
@@ -98,7 +98,7 @@ syntax = "proto3";
 
 package hero;
 
-service HeroService {
+service HeroesService {
   rpc FindOne (HeroById) returns (Hero) {}
 }
 
@@ -112,18 +112,18 @@ message Hero {
 }
 ```
 
-Our `HeroService` exposes a `FindOne()` method. This method expects an input argument of type `HeroById` and returns a `Hero` message (protocol buffers use `message` elements to define both parameter types and return types).
+Our `HeroesService` exposes a `FindOne()` method. This method expects an input argument of type `HeroById` and returns a `Hero` message (protocol buffers use `message` elements to define both parameter types and return types).
 
 Next, we need to implement the service. To define a handler that fulfills this definition, we use the `@GrpcMethod()` decorator in a controller, as shown below. This decorator provides the metadata needed to declare a method as a gRPC service method.
 
 > info **Hint** The `@MessagePattern()` decorator (<a href="microservices/basics#request-response">read more</a>) introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService', 'FindOne')
-  findOne(data: HeroById, metadata: any): Hero {
+export class HeroesController {
+  @GrpcMethod('HeroesService', 'FindOne')
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -133,9 +133,9 @@ export class HeroController {
 }
 @@switch
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService', 'FindOne')
-  findOne(data, metadata) {
+export class HeroesController {
+  @GrpcMethod('HeroesService', 'FindOne')
+  findOne(data, metadata, call) {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -145,20 +145,21 @@ export class HeroController {
 }
 ```
 
-> info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package.
+> info **Hint** The `@GrpcMethod()` decorator is imported from the `@nestjs/microservices` package, while `Metadata` and `ServerUnaryCall` from the `grpc` package.
 
-The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroService'`), corresponding to the `HeroService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroService` in the `hero.proto` file.
+The decorator shown above takes two arguments. The first is the service name (e.g., `'HeroesService'`), corresponding to the `HeroesService` service definition in `hero.proto`. The second (the string `'FindOne'`) corresponds to the `FindOne()` rpc method defined within `HeroesService` in the `hero.proto` file.
 
-The `findOne()` handler method takes two arguments, the `data` passed from the caller and `metadata` that stores gRPC request metadata.
+The `findOne()` handler method takes three arguments, the `data` passed from the caller, `metadata` that stores gRPC
+request metadata and `call` to obtain the `GrpcCall` object properties such as `sendMetadata` for send metadata to client.
 
 Both `@GrpcMethod()` decorator arguments are optional. If called without the second argument (e.g., `'FindOne'`), Nest will automatically associate the `.proto` file rpc method with the handler based on converting the handler name to upper camel case (e.g., the `findOne` handler is associated with the `FindOne` rpc call definition). This is shown below.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService')
-  findOne(data: HeroById, metadata: any): Hero {
+export class HeroesController {
+  @GrpcMethod('HeroesService')
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -168,9 +169,9 @@ export class HeroController {
 }
 @@switch
 @Controller()
-export class HeroController {
-  @GrpcMethod('HeroService')
-  findOne(data, metadata) {
+export class HeroesController {
+  @GrpcMethod('HeroesService')
+  findOne(data, metadata, call) {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -180,14 +181,14 @@ export class HeroController {
 }
 ```
 
-You can also omit the first `@GrpcMethod()` argument. In this case, Nest automatically associates the handler with the service definition from the proto definitions file based on the **class** name where the handler is defined. For example, in the following code, class `HeroService` associates its handler methods with the `HeroService` service definition in the `hero.proto` file based on the matching of the name `'HeroService'`.
+You can also omit the first `@GrpcMethod()` argument. In this case, Nest automatically associates the handler with the service definition from the proto definitions file based on the **class** name where the handler is defined. For example, in the following code, class `HeroesService` associates its handler methods with the `HeroesService` service definition in the `hero.proto` file based on the matching of the name `'HeroesService'`.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Controller()
-export class HeroService {
+export class HeroesService {
   @GrpcMethod()
-  findOne(data: HeroById, metadata: any): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -197,9 +198,9 @@ export class HeroService {
 }
 @@switch
 @Controller()
-export class HeroService {
+export class HeroesService {
   @GrpcMethod()
-  findOne(data, metadata) {
+  findOne(data, metadata, call) {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -237,19 +238,21 @@ Once registered, we can inject the configured `ClientGrpc` object with `@Inject(
 ```typescript
 @Injectable()
 export class AppService implements OnModuleInit {
-  private heroService: HeroService;
+  private heroesService: HeroesService;
 
   constructor(@Inject('HERO_PACKAGE') private client: ClientGrpc) {}
 
   onModuleInit() {
-    this.heroService = this.client.getService<HeroService>('HeroService');
+    this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
   getHero(): Observable<string> {
-    return this.heroService.findOne({ id: 1 });
+    return this.heroesService.findOne({ id: 1 });
   }
 }
 ```
+
+> error **Warning** gRPC Client will not send fields that contain underscore `_` in their names unless the `keepCase` options is set to `true` in the proto loader configuration (`options.loader.keepcase` in the microservice transporter configuration).
 
 Notice that there is a small difference compared to the technique used in other microservice transport methods. Instead of the `ClientProxy` class, we use the `ClientGrpc` class, which provides the `getService()` method. The `getService()` generic method takes a service name as an argument and returns its instance (if available).
 
@@ -267,26 +270,26 @@ export class AppService implements OnModuleInit {
   })
   client: ClientGrpc;
 
-  private heroService: HeroService;
+  private heroesService: HeroesService;
 
   onModuleInit() {
-    this.heroService = this.client.getService<HeroService>('HeroService');
+    this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
   getHero(): Observable<string> {
-    return this.heroService.findOne({ id: 1 });
+    return this.heroesService.findOne({ id: 1 });
   }
 }
 ```
 
 Finally, for more complex scenarios, we can inject a dynamically configured client using the `ClientProxyFactory` class as described <a href="/microservices/basics#client">here</a>.
 
-In either case, we end up with a reference to our `HeroService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroService` looks and acts like a local provider.
+In either case, we end up with a reference to our `HeroesService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroesService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroesService` looks and acts like a local provider.
 
-Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroService` definition contains the `FindOne()` function, the `heroService` instance will provide the `findOne()` method.
+Note, all service methods are **lower camel cased** (in order to follow the natural convention of the language). So, for example, while our `.proto` file `HeroesService` definition contains the `FindOne()` function, the `heroesService` instance will provide the `findOne()` method.
 
 ```typescript
-interface HeroService {
+interface HeroesService {
   findOne(data: { id: number }): Observable<any>;
 }
 ```
@@ -294,17 +297,32 @@ interface HeroService {
 A message handler is also able to return an `Observable`, in which case the result values will be emitted until the stream is completed.
 
 ```typescript
-@@filename(hero.controller)
+@@filename(heroes.controller)
 @Get()
 call(): Observable<any> {
-  return this.heroService.findOne({ id: 1 });
+  return this.heroesService.findOne({ id: 1 });
 }
 @@switch
 @Get()
 call() {
-  return this.heroService.findOne({ id: 1 });
+  return this.heroesService.findOne({ id: 1 });
 }
 ```
+
+To send gRPC metadata (along with the request), you can pass a second argument, as follows:
+
+```typescript
+call(): Observable<any> {
+  const metadata = new Metadata();
+  metadata.add('Set-Cookie', 'yummy_cookie=choco');
+
+  return this.heroesService.findOne({ id: 1 }, metadata);
+}
+```
+
+> info **Hint** The `Metadata` class is imported from the `grpc` package.
+
+Please note that this would require updating the `HeroesService` interface that we've defined a few steps earlier.
 
 A full working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
@@ -330,8 +348,8 @@ syntax = "proto3";
 package hello;
 
 service HelloService {
-  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse)
-  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse)
+  rpc BidiHello(stream HelloRequest) returns (stream HelloResponse);
+  rpc LotsOfGreetings(stream HelloRequest) returns (HelloResponse);
 }
 
 message HelloRequest {
@@ -370,7 +388,7 @@ The `@GrpcStreamMethod()` decorator provides the function parameter as an RxJS `
 
 ```typescript
 @GrpcStreamMethod()
-bidiHello(messages: Observable<any>): Observable<any> {
+bidiHello(messages: Observable<any>, metadata: Metadata, call: ServerDuplexStream<any, any>): Observable<any> {
   const subject = new Subject();
 
   const onNext = message => {
@@ -386,13 +404,15 @@ bidiHello(messages: Observable<any>): Observable<any> {
 }
 ```
 
-> info **Hint** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, the controller method must return an RxJS `Observable`.
+> warning **Warning** For supporting full-duplex interaction with the `@GrpcStreamMethod()` decorator, the controller method must return an RxJS `Observable`.
+
+> info **Hint** The `Metadata` and `ServerUnaryCall` classes/interfaces are imported from the `grpc` package.
 
 According to the service definition (in the `.proto` file), the `BidiHello` method should stream requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplySubject` class.
 
 ```typescript
 const helloService = this.client.getService<HelloService>('HelloService');
-const helloRequest$ = new ReplySubject<HelloRequest>();
+const helloRequest$ = new ReplaySubject<HelloRequest>();
 
 helloRequest$.next({ greeting: 'Hello (1)!' });
 helloRequest$.next({ greeting: 'Hello (2)!' });
@@ -440,3 +460,60 @@ lotsOfGreetings(requestStream: any, callback: (err: unknown, value: HelloRespons
 ```
 
 Here we used the `callback` function to send the response once processing of the `requestStream` has been completed.
+
+#### gRPC Metadata
+
+Metadata is information about a particular RPC call in the form of a list of key-value pairs, where the keys are strings and the values are typically strings but can be binary data. Metadata is opaque to gRPC itself - it lets the client provide information associated with the call to the server and vice versa. Metadata may include authentication tokens, request identifiers and tags for monitoring purposes, and data information such as the number of records in a data set.
+
+To read the metadata in `@GrpcMethod()` handler, use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
+
+To send back metadata from the handler, use the `ServerUnaryCall#sendMetadata()` method (third handler argument).
+
+```typescript
+@@filename(heroes.controller)
+@Controller()
+export class HeroesService {
+  @GrpcMethod()
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+    const serverMetadata = new Metadata();
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+
+    serverMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+    call.sendMetadata(serverMetadata);
+
+    return items.find(({ id }) => id === data.id);
+  }
+}
+@@switch
+@Controller()
+export class HeroesService {
+  @GrpcMethod()
+  findOne(data, metadata, call) {
+    const serverMetadata = new Metadata();
+    const items = [
+      { id: 1, name: 'John' },
+      { id: 2, name: 'Doe' },
+    ];
+
+    serverMetadata.add('Set-Cookie', 'yummy_cookie=choco');
+    call.sendMetadata(serverMetadata);
+
+    return items.find(({ id }) => id === data.id);
+  }
+}
+```
+
+Likewise, to read the metadata in handlers annotated with the `@GrpcStreamMethod()` handler ([subject strategy](microservices/grpc#subject-strategy)), use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
+
+To send back metadata from the handler, use the `ServerDuplexStream#sendMetadata()` method (third handler argument).
+
+To read metadata from within the [call stream handlers](microservices/grpc#call-stream-handler) (handlers annotated with `@GrpcStreamCall()` decorator), listen to the `metadata` event on the `requestStream` reference, as follows:
+
+```typescript
+requestStream.on('metadata', (metadata: Metadata) => {
+  const meta = metadata.get('X-Meta');
+});
+```

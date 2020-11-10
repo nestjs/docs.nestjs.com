@@ -115,6 +115,7 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `RequestTimeoutException`
 - `ConflictException`
 - `GoneException`
+- `HttpVersionNotSupportedException`
 - `PayloadTooLargeException`
 - `UnsupportedMediaTypeException`
 - `UnprocessableEntityException`
@@ -125,6 +126,7 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `BadGatewayException`
 - `ServiceUnavailableException`
 - `GatewayTimeoutException`
+- `PreconditionFailedException`
 
 #### Exception filters
 

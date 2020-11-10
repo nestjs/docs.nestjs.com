@@ -22,7 +22,7 @@ export class CatsService {
 
 #### Retrieving instances
 
-The `ModuleRef` instance (hereafter we'll refer to it as the **module reference**) has a `get()` method. This method retrieve a provider, controller, or injectable (e.g., guard, interceptor, etc.) that exists (has been instantiated) in the **current** module using its injection token/class name.
+The `ModuleRef` instance (hereafter we'll refer to it as the **module reference**) has a `get()` method. This method retrieves a provider, controller, or injectable (e.g., guard, interceptor, etc.) that exists (has been instantiated) in the **current** module using its injection token/class name.
 
 ```typescript
 @@filename(cats.service)
@@ -158,6 +158,17 @@ export class CatsService {
 
 > info **Hint** The `ContextIdFactory` class is imported from the `@nestjs/core` package.
 
+#### Registering `REQUEST` provider
+
+Manually generated context identifiers (with `ContextIdFactory.create()`) represent DI sub-trees in which `REQUEST` provider is `undefined` as they are not instantiated and managed by the Nest dependency injection system.
+
+To register a custom `REQUEST` object for a manually created DI sub-tree, use the `ModuleRef#registerRequestByContextId()` method, as follows:
+
+```typescript
+const contextId = ContextIdFactory.create();
+this.moduleRef.registerRequestByContextId(/* YOUR_REQUEST_OBJECT */, contextId);
+```
+
 #### Getting current sub-tree
 
 Occasionally, you may want to resolve an instance of a request-scoped provider within a **request context**. Let's say that `CatsService` is request-scoped and you want to resolve the `CatsRepository` instance which is also marked as a request-scoped provider. In order to share the same DI container sub-tree, you must obtain the current context identifier instead of generating a new one (e.g., with the `ContextIdFactory.create()` function, as shown above). To obtain the current context identifier, start by injecting the request object using `@Inject()` decorator.
@@ -189,9 +200,9 @@ const contextId = ContextIdFactory.getByRequest(this.request);
 const catsRepository = await this.moduleRef.resolve(CatsRepository, contextId);
 ```
 
-#### Instantiating classes dynamically
+#### Instantiating custom classes dynamically
 
-To dynamically instantiate a class that wasn't previously registered as a provider, use the module reference's `create()` method.
+To dynamically instantiate a class that **wasn't previously registered** as a **provider**, use the module reference's `create()` method.
 
 ```typescript
 @@filename(cats.service)

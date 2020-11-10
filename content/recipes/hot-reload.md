@@ -32,7 +32,7 @@ module.exports = function(options) {
     watch: true,
     externals: [
       nodeExternals({
-        whitelist: ['webpack/hot/poll?100'],
+        allowlist: ['webpack/hot/poll?100'],
       }),
     ],
     plugins: [
@@ -106,7 +106,7 @@ module.exports = {
   target: 'node',
   externals: [
     nodeExternals({
-      whitelist: ['webpack/hot/poll?100'],
+      allowlist: ['webpack/hot/poll?100'],
     }),
   ],
   module: {
@@ -167,3 +167,7 @@ $ npm run start:dev
 ```
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
+
+### TypeORM
+
+If you're using `@nestjs/typeorm`, you'll need to add `keepConnectionAlive: true` to your TypeORM configuration.

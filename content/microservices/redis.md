@@ -54,6 +54,8 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
   </tr>
 </table>
 
+All the properties supported by the official [redis](https://www.npmjs.com/package/redis#options-object-properties) client are also supported by this transporter.
+
 #### Client
 
 Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a Redis `ClientProxy` instance.

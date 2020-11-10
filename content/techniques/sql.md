@@ -2,7 +2,7 @@
 
 Nest is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. You have a number of options available to you, depending on your preferences. At the most general level, connecting Nest to a database is simply a matter of loading an appropriate Node.js driver for the database, just as you would with [Express](https://expressjs.com/en/guide/database-integration.html) or Fastify.
 
-You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](http://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)) and [TypeORM](https://github.com/typeorm/typeorm), to operate at a higher level of abstraction.
+You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](https://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)) [TypeORM](https://github.com/typeorm/typeorm), and [Prisma](https://www.github.com/prisma/prisma) ([recipe](/recipes/prisma)) , to operate at a higher level of abstraction.
 
 For convenience, Nest provides tight integration with TypeORM and Sequelize out-of-the-box with the `@nestjs/typeorm` and `@nestjs/sequelize` packages respectively, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
 
@@ -39,6 +39,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 })
 export class AppModule {}
 ```
+
+> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
 
 The `forRoot()` method supports all the configuration properties exposed by the `createConnection()` function from the [TypeORM](https://typeorm.io/#/connection-options) package. In addition, there are several extra configuration properties described below.
 
@@ -229,7 +231,7 @@ import { User } from './user.entity';
 
 @Injectable()
 @Dependencies(getRepositoryToken(User))
-export class UserService {
+export class UsersService {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;
   }
@@ -271,14 +273,14 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectRepositor
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UsersModule } from './users.module';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [UsersModule],
-  providers: [UserService],
-  controllers: [UserController]
+  providers: [UsersService],
+  controllers: [UsersController]
 })
 export class UserHttpModule {}
 ```
@@ -357,6 +359,63 @@ export class AppModule {}
 With that option specified, every entity registered through the `forFeature()` method will be automatically added to the `entities` array of the configuration object.
 
 > warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but are only referenced from the entity (via a relationship), won't be included by way of the `autoLoadEntities` setting.
+
+#### Separating entity definition
+
+You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
+
+```typescript
+import { EntitySchema } from 'typeorm';
+import { User } from './user.entity';
+
+export const UserSchema = new EntitySchema<User>({
+  name: 'User',
+  target: User,
+  columns: {
+    id: {
+      type: Number,
+      primary: true,
+      generated: true,
+    },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  relations: {
+    photos: {
+      type: 'one-to-many',
+      target: 'Photo', // the name of the PhotoSchema
+    },
+  },
+});
+```
+
+> warning error **Warning** If you provide the `target` option, the `name` option value has to be the same as the name of the target class.
+> If you do not provide the `target` you can use any name.
+
+Nest allows you to use an `EntitySchema` instance wherever an `Entity` is expected, for example:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserSchema } from './user.schema';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([UserSchema])],
+  providers: [UsersService],
+  controllers: [UsersController],
+})
+export class UsersModule {}
+```
 
 #### Transactions
 
@@ -534,6 +593,23 @@ export class AlbumsService {
 }
 ```
 
+It's also possible to inject any `Connection` to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsConnection: Connection) => {
+        return new AlbumsService(albumsConnection);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
+```
+
 #### Testing
 
 When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the connection instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
@@ -543,7 +619,7 @@ The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which 
 ```typescript
 @Module({
   providers: [
-    UserService,
+    UsersService,
     {
       provide: getRepositoryToken(User),
       useValue: mockRepository,
@@ -553,11 +629,11 @@ The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which 
 export class UsersModule {}
 ```
 
-Now a substitute `mockRepository` will be used as the `UserRepository`. Whenever any class asks for `UserRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
+Now a substitute `mockRepository` will be used as the `UsersRepository`. Whenever any class asks for `UsersRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
 
 #### Custom repository
 
-TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](http://typeorm.io/#/custom-repository).
+TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](https://typeorm.io/#/custom-repository).
 
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
@@ -616,11 +692,11 @@ TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: (configService: ConfigService) => ({
     type: 'mysql',
-    host: configService.get<string>('HOST'),
-    port: configService.get<string>('PORT'),
-    username: configService.get<string>('USERNAME'),
-    password: configService.get<string>('PASSWORD'),
-    database: configService.get<string>('DATABASE'),
+    host: configService.get('HOST'),
+    port: +configService.get<number>('PORT'),
+    username: configService.get('USERNAME'),
+    password: configService.get('PASSWORD'),
+    database: configService.get('DATABASE'),
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
   }),
@@ -707,7 +783,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 export class AppModule {}
 ```
 
-The `forRoot()` method supports all the configuration properties exposed by the Sequelize constuctor ([read more](https://sequelize.org/v5/manual/getting-started.html#setting-up-a-connection)). In addition, there are several extra configuration properties described below.
+The `forRoot()` method supports all the configuration properties exposed by the Sequelize constructor ([read more](https://sequelize.org/v5/manual/getting-started.html#setting-up-a-connection)). In addition, there are several extra configuration properties described below.
 
 <table>
   <tr>
@@ -862,7 +938,7 @@ import { User } from './user.model';
 
 @Injectable()
 @Dependencies(getModelToken(User))
-export class UserService {
+export class UsersService {
   constructor(usersRepository) {
     this.usersRepository = usersRepository;
   }
@@ -909,14 +985,14 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectModel(Use
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UsersModule } from './users.module';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [UsersModule],
-  providers: [UserService],
-  controllers: [UserController]
+  providers: [UsersService],
+  controllers: [UsersController]
 })
 export class UserHttpModule {}
 ```
@@ -1103,6 +1179,23 @@ export class AlbumsService {
 }
 ```
 
+It's also possible to inject any `Sequelize` instance to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsSequelize: Sequelize) => {
+        return new AlbumsService(albumsSequelize);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
+```
+
 #### Testing
 
 When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on models that are pulled from the connection instance. How do we handle that? The solution is to create mock models. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered model is automatically represented by a `<ModelName>Model` token, where `ModelName` is the name of your model class.
@@ -1112,7 +1205,7 @@ The `@nestjs/sequelize` package exposes the `getModelToken()` function which ret
 ```typescript
 @Module({
   providers: [
-    UserService,
+    UsersService,
     {
       provide: getModelToken(User),
       useValue: mockModel,
@@ -1151,11 +1244,11 @@ SequelizeModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: (configService: ConfigService) => ({
     dialect: 'mysql',
-    host: configService.get<string>('HOST'),
-    port: configService.get<string>('PORT'),
-    username: configService.get<string>('USERNAME'),
-    password: configService.get<string>('PASSWORD'),
-    database: configService.get<string>('DATABASE'),
+    host: configService.get('HOST'),
+    port: +configService.get('PORT'),
+    username: configService.get('USERNAME'),
+    password: configService.get('PASSWORD'),
+    database: configService.get('DATABASE'),
     models: [],
   }),
   inject: [ConfigService],

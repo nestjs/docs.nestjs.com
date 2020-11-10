@@ -68,7 +68,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
-    <td>Additional queue options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#assertQueue" rel="nofollow" target="_blank">here</a>)</td>
+    <td>Additional queue options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
   <tr>
     <td><code>socketOptions</code></td>
@@ -80,7 +80,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
 
 Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a RabbitMQ `ClientProxy` instance.
 
-One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
 
 ```typescript
 @Module({

@@ -15,13 +15,16 @@ The `ArgumentsHost` class provides methods for retrieving the arguments being pa
 When building generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) which are meant to run across multiple application contexts, we need a way to determine the type of application that our method is currently running in. Do this with the `getType()` method of `ArgumentsHost`:
 
 ```typescript
-const type = host.getType();
-if (type === 'http') {
-  // HTTP application
-} else if (type === 'rpc') {
-  // Microservice
+if (host.getType() === 'http') {
+  // do something that is only important in the context of regular HTTP requests (REST)
+} else if (host.getType() === 'rpc') {
+  // do something that is only important in the context of Microservice requests
+} else if (host.getType<GqlContextType>() === 'graphql') {
+  // do something that is only important in the context of GraphQL requests
 }
 ```
+
+> info **Hint** The `GqlContextType` is imported from the `@nestjs/graphql` package.
 
 With the application type available, we can write more generic components, as shown below.
 

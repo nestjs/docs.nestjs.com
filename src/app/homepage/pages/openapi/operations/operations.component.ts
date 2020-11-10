@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-crud',
-  templateUrl: './crud.component.html',
+  selector: 'app-openapi-operations',
+  templateUrl: './operations.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CrudComponent extends BasePageComponent {}
+export class OperationsComponent extends BasePageComponent {}

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { CqrsComponent } from './cqrs/cqrs.component';
-import { CrudComponent } from './crud/crud.component';
+import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { DocumentationComponent } from './documentation/documentation.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
@@ -11,7 +11,6 @@ import { PrismaComponent } from './prisma/prisma.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
-import { SwaggerComponent } from './swagger/swagger.component';
 import { TerminusComponent } from './terminus/terminus.component';
 
 const routes: Routes = [
@@ -37,8 +36,7 @@ const routes: Routes = [
   },
   {
     path: 'swagger',
-    component: SwaggerComponent,
-    data: { title: 'OpenAPI (Swagger)' },
+    redirectTo: '/openapi/introduction',
   },
   {
     path: 'prisma',
@@ -57,11 +55,16 @@ const routes: Routes = [
   },
   {
     path: 'crud-utilities',
-    redirectTo: '/controllers',
+    redirectTo: '/recipes/crud-generator',
   },
   {
     path: 'crud',
-    redirectTo: '/controllers',
+    redirectTo: '/recipes/crud-generator',
+  },
+  {
+    path: 'crud-generator',
+    component: CrudGeneratorComponent,
+    data: { title: 'CRUD (resource) generators' },
   },
   {
     path: 'hot-reload',
@@ -81,13 +84,12 @@ const routes: Routes = [
     SqlTypeormComponent,
     SqlSequelizeComponent,
     MongodbComponent,
-    SwaggerComponent,
     PrismaComponent,
     CqrsComponent,
     HotReloadComponent,
     TerminusComponent,
     DocumentationComponent,
-    CrudComponent,
+    CrudGeneratorComponent,
     ServeStaticComponent,
   ],
 })

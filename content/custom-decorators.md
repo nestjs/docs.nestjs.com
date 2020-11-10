@@ -5,7 +5,7 @@ Nest is built around a language feature called **decorators**. Decorators are a 
 <blockquote class="external">
   An ES2016 decorator is an expression which returns a function and can take a target, name and property descriptor as arguments.
   You apply it by prefixing the decorator with an <code>@</code> character and placing this at the very top of what
-  you are trying to decorate. Decorators can be defined for either a class or a property.
+  you are trying to decorate. Decorators can be defined for either a class, a method or a property.
 </blockquote>
 
 #### Param decorators
@@ -15,11 +15,11 @@ Nest provides a set of useful **param decorators** that you can use together wit
 <table>
   <tbody>
     <tr>
-      <td><code>@Request()</code></td>
+      <td><code>@Request(), @Req()</code></td>
       <td><code>req</code></td>
     </tr>
     <tr>
-      <td><code>@Response()</code></td>
+      <td><code>@Response(), @Res()</code></td>
       <td><code>res</code></td>
     </tr>
     <tr>
@@ -49,6 +49,10 @@ Nest provides a set of useful **param decorators** that you can use together wit
     <tr>
       <td><code>@Ip()</code></td>
       <td><code>req.ip</code></td>
+    </tr>
+    <tr>
+      <td><code>@HostParam()</code></td>
+      <td><code>req.hosts</code></td>
     </tr>
   </tbody>
 </table>
@@ -173,6 +177,7 @@ async findOne(user) {
 Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
 
 ```typescript
+@@filename(auth.decorator)
 import { applyDecorators } from '@nestjs/common';
 
 export function Auth(...roles: Role[]) {
@@ -180,7 +185,18 @@ export function Auth(...roles: Role[]) {
     SetMetadata('roles', roles),
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Unauthorized"' }),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
+}
+@@switch
+import { applyDecorators } from '@nestjs/common';
+
+export function Auth(...roles) {
+  return applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(AuthGuard, RolesGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
   );
 }
 ```

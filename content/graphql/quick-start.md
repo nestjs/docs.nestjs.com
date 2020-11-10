@@ -9,10 +9,9 @@ In this chapter, we assume a basic understanding of GraphQL, and focus on how to
 Start by installing the required packages:
 
 ```bash
-$ npm i --save @nestjs/graphql graphql-tools graphql
+$ npm i @nestjs/graphql graphql-tools graphql apollo-server-express
 ```
-
-Depending on what underlying platform you use (Express or Fastify), you must also install either `apollo-server-express` or `apollo-server-fastify`.
+> info **Hint** If using Fastify, instead of installing `apollo-server-express`, you should install `apollo-server-fastify`.
 
 #### Overview
 
@@ -101,6 +100,15 @@ GraphQLModule.forRoot({
 }),
 ```
 
+By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically, set the `sortSchema` property to `true`:
+
+```typescript
+GraphQLModule.forRoot({
+  autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+  sortSchema: true,
+}),
+```
+
 A fully working code first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first).
 
 #### Schema first
@@ -169,7 +177,37 @@ definitionsFactory.generate({
 });
 ```
 
+To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  emitTypenameField: true,
+});
+```
+
+To generate resolvers (queries, mutations, subscriptions) as plain fields without arguments, enable the `skipResolverArgs` option.
+
+```typescript
+definitionsFactory.generate({
+  // ...,
+  skipResolverArgs: true,
+});
+```
+
 A fully working schema first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first).
+
+#### Accessing generated schema
+
+In some circumstances (for example end-to-end tests), you may want to get a reference to the generated schema object. In end-to-end tests, you can then run queries using the `graphql` object without using any HTTP listeners.
+
+You can access the generated schema (in either the code first or schema first approach), using the `GraphQLSchemaHost` class:
+
+```typescript
+const { schema } = app.get(GraphQLSchemaHost);
+```
+
+> info **Hint** You must call the `GraphQLSchemaHost#schema` getter after the application has been initialized (after the `onModuleInit` hook has been triggered by either the `app.listen()` or `app.init()` method).
 
 #### Async configuration
 

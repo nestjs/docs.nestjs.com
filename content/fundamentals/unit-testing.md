@@ -239,6 +239,17 @@ describe('Cats', () => {
 });
 ```
 
+> info **Hint** If you're using [Fastify](/techniques/performance) as your HTTP adapter, it requires slightly different configuration:
+>
+> ```ts
+> app = moduleRef.createNestApplication<NestFastifyApplication>(
+>   new FastifyAdapter(),
+> );
+>
+> await app.init();
+> await app.getHttpAdapter().getInstance().ready();
+> ```
+
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
 
 We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
@@ -256,30 +267,31 @@ Each of the override method types, in turn, returns the `TestingModule` instance
 The compiled module has several useful methods, as described in the following table:
 
 <table>
-    <tr>
-      <td>
-        <code>createNestApplication()</code>
-      </td>
-      <td>
-        Creates and returns a Nest application (<code>INestApplication</code> instance) based on the given module.
-        Note that you must manually initialize the application using the <code>init()</code> method.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>createNestMicroservice()</code>
-      </td>
-      <td>
-        Creates and returns a Nest microservice (<code>INestMicroservice</code> instance) based on the given module.
-      </td>
-    </tr>
-    <tr>
+  <tr>
+    <td>
+      <code>createNestApplication()</code>
+    </td>
+    <td>
+      Creates and returns a Nest application (<code>INestApplication</code> instance) based on the given module.
+      Note that you must manually initialize the application using the <code>init()</code> method.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <code>createNestMicroservice()</code>
+    </td>
+    <td>
+      Creates and returns a Nest microservice (<code>INestMicroservice</code> instance) based on the given module.
+    </td>
+  </tr>
+  <tr>
     <td>
       <code>get()</code>
     </td>
     <td>
       Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
+  </tr>
   <tr>
      <td>
       <code>resolve()</code>
@@ -304,7 +316,7 @@ The compiled module has several useful methods, as described in the following ta
 
 [Request-scoped](/fundamentals/injection-scopes) providers are created uniquely for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
 
-We know (based on the sections above) that the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, as described <a href="https://docs.nestjs/com/fundamentals/module-ref#resolving-scoped-providers">here</a>, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
+We know (based on the sections above) that the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, as described <a href="https://docs.nestjs.com/fundamentals/module-ref#resolving-scoped-providers">here</a>, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
 
 The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. In this way we'll be able to retrieve instances created for a tested request.
 

@@ -1,6 +1,6 @@
 ### MQTT
 
-[MQTT](http://mqtt.org/) (Message Queuing Telemetry Transport) is an open source, lightweight messaging protocol, optimized for high-latency. This protocol provides a scalable and cost-efficient way to connect devices using a **publish/subscribe** model. A communication system built on MQTT consists of the publishing server, a broker and one or more clients. It is designed for constrained devices and low-bandwidth, high-latency or unreliable networks.
+[MQTT](https://mqtt.org/) (Message Queuing Telemetry Transport) is an open source, lightweight messaging protocol, optimized for high-latency. This protocol provides a scalable and cost-efficient way to connect devices using a **publish/subscribe** model. A communication system built on MQTT consists of the publishing server, a broker and one or more clients. It is designed for constrained devices and low-bandwidth, high-latency or unreliable networks.
 
 #### Installation
 
@@ -19,16 +19,14 @@ To use the MQTT transporter, pass the following options object to the `createMic
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
   transport: Transport.MQTT,
   options: {
-    host: 'localhost',
-    port: 1883,
+    url: 'mqtt://localhost:1883',
   },
 });
 @@switch
 const app = await NestFactory.createMicroservice(ApplicationModule, {
   transport: Transport.MQTT,
   options: {
-    host: 'localhost',
-    port: 1883,
+    url: 'mqtt://localhost:1883',
   },
 });
 ```
@@ -53,8 +51,7 @@ One method for creating an instance is to use use the `ClientsModule`. To create
         name: 'MATH_SERVICE',
         transport: Transport.MQTT,
         options: {
-          host: 'localhost',
-          port: 1883,
+          url: 'mqtt://localhost:1883',
         }
       },
     ]),

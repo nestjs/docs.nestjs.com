@@ -97,7 +97,7 @@ The request-response message style is useful when you need to **exchange** messa
 
 To enable the request-response message type, Nest creates two logical channels - one is responsible for transferring the data while the other waits for incoming responses. For some underlying transports, such as [NATS](https://nats.io/), this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels. There can be overhead for this, so if you do not require a request-response message style, you should consider using the event-based method.
 
-To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package.
+To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package. This decorator should be used only within the [controller](https://docs.nestjs.com/controllers) classes since they are the entry points for your application. Using them inside providers won't have any effect as they are simply ignored by Nest runtime.
 
 ```typescript
 @@filename(math.controller)
@@ -348,3 +348,27 @@ export interface RequestContext<T = any> {
 ```
 
 The `data` property is the message payload sent by the message producer. The `pattern` property is the pattern used to identify an appropriate handler to handle the incoming message.
+
+
+### Handling timeouts
+
+In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the `RxJS` timeout operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
+
+To solve this problem you have to use [rxjs](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
+
+```typescript
+@@filename()
+this.client
+      .send<TResult, TInput>(pattern, data)
+      .pipe(timeout(5000))
+      .toPromise();
+@@switch
+this.client
+      .send(pattern, data)
+      .pipe(timeout(5000))
+      .toPromise();
+```
+
+> info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.
+
+After 5 seconds, if the microservice isn't responding, it will throw an error.

@@ -17,7 +17,17 @@ The `GraphQLISODateTime` (e.g. `2019-12-03T09:54:33Z`) is used by default to rep
 ```typescript
 GraphQLModule.forRoot({
   buildSchemaOptions: {
-    dateScalarMode: 'timestamp'.
+    dateScalarMode: 'timestamp',
+  }
+}),
+```
+
+Likewise, the `GraphQLFloat` is used by default to represent the `number` type. To use the `GraphQLInt` instead, set the `numberScalarMode` of the `buildSchemaOptions` object to `'integer'` as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  buildSchemaOptions: {
+    numberScalarMode: 'integer',
   }
 }),
 ```
@@ -28,7 +38,7 @@ In addition, you can create custom scalars. For example, to create a `Date` scal
 import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
-@Scalar('Date', type => Date)
+@Scalar('Date', (type) => Date)
 export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
@@ -78,7 +88,7 @@ $ npm i --save graphql-type-json
 Once the package is installed, we pass a custom resolver to the `forRoot()` method:
 
 ```typescript
-import * as GraphQLJSON from 'graphql-type-json';
+import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [

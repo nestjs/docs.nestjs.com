@@ -1,11 +1,12 @@
 ### Mongo
 
-Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](http://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
+Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
 
 Start by installing the required dependencies:
 
 ```bash
 $ npm install --save @nestjs/mongoose mongoose
+$ npm install --save-dev @types/mongoose
 ```
 
 Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
@@ -25,12 +26,82 @@ The `forRoot()` method accepts the same configuration object as `mongoose.connec
 
 #### Model injection
 
-With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
+With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Each schema maps to a MongoDB collection and defines the shape of the documents within that collection. Schemas are used to define [Models](https://mongoosejs.com/docs/models.html). Models are responsible for creating and reading documents from the underlying MongoDB database.
+
+Schemas can be created with NestJS decorators, or with Mongoose itself manually. Using decorators to create schemas greatly reduces boilerplate and improves overall code readability.
+
+Let's define the `CatSchema`:
 
 ```typescript
 @@filename(schemas/cat.schema)
-import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
+export type CatDocument = Cat & Document;
+
+@Schema()
+export class Cat {
+  @Prop()
+  name: string;
+
+  @Prop()
+  age: number;
+
+  @Prop()
+  breed: string;
+}
+
+export const CatSchema = SchemaFactory.createForClass(Cat);
+```
+
+> info **Hint** Note you can also generate a raw schema definition using the `DefinitionsFactory` class (from the `nestjs/mongoose`). This allows you to manually modify the schema definition generated based on the metadata you provided. This is useful for certain edge-cases where it may be hard to represent everything with decorators.
+
+The `@Schema()` decorator marks a class as a schema definition. It maps our `Cat` class to a MongoDB collection of the same name, but with an additional “s” at the end - so the final mongo collection name will be `cats`. This decorator accepts a single optional argument which is a schema options object. Think of it as the object you would normally pass as a second argument of the `mongoose.Schema` class' constructor (e.g., `new mongoose.Schema(_, options)`)). To learn more about available schema options, see [this](https://mongoosejs.com/docs/guide.html#options) chapter.
+
+The `@Prop()` decorator defines a property in the document. For example, in the schema definition above, we defined three properties: `name`, `age`, and `breed`. The [schema types](https://mongoosejs.com/docs/schematypes.html) for these properties are automatically inferred thanks to TypeScript metadata (and reflection) capabilities. However, in more complex scenarios in which types cannot be implicitly reflected (for example, arrays or nested object structures), types must be indicated explicitly, as follows:
+
+```typescript
+@Prop([String])
+tags: string[];
+```
+
+Alternatively, the `@Prop()` decorator accepts an options object argument ([read more](https://mongoosejs.com/docs/schematypes.html#schematype-options) about the available options). With this, you can indicate whether a property is required or not, specify a default value, or mark it as immutable. For example:
+
+```typescript
+@Prop({ required: true })
+name: string;
+```
+
+In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in a different collection called `owners`, the property should have type and ref. For example:
+
+```typescript
+import { Types } from 'mongoose';
+import { Owner } from '../owners/schemas/owner.schema';
+
+@Prop({ type: Types.ObjectId, ref: Owner.name })
+owner: Owner;
+```
+
+In case there are multiple owners, your property configuration should look as follows:
+
+```typescript
+@Prop({ type: [Types.ObjectId], ref: Owner.name })
+owner: Owner[];
+```
+
+Finally, the **raw** schema definition can also be passed to the decorator. This is useful when, for example, a property represents a nested object which is not defined as a class. For this, use the `raw()` function from the `@nestjs/mongoose` package, as follows:
+
+```typescript
+@Prop(raw({
+  firstName: { type: String },
+  lastName: { type: String }
+}))
+details: Record<string, any>;
+```
+
+Alternatively, if you prefer **not using decorators**, you can define a schema manually. For example:
+
+```typescript
 export const CatSchema = new mongoose.Schema({
   name: String,
   age: Number,
@@ -38,7 +109,7 @@ export const CatSchema = new mongoose.Schema({
 });
 ```
 
-The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them them near their related **domain** objects, in the appropriate module directory.
+The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them near their related **domain** objects, in the appropriate module directory.
 
 Let's look at the `CatsModule`:
 
@@ -48,10 +119,10 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
-import { CatSchema } from './schemas/cat.schema';
+import { Cat, CatSchema } from './schemas/cat.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }])],
+  imports: [MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }])],
   controllers: [CatsController],
   providers: [CatsService],
 })
@@ -67,12 +138,12 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat } from './interfaces/cat.interface';
+import { Cat, CatDocument } from './schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel('Cat') private catModel: Model<Cat>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -87,9 +158,10 @@ export class CatsService {
 import { Model } from 'mongoose';
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
+import { Cat } from './schemas/cat.schema';
 
 @Injectable()
-@Dependencies(getModelToken('Cat'))
+@Dependencies(getModelToken(Cat.name))
 export class CatsService {
   constructor(catModel) {
     this.catModel = catModel;
@@ -150,7 +222,7 @@ With this setup, you have to tell the `MongooseModule.forFeature()` function whi
 ```typescript
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }], 'cats'),
+    MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }], 'cats'),
   ],
 })
 export class AppModule {}
@@ -169,6 +241,18 @@ export class CatsService {
 }
 ```
 
+To inject a given `Connection` to a custom provider (for example, factory provider), use the `getConnectionToken()` function passing the name of the connection as an argument.
+
+```typescript
+{
+  provide: CatsService,
+  useFactory: (catsConnection: Connection) => {
+    return new CatsService(catsConnection);
+  },
+  inject: [getConnectionToken('cats')],
+}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
@@ -178,7 +262,7 @@ Middleware (also called pre and post hooks) are functions which are passed contr
   imports: [
     MongooseModule.forFeatureAsync([
       {
-        name: 'Cat',
+        name: Cat.name,
         useFactory: () => {
           const schema = CatsSchema;
           schema.pre('save', () => console.log('Hello from pre save'));
@@ -198,13 +282,13 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
   imports: [
     MongooseModule.forFeatureAsync([
       {
-        name: 'Cat',
+        name: Cat.name,
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
           const schema = CatsSchema;
           schema.pre('save', () =>
             console.log(
-              `${configService.getString('APP_NAME')}: Hello from pre save`,
+              `${configService.get('APP_NAME')}: Hello from pre save`,
             ),
           );
           return schema;
@@ -226,7 +310,7 @@ To register a [plugin](https://mongoosejs.com/docs/plugins.html) for a given sch
   imports: [
     MongooseModule.forFeatureAsync([
       {
-        name: 'Cat',
+        name: Cat.name,
         useFactory: () => {
           const schema = CatsSchema;
           schema.plugin(require('mongoose-autopopulate'));
@@ -270,7 +354,7 @@ To make this easier, the `@nestjs/mongoose` package exposes a `getModelToken()` 
   providers: [
     CatsService,
     {
-      provide: getModelToken('Cat'),
+      provide: getModelToken(Cat.name),
       useValue: catModel,
     },
   ],
@@ -302,7 +386,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
 MongooseModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    uri: configService.getString('MONGODB_URI'),
+    uri: configService.get<string>('MONGODB_URI'),
   }),
   inject: [ConfigService],
 });
