@@ -61,7 +61,7 @@ The plugin adds appropriate decorators on the fly based on the **Abstract Syntax
 
 With the comments introspection feature enabled, CLI plugin will generate descriptions and example values for properties based on comments.
 
-For example, given an example `isEnabled` property:
+For example, given an example `roles` property:
 
 ```typescript
 /**
