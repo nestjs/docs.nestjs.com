@@ -343,6 +343,87 @@ import { MongooseModule } from '@nestjs/mongoose';
 export class AppModule {}
 ```
 
+#### Discriminators
+
+[Discriminators](https://mongoosejs.com/docs/discriminators.html) are a schema inheritance mechanism. They enable you to have multiple models with overlapping schemas on top of the same underlying MongoDB collection.
+
+Suppose you wanted to track different types of events in a single collection. Every event will have a timestamp.
+
+```typescript
+@@filename(event.schema)
+@Schema({ discriminatorKey: 'kind' })
+export class Event {
+  @Prop({
+    type: String,
+    required: true,
+    enum: [ClieckLinkEvent.name, SignUpEvent.name],
+  })
+  kind: string;
+
+  @Prop({ type: Date, required: true })
+  time: Date;
+}
+
+export const EventSchema = SchemaFactory.createForClass(Event);
+```
+
+> info **Hint** The way mongoose tells the difference between the different discriminator models is by the 'discriminator key', which is `__t` by default. Mongoose adds a String path called `__t` to your schemas that it uses to track which discriminator this document is an instance of.
+> you may also use the `discriminatorKey` option to the define the path for discrimination.
+
+```typescript
+@@filename(click-link-event.schema)
+@Schema()
+export class ClickedLinkEvent {
+  kind: string;
+
+  time: Date;
+
+  @Prop({ type: String, required: true })
+  url: string;
+}
+
+export const ClieckLinkEventSchema = SchemaFactory.createForClass(ClieckLinkEvent);
+```
+
+```typescript
+@@filename(sign-up-event.schema)
+@Schema()
+export class SignUpEvent {
+  kind: string;
+
+  time: Date;
+
+  @Prop({ type: String, required: true })
+  user: string;
+}
+
+export const SignUpEventSchema = SchemaFactory.createForClass(SignUpEvent);
+```
+
+Use the discriminators option to register a discriminator for a given schema. It works on both `MongooseModule.forFeature` and `MongooseModule.forFeatureAsync`
+
+```typescript
+@@filename(event.module)
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Event.name,
+        schema: EventSchema,
+        discriminators: [
+          { name: ClieckLinkEvent.name, schema: ClieckLinkEventSchema },
+          { name: SignUpEvent.name, schema: SignUpEventSchema },
+        ],
+      },
+    ]),
+  ]
+})
+export class EventModule {}
+```
+
 #### Testing
 
 When unit testing an application, we usually want to avoid any database connection, making our test suites simpler to set up and faster to execute. But our classes might depend on models that are pulled from the connection instance. How do we resolve these classes? The solution is to create mock models.
