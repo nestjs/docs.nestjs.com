@@ -417,7 +417,7 @@ You can read more on this subject in Bull's [documentation](https://github.com/O
 Please note that because your function is being executed in a fork, NestJS' Dependency Injection won't be available. This means your job function will need to contain, or create all instances of external dependencies it may need.
 
 ```ts
-// app.module.ts
+@@filename(app.module.ts)
 import { Module } from '@nestjs/common';
 import { BullModule } from 'nest-bull';
 import { join } from 'path';
@@ -433,7 +433,7 @@ export class AppModule {}
 ```
 
 ```ts
-// processor.ts
+@@filename(process.ts)
 import { Job, DoneCallback } from 'bull';
 
 export default function (job: Job, cb: DoneCallback) {
