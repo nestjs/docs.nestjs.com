@@ -414,7 +414,7 @@ This module allows you to run your job handlers in fork processes.
 To do so, add the filesystem path to a file (or more) exporting your processor function to the `processors` property of the BullModule options.
 You can read more on this subject in Bull's [documentation](https://github.com/OptimalBits/bull#separate-processes).
 
-Please note that, your function being executed in a fork, Nestjs' DI won't be available.
+Please note that because your function is being executed in a fork, NestJS' Dependency Injection won't be available. This means your job function will need to contain, or create all instances of external dependencies it may need.
 
 ```ts
 // app.module.ts
