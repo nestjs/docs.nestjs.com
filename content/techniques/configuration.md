@@ -119,8 +119,7 @@ export class AppModule {}
 #### Custom configuration yaml file
 With custom configuration files, it's also possible to manage custom files such as yaml files.
 
-Here is an example of an configuration using yaml file:
-`config.yml`:
+Here is an example of an configuration using yaml file, `config.yml`:
 ```
 http:
   host: 'localhost'
