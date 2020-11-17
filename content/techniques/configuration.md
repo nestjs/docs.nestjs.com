@@ -120,8 +120,8 @@ export class AppModule {}
 With custom configuration files, it's also possible to manage custom files such as yaml files.
 
 Here is an example of an configuration using yaml file:
-```yml
-@@filename(config.yml)
+`config.yml`:
+```
 http:
   host: 'localhost'
   port: 8080
@@ -137,7 +137,7 @@ db:
 
 ```
 
-To be able to read yaml file and put the configuration in json object, we need to add "js-yaml" to our project.
+To be able to read yaml file and put the configuration in json object, we need to add `js-yaml` to our project.
 ```bash
 npm i --save js-yaml @types/js-yaml
 ```
@@ -161,8 +161,8 @@ export function loadYmlFile() {
 We are controlling the returned configuration object, so we'll add loadYmlFile() to registerAs. For example:
 
 ```typescript
-@@filename(yaml.config.ts)
-import { registerAs } from '../../lib/utils';
+@@filename(configuration.ts)
+import { registerAs } from '@nestjs/config';
 import { loadYmlFile } from './loadYamFile';
 
 let yamlArray = loadYmlFile();
@@ -176,16 +176,31 @@ export default registerAs('yaml', () => ({
 We load the yaml.config.ts file using the `load` property of the options object we pass to the `ConfigModule.forRoot()` method:
 
 ```typescript
-import yamlConfig from './config/yaml.config';
+import yamlConfig from './configuration';
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      load: [yamlConfig],
-    }),
-  ],
-})
-export class AppModule {}
+@Module({})
+export class AppModule {
+  constructor(
+    @Optional()
+    @Inject(yamlConfig.KEY)
+    private readonly ymlConfig: ConfigType<typeof yamlConfig>,
+  ) {}
+
+  static withYamlConfigurations(): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.forRoot({
+          load: [yamlConfig],
+        }),
+      ],
+    };
+  }
+
+  getYamlConfig() {
+    return this.ymlConfig;
+  }
+}
 ```
 
 Testing the configuration:
