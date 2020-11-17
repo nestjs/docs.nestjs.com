@@ -408,6 +408,40 @@ BullModule.forRootAsync({
 
 This construction works the same as `useClass` with one critical difference - `BullModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
+#### Separate processes
+
+This module allows you to run your job handlers in fork processes.
+To do so, add the filesystem path to a file (or more) exporting your processor function to the `processors` property of the BullModule options.
+You can read more on this subject in Bull's [documentation](https://github.com/OptimalBits/bull#separate-processes).
+
+Please note that because your function is being executed in a fork, NestJS' Dependency Injection won't be available. This means your job function will need to contain, or create all instances of external dependencies it may need.
+
+```ts
+@@filename(app.module.ts)
+import { Module } from '@nestjs/common';
+import { BullModule } from 'nest-bull';
+import { join } from 'path';
+
+@Module({
+  imports: [
+    BullModule.forRoot({
+      processors: [join(__dirname, 'processor.js')],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+```ts
+@@filename(process.ts)
+import { Job, DoneCallback } from 'bull';
+
+export default function (job: Job, cb: DoneCallback) {
+  console.log(`[${process.pid}] ${JSON.stringify(job.data)}`);
+  cb(null, 'It works');
+}
+```
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/26-queues).
