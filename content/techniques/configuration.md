@@ -116,6 +116,116 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
+#### Custom configuration yaml file
+With custom configuration files, it's also possible to manage custom files such as yaml files.
+
+Here is an example of an configuration using yaml file:
+```yml
+@@filename(config.yml)
+http:
+  host: 'localhost'
+  port: 8080
+
+db: 
+  postgres: 
+    url: 'localhost'
+    port: 5432
+    database: 'yaml-db'
+    
+  sqlite: 
+    database: 'sqlite.db'
+
+```
+
+To be able to read yaml file and put the configuration in json object, we need to add "js-yaml" to our project.
+```bash
+npm i --save js-yaml @types/js-yaml
+```
+
+Then we need to add loadYmlFile() function:
+```typescript
+@@filename(loadYamlFile.ts)
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
+import { join } from 'path';
+
+export function loadYmlFile() {
+  let yamlResult = yaml.load(
+    fs.readFileSync(join(__dirname, 'config.yml'), 'utf8'),
+  );
+  return JSON.stringify(yamlResult);
+}
+
+```
+
+We are controlling the returned configuration object, so we'll add loadYmlFile() to registerAs. For example:
+
+```typescript
+@@filename(yaml.config.ts)
+import { registerAs } from '../../lib/utils';
+import { loadYmlFile } from './loadYamFile';
+
+let yamlArray = loadYmlFile();
+
+export default registerAs('yaml', () => ({
+  yamlArray,
+}));
+```
+
+
+We load the yaml.config.ts file using the `load` property of the options object we pass to the `ConfigModule.forRoot()` method:
+
+```typescript
+import yamlConfig from './config/yaml.config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      load: [yamlConfig],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Testing the configuration:
+
+```typescript
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+
+describe('Files', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule.withYamlConfigurations()],
+    }).compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  it(`should return loaded configuration (injected through constructor)`, () => {
+    const config = app.get(AppModule).getYamlConfig();
+
+    let jsonData = JSON.parse(config.yamlArray);
+    expect(jsonData.http.host).toEqual('localhost');
+    expect(jsonData.http.port).toEqual(8080);
+
+    expect(jsonData.db.postgres.url).toEqual('localhost');
+    expect(jsonData.db.postgres.port).toEqual(5432);
+    expect(jsonData.db.postgres.database).toEqual('yaml-db');
+    expect(jsonData.db.sqlite.database).toEqual('sqlite.db');
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+```
+
 <app-banner-enterprise></app-banner-enterprise>
 
 #### Using the `ConfigService`
