@@ -341,6 +341,44 @@ To resume a paused queue, use the `resume()` method, as follows:
 await audioQueue.resume();
 ```
 
+#### Separate processes
+
+Job handlers can also be run in a separate (forked) process ([source](https://github.com/OptimalBits/bull#separate-processes)). This has several advantages:
+
+- The process is sandboxed so if it crashes it does not affect the worker.
+- You can run blocking code without affecting the queue (jobs will not stall).
+- Much better utilization of multi-core CPUs.
+- Less connections to redis.
+
+```ts
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
+import { join } from 'path';
+
+@Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'audio',
+      processors: [join(__dirname, 'processor.js')],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Please note that because your function is being executed in a forked process, Dependency Injection (and IoC container) won't be available. That means that your processor function will need to contain (or create) all instances of external dependencies it needs.
+
+```ts
+@@filename(processor)
+import { Job, DoneCallback } from 'bull';
+
+export default function (job: Job, cb: DoneCallback) {
+  console.log(`[${process.pid}] ${JSON.stringify(job.data)}`);
+  cb(null, 'It works');
+}
+```
+
 #### Async configuration
 
 You may want to pass `bull` options asynchronously instead of statically. In this case, use the `forRootAsync()` method which provides several ways to deal with async configuration. Likewise, if you want to pass queue options asynchronously, use the `registerQueueAsync()` method.
