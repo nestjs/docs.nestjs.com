@@ -183,13 +183,13 @@ interface EnvironmentVariables {
 constructor(private configService: ConfigService<EnvironmentVariables>) {
   // this is valid
   const port = this.configService.get<number>('PORT');
-  
+
   // this is invalid as URL is not a property on the EnvironmentVariables interface
   const url = this.configService.get<string>('URL');
 }
 ```
 
-> warning **Notice** If you have nested properties in your config, like in the `database.host` example above,  the interface must have a matching `'database.host': string;` property.  Otherwise a TypeScript error will be thrown.
+> warning **Notice** If you have nested properties in your config, like in the `database.host` example above, the interface must have a matching `'database.host': string;` property. Otherwise a TypeScript error will be thrown.
 
 #### Configuration namespaces
 
@@ -256,13 +256,12 @@ export class DatabaseModule {}
 
 #### Schema validation
 
-It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables two ways to do this:
-- use [Joi](https://github.com/hapijs/joi) npm package to support this type of validation. With Joi, you define an object schema and validate JavaScript objects against it.
-- create your own `validate` function and pass it to the module
+It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables two different ways to do this:
 
-##### Joi
+- [Joi](https://github.com/hapijs/joi) built-in validator. With Joi, you define an object schema and validate JavaScript objects against it.
+- A custom `validate()` function which takes environment variables as an input.
 
-Install Joi (and its types, for **TypeScript** users):
+To use Joi, we must install Joi package (and its types, for **TypeScript** users):
 
 ```bash
 $ npm install --save @hapi/joi
@@ -326,53 +325,51 @@ The `@nestjs/config` package uses default settings of:
 
 Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
 
-##### Custom validate function
+#### Custom validate function
 
-In this case you provide a **synchronous** `validate` function that takes an object containing the environment variables (from env file and process) and returns an object containing validated environment variables so that you can convert them if needed. If the function throw and error it will prevent the application from bootstrapping.
+Alternatively, you can specify a **synchronous** `validate` function that takes an object containing the environment variables (from env file and process) and returns an object containing validated environment variables so that you can convert/mutate them if needed. If the function throws an error, it will prevent the application from bootstrapping.
 
-Here is an exemple with `class-transformer` and `class-validator`
+In this example, we'll proceed with the `class-transformer` and `class-validator` packages. First, we have to define:
 
-First we have to define:
-- a class with the correct constraints
-- a validate function that make use of `plainToClass` and `validateSync`
+- a class with validation constraints,
+- a validate function that makes use of the `plainToClass` and `validateSync` functions.
 
 ```typescript
 @@filename(env.validation)
 import { plainToClass } from 'class-transformer';
 import { IsEnum, IsNumber, validateSync } from 'class-validator';
 
-enum Environments {
-  development = "development", 
-  production = "production", 
-  test = "test",
-  provision = "provision",
+enum Environment {
+  Development = "development",
+  Production = "production",
+  Test = "test",
+  Provision = "provision",
 }
 
 class EnvironmentVariables {
-  @IsEnum(Environments)
-  NODE_ENV: Environments;
+  @IsEnum(Environment)
+  NODE_ENV: Environment;
 
   @IsNumber()
   PORT: number;
 }
 
-export const validate = (config: Record<string, unknown>) => {
+export function validate(config: Record<string, unknown>) {
   const validatedConfig = plainToClass(
     EnvironmentVariables,
     config,
     { enableImplicitConversion: true },
   );
   const errors = validateSync(validatedConfig, { skipMissingProperties: false });
-  
+
   if (errors.length > 0) {
-    throw new Error(errors.toString())
+    throw new Error(errors.toString());
   }
-  
-  return validatedConfig
+  return validatedConfig;
 }
 ```
 
-Then import it in `app.module` and pass it to `ConfigModule`
+With this in place, use the `validate` function as a configuration option of the `ConfigModule`, as follows:
 
 ```typescript
 @@filename(app.module)
@@ -387,8 +384,6 @@ import { validate } from './env.validation';
 })
 export class AppModule {}
 ```
-
-That's all, `PORT` and `NODE_ENV` are now available in your environment, also `PORT` was converted to `number`.
 
 <app-banner-shop></app-banner-shop>
 
