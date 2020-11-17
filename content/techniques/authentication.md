@@ -8,7 +8,7 @@ Authentication is an **essential** part of most applications. There are many dif
 - Manage authenticated state (by issuing a portable token, such as a JWT, or creating an [Express session](https://github.com/expressjs/session))
 - Attach information about the authenticated user to the `Request` object for further use in route handlers
 
-Passport has a rich ecosystem of [strategies](http://www.passportjs.org/packages/) that implement various authentication mechanisms. While simple in concept, the set of Passport strategies you can choose from is large and presents a lot of variety. Passport abstracts these varied steps into a standard pattern, and the `@nestjs/passport` module wraps and standardizes this pattern into familiar Nest constructs.
+Passport has a rich ecosystem of [strategies](http://www.passportjs.org/) that implement various authentication mechanisms. While simple in concept, the set of Passport strategies you can choose from is large and presents a lot of variety. Passport abstracts these varied steps into a standard pattern, and the `@nestjs/passport` module wraps and standardizes this pattern into familiar Nest constructs.
 
 In this chapter, we'll implement a complete end-to-end authentication solution for a RESTful API server using these powerful and flexible modules. You can use the concepts described here to implement any Passport strategy to customize your authentication scheme. You can follow the steps in this chapter to build this complete example. You can find a repository with a completed sample app [here](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
 
