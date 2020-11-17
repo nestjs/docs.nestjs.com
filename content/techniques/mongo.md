@@ -356,7 +356,7 @@ export class Event {
   @Prop({
     type: String,
     required: true,
-    enum: [ClieckLinkEvent.name, SignUpEvent.name],
+    enum: [ClickedLinkEvent.name, SignUpEvent.name],
   })
   kind: string;
 
@@ -367,30 +367,34 @@ export class Event {
 export const EventSchema = SchemaFactory.createForClass(Event);
 ```
 
-> info **Hint** The way mongoose tells the difference between the different discriminator models is by the 'discriminator key', which is `__t` by default. Mongoose adds a String path called `__t` to your schemas that it uses to track which discriminator this document is an instance of.
-> you may also use the `discriminatorKey` option to the define the path for discrimination.
+> info **Hint** The way mongoose tells the difference between the different discriminator models is by the "discriminator key", which is `__t` by default. Mongoose adds a String path called `__t` to your schemas that it uses to track which discriminator this document is an instance of.
+> You may also use the `discriminatorKey` option to define the path for discrimination.
+
+`SignedUpEvent` and `ClickedLinkEvent` instances will be stored in the same collection as generic events.
+
+Now, let's define the `ClickedLinkEvent` class, as follows:
 
 ```typescript
 @@filename(click-link-event.schema)
 @Schema()
 export class ClickedLinkEvent {
   kind: string;
-
   time: Date;
 
   @Prop({ type: String, required: true })
   url: string;
 }
 
-export const ClieckLinkEventSchema = SchemaFactory.createForClass(ClieckLinkEvent);
+export const ClickedLinkEventSchema = SchemaFactory.createForClass(ClickedLinkEvent);
 ```
+
+And `SignUpEvent` class:
 
 ```typescript
 @@filename(sign-up-event.schema)
 @Schema()
 export class SignUpEvent {
   kind: string;
-
   time: Date;
 
   @Prop({ type: String, required: true })
@@ -400,7 +404,7 @@ export class SignUpEvent {
 export const SignUpEventSchema = SchemaFactory.createForClass(SignUpEvent);
 ```
 
-Use the discriminators option to register a discriminator for a given schema. It works on both `MongooseModule.forFeature` and `MongooseModule.forFeatureAsync`
+With this in place, use the `discriminators` option to register a discriminator for a given schema. It works on both `MongooseModule.forFeature` and `MongooseModule.forFeatureAsync`:
 
 ```typescript
 @@filename(event.module)
@@ -414,14 +418,14 @@ import { MongooseModule } from '@nestjs/mongoose';
         name: Event.name,
         schema: EventSchema,
         discriminators: [
-          { name: ClieckLinkEvent.name, schema: ClieckLinkEventSchema },
+          { name: ClickedLinkEvent.name, schema: ClickedLinkEventSchema },
           { name: SignUpEvent.name, schema: SignUpEventSchema },
         ],
       },
     ]),
   ]
 })
-export class EventModule {}
+export class EventsModule {}
 ```
 
 #### Testing
