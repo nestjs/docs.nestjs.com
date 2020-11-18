@@ -15,7 +15,7 @@ Following the best practices, for each entity we would have to perform several o
 
 That's a lot of steps!
 
-To help speed up this repetitive process, [NestJS CLI](https://docs.nestjs.com/cli/overview) provides a generator (schematic) that automatically generates all the boilerplate code to help us avoid doing all of this, and make the developer experience much simpler.
+To help speed up this repetitive process, [Nest CLI](/cli/overview) provides a generator (schematic) that automatically generates all the boilerplate code to help us avoid doing all of this, and make the developer experience much simpler.
 
 > info **Note** The schematic supports generating **HTTP** controllers, **Microservice** controllers, **GraphQL** resolvers (both code first and schema first), and **WebSocket** Gateways.
 
