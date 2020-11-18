@@ -483,6 +483,8 @@ export class CatsController {
 }
 ```
 
+> info **Hint** Nest CLI provides a generator (schematic) that automatically generates all the boilerplate code to help us avoid doing all of this, and make the developer experience much simpler. Read more about this feature [here](/recipes/crud-generator).
+
 #### Getting up and running
 
 With the above controller fully defined, Nest still doesn't know that `CatsController` exists and as a result won't create an instance of this class.
