@@ -116,6 +116,49 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
+With custom configuration files, we can also manage custom files such as YAML files. Here is an example of a configuration using YAML format:
+
+```yaml
+http:
+  host: 'localhost'
+  port: 8080
+
+db:
+  postgres:
+    url: 'localhost'
+    port: 5432
+    database: 'yaml-db'
+
+  sqlite:
+    database: 'sqlite.db'
+```
+
+To read and parse YAML files, we can leverage the `js-yaml` package.
+
+```bash
+$ npm i js-yaml
+$ npm i -D @types/js-yaml
+```
+
+Once the package is installed, we use `yaml#load` function to load YAML file we just created above.
+
+```typescript
+@@filename(config/configuration)
+import { readFileSync } from 'fs';
+import * as yaml from 'js-yaml';
+import { join } from 'path';
+
+const YAML_CONFIG_FILENAME = 'config.yml';
+
+export default () => {
+  return yaml.load(
+    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+  );
+};
+```
+
+> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are being moved as part of the compilation, add `compilerOptions#assets` to the `nest-cli.json` configuration file (`"assets": ["**/*.yml"]`). Read more [here](/cli/monorepo#assets).
+
 <app-banner-enterprise></app-banner-enterprise>
 
 #### Using the `ConfigService`

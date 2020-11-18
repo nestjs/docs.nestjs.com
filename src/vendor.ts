@@ -2,6 +2,7 @@ import 'prismjs/prism';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
 
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/delay';
