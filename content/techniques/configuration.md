@@ -116,129 +116,48 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
-#### Custom configuration yaml file
-With custom configuration files, it's also possible to manage custom files such as yaml files.
+With custom configuration files, we can also manage custom files such as YAML files. Here is an example of a configuration using YAML format:
 
-Here is an example of an configuration using yaml file, `config.yml`:
-```
+```yaml
 http:
   host: 'localhost'
   port: 8080
 
-db: 
-  postgres: 
+db:
+  postgres:
     url: 'localhost'
     port: 5432
     database: 'yaml-db'
-    
-  sqlite: 
+
+  sqlite:
     database: 'sqlite.db'
-
 ```
 
-To be able to read yaml file and put the configuration in json object, we need to add `js-yaml` to our project.
+To read and parse YAML files, we can leverage the `js-yaml` package.
+
 ```bash
-npm i --save js-yaml @types/js-yaml
+$ npm i js-yaml
+$ npm i -D @types/js-yaml
 ```
 
-Then we need to add loadYmlFile() function:
+Once the package is installed, we use `yaml#load` function to load YAML file we just created above.
+
 ```typescript
-@@filename(loadYamlFile.ts)
-import * as fs from 'fs';
+@@filename(config/configuration)
+import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
 
-export function loadYmlFile() {
-  let yamlResult = yaml.load(
-    fs.readFileSync(join(__dirname, 'config.yml'), 'utf8'),
+const YAML_CONFIG_FILENAME = 'config.yml';
+
+export default () => {
+  return yaml.load(
+    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
   );
-  return JSON.stringify(yamlResult);
-}
-
+};
 ```
 
-We are controlling the returned configuration object, so we'll add loadYmlFile() to registerAs. For example:
-
-```typescript
-@@filename(configuration.ts)
-import { registerAs } from '@nestjs/config';
-import { loadYmlFile } from './loadYamFile';
-
-let yamlArray = loadYmlFile();
-
-export default registerAs('yaml', () => ({
-  yamlArray,
-}));
-```
-
-
-We load the yaml.config.ts file using the `load` property of the options object we pass to the `ConfigModule.forRoot()` method:
-
-```typescript
-import yamlConfig from './configuration';
-
-@Module({})
-export class AppModule {
-  constructor(
-    @Optional()
-    @Inject(yamlConfig.KEY)
-    private readonly ymlConfig: ConfigType<typeof yamlConfig>,
-  ) {}
-
-  static withYamlConfigurations(): DynamicModule {
-    return {
-      module: AppModule,
-      imports: [
-        ConfigModule.forRoot({
-          load: [yamlConfig],
-        }),
-      ],
-    };
-  }
-
-  getYamlConfig() {
-    return this.ymlConfig;
-  }
-}
-```
-
-Testing the configuration:
-
-```typescript
-import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
-
-describe('Files', () => {
-  let app: INestApplication;
-
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
-      imports: [AppModule.withYamlConfigurations()],
-    }).compile();
-
-    app = module.createNestApplication();
-    await app.init();
-  });
-
-  it(`should return loaded configuration (injected through constructor)`, () => {
-    const config = app.get(AppModule).getYamlConfig();
-
-    let jsonData = JSON.parse(config.yamlArray);
-    expect(jsonData.http.host).toEqual('localhost');
-    expect(jsonData.http.port).toEqual(8080);
-
-    expect(jsonData.db.postgres.url).toEqual('localhost');
-    expect(jsonData.db.postgres.port).toEqual(5432);
-    expect(jsonData.db.postgres.database).toEqual('yaml-db');
-    expect(jsonData.db.sqlite.database).toEqual('sqlite.db');
-  });
-
-  afterEach(async () => {
-    await app.close();
-  });
-});
-```
+> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are being moved as part of the compilation, add `compilerOptions#assets` to the `nest-cli.json` configuration file (`"assets": ["**/*.yml"]`). Read more [here](/cli/monorepo#assets).
 
 <app-banner-enterprise></app-banner-enterprise>
 
