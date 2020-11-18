@@ -289,7 +289,7 @@ findOne(params) {
 ```typescript
 @@filename()
 @Get(':id')
-findOne(@Param('id') id): string {
+findOne(@Param('id') id: string): string {
   return `This action returns a #${id} cat`;
 }
 @@switch
@@ -482,6 +482,8 @@ export class CatsController {
   }
 }
 ```
+
+> info **Hint** Nest CLI provides a generator (schematic) that automatically generates **all the boilerplate code** to help us avoid doing all of this, and make the developer experience much simpler. Read more about this feature [here](/recipes/crud-generator).
 
 #### Getting up and running
 
