@@ -85,7 +85,7 @@ owner: Owner;
 In case there are multiple owners, your property configuration should look as follows:
 
 ```typescript
-@Prop({ type: [Types.ObjectId], ref: Owner.name })
+@Prop({ type: [{ type: Types.ObjectId, ref: Owner.name }] })
 owner: Owner[];
 ```
 
