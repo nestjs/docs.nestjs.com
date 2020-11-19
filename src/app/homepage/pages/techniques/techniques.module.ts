@@ -6,6 +6,7 @@ import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { CookiesComponent } from './cookies/cookies.component';
+import { EventsComponent } from './events/events.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { HttpModuleComponent } from './http-module/http-module.component';
 import { LoggerComponent } from './logger/logger.component';
@@ -116,6 +117,11 @@ const routes: Routes = [
     component: ServerSentEventsComponent,
     data: { title: 'Server-Sent Events' },
   },
+  {
+    path: 'events',
+    component: EventsComponent,
+    data: { title: 'Events' },
+  },
 ];
 
 @NgModule({
@@ -128,6 +134,7 @@ const routes: Routes = [
     LoggerComponent,
     TaskSchedulingComponent,
     PerformanceComponent,
+    EventsComponent,
     FileUploadComponent,
     HttpModuleComponent,
     ConfigurationComponent,

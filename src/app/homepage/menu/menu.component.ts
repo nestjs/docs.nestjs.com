@@ -92,7 +92,7 @@ export class MenuComponent implements OnInit {
         { title: 'Queues', path: '/techniques/queues' },
         { title: 'Logging', path: '/techniques/logger' },
         { title: 'Cookies', path: '/techniques/cookies' },
-        // { title: 'Events', path: '/techniques/#' },
+        { title: 'Events', path: '/techniques/events' },
         { title: 'Compression', path: '/techniques/compression' },
         { title: 'File upload', path: '/techniques/file-upload' },
         { title: 'HTTP module', path: '/techniques/http-module' },
