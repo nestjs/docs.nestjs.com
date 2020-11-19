@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
-import { AuthenticationComponent } from './authentication/authentication.component';
 import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
@@ -14,7 +13,6 @@ import { MongoComponent } from './mongo/mongo.component';
 import { MvcComponent } from './mvc/mvc.component';
 import { PerformanceComponent } from './performance/performance.component';
 import { QueuesComponent } from './queues/queues.component';
-import { SecurityComponent } from './security/security.component';
 import { SerializationComponent } from './serialization/serialization.component';
 import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
 import { SqlComponent } from './sql/sql.component';
@@ -24,8 +22,7 @@ import { ValidationComponent } from './validation/validation.component';
 const routes: Routes = [
   {
     path: 'authentication',
-    component: AuthenticationComponent,
-    data: { title: 'Authentication' },
+    redirectTo: '/security/authentication',
   },
   {
     path: 'mvc',
@@ -88,8 +85,7 @@ const routes: Routes = [
   },
   {
     path: 'security',
-    component: SecurityComponent,
-    data: { title: 'Security' },
+    redirectTo: '/security/helmet',
   },
   {
     path: 'cookies',
@@ -128,8 +124,6 @@ const routes: Routes = [
     SqlComponent,
     MvcComponent,
     MongoComponent,
-    AuthenticationComponent,
-    SecurityComponent,
     QueuesComponent,
     LoggerComponent,
     TaskSchedulingComponent,
