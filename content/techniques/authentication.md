@@ -262,7 +262,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
 We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object.
 
-> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body.  Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`.  See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
+> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body. Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`. See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
 
 We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
 
@@ -920,6 +920,159 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'myjwt')
 ```
 
 Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
+
+#### Refresh-Token Functionality
+
+When the JWT strategy is in play, the token will expire within a short time frame and the user will have to re-enter authentication details to generate a new JWT. Instead, the user can be sent a refresh-token together with a JWT at the time of authentication. This refresh-token would preferably have a different secret and a longer expiration time.
+
+Since the refresh-token is generated at the same time as the JWT follwing a similar mechanism, it's convenint to keep this within the AuthModule.
+
+But, because the secret and signOptions which contains the expiration time are defined in AuthModule when registering the JwtModule, they will have to be overwritten.
+
+Update `constants.ts` in the `auth` folder to contain a new secret for refresh-token mechanism:
+
+```typescript
+@@filename(auth/constants)
+export const jwtConstants = {
+  secret: 'secretKey',
+  refreshSecret:'refreshSecretKey'
+};
+@@switch
+export const jwtConstants = {
+  secret: 'secretKey',
+  refreshSecret:'refreshSecretKey'
+};
+```
+
+Create a new JSON object called `options` and pass in the required values as follows:
+
+Then, pass this in as a second argument to `this.jwtService.sign()` function when generating the refresh-token in `auth.service.ts`.
+
+```typescript
+@@filename(auth/auth.service)
+import { Injectable } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService
+  ) {}
+
+  async validateUser(username: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOne(username);
+    if (user && user.password === pass) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  async login(user: any) {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: await this.getRefreshToken(payload),
+    };
+  }
+
+  async getRefreshToken(payload: any): Promise<any> {
+    const options = { secret: jwtConstants.refreshSecret, expiresIn: '30d' };
+    return this.jwtService.sign(payload, options);
+  }
+}
+
+@@switch
+import { Injectable, Dependencies } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
+
+@Dependencies(UsersService, JwtService)
+@Injectable()
+export class AuthService {
+  constructor(usersService, jwtService) {
+    this.usersService = usersService;
+    this.jwtService = jwtService;
+  }
+
+  async validateUser(username, pass) {
+    const user = await this.usersService.findOne(username);
+    if (user && user.password === pass) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  async login(user) {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: this.jwtService.sign(payload),
+      refresh_token: await this.getRefreshToken(payload),
+    };
+  }
+
+  async getRefreshToken(payload){
+    const options = { secret: jwtConstants.refreshSecret, expiresIn: '30d' };
+    return this.jwtService.sign(payload, options);
+  }
+}
+```
+
+After this, in order to regenerate the tokens, the following method will be required to be implemented in `AuthService`:
+
+```typescript
+@@filename(auth/auth.service)
+ async regenerateTokens(refresh: any): Promise<any> {
+    const options = { secret: jwtConstants.refreshSecret };
+
+    if (await this.jwtService.verify(refresh.refreshToken, options)) {
+      // if the refreshToken is valid,
+
+      const oldSignedPayload: any = this.jwtService.decode(
+        refresh.refreshToken,
+      );
+      const newUnsignedPayload = {
+        sub: oldSignedPayload.sub,
+        username: oldSignedPayload.username,
+      };
+
+      return {
+        access_token: this.jwtService.sign(newUnsignedPayload),
+        refresh_token: await this.getRefreshToken(newUnsignedPayload),
+      };
+    }
+  }
+@@switch
+async regenerateTokens(refresh) {
+    const options = { secret: jwtConstants.refreshSecret };
+
+    if (await this.jwtService.verify(refresh.refreshToken, options)) {
+      // if the refreshToken is valid,
+
+      const oldSignedPayload = this.jwtService.decode(
+        refresh.refreshToken,
+      );
+      const newUnsignedPayload = {
+        sub: oldSignedPayload.sub,
+        username: oldSignedPayload.username,
+      };
+
+      return {
+        access_token: this.jwtService.sign(newUnsignedPayload),
+        refresh_token: await this.getRefreshToken(newUnsignedPayload),
+      };
+    }
+  }
+```
+Notice that here, the expiration time isn't included in `options` and that the oldSignedPayload is used to retrieve the usename & password (sub) for the token regeneration process.
+
+Extra steps of validation can be added to this by saving the refresh-token in a Database and checking if the refresh-token exists there when it's requested to be regenerated.
+
 
 #### GraphQL
 
