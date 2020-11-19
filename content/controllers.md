@@ -506,7 +506,7 @@ We attached the metadata to the module class using the `@Module()` decorator, an
 
 <app-banner-shop></app-banner-shop>
 
-#### Appendix: Library-specific approach
+#### Library-specific approach
 
 So far we've discussed the Nest standard way of manipulating responses. The second way of manipulating the response is to use a library-specific [response object](https://expressjs.com/en/api.html#res). In order to inject a particular response object, we need to use the `@Res()` decorator. To show the differences, let's rewrite the `CatsController` to the following:
 

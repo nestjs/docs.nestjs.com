@@ -6,6 +6,7 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
+import { CookiesComponent } from './cookies/cookies.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { HttpModuleComponent } from './http-module/http-module.component';
 import { LoggerComponent } from './logger/logger.component';
@@ -91,6 +92,11 @@ const routes: Routes = [
     data: { title: 'Security' },
   },
   {
+    path: 'cookies',
+    component: CookiesComponent,
+    data: { title: 'Cookies' },
+  },
+  {
     path: 'task-scheduling',
     component: TaskSchedulingComponent,
     data: { title: 'Task Scheduling' },
@@ -135,7 +141,8 @@ const routes: Routes = [
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
-    ServerSentEventsComponent
+    ServerSentEventsComponent,
+    CookiesComponent,
   ],
 })
 export class TechniquesModule {}
