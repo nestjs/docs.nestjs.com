@@ -161,7 +161,10 @@ Nest treats custom param decorators in the same fashion as the built-in ones (`@
 ```typescript
 @@filename()
 @Get()
-async findOne(@User(new ValidationPipe({ validateCustomDecorators: true })) user: UserEntity) {
+async findOne(
+  @User(new ValidationPipe({ validateCustomDecorators: true }))
+  user: UserEntity,
+) {
   console.log(user);
 }
 @@switch
