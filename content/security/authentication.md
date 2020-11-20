@@ -58,6 +58,7 @@ Replace the default contents of these generated files as shown below. For our sa
 @@filename(users/users.service)
 import { Injectable } from '@nestjs/common';
 
+// This should be a real class/interface representing a user entity
 export type User = any;
 
 @Injectable()
@@ -73,11 +74,6 @@ export class UsersService {
       },
       {
         userId: 2,
-        username: 'chris',
-        password: 'secret',
-      },
-      {
-        userId: 3,
         username: 'maria',
         password: 'guess',
       },
@@ -102,11 +98,6 @@ export class UsersService {
       },
       {
         userId: 2,
-        username: 'chris',
-        password: 'secret',
-      },
-      {
-        userId: 3,
         username: 'maria',
         password: 'guess',
       },
@@ -262,7 +253,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
 We've followed the recipe described earlier for all Passport strategies. In our use case with passport-local, there are no configuration options, so our constructor simply calls `super()`, without an options object.
 
-> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body.  Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`.  See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
+> info **Hint** We can pass an options object in the call to `super()` to customize the behavior of the passport strategy. In this example, the passport-local strategy by default expects properties called `username` and `password` in the request body. Pass an options object to specify different property names, for example: `super({{ '{' }} usernameField: 'email' {{ '}' }})`. See the [Passport documentation](http://www.passportjs.org/docs/configure/) for more information.
 
 We've also implemented the `validate()` method. For each strategy, Passport will call the verify function (implemented with the `validate()` method in `@nestjs/passport`) using an appropriate strategy-specific set of parameters. For the local-strategy, Passport expects a `validate()` method with the following signature: `validate(username: string, password:string): any`.
 
@@ -789,35 +780,92 @@ Note that in the `AuthModule`, we configured the JWT to have an expiration of `6
 
 We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server. You can find a complete version of the code in this chapter [here](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
 
-<app-banner-enterprise></app-banner-enterprise>
+#### Extending guards
 
-#### Default strategy
-
-In our `AppController`, we pass the name of the strategy in the `AuthGuard()` function. We need to do this because we've introduced **two** Passport strategies (passport-local and passport-jwt), both of which supply implementations of various Passport components. Passing the name disambiguates which implementation we're linking to. When multiple strategies are included in an application, we can declare a default strategy so that we no longer have to pass the name in the `AuthGuard` function if using that default strategy. Here's how to register a default strategy when importing the `PassportModule`. This code would go in the `AuthModule`:
+In most cases, using a provided `AuthGuard` class is sufficient. However, there might be use-cases when you would like to simply extend the default error handling or authentication logic. For this, you can extend the built-in class and override methods within a sub-class.
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { UsersModule } from '../users/users.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
-import { JwtStrategy } from './jwt.strategy';
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
-@Module({
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),
-    UsersModule,
-  ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
-})
-export class AuthModule {}
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  canActivate(context: ExecutionContext) {
+    // Add your custom authentication logic here
+    // for example, call super.logIn(request) to establish a session.
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user, info) {
+    // You can throw an exception based on either "info" or "err" arguments
+    if (err || !user) {
+      throw err || new UnauthorizedException();
+    }
+    return user;
+  }
+}
+```
+
+#### Enable authentication globally
+
+If the vast of your endpoints should be protected by default, you can register the authentication guard as a [global guard](/guards#binding-guards) and instead of using `@UseGuards()` decorator on top of each controller, you could simply flag which routes should be public.
+
+First, register the `JwtAuthGuard` as a global guard using the following construction (in any module):
+
+```typescript
+providers: [
+  {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+  },
+],
+```
+
+With this in place, Nest will automatically bind `JwtAuthGuard` to all endpoints.
+
+Now we must provide a mechanism for declaring routes as public. For this, we can create a custom decorator using the `SetMetadata` decorator factory function.
+
+```typescript
+import { SetMetadata } from '@nestjs/common';
+
+export const IS_PUBLIC_KEY = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+```
+
+In the file above, we exported two constants. One being our metadata key named `IS_PUBLIC_KEY`, and the other being our new decorator itself that we’re going to call `Public` (we can alternatively name it `SkipAuth`).
+
+Now that we have a custom `@Public()` decorator, we can use it to decorate any method, as follows:
+
+```typescript
+@Public()
+@Get()
+findAll() {
+  return [];
+}
+```
+
+Lastly, we need the `JwtAuthGuard` to return `true` when the `"isPublic"` metadata is found. For this, we'll use the `Reflector` class (read more [here](/guards#putting-it-all-together)).
+
+```typescript
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
+    }
+    return super.canActivate(context);
+  }
+}
 ```
 
 #### Request-scoped strategies
@@ -858,36 +906,6 @@ async validate(
 ```
 
 In the example above, the `resolve()` method will asynchronously return the request-scoped instance of the `AuthService` provider (we assumed that `AuthService` is marked as a request-scoped provider).
-
-#### Extending guards
-
-In most cases, using a provided `AuthGuard` class is sufficient. However, there might be use-cases when you would like to simply extend the default error handling or authentication logic. For this, you can extend the built-in class and override methods within a sub-class.
-
-```typescript
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
-  canActivate(context: ExecutionContext) {
-    // Add your custom authentication logic here
-    // for example, call super.logIn(request) to establish a session.
-    return super.canActivate(context);
-  }
-
-  handleRequest(err, user, info) {
-    // You can throw an exception based on either "info" or "err" arguments
-    if (err || !user) {
-      throw err || new UnauthorizedException();
-    }
-    return user;
-  }
-}
-```
 
 #### Customize Passport
 
@@ -933,14 +951,6 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
     return ctx.getContext().req;
   }
 }
-```
-
-To use the above construct, be sure to pass the request (`req`) object as part of the context value in the GraphQL Module settings:
-
-```typescript
-GraphQLModule.forRoot({
-  context: ({ req }) => ({ req }),
-});
 ```
 
 To get the current authenticated user in your graphql resolver, you can define a `@CurrentUser()` decorator:
