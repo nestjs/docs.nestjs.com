@@ -75,17 +75,17 @@ name: string;
 In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in a different collection called `owners`, the property should have type and ref. For example:
 
 ```typescript
-import { Types } from 'mongoose';
+import { Schema } from 'mongoose';
 import { Owner } from '../owners/schemas/owner.schema';
 
-@Prop({ type: Types.ObjectId, ref: Owner.name })
+@Prop({ type: Schema.Types.ObjectId, ref: Owner.name })
 owner: Owner;
 ```
 
 In case there are multiple owners, your property configuration should look as follows:
 
 ```typescript
-@Prop({ type: [{ type: Types.ObjectId, ref: Owner.name }] })
+@Prop({ type: [{ type: Schema.Types.ObjectId, ref: Owner.name }] })
 owner: Owner[];
 ```
 
