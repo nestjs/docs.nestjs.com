@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-securit',
-  templateUrl: './security.component.html',
+  selector: 'app-encryption-hashing',
+  templateUrl: './encryption-hashing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SecurityComponent extends BasePageComponent {}
+export class EncryptionHashingComponent extends BasePageComponent {}

@@ -116,6 +116,49 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
+With custom configuration files, we can also manage custom files such as YAML files. Here is an example of a configuration using YAML format:
+
+```yaml
+http:
+  host: 'localhost'
+  port: 8080
+
+db:
+  postgres:
+    url: 'localhost'
+    port: 5432
+    database: 'yaml-db'
+
+  sqlite:
+    database: 'sqlite.db'
+```
+
+To read and parse YAML files, we can leverage the `js-yaml` package.
+
+```bash
+$ npm i js-yaml
+$ npm i -D @types/js-yaml
+```
+
+Once the package is installed, we use `yaml#load` function to load YAML file we just created above.
+
+```typescript
+@@filename(config/configuration)
+import { readFileSync } from 'fs';
+import * as yaml from 'js-yaml';
+import { join } from 'path';
+
+const YAML_CONFIG_FILENAME = 'config.yml';
+
+export default () => {
+  return yaml.load(
+    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+  );
+};
+```
+
+> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are being moved as part of the compilation, add `compilerOptions#assets` to the `nest-cli.json` configuration file (`"assets": ["**/*.yml"]`). Read more [here](/cli/monorepo#assets).
+
 <app-banner-enterprise></app-banner-enterprise>
 
 #### Using the `ConfigService`
@@ -136,6 +179,8 @@ Then we can inject it using standard constructor injection:
 constructor(private configService: ConfigService) {}
 ```
 
+> info **Hint** The `ConfigService` is imported from the `@nestjs/config` package.
+
 And use it in our class:
 
 ```typescript
@@ -146,7 +191,23 @@ const dbUser = this.configService.get<string>('DATABASE_USER');
 const dbHost = this.configService.get<string>('database.host');
 ```
 
-As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>), as shown in the second example above. The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
+As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can do TypeScript type hinting by passing the type, as shown above (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created via a <a href="techniques/configuration#custom-configuration-files">Custom configuration file</a>), as shown in the second example above.
+
+You can also get the whole nested custom configuration object using an interface as the type hint:
+
+```typescript
+interface DatabaseConfig {
+  host: string;
+  port: number;
+}
+
+const dbConfig = this.configService.get<DatabaseConfig>('database');
+
+// you can now use `dbConfig.port` and `dbConfig.host`
+const port = dbConfig.port;
+```
+
+The `get()` method also takes an optional second argument defining a default value, which will be returned when the key doesn't exist, as shown below:
 
 ```typescript
 // use "localhost" when "database.host" is not defined
@@ -165,13 +226,13 @@ interface EnvironmentVariables {
 constructor(private configService: ConfigService<EnvironmentVariables>) {
   // this is valid
   const port = this.configService.get<number>('PORT');
-  
+
   // this is invalid as URL is not a property on the EnvironmentVariables interface
   const url = this.configService.get<string>('URL');
 }
 ```
 
-> warning **Notice** If you have nested properties in your config, like in the `database.host` example above,  the interface must have a matching `'database.host': string;` property.  Otherwise a TypeScript error will be thrown.
+> warning **Notice** If you have nested properties in your config, like in the `database.host` example above, the interface must have a matching `'database.host': string;` property. Otherwise a TypeScript error will be thrown.
 
 #### Configuration namespaces
 
@@ -238,9 +299,12 @@ export class DatabaseModule {}
 
 #### Schema validation
 
-It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables use of the [Joi](https://github.com/sideway/joi) npm package to support this type of validation. With Joi, you define an object schema and validate JavaScript objects against it.
+It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables two different ways to do this:
 
-Install Joi (and its types, for **TypeScript** users):
+- [Joi](https://github.com/sideway/joi) built-in validator. With Joi, you define an object schema and validate JavaScript objects against it.
+- A custom `validate()` function which takes environment variables as an input.
+
+To use Joi, we must install Joi package (and its types, for **TypeScript** users):
 
 ```bash
 $ npm install --save joi
@@ -303,6 +367,66 @@ The `@nestjs/config` package uses default settings of:
 - `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
 
 Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
+
+#### Custom validate function
+
+Alternatively, you can specify a **synchronous** `validate` function that takes an object containing the environment variables (from env file and process) and returns an object containing validated environment variables so that you can convert/mutate them if needed. If the function throws an error, it will prevent the application from bootstrapping.
+
+In this example, we'll proceed with the `class-transformer` and `class-validator` packages. First, we have to define:
+
+- a class with validation constraints,
+- a validate function that makes use of the `plainToClass` and `validateSync` functions.
+
+```typescript
+@@filename(env.validation)
+import { plainToClass } from 'class-transformer';
+import { IsEnum, IsNumber, validateSync } from 'class-validator';
+
+enum Environment {
+  Development = "development",
+  Production = "production",
+  Test = "test",
+  Provision = "provision",
+}
+
+class EnvironmentVariables {
+  @IsEnum(Environment)
+  NODE_ENV: Environment;
+
+  @IsNumber()
+  PORT: number;
+}
+
+export function validate(config: Record<string, unknown>) {
+  const validatedConfig = plainToClass(
+    EnvironmentVariables,
+    config,
+    { enableImplicitConversion: true },
+  );
+  const errors = validateSync(validatedConfig, { skipMissingProperties: false });
+
+  if (errors.length > 0) {
+    throw new Error(errors.toString());
+  }
+  return validatedConfig;
+}
+```
+
+With this in place, use the `validate` function as a configuration option of the `ConfigModule`, as follows:
+
+```typescript
+@@filename(app.module)
+import { validate } from './env.validation';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      validate,
+    }),
+  ],
+})
+export class AppModule {}
+```
 
 <app-banner-shop></app-banner-shop>
 

@@ -4,15 +4,18 @@ Caching is a great and simple **technique** that helps improve your app's perfor
 
 #### Installation
 
-First install the required package:
+First install required packages:
 
 ```bash
-$ npm install --save cache-manager
+$ npm install cache-manager
+$ npm install -D @types/cache-manager
 ```
 
 #### In-memory cache
 
-Nest provides a unified API for various cache storage providers. The built-in one is an in-memory data store. However, you can easily switch to a more comprehensive solution, like Redis. In order to enable caching, first import the `CacheModule` and call its `register()` method.
+Nest provides a unified API for various cache storage providers. The built-in one is an in-memory data store. However, you can easily switch to a more comprehensive solution, like Redis.
+
+In order to enable caching, import the `CacheModule` and call its `register()` method.
 
 ```typescript
 import { CacheModule, Module } from '@nestjs/common';
@@ -25,9 +28,51 @@ import { AppController } from './app.controller';
 export class ApplicationModule {}
 ```
 
+#### Interacting with the Cache store
+
+To interact with the cache manager instance, inject it to your class using the `CACHE_MANAGER` token, as follows:
+
+```typescript
+constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+```
+
+> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/common` package.
+
+The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, an exception will be thrown.
+
+```typescript
+const value = this.cacheManager.get('key');
+```
+
+To add an item to the cache, use the `set` method:
+
+```typescript
+await this.cacheManager.set('key', 'value');
+```
+
+You can also specify a TTL (expiration time) for this specific key, as follows:
+
+```typescript
+await this.cacheManager.set('key', 'value', { ttl: 1000 });
+```
+
+To remove an item from the cache, use the `del` method:
+
+```typescript
+await this.cacheManager.del('key');
+```
+
+To clear the entire cache, use the `reset` method:
+
+```typescript
+await this.cacheManager.reset();
+```
+
+#### Auto-caching responses
+
 > warning **Warning** In [GraphQL](/graphql/quick-start) applications, interceptors are executed separately for each field resolver. Thus, `CacheModule` (which uses interceptors to cache responses) will not work properly.
 
-Then just tie the `CacheInterceptor` where you want to cache data.
+To enable auto-caching responses, just tie the `CacheInterceptor` where you want to cache data.
 
 ```typescript
 @Controller()
@@ -42,8 +87,6 @@ export class AppController {
 
 > warning**Warning** Only `GET` endpoints are cached. Also, HTTP server routes that inject the native response object (`@Res()`) cannot use the Cache Interceptor. See
 > <a href="https://docs.nestjs.com/interceptors#response-mapping">response mapping</a> for more details.
-
-#### Global cache
 
 To reduce the amount of required boilerplate, you can bind `CacheInterceptor` to all endpoints globally:
 
@@ -139,6 +182,21 @@ handleEvent(client, data) {
 
 > info **Hint** The `@CacheTTL()` decorator may be used with or without a corresponding `@CacheKey()` decorator.
 
+#### Adjust tracking
+
+By default, Nest uses the request URL (in an HTTP app) or cache key (in websockets and microservices apps, set through the `@CacheKey()` decorator) to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different factors, for example, using HTTP headers (e.g. `Authorization` to properly identify `profile` endpoints).
+
+In order to accomplish that, create a subclass of `CacheInterceptor` and override the `trackBy()` method.
+
+```typescript
+@Injectable()
+class HttpCacheInterceptor extends CacheInterceptor {
+  trackBy(context: ExecutionContext): string | undefined {
+    return 'key';
+  }
+}
+```
+
 #### Different stores
 
 This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
@@ -161,21 +219,6 @@ import { AppController } from './app.controller';
 export class ApplicationModule {}
 ```
 
-#### Adjust tracking
-
-By default, Nest uses the request URL (in an HTTP app) or cache key (in websockets and microservices apps, set through the `@CacheKey()` decorator) to associate cache records with your endpoints. Nevertheless, sometimes you might want to set up tracking based on different factors, for example, using HTTP headers (e.g. `Authorization` to properly identify `profile` endpoints).
-
-In order to accomplish that, create a subclass of `CacheInterceptor` and override the `trackBy()` method.
-
-```typescript
-@Injectable()
-class HttpCacheInterceptor extends CacheInterceptor {
-  trackBy(context: ExecutionContext): string | undefined {
-    return 'key';
-  }
-}
-```
-
 #### Async configuration
 
 You may want to asynchronously pass in module options instead of passing them statically at compile time. In this case, use the `registerAsync()` method, which provides several ways to deal with async configuration.
@@ -196,7 +239,7 @@ Our factory behaves like all other asynchronous module factories (it can be `asy
 CacheModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    ttl: configService.getString('CACHE_TTL'),
+    ttl: configService.get('CACHE_TTL'),
   }),
   inject: [ConfigService],
 });

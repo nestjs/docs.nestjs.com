@@ -115,7 +115,7 @@
     {
       "logo": "/assets/logo/dozto.png",
       "url": "https://www.dozto.com",
-      "width": "130px"
+      "width": "117px"
     },
     {
       "logo": "/assets/logo/qingtui.png",
@@ -171,6 +171,21 @@
       "logo": "/assets/logo/ottonova.png",
       "url": "https://www.ottonova.de",
       "width": "130px"
+    },
+    {
+      "logo": "/assets/logo/radity.png",
+      "url": "https://radity.com",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/global-cto-forum.png",
+      "url": "https://globalctoforum.org/",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/rivvy.png",
+      "url": "https://rivvy.app",
+      "width": "120px"
     }
   ],
   "Body": [
@@ -218,6 +233,12 @@
     "https://accerlery.be",
     "https://www.facile.it",
     "https://shopback.com",
-    "https://www.ottonova.de"
+    "https://www.ottonova.de",
+    "https://www.radity.com",
+    "https://globalctoforum.org",
+    "https://halojasa.com",
+    "https://hexito.com",
+    "https://rivvy.app",
+    "https://padfever.com/"
   ]
 }

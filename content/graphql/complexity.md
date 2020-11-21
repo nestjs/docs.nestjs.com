@@ -84,3 +84,14 @@ Alternatively, you can define the estimator function:
 @Field({ complexity: (options: ComplexityEstimatorArgs) => ... })
 title: string;
 ```
+
+#### Query/Mutation-level complexity
+
+In addition, `@Query()` and `@Mutation()` decorators may have a `complexity` property specified like so:
+
+```typescript
+@Query({ complexity: (options: ComplexityEstimatorArgs) => options.args.count * options.childComplexity })
+items(@Args('count') count: number) {
+  return this.itemsService.getItems({ count });
+}
+```

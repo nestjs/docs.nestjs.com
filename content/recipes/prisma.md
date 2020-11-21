@@ -2,9 +2,9 @@
 
 [Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) database toolkit. You can use it to query data from a database inside a Node.js or TypeScript application. Prisma and NestJS go great together since you can use Prisma in your services to fulfill the data needs from your controllers.
 
-Prisma is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](http://knexjs.org/)) or ORMs (like [TypeORM](http://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL and SQLite.
+Prisma is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](https://knexjs.org/)) or ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL and SQLite.
 
-While Prisma is a toolkit\_ that contains multiple tools, the focus of this guide will be on using [Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client). Prisma Client is an auto-generated and type-safe query builder that lets you read and write data in your database.
+While Prisma is a toolkit that contains multiple tools, the focus of this guide will be on using [Prisma Client](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client). Prisma Client is an auto-generated and type-safe query builder that lets you read and write data in your database.
 
 > info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/).
 
@@ -12,7 +12,7 @@ While Prisma is a toolkit\_ that contains multiple tools, the focus of this guid
 
 In this recipe, you'll learn how to get started with NestJS and Prisma from scratch. You are going to build a sample NestJS application with a REST API that can read and write data in a database.
 
-For the purpose of this guide, you'll use a [SQLite](http://sqlite.org/) database to save the overhead of setting up a database server. Note that you can still follow this guide, even if you're using PostgreSQL or MySQL – you'll get extra instructions for using these databases at the right places.
+For the purpose of this guide, you'll use a [SQLite](https://sqlite.org/) database to save the overhead of setting up a database server. Note that you can still follow this guide, even if you're using PostgreSQL or MySQL – you'll get extra instructions for using these databases at the right places.
 
 #### Create your NestJS project
 
@@ -263,11 +263,11 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient
   implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
-    await this.connect();
+    await this.$connect();
   }
 
   async onModuleDestroy() {
-    await this.disconnect();
+    await this.$disconnect();
   }
 }
 ```

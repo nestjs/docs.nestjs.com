@@ -1,4 +1,4 @@
-### Plugin
+### CLI Plugin
 
 TypeScript's metadata reflection system has several limitations which make it impossible to, for instance, determine what properties a class consists of or recognize whether a given property is optional or required. However, some of these constraints can be addressed at compilation time. Nest provides a plugin that enhances the TypeScript compilation process to reduce the amount of boilerplate code required.
 
@@ -14,6 +14,8 @@ The Swagger plugin will automatically:
 - set the `default` property based on the assigned default value
 - set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
 - add a response decorator to every endpoint with a proper status and `type` (response model)
+- generate descriptions for properties and endpoints based on comments (if `introspectComments` set to `true`)
+- generate example values for properties based on comments (if `introspectComments` set to `true`)
 
 Please, note that your filenames **must have** one of the following suffixes: `['.dto.ts', '.entity.ts']` (e.g., `create-user.dto.ts`) in order to be analysed by the plugin.
 
@@ -55,6 +57,34 @@ The plugin adds appropriate decorators on the fly based on the **Abstract Syntax
 
 > warning **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@ApiProperty()`.
 
+#### Comments introspection
+
+With the comments introspection feature enabled, CLI plugin will generate descriptions and example values for properties based on comments.
+
+For example, given an example `roles` property:
+
+```typescript
+/**
+ * A list of user's roles
+ * @example ['admin']
+ */
+@ApiProperty({
+  description: `A list of user's roles`,
+  example: ['admin'],
+})
+roles: RoleEnum[] = [];
+```
+
+You must duplicate both description and example values. With `introspectComments` enabled, the CLI plugin can extract these comments and automatically provide descriptions (and examples, if defined) for properties. Now, the above property can be declared simply as follows:
+
+```typescript
+/**
+ * A list of user's roles
+ * @example ['admin']
+ */
+roles: RoleEnum[] = [];
+```
+
 #### Using the CLI plugin
 
 To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
@@ -64,7 +94,7 @@ To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "plugins": ["@nestjs/swagger/plugin"]
+    "plugins": ["@nestjs/swagger"]
   }
 }
 ```
@@ -74,9 +104,10 @@ You can use the `options` property to customize the behavior of the plugin.
 ```javascript
 "plugins": [
   {
-    "name": "@nestjs/swagger/plugin",
+    "name": "@nestjs/swagger",
     "options": {
-      "classValidatorShim": false
+      "classValidatorShim": false,
+      "introspectComments": true
     }
   }
 ]
@@ -89,6 +120,7 @@ export interface PluginOptions {
   dtoFileNameSuffix?: string[];
   controllerFileNameSuffix?: string[];
   classValidatorShim?: boolean;
+  introspectComments?: boolean;
 }
 ```
 
@@ -113,6 +145,11 @@ export interface PluginOptions {
     <td><code>true</code></td>
     <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
   </tr>
+  <tr>
+  <td><code>introspectComments</code></td>
+    <td><code>false</code></td>
+    <td>If set to true, plugin will generate descriptions and example values for properties based on comments</td>
+  </tr>
 </table>
 
 If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
@@ -121,4 +158,42 @@ If you don't use the CLI but instead have a custom `webpack` configuration, you 
 getCustomTransformers: (program: any) => ({
   before: [require('@nestjs/swagger/plugin').before({}, program)]
 }),
+```
+
+#### Integration with `ts-jest` (e2e tests)
+
+To run e2e tests, `ts-jest` compiles your source code files on the fly, in memory. This means, it doesn't use Nest CLI compiler and does not apply any plugins or perform AST transformations.
+
+To enable the plugin, create the following file in your e2e tests directory:
+
+```javascript
+const transformer = require('@nestjs/swagger/plugin');
+
+module.exports.name = 'nestjs-swagger-transformer';
+// you should change the version number anytime you change the configuration below - otherwise, jest will not detect changes
+module.exports.version = 1;
+
+module.exports.factory = (cs) => {
+  return transformer.before(
+    {
+      // @nestjs/swagger/plugin options (can be empty)
+    },
+    cs.tsCompiler.program,
+  );
+};
+```
+
+With this in place, import AST transformer within your `jest` configuration file. By default (in the starter application), e2e tests configuration file is located under the `test` folder and is named `jest-e2e.json`.
+
+```json
+{
+  ... // other configuration
+  "globals": {
+    "ts-jest": {
+      "astTransformers": {
+        "before": ["<path to the file created above>"],
+      }
+    }
+  }
+}
 ```

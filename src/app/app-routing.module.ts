@@ -141,6 +141,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'security',
+        loadChildren: () =>
+          import('./homepage/pages/security/security.module').then(
+            (m) => m.SecurityModule,
+          ),
+      },
+      {
         path: 'graphql',
         loadChildren: () =>
           import('./homepage/pages/graphql/graphql.module').then(

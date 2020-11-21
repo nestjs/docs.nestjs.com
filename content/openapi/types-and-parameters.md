@@ -239,14 +239,24 @@ async create(@Body() coords: number[][]) {}
 
 #### Extra models
 
-To define additional models that should be inspected by the Swagger module, use the `@ApiExtraModels()` decorator:
+To define additional models that are not directly referenced in your controllers but should be inspected by the Swagger module, use the `@ApiExtraModels()` decorator:
 
 ```typescript
 @ApiExtraModels(ExtraModel)
 export class CreateCatDto {}
 ```
 
-Then, you can get the reference (`$ref`) to your model using `getSchemaPath(ExtraModel)`:
+> info **Hint** You only need to use `@ApiExtraModels()` once for a specific model class.
+
+Alternatively, you can pass an options object with the `extraModels` property specified to the `SwaggerModule#createDocument()` method, as follows:
+
+```typescript
+const document = SwaggerModule.createDocument(app, options, {
+  extraModels: [ExtraModel],
+});
+```
+
+To get a reference (`$ref`) to your model, use the `getSchemaPath(ExtraModel)` function:
 
 ```typescript
 'application/vnd.api+json': {

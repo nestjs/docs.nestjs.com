@@ -154,6 +154,7 @@ export class AuthorsResolver {
 }
 ```
 
+
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
 You can define multiple resolver classes. Nest will combine these at run time. See the [module](/graphql/resolvers#module) section below for more on code organization.
@@ -169,6 +170,8 @@ The argument passed to the `@Resolver()` decorator is optional, but comes into p
 In our example, since the class includes a **field resolver** function (for the `posts` property of the `Author` object type), we **must** supply the `@Resolver()` decorator with a value to indicate which class is the parent type (i.e., the corresponding `ObjectType` class name) for all field resolvers defined within this class. As should be clear from the example, when writing a field resolver function, it's necessary to access the parent object (the object the field being resolved is a member of). In this example, we populate an author's posts array with a field resolver that calls a service which takes the author's `id` as an argument. Hence the need to identify the parent object in the `@Resolver()` decorator. Note the corresponding use of the `@Parent()` method parameter decorator to then extract a reference to that parent object in the field resolver.
 
 We can define multiple `@Query()` resolver functions (both within this class, and in any other resolver class), and they will be aggregated into a single **Query type** definition in the generated SDL along with the appropriate entries in the resolver map. This allows you to define queries close to the models and services that they use, and to keep them well organized in modules.
+
+> info **Hint** Nest CLI provides a generator (schematic) that automatically generates **all the boilerplate code** to help us avoid doing all of this, and make the developer experience much simpler. Read more about this feature [here](/recipes/crud-generator).
 
 #### Query type names
 
@@ -189,7 +192,7 @@ type Query {
 }
 ```
 
-> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+> info **Hint** Learn more about GraphQL queries [here](https://graphql.org/learn/queries/).
 
 Conventionally, we prefer to decouple these names; for example, we prefer to use a name like `getAuthor()` for our query handler method, but still use `author` for our query type name. The same applies to our field resolvers. We can easily do this by passing the mapping names as arguments of the `@Query()` and `@ResolveField()` decorators, as shown below:
 
@@ -263,8 +266,8 @@ Query handler methods can take multiple arguments. Let's imagine that we want to
 
 ```typescript
 getAuthor(
-  @Args( 'firstName', { nullable: true }) firstName?: string,
-  @Args( 'lastName', { defaultValue: '' }) lastName?: string,
+  @Args('firstName', { nullable: true }) firstName?: string,
+  @Args('lastName', { defaultValue: '' }) lastName?: string,
 ) {}
 ```
 
@@ -445,7 +448,7 @@ class PaginatedAuthor extends Paginated(Author) {}
 
 #### Schema first
 
-As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](http://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
+As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](https://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
 
 > info **Hint** For convenience in this chapter, we've aggregated all of the SDL in one location (e.g., one `.graphql` file, as shown below). In practice, you may find it appropriate to organize your code in a modular fashion. For example, it can be helpful to create individual SDL files with type definitions representing each domain entity, along with related services, resolver code, and the Nest module definition class, in a dedicated directory for that entity. Nest will aggregate all the individual schema type definitions at run time.
 
@@ -472,7 +475,7 @@ type Query {
 
 The schema above exposes a single query - `author(id: Int!): Author`.
 
-> info **Hint** Learn more about GraphQL queries [here](http://graphql.org/learn/queries/).
+> info **Hint** Learn more about GraphQL queries [here](https://graphql.org/learn/queries/).
 
 Let's now create an `AuthorsResolver` class that resolves author queries:
 
@@ -539,7 +542,7 @@ type Query {
 Conventionally, we would prefer to decouple these, using names like `getAuthor()` or `getPosts()` for our resolver methods. We can easily do this by passing the mapping name as an argument to the decorator, as shown below:
 
 ```typescript
-@@filename(authors/authors.resolver.ts)
+@@filename(authors/authors.resolver)
 @Resolver('Author')
 export class AuthorsResolver {
   constructor(
@@ -560,12 +563,14 @@ export class AuthorsResolver {
 }
 ```
 
+> info **Hint** Nest CLI provides a generator (schematic) that automatically generates **all the boilerplate code** to help us avoid doing all of this, and make the developer experience much simpler. Read more about this feature [here](/recipes/crud-generator).
+
 #### Generating types
 
 Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it will generate the following file (in the location you specified in the `GraphQLModule.forRoot()` method. For example, in `src/graphql.ts`)
 
 ```typescript
-@@filename(graphql.ts)
+@@filename(graphql)
 export class Author {
   id: number;
   firstName?: string;

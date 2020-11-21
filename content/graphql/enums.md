@@ -42,6 +42,44 @@ enum AllowedColor {
 }
 ```
 
+To provide a description for the enum, pass the `description` property into the `registerEnumType()` function.
+
+```typescript
+registerEnumType(AllowedColor, {
+  name: 'AllowedColor',
+  description: 'The supported colors.',
+});
+```
+
+To provide a description for the enum values, or to mark a value as deprecated, pass the `valuesMap` property, as follows:
+
+```typescript
+registerEnumType(AllowedColor, {
+  name: 'AllowedColor',
+  description: 'The supported colors.',
+  valuesMap: {
+    RED: {
+      description: 'The default color.',
+    },
+    BLUE: {
+      deprecationReason: 'Too blue.',
+    }
+  }
+});
+```
+
+This will generate the following GraphQL schema in SDL:
+
+```graphql
+"""The supported colors."""
+enum AllowedColor {
+  """The default color."""
+  RED
+  GREEN
+  BLUE @deprecated(reason: "Too blue.")
+}
+```
+
 #### Schema first
 
 To define an enumerator in the schema first approach, simply create a GraphQL enum with SDL.

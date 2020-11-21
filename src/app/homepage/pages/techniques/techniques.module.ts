@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
-import { AuthenticationComponent } from './authentication/authentication.component';
 import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
+import { CookiesComponent } from './cookies/cookies.component';
+import { EventsComponent } from './events/events.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { HttpModuleComponent } from './http-module/http-module.component';
 import { LoggerComponent } from './logger/logger.component';
@@ -13,8 +14,8 @@ import { MongoComponent } from './mongo/mongo.component';
 import { MvcComponent } from './mvc/mvc.component';
 import { PerformanceComponent } from './performance/performance.component';
 import { QueuesComponent } from './queues/queues.component';
-import { SecurityComponent } from './security/security.component';
 import { SerializationComponent } from './serialization/serialization.component';
+import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
 import { SqlComponent } from './sql/sql.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
@@ -22,8 +23,7 @@ import { ValidationComponent } from './validation/validation.component';
 const routes: Routes = [
   {
     path: 'authentication',
-    component: AuthenticationComponent,
-    data: { title: 'Authentication' },
+    redirectTo: '/security/authentication',
   },
   {
     path: 'mvc',
@@ -86,8 +86,12 @@ const routes: Routes = [
   },
   {
     path: 'security',
-    component: SecurityComponent,
-    data: { title: 'Security' },
+    redirectTo: '/security/helmet',
+  },
+  {
+    path: 'cookies',
+    component: CookiesComponent,
+    data: { title: 'Cookies' },
   },
   {
     path: 'task-scheduling',
@@ -108,6 +112,16 @@ const routes: Routes = [
     path: 'hot-reload',
     redirectTo: '/recipes/hot-reload',
   },
+  {
+    path: 'server-sent-events',
+    component: ServerSentEventsComponent,
+    data: { title: 'Server-Sent Events' },
+  },
+  {
+    path: 'events',
+    component: EventsComponent,
+    data: { title: 'Events' },
+  },
 ];
 
 @NgModule({
@@ -116,12 +130,11 @@ const routes: Routes = [
     SqlComponent,
     MvcComponent,
     MongoComponent,
-    AuthenticationComponent,
-    SecurityComponent,
     QueuesComponent,
     LoggerComponent,
     TaskSchedulingComponent,
     PerformanceComponent,
+    EventsComponent,
     FileUploadComponent,
     HttpModuleComponent,
     ConfigurationComponent,
@@ -129,6 +142,8 @@ const routes: Routes = [
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
+    ServerSentEventsComponent,
+    CookiesComponent,
   ],
 })
 export class TechniquesModule {}

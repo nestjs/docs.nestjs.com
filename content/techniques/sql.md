@@ -2,7 +2,7 @@
 
 Nest is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. You have a number of options available to you, depending on your preferences. At the most general level, connecting Nest to a database is simply a matter of loading an appropriate Node.js driver for the database, just as you would with [Express](https://expressjs.com/en/guide/database-integration.html) or Fastify.
 
-You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](http://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)) [TypeORM](https://github.com/typeorm/typeorm), and [Prisma](https://www.github.com/prisma/prisma) ([recipe](/recipes/prisma)) , to operate at a higher level of abstraction.
+You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](https://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)) [TypeORM](https://github.com/typeorm/typeorm), and [Prisma](https://www.github.com/prisma/prisma) ([recipe](/recipes/prisma)) , to operate at a higher level of abstraction.
 
 For convenience, Nest provides tight integration with TypeORM and Sequelize out-of-the-box with the `@nestjs/typeorm` and `@nestjs/sequelize` packages respectively, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
 
@@ -39,6 +39,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 })
 export class AppModule {}
 ```
+
+> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
 
 The `forRoot()` method supports all the configuration properties exposed by the `createConnection()` function from the [TypeORM](https://typeorm.io/#/connection-options) package. In addition, there are several extra configuration properties described below.
 
@@ -271,7 +273,7 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectRepositor
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
+import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
@@ -591,6 +593,23 @@ export class AlbumsService {
 }
 ```
 
+It's also possible to inject any `Connection` to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsConnection: Connection) => {
+        return new AlbumsService(albumsConnection);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
+```
+
 #### Testing
 
 When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the connection instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
@@ -614,7 +633,7 @@ Now a substitute `mockRepository` will be used as the `UsersRepository`. Wheneve
 
 #### Custom repository
 
-TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](http://typeorm.io/#/custom-repository).
+TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](https://typeorm.io/#/custom-repository).
 
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
@@ -966,7 +985,7 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectModel(Use
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
+import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
@@ -1158,6 +1177,23 @@ export class AlbumsService {
     private sequelize: Sequelize,
   ) {}
 }
+```
+
+It's also possible to inject any `Sequelize` instance to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsSequelize: Sequelize) => {
+        return new AlbumsService(albumsSequelize);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
 ```
 
 #### Testing

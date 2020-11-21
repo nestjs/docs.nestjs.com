@@ -19,7 +19,7 @@ Nest comes with a number of built-in pipes that you can use out-of-the-box. You 
 
 #### Built-in pipes
 
-Nest comes with five pipes available out-of-the-box:
+Nest comes with six pipes available out-of-the-box:
 
 - `ValidationPipe`
 - `ParseIntPipe`
@@ -30,7 +30,7 @@ Nest comes with five pipes available out-of-the-box:
 
 They're exported from the `@nestjs/common` package.
 
-Let's take a quick look at using `ParseIntPipe`. This is an example of the **transformation** use case, where the pipe ensures that a method handler parameter is converted to a JavaScript integer (or throws an exception if the conversion fails). Later in this chapter, we'll show a simple custom implementation for a `ParseIntPipe`. The example techniques below also apply to the other built-in transformation pipes (`ParseBoolPipe`, `ParseArrayPipe` and `ParseUUIDPipe`, which well refer to as the `Parse*` pipes in this chapter).
+Let's take a quick look at using `ParseIntPipe`. This is an example of the **transformation** use case, where the pipe ensures that a method handler parameter is converted to a JavaScript integer (or throws an exception if the conversion fails). Later in this chapter, we'll show a simple custom implementation for a `ParseIntPipe`. The example techniques below also apply to the other built-in transformation pipes (`ParseBoolPipe`, `ParseArrayPipe` and `ParseUUIDPipe`, which we'll refer to as the `Parse*` pipes in this chapter).
 
 #### Binding pipes
 
@@ -43,7 +43,7 @@ async findOne(@Param('id', ParseIntPipe) id: number) {
 }
 ```
 
-This ensures that one of the following two conditions is true: either the parameter we receive in the `findOne()` method is a number (as expected in our call to `this.catsService.findOne())`), or an exception is thrown before the route handler is called.
+This ensures that one of the following two conditions is true: either the parameter we receive in the `findOne()` method is a number (as expected in our call to `this.catsService.findOne()`), or an exception is thrown before the route handler is called.
 
 For example, assume the route is called like:
 
@@ -86,7 +86,7 @@ async findOne(@Query('id', ParseIntPipe) id: number) {
 }
 ```
 
-Here's an example of using the `ParseUUIDPipe` to parse a string parameter and validate if is a UUID.
+Here's an example of using the `ParseUUIDPipe` to parse a string parameter and validate if it is a UUID.
 
 ```typescript
 @@filename()
