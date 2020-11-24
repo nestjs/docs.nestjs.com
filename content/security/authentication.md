@@ -63,22 +63,18 @@ export type User = any;
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[];
-
-  constructor() {
-    this.users = [
-      {
-        userId: 1,
-        username: 'john',
-        password: 'changeme',
-      },
-      {
-        userId: 2,
-        username: 'maria',
-        password: 'guess',
-      },
-    ];
-  }
+  private readonly users = [
+    {
+      userId: 1,
+      username: 'john',
+      password: 'changeme',
+    },
+    {
+      userId: 2,
+      username: 'maria',
+      password: 'guess',
+    },
+  ];
 
   async findOne(username: string): Promise<User | undefined> {
     return this.users.find(user => user.username === username);
@@ -836,7 +832,7 @@ export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 ```
 
-In the file above, we exported two constants. One being our metadata key named `IS_PUBLIC_KEY`, and the other being our new decorator itself that we’re going to call `Public` (we can alternatively name it `SkipAuth`).
+In the file above, we exported two constants. One being our metadata key named `IS_PUBLIC_KEY`, and the other being our new decorator itself that we’re going to call `Public` (you can alternatively name it `SkipAuth` or `AllowAnon`, whatever fits your project).
 
 Now that we have a custom `@Public()` decorator, we can use it to decorate any method, as follows:
 
@@ -853,7 +849,9 @@ Lastly, we need the `JwtAuthGuard` to return `true` when the `"isPublic"` metada
 ```typescript
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) {
+    super();
+  }
 
   canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { AuthenticationComponent } from './authentication/authentication.component';
+import { AuthorizationComponent } from './authorization/authorization.component';
 import { CorsComponent } from './cors/cors.component';
 import { CsrfComponent } from './csrf/csrf.component';
 import { EncryptionHashingComponent } from './encryption-hashing/encryption-hashing.component';
@@ -40,6 +41,11 @@ const routes: Routes = [
     component: RateLimitingComponent,
     data: { title: 'Rate Limiting' },
   },
+  {
+    path: 'authorization',
+    component: AuthorizationComponent,
+    data: { title: 'Authorization' },
+  },
 ];
 
 @NgModule({
@@ -48,6 +54,7 @@ const routes: Routes = [
     AuthenticationComponent,
     RateLimitingComponent,
     CsrfComponent,
+    AuthorizationComponent,
     CorsComponent,
     EncryptionHashingComponent,
     HelmetComponent,

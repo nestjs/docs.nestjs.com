@@ -106,6 +106,7 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [
         { title: 'Authentication', path: '/security/authentication' },
+        { title: 'Authorization', path: '/security/authorization' },
         {
           title: 'Encryption and Hashing',
           path: '/security/encryption-and-hashing',
