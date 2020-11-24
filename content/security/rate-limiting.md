@@ -1,34 +1,79 @@
-### Rate limiting
+### Rate Limiting
 
-A common technique to protect applications from brute-force attacks is **rate-limiting**. Many Express packages exist to provide a rate-limiting feature. A popular one is [express-rate-limit](https://github.com/nfriedly/express-rate-limit).
-
-#### Getting started
-
-Start by installing the required package:
+In this chapter we cover how to add rate limiting to your application in a more "NestJS Way" than using a package like `express-rate-limit`. To get started, you'll need to install the `@nestjs/throttler` package.
 
 ```bash
-$ npm i --save express-rate-limit
+$ npm i --save @nestjs/throttle
 ```
 
-Once the installation is complete, apply the rate-limiter as global middleware.
+Once installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync`.
 
 ```typescript
-import * as rateLimit from 'express-rate-limit';
-// somewhere in your initialization file
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  }),
-);
+@Module({
+  imports: [
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
+  ]
+})
+export class AppModule {}
 ```
 
-When there is a load balancer or reverse proxy between the server and the internet, Express may need to be configured to trust the headers set by the proxy in order to get the correct IP for the end user. To do so, first use the `NestExpressApplication` platform [interface](https://docs.nestjs.com/first-steps#platform) when creating your `app` instance, then enable the [trust proxy](https://expressjs.com/en/guide/behind-proxies.html) setting:
+or
 
 ```typescript
-const app = await NestFactory.create<NestExpressApplication>(AppModule);
-// see https://expressjs.com/en/guide/behind-proxies.html
-app.set('trust proxy', 1);
+@Module({
+  imports: [
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        ttl: config.get('THROTTLE_TTL'),
+        limit: config.get('THROTTLE_LIMIT'),
+      }),
+    }),
+  ],
+})
+export class AppModule {}
 ```
 
-> info **Hint** If you use the `FastifyAdapter`, use the [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) package instead.
+The above will set the global options for the `ttl`, the time to live, and the `limit`, the maximum number of requests within the ttl, for the routes of your application that are guarded.
+
+Once the module has been imported, you can then choose how you would like to bind the `ThrottlerGuard`. Any kind of binding as mentioned in the [guards](https://docs.nestjs.com/guards) section is fine. If you wanted to bind the guard globally, for example, you could do so but adding this provider to any module
+
+```typescript
+{
+  provide: APP_GUARD,
+  useClass: ThrottlerGuard
+}
+```
+
+#### Customization
+
+There may be a time where you want to bind the guard to a controller or globally, but want to avoid rate limiting one or more of your endpoints. For that, you can use the `@SkipThrottle()` decorator, to negate the throttler for an entire class or a single route. The `@SkipThrottle()` decorator can also take in a boolean for if there is a case where you want to exclude _most_ of a controller, but not every route.
+
+There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. The order for this decorator does matter, as the arguments are in the order of `limit` `ttl`.
+
+#### Websockets
+
+This module does work with websockets as well, with some limited functionality. First of all, user agent headers are not taken into consideration due to the difference in the underlying transport layer of Socket.IO vs Websockets. The other thing to make note of is that globally bound guards do not activate on websocket gateways, so you **must** bind the guard to the gateway itself using `@UseGuards()`.
+
+#### GraphQL
+
+Currently, only GraphQL with Express is supported, but Fastify support is coming as well. This module makes use of setting headers through the `res` object and reading headers through the `req` object of Express. To make sure these are available, when configuring your GraphQLModule, make sure the option `context: ({{ '{' }} req, res {{ '}' }}) => ({{ '{' }} req, res {{ '}' }})` is set.
+
+#### Configuration
+
+The following options are valid for the `ThrottlerModule`
+
+* ttl: the number of seconds that each request will last in storage
+* limit: the maximum number of requests within the TTL limit
+* ignoreUserAgents: an array of regular expressions of user-agents to ignore when it comes to throttling requests
+* storage: the storage setting for how to keep track of the requests.
+
+#### Storages
+
+The built in storage is an in memory cache that keeps track of the requests made until they have passed the TTL set by the global options. You can drop in your own storage option to the `storage` option of the `ThrottlerModule` so long as the class implements the `ThrottlerStorage` interface. 
+
+> **Note** `ThrottlerStorage` can be imported from `@nestjs/throttler`.
