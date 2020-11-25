@@ -16,6 +16,7 @@ import { PerformanceComponent } from './performance/performance.component';
 import { QueuesComponent } from './queues/queues.component';
 import { SerializationComponent } from './serialization/serialization.component';
 import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
+import { SessionComponent } from './sessions/sessions.component';
 import { SqlComponent } from './sql/sql.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
@@ -122,6 +123,11 @@ const routes: Routes = [
     component: EventsComponent,
     data: { title: 'Events' },
   },
+  {
+    path: 'session',
+    component: SessionComponent,
+    data: { title: 'Session' },
+  },
 ];
 
 @NgModule({
@@ -143,6 +149,7 @@ const routes: Routes = [
     CachingComponent,
     SerializationComponent,
     ServerSentEventsComponent,
+    SessionComponent,
     CookiesComponent,
   ],
 })

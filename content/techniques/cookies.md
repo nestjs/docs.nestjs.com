@@ -19,7 +19,7 @@ import * as cookieParser from 'cookie-parser';
 app.use(cookieParser());
 ```
 
-You can also pass several options to the `cookieParser` middleware:
+You can pass several options to the `cookieParser` middleware:
 
 - `secret` a string or array used for signing cookies. This is optional and if not specified, will not parse signed cookies. If a string is provided, this is used as the secret. If an array is provided, an attempt will be made to unsign the cookie with each secret in order.
 - `options` an object that is passed to `cookie.parse` as the second option. See [cookie](https://www.npmjs.org/package/cookie) for more information.

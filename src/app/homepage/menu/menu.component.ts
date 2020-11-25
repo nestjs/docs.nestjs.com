@@ -96,6 +96,7 @@ export class MenuComponent implements OnInit {
         { title: 'Compression', path: '/techniques/compression' },
         { title: 'File upload', path: '/techniques/file-upload' },
         { title: 'HTTP module', path: '/techniques/http-module' },
+        { title: 'Session', path: '/techniques/session' },
         { title: 'Model-View-Controller', path: '/techniques/mvc' },
         { title: 'Performance (Fastify)', path: '/techniques/performance' },
         { title: 'Server-Sent Events', path: '/techniques/server-sent-events' },
