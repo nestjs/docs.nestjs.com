@@ -1,12 +1,12 @@
 ### Rate Limiting
 
-In this chapter we cover how to add rate limiting to your application in a more "NestJS Way" than using a package like `express-rate-limit`. To get started, you'll need to install the `@nestjs/throttler` package.
+A common technique to protect applications from brute-force attacks is **rate-limiting**. To get started, you'll need to install the `@nestjs/throttler` package.
 
 ```bash
 $ npm i --save @nestjs/throttle
 ```
 
-Once installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync`.
+Once the installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync` methods.
 
 ```typescript
 @Module({
@@ -16,24 +16,6 @@ Once installation is complete, the `ThrottlerModule` can be configured as any ot
       limit: 10,
     }),
   ]
-})
-export class AppModule {}
-```
-
-or
-
-```typescript
-@Module({
-  imports: [
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        ttl: config.get('THROTTLE_TTL'),
-        limit: config.get('THROTTLE_LIMIT'),
-      }),
-    }),
-  ],
 })
 export class AppModule {}
 ```
@@ -67,10 +49,62 @@ Currently, only GraphQL with Express is supported, but Fastify support is coming
 
 The following options are valid for the `ThrottlerModule`
 
-* ttl: the number of seconds that each request will last in storage
-* limit: the maximum number of requests within the TTL limit
-* ignoreUserAgents: an array of regular expressions of user-agents to ignore when it comes to throttling requests
-* storage: the storage setting for how to keep track of the requests.
+<table>
+  <tr>
+    <td><code>ttl</code></td>
+    <td>the number of seconds that each request will last in storage</td>
+  </tr>
+  <tr>
+    <td><code>limit</code></td>
+    <td>the maximum number of requests within the TTL limit</td>
+  </tr>
+  <tr>
+    <td><code>ignoreUserAgents</code></td>
+    <td>an array of regular expressions of user-agents to ignore when it comes to throttling requests</td>
+  </tr>
+  <tr>
+    <td><code>storage</code></td>
+    <td> the storage setting for how to keep track of the requests</td>
+  </tr>
+</table>
+
+#### Async Configuration
+
+You may want to get your rate-limiting configuration asynchronously instead of synchronously. You can use the `forRootAsync()` method, which allows for dependency injection and `async` methods.
+
+One approach would be to use a factory function:
+
+```typescript
+@Module({
+  imports: [
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        ttl: config.get('THROTTLE_TTL'),
+        limit: config.get('THROTTLE_LIMIT'),
+      }),
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+You can also use the `useClass` syntax:
+
+```typescript
+@Module({
+  imports: [
+    ThrottlerModule.forRootASync({
+      imports: [ConfigModule],
+      useClass: ThrottlerConfigService,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+This is doable, as long as `ThrottlerConfigService` implements the interface `ThrottlerOptionsFactory`.
 
 #### Storages
 
