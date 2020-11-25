@@ -282,6 +282,16 @@ constructor(
 
 > info **Hint** The `ConfigType` is exported from the `@nestjs/config` package.
 
+#### Use cache
+
+As accessing `process.env` can be slow, you can set the `cache` property of the options object passed to `ConfigModule.forRoot()` to increase the performance of `ConfifService.get` when it comes to variables stored in `process.env`
+
+```typescript
+ConfigModule.forRoot({
+  cache: true,
+});
+```
+
 #### Partial registration
 
 Thus far, we've processed configuration files in our root module (e.g., `AppModule`), with the `forRoot()` method. Perhaps you have a more complex project structure, with feature-specific configuration files located in multiple different directories. Rather than load all these files in the root module, the `@nestjs/config` package provides a feature called **partial registration**, which references only the configuration files associated with each feature module. Use the `forFeature()` static method within a feature module to perform this partial registration, as follows:
