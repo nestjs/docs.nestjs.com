@@ -152,3 +152,50 @@ Now we can use the `Date` scalar in type definitions.
 ```graphql
 scalar Date
 ```
+
+By default, the generated TypeScript definition for all scalars is `any` - which isn't particularly typesafe.
+But, you can configure how Nest.js generates typings for your custom scalars when you specify how to generate types:
+
+```typescript
+import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
+import { join } from 'path';
+
+const definitionsFactory = new GraphQLDefinitionsFactory()
+
+definitionsFactory.generate({
+  typePaths: ['./src/**/*.graphql'],
+  path: join(process.cwd(), 'src/graphql.ts'),
+  outputAs: 'class',
+  defaultScalarType: 'unknown',
+  customScalarTypeMapping: {
+    DateTime: 'Date',
+    BigNumber: '_BigNumber',
+  },
+  additionalHeader: "import _BigNumber from 'bignumber.js'",
+})
+```
+
+Now, given the following GraphQL custom scalar types:
+
+```graphql
+scalar DateTime
+scalar BigNumber
+scalar Payload
+```
+
+we will now see the following generated TypeScript definitions in `src/graphql.ts`:
+
+```typescript
+import _BigNumber from 'bignumber.js'
+
+export type DateTime = Date
+export type BigNumber = _BigNumber
+export type Payload = unknown
+```
+
+Here, we've used the `customScalarTypeMapping` property to supply a map of the types we wish to declare for our custom scalars. We've
+also provided an `additionalHeader` property so that we can add any imports required for these type definitions. Lastly, we've added
+a `defaultScalarType` of `'unknown'`, so that any custom scalars not specified in `customScalarTypeMapping` will be aliased to
+`unknown` instead of `any` (which [TypeScript recommends](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type) using since 3.0 for added type safety).
+
+> info **Hint** Note that we've imported `_BigNumber` from `bignumber.js`; this is to avoid [circular type references](https://github.com/Microsoft/TypeScript/issues/12525#issuecomment-263166239).
