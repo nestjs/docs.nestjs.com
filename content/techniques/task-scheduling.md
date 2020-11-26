@@ -129,7 +129,7 @@ You can supply additional options as the second parameter to the `@Cron()` decor
     <tr>
       <td><code>name</code></td>
       <td>
-        Useful to access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>.
+        Useful to access and control a cron job after it's been declared.
       </td>
     </tr>
     <tr>
