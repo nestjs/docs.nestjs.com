@@ -122,14 +122,46 @@ Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decora
 
 > info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
 
-You can access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>. To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in an optional options object as the second argument of the decorator, as shown below:
+Also, you can supply additional options as the second parameter to the `@Cron()` decorator.
+
+<table>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td>
+        Useful to access and control a cron job after it's been declared.
+      </td>
+    </tr>
+    <tr>
+      <td><code>timeZone</code></td>
+      <td>
+        Specify the timezone for the execution. This will modify the actual time relative to your timezone. If the timezone is invalid, an error is thrown. You can check all timezones available at <a href="http://momentjs.com/timezone/">Moment Timezone</a> website.
+      </td>
+    </tr>
+    <tr>
+      <td><code>utcOffset</code></td>
+      <td>
+        This allows you to specify the offset of your timezone rather than using the <code>timeZone</code> param.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ```typescript
-@Cron('* * 8 * * *', {
-  name: 'notifications',
-})
-triggerNotifications() {}
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+@Injectable()
+export class NotificationService {
+  @Cron('* * 0 * * *', {
+    name: 'notifications',
+    timeZone: 'Europe/Paris',
+  })
+  triggerNotifications() {}
+}
 ```
+
+You can access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>. To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in an optional options object as the second argument of the decorator.
 
 #### Declarative intervals
 
