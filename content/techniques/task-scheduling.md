@@ -122,7 +122,7 @@ Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decora
 
 > info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
 
-You can supply additional options as the second parameters to the `@Cron()` decorator.
+You can supply additional options as the second parameter to the `@Cron()` decorator.
 
 <table>
   <tbody>
