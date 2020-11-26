@@ -162,8 +162,6 @@ export class NotificationService {
 }
 ```
 
-> info **Info** Probably don't use both <code>timeZone</code> and <code>utcOffset</code> together or weird things may happen.
-
 #### Declarative intervals
 
 To declare that a method should run at a (recurring) specified interval, prefix the method definition with the `@Interval()` decorator. Pass the interval value, as a number in milliseconds, to the decorator as shown below:
