@@ -154,7 +154,7 @@ scalar Date
 ```
 
 By default, the generated TypeScript definition for all scalars is `any` - which isn't particularly typesafe.
-But, you can configure how Nest.js generates typings for your custom scalars when you specify how to generate types:
+But, you can configure how Nest generates typings for your custom scalars when you specify how to generate types:
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
