@@ -175,6 +175,8 @@ definitionsFactory.generate({
 })
 ```
 
+> info **Hint** Alternatively, you can use a type reference instead, for example: `DateTime: Date`. In this case, `GraphQLDefinitionsFactory` will extract the name property of the specified type (`Date.name`) to generate TS definitions. Note: adding an import type for non-built-in types (custom types) is required.
+
 Now, given the following GraphQL custom scalar types:
 
 ```graphql
