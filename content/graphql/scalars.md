@@ -185,7 +185,7 @@ scalar BigNumber
 scalar Payload
 ```
 
-we will now see the following generated TypeScript definitions in `src/graphql.ts`:
+We will now see the following generated TypeScript definitions in `src/graphql.ts`:
 
 ```typescript
 import _BigNumber from 'bignumber.js'
