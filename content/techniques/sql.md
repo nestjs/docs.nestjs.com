@@ -567,7 +567,7 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-If you using multiple connections with asynchronously, set Connection Name like this.
+If you need to use multiple connections with asynchronous module registration, you can set the name for the connection like this:
 
 ```typescript
 const defaultOptions = {
