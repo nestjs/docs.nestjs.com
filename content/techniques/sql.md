@@ -567,6 +567,42 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
+If you using multiple connections with asynchronously, set Connection Name like this.
+
+```typescript
+const defaultOptions = {
+  type: 'postgres',
+  port: 5432,
+  username: 'user',
+  password: 'password',
+  database: 'db',
+  synchronize: true,
+};
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        ...defaultOptions
+        host: 'user_db_host',
+        entities: [User],
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        ...defaultOptions,
+        name: 'albums_typeorm_connection',
+        host: 'album_db_host',
+        entities: [Album],
+      }),
+      name: 'albumsConnection'
+    }),
+  ],
+})
+
+export class AppModule {}
+```
+
 At this point, you have `User` and `Album` entities registered with their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
 
 ```typescript
