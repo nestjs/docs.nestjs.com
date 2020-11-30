@@ -312,6 +312,46 @@ The compiled module has several useful methods, as described in the following ta
 
 > info **Hint** Keep your e2e test files inside the `e2e` directory. The testing files should have a `.e2e-spec` or `.e2e-test` suffix.
 
+#### Overriding globally registered providers
+
+If you have a [globally registered guard](/security/authentication#enable-authentication-globally) (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To re-cap the original registration looks like this:
+
+```typescript
+providers: [
+  {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+  },
+],
+```
+
+This is registering the guard as a "multi"-provider through the `APP_*` token. To be able to replace the JwtAuthGuard here, the registration needs to use an existing provider in this slot:
+
+```typescript
+providers: [
+  {
+    provide: APP_GUARD,
+    useExisting: JwtAuthGuard,
+  },
+  JwtAuthGuard,
+],
+```
+
+> info **Hint** Change the `useClass` to `useExisting` to reference a registered provider instead of having Nest instantiate it behind the token.
+
+Now the `JwtAuthGuard` is visible to nest as a regular provider that can be overridden when creating the test module:
+
+```typescript
+const moduleRef = await Test.createTestingModule({
+  imports: [AppModule],
+})
+  .overrideProvider(JwtAuthGuard)
+  .useClass(MockAuthGuard)
+  .compile();
+```
+
+Now all your tests will use the `MockAuthGuard` on every request.
+
 #### Testing request-scoped instances
 
 [Request-scoped](/fundamentals/injection-scopes) providers are created uniquely for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
