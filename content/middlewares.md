@@ -200,9 +200,9 @@ The `LoggerMiddleware` class we've been using is quite simple. It has no members
 
 ```typescript
 @@filename(logger.middleware)
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
-export function logger(req: Request, res: Response, next: Function) {
+export function logger(req: Request, res: Response, next: NextFunction) {
   console.log(`Request...`);
   next();
 };
