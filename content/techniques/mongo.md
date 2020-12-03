@@ -265,7 +265,7 @@ Middleware (also called pre and post hooks) are functions which are passed contr
         name: Cat.name,
         useFactory: () => {
           const schema = CatsSchema;
-          schema.pre('save', () => console.log('Hello from pre save'));
+          schema.pre('save', function() { console.log('Hello from pre save') });
           return schema;
         },
       },
@@ -286,11 +286,11 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
           const schema = CatsSchema;
-          schema.pre('save', () =>
+          schema.pre('save', function() {
             console.log(
               `${configService.get('APP_NAME')}: Hello from pre save`,
             ),
-          );
+          });
           return schema;
         },
         inject: [ConfigService],
