@@ -567,42 +567,6 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a connection, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-If you need to use multiple connections with asynchronous module registration, you can set the name for the connection like this:
-
-```typescript
-const defaultOptions = {
-  type: 'postgres',
-  port: 5432,
-  username: 'user',
-  password: 'password',
-  database: 'db',
-  synchronize: true,
-};
-
-@Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        ...defaultOptions
-        host: 'user_db_host',
-        entities: [User],
-      }),
-    }),
-    TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        ...defaultOptions,
-        name: 'albums_typeorm_connection',
-        host: 'album_db_host',
-        entities: [Album],
-      }),
-      name: 'albumsConnection'
-    }),
-  ],
-})
-
-export class AppModule {}
-```
-
 At this point, you have `User` and `Album` entities registered with their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
 
 ```typescript
@@ -778,6 +742,28 @@ TypeOrmModule.forRootAsync({
 ```
 
 This construction works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
+
+If you don't use ConnectionName as 'default', you need to specify ConnectionName so that nestjs can recognize it.
+
+```typescript
+TypeOrmModule.forRootAsync({
+  useFactory: () => {
+    return {
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'test',
+      entities:[],
+      synchronize: true,
+      name:"typeorm_user_connection"
+    }
+  },
+  name: 'USER',
+}),
+```
+
 
 #### Example
 
