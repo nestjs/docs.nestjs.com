@@ -744,25 +744,7 @@ TypeOrmModule.forRootAsync({
 This construction works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
 If you don't use ConnectionName as 'default', you need to specify ConnectionName so that nestjs can recognize it.
-
-```typescript
-TypeOrmModule.forRootAsync({
-  useFactory: () => {
-    return {
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'test',
-      entities:[],
-      synchronize: true,
-      name:"typeorm_user_connection"
-    }
-  },
-  name: 'USER',
-}),
-```
+> **Hint**: make sure the `name` property is on the same level as the `useFactory`, `useClass`, or `useValue` property. This will allow Nest to properly create the injection token
 
 
 #### Example
