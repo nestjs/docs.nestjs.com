@@ -40,4 +40,4 @@ Scope [<module_import_chain>]
 # example chain AppModule -> FooModule
 ```
 
-Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on ciruclar dependencies and make sure that both the modules **and** the providers are marked with `forwardRef`.
+Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on circular dependencies and make sure that both the modules **and** the providers are marked with `forwardRef`.

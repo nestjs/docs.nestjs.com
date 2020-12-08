@@ -88,7 +88,7 @@ The `SwaggerModule` automatically reflects all of your endpoints. Note that the 
 
 ### Document options
 
-When creating a document, it is possible to provide some extra options to finetune the library's behavior. These options should be of type `SwaggerDocumentOptions`, which can be the following:
+When creating a document, it is possible to provide some extra options to fine tune the library's behavior. These options should be of type `SwaggerDocumentOptions`, which can be the following:
 
 ```TypeScript
 export interface SwaggerDocumentOptions {

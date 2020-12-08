@@ -284,7 +284,7 @@ constructor(
 
 #### Cache environment variables
 
-As accessing `process.env` can be slow, you can set the `cache` property of the options object passed to `ConfigModule.forRoot()` to increase the performance of `ConfifService#get` method when it comes to variables stored in `process.env`.
+As accessing `process.env` can be slow, you can set the `cache` property of the options object passed to `ConfigModule.forRoot()` to increase the performance of `ConfigService#get` method when it comes to variables stored in `process.env`.
 
 ```typescript
 ConfigModule.forRoot({
