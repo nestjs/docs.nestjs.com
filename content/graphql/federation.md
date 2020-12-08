@@ -203,7 +203,7 @@ import { PostsResolvers } from './posts.resolvers';
 export class AppModule {}
 ```
 
-##### Code first
+#### Code first
 
 We will need to create a class representing our `User` entity. Even though it lives in another service, we will be using and extending it. Note the `@extends` and `@external` directives.
 

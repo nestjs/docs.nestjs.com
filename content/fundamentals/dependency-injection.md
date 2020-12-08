@@ -89,7 +89,6 @@ export class AppModule {}
 What exactly is happening under the covers to make this work? There are three key steps in the process:
 
 1. In `cats.service.ts`, the `@Injectable()` decorator declares the `CatsService` class as a class that can be managed by the Nest IoC container.
-
 2. In `cats.controller.ts`, `CatsController` declares a dependency on the `CatsService` token with constructor injection:
 
 ```typescript
