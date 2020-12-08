@@ -6,7 +6,6 @@ Start by installing the required dependencies:
 
 ```bash
 $ npm install --save @nestjs/mongoose mongoose
-$ npm install --save-dev @types/mongoose
 ```
 
 Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
