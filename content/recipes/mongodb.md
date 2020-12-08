@@ -9,10 +9,6 @@
 To start the adventure with this library we have to install all required dependencies:
 
 ```typescript
-@@filename()
-$ npm install --save mongoose
-$ npm install --save-dev @types/mongoose
-@@switch
 $ npm install --save mongoose
 ```
 
