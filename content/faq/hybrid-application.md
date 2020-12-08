@@ -39,7 +39,7 @@ To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) i
 
 ```typescript
 @@filename()
-@MessagePattern('time.us.*', Transport.NAST)
+@MessagePattern('time.us.*', Transport.NATS)
 getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
   console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
   return new Date().toLocaleTimeString(...);
@@ -50,7 +50,7 @@ getTCPDate(@Payload() data: number[]) {
 }
 @@switch
 @Bind(Payload(), Ctx())
-@MessagePattern('time.us.*', Transport.NAST)
+@MessagePattern('time.us.*', Transport.NATS)
 getDate(data, context) {
   console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
   return new Date().toLocaleTimeString(...);

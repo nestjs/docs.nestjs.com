@@ -221,7 +221,7 @@ Lastly, since `PaginatedDto` is not directly referenced by any controller, the `
 export class CatsController {}
 ```
 
-If you run Swagger now, the generated `swagger.json` for this specific endpoint should have the followng response defined:
+If you run Swagger now, the generated `swagger.json` for this specific endpoint should have the following response defined:
 
 ```json
 "responses": {

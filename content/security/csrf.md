@@ -28,7 +28,7 @@ Start by installing the required package:
 $ npm i --save fastify-csrf
 ```
 
-Once the installation is complete, register the `fastify-csrf` pluign, as follows:
+Once the installation is complete, register the `fastify-csrf` plugin, as follows:
 
 ```typescript
 import fastifyCsrf from 'fastify-csrf';

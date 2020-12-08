@@ -37,9 +37,9 @@ const decryptedText = Buffer.concat([
 
 #### Hashing
 
-For hashing, we recommed using either the [bcrypt](https://www.npmjs.com/package/bcrypt) or [argon2](https://www.npmjs.com/package/argon2) packages. Nest itself does not provide any additional wrappers on top of these modules to avoid introducing unnecessary abstractions (making the learning curve short).
+For hashing, we recommend using either the [bcrypt](https://www.npmjs.com/package/bcrypt) or [argon2](https://www.npmjs.com/package/argon2) packages. Nest itself does not provide any additional wrappers on top of these modules to avoid introducing unnecessary abstractions (making the learning curve short).
 
-As an example, let's use `bcrypt` to hash a random pasword.
+As an example, let's use `bcrypt` to hash a random password.
 
 First install required packages:
 

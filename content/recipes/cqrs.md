@@ -2,10 +2,10 @@
 
 The flow of simple [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) (Create, Read, Update and Delete) applications can be described using the following steps:
 
-1.  The **controllers** layer handles HTTP requests and delegates tasks to the services layer.
-2.  The **services layer** is where most of the business logic lives.
-3.  Services use **repositories / DAOs** to change / persist entities.
-4.  Entities act as containers for the values, with setters and getters.
+1. The **controllers** layer handles HTTP requests and delegates tasks to the services layer.
+2. The **services layer** is where most of the business logic lives.
+3. Services use **repositories / DAOs** to change / persist entities.
+4. Entities act as containers for the values, with setters and getters.
 
 In most cases, for small and medium-sized applications, this pattern is sufficient. However, when our requirements become more complex, the **CQRS** model may be more appropriate and scalable. To facilitate that model, Nest provides a lightweight [CQRS module](https://github.com/nestjs/cqrs). This chapter describes how to use it.
 
