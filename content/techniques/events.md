@@ -50,7 +50,29 @@ EventEmitterModule.forRoot({
 });
 ```
 
-#### Event listeners
+#### Dispatching Events
+
+To dispatch an event, first inject `EventEmitter2` using standard constructor injection:
+
+```typescript
+constructor(private eventEmitter: EventEmitter2) {}
+```
+
+> info **Hint** Import the `EventEmitter2` from the `@nestjs/event-emitter` package.
+
+Then use it in a class as follows.
+
+```typescript
+this.eventEmitter.emit(
+  'order.created',
+  new OrderCreatedEvent({
+    orderId: 1,
+    payload: {},
+  }),
+);
+```
+
+#### Listening to Events
 
 To declare an event listener, decorate a method with the `@OnEvent()` decorator preceding the method definition containing the code to be executed, as follows:
 
@@ -77,28 +99,6 @@ To use namespaces/wildcards, pass the `wildcard` option into the `EventEmitterMo
 handleOrderEvents(payload: OrderCreatedEvent | OrderRemovedEvent | OrderUpdatedEvent) {
   // handle and process an event
 }
-```
-
-#### Dispatching events
-
-To dispatch an event, first inject `EventEmitter2` using standard constructor injection:
-
-```typescript
-constructor(private eventEmitter: EventEmitter2) {}
-```
-
-> info **Hint** Import the `EventEmitter2` from the `@nestjs/event-emitter` package.
-
-Then use it in a class as follows.
-
-```typescript
-this.eventEmitter.emit(
-  'order.created',
-  new OrderCreatedEvent({
-    orderId: 1,
-    payload: {},
-  }),
-);
 ```
 
 > info **Hint** `EventEmitter2` class provides several useful methods for interacting with events, like `waitFor` and `onAny`. You can read more about them [here](https://github.com/EventEmitter2/EventEmitter2).
