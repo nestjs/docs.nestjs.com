@@ -52,7 +52,7 @@ EventEmitterModule.forRoot({
 
 #### Dispatching Events
 
-To dispatch an event, first inject `EventEmitter2` using standard constructor injection:
+To dispatch (i.e., fire) an event, first inject `EventEmitter2` using standard constructor injection:
 
 ```typescript
 constructor(private eventEmitter: EventEmitter2) {}
@@ -98,6 +98,18 @@ To use namespaces/wildcards, pass the `wildcard` option into the `EventEmitterMo
 @OnEvent('order.*')
 handleOrderEvents(payload: OrderCreatedEvent | OrderRemovedEvent | OrderUpdatedEvent) {
   // handle and process an event
+}
+```
+
+Note that such a wildcard only applies to one block. The argument `order.*` will match, for example, the events `order.created` and `order.shipped` but not `order.delayed.out_of_stock`. In order to listen to such events,
+use the `multilevel wildcard` pattern (i.e, `**`), described in the `EventEmitter2` package.
+
+With this pattern, you can, for example, create an event listener that catches all events.
+
+```typescript
+@OnEvent('**')
+handleEverything(payload: any) {
+  console.log('listener triggered');
 }
 ```
 
