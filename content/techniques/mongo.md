@@ -77,6 +77,7 @@ In case you want to specify relation to another model, later for populating, you
 import * as mongoose from 'mongoose';
 import { Owner } from '../owners/schemas/owner.schema';
 
+// inside the class definition
 @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
 owner: Owner;
 ```
