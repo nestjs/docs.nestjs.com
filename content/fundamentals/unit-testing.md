@@ -314,7 +314,7 @@ The compiled module has several useful methods, as described in the following ta
 
 #### Overriding globally registered providers
 
-If you have a [globally registered guard](/security/authentication#enable-authentication-globally) (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To re-cap the original registration looks like this:
+If you have a [globally registered guard](/security/authentication#enable-authentication-globally) (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap the original registration looks like this:
 
 ```typescript
 providers: [
@@ -339,7 +339,7 @@ providers: [
 
 > info **Hint** Change the `useClass` to `useExisting` to reference a registered provider instead of having Nest instantiate it behind the token.
 
-Now the `JwtAuthGuard` is visible to nest as a regular provider that can be overridden when creating the test module:
+Now the `JwtAuthGuard` is visible to nestjs as a regular provider that can be overridden when creating the `TestingModule`:
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
