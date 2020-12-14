@@ -23,11 +23,11 @@ You implement custom Nest middleware in either a function, or in a class with an
 ```typescript
 @@filename(logger.middleware)
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: Function) {
+  use(req: Request, res: Response, next: NextFunction) {
     console.log('Request...');
     next();
   }
@@ -200,9 +200,9 @@ The `LoggerMiddleware` class we've been using is quite simple. It has no members
 
 ```typescript
 @@filename(logger.middleware)
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
-export function logger(req: Request, res: Response, next: Function) {
+export function logger(req: Request, res: Response, next: NextFunction) {
   console.log(`Request...`);
   next();
 };
