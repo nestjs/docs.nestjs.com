@@ -1,9 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { MixinComponentsComponent } from './mixin-components.component';
 
 describe('MixinComponentsComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     return TestBed.configureTestingModule({
       declarations: [ MixinComponentsComponent ]
     })

@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CustomTransportComponent } from './custom-transport.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 describe('CustomTransportComponent', () => {
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     return TestBed.configureTestingModule({
       declarations: [
         TabsComponent,
