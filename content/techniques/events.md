@@ -60,7 +60,7 @@ constructor(private eventEmitter: EventEmitter2) {}
 
 > info **Hint** Import the `EventEmitter2` from the `@nestjs/event-emitter` package.
 
-Then use it in a class as follows.
+Then use it in a class as follows:
 
 ```typescript
 this.eventEmitter.emit(
@@ -102,7 +102,7 @@ handleOrderEvents(payload: OrderCreatedEvent | OrderRemovedEvent | OrderUpdatedE
 ```
 
 Note that such a wildcard only applies to one block. The argument `order.*` will match, for example, the events `order.created` and `order.shipped` but not `order.delayed.out_of_stock`. In order to listen to such events,
-use the `multilevel wildcard` pattern (i.e, `**`), described in the `EventEmitter2` package.
+use the `multilevel wildcard` pattern (i.e, `**`), described in the `EventEmitter2` [documentation](https://github.com/EventEmitter2/EventEmitter2#multi-level-wildcards).
 
 With this pattern, you can, for example, create an event listener that catches all events.
 
