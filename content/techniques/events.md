@@ -109,7 +109,7 @@ With this pattern, you can, for example, create an event listener that catches a
 ```typescript
 @OnEvent('**')
 handleEverything(payload: any) {
-  console.log('listener triggered');
+  // handle and process an event
 }
 ```
 
