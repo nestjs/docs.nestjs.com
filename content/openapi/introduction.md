@@ -128,7 +128,7 @@ const document = SwaggerModule.createDocument(app, options, {
   operationIdFactory: (
     controllerKey: string,
     methodKey: string
-  ) => methodKey;
+  ) => methodKey
 });
 ```
 
