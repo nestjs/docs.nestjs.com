@@ -205,7 +205,7 @@ Whether the processor needs to depend on a request scoped provider or be explici
 })
 ```
 
-then you can inject the JOB_REF via the constructor.
+then you can inject the `JOB_REF` via the constructor.
 
 ```typescript
 constructor(@Inject(JOB_REF) jobRef: Job) {
