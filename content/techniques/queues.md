@@ -205,13 +205,15 @@ Whether the processor needs to depend on a request scoped provider or be explici
 })
 ```
 
-and then you can inject the JOB_REF via the constructor.
+then you can inject the JOB_REF via the constructor.
 
 ```typescript
 constructor(@Inject(JOB_REF) jobRef: Job) {
    console.log(jobRef);
 }
 ```
+
+> info **Hint** to import JOB_REF: ``` import { JOB_REF } from '@nestjs/bull' ```
 
 #### Consumers
 
