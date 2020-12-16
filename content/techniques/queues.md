@@ -213,7 +213,7 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 }
 ```
 
-> info **Hint** to import JOB_REF: ``` import { JOB_REF } from '@nestjs/bull' ```
+> info **Hint** The `JOB_REF` is imported from `@nestjs/bull`
 
 #### Consumers
 
