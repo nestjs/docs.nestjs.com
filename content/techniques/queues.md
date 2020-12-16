@@ -194,6 +194,27 @@ const job = await this.audioQueue.add(
 );
 ```
 
+#### Providers
+
+Whether the processor needs to depend on a request scoped provider or be explicitly registered as a scoped processor, as follows:
+
+```typescript
+@Processor({
+  name: 'audio',
+  scope: Scope.REQUEST,
+})
+```
+
+then you can inject the `JOB_REF` via the constructor.
+
+```typescript
+constructor(@Inject(JOB_REF) jobRef: Job) {
+   console.log(jobRef);
+}
+```
+
+> info **Hint** to import JOB_REF: ``` import { JOB_REF } from '@nestjs/bull' ```
+
 #### Consumers
 
 A consumer is a **class** defining methods that either process jobs added into the queue, or listen for events on the queue, or both. Declare a consumer class using the `@Processor()` decorator as follows:
