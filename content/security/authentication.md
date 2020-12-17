@@ -811,29 +811,7 @@ In addition to extending the default error handling and authentication logic, we
 The first strategy a is successful, redirects or by a mistake will stop the chain. Authentication errors will proceed through each strategy in series, eventually failing if all strategies fail.
 
 ```typescript
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-
-@Injectable()
-export class JwtAuthGuard extends AuthGuard(['strategy_jwt_1', 'strategy_jwt_2', '...']) {
-  canActivate(context: ExecutionContext) {
-    // Add your custom authentication logic here
-    // for example, call super.logIn(request) to establish a session.
-    return super.canActivate(context);
-  }
-
-  handleRequest(err, user, info) {
-    // You can throw an exception based on either "info" or "err" arguments
-    if (err || !user) {
-      throw err || new UnauthorizedException();
-    }
-    return user;
-  }
-}
+export class JwtAuthGuard extends AuthGuard(['strategy_jwt_1', 'strategy_jwt_2', '...']) { ... }
 ```
 #### Enable authentication globally
 
