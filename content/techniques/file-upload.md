@@ -118,7 +118,7 @@ You can specify multer options in the file interceptors as described above. To s
 
 ```typescript
 MulterModule.register({
-  dest: '/upload',
+  dest: './upload',
 });
 ```
 
@@ -133,7 +133,7 @@ One technique is to use a factory function:
 ```typescript
 MulterModule.registerAsync({
   useFactory: () => ({
-    dest: '/upload',
+    dest: './upload',
   }),
 });
 ```
@@ -165,7 +165,7 @@ The construction above instantiates `MulterConfigService` inside `MulterModule`,
 class MulterConfigService implements MulterOptionsFactory {
   createMulterOptions(): MulterModuleOptions {
     return {
-      dest: '/upload',
+      dest: './upload',
     };
   }
 }
