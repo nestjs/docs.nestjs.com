@@ -13,7 +13,7 @@ If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the confi
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack-node-externals run-script-webpack-plugin
+$ npm i --save-dev webpack-node-externals run-script-webpack-plugin webpack
 ```
 
 #### Configuration
