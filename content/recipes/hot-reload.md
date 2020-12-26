@@ -10,15 +10,31 @@ If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the confi
 
 #### Installation
 
-First install the required packages:
+First install the required packages.
+
+##### With NPM
 
 ```bash
 $ npm i --save-dev webpack-node-externals run-script-webpack-plugin webpack
 ```
 
+##### With Yarn classic
+
+```bash
+$ yarn add -D webpack-node-externals run-script-webpack-plugin webpack
+```
+
+##### With Yarn berry
+
+```bash
+$ yarn add -D webpack-pnp-externals run-script-webpack-plugin webpack
+```
+
 #### Configuration
 
 Once the installation is complete, create a `webpack-hmr.config.js` file in the root directory of your application.
+
+##### With NPM or Yarn classic
 
 ```typescript
 const webpack = require('webpack');
@@ -40,6 +56,35 @@ module.exports = function(options) {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.WatchIgnorePlugin({
         paths: [/\.js$/, /\.d\.ts$/],
+      }),
+      new RunScriptWebpackPlugin({ name: options.output.filename }),
+    ],
+  };
+};
+```
+
+##### With Yarn berry
+
+```typescript
+const webpack = require('webpack');
+const { WebpackPnpExternals } = require('webpack-pnp-externals');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
+
+module.exports = function(options) {
+  return {
+    ...options,
+    entry: ['webpack/hot/poll?100', options.entry],
+    watch: true,
+    externals: [
+      WebpackPnpExternals({
+        exclude: ['webpack/hot/poll?100'],
+      }),
+    ],
+    plugins: [
+      ...options.plugins,
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.WatchIgnorePlugin({
+        paths: [/\.js$/, /\.d\.ts$/]
       }),
       new RunScriptWebpackPlugin({ name: options.output.filename }),
     ],
@@ -86,15 +131,31 @@ If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the c
 
 #### Installation
 
-First install the required packages:
+First install the required packages.
+
+##### With NPM
 
 ```bash
 $ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader run-script-webpack-plugin
 ```
 
+##### With Yarn classic
+
+```bash
+$ yarn add -D webpack webpack-cli webpack-node-externals ts-loader run-script-webpack-plugin
+```
+
+##### With Yarn berry
+
+```bash
+$ yarn add -D webpack webpack-cli webpack-pnp-externals ts-loader run-script-webpack-plugin
+```
+
 #### Configuration
 
 Once the installation is complete, create a `webpack.config.js` file in the root directory of your application.
+
+##### With NPM or Yarn classic
 
 ```typescript
 const webpack = require('webpack');
@@ -109,6 +170,47 @@ module.exports = {
   externals: [
     nodeExternals({
       allowlist: ['webpack/hot/poll?100'],
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  mode: 'development',
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new RunScriptWebpackPlugin({ name: 'server.js' }),
+  ],
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'server.js',
+  },
+};
+```
+
+##### With Yarn berry
+
+```typescript
+const webpack = require('webpack');
+const path = require('path');
+const { WebpackPnpExternals } = require('webpack-pnp-externals');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
+
+module.exports = {
+  entry: ['webpack/hot/poll?100', './src/main.ts'],
+  watch: true,
+  target: 'node',
+  externals: [
+    WebpackPnpExternals({
+      exclude: ['webpack/hot/poll?100'],
     }),
   ],
   module: {
