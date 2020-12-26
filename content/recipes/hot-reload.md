@@ -13,7 +13,7 @@ If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the confi
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack-node-externals start-server-webpack-plugin
+$ npm i --save-dev webpack-node-externals run-script-webpack-plugin
 ```
 
 #### Configuration
@@ -23,7 +23,7 @@ Once the installation is complete, create a `webpack-hmr.config.js` file in the 
 ```typescript
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
-const StartServerPlugin = require('start-server-webpack-plugin');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 module.exports = function(options) {
   return {
@@ -39,7 +39,7 @@ module.exports = function(options) {
       ...options.plugins,
       new webpack.HotModuleReplacementPlugin(),
       new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
-      new StartServerPlugin({ name: options.output.filename }),
+      new RunScriptWebpackPlugin({ name: options.output.filename }),
     ],
   };
 };
@@ -87,7 +87,7 @@ If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the c
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader start-server-webpack-plugin
+$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader run-script-webpack-plugin
 ```
 
 #### Configuration
@@ -98,7 +98,7 @@ Once the installation is complete, create a `webpack.config.js` file in the root
 const webpack = require('webpack');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const StartServerPlugin = require('start-server-webpack-plugin');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 module.exports = {
   entry: ['webpack/hot/poll?100', './src/main.ts'],
@@ -124,7 +124,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new StartServerPlugin({ name: 'server.js' }),
+    new RunScriptWebpackPlugin({ name: 'server.js' }),
   ],
   output: {
     path: path.join(__dirname, 'dist'),
