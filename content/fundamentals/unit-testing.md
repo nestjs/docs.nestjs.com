@@ -312,7 +312,7 @@ The compiled module has several useful methods, as described in the following ta
 
 > info **Hint** Keep your e2e test files inside the `e2e` directory. The testing files should have a `.e2e-spec` or `.e2e-test` suffix.
 
-#### Overriding globally registered providers
+#### Overriding globally registered enhancers
 
 If you have a [globally registered guard](/security/authentication#enable-authentication-globally) (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap the original registration looks like this:
 
@@ -325,7 +325,7 @@ providers: [
 ],
 ```
 
-This is registering the guard as a "multi"-provider through the `APP_*` token. To be able to replace the JwtAuthGuard here, the registration needs to use an existing provider in this slot:
+This is registering the guard as a "multi"-provider through the `APP_*` token. To be able to replace the `JwtAuthGuard` here, the registration needs to use an existing provider in this slot:
 
 ```typescript
 providers: [
@@ -339,7 +339,7 @@ providers: [
 
 > info **Hint** Change the `useClass` to `useExisting` to reference a registered provider instead of having Nest instantiate it behind the token.
 
-Now the `JwtAuthGuard` is visible to nestjs as a regular provider that can be overridden when creating the `TestingModule`:
+Now the `JwtAuthGuard` is visible to nest as a regular provider that can be overridden when creating the `TestingModule`:
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
