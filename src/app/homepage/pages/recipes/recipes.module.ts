@@ -64,7 +64,7 @@ const routes: Routes = [
   {
     path: 'crud-generator',
     component: CrudGeneratorComponent,
-    data: { title: 'CRUD (resource) generators' },
+    data: { title: 'CRUD generator' },
   },
   {
     path: 'hot-reload',
