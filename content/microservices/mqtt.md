@@ -14,7 +14,7 @@ $ npm i --save mqtt
 
 To use the MQTT transporter, pass the following options object to the `createMicroservice()` method:
 
-> info **Hint** If you were to use MQTT in a docker environment I recommend using `hostname` as a parameter options.
+> info **Hint** In development environments where you need to specify the port number, use `hostname` instead of `host`
 
 ```typescript
 @@filename(main)
