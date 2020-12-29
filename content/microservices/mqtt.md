@@ -14,6 +14,8 @@ $ npm i --save mqtt
 
 To use the MQTT transporter, pass the following options object to the `createMicroservice()` method:
 
+> info **Hint** If you were to use MQTT in a docker environment I recommend using `hostname` as a parameter options.
+
 ```typescript
 @@filename(main)
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
