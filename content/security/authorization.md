@@ -405,9 +405,9 @@ findAll() {
 Alternatively, we can define a class which implements the `IPolicyHandler` interface:
 
 ```typescript
-export class CreateArticlePolicyHandler implements IPolicyHandler {
+export class ReadArticlePolicyHandler implements IPolicyHandler {
   handle(ability: AppAbility) {
-    return ability.can(Action.Create, Article);
+    return ability.can(Action.Read, Article);
   }
 }
 ```
@@ -417,7 +417,7 @@ And use it as follows:
 ```typescript
 @Get()
 @UseGuards(PoliciesGuard)
-@CheckPolicies(new CreateArticlePolicyHandler())
+@CheckPolicies(new ReadArticlePolicyHandler())
 findAll() {
   return this.articlesService.findAll();
 }
