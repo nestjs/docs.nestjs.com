@@ -67,7 +67,7 @@ export class RabbitMQServer extends Server implements CustomTransportStrategy {
   get rabbitMqServerJs() {
     return `
 import * as amqp from 'amqplib';
-import { Server } from '@nestjs/microservices';
+import { Server, CustomStrategy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 
 export class RabbitMQServer extends Server {
@@ -123,7 +123,7 @@ export class RabbitMQServer extends Server {
 
   get setupServer() {
     return `
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice<CustomStrategy>(ApplicationModule, {
     strategy: new RabbitMQServer('amqp://localhost', 'channel'),
 });`;
   }
