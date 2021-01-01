@@ -243,3 +243,7 @@ export class HealthController {
   }
 }
 ```
+
+#### Examples
+
+Some working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).
