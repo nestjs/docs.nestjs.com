@@ -20,6 +20,8 @@ import helmet from 'helmet';
 app.use(helmet());
 ```
 
+> info **Hint** If you are getting a error (`TypeError: helmet_1.default is not a function`) while trying to import Helmet, you will need to set `allowSyntheticDefaultImports` and `esModuleInterop` to `true` in your project's `tsconfig.json`. Another solution is to import `Helmet` using `import * as helmet from 'helmet'`.
+
 #### Use with Fastify
 
 If you are using the `FastifyAdapter`, install the [fastify-helmet](https://github.com/fastify/fastify-helmet) package:
