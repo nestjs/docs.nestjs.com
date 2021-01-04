@@ -256,6 +256,9 @@ We simulate HTTP tests using the `request()` function from Supertest. We want th
 
 In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override guards, interceptors, filters and pipes with the`overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
 
+While testing you sometimes also want to provide a custom logger e.g. the tests are run on a CI server. Use `setLogger()` with a `Logger` instance that is derived from the 
+[Logger class](https://docs.nestjs.com/techniques/logger#injecting-a-custom-logger) to tell the TestModuleBuilder how to log during tests.
+
 Each of the override methods returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
 
 - `useClass`: you supply a class that will be instantiated to provide the instance to override the object (provider, guard, etc.).
