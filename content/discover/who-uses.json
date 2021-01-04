@@ -186,6 +186,11 @@
       "logo": "/assets/logo/rivvy.png",
       "url": "https://rivvy.app",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/datenlotse.svg",
+      "url": "https://datenlotse.org",
+      "width": "120px"
     }
   ],
   "Body": [
@@ -239,7 +244,6 @@
     "https://halojasa.com",
     "https://hexito.com",
     "https://rivvy.app",
-    "https://padfever.com/",
-    "https://datenlotse.org"
+    "https://padfever.com/"
   ]
 }
