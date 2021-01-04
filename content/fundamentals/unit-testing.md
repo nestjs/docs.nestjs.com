@@ -256,8 +256,6 @@ We simulate HTTP tests using the `request()` function from Supertest. We want th
 
 In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override guards, interceptors, filters and pipes with the`overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
 
-While testing you sometimes also want to provide a custom logger e.g. the tests are run on a CI server. Use `setLogger()` with a `Logger` instance that is derived from the 
-[Logger class](https://docs.nestjs.com/techniques/logger#injecting-a-custom-logger) to tell the TestModuleBuilder how to log during tests.
 
 Each of the override methods returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
 
@@ -266,6 +264,9 @@ Each of the override methods returns an object with 3 different methods that mir
 - `useFactory`: you supply a function that returns an instance that will override the object.
 
 Each of the override method types, in turn, returns the `TestingModule` instance, and can thus be chained with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). You should use `compile()` at the end of such a chain to cause Nest to instantiate and initialize the module.
+
+While testing you sometimes also want to provide a custom logger e.g. when the tests are run on a CI server. Use `setLogger()` with a `Logger` instance that is derived from the 
+[Logger class](https://docs.nestjs.com/techniques/logger#injecting-a-custom-logger) to tell the TestModuleBuilder how to log during tests.
 
 The compiled module has several useful methods, as described in the following table:
 
