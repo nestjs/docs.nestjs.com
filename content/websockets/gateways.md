@@ -59,12 +59,12 @@ If you would prefer not to use decorators, the following code is functionally eq
 ```typescript
 @@filename(events.gateway)
 @SubscribeMessage('events')
-handleEvent(client: Socket, data: string): string {
+handleEvent(data: string, client: Socket): string {
   return data;
 }
 @@switch
 @SubscribeMessage('events')
-handleEvent(client, data) {
+handleEvent(data, client) {
   return data;
 }
 ```
