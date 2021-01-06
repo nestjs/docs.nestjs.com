@@ -15,12 +15,12 @@ $ npm i --save helmet
 Once the installation is complete, apply it as a global middleware.
 
 ```typescript
-import helmet from 'helmet';
+import * as helmet from 'helmet';
 // somewhere in your initialization file
 app.use(helmet());
 ```
 
-> info **Hint** If you are getting a error (`TypeError: helmet_1.default is not a function`) while trying to import Helmet, you will need to set `allowSyntheticDefaultImports` and `esModuleInterop` to `true` in your project's `tsconfig.json`. Another solution is to import `Helmet` using `import * as helmet from 'helmet'`.
+> info **Hint** If you are getting a error (`This expression is not callable`) while trying to import Helmet, you probably have `allowSyntheticDefaultImports` and `esModuleInterop` set to `true` in your project's `tsconfig.json`. If this is the case, you will need to use `import helmet from 'helmet'`, instead of the example.
 
 #### Use with Fastify
 
