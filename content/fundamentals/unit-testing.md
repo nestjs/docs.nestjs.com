@@ -310,7 +310,7 @@ The compiled module has several useful methods, as described in the following ta
   </tr>
 </table>
 
-> info **Hint** Keep your e2e test files inside the `e2e` directory. The testing files should have a `.e2e-spec` or `.e2e-test` suffix.
+> info **Hint** Keep your e2e test files inside the `test` directory. The testing files should have a `.e2e-spec` suffix.
 
 #### Overriding globally registered enhancers
 
