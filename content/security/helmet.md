@@ -20,7 +20,7 @@ import * as helmet from 'helmet';
 app.use(helmet());
 ```
 
-> info **Hint** If you are getting a error (`This expression is not callable`) while trying to import Helmet, you probably have `allowSyntheticDefaultImports` and `esModuleInterop` set to `true` in your project's `tsconfig.json`. If this is the case, you will need to use `import helmet from 'helmet'`, instead of the example.
+> info **Hint** If you are getting a `This expression is not callable` error while trying to import `Helmet`, you very likely have the `allowSyntheticDefaultImports` and `esModuleInterop` options set to `true` in your project's `tsconfig.json` file. If that's the case, change the import statement to: `import helmet from 'helmet'` instead.
 
 #### Use with Fastify
 
