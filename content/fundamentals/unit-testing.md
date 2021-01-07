@@ -314,7 +314,7 @@ The compiled module has several useful methods, as described in the following ta
 
 #### Overriding globally registered enhancers
 
-If you have a [globally registered guard](/security/authentication#enable-authentication-globally) (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap the original registration looks like this:
+If you have a globally registered guard (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap the original registration looks like this:
 
 ```typescript
 providers: [
