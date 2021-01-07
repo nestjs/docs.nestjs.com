@@ -6,7 +6,7 @@ To handle file uploading, Nest provides a built-in module based on the [multer](
 
 #### Use with Express (default)
 
-To work properly with Typescript, its types must be installed:
+If you want to use the `Express.Multer.File` type for `@UploadedFile()` files, it is necessary to install the types:
 
 ```shell
 $ npm i -D @types/multer
