@@ -339,7 +339,7 @@ providers: [
 
 > info **Hint** Change the `useClass` to `useExisting` to reference a registered provider instead of having Nest instantiate it behind the token.
 
-Now the `JwtAuthGuard` is visible to nest as a regular provider that can be overridden when creating the `TestingModule`:
+Now the `JwtAuthGuard` is visible to Nest as a regular provider that can be overridden when creating the `TestingModule`:
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
