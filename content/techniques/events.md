@@ -83,6 +83,8 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 }
 ```
 
+> warning **Warning** Event subscribers cannot be request-scoped.
+
 The first argument can be a `string` or `symbol` for a simple event emitter and a `string | symbol | Array<string | symbol>` in a case of a wildcard emitter. The second argument (optional) is a listener options object ([read more](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
 
 ```typescript
