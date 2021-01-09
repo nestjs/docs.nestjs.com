@@ -35,7 +35,12 @@ async function bootstrap() {
     .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+    customSiteTitle: 'My website browser title.',
+  });
 
   await app.listen(3000);
 }
@@ -51,6 +56,7 @@ Once we create a document, we can call the `setup()` method. It accepts:
 1. the path to mount the Swagger UI
 2. an application instance
 3. the document object instantiated above
+4. optional configuration parameter
 
 Now you can run the following command to start the HTTP server:
 
