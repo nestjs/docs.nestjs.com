@@ -343,6 +343,28 @@ import { MongooseModule } from '@nestjs/mongoose';
 export class AppModule {}
 ```
 
+#### Virtuals
+
+[Virtuals](https://mongoosejs.com/docs/tutorials/virtuals.html) is a property that is not stored in MongoDB. Virtuals are used for document properties.
+
+Suppose you have a user model. And we want to add a virtual Fullname field and includes the firstName and lastName field like so:
+
+```typescript
+CustomerSchema.virtual('fullName').get(function() {
+  return `${this.firstName} ${this.lastName}`;
+});
+```
+The virtuals besides you have getters also have setters to set the properties
+
+```typescript
+CustomerSchema.virtual('fullName').set(function (fullName: string) {
+  const [firstName, lastName] = fullName.split(' ');
+  this.set({ firstName, lastName });
+})
+```
+
+> info **Hint** For more information regarding the use of virtuals see the [mongoose](https://mongoosejs.com/docs/tutorials/virtuals.html) help
+
 #### Discriminators
 
 [Discriminators](https://mongoosejs.com/docs/discriminators.html) are a schema inheritance mechanism. They enable you to have multiple models with overlapping schemas on top of the same underlying MongoDB collection.
