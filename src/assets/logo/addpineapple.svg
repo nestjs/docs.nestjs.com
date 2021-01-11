@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="148.4" height="188.9" data-name="Layer 1" version="1.1" viewBox="0 0 148.4 188.9" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>RGB Logos</dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style>.cls-1{fill:#6bc393;}.cls-2{fill:#fcc317;}</style>
+ </defs>
+ <title>RGB Logos</title>
+ <path class="cls-1" d="m60.71 67.46v-53.17q0-7.94 2.49-11.12c1.66-2.11 4.62-3.17 8.84-3.17h4.32q6.33 0 8.84 3.17c1.65 2.12 2.49 5.83 2.49 11.12v53.17z"/>
+ <path class="cls-1" d="m60.71 67.47 19.08-19.08-27.58-27.6c-3.74-3.74-7-5.77-9.63-6.09s-5.51 1-8.49 4l-3.05 3.05q-4.49 4.49-4 8.5t6.09 9.62z"/>
+ <path class="cls-1" d="m87.68 67.47-19.07-19.08 27.58-27.6q5.61-5.61 9.62-6.09t8.5 4l3.05 3.05q4.49 4.49 4 8.5t-6.1 9.62z"/>
+ <path class="cls-2" d="m14.29 148.42c-5.29 0-9-0.84-11.12-2.49s-3.17-4.62-3.17-8.84v-4.32c0-4.22 1.06-7.18 3.17-8.84s5.83-2.49 11.12-2.49h119.82q7.93 0 11.11 2.49c2.12 1.66 3.18 4.62 3.18 8.84v4.32q0 6.33-3.18 8.84c-2.11 1.65-5.82 2.49-11.11 2.49z"/>
+ <path class="cls-2" d="m27.78 188.9c-5.29 0-9-0.84-11.11-2.49s-3.18-4.62-3.18-8.85v-4.31c0-4.22 1.06-7.18 3.18-8.84s5.82-2.5 11.11-2.5h92.86q7.94 0 11.11 2.5c2.12 1.66 3.18 4.62 3.18 8.84v4.31q0 6.35-3.18 8.85c-2.11 1.65-5.82 2.49-11.11 2.49z"/>
+ <path class="cls-2" d="m41.26 107.94q-7.93 0-11.11-2.49t-3.17-8.84v-4.32q0-6.33 3.17-8.84t11.11-2.49h65.88q7.94 0 11.11 2.49t3.18 8.84v4.32q0 6.33-3.18 8.84t-11.11 2.49z"/>
+</svg>
