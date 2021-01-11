@@ -34,7 +34,7 @@
     "@angular/router": "11.0.7",
     "core-js": "2.6.12",
     "hammerjs": "2.0.8",
-    "ngx-perfect-scrollbar": "10.0.1",
+    "ngx-perfect-scrollbar": "10.1.0",
     "nodemon": "2.0.7",
     "prismjs": "1.23.0",
     "rxjs": "6.6.3",
