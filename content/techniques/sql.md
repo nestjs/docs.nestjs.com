@@ -93,7 +93,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-> info **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
+> warning **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
 
 > warning **Warning** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied.
 
