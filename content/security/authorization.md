@@ -144,7 +144,7 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 
 #### Claims-based authorization
 
-When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject is, not what the subject can do.
+When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject can do, not what the subject is.
 
 To implement a Claims-based authorization in Nest, you can follow the same steps we have shown above in the [RBAC](/security/authorization#basic-rbac-implementation) section with one significant difference: instead of checking for specific roles, you should compare **permissions**. Every user would have a set of permissions assigned. Likewise, each resource/endpoint would define what permissions are required (for example, through a dedicated `@RequirePermissions()` decorator) to access them.
 
