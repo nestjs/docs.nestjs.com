@@ -114,7 +114,7 @@ export class Book {
 export type ResultUnion = Author | Book;
 ```
 
-Unions require an extra `__resolveType` field in the resolver map to determine which type the union should resolve to. Let's create a `ResultUnionResolver` class and define the `__resolveType` method:
+Unions require an extra `__resolveType` field in the resolver map to determine which type the union should resolve to. Let's create a `ResultUnionResolver` class and define the `__resolveType` method. Note that the `ResultUnionResolver` class has to be registered in the required module:
 
 ```typescript
 @Resolver('ResultUnion')
