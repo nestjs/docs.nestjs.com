@@ -31,7 +31,7 @@ The `FileInterceptor()` decorator takes two arguments:
 - `fieldName`: string that supplies the name of the field from the HTML form that holds a file
 - `options`: optional object of type `MulterOptions`. This is the same object used by the multer constructor (more details [here](https://github.com/expressjs/multer#multeropts)).
 
-> warning **Warning** `FileInterceptor()` is not compatible with third party cloud providers type Firebase (and other cloud providers)
+> warning **Warning** `FileInterceptor()` may not be compatible with third party cloud providers like Google Firebase or others.
 
 #### Array of files
 
