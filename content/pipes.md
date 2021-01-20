@@ -229,13 +229,13 @@ This is, of course, exactly the use case for which pipes are designed. So let's 
 
 There are several approaches available for doing object validation in a clean, [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) way. One common approach is to use **schema-based** validation. Let's go ahead and try that approach.
 
-The [Joi](https://github.com/hapijs/joi) library allows you to create schemas in a straightforward way, with a readable API. Let's build a validation pipe that makes use of Joi-based schemas.
+The [Joi](https://github.com/sideway/joi) library allows you to create schemas in a straightforward way, with a readable API. Let's build a validation pipe that makes use of Joi-based schemas.
 
 Start by installing the required package:
 
 ```bash
-$ npm install --save @hapi/joi
-$ npm install --save-dev @types/hapi__joi
+$ npm install --save joi
+$ npm install --save-dev @types/joi
 ```
 
 In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.validate()` method, which validates our incoming argument against the provided schema.
@@ -247,7 +247,7 @@ In the next section, you'll see how we supply the appropriate schema for a given
 ```typescript
 @@filename()
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { ObjectSchema } from '@hapi/joi';
+import { ObjectSchema } from 'joi';
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {

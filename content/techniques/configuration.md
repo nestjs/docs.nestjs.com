@@ -311,23 +311,23 @@ export class DatabaseModule {}
 
 It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables two different ways to do this:
 
-- [Joi](https://github.com/hapijs/joi) built-in validator. With Joi, you define an object schema and validate JavaScript objects against it.
+- [Joi](https://github.com/sideway/joi) built-in validator. With Joi, you define an object schema and validate JavaScript objects against it.
 - A custom `validate()` function which takes environment variables as an input.
 
 To use Joi, we must install Joi package (and its types, for **TypeScript** users):
 
 ```bash
-$ npm install --save @hapi/joi
-$ npm install --save-dev @types/hapi__joi
+$ npm install --save joi
+$ npm install --save-dev @types/joi
 ```
 
-> warning **Notice** The latest version of `@hapi/joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their documentation](https://hapi.dev/family/joi/?v=17.0.2#install) & this [github issue](https://github.com/hapijs/joi/issues/2266#issuecomment-571667769).
+> warning **Notice** The latest version of `joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their documentation](https://hapi.dev/family/joi/?v=17.0.2#install) & this [github issue](https://github.com/hapijs/joi/issues/2266#issuecomment-571667769).
 
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
 @@filename(app.module)
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
@@ -350,7 +350,7 @@ By default, unknown environment variables (environment variables whose keys are 
 
 ```typescript
 @@filename(app.module)
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
