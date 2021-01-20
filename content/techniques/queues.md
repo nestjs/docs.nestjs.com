@@ -194,7 +194,7 @@ const job = await this.audioQueue.add(
 );
 ```
 
-#### Providers
+#### Request-scoped job processors
 
 Whether the processor needs to depend on a request scoped provider or be explicitly registered as a scoped processor, as follows:
 
