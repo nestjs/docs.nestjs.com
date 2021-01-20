@@ -168,6 +168,10 @@ export class MenuComponent implements OnInit {
         { title: 'Kafka', path: '/microservices/kafka' },
         { title: 'gRPC', path: '/microservices/grpc' },
         {
+          title: 'Custom transporters',
+          path: '/microservices/custom-transport',
+        },
+        {
           title: 'Exception filters',
           path: '/microservices/exception-filters',
         },

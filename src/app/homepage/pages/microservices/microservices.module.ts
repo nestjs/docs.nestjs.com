@@ -74,7 +74,7 @@ const routes: Routes = [
   {
     path: 'custom-transport',
     component: CustomTransportComponent,
-    data: { title: 'Custom Transport - Microservices' },
+    data: { title: 'Custom transporters - Microservices' },
   },
 ];
 
