@@ -95,7 +95,7 @@ export class AppModule {}
 
 > warning **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
 
-> warning **Warning** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied.
+> info **Hint** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied.
 
 Once this is done, the TypeORM `Connection` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
 
