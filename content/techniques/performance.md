@@ -15,7 +15,7 @@ First, we need to install the required package:
 ```bash
 $ npm i --save @nestjs/platform-fastify
 ```
-> warning **Warning** When using `@nestjs/platform-fastify` version `<=3.0.0` and `apollo-server-fastify`, graphql playground may not work due to incompatibility with `fastify` version `^3.0.0`. You may want to use the unstable `apollo-server-fastify` version `^3.0.0-alpha.3` or choose express.
+> warning **Warning** When using `@nestjs/platform-fastify` version `>=7.5.0` and `apollo-server-fastify`, GraphQL playground may not work due to incompatibility with `fastify` version `^3.0.0`. You may want to use the unstable `apollo-server-fastify` version `^3.0.0-alpha.3` or temporarily choose express instead.
 
 #### Adapter
 
