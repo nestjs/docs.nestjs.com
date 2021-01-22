@@ -97,7 +97,7 @@ export const catsProviders = [
 ];
 ```
 
-> **Notice** In the real-world applications you should avoid **magic strings**. Both `CAT_MODEL` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `CAT_MODEL` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
 Now we can inject the `CAT_MODEL` to the `CatsService` using the `@Inject()` decorator:
 
@@ -180,4 +180,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> warning **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.
