@@ -2,7 +2,7 @@
 
 ##### This chapter applies only to TypeScript
 
-> **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **TypeORM** package from scratch using custom providers mechanism. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
+> warning **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **TypeORM** package from scratch using custom providers mechanism. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/typeorm` package. To learn more, see [here](/techniques/sql).
 
 [TypeORM](https://github.com/typeorm/typeorm) is definitely the most mature Object Relational Mapper (ORM) available in the node.js world. Since it's written in TypeScript, it works pretty well with the Nest framework.
 
@@ -107,7 +107,7 @@ export const photoProviders = [
 ];
 ```
 
-> warning **Notice** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
 Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inject()` decorator:
 
@@ -151,4 +151,4 @@ import { PhotoService } from './photo.service';
 export class PhotoModule {}
 ```
 
-> warning **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
