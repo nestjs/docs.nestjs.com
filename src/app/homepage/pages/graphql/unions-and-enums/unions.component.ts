@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-enums',
-  templateUrl: './enums.component.html',
+  selector: 'app-unions-enums',
+  templateUrl: './unions-and-enums.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EnumsComponent extends BasePageComponent {}
+export class UnionsAndEnumsComponent extends BasePageComponent {}
