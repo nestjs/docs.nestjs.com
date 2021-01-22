@@ -25,7 +25,7 @@ $ npm install --save @nestjs/passport passport passport-local
 $ npm install --save-dev @types/passport-local
 ```
 
-> warning **Notice** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as shown above with `@types/passport-local`, which provides assistance while writing TypeScript code.
+> warning **Warning** For **any** Passport strategy you choose, you'll always need the `@nestjs/passport` and `passport` packages. Then, you'll need to install the strategy-specific package (e.g., `passport-jwt` or `passport-local`) that implements the particular authentication strategy you are building. In addition, you can also install the type definitions for any Passport strategy, as shown above with `@types/passport-local`, which provides assistance while writing TypeScript code.
 
 #### Implementing Passport strategies
 
@@ -171,7 +171,7 @@ export class AuthService {
 }
 ```
 
-> Warning **Warning** Of course in a real application, you wouldn't store a password in plain text. You'd instead use a library like [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme), with a salted one-way hash algorithm. With that approach, you'd only store hashed passwords, and then compare the stored password to a hashed version of the **incoming** password, thus never storing or exposing user passwords in plain text. To keep our sample app simple, we violate that absolute mandate and use plain text. **Don't do this in your real app!**
+> warning **Warning** Of course in a real application, you wouldn't store a password in plain text. You'd instead use a library like [bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme), with a salted one-way hash algorithm. With that approach, you'd only store hashed passwords, and then compare the stored password to a hashed version of the **incoming** password, thus never storing or exposing user passwords in plain text. To keep our sample app simple, we violate that absolute mandate and use plain text. **Don't do this in your real app!**
 
 Now, we update our `AuthModule` to import the `UsersModule`.
 
@@ -475,7 +475,7 @@ export const jwtConstants = {
 
 We'll use this to share our key between the JWT signing and verifying steps.
 
-> Warning **Warning** **Do not expose this key publicly**. We have done so here to make it clear what the code is doing, but in a production system **you must protect this key** using appropriate measures such as a secrets vault, environment variable, or configuration service.
+> warning **Warning** **Do not expose this key publicly**. We have done so here to make it clear what the code is doing, but in a production system **you must protect this key** using appropriate measures such as a secrets vault, environment variable, or configuration service.
 
 Now, open `auth.module.ts` in the `auth` folder and update it to look like this:
 
