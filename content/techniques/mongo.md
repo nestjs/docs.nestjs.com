@@ -275,6 +275,8 @@ Middleware (also called pre and post hooks) are functions which are passed contr
 export class AppModule {}
 ```
 
+> warning **NOTICE** Since you're returning the schema itself from the factory function, it's not required to have `forFeature()` separately and declare the schema there. In fact, the hook won't be triggered if you do so and it may create side-effects in some situations.
+
 Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory), our factory function can be `async` and can inject dependencies through `inject`.
 
 ```typescript
