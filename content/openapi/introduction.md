@@ -35,12 +35,7 @@ async function bootstrap() {
     .addTag('cats')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-    customSiteTitle: 'My website browser title.',
-  });
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }
