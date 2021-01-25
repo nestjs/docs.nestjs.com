@@ -151,9 +151,10 @@ import { join } from 'path';
 const YAML_CONFIG_FILENAME = 'config.yml';
 
 export default () => {
-  return yaml.load(
-    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
-  );
+  return (<object>
+    yaml.load(
+      readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+    ));
 };
 ```
 
