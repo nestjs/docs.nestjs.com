@@ -107,7 +107,7 @@ export const photoProviders = [
 ];
 ```
 
-> warning **Notice** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
 Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inject()` decorator:
 
@@ -151,4 +151,4 @@ import { PhotoService } from './photo.service';
 export class PhotoModule {}
 ```
 
-> warning **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
