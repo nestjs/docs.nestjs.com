@@ -158,48 +158,7 @@ export default () => {
 ```
 
 
-> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in the 'nest-cli.json' file. You can find an example below:
-
-Here is an example, how your folder structure may look like:
-```bash
-.eslintrc.js
-│   .gitignore
-│   .prettierrc
-│   nest-cli.json
-│   package-lock.json
-│   package.json
-│   README.md
-│   tsconfig.build.json
-│   tsconfig.json
-│
-├───config
-│       config.yaml
-│       configuration.ts
-│
-├───dist
-├───node_modules
-└───src
-        app.controller.ts
-        app.module.ts
-        main.ts
-```
-The paths of the assets have to be relative to "sourceRoot" in 'nest-cli.json'. Because config is in the same directory as src, "include" has to go a directory up. "outDir" defines, where the assets are copied to. Your nest-cli.json file might then look like this:
-```json
-{
-  "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "assets": [
-      {
-        "include": "../config/*.yaml",
-        "outDir": "./dist/config"
-      }
-    ]
-  }
-}
-```
-
-Read more about "assets" [here](/cli/monorepo#assets).
+> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in `compilerOptions#assets` in the `nest-cli.json` file. As an example, if the `config` folder is at the same level as the `src` folder, add `compilerOptions#assets` with the value `"assets": [{"include": "../config/*.yaml","outDir": "./dist/config"}]`. Read more [here](/cli/monorepo#assets).
 
 <app-banner-enterprise></app-banner-enterprise>
 
