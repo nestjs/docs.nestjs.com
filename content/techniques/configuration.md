@@ -116,7 +116,8 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
-With custom configuration files, we can also manage custom files such as YAML files. Here is an example of a configuration using YAML format:
+With custom configuration files, we can also manage custom files such as 
+files. Here is an example of a configuration using YAML format:
 
 ```yaml
 http:
@@ -158,7 +159,7 @@ export default () => {
 ```
 
 
-> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in `compilerOptions#assets` in the `nest-cli.json` file. As an example, if the `config` folder is at the same level as the `src` folder, add `compilerOptions#assets` with the value `"assets": [{"include": "../config/*.yaml","outDir": "./dist/config"}]`. Read more [here](/cli/monorepo#assets).
+> warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in `compilerOptions#assets` in the `nest-cli.json` file. As an example, if the `config` folder is at the same level as the `src` folder, add `compilerOptions#assets` with the value `"assets": [{{ '{' }}"include": "../config/*.yaml","outDir": "./dist/config"{{ '}' }}]`. Read more [here](/cli/monorepo#assets).
 
 <app-banner-enterprise></app-banner-enterprise>
 
