@@ -20,7 +20,7 @@ $ npm i --save-dev @types/socket.io
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 ```
 
-> warning **Warning** `@nestjs/platform-socket.io` currently depends on socket.io v2.3 and socket.io v3.0 client and server are not backwards compatible. However, can implement a custom adapter to use socket.io v3.0. Please refer to [this issue](https://github.com/nestjs/nest/issues/5676) for further information.
+> warning **Warning** `@nestjs/platform-socket.io` currently depends on socket.io v2.3 and socket.io v3.0 client and server are not backward compatible. However, you can still implement a custom adapter to use socket.io v3.0. Please refer to [this issue](https://github.com/nestjs/nest/issues/5676) for further information.
 
 #### Overview
 
