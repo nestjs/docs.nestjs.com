@@ -186,6 +186,11 @@
       "logo": "/assets/logo/rivvy.png",
       "url": "https://rivvy.app",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/nemovote.png",
+      "url": "https://nemovote.com",
+      "width": "70px"
     }
   ],
   "Body": [
@@ -240,6 +245,7 @@
     "https://hexito.com",
     "https://rivvy.app",
     "https://padfever.com/",
-    "https://datenlotse.org"
+    "https://datenlotse.org",
+    "https://nemovote.com"
   ]
 }
