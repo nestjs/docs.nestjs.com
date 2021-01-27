@@ -265,3 +265,40 @@ GraphQLModule.forRoot({
   }
 }),
 ```
+
+#### Authorization over WebSocket
+
+Checking that the user is authenticated should be done inside the `onConnect` property of the `subscriptions` options (read [more](https://www.apollographql.com/docs/graphql-subscriptions/authentication/)).
+The `onConnect` will receive as first argument the `connectionParams` passed to the `SubscriptionClient` (read [more](https://www.apollographql.com/docs/react/data/subscriptions/#4-authenticate-over-websocket-optional)).
+
+```typescript
+GraphQLModule.forRoot({
+  installSubscriptionHandlers: true,
+  subscriptions: {
+    onConnect: (connectionParams) => {
+      // extract the token
+      const authToken = connectionParams.authToken;
+      // validate the token (e.g., signature, expiration for jwt)
+      if (!isValid(authToken)) {
+        throw new Error('Token is not valid');
+      }
+      // extract user information from token
+      const user = parseToken(authToken);
+      // return user info to add them to the context later
+      return { user };
+    },
+  },
+  context: ({ connection }) => {
+    // connection.context will be equal to what was returned by onConnect
+    // now user info is available inside context.req.user
+    return {
+      req: connection?.context ?? {},
+    };
+  },
+}),
+```
+
+The `authToken` in this example is only sent once by the client, when the connection is first established.
+All subscriptions made with this connection will have the same `authToken`, and thus the same user info.
+
+> warning **Note** There is a bug in `subscriptions-transport-ws` that allows connections to skip the `onConnect` phase (read [more](https://github.com/apollographql/subscriptions-transport-ws/issues/349)). You should not assume that `onConnect` was called when the user starts a subscription, and always check that the `context` is populated.
