@@ -128,6 +128,9 @@ export class HealthController {
 }
 
 @Module({
+  controllers: [
+    HealthController
+  ],
   imports: [
     TerminusModule
   ]
