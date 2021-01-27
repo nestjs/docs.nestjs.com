@@ -135,7 +135,7 @@ const document = SwaggerModule.createDocument(app, options, {
 
 ### Setup options
 
-While calling setup method, it is possible to have some extra options. These options should be of type `SwaggerCustomOptions`, which can be the following:
+While calling the setup method, it is possible to pass extra options. These options should be of type `SwaggerCustomOptions`, which can be the following:
 
 ```TypeScript
 export interface SwaggerCustomOptions {
