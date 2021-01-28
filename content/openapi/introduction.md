@@ -129,7 +129,7 @@ const options: SwaggerDocumentOptions =  {
     controllerKey: string,
     methodKey: string
   ) => methodKey
-});
+};
 const document = SwaggerModule.createDocument(app, config, options);
 ```
 
