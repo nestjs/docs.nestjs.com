@@ -156,35 +156,7 @@ catsService = await moduleRef.resolve(CatsService);
 
 > info **Hint** Learn more about the module reference features [here](/fundamentals/module-ref).
 
-Instead of using the production version of any provider, you can override it with a [custom provider](/fundamentals/custom-providers) for testing purposes. For example, you can mock a database service instead of connecting to a live database. We'll cover overrides in the [End-to-end testing](#end-to-end-testing) section, but they're available for unit tests as well.
-
-##### Configuration Service
-
-Similar to utilizing production versions of the `CatsController` and `CatsService` above, it is also possible to utilize the production version of the [Configuration Module](https://docs.nestjs.com/techniques/configuration#configuration) if it is installed, rather than overriding it with a custom provider. In the following example we import it into our module and then retrieve the static instance, assigning it to a `configService` variable that can be used in our tests.
-
-```typescript
-@@filename(cats.controller.spec)
-import { Test } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
-
-describe('CatsController', () => {
-    let controller: CatsController;
-    let configService: ConfigService;
-
-    beforeEach(async () => {
-        const moduleRef = await Test.createTestingModule({
-            imports: [ConfigModule.forRoot()],
-            controllers: [CatsController],
-            providers: [CatsService],
-        }).compile();
-
-        controller = moduleRef.get<CatsController>(CatsController);
-        configService = moduleRef.get<ConfigService>(ConfigService);
-    });
-});
-```
+Instead of using the production version of any provider, you can override it with a [custom provider](/fundamentals/custom-providers) for testing purposes. For example, you can mock a database service instead of connecting to a live database. We'll cover overrides in the next section, but they're available for unit tests as well.
 
 <app-banner-courses></app-banner-courses>
 

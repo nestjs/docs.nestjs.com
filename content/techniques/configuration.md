@@ -535,3 +535,31 @@ You can then use it as usual, by calling the `get` method with the configuration
 ```typescript
 const port = configService.get('PORT');
 ```
+
+### Using in testing
+
+It is also possible to utilize the Configuration Service in testing. In the following example we import it into our module and then retrieve the static instance, assigning it to a `configService` variable that can be used in our tests.
+
+```typescript
+@@filename(cats.controller.spec)
+import { Test } from '@nestjs/testing';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
+
+describe('CatsController', () => {
+    let controller: CatsController;
+    let configService: ConfigService;
+
+    beforeEach(async () => {
+        const moduleRef = await Test.createTestingModule({
+            imports: [ConfigModule.forRoot()],
+            controllers: [CatsController],
+            providers: [CatsService],
+        }).compile();
+
+        controller = moduleRef.get<CatsController>(CatsController);
+        configService = moduleRef.get<ConfigService>(ConfigService);
+    });
+});
+```
