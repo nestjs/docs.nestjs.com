@@ -33,10 +33,12 @@
 <p>When you run <code>nest new</code>, or clone the <a rel='nofollow' target='_blank' href="https://github.com/nestjs/typescript-starter">typescript starter</a>, Nest populates the new project&#39;s <code>package.json</code> scripts with commands like <code>build</code> and <code>start</code>. It also installs the underlying compiler tools (such as <code>typescript</code>) as <strong>dev dependencies</strong>.</p>
 <p>You run the build and execute scripts with commands like:</p>
 <pre><code class="language-bash">
-$ npm run build</code></pre>
+$ npm run build
+</code></pre>
 <p>and</p>
 <pre><code class="language-bash">
-$ npm run start</code></pre>
+$ npm run start
+</code></pre>
 <p>These commands use npm&#39;s script running capabilities to execute <code>nest build</code> or <code>nest start</code> using the <strong>locally installed</strong> <code>nest</code> binary. By using these built-in package scripts, you have full dependency management over the Nest CLI commands*. This means that, by following this <strong>recommended</strong> usage, all members of your organization can be assured of running the same version of the commands.</p>
 <p>*This applies to the <code>build</code> and <code>start</code> commands. The <code>nest new</code> and <code>nest generate</code> commands aren&#39;t part of the build/execute pipeline, so they operate in a different context, and do not come with built-in <code>package.json</code> scripts.</p>
 <p>For most developers/teams, it is recommended to utilize the package scripts for building and executing their Nest projects. You can fully customize the behavior of these scripts via their options (<code>--path</code>, <code>--webpack</code>, <code>--webpackPath</code>) and/or customize the <code>tsc</code> or webpack compiler options files (e.g., <code>tsconfig.json</code>) as needed. You are also free to run a completely custom build process to compile the TypeScript (or even to execute TypeScript directly with <code>ts-node</code>).</p>
@@ -47,13 +49,15 @@ $ npm run start</code></pre>
 <pre><code class="language-bash">
 $ npm install -g @nestjs/cli
 $ cd  /some/project/root/folder
-$ npm install -D @nestjs/cli</code></pre>
+$ npm install -D @nestjs/cli
+</code></pre>
 <p>You can then replace the <code>scripts</code> defined in <code>package.json</code> with the following ones:</p>
 <pre><code class="language-typescript">
 &quot;build&quot;: &quot;nest build&quot;,
 &quot;start&quot;: &quot;nest start&quot;,
 &quot;start:dev&quot;: &quot;nest start --watch&quot;,
-&quot;start:debug&quot;: &quot;nest start --debug --watch&quot;,</code></pre>
+&quot;start:debug&quot;: &quot;nest start --debug --watch&quot;,
+</code></pre>
 
 </div>
 
