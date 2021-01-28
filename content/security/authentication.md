@@ -805,7 +805,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 }
 ```
-#### Extending guards with multiple strategies
 
 In addition to extending the default error handling and authentication logic, we can allow authentication to go through a chain of strategies.
 The first strategy a is successful, redirects or by a mistake will stop the chain. Authentication errors will proceed through each strategy in series, eventually failing if all strategies fail.
