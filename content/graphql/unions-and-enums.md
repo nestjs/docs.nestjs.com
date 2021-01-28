@@ -28,11 +28,11 @@ export class Author {
 }
 ```
 
-With this in place, register the `Result` union using the `createUnionType` function exported from the `@nestjs/graphql` package:
+With this in place, register the `ResultUnion` union using the `createUnionType` function exported from the `@nestjs/graphql` package:
 
 ```typescript
 export const ResultUnion = createUnionType({
-  name: 'Result',
+  name: 'ResultUnion',
   types: () => [Author, Book],
 });
 ```
@@ -70,7 +70,7 @@ To provide a customized `resolveType()` function, pass the `resolveType` propert
 
 ```typescript
 export const ResultUnion = createUnionType({
-  name: 'Result',
+  name: 'ResultUnion',
   types: () => [Author, Book],
   resolveType(value) {
     if (value.name) {
