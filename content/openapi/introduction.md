@@ -140,7 +140,7 @@ While calling the setup method, it is possible to pass extra options. These opti
 ```TypeScript
 export interface SwaggerCustomOptions {
     explorer?: boolean;
-    swaggerOptions?: any;
+    swaggerOptions?: Record<string, any>;
     customCss?: string;
     customCssUrl?: string;
     customJs?: string;
