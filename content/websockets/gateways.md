@@ -20,6 +20,8 @@ $ npm i --save-dev @types/socket.io
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 ```
 
+> warning **Warning** `@nestjs/platform-socket.io` currently depends on socket.io v2.3 and socket.io v3.0 client and server are not backward compatible. However, you can still implement a custom adapter to use socket.io v3.0. Please refer to [this issue](https://github.com/nestjs/nest/issues/5676) for further information.
+
 #### Overview
 
 In general, each gateway is listening on the same port as the **HTTP server**, unless your app is not a web application, or you have changed the port manually. This default behavior can be modified by passing an argument to the `@WebSocketGateway(80)` decorator where `80` is a chosen port number. You can also set a [namespace](https://socket.io/docs/rooms-and-namespaces/) used by the gateway using the following construction:

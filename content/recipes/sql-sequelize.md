@@ -42,7 +42,7 @@ export const databaseProviders = [
 ];
 ```
 
-> warning **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
+> info **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
 
 Then, we need to export these providers to make them **accessible** for the rest part of the application.
 
@@ -94,7 +94,7 @@ export const catsProviders = [
 ];
 ```
 
-> **Notice** In the real-world applications you should avoid **magic strings**. Both `CATS_REPOSITORY` and `SEQUELIZE` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `CATS_REPOSITORY` and `SEQUELIZE` should be kept in the separated `constants.ts` file.
 
 In Sequelize, we use static methods to manipulate the data, and thus we created an **alias** here.
 
@@ -140,4 +140,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> warning **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.
