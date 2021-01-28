@@ -2,6 +2,18 @@
 
 This article provides a set of guidelines for migrating from Nest version 6 to version 7.
 
+### branch your repo for the update
+
+It's always good to have a failback plan.
+
+### update the nest installation
+
+Using the nest-cli update the version of NestJS you're running.
+
+`nest update -f -t latest`
+
+Confirm by inspection of your package.json file that the nest version has increased.
+
 #### Custom route decorators
 
 The [Custom decorators](/custom-decorators) API has been unified for all types of applications. Now, whether you're creating a GraphQL application or a REST API, the factory passed into the `createParamDecorator()` function will take the `ExecutionContext` (read more [here](/fundamentals/execution-context)) object as a second argument.
