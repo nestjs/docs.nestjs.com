@@ -1,11 +1,16 @@
 ### Streaming Files
 
-There won't always be a time where you're sending back JSON or string responses. There may be times where you'd like to send back a file from the server to the client. In an express application, you may use something like
+There won't always be a time where you're sending back JSON or string responses. There may be times where you'd like to send back a file from the server to the client. To do this with Nest, normally you'd do te following:
 
 ```ts
-app.get('send-file', (req, res) => {
-  createReadStream(path(process.cwd(), 'package.json')).pipe(res);
-});
+@Controller('file')
+export class FileController {
+  @Get()
+  getFile(@Res() res: Response) {
+    const file = createReadStream(join(process.cwd(), 'package.json'));
+    file.pipe(res);
+  }
+}
 ```
 
 to manage sending the file back. This is still doable in Nest, by injecting `@Res()` in the controller, but in doing so you end up losing access to your post-controller interceptor logic. To handle this, you can return a `StreamableFile` instance and under the hood Nest will take care of piping the response.
