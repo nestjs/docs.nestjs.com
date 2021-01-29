@@ -14,7 +14,7 @@ await app.listen(3000);
 
 The `enableCors()` method takes an optional configuration object argument. The available properties of this object are described in the official [CORS](https://github.com/expressjs/cors#configuration-options) documentation.
 
-Alternatively, enable CORS via the `create()` method's options object. Set the `cors` property to `true` to enable CORS with default settings. Alternatively, pass a [CORS configuration object](https://github.com/expressjs/cors#configuration-options) as the `cors` property value to customize its behavior.
+Alternatively, enable CORS via the `create()` method's options object. Set the `cors` property to `true` to enable CORS with default settings. Or, pass a [CORS configuration object](https://github.com/expressjs/cors#configuration-options) as the `cors` property value to customize its behavior.
 
 ```typescript
 const app = await NestFactory.create(AppModule, { cors: true });
