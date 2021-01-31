@@ -123,6 +123,98 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 | `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
 | `details` | Object containing all information of each health indicator                                                                                                                                  | `object`                             |
 
+#### TypeOrm health indicator
+
+Terminus offers the capability to add database checks to your health check. In order to get started with this health indicator, you
+should check out the [Database chapter](/techniques/sql) and make sure your database connection within your NestJS application is established.
+
+> info **Hint** Behind the scenes the `TypeOrmHealthIndicator` simply executes a `SELECT 1`-SQL command which is often used to verify whether the database still alive. In case you are using an Oracle database it uses `SELECT 1 FROM DUAL`.  
+
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private db: TypeOrmHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.db.pingCheck('database'),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, TypeOrmHealthIndicator)
+export class HealthController {
+  constructor(
+    private health,
+    private db,
+  ) { }
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.db.pingCheck('database'),
+    ])
+  }
+}
+```
+
+If your database is reachable, you should now see the following JSON-result when requesting `http://localhost:3000` with a `GET` request:
+
+```json
+{
+  "status": "ok",
+  "info": {
+    "database": {
+      "status": "up"
+    }
+  },
+  "error": {},
+  "details": {
+    "database": {
+      "status": "up"
+    }
+  }
+}
+```
+
+##### Mutlible Database connection 
+
+In case you are using [multiple databases within your NestJS application](techniques/database#multiple-databases) you need to inject each
+of the connections into your `HealthController`. You can then simply pass the connection to the `TypeOrmHealthIndicator`.
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private db: TypeOrmHealthIndicator,
+    @InjectionConnection('albumsConnection')
+    private albumsConnection: Connection,
+    @InjectConnection()
+    private defaultConnection: Connection,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.db.pingCheck('albums-database', { connection: this.albumsConnection }),
+      () => this.db.pingCheck('database', { connection: this.defaultConnection }),
+    ]);
+  }
+}
+```
+
 #### Custom health indicator
 
 In some cases, the predefined health indicators provided by `@nestjs/terminus` do not cover all of your health check requirements. In that case, you can set up a custom health indicator according to your needs.
