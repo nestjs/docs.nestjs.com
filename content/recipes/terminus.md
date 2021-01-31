@@ -22,9 +22,10 @@ $ npm install --save @nestjs/terminus
 
 A health check represents a summary of **health indicators**. A health indicator executes a check of a service, whether it is in a healthy or unhealthy state. A health check is positive if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, [@nestjs/terminus](https://github.com/nestjs/terminus) provides a set of predefined indicators, such as:
 
-- `DNSHealthIndicator`
+- `HttpHealthIndicator`
 - `TypeOrmHealthIndicator`
 - `MongooseHealthIndicator`
+- `SequelizeHealthIndicator`
 - `MicroserviceHealthIndicator`
 - `GRPCHealthIndicator`
 - `MemoryHealthIndicator`
@@ -52,7 +53,7 @@ $ nest generate controller health
 
 > info **Info** It is highly recommended to enable shutdown hooks in your application. The Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown).
 
-#### DNS Healthcheck
+#### Http Healthcheck
 
 Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check. 
 
@@ -62,31 +63,31 @@ Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and cre
 export class HealthController {
   constructor(
     private health: HealthCheckService,
-    private dns: DNSHealthIndicator,
+    private http: HttpHealthIndicator,
   ) {}
 
   @Get()
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
     ]);
   }
 }
 @@switch
 @Controller('health')
-@Dependencies(HealthCheckService, DNSHealthIndicator)
+@Dependencies(HealthCheckService, HttpHealthIndicator)
 export class HealthController {
   constructor(
     private health,
-    private dns,
+    private http,
   ) { }
 
   @Get()
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      async () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
     ])
   }
 }
