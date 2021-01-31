@@ -24,6 +24,7 @@ A health check represents a summary of **health indicators**. A health indicator
 
 - `DNSHealthIndicator`
 - `TypeOrmHealthIndicator`
+- `SequelizeHealthIndicator`
 - `MongooseHealthIndicator`
 - `MicroserviceHealthIndicator`
 - `GRPCHealthIndicator`
