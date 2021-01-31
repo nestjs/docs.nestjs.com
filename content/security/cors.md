@@ -21,9 +21,7 @@ const app = await NestFactory.create(AppModule, { cors: true });
 await app.listen(3000);
 ```
 
-#### GraphQL
-
-Above method only applies to REST endpoints. To enable CORS to GraphQL, set `cors` property to `true` or pass [CORS configuration object](https://github.com/expressjs/cors#configuration-options) as the `cors` property value when you import GraphQL module.
+Above method only applies to REST endpoints. To enable CORS in GraphQL, set `cors` property to `true` or pass [CORS configuration object](https://github.com/expressjs/cors#configuration-options) as the `cors` property value when you import GraphQL module.
 
 ```typescript
 @Module({
