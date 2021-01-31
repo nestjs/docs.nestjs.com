@@ -76,6 +76,8 @@ In order to migrate your existing application, simply rename all the `type-graph
 In the version 7 major release of `@nestjs/terminus`, a new simplified API has been introduced
 to run health checks. The previously required peer dependency `@godaddy/terminus` has been removed, which allows us to integrate our health checks automatically into Swagger! Read more about the removal of `@godaddy/terminus` [here](https://github.com/nestjs/terminus/issues/340).
 
+##### TerminusModule.forRootAsync
+
 For most users, the biggest change will be the removal of the `TerminusModule.forRootAsync` function. With the next major version, this function will be completely removed.
 To migrate to the new API, you will need to create a new controller, which will handle your health checks.
 
@@ -85,14 +87,14 @@ To migrate to the new API, you will need to create a new controller, which will 
 @Injectable()
 export class TerminusOptionsService implements TerminusOptionsFactory {
   constructor(
-    private dns: DNSHealthIndicator,
+    private http: HttpHealthIndicator,
   ) {}
 
   createTerminusOptions(): TerminusModuleOptions {
     const healthEndpoint: TerminusEndpoint = {
       url: '/health',
       healthIndicators: [
-        async () => this.dns.pingCheck('google', 'https://google.com'),
+        async () => this.http.pingCheck('google', 'https://google.com'),
       ],
     };
     return {
@@ -115,14 +117,14 @@ export class AppModule { }
 export class HealthController {
   constructor(
     private health: HealthCheckService,
-    private dns: DNSHealthIndicator,
+    private http: HttpHealthIndicator,
   ) { }
 
   @Get()
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dns.pingCheck('google', 'https://google.com'),
+      async () => this.http.pingCheck('google', 'https://google.com'),
     ]);
   }
 }
@@ -141,17 +143,17 @@ export class AppModule { }
 
 // Before
 @Injectable()
-@Dependencies(DNSHealthIndicator)
+@Dependencies(HttpHealthIndicator)
 export class TerminusOptionsService {
   constructor(
-    private dns,
+    private http,
   ) {}
 
   createTerminusOptions() {
     const healthEndpoint = {
       url: '/health',
       healthIndicators: [
-        async () => this.dns.pingCheck('google', 'https://google.com'),
+        async () => this.http.pingCheck('google', 'https://google.com'),
       ],
     };
     return {
@@ -171,18 +173,18 @@ export class AppModule { }
 
 // After
 @Controller('/health')
-@Dependencies(HealthCheckService, DNSHealthIndicator)
+@Dependencies(HealthCheckService, HttpHealthIndicator)
 export class HealthController {
   constructor(
     private health,
-    private dns,
+    private http,
   ) { }
 
   @Get('/')
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dns.pingCheck('google', 'https://google.com'),
+      async () => this.http.pingCheck('google', 'https://google.com'),
     ])
   }
 }
@@ -230,6 +232,32 @@ Once you have fully migrated, make sure you uninstall `@godaddy/terminus`.
 
 ```bash
 npm uninstall --save @godaddy/terminus
+```
+
+##### DNSHealthIndicator deprecation
+
+The `DNSHealthIndicator` has been renamed to `HttpHealthIndicator` in order to improve consistency with NestJS [`HttpService`](/techniques/http-module#http-module)
+as well as choosing a better fitting name for its functionality.
+
+Simply migrate by replacing the `DNSHealthIndicator` references with `HttpHealthIndicator`. The functionality has been untouched.
+
+```typescript
+// Before
+@Controller('health')
+export class HealthController {
+  constructor(
+    private dns: DNSHealthIndicator,
+  ) { }
+  ...
+}
+// After
+@Controller('health')
+export class HealthController {
+  constructor(
+    private http: HttpHealthIndicator,
+  ) { }
+  ...
+}
 ```
 
 #### HTTP exceptions body
