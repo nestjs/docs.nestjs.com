@@ -24,12 +24,10 @@ await app.listen(3000);
 Above method only applies to REST endpoints. To enable CORS in GraphQL, set `cors` property to `true` or pass [CORS configuration object](https://github.com/expressjs/cors#configuration-options) as the `cors` property value when you import GraphQL module.
 
 ```typescript
-@Module({
-  imports: [
-    GraphQLModule.forRoot({
-      cors: {
-        origin: 'http://localhost:3000',
-        credentials: true,
-      },
-    }),
+GraphQLModule.forRoot({
+  cors: {
+    origin: 'http://localhost:3000',
+    credentials: true,
+  },
+}),
 ```
