@@ -167,6 +167,7 @@ export class MenuComponent implements OnInit {
         { title: 'RabbitMQ', path: '/microservices/rabbitmq' },
         { title: 'Kafka', path: '/microservices/kafka' },
         { title: 'gRPC', path: '/microservices/grpc' },
+        { title: 'Google Cloud Pub/Sub', path: '/microservices/gc-pubsub' },
         {
           title: 'Custom transporters',
           path: '/microservices/custom-transport',
