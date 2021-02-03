@@ -25,7 +25,7 @@ $ nest new project-name
 
 #### Alternatives
 
-Alternatively, to install the TypeScript starter project with **Git**:
+Install the TypeScript starter project with **Git**:
 
 ```bash
 $ git clone https://github.com/nestjs/typescript-starter.git project
