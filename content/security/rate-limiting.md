@@ -39,11 +39,43 @@ There is also the `@Throttle()` decorator which can be used to override the `lim
 
 #### Websockets
 
-This module does work with websockets as well, with some limited functionality. First of all, user agent headers are not taken into consideration due to the difference in the underlying transport layer of Socket.IO vs Websockets. The other thing to make note of is that globally bound guards do not activate on websocket gateways, so you **must** bind the guard to the gateway itself using `@UseGuards()`.
+This module _can_ work with websockets, but it requires some class extension. You can extend the `ThrottlerGuard` and override the `handleRequest` method like so:
+
+```typescript
+@Injectable()
+export class WsThrottlerGuard extends ThrottlerGuard {
+  async handleRequest(context: ExecutionContext, limit: number, ttl: number): Promise<boolean> {
+    const client = context.switchToWs().getClient();
+    const ip = client.conn.remoteAddress; 
+    const key = this.generateKey(context, ip);
+    const ttls = await this.storageService.getRecord(key);
+
+    if (ttls.length >= limit) {
+      throw new ThrottlerException();
+    }
+
+    await this.storageService.addRecord(key, ttl);
+    return true;
+  }
+}
+```
+
+> info **Hint** If you are using the `@nestjs/platform-ws` package you can use  `client._socket.remoteAddress` instead.
 
 #### GraphQL
 
-Currently, only GraphQL with Express is supported, but Fastify support is coming as well. This module makes use of setting headers through the `res` object and reading headers through the `req` object of Express. To make sure these are available, when configuring your GraphQLModule, make sure the option `context: ({{ '{' }} req, res {{ '}' }}) => ({{ '{' }} req, res {{ '}' }})` is set.
+The `ThrottlerGuard` can also be used to work with GraphQL requests. Again, the guard can be extended, but this tme the `getRequestResponse` method will be overridden
+
+```typescript
+@Injectable()
+export class GqlThrottlerGuard extends ThrottlerGuard {
+  getRequestResponse(context: ExecutionContext): { req: Record<string, any>, res: Record<string, any> } {
+    const gqlCtx = GqlExecutionContext.create(context);
+    const ctx = gql.getContext();
+    return { req, ctx.req, res: ctx.res }
+  }
+}
+```
 
 #### Configuration
 
