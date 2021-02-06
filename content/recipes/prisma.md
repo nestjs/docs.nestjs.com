@@ -462,7 +462,7 @@ export class AppController {
     return this.postService.createPost({
       title,
       content,
-      User: {
+      author: {
         connect: { email: authorEmail },
       },
     });
