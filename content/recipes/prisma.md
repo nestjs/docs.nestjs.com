@@ -32,7 +32,7 @@ Start by installing the Prisma CLI as a development dependency in your project:
 
 ```bash
 $ cd hello-prisma
-$ npm install @prisma/cli --save-dev
+$ npm install prisma --save-dev
 ```
 
 In the following steps, we'll be utilizing the [Prisma CLI](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli). As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
@@ -46,7 +46,7 @@ $ npx prisma
 If you're using Yarn, then you can install the Prisma CLI as follows:
 
 ```bash
-$ yarn add @prisma/cli --dev
+$ yarn add prisma --dev
 ```
 
 Once installed, you can invoke it by prefixing it with `yarn`:
