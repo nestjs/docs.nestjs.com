@@ -28,13 +28,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const options = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle('Cats example')
     .setDescription('The cats API description')
     .setVersion('1.0')
     .addTag('cats')
     .build();
-  const document = SwaggerModule.createDocument(app, options);
+  const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
@@ -86,7 +86,7 @@ The `SwaggerModule` automatically reflects all of your endpoints. Note that the 
 > });
 > ```
 
-### Document options
+#### Document options
 
 When creating a document, it is possible to provide some extra options to fine tune the library's behavior. These options should be of type `SwaggerDocumentOptions`, which can be the following:
 
@@ -124,12 +124,13 @@ export interface SwaggerDocumentOptions {
 For example, if you want to make sure that the library generates operation names like `createUser` instead of `UserController_createUser`, you can set the following:
 
 ```TypeScript
-const document = SwaggerModule.createDocument(app, options, {
+const options: SwaggerDocumentOptions =  {
   operationIdFactory: (
     controllerKey: string,
     methodKey: string
   ) => methodKey
-});
+};
+const document = SwaggerModule.createDocument(app, config, options);
 ```
 
 #### Example

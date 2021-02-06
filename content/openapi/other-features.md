@@ -22,6 +22,7 @@ You can setup multiple specifications support as shown below:
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { CatsModule } from './cats/cats.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

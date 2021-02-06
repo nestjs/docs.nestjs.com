@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-unions',
-  templateUrl: './unions.component.html',
+  selector: 'app-field-middleware',
+  templateUrl: './field-middleware.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UnionsComponent extends BasePageComponent {}
+export class FieldMiddlewareComponent extends BasePageComponent {}

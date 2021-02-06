@@ -144,7 +144,7 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 
 #### Claims-based authorization
 
-When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject is, not what the subject can do.
+When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject can do, not what the subject is.
 
 To implement a Claims-based authorization in Nest, you can follow the same steps we have shown above in the [RBAC](/security/authorization#basic-rbac-implementation) section with one significant difference: instead of checking for specific roles, you should compare **permissions**. Every user would have a set of permissions assigned. Likewise, each resource/endpoint would define what permissions are required (for example, through a dedicated `@RequirePermissions()` decorator) to access them.
 
@@ -250,16 +250,21 @@ export class CaslAbilityFactory {
     can(Action.Update, Article, { authorId: user.id });
     cannot(Action.Delete, Article, { isPublished: true });
 
-    return build();
+    return build({
+      // Read https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types for details
+      detectSubjectType: item => item.constructor as ExtractSubjectType<Subjects>
+    });
   }
 }
 ```
 
 > warning **Notice** `all` is a special keyword in CASL that represents "any subject".
 
-> info **Hint** `Ability`, `AbilityBuilder`, and `AbilityClass` classes are exported from the `@casl/ability` package.
+> info **Hint** `Ability`, `AbilityBuilder`, `AbilityClass`, and `ExtractSubjectType` classes are exported from the `@casl/ability` package.
 
-In the example above, we created the `Ability` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but has different meanings, `can` allows to do an action on the specified subject and `cannot` forbids. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v4/en/guide/intro).
+> info **Hint** `detectSubjectType` option let CASL understand how to get subject type out of an object. For more information read  [CASL documentation](https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types) for details.
+
+In the example above, we created the `Ability` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but has different meanings, `can` allows to do an action on the specified subject and `cannot` forbids. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v5/en/guide/intro).
 
 Lastly, make sure to add the `CaslAbilityFactory` to the `providers` and `exports` arrays in the `CaslModule` module definition:
 
@@ -289,7 +294,7 @@ if (ability.can(Action.Read, 'all')) {
 }
 ```
 
-> info **Hint** Learn more about the `Ability` class in the official [CASL documentation](https://casl.js.org/v4/en/guide/intro).
+> info **Hint** Learn more about the `Ability` class in the official [CASL documentation](https://casl.js.org/v5/en/guide/intro).
 
 For example, let's say we have a user who is not an admin. In this case, the user should be able to read articles, but creating new ones or removing the existing articles should be prohibited.
 

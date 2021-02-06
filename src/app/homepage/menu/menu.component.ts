@@ -130,8 +130,8 @@ export class MenuComponent implements OnInit {
         { title: 'Directives', path: '/graphql/directives' },
         { title: 'Plugins', path: '/graphql/plugins' },
         { title: 'Interfaces', path: '/graphql/interfaces' },
-        { title: 'Unions', path: '/graphql/unions' },
-        { title: 'Enums', path: '/graphql/enums' },
+        { title: 'Unions and Enums', path: '/graphql/unions-and-enums' },
+        { title: 'Field middleware', path: '/graphql/field-middleware' },
         { title: 'Mapped types', path: '/graphql/mapped-types' },
         { title: 'Complexity', path: '/graphql/complexity' },
         { title: 'Extensions', path: '/graphql/extensions' },
@@ -167,6 +167,10 @@ export class MenuComponent implements OnInit {
         { title: 'RabbitMQ', path: '/microservices/rabbitmq' },
         { title: 'Kafka', path: '/microservices/kafka' },
         { title: 'gRPC', path: '/microservices/grpc' },
+        {
+          title: 'Custom transporters',
+          path: '/microservices/custom-transport',
+        },
         {
           title: 'Exception filters',
           path: '/microservices/exception-filters',
