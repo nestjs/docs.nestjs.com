@@ -7,7 +7,7 @@
 First install the required package (and its types for TypeScript users):
 
 ```shell
-$ npm i express-session
+$ npm i -S express-session
 $ npm i -D @types/express-session
 ```
 
