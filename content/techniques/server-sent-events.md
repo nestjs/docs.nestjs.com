@@ -43,4 +43,6 @@ eventSource.onmessage = ({ data }) => {
 };
 ```
 
-You can find a working example [here](https://github.com/nestjs/nest/tree/master/sample/28-sse).
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/28-sse).
