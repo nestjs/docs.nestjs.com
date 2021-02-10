@@ -166,6 +166,8 @@ Now simply open your command line and run the following command:
 $ npm run start:dev
 ```
 
+#### Example
+
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
 
 ### TypeORM
