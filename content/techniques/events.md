@@ -116,3 +116,7 @@ handleEverything(payload: any) {
 ```
 
 > info **Hint** `EventEmitter2` class provides several useful methods for interacting with events, like `waitFor` and `onAny`. You can read more about them [here](https://github.com/EventEmitter2/EventEmitter2).
+
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/30-event-emitter).
