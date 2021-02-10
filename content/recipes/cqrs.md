@@ -290,4 +290,6 @@ export class HeroesGameModule {}
 
 `CommandBus`, `QueryBus` and `EventBus` are **Observables**. This means that you can easily subscribe to the whole stream and enrich your application with **Event Sourcing**.
 
+#### Example
+
 A working example is available [here](https://github.com/kamilmysliwiec/nest-cqrs-example).
