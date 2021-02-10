@@ -44,6 +44,6 @@ You can set the path to render your static app, specify excluded paths, enable o
 > It lets you create Client-Side routing for your SPA. Paths, specified in your controllers will fallback to the server.
 > You can change this behavior setting `serveRoot`, `renderPath` combining them with other options.
 
-#### Summary
+#### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/24-serve-static).
