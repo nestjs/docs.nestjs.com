@@ -20,6 +20,9 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
+              "src/apple-touch-icon.png",
+              "src/browserconfig.xml",
+              "src/mstile-150x150.png",
               "src/_redirects"
             ],
             "styles": [
@@ -81,8 +84,7 @@
               "src/styles.scss"
             ],
             "assets": [
-              "src/assets",
-              "src/favicon.ico"
+              "src/assets"
             ]
           }
         },
