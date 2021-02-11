@@ -53,7 +53,7 @@ export class RedisIoAdapter extends IoAdapter {
 Afterward, simply switch to your newly created Redis adapter.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.useWebSocketAdapter(new RedisIoAdapter(app));
 ```
 
@@ -70,7 +70,7 @@ $ npm i --save @nestjs/platform-ws
 Once the package is installed, we can switch an adapter:
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.useWebSocketAdapter(new WsAdapter(app));
 ```
 
@@ -139,7 +139,7 @@ Then, we can set up a custom adapter using `useWebSocketAdapter()` method:
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 app.useWebSocketAdapter(new WsAdapter(app));
 ```
 
