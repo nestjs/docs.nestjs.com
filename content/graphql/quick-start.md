@@ -195,6 +195,8 @@ definitionsFactory.generate({
 });
 ```
 
+#### Example
+
 A fully working schema first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first).
 
 #### Accessing generated schema
