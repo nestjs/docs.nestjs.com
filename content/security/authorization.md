@@ -230,7 +230,7 @@ $ nest g class casl/casl-ability.factory
 With this in place, we can define the `createForUser()` method on the `CaslAbilityFactory`. This method will create the `Ability` object for a given user:
 
 ```typescript
-type Subjects = typeof Article | typeof User | Article | User | 'all';
+type Subjects = InferSubjects<typeof Article | typeof User> | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 
