@@ -324,7 +324,9 @@ call(): Observable<any> {
 
 Please note that this would require updating the `HeroesService` interface that we've defined a few steps earlier.
 
-A full working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
 
 #### gRPC Streaming
 
