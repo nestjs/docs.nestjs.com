@@ -109,6 +109,8 @@ GraphQLModule.forRoot({
 }),
 ```
 
+#### Example
+
 A fully working code first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first).
 
 #### Schema first
