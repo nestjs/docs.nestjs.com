@@ -774,7 +774,11 @@ $ # result -> {"userId":1,"username":"john"}
 
 Note that in the `AuthModule`, we configured the JWT to have an expiration of `60 seconds`. This is probably too short an expiration, and dealing with the details of token expiration and refresh is beyond the scope of this article. However, we chose that to demonstrate an important quality of JWTs and the passport-jwt strategy. If you wait 60 seconds after authenticating before attempting a `GET /profile` request, you'll receive a `401 Unauthorized` response. This is because Passport automatically checks the JWT for its expiration time, saving you the trouble of doing so in your application.
 
-We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server. You can find a complete version of the code in this chapter [here](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
+We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server. 
+
+#### Example
+
+You can find a complete version of the code in this chapter [here](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
 
 #### Extending guards
 
