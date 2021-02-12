@@ -96,6 +96,10 @@ findOne(): UserEntity {
 
 Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `classToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
 
+#### Example 
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
+
 #### WebSockets and Microservices
 
 While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ClassSerializerInterceptor` works the same for WebSockets and Microservices, regardless of the transport method that is used.
