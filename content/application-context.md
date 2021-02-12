@@ -9,7 +9,7 @@ To create a Nest standalone application, use the following construction:
 ```typescript
 @@filename()
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(ApplicationModule);
+  const app = await NestFactory.createApplicationContext(AppModule);
   // application logic...
 }
 bootstrap();
@@ -19,7 +19,7 @@ The standalone application object allows you to obtain a reference to any instan
 
 ```typescript
 @@filename()
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 const tasksService = app.get(TasksService);
 ```
 
@@ -59,7 +59,7 @@ If you want the node application to close after the script finishes (e.g., for a
 ```typescript
 @@filename()
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(ApplicationModule);
+  const app = await NestFactory.createApplicationContext(AppModule);
   // application logic...
   await app.close();
 }
