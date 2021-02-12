@@ -18,14 +18,14 @@ To use the Redis transporter, pass the following options object to the `createMi
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.REDIS,
   options: {
     url: 'redis://localhost:6379',
   },
 });
 @@switch
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.REDIS,
   options: {
     url: 'redis://localhost:6379',
