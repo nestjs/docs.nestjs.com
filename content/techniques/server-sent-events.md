@@ -30,7 +30,7 @@ export interface MessageEvent {
 }
 ```
 
-With this in place, we can now create an instance of the `EventSource` class in our client-side application, passing the `/see` (which is a route string matching what we have passed into the `@Sse()` decorator above) as a constructor argument.
+With this in place, we can now create an instance of the `EventSource` class in our client-side application, passing the `/sse` (which is a route string matching what we have passed into the `@Sse()` decorator above) as a constructor argument.
 
 `EventSource` instance opens a persistent connection to an HTTP server, which sends events in `text/event-stream` format. The connection remains open until closed by calling `EventSource.close()`.
 
