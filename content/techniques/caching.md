@@ -276,3 +276,7 @@ CacheModule.registerAsync({
 ```
 
 This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
+
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/20-cache).
