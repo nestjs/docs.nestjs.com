@@ -48,7 +48,7 @@ export class Author {
 
 The `Author` object type, like any class, is made of a collection of fields, with each field declaring a type. A field's type corresponds to a [GraphQL type](https://graphql.org/learn/schema/). A field's GraphQL type can be either another object type or a scalar type. A GraphQL scalar type is a primitive (like `ID`, `String`, `Boolean`, or `Int`) that resolves to a single value.
 
-> info **Hint** In addition to GraphQLs built-in scalar types, you can define custom scalar types (read [more](/graphql/scalars)).
+> info **Hint** In addition to GraphQL's built-in scalar types, you can define custom scalar types (read [more](/graphql/scalars)).
 
 The above `Author` object type definition will cause Nest to **generate** the SDL we showed above:
 
