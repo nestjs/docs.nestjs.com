@@ -239,15 +239,30 @@ describe('Cats', () => {
 });
 ```
 
-> info **Hint** If you're using [Fastify](/techniques/performance) as your HTTP adapter, it requires slightly different configuration:
+> info **Hint** If you're using [Fastify](/techniques/performance) as your HTTP adapter, it requires slightly different configuration, and has build-in testing capabilities:
 >
 > ```ts
-> app = moduleRef.createNestApplication<NestFastifyApplication>(
->   new FastifyAdapter(),
-> );
+> let app: NestFastifyApplication;
+> 
+> beforeAll(async () => {
+>   app = moduleRef.createNestApplication<NestFastifyApplication>(
+>     new FastifyAdapter(),
+>   );
 >
-> await app.init();
-> await app.getHttpAdapter().getInstance().ready();
+>   await app.init();
+>   await app.getHttpAdapter().getInstance().ready();
+> })
+> 
+> it(`/GET cats`, () => {
+>   return app
+>     .inject({
+>       method: 'GET',
+>       url: '/cats'
+>     }).then(result => {
+>       expect(result.statusCode).to.be.eql(200)
+>       expect(result.payload).to.be.eql('up')
+>     });
+> })
 > ```
 
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
