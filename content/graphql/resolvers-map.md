@@ -120,7 +120,6 @@ export class Post {
 The `Post` object type will result in generating the following part of the GraphQL schema in SDL:
 
 ```graphql
-@@filename(schema.gql)
 type Post {
   id: Int!
   title: String!
