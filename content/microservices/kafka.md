@@ -24,7 +24,7 @@ Like other Nest microservice transport layer implementations, you select the Kaf
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {
@@ -33,7 +33,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(Applicatio
   }
 });
 @@switch
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {
@@ -338,7 +338,7 @@ The Kafka microservice components append a description of their respective role 
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {
