@@ -16,14 +16,14 @@ To use the NATS transporter, pass the following options object to the `createMic
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.NATS,
   options: {
     url: 'nats://localhost:4222',
   },
 });
 @@switch
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
     url: 'nats://localhost:4222',
@@ -77,7 +77,7 @@ NATS provides a built-in load balancing feature called [distributed queues](http
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
     url: 'nats://localhost:4222',

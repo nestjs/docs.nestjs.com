@@ -16,14 +16,14 @@ To use the MQTT transporter, pass the following options object to the `createMic
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.MQTT,
   options: {
     url: 'mqtt://localhost:1883',
   },
 });
 @@switch
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.MQTT,
   options: {
     url: 'mqtt://localhost:1883',
