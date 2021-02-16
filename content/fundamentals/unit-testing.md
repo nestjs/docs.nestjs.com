@@ -259,7 +259,7 @@ describe('Cats', () => {
 >       method: 'GET',
 >       url: '/cats'
 >     }).then(result => {
->       expect(result.statusCode).to.be.eql(200)
+>       expect(result.statusCode).toEqual(200)
 >       expect(result.payload).to.be.eql(/* expectedPayload */)
 >     });
 > })
