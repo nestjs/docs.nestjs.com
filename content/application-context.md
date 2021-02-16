@@ -65,3 +65,7 @@ async function bootstrap() {
 }
 bootstrap();
 ```
+
+#### Example 
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/18-context).
