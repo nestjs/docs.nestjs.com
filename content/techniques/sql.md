@@ -743,10 +743,7 @@ TypeOrmModule.forRootAsync({
 
 This construction works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
-If you don't use ConnectionName as 'default', you need to specify ConnectionName so that nestjs can recognize it.
-
-> info **Hint**: make sure the `name` property is on the same level as the `useFactory`, `useClass`, or `useValue` property. This will allow Nest to properly create the injection token
-
+> info **Hint** Make sure that the `name` property is defined on the same level as the `useFactory`, `useClass`, or `useValue` property. This will allow Nest to properly register the connection under the appropriate injection token.
 
 #### Example
 
