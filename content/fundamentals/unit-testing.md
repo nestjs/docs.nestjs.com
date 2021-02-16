@@ -260,7 +260,7 @@ describe('Cats', () => {
 >       url: '/cats'
 >     }).then(result => {
 >       expect(result.statusCode).toEqual(200)
->       expect(result.payload).to.be.eql(/* expectedPayload */)
+>       expect(result.payload).toEqual(/* expectedPayload */)
 >     });
 > })
 > ```
