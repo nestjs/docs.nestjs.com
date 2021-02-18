@@ -212,11 +212,11 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<User[]> {
+  async findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<User> {
     return this.usersRepository.findOne(id);
   }
 
@@ -918,7 +918,7 @@ export class UsersService {
     return this.userModel.findAll();
   }
 
-  findOne(id: string): Promise<User> {
+  async findOne(id: string): Promise<User> {
     return this.userModel.findOne({
       where: {
         id,
