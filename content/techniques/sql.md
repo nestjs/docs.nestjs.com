@@ -535,7 +535,7 @@ Migration classes are separate from the Nest application source code. Their life
 
 Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, connection naming becomes **mandatory**.
 
-> info **Hint** Sometimes, you may want to use multiple configurations using different formats and read connection options from ormconfig file (or ENV variables) for these cases you can use `getConnectionOptions()` method, for other more information [here](https://typeorm.io/#/using-ormconfig/overriding-options-defined-in-ormconfig) 
+> info **Hint** Sometimes, you may want to use multiple configurations using different formats and read connection options from an ormconfig file (or ENV variables). For these cases you can use the `getConnectionOptions()` method. For other more information [you can view TypeORM's docs](https://typeorm.io/#/using-ormconfig/overriding-options-defined-in-ormconfig).
 
 Suppose you have an `Album` entity stored in its own database.
 
