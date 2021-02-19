@@ -321,7 +321,11 @@ export class AppModule {}
 
 #### Federated example: Gateway
 
-First, install the optional dependency for the gateway: `npm install --save @apollo/gateway`.
+First, install the optional dependency for the gateway:
+
+```bash
+$ npm install --save @apollo/gateway
+```
 
 Our gateway only needs a list of endpoints and will auto-discover the schemas from there. Therefore it is the same for code and schema first, and the code for our gateway is very short:
 
