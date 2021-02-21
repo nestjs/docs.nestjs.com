@@ -207,6 +207,14 @@
   }
 }
 
+.sponsors-carbon {
+  .sponsors-container {
+    @media (min-width: 1200px) {
+      width: calc(100% - 220px);
+    }
+  }
+}
+
 .backers-wrapper {
   margin-top: 10px;
   img {
