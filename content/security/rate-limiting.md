@@ -23,12 +23,13 @@ app.use(
 );
 ```
 
-When there is a load balancer or reverse proxy between the server and the internet, Express may need to be configured to trust the headers set by the proxy in order to get the correct IP for the end user. To do so, first use the `NestExpressApplication` platform [interface](https://docs.nestjs.com/first-steps#platform) when creating your `app` instance, then enable the [trust proxy](https://expressjs.com/en/guide/behind-proxies.html) setting:
+When there is a load balancer or reverse proxy between the server and the internet, Express may need to be configured to trust the headers set by the proxy in order to get the correct IP for the end user. To do so, first use the `NestExpressApplication` platform [interface](https://docs.nestjs.com/first-steps#platform) when creating your `app` instance, then enable the `trust proxy` setting:
 
 ```typescript
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
-// see https://expressjs.com/en/guide/behind-proxies.html
 app.set('trust proxy', 1);
 ```
+
+For more information on `trust proxy` see [here](https://expressjs.com/en/guide/behind-proxies.html).
 
 > info **Hint** If you use the `FastifyAdapter`, use the [fastify-rate-limit](https://github.com/fastify/fastify-rate-limit) package instead.
