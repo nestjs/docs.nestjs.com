@@ -96,6 +96,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       '.newsletter-wrapper',
     );
     const carbonRef = nativeElement.querySelector('#carbonads');
+    const sponsorsWrapper = nativeElement.querySelector('.sponsors-wrapper');
     if (!footerRef || !carbonRef) {
       return;
     }
@@ -103,6 +104,10 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.renderer.removeStyle(carbonRef, 'position');
       this.renderer.removeStyle(carbonRef, 'bottom');
       return;
+    }
+
+    if (carbonRef) {
+      sponsorsWrapper.classList.add('sponsors-carbon');
     }
 
     const isPositionFixed =
