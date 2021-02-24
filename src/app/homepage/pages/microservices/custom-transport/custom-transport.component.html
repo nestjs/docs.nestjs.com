@@ -18,7 +18,7 @@ In fact, if you don&#39;t need decorators (<code>@EventPattern</code> or <code>@
 </blockquote>
 <p>With a custom transporter, you can integrate any messaging system/protocol (including Google Cloud Pub/Sub, Amazon Kinesis, and others) or extend the existing one, adding extra features on top (for example, <a rel='nofollow' target='_blank' href="https://github.com/mqttjs/MQTT.js/blob/master/README.md#qos">QoS</a> for MQTT).</p>
 <blockquote class="
-info "><strong>Hint</strong> To better understand how Nest microservices work and how you can extend the capabilities of existing transporters, we recommend reading the <a routerLink="">NestJS Microservices in Action</a> and <a rel='nofollow' target='_blank' href="https://dev.to/nestjs/part-1-introduction-and-setup-1a2l">Advanced NestJS Microservices</a> article series.
+info "><strong>Hint</strong> To better understand how Nest microservices work and how you can extend the capabilities of existing transporters, we recommend reading the <a rel='nofollow' target='_blank' href="https://dev.to/johnbiundo/series/4724">NestJS Microservices in Action</a> and <a rel='nofollow' target='_blank' href="https://dev.to/nestjs/part-1-introduction-and-setup-1a2l">Advanced NestJS Microservices</a> article series.
 </blockquote>
 <h4 appAnchor id="creating-a-strategy"><span>Creating a strategy</span></h4>
 <p>First, let&#39;s define a class representing our custom transporter.</p>
@@ -39,7 +39,8 @@ class GoogleCloudPubSubServer
    * This method is triggered on application shutdown.
    */
   close() &#123;&#125;
-&#125;</code></pre>
+&#125;
+</code></pre>
 <blockquote class="
 warning "><strong>Warning</strong> Please, note we won&#39;t be implementing a fully-featured Google Cloud Pub/Sub server in this chapter as this would require diving into transporter specific technical details.
 </blockquote>
@@ -53,7 +54,8 @@ const app = await NestFactory.createMicroservice&lt;MicroserviceOptions&gt;(
   &#123;
     strategy: new GoogleCloudPubSubServer(),
   &#125;,
-);</code></pre>
+);
+</code></pre>
 <p>Basically, instead of passing the normal transporter options object with <code>transport</code> and <code>options</code> properties, we pass a single property, <code>strategy</code>, whose value is an instance of our custom transporter class.</p>
 <p>Back to our <code>GoogleCloudPubSubServer</code> class, in a real-world application, we would be establishing a connection to our message broker/external service and registering subscribers/listening to specific channels in <code>listen()</code> method (and then removing subscriptions &amp; closing the connection in the <code>close()</code> teardown method),
 but since this requires a good understanding of how Nest microservices communicate with each other, we recommend reading this <a rel='nofollow' target='_blank' href="https://dev.to/nestjs/part-1-introduction-and-setup-1a2l">article series</a>.
@@ -63,17 +65,20 @@ In this chapter instead, we&#39;ll focus on the capabilities the <code>Server</c
 @MessagePattern(&#39;echo&#39;)
 echo(@Payload() data: object) &#123;
   return data;
-&#125;</code></pre>
+&#125;
+</code></pre>
 <p>This message handler will be automatically registered by Nest runtime. With <code>Server</code> class, you can see what message patterns have been registered and also, access and execute the actual methods that were assigned to them.
 To test this out, let&#39;s add a simple <code>console.log</code> inside <code>listen()</code> method before <code>callback</code> function is called:</p>
 <pre><code class="language-typescript">
 listen(callback: () =&gt; void) &#123;
   console.log(this.messageHandlers);
   callback();
-&#125;</code></pre>
+&#125;
+</code></pre>
 <p>After your application restarts, you&#39;ll see the following log in your terminal:</p>
 <pre><code class="language-typescript">
-Map &#123; &#39;echo&#39; =&gt; [AsyncFunction] &#123; isEventHandler: false &#125; &#125;</code></pre>
+Map &#123; &#39;echo&#39; =&gt; [AsyncFunction] &#123; isEventHandler: false &#125; &#125;
+</code></pre>
 <blockquote class="
 info "><strong>Hint</strong> If we used the <code>@EventPattern</code> decorator, you would see the same output, but with the <code>isEventHandler</code> property set to <code>true</code>.
 </blockquote>
@@ -84,10 +89,12 @@ async listen(callback: () =&gt; void) &#123;
   const echoHandler = this.messageHandlers.get(&#39;echo&#39;);
   console.log(await echoHandler(&#39;Hello world!&#39;));
   callback();
-&#125;</code></pre>
+&#125;
+</code></pre>
 <p>Once we execute the <code>echoHandler</code> passing an arbitrary string as an argument (<code>&quot;Hello world!&quot;</code> here), we should see it in the console:</p>
 <pre><code class="language-json">
-Hello world!</code></pre>
+Hello world!
+</code></pre>
 <p>Which means that our method handler was properly executed.</p>
 <h4 appAnchor id="client-proxy"><span>Client proxy</span></h4>
 <p>As we mentioned in the first section, you don&#39;t necessarily need to use the <code>@nestjs/microservices</code> package to create microservices, but if you decide to do so and you need to integrate a custom strategy, you will need to provide a &quot;client&quot; class too.</p>
@@ -106,7 +113,8 @@ class GoogleCloudPubSubClient extends ClientProxy &#123;
     packet: ReadPacket&lt;any&gt;,
     callback: (packet: WritePacket&lt;any&gt;) =&gt; void,
   ): Function &#123;&#125;
-&#125;</code></pre>
+&#125;
+</code></pre>
 <blockquote class="
 warning "><strong>Warning</strong> Please, note we won&#39;t be implementing a fully-featured Google Cloud Pub/Sub client in this chapter as this would require diving into transporter specific technical details.
 </blockquote>
@@ -140,18 +148,21 @@ class GoogleCloudPubSubClient extends ClientProxy &#123;
 
     return () =&gt; console.log(&#39;teardown&#39;);
   &#125;
-&#125;</code></pre>
+&#125;
+</code></pre>
 <p>With this in place, let&#39;s create an instance of <code>GoogleCloudPubSubClient</code> class and run the <code>send()</code> method (which you might have seen in earlier chapters), subscribing to the returned observable stream.</p>
 <pre><code class="language-typescript">
 const googlePubSubClient = new GoogleCloudPubSubClient();
 googlePubSubClient
   .send(&#39;pattern&#39;, &#39;Hello world!&#39;)
-  .subscribe((response) =&gt; console.log(response));</code></pre>
+  .subscribe((response) =&gt; console.log(response));
+</code></pre>
 <p>Now, you should see the following output in your terminal:</p>
 <pre><code class="language-typescript">
 connect
 message: &#123; pattern: &#39;pattern&#39;, data: &#39;Hello world!&#39; &#125;
-Hello world! // &lt;-- after 5 seconds</code></pre>
+Hello world! // &lt;-- after 5 seconds
+</code></pre>
 <p>To test if our &quot;teardown&quot; method (which our <code>publish()</code> method returns) is properly executed, let&#39;s apply a timeout operator to our stream, setting it to 2 seconds to make sure it throws earlier then our <code>setTimeout</code> calls the <code>callback</code> function.</p>
 <pre><code class="language-typescript">
 const googlePubSubClient = new GoogleCloudPubSubClient();
@@ -161,7 +172,8 @@ googlePubSubClient
   .subscribe(
     (response) =&gt; console.log(response),
     (error) =&gt; console.error(error.message),
-  );</code></pre>
+  );
+</code></pre>
 <blockquote class="
 info "><strong>Hint</strong> The <code>timeout</code> operator is imported from the <code>rxjs/operators</code> package.
 </blockquote>
@@ -170,14 +182,17 @@ info "><strong>Hint</strong> The <code>timeout</code> operator is imported from 
 connect
 message: &#123; pattern: &#39;pattern&#39;, data: &#39;Hello world!&#39; &#125;
 teardown // &lt;-- teardown
-Timeout has occurred</code></pre>
+Timeout has occurred
+</code></pre>
 <p>To dispatch an event (instead of sending a message), use the <code>emit()</code> method:</p>
 <pre><code class="language-typescript">
-googlePubSubClient.emit(&#39;event&#39;, &#39;Hello world!&#39;);</code></pre>
+googlePubSubClient.emit(&#39;event&#39;, &#39;Hello world!&#39;);
+</code></pre>
 <p>And that&#39;s what you should see in the console:</p>
 <pre><code class="language-typescript">
 connect
-event to dispatch:  &#123; pattern: &#39;event&#39;, data: &#39;Hello world!&#39; &#125;</code></pre>
+event to dispatch:  &#123; pattern: &#39;event&#39;, data: &#39;Hello world!&#39; &#125;
+</code></pre>
 
 </div>
 
