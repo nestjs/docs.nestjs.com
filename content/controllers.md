@@ -8,7 +8,7 @@ A controller's purpose is to receive specific requests for the application. The 
 
 In order to create a basic controller, we use classes and **decorators**. Decorators associate classes with required metadata and enable Nest to create a routing map (tie requests to the corresponding controllers).
 
-> info **Note** For quickly creating a CRUD contoller with [validation](https://docs.nestjs.com/techniques/validation) you may use the CLI's [CRUD generator](https://docs.nestjs.com/recipes/crud-generator#crud-generator): `nest g resource name`
+> info **Hint** For quickly creating a CRUD controller with the [validation](https://docs.nestjs.com/techniques/validation) built-in, you may use the CLI's [CRUD generator](https://docs.nestjs.com/recipes/crud-generator#crud-generator): `nest g resource [name]`.
 
 #### Routing
 
