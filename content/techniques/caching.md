@@ -58,7 +58,7 @@ You can manually specify a TTL (expiration time) for this specific key, as follo
 await this.cacheManager.set('key', 'value', { ttl: 1000 });
 ```
 
-You can set the expiration time to be effectively infinite as follows:
+You can disable expiration of the cache by setting the `ttl` to `null`:
 
 ```typescript
 await this.cacheManager.set('key', 'value', { ttl: null });
