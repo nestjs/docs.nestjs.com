@@ -163,3 +163,8 @@ const customOptions: SwaggerCustomOptions = {
   customSiteTitle: 'My API Docs',
 };
 SwaggerModule.setup('docs', app, document, customOptions);
+```
+
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
