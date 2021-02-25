@@ -806,8 +806,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 ```
 
-In addition to extending the default error handling and authentication logic, we can allow authentication to go through a chain of strategies.
-The first strategy a is successful, redirects or by a mistake will stop the chain. Authentication errors will proceed through each strategy in series, eventually failing if all strategies fail.
+In addition to extending the default error handling and authentication logic, we can allow authentication to go through a chain of strategies. The first strategy to succeed, redirect, or error will halt the chain.  Authentication failures will proceed through each strategy in series, ultimately failing if all strategies fail.
 
 ```typescript
 export class JwtAuthGuard extends AuthGuard(['strategy_jwt_1', 'strategy_jwt_2', '...']) { ... }
