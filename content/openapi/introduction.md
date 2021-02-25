@@ -48,10 +48,10 @@ The `DocumentBuilder` helps to structure a base document that conforms to the Op
 
 Once we create a document, we can call the `setup()` method. It accepts:
 
-1. the path to mount the Swagger UI
-2. an application instance
-3. the document object instantiated above
-4. optional configuration parameter. More on this in the [Setup options section](/openapi/introduction#document-options).
+1. The path to mount the Swagger UI
+2. An application instance
+3. The document object instantiated above
+4. Optional configuration parameter (read more [here](/openapi/introduction#document-options))
 
 Now you can run the following command to start the HTTP server:
 
