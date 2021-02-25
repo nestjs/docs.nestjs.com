@@ -50,10 +50,18 @@ To add an item to the cache, use the `set` method:
 await this.cacheManager.set('key', 'value');
 ```
 
-You can also specify a TTL (expiration time) for this specific key, as follows:
+The default expiration time of the cache is 5 seconds.
+
+You can manually specify a TTL (expiration time) for this specific key, as follows:
 
 ```typescript
 await this.cacheManager.set('key', 'value', { ttl: 1000 });
+```
+
+To disable expiration of the cache, set the `ttl` configuration property to `null`:
+
+```typescript
+await this.cacheManager.set('key', 'value', { ttl: null });
 ```
 
 To remove an item from the cache, use the `del` method:
