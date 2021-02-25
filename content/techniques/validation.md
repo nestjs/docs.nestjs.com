@@ -348,8 +348,6 @@ export class UpdateCatDto extends IntersectionType(
 
 > info **Hint** The `IntersectionType()` function is imported from the `@nestjs/mapped-types` package.
 
-#### Composition
-
 The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateCatDto` type except for `name`, and those properties will be set to optional:
 
 ```typescript
