@@ -194,27 +194,6 @@ const job = await this.audioQueue.add(
 );
 ```
 
-#### Request-scoped consumers
-
-When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
-
-```typescript
-@Processor({
-  name: 'audio',
-  scope: Scope.REQUEST,
-})
-```
-
-Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a `JOB_REF` through the constructor using a standard approach.
-
-```typescript
-constructor(@Inject(JOB_REF) jobRef: Job) {
-  console.log(jobRef);
-}
-```
-
-> info **Hint** The `JOB_REF` token is imported from the `@nestjs/bull` package.
-
 #### Consumers
 
 A consumer is a **class** defining methods that either process jobs added into the queue, or listen for events on the queue, or both. Declare a consumer class using the `@Processor()` decorator as follows:
@@ -259,6 +238,28 @@ You can designate that a job handler method will handle **only** jobs of a certa
 @Process('transcode')
 async transcode(job: Job<unknown>) { ... }
 ```
+
+#### Request-scoped consumers
+
+When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
+
+```typescript
+@Processor({
+  name: 'audio',
+  scope: Scope.REQUEST,
+})
+```
+
+Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a `JOB_REF` through the constructor using a standard approach.
+
+```typescript
+constructor(@Inject(JOB_REF) jobRef: Job) {
+  console.log(jobRef);
+}
+```
+
+> info **Hint** The `JOB_REF` token is imported from the `@nestjs/bull` package.
+
 
 #### Event listeners
 
