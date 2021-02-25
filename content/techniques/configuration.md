@@ -116,7 +116,7 @@ export class AppModule {}
 
 > info **Notice** The value assigned to the `load` property is an array, allowing you to load multiple configuration files (e.g. `load: [databaseConfig, authConfig]`)
 
-With custom configuration files, we can also manage custom files such as files. Here is an example of a configuration using YAML format:
+With custom configuration files, we can also manage custom files such as YAML files. Here is an example of a configuration using YAML format:
 
 ```yaml
 http:
