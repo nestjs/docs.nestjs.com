@@ -22,9 +22,10 @@ $ npm install --save @nestjs/terminus
 
 A health check represents a summary of **health indicators**. A health indicator executes a check of a service, whether it is in a healthy or unhealthy state. A health check is positive if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, [@nestjs/terminus](https://github.com/nestjs/terminus) provides a set of predefined indicators, such as:
 
-- `DNSHealthIndicator`
+- `HttpHealthIndicator`
 - `TypeOrmHealthIndicator`
 - `MongooseHealthIndicator`
+- `SequelizeHealthIndicator`
 - `MicroserviceHealthIndicator`
 - `GRPCHealthIndicator`
 - `MemoryHealthIndicator`
@@ -52,7 +53,7 @@ $ nest generate controller health
 
 > info **Info** It is highly recommended to enable shutdown hooks in your application. The Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown).
 
-#### DNS Healthcheck
+#### HTTP Healthcheck
 
 Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check. 
 
@@ -62,31 +63,31 @@ Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and cre
 export class HealthController {
   constructor(
     private health: HealthCheckService,
-    private dns: DNSHealthIndicator,
+    private http: HttpHealthIndicator,
   ) {}
 
   @Get()
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
     ]);
   }
 }
 @@switch
 @Controller('health')
-@Dependencies(HealthCheckService, DNSHealthIndicator)
+@Dependencies(HealthCheckService, HttpHealthIndicator)
 export class HealthController {
   constructor(
     private health,
-    private dns,
+    private http,
   ) { }
 
   @Get()
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dns.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      async () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
     ])
   }
 }
@@ -121,6 +122,95 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 | `info`    | Object containing information of each health indicator which is of status `'up'`, or in other words "healthy".                                                                              | `object`                             |
 | `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
 | `details` | Object containing all information of each health indicator                                                                                                                                  | `object`                             |
+
+#### TypeOrm health indicator
+
+Terminus offers the capability to add database checks to your health check. In order to get started with this health indicator, you
+should check out the [Database chapter](/techniques/sql) and make sure your database connection within your application is established.
+
+> info **Hint** Behind the scenes the `TypeOrmHealthIndicator` simply executes a `SELECT 1`-SQL command which is often used to verify whether the database still alive. In case you are using an Oracle database it uses `SELECT 1 FROM DUAL`.  
+
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private db: TypeOrmHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.db.pingCheck('database'),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, TypeOrmHealthIndicator)
+export class HealthController {
+  constructor(
+    private health,
+    private db,
+  ) { }
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      async () => this.db.pingCheck('database'),
+    ])
+  }
+}
+```
+
+If your database is reachable, you should now see the following JSON-result when requesting `http://localhost:3000` with a `GET` request:
+
+```json
+{
+  "status": "ok",
+  "info": {
+    "database": {
+      "status": "up"
+    }
+  },
+  "error": {},
+  "details": {
+    "database": {
+      "status": "up"
+    }
+  }
+}
+```
+In case your app uses [multiple databases](techniques/database#multiple-databases), you need to inject each
+connection into your `HealthController`. Then, you can simply pass the connection reference to the `TypeOrmHealthIndicator`.
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private db: TypeOrmHealthIndicator,
+    @InjectConnection('albumsConnection')
+    private albumsConnection: Connection,
+    @InjectConnection()
+    private defaultConnection: Connection,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.db.pingCheck('albums-database', { connection: this.albumsConnection }),
+      () => this.db.pingCheck('database', { connection: this.defaultConnection }),
+    ]);
+  }
+}
+```
 
 #### Custom health indicator
 
