@@ -126,7 +126,7 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 #### TypeOrm health indicator
 
 Terminus offers the capability to add database checks to your health check. In order to get started with this health indicator, you
-should check out the [Database chapter](/techniques/sql) and make sure your database connection within your NestJS application is established.
+should check out the [Database chapter](/techniques/sql) and make sure your database connection within your application is established.
 
 > info **Hint** Behind the scenes the `TypeOrmHealthIndicator` simply executes a `SELECT 1`-SQL command which is often used to verify whether the database still alive. In case you are using an Oracle database it uses `SELECT 1 FROM DUAL`.  
 
