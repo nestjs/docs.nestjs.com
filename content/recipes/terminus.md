@@ -186,7 +186,7 @@ If your database is reachable, you should now see the following JSON-result when
 }
 ```
 
-##### Multiple Database connections
+##### Multiple database connections
 
 In case you are using [multiple databases within your NestJS application](techniques/database#multiple-databases) you need to inject each
 of the connections into your `HealthController`. You can then simply pass the connection to the `TypeOrmHealthIndicator`.
