@@ -232,7 +232,7 @@ Once you have fully migrated, make sure you uninstall `@godaddy/terminus`.
 npm uninstall --save @godaddy/terminus
 ```
 
-##### DNSHealthIndicator deprecation
+##### `DNSHealthIndicator` deprecation
 
 The `DNSHealthIndicator` has been renamed to `HttpHealthIndicator` in order to improve consistency with NestJS [`HttpService`](/techniques/http-module#http-module)
 as well as choosing a better fitting name for its functionality.
