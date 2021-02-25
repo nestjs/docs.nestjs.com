@@ -536,7 +536,7 @@ You can then use it as usual, by calling the `get` method with the configuration
 const port = configService.get('PORT');
 ```
 
-### Using in testing
+### Using in e2e/integration tests
 
 It is also possible to utilize the Configuration Service in testing. In the following example we import it into our module and then retrieve the static instance, assigning it to a `configService` variable that can be used in our tests.
 
