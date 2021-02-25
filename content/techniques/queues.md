@@ -196,7 +196,7 @@ const job = await this.audioQueue.add(
 
 #### Request-scoped consumers
 
-Whether the processor needs to depend on a request scoped provider or be explicitly registered as a scoped processor, as follows:
+When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
 
 ```typescript
 @Processor({
