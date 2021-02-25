@@ -48,6 +48,8 @@ In the `nest-cli.json` file, we add the `assets` property that allows us to dist
     "watchAssets": true
   }
 }
+```
+
 #### Options
 
 The <strong>gRPC</strong> transporter options object exposes the properties described below.
