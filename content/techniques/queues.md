@@ -209,7 +209,7 @@ Since request-scoped consumer classes are instantiated dynamically and scoped to
 
 ```typescript
 constructor(@Inject(JOB_REF) jobRef: Job) {
-   console.log(jobRef);
+  console.log(jobRef);
 }
 ```
 
