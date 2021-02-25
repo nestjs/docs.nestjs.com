@@ -3,7 +3,7 @@
 A common technique to protect applications from brute-force attacks is **rate-limiting**. To get started, you'll need to install the `@nestjs/throttler` package.
 
 ```bash
-$ npm i --save @nestjs/throttle
+$ npm i --save @nestjs/throttler
 ```
 
 Once the installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync` methods.
@@ -22,7 +22,7 @@ export class AppModule {}
 
 The above will set the global options for the `ttl`, the time to live, and the `limit`, the maximum number of requests within the ttl, for the routes of your application that are guarded.
 
-Once the module has been imported, you can then choose how you would like to bind the `ThrottlerGuard`. Any kind of binding as mentioned in the [guards](https://docs.nestjs.com/guards) section is fine. If you wanted to bind the guard globally, for example, you could do so but adding this provider to any module
+Once the module has been imported, you can then choose how you would like to bind the `ThrottlerGuard`. Any kind of binding as mentioned in the [guards](https://docs.nestjs.com/guards) section is fine. If you wanted to bind the guard globally, for example, you could do so by adding this provider to any module:
 
 ```typescript
 {
@@ -33,13 +33,13 @@ Once the module has been imported, you can then choose how you would like to bin
 
 #### Customization
 
-There may be a time where you want to bind the guard to a controller or globally, but want to avoid rate limiting one or more of your endpoints. For that, you can use the `@SkipThrottle()` decorator, to negate the throttler for an entire class or a single route. The `@SkipThrottle()` decorator can also take in a boolean for if there is a case where you want to exclude _most_ of a controller, but not every route.
+There may be a time where you want to bind the guard to a controller or globally, but want to disable rate limiting for one or more of your endpoints. For that, you can use the `@SkipThrottle()` decorator, to negate the throttler for an entire class or a single route. The `@SkipThrottle()` decorator can also take in a boolean for if there is a case where you want to exclude _most_ of a controller, but not every route.
 
-There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. The order for this decorator does matter, as the arguments are in the order of `limit` `ttl`.
+There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. The order for this decorator does matter, as the arguments are in the order of `limit, ttl`.
 
 #### Websockets
 
-This module _can_ work with websockets, but it requires some class extension. You can extend the `ThrottlerGuard` and override the `handleRequest` method like so:
+This module can work with websockets, but it requires some class extension. You can extend the `ThrottlerGuard` and override the `handleRequest` method like so:
 
 ```typescript
 @Injectable()
@@ -69,7 +69,7 @@ The `ThrottlerGuard` can also be used to work with GraphQL requests. Again, the 
 ```typescript
 @Injectable()
 export class GqlThrottlerGuard extends ThrottlerGuard {
-  getRequestResponse(context: ExecutionContext): { req: Record<string, any>, res: Record<string, any> } {
+  getRequestResponse(context: ExecutionContext) {
     const gqlCtx = GqlExecutionContext.create(context);
     const ctx = gql.getContext();
     return { req, ctx.req, res: ctx.res }
@@ -79,7 +79,7 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
 
 #### Configuration
 
-The following options are valid for the `ThrottlerModule`
+The following options are valid for the `ThrottlerModule`:
 
 <table>
   <tr>
@@ -142,4 +142,4 @@ This is doable, as long as `ThrottlerConfigService` implements the interface `Th
 
 The built in storage is an in memory cache that keeps track of the requests made until they have passed the TTL set by the global options. You can drop in your own storage option to the `storage` option of the `ThrottlerModule` so long as the class implements the `ThrottlerStorage` interface. 
 
-> **Note** `ThrottlerStorage` can be imported from `@nestjs/throttler`.
+> info **Note** `ThrottlerStorage` can be imported from `@nestjs/throttler`.
