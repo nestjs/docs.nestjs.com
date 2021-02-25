@@ -76,8 +76,6 @@ In order to migrate your existing application, simply rename all the `type-graph
 In the version 7 major release of `@nestjs/terminus`, a new simplified API has been introduced
 to run health checks. The previously required peer dependency `@godaddy/terminus` has been removed, which allows us to integrate our health checks automatically into Swagger! Read more about the removal of `@godaddy/terminus` [here](https://github.com/nestjs/terminus/issues/340).
 
-##### TerminusModule.forRootAsync
-
 For most users, the biggest change will be the removal of the `TerminusModule.forRootAsync` function. With the next major version, this function will be completely removed.
 To migrate to the new API, you will need to create a new controller, which will handle your health checks.
 
