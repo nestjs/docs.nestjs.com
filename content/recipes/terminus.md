@@ -198,7 +198,7 @@ export class HealthController {
   constructor(
     private health: HealthCheckService,
     private db: TypeOrmHealthIndicator,
-    @InjectionConnection('albumsConnection')
+    @InjectConnection('albumsConnection')
     private albumsConnection: Connection,
     @InjectConnection()
     private defaultConnection: Connection,
