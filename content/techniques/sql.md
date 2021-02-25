@@ -103,7 +103,7 @@ export class AppModule {}
 >       autoLoadEntities: true,
 >     }),
 > })
-```
+> ```
 
 Once this is done, the TypeORM `Connection` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
 
