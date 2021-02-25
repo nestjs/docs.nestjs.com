@@ -205,7 +205,7 @@ When a consumer is flagged as request-scoped (learn more about the injection sco
 })
 ```
 
-then you can inject the `JOB_REF` via the constructor.
+Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a `JOB_REF` through the constructor using a standard approach.
 
 ```typescript
 constructor(@Inject(JOB_REF) jobRef: Job) {
