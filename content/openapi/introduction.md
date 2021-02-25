@@ -153,7 +153,7 @@ export interface SwaggerCustomOptions {
 }
 ```
 
-For example, if you want to make sure that the auth token in the docs persists after refreshing page or change the browser title you can set the following:
+For example, if you want to make sure that the authentication token persists after refreshing the page, or change the page title (that shows up in the browser), you can use the following settings:
 
 ```TypeScript
 const customOptions: SwaggerCustomOptions = {
@@ -163,9 +163,5 @@ const customOptions: SwaggerCustomOptions = {
   customSiteTitle: 'My API Docs',
 };
 SwaggerModule.setup('docs', app, document, customOptions);
-```
-
-
-#### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
