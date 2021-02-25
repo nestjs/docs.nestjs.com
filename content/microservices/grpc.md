@@ -39,15 +39,15 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 > info **Hint** The `join()` function is imported from the `path` package; the `Transport` enum is imported from the `@nestjs/microservices` package.
 
-Later in the `nest-cli.json` file, we add the assets property that allows us to distribute non-TypeScript files, in our case the `.proto` file. This way, during the build phase, you can edit non-TypeScript files and compile and test iteratively.
+In the `nest-cli.json` file, we add the `assets` property that allows us to distribute non-TypeScript files, and `watchAssets` - to turn on watching all non-TypeScript assets. In our case, we want `.proto` files to be automatically copied to the `dist` folder. 
 
 ```json
 {
   "compilerOptions": {
-    "assets": ["**/*.proto"]
+    "assets": ["**/*.proto"],
+    "watchAssets": true
   }
 }
-```
 #### Options
 
 The <strong>gRPC</strong> transporter options object exposes the properties described below.
