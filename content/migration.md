@@ -234,8 +234,7 @@ npm uninstall --save @godaddy/terminus
 
 ##### `DNSHealthIndicator` deprecation
 
-The `DNSHealthIndicator` has been renamed to `HttpHealthIndicator` in order to improve consistency with NestJS [`HttpService`](/techniques/http-module#http-module)
-as well as choosing a better fitting name for its functionality.
+The `DNSHealthIndicator` has been renamed to `HttpHealthIndicator` in order to improve consistency with the official [`HttpService`](/techniques/http-module#http-module) as well as choosing a better fitting name for its functionality.
 
 Simply migrate by replacing the `DNSHealthIndicator` references with `HttpHealthIndicator`. The functionality has been untouched.
 
