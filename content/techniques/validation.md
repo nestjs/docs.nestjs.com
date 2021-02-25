@@ -281,9 +281,6 @@ export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/mapped-types` package.
-
-##### Pick
-
 The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
 
 ```typescript
