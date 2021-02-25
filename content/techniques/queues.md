@@ -213,7 +213,7 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 }
 ```
 
-> info **Hint** The `JOB_REF` is imported from `@nestjs/bull`
+> info **Hint** The `JOB_REF` token is imported from the `@nestjs/bull` package.
 
 #### Consumers
 
