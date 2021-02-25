@@ -301,9 +301,6 @@ export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/mapped-types` package.
-
-##### Omit
-
 The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
 
 ```typescript
