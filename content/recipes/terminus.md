@@ -53,7 +53,7 @@ $ nest generate controller health
 
 > info **Info** It is highly recommended to enable shutdown hooks in your application. The Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown).
 
-#### Http Healthcheck
+#### HTTP Healthcheck
 
 Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check. 
 
