@@ -256,7 +256,6 @@ We simulate HTTP tests using the `request()` function from Supertest. We want th
 
 In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override guards, interceptors, filters and pipes with the`overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
 
-
 Each of the override methods returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
 
 - `useClass`: you supply a class that will be instantiated to provide the instance to override the object (provider, guard, etc.).
