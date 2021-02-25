@@ -321,9 +321,6 @@ export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/mapped-types` package.
-
-##### Intersection
-
 The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
 
 ```typescript
