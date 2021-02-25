@@ -48,9 +48,10 @@ The `DocumentBuilder` helps to structure a base document that conforms to the Op
 
 Once we create a document, we can call the `setup()` method. It accepts:
 
-1. the path to mount the Swagger UI
-2. an application instance
-3. the document object instantiated above
+1. The path to mount the Swagger UI
+2. An application instance
+3. The document object instantiated above
+4. Optional configuration parameter (read more [here](/openapi/introduction#document-options))
 
 Now you can run the following command to start the HTTP server:
 
@@ -131,6 +132,38 @@ const options: SwaggerDocumentOptions =  {
   ) => methodKey
 };
 const document = SwaggerModule.createDocument(app, config, options);
+```
+
+#### Setup options
+
+You can configure Swagger UI by passing the options object which fulfills the `SwaggerCustomOptions` interface as a fourth argument of the `SwaggerModule#setup` method.
+
+```TypeScript
+export interface SwaggerCustomOptions {
+  explorer?: boolean;
+  swaggerOptions?: Record<string, any>;
+  customCss?: string;
+  customCssUrl?: string;
+  customJs?: string;
+  customfavIcon?: string;
+  swaggerUrl?: string;
+  customSiteTitle?: string;
+  validatorUrl?: string;
+  url?: string;
+  urls?: Record<'url' | 'name', string>[];
+}
+```
+
+For example, if you want to make sure that the authentication token persists after refreshing the page, or change the page title (that shows up in the browser), you can use the following settings:
+
+```TypeScript
+const customOptions: SwaggerCustomOptions = {
+  swaggerOptions: {
+    persistAuthorization: true,
+  },
+  customSiteTitle: 'My API Docs',
+};
+SwaggerModule.setup('docs', app, document, customOptions);
 ```
 
 #### Example
