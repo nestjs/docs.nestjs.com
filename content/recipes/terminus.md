@@ -185,9 +185,6 @@ If your database is reachable, you should now see the following JSON-result when
   }
 }
 ```
-
-##### Multiple database connections
-
 In case your app uses [multiple databases](techniques/database#multiple-databases), you need to inject each
 connection into your `HealthController`. Then, you can simply pass the connection reference to the `TypeOrmHealthIndicator`.
 
