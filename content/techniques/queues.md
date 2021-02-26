@@ -260,7 +260,6 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 
 > info **Hint** The `JOB_REF` token is imported from the `@nestjs/bull` package.
 
-
 #### Event listeners
 
 Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow subscribing to a core set of standard events. These are exported from the `@nestjs/bull` package.
