@@ -4,6 +4,14 @@ To handle file uploading, Nest provides a built-in module based on the [multer](
 
 > warning **Warning** Multer cannot process data which is not in the supported multipart format (`multipart/form-data`). Also, note that this package is not compatible with the `FastifyAdapter`.
 
+For better type safety, let's install Multer typings package:
+
+```shell
+$ npm i -D @types/multer
+```
+
+With this package installed, we can now use the `Express.Multer.File` type (you can import this type as follows: `import {{ '{' }} Express {{ '}' }} from 'express'`).
+
 #### Basic example
 
 To upload a single file, simply tie the `FileInterceptor()` interceptor to the route handler and extract `file` from the `request` using the `@UploadedFile()` decorator.
@@ -12,7 +20,7 @@ To upload a single file, simply tie the `FileInterceptor()` interceptor to the r
 @@filename()
 @Post('upload')
 @UseInterceptors(FileInterceptor('file'))
-uploadFile(@UploadedFile() file) {
+uploadFile(@UploadedFile() file: Express.Multer.File) {
   console.log(file);
 }
 @@switch
@@ -47,7 +55,7 @@ When using `FilesInterceptor()`, extract files from the `request` with the `@Upl
 @@filename()
 @Post('upload')
 @UseInterceptors(FilesInterceptor('files'))
-uploadFile(@UploadedFiles() files) {
+uploadFile(@UploadedFiles() files: Express.Multer.File) {
   console.log(files);
 }
 @@switch
@@ -102,7 +110,7 @@ When using `AnyFilesInterceptor()`, extract files from the `request` with the `@
 @@filename()
 @Post('upload')
 @UseInterceptors(AnyFilesInterceptor())
-uploadFile(@UploadedFiles() files) {
+uploadFile(@UploadedFiles() files: Express.Multer.File) {
   console.log(files);
 }
 @@switch
