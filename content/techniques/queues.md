@@ -239,6 +239,27 @@ You can designate that a job handler method will handle **only** jobs of a certa
 async transcode(job: Job<unknown>) { ... }
 ```
 
+#### Request-scoped consumers
+
+When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
+
+```typescript
+@Processor({
+  name: 'audio',
+  scope: Scope.REQUEST,
+})
+```
+
+Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a `JOB_REF` through the constructor using a standard approach.
+
+```typescript
+constructor(@Inject(JOB_REF) jobRef: Job) {
+  console.log(jobRef);
+}
+```
+
+> info **Hint** The `JOB_REF` token is imported from the `@nestjs/bull` package.
+
 #### Event listeners
 
 Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow subscribing to a core set of standard events. These are exported from the `@nestjs/bull` package.
