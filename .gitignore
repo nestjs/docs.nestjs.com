@@ -5,6 +5,7 @@ dist/*
 !/dist/v4
 !/dist/v5
 !/dist/v6
+!/dist/v7
 
 /tmp
 /out-tsc
