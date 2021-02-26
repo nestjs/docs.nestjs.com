@@ -4,13 +4,13 @@ To handle file uploading, Nest provides a built-in module based on the [multer](
 
 > warning **Warning** Multer cannot process data which is not in the supported multipart format (`multipart/form-data`). Also, note that this package is not compatible with the `FastifyAdapter`.
 
-#### Use with Express (default)
-
-If you want to use the `Express.Multer.File` type for `@UploadedFile()` files, it is necessary to install the types:
+For better type safety, let's install Multer typings package:
 
 ```shell
 $ npm i -D @types/multer
 ```
+
+With this package installed, we can now use the `Express.Multer.File` type (you can import this type as follows: `import {{ '{' }} Express {{ '}' }} from 'express'`).
 
 #### Basic example
 
