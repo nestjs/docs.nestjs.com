@@ -241,3 +241,5 @@ const app = await NestFactory.create(AppModule);
 app.use(logger);
 await app.listen(3000);
 ```
+
+> info **Hint** Accessing the DI container in a global middleware is not possible. You need to use a functional middleware instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')`.
