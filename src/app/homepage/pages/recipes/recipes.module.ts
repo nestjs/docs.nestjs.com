@@ -6,6 +6,7 @@ import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { DocumentationComponent } from './documentation/documentation.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
+import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
@@ -14,6 +15,11 @@ import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 
 const routes: Routes = [
+  {
+    path: 'mikroorm',
+    component: MikroOrmComponent,
+    data: { title: 'MikroORM' },
+  },
   {
     path: 'sql-typeorm',
     component: SqlTypeormComponent,
@@ -81,6 +87,7 @@ const routes: Routes = [
 @NgModule({
   imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [
+    MikroOrmComponent,
     SqlTypeormComponent,
     SqlSequelizeComponent,
     MongodbComponent,
