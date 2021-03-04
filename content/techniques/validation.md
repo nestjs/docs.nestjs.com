@@ -103,7 +103,7 @@ We'll start by binding `ValidationPipe` at the application level, thus ensuring 
 
 ```typescript
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule);
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
