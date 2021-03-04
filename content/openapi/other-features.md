@@ -66,6 +66,8 @@ async function bootstrap() {
 bootstrap();
 ```
 
+> info **Hint** Don't forget to import `CatsModule` and` DogsModule` into the root `AppModule`.
+
 Now you can start your server with the following command:
 
 ```bash
