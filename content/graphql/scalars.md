@@ -98,7 +98,7 @@ import GraphQLJSON from 'graphql-type-json';
     }),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 Now we can use the `JSON` scalar in our type definitions:
