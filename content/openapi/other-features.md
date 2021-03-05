@@ -1,5 +1,7 @@
 ### Other features
 
+This page lists all the other available features that you may find useful.
+
 #### Global prefix
 
 To ignore a global prefix for routes set through `setGlobalPrefix()`, use `ignoreGlobalPrefix`:

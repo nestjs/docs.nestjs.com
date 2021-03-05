@@ -15,7 +15,7 @@ Once the installation is complete, the `ThrottlerModule` can be configured as an
       ttl: 60,
       limit: 10,
     }),
-  ]
+  ],
 })
 export class AppModule {}
 ```
@@ -44,9 +44,13 @@ This module can work with websockets, but it requires some class extension. You 
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
-  async handleRequest(context: ExecutionContext, limit: number, ttl: number): Promise<boolean> {
+  async handleRequest(
+    context: ExecutionContext,
+    limit: number,
+    ttl: number,
+  ): Promise<boolean> {
     const client = context.switchToWs().getClient();
-    const ip = client.conn.remoteAddress; 
+    const ip = client.conn.remoteAddress;
     const key = this.generateKey(context, ip);
     const ttls = await this.storageService.getRecord(key);
 
@@ -60,7 +64,7 @@ export class WsThrottlerGuard extends ThrottlerGuard {
 }
 ```
 
-> info **Hint** If you are using the `@nestjs/platform-ws` package you can use  `client._socket.remoteAddress` instead.
+> info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
 
 #### GraphQL
 
@@ -127,7 +131,7 @@ You can also use the `useClass` syntax:
 ```typescript
 @Module({
   imports: [
-    ThrottlerModule.forRootASync({
+    ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       useClass: ThrottlerConfigService,
     }),
@@ -140,6 +144,6 @@ This is doable, as long as `ThrottlerConfigService` implements the interface `Th
 
 #### Storages
 
-The built in storage is an in memory cache that keeps track of the requests made until they have passed the TTL set by the global options. You can drop in your own storage option to the `storage` option of the `ThrottlerModule` so long as the class implements the `ThrottlerStorage` interface. 
+The built in storage is an in memory cache that keeps track of the requests made until they have passed the TTL set by the global options. You can drop in your own storage option to the `storage` option of the `ThrottlerModule` so long as the class implements the `ThrottlerStorage` interface.
 
 > info **Note** `ThrottlerStorage` can be imported from `@nestjs/throttler`.

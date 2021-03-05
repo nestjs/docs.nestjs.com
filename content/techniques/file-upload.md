@@ -55,7 +55,7 @@ When using `FilesInterceptor()`, extract files from the `request` with the `@Upl
 @@filename()
 @Post('upload')
 @UseInterceptors(FilesInterceptor('files'))
-uploadFile(@UploadedFiles() files: Express.Multer.File) {
+uploadFile(@UploadedFiles() files: Express.Multer.File[]) {
   console.log(files);
 }
 @@switch
@@ -110,7 +110,7 @@ When using `AnyFilesInterceptor()`, extract files from the `request` with the `@
 @@filename()
 @Post('upload')
 @UseInterceptors(AnyFilesInterceptor())
-uploadFile(@UploadedFiles() files: Express.Multer.File) {
+uploadFile(@UploadedFiles() files: Express.Multer.File[]) {
   console.log(files);
 }
 @@switch
