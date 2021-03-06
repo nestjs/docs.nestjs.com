@@ -362,13 +362,20 @@ import { AuthGuard } from '@nestjs/passport';
 export class LocalAuthGuard extends AuthGuard('local') {}
 ```
 
-Now, we can update the `/auth/login` route handler and use the `LocalAuthGuard` instead:
+Now, we can update the `/auth/login` route handler to use the `LocalAuthGuard` instead. Update the `app.controller.ts` file, so that it looks like this:
 
 ```typescript
-@UseGuards(LocalAuthGuard)
-@Post('auth/login')
-async login(@Request() req) {
-  return req.user;
+@@filename(app.controller)
+import { Controller, Request, Post, UseGuards } from '@nestjs/common';
+import { LocalAuthGuard } from './auth/local-auth.guard';
+
+@Controller()
+export class AppController {
+  @UseGuards(LocalAuthGuard)
+  @Post('auth/login')
+  async login(@Request() req) {
+    return req.user;
+  }
 }
 ```
 
