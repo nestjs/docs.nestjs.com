@@ -71,8 +71,8 @@ The `ThrottlerGuard` can also be used to work with GraphQL requests. Again, the 
 export class GqlThrottlerGuard extends ThrottlerGuard {
   getRequestResponse(context: ExecutionContext) {
     const gqlCtx = GqlExecutionContext.create(context);
-    const ctx = gql.getContext();
-    return { req, ctx.req, res: ctx.res }
+    const ctx = gqlCtx.getContext();
+    return { req: ctx.req, res: ctx.res }
   }
 }
 ```
