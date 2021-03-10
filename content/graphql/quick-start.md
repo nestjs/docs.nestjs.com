@@ -58,8 +58,6 @@ export class AppModule {}
 
 As mentioned, these options will be forwarded to the `ApolloServer` constructor.
 
-> warning **Warning** If you use the `apollo-server-fastify` package with multiple GraphQL endpoints in a single application, enable the `disableHealthCheck` setting to` true` in the configuration` GraphQLModule`.
-
 <app-banner-enterprise></app-banner-enterprise>
 
 #### GraphQL playground
@@ -81,6 +79,8 @@ GraphQLModule.forRoot({
   include: [CatsModule],
 }),
 ```
+
+> warning **Warning** If you use the `apollo-server-fastify` package with multiple GraphQL endpoints in a single application, enable the `disableHealthCheck` setting to` true` in the configuration` GraphQLModule`.
 
 #### Code first
 
