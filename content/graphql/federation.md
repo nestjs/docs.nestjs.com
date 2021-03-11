@@ -185,12 +185,30 @@ export class PostsResolvers {
 }
 ```
 
-The Posts service has virtually the same module, but is included below for the sake of completeness:
+In order to fill in the `posts` fields added to our `User` schema, we need to add a `users.resolver.ts` in our Post service.
+
+```typescript
+import { ResolveField, Resolver } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
+
+@Resolver('User')
+export class UsersResolvers {
+  constructor(private postsService: PostsService) {}
+
+  @ResolveField('posts')
+  getPosts(reference: { __typename: string; id: string }) {
+    return this.postsService.findByAuthorId(reference.id);
+  }
+}
+```
+
+The Posts service needs to export both resolvers as providers in its module definition:
 
 ```typescript
 import { Module } from '@nestjs/common';
 import { GraphQLFederationModule } from '@nestjs/graphql';
 import { PostsResolvers } from './posts.resolvers';
+import { UsersResolvers } from './users.resolvers';
 
 @Module({
   imports: [
@@ -198,7 +216,7 @@ import { PostsResolvers } from './posts.resolvers';
       typePaths: ['**/*.graphql'],
     }),
   ],
-  providers: [PostsResolvers],
+  providers: [PostsResolvers, UsersResolvers],
 })
 export class AppModule {}
 ```
