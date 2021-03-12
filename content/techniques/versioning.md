@@ -1,16 +1,15 @@
 ### Versioning
 
-Versioning allows you to have different versions of your controllers or individual routes running within the same application. Applications change very often and it is not unusual that there are breaking changes that you need to make while still needing to support the previous version of the application. 
+> info **Hint** This chapter is only relevant to HTTP-based applications.
+
+Versioning allows you to have **different versions** of your controllers or individual routes running within the same application. Applications change very often and it is not unusual that there are breaking changes that you need to make while still needing to support the previous version of the application.
 
 There are 3 types of versioning that are supported:
+
 <table>
   <tr>
-    <th>Type</th>
-    <th>Description</th>
-  </tr> 
-  <tr>
     <td><a href='techniques/versioning#uri-versioning-type'><code>URI Versioning</code></a></td>
-    <td>The version will be passed within the URI of the request</td>
+    <td>The version will be passed within the URI of the request (default)</td>
   </tr>
   <tr>
     <td><a href='techniques/versioning#header-versioning-type'><code>Header Versioning</code></a></td>
@@ -28,27 +27,16 @@ URI Versioning uses the version passed within the URI of the request, such as `h
 
 > warning **Notice** With URI Versioning the version will be automatically added to the URI after the <a href="faq/global-prefix">global path prefix</a> (if one exists), and before any controller or route paths.
 
-Example HTTP Requests for URI Versioning:
-```http
-GET https://example.com/v1/route HTTP/1.1
-
-GET https://example.com/v2/route HTTP/1.1
-```
-
 To enable URI Versioning for your application, do the following:
 
 ```typescript
 @@filename(main)
-import { VersioningType } from '@nestjs/common';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
-  await app.listen(3000);
-}
-bootstrap();
+const app = await NestFactory.create(AppModule);
+// or "app.enableVersioning()"
+app.enableVersioning({
+  type: VersioningType.URI,
+});
+await app.listen(3000);
 ```
 
 > warning **Notice** The version in the URI will be automatically prefixed with `v` by default, however the prefix value can be configured by setting the `prefix` key to your desired prefix or `false` if you wish to disable it.
@@ -60,29 +48,17 @@ bootstrap();
 Header Versioning uses a custom, user specified, request header to specify the version where the value of the header will be the version to use for the request.
 
 Example HTTP Requests for Header Versioning:
-```http
-GET https://example.com/route HTTP/1.1
-Custom-Version-Header: 1
 
-GET https://example.com/route HTTP/1.1
-Custom-Version-Header: 2
-```
-
-To enable Header Versioning for your application, do the following:
+To enable **Header Versioning** for your application, do the following:
 
 ```typescript
 @@filename(main)
-import { VersioningType } from '@nestjs/common';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableVersioning({
-    type: VersioningType.HEADER,
-    header: 'Custom-Header',
-  });
-  await app.listen(3000);
-}
-bootstrap();
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.HEADER,
+  header: 'Custom-Header',
+});
+await app.listen(3000);
 ```
 
 The `header` property should be the name of the header that will contain the version of the request.
@@ -95,30 +71,16 @@ Media Type Versioning uses the `Accept` header of the request to specify the ver
 
 Within the `Accept` header, the version will be separated from the media type with a semi-colon, `;`. It should then contain a key-value pair that represents the version to use for the request, such as `Accept: application/json;v=2`. They key is treated more as a prefix when determining the version will to be configured to include the key and separator.
 
-Example HTTP Requests for Media Type Versioning:
-```http
-GET https://example.com/route HTTP/1.1
-Accept: application/json;v=1
-
-GET https://example.com/route HTTP/1.1
-Accept: application/json;v=2
-```
-
-To enable Media Type Versioning for your application, do the following:
+To enable **Media Type Versioning** for your application, do the following:
 
 ```typescript
 @@filename(main)
-import { VersioningType } from '@nestjs/common';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableVersioning({
-    type: VersioningType.MEDIA_TYPE,
-    key: 'v=',
-  });
-  await app.listen(3000);
-}
-bootstrap();
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.MEDIA_TYPE,
+  key: 'v=',
+});
+await app.listen(3000);
 ```
 
 The `key` property should be the key and separator of the key-value pair that contains the version. For the example `Accept: application/json;v=2`, the `key` property would be set to `v=`.
@@ -131,7 +93,7 @@ Versioning allows you to version controllers, individual routes, and also provid
 
 > warning **Notice** If versioning is enabled for the application but the controller or route does not specify the version, any requests to that controller/route will be returned a `404` response status. Similarly, if a request is received containing a version that does not have a corresponding controller or route, it will also be returned a `404` response status.
 
-#### Controller Versions
+#### Controller versions
 
 A version can be applied to a controller, setting the version for all routes within the controller.
 
@@ -139,8 +101,6 @@ To add a version to a controller do the following:
 
 ```typescript
 @@filename(cats.controller)
-import { Controller, Get } from '@nestjs/common';
-
 @Controller({
   version: '1',
 })
@@ -148,21 +108,9 @@ export class CatsControllerV1 {
   @Get('cats')
   findAll(): string {
     return 'This action returns all cats for version 1';
-  }
-}
-
-@Controller({
-  version: '2',
-})
-export class CatsControllerV2 {
-  @Get('cats')
-  findAll(): string {
-    return 'This action returns all cats for version 2';
   }
 }
 @@switch
-import { Controller, Get } from '@nestjs/common';
-
 @Controller({
   version: '1',
 })
@@ -170,21 +118,11 @@ export class CatsControllerV1 {
   @Get('cats')
   findAll() {
     return 'This action returns all cats for version 1';
-  }
-}
-
-@Controller({
-  version: '2',
-})
-export class CatsControllerV2 {
-  @Get('cats')
-  findAll() {
-    return 'This action returns all cats for version 2';
   }
 }
 ```
 
-#### Route Versions
+#### Route versions
 
 A version can be applied to an individual route. This version will override any other version that would effect the route, such as the Controller Version.
 
@@ -227,9 +165,7 @@ export class CatsController {
 }
 ```
 
-> info **Hint** The `@Version()` decorator is imported from `@nestjs/common` package.
-
-#### Multiple Versions
+#### Multiple versions
 
 Multiple versions can be applied to a controller or route. To use multiple versions, you would set the version to be an Array.
 
@@ -237,8 +173,6 @@ To add multiple versions do the following:
 
 ```typescript
 @@filename(cats.controller)
-import { Controller, Get } from '@nestjs/common';
-
 @Controller({
   version: ['1', '2'],
 })
@@ -249,8 +183,6 @@ export class CatsController {
   }
 }
 @@switch
-import { Controller, Get } from '@nestjs/common';
-
 @Controller({
   version: ['1', '2'],
 })
@@ -262,8 +194,7 @@ export class CatsController {
 }
 ```
 
-
-#### Version Neutral
+#### Version "Neutral"
 
 Some controllers or routes may not care about the version and would have the same functionality regardless of the version. To accommodate this, the version can be set to `VERSION_NEUTRAL` symbol.
 
@@ -284,7 +215,7 @@ export class CatsController {
   @Get('cats')
   findAll(): string {
     return 'This action returns all cats regardless of version';
-  } 
+  }
 }
 @@switch
 import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
@@ -299,5 +230,3 @@ export class CatsController {
   }
 }
 ```
-
-> info **Hint** The `VERSION_NEUTRAL` symbol is imported from `@nestjs/common` package.

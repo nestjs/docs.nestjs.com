@@ -21,6 +21,7 @@ import { SqlComponent } from './sql/sql.component';
 import { StreamingFilesComponent } from './streaming-files/streaming-files.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
+import { VersioningComponent } from './versioning/versioning.component';
 
 const routes: Routes = [
   {
@@ -125,6 +126,11 @@ const routes: Routes = [
     data: { title: 'Server-Sent Events' },
   },
   {
+    path: 'versioning',
+    component: VersioningComponent,
+    data: { title: 'Versioning' },
+  },
+  {
     path: 'events',
     component: EventsComponent,
     data: { title: 'Events' },
@@ -151,6 +157,7 @@ const routes: Routes = [
     HttpModuleComponent,
     ConfigurationComponent,
     CompressionComponent,
+    VersioningComponent,
     ValidationComponent,
     CachingComponent,
     SerializationComponent,

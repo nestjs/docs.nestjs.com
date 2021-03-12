@@ -92,6 +92,7 @@ export class MenuComponent implements OnInit {
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
+        { title: 'Versioning', path: '/techniques/versioning' },
         { title: 'Task scheduling', path: '/techniques/task-scheduling' },
         { title: 'Queues', path: '/techniques/queues' },
         { title: 'Logging', path: '/techniques/logger' },
