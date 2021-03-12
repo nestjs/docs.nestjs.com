@@ -140,4 +140,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> info **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `CatsModule` into the root `AppModule`.

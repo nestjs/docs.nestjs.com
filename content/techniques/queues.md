@@ -205,6 +205,8 @@ import { Processor } from '@nestjs/bull';
 export class AudioConsumer {}
 ```
 
+> info **Hint** Consumers must be registered as `providers` so the `@nestjs/bull` package can pick them up.
+
 Where the decorator's string argument (e.g., `'audio'`) is the name of the queue to be associated with the class methods.
 
 Within a consumer class, declare job handlers by decorating handler methods with the `@Process()` decorator.
