@@ -25,7 +25,7 @@ import { AppController } from './app.controller';
   imports: [CacheModule.register()],
   controllers: [AppController],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 #### Interacting with the Cache store
@@ -113,7 +113,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     },
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 #### Customize caching
@@ -224,7 +224,7 @@ import { AppController } from './app.controller';
   ],
   controllers: [AppController],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 #### Async configuration

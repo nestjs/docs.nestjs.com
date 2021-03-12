@@ -151,4 +151,4 @@ import { PhotoService } from './photo.service';
 export class PhotoModule {}
 ```
 
-> info **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `PhotoModule` into the root `AppModule`.

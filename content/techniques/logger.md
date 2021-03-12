@@ -18,7 +18,7 @@ For more advanced logging functionality, you can make use of any Node.js logging
 To disable logging, set the `logger` property to `false` in the (optional) Nest application options object passed as the second argument to the `NestFactory.create()` method.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   logger: false,
 });
 await app.listen(3000);
@@ -27,7 +27,7 @@ await app.listen(3000);
 To enable specific logging levels, set the `logger` property to an array of strings specifying the log levels to display, as follows:
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   logger: ['error', 'warn'],
 });
 await app.listen(3000);
@@ -42,7 +42,7 @@ Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'de
 You can provide a custom logger implementation to be used by Nest for system logging by setting the value of the `logger` property to an object that fulfills the `LoggerService` interface. For example, you can tell Nest to use the built-in global JavaScript `console` object (which implements the `LoggerService` interface), as follows:
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   logger: console,
 });
 await app.listen(3000);
@@ -84,7 +84,7 @@ export class MyLogger implements LoggerService {
 You can then supply an instance of `MyLogger` via the `logger` property of the Nest application options object.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   logger: new MyLogger(),
 });
 await app.listen(3000);

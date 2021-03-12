@@ -208,10 +208,8 @@
 }
 
 .sponsors-carbon {
-  .sponsors-container {
-    @media (min-width: 1200px) {
-      width: calc(100% - 220px);
-    }
+  @media (min-width: 1200px) {
+    width: calc(100% - 220px);
   }
 }
 
