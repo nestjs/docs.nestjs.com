@@ -15,8 +15,6 @@ app.setGlobalPrefix('v1', {
 });
 ```
 
-> warning **Warning** The `exclude` feature does not support wildcards (`(.*)` or `*` will not work as expected). Instead, you must specify routes explicitly.
-
 Alternatively, you can specify route as a string (it will apply to every request method):
 
 ```typescript
