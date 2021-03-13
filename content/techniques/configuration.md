@@ -149,12 +149,12 @@ import * as yaml from 'js-yaml';
 import { join } from 'path';
 
 const YAML_CONFIG_FILENAME = 'config.yml';
+const CONFIG_FILE_PATH = join(__dirname, YAML_CONFIG_FILENAME);
 
 export default () => {
-  return yaml.load(
-    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
-  );
+  return yaml.load(readFileSync(CONFIG_FILE_PATH, 'utf8'));
 };
+
 ```
 
 > warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in the `compilerOptions#assets` object in the `nest-cli.json` file. As an example, if the `config` folder is at the same level as the `src` folder, add `compilerOptions#assets` with the value `"assets": [{{ '{' }}"include": "../config/*.yaml", "outDir": "./dist/config"{{ '}' }}]`. Read more [here](/cli/monorepo#assets).
