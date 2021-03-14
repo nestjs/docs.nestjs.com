@@ -152,7 +152,7 @@ const YAML_CONFIG_FILENAME = 'config.yml';
 
 export default () => {
   return yaml.load(
-    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
   );
 };
 ```
