@@ -86,7 +86,7 @@ Some sample cron patterns are:
       <td>every minute, on the 45th second</td>
     </tr>
     <tr>
-      <td><code>* 10 * * * *</code></td>
+      <td><code>0 10 * * * *</code></td>
       <td>every hour, at the start of the 10th minute</td>
     </tr>
     <tr>
