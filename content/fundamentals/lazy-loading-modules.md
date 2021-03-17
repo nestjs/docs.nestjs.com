@@ -97,7 +97,7 @@ const lazyService = moduleRef.get(LazyService);
 
 #### Lazy-loading controllers, gateways, and resolvers
 
-Since controllers (or resolvers in **GraphQL** applications) in Nest represent sets of routes/paths/topics (or queries/mutations), you cannot lazy load them using the `LazyModuleLoader` class.
+Since controllers (or resolvers in GraphQL applications) in Nest represent sets of routes/paths/topics (or queries/mutations), you **cannot lazy load them** using the `LazyModuleLoader` class.
 
 > error **Warning** Controllers, [resolvers](/graphql/resolvers), and [gateways](/websockets/gateways) registered inside lazy-loaded modules will not behave as expected. Similarly, you cannot register middleware functions (by implementing the `MiddlewareConsumer` interface) on-demand.
 
