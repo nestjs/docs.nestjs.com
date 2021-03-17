@@ -30,7 +30,6 @@ module.exports = function (options, webpack) {
   return {
     ...options,
     entry: ['webpack/hot/poll?100', options.entry],
-    watch: true,
     externals: [
       nodeExternals({
         allowlist: ['webpack/hot/poll?100'],
@@ -74,7 +73,7 @@ bootstrap();
 To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js"
+"start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch"
 ```
 
 Now simply open your command line and run the following command:
@@ -111,7 +110,6 @@ const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 module.exports = {
   entry: ['webpack/hot/poll?100', './src/main.ts'],
-  watch: true,
   target: 'node',
   externals: [
     nodeExternals({
@@ -168,7 +166,7 @@ bootstrap();
 To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"start:dev": "webpack --config webpack.config.js"
+"start:dev": "webpack --config webpack.config.js --watch"
 ```
 
 Now simply open your command line and run the following command:
