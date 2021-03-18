@@ -20,6 +20,8 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
   transport: Transport.NATS,
   options: {
     url: 'nats://localhost:4222',
+    maxReconnectAttempts: -1,
+    waitOnFirstConnect:   true,
   },
 });
 @@switch
@@ -27,6 +29,8 @@ const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
     url: 'nats://localhost:4222',
+    maxReconnectAttempts: -1,
+    waitOnFirstConnect:   true,
   },
 });
 ```
@@ -53,6 +57,8 @@ One method for creating an instance is to use use the `ClientsModule`. To create
         transport: Transport.NATS,
         options: {
           url: 'nats://localhost:4222',
+          maxReconnectAttempts: -1,
+          waitOnFirstConnect:   true,
         }
       },
     ]),
@@ -82,6 +88,8 @@ const app = await NestFactory.createMicroservice(AppModule, {
   options: {
     url: 'nats://localhost:4222',
     queue: 'cats_queue',
+    maxReconnectAttempts: -1,
+    waitOnFirstConnect:   true,
   },
 });
 ```
