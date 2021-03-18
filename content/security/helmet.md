@@ -17,7 +17,7 @@ Once the installation is complete, apply it as a global middleware.
 ```typescript
 import * as helmet from 'helmet';
 // somewhere in your initialization file
-app.use(helmet());
+await app.use(helmet());
 ```
 
 > info **Hint** If you are getting the `This expression is not callable` error while trying to import `Helmet`, you very likely have the `allowSyntheticDefaultImports` and `esModuleInterop` options set to `true` in your project's `tsconfig.json` file. If that's the case, change the import statement to: `import helmet from 'helmet'` instead.
@@ -35,12 +35,12 @@ $ npm i --save fastify-helmet
 ```typescript
 import { fastifyHelmet } from 'fastify-helmet';
 // somewhere in your initialization file
-app.register(helmet);
+await app.register(helmet);
 ```
 > warning **Warning** When using `apollo-server-fastify` and `fastify-helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) on the GraphQL playground, to solve this collision, configure the CSP as shown below:
 >
 > ```typescript
-> app.register(helmet, {
+> await app.register(helmet, {
 >   contentSecurityPolicy: {
 >     directives: {
 >       defaultSrc: [`'self'`],
@@ -53,7 +53,7 @@ app.register(helmet);
 > });
 >
 > // If you are not going to use CSP at all, you can use this:
-> app.register(helmet, {
+> await app.register(helmet, {
 >   contentSecurityPolicy: false,
 > });
 > ```
