@@ -236,7 +236,7 @@ create() {
 
 To redirect a response to a specific URL, you can either use a `@Redirect()` decorator or a library-specific response object (and call `res.redirect()` directly).
 
-`@Redirect()` takes a required `url` argument, and an optional `statusCode` argument. The `statusCode` defaults to `302` (`Found`) if omitted.
+`@Redirect()` takes two arguments, `url` and` statusCode`, both are optional. The default value of `statusCode` is `302` (`Found`) if omitted.
 
 ```typescript
 @Get()
