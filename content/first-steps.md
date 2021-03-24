@@ -26,8 +26,8 @@ The `project` directory will be created, node modules and a few other boilerplat
 <div class="file-tree">
   <div class="item">src</div>
   <div class="children">
-    <div class="item">app.controller.ts</div>
     <div class="item">app.controller.spec.ts</div>
+    <div class="item">app.controller.ts</div>
     <div class="item">app.module.ts</div>
     <div class="item">app.service.ts</div>
     <div class="item">main.ts</div>
