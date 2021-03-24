@@ -78,9 +78,9 @@ Here is how our directory structure looks now:
       <div class="children">
         <div class="item">cat.interface.ts</div>
       </div>
-      <div class="item">cats.service.ts</div>
       <div class="item">cats.controller.ts</div>
       <div class="item">cats.module.ts</div>
+      <div class="item">cats.service.ts</div>
     </div>
     <div class="item">app.module.ts</div>
     <div class="item">main.ts</div>
