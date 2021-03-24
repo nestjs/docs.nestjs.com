@@ -40,9 +40,9 @@ The files generated for a library are slightly different from those generated fo
     <div class="children">
       <div class="item">src</div>
       <div class="children">
-        <div class="item">my-library.service.ts</div>
-        <div class="item">my-library.module.ts</div>
         <div class="item">index.ts</div>
+        <div class="item">my-library.module.ts</div>
+        <div class="item">my-library.service.ts</div>
       </div>
       <div class="item">tsconfig.lib.json</div>
     </div>
