@@ -411,7 +411,13 @@ bidiHello(messages: Observable<any>, metadata: Metadata, call: ServerDuplexStrea
     });
   };
   const onComplete = () => subject.complete();
-  messages.subscribe(onNext, null, onComplete);
+  messages.subscribe((data) => {
+      onNext(data)
+  }, err => {
+      console.error(err);
+  }, () => {
+      onComplete()
+  });
 
   return subject.asObservable();
 }
