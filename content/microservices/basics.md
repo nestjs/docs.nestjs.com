@@ -160,6 +160,10 @@ accumulate(data: number[]): Observable<number> {
 
 In the example above, the message handler will respond **3 times** (with each item from the array).
 
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/03-microservices).
+
 #### Event-based
 
 While the request-response method is ideal for exchanging messages between services, it is less suitable when your message style is event-based - when you just want to publish **events** without waiting for a response. In that case, you do not want the overhead required by request-response for maintaining two channels.
