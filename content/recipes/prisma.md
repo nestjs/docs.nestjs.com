@@ -180,10 +180,8 @@ model Post {
 With your Prisma models in place, you can generate your SQL migration files and run them against the database. Run the following commands in your terminal:
 
 ```bash
-$ npx prisma migrate dev --name init --preview-feature
+$ npx prisma migrate dev --name init
 ```
-
-> info **Note** The `prisma migrate` commands currently requires the `--preview-feature` option as it's in [Preview](https://www.prisma.io/docs/about/releases#preview).
 
 This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files was created in the existing `prisma` directory:
 
