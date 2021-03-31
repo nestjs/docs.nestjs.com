@@ -85,7 +85,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>validationError.target</code></td>
     <td><code>boolean</code></td>
-    <td>Indicates if target should be exposed in <code>ValidationError</code></td>
+    <td>Indicates if target should be exposed in <code>ValidationError</code>.</td>
   </tr>
   <tr>
     <td><code>validationError.value</code></td>
