@@ -74,10 +74,10 @@ export const ResultUnion = createUnionType({
   types: () => [Author, Book],
   resolveType(value) {
     if (value.name) {
-      return Author;
+      return 'Author';
     }
     if (value.title) {
-      return Book;
+      return 'Book';
     }
     return null;
   },
