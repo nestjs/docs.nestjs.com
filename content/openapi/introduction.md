@@ -21,6 +21,7 @@ $ npm install --save @nestjs/swagger fastify-swagger
 Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
 
 ```typescript
+@@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
