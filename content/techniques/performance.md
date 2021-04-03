@@ -22,6 +22,7 @@ $ npm i --save @nestjs/platform-fastify
 Once the Fastify platform is installed, we can use the `FastifyAdapter`.
 
 ```typescript
+@@filename(main)
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
