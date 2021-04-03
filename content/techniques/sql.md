@@ -851,7 +851,7 @@ Sequelize implements the Active Record pattern. With this pattern, you use model
 import { Column, Model, Table } from 'sequelize-typescript';
 
 @Table
-export class User extends Model<User> {
+export class User extends Model {
   @Column
   firstName: string;
 
@@ -1036,7 +1036,7 @@ import { Column, Model, Table, HasMany } from 'sequelize-typescript';
 import { Photo } from '../photos/photo.model';
 
 @Table
-export class User extends Model<User> {
+export class User extends Model {
   @Column
   firstName: string;
 
