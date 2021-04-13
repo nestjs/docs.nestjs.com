@@ -36,3 +36,9 @@ To learn more, check out these articles: [Socket.io 3 Release](https://socket.io
 #### `@nestjs/config` package
 
 There was a minor breaking change in the `registerAs` function (typings), you can see what has changed in [this PR](https://github.com/nestjs/config/pull/173).
+
+#### `@nestjs/graphql` package
+
+There might be some small differences in how your auto-generated schema file may look like (changed types order). Also, if you use the schema-first approach, the automatically generated type definitions will change as there was a new `Nullable<T>` type introduced in the latest release.
+
+Also, all `HttpException` errors thrown from your resolvers will be now automatically mapped to the corresponding `ApolloError` instances, unless you set the `autoTransformHttpErrors` configuration property (in the options object you pass into the `GraphQLModule#forRoot()` method) to `false`.
