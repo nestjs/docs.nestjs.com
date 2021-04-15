@@ -33,10 +33,10 @@ export class AppModule {}
 To interact with the cache manager instance, inject it to your class using the `CACHE_MANAGER` token, as follows:
 
 ```typescript
-constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+constructor(@Inject(CACHE_MANAGER) private cacheManager: Store) {}
 ```
 
-> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/common` package.
+> info **Hint** The `Store` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/common` package.
 
 The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, an exception will be thrown.
 
