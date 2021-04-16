@@ -814,7 +814,7 @@ The `forRoot()` method supports all the configuration properties exposed by the 
   </tr>
   <tr>
     <td><code>synchronize</code></td>
-    <td>If <code>true</code>, automatically loaded models will be synchronized (default: <code>false</code>)</td>
+    <td>If <code>true</code>, automatically loaded models will be synchronized (default: <code>true</code>)</td>
   </tr>
 </table>
 
