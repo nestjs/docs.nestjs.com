@@ -8,7 +8,7 @@ It is best practice to validate the correctness of any data sent into a web appl
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
 
-The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
+The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package (you need separatedly install it) and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
 #### Overview
 
