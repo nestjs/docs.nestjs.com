@@ -652,13 +652,12 @@ export class AuthorRepository extends Repository<Author> {}
 
 > info **Hint** Both `@EntityRepository()` and `Repository` are imported from the `typeorm` package.
 
-Once the class is created, the next step is to delegate instantiation responsibility to Nest. For this, we have to pass the`AuthorRepository` class to the `TypeOrm.forFeature()` method.
+Once the class is created, the next step is to delegate instantiation responsibility to Nest. For this, we have to pass the`AuthorRepository` class to the providers.
 
 ```typescript
 @Module({
-  imports: [TypeOrmModule.forFeature([AuthorRepository])],
   controller: [AuthorController],
-  providers: [AuthorService],
+  providers: [AuthorService, AuthorRepository],
 })
 export class AuthorModule {}
 ```
