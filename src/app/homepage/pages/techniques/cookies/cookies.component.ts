@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-cookies',
+  selector: 'app-cookies-docs',
   templateUrl: './cookies.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
