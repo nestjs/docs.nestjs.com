@@ -284,6 +284,8 @@ findOne(params) {
 }
 ```
 
+> warning **Warning** In these examples, the returned values serve as a placeholder. To protect parameters from attacks such as XSS (Cross-site scripting) in an application, we can use the built-in [ValidationPipe](https://docs.nestjs.com/techniques/validation#using-the-built-in-validationpipe), applying [explicit conversion](https://docs.nestjs.com/techniques/validation#explicit-conversion) that implicitly transform the query and path parameters based on the expected type.
+
 `@Param()` is used to decorate a method parameter (`params` in the example above), and makes the **route** parameters available as properties of that decorated method parameter inside the body of the method. As seen in the code above, we can access the `id` parameter by referencing `params.id`. You can also pass in a particular parameter token to the decorator, and then reference the route parameter directly by name in the method body.
 
 > info **Hint** Import `Param` from the `@nestjs/common` package.
