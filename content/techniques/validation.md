@@ -254,6 +254,31 @@ findOne(
 
 > info **Hint** The `ParseIntPipe` and `ParseBoolPipe` are exported from the `@nestjs/common` package.
 
+If you are using a class to capture more than one parameter or query you can use the `@Type` decorator from `class-transformer` to transform the inpu
+
+```typescript
+class QueryDTO {
+  @IsBoolean()
+  @Type(() => Boolean)
+  public sort: boolean;
+}
+
+class ParamDTO {
+  @IsInt()
+  @Type(() => Number)
+  public id: number;
+}
+
+
+@Get(':id')
+findOne(
+  @Param() params: ParamDTO,
+  @Query() query: QueryDTO,
+) {
+  return 'This action returns a user';
+}
+```
+
 #### Mapped types
 
 As you build out features like **CRUD** (Create/Read/Update/Delete) it's often useful to construct variants on a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
