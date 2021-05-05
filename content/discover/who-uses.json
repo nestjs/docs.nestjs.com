@@ -186,6 +186,11 @@
       "logo": "/assets/logo/rivvy.png",
       "url": "https://rivvy.app",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/selleo.png",
+      "url": "https://selleo.com",
+      "width": "130px"
     }
   ],
   "Body": [
@@ -243,6 +248,7 @@
     "https://datenlotse.org",
     "https://bemum.co",
     "https://weoptimeye.ai",
-    "https://nemovote.com"
+    "https://nemovote.com",
+    "https://selleo.com"
   ]
 }
