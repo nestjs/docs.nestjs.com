@@ -3,7 +3,7 @@
 A common technique to protect applications from brute-force attacks is **rate-limiting**. To get started, you'll need to install the `@nestjs/throttler` package.
 
 ```bash
-$ npm i --save @nestjs/throttler
+$ npm i @nestjs/throttler
 ```
 
 Once the installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync` methods.
