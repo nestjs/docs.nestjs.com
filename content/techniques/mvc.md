@@ -12,7 +12,7 @@ $ nest new project
 In order to create an MVC app, we also need a [template engine](https://expressjs.com/en/guide/using-template-engines.html) to render our HTML views:
 
 ```bash
-$ npm install --save hbs
+$ npm i hbs
 ```
 
 We've used the `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)) engine, though you can use whatever fits your requirements. Once the installation process is complete, we need to configure the express instance using the following code:

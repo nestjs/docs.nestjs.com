@@ -13,7 +13,7 @@ For integrating with SQL and NoSQL databases, Nest provides the `@nestjs/typeorm
 To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but TypeORM provides support for many relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, SQLite, and even NoSQL databases like MongoDB. The procedure we walk through in this chapter will be the same for any database supported by TypeORM. You'll simply need to install the associated client API libraries for your selected database.
 
 ```bash
-$ npm install --save @nestjs/typeorm typeorm mysql2
+$ npm i @nestjs/typeorm typeorm mysql2
 ```
 
 Once the installation process is complete, we can import the `TypeOrmModule` into the root `AppModule`.
@@ -766,8 +766,8 @@ An alternative to using TypeORM is to use the [Sequelize](https://sequelize.org/
 To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but Sequelize provides support for many relational databases, such as PostgreSQL, MySQL, Microsoft SQL Server, SQLite, and MariaDB. The procedure we walk through in this chapter will be the same for any database supported by Sequelize. You'll simply need to install the associated client API libraries for your selected database.
 
 ```bash
-$ npm install --save @nestjs/sequelize sequelize sequelize-typescript mysql2
-$ npm install --save-dev @types/sequelize
+$ npm i @nestjs/sequelize sequelize sequelize-typescript mysql2
+$ npm i -D @types/sequelize
 ```
 
 Once the installation process is complete, we can import the `SequelizeModule` into the root `AppModule`.

@@ -317,7 +317,7 @@ It is standard practice to throw an exception during application startup if requ
 To use Joi, we must install Joi package:
 
 ```bash
-$ npm install --save joi
+$ npm i joi
 ```
 
 > warning **Notice** The latest version of `joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their 17.0.0 release notes](https://github.com/sideway/joi/issues/2262).

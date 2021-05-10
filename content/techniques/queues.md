@@ -17,8 +17,8 @@ This chapter covers the `@nestjs/bull` package. We also recommend reading the [B
 To begin using it, we first install the required dependencies.
 
 ```bash
-$ npm install --save @nestjs/bull bull
-$ npm install --save-dev @types/bull
+$ npm i @nestjs/bull bull
+$ npm i -D @types/bull
 ```
 
 Once the installation process is complete, we can import the `BullModule` into the root `AppModule`.
