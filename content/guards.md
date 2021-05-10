@@ -142,6 +142,60 @@ export class AppModule {}
 > where the guard (`RolesGuard` in the example above) is defined. Also, `useClass` is not the only way of dealing with
 > custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
+#### Passing data from the Guard to the Controller's handler.
+
+After returning successfully from a guard (doesn't matter if you do it synchronously or using a promise | observable)
+you might want to pass some **data** from the guard to the controller's [handler](/controllers#routing) that is about to be executed.
+In order to achieve that, you can append to the `request` object a new property that contains the **data**. Remember that you can
+get the `request` object using the [Execution Context](/fundamentals/execution-context#current-application-context) parameter which 
+is available in the `canActivate()` method, like the following example:
+
+```typescript
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+
+    //Get the request object.
+    const request = context.switchToHttp().getRequest();
+
+    //Mock token payload.
+    const token_payload = {user_id: 1};
+
+    //Append the request object with the new propery.
+    //Make SURE to give a unique name to the myCustomPropery
+    //in order to not shadow any existing properties.
+    request.myCustomProperty = token_payload;
+
+    //Return true or false.
+    return validateRequest(request);
+  }
+}
+```
+
+Now you can retrieve it by getting the request object using the [@Req() decorator](/controllers#request-object).
+
+```typescript
+import { Controller, Get, Req } from '@nestjs/common';
+import { Request } from 'express';
+
+@Controller('cats')
+export class CatsController {
+  @Get()
+  findAll(@Req() request: Request): string {
+
+    //Get the payload from myCustomPropery.
+    const payload = request.myCustomProperty;
+
+    return 'This action returns all cats';
+  }
+}
+```
+
 #### Setting roles per handler
 
 Our `RolesGuard` is working, but it's not very smart yet. We're not yet taking advantage of the most important guard feature - the [execution context](/fundamentals/execution-context). It doesn't yet know about roles, or which roles are allowed for each handler. The `CatsController`, for example, could have different permission schemes for different routes. Some might be available only for an admin user, and others could be open for everyone. How can we match roles to routes in a flexible and reusable way?
