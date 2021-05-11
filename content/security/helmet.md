@@ -33,14 +33,14 @@ $ npm i --save fastify-helmet
 [fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Plugins/), i.e., by using `app.register()`:
 
 ```typescript
-import * as helmet from 'fastify-helmet';
+import { fastifyHelmet } from 'fastify-helmet';
 // somewhere in your initialization file
-app.register(helmet);
+await app.register(fastifyHelmet);
 ```
 > warning **Warning** When using `apollo-server-fastify` and `fastify-helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) on the GraphQL playground, to solve this collision, configure the CSP as shown below:
 >
 > ```typescript
-> app.register(helmet, {
+> await app.register(fastifyHelmet, {
 >   contentSecurityPolicy: {
 >     directives: {
 >       defaultSrc: [`'self'`],
@@ -53,7 +53,7 @@ app.register(helmet);
 > });
 >
 > // If you are not going to use CSP at all, you can use this:
-> app.register(helmet, {
+> await app.register(fastifyHelmet, {
 >   contentSecurityPolicy: false,
 > });
 > ```
