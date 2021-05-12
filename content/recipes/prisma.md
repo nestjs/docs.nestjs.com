@@ -252,16 +252,15 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy {
+  implements OnModuleInit {
+
   async onModuleInit() {
     await this.$connect();
   }
-
-  async onModuleDestroy() {
-    await this.$disconnect();
-  }
 }
 ```
+
+> info **Note** The `onModuleInit` is optional - if you leave it out, Prisma will connect lazily on first call to db. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. 
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
