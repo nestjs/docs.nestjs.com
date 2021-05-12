@@ -515,6 +515,17 @@ This controller implements the following routes:
 
 - `/post/:id`: Delete a post by its `id`
 
+#### Issues with `enableShutdownHooks`
+
+Prisma interferes with NestJS `enableShutdownHooks` - Prisma listens for shutdown signals and will call process.exit() before your application shutdown hooks fire. To deal with this, you would need to add a listener for Prisma `beforeExit` event. 
+```typescript
+prismaService.$on('beforeExit', async () => {
+  logger.log('Prisma before exit...');
+  await app.close();
+});
+```
+
+
 #### Summary
 
 In this recipe, you learned how to use Prisma along with NestJS to implement a REST API. The controller that implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
