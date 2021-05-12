@@ -180,9 +180,11 @@ export class AuthGuard implements CanActivate {
 Now you can retrieve it by getting the request object using the [@Req() decorator](/controllers#request-object).
 
 ```typescript
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
+import { AuthGuard } from 'src/auth-guard/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('cats')
 export class CatsController {
   @Get()
