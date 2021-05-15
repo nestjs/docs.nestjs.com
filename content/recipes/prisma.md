@@ -257,10 +257,16 @@ export class PrismaService extends PrismaClient
   async onModuleInit() {
     await this.$connect();
   }
+
+  async enableShutdownHooks(app) {
+    this.$on('beforeExit', async () => {
+      await app.close();
+    });    
+  }
 }
 ```
 
-> info **Note** The `onModuleInit` is optional - if you leave it out, Prisma will connect lazily on first call to db. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection.
+> info **Note** The `onModuleInit` is optional - if you leave it out, Prisma will connect lazily on first call to db. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. For more info on `enableShutdownHooks`, please see [Issues with `enableShutdownHooks`](#issues-with-enableShutdownHooks)
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
@@ -527,11 +533,7 @@ import { PrismaService } from './services/prisma/prisma.service';
 bootstrap() {
   ...
   const prismaService: PrismaService = app.get(PrismaService);
-
-  prismaService.$on('beforeExit', async () => {
-    logger.log('Prisma before exit...');
-    await app.close();
-  });
+  prismaService.enableShutdownHooks(app)
   ...
 }
 ```
