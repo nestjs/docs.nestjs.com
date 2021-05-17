@@ -247,7 +247,7 @@ When setting up your NestJS application, you'll want to abstract away the Prisma
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { INestApplication, Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -258,7 +258,7 @@ export class PrismaService extends PrismaClient
     await this.$connect();
   }
 
-  async enableShutdownHooks(app) {
+  async enableShutdownHooks(app: INestApplication) {
     this.$on('beforeExit', async () => {
       await app.close();
     });    
