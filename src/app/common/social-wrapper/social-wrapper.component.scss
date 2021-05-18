@@ -5,6 +5,7 @@
   float: right;
   padding-right: 40px;
   position: relative;
+  display: flex;
 
   a {
     @extend .transition-fast;
