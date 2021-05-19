@@ -41,7 +41,7 @@ constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, an exception will be thrown.
 
 ```typescript
-const value = this.cacheManager.get('key');
+const value = await this.cacheManager.get('key');
 ```
 
 To add an item to the cache, use the `set` method:
