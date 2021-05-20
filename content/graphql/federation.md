@@ -399,8 +399,8 @@ class BuildServiceModule {}
           ],
         },
         server: {
-          context: ({ req }) => ({
-            jwt: req.headers.authorization,
+          context: ({ request }) => ({
+            jwt: request.headers.authorization,
           }),
         },
       }),
