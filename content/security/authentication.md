@@ -956,7 +956,7 @@ In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quic
 export class GqlAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    return { body: ctx.getArgs() };
   }
 }
 ```
