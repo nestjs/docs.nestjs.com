@@ -19,7 +19,7 @@ The standalone application object allows you to obtain a reference to any instan
 
 ```typescript
 @@filename()
-const app = await NestFactory.create(AppModule);
+const app = await NestFactory.createApplicationContext(AppModule);
 const tasksService = app.get(TasksService);
 ```
 
@@ -27,7 +27,7 @@ To access the `TasksService` instance we use the `get()` method. The `get()` met
 
 ```typescript
 @@filename()
-const app = await NestFactory.create(AppModule);
+const app = await NestFactory.createApplicationContext(AppModule);
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
