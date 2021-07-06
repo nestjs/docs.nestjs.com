@@ -41,3 +41,7 @@ Scope [<module_import_chain>]
 ```
 
 Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on circular dependencies and make sure that both the modules **and** the providers are marked with `forwardRef`.
+
+#### "Sequqlize & Sequlelize-typescript compatibilty issue" error
+
+If you are using Sequqlize-typescript and installed version of sequelize is 6.6.5 then you might see an error while defining your model. To solve this, install sequelize version 6.6.2
