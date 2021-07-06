@@ -56,6 +56,24 @@ handleEvent(data) {
 
 > info **Hint** `@SubscribeMessage()` and `@MessageBody()` decorators are imported from `@nestjs/websockets` package.
 
+You can also use a key to extract a property from the message body.
+
+```typescript
+@SubscribeMessage('events')
+handleEvent(@MessageBody('token') data: { token: string }): string {
+  return data; // data is token
+}
+```
+
+This can be used in combination with a pipe to give a robust way to validate the body object.
+
+```typescript
+@SubscribeMessage('events')
+handleEvent(@MessageBody('token', new ValidationPipe()) data: { token: string }): string {
+  return data;
+}
+```
+
 If you would prefer not to use decorators, the following code is functionally equivalent:
 
 ```typescript
@@ -105,7 +123,7 @@ socket.emit('events', { name: 'Nest' });
 The `handleEvent()` method will be executed. In order to listen for messages emitted from within the above handler, the client has to attach a corresponding acknowledgment listener:
 
 ```typescript
-socket.emit('events', { name: 'Nest' }, data => console.log(data));
+socket.emit('events', { name: 'Nest' }, (data) => console.log(data));
 ```
 
 #### Multiple responses
@@ -135,7 +153,7 @@ handleEvent(data) {
 In order to listen for the incoming response(s), the client has to apply another event listener.
 
 ```typescript
-socket.on('events', data => console.log(data));
+socket.on('events', (data) => console.log(data));
 ```
 
 #### Asynchronous responses
