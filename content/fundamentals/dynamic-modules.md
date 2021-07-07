@@ -159,7 +159,7 @@ It should now be clear how the pieces tie together. Calling `ConfigModule.regist
 
 Our dynamic module isn't very interesting yet, however, as we haven't introduced any capability to **configure** it as we said we would like to do. Let's address that next.
 
-### Module configuration
+#### Module configuration
 
 The obvious solution for customizing the behavior of the `ConfigModule` is to pass it an `options` object in the static `register()` method, as we guessed above. Let's look once again at our consuming module's `imports` property:
 

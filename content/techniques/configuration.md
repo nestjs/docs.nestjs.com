@@ -224,15 +224,23 @@ interface EnvironmentVariables {
 
 // somewhere in the code
 constructor(private configService: ConfigService<EnvironmentVariables>) {
-  // this is valid
-  const port = this.configService.get<number>('PORT');
+  const port = this.configService.get('PORT', { infer: true });
 
-  // this is invalid as URL is not a property on the EnvironmentVariables interface
-  const url = this.configService.get<string>('URL');
+  // Error: this is invalid as the URL property is not defined
+  const url = this.configService.get('URL', { infer: true });
 }
 ```
 
-> warning **Notice** If you have nested properties in your config, like in the `database.host` example above, the interface must have a matching `'database.host': string;` property. Otherwise a TypeScript error will be thrown.
+With the `infer` property set to `true`, the `ConfigService#get` method will automatically infer the property type based on the interface, so for example, `typeof port === "number"` since `PORT` has a `number` type in the `EnvironmentVariables` interface.
+
+Also, with the `infer` feature, you can infer the type of a nested custom configuration object's property, even when using dot notation, as follows:
+
+```typescript
+constructor(private configService: ConfigService<{ database: { host: string } }>) {
+  const dbHost = this.configService.get('database.host', { infer: true });
+  // typeof dbHost === "string"
+}
+```
 
 #### Configuration namespaces
 

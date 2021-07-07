@@ -43,7 +43,7 @@ export class RedisIoAdapter extends IoAdapter {
   createIOServer(port: number, options?: any): any {
     const server = super.createIOServer(port, options);
     const redisAdapter = redisIoAdapter({ host: 'localhost', port: 6379 });
-    
+
     server.adapter(redisAdapter);
     return server;
   }
@@ -60,6 +60,8 @@ app.useWebSocketAdapter(new RedisIoAdapter(app));
 #### Ws library
 
 Another available adapter is a `WsAdapter` which in turn acts like a proxy between the framework and integrate blazing fast and thoroughly tested [ws](https://github.com/websockets/ws) library. This adapter is fully compatible with native browser WebSockets and is far faster than socket.io package. Unluckily, it has significantly fewer functionalities available out-of-the-box. In some cases, you may just don't necessarily need them though.
+
+> info **Hint** `ws` library does not support namespaces (communication channels popularised by `socket.io`). However, to somehow mimic this feature, you can mount multiple `ws` servers on different paths (example: `@WebSocketGateway({{ '{' }} path: '/users' {{ '}' }})`).
 
 In order to use `ws`, we firstly have to install the required package:
 

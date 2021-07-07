@@ -12,6 +12,7 @@ import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
+import { RouterModuleComponent } from './router-module/router-module.component';
 
 const routes: Routes = [
   {
@@ -74,7 +75,12 @@ const routes: Routes = [
   {
     path: 'serve-static',
     component: ServeStaticComponent,
-    data: { title: 'Serve Static' },
+    data: { title: 'Serve static' },
+  },
+  {
+    path: 'router-module',
+    component: RouterModuleComponent,
+    data: { title: 'Router module' },
   },
 ];
 
@@ -90,6 +96,7 @@ const routes: Routes = [
     TerminusComponent,
     DocumentationComponent,
     CrudGeneratorComponent,
+    RouterModuleComponent,
     ServeStaticComponent,
   ],
 })

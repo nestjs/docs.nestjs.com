@@ -100,8 +100,6 @@ $ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader run-scri
 
 Once the installation is complete, create a `webpack.config.js` file in the root directory of your application.
 
-##### With NPM or Yarn classic
-
 ```typescript
 const webpack = require('webpack');
 const path = require('path');
@@ -179,6 +177,6 @@ $ npm run start:dev
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
 
-### TypeORM
+#### TypeORM
 
 If you're using `@nestjs/typeorm`, you'll need to add `keepConnectionAlive: true` to your TypeORM configuration.

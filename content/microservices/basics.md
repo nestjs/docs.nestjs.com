@@ -181,6 +181,8 @@ async handleUserCreated(data) {
 }
 ```
 
+> info **Hint** You can register multiple event handlers for a **single** event pattern and all of them will be automatically triggered in parallel.
+
 The `handleUserCreated()` **event handler** listens for the `'user_created'` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
 
 <app-banner-enterprise></app-banner-enterprise>
@@ -206,6 +208,8 @@ getDate(data, context) {
 ```
 
 > info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from `@nestjs/microservices`.
+
+> info **Hint** You can also pass in a property key to the `@Payload()` decorator to extract a specific property from the incoming payload object, for example, `@Payload('id')`.
 
 #### Client
 

@@ -96,13 +96,14 @@ export class AppModule {}
 > warning **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
 
 > info **Hint** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied. Luckily, TypeORM provides the [`getConnectionOptions`](https://typeorm.io/#/using-ormconfig/overriding-options-defined-in-ormconfig) function that reads connection options from the `ormconfig` file or environment variables. With this, you can still use the configuration file and set Nest-specific options, as follows:
+>
 > ```typescript
 > TypeOrmModule.forRootAsync({
 >   useFactory: async () =>
 >     Object.assign(await getConnectionOptions(), {
 >       autoLoadEntities: true,
 >     }),
-> })
+> });
 > ```
 
 Once this is done, the TypeORM `Connection` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
@@ -293,7 +294,7 @@ import { UsersController } from './users.controller';
 export class UserHttpModule {}
 ```
 
-### Relations
+#### Relations
 
 Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
 
@@ -1007,7 +1008,7 @@ import { UsersController } from './users.controller';
 export class UserHttpModule {}
 ```
 
-### Relations
+#### Relations
 
 Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
 

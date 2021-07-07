@@ -18,8 +18,10 @@ import { SerializationComponent } from './serialization/serialization.component'
 import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
 import { SessionComponent } from './sessions/sessions.component';
 import { SqlComponent } from './sql/sql.component';
+import { StreamingFilesComponent } from './streaming-files/streaming-files.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
+import { VersioningComponent } from './versioning/versioning.component';
 
 const routes: Routes = [
   {
@@ -64,6 +66,11 @@ const routes: Routes = [
     path: 'file-upload',
     component: FileUploadComponent,
     data: { title: 'File upload' },
+  },
+  {
+    path: 'streaming-files',
+    component: StreamingFilesComponent,
+    data: { title: 'Streaming Files' },
   },
   {
     path: 'logger',
@@ -119,6 +126,11 @@ const routes: Routes = [
     data: { title: 'Server-Sent Events' },
   },
   {
+    path: 'versioning',
+    component: VersioningComponent,
+    data: { title: 'Versioning' },
+  },
+  {
     path: 'events',
     component: EventsComponent,
     data: { title: 'Events' },
@@ -145,12 +157,14 @@ const routes: Routes = [
     HttpModuleComponent,
     ConfigurationComponent,
     CompressionComponent,
+    VersioningComponent,
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
     ServerSentEventsComponent,
     SessionComponent,
     CookiesComponent,
+    StreamingFilesComponent,
   ],
 })
 export class TechniquesModule {}
