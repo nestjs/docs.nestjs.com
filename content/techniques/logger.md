@@ -184,13 +184,13 @@ This should be suitable for most cases. But if you need more customization (like
 
 #### Injecting a custom logger
 
-To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `Logger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `Logger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
+To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `ConsoleLogger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `ConsoleLogger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
 
 ```typescript
-import { Injectable, Scope, Logger } from '@nestjs/common';
+import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class MyLogger extends Logger {
+export class MyLogger extends ConsoleLogger {
   customLog() {
     this.log('Please feed the cat!');
   }
