@@ -32,14 +32,14 @@ nest new my-project
 We've constructed a _standard mode_ structure, with a folder structure that looks like this:
 
 <div class="file-tree">
+  <div class="item">node_modules</div>
   <div class="item">src</div>
   <div class="children">
     <div class="item">app.controller.ts</div>
-    <div class="item">app.service.ts</div>
     <div class="item">app.module.ts</div>
+    <div class="item">app.service.ts</div>
     <div class="item">main.ts</div>
   </div>
-  <div class="item">node_modules</div>
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
@@ -63,8 +63,8 @@ At this point, `nest` converts the existing structure to a **monorepo mode** str
         <div class="item">src</div>
         <div class="children">
           <div class="item">app.controller.ts</div>
-          <div class="item">app.service.ts</div>
           <div class="item">app.module.ts</div>
+          <div class="item">app.service.ts</div>
           <div class="item">main.ts</div>
         </div>
         <div class="item">tsconfig.app.json</div>
@@ -74,8 +74,8 @@ At this point, `nest` converts the existing structure to a **monorepo mode** str
         <div class="item">src</div>
         <div class="children">
           <div class="item">app.controller.ts</div>
-          <div class="item">app.service.ts</div>
           <div class="item">app.module.ts</div>
+          <div class="item">app.service.ts</div>
           <div class="item">main.ts</div>
         </div>
         <div class="item">tsconfig.app.json</div>

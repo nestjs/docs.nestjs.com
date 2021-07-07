@@ -169,7 +169,7 @@ module.exports.factory = (cs) => {
     {
       // @nestjs/graphql/plugin options (can be empty)
     },
-    cs.tsCompiler.program,
+    cs.program, // "cs.tsCompiler.program" for older versions of Jest (<= v27)
   );
 };
 ```

@@ -818,7 +818,7 @@ export class JwtAuthGuard extends AuthGuard(['strategy_jwt_1', 'strategy_jwt_2',
 
 #### Enable authentication globally
 
-If the vast of your endpoints should be protected by default, you can register the authentication guard as a [global guard](/guards#binding-guards) and instead of using `@UseGuards()` decorator on top of each controller, you could simply flag which routes should be public.
+If the vast majority of your endpoints should be protected by default, you can register the authentication guard as a [global guard](/guards#binding-guards) and instead of using `@UseGuards()` decorator on top of each controller, you could simply flag which routes should be public.
 
 First, register the `JwtAuthGuard` as a global guard using the following construction (in any module):
 

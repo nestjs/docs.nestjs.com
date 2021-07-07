@@ -68,7 +68,7 @@ export class WsThrottlerGuard extends ThrottlerGuard {
 
 #### GraphQL
 
-The `ThrottlerGuard` can also be used to work with GraphQL requests. Again, the guard can be extended, but this tme the `getRequestResponse` method will be overridden
+The `ThrottlerGuard` can also be used to work with GraphQL requests. Again, the guard can be extended, but this time the `getRequestResponse` method will be overridden
 
 ```typescript
 @Injectable()

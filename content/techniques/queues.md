@@ -223,7 +223,7 @@ export class AudioConsumer {
     for (i = 0; i < 100; i++) {
       await doSomething(job.data);
       progress += 10;
-      job.progress(progress);
+      await job.progress(progress);
     }
     return {};
   }
@@ -442,12 +442,12 @@ BullModule.forRootAsync({
 });
 ```
 
-The construction above will instantiate `BullConfigService` inside `BullModule` and use it to provide an options object by calling `createBullOptions()`. Note that this means that the `BullConfigService` has to implement the `BullOptionsFactory` interface, as shown below:
+The construction above will instantiate `BullConfigService` inside `BullModule` and use it to provide an options object by calling `createSharedConfiguration()`. Note that this means that the `BullConfigService` has to implement the `SharedBullConfigurationFactory` interface, as shown below:
 
 ```typescript
 @Injectable()
-class BullConfigService implements BullOptionsFactory {
-  createBullOptions(): BullModuleOptions {
+class BullConfigService implements SharedBullConfigurationFactory {
+  createSharedConfiguration(): SharedBullConfigurationFactory {
     return {
       redis: {
         host: 'localhost',

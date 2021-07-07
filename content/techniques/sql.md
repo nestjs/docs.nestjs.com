@@ -815,7 +815,7 @@ The `forRoot()` method supports all the configuration properties exposed by the 
   </tr>
   <tr>
     <td><code>synchronize</code></td>
-    <td>If <code>true</code>, automatically loaded models will be synchronized (default: <code>false</code>)</td>
+    <td>If <code>true</code>, automatically loaded models will be synchronized (default: <code>true</code>)</td>
   </tr>
 </table>
 
@@ -852,7 +852,7 @@ Sequelize implements the Active Record pattern. With this pattern, you use model
 import { Column, Model, Table } from 'sequelize-typescript';
 
 @Table
-export class User extends Model<User> {
+export class User extends Model {
   @Column
   firstName: string;
 
@@ -1037,7 +1037,7 @@ import { Column, Model, Table, HasMany } from 'sequelize-typescript';
 import { Photo } from '../photos/photo.model';
 
 @Table
-export class User extends Model<User> {
+export class User extends Model {
   @Column
   firstName: string;
 

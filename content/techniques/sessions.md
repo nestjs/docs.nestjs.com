@@ -42,7 +42,7 @@ With this in place, you can now set and read session values from within the rout
 ```typescript
 @Get()
 findAll(@Req() request: Request) {
-  req.session.visits = req.session.visits ? req.session.visits + 1 : 1;
+  request.session.visits = request.session.visits ? request.session.visits + 1 : 1;
 }
 ```
 

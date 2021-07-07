@@ -21,13 +21,13 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-The `project` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
+The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
 
 <div class="file-tree">
   <div class="item">src</div>
   <div class="children">
-    <div class="item">app.controller.ts</div>
     <div class="item">app.controller.spec.ts</div>
+    <div class="item">app.controller.ts</div>
     <div class="item">app.module.ts</div>
     <div class="item">app.service.ts</div>
     <div class="item">main.ts</div>

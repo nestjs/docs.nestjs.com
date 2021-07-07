@@ -74,7 +74,7 @@ get fullName(): string {
 You can perform additional data transformation using the `@Transform()` decorator. For example, the following construct returns the name property of the `RoleEntity` instead of returning the whole object.
 
 ```typescript
-@Transform(role => role.name)
+@Transform(({ value }) => value.name)
 role: RoleEntity;
 ```
 

@@ -1,6 +1,6 @@
 ### Providers
 
-Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can **inject** dependencies; this means objects can create various relationships with each other, and the function of "wiring up" instances of objects can largely be delegated to the Nest runtime system.
+Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can be **injected** as dependency; this means objects can create various relationships with each other, and the function of "wiring up" instances of objects can largely be delegated to the Nest runtime system.
 
 <figure><img src="/assets/Components_1.png" /></figure>
 
@@ -197,8 +197,8 @@ This is how our directory structure should look now:
 <div class="children">
 <div class="item">cat.interface.ts</div>
 </div>
-<div class="item">cats.service.ts</div>
 <div class="item">cats.controller.ts</div>
+<div class="item">cats.service.ts</div>
 </div>
 <div class="item">app.module.ts</div>
 <div class="item">main.ts</div>
