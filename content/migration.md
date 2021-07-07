@@ -33,6 +33,24 @@ Instead, simply use the `listen()` and `startAllMicroservices()` methods (they a
 The `@nestjs/platform-socket.io` package was upgraded to use the `socket.io@4.x.x` version (Nest v7 was based on the `socket.io` v2).
 To learn more, check out these articles: [Socket.io 3 Release](https://socket.io/blog/socket-io-3-release/) and [Socket.io 4 Release](https://socket.io/blog/socket-io-4-release/).
 
+
+#### Logger breaking changes
+
+For better extensibility, we separated out the `Logger` and `ConsoleLogger` classes ([PR](https://github.com/nestjs/nest/pull/6221), learn more in the [Logging](/techniques/logging) chapter). If your application uses a custom logger class that extends the built-in `Logger`, you should update it to extend the `ConsoleLogger` now.
+
+Before:
+
+```typescript
+export class MyLogger extends Logger {}
+```
+
+Now:
+
+```typescript
+export class MyLogger extends ConsoleLogger {}
+```
+
+
 #### `@nestjs/config` package
 
 There was a minor breaking change in the `registerAs` function (typings), you can see what has changed in [this PR](https://github.com/nestjs/config/pull/173).
