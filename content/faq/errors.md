@@ -44,4 +44,16 @@ Circular dependencies can arise from both providers depending on each other, or 
 
 #### "Sequqlize & Sequlelize-typescript compatibilty issue" error
 
-If you are using Sequqlize-typescript and installed version of sequelize is 6.6.5 then you might see an error while defining your model. To solve this, install sequelize version 6.6.2
+If you are using Sequqlize-typescript and installed version of sequelize is 6.6.5 then you might see an error while defining your model.
+You will see error similar to this one:
+```
+node_modules/sequelize-typescript/dist/model/model/model.d.ts:10:31 - error TS2417: Class static side 'typeof import("D:/project-folder/node_modules/sequelize-typescript/dist/model/model/model").Model' incorrectly extends base class static side 'typeof import("D:/project-folder/node_modules/sequelize/types/lib/model").Model'.
+  The types returned by 'init(...)' are incompatible between these types.
+    Type 'Model<any, any>' is not assignable to type 'MS'.
+      'MS' could be instantiated with an arbitrary type which could be unrelated to 'Model<any, any>'.
+```
+This error is because of compatibility issue between sequelize & sequelize-typescript. You will have to wait until either of the package mainters fix this issue.
+Meanwhile, to solve this, install sequelize version 6.6.2.
+```
+npm i sequelize@6.6.2
+```
