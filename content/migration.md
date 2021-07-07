@@ -39,6 +39,10 @@ There was a minor breaking change in the `registerAs` function (typings), you ca
 
 #### `@nestjs/graphql` package
 
-There might be some small differences in how your auto-generated schema file may look like (changed types order). Also, if you use the schema-first approach, the automatically generated type definitions will change as there was a new `Nullable<T>` type introduced in the latest release.
+There might be some small differences in how your auto-generated schema file looks like (changed types order). Also, if you use the schema-first approach, the automatically generated type definitions will change as there was a new `Nullable<T>` type introduced in the latest release.
 
 Also, all `HttpException` errors thrown from your resolvers will be now automatically mapped to the corresponding `ApolloError` instances, unless you set the `autoTransformHttpErrors` configuration property (in the options object you pass into the `GraphQLModule#forRoot()` method) to `false`.
+
+#### RxJS
+
+Make sure to upgrade to the latest version of the `rxjs` package (v7).
