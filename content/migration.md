@@ -36,7 +36,7 @@ To learn more, check out these articles: [Socket.io 3 Release](https://socket.io
 
 #### Logger breaking changes
 
-For better extensibility, we separated out the `Logger` and `ConsoleLogger` classes ([PR](https://github.com/nestjs/nest/pull/6221), learn more in the [Logging](/techniques/logging) chapter). If your application uses a custom logger class that extends the built-in `Logger`, you should update it to extend the `ConsoleLogger` now.
+For better extensibility, we separated out the `Logger` and `ConsoleLogger` classes ([PR](https://github.com/nestjs/nest/pull/6221), learn more in the [Logging](/techniques/logger) chapter). If your application uses a custom logger class that extends the built-in `Logger`, you should update it to extend the `ConsoleLogger` now.
 
 Before:
 
