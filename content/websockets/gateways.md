@@ -15,7 +15,6 @@ To start building WebSockets-based applications, first install the required pack
 ```bash
 @@filename()
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
-$ npm i --save-dev @types/socket.io
 @@switch
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 ```
