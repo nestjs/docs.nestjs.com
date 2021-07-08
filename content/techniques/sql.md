@@ -754,6 +754,39 @@ This construction works the same as `useClass` with one critical difference - `T
 
 > info **Hint** Make sure that the `name` property is defined at the same level as the `useFactory`, `useClass`, or `useValue` property. This will allow Nest to properly register the connection under the appropriate injection token.
 
+#### Custom Connection Factory
+
+In conjunction with async configuration using `useFactory`, `useClass`, or `useExisting`, you can optionally specify a `connectionFactory` function which will allow you to provide your own TypeORM connection rather than allowing `TypeOrmModule` to create the connection.
+
+`connectionFactory` receives the TypeORM `ConnectionOptions` configured during async configuration using `useFactory`, `useClass`, or `useExisting` and returns a `Promise` that resolves a TypeORM `Connection`.
+
+```typescript
+TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  // Use useFactory, useClass, or useExisting
+  // to configure the ConnectionOptions.
+  useFactory: (configService: ConfigService) => ({
+    type: 'mysql',
+    host: configService.get('HOST'),
+    port: +configService.get<number>('PORT'),
+    username: configService.get('USERNAME'),
+    password: configService.get('PASSWORD'),
+    database: configService.get('DATABASE'),
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: true,
+  }),
+  // connectionFactory receives the configured ConnectionOptions
+  // and returns a Promise<Connection>.
+  connectionFactory: async (options) => {
+    const connection = await createConnection(options);
+    return connection;
+  },
+});
+```
+
+> info **Hint** The `createConnection` function is imported from the `typeorm` package.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm).
