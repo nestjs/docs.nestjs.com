@@ -375,7 +375,7 @@ In addition, the `ParseArrayPipe` may come in handy when parsing query parameter
 ```typescript
 @Get()
 findByIds(
-  @Query('id', new ParseArrayPipe({ items: Number, separator: ',' }))
+  @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
   ids: number[],
 ) {
   return 'This action returns users by ids';
