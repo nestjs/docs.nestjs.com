@@ -110,14 +110,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);
 
-  @Cron(CronExpression.EVERY_45_SECONDS)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   handleCron() {
-    this.logger.debug('Called every 45 seconds');
+    this.logger.debug('Called every 30 seconds');
   }
 }
 ```
 
-In this example, the `handleCron()` method will be called every `45` seconds.
+In this example, the `handleCron()` method will be called every `30` seconds.
 
 Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator. Doing so causes the job to execute exactly once, at the specified date.
 
