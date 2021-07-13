@@ -7,7 +7,7 @@
 To start building NATS-based microservices, first install the required package:
 
 ```bash
-$ npm i --save nats@^1.4.12
+$ npm i --save nats
 ```
 
 #### Overview
