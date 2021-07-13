@@ -19,14 +19,14 @@ To use the NATS transporter, pass the following options object to the `createMic
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.NATS,
   options: {
-    url: 'nats://localhost:4222',
+    servers: ['nats://localhost:4222'],
   },
 });
 @@switch
 const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
-    url: 'nats://localhost:4222',
+     servers: ['nats://localhost:4222'],
   },
 });
 ```
@@ -52,7 +52,7 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
         name: 'MATH_SERVICE',
         transport: Transport.NATS,
         options: {
-          url: 'nats://localhost:4222',
+          servers: ['nats://localhost:4222'],
         }
       },
     ]),
@@ -80,7 +80,7 @@ NATS provides a built-in load balancing feature called [distributed queues](http
 const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
-    url: 'nats://localhost:4222',
+    servers: ['nats://localhost:4222'],
     queue: 'cats_queue',
   },
 });
