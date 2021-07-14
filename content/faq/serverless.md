@@ -2,7 +2,7 @@
 
 Serverless computing is a cloud computing execution model in which the cloud provider allocates machine resources on-demand, taking care of the servers on behalf of their customers. When an app is not in use, there are no computing resources allocated to the app. Pricing is based on the actual amount of resources consumed by an application ([source](https://en.wikipedia.org/wiki/Serverless_computing)).
 
-With a **serverless architecture**, you focus purely on the individual functions in your application code. Services such AWS Lambda, Google Cloud Functions, and Microsoft Azure Functions take care of all the physical hardware, virtual machine operating system, and web server software management.
+With a **serverless architecture**, you focus purely on the individual functions in your application code. Services such as AWS Lambda, Google Cloud Functions, and Microsoft Azure Functions take care of all the physical hardware, virtual machine operating system, and web server software management.
 
 > info **Hint** This chapter does not cover the pros and cons of serverless functions nor dives into the specifics of any cloud providers.
 
