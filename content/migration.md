@@ -16,8 +16,27 @@ With Nest v8, you should use the `@grpc/grpc-js` library instead.
 #### NATS strategy
 
 NATS has released a new major version (2.0) which has many changes and it is not API compatible with `nats@1.x.x`.
-If you interact with a Nest microservice (that uses NATS as a transfer layer), from a service written in a different framework, please, see their [migration document](https://github.com/nats-io/nats.js/blob/master/migration.md) to learn what's changed in v2.
-Otherwise, you should not see any specific differences when communicating from one Nest microservice and another (although we use v2 now, there are no API differences - just make sure to upgrade the `nats` package: `npm i nats@latest`).
+If you interact with a Nest microservice (that uses NATS as a transfer layer), from a service written in a different framework, please, see their [migration document](https://github.com/nats-io/nats.js/blob/master/migration.md) to learn what's changed in v2. Otherwise, you should not see any major differences when communicating between Nest microservices.
+
+To upgrade, make sure to install the latest version of the `nats` package (`npm i nats@latest`). Also, update your [NATS configuration](https://github.com/nats-io/nats.js/blob/master/migration.md#changed-configuration-properties). Example:
+
+```typescript
+// Before
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.NATS,
+  options: {
+    url: 'nats://localhost:4222',
+  },
+});
+
+// Now
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.NATS,
+  options: {
+    servers: ['nats://localhost:4222'],
+  },
+});
+```
 
 #### `@All()` decorator
 
