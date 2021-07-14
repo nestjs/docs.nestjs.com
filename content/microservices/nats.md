@@ -26,7 +26,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
 const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
-     servers: ['nats://localhost:4222'],
+    servers: ['nats://localhost:4222'],
   },
 });
 ```
