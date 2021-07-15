@@ -9,7 +9,7 @@ In this chapter, we assume a basic understanding of GraphQL, and focus on how to
 Start by installing the required packages:
 
 ```bash
-$ npm i @nestjs/graphql graphql-tools graphql apollo-server-express
+$ npm i @nestjs/graphql graphql-tools graphql apollo-server-express@2.x.x
 ```
 > info **Hint** If using Fastify, instead of installing `apollo-server-express`, you should install `apollo-server-fastify`.
 
