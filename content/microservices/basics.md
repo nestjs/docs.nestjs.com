@@ -33,7 +33,7 @@ async function bootstrap() {
       transport: Transport.TCP,
     },
   );
-  app.listen(() => console.log('Microservice is listening'));
+  app.listen();
 }
 bootstrap();
 @@switch
