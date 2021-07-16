@@ -139,6 +139,7 @@ export class MenuComponent implements OnInit {
         { title: 'Unions and Enums', path: '/graphql/unions-and-enums' },
         { title: 'Field middleware', path: '/graphql/field-middleware' },
         { title: 'Mapped types', path: '/graphql/mapped-types' },
+        { title: 'Sharing Models', path: '/graphql/sharing-models' },
         { title: 'Complexity', path: '/graphql/complexity' },
         { title: 'Extensions', path: '/graphql/extensions' },
         { title: 'CLI Plugin', path: '/graphql/cli-plugin' },

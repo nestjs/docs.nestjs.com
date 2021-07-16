@@ -17,6 +17,7 @@ import { QuickStartComponent } from './quick-start/quick-start.component';
 import { ResolversMapComponent } from './resolvers-map/resolvers-map.component';
 import { ScalarsComponent } from './scalars/scalars.component';
 import { SchemaGeneratorComponent } from './schema-generator/schema-generator.component';
+import { SharingModelsComponent } from "./sharing-models/sharing-models.component";
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { UnionsAndEnumsComponent } from './unions-and-enums/unions.component';
 
@@ -112,6 +113,11 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Interfaces' },
   },
   {
+    path: 'sharing-models',
+    component: SharingModelsComponent,
+    data: { title: "GraphQL + TypeScript - Sharing models"}
+  },
+  {
     path: 'mapped-types',
     component: MappedTypesComponent,
     data: { title: 'GraphQL + TypeScript - Mapped types' },
@@ -142,6 +148,7 @@ const routes: Routes = [
     ScalarsComponent,
     SchemaGeneratorComponent,
     MappedTypesComponent,
+    SharingModelsComponent,
     CliPluginComponent,
     FederationComponent,
     ComplexityComponent,
