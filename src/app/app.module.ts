@@ -35,6 +35,7 @@ import { BasePageComponent } from './homepage/pages/page/page.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { SharedModule } from './shared/shared.module';
+import { DarkModeToggleComponent } from './homepage/dark-mode-toggle/dark-mode-toggle.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -77,6 +78,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     EnterpriseComponent,
     SocialWrapperComponent,
     NewsletterComponent,
+    DarkModeToggleComponent,
   ],
   bootstrap: [AppComponent],
   providers: [
