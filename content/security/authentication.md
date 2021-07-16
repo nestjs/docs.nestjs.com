@@ -499,7 +499,7 @@ import { jwtConstants } from './constants';
     }),
   ],
   providers: [AuthService, LocalStrategy],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService],
 })
 export class AuthModule {}
 @@switch
