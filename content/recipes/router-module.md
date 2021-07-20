@@ -13,6 +13,7 @@ In such a case, instead of repeating the `/dashboard` prefix within each control
 ```typescript
 @Module({
   imports: [
+    DashboardModule,
     RouterModule.register([
       {
         path: 'dashboard',
@@ -23,6 +24,8 @@ In such a case, instead of repeating the `/dashboard` prefix within each control
 })
 export class AppModule {}
 ```
+
+Next we set the `dashboard` route in the controller decorator like this `@Controller ('dashboard')`.
 
 > info **Hint** The `RouterModule` class is exported from the `@nestjs/core` package.
 
