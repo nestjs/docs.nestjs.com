@@ -13,6 +13,7 @@ In such a case, instead of repeating the `/dashboard` prefix within each control
 ```typescript
 @Module({
   imports: [
+    DashboardModule,
     RouterModule.register([
       {
         path: 'dashboard',
