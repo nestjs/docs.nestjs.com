@@ -25,8 +25,6 @@ In such a case, instead of repeating the `/dashboard` prefix within each control
 export class AppModule {}
 ```
 
-Next we set the `dashboard` route in the controller decorator like this `@Controller('dashboard')`.
-
 > info **Hint** The `RouterModule` class is exported from the `@nestjs/core` package.
 
 In addition, you can define hierarchical structures. This means each module can have `children` modules.
