@@ -16,6 +16,12 @@ In the [Pipes](/pipes) chapter, we went through the process of building simple p
 
 #### Using the built-in ValidationPipe
 
+To begin using it, we first install the required dependency.
+
+```bash
+$ npm i --save class-validator class-transformer
+```
+
 > info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
 
 Because this pipe uses the `class-validator` and `class-transformer` libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
