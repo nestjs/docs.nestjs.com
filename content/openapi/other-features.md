@@ -25,6 +25,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { CatsModule } from './cats/cats.module';
+import { DogsModule } from './dogs/dogs.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
