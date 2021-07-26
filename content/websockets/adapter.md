@@ -37,13 +37,17 @@ Once the package is installed, we can create a `RedisIoAdapter` class.
 
 ```typescript
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import * as redisIoAdapter from 'socket.io-redis';
+import { RedisClient } from 'redis';
+import { ServerOptions } from 'socket.io';
+import { createAdapter } from 'socket.io-redis';
+
+const pubClient = new RedisClient({ host: 'localhost', port: 6379 });
+const subClient = pubClient.duplicate();
+const redisAdapter = createAdapter({ pubClient, subClient });
 
 export class RedisIoAdapter extends IoAdapter {
-  createIOServer(port: number, options?: any): any {
+  createIOServer(port: number, options?: ServerOptions): any {
     const server = super.createIOServer(port, options);
-    const redisAdapter = redisIoAdapter({ host: 'localhost', port: 6379 });
-
     server.adapter(redisAdapter);
     return server;
   }
