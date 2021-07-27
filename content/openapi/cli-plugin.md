@@ -199,23 +199,27 @@ With this in place, import AST transformer within your `jest` configuration file
 ```
 
 #### Troubleshooting `jest` (e2e tests)
-In any case that `jest` does not seem to pick up your configuration changes, it is quite possible that it has already **cached** the build result. In order for your changes _(`@nestjs/swagger/plugin` integration)_, to be taken into account, you need to clear its cache directory.
 
-In order to clear the cache directory of `jest`, run the following command in your NestJS project folder:
-```bash
+In case `jest` does not seem to pick up your configuration changes, it's possible that Jest has already **cached** the build result. To apply the new configuration, you need to clear Jest's cache directory.
+
+To clear the cache directory, run the following command in your NestJS project folder:
+
+\```bash
 $ npx jest --clearCache
-```
-In any case the automatic cache clearance fails, you can still manually empty the cache folder with the following way:
-```bash
-# Find out jest cache directory (usually /tmp/jest_rs)
-# by running command below in your NestJS project root
+\```
+
+In case the automatic cache clearance fails, you can still manually remove the cache folder with the following commands:
+
+\```bash
+# Find jest cache directory (usually /tmp/jest_rs)
+# by running the following command in your NestJS project root
 $ npx jest --showConfig | grep cache
 # ex result:
 #   "cache": true,
 #   "cacheDirectory": "/tmp/jest_rs"
 
-# Remove or empty the found Jest cache directory
+# Remove or empty the Jest cache directory
 $ rm -rf  <cacheDirectory value>
 # ex:
 # rm -rf /tmp/jest_rs  
-```
+\```
