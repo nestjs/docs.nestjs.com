@@ -204,13 +204,13 @@ In case `jest` does not seem to pick up your configuration changes, it's possibl
 
 To clear the cache directory, run the following command in your NestJS project folder:
 
-\```bash
+```bash
 $ npx jest --clearCache
-\```
+```
 
 In case the automatic cache clearance fails, you can still manually remove the cache folder with the following commands:
 
-\```bash
+```bash
 # Find jest cache directory (usually /tmp/jest_rs)
 # by running the following command in your NestJS project root
 $ npx jest --showConfig | grep cache
@@ -221,5 +221,5 @@ $ npx jest --showConfig | grep cache
 # Remove or empty the Jest cache directory
 $ rm -rf  <cacheDirectory value>
 # ex:
-# rm -rf /tmp/jest_rs  
-\```
+# rm -rf /tmp/jest_rs
+```
