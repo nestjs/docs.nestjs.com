@@ -80,7 +80,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> warning **Warning** If you use the `apollo-server-fastify` package with multiple GraphQL endpoints in a single application, enable the `disableHealthCheck` setting to` true` in the configuration` GraphQLModule`.
+> warning **Warning** If you use the `apollo-server-fastify` package with multiple GraphQL endpoints in a single application, make sure to enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
 
 #### Code first
 
