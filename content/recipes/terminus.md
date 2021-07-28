@@ -58,6 +58,9 @@ Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and cre
 
 ```typescript
 @@filename(health.controller)
+import { Controller, Get } from '@nestjs/common';
+import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
+
 @Controller('health')
 export class HealthController {
   constructor(
@@ -74,6 +77,9 @@ export class HealthController {
   }
 }
 @@switch
+import { Controller, Get } from '@nestjs/common';
+import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
+
 @Controller('health')
 @Dependencies(HealthCheckService, HttpHealthIndicator)
 export class HealthController {
