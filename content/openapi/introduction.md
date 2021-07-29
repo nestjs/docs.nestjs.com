@@ -155,7 +155,7 @@ export interface ExpressSwaggerCustomOptions {
 }
 ```
 
-while if you use fastify you can configure the user interface using `FastifySwaggerCustomOptions`.
+If you use fastify, you can configure the user interface by passing the `FastifySwaggerCustomOptions` object.
 
 ```Typescript
 export interface FastifySwaggerCustomOptions {
