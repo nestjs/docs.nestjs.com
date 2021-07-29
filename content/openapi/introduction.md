@@ -137,7 +137,7 @@ const document = SwaggerModule.createDocument(app, config, options);
 
 #### Setup options
 
-You can configure Swagger UI by passing the options object which fulfills the `ExpressSwaggerCustomOptions` interface as a fourth argument of the `SwaggerModule#setup` method, if you use express.
+You can configure Swagger UI by passing the options object which fulfills the `ExpressSwaggerCustomOptions` (if you use express) interface as a fourth argument of the `SwaggerModule#setup` method.
 
 ```TypeScript
 export interface ExpressSwaggerCustomOptions {
