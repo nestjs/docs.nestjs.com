@@ -137,10 +137,10 @@ const document = SwaggerModule.createDocument(app, config, options);
 
 #### Setup options
 
-You can configure Swagger UI by passing the options object which fulfills the `SwaggerCustomOptions` interface as a fourth argument of the `SwaggerModule#setup` method.
+You can configure Swagger UI by passing the options object which fulfills the `ExpressSwaggerCustomOptions` (if you use express) interface as a fourth argument of the `SwaggerModule#setup` method.
 
 ```TypeScript
-export interface SwaggerCustomOptions {
+export interface ExpressSwaggerCustomOptions {
   explorer?: boolean;
   swaggerOptions?: Record<string, any>;
   customCss?: string;
@@ -152,6 +152,14 @@ export interface SwaggerCustomOptions {
   validatorUrl?: string;
   url?: string;
   urls?: Record<'url' | 'name', string>[];
+}
+```
+
+If you use fastify, you can configure the user interface by passing the `FastifySwaggerCustomOptions` object.
+
+```Typescript
+export interface FastifySwaggerCustomOptions {
+  uiConfig?: Record<string, any>;
 }
 ```
 
