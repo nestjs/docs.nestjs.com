@@ -234,6 +234,16 @@ To install Prisma Client in your project, run the following command in your term
 $ npm install @prisma/client
 ```
 
+<details><summary>Expand if you're using Yarn</summary>
+
+If you're using Yarn, then you can install the Prisma Client as follows:
+
+```bash
+$ yarn add @prisma/client
+```
+
+</details>
+
 Note that during installation, Prisma automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
 
 > info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
