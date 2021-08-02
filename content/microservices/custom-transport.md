@@ -231,7 +231,7 @@ class ErrorHandlingProxy extends ClientTCP {
 }
 ```
 
-and then use it in the `ClientsModule` like so
+and then use it in the `ClientsModule` like so:
 
 ```typescript
 @@filename(app.module)
