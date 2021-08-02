@@ -216,7 +216,7 @@ connect
 event to dispatch:  { pattern: 'event', data: 'Hello world!' }
 ```
 
-#### Message Serialization
+#### Message serialization
 
 If you need to add some custom logic around the serialization of responses on the client side, you can use a custom class that extends the `ClientProxy` class or one of its child classes. For modifying successful requests you can override the `serializeResponse` method, and for modifying any errors that go through this client you can override the `serializeError` method. To make use of this custom class, you can pass the class itself to the `ClientsModule.register()` method using the `customClass` property. Below is an example of a custom `ClientProxy` that serializes each error into an `RpcException`.
 
