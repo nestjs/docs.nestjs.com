@@ -410,7 +410,19 @@ We saw one use of generics above. This powerful TypeScript feature can be used t
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
-export function Paginated<T>(classRef: Type<T>): any {
+interface IEdgeType<T> {
+  cursor: string;
+  node: T;
+}
+
+export interface IPaginatedType<T> {
+  edges: IEdgeType<T>[];
+  nodes: T[];
+  totalCount: number;
+  hasNextPage: boolean;
+}
+
+export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
     @Field((type) => String)
@@ -421,7 +433,7 @@ export function Paginated<T>(classRef: Type<T>): any {
   }
 
   @ObjectType({ isAbstract: true })
-  abstract class PaginatedType {
+  abstract class PaginatedType implements IPaginatedType<T> {
     @Field((type) => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
@@ -434,7 +446,7 @@ export function Paginated<T>(classRef: Type<T>): any {
     @Field()
     hasNextPage: boolean;
   }
-  return PaginatedType;
+  return PaginatedType as Type<IPaginatedType<T>>;
 }
 ```
 
