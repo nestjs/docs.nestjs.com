@@ -544,7 +544,7 @@ Migration classes are separate from the Nest application source code. Their life
 
 Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, connection naming becomes **mandatory**.
 
-Suppose you have an `Album` entity stored in its own database.
+Suppose you have `Album` and `Cart` entities stored in its own database.
 
 ```typescript
 const defaultOptions = {
@@ -568,6 +568,14 @@ const defaultOptions = {
       name: 'albumsConnection',
       host: 'album_db_host',
       entities: [Album],
+    }),
+    TypeOrmModule.forRootAsync({
+      name: 'cartConnection', // notice 'name' placement
+      useFactory: () => ({
+        ...defaultOptions,
+        host: 'cart_db_host',
+        entities: [Cart],
+      }),
     }),
   ],
 })
