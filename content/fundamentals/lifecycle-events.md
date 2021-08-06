@@ -109,3 +109,5 @@ class UsersService implements OnApplicationShutdown {
   }
 }
 ```
+
+> info **Info** Calling `app.close()` doesn't terminate the process but rather clean all resources which let it close by itself, so if there are some intervals, handlers and more that are still running the application will not close
