@@ -95,7 +95,7 @@ The `Photo` entity belongs to the `photo` directory. This directory represents t
 
 ```typescript
 @@filename(photo.providers)
-import { Connection, Repository } from 'typeorm';
+import { Connection } from 'typeorm';
 import { Photo } from './photo.entity';
 
 export const photoProviders = [
