@@ -44,15 +44,15 @@ Aside from a few specific considerations around how the **build** process works 
 
 You can use either mode to manage multiple projects. Here's a quick summary of the differences:
 
-| Feature                                              | Standard Mode                                                      | Monorepo Mode                                              |
-| ---------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
-| Multiple projects                                    | Separate file system structure                                     | Single file system structure                               |
-| `node_modules` & `package.json`                      | Separate instances                                                 | Shared across monorepo                                     |
-| Default compiler                                     | `tsc`                                                              | webpack                                                    |
-| Compiler settings                                    | Specified separately                                               | Monorepo defaults that can be overridden per project       |
-| Config files like `tslint.json`, `.prettierrc`, etc. | Specified separately                                               | Shared across monorepo                                     |
-| `nest build` and `nest start` commands               | Target defaults automatically to the (only) project in the context | Target defaults to the **default project** in the monorepo |
-| Libraries                                            | Managed manually, usually via npm packaging                        | Built-in support, including path management and bundling   |
+| Feature                                               | Standard Mode                                                      | Monorepo Mode                                              |
+| ----------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Multiple projects                                     | Separate file system structure                                     | Single file system structure                               |
+| `node_modules` & `package.json`                       | Separate instances                                                 | Shared across monorepo                                     |
+| Default compiler                                      | `tsc`                                                              | webpack                                                    |
+| Compiler settings                                     | Specified separately                                               | Monorepo defaults that can be overridden per project       |
+| Config files like `.eslintrc.js`, `.prettierrc`, etc. | Specified separately                                               | Shared across monorepo                                     |
+| `nest build` and `nest start` commands                | Target defaults automatically to the (only) project in the context | Target defaults to the **default project** in the monorepo |
+| Libraries                                             | Managed manually, usually via npm packaging                        | Built-in support, including path management and bundling   |
 
 Read the sections on [Workspaces](/cli/monorepo) and [Libraries](/cli/libraries) for more detailed information to help you decide which mode is most suitable for you.
 
