@@ -156,10 +156,6 @@ $ nest add <name> [options]
 
 Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version.
 
-```bash
-$ nest update [options]
-```
-
 ##### Options
 
 | Option    | Description                                                              |
