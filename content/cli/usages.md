@@ -168,6 +168,10 @@ Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to th
 Displays information about installed nest packages and other helpful system info. For example:
 
 ```bash
+$ nest info
+```
+
+```bash
  _   _             _      ___  _____  _____  _     _____
 | \ | |           | |    |_  |/  ___|/  __ \| |   |_   _|
 |  \| |  ___  ___ | |_     | |\ `--. | /  \/| |     | |
