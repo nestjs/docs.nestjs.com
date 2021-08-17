@@ -11,6 +11,7 @@ import { PrismaComponent } from './prisma/prisma.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
+import { SqlKnexComponent } from './sql-knex/sql-knex.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 
@@ -29,6 +30,11 @@ const routes: Routes = [
     path: 'sql-sequelize',
     component: SqlSequelizeComponent,
     data: { title: 'SQL (Sequelize)' },
+  },
+  { 
+    path: 'sql-knex',
+    component: SqlKnexComponent,
+    data: { title: 'SQL (Knex)' },
   },
   {
     path: 'cqrs',
@@ -89,6 +95,7 @@ const routes: Routes = [
   declarations: [
     SqlTypeormComponent,
     SqlSequelizeComponent,
+    SqlKnexComponent,
     MongodbComponent,
     PrismaComponent,
     CqrsComponent,
