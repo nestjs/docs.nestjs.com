@@ -34,15 +34,14 @@ You can find a simple example of returning the `package.json` as a file instead 
 > info **hint** If the @Response parameter is present, it must have `{{ '{' }} passthrough: true {{ '}' }}`.
 
 ```ts
-import { Controller, Get, StreamableFile } from '@nestjs/common';
+import { Controller, Get, StreamableFile, Response } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 
 @Controller('file')
 export class FileController {
   @Get()
-  @Response({ passthrough: true }) res,
-  getFile(): StreamableFile {
+  getFile(@Response({ passthrough: true }) res): StreamableFile {
     const file = createReadStream(join(process.cwd(), 'package.json'));
     res.set({
       'Content-Type': 'application/json',
