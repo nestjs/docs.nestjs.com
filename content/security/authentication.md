@@ -774,7 +774,7 @@ $ # result -> {"userId":1,"username":"john"}
 
 Note that in the `AuthModule`, we configured the JWT to have an expiration of `60 seconds`. This is probably too short an expiration, and dealing with the details of token expiration and refresh is beyond the scope of this article. However, we chose that to demonstrate an important quality of JWTs and the passport-jwt strategy. If you wait 60 seconds after authenticating before attempting a `GET /profile` request, you'll receive a `401 Unauthorized` response. This is because Passport automatically checks the JWT for its expiration time, saving you the trouble of doing so in your application.
 
-We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server. 
+We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server.
 
 #### Example
 
@@ -909,7 +909,7 @@ async validate(
   const contextId = ContextIdFactory.getByRequest(request);
   // "AuthService" is a request-scoped provider
   const authService = await this.moduleRef.resolve(AuthService, contextId);
-  ...
+...
 }
 ```
 
@@ -949,7 +949,7 @@ Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
-In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
+In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the `getRequest()` method.
 
 ```typescript
 @Injectable()
@@ -984,3 +984,96 @@ whoAmI(@CurrentUser() user: User) {
   return this.usersService.findById(user.id);
 }
 ```
+
+#### Implementing Passport Twitter
+
+In order to use an AuthGuard with [passport-twitter](http://www.passportjs.org/packages/passport-twitter/), extend the built-in AuthGuard class and override the `handleRequest()` method.
+```typescript
+@Injectable()
+export class TwitterAuthGuard extends AuthGuard('twitter') {
+  handleRequest(err, user, info, context) {
+    return user;
+  }
+}
+```
+> info **Hint** You *must* include the `handleRequest()` method, and return the user object. Otherwise, Passport will not store the user in the session, and you will have an error similar to this:
+>
+> `Error: Failed to find request token in session`
+
+This is an example Controller class. When the user accesses the `/api/auth/twitter` endpoint, they will be automatically redirected by the `TwitterAuthGuard` to the Twitter OAuth webpage. Twitter then sends the user back to the `/api/auth/twitter/callback` endpoint, and as shown below, the user is then authenticated, and the user object is now in the `Request` object.
+```typescript
+@Controller('api/auth')
+export class AuthController {
+  constructor() {}
+
+  @Get('twitter')
+  @UseGuards(TwitterAuthGuard)
+  async twitter() {
+    throw new UnauthorizedException(); // Guard redirects, this will never be hit
+  }
+
+  @Get('twitter/callback')
+  @UseGuards(TwitterAuthGuard)
+  async twitterCallback(@Req() req: Request, @Res() res: Response) {
+    res.send({user: req.user}); // req.user will now contain the user from the 
+  }
+}
+```
+
+Here is an example `PassportStrategy` implementation for Twitter. You must pass the correct passport options into the constructor's `super` call.
+```typescript
+@Injectable()
+export class TwitterStrategy extends PassportStrategy(Strategy) {
+  constructor(private configService: ConfigService) {
+    super({
+      consumerKey: configService.get<string>('TWITTER_API_KEY'),
+      consumerSecret: configService.get<string>('TWITTER_API_SECRET'),
+      callbackURL: 'http://127.0.0.1:3000/api/auth/twitter/callback',
+      passReqToCallback: true,
+      // includeEmail: true,
+    });
+  }
+
+  validate(
+    req: Request,
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done,
+  ) {
+    const twitterUser = {
+      id: profile.id,
+      username: profile.username,
+      displayName: profile.displayName,
+      email: profile.emails?.shift().value,
+      photo: profile.photos?.shift().value,
+    };
+
+    // This is where you would store the Twitter user
+    // User.findOrCreate({ twitterId: profile.id }, function (err, user) {
+    //   return done(err, user);
+    // });
+    
+    done(null, twitterUser); // Must call the callback with the user object
+  }
+}
+```
+
+It is important to note that you may only gather the user's email if you have special permissions from Twitter. If you are granted permissions, you may use the `includeEmail: true,` property.
+> info **Hint** You will need to change the `callbackURL` property to your host domain if not running locally.
+>
+> It is also important to recognize that you must use the address of `http://127.0.0.1` instead of local host, when running locally. These values must match what you provide on the twitter dev page.
+>
+> You may obtain your Twitter API Key and Secret Key from the twitter developer portal [here](https://developer.twitter.com/apply-for-access).
+
+Be sure to include your `TwitterStrategy` in your module.
+```typescript
+@Module({
+  imports: [],
+  providers: [TwitterStrategy],
+  controllers: [AuthController],
+})
+export class AuthModule {}
+```
+
+You should now be able to test out your Twitter OAuth flow via `http://127.0.0.1:YOUR_PORT/api/auth/twitter`.
