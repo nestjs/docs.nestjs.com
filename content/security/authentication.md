@@ -985,9 +985,11 @@ whoAmI(@CurrentUser() user: User) {
 }
 ```
 
-#### Implementing Passport Twitter
+#### Implementing A Provider-Specific OAuth2 Strategy
 
-In order to use an AuthGuard with [passport-twitter](http://www.passportjs.org/packages/passport-twitter/), extend the built-in AuthGuard class and override the `handleRequest()` method.
+Each OAuth2 provider has different options and configurations. Make sure to read up on each provider's options to ensure all the values are passed correctly. See the list for supported providers [here](https://github.com/jaredhanson/passport/wiki/Strategies).
+
+In this example, we're going to implement an AuthGuard using the [passport-twitter](http://www.passportjs.org/packages/passport-twitter/) strategy. Start by extending the built-in `AuthGuard` class and override the `handleRequest()` method.
 ```typescript
 @Injectable()
 export class TwitterAuthGuard extends AuthGuard('twitter') {
@@ -996,11 +998,11 @@ export class TwitterAuthGuard extends AuthGuard('twitter') {
   }
 }
 ```
-> info **Hint** You *must* include the `handleRequest()` method, and return the user object. Otherwise, Passport will not store the user in the session, and you will have an error similar to this:
+> warning **Warning** You **must** include the `handleRequest()` method, and return the user object. Otherwise, Passport will not store the user in the session, and you will receive an error stating:
 >
 > `Error: Failed to find request token in session`
 
-This is an example Controller class. When the user accesses the `/api/auth/twitter` endpoint, they will be automatically redirected by the `TwitterAuthGuard` to the Twitter OAuth webpage. Twitter then sends the user back to the `/api/auth/twitter/callback` endpoint, and as shown below, the user is then authenticated, and the user object is now in the `Request` object.
+Now implement your Controller class. When the user accesses the `/api/auth/twitter` endpoint, they will be automatically redirected by the `TwitterAuthGuard` to the Twitter OAuth webpage. Twitter then sends the user back to the `/api/auth/twitter/callback` endpoint, and as shown below, the user is then authenticated, and the user object is stored in the `Request` object.
 ```typescript
 @Controller('api/auth')
 export class AuthController {
@@ -1009,13 +1011,13 @@ export class AuthController {
   @Get('twitter')
   @UseGuards(TwitterAuthGuard)
   async twitter() {
-    throw new UnauthorizedException(); // Guard redirects, this will never be hit
+    throw new UnauthorizedException(); // Guard redirects to Twitter, this will never be hit
   }
 
   @Get('twitter/callback')
   @UseGuards(TwitterAuthGuard)
   async twitterCallback(@Req() req: Request, @Res() res: Response) {
-    res.send({user: req.user}); // req.user will now contain the user from the 
+    res.send({user: req.user}); // req.user contains the user from the TwitterAuthGuard
   }
 }
 ```
@@ -1034,12 +1036,11 @@ export class TwitterStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(
+  async validate(
     req: Request,
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done,
   ) {
     const twitterUser = {
       id: profile.id,
@@ -1050,21 +1051,17 @@ export class TwitterStrategy extends PassportStrategy(Strategy) {
     };
 
     // This is where you would store the Twitter user
-    // User.findOrCreate({ twitterId: profile.id }, function (err, user) {
-    //   return done(err, user);
-    // });
+    // return await User.findOrCreate({ twitterId: profile.id }).exec();
     
-    done(null, twitterUser); // Must call the callback with the user object
+    return twitterUser;
   }
 }
 ```
 
-It is important to note that you may only gather the user's email if you have special permissions from Twitter. If you are granted permissions, you may use the `includeEmail: true,` property.
+You may only gather the user's email if you have special permissions from Twitter. If you are granted permissions, you may use the `includeEmail: true,` property.
 > info **Hint** You will need to change the `callbackURL` property to your host domain if not running locally.
 >
-> It is also important to recognize that you must use the address of `http://127.0.0.1` instead of local host, when running locally. These values must match what you provide on the twitter dev page.
->
-> You may obtain your Twitter API Key and Secret Key from the twitter developer portal [here](https://developer.twitter.com/apply-for-access).
+> It is also important to recognize that you must use the address of `http://127.0.0.1` instead of `http://localhost`, when running locally. These values must match what you provide on the twitter developer page. You may obtain your Twitter API Key and Secret Key from the twitter developer portal [here](https://developer.twitter.com/apply-for-access).
 
 Be sure to include your `TwitterStrategy` in your module.
 ```typescript
