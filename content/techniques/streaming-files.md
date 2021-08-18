@@ -31,6 +31,8 @@ Fastify, by default, can support sending files without needing to call `stream.p
 
 You can find a simple example of returning the `package.json` as a file instead of a JSON below, but the idea extends out naturally to images, documents, and any other file type.
 
+> info **hint** If the @Response parameter is present, it must have `{ passthrough: true }`.
+
 ```ts
 import { Controller, Get, StreamableFile } from '@nestjs/common';
 import { createReadStream } from 'fs';
@@ -39,8 +41,13 @@ import { join } from 'path';
 @Controller('file')
 export class FileController {
   @Get()
+  @Response({ passthrough: true }) res,
   getFile(): StreamableFile {
     const file = createReadStream(join(process.cwd(), 'package.json'));
+    res.set({
+      'Content-Type': 'application/json',
+      'Content-Disposition': 'attachment; filename="package.json"',
+    });
     return new StreamableFile(file);
   }
 }
