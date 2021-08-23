@@ -178,7 +178,7 @@ module.exports.factory = (cs) => {
     {
       // @nestjs/swagger/plugin options (can be empty)
     },
-    cs.tsCompiler.program,
+    cs.program, // "cs.tsCompiler.program" for older versions of Jest (<= v27)
   );
 };
 ```
