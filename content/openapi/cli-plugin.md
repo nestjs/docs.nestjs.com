@@ -170,12 +170,12 @@ export interface PluginOptions {
   <tr>
     <td><code>dtoKeyOfComment</code></td>
     <td><code>'description'</code></td>
-    <td>The property key to set the comment text to on <code>ApiOperation</code>. Eg: <code>@ApiOperation({ description: 'comment' })</code></td>
+    <td>The property key to set the comment text to on <code>ApiProperty</code>.</td>
   </tr>
   <tr>
     <td><code>controllerKeyOfComment</code></td>
     <td><code>'description'</code></td>
-    <td>The property key to set the comment text to on <code>ApiOperation</code>. Eg: <code>@ApiOperation({ description: 'comment' })</code></td>
+    <td>The property key to set the comment text to on <code>ApiOperation</code>.</td>
   </tr>
   <tr>
   <td><code>introspectComments</code></td>
