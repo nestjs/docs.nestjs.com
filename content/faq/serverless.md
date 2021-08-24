@@ -70,7 +70,7 @@ For all these scripts, we used the `tsc` (TypeScript) compiler and so the code r
 | Nest (standalone application)        | 0.1117s (111.7ms) |
 | Raw Node.js script                   | 0.0071s (7.1ms)   |
 
-> info **Note** Machine: MacBook Pro Mid 2014, 2,5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
+> info **Note** Machine: MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
 
 Now, let's repeat all benchmarks but this time, using `webpack` (if you have [Nest CLI](/cli/overview) installed, you can run `nest build --webpack`) to bundle our application into a single executable JavaScript file.
 However, instead of using the default `webpack` configuration that Nest CLI ships with, we'll make sure to bundle all dependencies (`node_modules`) together, as follows:
@@ -115,13 +115,13 @@ With this configuration, we received the following results:
 | Nest (standalone application)        | 0.0319s (31.9ms) |
 | Raw Node.js script                   | 0.0066s (6.6ms)  |
 
-> info **Note** Machine: MacBook Pro Mid 2014, 2,5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
+> info **Note** Machine: MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
 
 > info **Hint** You could optimize it even further by applying additional code minification & optimization techniques (using `webpack` plugins, etc.).
 
 As you can see, the way you compile (and whether you bundle your code) is crucial and has a significant impact on the overall startup time. With `webpack`, you can get the bootstrap time of a standalone Nest application (starter project with one module, controller, and service) down to ~32ms on average, and down to ~81.5ms for a regular HTTP, express-based NestJS app.
 
-For more complicated Nest applications, for example, with 10 resources (generated through `$ nest g resource` schematic = 10 modules, 10 controllers, 10 services, 20 DTO classes, 50 HTTP endpoints + `AppModule`), the overall startup on MacBook Pro Mid 2014, 2,5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD is approximately 0.1298s (129.8ms). Running a monolithic application as a serverless function typically doesn't make too much sense anyway, so think of this benchmark more as an example of how the bootstrap time may potentially increase as your application grows.
+For more complicated Nest applications, for example, with 10 resources (generated through `$ nest g resource` schematic = 10 modules, 10 controllers, 10 services, 20 DTO classes, 50 HTTP endpoints + `AppModule`), the overall startup on MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD is approximately 0.1298s (129.8ms). Running a monolithic application as a serverless function typically doesn't make too much sense anyway, so think of this benchmark more as an example of how the bootstrap time may potentially increase as your application grows.
 
 #### Runtime optimizations
 
