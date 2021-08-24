@@ -469,6 +469,46 @@ BullModule.forRootAsync({
 
 This construction works the same as `useClass` with one critical difference - `BullModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
+#### Testing
+
+This is a good idea to avoid using Redis in your unit tests because otherwise your tests would not be independent.
+
+To do so, in your test, you simply need to use `Test.createTestingModule` and then override queue provider to mock [`Queue.add`](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/2bc02ad2577298f4bac4203b34e7eeced717863a/types/bull/index.d.ts#L580) method. Here a basic example:
+
+```typescript
+describe('JobCreatorService', () => {
+  let service: JobCreatorService;
+  let moduleRef: TestingModule;
+
+  const queueMock = { add: jest.fn() };
+
+  beforeEach(async () => {
+    jest.resetAllMocks();
+    moduleRef = await Test.createTestingModule({
+      imports: [
+        BullModule.registerQueue({
+          name: 'queue-name',
+        }),
+      ],
+    })
+      .overrideProvider(getQueueToken('queue-name'))
+      .useValue(queueMock)
+      .compile();
+
+    service = moduleRef.get<JobCreatorService>(JobCreatorService);
+  });
+
+  afterAll(async () => {
+    await moduleRef.close();
+  });
+
+  it('should dispatch job', async () => {
+    await service.methodThatDispatches();
+    expect(queueMock.add).toHaveBeenCalledWith({example: jobData});
+  });
+});
+```
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/26-queues).
