@@ -85,6 +85,26 @@ You must duplicate both description and example values. With `introspectComments
 roles: RoleEnum[] = [];
 ```
 
+There are `dtoKeyOfComment` and `controllerKeyOfComment` plugin options that you can use to customize how the plugin will set the value for `ApiProperty` and `ApiOperation` decorators respectively. Take a look at the following example:
+
+```typescript
+export class SomeController {
+  /**
+   * Create some resource
+   */
+  @Post()
+  create() {}
+}
+```
+
+By default, these options are set to `"description"`. This means the plugin will assign `"Create some resource"` to `description` key on the `ApiOperation` operator. Like so:
+
+```ts
+@ApiOperation({ description: "Create some resource" })
+```
+
+> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead. 
+
 #### Using the CLI plugin
 
 To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)) and add the following `plugins` configuration:
@@ -120,6 +140,8 @@ export interface PluginOptions {
   dtoFileNameSuffix?: string[];
   controllerFileNameSuffix?: string[];
   classValidatorShim?: boolean;
+  dtoKeyOfComment?: string;
+  controllerKeyOfComment?: string;
   introspectComments?: boolean;
 }
 ```
@@ -144,6 +166,16 @@ export interface PluginOptions {
     <td><code>classValidatorShim</code></td>
     <td><code>true</code></td>
     <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
+  </tr>
+  <tr>
+    <td><code>dtoKeyOfComment</code></td>
+    <td><code>'description'</code></td>
+    <td>The property key to set the comment text to on <code>ApiProperty</code>.</td>
+  </tr>
+  <tr>
+    <td><code>controllerKeyOfComment</code></td>
+    <td><code>'description'</code></td>
+    <td>The property key to set the comment text to on <code>ApiOperation</code>.</td>
   </tr>
   <tr>
   <td><code>introspectComments</code></td>
