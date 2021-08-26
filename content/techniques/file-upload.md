@@ -85,7 +85,7 @@ When using `FileFieldsInterceptor()`, extract files from the `request` with the 
   { name: 'avatar', maxCount: 1 },
   { name: 'background', maxCount: 1 },
 ]))
-uploadFile(@UploadedFiles() files: Express.Multer.File[]) {
+uploadFile(@UploadedFiles() files: { avatar?: Express.Multer.File[], background?: Express.Multer.File[] }) {
   console.log(files);
 }
 @@switch
