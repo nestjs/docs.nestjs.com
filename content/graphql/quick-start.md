@@ -9,9 +9,12 @@ In this chapter, we assume a basic understanding of GraphQL, and focus on how to
 Start by installing the required packages:
 
 ```bash
-$ npm i @nestjs/graphql graphql apollo-server-express@2.x.x
+$ npm i @nestjs/graphql graphql apollo-server-express
 ```
+
 > info **Hint** If using Fastify, instead of installing `apollo-server-express`, you should install `apollo-server-fastify`.
+
+> warning **Warning** `@nestjs/graphql@^9` is compatible with **Apollo v3** (check out Apollo Server 3 [migration guide](https://www.apollographql.com/docs/apollo-server/migration/) for more details), while `@nestjs/graphql@^8` only supports **Apollo v2** (e.g., `apollo-server-express@2.x.x` package). Both versions (v9 and v8) are fully compatible with Nest v8 (`@nestjs/common@^8`, `@nestjs/core@^8`, etc.).
 
 #### Overview
 

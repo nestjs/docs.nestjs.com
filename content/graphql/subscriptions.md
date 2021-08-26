@@ -14,6 +14,20 @@ GraphQLModule.forRoot({
 }),
 ```
 
+> warning **Warning** The `installSubscriptionHandlers` configuration option has been removed from the latest version of Apollo server and will be soon deprecated in this package as well. By default, `installSubscriptionHandlers` will fallback to use the `subscriptions-transport-ws` ([read more](https://github.com/apollographql/subscriptions-transport-ws)) but we strongly recommend using the `graphql-ws`([read more](https://github.com/enisdenjo/graphql-ws)) library instead.
+
+To switch to use the `graphql-ws` package instead, use the following configuration:
+
+```typescript
+GraphQLModule.forRoot({
+  subscriptions: {
+    'graphql-ws': true
+  },
+}),
+```
+
+> info **Hint** You can also use both packages (`subscriptions-transport-ws` and `graphql-ws`) at the same time, for example, for backward compatibility.
+
 #### Code first
 
 To create a subscription using the code first approach, we use the `@Subscription()` decorator and the `PubSub` class from the `graphql-subscriptions` package, which provides a simple **publish/subscribe API**.
@@ -23,10 +37,10 @@ The following subscription handler takes care of **subscribing** to an event by 
 ```typescript
 const pubSub = new PubSub();
 
-@Resolver(of => Author)
+@Resolver((of) => Author)
 export class AuthorResolver {
   // ...
-  @Subscription(returns => Comment)
+  @Subscription((returns) => Comment)
   commentAdded() {
     return pubSub.asyncIterator('commentAdded');
   }
@@ -255,13 +269,28 @@ We instantiated a local `PubSub` instance above. The preferred approach is to de
 
 #### Customize subscriptions server
 
-To customize the subscriptions server (e.g., change the listener port), use the `subscriptions` options property (read [more](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt)).
+To customize the subscriptions server (e.g., change the path), use the `subscriptions` options property.
 
 ```typescript
 GraphQLModule.forRoot({
   installSubscriptionHandlers: true,
   subscriptions: {
-    keepAlive: 5000,
+    'subscriptions-transport-ws': {
+      path: '/graphql'
+    },
+  }
+}),
+```
+
+If you're using the `graphql-ws` package for subscriptions, replace the `subscriptions-transport-ws` key with `graphql-ws`, as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  installSubscriptionHandlers: true,
+  subscriptions: {
+    'graphql-ws': {
+      path: '/graphql'
+    },
   }
 }),
 ```
