@@ -109,3 +109,5 @@ class UsersService implements OnApplicationShutdown {
   }
 }
 ```
+
+> info **Info** Calling `app.close()` doesn't terminate the Node process but only triggers the `onModuleDestroy()` and `onApplicationShutdown()` hooks, so if there are some intervals, long-running background tasks, etc. the process won't be automatically terminated.
