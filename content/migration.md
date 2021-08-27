@@ -8,6 +8,16 @@ To learn more about the new features we've added in the v8, check out this [link
 The `HttpModule` exported from the `@nestjs/common` package has been deprecated and will be removed in the next major release.
 Instead, please use the `@nestjs/axios` package (otherwise, there are no API differences).
 
+#### Terminus
+
+##### HttpHealthIndicator
+
+`HttpHealthIndicator` requires `@nestjs/axios` to be installed as well as `HttpModule` to be imported. (otherwise, there are no API differences)
+
+##### TerminusModule.forRoot{Async}
+
+The deprecated `TerminusModule.forRoot{Async)` has been removed. In order to upgrade, check out the [Terminus v7.x.x upgrade guide](https://docs.nestjs.com/v7/migration-guide#terminus)
+
 #### gRPC strategy
 
 The original Node gRPC library (`grpc`) has been deprecated and will no longer receive feature updates.
