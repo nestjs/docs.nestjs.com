@@ -31,8 +31,8 @@ export class UpperCaseDirective extends SchemaDirectiveVisitor {
 ```
 
 > info **Hint** Note that directives cannot be decorated with the `@Injectable()` decorator. Thus, they are not able to inject dependencies.
-> 
-> warning **Warning** `SchemaDirectiveVisitor` is exported from the `@graphql-tools/utils` package. Note that the 8.x release of this package removes this export
+
+> warning **Warning** `SchemaDirectiveVisitor` is exported from the `@graphql-tools/utils` package. Note that the 8.x release of graphql-tools removes this export
 > and uses a different and incompatible approach to directives, so make sure to install `@graphql-tools/utils@^7` in your project.
 
 Now, register the `UpperCaseDirective` in the `GraphQLModule.forRoot()` method:
