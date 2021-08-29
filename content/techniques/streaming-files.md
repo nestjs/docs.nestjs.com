@@ -48,7 +48,7 @@ export class FileController {
 
 The default content type is `application/octet-stream`, if you need to customize the response you can use `res.set`.
 
-> info **hint** If the @Response parameter is present, it must have `{ passthrough: true }`.
+> info **hint** If the @Response parameter is present, it must have `{{ '{' }} passthrough: true {{ '}' }}`.
 
 ```ts
 import { Controller, Get, StreamableFile, Response } from '@nestjs/common';
