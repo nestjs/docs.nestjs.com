@@ -31,7 +31,7 @@ In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onAp
 Each lifecycle hook is represented by an interface. Interfaces are technically optional because they do not exist after TypeScript compilation. Nonetheless, it's good practice to use them in order to benefit from strong typing and editor tooling. To register a lifecycle hook, implement the appropriate interface. For example, to register a method to be called during module initialization on a particular class (e.g., Controller, Provider or Module), implement the `OnModuleInit` interface by supplying an `onModuleInit()` method, as shown below:
 
 ```typescript
-@@filename()
+@@filename(users.service)
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 @Injectable()
@@ -56,7 +56,7 @@ export class UsersService {
 Both the `OnModuleInit` and `OnApplicationBootstrap` hooks allow you to defer the application initialization process (return a `Promise` or mark the method as `async` and `await` an asynchronous method completion in the method body).
 
 ```typescript
-@@filename()
+@@filename(users.service)
 async onModuleInit(): Promise<void> {
   await this.fetch();
 }
@@ -73,6 +73,7 @@ The `onModuleDestroy()`, `beforeApplicationShutdown()` and `onApplicationShutdow
 Shutdown hook listeners consume system resources, so they are disabled by default. To use shutdown hooks, you **must enable listeners** by calling `enableShutdownHooks()`:
 
 ```typescript
+@@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -94,7 +95,7 @@ bootstrap();
 When the application receives a termination signal it will call any registered `onModuleDestroy()`, `beforeApplicationShutdown()`, then `onApplicationShutdown()` methods (in the sequence described above) with the corresponding signal as the first parameter. If a registered function awaits an asynchronous call (returns a promise), Nest will not continue in the sequence until the promise is resolved or rejected.
 
 ```typescript
-@@filename()
+@@filename(users.service)
 @Injectable()
 class UsersService implements OnApplicationShutdown {
   onApplicationShutdown(signal: string) {
