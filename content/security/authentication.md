@@ -785,6 +785,7 @@ You can find a complete version of the code in this chapter [here](https://githu
 In most cases, using a provided `AuthGuard` class is sufficient. However, there might be use-cases when you would like to simply extend the default error handling or authentication logic. For this, you can extend the built-in class and override methods within a sub-class.
 
 ```typescript
+@@filename(auth/jwt-auth.guard.ts)
 import {
   ExecutionContext,
   Injectable,
@@ -823,12 +824,19 @@ If the vast majority of your endpoints should be protected by default, you can r
 First, register the `JwtAuthGuard` as a global guard using the following construction (in any module):
 
 ```typescript
-providers: [
-  {
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard,
-  },
-],
+@@filename(app.module.ts)
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
+})
+export class AppModule {}
 ```
 
 With this in place, Nest will automatically bind `JwtAuthGuard` to all endpoints.
@@ -857,6 +865,7 @@ findAll() {
 Lastly, we need the `JwtAuthGuard` to return `true` when the `"isPublic"` metadata is found. For this, we'll use the `Reflector` class (read more [here](/guards#putting-it-all-together)).
 
 ```typescript
+@@filename(auth/jwt-auth.guard.ts)
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
@@ -952,6 +961,7 @@ Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
 
 ```typescript
+@@filename(auth/gql-auth.guard.ts)
 @Injectable()
 export class GqlAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
