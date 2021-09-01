@@ -8,7 +8,7 @@ const microservice = app.connectMicroservice({
   transport: Transport.TCP,
 });
 
-await app.startAllMicroservicesAsync();
+await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
@@ -31,7 +31,7 @@ const microserviceRedis = app.connectMicroservice<MicroserviceOptions>({
   },
 });
 
-await app.startAllMicroservicesAsync();
+await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
