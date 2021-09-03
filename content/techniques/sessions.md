@@ -4,7 +4,7 @@
 
 #### Use with Express (default)
 
-First install the required package (and its types for TypeScript users):
+First install the [required package](https://github.com/expressjs/session) (and its types for TypeScript users):
 
 ```shell
 $ npm i express-session

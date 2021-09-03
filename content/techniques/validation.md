@@ -24,7 +24,7 @@ $ npm i --save class-validator class-transformer
 
 > info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
 
-Because this pipe uses the `class-validator` and `class-transformer` libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
+Because this pipe uses the [`class-validator`](https://github.com/typestack/class-validator) and [`class-transformer`](https://github.com/typestack/class-transformer) libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
 
 ```typescript
 export interface ValidationPipeOptions extends ValidatorOptions {
