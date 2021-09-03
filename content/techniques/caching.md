@@ -18,6 +18,7 @@ Nest provides a unified API for various cache storage providers. The built-in on
 In order to enable caching, import the `CacheModule` and call its `register()` method.
 
 ```typescript
+@@filename(app.module)
 import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
@@ -99,6 +100,7 @@ export class AppController {
 To reduce the amount of required boilerplate, you can bind `CacheInterceptor` to all endpoints globally:
 
 ```typescript
+@@filename(app.module)
 import { CacheModule, Module, CacheInterceptor } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -132,6 +134,7 @@ CacheModule.register({
 While global cache is enabled, cache entries are stored under a `CacheKey` that is auto-generated based on the route path. You may override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis, allowing customized caching strategies for individual controller methods. This may be most relevant while using [different cache stores.](https://docs.nestjs.com/techniques/caching#different-stores)
 
 ```typescript
+@@filename(app.controller)
 @Controller()
 export class AppController {
   @CacheKey('custom_key')
@@ -151,7 +154,6 @@ The `@CacheKey()` decorator may be used with or without a corresponding `@CacheT
 You can also apply the `CacheInterceptor` to WebSocket subscribers as well as Microservice's patterns (regardless of the transport method that is being used).
 
 ```typescript
-@@filename()
 @CacheKey('events')
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage('events')
@@ -209,7 +211,10 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
+Note that the Redis service does not automatically shut down; you will need to enable shutdown hooks in `main.ts`, and add a hook to `app.module.ts`.
+
 ```typescript
+@@filename(app.module)
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -224,7 +229,45 @@ import { AppController } from './app.controller';
   ],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+  
+  onModuleDestroy() {
+    (this.cacheManager.store as any).getClient().end(true)
+  }
+}
+```
+
+```typescript
+@@filename(main)
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule)
+  // ...
+  app.enableShutdownHooks();
+  await app.listen(3000)
+}
+bootstrap()
+```
+
+Every module that uses Redis for cache must include the CacheModule option bundle.
+
+```typescript
+@@filename(cats.module)
+@Module({
+  imports: [
+    CacheModule.register({
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+    }),
+  ],
+  exports: [CatsService],
+  providers: [CatsService],
+  controllers: [CatsController],
+})
+export class CatsModule {}
 ```
 
 #### Async configuration
