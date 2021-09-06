@@ -647,6 +647,7 @@ TypeORM provides a feature called **custom repositories**. Custom repositories a
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
 ```typescript
+@@filename(author.repository)
 @EntityRepository(Author)
 export class AuthorRepository extends Repository<Author> {}
 ```
