@@ -186,6 +186,10 @@
       "logo": "/assets/logo/rivvy.png",
       "url": "https://rivvy.app",
       "width": "120px"
+    },
+    {
+      "logo": "https://www.itrio.net/wp-content/uploads/2020/04/logo17.png",
+      "url": "https://www.itrio.net/",
     }
   ],
   "Body": [
