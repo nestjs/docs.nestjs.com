@@ -43,6 +43,21 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <th>Description</th>
   </tr>
   <tr>
+    <td><code>enableDebugMessages</code></td>
+    <td><code>boolean</code></td>
+    <td>If set to true, validator will print extra warning messages to the console when something is not right.</td>
+  </tr>
+  <tr>
+    <td><code>skipUndefinedProperties</code></td>
+    <td><code>boolean</code></td>
+    <td>If set to true, validator will skip validation of all properties that are null in the validating object.</td>
+  </tr>
+  <tr>
+    <td><code>skipNullProperties</code></td>
+    <td><code>boolean</code></td>
+    <td> If set to true, validator will skip validation of all properties that are null or undefined in the validating object.</td>
+  </tr>
+  <tr>
     <td><code>skipMissingProperties</code></td>
     <td><code>boolean</code></td>
     <td>If set to true, validator will skip validation of all properties that are missing in the validating object.</td>
@@ -83,6 +98,17 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td>Groups to be used during validation of the object.</td>
   </tr>
   <tr>
+    <td><code>always</code></td>
+    <td><code>boolean</code></td>
+    <td>Set default for <code>always</code> option of decorators. Default can be overridden in decorator options</td>
+  </tr>
+
+  <tr>
+    <td><code>strictGroups</code></td>
+    <td><code>boolean</code></td>
+    <td>If <code>groups</code> is not given or is empty, ignore decorators with at least one group.</td>
+  </tr>
+  <tr>
     <td><code>dismissDefaultMessages</code></td>
     <td><code>boolean</code></td>
     <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code>        if
@@ -98,10 +124,14 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>boolean</code></td>
     <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
   </tr>
+  <tr>
+    <td><code>stopAtFirstError</code></td>
+    <td><code>boolean</code></td>
+    <td>When set to true, validation of the given property will stop after encountering the first error. Defaults to false.</td>
+  </tr>
 </table>
 
 > info **Notice** Find more information about the `class-validator` package in its [repository](https://github.com/typestack/class-validator).
-
 
 #### Auto-validation
 
