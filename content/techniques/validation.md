@@ -317,6 +317,7 @@ export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/mapped-types` package.
+
 The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
 
 ```typescript
@@ -334,6 +335,7 @@ export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/mapped-types` package.
+
 The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
 
 ```typescript
@@ -351,6 +353,7 @@ export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/mapped-types` package.
+
 The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
 
 ```typescript
