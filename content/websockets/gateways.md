@@ -61,7 +61,7 @@ import { EventsGatway } from './events.gateway';
 
 @@filename(events.module)
 @Module({
-  providers: [EventsGatway]
+  providers: [EventsGateway]
 })
 export class EventsModule {}
 ```
