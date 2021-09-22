@@ -10,7 +10,7 @@ The code-first approach ships with five scalars in which three of them are simpl
 - `Int` (alias for `GraphQLInt`) - a signed 32‐bit integer
 - `Float` (alias for `GraphQLFloat`) - a signed double-precision floating-point value
 - `GraphQLISODateTime` - a date-time string at UTC (used by default to represent `Date` type)
-- `GraphQLTimestamp` - a numeric string which represents time and date as number of milliseconds from start of UNIX epoch
+- `GraphQLTimestamp` - a signed integer which represents date and time as number of milliseconds from start of UNIX epoch
 
 The `GraphQLISODateTime` (e.g. `2019-12-03T09:54:33Z`) is used by default to represent the `Date` type. To use the `GraphQLTimestamp` instead, set the `dateScalarMode` of the `buildSchemaOptions` object to `'timestamp'` as follows:
 
