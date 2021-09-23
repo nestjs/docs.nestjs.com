@@ -45,14 +45,17 @@ If your NestJS server runs behind a proxy server, check the specific HTTP adapte
 // throttler-behind-proxy.guard.ts
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
+
 @Injectable()
 export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
   protected getTracker(req: Record<string, any>): string {
     return req.ips.length ? req.ips[0] : req.ip; // individualize IP extraction to meet your own needs
   }
 }
+
 // app.controller.ts
 import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
+
 @UseGuards(ThrottlerBehindProxyGuard)
 ```
 
