@@ -12,7 +12,7 @@ Instead, please use the `@nestjs/axios` package (otherwise, there are no API dif
 
 ##### HttpHealthIndicator
 
-`HttpHealthIndicator` requires `@nestjs/axios` to be installed as well as `HttpModule` to be imported. (otherwise, there are no API differences)
+`HttpHealthIndicator` requires `@nestjs/axios` to be installed as well as `HttpModule` to be imported. Otherwise, there are no API differences.
 
 ##### TerminusModule.forRoot{Async}
 
