@@ -205,6 +205,8 @@ and run it using
 $ npm run build
 ```
 
+> info **Hint** Setting `"deleteOutDir": true` in  [Global Compiler Options](https://docs.nestjs.com/cli/monorepo#global-compiler-options) will remove the compilation output directory everytime `nest build` is invoked
+
 If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
 
 ```javascript
