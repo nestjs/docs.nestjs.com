@@ -46,7 +46,7 @@ export class FileController {
 }
 ```
 
-The default content type is `application/octet-stream`, if you need to customize the response you can use `res.set`.
+The default content type is `application/octet-stream`, if you need to customize the response you can use the `res.set` method.
 
 > info **hint** If the @Response parameter is present, it must have `{{ '{' }} passthrough: true {{ '}' }}`.
 
