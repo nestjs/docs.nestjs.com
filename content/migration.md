@@ -16,7 +16,7 @@ Instead, please use the `@nestjs/axios` package (otherwise, there are no API dif
 
 ##### TerminusModule.forRoot{Async}
 
-The deprecated `TerminusModule.forRoot{Async)` has been removed. In order to upgrade, check out the [Terminus v7.x.x upgrade guide](https://docs.nestjs.com/v7/migration-guide#terminus)
+The deprecated `TerminusModule.forRootAsync` has been removed. To migrate, check out the `@nestjs/terminus` v7.x.x [upgrade guide](https://docs.nestjs.com/v7/migration-guide#terminus)
 
 #### gRPC strategy
 
