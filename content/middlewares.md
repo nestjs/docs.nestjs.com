@@ -237,6 +237,7 @@ consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
 If we want to bind middleware to every registered route at once, we can use the `use()` method that is supplied by the `INestApplication` instance:
 
 ```typescript
+@@filename(main)
 const app = await NestFactory.create(AppModule);
 app.use(logger);
 await app.listen(3000);
