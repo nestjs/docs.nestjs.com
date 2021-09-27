@@ -4,7 +4,7 @@
 
 In an HTTP application (for example, REST API), the route path for a handler is determined by concatenating the (optional) prefix declared for the controller (inside the `@Controller` decorator),
 and any path specified in the method's decorator (e.g, `@Get('users')`). You can learn more about that in [this section](/controllers#routing). Additionally,
-you can define a [global prefix](/faq/global-prefix) for all routes registered in your application, or enable [versioning]().
+you can define a [global prefix](/faq/global-prefix) for all routes registered in your application, or enable [versioning](/techniques/versioning).
 
 Also, there are edge-cases when defining a prefix at a module-level (and so for all controllers registered inside that module) may come in handy.
 For example, imagine a REST application that exposes several different endpoints being used by a specific portion of your application called "Dashboard".
