@@ -25,10 +25,10 @@ $ nest new project-name
 
 #### Alternatives
 
-Alternatively, to install the TypeScript starter project with **Git**:
+Alternatively, to install the TypeScript starter project with [degit](https://github.com/Rich-Harris/degit):
 
 ```bash
-$ git clone https://github.com/nestjs/typescript-starter.git project
+$ npx degit nestjs/typescript-starter project
 $ cd project
 $ npm install
 $ npm run start
