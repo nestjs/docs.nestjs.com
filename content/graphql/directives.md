@@ -10,10 +10,10 @@ A directive is an identifier preceded by a `@` character, optionally followed by
 
 #### Custom directives
 
-To create a custom schema directive, declare a class which extends the `SchemaDirectiveVisitor` class exported from the `apollo-server` package.
+To create a custom schema directive, declare a class which extends the `SchemaDirectiveVisitor` class exported from the `@graphql-tools/utils` package.
 
 ```typescript
-import { SchemaDirectiveVisitor } from 'apollo-server';
+import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { defaultFieldResolver, GraphQLField } from 'graphql';
 
 export class UpperCaseDirective extends SchemaDirectiveVisitor {
@@ -31,6 +31,8 @@ export class UpperCaseDirective extends SchemaDirectiveVisitor {
 ```
 
 > info **Hint** Note that directives cannot be decorated with the `@Injectable()` decorator. Thus, they are not able to inject dependencies.
+
+> warning **Warning** `SchemaDirectiveVisitor` is exported from the `@graphql-tools/utils` package. Note that the 8.x release of `graphql-tools` removes this export and provides a different and incompatible approach to directives, so make sure to install `@graphql-tools/utils@^7` in your project.
 
 Now, register the `UpperCaseDirective` in the `GraphQLModule.forRoot()` method:
 

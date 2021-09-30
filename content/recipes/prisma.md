@@ -266,7 +266,7 @@ export class PrismaService extends PrismaClient
 }
 ```
 
-> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. For more info on `enableShutdownHooks`, please see [Issues with `enableShutdownHooks`](#issues-with-enableShutdownHooks)
+> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. For more info on `enableShutdownHooks`, please see [Issues with `enableShutdownHooks`](recipes/prisma#issues-with-enableshutdownhooks)
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
@@ -295,7 +295,7 @@ export class UserService {
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<User[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.user.findMany({
@@ -361,7 +361,7 @@ export class PostService {
     take?: number;
     cursor?: Prisma.PostWhereUniqueInput;
     where?: Prisma.PostWhereInput;
-    orderBy?: Prisma.PostOrderByInput;
+    orderBy?: Prisma.PostOrderByWithRelationInput;
   }): Promise<Post[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.post.findMany({

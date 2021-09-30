@@ -37,6 +37,30 @@ There may be a time where you want to bind the guard to a controller or globally
 
 There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. The order for this decorator does matter, as the arguments are in the order of `limit, ttl`.
 
+#### Proxies
+
+If your application runs behind a proxy server, check the specific HTTP adapter options ([express](http://expressjs.com/en/guide/behind-proxies.html) and [fastify](https://www.fastify.io/docs/latest/Server/#trustproxy)) for the `trust proxy` option and enable it. Doing so will allow you to get the original IP address from the `X-Forward-For` header, and you can override the `getTracker()` method to pull the value from the header rather than from `req.ip`. The following example works with both express and fastify:
+
+```ts
+// throttler-behind-proxy.guard.ts
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
+  protected getTracker(req: Record<string, any>): string {
+    return req.ips.length ? req.ips[0] : req.ip; // individualize IP extraction to meet your own needs
+  }
+}
+
+// app.controller.ts
+import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
+
+@UseGuards(ThrottlerBehindProxyGuard)
+```
+
+> info **Hint** You can find the API of the `req` Request object for express [here](https://expressjs.com/en/api.html#req.ips) and for fastify [here](https://www.fastify.io/docs/latest/Request/).
+
 #### Websockets
 
 This module can work with websockets, but it requires some class extension. You can extend the `ThrottlerGuard` and override the `handleRequest` method like so:
