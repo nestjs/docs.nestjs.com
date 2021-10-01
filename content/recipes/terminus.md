@@ -98,6 +98,8 @@ export class HealthController {
 }
 ```
 
+> warning **Warning** `HttpHealthIndicator` requires the installation of the `@nestjs/axios` package and the import of `HttpModule`.
+
 Our health check will now send a _GET_-request to the `https://docs.nestjs.com` address. If
 we get a healthy response from that address, our route at `http://localhost:3000/health` will return
 the following object with a 200 status code.
