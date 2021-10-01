@@ -28,10 +28,6 @@
       "url": "https://www.decathlon.com/"
     },
     {
-      "logo": "/assets/logo/vue-storefront.png",
-      "url": "https://www.vuestorefront.io/"
-    },
-    {
       "logo": "/assets/logo/autodesk.png",
       "url": "https://www.autodesk.com/"
     },
@@ -190,6 +186,10 @@
       "logo": "/assets/logo/rivvy.png",
       "url": "https://rivvy.app",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/vue-storefront.png",
+      "url": "https://www.vuestorefront.io/"
     }
   ],
   "Body": [
