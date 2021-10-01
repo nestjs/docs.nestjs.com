@@ -53,6 +53,19 @@ handleEvent(data) {
 
 > info **Hint** `@SubscribeMessage()` and `@MessageBody()` decorators are imported from `@nestjs/websockets` package.
 
+Once the gateway is created, we can register it in our module.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { EventsGateway } from './events.gateway';
+
+@@filename(events.module)
+@Module({
+  providers: [EventsGateway]
+})
+export class EventsModule {}
+```
+
 You can also pass in a property key to the decorator to extract it from the incoming message body:
 
 ```typescript
