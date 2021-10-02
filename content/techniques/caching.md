@@ -118,12 +118,22 @@ export class AppModule {}
 
 #### Customize caching
 
-All cached data has its own expiration time (TTL). To customize default values, pass the options object to the `register()` method.
+All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). To customize default values, pass the options object to the `register()` method.
 
 ```typescript
 CacheModule.register({
   ttl: 5, // seconds
   max: 10, // maximum number of items in cache
+});
+```
+
+#### Use module globally
+
+When you want to use `CacheModule` in other modules, you'll need to import it (as is standard with any Nest module). Alternatively, declare it as a [global module](https://docs.nestjs.com/modules#global-modules) by setting the options object's `isGlobal` property to `true`, as shown below. In that case, you will not need to import `CacheModule` in other modules once it's been loaded in the root module (e.g., `AppModule`).
+
+```typescript
+CacheModule.register({
+  isGlobal: true,
 });
 ```
 
