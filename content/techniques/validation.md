@@ -30,7 +30,12 @@ Because this pipe uses the `class-validator` and `class-transformer` libraries, 
 export interface ValidationPipeOptions extends ValidatorOptions {
   transform?: boolean;
   disableErrorMessages?: boolean;
+  transformOptions?: ClassTransformOptions;
+  errorHttpStatusCode?: ErrorHttpStatusCode;
   exceptionFactory?: (errors: ValidationError[]) => any;
+  validate?: (object: object, validatorOptions?: ValidatorOptions) => Promise<ValidationError[]> | ValidationError[];
+  validateCustomDecorators?: boolean;
+  expectedType?: Type<any>;
 }
 ```
 
@@ -91,6 +96,11 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>exceptionFactory</code></td>
     <td><code>Function</code></td>
     <td>Takes an array of the validation errors and returns an exception object to be thrown.</td>
+  </tr>
+  <tr>
+    <td><code>validate</code></td>
+    <td><code>Function</code></td>
+    <td>This option allows you to pass your own version of <code>class-validator</code>'s <code>validate</code> function.</td>
   </tr>
   <tr>
     <td><code>groups</code></td>
