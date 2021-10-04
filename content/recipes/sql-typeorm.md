@@ -11,7 +11,7 @@
 To start the adventure with this library we have to install all required dependencies:
 
 ```bash
-$ npm install --save typeorm mysql
+npm install --save typeorm mysql2
 ```
 
 The first step we need to do is to establish the connection with our database using `createConnection()` function imported from the `typeorm` package. The `createConnection()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
