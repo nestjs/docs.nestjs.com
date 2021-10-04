@@ -1,6 +1,7 @@
 <header>
-  <div
-    class="icon-wrapper"
+  <button
+    title="Docs Menu"
+    class="icon-wrapper no-button"
     (click)="toggle.emit()"
     [class.opened]="isSidebarOpened"
   >
@@ -38,7 +39,7 @@
         />
       </svg>
     </div>
-  </div>
+  </button>
   <ng-content></ng-content>
   <app-social-wrapper></app-social-wrapper>
   <div class="menu-wrapper">
