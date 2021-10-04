@@ -530,12 +530,13 @@ Prisma interferes with NestJS `enableShutdownHooks`. Prisma listens for shutdown
 ...
 import { PrismaService } from './services/prisma/prisma.service';
 ...
-bootstrap() {
+async function bootstrap() {
   ...
   const prismaService: PrismaService = app.get(PrismaService);
   prismaService.enableShutdownHooks(app)
   ...
 }
+bootstrap()
 ```
 
 You can [read more](https://github.com/prisma/prisma/issues/2917#issuecomment-708340112) about Prisma handling of shutdown signal, and `beforeExit` event.
