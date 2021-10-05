@@ -1,5 +1,5 @@
 <header>
-  <div
+  <button
     class="icon-wrapper"
     (click)="toggle.emit()"
     [class.opened]="isSidebarOpened"
@@ -38,7 +38,7 @@
         />
       </svg>
     </div>
-  </div>
+  </button>
   <ng-content></ng-content>
   <app-social-wrapper></app-social-wrapper>
   <div class="menu-wrapper">
