@@ -447,7 +447,7 @@ The construction above will instantiate `BullConfigService` inside `BullModule` 
 ```typescript
 @Injectable()
 class BullConfigService implements SharedBullConfigurationFactory {
-  createSharedConfiguration(): SharedBullConfigurationFactory {
+  createSharedConfiguration(): BullModuleOptions {
     return {
       redis: {
         host: 'localhost',
