@@ -140,7 +140,13 @@ const document = SwaggerModule.createDocument(app, config, options);
 You can configure Swagger UI by passing the options object which fulfills the `ExpressSwaggerCustomOptions` (if you use express) interface as a fourth argument of the `SwaggerModule#setup` method.
 
 ```TypeScript
-export interface ExpressSwaggerCustomOptions {
+interface CommonSwaggerCustomOptions {
+  useGlobalPrefix?: boolean;
+}
+```
+
+```TypeScript
+export interface SwaggerUiExpressOptions {
   explorer?: boolean;
   swaggerOptions?: Record<string, any>;
   customCss?: string;
@@ -155,10 +161,20 @@ export interface ExpressSwaggerCustomOptions {
 }
 ```
 
+```TypeScript
+export interface ExpressSwaggerCustomOptions
+  extends CommonSwaggerCustomOptions,
+    SwaggerUiExpressOptions {
+  jsonSpecPath?: string;
+  swaggerUiLib?: SwaggerUiExpress;
+}
+```
+
 If you use fastify, you can configure the user interface by passing the `FastifySwaggerCustomOptions` object.
 
 ```Typescript
-export interface FastifySwaggerCustomOptions {
+export interface FastifySwaggerCustomOptions
+  extends CommonSwaggerCustomOptions {
   uiConfig?: Record<string, any>;
 }
 ```
@@ -171,6 +187,15 @@ const customOptions: SwaggerCustomOptions = {
     persistAuthorization: true,
   },
   customSiteTitle: 'My API Docs',
+};
+SwaggerModule.setup('docs', app, document, customOptions);
+```
+
+You can also change url of OpenAPI schema (if you use express) like this:
+
+```TypeScript
+const customOptions: SwaggerCustomOptions = {
+  jsonSpecPath: '/schemas/v1/openapi.json',
 };
 SwaggerModule.setup('docs', app, document, customOptions);
 ```
