@@ -9,7 +9,7 @@ Expanding on the [standalone application](/standalone-applications) docs there's
 Just like any other package, you've got to install it before you can use it.
 
 ```bash
-npm i nest-commander
+$ npm i nest-commander
 ```
 
 #### A Command File
