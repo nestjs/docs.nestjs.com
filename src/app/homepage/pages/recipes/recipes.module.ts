@@ -14,6 +14,7 @@ import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
+import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 
 const routes: Routes = [
   {
@@ -88,6 +89,11 @@ const routes: Routes = [
     component: RouterModuleComponent,
     data: { title: 'Router module' },
   },
+  {
+    path: 'nest-commander',
+    component: NestCommanderComponent,
+    data: { title: 'Nest Commander' },
+  },
 ];
 
 @NgModule({
@@ -105,6 +111,7 @@ const routes: Routes = [
     CrudGeneratorComponent,
     RouterModuleComponent,
     ServeStaticComponent,
+    NestCommanderComponent,
   ],
 })
 export class RecipesModule {}

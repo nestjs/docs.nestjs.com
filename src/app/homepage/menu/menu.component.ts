@@ -237,6 +237,7 @@ export class MenuComponent implements OnInit {
         { title: 'Compodoc', path: '/recipes/documentation' },
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Serve static', path: '/recipes/serve-static' },
+        { title: 'Nest Commander', path: '/recipes/nest-commander' },
       ],
     },
     {
