@@ -74,6 +74,10 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
     <td><code>socketOptions</code></td>
     <td>Additional socket options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
+  <tr>
+    <td><code>headers</code></td>
+    <td>Headers to be sent along with every message</td>
+  </tr>
 </table>
 
 #### Client
@@ -193,5 +197,39 @@ getNotifications(data, context) {
   const originalMsg = context.getMessage();
 
   channel.ack(originalMsg);
+}
+```
+
+#### Message options
+
+It's possible to customize the message sent to the RabbitMQ server to e.g.: add headers or configure priority
+
+```typescript
+import { RmqRecordBuilder } from '@nestjs/microservices';
+
+const record = new RmqRecordBuilder(':cat:')
+  .setOptions({
+    headers: { 'x-version': '1.0.0' },
+    priority: 3,
+  })
+  .build();
+client.send('replace-emoji', record);
+```
+
+And you can read those values server-side as well, by accessing the RmqContext
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: RmqContext): string {
+  const { properties: { headers } } = context.getMessage();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const { properties: { headers } } = context.getMessage();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
 }
 ```

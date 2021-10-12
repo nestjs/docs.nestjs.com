@@ -125,3 +125,61 @@ getDate(data, context) {
   return new Date().toLocaleTimeString(...);
 }
 ```
+
+#### Headers
+
+It's possible to send headers with both request-response and event-based flows.
+
+```typescript
+import nats from 'nats';
+import { NatsRecordBuilder } from '@nestjs/microservices';
+
+const headers = nats.headers();
+headers.set('x-version', '1.0.0');
+const record = new NatsRecordBuilder(':cat:').setHeaders(headers).build();
+client.send('replace-emoji', record);
+```
+
+And you can read those headers server-side as well, by accessing the NatsContext
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: NatsContext): string {
+  const headers = context.getHeaders();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const headers = context.getHeaders();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+```
+
+In some cases you might want to configure headers for multiple requests, you can pass these as options to the ClientProxyFactory
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+@Module({
+  providers: [
+    {
+      provide: 'API_v1',
+      useFactory: () =>
+        ClientProxyFactory.create({
+          transport: Transport.NATS,
+          options: {
+            servers: ['nats://localhost:4222'],
+            headers: { 'x-version': '1.0.0' },
+          },
+        }),
+    },
+  ],
+})
+export class ApiModule {}
+```
+
+> info **Hint** You could make this provider request-scoped and thus enable things like cross-protocol request tracing.

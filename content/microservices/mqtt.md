@@ -115,3 +115,62 @@ getTemperature(context) {
   console.log(`Topic: ${context.getTopic()}`);
 }
 ```
+
+#### Message options
+
+It's possible to customize the message sent to the MQTT server to e.g.: adjust the QoS level, set the Retain or DUP flags, or add additional properties to the payload
+
+```typescript
+import { MqttRecordBuilder } from '@nestjs/microservices';
+
+const userProperties = { 'x-version': '1.0.0' };
+const record = new MqttRecordBuilder(':cat:')
+  .setProperties({ userProperties })
+  .setQoS(1)
+  .build();
+client.send('replace-emoji', record);
+```
+
+And you can read those options server-side as well, by accessing the MqttContext
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: MqttContext): string {
+  const { properties: { userProperties } } = context.getPacket();
+  return userProperties['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const { properties: { userProperties } } = context.getPacket();
+  return userProperties['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+```
+
+In some cases you might want to configure user properties for multiple requests, you can pass these as options to the ClientProxyFactory
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+@Module({
+  providers: [
+    {
+      provide: 'API_v1',
+      useFactory: () =>
+        ClientProxyFactory.create({
+          transport: Transport.MQTT,
+          options: {
+            url: 'mqtt://localhost:1833',
+            userProperties: { 'x-version': '1.0.0' },
+          },
+        }),
+    },
+  ],
+})
+export class ApiModule {}
+```
+
+> info **Hint** You could make this provider request-scoped and thus enable things like cross-protocol request tracing.
