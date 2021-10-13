@@ -244,6 +244,5 @@ app.enableVersioning({
   defaultVersion: ['1', '2']
   // or
   defaultVersion: VERSION_NEUTRAL
-  // and so on
 });
 ```
