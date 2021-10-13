@@ -10,12 +10,13 @@ Start by installing the required package:
 $ npm i --save csurf
 ```
 
-> warning **Warning** As explained on the [csurf middleware page](https://github.com/expressjs/csurf#csurf), the csurf module requires either session middleware or a cookie-parser to be initialized first. Please see that documentation for further instructions.
+> warning **Warning** As explained in the [`csurf` docs](https://github.com/expressjs/csurf#csurf), this middleware requires either session middleware or `cookie-parser` to be initialized first. Please see that documentation for further instructions.
 
-Once the installation is complete, apply the csurf middleware as global middleware.
+Once the installation is complete, apply the `csurf` middleware as global middleware.
 
 ```typescript
 import * as csurf from 'csurf';
+// ...
 // somewhere in your initialization file
 app.use(csurf());
 ```
@@ -32,6 +33,9 @@ Once the installation is complete, register the `fastify-csrf` plugin, as follow
 
 ```typescript
 import fastifyCsrf from 'fastify-csrf';
-// somewhere in your initialization file
+// ...
+// somewhere in your initialization file after registering some storage plugin
 app.register(fastifyCsrf);
 ```
+
+> warning **Warning** As explained in the `fastify-csrf` docs [here](https://github.com/fastify/fastify-csrf#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.
