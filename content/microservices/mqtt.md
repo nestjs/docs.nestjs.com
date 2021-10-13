@@ -118,12 +118,59 @@ getTemperature(context) {
 
 #### Record builders
 
-To configure message options, you can use the `MqttRecordBuilder` class. For example, to set `QoS` to `2` use the `setQoS` method, as follows:
+To configure message options (adjust the QoS level, set the Retain or DUP flags, or add additional properties to the payload), you can use the `MqttRecordBuilder` class. For example, to set `QoS` to `2` use the `setQoS` method, as follows:
 
 ```typescript
-const message = { event: 'USER_CREATED' };
-const record = new MqttRecordBuilder(message).setQoS(2).build();
-this.client.send('notifications', record).subscribe(...);
+const userProperties = { 'x-version': '1.0.0' };
+const record = new MqttRecordBuilder(':cat:')
+  .setProperties({ userProperties })
+  .setQoS(1)
+  .build();
+client.send('replace-emoji', record).subscribe(...);
 ```
 
 > info **Hint** `MqttRecordBuilder` class is exported from the `@nestjs/microservices` package.
+
+And you can read these options on the server-side as well, by accessing the `MqttContext`.
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: MqttContext): string {
+  const { properties: { userProperties } } = context.getPacket();
+  return userProperties['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const { properties: { userProperties } } = context.getPacket();
+  return userProperties['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+```
+
+In some cases you might want to configure user properties for multiple requests, you can pass these options to the `ClientProxyFactory`.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+@Module({
+  providers: [
+    {
+      provide: 'API_v1',
+      useFactory: () =>
+        ClientProxyFactory.create({
+          transport: Transport.MQTT,
+          options: {
+            url: 'mqtt://localhost:1833',
+            userProperties: { 'x-version': '1.0.0' },
+          },
+        }),
+    },
+  ],
+})
+export class ApiModule {}
+```
+
+> info **Hint** You could make this provider request-scoped and thus enable things like cross-protocol request tracing.
