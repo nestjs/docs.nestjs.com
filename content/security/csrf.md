@@ -38,4 +38,4 @@ import fastifyCsrf from 'fastify-csrf';
 app.register(fastifyCsrf);
 ```
 
-> warning **Warning** As explained on the [`fastify-csrf` docs](https://github.com/fastify/fastify-csrf#usage), this plugin requires some storage plugin to be initialized first. Please, see that documentation for further instructions.
+> warning **Warning** As explained in the `fastify-csrf` docs [here](https://github.com/fastify/fastify-csrf#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.
