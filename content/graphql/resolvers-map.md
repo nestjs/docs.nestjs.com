@@ -17,7 +17,7 @@ type Author {
   id: Int!
   firstName: String
   lastName: String
-  posts: [Post]
+  posts: [Post!]!
 }
 ```
 
@@ -57,7 +57,7 @@ type Author {
   id: Int!
   firstName: String
   lastName: String
-  posts: [Post]
+  posts: [Post!]!
 }
 ```
 

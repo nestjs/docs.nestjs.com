@@ -247,7 +247,7 @@ When setting up your NestJS application, you'll want to abstract away the Prisma
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { INestApplication, Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -530,12 +530,13 @@ Prisma interferes with NestJS `enableShutdownHooks`. Prisma listens for shutdown
 ...
 import { PrismaService } from './services/prisma/prisma.service';
 ...
-bootstrap() {
+async function bootstrap() {
   ...
   const prismaService: PrismaService = app.get(PrismaService);
   prismaService.enableShutdownHooks(app)
   ...
 }
+bootstrap()
 ```
 
 You can [read more](https://github.com/prisma/prisma/issues/2917#issuecomment-708340112) about Prisma handling of shutdown signal, and `beforeExit` event.

@@ -349,6 +349,7 @@ providers: [
   {
     provide: APP_GUARD,
     useExisting: JwtAuthGuard,
+    // ^^^^^^^^ notice the use of 'useExisting' instead of 'useClass'
   },
   JwtAuthGuard,
 ],

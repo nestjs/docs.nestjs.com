@@ -30,6 +30,8 @@ header {
   display: inline-block;
   position: relative;
   z-index: 10000;
+  border: none;
+  background: transparent;
 
   &:hover {
     cursor: pointer;
