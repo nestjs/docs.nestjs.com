@@ -128,7 +128,7 @@ getDate(data, context) {
 
 #### Record builders
 
-To configure message options, you can use the `NatsRecordBuilder` class. For example, to add `x-version` header, use the `setHeaders` method, as follows:
+To configure message options, you can use the `NatsRecordBuilder` class (note: this is doable for event-based flows as well). For example, to add `x-version` header, use the `setHeaders` method, as follows:
 
 ```typescript
 import * as nats from 'nats';
@@ -137,9 +137,52 @@ import * as nats from 'nats';
 const headers = nats.headers();
 headers.set('x-version', '1.0.0');
 
-const message = { event: 'USER_CREATED' };
-const record = new NatsRecordBuilder(message).setHeaders(headers).build();
-this.client.send('notifications', record).subscribe(...);
+const record = new NatsRecordBuilder(':cat:').setHeaders(headers).build();
+this.client.send('replace-emoji', record).subscribe(...);
 ```
 
 > info **Hint** `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.
+
+And you can read these headers on the server-side as well, by accessing the `NatsContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: NatsContext): string {
+  const headers = context.getHeaders();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const headers = context.getHeaders();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+```
+
+In some cases you might want to configure headers for multiple requests, you can pass these as options to the `ClientProxyFactory`:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+@Module({
+  providers: [
+    {
+      provide: 'API_v1',
+      useFactory: () =>
+        ClientProxyFactory.create({
+          transport: Transport.NATS,
+          options: {
+            servers: ['nats://localhost:4222'],
+            headers: { 'x-version': '1.0.0' },
+          },
+        }),
+    },
+  ],
+})
+export class ApiModule {}
+```
+
+> info **Hint** You could make this provider request-scoped and thus enable things like cross-protocol request tracing.

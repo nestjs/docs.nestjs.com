@@ -197,8 +197,8 @@ event to dispatch:  &#123; pattern: &#39;event&#39;, data: &#39;Hello world!&#39
 <p>If you need to add some custom logic around the serialization of responses on the client side, you can use a custom class that extends the <code>ClientProxy</code> class or one of its child classes. For modifying successful requests you can override the <code>serializeResponse</code> method, and for modifying any errors that go through this client you can override the <code>serializeError</code> method. To make use of this custom class, you can pass the class itself to the <code>ClientsModule.register()</code> method using the <code>customClass</code> property. Below is an example of a custom <code>ClientProxy</code> that serializes each error into an <code>RpcException</code>.</p>
 
 <span class="filename">
-  {{ 'error-handling.proxy' | extension: appef748bdb0474f8314c0d2d844a046dd0b313d5bd.isJsActive }}
-<app-tabs #appef748bdb0474f8314c0d2d844a046dd0b313d5bd></app-tabs>
+  {{ 'error-handling.proxy' | extension: app37591e0f00090be59cdd04c6c4aa7f47d21ed33c.isJsActive }}
+<app-tabs #app37591e0f00090be59cdd04c6c4aa7f47d21ed33c></app-tabs>
 </span><pre><code class="language-typescript">
 import &#123; ClientTcp, RpcException &#125; from &#39;@nestjs/microservices&#39;;
 
@@ -210,8 +210,8 @@ class ErrorHandlingProxy extends ClientTCP &#123;
 </code></pre><p>and then use it in the <code>ClientsModule</code> like so:</p>
 
 <span class="filename">
-  {{ 'app.module' | extension: appe71a4ea7740a397e20f1e653d6c83fd05f372e95.isJsActive }}
-<app-tabs #appe71a4ea7740a397e20f1e653d6c83fd05f372e95></app-tabs>
+  {{ 'app.module' | extension: app8e7d939eefa181bf7634362268838b383adc08c2.isJsActive }}
+<app-tabs #app8e7d939eefa181bf7634362268838b383adc08c2></app-tabs>
 </span><pre><code class="language-typescript">
 @Module(&#123;
   imports: [
