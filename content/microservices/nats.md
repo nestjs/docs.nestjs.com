@@ -125,3 +125,21 @@ getDate(data, context) {
   return new Date().toLocaleTimeString(...);
 }
 ```
+
+#### Record builders
+
+To configure message options, you can use the `NatsRecordBuilder` class. For example, to add `x-version` header, use the `setHeaders` method, as follows:
+
+```typescript
+import * as nats from 'nats';
+
+// somewhere in your code
+const headers = nats.headers();
+headers.set('x-version', '1.0.0');
+
+const message = { event: 'USER_CREATED' };
+const record = new NatsRecordBuilder(message).setHeaders(headers).build();
+this.client.send('notifications', record).subscribe(...);
+```
+
+> info **Hint** `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.

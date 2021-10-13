@@ -195,3 +195,23 @@ getNotifications(data, context) {
   channel.ack(originalMsg);
 }
 ```
+
+#### Record builders
+
+To configure message options, you can use the `RmqRecordBuilder` class. For example, to set `headers` and `priority` properties, use the `setOptions` method, as follows:
+
+```typescript
+const message = { event: 'USER_CREATED' };
+const record = new RmqRecordBuilder(message)
+  .setOptions({
+    headers: {
+      ['x-version']: '1.0.0',
+    },
+    priority: 3,
+  })
+  .build();
+
+this.client.send('notifications', record).subscribe(...);
+```
+
+> info **Hint** `RmqRecordBuilder` class is exported from the `@nestjs/microservices` package.

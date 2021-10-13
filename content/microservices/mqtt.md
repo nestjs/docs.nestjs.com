@@ -115,3 +115,15 @@ getTemperature(context) {
   console.log(`Topic: ${context.getTopic()}`);
 }
 ```
+
+#### Record builders
+
+To configure message options, you can use the `MqttRecordBuilder` class. For example, to set `QoS` to `2` use the `setQoS` method, as follows:
+
+```typescript
+const message = { event: 'USER_CREATED' };
+const record = new MqttRecordBuilder(message).setQoS(2).build();
+this.client.send('notifications', record).subscribe(...);
+```
+
+> info **Hint** `MqttRecordBuilder` class is exported from the `@nestjs/microservices` package.
