@@ -35,7 +35,7 @@ await app.listen(3000);
 
 Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
 
-> info **Hint** To disable color in the default logger's messages, set the `NO_COLOR` environment variable.
+> info **Hint** To disable color in the default logger's messages, set the `NO_COLOR` environment variable to some non-empty string.
 
 #### Custom implementation
 
