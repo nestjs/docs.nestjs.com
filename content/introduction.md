@@ -34,7 +34,7 @@ $ npm install
 $ npm run start
 ```
 
-> If you'd like to clone the repository without the git history, you can use [degit](https://github.com/Rich-Harris/degit)
+> info **Hint** If you'd like to clone the repository without the git history, you can use [degit](https://github.com/Rich-Harris/degit).
 
 Open your browser and navigate to [`http://localhost:3000/`](http://localhost:3000/).
 
