@@ -404,7 +404,17 @@ Your `UserService` and `PostService` currently wrap the CRUD queries that are av
 
 Finally, you'll use the services you created in the previous sections to implement the different routes of your app. For the purpose of this guide, you'll put all your routes into the already existing `AppController` class.
 
-Replace the contents of the `app.controller.ts` file with the following code:
+First, specify the new Prisma services in your: `app.module.ts`:
+```typescript
+...
+@Module({
+	controllers: [AppController],
+	providers: [PrismaService, UserService, PostService],
+})
+...
+```
+
+Then, replace the contents of the `app.controller.ts` file with the following code:
 
 ```typescript
 import {
