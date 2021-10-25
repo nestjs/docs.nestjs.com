@@ -91,3 +91,23 @@ Also, all `HttpException` errors thrown from your resolvers will be now automati
 #### RxJS
 
 Make sure to upgrade to the latest version of the `rxjs` package (v7).
+
+#### TestingModule / NestFactory
+
+If you are currently getting an element (in this case `ConfigService`) from the module using a string you'll receive following error: 
+```
+Nest could not find ConfigService element (this provider does not exist in the current context)
+```
+
+Please change this to the actual reference.
+Before:
+```typescript
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
+const config = app.get<ConfigService>('ConfigService');
+```
+
+Now:
+```typescript
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
+const config = app.get<ConfigService>(ConfigService);
+```
