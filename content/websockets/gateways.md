@@ -29,7 +29,7 @@ In general, each gateway is listening on the same port as the **HTTP server**, u
 
 > warning **Warning** Gateways are not instantiated until they are referenced in the providers array of an existing module.
 
-You can pass any supported [option](https://socket.io/docs/server-api/) to the socket constructor with the second argument to the `@WebSocketGateway()` decorator, as shown below:
+You can pass any supported [option](https://socket.io/docs/v4/server-options/) to the socket constructor with the second argument to the `@WebSocketGateway()` decorator, as shown below:
 
 ```typescript
 @WebSocketGateway(81, { transports: ['websocket'] })
