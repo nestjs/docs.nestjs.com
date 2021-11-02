@@ -11,7 +11,7 @@ import { Field, ID, InterfaceType } from '@nestjs/graphql';
 
 @InterfaceType()
 export abstract class Character {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()
@@ -58,13 +58,37 @@ To provide a customized `resolveType()` function, pass the `resolveType` propert
   },
 })
 export abstract class Book {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()
   title: string;
 }
 ```
+
+##### Interface resolvers
+
+So far, using interfaces, you could only share fields with your objects. But what if you want to share methods using your interface? That's when you use interface resolvers.
+To do so, create a resolver and point its type to the interface, then defined your methods/queries using the `@ResolveField` decorator.
+
+```typescript
+import { Resolver, ResolveField, Parent, Info } from '@nestjs/graphql';
+
+@Resolver((type) => Character) // Reminder: Character is an interface
+export class CharacterInterfaceResolver {
+  @ResolveField(() => [Character])
+  friends(
+    @Parent() character, // Resolved object that implements Character
+    @Info() { parentType }, // Type of the object that implements Character
+    @Args('search', { type: () => String }) searchTerm: string,
+  ) {
+    // Get character's friends
+    return friendsFromDB;
+  }
+}
+```
+
+Now the `friends` query is applied on all objects that implement the `Character` interface.
 
 #### Schema first
 
