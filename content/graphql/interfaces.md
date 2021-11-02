@@ -11,7 +11,7 @@ import { Field, ID, InterfaceType } from '@nestjs/graphql';
 
 @InterfaceType()
 export abstract class Character {
-  @Fieldtype(type => ID)
+  @Field(type => ID)
   id: string;
 
   @Field()
