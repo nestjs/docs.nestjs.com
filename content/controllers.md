@@ -132,7 +132,7 @@ The request object represents the HTTP request and has properties for the reques
       <td><code>req.query</code> / <code>req.query[key]</code></td>
     </tr>
     <tr>
-      <td><code>@Headers(name?: string)</code></td>
+      <td><code>@Header(name?: string)</code></td>
       <td><code>req.headers</code> / <code>req.headers[name]</code></td>
     </tr>
     <tr>
