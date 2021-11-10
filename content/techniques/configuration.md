@@ -243,7 +243,7 @@ constructor(private configService: ConfigService<{ database: { host: string } }>
 }
 ```
 
-The second type argument rely on the first one, acting as a type assertion to get rid of all `undefined` types that `ConfigService`'s methods can return when `strictNullChecks` is on. For instance:
+The second generic relies on the first one, acting as a type assertion to get rid of all `undefined` types that `ConfigService`'s methods can return when `strictNullChecks` is on. For instance:
 
 ```typescript
 // ...
