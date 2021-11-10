@@ -160,6 +160,30 @@ Instead of using the production version of any provider, you can override it wit
 
 <app-banner-courses></app-banner-courses>
 
+#### Auto mocking
+
+Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. Otherwise, a general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/https://github.com/golevelup/nestjs/tree/master/packages/testing) can be passed directly.
+
+```typescript
+describe('CatsController', () => {
+  let controller: CatsController;
+
+  beforeEach(async () => {
+    const modRef = await Test.createTestingModule({
+      controllers: [CatsController],
+    })
+    .useMocker((token) => {
+      if (token === CatsService) {
+        return { findAll: jest.fn().mockResolveValue(results) }
+      }
+    })
+    .compile();
+    controller = modRef.get(CatsController);
+  });
+})
+```
+
+You can also retrieve these mocks out of the testing container as you normally would custom providers, `modRef.get(CatsService)`.
 #### End-to-end testing
 
 Unlike unit testing, which focuses on individual modules and classes, end-to-end (e2e) testing covers the interaction of classes and modules at a more aggregate level -- closer to the kind of interaction that end-users will have with the production system. As an application grows, it becomes hard to manually test the end-to-end behavior of each API endpoint. Automated end-to-end tests help us ensure that the overall behavior of the system is correct and meets project requirements. To perform e2e tests we use a similar configuration to the one we just covered in **unit testing**. In addition, Nest makes it easy to use the [Supertest](https://github.com/visionmedia/supertest) library to simulate HTTP requests.
