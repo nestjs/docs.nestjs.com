@@ -250,7 +250,7 @@ The second generic relies on the first one, acting as a type assertion to get ri
 constructor(private configService: ConfigService<{ PORT: number }, true>) {
   //                                                               ^^^^
   const port = this.configService.get('PORT', { infer: true });
-  //    ^^^ The type of this will be 'number' thus you don't need TS type assertions anymore
+  //    ^^^ The type of port will be 'number' thus you don't need TS type assertions anymore
 }
 ```
 
