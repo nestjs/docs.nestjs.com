@@ -282,7 +282,7 @@ Create the `GetAuthorArgs` class using `@ArgsType()` as shown below:
 
 ```typescript
 @@filename(authors/dto/get-author.args)
-import { MinLength } from 'class-validator';
+import { MinLength } from '@nestjs/class-validator';
 import { Field, ArgsType } from '@nestjs/graphql';
 
 @ArgsType()
@@ -600,10 +600,10 @@ export abstract class IQuery {
 }
 ```
 
-By generating classes (instead of the default technique of generating interfaces), you can use declarative validation **decorators** in combination with the schema first approach, which is an extremely useful technique (read [more](/techniques/validation)). For example, you could add `class-validator` decorators to the generated `CreatePostInput` class as shown below to enforce minimum and maximum string lengths on the `title` field:
+By generating classes (instead of the default technique of generating interfaces), you can use declarative validation **decorators** in combination with the schema first approach, which is an extremely useful technique (read [more](/techniques/validation)). For example, you could add `@nestjs/class-validator` decorators to the generated `CreatePostInput` class as shown below to enforce minimum and maximum string lengths on the `title` field:
 
 ```typescript
-import { MinLength, MaxLength } from 'class-validator';
+import { MinLength, MaxLength } from '@nestjs/class-validator';
 
 export class CreatePostInput {
   @MinLength(3)
@@ -617,7 +617,7 @@ export class CreatePostInput {
 However, if you add decorators directly to the automatically generated file, they will be **overwritten** each time the file is generated. Instead, create a separate file and simply extend the generated class.
 
 ```typescript
-import { MinLength, MaxLength } from 'class-validator';
+import { MinLength, MaxLength } from '@nestjs/class-validator';
 import { Post } from '../../graphql.ts';
 
 export class CreatePostInput extends Post {

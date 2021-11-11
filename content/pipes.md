@@ -320,17 +320,17 @@ async create(createCatDto) {
 
 Let's look at an alternate implementation for our validation technique.
 
-Nest works well with the [class-validator](https://github.com/typestack/class-validator) library. This powerful library allows you to use decorator-based validation. Decorator-based validation is extremely powerful, especially when combined with Nest's **Pipe** capabilities since we have access to the `metatype` of the processed property. Before we start, we need to install the required packages:
+Nest works well with the [@nestjs/class-validator](https://github.com/nestjs/class-validator) library. This powerful library allows you to use decorator-based validation. Decorator-based validation is extremely powerful, especially when combined with Nest's **Pipe** capabilities since we have access to the `metatype` of the processed property. Before we start, we need to install the required packages:
 
 ```bash
-$ npm i --save class-validator class-transformer
+$ npm i --save @nestjs/class-validator @nestjs/class-transformer
 ```
 
 Once these are installed, we can add a few decorators to the `CreateCatDto` class. Here we see a significant advantage of this technique: the `CreateCatDto` class remains the single source of truth for our Post body object (rather than having to create a separate validation class).
 
 ```typescript
 @@filename(create-cat.dto)
-import { IsString, IsInt } from 'class-validator';
+import { IsString, IsInt } from '@nestjs/class-validator';
 
 export class CreateCatDto {
   @IsString()
@@ -344,15 +344,15 @@ export class CreateCatDto {
 }
 ```
 
-> info **Hint** Read more about the class-validator decorators [here](https://github.com/typestack/class-validator#usage).
+> info **Hint** Read more about the @nestjs/class-validator decorators [here](https://github.com/nestjs/class-validator#usage).
 
 Now we can create a `ValidationPipe` class that uses these annotations.
 
 ```typescript
 @@filename(validation.pipe)
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { validate } from '@nestjs/class-validator';
+import { plainToClass } from '@nestjs/class-transformer';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
@@ -375,15 +375,15 @@ export class ValidationPipe implements PipeTransform<any> {
 }
 ```
 
-> warning **Notice** Above, we have used the [class-transformer](https://github.com/typestack/class-transformer) library. It's made by the same author as the **class-validator** library, and as a result, they play very well together.
+> warning **Notice** Above, we have used the [@nestjs/class-transformer](https://github.com/nestjs/class-transformer) library. It's made by the same author as the **@nestjs/class-validator** library, and as a result, they play very well together.
 
-Let's go through this code. First, note that the `transform()` method is marked as `async`. This is possible because Nest supports both synchronous and **asynchronous** pipes. We make this method `async` because some of the class-validator validations [can be async](https://github.com/typestack/class-validator#custom-validation-classes) (utilize Promises).
+Let's go through this code. First, note that the `transform()` method is marked as `async`. This is possible because Nest supports both synchronous and **asynchronous** pipes. We make this method `async` because some of the @nestjs/class-validator validations [can be async](https://github.com/nestjs/class-validator#custom-validation-classes) (utilize Promises).
 
 Next note that we are using destructuring to extract the metatype field (extracting just this member from an `ArgumentMetadata`) into our `metatype` parameter. This is just shorthand for getting the full `ArgumentMetadata` and then having an additional statement to assign the metatype variable.
 
 Next, note the helper function `toValidate()`. It's responsible for bypassing the validation step when the current argument being processed is a native JavaScript type (these can't have validation decorators attached, so there's no reason to run them through the validation step).
 
-Next, we use the class-transformer function `plainToClass()` to transform our plain JavaScript argument object into a typed object so that we can apply validation. The reason we must do this is that the incoming post body object, when deserialized from the network request, does **not have any type information** (this is the way the underlying platform, such as Express, works). Class-validator needs to use the validation decorators we defined for our DTO earlier, so we need to perform this transformation to treat the incoming body as an appropriately decorated object, not just a plain vanilla object.
+Next, we use the @nestjs/class-transformer function `plainToClass()` to transform our plain JavaScript argument object into a typed object so that we can apply validation. The reason we must do this is that the incoming post body object, when deserialized from the network request, does **not have any type information** (this is the way the underlying platform, such as Express, works). `@nestjs/class-validator` needs to use the validation decorators we defined for our DTO earlier, so we need to perform this transformation to treat the incoming body as an appropriately decorated object, not just a plain vanilla object.
 
 Finally, as noted earlier, since this is a **validation pipe** it either returns the value unchanged, or throws an exception.
 

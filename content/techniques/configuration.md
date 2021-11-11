@@ -389,15 +389,15 @@ Note that once you decide to pass a `validationOptions` object, any settings you
 
 Alternatively, you can specify a **synchronous** `validate` function that takes an object containing the environment variables (from env file and process) and returns an object containing validated environment variables so that you can convert/mutate them if needed. If the function throws an error, it will prevent the application from bootstrapping.
 
-In this example, we'll proceed with the `class-transformer` and `class-validator` packages. First, we have to define:
+In this example, we'll proceed with the `@nestjs/class-transformer` and `@nestjs/class-validator` packages. First, we have to define:
 
 - a class with validation constraints,
 - a validate function that makes use of the `plainToClass` and `validateSync` functions.
 
 ```typescript
 @@filename(env.validation)
-import { plainToClass } from 'class-transformer';
-import { IsEnum, IsNumber, validateSync } from 'class-validator';
+import { plainToClass } from '@nestjs/class-transformer';
+import { IsEnum, IsNumber, validateSync } from '@nestjs/class-validator';
 
 enum Environment {
   Development = "development",

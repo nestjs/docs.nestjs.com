@@ -8,7 +8,7 @@ It is best practice to validate the correctness of any data sent into a web appl
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
 
-The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
+The `ValidationPipe` makes use of the powerful [@nestjs/class-validator](https://github.com/nestjs/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
 #### Overview
 
@@ -19,12 +19,12 @@ In the [Pipes](/pipes) chapter, we went through the process of building simple p
 To begin using it, we first install the required dependency.
 
 ```bash
-$ npm i --save class-validator class-transformer
+$ npm i --save @nestjs/class-validator @nestjs/class-transformer
 ```
 
 > info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
 
-Because this pipe uses the `class-validator` and `class-transformer` libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
+Because this pipe uses the `@nestjs/class-validator` and `@nestjs/class-transformer` libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
 
 ```typescript
 export interface ValidationPipeOptions extends ValidatorOptions {
@@ -34,7 +34,7 @@ export interface ValidationPipeOptions extends ValidatorOptions {
 }
 ```
 
-In addition to these, all `class-validator` options (inherited from the `ValidatorOptions` interface) are available:
+In addition to these, all `@nestjs/class-validator` options (inherited from the `ValidatorOptions` interface) are available:
 
 <table>
   <tr>
@@ -131,7 +131,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   </tr>
 </table>
 
-> info **Notice** Find more information about the `class-validator` package in its [repository](https://github.com/typestack/class-validator).
+> info **Notice** Find more information about the `@nestjs/class-validator` package in its [repository](https://github.com/nestjs/class-validator).
 
 #### Auto-validation
 
@@ -159,10 +159,10 @@ create(@Body() createUserDto: CreateUserDto) {
 
 > info **Hint** When importing your DTOs, you can't use a type-only import as that would be erased at runtime, i.e. remember to `import {{ '{' }} CreateUserDto {{ '}' }}` instead of `import type {{ '{' }} CreateUserDto {{ '}' }}`.
 
-Now we can add a few validation rules in our `CreateUserDto`. We do this using decorators provided by the `class-validator` package, described in detail [here](https://github.com/typestack/class-validator#validation-decorators). In this fashion, any route that uses the `CreateUserDto` will automatically enforce these validation rules.
+Now we can add a few validation rules in our `CreateUserDto`. We do this using decorators provided by the `@nestjs/class-validator` package, described in detail [here](https://github.com/nestjs/class-validator#validation-decorators). In this fashion, any route that uses the `CreateUserDto` will automatically enforce these validation rules.
 
 ```typescript
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from '@nestjs/class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -192,10 +192,10 @@ findOne(@Param() params: FindOneParams) {
 }
 ```
 
-`FindOneParams`, like a DTO, is simply a class that defines validation rules using `class-validator`. It would look like this:
+`FindOneParams`, like a DTO, is simply a class that defines validation rules using `@nestjs/class-validator`. It would look like this:
 
 ```typescript
-import { IsNumberString } from 'class-validator';
+import { IsNumberString } from '@nestjs/class-validator';
 
 export class FindOneParams {
   @IsNumberString()
@@ -433,4 +433,4 @@ While this chapter shows examples using HTTP style applications (e.g., Express o
 
 #### Learn more
 
-Read more about custom validators, error messages, and available decorators as provided by the `class-validator` package [here](https://github.com/typestack/class-validator).
+Read more about custom validators, error messages, and available decorators as provided by the `@nestjs/class-validator` package [here](https://github.com/nestjs/class-validator).

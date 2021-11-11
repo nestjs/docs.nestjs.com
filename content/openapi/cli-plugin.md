@@ -12,7 +12,7 @@ The Swagger plugin will automatically:
 - set the `required` property depending on the question mark (e.g. `name?: string` will set `required: false`)
 - set the `type` or `enum` property depending on the type (supports arrays as well)
 - set the `default` property based on the assigned default value
-- set several validation rules based on `class-validator` decorators (if `classValidatorShim` set to `true`)
+- set several validation rules based on `@nestjs/class-validator` decorators (if `classValidatorShim` set to `true`)
 - add a response decorator to every endpoint with a proper status and `type` (response model)
 - generate descriptions for properties and endpoints based on comments (if `introspectComments` set to `true`)
 - generate example values for properties based on comments (if `introspectComments` set to `true`)
@@ -165,7 +165,7 @@ export interface PluginOptions {
   <tr>
     <td><code>classValidatorShim</code></td>
     <td><code>true</code></td>
-    <td>If set to true, the module will reuse <code>class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
+    <td>If set to true, the module will reuse <code>@nestjs/class-validator</code> validation decorators (e.g. <code>@Max(10)</code> will add <code>max: 10</code> to schema definition) </td>
   </tr>
   <tr>
     <td><code>dtoKeyOfComment</code></td>

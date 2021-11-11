@@ -4,14 +4,14 @@ Serialization is a process that happens before objects are returned in a network
 
 #### Overview
 
-Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `classToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer). In doing so, it can apply rules expressed by `class-transformer` decorators on an entity/DTO class, as described below.
+Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [@nestjs/class-transformer](https://github.com/nestjs/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `classToPlain()` function from [@nestjs/class-transformer](https://github.com/nestjs/class-transformer). In doing so, it can apply rules expressed by `@nestjs/class-transformer` decorators on an entity/DTO class, as described below.
 
 #### Exclude properties
 
 Let's assume that we want to automatically exclude a `password` property from a user entity. We annotate the entity as follows:
 
 ```typescript
-import { Exclude } from 'class-transformer';
+import { Exclude } from '@nestjs/class-transformer';
 
 export class UserEntity {
   id: number;
@@ -106,4 +106,4 @@ While this chapter shows examples using HTTP style applications (e.g., Express o
 
 #### Learn more
 
-Read more about available decorators and options as provided by the `class-transformer` package [here](https://github.com/typestack/class-transformer).
+Read more about available decorators and options as provided by the `@nestjs/class-transformer` package [here](https://github.com/nestjs/class-transformer).
