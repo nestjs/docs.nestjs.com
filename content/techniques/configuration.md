@@ -18,6 +18,8 @@ $ npm i --save @nestjs/config
 
 > info **Hint** The `@nestjs/config` package internally uses [dotenv](https://github.com/motdotla/dotenv).
 
+> warning **Note** `@nestjs/config` requires TypeScript 4.1 or later.
+
 #### Getting started
 
 Once the installation process is complete, we can import the `ConfigModule`. Typically, we'll import it into the root `AppModule` and control its behavior using the `.forRoot()` static method. During this step, environment variable key/value pairs are parsed and resolved. Later, we'll see several options for accessing the `ConfigService` class of the `ConfigModule` in our other feature modules.
