@@ -190,6 +190,10 @@
     {
       "logo": "/assets/logo/vue-storefront.png",
       "url": "https://www.vuestorefront.io/"
+    },
+    {
+      "logo": "/assets/logo/alexishr.png",
+      "url": "https://alexishr.com"
     }
   ],
   "Body": [
@@ -253,6 +257,7 @@
     "https://tayeh.ir",
     "https://forwardigital.co.uk",
     "https://rozetka.com.ua",
-    "https://www.itrio.net"
+    "https://www.itrio.net",
+    "https://alexishr.com"
   ]
 }
