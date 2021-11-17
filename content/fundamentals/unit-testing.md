@@ -162,20 +162,26 @@ Instead of using the production version of any provider, you can override it wit
 
 #### Auto mocking
 
-Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. Otherwise, a general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can be passed directly.
+Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The below is an example of creating a generic mocker using [`jest-mock`](https://www.npmjs.com/package/jest-mock) and a specific mock for `CatsService` using `jest.fn()`.
 
 ```typescript
+const moduleMocker = new ModuleMocker(global);
+
 describe('CatsController', () => {
   let controller: CatsController;
 
   beforeEach(async () => {
-    const modRef = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       controllers: [CatsController],
     })
     .useMocker((token) => {
       if (token === CatsService) {
         return { findAll: jest.fn().mockResolveValue(results) }
       }
+      if (typeof token === 'function') {
+        const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>
+        const Mock = moduleMocker.generateFromMetadata(mockMetadata)
+        return new Mock()
     })
     .compile();
     controller = modRef.get(CatsController);
@@ -183,7 +189,9 @@ describe('CatsController', () => {
 })
 ```
 
-You can also retrieve these mocks out of the testing container as you normally would custom providers, `modRef.get(CatsService)`.
+> info **Hint** A general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can also be passed directly.
+
+You can also retrieve these mocks out of the testing container as you normally would custom providers, `moduleRef.get(CatsService)`.
 
 #### End-to-end testing
 
