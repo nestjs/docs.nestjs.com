@@ -176,12 +176,12 @@ describe('CatsController', () => {
     })
     .useMocker((token) => {
       if (token === CatsService) {
-        return { findAll: jest.fn().mockResolveValue(results) }
+        return { findAll: jest.fn().mockResolveValue(results) };
       }
       if (typeof token === 'function') {
-        const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>
-        const Mock = moduleMocker.generateFromMetadata(mockMetadata)
-        return new Mock()
+        const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+        const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+        return new Mock();
     })
     .compile();
     controller = modRef.get(CatsController);
@@ -276,7 +276,7 @@ describe('Cats', () => {
 >
 > ```ts
 > let app: NestFastifyApplication;
-> 
+>
 > beforeAll(async () => {
 >   app = moduleRef.createNestApplication<NestFastifyApplication>(
 >     new FastifyAdapter(),
@@ -284,18 +284,19 @@ describe('Cats', () => {
 >
 >   await app.init();
 >   await app.getHttpAdapter().getInstance().ready();
-> })
-> 
+> });
+>
 > it(`/GET cats`, () => {
 >   return app
 >     .inject({
 >       method: 'GET',
->       url: '/cats'
->     }).then(result => {
->       expect(result.statusCode).toEqual(200)
->       expect(result.payload).toEqual(/* expectedPayload */)
+>       url: '/cats',
+>     })
+>     .then((result) => {
+>       expect(result.statusCode).toEqual(200);
+>       expect(result.payload).toEqual(/* expectedPayload */);
 >     });
-> })
+> });
 > ```
 
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
