@@ -137,6 +137,8 @@ What happens when your requirements go beyond those offered by _Standard provide
 
 Nest allows you to define Custom providers to handle these cases. It provides several ways to define custom providers. Let's walk through them.
 
+> info **Hint** If you are having problems with dependency resolution you can set the `NEST_DEBUG` environment variable and get extra dependency resolution logs during startup.
+
 #### Value providers: `useValue`
 
 The `useValue` syntax is useful for injecting a constant value, putting an external library into the Nest container, or replacing a real implementation with a mock object. Let's say you'd like to force Nest to use a mock `CatsService` for testing purposes.

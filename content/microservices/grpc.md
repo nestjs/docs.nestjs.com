@@ -427,7 +427,7 @@ bidiHello(messages: Observable<any>, metadata: Metadata, call: ServerDuplexStrea
 
 > info **Hint** The `Metadata` and `ServerUnaryCall` classes/interfaces are imported from the `grpc` package.
 
-According to the service definition (in the `.proto` file), the `BidiHello` method should stream requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplySubject` class.
+According to the service definition (in the `.proto` file), the `BidiHello` method should stream requests to the service. To send multiple asynchronous messages to the stream from a client, we leverage an RxJS `ReplaySubject` class.
 
 ```typescript
 const helloService = this.client.getService<HelloService>('HelloService');

@@ -230,3 +230,19 @@ export class CatsController {
   }
 }
 ```
+
+#### Global default version
+
+If you do not want to provide a version for each controller/or individual routes, or if you want to have a specific version set as the default version for every controller/route that don't have the version specified, you could set the `defaultVersion` as follows:
+
+```typescript
+@@filename(main)
+app.enableVersioning({
+  // ...
+  defaultVersion: '1'
+  // or
+  defaultVersion: ['1', '2']
+  // or
+  defaultVersion: VERSION_NEUTRAL
+});
+```

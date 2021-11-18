@@ -18,6 +18,8 @@ $ npm i --save @nestjs/config
 
 > info **Hint** The `@nestjs/config` package internally uses [dotenv](https://github.com/motdotla/dotenv).
 
+> warning **Note** `@nestjs/config` requires TypeScript 4.1 or later.
+
 #### Getting started
 
 Once the installation process is complete, we can import the `ConfigModule`. Typically, we'll import it into the root `AppModule` and control its behavior using the `.forRoot()` static method. During this step, environment variable key/value pairs are parsed and resolved. Later, we'll see several options for accessing the `ConfigService` class of the `ConfigModule` in our other feature modules.
@@ -214,7 +216,7 @@ The `get()` method also takes an optional second argument defining a default val
 const dbHost = this.configService.get<string>('database.host', 'localhost');
 ```
 
-`ConfigService` has an optional generic (type argument) to help prevent accessing a config property that does not exist. Use it as shown below:
+`ConfigService` has two optional generics (type arguments). The first one is to help prevent accessing a config property that does not exist. Use it as shown below:
 
 ```typescript
 interface EnvironmentVariables {
@@ -226,19 +228,31 @@ interface EnvironmentVariables {
 constructor(private configService: ConfigService<EnvironmentVariables>) {
   const port = this.configService.get('PORT', { infer: true });
 
-  // Error: this is invalid as the URL property is not defined
+  // TypeScript Error: this is invalid as the URL property is not defined in EnvironmentVariables
   const url = this.configService.get('URL', { infer: true });
 }
 ```
 
-With the `infer` property set to `true`, the `ConfigService#get` method will automatically infer the property type based on the interface, so for example, `typeof port === "number"` since `PORT` has a `number` type in the `EnvironmentVariables` interface.
+With the `infer` property set to `true`, the `ConfigService#get` method will automatically infer the property type based on the interface, so for example, `typeof port === "number"` (if you're not using `strictNullChecks` flag from TypeScript) since `PORT` has a `number` type in the `EnvironmentVariables` interface.
 
 Also, with the `infer` feature, you can infer the type of a nested custom configuration object's property, even when using dot notation, as follows:
 
 ```typescript
 constructor(private configService: ConfigService<{ database: { host: string } }>) {
-  const dbHost = this.configService.get('database.host', { infer: true });
-  // typeof dbHost === "string"
+  const dbHost = this.configService.get('database.host', { infer: true })!;
+  // typeof dbHost === "string"                                          |
+  //                                                                     +--> non-null assertion operator
+}
+```
+
+The second generic relies on the first one, acting as a type assertion to get rid of all `undefined` types that `ConfigService`'s methods can return when `strictNullChecks` is on. For instance:
+
+```typescript
+// ...
+constructor(private configService: ConfigService<{ PORT: number }, true>) {
+  //                                                               ^^^^
+  const port = this.configService.get('PORT', { infer: true });
+  //    ^^^ The type of port will be 'number' thus you don't need TS type assertions anymore
 }
 ```
 

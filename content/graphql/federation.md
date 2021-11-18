@@ -18,7 +18,7 @@ In the next example, we'll set up a demo application with a gateway and two fede
 First, install the optional dependency for federation:
 
 ```bash
-$ npm install --save @apollo/federation
+$ npm install --save @apollo/federation @apollo/subgraph
 ```
 
 #### Schema first
