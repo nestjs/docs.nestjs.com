@@ -185,7 +185,7 @@ describe('CatsController', () => {
       }
     })
     .compile();
-    controller = modRef.get(CatsController);
+    controller = moduleRef.get(CatsController);
   });
 })
 ```
