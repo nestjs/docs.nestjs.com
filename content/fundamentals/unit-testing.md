@@ -288,7 +288,7 @@ describe('Cats', () => {
 >   await app.getHttpAdapter().getInstance().ready();
 > });
 > 
-> afterEach(async () => {
+> afterAll(async () => {
 >   await app.close();
 > });
 >
