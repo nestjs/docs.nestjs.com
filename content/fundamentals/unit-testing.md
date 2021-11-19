@@ -287,6 +287,10 @@ describe('Cats', () => {
 >   await app.init();
 >   await app.getHttpAdapter().getInstance().ready();
 > });
+> 
+> afterEach(async () => {
+>   await app.close();
+> });
 >
 > it(`/GET cats`, () => {
 >   return app
