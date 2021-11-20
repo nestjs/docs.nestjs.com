@@ -287,10 +287,6 @@ describe('Cats', () => {
 >   await app.init();
 >   await app.getHttpAdapter().getInstance().ready();
 > });
-> 
-> afterAll(async () => {
->   await app.close();
-> });
 >
 > it(`/GET cats`, () => {
 >   return app
@@ -302,6 +298,10 @@ describe('Cats', () => {
 >       expect(result.statusCode).toEqual(200);
 >       expect(result.payload).toEqual(/* expectedPayload */);
 >     });
+> });
+>  
+> afterAll(async () => {
+>   await app.close();
 > });
 > ```
 
