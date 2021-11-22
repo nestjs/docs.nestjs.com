@@ -299,6 +299,10 @@ describe('Cats', () => {
 >       expect(result.payload).toEqual(/* expectedPayload */);
 >     });
 > });
+>  
+> afterAll(async () => {
+>   await app.close();
+> });
 > ```
 
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
