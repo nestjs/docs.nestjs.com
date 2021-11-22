@@ -341,7 +341,7 @@ subscriptions: {
     },
   },
   context: ({ extra }) => {
-    // you then can access your additional context value through extra field
+    // you can now access your additional context value through the extra field
   } 
 },
 ```
