@@ -336,7 +336,7 @@ subscriptions: {
     onConnect: (context: Context<any>) => {
       const { connectionParams, extra } = context;
       // user validation will remain the same as in the example above
-      // when using with graphql-ws, additional context value should store into extra field
+      // when using with graphql-ws, additional context value should be stored in the extra field
       extra.user = { user: {} };
     },
   },
