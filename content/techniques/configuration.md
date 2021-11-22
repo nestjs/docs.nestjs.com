@@ -219,10 +219,10 @@ const dbHost = this.configService.get<string>('database.host', 'localhost');
 `ConfigService` has two optional generics (type arguments). The first one is to help prevent accessing a config property that does not exist. Use it as shown below:
 
 ```typescript
-interface EnvironmentVariables {
+type EnvironmentVariables = {
   PORT: number;
   TIMEOUT: string;
-}
+};
 
 // somewhere in the code
 constructor(private configService: ConfigService<EnvironmentVariables>) {
@@ -233,7 +233,7 @@ constructor(private configService: ConfigService<EnvironmentVariables>) {
 }
 ```
 
-With the `infer` property set to `true`, the `ConfigService#get` method will automatically infer the property type based on the interface, so for example, `typeof port === "number"` (if you're not using `strictNullChecks` flag from TypeScript) since `PORT` has a `number` type in the `EnvironmentVariables` interface.
+With the `infer` property set to `true`, the `ConfigService#get` method will automatically infer the property type based on the interface, so for example, `typeof port === "number"` (if you're not using `strictNullChecks` flag from TypeScript) since `PORT` has a `number` type in the `EnvironmentVariables` type alias.
 
 Also, with the `infer` feature, you can infer the type of a nested custom configuration object's property, even when using dot notation, as follows:
 
