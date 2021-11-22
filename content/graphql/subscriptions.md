@@ -334,9 +334,14 @@ If you're using the `graphql-ws` package, the signature of the `onConnect` callb
 subscriptions: {
   'graphql-ws': {
     onConnect: (context: Context<any>) => {
-      const { connectionParams } = context;
-      // the rest will remain the same as in the example above
+      const { connectionParams, extra } = context;
+      // user validation will remain the same as in the example above
+      // when using with graphql-ws, additional context value should store into extra field
+      extra.user = { user: {} };
     },
   },
+  context: ({ extra }) => {
+    // you then can access your additional context value through extra field
+  } 
 },
 ```
