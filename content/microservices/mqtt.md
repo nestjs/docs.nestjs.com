@@ -172,5 +172,3 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 })
 export class ApiModule {}
 ```
-
-> info **Hint** You could make this provider request-scoped and thus enable things like cross-protocol request tracing.
