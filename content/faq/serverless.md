@@ -264,21 +264,12 @@ Once the application is running, open your browser and navigate to `http://local
 
 In the sections above, we've shown that using `webpack` and bundling your app can have significant impact on the overall bootstrap time.
 However, to make it work with our example, there are a few additional configurations you must add in your `webpack.config.js` file. Generally,
-to make sure our `handler` function will be picked up, we must change the `output.libraryTarget` property to `commonjs2`. It's also recommended to install the `terser-webpack-plugin` package and override its configuration to keep classnames intact when minifying your production build. Not doing so can result in incorrect behavior when using `class-validator` within your application.
+to make sure our `handler` function will be picked up, we must change the `output.libraryTarget` property to `commonjs2`.
 
 ```javascript
-const TerserPlugin = require("terser-webpack-plugin");
-
 return {
   ...options,
   externals: [],
-  optimization: {
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        keep_classnames: true
-      }
-    })]
-  },
   output: {
     ...options.output,
     libraryTarget: 'commonjs2',
@@ -288,6 +279,31 @@ return {
 ```
 
 With this in place, you can now use `$ nest build --webpack` to compile your function's code (and then `$ npx serverless offline` to test it).
+
+It's also recommended (but **not required** as it will slow down your build process) to install the `terser-webpack-plugin` package and override its configuration to keep classnames intact when minifying your production build. Not doing so can result in incorrect behavior when using `class-validator` within your application.
+
+```javascript
+const TerserPlugin = require('terser-webpack-plugin');
+
+return {
+  ...options,
+  externals: [],
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          keep_classnames: true,
+        },
+      }),
+    ],
+  },
+  output: {
+    ...options.output,
+    libraryTarget: 'commonjs2',
+  },
+  // ... the rest of the configuration
+};
+```
 
 #### Using standalone application feature
 
