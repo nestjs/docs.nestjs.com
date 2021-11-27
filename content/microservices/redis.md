@@ -6,10 +6,10 @@ The [Redis](https://redis.io/) transporter implements the publish/subscribe mess
 
 #### Installation
 
-To start building Redis-based microservices, first install the required package:
+To start building Redis-based microservices, first install the required package (note as of now the supported Redis version is ^3, not the latest ^4):
 
 ```bash
-$ npm i --save redis
+$ npm i --save redis@3
 ```
 
 #### Overview
