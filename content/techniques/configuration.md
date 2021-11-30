@@ -44,6 +44,8 @@ DATABASE_USER=test
 DATABASE_PASSWORD=test
 ```
 
+> info **Notice** For a practical example with asynchronous database configuration see the documentation [here](https://docs.nestjs.com/techniques/database#async-configuration)
+
 #### Custom env file path
 
 By default, the package looks for a `.env` file in the root directory of the application. To specify another path for the `.env` file, set the `envFilePath` property of an (optional) options object you pass to `forRoot()`, as follows:
