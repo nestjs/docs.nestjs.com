@@ -45,3 +45,8 @@ You can also manually create a new project from scratch by installing the core a
 ```bash
 $ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata
 ```
+
+#### TC39 decorators proposal
+
+Please if you enjoy nestjs, go and star repo with the [proposal-decorators
+](https://github.com/tc39/proposal-decorators). That's a way to show the TC39 members that you are actively using decorators and you want to have them in the language.
