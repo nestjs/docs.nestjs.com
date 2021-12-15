@@ -11,7 +11,7 @@
     "build": "ng build --deleteOutputPath=false",
     "build:watch": "concurrently \"nodemon --config nodemon.json\" \"npm run start:watch\"",
     "prebuild:prod": "npm run docs",
-    "build:prod": "ng build --prod --aot --deleteOutputPath=false",
+    "build:prod": "ng build --configuration production --aot --deleteOutputPath=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

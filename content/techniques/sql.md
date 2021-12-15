@@ -642,7 +642,7 @@ Now a substitute `mockRepository` will be used as the `UsersRepository`. Wheneve
 
 #### Custom repository
 
-TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](https://typeorm.io/#/custom-repository).
+TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](https://typeorm.io/#/custom-repository). Be aware that custom repositories are outside of NestJS's Dependency Injection system, thus you can't inject any values into them.
 
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
