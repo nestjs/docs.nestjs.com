@@ -178,7 +178,7 @@ First, let's install the required packages:
 
 ```bash
 $ npm i @vendia/serverless-express aws-lambda
-$ npm i @types/aws-lambda serverless-offline
+$ npm i -D @types/aws-lambda serverless-offline
 ```
 
 > info **Hint** To speed up development cycles, we install the `serverless-offline` plugin which emulates AWS λ and API Gateway.
