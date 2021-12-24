@@ -7,8 +7,8 @@ Caching is a great and simple **technique** that helps improve your app's perfor
 First install required packages:
 
 ```bash
-$ npm install cache-manager
-$ npm install -D @types/cache-manager
+$ npm install --save cache-manager
+$ npm install --save-dev @types/cache-manager
 ```
 
 #### In-memory cache
