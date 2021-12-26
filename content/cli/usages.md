@@ -70,7 +70,7 @@ $ nest g <schematic> <name> [options]
 | `pipe`        | `pi`  | Generate a pipe declaration.                                                                        |
 | `provider`    | `pr`  | Generate a provider declaration.                                                                    |
 | `resolver`    | `r`   | Generate a resolver declaration.
-| `resource`    | `res` | Generate a new CRUD resource. See the [CRUD (resource) generator](/recipes/crud-generator) for more details.                                                                    |
+| `resource`    | `res` | Generate a new CRUD resource. See the [CRUD (resource) generator](https://docs.nestjs.com/recipes/crud-generator) for more details.                                                                    |
 | `service`     | `s`   | Generate a service declaration.                                                                    |
 
 ##### Options
@@ -131,7 +131,7 @@ $ nest start <name> [options]
 | `--config [path]`       | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                               |
 | `--watch`               | Run in watch mode (live-reload) <br/>Alias `-w`                                                                      |
 | `--preserveWatchOutput` | Keep outdated console output in watch mode instead of clearing the screen. (`tsc` watch mode only)                   |
-| `--watchAssets`         | Run in watch mode (live-reload), watching non-TS files (assets). See [Assets](cli/monorepo#assets) for more details. |
+| `--watchAssets`         | Run in watch mode (live-reload), watching non-TS files (assets). See [Assets](https://docs.nestjs.com/cli/monorepo#assets) for more details. |
 | `--debug [hostport]`    | Run in debug mode (with --inspect flag) <br/>Alias `-d`                                                              |
 | `--webpack`             | Use webpack for compilation.                                                                                         |
 | `--webpackPath`         | Path to webpack configuration.                                                                                       |

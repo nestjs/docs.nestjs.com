@@ -14,7 +14,7 @@ This process adds **significant latency** depending on several factors, the lang
 The cold start is important and although there are things which are beyond our control, there's still a lot of things we can do on our side to make it as short as possible.
 
 While you can think of Nest as a fully-fledged framework designed to be used in complex, enterprise applications,
-it is also **suitable for much "simpler" applications** (or scripts). For example, with the use of [Standalone applications](/standalone-applications) feature, you can take advantage of Nest's DI system in simple workers, CRON jobs, CLIs, or serverless functions.
+it is also **suitable for much "simpler" applications** (or scripts). For example, with the use of [Standalone applications](https://docs.nestjs.com/standalone-applications) feature, you can take advantage of Nest's DI system in simple workers, CRON jobs, CLIs, or serverless functions.
 
 #### Benchmarks
 
@@ -72,7 +72,7 @@ For all these scripts, we used the `tsc` (TypeScript) compiler and so the code r
 
 > info **Note** Machine: MacBook Pro Mid 2014, 2.5 GHz Quad-Core Intel Core i7, 16 GB 1600 MHz DDR3, SSD.
 
-Now, let's repeat all benchmarks but this time, using `webpack` (if you have [Nest CLI](/cli/overview) installed, you can run `nest build --webpack`) to bundle our application into a single executable JavaScript file.
+Now, let's repeat all benchmarks but this time, using `webpack` (if you have [Nest CLI](https://docs.nestjs.com/cli/overview) installed, you can run `nest build --webpack`) to bundle our application into a single executable JavaScript file.
 However, instead of using the default `webpack` configuration that Nest CLI ships with, we'll make sure to bundle all dependencies (`node_modules`) together, as follows:
 
 ```javascript
@@ -127,13 +127,13 @@ For more complicated Nest applications, for example, with 10 resources (generate
 
 Thus far we covered compile-time optimizations. These are unrelated to the way you define providers and load Nest modules in your application, and that plays an essential role as your application gets bigger.
 
-For example, imagine having a database connection defined as an [asynchronous provider](/fundamentals/async-providers). Async providers are designed to delay the application start until one or more asynchronous tasks are completed.
+For example, imagine having a database connection defined as an [asynchronous provider](https://docs.nestjs.com/cli/overview/fundamentals/async-providers). Async providers are designed to delay the application start until one or more asynchronous tasks are completed.
 That means, if your serverless function on average requires 2s to connect to the database (on bootstrap), your endpoint will need at least two extra seconds (because it must wait till the connection is established) to send a response back (when it's a cold start and your application wasn't running already).
 
 As you can see, the way you structure your providers is somewhat different in a **serverless environment** where bootstrap time is important.
 Another good example is if you use Redis for caching, but only in certain scenarios. Perhaps, in this case, you should not define a Redis connection as an async provider, as it would slow down the bootstrap time, even if it's not required for this specific function invocation.
 
-Also, sometimes you could lazy-load entire modules, using the `LazyModuleLoader` class, as described in [this chapter](/fundamentals/lazy-loading-modules). Caching is a great example here too.
+Also, sometimes you could lazy-load entire modules, using the `LazyModuleLoader` class, as described in [this chapter](https://docs.nestjs.com/cli/overview/fundamentals/lazy-loading-modules). Caching is a great example here too.
 Imagine that your application has, let's say, `CacheModule` which internally connects to Redis and also, exports the `CacheService` to interact with the Redis storage. If you don't need it for all potential function invocations,
 you can just load it on-demand, lazily. This way you'll get a faster startup time (when a cold start occurs) for all invocations that don't require caching.
 
@@ -238,7 +238,7 @@ export const handler: Handler = async (
 };
 ```
 
-> info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](/cli/monorepo#monorepo-mode).
+> info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](https://docs.nestjs.com/cli/monorepo#monorepo-mode).
 
 > warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [article](https://javascript.plainenglish.io/serverless-nestjs-document-your-api-with-swagger-and-aws-api-gateway-64a53962e8a2) for more information.
 
