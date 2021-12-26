@@ -8,7 +8,7 @@ Queues are a powerful design pattern that help you deal with common application 
 
 Nest provides the `@nestjs/bull` package as an abstraction/wrapper on top of [Bull](https://github.com/OptimalBits/bull), a popular, well supported, high performance Node.js based Queue system implementation. The package makes it easy to integrate Bull Queues in a Nest-friendly way to your application.
 
-Bull uses [Redis](https://redis.io/) to persist job data, so you'll need to have Redis installed on your system. Because it is Redis-backed, your Queue architecture can be completely distributed and platform-independent. For example, you can have some Queue <a href="techniques/queues#producers">producers</a> and <a href="techniques/queues#consumers">consumers</a> and <a href="techniques/queues#event-listeners">listeners</a> running in Nest on one (or several) nodes, and other producers, consumers and listeners running on other Node.js platforms on other network nodes.
+Bull uses [Redis](https://redis.io/) to persist job data, so you'll need to have Redis installed on your system. Because it is Redis-backed, your Queue architecture can be completely distributed and platform-independent. For example, you can have some Queue <a href="https://docs.nestjs.com/techniques/queues#producers">producers</a> and <a href="https://docs.nestjs.com/techniques/queues#consumers">consumers</a> and <a href="https://docs.nestjs.com/techniques/queues#event-listeners">listeners</a> running in Nest on one (or several) nodes, and other producers, consumers and listeners running on other Node.js platforms on other network nodes.
 
 This chapter covers the `@nestjs/bull` package. We also recommend reading the [Bull documentation](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md) for more background and specific implementation details.
 
@@ -76,7 +76,7 @@ BullModule.registerQueue({
 
 Since jobs are persisted in Redis, each time a specific named queue is instantiated (e.g., when an app is started/restarted), it attempts to process any old jobs that may exist from a previous unfinished session.
 
-Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. Controlling queue processing order is discussed <a href="techniques/queues#consumers">here</a>.
+Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. Controlling queue processing order is discussed <a href="https://docs.nestjs.com/techniques/queues#consumers">here</a>.
 
 <app-banner-enterprise></app-banner-enterprise>
 
@@ -107,7 +107,7 @@ BullModule.registerQueue({
 
 #### Producers
 
-Job producers add jobs to queues. Producers are typically application services (Nest [providers](/providers)). To add jobs to a queue, first inject the queue into the service as follows:
+Job producers add jobs to queues. Producers are typically application services (Nest [providers](https://docs.nestjs.com/providers)). To add jobs to a queue, first inject the queue into the service as follows:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -132,7 +132,7 @@ const job = await this.audioQueue.add({
 
 #### Named jobs
 
-Jobs may have unique names. This allows you to create specialized <a href="techniques/queues#consumers">consumers</a> that will only process jobs with a given name.
+Jobs may have unique names. This allows you to create specialized <a href="https://docs.nestjs.com/techniques/queues#consumers">consumers</a> that will only process jobs with a given name.
 
 ```typescript
 const job = await this.audioQueue.add('transcode', {
@@ -140,7 +140,7 @@ const job = await this.audioQueue.add('transcode', {
 });
 ```
 
-> Warning **Warning** When using named jobs, you must create processors for each unique name added to a queue, or the queue will complain that you are missing a processor for the given job. See <a href="techniques/queues#consumers">here</a> for more information on consuming named jobs.
+> Warning **Warning** When using named jobs, you must create processors for each unique name added to a queue, or the queue will complain that you are missing a processor for the given job. See <a href="https://docs.nestjs.com/techniques/queues#consumers">here</a> for more information on consuming named jobs.
 
 #### Job options
 
@@ -243,7 +243,7 @@ async transcode(job: Job<unknown>) { ... }
 
 #### Request-scoped consumers
 
-When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
+When a consumer is flagged as request-scoped (learn more about the injection scopes [here](https://docs.nestjs.com/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
 
 ```typescript
 @Processor({
@@ -266,7 +266,7 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 
 Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow subscribing to a core set of standard events. These are exported from the `@nestjs/bull` package.
 
-Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
+Event listeners must be declared within a <a href="https://docs.nestjs.com/techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
 import { Processor, Process } from '@nestjs/bull';

@@ -8,15 +8,15 @@ There are 3 types of versioning that are supported:
 
 <table>
   <tr>
-    <td><a href='techniques/versioning#uri-versioning-type'><code>URI Versioning</code></a></td>
+    <td><a href='https://docs.nestjs.com/techniques/versioning#uri-versioning-type'><code>URI Versioning</code></a></td>
     <td>The version will be passed within the URI of the request (default)</td>
   </tr>
   <tr>
-    <td><a href='techniques/versioning#header-versioning-type'><code>Header Versioning</code></a></td>
+    <td><a href='https://docs.nestjs.com/techniques/versioning#header-versioning-type'><code>Header Versioning</code></a></td>
     <td>A custom request header will specify the version</td>
   </tr>
   <tr>
-    <td><a href='techniques/versioning#media-type-versioning-type'><code>Media Type Versioning</code></a></td>
+    <td><a href='https://docs.nestjs.com/techniques/versioning#media-type-versioning-type'><code>Media Type Versioning</code></a></td>
     <td>The <code>Accept</code> header of the request will specify the version</td>
   </tr>
 </table>
@@ -25,7 +25,7 @@ There are 3 types of versioning that are supported:
 
 URI Versioning uses the version passed within the URI of the request, such as `https://example.com/v1/route` and `https://example.com/v2/route`.
 
-> warning **Notice** With URI Versioning the version will be automatically added to the URI after the <a href="faq/global-prefix">global path prefix</a> (if one exists), and before any controller or route paths.
+> warning **Notice** With URI Versioning the version will be automatically added to the URI after the <a href="https://docs.nestjs.com/faq/global-prefix">global path prefix</a> (if one exists), and before any controller or route paths.
 
 To enable URI Versioning for your application, do the following:
 

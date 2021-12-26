@@ -90,7 +90,7 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-This technique, while simple, doesn't utilize dependency injection for the `MyLogger` class. This can pose some challenges, particularly for testing, and limit the reusability of `MyLogger`. For a better solution, see the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below.
+This technique, while simple, doesn't utilize dependency injection for the `MyLogger` class. This can pose some challenges, particularly for testing, and limit the reusability of `MyLogger`. For a better solution, see the <a href="https://docs.nestjs.com/techniques/logger#dependency-injection">Dependency Injection</a> section below.
 
 #### Extend built-in logger
 
@@ -107,9 +107,9 @@ export class MyLogger extends ConsoleLogger {
 }
 ```
 
-You can use such an extended logger in your feature modules as described in the <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> section below.
+You can use such an extended logger in your feature modules as described in the <a href="https://docs.nestjs.com/techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> section below.
 
-You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the <a href="techniques/logger#custom-logger-implementation">Custom implementation</a> section above), or by using the technique shown in the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below. If you do so, you should take care to call `super`, as shown in the sample code above, to delegate the specific log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
+You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the [Custom implementation](https://docs.nestjs.com/techniques/logger#custom-implementation) section above), or by using the technique shown in the <a href="https://docs.nestjs.com/techniques/logger#dependency-injection">Dependency Injection</a> section below. If you do so, you should take care to call `super`, as shown in the sample code above, to delegate the specific log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
 
 <app-banner-courses></app-banner-courses>
 
@@ -149,7 +149,7 @@ await app.listen(3000);
 
 Here we use the `get()` method on the `NestApplication` instance to retrieve the singleton instance of the `MyLogger` object. This technique is essentially a way to "inject" an instance of a logger for use by Nest. The `app.get()` call retrieves the singleton instance of `MyLogger`, and depends on that instance being first injected in another module, as described above.
 
-You can also inject this `MyLogger` provider in your feature classes, thus ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> and <a href="techniques/logger#injecting-a-custom-logger">Injecting a custom logger</a> below for more information.
+You can also inject this `MyLogger` provider in your feature classes, thus ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="https://docs.nestjs.com/techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> and <a href="https://docs.nestjs.com/techniques/logger#injecting-a-custom-logger">Injecting a custom logger</a> below for more information.
 
 #### Using the logger for application logging
 
@@ -184,7 +184,7 @@ This should be suitable for most cases. But if you need more customization (like
 
 #### Injecting a custom logger
 
-To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `ConsoleLogger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `ConsoleLogger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
+To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `ConsoleLogger` class, specifying a [transient](https://docs.nestjs.com/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `ConsoleLogger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
 
 ```typescript
 import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';

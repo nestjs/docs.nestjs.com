@@ -16,7 +16,7 @@ $ npm i --save @grpc/grpc-js @grpc/proto-loader
 
 #### Overview
 
-Like other Nest microservices transport layer implementations, you select the gRPC transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method. In the following example, we'll set up a hero service. The `options` property provides metadata about that service; its properties are described <a href="microservices/grpc#options">below</a>.
+Like other Nest microservices transport layer implementations, you select the gRPC transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method. In the following example, we'll set up a hero service. The `options` property provides metadata about that service; its properties are described [below](https://docs.nestjs.com/microservices/grpc#options).
 
 ```typescript
 @@filename(main)
@@ -127,7 +127,7 @@ Our `HeroesService` exposes a `FindOne()` method. This method expects an input a
 
 Next, we need to implement the service. To define a handler that fulfills this definition, we use the `@GrpcMethod()` decorator in a controller, as shown below. This decorator provides the metadata needed to declare a method as a gRPC service method.
 
-> info **Hint** The `@MessagePattern()` decorator (<a href="microservices/basics#request-response">read more</a>) introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
+> info **Hint** The `@MessagePattern()` decorator (<a href="https://docs.nestjs.com/microservices/basics#request-response">read more</a>) introduced in previous microservices chapters is not used with gRPC-based microservices. The `@GrpcMethod()` decorator effectively takes its place for gRPC-based microservices.
 
 ```typescript
 @@filename(heroes.controller)
@@ -225,7 +225,7 @@ export class HeroesService {
 
 Nest applications can act as gRPC clients, consuming services defined in `.proto` files. You access remote services through a `ClientGrpc` object. You can obtain a `ClientGrpc` object in several ways.
 
-The preferred technique is to import the `ClientsModule`. Use the `register()` method to bind a package of services defined in a `.proto` file to an injection token, and to configure the service. The `name` property is the injection token. For gRPC services, use `transport: Transport.GRPC`. The `options` property is an object with the same properties described <a href="microservices/grpc#options">above</a>.
+The preferred technique is to import the `ClientsModule`. Use the `register()` method to bind a package of services defined in a `.proto` file to an injection token, and to configure the service. The `name` property is the injection token. For gRPC services, use `transport: Transport.GRPC`. The `options` property is an object with the same properties described [above](https://docs.nestjs.com/microservices/grpc#options).
 
 ```typescript
 imports: [
@@ -293,7 +293,7 @@ export class AppService implements OnModuleInit {
 }
 ```
 
-Finally, for more complex scenarios, we can inject a dynamically configured client using the `ClientProxyFactory` class as described <a href="/microservices/basics#client">here</a>.
+Finally, for more complex scenarios, we can inject a dynamically configured client using the `ClientProxyFactory` class as described [here](https://docs.nestjs.com/microservices/basics#client).
 
 In either case, we end up with a reference to our `HeroesService` proxy object, which exposes the same set of methods that are defined inside the `.proto` file. Now, when we access this proxy object (i.e., `heroesService`), the gRPC system automatically serializes requests, forwards them to the remote system, returns a response, and deserializes the response. Because gRPC shields us from these network communication details, `heroesService` looks and acts like a local provider.
 
@@ -525,11 +525,11 @@ export class HeroesService {
 }
 ```
 
-Likewise, to read the metadata in handlers annotated with the `@GrpcStreamMethod()` handler ([subject strategy](microservices/grpc#subject-strategy)), use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
+Likewise, to read the metadata in handlers annotated with the `@GrpcStreamMethod()` handler ([subject strategy](https://docs.nestjs.com/microservices/grpc#subject-strategy)), use the second argument (metadata), which is of type `Metadata` (imported from the `grpc` package).
 
 To send back metadata from the handler, use the `ServerDuplexStream#sendMetadata()` method (third handler argument).
 
-To read metadata from within the [call stream handlers](microservices/grpc#call-stream-handler) (handlers annotated with `@GrpcStreamCall()` decorator), listen to the `metadata` event on the `requestStream` reference, as follows:
+To read metadata from within the [call stream handlers](https://docs.nestjs.com/microservices/grpc#call-stream-handler) (handlers annotated with `@GrpcStreamCall()` decorator), listen to the `metadata` event on the `requestStream` reference, as follows:
 
 ```typescript
 requestStream.on('metadata', (metadata: Metadata) => {

@@ -49,7 +49,7 @@ findAll(@Res({ passthrough: true }) response: Response) {
 }
 ```
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](https://docs.nestjs.com/controllers#library-specific-approach).
 
 > info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `Response` from the `express` package.
 
@@ -98,13 +98,13 @@ findAll(@Res({ passthrough: true }) response: FastifyReply) {
 
 To read more about `FastifyReply#setCookie()` method, check out this [page](https://github.com/fastify/fastify-cookie#sending).
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](https://docs.nestjs.com/controllers#library-specific-approach).
 
 > info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `FastifyReply` from the `fastify` package.
 
 #### Creating a custom decorator (cross-platform)
 
-To provide a convenient, declarative way of accessing incoming cookies, we can create a [custom decorator](/custom-decorators).
+To provide a convenient, declarative way of accessing incoming cookies, we can create a [custom decorator](https://docs.nestjs.com/custom-decorators).
 
 ```typescript
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
