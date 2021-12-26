@@ -44,13 +44,13 @@ import { TerminusModule } from '@nestjs/terminus';
 export class AppModule {}
 ```
 
-Our healthcheck(s) can be executed using a [controller](/controllers), which can be easily set up using the [Nest CLI](cli/overview).
+Our healthcheck(s) can be executed using a [controller](https://docs.nestjs.com/controllers), which can be easily set up using the [Nest CLI](https://docs.nestjs.com/cli/overview).
 
 ```bash
 $ nest g controller health
 ```
 
-> info **Info** It is highly recommended to enable shutdown hooks in your application. Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](fundamentals/lifecycle-events#application-shutdown).
+> info **Info** It is highly recommended to enable shutdown hooks in your application. Terminus integration makes use of this lifecycle event if enabled. Read more about shutdown hooks [here](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown).
 
 #### HTTP Healthcheck
 
@@ -133,7 +133,7 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 #### TypeOrm health indicator
 
 Terminus offers the capability to add database checks to your health check. In order to get started with this health indicator, you
-should check out the [Database chapter](/techniques/sql) and make sure your database connection within your application is established.
+should check out the [Database chapter](https://docs.nestjs.com/techniques/sql) and make sure your database connection within your application is established.
 
 > info **Hint** Behind the scenes the `TypeOrmHealthIndicator` simply executes a `SELECT 1`-SQL command which is often used to verify whether the database still alive. In case you are using an Oracle database it uses `SELECT 1 FROM DUAL`.
 
@@ -192,7 +192,7 @@ If your database is reachable, you should now see the following JSON-result when
 }
 ```
 
-In case your app uses [multiple databases](techniques/database#multiple-databases), you need to inject each
+In case your app uses [multiple databases](https://docs.nestjs.com/techniques/database#multiple-databases), you need to inject each
 connection into your `HealthController`. Then, you can simply pass the connection reference to the `TypeOrmHealthIndicator`.
 
 ```typescript

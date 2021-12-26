@@ -41,7 +41,7 @@ export class Recipe {
 
 Now whenever we request the `title` field of `Recipe` object type, the original field's value will be logged to the console.
 
-> info **Hint** To learn how you can implement a field-level permissions system with the use of [extensions](/graphql/extensions) feature, check out this [section](/graphql/extensions#using-custom-metadata).
+> info **Hint** To learn how you can implement a field-level permissions system with the use of [extensions](https://docs.nestjs.com/graphql/extensions) feature, check out this [section](https://docs.nestjs.com/graphql/extensions#using-custom-metadata).
 
 Also, as mentioned above, we can control the field's value from within the middleware function. For demonstration purposes, let's capitalise a recipe's title (if present):
 
@@ -61,7 +61,7 @@ title() {
 }
 ```
 
-> warning **Warning** In case enhancers are enabled at the field resolver level ([read more](/graphl//other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions will run before any interceptors, guards, etc., **bounded to the method** (but after the root-level enhancers registered for query or mutation handlers).
+> warning **Warning** In case enhancers are enabled at the field resolver level ([read more](https://docs.nestjs.com/graphl/other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions will run before any interceptors, guards, etc., **bounded to the method** (but after the root-level enhancers registered for query or mutation handlers).
 
 #### Global field middleware
 
