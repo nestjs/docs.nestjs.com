@@ -34,6 +34,7 @@ Now to decrypt `encryptedText` value:
 ```typescript
 import { createDecipheriv } from 'crypto';
 
+const encryptedText = Buffer.from(password, 'hex');
 const decipher = createDecipheriv('aes-256-ctr', key, iv);
 const decryptedText = Buffer.concat([
   decipher.update(encryptedText),
