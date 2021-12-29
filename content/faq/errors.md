@@ -6,7 +6,7 @@ During your development with NestJS, you may encounter various errors as you lea
 
 Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
 
-```bash
+```
 Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument <unknown_token> at index [<index>] is available in the <module> context.
 
 Potential solutions:
@@ -24,6 +24,60 @@ There are a few gotchas, that are common. One is putting a provider in an `impor
 If you run across this error while developing, take a look at the module mentioned in the error message and look at its `providers`. For each provider in the `providers` array, make sure the module has access to all of the dependencies. Often times, `providers` are duplicated in a "Feature Module" and a "Root Module" which means Nest will try to instantiate the provider twice. More than likely, the module containing the `provider` being duplicated should be added in the "Root Module"'s `imports` array instead.
 
 If the `unknown_token` above is the string `dependency`, you might have a circular file import. This is different from the [circular dependency](./errors.md#circular-dependency-error) below because instead of having providers depend on each other in their constructors, it just means that two files end up importing each other. A common case would be a module file declaring a token and importing a provider, and the provider import the token constant from the module file. If you are using barrel files, ensure that your barrel imports do not end up creating these circular imports as well.
+
+##### Error on monorepos
+
+If you are in a monorepo setup, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
+
+```
+Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument ModuleRef at index [<index>] is available in the <module> context.
+...
+```
+
+This likely happens when your project end up loading two Node modules of the package `@nestjs/core`
+
+```
+.
+├── package.json
+├── apps
+│   └── api
+│       └── node_modules
+│           └── @nestjs/bull
+│               └── node_modules
+│                   └── @nestjs/core
+└── node_modules
+    ├── (other packages)
+    └── @nestjs/core
+```
+
+###### Fix for Yarn Workspaces
+
+To circumvent that file structure in **Yarn** Workspaces, you can levearage on its [_nohoist_ feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist):
+
+```json
+{
+  "workspaces": {
+    "packages": [],
+    "nohoist": [
+      "**/@nestjs/**"
+    ]
+  }
+}
+```
+
+Then, after `yarn install`, you'll get something like this:
+
+```
+.
+├── package.json
+├── apps
+│   └── api
+│       └── node_modules
+│           ├── @nestjs/core
+│           └── @nestjs/bull
+└── node_modules
+    └── (other packages)
+```
 
 #### "Circular dependency" error
 
