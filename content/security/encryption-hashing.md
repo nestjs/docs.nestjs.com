@@ -15,11 +15,12 @@ import { createCipheriv, randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 
 const iv = randomBytes(16);
-const password = 'Password used to generate key';
 
 // The key length is dependent on the algorithm.
 // In this case for aes256, it is 32 bytes.
-const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
+const key = randomBytes(32);
+const password = 'Password used to generate key';
+
 const cipher = createCipheriv('aes-256-ctr', key, iv);
 
 const textToEncrypt = 'Nest';
@@ -27,6 +28,7 @@ const encryptedText = Buffer.concat([
   cipher.update(textToEncrypt),
   cipher.final(),
 ]);
+let encryptedString = encryptedText.toString('hex');
 ```
 
 Now to decrypt `encryptedText` value:
@@ -34,12 +36,14 @@ Now to decrypt `encryptedText` value:
 ```typescript
 import { createDecipheriv } from 'crypto';
 
-const encryptedText = Buffer.from(password, 'hex');
+const encryptedText = Buffer.from(encryptedString, 'hex');
 const decipher = createDecipheriv('aes-256-ctr', key, iv);
 const decryptedText = Buffer.concat([
   decipher.update(encryptedText),
   decipher.final(),
 ]);
+
+console.log(decryptedText.toString());
 ```
 
 #### Hashing
