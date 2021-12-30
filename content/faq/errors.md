@@ -6,7 +6,7 @@ During your development with NestJS, you may encounter various errors as you lea
 
 Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
 
-```
+```text
 Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument <unknown_token> at index [<index>] is available in the <module> context.
 
 Potential solutions:
@@ -29,14 +29,14 @@ If the `unknown_token` above is the string `dependency`, you might have a circul
 
 If you are in a monorepo setup, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
 
-```
+```text
 Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument ModuleRef at index [<index>] is available in the <module> context.
 ...
 ```
 
-This likely happens when your project end up loading two Node modules of the package `@nestjs/core`
+This likely happens when your project end up loading two Node modules of the package `@nestjs/core`, like this:
 
-```
+```text
 .
 ├── package.json
 ├── apps
@@ -52,7 +52,7 @@ This likely happens when your project end up loading two Node modules of the pac
 
 ###### Fix for Yarn Workspaces
 
-To circumvent that file structure in **Yarn** Workspaces, you can levearage on its [_nohoist_ feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist):
+To circumvent that file structure in **Yarn** Workspaces, you can leverage on its [_nohoist_ feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist):
 
 ```json
 {
@@ -67,7 +67,7 @@ To circumvent that file structure in **Yarn** Workspaces, you can levearage on i
 
 Then, after `yarn install`, you'll get something like this:
 
-```
+```text
 .
 ├── package.json
 ├── apps
