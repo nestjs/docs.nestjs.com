@@ -32,7 +32,7 @@ Next, inject `HttpService` using normal constructor injection.
 @@filename()
 @Injectable()
 export class CatsService {
-  constructor(private httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) {}
 
   findAll(): Observable<AxiosResponse<Cat[]>> {
     return this.httpService.get('http://localhost:3000/cats');
@@ -130,4 +130,20 @@ HttpModule.registerAsync({
   imports: [ConfigModule],
   useExisting: HttpConfigService,
 });
+```
+
+#### Using Axios directly
+
+If you think that `HttpModule.register`'s options are not enough for you, or if you just want to access the underlying Axios instance created by `@nestjs/axios`, you can access it via `HttpService#axiosRef` as follows:
+
+```typescript
+@Injectable()
+export class CatsService {
+  constructor(private readonly httpService: HttpService) {}
+
+  findAll(): Promise<AxiosResponse<Cat[]>> {
+    return this.httpService.axiosRef.get('http://localhost:3000/cats');
+    //                      ^ AxiosInstance interface
+  }
+}
 ```
