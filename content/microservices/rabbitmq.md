@@ -7,7 +7,7 @@
 To start building RabbitMQ-based microservices, first install the required packages:
 
 ```bash
-$ npm i --save amqplib amqp-connection-manager
+$ npm i --save amqplib amqp-connection-manager@3.9.0
 ```
 
 #### Overview
