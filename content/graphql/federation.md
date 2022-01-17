@@ -136,6 +136,10 @@ import { UsersService } from './users.service'; // Not included in this example
 export class AppModule {}
 ```
 
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/users-application) in code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/users-application) in schema first mode.
+
 #### Federated example: Posts
 
 Our Post service serves aggregated posts via a `getPosts` query, but also extends our `User` type with `user.posts`
@@ -318,6 +322,9 @@ import { PostsService } from './posts.service'; // Not included in example
 })
 export class AppModule {}
 ```
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/posts-application) in code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/posts-application) in schema first mode.
 
 #### Federated example: Gateway
 
@@ -353,6 +360,10 @@ export class AppModule {}
 ```
 
 > info **Hint** Apollo recommends that you don't rely on the service discovery in a production environment but use their [Graph Manager](https://www.apollographql.com/docs/graph-manager/federation/) instead.
+
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/gateway) in code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/gateway) in schema first mode.
 
 #### Sharing context
 
