@@ -66,6 +66,9 @@ ConfigModule.forRoot({
 
 If a variable is found in multiple files, the first one takes precedence.
 
+> info **Notice** Environment variables from the runtime environment will overwrite the variables with the same name located at your `.env` files.
+
+
 #### Disable env variables loading
 
 If you don't want to load the `.env` file, but instead would like to simply access environment variables from the runtime environment (as with OS shell exports like `export DATABASE_USER=test`), set the options object's `ignoreEnvFile` property to `true`, as follows:
