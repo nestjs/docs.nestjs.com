@@ -313,14 +313,15 @@ Open the `app.controller.ts` file and replace its contents with the following:
 
 ```typescript
 @@filename(app.controller)
-import { Controller, Request, Post, UseGuards } from '@nestjs/common';
+import { Controller, Req, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @Controller()
 export class AppController {
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
-  async login(@Request() req) {
+  async login(@Req() req: Request) {
     return req.user;
   }
 }
@@ -367,7 +368,7 @@ Now, we can update the `/auth/login` route handler and use the `LocalAuthGuard` 
 ```typescript
 @UseGuards(LocalAuthGuard)
 @Post('auth/login')
-async login(@Request() req) {
+async login(@Req() req: Request) {
   return req.user;
 }
 ```
