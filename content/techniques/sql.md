@@ -544,7 +544,7 @@ export class AppModule {}
 > }),
 > ```
 >
-> [@nestjs/typeorm issue](https://github.com/nestjs/typeorm/issues/86)
+> See [`@nestjs/typeorm` issue](https://github.com/nestjs/typeorm/issues/86).
 
 At this point, you have `User` and `Album` entities registered with their own connection. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which connection should be used. If you do not pass any connection name, the `default` connection is used.
 
