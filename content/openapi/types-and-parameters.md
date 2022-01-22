@@ -34,6 +34,16 @@ export class CreateCatDto {
 
 > info **Hint** Instead of manually annotating each property, consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically provide this for you.
 
+use `@ApiPropertyOptional()` for Optional Parameters
+
+```typescript
+import { ApiPropertyOptional} from '@nestjs/swagger';
+
+export class CreateCatDto {
+  @ApiPropertyOptional()
+  breed: string;
+}
+```
 Let's open the browser and verify the generated `CreateCatDto` model:
 
 <figure><img src="/assets/swagger-dto2.png" /></figure>
