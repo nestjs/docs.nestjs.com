@@ -549,5 +549,5 @@ If you want to learn more about using NestJS with Prisma, be sure to check out t
 
 - [NestJS & Prisma](https://www.prisma.io/nestjs)
 - [Ready-to-run example projects for REST & GraphQL](https://github.com/prisma/prisma-examples/)
-- [Production-ready starter kit](https://github.com/fivethree-team/nestjs-prisma-starter#instructions)
+- [Production-ready starter kit](https://github.com/notiz-dev/nestjs-prisma-starter#instructions)
 - [Video: Accessing Databases using NestJS with Prisma (5min)](https://www.youtube.com/watch?v=UlVJ340UEuk&ab_channel=Prisma) by [Marc Stammerjohann](https://github.com/marcjulian)

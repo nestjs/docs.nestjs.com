@@ -135,7 +135,6 @@ $screen-xlarge: 'only screen and (max-width: 1349px)';
 
 /* CLEARFIX */
 %clearfix {
-  *zoom: 1;
   &:before,
   &:after {
     content: ' ';

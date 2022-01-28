@@ -94,8 +94,8 @@ Like other factory providers, our factory function can be [async](https://docs.n
 HttpModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    timeout: configService.getString('HTTP_TIMEOUT'),
-    maxRedirects: configService.getString('HTTP_MAX_REDIRECTS'),
+    timeout: configService.get('HTTP_TIMEOUT'),
+    maxRedirects: configService.get('HTTP_MAX_REDIRECTS'),
   }),
   inject: [ConfigService],
 });
@@ -128,6 +128,6 @@ If you want to reuse an existing options provider instead of creating a private 
 ```typescript
 HttpModule.registerAsync({
   imports: [ConfigModule],
-  useExisting: ConfigService,
+  useExisting: HttpConfigService,
 });
 ```

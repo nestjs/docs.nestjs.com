@@ -217,17 +217,19 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Different stores
 
-This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
+This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
 ```typescript
+import type { ClientOpts as RedisClientOpts } from 'redis'
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    CacheModule.register({
+    CacheModule.register<RedisClientOpts>({
       store: redisStore,
+      // Store-specific configuration:
       host: 'localhost',
       port: 6379,
     }),
@@ -294,6 +296,8 @@ CacheModule.registerAsync({
 ```
 
 This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
+
+> info **Hint** `CacheModule#register` and `CacheModule#registerAsync` and `CacheOptionsFactory` has an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
 
 #### Example
 

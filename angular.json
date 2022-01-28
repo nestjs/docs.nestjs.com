@@ -27,7 +27,8 @@
               "src/_redirects"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/assets/css/perfect-scrollbar.min.css"
             ]
           },
           "configurations": {

@@ -170,24 +170,45 @@
     color: #4e4e4e;
   }
 
-  .logo-sponsor {
-    //width: 280px;
+  .logo-sponsor-container {
+    display: inline-block;
     margin-top: 10px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+
+    &:last-of-type {
+      margin-right: 0;
+      margin-bottom: 0;
+    }
+    @media (max-width: 480px) {
+      display: block;
+      margin-bottom: 20px;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .logo-sponsor {
     width: 180px;
     filter: grayscale(1);
-    &:first-of-type {
-      margin-right: 30px;
-      margin-bottom: 10px;
-    }
+
     &:hover {
       filter: grayscale(0);
     }
   }
 
-  .logo-sponsor-small {
-    width: 150px;
-    margin-bottom: 30px;
-    display: block;
+  .logo-sponsor--high {
+    width: 160px;
+  }
+
+  .logo-sponsor--slim {
+    width: auto;
+    max-height: 40px;
+    margin-left: 10px;
+    @media (max-width: 480px) {
+      margin-left: 0;
+    }
   }
 
   .logo-blueanchor {
