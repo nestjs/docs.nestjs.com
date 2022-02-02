@@ -61,7 +61,7 @@ title() {
 }
 ```
 
-> warning **Warning** In case enhancers are enabled at the field resolver level ([read more](/graphl//other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions will run before any interceptors, guards, etc., **bounded to the method** (but after the root-level enhancers registered for query or mutation handlers).
+> warning **Warning** In case enhancers are enabled at the field resolver level ([read more](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions will run before any interceptors, guards, etc., **bounded to the method** (but after the root-level enhancers registered for query or mutation handlers).
 
 #### Global field middleware
 
