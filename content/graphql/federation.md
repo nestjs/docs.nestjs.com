@@ -145,6 +145,8 @@ import { UsersService } from './users.service'; // Not included in this example
 export class AppModule {}
 ```
 
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/users-application) in code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/users-application) in schema first mode.
+
 #### Federated example: Posts
 
 Post service is supposed to serve aggregated posts through the `getPosts` query, but also extend our `User` type with the `user.posts` field.
@@ -337,6 +339,8 @@ import { PostsService } from './posts.service'; // Not included in example
 export class AppModule {}
 ```
 
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/posts-application) for the code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/posts-application) for the schema first mode.
+
 #### Federated example: Gateway
 
 Start by installing the required dependency:
@@ -374,6 +378,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 })
 export class AppModule {}
 ```
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/gateway) for the code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/gateway) for the schema first mode.
 
 #### Federation with Mercurius
 
