@@ -5,8 +5,8 @@
   "scripts": {
     "ng": "ng",
     "prestart": "npm run docs",
-    "start": "ng serve --source-map=false",
-    "start:watch": "ng serve --source-map=false --watch",
+    "start": "ng serve",
+    "start:watch": "ng serve --watch",
     "prebuild": "npm run docs",
     "build": "ng build --deleteOutputPath=false",
     "build:watch": "concurrently \"nodemon --config nodemon.json\" \"npm run start:watch\"",

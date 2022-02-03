@@ -761,7 +761,7 @@ Ensure the app is running, and test the routes using `cURL`.
 ```bash
 $ # GET /profile
 $ curl http://localhost:3000/profile
-$ # result -> {"statusCode":401,"error":"Unauthorized"}
+$ # result -> {"statusCode":401,"message":"Unauthorized"}
 
 $ # POST /auth/login
 $ curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"

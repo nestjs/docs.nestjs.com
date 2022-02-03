@@ -128,6 +128,6 @@ If you want to reuse an existing options provider instead of creating a private 
 ```typescript
 HttpModule.registerAsync({
   imports: [ConfigModule],
-  useExisting: ConfigService,
+  useExisting: HttpConfigService,
 });
 ```
