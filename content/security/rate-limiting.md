@@ -59,7 +59,7 @@ import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
 @UseGuards(ThrottlerBehindProxyGuard)
 ```
 
-> info **Hint** You can find the API of the `req` Request object for express [here](https://expressjs.com/en/api.html#req.ips) and for fastify [here](https://www.fastify.io/docs/latest/Request/).
+> info **Hint** You can find the API of the `req` Request object for express [here](https://expressjs.com/en/api.html#req.ips) and for fastify [here](https://www.fastify.io/docs/latest/Reference/Request/).
 
 #### Websockets
 
