@@ -30,7 +30,7 @@ If you are using the `FastifyAdapter`, install the [fastify-helmet](https://gith
 $ npm i --save fastify-helmet
 ```
 
-[fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Plugins/), i.e., by using `app.register()`:
+[fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Reference/Plugins/), i.e., by using `app.register()`:
 
 ```typescript
 import { fastifyHelmet } from 'fastify-helmet';
