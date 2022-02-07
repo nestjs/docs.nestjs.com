@@ -235,8 +235,6 @@ import { AppController } from './app.controller';
         host: 'localhost',
         port: 6379,
       },
-      // username: '',
-      // password: '',
     }),
   ],
   controllers: [AppController],
