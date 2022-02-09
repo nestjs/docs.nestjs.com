@@ -186,15 +186,14 @@ $ npm i -D @types/aws-lambda serverless-offline
 Once the installation process is complete, let's create the `serverless.yml` file to configure the Serverless framework:
 
 ```yaml
-service:
-  name: serverless-example
+service: serverless-example
 
 plugins:
   - serverless-offline
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
 
 functions:
   main:
