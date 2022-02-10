@@ -2,7 +2,7 @@
 
 This article provides a set of guidelines for migrating from `@nestjs/graphql` version 9 to version 10. The focus of this major-version release is to provide a lighter, platform-agnostic core library.
 
-#### New "driver" packages
+#### Introducing "driver" packages
 
 In the latest version, we made a decision to break the `@nestjs/graphql` package up into a few separate libraries, letting you choose whether to use Apollo (`@nestjs/apollo`), Mercurius (`@nestjs/mercurius`), or another GraphQL library in your project.
 
@@ -107,7 +107,7 @@ export function upperDirectiveTransformer(
 }
 ```
 
-In order to apply this directive implementation to a schema that contains `@upper` directives, use the `transformSchema` function:
+To apply this directive implementation to a schema that contains `@upper` directives, use the `transformSchema` function:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
