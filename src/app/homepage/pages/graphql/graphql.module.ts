@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { MigrationComponent } from './migration/migration.component';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { ComplexityComponent } from './complexity/complexity.component';
 import { DirectivesComponent } from './directives/directives.component';
@@ -72,6 +73,11 @@ const routes: Routes = [
     path: 'directives',
     component: DirectivesComponent,
     data: { title: 'GraphQL + TypeScript - Directives' },
+  },
+  {
+    path: 'migration-guide',
+    component: MigrationComponent,
+    data: { title: 'GraphQL + TypeScript - Migration guide' },
   },
   {
     path: 'field-middleware',
@@ -147,6 +153,7 @@ const routes: Routes = [
     ComplexityComponent,
     ExtensionsComponent,
     FieldMiddlewareComponent,
+    MigrationComponent,
   ],
 })
 export class GraphqlModule {}
