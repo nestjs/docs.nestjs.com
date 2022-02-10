@@ -122,6 +122,8 @@ class User {
 Lastly, make sure to register the `RolesGuard`, for example, at the controller level, or globally:
 
 ```typescript
+import { APP_GUARD } from '@nestjs/core'; // top of the code
+// .........More Codes......
 providers: [
   {
     provide: APP_GUARD,
