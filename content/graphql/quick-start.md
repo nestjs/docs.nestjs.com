@@ -13,7 +13,7 @@ Start by installing the required packages:
 $ npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
 
 # For Fastify and Apollo
-# npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
+# npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-fastify
 
 # For Fastify and Mercurius
 # npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
