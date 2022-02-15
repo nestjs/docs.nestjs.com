@@ -30,7 +30,7 @@ The WebSockets module is platform-agnostic, hence, you can bring your own librar
 The [socket.io](https://github.com/socketio/socket.io) package is wrapped in an `IoAdapter` class. What if you would like to enhance the basic functionality of the adapter? For instance, your technical requirements require a capability to broadcast events across multiple load-balanced instances of your web service. For this, you can extend `IoAdapter` and override a single method which responsibility is to instantiate new socket.io servers. But first of all, let's install the required package.
 
 ```bash
-$ npm i --save @socket.io/redis-adapter
+$ npm i --save redis socket.io @socket.io/redis-adapter
 ```
 
 Once the package is installed, we can create a `RedisIoAdapter` class.
