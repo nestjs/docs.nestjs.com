@@ -44,11 +44,14 @@ import { createClient } from 'redis';
 const io = new Server();
 const pubClient = createClient({ url: `redis://localhost:6379` });
 const subClient = pubClient.duplicate();
-const redisAdapter = io.adapter(createAdapter(pubClient, subClient));
+
+pubClient.connect();
+subClient.connect();
+
 export class RedisIoAdapter extends IoAdapter {
   createIOServer(port: number, options?: ServerOptions): any {
     const server = super.createIOServer(port, options);
-    server.adapter(redisAdapter);
+    server.adapter(createAdapter(pubClient, subClient));
     return server;
   }
 }
