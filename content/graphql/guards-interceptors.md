@@ -47,21 +47,34 @@ The GraphQL context object returned by `GqlExecutionContext.create()` exposes a 
 
 #### Exception filters
 
-Nest standard [exception filters](/exception-filters) are compatible with GraphQL applications as well. As with `ExecutionContext`, GraphQL apps should transform the `ArgumentsHost` object to a `GqlArgumentsHost` object.
+Nest standard [exception filters](/exception-filters) are compatible with GraphQL applications as well. You may want to implement custom response logic for them.
+
+To do this while being compatible with underlying Apollo Server error handling, we need to return an `ApolloError` instance. The instance can take up to three arguments to define the message, the error code and an extensions object that can contain any data.
 
 ```typescript
+import { Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { GqlArgumentsHost, GqlExceptionFilter } from '@nestjs/graphql';
+import { ApolloError } from 'apollo-server-express';
+
 @Catch(HttpException)
 export class HttpExceptionFilter implements GqlExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const gqlHost = GqlArgumentsHost.create(host);
-    return exception;
+    const status = exception.getStatus();
+    
+    const extensions = {
+      statusCode: status,
+      timestamp: new Date().toISOString()
+    }
+    
+    return new ApolloError(exception.message, 'MY_ERROR_CODE', extensions);
   }
 }
 ```
 
-> info **Hint** Both `GqlExceptionFilter` and `GqlArgumentsHost` are imported from the `@nestjs/graphql` package.
+> info **Hint** As with `ExecutionContext`, GraphQL apps should transform the `ArgumentsHost` object to a `GqlArgumentsHost` object.
 
-Note that unlike the REST case, you don't use the native `response` object to generate a response.
+Note that unlike the REST case, you don't use the native `response` object to generate a response. Learn more about `ApolloError` handling by Apollo Server [here](https://www.apollographql.com/docs/apollo-server/data/errors/).
 
 #### Custom decorators
 
