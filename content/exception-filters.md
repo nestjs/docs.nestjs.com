@@ -358,7 +358,7 @@ The above implementation is just a shell demonstrating the approach. Your implem
 
 Global filters **can** extend the base filter. This can be done in either of two ways.
 
-The first method is to inject the `HttpServer` reference when instantiating the custom global filter:
+The first method is to inject the `HttpAdapter` reference when instantiating the custom global filter:
 
 ```typescript
 async function bootstrap() {
