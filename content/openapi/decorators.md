@@ -8,6 +8,7 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiResponse()`          | Method / Controller |
 | `@ApiProduces()`          | Method / Controller |
 | `@ApiConsumes()`          | Method / Controller |
+| `@ApiCookieAuth()`        | Method / Controller |
 | `@ApiBearerAuth()`        | Method / Controller |
 | `@ApiOAuth2()`            | Method / Controller |
 | `@ApiBasicAuth()`         | Method / Controller |
