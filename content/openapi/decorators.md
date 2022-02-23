@@ -17,7 +17,7 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiParam()`             | Method              |
 | `@ApiQuery()`             | Method              |
 | `@ApiHeader()`            | Method / Controller |
-| `@ApiExcludeController()` | Method / Controller |
+| `@ApiExcludeController()` | Controller          |
 | `@ApiExcludeEndpoint()`   | Method              |
 | `@ApiTags()`              | Method / Controller |
 | `@ApiProperty()`          | Model               |
