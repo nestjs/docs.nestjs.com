@@ -386,7 +386,7 @@ A working example is available [here](https://github.com/nestjs/nest/tree/master
 Start by installing the required dependencies:
 
 ```bash
-$ npm install --save @apollo/subgraph
+$ npm install --save @apollo/subgraph @nestjs/mercurius
 ```
 
 > info **Note** The `@apollo/subgraph` package is required to build a subgraph schema (`buildSubgraphSchema`, `printSubgraphSchema` functions).
