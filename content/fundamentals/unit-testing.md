@@ -176,7 +176,7 @@ describe('CatsController', () => {
     })
     .useMocker((token) => {
       if (token === CatsService) {
-        return { findAll: jest.fn().mockResolveValue(results) };
+        return { findAll: jest.fn().mockResolvedValue(results) };
       }
       if (typeof token === 'function') {
         const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
