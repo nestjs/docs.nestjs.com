@@ -106,4 +106,4 @@ To watch for changes in your files, you can run the following command to start t
 $ npm run start:dev
 ```
 
-This command will watch your files and automatically recompile and reload the server.
+This command will watch your files, automatically recompiling and reloading the server.
