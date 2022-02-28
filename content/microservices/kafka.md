@@ -389,3 +389,59 @@ onModuleInit() {
 ```
 
 > info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+
+#### Commit offsets
+
+Comitting offsets is essential when working with kafka. Per default messages will be automatically committed after a specific time. For more information visit [kafkajs docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that functions like the [native kafkajs implementation](https://kafka.js.org/docs/consuming#manual-committing).
+
+```typescript
+@@filename()
+
+constructor(@Inject(KAFKA) client: ClientKafka) {}
+
+@EventPattern('user_created')
+async handleUserCreated(@Payload() data: IncomingMessage) {
+  // business logic
+
+  await this.client.commitOffsets([ { topic: data.topic, partition: data.partition, offset: data.offset } ])
+}
+@@switch
+
+constructor(@Inject(KAFKA) client: ClientKafka) {}
+
+@EventPattern('user_created')
+async handleUserCreated(data) {
+  // business logic
+
+  await this.client.commitOffsets([ { topic: data.topic, partition: data.partition, offset: data.offset } ])
+}
+```
+
+To disable auto-committing of messages set `autoCommit: false` in the `run` config.
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+```
