@@ -33,9 +33,11 @@ With this in place, register the `ResultUnion` union using the `createUnionType`
 ```typescript
 export const ResultUnion = createUnionType({
   name: 'ResultUnion',
-  types: () => [Author, Book],
+  types: () => [Author, Book] as const,
 });
 ```
+
+> warning **Warning** The array returned by the `types` property of the `createUnionType` function should be given a const assertion. If the const assertion is not given, a wrong declaration file will be generated at compile time, and an error will occur when using it from another project.
 
 Now, we can reference the `ResultUnion` in our query:
 
@@ -71,7 +73,7 @@ To provide a customized `resolveType()` function, pass the `resolveType` propert
 ```typescript
 export const ResultUnion = createUnionType({
   name: 'ResultUnion',
-  types: () => [Author, Book],
+  types: () => [Author, Book] as const,
   resolveType(value) {
     if (value.name) {
       return Author;
