@@ -42,7 +42,7 @@ export class CreateUserDto {
 
 While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
 
-By [enabling the Swagger plugin](#using-the-cli-plugin), the above class definition can be declared simply:
+By [enabling the Swagger plugin](/openapi/cli-plugin#using-the-cli-plugin), the above class definition can be declared simply:
 
 ```typescript
 export class CreateUserDto {
