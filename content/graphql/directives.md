@@ -85,7 +85,7 @@ async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
 Lastly, make sure to declare directives in the `GraphQLModule`, as follows:
 
 ```typescript
-GraphQLModule.forRoot<ApolloDriverConfig>({
+GraphQLModule.forRoot({
   // ...,
   transformSchema: schema => upperDirectiveTransformer(schema, 'upper'),
   buildSchemaOptions: {
