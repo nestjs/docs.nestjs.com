@@ -27,7 +27,10 @@
   a {
     color: #fff;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 18px;
+    @include media(small) {
+      font-size: 15px;
+    }
   }
 }
 
