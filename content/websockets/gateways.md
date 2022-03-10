@@ -122,7 +122,7 @@ handleEvent(data, client) {
 
 > info **Hint** `@ConnectedSocket()` decorator is imported from `@nestjs/websockets` package.
 
-However, in this case, you won't be able to leverage interceptors. If you don't want to respond to the user, you can simple skip the `return` statement (or explicitly return "falsy" value, e.g. `undefined`).
+However, in this case, you won't be able to leverage interceptors. If you don't want to respond to the user, you can simply skip the `return` statement (or explicitly return a "falsy" value, e.g. `undefined`).
 
 Now when a client emits the message as follows:
 
@@ -138,7 +138,7 @@ socket.emit('events', { name: 'Nest' }, (data) => console.log(data));
 
 #### Multiple responses
 
-The acknowledgment is dispatched only once. Furthermore, it is not supported by native WebSockets implementation. To solve this limitation, you may return an object which consist of two properties. The `event` which is a name of the emitted event and the `data` that has to be forwarded to the client.
+The acknowledgment is dispatched only once. Furthermore, it is not supported by native WebSockets implementation. To solve this limitation, you may return an object which consists of two properties. The `event` which is a name of the emitted event and the `data` that has to be forwarded to the client.
 
 ```typescript
 @@filename(events.gateway)
@@ -158,7 +158,7 @@ handleEvent(data) {
 
 > info **Hint** The `WsResponse` interface is imported from `@nestjs/websockets` package.
 
-> warning **Warning** You should return a class instance that implements `WsResponse` if your `data` field relies on `ClassSerializerInterceptor`, as it ignores plain JavaScript objects responses.
+> warning **Warning** You should return a class instance that implements `WsResponse` if your `data` field relies on `ClassSerializerInterceptor`, as it ignores plain JavaScript object responses.
 
 In order to listen for the incoming response(s), the client has to apply another event listener.
 
