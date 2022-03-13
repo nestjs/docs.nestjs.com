@@ -182,6 +182,13 @@ object.
 > still need CLI config with the full list of entities. On the other hand, we can
 > use globs there, as the CLI won't go thru webpack.
 
+
+#### Serialization
+
+> warning **Note** MikroORM wraps every single entity relation in a `Reference<T>` or a `Collection<T>` object, in order to provide better type-safety. This doesn't play well with class-transformer and the [serialization technique described in the NestJS docs](/techniques/serialization).
+
+In order to achieve serialization with MikroORM, the recommended way is to use the [built-in serialization API](https://mikro-orm.io/docs/serializing).
+
 #### Request scoped handlers in queues
 
 > info **info** `@UseRequestContext()` decorator was added in v4.1.0
