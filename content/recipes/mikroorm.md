@@ -185,9 +185,24 @@ object.
 
 #### Serialization
 
-> warning **Note** MikroORM wraps every single entity relation in a `Reference<T>` or a `Collection<T>` object, in order to provide better type-safety. This doesn't play well with class-transformer and the [serialization technique described in the NestJS docs](/techniques/serialization).
+> warning **Note** MikroORM wraps every single entity relation in a `Reference<T>` or a `Collection<T>` object, in order to provide better type-safety. This will make [Nest's built-in serializer](/techniques/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, all of their relations will NOT be serialized.
 
-In order to achieve serialization with MikroORM, the recommended way is to use the [built-in serialization API](https://mikro-orm.io/docs/serializing).
+Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/serializing) which can be used in lieu of `ClassSerializerInterceptor`.
+
+```typescript
+@Entity()
+export class Book {
+
+  @Property({ hidden: true }) // Equivalent of class-transformer's `@Exclude`
+  hiddenField = Date.now();
+  
+  @Property({ persist: false }) // Similar to class-transformer's `@Expose()`. Will only exist in memory, and will be serialized.
+  count?: number;
+  
+  @ManyToOne({ serializer: value => value.name, serializedName: 'authorName' }) // Equivalent of class-transformer's `@Transform()`
+  author: Author;
+}
+```
 
 #### Request scoped handlers in queues
 
