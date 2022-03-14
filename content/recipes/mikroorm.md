@@ -192,7 +192,6 @@ Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/seria
 ```typescript
 @Entity()
 export class Book {
-
   @Property({ hidden: true }) // Equivalent of class-transformer's `@Exclude`
   hiddenField = Date.now();
   
