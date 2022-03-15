@@ -25,6 +25,8 @@ If you run across this error while developing, take a look at the module mention
 
 If the `<unknown_token>` above is the string `dependency`, you might have a circular file import. This is different from the [circular dependency](/faq/common-errors#circular-dependency-error) below because instead of  having providers depend on each other in their constructors, it just means that two files end up importing each other. A common case would be a module file declaring a token and importing a provider, and the provider import the token constant from the module file. If you are using barrel files, ensure that your barrel imports do not end up creating these circular imports as well.
 
+If the `<unknown_token>` above is the string `Object`, it means that you're injecting using an type/interface without a proper provider's token. To fix that, make sure you're importing the class reference or use a custom token with `@Inject()` decorator. Read the [custom providers page](/fundamentals/custom-providers).
+
 Also, make sure you didn't end up injecting the provider on itself because self-injections are not allowed on NetJS. When this happens, `<unknown_token>` will likely be equal to `<provider>`.
 
 #### Error on monorepos
