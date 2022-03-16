@@ -947,6 +947,43 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'myjwt')
 
 Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
+
+#### OAuth Client
+
+If in our application we need a third-party authentication (services such as google, twitter, facebook, etc.), create a strategy using the OAuth2 protocol (Open Authorization), an open standard protocol that a secure API authorization like this way:
+
+```typescript
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+    constructor() {
+        super({
+            clientID: 'CLIENT_ID',
+            clientSecret: 'CLIENT_SECRET',
+            callbackURL: 'CALLBACK_URL',
+            scope: ['email', 'profile'],
+        });
+    }
+    
+    async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
+        const { name, emails, photos } = profile;
+        const user = {
+            email: emails[0].value,
+            firstName: name.givenName,
+            lastName: name.familyName,
+            picture: photos[0].value,
+            accessToken
+        }
+        return user;
+    }
+}
+```
+
+> warning **Warning** In this example we used the `passport-google-oauth20` package, but you can use others as needed.
+
 #### GraphQL
 
 In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
