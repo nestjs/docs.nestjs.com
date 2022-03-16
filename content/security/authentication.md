@@ -958,7 +958,7 @@ import { Strategy } from 'passport-google-oauth20';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleStrategy extends PassportStrategy(Strategy) {
     constructor() {
         super({
             clientID: 'CLIENT_ID',
