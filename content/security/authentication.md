@@ -950,7 +950,7 @@ Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### OAuth Client
 
-If in our application we need a third-party authentication (services such as google, twitter, facebook, etc.), create a strategy using the OAuth2 protocol (Open Authorization), an open standard protocol that a secure API authorization like this way:
+If in our application we need third-party authentication (services such as Google, Twitter, Facebook etc.), we can create a strategy using the OAuth2 protocol (Open Authorization) like this:
 
 ```typescript
 import { PassportStrategy } from '@nestjs/passport';
