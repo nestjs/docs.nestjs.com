@@ -532,8 +532,8 @@ import { PrismaService } from './services/prisma/prisma.service';
 ...
 async function bootstrap() {
   ...
-  const prismaService: PrismaService = app.get(PrismaService);
-  prismaService.enableShutdownHooks(app)
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app)
   ...
 }
 bootstrap()
