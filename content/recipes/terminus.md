@@ -22,14 +22,14 @@ $ npm install --save @nestjs/terminus
 
 A health check represents a summary of **health indicators**. A health indicator executes a check of a service, whether it is in a healthy or unhealthy state. A health check is positive if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, [`@nestjs/terminus`](https://github.com/nestjs/terminus) provides a set of predefined indicators, such as:
 
--   `HttpHealthIndicator`
--   `TypeOrmHealthIndicator`
--   `MongooseHealthIndicator`
--   `SequelizeHealthIndicator`
--   `MicroserviceHealthIndicator`
--   `GRPCHealthIndicator`
--   `MemoryHealthIndicator`
--   `DiskHealthIndicator`
+- `HttpHealthIndicator`
+- `TypeOrmHealthIndicator`
+- `MongooseHealthIndicator`
+- `SequelizeHealthIndicator`
+- `MicroserviceHealthIndicator`
+- `GRPCHealthIndicator`
+- `MemoryHealthIndicator`
+- `DiskHealthIndicator`
 
 To get started with our first health check, let's generate the `HealthModule` now using [Nest CLI](/cli/overview).
 
