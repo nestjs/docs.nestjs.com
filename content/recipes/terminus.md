@@ -98,6 +98,29 @@ export class HealthController {
 }
 ```
 
+```typescript
+@@filename(health.module)
+import { Module } from '@nestjs/common';
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthController } from './health.controller';
+
+@Module({
+  imports: [TerminusModule],
+  controllers: [HealthController],
+})
+export class HealthModule {}
+@@switch
+import { Module } from '@nestjs/common';
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthController } from './health.controller';
+
+@Module({
+  imports: [TerminusModule],
+  controllers: [HealthController],
+})
+export class HealthModule {}
+```
+
 > warning **Warning** `HttpHealthIndicator` requires the installation of the `@nestjs/axios` package and the import of `HttpModule`.
 
 Our health check will now send a _GET_-request to the `https://docs.nestjs.com` address. If
