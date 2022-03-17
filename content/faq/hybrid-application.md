@@ -35,7 +35,7 @@ await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
-To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument with either of below,
+To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument with either of below:
 1. a `Transport` which is an enum with all the built-in transport strategies defined.
 2. a Symbol which is the `transportId` in the Custom Transporter server.
 
