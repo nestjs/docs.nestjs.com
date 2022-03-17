@@ -22,26 +22,32 @@ $ npm install --save @nestjs/terminus
 
 A health check represents a summary of **health indicators**. A health indicator executes a check of a service, whether it is in a healthy or unhealthy state. A health check is positive if all the assigned health indicators are up and running. Because a lot of applications will need similar health indicators, [`@nestjs/terminus`](https://github.com/nestjs/terminus) provides a set of predefined indicators, such as:
 
-- `HttpHealthIndicator`
-- `TypeOrmHealthIndicator`
-- `MongooseHealthIndicator`
-- `SequelizeHealthIndicator`
-- `MicroserviceHealthIndicator`
-- `GRPCHealthIndicator`
-- `MemoryHealthIndicator`
-- `DiskHealthIndicator`
+-   `HttpHealthIndicator`
+-   `TypeOrmHealthIndicator`
+-   `MongooseHealthIndicator`
+-   `SequelizeHealthIndicator`
+-   `MicroserviceHealthIndicator`
+-   `GRPCHealthIndicator`
+-   `MemoryHealthIndicator`
+-   `DiskHealthIndicator`
 
-To get started with our first health check, we need to import the `TerminusModule` into our `AppModule`.
+To get started with our first health check, let's generate the `HealthModule` now using [Nest CLI](/cli/overview).
+
+```bash
+$ nest g module health
+```
+
+Once generated, we can import the `TerminusModule` into it in its imports array.
 
 ```typescript
-@@filename(app.module)
+@@filename(health.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
   imports: [TerminusModule]
 })
-export class AppModule {}
+export class HealthModule {}
 ```
 
 Our healthcheck(s) can be executed using a [controller](/controllers), which can be easily set up using the [Nest CLI](cli/overview).
@@ -303,7 +309,7 @@ export class DogHealthIndicator extends HealthIndicator {
 The next thing we need to do is register the health indicator as a provider.
 
 ```typescript
-@@filename(app.module)
+@@filename(health.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { DogHealthIndicator } from './dog.health';
@@ -313,10 +319,10 @@ import { DogHealthIndicator } from './dog.health';
   imports: [TerminusModule],
   providers: [DogHealthIndicator]
 })
-export class AppModule { }
+export class HealthModule { }
 ```
 
-> info **Hint** In a real-world application the `DogHealthIndicator` should be provided in a separate module, for example, `DogModule`, which then will be imported by the `AppModule`.
+> info **Hint** In a real-world application the `DogHealthIndicator` should be provided in a separate module, for example, `DogModule`, which then will be imported by the `HealthModule`.
 
 The last required step is to add the now available health indicator in the required health check endpoint. For that, we go back to our `HealthController` and add it to our `check` function.
 
