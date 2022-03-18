@@ -31,13 +31,9 @@ A health check represents a summary of **health indicators**. A health indicator
 - `MemoryHealthIndicator`
 - `DiskHealthIndicator`
 
-To get started with our first health check, let's generate the `HealthModule` now using [Nest CLI](/cli/overview).
+To get started with our first health check, let's create the `HealthModule` and import the `TerminusModule` into it in its imports array.
 
-```bash
-$ nest g module health
-```
-
-Once generated, we can import the `TerminusModule` into it in its imports array.
+> info **Hint** To create the module using the [Nest CLI](cli/overview), simply execute the `$ nest g module health` command.
 
 ```typescript
 @@filename(health.module)
