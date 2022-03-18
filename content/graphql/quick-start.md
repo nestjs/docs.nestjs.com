@@ -269,7 +269,7 @@ When you need to pass module options asynchronously instead of statically, use t
 One technique is to use a factory function:
 
 ```typescript
- GraphQLModule.forRootAsync<ApolloDriverAsyncConfig>({
+ GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   useFactory: () => ({
     typePaths: ['./**/*.graphql'],
@@ -280,7 +280,7 @@ One technique is to use a factory function:
 Like other factory providers, our factory function can be <a href="https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory">async</a> and can inject dependencies through `inject`.
 
 ```typescript
-GraphQLModule.forRootAsync<ApolloDriverAsyncConfig>({
+GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
@@ -293,7 +293,7 @@ GraphQLModule.forRootAsync<ApolloDriverAsyncConfig>({
 Alternatively, you can configure the `GraphQLModule` using a class instead of a factory, as shown below:
 
 ```typescript
-GraphQLModule.forRootAsync<ApolloDriverAsyncConfig>({
+GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   useClass: GqlConfigService,
 }),
@@ -315,7 +315,7 @@ class GqlConfigService implements GqlOptionsFactory {
 If you want to reuse an existing options provider instead of creating a private copy inside the `GraphQLModule`, use the `useExisting` syntax.
 
 ```typescript
-GraphQLModule.forRootAsync<ApolloDriverAsyncConfig>({
+GraphQLModule.forRootAsync<ApolloDriverConfig>({
   imports: [ConfigModule],
   useExisting: ConfigService,
 }),
