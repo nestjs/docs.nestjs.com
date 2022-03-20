@@ -2,7 +2,7 @@
 
 #### Dockerfile template
 
-Here a `Dockerfile` template that you can use:
+Here is a `Dockerfile` template that can be used as a template:
 
 ```dockerfile
 # References:
