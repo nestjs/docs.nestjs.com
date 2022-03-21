@@ -4,24 +4,24 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 
 |                           |                     |
 | ------------------------- | ------------------- |
-| `@ApiOperation()`         | Method              |
-| `@ApiResponse()`          | Method / Controller |
-| `@ApiProduces()`          | Method / Controller |
+| `@ApiBasicAuth()`         | Method / Controller |
+| `@ApiBearerAuth()`        | Method / Controller |
+| `@ApiBody()`              | Method              |
 | `@ApiConsumes()`          | Method / Controller |
 | `@ApiCookieAuth()`        | Method / Controller |
-| `@ApiBearerAuth()`        | Method / Controller |
-| `@ApiOAuth2()`            | Method / Controller |
-| `@ApiBasicAuth()`         | Method / Controller |
-| `@ApiSecurity()`          | Method / Controller |
-| `@ApiExtraModels()`       | Method / Controller |
-| `@ApiBody()`              | Method              |
-| `@ApiParam()`             | Method              |
-| `@ApiQuery()`             | Method              |
-| `@ApiHeader()`            | Method / Controller |
 | `@ApiExcludeController()` | Controller          |
 | `@ApiExcludeEndpoint()`   | Method              |
-| `@ApiTags()`              | Method / Controller |
+| `@ApiExtension()`         | Method              |
+| `@ApiExtraModels()`       | Method / Controller |
+| `@ApiHeader()`            | Method / Controller |
+| `@ApiHideProperty()`      | Model               |
+| `@ApiOAuth2()`            | Method / Controller |
+| `@ApiOperation()`         | Method              |
+| `@ApiParam()`             | Method              |
+| `@ApiProduces()`          | Method / Controller |
 | `@ApiProperty()`          | Model               |
 | `@ApiPropertyOptional()`  | Model               |
-| `@ApiHideProperty()`      | Model               |
-| `@ApiExtension()`         | Method              |
+| `@ApiQuery()`             | Method              |
+| `@ApiResponse()`          | Method / Controller |
+| `@ApiSecurity()`          | Method / Controller |
+| `@ApiTags()`              | Method / Controller |
