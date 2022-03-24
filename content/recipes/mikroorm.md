@@ -196,8 +196,11 @@ export class Book {
 
   @Property({ persist: false }) // Similar to class-transformer's `@Expose()`. Will only exist in memory, and will be serialized.
   count?: number;
-  
-  @ManyToOne({ serializer: value => value.name, serializedName: 'authorName' }) // Equivalent of class-transformer's `@Transform()`
+
+  @ManyToOne({
+    serializer: (value) => value.name,
+    serializedName: 'authorName',
+  }) // Equivalent of class-transformer's `@Transform()`
   author: Author;
 }
 ```

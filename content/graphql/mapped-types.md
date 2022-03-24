@@ -64,7 +64,9 @@ We can pick a set of properties from this class using the `PickType()` utility f
 
 ```typescript
 @InputType()
-export class UpdateEmailInput extends PickType(CreateUserInput, ['email'] as const) {}
+export class UpdateEmailInput extends PickType(CreateUserInput, [
+  'email',
+] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/graphql` package.
@@ -91,7 +93,9 @@ We can generate a derived type that has every property **except** `email` as sho
 
 ```typescript
 @InputType()
-export class UpdateUserInput extends OmitType(CreateUserInput, ['email'] as const) {}
+export class UpdateUserInput extends OmitType(CreateUserInput, [
+  'email',
+] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/graphql` package.
@@ -124,7 +128,10 @@ We can generate a new type that combines all properties in both types.
 
 ```typescript
 @InputType()
-export class UpdateUserInput extends IntersectionType(CreateUserInput, AdditionalUserInfo) {}
+export class UpdateUserInput extends IntersectionType(
+  CreateUserInput,
+  AdditionalUserInfo,
+) {}
 ```
 
 > info **Hint** The `IntersectionType()` function is imported from the `@nestjs/graphql` package.
