@@ -10,6 +10,8 @@ It is best practice to validate the correctness of any data sent into a web appl
 
 The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
+> info **Hint** Nest now offers maintained forks for the class-validator and class-transformer packages, that can be installed via `@nestjs/class-validator` and `@nestjs/class-transformer` respectively. Due to backwards compatibility, Nest internally still uses class-validator and class-transformer. It can, however, be changed to use the `@nestjs/class-validator` packages internally.
+
 #### Overview
 
 In the [Pipes](/pipes) chapter, we went through the process of building simple pipes and binding them to controllers, methods or to the global app to demonstrate how the process works. Be sure to review that chapter to best understand the topics of this chapter. Here, we'll focus on various **real world** use cases of the `ValidationPipe`, and show how to use some of its advanced customization features.
@@ -111,8 +113,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>dismissDefaultMessages</code></td>
     <td><code>boolean</code></td>
-    <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code>        if
-      its not explicitly set.</td>
+    <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code> if its not explicitly set.</td>
   </tr>
   <tr>
     <td><code>validationError.target</code></td>
@@ -128,6 +129,16 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>stopAtFirstError</code></td>
     <td><code>boolean</code></td>
     <td>When set to true, validation of the given property will stop after encountering the first error. Defaults to false.</td>
+  </tr>
+  <tr>
+    <td><code>validatorPackage</code></td>
+    <td><code>Function</code></td>
+    <td>Describes the validator package that should be used internally. Set to <code>require('@nestjs/class-validator')</code> in order to use to the <code>@nestjs/class-validator</code> package.</td>
+  </tr>
+  <tr>
+    <td><code>transformerPackage</code></td>
+    <td><code>Function</code></td>
+    <td>Describes the transformer package that should be used internally. Set to <code>require('@nestjs/class-transformer')</code> in order to use to the <code>@nestjs/class-transformer</code> package.</td>
   </tr>
 </table>
 
@@ -155,7 +166,7 @@ create(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
-> info **Hint** Since TypeScript does not store metadata about **generics or interfaces**, when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data.  For this reason, consider using concrete classes in your DTOs.
+> info **Hint** Since TypeScript does not store metadata about **generics or interfaces**, when you use them in your DTOs, `ValidationPipe` may not be able to properly validate incoming data. For this reason, consider using concrete classes in your DTOs.
 
 > info **Hint** When importing your DTOs, you can't use a type-only import as that would be erased at runtime, i.e. remember to `import {{ '{' }} CreateUserDto {{ '}' }}` instead of `import type {{ '{' }} CreateUserDto {{ '}' }}`.
 
@@ -237,7 +248,7 @@ Alternatively, you can stop the request from processing when non-whitelisted pro
 
 #### Transform payload objects
 
-Payloads coming in over the network are plain JavaScript objects. The `ValidationPipe` can automatically transform payloads to be objects typed according to their DTO classes. To enable auto-transformation, set `transform` to `true`.  This can be done at a method level:
+Payloads coming in over the network are plain JavaScript objects. The `ValidationPipe` can automatically transform payloads to be objects typed according to their DTO classes. To enable auto-transformation, set `transform` to `true`. This can be done at a method level:
 
 ```typescript
 @@filename(cats.controller)
@@ -425,6 +436,25 @@ This construction validates the incoming query parameters from an HTTP `GET` req
 
 ```bash
 GET /?ids=1,2,3
+```
+
+#### Changing internal validation package
+
+As described before, Nest provides maintained forks for the `class-validator` and `class-transformer` packages. These packages can be installed via the following command:
+
+```bash
+npm i --save @nestjs/class-validator @nestjs/class-transformer
+```
+
+In order to tell the provided `ValidationPipe` to use the new package (instead of the default `class-validator`), the `ValidationPipe` offers two additional attributes for configuration:
+
+```typescript
+app.useGlobalPipes(
+  new ValidationPipe({
+    validatorPackage: require('@nestjs/class-validator'),
+    transformerPackage: require('@nestjs/class-transformer'),
+  }),
+);
 ```
 
 #### WebSockets and Microservices
