@@ -1,6 +1,6 @@
 ### Plugins
 
-> warning **Warning** This chapter applies only to the `@nestjs/apollo` driver.
+#### For `@nestjs/apollo` driver
 
 Plugins enable you to extend Apollo Server's core functionality by performing custom operations in response to certain events. Currently, these events correspond to individual phases of the GraphQL request lifecycle, and to the startup of Apollo Server itself (read more [here](https://www.apollographql.com/docs/apollo-server/integrations/plugins/)). For example, a basic logging plugin might log the GraphQL query string associated with each request that's sent to Apollo Server.
 
@@ -51,3 +51,27 @@ GraphQLModule.forRoot({
 ```
 
 > info **Hint** The `ApolloServerOperationRegistry` plugin is exported from the `apollo-server-plugin-operation-registry` package.
+
+#### For `@nestjs/mercurius` driver
+
+There are serveral mercurius specific fastify plugins that have to be loaded after the mercurius plugin (read more [here](https://mercurius.dev/#/docs/plugins)).
+
+> warning **Warning** [mercurius-upload](https://github.com/mercurius-js/mercurius-upload) is an exception and should be registered in the main file.
+
+In order to register these plugins just add them to the plugins array inside an object with the plugin function as the plugin parameter and its options object as the options optional parameter, example:
+
+```typescript
+GraphQLModule.forRoot({
+  // ...
+  plugins: [
+    {
+      plugin: altair,
+      options: {
+        path: '/altair',
+        baseURL: '/altair/',
+        endpointURL: '/api/graphql',
+      },
+    }
+  ]
+}),
+```
