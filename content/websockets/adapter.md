@@ -71,7 +71,6 @@ const redisIoAdapter = new RedisIoAdapter(app);
 await redisIoAdapter.connectToRedis();
 
 app.useWebSocketAdapter(redisIoAdapter);
-
 ```
 
 #### Ws library

@@ -229,7 +229,7 @@ import { AppController } from './app.controller';
   imports: [
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      
+
       // Store-specific configuration:
       socket: {
         host: 'localhost',

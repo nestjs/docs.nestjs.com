@@ -188,7 +188,7 @@ describe('CatsController', () => {
     
     controller = moduleRef.get(CatsController);
   });
-})
+});
 ```
 
 > info **Hint** A general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can also be passed directly.
@@ -299,7 +299,7 @@ describe('Cats', () => {
 >       expect(result.payload).toEqual(/* expectedPayload */);
 >     });
 > });
->  
+>
 > afterAll(async () => {
 >   await app.close();
 > });

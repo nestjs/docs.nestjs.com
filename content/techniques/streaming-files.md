@@ -48,7 +48,6 @@ export class FileController {
 
 The default content type is `application/octet-stream`, if you need to customize the response you can use the `res.set` method.
 
-
 ```ts
 import { Controller, Get, StreamableFile, Response } from '@nestjs/common';
 import { createReadStream } from 'fs';

@@ -103,7 +103,7 @@ By default, these options are set to `"description"`. This means the plugin will
 @ApiOperation({ description: "Create some resource" })
 ```
 
-> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead. 
+> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead.
 
 #### Using the CLI plugin
 
