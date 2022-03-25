@@ -21,7 +21,9 @@
     </svg>
   </a>
   <div class="dropdown-content"  [@openCloseAnimation]="isOpen">
-    <a href="https://docs.nestjs.com/v7/" target="_blank">7.x</a>
+    <a class="dropdown-item" href="#">Latest(v{{ versions }})</a>
+    <div class="dropdown-divider"></div>  
+    <a href="https://docs.nestjs.com/v7/" target="_blank">7.x </a>
     <a href="https://docs.nestjs.com/v6/" target="_blank">6.x</a>
     <a href="https://docs.nestjs.com/v5/" target="_blank">5.x</a>
     <a href="https://docs.nestjs.com/v4/" target="_blank">4.x</a>
