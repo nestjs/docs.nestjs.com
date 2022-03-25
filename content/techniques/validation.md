@@ -10,7 +10,7 @@ It is best practice to validate the correctness of any data sent into a web appl
 
 The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
 
-> info **Hint** Nest now offers maintained forks for the class-validator and class-transformer packages, that can be installed via `@nestjs/class-validator` and `@nestjs/class-transformer` respectively. Due to backwards compatibility, Nest internally still uses class-validator and class-transformer. It can, however, be changed to use the `@nestjs/class-validator` packages internally.
+> info **Hint** Nest now offers maintained forks for the `class-validator` and `class-transformer` packages, that can be installed via `@nestjs/class-validator` and `@nestjs/class-transformer` respectively. Due to backwards compatibility, Nest internally still uses `class-validator` and `class-transformer`. It can, however, be changed to use the `@nestjs/class-validator` packages internally.
 
 #### Overview
 
