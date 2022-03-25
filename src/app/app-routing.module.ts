@@ -141,6 +141,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'security',
+        loadChildren: () =>
+          import('./homepage/pages/security/security.module').then(
+            (m) => m.SecurityModule,
+          ),
+      },
+      {
         path: 'graphql',
         loadChildren: () =>
           import('./homepage/pages/graphql/graphql.module').then(
@@ -197,11 +204,12 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      // enableTracing: !environment.production,
-      scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      preloadingStrategy: PreloadAllModules,
-    }),
+    // enableTracing: !environment.production,
+    scrollPositionRestoration: 'enabled',
+    anchorScrolling: 'enabled',
+    preloadingStrategy: PreloadAllModules,
+    relativeLinkResolution: 'legacy'
+}),
   ],
   providers: [RedirectGuard],
   exports: [RouterModule],

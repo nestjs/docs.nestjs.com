@@ -13,23 +13,23 @@ If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the confi
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack-node-externals start-server-webpack-plugin
+$ npm i --save-dev webpack-node-externals run-script-webpack-plugin webpack
 ```
+
+> info **Hint** If you use **Yarn Berry** (not classic Yarn), install the `webpack-pnp-externals` package instead of the `webpack-node-externals`.
 
 #### Configuration
 
 Once the installation is complete, create a `webpack-hmr.config.js` file in the root directory of your application.
 
 ```typescript
-const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
-const StartServerPlugin = require('start-server-webpack-plugin');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
-module.exports = function(options) {
+module.exports = function (options, webpack) {
   return {
     ...options,
     entry: ['webpack/hot/poll?100', options.entry],
-    watch: true,
     externals: [
       nodeExternals({
         allowlist: ['webpack/hot/poll?100'],
@@ -38,14 +38,18 @@ module.exports = function(options) {
     plugins: [
       ...options.plugins,
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.WatchIgnorePlugin([/\.js$/, /\.d\.ts$/]),
-      new StartServerPlugin({ name: options.output.filename }),
+      new webpack.WatchIgnorePlugin({
+        paths: [/\.js$/, /\.d\.ts$/],
+      }),
+      new RunScriptWebpackPlugin({ name: options.output.filename }),
     ],
   };
 };
 ```
 
-This function takes the original object containing the default webpack configuration and returns a modified one with an applied `HotModuleReplacementPlugin` plugin.
+> info **Hint** With **Yarn Berry** (not classic Yarn), instead of using the `nodeExternals` in the `externals` configuration property, use the `WebpackPnpExternals` from `webpack-pnp-externals` package: `WebpackPnpExternals({{ '{' }} exclude: ['webpack/hot/poll?100'] {{ '}' }})`.
+
+This function takes the original object containing the default webpack configuration as a first argument, and the reference to the underlying `webpack` package used by the Nest CLI as the second one. Also, it returns a modified webpack configuration with the `HotModuleReplacementPlugin`, `WatchIgnorePlugin`, and `RunScriptWebpackPlugin` plugins.
 
 #### Hot-Module Replacement
 
@@ -69,7 +73,7 @@ bootstrap();
 To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js"
+"start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch"
 ```
 
 Now simply open your command line and run the following command:
@@ -87,8 +91,10 @@ If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the c
 First install the required packages:
 
 ```bash
-$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader start-server-webpack-plugin
+$ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader run-script-webpack-plugin
 ```
+
+> info **Hint** If you use **Yarn Berry** (not classic Yarn), install the `webpack-pnp-externals` package instead of the `webpack-node-externals`.
 
 #### Configuration
 
@@ -98,11 +104,10 @@ Once the installation is complete, create a `webpack.config.js` file in the root
 const webpack = require('webpack');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
-const StartServerPlugin = require('start-server-webpack-plugin');
+const { RunScriptWebpackPlugin } = require('run-script-webpack-plugin');
 
 module.exports = {
   entry: ['webpack/hot/poll?100', './src/main.ts'],
-  watch: true,
   target: 'node',
   externals: [
     nodeExternals({
@@ -124,7 +129,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new StartServerPlugin({ name: 'server.js' }),
+    new RunScriptWebpackPlugin({ name: 'server.js' }),
   ],
   output: {
     path: path.join(__dirname, 'dist'),
@@ -132,6 +137,8 @@ module.exports = {
   },
 };
 ```
+
+> info **Hint** With **Yarn Berry** (not classic Yarn), instead of using the `nodeExternals` in the `externals` configuration property, use the `WebpackPnpExternals` from `webpack-pnp-externals` package: `WebpackPnpExternals({{ '{' }} exclude: ['webpack/hot/poll?100'] {{ '}' }})`.
 
 This configuration tells webpack a few essential things about your application: location of the entry file, which directory should be used to hold **compiled** files, and what kind of loader we want to use to compile source files. Generally, you should be able to use this file as-is, even if you don't fully understand all of the options.
 
@@ -157,7 +164,7 @@ bootstrap();
 To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"start:dev": "webpack --config webpack.config.js"
+"start:dev": "webpack --config webpack.config.js --watch"
 ```
 
 Now simply open your command line and run the following command:
@@ -166,4 +173,10 @@ Now simply open your command line and run the following command:
 $ npm run start:dev
 ```
 
+#### Example
+
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
+
+#### TypeORM
+
+If you're using `@nestjs/typeorm`, you'll need to add `keepConnectionAlive: true` to your TypeORM configuration.

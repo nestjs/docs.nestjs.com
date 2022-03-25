@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { MigrationComponent } from './migration/migration.component';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { ComplexityComponent } from './complexity/complexity.component';
 import { DirectivesComponent } from './directives/directives.component';
-import { EnumsComponent } from './enums/enums.component';
 import { ExtensionsComponent } from './extensions/extensions.component';
 import { FederationComponent } from './federation/federation.component';
+import { FieldMiddlewareComponent } from './field-middleware/field-middleware.component';
 import { GuardsInterceptorsComponent } from './guards-interceptors/guards-interceptors.component';
 import { InterfacesComponent } from './interfaces/interfaces.component';
 import { MappedTypesComponent } from './mapped-types/mapped-types.component';
@@ -19,7 +20,7 @@ import { ScalarsComponent } from './scalars/scalars.component';
 import { SchemaGeneratorComponent } from './schema-generator/schema-generator.component';
 import { SharingModelsComponent } from "./sharing-models/sharing-models.component";
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
-import { UnionsComponent } from './unions/unions.component';
+import { UnionsAndEnumsComponent } from './unions-and-enums/unions.component';
 
 const routes: Routes = [
   {
@@ -75,6 +76,16 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Directives' },
   },
   {
+    path: 'migration-guide',
+    component: MigrationComponent,
+    data: { title: 'GraphQL + TypeScript - Migration guide' },
+  },
+  {
+    path: 'field-middleware',
+    component: FieldMiddlewareComponent,
+    data: { title: 'GraphQL + TypeScript - Field middleware' },
+  },
+  {
     path: 'complexity',
     component: ComplexityComponent,
     data: { title: 'GraphQL + TypeScript - Complexity' },
@@ -86,13 +97,16 @@ const routes: Routes = [
   },
   {
     path: 'enums',
-    component: EnumsComponent,
-    data: { title: 'GraphQL + TypeScript - Enums' },
+    redirectTo: 'unions-and-enums',
   },
   {
     path: 'unions',
-    component: UnionsComponent,
-    data: { title: 'GraphQL + TypeScript - Unions' },
+    redirectTo: 'unions-and-enums',
+  },
+  {
+    path: 'unions-and-enums',
+    component: UnionsAndEnumsComponent,
+    data: { title: 'GraphQL + TypeScript - Unions and Enums' },
   },
   {
     path: 'plugins',
@@ -134,8 +148,7 @@ const routes: Routes = [
     MutationsComponent,
     SubscriptionsComponent,
     DirectivesComponent,
-    EnumsComponent,
-    UnionsComponent,
+    UnionsAndEnumsComponent,
     PluginsComponent,
     GuardsInterceptorsComponent,
     ScalarsComponent,
@@ -146,6 +159,8 @@ const routes: Routes = [
     FederationComponent,
     ComplexityComponent,
     ExtensionsComponent,
+    FieldMiddlewareComponent,
+    MigrationComponent,
   ],
 })
 export class GraphqlModule {}

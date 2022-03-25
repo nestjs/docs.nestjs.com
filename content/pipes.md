@@ -1,6 +1,6 @@
 ### Pipes
 
-A pipe is a class annotated with the `@Injectable()` decorator. Pipes should implement the `PipeTransform` interface.
+A pipe is a class annotated with the `@Injectable()` decorator, which implements the `PipeTransform` interface.
 
 <figure>
   <img src="/assets/Pipe_1.png" />
@@ -19,18 +19,20 @@ Nest comes with a number of built-in pipes that you can use out-of-the-box. You 
 
 #### Built-in pipes
 
-Nest comes with six pipes available out-of-the-box:
+Nest comes with eight pipes available out-of-the-box:
 
 - `ValidationPipe`
 - `ParseIntPipe`
+- `ParseFloatPipe`
 - `ParseBoolPipe`
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
+- `ParseEnumPipe`
 - `DefaultValuePipe`
 
 They're exported from the `@nestjs/common` package.
 
-Let's take a quick look at using `ParseIntPipe`. This is an example of the **transformation** use case, where the pipe ensures that a method handler parameter is converted to a JavaScript integer (or throws an exception if the conversion fails). Later in this chapter, we'll show a simple custom implementation for a `ParseIntPipe`. The example techniques below also apply to the other built-in transformation pipes (`ParseBoolPipe`, `ParseArrayPipe` and `ParseUUIDPipe`, which we'll refer to as the `Parse*` pipes in this chapter).
+Let's take a quick look at using `ParseIntPipe`. This is an example of the **transformation** use case, where the pipe ensures that a method handler parameter is converted to a JavaScript integer (or throws an exception if the conversion fails). Later in this chapter, we'll show a simple custom implementation for a `ParseIntPipe`. The example techniques below also apply to the other built-in transformation pipes (`ParseBoolPipe`, `ParseFloatPipe`, `ParseEnumPipe`, `ParseArrayPipe` and `ParseUUIDPipe`, which we'll refer to as the `Parse*` pipes in this chapter).
 
 #### Binding pipes
 
@@ -229,13 +231,13 @@ This is, of course, exactly the use case for which pipes are designed. So let's 
 
 There are several approaches available for doing object validation in a clean, [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) way. One common approach is to use **schema-based** validation. Let's go ahead and try that approach.
 
-The [Joi](https://github.com/hapijs/joi) library allows you to create schemas in a straightforward way, with a readable API. Let's build a validation pipe that makes use of Joi-based schemas.
+The [Joi](https://github.com/sideway/joi) library allows you to create schemas in a straightforward way, with a readable API. Let's build a validation pipe that makes use of Joi-based schemas.
 
 Start by installing the required package:
 
 ```bash
-$ npm install --save @hapi/joi
-$ npm install --save-dev @types/hapi__joi
+$ npm install --save joi
+$ npm install --save-dev @types/joi
 ```
 
 In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.validate()` method, which validates our incoming argument against the provided schema.
@@ -247,7 +249,7 @@ In the next section, you'll see how we supply the appropriate schema for a given
 ```typescript
 @@filename()
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { ObjectSchema } from '@hapi/joi';
+import { ObjectSchema } from 'joi';
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {
@@ -438,6 +440,10 @@ export class AppModule {}
 
 > info **Hint** When using this approach to perform dependency injection for the pipe, note that regardless of the module where this construction is employed, the pipe is, in fact, global. Where should this be done? Choose the module where the pipe (`ValidationPipe` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
+#### The built-in ValidationPipe
+
+As a reminder, you don't have to build a generic validation pipe on your own since the `ValidationPipe` is provided by Nest out-of-the-box. The built-in `ValidationPipe` offers more options than the sample we built in this chapter, which has been kept basic for the sake of illustrating the mechanics of a custom-built pipe. You can find full details, along with lots of examples [here](/techniques/validation).
+
 #### Transformation use case
 
 Validation isn't the only use case for custom pipes. At the beginning of this chapter, we mentioned that a pipe can also **transform** the input data to the desired format. This is possible because the value returned from the `transform` function completely overrides the previous value of the argument.
@@ -523,7 +529,3 @@ async findAll(
   return this.catsService.findAll({ activeOnly, page });
 }
 ```
-
-#### The built-in ValidationPipe
-
-As a reminder, you don't have to build a generic validation pipe on your own since the `ValidationPipe` is provided by Nest out-of-the-box. The built-in `ValidationPipe` offers more options than the sample we built in this chapter, which has been kept basic for the sake of illustrating the mechanics of a custom-built pipe. You can find full details, along with lots of examples [here](/techniques/validation).

@@ -1,6 +1,6 @@
 ### Guards
 
-A guard is a class annotated with the `@Injectable()` decorator. Guards should implement the `CanActivate` interface.
+A guard is a class annotated with the `@Injectable()` decorator, which implements the `CanActivate` interface.
 
 <figure><img src="/assets/Guards_1.png" /></figure>
 
@@ -39,6 +39,8 @@ export class AuthGuard {
   }
 }
 ```
+
+> info **Hint** If you are looking for a real-world example on how to implement an authentication mechanism in your application, visit [this chapter](/security/authentication). Likewise, for more sophisticated authorization example, check [this page](/security/authorization).
 
 The logic inside the `validateRequest()` function can be as simple or sophisticated as needed. The main point of this example is to show how guards fit into the request/response cycle.
 
@@ -241,7 +243,7 @@ export class RolesGuard {
 }
 ```
 
-> info **Hint** In the node.js world, it's common practice to attach the authorized user to the `request` object. Thus, in our sample code above, we are assuming that `request.user` contains the user instance and allowed roles. In your app, you will probably make that association in your custom **authentication guard** (or middleware).
+> info **Hint** In the node.js world, it's common practice to attach the authorized user to the `request` object. Thus, in our sample code above, we are assuming that `request.user` contains the user instance and allowed roles. In your app, you will probably make that association in your custom **authentication guard** (or middleware). Check [this chapter](/security/authentication) for more information on this topic.
 
 > warning **Warning** The logic inside the `matchRoles()` function can be as simple or sophisticated as needed. The main point of this example is to show how guards fit into the request/response cycle.
 
@@ -264,3 +266,5 @@ throw new UnauthorizedException();
 ```
 
 Any exception thrown by a guard will be handled by the [exceptions layer](/exception-filters) (global exceptions filter and any exceptions filters that are applied to the current context).
+
+> info **Hint** If you are looking for a real-world example on how to implement authorization, check [this chapter](/security/authorization).

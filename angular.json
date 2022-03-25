@@ -20,10 +20,15 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
+              "src/apple-touch-icon.png",
+              "src/apple-touch-icon-precomposed.png",
+              "src/browserconfig.xml",
+              "src/mstile-150x150.png",
               "src/_redirects"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/assets/css/perfect-scrollbar.min.css"
             ]
           },
           "configurations": {
@@ -34,10 +39,16 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
+                },
+                "fonts": true
+              },
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -82,8 +93,7 @@
               "src/styles.scss"
             ],
             "assets": [
-              "src/assets",
-              "src/favicon.ico"
+              "src/assets"
             ]
           }
         },

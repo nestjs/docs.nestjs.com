@@ -11,7 +11,7 @@
 To start the adventure with this library we have to install all required dependencies:
 
 ```bash
-$ npm install --save typeorm mysql
+$ npm install --save typeorm mysql2
 ```
 
 The first step we need to do is to establish the connection with our database using `createConnection()` function imported from the `typeorm` package. The `createConnection()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
@@ -39,7 +39,9 @@ export const databaseProviders = [
 ];
 ```
 
-> warning **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
+> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
+
+> info **Hint** Following best practices, we declared the custom provider in the separated file which has a `*.providers.ts` suffix.
 
 Then, we need to export these providers to make them **accessible** for the rest of the application.
 
@@ -93,7 +95,7 @@ The `Photo` entity belongs to the `photo` directory. This directory represents t
 
 ```typescript
 @@filename(photo.providers)
-import { Connection, Repository } from 'typeorm';
+import { Connection } from 'typeorm';
 import { Photo } from './photo.entity';
 
 export const photoProviders = [
@@ -105,7 +107,7 @@ export const photoProviders = [
 ];
 ```
 
-> warning **Notice** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
 Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inject()` decorator:
 
@@ -149,4 +151,4 @@ import { PhotoService } from './photo.service';
 export class PhotoModule {}
 ```
 
-> warning **Hint** Do not forget to import the `PhotoModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `PhotoModule` into the root `AppModule`.

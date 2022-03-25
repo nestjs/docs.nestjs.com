@@ -10,7 +10,7 @@ The code-first approach ships with five scalars in which three of them are simpl
 - `Int` (alias for `GraphQLInt`) - a signed 32‐bit integer
 - `Float` (alias for `GraphQLFloat`) - a signed double-precision floating-point value
 - `GraphQLISODateTime` - a date-time string at UTC (used by default to represent `Date` type)
-- `GraphQLTimestamp` - a numeric string which represents time and date as number of milliseconds from start of UNIX epoch
+- `GraphQLTimestamp` - a signed integer which represents date and time as number of milliseconds from start of UNIX epoch
 
 The `GraphQLISODateTime` (e.g. `2019-12-03T09:54:33Z`) is used by default to represent the `Date` type. To use the `GraphQLTimestamp` instead, set the `dateScalarMode` of the `buildSchemaOptions` object to `'timestamp'` as follows:
 
@@ -22,13 +22,23 @@ GraphQLModule.forRoot({
 }),
 ```
 
+Likewise, the `GraphQLFloat` is used by default to represent the `number` type. To use the `GraphQLInt` instead, set the `numberScalarMode` of the `buildSchemaOptions` object to `'integer'` as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  buildSchemaOptions: {
+    numberScalarMode: 'integer',
+  }
+}),
+```
+
 In addition, you can create custom scalars. For example, to create a `Date` scalar, simply create a new class.
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
-@Scalar('Date', type => Date)
+@Scalar('Date', (type) => Date)
 export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
@@ -88,7 +98,7 @@ import GraphQLJSON from 'graphql-type-json';
     }),
   ],
 })
-export class ApplicationModule {}
+export class AppModule {}
 ```
 
 Now we can use the `JSON` scalar in our type definitions:
@@ -142,3 +152,52 @@ Now we can use the `Date` scalar in type definitions.
 ```graphql
 scalar Date
 ```
+
+By default, the generated TypeScript definition for all scalars is `any` - which isn't particularly typesafe.
+But, you can configure how Nest generates typings for your custom scalars when you specify how to generate types:
+
+```typescript
+import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
+import { join } from 'path';
+
+const definitionsFactory = new GraphQLDefinitionsFactory()
+
+definitionsFactory.generate({
+  typePaths: ['./src/**/*.graphql'],
+  path: join(process.cwd(), 'src/graphql.ts'),
+  outputAs: 'class',
+  defaultScalarType: 'unknown',
+  customScalarTypeMapping: {
+    DateTime: 'Date',
+    BigNumber: '_BigNumber',
+  },
+  additionalHeader: "import _BigNumber from 'bignumber.js'",
+})
+```
+
+> info **Hint** Alternatively, you can use a type reference instead, for example: `DateTime: Date`. In this case, `GraphQLDefinitionsFactory` will extract the name property of the specified type (`Date.name`) to generate TS definitions. Note: adding an import statement for non-built-in types (custom types) is required.
+
+Now, given the following GraphQL custom scalar types:
+
+```graphql
+scalar DateTime
+scalar BigNumber
+scalar Payload
+```
+
+We will now see the following generated TypeScript definitions in `src/graphql.ts`:
+
+```typescript
+import _BigNumber from 'bignumber.js'
+
+export type DateTime = Date
+export type BigNumber = _BigNumber
+export type Payload = unknown
+```
+
+Here, we've used the `customScalarTypeMapping` property to supply a map of the types we wish to declare for our custom scalars. We've
+also provided an `additionalHeader` property so that we can add any imports required for these type definitions. Lastly, we've added
+a `defaultScalarType` of `'unknown'`, so that any custom scalars not specified in `customScalarTypeMapping` will be aliased to
+`unknown` instead of `any` (which [TypeScript recommends](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type) using since 3.0 for added type safety).
+
+> info **Hint** Note that we've imported `_BigNumber` from `bignumber.js`; this is to avoid [circular type references](https://github.com/Microsoft/TypeScript/issues/12525#issuecomment-263166239).

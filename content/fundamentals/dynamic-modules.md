@@ -117,7 +117,7 @@ In fact, what our `register()` method will return is a `DynamicModule`. A dynami
 
 ```typescript
 @Module({
-  imports: [DogsService],
+  imports: [DogsModule],
   controllers: [CatsController],
   providers: [CatsService],
   exports: [CatsService]
@@ -128,7 +128,7 @@ Dynamic modules must return an object with the exact same interface, plus one ad
 
 > info **Hint** For a dynamic module, all properties of the module options object are optional **except** `module`.
 
-What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Modules` decorator, we specify them programmatically.
+What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Module` decorator, we specify them programmatically.
 
 There are still a couple of details to cover to help make the picture complete:
 
@@ -159,7 +159,7 @@ It should now be clear how the pieces tie together. Calling `ConfigModule.regist
 
 Our dynamic module isn't very interesting yet, however, as we haven't introduced any capability to **configure** it as we said we would like to do. Let's address that next.
 
-### Module configuration
+#### Module configuration
 
 The obvious solution for customizing the behavior of the `ConfigModule` is to pass it an `options` object in the static `register()` method, as we guessed above. Let's look once again at our consuming module's `imports` property:
 

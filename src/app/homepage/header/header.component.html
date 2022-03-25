@@ -1,5 +1,8 @@
+<div class="top-bar">
+  <a href="https://supportukrainenow.org/">STOP RUSSIA'S INVASION OF UKRAINE 🇺🇦</a>
+</div>
 <header>
-  <div
+  <button
     class="icon-wrapper"
     (click)="toggle.emit()"
     [class.opened]="isSidebarOpened"
@@ -38,7 +41,7 @@
         />
       </svg>
     </div>
-  </div>
+  </button>
   <ng-content></ng-content>
   <app-social-wrapper></app-social-wrapper>
   <div class="menu-wrapper">
@@ -53,14 +56,6 @@
           target="_blank"
           title="NestJS - A node.js framework built on top of TypeScript"
           >Our website</a
-        >
-      </li>
-      <li class="shop-link">
-        <a
-          href="https://nestjs.threadless.com/"
-          target="_blank"
-          title="Shop | NestJS - A node.js framework built on top of TypeScript"
-          >Shop</a
         >
       </li>
       <li>
@@ -82,14 +77,4 @@
       </li>
     </ul>
   </div>
-  <!--<div class="workshop-wrapper">
-    <img src="/assets/ng-camp-small.svg" alt="AngularCamp, Barcelona" />
-    <div class="workshop-info">
-      <h3 class="long-title">
-        <span>NestJS</span> at 2018 JSCamp Conference, Barcelona</h3>
-      <h3 class="short-title">
-        <span>NestJS</span> 2018 JSCamp</h3>
-      <a href="https://angularcamp.tech/workshops/scalable-nodejs-with-nest/" target="_blank">LEARN MORE</a>
-    </div>
-  </div>-->
 </header>

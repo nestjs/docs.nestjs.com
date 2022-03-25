@@ -17,7 +17,7 @@ type Author {
   id: Int!
   firstName: String
   lastName: String
-  posts: [Post]
+  posts: [Post!]!
 }
 ```
 
@@ -57,13 +57,13 @@ type Author {
   id: Int!
   firstName: String
   lastName: String
-  posts: [Post]
+  posts: [Post!]!
 }
 ```
 
 The `@Field()` decorator accepts an optional type function (e.g., `type => Int`), and optionally an options object.
 
-The type function is required when there's the potential for ambiguity between the TypeScript type system and the GraphQL type system. Specifically: it is **not** required for `string` and `boolean` types; it **is** required for arrays, numbers (which must be mapped to either a GraphQL `Int` or `Float`) and object types. The type function should simply return the desired GraphQL type (as shown in various examples in these chapters).
+The type function is required when there's the potential for ambiguity between the TypeScript type system and the GraphQL type system. Specifically: it is **not** required for `string` and `boolean` types; it **is** required for `number` (which must be mapped to either a GraphQL `Int` or `Float`). The type function should simply return the desired GraphQL type (as shown in various examples in these chapters).
 
 The options object can have any of the following key/value pairs:
 
@@ -120,7 +120,6 @@ export class Post {
 The `Post` object type will result in generating the following part of the GraphQL schema in SDL:
 
 ```graphql
-@@filename(schema.gql)
 type Post {
   id: Int!
   title: String!
@@ -154,6 +153,7 @@ export class AuthorsResolver {
 }
 ```
 
+
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
 You can define multiple resolver classes. Nest will combine these at run time. See the [module](/graphql/resolvers#module) section below for more on code organization.
@@ -169,6 +169,8 @@ The argument passed to the `@Resolver()` decorator is optional, but comes into p
 In our example, since the class includes a **field resolver** function (for the `posts` property of the `Author` object type), we **must** supply the `@Resolver()` decorator with a value to indicate which class is the parent type (i.e., the corresponding `ObjectType` class name) for all field resolvers defined within this class. As should be clear from the example, when writing a field resolver function, it's necessary to access the parent object (the object the field being resolved is a member of). In this example, we populate an author's posts array with a field resolver that calls a service which takes the author's `id` as an argument. Hence the need to identify the parent object in the `@Resolver()` decorator. Note the corresponding use of the `@Parent()` method parameter decorator to then extract a reference to that parent object in the field resolver.
 
 We can define multiple `@Query()` resolver functions (both within this class, and in any other resolver class), and they will be aggregated into a single **Query type** definition in the generated SDL along with the appropriate entries in the resolver map. This allows you to define queries close to the models and services that they use, and to keep them well organized in modules.
+
+> info **Hint** Nest CLI provides a generator (schematic) that automatically generates **all the boilerplate code** to help us avoid doing all of this, and make the developer experience much simpler. Read more about this feature [here](/recipes/crud-generator).
 
 #### Query type names
 
@@ -408,7 +410,19 @@ We saw one use of generics above. This powerful TypeScript feature can be used t
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
-export function Paginated<T>(classRef: Type<T>): any {
+interface IEdgeType<T> {
+  cursor: string;
+  node: T;
+}
+
+export interface IPaginatedType<T> {
+  edges: IEdgeType<T>[];
+  nodes: T[];
+  totalCount: number;
+  hasNextPage: boolean;
+}
+
+export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
     @Field((type) => String)
@@ -419,7 +433,7 @@ export function Paginated<T>(classRef: Type<T>): any {
   }
 
   @ObjectType({ isAbstract: true })
-  abstract class PaginatedType {
+  abstract class PaginatedType implements IPaginatedType<T> {
     @Field((type) => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
@@ -432,7 +446,7 @@ export function Paginated<T>(classRef: Type<T>): any {
     @Field()
     hasNextPage: boolean;
   }
-  return PaginatedType;
+  return PaginatedType as Type<IPaginatedType<T>>;
 }
 ```
 
@@ -560,9 +574,11 @@ export class AuthorsResolver {
 }
 ```
 
+> info **Hint** Nest CLI provides a generator (schematic) that automatically generates **all the boilerplate code** to help us avoid doing all of this, and make the developer experience much simpler. Read more about this feature [here](/recipes/crud-generator).
+
 #### Generating types
 
-Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it will generate the following file (in the location you specified in the `GraphQLModule.forRoot()` method. For example, in `src/graphql.ts`)
+Assuming that we use the schema first approach and have enabled the typings generation feature (with `outputAs: 'class'` as shown in the [previous](/graphql/quick-start) chapter), once you run the application it will generate the following file (in the location you specified in the `GraphQLModule.forRoot()` method). For example, in `src/graphql.ts`:
 
 ```typescript
 @@filename(graphql)

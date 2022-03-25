@@ -14,6 +14,7 @@ body {
   // letter-spacing: 0.2px;
   font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
   background-color: #fdfdfd;
+  font-display: swap;
   color: $grey-color;
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -301,6 +302,10 @@ tr td span.table-code-asterisk {
 .ps__rail-y:focus {
   background-color: #eee;
   opacity: 0.9;
+}
+
+.ps__rail-y {
+  left: auto !important;
 }
 
 /*

@@ -10,7 +10,7 @@ To get a reference to the `HttpAdapter` from outside of the application context,
 
 ```typescript
 @@filename()
-const app = await NestFactory.create(ApplicationModule);
+const app = await NestFactory.create(AppModule);
 const httpAdapter = app.getHttpAdapter();
 ```
 

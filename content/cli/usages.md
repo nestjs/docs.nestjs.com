@@ -31,7 +31,7 @@ Creates and initializes a new Nest project. Prompts for package manager.
 | `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                        |
 | `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                            |
 | `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                     |
-| `--package-manager [package-manager]` | Specify package manager. Use `npm` or `yarn`. Package manager must be installed globally.<br/> Alias: `-p`      |
+| `--package-manager [package-manager]` | Specify package manager. Use `npm`, `yarn`, or `pnpm`. Package manager must be installed globally.<br/> Alias: `-p`      |
 | `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                   |
 | `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
 
@@ -69,8 +69,9 @@ $ nest g <schematic> <name> [options]
 | `module`      | `mo`  | Generate a module declaration.                                                                      |
 | `pipe`        | `pi`  | Generate a pipe declaration.                                                                        |
 | `provider`    | `pr`  | Generate a provider declaration.                                                                    |
-| `resolver`    | `r`   | Generate a resolver declaration.                                                                    |
-| `service`     | `s`   | Generate a service declaration.                                                                     |
+| `resolver`    | `r`   | Generate a resolver declaration.
+| `resource`    | `res` | Generate a new CRUD resource. See the [CRUD (resource) generator](/recipes/crud-generator) for more details.                                                                    |
+| `service`     | `s`   | Generate a service declaration.                                                                    |
 
 ##### Options
 
@@ -165,6 +166,10 @@ Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to th
 #### nest info
 
 Displays information about installed nest packages and other helpful system info. For example:
+
+```bash
+$ nest info
+```
 
 ```bash
  _   _             _      ___  _____  _____  _     _____

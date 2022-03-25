@@ -115,7 +115,7 @@
     {
       "logo": "/assets/logo/dozto.png",
       "url": "https://www.dozto.com",
-      "width": "130px"
+      "width": "117px"
     },
     {
       "logo": "/assets/logo/qingtui.png",
@@ -181,6 +181,15 @@
       "logo": "/assets/logo/global-cto-forum.png",
       "url": "https://globalctoforum.org/",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/rivvy.png",
+      "url": "https://rivvy.app",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/vue-storefront.png",
+      "url": "https://www.vuestorefront.io/"
     }
   ],
   "Body": [
@@ -232,6 +241,23 @@
     "https://www.radity.com",
     "https://globalctoforum.org",
     "https://halojasa.com",
-    "https://hexito.com"
+    "https://hexito.com",
+    "https://rivvy.app",
+    "https://padfever.com/",
+    "https://datenlotse.org",
+    "https://bemum.co",
+    "https://weoptimeye.ai",
+    "https://nemovote.com",
+    "https://selleo.com",
+    "https://pchas.ir",
+    "https://tayeh.ir",
+    "https://forwardigital.co.uk",
+    "https://rozetka.com.ua",
+    "https://www.itrio.net",
+    "https://alexishr.com",
+    "https://dyrector.io",
+    "https://stijlbreuk.nl",
+    "https://polygon-software.ch",
+    "https://bewith.io"
   ]
 }

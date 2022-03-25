@@ -8,24 +8,12 @@ Each application has at least one module, a **root module**. The root module is 
 
 The `@Module()` decorator takes a single object whose properties describe the module:
 
-<table>
-  <tr>
-    <td><code>providers</code></td>
-    <td>the providers that will be instantiated by the Nest injector and that may be shared at least across this module</td>
-  </tr>
-  <tr>
-    <td><code>controllers</code></td>
-    <td>the set of controllers defined in this module which have to be instantiated</td>
-  </tr>
-  <tr>
-    <td><code>imports</code></td>
-    <td>the list of imported modules that export the providers which are required in this module</td>
-  </tr>
-  <tr>
-    <td><code>exports</code></td>
-    <td>the subset of <code>providers</code> that are provided by this module and should be available in other modules which import this module</td>
-  </tr>
-</table>
+| | |
+|-|-|
+| `providers`   | the providers that will be instantiated by the Nest injector and that may be shared at least across this module |
+| `controllers` | the set of controllers defined in this module which have to be instantiated  |
+| `imports`     | the list of imported modules that export the providers which are required in this module |
+| `exports`     | the subset of `providers` that are provided by this module and should be available in other modules which import this module. You can use either the provider itself or just its token (`provide` value) |
 
 The module **encapsulates** providers by default. This means that it's impossible to inject providers that are neither directly part of the current module nor exported from the imported modules. Thus, you may consider the exported providers from a module as the module's public interface, or API.
 
@@ -78,9 +66,9 @@ Here is how our directory structure looks now:
       <div class="children">
         <div class="item">cat.interface.ts</div>
       </div>
-      <div class="item">cats.service.ts</div>
       <div class="item">cats.controller.ts</div>
       <div class="item">cats.module.ts</div>
+      <div class="item">cats.service.ts</div>
     </div>
     <div class="item">app.module.ts</div>
     <div class="item">main.ts</div>

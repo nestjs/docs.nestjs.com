@@ -22,7 +22,7 @@
   //@include transform(translateX(250px));
   margin-left: 250px;
   width: calc(100% - 250px);
-  padding: 85px 85px 0;
+  padding: 120px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -38,7 +38,7 @@
     //@include transform(translateX(250px));
     margin-left: 250px;
     width: calc(100% - 250px);
-    padding: 85px 50px 0;
+    padding: 120px 50px 0;
     &.wide {
       width: 100%;
     }
@@ -47,7 +47,7 @@
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
-    padding: 85px 20px 0;
+    padding: 120px 20px 0;
   }
 
   @media print {
@@ -170,24 +170,45 @@
     color: #4e4e4e;
   }
 
-  .logo-sponsor {
-    //width: 280px;
+  .logo-sponsor-container {
+    display: inline-block;
     margin-top: 10px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+
+    &:last-of-type {
+      margin-right: 0;
+      margin-bottom: 0;
+    }
+    @media (max-width: 480px) {
+      display: block;
+      margin-bottom: 20px;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .logo-sponsor {
     width: 180px;
     filter: grayscale(1);
-    &:first-of-type {
-      margin-right: 30px;
-      margin-bottom: 10px;
-    }
+
     &:hover {
       filter: grayscale(0);
     }
   }
 
-  .logo-sponsor-small {
-    width: 150px;
-    margin-bottom: 30px;
-    display: block;
+  .logo-sponsor--high {
+    width: 160px;
+  }
+
+  .logo-sponsor--slim {
+    width: auto;
+    max-height: 40px;
+    margin-left: 10px;
+    @media (max-width: 480px) {
+      margin-left: 0;
+    }
   }
 
   .logo-blueanchor {
@@ -204,6 +225,12 @@
       color: #0894e2;
       border-color: #0894e2;
     }
+  }
+}
+
+.sponsors-carbon {
+  @media (min-width: 1200px) {
+    width: calc(100% - 220px);
   }
 }
 

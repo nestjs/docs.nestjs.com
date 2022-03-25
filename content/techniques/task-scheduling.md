@@ -8,6 +8,7 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/schedule
+$ npm install --save-dev @types/cron
 ```
 
 To activate job scheduling, import the `ScheduleModule` into the root `AppModule` and run the `forRoot()` static method as shown below:
@@ -65,11 +66,11 @@ In the example above, we passed `45 * * * * *` to the decorator. The following k
 * * * * * *
 | | | | | |
 | | | | | day of week
-| | | | month
+| | | | months
 | | | day of month
-| | hour
-| minute
-second (optional)
+| | hours
+| minutes
+seconds (optional)
 </code></pre>
 
 Some sample cron patterns are:
@@ -85,7 +86,7 @@ Some sample cron patterns are:
       <td>every minute, on the 45th second</td>
     </tr>
     <tr>
-      <td><code>* 10 * * * *</code></td>
+      <td><code>0 10 * * * *</code></td>
       <td>every hour, at the start of the 10th minute</td>
     </tr>
     <tr>
@@ -109,27 +110,59 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);
 
-  @Cron(CronExpression.EVERY_45_SECONDS)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   handleCron() {
-    this.logger.debug('Called every 45 seconds');
+    this.logger.debug('Called every 30 seconds');
   }
 }
 ```
 
-In this example, the `handleCron()` method will be called every `45` seconds.
+In this example, the `handleCron()` method will be called every `30` seconds.
 
 Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator. Doing so causes the job to execute exactly once, at the specified date.
 
 > info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
 
-You can access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>. To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in an optional options object as the second argument of the decorator, as shown below:
+Also, you can supply additional options as the second parameter to the `@Cron()` decorator.
+
+<table>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td>
+        Useful to access and control a cron job after it's been declared.
+      </td>
+    </tr>
+    <tr>
+      <td><code>timeZone</code></td>
+      <td>
+        Specify the timezone for the execution. This will modify the actual time relative to your timezone. If the timezone is invalid, an error is thrown. You can check all timezones available at <a href="http://momentjs.com/timezone/">Moment Timezone</a> website.
+      </td>
+    </tr>
+    <tr>
+      <td><code>utcOffset</code></td>
+      <td>
+        This allows you to specify the offset of your timezone rather than using the <code>timeZone</code> param.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ```typescript
-@Cron('* * 8 * * *', {
-  name: 'notifications',
-})
-triggerNotifications() {}
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+@Injectable()
+export class NotificationService {
+  @Cron('* * 0 * * *', {
+    name: 'notifications',
+    timeZone: 'Europe/Paris',
+  })
+  triggerNotifications() {}
+}
 ```
+
+You can access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>. To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in an optional options object as the second argument of the decorator.
 
 #### Declarative intervals
 
@@ -227,7 +260,7 @@ addCronJob(name: string, seconds: string) {
     this.logger.warn(`time (${seconds}) for job ${name} to run!`);
   });
 
-  this.scheduler.addCronJob(name, job);
+  this.schedulerRegistry.addCronJob(name, job);
   job.start();
 
   this.logger.warn(
@@ -244,7 +277,7 @@ In this code, we use the `CronJob` object from the `cron` package to create the 
 
 ```typescript
 deleteCron(name: string) {
-  this.scheduler.deleteCronJob(name);
+  this.schedulerRegistry.deleteCronJob(name);
   this.logger.warn(`job ${name} deleted!`);
 }
 ```
@@ -253,7 +286,7 @@ deleteCron(name: string) {
 
 ```typescript
 getCrons() {
-  const jobs = this.scheduler.getCronJobs();
+  const jobs = this.schedulerRegistry.getCronJobs();
   jobs.forEach((value, key, map) => {
     let next;
     try {
@@ -286,13 +319,13 @@ clearInterval(interval);
 **Create** a new interval dynamically using the `SchedulerRegistry.addInterval()` method, as follows:
 
 ```typescript
-addInterval(name: string, seconds: string) {
+addInterval(name: string, milliseconds: number) {
   const callback = () => {
-    this.logger.warn(`Interval ${name} executing at time (${seconds})!`);
+    this.logger.warn(`Interval ${name} executing at time (${milliseconds})!`);
   };
 
-  const interval = setInterval(callback, seconds);
-  this.scheduler.addInterval(name, interval);
+  const interval = setInterval(callback, milliseconds);
+  this.schedulerRegistry.addInterval(name, interval);
 }
 ```
 
@@ -303,7 +336,7 @@ That method takes two arguments: a name for the interval, and the interval itsel
 
 ```typescript
 deleteInterval(name: string) {
-  this.scheduler.deleteInterval(name);
+  this.schedulerRegistry.deleteInterval(name);
   this.logger.warn(`Interval ${name} deleted!`);
 }
 ```
@@ -312,7 +345,7 @@ deleteInterval(name: string) {
 
 ```typescript
 getIntervals() {
-  const intervals = this.scheduler.getIntervals();
+  const intervals = this.schedulerRegistry.getIntervals();
   intervals.forEach(key => this.logger.log(`Interval: ${key}`));
 }
 ```
@@ -335,13 +368,13 @@ clearTimeout(timeout);
 **Create** a new timeout dynamically using the `SchedulerRegistry.addTimeout()` method, as follows:
 
 ```typescript
-addTimeout(name: string, seconds: string) {
+addTimeout(name: string, milliseconds: number) {
   const callback = () => {
-    this.logger.warn(`Timeout ${name} executing after (${seconds})!`);
+    this.logger.warn(`Timeout ${name} executing after (${milliseconds})!`);
   };
 
-  const timeout = setTimeout(callback, seconds);
-  this.scheduler.addTimeout(name, timeout);
+  const timeout = setTimeout(callback, milliseconds);
+  this.schedulerRegistry.addTimeout(name, timeout);
 }
 ```
 
@@ -352,7 +385,7 @@ That method takes two arguments: a name for the timeout, and the timeout itself.
 
 ```typescript
 deleteTimeout(name: string) {
-  this.scheduler.deleteTimeout(name);
+  this.schedulerRegistry.deleteTimeout(name);
   this.logger.warn(`Timeout ${name} deleted!`);
 }
 ```
@@ -361,7 +394,7 @@ deleteTimeout(name: string) {
 
 ```typescript
 getTimeouts() {
-  const timeouts = this.scheduler.getTimeouts();
+  const timeouts = this.schedulerRegistry.getTimeouts();
   timeouts.forEach(key => this.logger.log(`Timeout: ${key}`));
 }
 ```

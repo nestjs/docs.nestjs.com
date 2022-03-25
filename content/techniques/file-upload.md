@@ -4,6 +4,14 @@ To handle file uploading, Nest provides a built-in module based on the [multer](
 
 > warning **Warning** Multer cannot process data which is not in the supported multipart format (`multipart/form-data`). Also, note that this package is not compatible with the `FastifyAdapter`.
 
+For better type safety, let's install Multer typings package:
+
+```shell
+$ npm i -D @types/multer
+```
+
+With this package installed, we can now use the `Express.Multer.File` type (you can import this type as follows: `import {{ '{' }} Express {{ '}' }} from 'express'`).
+
 #### Basic example
 
 To upload a single file, simply tie the `FileInterceptor()` interceptor to the route handler and extract `file` from the `request` using the `@UploadedFile()` decorator.
@@ -12,7 +20,7 @@ To upload a single file, simply tie the `FileInterceptor()` interceptor to the r
 @@filename()
 @Post('upload')
 @UseInterceptors(FileInterceptor('file'))
-uploadFile(@UploadedFile() file) {
+uploadFile(@UploadedFile() file: Express.Multer.File) {
   console.log(file);
 }
 @@switch
@@ -31,6 +39,8 @@ The `FileInterceptor()` decorator takes two arguments:
 - `fieldName`: string that supplies the name of the field from the HTML form that holds a file
 - `options`: optional object of type `MulterOptions`. This is the same object used by the multer constructor (more details [here](https://github.com/expressjs/multer#multeropts)).
 
+> warning **Warning** `FileInterceptor()` may not be compatible with third party cloud providers like Google Firebase or others.
+
 #### Array of files
 
 To upload an array of files (identified with a single field name), use the `FilesInterceptor()` decorator (note the plural **Files** in the decorator name). This decorator takes three arguments:
@@ -45,7 +55,7 @@ When using `FilesInterceptor()`, extract files from the `request` with the `@Upl
 @@filename()
 @Post('upload')
 @UseInterceptors(FilesInterceptor('files'))
-uploadFile(@UploadedFiles() files) {
+uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
   console.log(files);
 }
 @@switch
@@ -75,7 +85,7 @@ When using `FileFieldsInterceptor()`, extract files from the `request` with the 
   { name: 'avatar', maxCount: 1 },
   { name: 'background', maxCount: 1 },
 ]))
-uploadFile(@UploadedFiles() files) {
+uploadFile(@UploadedFiles() files: { avatar?: Express.Multer.File[], background?: Express.Multer.File[] }) {
   console.log(files);
 }
 @@switch
@@ -100,7 +110,7 @@ When using `AnyFilesInterceptor()`, extract files from the `request` with the `@
 @@filename()
 @Post('upload')
 @UseInterceptors(AnyFilesInterceptor())
-uploadFile(@UploadedFiles() files) {
+uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
   console.log(files);
 }
 @@switch
@@ -118,7 +128,7 @@ You can specify multer options in the file interceptors as described above. To s
 
 ```typescript
 MulterModule.register({
-  dest: '/upload',
+  dest: './upload',
 });
 ```
 
@@ -133,7 +143,7 @@ One technique is to use a factory function:
 ```typescript
 MulterModule.registerAsync({
   useFactory: () => ({
-    dest: '/upload',
+    dest: './upload',
   }),
 });
 ```
@@ -165,7 +175,7 @@ The construction above instantiates `MulterConfigService` inside `MulterModule`,
 class MulterConfigService implements MulterOptionsFactory {
   createMulterOptions(): MulterModuleOptions {
     return {
-      dest: '/upload',
+      dest: './upload',
     };
   }
 }
@@ -179,3 +189,7 @@ MulterModule.registerAsync({
   useExisting: ConfigService,
 });
 ```
+
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/29-file-upload).

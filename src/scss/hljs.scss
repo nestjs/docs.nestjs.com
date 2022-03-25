@@ -23,6 +23,7 @@
 
 code {
   font-family: Inconsolata, Consolas, 'Courier New', monospace;
+  font-display: swap;
   padding: 2px 6px;
   color: #2876d2;
   border-radius: 4px;
@@ -114,6 +115,11 @@ pre[class*='language-'] {
 }
 .language-html .punctuation {
   color: white;
+}
+
+.language-bash .token.function,
+.language-bash .token.builtin {
+  color: #fff;
 }
 
 .token.selector,

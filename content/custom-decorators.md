@@ -120,7 +120,7 @@ export const User = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     const user = request.user;
 
-    return data ? user && user[data] : user;
+    return data ? user?.[data] : user;
   },
 );
 @@switch
@@ -161,16 +161,21 @@ Nest treats custom param decorators in the same fashion as the built-in ones (`@
 ```typescript
 @@filename()
 @Get()
-async findOne(@User(new ValidationPipe()) user: UserEntity) {
+async findOne(
+  @User(new ValidationPipe({ validateCustomDecorators: true }))
+  user: UserEntity,
+) {
   console.log(user);
 }
 @@switch
 @Get()
-@Bind(User(new ValidationPipe()))
+@Bind(User(new ValidationPipe({ validateCustomDecorators: true })))
 async findOne(user) {
   console.log(user);
 }
 ```
+
+> info **Hint** Note that `validateCustomDecorators` option must be set to true. `ValidationPipe` does not validate arguments annotated with the custom decorators by default.
 
 #### Decorator composition
 

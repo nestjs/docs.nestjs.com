@@ -74,7 +74,7 @@ get fullName(): string {
 You can perform additional data transformation using the `@Transform()` decorator. For example, the following construct returns the name property of the `RoleEntity` instead of returning the whole object.
 
 ```typescript
-@Transform(role => role.name)
+@Transform(({ value }) => value.name)
 role: RoleEntity;
 ```
 
@@ -95,6 +95,10 @@ findOne(): UserEntity {
 > info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common`.
 
 Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `classToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
+
+#### Example 
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
 
 #### WebSockets and Microservices
 

@@ -1,16 +1,16 @@
 ### Providers
 
-Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can **inject** dependencies; this means objects can create various relationships with each other, and the function of "wiring up" instances of objects can largely be delegated to the Nest runtime system. A provider is simply a class annotated with an `@Injectable()` decorator.
+Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can be **injected** as dependency; this means objects can create various relationships with each other, and the function of "wiring up" instances of objects can largely be delegated to the Nest runtime system.
 
 <figure><img src="/assets/Components_1.png" /></figure>
 
-In the previous chapter, we built a simple `CatsController`. Controllers should handle HTTP requests and delegate more complex tasks to **providers**. Providers are plain JavaScript classes with an `@Injectable()` decorator preceding their class declaration.
+In the previous chapter, we built a simple `CatsController`. Controllers should handle HTTP requests and delegate more complex tasks to **providers**. Providers are plain JavaScript classes that are declared as `providers` in a [module](/modules).
 
 > info **Hint** Since Nest enables the possibility to design and organize dependencies in a more OO-way, we strongly recommend following the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles.
 
 #### Services
 
-Let's start by creating a simple `CatsService`. This service will be responsible for data storage and retrieval, and is designed to be used by the `CatsController`, so it's a good candidate to be defined as a provider. Thus, we decorate the class with `@Injectable()`.
+Let's start by creating a simple `CatsService`. This service will be responsible for data storage and retrieval, and is designed to be used by the `CatsController`, so it's a good candidate to be defined as a provider.
 
 ```typescript
 @@filename(cats.service)
@@ -50,7 +50,7 @@ export class CatsService {
 
 > info **Hint** To create a service using the CLI, simply execute the `$ nest g service cats` command.
 
-Our `CatsService` is a basic class with one property and two methods. The only new feature is that it uses the `@Injectable()` decorator. The `@Injectable()` decorator attaches metadata, which tells Nest that this class is a Nest provider. By the way, this example also uses a `Cat` interface, which probably looks something like this:
+Our `CatsService` is a basic class with one property and two methods. The only new feature is that it uses the `@Injectable()` decorator. The `@Injectable()` decorator attaches metadata, which declares that `CatsService`  is a class that can be managed by the Nest IoC container. By the way, this example also uses a `Cat` interface, which probably looks something like this:
 
 ```typescript
 @@filename(interfaces/cat.interface)
@@ -128,7 +128,7 @@ Providers normally have a lifetime ("scope") synchronized with the application l
 
 #### Custom providers
 
-Nest has a built-in inversion of control ("IoC") container that resolves relationships between providers. This feature underlies the dependency injection feature described above, but is in fact far more powerful than what we've described so far. The `@Injectable()` decorator is only the tip of the iceberg, and is not the only way to define providers. In fact, you can use plain values, classes, and either asynchronous or synchronous factories. More examples are provided [here](/fundamentals/dependency-injection).
+Nest has a built-in inversion of control ("IoC") container that resolves relationships between providers. This feature underlies the dependency injection feature described above, but is in fact far more powerful than what we've described so far.  There are several ways to define a provider: you can use plain values, classes, and either asynchronous or synchronous factories. More examples are provided [here](/fundamentals/dependency-injection).
 
 #### Optional providers
 
@@ -197,8 +197,8 @@ This is how our directory structure should look now:
 <div class="children">
 <div class="item">cat.interface.ts</div>
 </div>
-<div class="item">cats.service.ts</div>
 <div class="item">cats.controller.ts</div>
+<div class="item">cats.service.ts</div>
 </div>
 <div class="item">app.module.ts</div>
 <div class="item">main.ts</div>

@@ -23,6 +23,8 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
+#### Alternatives
+
 Alternatively, to install the TypeScript starter project with **Git**:
 
 ```bash
@@ -31,6 +33,8 @@ $ cd project
 $ npm install
 $ npm run start
 ```
+
+> info **Hint** If you'd like to clone the repository without the git history, you can use [degit](https://github.com/Rich-Harris/degit).
 
 Open your browser and navigate to [`http://localhost:3000/`](http://localhost:3000/).
 
