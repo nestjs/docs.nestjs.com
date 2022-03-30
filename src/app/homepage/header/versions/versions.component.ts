@@ -34,11 +34,9 @@ export class VersionsComponent implements OnInit {
     this.versionsService.addToVersionLatest().subscribe(
       (data) => {
         this.versions = data['version'];
-        console.log(data);
-        console.log(data['version']);
       },
       (error) => {
-        console.log(error);
+        throw error;
       },
     );
   }
