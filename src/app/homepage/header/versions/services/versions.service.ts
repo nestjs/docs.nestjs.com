@@ -11,9 +11,9 @@ export default class Versions {
 export class VersionsService {
   constructor(private readonly httpClient: HttpClient) {}
 
-  addToVersionLatest(): Observable<any> {
+  addToVersionLatest(): Observable<Versions[]> {
     const urlVersionsLatest = 'https://registry.npmjs.org/@nestjs/core/latest';
-    return this.httpClient.get<Versions>(urlVersionsLatest).pipe(
+    return this.httpClient.get<Versions[]>(urlVersionsLatest).pipe(
       catchError((err) => {
         return throwError(err);
       }),
