@@ -23,6 +23,7 @@ export class VersionsComponent implements OnInit {
   @Input() icon: string;
 
   versions: Versions[];
+  linkLatest: boolean = false;
 
   constructor(private readonly versionsService: VersionsService) {}
 
@@ -36,6 +37,7 @@ export class VersionsComponent implements OnInit {
         this.versions = data['version'];
       },
       (error) => {
+        this.linkLatest = true;
         throw error;
       },
     );
