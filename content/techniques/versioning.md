@@ -107,13 +107,14 @@ For example, if an incoming request specifies it supports versions `1`, `2`, and
 If versions `[3, 2, 1]` are extracted, but routes only exist for version `2` and `1`, the route that matches version `2`
 is selected (version `3` is automatically ignored).
 
-> warning **Notice** Selecting the highest matched version based on the array returned from `extractor`
+> warning **Notice** Selecting the highest matching version based on the array returned from `extractor`
 > **does not reliably work** with the Express adapter due to design limitations. A single version (either a string or
-> array of 1 element) works just fine in Express. Fastify correctly supports both highest matched version
+> array of 1 element) works just fine in Express. Fastify correctly supports both highest matching version
 > selection and single version selection.
 
 To enable **Custom Versioning** for your application, create an `extractor` function and pass it into your application
 like so:
+
 ```typescript
 @@filename(main)
 // Example extractor that pulls out a list of versions from a custom header and turns it into a sorted array.
