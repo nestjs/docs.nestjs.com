@@ -105,6 +105,42 @@ export class CatsService {
 
 You then configure your `context` value (in the `GraphQLModule`) to contain `request` as its property.
 
+#### Inquirer provider
+
+If you want get the class where a provider was constructed, for instance in logging or metrics providers, you can inject the `INQUIRER` token.
+
+```typescript
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { INQUIRER } from '@nestjs/core';
+
+@Injectable({ scope: Scope.TRANSIENT })
+export class HelloService {
+  constructor(@Inject(INQUIRER) private parentClass: object) {}
+
+  sayHello(message: string) {
+    console.log(`${this.parentClass?.constructor?.name}: ${message}`);
+  }
+}
+````
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { HelloService } from './hello.service';
+
+@Injectable()
+export class AppService {
+  constructor(private helloService: HelloService) {}
+
+  getRoot(): string {
+    this.helloService.sayHello('My name is getRoot');
+
+    return 'Hello world!';
+  }
+}
+````
+
+In the example above when `AppService.getRoot` is called, `'AppService: My name is getRoot'` will be logged to the console.
+
 #### Performance
 
 Using request-scoped providers will have an impact on application performance. While Nest tries to cache as much metadata as possible, it will still have to create an instance of your class on each request. Hence, it will slow down your average response time and overall benchmarking result. Unless a provider must be request-scoped, it is strongly recommended that you use the default singleton scope.
