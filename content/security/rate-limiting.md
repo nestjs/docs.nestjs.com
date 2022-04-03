@@ -47,15 +47,14 @@ This `@SkipThrottle()` decorator can be used to skip a route or a class or to ne
 @SkipThrottle()
 @Controller('users')
 export class UsersController {
-  // This route will skip rate limiting.
+  // Rate limiting is applied to this route.
   @SkipThrottle(false)
   dontSkip() {
-    return "List users work with Rate limiting"
+    return "List users work with Rate limiting.";
   }
-
-  // Rate limiting is applied to this route.
+  // This route will skip rate limiting.
   doSkip() {
-    return "List users work without Rate limiting"
+    return "List users work without Rate limiting.";
   }
 }
 ```
