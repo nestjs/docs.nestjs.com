@@ -66,8 +66,8 @@ There is also the `@Throttle()` decorator which can be used to override the `lim
 ```typescript
 // Override default configuration for Rate limiting and duration.
 @Throttle(3, 60)
-@Get()    
-findAll() {    
+@Get()
+findAll() {
   return "List users works with custom rate limiting.";
 }
 ```
