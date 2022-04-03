@@ -84,7 +84,6 @@ module.exports = (options, webpack) => {
 
   return {
     ...options,
-    externals: [],
     plugins: [
       ...options.plugins,
       new webpack.IgnorePlugin({
@@ -268,10 +267,12 @@ to make sure our `handler` function will be picked up, we must change the `outpu
 ```javascript
 return {
   ...options,
-  externals: [],
   output: {
     ...options.output,
-    libraryTarget: 'commonjs2',
+    library: {
+      ...options.output.library,
+      type: "commonjs2",
+    },
   },
   // ... the rest of the configuration
 };
@@ -286,7 +287,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 return {
   ...options,
-  externals: [],
   optimization: {
     minimizer: [
       new TerserPlugin({
