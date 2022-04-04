@@ -119,7 +119,7 @@ export class HelloService {
     console.log(`${this.parentClass?.constructor?.name}: ${message}`);
   }
 }
-````
+```
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -135,7 +135,7 @@ export class AppService {
     return 'Hello world!';
   }
 }
-````
+```
 
 In the example above when `AppService.getRoot` is called, `'AppService: My name is getRoot'` will be logged to the console.
 
