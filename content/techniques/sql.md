@@ -580,13 +580,8 @@ export class AppModule {}
 > ```typescript
 > TypeOrmModule.forRootAsync({
 >   name: 'albumsConnection',
->   useFactory: (config: ConfigService) =>
->     ({
->       ...config.get('db'),
->       host: 'album_db_host',
->       entities: [Album],
->     } as TypeOrmModuleOptions),
->   inject: [ConfigService],
+>   useFactory: ...,
+>   inject: ...,
 > }),
 > ```
 > See [`@nestjs/typeorm` issue](https://github.com/nestjs/typeorm/issues/86).
