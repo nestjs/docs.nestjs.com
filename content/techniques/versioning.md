@@ -92,6 +92,7 @@ The `key` property should be the key and separator of the key-value pair that co
 > info **Hint** The `VersioningType` enum is available to use for the `type` property and is imported from the `@nestjs/common` package.
 
 #### Custom Versioning Type
+
 Custom Versioning uses any aspect of the request to specify the version (or versions). The incoming request is analyzed
 using an `extractor` function that returns a string or array of strings.
 
@@ -101,14 +102,12 @@ lowest.
 
 If an empty string or array is returned from the `extractor`, no routes are matched and a 404 is returned.
 
-For example, if an incoming request specifies it supports versions `1`, `2`, and `3`, the `extractor` **MUST** return `[3,
-2, 1]`. This ensures that the highest possible route version is selected first.
+For example, if an incoming request specifies it supports versions `1`, `2`, and `3`, the `extractor` **MUST** return `[3, 2, 1]`. This ensures that the highest possible route version is selected first.
 
 If versions `[3, 2, 1]` are extracted, but routes only exist for version `2` and `1`, the route that matches version `2`
 is selected (version `3` is automatically ignored).
 
-> warning **Notice** Selecting the highest matching version based on the array returned from `extractor`
-> **does not reliably work** with the Express adapter due to design limitations. A single version (either a string or
+> warning **Notice** Selecting the highest matching version based on the array returned from `extractor` > **does not reliably work** with the Express adapter due to design limitations. A single version (either a string or
 > array of 1 element) works just fine in Express. Fastify correctly supports both highest matching version
 > selection and single version selection.
 
