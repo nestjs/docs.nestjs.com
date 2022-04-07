@@ -1,8 +1,8 @@
-### Common errors
+## Common errors
 
 During your development with NestJS, you may encounter various errors as you learn the framework.
 
-#### "Cannot resolve dependency" error
+### "Cannot resolve dependency" error
 
 Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
 
@@ -23,9 +23,9 @@ There are a few gotchas, that are common. One is putting a provider in an `impor
 
 If you run across this error while developing, take a look at the module mentioned in the error message and look at its `providers`. For each provider in the `providers` array, make sure the module has access to all of the dependencies. Often times, `providers` are duplicated in a "Feature Module" and a "Root Module" which means Nest will try to instantiate the provider twice. More than likely, the module containing the `provider` being duplicated should be added in the "Root Module"'s `imports` array instead.
 
-If the `unknown_token` above is the string `dependency`, you might have a circular file import. This is different from the [circular dependency](./errors.md#circular-dependency-error) below because instead of having providers depend on each other in their constructors, it just means that two files end up importing each other. A common case would be a module file declaring a token and importing a provider, and the provider import the token constant from the module file. If you are using barrel files, ensure that your barrel imports do not end up creating these circular imports as well.
+If the `unknown_token` above is the string `dependency`, you might have a circular file import. This is different from the [circular dependency](#circular-dependency-error) below because instead of  having providers depend on each other in their constructors, it just means that two files end up importing each other. A common case would be a module file declaring a token and importing a provider, and the provider import the token constant from the module file. If you are using barrel files, ensure that your barrel imports do not end up creating these circular imports as well.
 
-##### Error on monorepos
+#### Error on monorepos
 
 If you are in a monorepo setup, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
 
@@ -50,38 +50,13 @@ This likely happens when your project end up loading two Node modules of the pac
     └── @nestjs/core
 ```
 
-###### Fix for Yarn Workspaces
+Solutions:
 
-To circumvent that file structure in **Yarn** Workspaces, you can leverage on its [_nohoist_ feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist):
+- **Yarn** Workspaces: use the [_nohoist_ feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) to prevent hosting the package `@nestjs/core`.
 
-```json
-{
-  "workspaces": {
-    "packages": [],
-    "nohoist": [
-      "**/@nestjs/**"
-    ]
-  }
-}
-```
+### "Circular dependency" error
 
-Then, after `yarn install`, you'll get something like this:
-
-```text
-.
-├── package.json
-├── apps
-│   └── api
-│       └── node_modules
-│           ├── @nestjs/core
-│           └── @nestjs/bull
-└── node_modules
-    └── (other packages)
-```
-
-#### "Circular dependency" error
-
-Occasionally you'll find it difficult to avoid [circular dependencies](/fundamentals/circular-dependency) in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
+Occasionally you'll find it difficult to avoid [circular dependencies](https://docs.nestjs.com/fundamentals/circular-dependency) in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
 
 ```bash
 Nest cannot create the <module> instance.
@@ -97,7 +72,7 @@ Scope [<module_import_chain>]
 
 Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on circular dependencies and make sure that both the modules **and** the providers are marked with `forwardRef`.
 
-#### Debugging dependency errors
+### Debugging dependency errors
 
 Along with just manually verifying your dependencies are correct, as of Nest 8.1.0 you can set the `NEST_DEBUG` environment variable to a string that resolves as truthy, and get extra logging information while Nest is resolving all of the dependencies for the application.
 
