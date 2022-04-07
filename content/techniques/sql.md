@@ -534,13 +534,8 @@ export class AppModule {}
 > ```typescript
 > TypeOrmModule.forRootAsync({
 >   name: 'albumsConnection',
->   useFactory: (config: ConfigService) =>
->     ({
->       ...config.get('db'),
->       host: 'album_db_host',
->       entities: [Album],
->     } as TypeOrmModuleOptions),
->   inject: [ConfigService],
+>   useFactory: ...,
+>   inject: ...,
 > }),
 > ```
 >
