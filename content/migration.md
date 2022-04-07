@@ -95,7 +95,7 @@ Make sure to upgrade to the latest version of the `rxjs` package (v7).
 #### TestingModule / NestFactory
 
 If you are currently getting an element (in this case `ConfigService`) from the module using a string you'll receive following error: 
-```
+```text
 Nest could not find ConfigService element (this provider does not exist in the current context)
 ```
 
