@@ -28,7 +28,7 @@ jobs:
           site_name: 'docs-nestjs'
           max_timeout: 600
       - name: Run Lighthouse on urls and validate with lighthouserc
-        uses: treosh/lighthouse-ci-action@v8
+        uses: treosh/lighthouse-ci-action@v9
         with:
           urls: |
             ${{ steps.wait-for-netflify-preview.outputs.url }}
