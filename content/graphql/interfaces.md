@@ -87,7 +87,7 @@ export class CharacterInterfaceResolver {
 }
 ```
 
-Now the `friends` query is applied on all objects that implement the `Character` interface.
+Now the `friends` field resolver is auto-registered for all object types that implement the `Character` interface.
 
 #### Schema first
 
