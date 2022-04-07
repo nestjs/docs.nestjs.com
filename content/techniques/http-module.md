@@ -52,7 +52,7 @@ export class CatsService {
 }
 ```
 
-> info **Hint** `AxiosResponse` is an interface exported from the `axios` package (`$ npm i axios`). 
+> info **Hint** `AxiosResponse` is an interface exported from the `axios` package (`$ npm i axios`).
 
 All `HttpService` methods return an `AxiosResponse` wrapped in an `Observable` object.
 

@@ -182,7 +182,6 @@ object.
 > still need CLI config with the full list of entities. On the other hand, we can
 > use globs there, as the CLI won't go thru webpack.
 
-
 #### Serialization
 
 > warning **Note** MikroORM wraps every single entity relation in a `Reference<T>` or a `Collection<T>` object, in order to provide better type-safety. This will make [Nest's built-in serializer](/techniques/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, all of their relations will NOT be serialized.
@@ -194,11 +193,14 @@ Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/seria
 export class Book {
   @Property({ hidden: true }) // Equivalent of class-transformer's `@Exclude`
   hiddenField = Date.now();
-  
+
   @Property({ persist: false }) // Similar to class-transformer's `@Expose()`. Will only exist in memory, and will be serialized.
   count?: number;
-  
-  @ManyToOne({ serializer: value => value.name, serializedName: 'authorName' }) // Equivalent of class-transformer's `@Transform()`
+
+  @ManyToOne({
+    serializer: (value) => value.name,
+    serializedName: 'authorName',
+  }) // Equivalent of class-transformer's `@Transform()`
   author: Author;
 }
 ```

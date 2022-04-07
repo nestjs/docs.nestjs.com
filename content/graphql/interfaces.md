@@ -11,7 +11,7 @@ import { Field, ID, InterfaceType } from '@nestjs/graphql';
 
 @InterfaceType()
 export abstract class Character {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()
@@ -58,7 +58,7 @@ To provide a customized `resolveType()` function, pass the `resolveType` propert
   },
 })
 export abstract class Book {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()

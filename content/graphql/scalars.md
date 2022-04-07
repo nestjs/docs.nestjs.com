@@ -160,7 +160,7 @@ But, you can configure how Nest generates typings for your custom scalars when y
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
 import { join } from 'path';
 
-const definitionsFactory = new GraphQLDefinitionsFactory()
+const definitionsFactory = new GraphQLDefinitionsFactory();
 
 definitionsFactory.generate({
   typePaths: ['./src/**/*.graphql'],
@@ -172,7 +172,7 @@ definitionsFactory.generate({
     BigNumber: '_BigNumber',
   },
   additionalHeader: "import _BigNumber from 'bignumber.js'",
-})
+});
 ```
 
 > info **Hint** Alternatively, you can use a type reference instead, for example: `DateTime: Date`. In this case, `GraphQLDefinitionsFactory` will extract the name property of the specified type (`Date.name`) to generate TS definitions. Note: adding an import statement for non-built-in types (custom types) is required.
@@ -188,11 +188,11 @@ scalar Payload
 We will now see the following generated TypeScript definitions in `src/graphql.ts`:
 
 ```typescript
-import _BigNumber from 'bignumber.js'
+import _BigNumber from 'bignumber.js';
 
-export type DateTime = Date
-export type BigNumber = _BigNumber
-export type Payload = unknown
+export type DateTime = Date;
+export type BigNumber = _BigNumber;
+export type Payload = unknown;
 ```
 
 Here, we've used the `customScalarTypeMapping` property to supply a map of the types we wish to declare for our custom scalars. We've
