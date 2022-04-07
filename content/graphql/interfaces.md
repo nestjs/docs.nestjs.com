@@ -82,7 +82,7 @@ export class CharacterInterfaceResolver {
     @Args('search', { type: () => String }) searchTerm: string,
   ) {
     // Get character's friends
-    return friendsFromDB;
+    return [];
   }
 }
 ```
