@@ -69,7 +69,6 @@ export abstract class Book {
 #### Interface resolvers
 
 So far, using interfaces, you could only share field definitions with your objects. If you also want to share the actual field resolvers implementation, you can create a dedicated interface resolver, as follows:
-To do so, create a resolver and point its type to the interface, then define your methods using the `@ResolveField` decorator.
 
 ```typescript
 import { Resolver, ResolveField, Parent, Info } from '@nestjs/graphql';
