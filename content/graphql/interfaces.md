@@ -66,6 +66,29 @@ export abstract class Book {
 }
 ```
 
+#### Interface resolvers
+
+So far, using interfaces, you could only share field definitions with your objects. If you also want to share the actual field resolvers implementation, you can create a dedicated interface resolver, as follows:
+
+```typescript
+import { Resolver, ResolveField, Parent, Info } from '@nestjs/graphql';
+
+@Resolver(type => Character) // Reminder: Character is an interface
+export class CharacterInterfaceResolver {
+  @ResolveField(() => [Character])
+  friends(
+    @Parent() character, // Resolved object that implements Character
+    @Info() { parentType }, // Type of the object that implements Character
+    @Args('search', { type: () => String }) searchTerm: string,
+  ) {
+    // Get character's friends
+    return [];
+  }
+}
+```
+
+Now the `friends` field resolver is auto-registered for all object types that implement the `Character` interface.
+
 #### Schema first
 
 To define an interface in the schema first approach, simply create a GraphQL interface with SDL.
