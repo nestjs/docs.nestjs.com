@@ -1,8 +1,8 @@
-## Common errors
+### Common errors
 
 During your development with NestJS, you may encounter various errors as you learn the framework.
 
-### "Cannot resolve dependency" error
+#### "Cannot resolve dependency" error
 
 Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
 
@@ -29,9 +29,7 @@ If the `<unknown_token>` above is the string `Object`, it means that you're inje
 
 Also, make sure you didn't end up injecting the provider on itself because self-injections are not allowed on NetJS. When this happens, `<unknown_token>` will likely be equal to `<provider>`.
 
-#### Error on monorepos
-
-If you are in a monorepo setup, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
+If you are in a **monorepo setup**, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
 
 ```bash
 Nest can't resolve dependencies of the <provider> (?).
@@ -59,7 +57,7 @@ Solutions:
 
 - For **Yarn** Workspaces, use the [nohoist feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) to prevent hosting the package `@nestjs/core`.
 
-### "Circular dependency" error
+#### "Circular dependency" error
 
 Occasionally you'll find it difficult to avoid [circular dependencies](https://docs.nestjs.com/fundamentals/circular-dependency) in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
 
@@ -77,7 +75,7 @@ Scope [<module_import_chain>]
 
 Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on circular dependencies and make sure that both the modules **and** the providers are marked with `forwardRef`.
 
-### Debugging dependency errors
+#### Debugging dependency errors
 
 Along with just manually verifying your dependencies are correct, as of Nest 8.1.0 you can set the `NEST_DEBUG` environment variable to a string that resolves as truthy, and get extra logging information while Nest is resolving all of the dependencies for the application.
 
