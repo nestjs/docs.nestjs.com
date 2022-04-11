@@ -108,6 +108,10 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         >here</a
       >)</td>
   </tr>
+  <tr>
+    <td><code>producerOnlyMode</code></td>
+    <td><strong>boolean</strong> - Feature flag to skip consumer group registration and only act as a producer</td>
+  </tr>
 </table>
 
 #### Client
