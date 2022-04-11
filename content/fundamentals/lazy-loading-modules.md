@@ -6,6 +6,8 @@ Lazy loading can help decrease bootstrap time by loading only modules required b
 
 > info **Hint** If you're familiar with the **Angular** framework, you might have seen the "lazy-loading modules" term before. Be aware that this technique is **functionally different** in Nest and so think about this as an entirely different feature that shares similar naming conventions.
 
+> warning **Warning** Do note that [lifecycle hooks methods](https://docs.nestjs.com/fundamentals/lifecycle-events) are not invoked in lazy loaded modules and services.
+
 #### Getting started
 
 To load modules on-demand, Nest provides the `LazyModuleLoader` class that can be injected into a class in the normal way:
