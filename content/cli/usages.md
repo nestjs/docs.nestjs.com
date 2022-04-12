@@ -159,9 +159,9 @@ Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to th
 ##### Options
 
 | Option    | Description                                                             |
-| --------- | ----------------------------------------------------------------------- | --- |
+| --------- | ----------------------------------------------------------------------- |
 | `--force` | Do **upgrade** instead of update <br/>Alias `-f`                        |
-| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |     |
+| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |
 
 #### nest info
 
