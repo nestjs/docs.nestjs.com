@@ -589,6 +589,16 @@ At this point, you have `User` and `Album` entities registered with their own co
 })
 export class AppModule {}
 ```
+```typescript
+@@filename(album.service)
+@Injectable()
+export class AlbumService {
+    constructor(
+        @InjectRepository(Album, 'albumsConnection')
+        private readonly albumRepository: Repository<Album>
+    ) { }     
+}
+```
 
 You can also inject the `Connection` or `EntityManager` for a given connection:
 
