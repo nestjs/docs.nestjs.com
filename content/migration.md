@@ -5,7 +5,7 @@ To learn more about the new features we've added in the v8, check out this [link
 
 #### HTTP module
 
-The `HttpModule` exported from the `@nestjs/common` package has been deprecated and will be removed in the next major release.
+The `HttpModule` and `HttpService` exported from the `@nestjs/common` package have been deprecated and will be removed in the next major release.
 Instead, please use the `@nestjs/axios` package (otherwise, there are no API differences).
 
 #### gRPC strategy
