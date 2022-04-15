@@ -491,7 +491,7 @@ The construction above instantiates `MongooseConfigService` inside `MongooseModu
 
 ```typescript
 @Injectable()
-class MongooseConfigService implements MongooseOptionsFactory {
+export class MongooseConfigService implements MongooseOptionsFactory {
   createMongooseOptions(): MongooseModuleOptions {
     return {
       uri: 'mongodb://localhost/nest',
