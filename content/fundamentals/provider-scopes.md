@@ -139,7 +139,7 @@ export class AppService {
 }
 ```
 
-In the example above when `AppService.getRoot` is called, `'AppService: My name is getRoot'` will be logged to the console.
+In the example above when `AppService#getRoot` is called, `"AppService: My name is getRoot"` will be logged to the console.
 
 #### Performance
 
