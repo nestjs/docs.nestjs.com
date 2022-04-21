@@ -100,6 +100,45 @@ Options passed via `@SerializeOptions()` are passed as the second argument of th
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
 
+#### Sequelize
+
+class-transformer does not play well with Sequelize, so you're going to need a few extra steps to get it to work properly.
+
+First off, create a response DTO with @Expose / @Exclude
+```typescript
+import { Exclude, Expose } from 'class-transformer';
+
+@Exclude()
+export class UserResponseDto {
+    @Expose()
+    name: string;
+    
+    @Expose()
+    email: string;
+
+    password: string;
+}
+```
+
+Then use `plainToClass(DTO, Promise<Model>)` in your controller:
+```typescript
+    @Get(':id')
+    @UseInterceptors(ClassSerializerInterceptor)
+    findOne(@Param('id') id: string): UserResponseDto {
+        return plainToClass(
+            UserResponseDto,
+            this.usersService.findOneById(+id),
+        );
+    }
+```
+
+For reference, here's what `usersService.findOneById()` looks like:
+```typescript
+async findOneById(id: number): Promise<User> {
+  return await this.userModel.findByPk(id);
+}
+```
+
 #### WebSockets and Microservices
 
 While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ClassSerializerInterceptor` works the same for WebSockets and Microservices, regardless of the transport method that is used.
