@@ -893,7 +893,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 }
 ```
 ##### Facebook Guard Example
-Authentication using providers like Facebook can add some complexity to your application.  You may wish to provide dynamic state information which is maintained between the request to your app and the callback from Facebook.  A common case is when you want to dynamically specify the referer in the state so that you know where the user originated the login request from.  When the callback is executed, you can then retrieve the referer URL from the state and redirect the user back to their original location.
+Authentication using providers like Facebook can add some complexity to your application. You may wish to provide dynamic state information which is maintained between the request to your app and the callback from Facebook. A common case is when you want to dynamically specify the referer in the state so that you know where the user originated the login request from. When the callback is executed, you can then retrieve the referer URL from the state and redirect the user back to their original location.
 
 
 ```typescript
