@@ -21,13 +21,13 @@ With official support, get expert help directly from the NestJS core team. We ta
     </p>
   </div>
   <div class="thumbnail p-l-30">
-    <img src="/assets/enterprise/help.svg">
+    <img src="/assets/enterprise/help.svg" />
   </div>
 </div>
 
 <div class="row">
 <div class="thumbnail p-r-30">
-    <img src="/assets/enterprise/contact.svg">
+    <img src="/assets/enterprise/contact.svg" />
   </div>
   <div class="content">
     <h4>NestJS Best Practices</h4>

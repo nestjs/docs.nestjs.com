@@ -1,13 +1,15 @@
 ### Plugins
 
+> warning **Warning** This chapter applies only to the `@nestjs/apollo` driver.
+
 Plugins enable you to extend Apollo Server's core functionality by performing custom operations in response to certain events. Currently, these events correspond to individual phases of the GraphQL request lifecycle, and to the startup of Apollo Server itself (read more [here](https://www.apollographql.com/docs/apollo-server/integrations/plugins/)). For example, a basic logging plugin might log the GraphQL query string associated with each request that's sent to Apollo Server.
 
 #### Custom plugins
 
-To create a plugin, declare a class annotated with the `@Plugin` decorator exported from the `@nestjs/graphql` package. Also, for better code autocompletion, implement the `ApolloServerPlugin` interface from the `apollo-server-plugin-base` package.
+To create a plugin, declare a class annotated with the `@Plugin` decorator exported from the `@nestjs/apollo` package. Also, for better code autocompletion, implement the `ApolloServerPlugin` interface from the `apollo-server-plugin-base` package.
 
 ```typescript
-import { Plugin } from '@nestjs/graphql';
+import { Plugin } from '@nestjs/apollo';
 import {
   ApolloServerPlugin,
   GraphQLRequestListener,
@@ -15,10 +17,10 @@ import {
 
 @Plugin()
 export class LoggingPlugin implements ApolloServerPlugin {
-  requestDidStart(): GraphQLRequestListener {
+  async requestDidStart(): Promise<GraphQLRequestListener> {
     console.log('Request started');
     return {
-      willSendResponse() {
+      async willSendResponse() {
         console.log('Will send response');
       },
     };

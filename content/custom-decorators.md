@@ -15,11 +15,11 @@ Nest provides a set of useful **param decorators** that you can use together wit
 <table>
   <tbody>
     <tr>
-      <td><code>@Request()</code></td>
+      <td><code>@Request(), @Req()</code></td>
       <td><code>req</code></td>
     </tr>
     <tr>
-      <td><code>@Response()</code></td>
+      <td><code>@Response(), @Res()</code></td>
       <td><code>res</code></td>
     </tr>
     <tr>
@@ -49,6 +49,10 @@ Nest provides a set of useful **param decorators** that you can use together wit
     <tr>
       <td><code>@Ip()</code></td>
       <td><code>req.ip</code></td>
+    </tr>
+    <tr>
+      <td><code>@HostParam()</code></td>
+      <td><code>req.hosts</code></td>
     </tr>
   </tbody>
 </table>
@@ -116,7 +120,7 @@ export const User = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     const user = request.user;
 
-    return data ? user && user[data] : user;
+    return data ? user?.[data] : user;
   },
 );
 @@switch
@@ -157,22 +161,28 @@ Nest treats custom param decorators in the same fashion as the built-in ones (`@
 ```typescript
 @@filename()
 @Get()
-async findOne(@User(new ValidationPipe()) user: UserEntity) {
+async findOne(
+  @User(new ValidationPipe({ validateCustomDecorators: true }))
+  user: UserEntity,
+) {
   console.log(user);
 }
 @@switch
 @Get()
-@Bind(User(new ValidationPipe()))
+@Bind(User(new ValidationPipe({ validateCustomDecorators: true })))
 async findOne(user) {
   console.log(user);
 }
 ```
+
+> info **Hint** Note that `validateCustomDecorators` option must be set to true. `ValidationPipe` does not validate arguments annotated with the custom decorators by default.
 
 #### Decorator composition
 
 Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
 
 ```typescript
+@@filename(auth.decorator)
 import { applyDecorators } from '@nestjs/common';
 
 export function Auth(...roles: Role[]) {
@@ -180,7 +190,18 @@ export function Auth(...roles: Role[]) {
     SetMetadata('roles', roles),
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
-    ApiUnauthorizedResponse({ description: 'Unauthorized"' }),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
+}
+@@switch
+import { applyDecorators } from '@nestjs/common';
+
+export function Auth(...roles) {
+  return applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(AuthGuard, RolesGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
   );
 }
 ```

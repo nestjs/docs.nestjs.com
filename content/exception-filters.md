@@ -15,6 +15,8 @@ Out of the box, this action is performed by a built-in **global exception filter
 }
 ```
 
+> info **Hint** The global exception filter partially supports the `http-errors` library. Basically, any thrown exception containing the `statusCode` and `message` property will be properly populated and send back as a response (instead of the default `InternalServerErrorException` for unrecognized exceptions).
+
 #### Throwing standard exceptions
 
 Nest provides a built-in `HttpException` class, exposed from the `@nestjs/common` package. For typical HTTP REST/GraphQL API based applications, it's best practice to send standard HTTP response objects when certain error conditions occur.
@@ -126,6 +128,7 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `BadGatewayException`
 - `ServiceUnavailableException`
 - `GatewayTimeoutException`
+- `PreconditionFailedException`
 
 #### Exception filters
 
@@ -281,6 +284,8 @@ You can add as many filters with this technique as needed; simply add each to th
 
 In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
 
+In the example below we have a code that is platform-agnostic because it uses the [HTTP adapter](./faq/http-adapter) to deliver the response, and doesn't use any of the platform-specific objects (`Request` and `Response`) directly:
+
 ```typescript
 import {
   ExceptionFilter,
@@ -289,29 +294,34 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
-    const request = ctx.getRequest();
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-    const status =
+  catch(exception: unknown, host: ArgumentsHost): void {
+    // In certain situations `httpAdapter` might not be available in the
+    // constructor method, thus we should resolve it here.
+    const { httpAdapter } = this.httpAdapterHost;
+
+    const ctx = host.switchToHttp();
+
+    const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    response.status(status).json({
-      statusCode: status,
+    const responseBody = {
+      statusCode: httpStatus,
       timestamp: new Date().toISOString(),
-      path: request.url,
-    });
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }
 ```
-
-In the example above the filter will catch each exception thrown, regardless of its type (class).
 
 #### Inheritance
 
@@ -348,7 +358,7 @@ The above implementation is just a shell demonstrating the approach. Your implem
 
 Global filters **can** extend the base filter. This can be done in either of two ways.
 
-The first method is to inject the `HttpServer` reference when instantiating the custom global filter:
+The first method is to inject the `HttpAdapter` reference when instantiating the custom global filter:
 
 ```typescript
 async function bootstrap() {

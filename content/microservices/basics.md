@@ -33,7 +33,7 @@ async function bootstrap() {
       transport: Transport.TCP,
     },
   );
-  app.listen(() => console.log('Microservice is listening'));
+  app.listen();
 }
 bootstrap();
 @@switch
@@ -97,7 +97,7 @@ The request-response message style is useful when you need to **exchange** messa
 
 To enable the request-response message type, Nest creates two logical channels - one is responsible for transferring the data while the other waits for incoming responses. For some underlying transports, such as [NATS](https://nats.io/), this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels. There can be overhead for this, so if you do not require a request-response message style, you should consider using the event-based method.
 
-To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package.
+To create a message handler based on the request-response paradigm use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package. This decorator should be used only within the [controller](https://docs.nestjs.com/controllers) classes since they are the entry points for your application. Using them inside providers won't have any effect as they are simply ignored by Nest runtime.
 
 ```typescript
 @@filename(math.controller)
@@ -181,6 +181,8 @@ async handleUserCreated(data) {
 }
 ```
 
+> info **Hint** You can register multiple event handlers for a **single** event pattern and all of them will be automatically triggered in parallel.
+
 The `handleUserCreated()` **event handler** listens for the `'user_created'` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
 
 <app-banner-enterprise></app-banner-enterprise>
@@ -206,6 +208,8 @@ getDate(data, context) {
 ```
 
 > info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from `@nestjs/microservices`.
+
+> info **Hint** You can also pass in a property key to the `@Payload()` decorator to extract a specific property from the incoming payload object, for example, `@Payload('id')`.
 
 #### Client
 
@@ -238,7 +242,7 @@ constructor(
 
 > info **Hint** The `ClientsModule` and `ClientProxy` classes are imported from the `@nestjs/microservices` package.
 
-At times we may need to fetch the transporter configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can register a [custom provider](/techniques/custom-providers) using the `ClientProxyFactory` class. This class has a static `create()` method, which accepts a transporter options object, and returns a customized `ClientProxy` instance.
+At times we may need to fetch the transporter configuration from another service (say a `ConfigService`), rather than hard-coding it in our client application. To do this, we can register a [custom provider](/fundamentals/custom-providers) using the `ClientProxyFactory` class. This class has a static `create()` method, which accepts a transporter options object, and returns a customized `ClientProxy` instance.
 
 ```typescript
 @Module({
@@ -348,3 +352,26 @@ export interface RequestContext<T = any> {
 ```
 
 The `data` property is the message payload sent by the message producer. The `pattern` property is the pattern used to identify an appropriate handler to handle the incoming message.
+
+#### Handling timeouts
+
+In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the `RxJS` timeout operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
+
+To solve this problem you have to use [rxjs](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
+
+```typescript
+@@filename()
+this.client
+      .send<TResult, TInput>(pattern, data)
+      .pipe(timeout(5000))
+      .toPromise();
+@@switch
+this.client
+      .send(pattern, data)
+      .pipe(timeout(5000))
+      .toPromise();
+```
+
+> info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.
+
+After 5 seconds, if the microservice isn't responding, it will throw an error.

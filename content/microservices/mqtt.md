@@ -1,6 +1,6 @@
 ### MQTT
 
-[MQTT](http://mqtt.org/) (Message Queuing Telemetry Transport) is an open source, lightweight messaging protocol, optimized for high-latency. This protocol provides a scalable and cost-efficient way to connect devices using a **publish/subscribe** model. A communication system built on MQTT consists of the publishing server, a broker and one or more clients. It is designed for constrained devices and low-bandwidth, high-latency or unreliable networks.
+[MQTT](https://mqtt.org/) (Message Queuing Telemetry Transport) is an open source, lightweight messaging protocol, optimized for low latency. This protocol provides a scalable and cost-efficient way to connect devices using a **publish/subscribe** model. A communication system built on MQTT consists of the publishing server, a broker and one or more clients. It is designed for constrained devices and low-bandwidth, high-latency or unreliable networks.
 
 #### Installation
 
@@ -16,14 +16,14 @@ To use the MQTT transporter, pass the following options object to the `createMic
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.MQTT,
   options: {
     url: 'mqtt://localhost:1883',
   },
 });
 @@switch
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.MQTT,
   options: {
     url: 'mqtt://localhost:1883',
@@ -114,4 +114,61 @@ getTemperature(@Ctx() context: MqttContext) {
 getTemperature(context) {
   console.log(`Topic: ${context.getTopic()}`);
 }
+```
+
+#### Record builders
+
+To configure message options (adjust the QoS level, set the Retain or DUP flags, or add additional properties to the payload), you can use the `MqttRecordBuilder` class. For example, to set `QoS` to `2` use the `setQoS` method, as follows:
+
+```typescript
+const userProperties = { 'x-version': '1.0.0' };
+const record = new MqttRecordBuilder(':cat:')
+  .setProperties({ userProperties })
+  .setQoS(1)
+  .build();
+client.send('replace-emoji', record).subscribe(...);
+```
+
+> info **Hint** `MqttRecordBuilder` class is exported from the `@nestjs/microservices` package.
+
+And you can read these options on the server-side as well, by accessing the `MqttContext`.
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: MqttContext): string {
+  const { properties: { userProperties } } = context.getPacket();
+  return userProperties['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const { properties: { userProperties } } = context.getPacket();
+  return userProperties['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+```
+
+In some cases you might want to configure user properties for multiple requests, you can pass these options to the `ClientProxyFactory`.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+@Module({
+  providers: [
+    {
+      provide: 'API_v1',
+      useFactory: () =>
+        ClientProxyFactory.create({
+          transport: Transport.MQTT,
+          options: {
+            url: 'mqtt://localhost:1833',
+            userProperties: { 'x-version': '1.0.0' },
+          },
+        }),
+    },
+  ],
+})
+export class ApiModule {}
 ```

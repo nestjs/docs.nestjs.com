@@ -41,7 +41,7 @@
     },
     {
       "logo": "/assets/logo/sanofi.png",
-      "url": "https://www.sanofi.com/"
+      "url": "https://github.com/Sanofi-IADC"
     },
     {
       "logo": "https://nestjs.com/img/valor-software.png",
@@ -115,7 +115,7 @@
     {
       "logo": "/assets/logo/dozto.png",
       "url": "https://www.dozto.com",
-      "width": "130px"
+      "width": "117px"
     },
     {
       "logo": "/assets/logo/qingtui.png",
@@ -161,6 +161,35 @@
       "logo": "/assets/logo/facile.png",
       "url": "https://www.facile.it",
       "width": "100px"
+    },
+    {
+      "logo": "/assets/logo/interfacewerk.png",
+      "url": "https://interfacewerk.de",
+      "width": "130px"
+    },
+    {
+      "logo": "/assets/logo/ottonova.png",
+      "url": "https://www.ottonova.de",
+      "width": "130px"
+    },
+    {
+      "logo": "/assets/logo/radity.png",
+      "url": "https://radity.com",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/global-cto-forum.png",
+      "url": "https://globalctoforum.org/",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/rivvy.png",
+      "url": "https://rivvy.app",
+      "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/vue-storefront.png",
+      "url": "https://www.vuestorefront.io/"
     }
   ],
   "Body": [
@@ -207,6 +236,28 @@
     "https://harmonize.health",
     "https://accerlery.be",
     "https://www.facile.it",
-    "https://shopback.com"
+    "https://shopback.com",
+    "https://www.ottonova.de",
+    "https://www.radity.com",
+    "https://globalctoforum.org",
+    "https://halojasa.com",
+    "https://hexito.com",
+    "https://rivvy.app",
+    "https://padfever.com/",
+    "https://datenlotse.org",
+    "https://bemum.co",
+    "https://weoptimeye.ai",
+    "https://nemovote.com",
+    "https://selleo.com",
+    "https://pchas.ir",
+    "https://tayeh.ir",
+    "https://forwardigital.co.uk",
+    "https://rozetka.com.ua",
+    "https://www.itrio.net",
+    "https://alexishr.com",
+    "https://dyrector.io",
+    "https://stijlbreuk.nl",
+    "https://polygon-software.ch",
+    "https://bewith.io"
   ]
 }

@@ -4,7 +4,7 @@ Nest applications handle requests and produce responses in a sequence we refer t
 
 #### Middleware
 
-Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works.
+Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works. In the case of middleware bound across different modules, the middleware bound to the root module will run first, and then middleware will run in the order that the modules are added to the imports array.
 
 #### Guards
 
@@ -67,22 +67,22 @@ Filters are the only component that do not resolve global first. Instead, filter
 In general, the request lifecycle looks like the following:
 
 1. Incoming request
-1. Globally bound middleware
-1. Module bound middleware
-1. Global guards
-1. Controller guards
-1. Route guards
-1. Global interceptors (pre-controller)
-1. Controller interceptors (pre-controller)
-1. Route interceptors (pre-controller)
-1. Global pipes
-1. Controller pipes
-1. Route pipes
-1. Route parameter pipes
-1. Controller (method handler)
-1. Service (if exists)
-1. Route interceptor (post-request)
-1. Controller interceptor (post-request)
-1. Global interceptor (post-request)
-1. Exception filters (route, then controller, then global)
-1. Server response
+2. Globally bound middleware
+3. Module bound middleware
+4. Global guards
+5. Controller guards
+6. Route guards
+7. Global interceptors (pre-controller)
+8. Controller interceptors (pre-controller)
+9. Route interceptors (pre-controller)
+10. Global pipes
+11. Controller pipes
+12. Route pipes
+13. Route parameter pipes
+14. Controller (method handler)
+15. Service (if exists)
+16. Route interceptor (post-request)
+17. Controller interceptor (post-request)
+18. Global interceptor (post-request)
+19. Exception filters (route, then controller, then global)
+20. Server response

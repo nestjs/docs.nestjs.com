@@ -117,7 +117,7 @@ In fact, what our `register()` method will return is a `DynamicModule`. A dynami
 
 ```typescript
 @Module({
-  imports: [DogsService],
+  imports: [DogsModule],
   controllers: [CatsController],
   providers: [CatsService],
   exports: [CatsService]
@@ -128,7 +128,7 @@ Dynamic modules must return an object with the exact same interface, plus one ad
 
 > info **Hint** For a dynamic module, all properties of the module options object are optional **except** `module`.
 
-What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Modules` decorator, we specify them programmatically.
+What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. When we call it, we are effectively providing a module to the `imports` list, similar to the way we would do so in the static case by listing a module class name. In other words, the dynamic module API simply returns a module, but rather than fix the properties in the `@Module` decorator, we specify them programmatically.
 
 There are still a couple of details to cover to help make the picture complete:
 
@@ -159,7 +159,7 @@ It should now be clear how the pieces tie together. Calling `ConfigModule.regist
 
 Our dynamic module isn't very interesting yet, however, as we haven't introduced any capability to **configure** it as we said we would like to do. Let's address that next.
 
-### Module configuration
+#### Module configuration
 
 The obvious solution for customizing the behavior of the `ConfigModule` is to pass it an `options` object in the static `register()` method, as we guessed above. Let's look once again at our consuming module's `imports` property:
 
@@ -260,6 +260,21 @@ One final note: for simplicity we used a string-based injection token (`'CONFIG_
 ```typescript
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
 ```
+
+### Community Guidelines
+
+You may have seen the use for methods like `forRoot`, `register`, and `forFeature` around some of the `@nestjs/` packages and may be wondering what the difference for all of these methods are. There is no hard rule about this, but the `@nestjs/` packages try to follow these guidelines:
+
+When creating a module with:
+
+* `register`, you are expecting to configure a dynamic module with a specific configuration for use only by the calling module . For example, with Nest's `@nestjs/axios`: `HttpModule.register({{ '{' }} baseUrl: 'someUrl' {{ '}' }})`. If, in another module you use `HttpModule.register({{ '{' }} baseUrl: 'somewhere else' {{ '}' }})`, it will have the different configuration. You can do this for as many modules as you want.
+
+* `forRoot`, you are expecting to configure a dynamic module once and reuse that configuration in multiple places (though possibly unknowingly as it's abstracted away). This is why you have one `GraphQLModule.forRoot()`, one `TypeOrmModule.forRoot()`, etc. 
+
+* `forFeature`, you are expecting to use the configuration of a dynamic module's `forRoot` but need to modify some configuration specific to the calling module's needs (i.e. which repository this module should have access to, or the context that a logger should use.)
+
+
+All of these, usually, have their `async` counterparts as well, `registerAsync`, `forRootAsync`, and `forFeatureAsync`, that mean the same thing, but use Nest's Dependency Injection for the configuration as well.
 
 ### Example
 

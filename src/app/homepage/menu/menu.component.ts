@@ -5,6 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu',
@@ -63,6 +64,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/module-ref',
         },
         {
+          title: 'Lazy-loading modules',
+          path: '/fundamentals/lazy-loading-modules',
+        },
+        {
           title: 'Execution context',
           path: '/fundamentals/execution-context',
         },
@@ -81,22 +86,42 @@ export class MenuComponent implements OnInit {
       title: 'Techniques',
       isOpened: false,
       children: [
-        { title: 'Authentication', path: '/techniques/authentication' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
         { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
+        { title: 'Versioning', path: '/techniques/versioning' },
         { title: 'Task scheduling', path: '/techniques/task-scheduling' },
-        { title: 'Compression', path: '/techniques/compression' },
-        { title: 'Security', path: '/techniques/security' },
         { title: 'Queues', path: '/techniques/queues' },
-        { title: 'Logger', path: '/techniques/logger' },
+        { title: 'Logging', path: '/techniques/logger' },
+        { title: 'Cookies', path: '/techniques/cookies' },
+        { title: 'Events', path: '/techniques/events' },
+        { title: 'Compression', path: '/techniques/compression' },
         { title: 'File upload', path: '/techniques/file-upload' },
+        { title: 'Streaming files', path: '/techniques/streaming-files' },
         { title: 'HTTP module', path: '/techniques/http-module' },
+        { title: 'Session', path: '/techniques/session' },
         { title: 'Model-View-Controller', path: '/techniques/mvc' },
         { title: 'Performance (Fastify)', path: '/techniques/performance' },
+        { title: 'Server-Sent Events', path: '/techniques/server-sent-events' },
+      ],
+    },
+    {
+      title: 'Security',
+      isOpened: false,
+      children: [
+        { title: 'Authentication', path: '/security/authentication' },
+        { title: 'Authorization', path: '/security/authorization' },
+        {
+          title: 'Encryption and Hashing',
+          path: '/security/encryption-and-hashing',
+        },
+        { title: 'Helmet', path: '/security/helmet' },
+        { title: 'CORS', path: '/security/cors' },
+        { title: 'CSRF Protection', path: '/security/csrf' },
+        { title: 'Rate limiting', path: '/security/rate-limiting' },
       ],
     },
     {
@@ -109,11 +134,11 @@ export class MenuComponent implements OnInit {
         { title: 'Subscriptions', path: '/graphql/subscriptions' },
         { title: 'Scalars', path: '/graphql/scalars' },
         { title: 'Directives', path: '/graphql/directives' },
-        { title: 'Plugins', path: '/graphql/plugins' },
         { title: 'Interfaces', path: '/graphql/interfaces' },
-        { title: 'Unions', path: '/graphql/unions' },
-        { title: 'Enums', path: '/graphql/enums' },
+        { title: 'Unions and Enums', path: '/graphql/unions-and-enums' },
+        { title: 'Field middleware', path: '/graphql/field-middleware' },
         { title: 'Mapped types', path: '/graphql/mapped-types' },
+        { title: 'Plugins', path: '/graphql/plugins' },
         { title: 'Complexity', path: '/graphql/complexity' },
         { title: 'Extensions', path: '/graphql/extensions' },
         { title: 'CLI Plugin', path: '/graphql/cli-plugin' },
@@ -123,6 +148,7 @@ export class MenuComponent implements OnInit {
           path: '/graphql/other-features',
         },
         { title: 'Federation', path: '/graphql/federation' },
+        { title: 'Migration guide', path: '/graphql/migration-guide' },
       ],
     },
     {
@@ -149,6 +175,10 @@ export class MenuComponent implements OnInit {
         { title: 'Kafka', path: '/microservices/kafka' },
         { title: 'gRPC', path: '/microservices/grpc' },
         {
+          title: 'Custom transporters',
+          path: '/microservices/custom-transport',
+        },
+        {
           title: 'Exception filters',
           path: '/microservices/exception-filters',
         },
@@ -174,30 +204,54 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'OpenAPI',
+      isOpened: false,
+      children: [
+        { title: 'Introduction', path: '/openapi/introduction' },
+        {
+          title: 'Types and Parameters',
+          path: '/openapi/types-and-parameters',
+        },
+        { title: 'Operations', path: '/openapi/operations' },
+        { title: 'Security', path: '/openapi/security' },
+        { title: 'Mapped Types', path: '/openapi/mapped-types' },
+        { title: 'Decorators', path: '/openapi/decorators' },
+        { title: 'CLI Plugin', path: '/openapi/cli-plugin' },
+        { title: 'Other features', path: '/openapi/other-features' },
+        { title: 'Migration guide', path: '/openapi/migration-guide' },
+      ],
+    },
+    {
       title: 'Recipes',
       isOpened: false,
       children: [
+        { title: 'CRUD generator', path: '/recipes/crud-generator' },
+        { title: 'Hot reload', path: '/recipes/hot-reload' },
+        { title: 'MikroORM', path: '/recipes/mikroorm' },
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
-        { title: 'OpenAPI (Swagger)', path: '/recipes/swagger' },
+        { title: 'Router module', path: '/recipes/router-module' },
+        { title: 'Swagger', path: '/recipes/swagger' },
+        { title: 'Health checks', path: '/recipes/terminus' },
         { title: 'CQRS', path: '/recipes/cqrs' },
+        { title: 'Compodoc', path: '/recipes/documentation' },
         { title: 'Prisma', path: '/recipes/prisma' },
-        { title: 'Health checks (Terminus)', path: '/recipes/terminus' },
-        { title: 'Documentation', path: '/recipes/documentation' },
-        { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'Serve static', path: '/recipes/serve-static' },
+        { title: 'Commander', path: '/recipes/nest-commander' },
       ],
     },
     {
       title: 'FAQ',
       isOpened: false,
       children: [
+        { title: 'Serverless', path: '/faq/serverless' },
         { title: 'HTTP adapter', path: '/faq/http-adapter' },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
         { title: 'Request lifecycle', path: '/faq/request-lifecycle' },
+        { title: 'Common errors', path: '/faq/common-errors' },
         {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
@@ -208,6 +262,10 @@ export class MenuComponent implements OnInit {
       title: 'Migration guide',
       isOpened: false,
       path: '/migration-guide',
+    },
+    {
+      title: 'Official courses',
+      externalUrl: 'https://courses.nestjs.com/',
     },
     {
       title: 'Discover',
@@ -232,7 +290,7 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.router.events
-      .filter((event) => event instanceof NavigationEnd)
+      .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe((event) => this.toggleCategory());
 
     this.toggleCategory();

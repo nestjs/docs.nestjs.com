@@ -11,7 +11,7 @@
         ],
         "categories:performance": [
           "error",
-          { "minScore": 0.4, "aggregationMethod": "optimistic" }
+          { "minScore": 0.3, "aggregationMethod": "optimistic" }
         ],
         "categories:best-practices": [
           "error",

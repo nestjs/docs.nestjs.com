@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { BasePageComponent } from './pages/page/page.component';
 
@@ -41,7 +41,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.router.events
-      .filter(e => e instanceof NavigationEnd)
+      .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe(() => {
         if (window.innerWidth > 768) {
           return false;
@@ -52,7 +52,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.scrollSubscription = fromEvent(window, 'scroll')
       .pipe(debounceTime(this.scrollDebounceTime))
-      .subscribe(_ => {
+      .subscribe((_) => {
         this.checkViewportBoundaries();
       });
   }
@@ -96,6 +96,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       '.newsletter-wrapper',
     );
     const carbonRef = nativeElement.querySelector('#carbonads');
+    const sponsorsWrapper = nativeElement.querySelector('.sponsors-wrapper');
     if (!footerRef || !carbonRef) {
       return;
     }
@@ -103,6 +104,10 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.renderer.removeStyle(carbonRef, 'position');
       this.renderer.removeStyle(carbonRef, 'bottom');
       return;
+    }
+
+    if (carbonRef) {
+      sponsorsWrapper.classList.add('sponsors-carbon');
     }
 
     const isPositionFixed =
