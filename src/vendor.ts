@@ -2,15 +2,16 @@ import 'prismjs/prism';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-bash';
 
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/mapTo';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/filter';
+import 'rxjs/internal/operators/mergeMap';
+import 'rxjs/internal/operators/delay';
+import 'rxjs/internal/operators/mapTo';
+import 'rxjs/internal/operators/catchError';
+import 'rxjs/internal/operators/take';
+import 'rxjs/internal/operators/filter';
 
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
+import 'rxjs/internal/observable/empty';
+import 'rxjs/internal/observable/of';
+import 'rxjs/internal/observable/throwError';

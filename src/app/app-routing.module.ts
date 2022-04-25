@@ -130,53 +130,67 @@ const routes: Routes = [
         path: 'fundamentals',
         loadChildren: () =>
           import('./homepage/pages/fundamentals/fundamentals.module').then(
-            m => m.FundamentalsModule,
+            (m) => m.FundamentalsModule,
           ),
       },
       {
         path: 'techniques',
         loadChildren: () =>
           import('./homepage/pages/techniques/techniques.module').then(
-            m => m.TechniquesModule,
+            (m) => m.TechniquesModule,
+          ),
+      },
+      {
+        path: 'security',
+        loadChildren: () =>
+          import('./homepage/pages/security/security.module').then(
+            (m) => m.SecurityModule,
           ),
       },
       {
         path: 'graphql',
         loadChildren: () =>
           import('./homepage/pages/graphql/graphql.module').then(
-            m => m.GraphqlModule,
+            (m) => m.GraphqlModule,
           ),
       },
       {
         path: 'websockets',
         loadChildren: () =>
           import('./homepage/pages/websockets/websockets.module').then(
-            m => m.WebsocketsModule,
+            (m) => m.WebsocketsModule,
           ),
       },
       {
         path: 'microservices',
         loadChildren: () =>
           import('./homepage/pages/microservices/microservices.module').then(
-            m => m.MicroservicesModule,
+            (m) => m.MicroservicesModule,
           ),
       },
       {
         path: 'recipes',
         loadChildren: () =>
           import('./homepage/pages/recipes/recipes.module').then(
-            m => m.RecipesModule,
+            (m) => m.RecipesModule,
           ),
       },
       {
         path: 'faq',
         loadChildren: () =>
-          import('./homepage/pages/faq/faq.module').then(m => m.FaqModule),
+          import('./homepage/pages/faq/faq.module').then((m) => m.FaqModule),
       },
       {
         path: 'cli',
         loadChildren: () =>
-          import('./homepage/pages/cli/cli.module').then(m => m.CliModule),
+          import('./homepage/pages/cli/cli.module').then((m) => m.CliModule),
+      },
+      {
+        path: 'openapi',
+        loadChildren: () =>
+          import('./homepage/pages/openapi/openapi.module').then(
+            (m) => m.OpenApiModule,
+          ),
       },
     ],
   },
@@ -190,11 +204,12 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      // enableTracing: !environment.production,
-      scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      preloadingStrategy: PreloadAllModules,
-    }),
+    // enableTracing: !environment.production,
+    scrollPositionRestoration: 'enabled',
+    anchorScrolling: 'enabled',
+    preloadingStrategy: PreloadAllModules,
+    relativeLinkResolution: 'legacy'
+}),
   ],
   providers: [RedirectGuard],
   exports: [RouterModule],

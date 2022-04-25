@@ -7,7 +7,7 @@ const httpsOptions = {
   key: fs.readFileSync('./secrets/private-key.pem'),
   cert: fs.readFileSync('./secrets/public-certificate.pem'),
 };
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   httpsOptions,
 });
 await app.listen(3000);
@@ -17,7 +17,7 @@ If you use the `FastifyAdapter`, create the application as follows:
 
 ```typescript
 const app = await NestFactory.create<NestFastifyApplication>(
-  ApplicationModule,
+  AppModule,
   new FastifyAdapter({ https: httpsOptions }),
 );
 ```
@@ -34,7 +34,7 @@ const httpsOptions = {
 
 const server = express();
 const app = await NestFactory.create(
-  ApplicationModule,
+  AppModule,
   new ExpressAdapter(server),
 );
 await app.init();

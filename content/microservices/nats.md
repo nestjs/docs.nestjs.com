@@ -16,17 +16,17 @@ To use the NATS transporter, pass the following options object to the `createMic
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(ApplicationModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.NATS,
   options: {
-    url: 'nats://localhost:4222',
+    servers: ['nats://localhost:4222'],
   },
 });
 @@switch
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
-    url: 'nats://localhost:4222',
+    servers: ['nats://localhost:4222'],
   },
 });
 ```
@@ -42,7 +42,7 @@ Additionally, there is a `queue` property which allows you to specify the name o
 
 Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a NATS `ClientProxy` instance.
 
-One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
 
 ```typescript
 @Module({
@@ -52,7 +52,7 @@ One method for creating an instance is to use use the `ClientsModule`. To create
         name: 'MATH_SERVICE',
         transport: Transport.NATS,
         options: {
-          url: 'nats://localhost:4222',
+          servers: ['nats://localhost:4222'],
         }
       },
     ]),
@@ -65,7 +65,7 @@ Other options to create a client (either `ClientProxyFactory` or `@Client()`) ca
 
 #### Request-response
 
-For the **request-response** message style ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter uses NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. A request is published on a given subject with a reply subject, and responders listen on that subject and send responses to the reply subject. Reply subjects are usually a subject called an `_INBOX` that will be directed back to the requestor dynamically, regardless of location of either party.
+For the **request-response** message style ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter does not use the NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. Instead, a "request" is published on a given subject using the `publish()` method with a unique reply subject name, and responders listen on that subject and send responses to the reply subject. Reply subjects are directed back to the requestor dynamically, regardless of location of either party.
 
 #### Event-based
 
@@ -77,10 +77,10 @@ NATS provides a built-in load balancing feature called [distributed queues](http
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(ApplicationModule, {
+const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.NATS,
   options: {
-    url: 'nats://localhost:4222',
+    servers: ['nats://localhost:4222'],
     queue: 'cats_queue',
   },
 });
@@ -124,4 +124,63 @@ getDate(data, context) {
   console.log(`Subject: ${context.getSubject()}`); // e.g. "time.us.east"
   return new Date().toLocaleTimeString(...);
 }
+```
+
+#### Record builders
+
+To configure message options, you can use the `NatsRecordBuilder` class (note: this is doable for event-based flows as well). For example, to add `x-version` header, use the `setHeaders` method, as follows:
+
+```typescript
+import * as nats from 'nats';
+
+// somewhere in your code
+const headers = nats.headers();
+headers.set('x-version', '1.0.0');
+
+const record = new NatsRecordBuilder(':cat:').setHeaders(headers).build();
+this.client.send('replace-emoji', record).subscribe(...);
+```
+
+> info **Hint** `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.
+
+And you can read these headers on the server-side as well, by accessing the `NatsContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: NatsContext): string {
+  const headers = context.getHeaders();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const headers = context.getHeaders();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+```
+
+In some cases you might want to configure headers for multiple requests, you can pass these as options to the `ClientProxyFactory`:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+
+@Module({
+  providers: [
+    {
+      provide: 'API_v1',
+      useFactory: () =>
+        ClientProxyFactory.create({
+          transport: Transport.NATS,
+          options: {
+            servers: ['nats://localhost:4222'],
+            headers: { 'x-version': '1.0.0' },
+          },
+        }),
+    },
+  ],
+})
+export class ApiModule {}
 ```

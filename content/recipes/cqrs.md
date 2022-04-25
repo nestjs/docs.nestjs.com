@@ -2,10 +2,10 @@
 
 The flow of simple [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) (Create, Read, Update and Delete) applications can be described using the following steps:
 
-1.  The **controllers** layer handles HTTP requests and delegates tasks to the services layer.
-2.  The **services layer** is where most of the business logic lives.
-3.  Services uses **repositories / DAOs** to change / persist entities.
-4.  Entities act as containers for the values, with setters and getters.
+1. The **controllers** layer handles HTTP requests and delegates tasks to the services layer.
+2. The **services layer** is where most of the business logic lives.
+3. Services use **repositories / DAOs** to change / persist entities.
+4. Entities act as containers for the values, with setters and getters.
 
 In most cases, for small and medium-sized applications, this pattern is sufficient. However, when our requirements become more complex, the **CQRS** model may be more appropriate and scalable. To facilitate that model, Nest provides a lightweight [CQRS module](https://github.com/nestjs/cqrs). This chapter describes how to use it.
 
@@ -196,7 +196,7 @@ export class KillDragonHandler {
 Now everything works as expected. Notice that we need to `commit()` events since they're not being dispatched immediately. Obviously, an object doesn't have to exist up front. We can easily merge type context as well:
 
 ```typescript
-const HeroModel = this.publisher.mergeContext(Hero);
+const HeroModel = this.publisher.mergeClassContext(Hero);
 new HeroModel('id');
 ```
 
@@ -289,5 +289,7 @@ export class HeroesGameModule {}
 #### Summary
 
 `CommandBus`, `QueryBus` and `EventBus` are **Observables**. This means that you can easily subscribe to the whole stream and enrich your application with **Event Sourcing**.
+
+#### Example
 
 A working example is available [here](https://github.com/kamilmysliwiec/nest-cqrs-example).

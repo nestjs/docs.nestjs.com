@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
-import { AuthenticationComponent } from './authentication/authentication.component';
 import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
+import { CookiesComponent } from './cookies/cookies.component';
+import { EventsComponent } from './events/events.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { HttpModuleComponent } from './http-module/http-module.component';
 import { LoggerComponent } from './logger/logger.component';
@@ -13,17 +14,19 @@ import { MongoComponent } from './mongo/mongo.component';
 import { MvcComponent } from './mvc/mvc.component';
 import { PerformanceComponent } from './performance/performance.component';
 import { QueuesComponent } from './queues/queues.component';
-import { SecurityComponent } from './security/security.component';
 import { SerializationComponent } from './serialization/serialization.component';
+import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
+import { SessionComponent } from './sessions/sessions.component';
 import { SqlComponent } from './sql/sql.component';
+import { StreamingFilesComponent } from './streaming-files/streaming-files.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
+import { VersioningComponent } from './versioning/versioning.component';
 
 const routes: Routes = [
   {
     path: 'authentication',
-    component: AuthenticationComponent,
-    data: { title: 'Authentication' },
+    redirectTo: '/security/authentication',
   },
   {
     path: 'mvc',
@@ -65,6 +68,11 @@ const routes: Routes = [
     data: { title: 'File upload' },
   },
   {
+    path: 'streaming-files',
+    component: StreamingFilesComponent,
+    data: { title: 'Streaming Files' },
+  },
+  {
     path: 'logger',
     component: LoggerComponent,
     data: { title: 'Logger' },
@@ -86,8 +94,12 @@ const routes: Routes = [
   },
   {
     path: 'security',
-    component: SecurityComponent,
-    data: { title: 'Security' },
+    redirectTo: '/security/helmet',
+  },
+  {
+    path: 'cookies',
+    component: CookiesComponent,
+    data: { title: 'Cookies' },
   },
   {
     path: 'task-scheduling',
@@ -108,6 +120,26 @@ const routes: Routes = [
     path: 'hot-reload',
     redirectTo: '/recipes/hot-reload',
   },
+  {
+    path: 'server-sent-events',
+    component: ServerSentEventsComponent,
+    data: { title: 'Server-Sent Events' },
+  },
+  {
+    path: 'versioning',
+    component: VersioningComponent,
+    data: { title: 'Versioning' },
+  },
+  {
+    path: 'events',
+    component: EventsComponent,
+    data: { title: 'Events' },
+  },
+  {
+    path: 'session',
+    component: SessionComponent,
+    data: { title: 'Session' },
+  },
 ];
 
 @NgModule({
@@ -116,19 +148,23 @@ const routes: Routes = [
     SqlComponent,
     MvcComponent,
     MongoComponent,
-    AuthenticationComponent,
-    SecurityComponent,
     QueuesComponent,
     LoggerComponent,
     TaskSchedulingComponent,
     PerformanceComponent,
+    EventsComponent,
     FileUploadComponent,
     HttpModuleComponent,
     ConfigurationComponent,
     CompressionComponent,
+    VersioningComponent,
     ValidationComponent,
     CachingComponent,
     SerializationComponent,
+    ServerSentEventsComponent,
+    SessionComponent,
+    CookiesComponent,
+    StreamingFilesComponent,
   ],
 })
 export class TechniquesModule {}

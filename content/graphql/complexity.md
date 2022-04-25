@@ -35,11 +35,12 @@ import {
 export class ComplexityPlugin implements ApolloServerPlugin {
   constructor(private gqlSchemaHost: GraphQLSchemaHost) {}
 
-  requestDidStart(): GraphQLRequestListener {
+  async requestDidStart(): Promise<GraphQLRequestListener> {
+    const maxComplexity = 20;
     const { schema } = this.gqlSchemaHost;
 
     return {
-      didResolveOperation({ request, document }) {
+      async didResolveOperation({ request, document }) {
         const complexity = getComplexity({
           schema,
           operationName: request.operationName,
@@ -50,9 +51,9 @@ export class ComplexityPlugin implements ApolloServerPlugin {
             simpleEstimator({ defaultComplexity: 1 }),
           ],
         });
-        if (complexity >= 20) {
+        if (complexity > maxComplexity) {
           throw new GraphQLError(
-            `Query is too complex: ${complexity}. Maximum allowed complexity: 20`,
+            `Query is too complex: ${complexity}. Maximum allowed complexity: ${maxComplexity}`,
           );
         }
         console.log('Query Complexity:', complexity);
@@ -83,4 +84,15 @@ Alternatively, you can define the estimator function:
 ```typescript
 @Field({ complexity: (options: ComplexityEstimatorArgs) => ... })
 title: string;
+```
+
+#### Query/Mutation-level complexity
+
+In addition, `@Query()` and `@Mutation()` decorators may have a `complexity` property specified like so:
+
+```typescript
+@Query({ complexity: (options: ComplexityEstimatorArgs) => options.args.count * options.childComplexity })
+items(@Args('count') count: number) {
+  return this.itemsService.getItems({ count });
+}
 ```

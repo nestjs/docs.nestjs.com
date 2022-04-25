@@ -45,7 +45,7 @@ export class ExceptionFilter {
 }
 ```
 
-> **Warning** You cannot set up global microservice exception filters when using a [hybrid application](/faq/hybrid-application).
+> warning **Warning** Global microservice exception filters aren't enabled by default when using a [hybrid application](/faq/hybrid-application).
 
 The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
 

@@ -2,17 +2,13 @@
 
 > **Warning** In this article, you'll learn how to create a `DatabaseModule` based on the **Mongoose** package from scratch using custom components. As a consequence, this solution contains a lot of overhead that you can omit using ready to use and available out-of-the-box dedicated `@nestjs/mongoose` package. To learn more, see [here](/techniques/mongodb).
 
-[Mongoose](http://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool.
+[Mongoose](https://mongoosejs.com) is the most popular [MongoDB](https://www.mongodb.org/) object modeling tool.
 
 #### Getting started
 
 To start the adventure with this library we have to install all required dependencies:
 
 ```typescript
-@@filename()
-$ npm install --save mongoose
-$ npm install --save-dev @types/mongoose
-@@switch
 $ npm install --save mongoose
 ```
 
@@ -60,7 +56,7 @@ Now we can inject the `Connection` object using `@Inject()` decorator. Each clas
 
 #### Model injection
 
-With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
+With Mongoose, everything is derived from a [Schema](https://mongoosejs.com/docs/guide.html). Let's define the `CatSchema`:
 
 ```typescript
 @@filename(schemas/cat.schema)
@@ -101,7 +97,7 @@ export const catsProviders = [
 ];
 ```
 
-> **Notice** In the real-world applications you should avoid **magic strings**. Both `CAT_MODEL` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `CAT_MODEL` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
 
 Now we can inject the `CAT_MODEL` to the `CatsService` using the `@Inject()` decorator:
 
@@ -184,4 +180,4 @@ import { DatabaseModule } from '../database/database.module';
 export class CatsModule {}
 ```
 
-> warning **Hint** Do not forget to import the `CatsModule` into the root `ApplicationModule`.
+> info **Hint** Do not forget to import the `CatsModule` into the root `AppModule`.

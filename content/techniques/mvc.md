@@ -9,7 +9,7 @@ $ npm i -g @nestjs/cli
 $ nest new project
 ```
 
-In order to create an MVC app, we also need a [template engine](http://expressjs.com/en/guide/using-template-engines.html) to render our HTML views:
+In order to create an MVC app, we also need a [template engine](https://expressjs.com/en/guide/using-template-engines.html) to render our HTML views:
 
 ```bash
 $ npm install --save hbs
@@ -98,11 +98,11 @@ While the application is running, open your browser and navigate to `http://loca
 
 If the application logic must dynamically decide which template to render, then we should use the `@Res()` decorator, and supply the view name in our route handler, rather than in the `@Render()` decorator:
 
-> info **Hint** When Nest detects the `@Res()` decorator, it injects the library-specific `response` object. We can use this object to dynamically render the template. Learn more about the `response` object API [here](http://expressjs.com/en/api.html).
+> info **Hint** When Nest detects the `@Res()` decorator, it injects the library-specific `response` object. We can use this object to dynamically render the template. Learn more about the `response` object API [here](https://expressjs.com/en/api.html).
 
 ```typescript
 @@filename(app.controller)
-import { Get, Controller, Render } from '@nestjs/common';
+import { Get, Controller, Res, Render } from '@nestjs/common';
 import { Response } from 'express';
 import { AppService } from './app.service';
 
@@ -129,7 +129,7 @@ A working example is available [here](https://github.com/nestjs/nest/tree/master
 As mentioned in this [chapter](/techniques/performance), we are able to use any compatible HTTP provider together with Nest. One such library is [Fastify](https://github.com/fastify/fastify). In order to create an MVC application with Fastify, we have to install the following packages:
 
 ```bash
-$ npm i --save fastify point-of-view handlebars
+$ npm i --save fastify-static point-of-view handlebars
 ```
 
 The next steps cover almost the same process used with Express, with minor differences specific to the platform. Once the installation process is complete, open the `main.ts` file and update its contents:

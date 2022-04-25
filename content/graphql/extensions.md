@@ -14,51 +14,43 @@ To attach custom metadata for a field, use the `@Extensions()` decorator exporte
 password: string;
 ```
 
-In the example above, we assigned the `role` metadata property the value of `Role.ADMIN`.  `Role` is a simple TypeScript enum that groups all the user roles available in our system.
+In the example above, we assigned the `role` metadata property the value of `Role.ADMIN`. `Role` is a simple TypeScript enum that groups all the user roles available in our system.
 
 Note, in addition to setting metadata on fields, you can use the `@Extensions()` decorator at the class level and method level (e.g., on the query handler).
 
 #### Using custom metadata
 
-The logic that leverages the custom metatada can be as complex as needed. For example, you can create a simple interceptor that stores/logs events per method invocation, or create a sophisticated guard that **analyzes requested fields**, iterates through the `GraphQLObjectType` definition, and matches the roles required to retrieve specific fields with the caller permissions (field-level permissions system).
+Logic that leverages the custom metadata can be as complex as needed. For example, you can create a simple interceptor that stores/logs events per method invocation, or a [field middleware](/graphql/field-middleware) that matches roles required to retrieve a field with the caller permissions (field-level permissions system).
 
-Let's define a `FieldRolesGuard` that implements a basic version of such a field-level permissions system.
+For illustration purposes, let's define a `checkRoleMiddleware` that compares a user's role (hardcoded here) with a role required to access a target field:
 
 ```typescript
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
-import { GraphQLNonNull, GraphQLObjectType, GraphQLResolveInfo } from 'graphql';
-import * as graphqlFields from 'graphql-fields';
+export const checkRoleMiddleware: FieldMiddleware = async (
+  ctx: MiddlewareContext,
+  next: NextFn,
+) => {
+  const { info } = ctx;
+  const { extensions } = info.parentType.getFields()[info.fieldName];
 
-@Injectable()
-export class FieldRolesGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
-    const info = GqlExecutionContext.create(context).getInfo<
-      GraphQLResolveInfo
-    >();
-    const returnType = (info.returnType instanceof GraphQLNonNull
-      ? info.returnType.ofType
-      : info.returnType) as GraphQLObjectType;
-
-    const fields = returnType.getFields();
-    const requestedFields = graphqlFields(info);
-
-    Object.entries(fields)
-      .filter(([key]) => key in requestedFields)
-      .map(([_, field]) => field)
-      .filter((field) => field.extensions && field.extensions.role)
-      .forEach((field) => {
-        // match user and field roles here
-        console.log(field.extensions.role);
-      });
-
-    return true;
+  /**
+   * In a real-world application, the "userRole" variable
+   * should represent the caller's (user) role (for example, "ctx.user.role").
+   */
+  const userRole = Role.USER;
+  if (userRole === extensions.role) {
+    // or just "return null" to ignore
+    throw new ForbiddenException(
+      `User does not have sufficient permissions to access "${info.fieldName}" field.`,
+    );
   }
-}
+  return next();
+};
 ```
 
-> warning **Warning** For illustration purposes, we assumed that **every** resolver returns either the `GraphQLObjectType` or `GraphQLNonNull` that wraps the object type. In a real-world application, you should cover other cases (scalars, etc.). Note that using this particular implementation can lead to unexpected errors (e.g., missing `getFields()` method).
+With this in place, we can register a middleware for the `password` field, as follows:
 
-In the example above, we've used the [graphql-fields](https://github.com/robrichard/graphql-fields) package that turns the `GraphQLResolveInfo` object into an object that consists of the requested fields. We used this specific library to make the presented example somewhat simpler.
-
-With this guard in place, if the return type of any resolver contains a field annotated with the `@Extensions({{ '{' }} role: Role.ADMIN {{ '}' }}})` decorator, this `role` (`Role.ADMIN`) will be logged in the console **if requested** in the GraphQL query.
+```typescript
+@Field({ middleware: [checkRoleMiddleware] })
+@Extensions({ role: Role.ADMIN })
+password: string;
+```

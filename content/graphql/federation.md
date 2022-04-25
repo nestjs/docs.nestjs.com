@@ -1,6 +1,6 @@
 ### Federation
 
-[Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) offers a means of splitting your monolithic GraphQL server into independent microservices. It consists of two components: a gateway and one or more federated microservices. Each microservice holds part of the schema and the gateway merges the schemas into a single schema that can be consumed by the client.
+Federation offers a means of splitting your monolithic GraphQL server into independent microservices. It consists of two components: a gateway and one or more federated microservices. Each microservice holds part of the schema and the gateway merges the schemas into a single schema that can be consumed by the client.
 
 To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260cf525d21), Federation is designed with these core principles:
 
@@ -9,19 +9,21 @@ To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260
 - The graph should be simple for clients to consume. Together, federated services can form a complete, product-focused graph that accurately reflects how it’s being consumed on the client.
 - It’s just **GraphQL**, using only spec-compliant features of the language. Any language, not just JavaScript, can implement federation.
 
-> warning **Warning** Apollo Federation currently does not support subscriptions.
+> warning **Warning** Federation currently does not support subscriptions.
 
-In the next example, we'll set up a demo application with a gateway and two federated endpoints: a Users service and a Posts service.
+In the following sections, we'll set up a demo application that consits of a gateway and two federated endpoints: Users service and Posts service.
 
-#### Federated example: Users
+#### Federation with Apollo
 
-First install the optional dependency for federation:
+Start by installing the required dependencies:
 
 ```bash
-$ npm install --save @apollo/federation
+$ npm install --save @apollo/federation @apollo/subgraph
 ```
 
-The User service has a simple schema. Note the `@key` directive: it tells the Apollo query planner that a particular instance of User can be fetched if you have its `id`. Also note that we extend the `Query` type.
+#### Schema first
+
+The "User service" provides a simple schema. Note the `@key` directive: it instructs the Apollo query planner that a particular instance of `User` can be fetched if you specify its `id`. Also, note that we `extend` the `Query` type.
 
 ```graphql
 type User @key(fields: "id") {
@@ -34,14 +36,14 @@ extend type Query {
 }
 ```
 
-Our resolver has one extra method: `resolveReference`. It's called by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later on. Please note the `@ResolveReference` decorator.
+Resolver provides one additional method named `resolveReference()`. This method is triggered by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later. Please note that the method must be annotated with the `@ResolveReference()` decorator.
 
 ```typescript
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 
 @Resolver('User')
-export class UsersResolvers {
+export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
   @Query()
@@ -56,27 +58,102 @@ export class UsersResolvers {
 }
 ```
 
-Finally, we hook everything up in a module together with a `GraphQLFederationModule`. This module accepts the same options as the regular `GraphQLModule`.
+Finally, we hook everything up by registering the `GraphQLModule` passing the `ApolloFederationDriver` driver in the configuration object:
 
 ```typescript
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLFederationModule } from '@nestjs/graphql';
-import { UsersResolvers } from './users.resolvers';
+import { GraphQLModule } from '@nestjs/graphql';
+import { UsersResolver } from './users.resolver';
 
 @Module({
   imports: [
-    GraphQLFederationModule.forRoot({
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
       typePaths: ['**/*.graphql'],
     }),
   ],
-  providers: [UsersResolvers],
+  providers: [UsersResolver],
 })
 export class AppModule {}
 ```
 
+#### Code first
+
+Start by adding some extra decorators to the `User` entity.
+
+```ts
+import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
+@Directive('@key(fields: "id")')
+export class User {
+  @Field((type) => ID)
+  id: number;
+
+  @Field()
+  name: string;
+}
+```
+
+Resolver provides one additional method named `resolveReference()`. This method is triggered by the Apollo Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later. Please note that the method must be annotated with the `@ResolveReference()` decorator.
+
+```ts
+import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
+import { User } from './user.entity';
+import { UsersService } from './users.service';
+
+@Resolver((of) => User)
+export class UsersResolver {
+  constructor(private usersService: UsersService) {}
+
+  @Query((returns) => User)
+  getUser(@Args('id') id: number): User {
+    return this.usersService.findById(id);
+  }
+
+  @ResolveReference()
+  resolveReference(reference: { __typename: string; id: number }): User {
+    return this.usersService.findById(reference.id);
+  }
+}
+```
+
+Finally, we hook everything up by registering the `GraphQLModule` passing the `ApolloFederationDriver` driver in the configuration object:
+
+```typescript
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service'; // Not included in this example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: true,
+    }),
+  ],
+  providers: [UsersResolver, UsersService],
+})
+export class AppModule {}
+```
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/users-application) in code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/users-application) in schema first mode.
+
 #### Federated example: Posts
 
-The Posts service references the User type in its schema by marking it with the `extend` keyword. It also adds one property to the User type. Note the `@key` directive used for matching instances of User, and the `@external` directive indicating that the `id` field is managed elsewhere.
+Post service is supposed to serve aggregated posts through the `getPosts` query, but also extend our `User` type with the `user.posts` field.
+
+#### Schema first
+
+"Posts service" references the `User` type in its schema by marking it with the `extend` keyword. It also declares one additional property on the `User` type (`posts`). Note the `@key` directive used for matching instances of User, and the `@external` directive indicating that the `id` field is managed elsewhere.
 
 ```graphql
 type Post @key(fields: "id") {
@@ -96,15 +173,15 @@ extend type Query {
 }
 ```
 
-Our resolver has one method of interest here: `getUser`. It returns a reference containing `__typename` and any additional properties your application needs to resolve the reference, in this case only an `id`. The `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and request the instance. The Users service discussed above will be called on the `resolveReference` method.
+In the following example, the `PostsResolver` provides the `getUser()` method that returns a reference containing `__typename` and some additional properties your application may need to resolve the reference, in this case `id`. `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and retrieve the corresponding instance. The "Users service" described above will be requested upon execution of the `resolveReference()` method.
 
 ```typescript
-import { Query, Resolver, Parent, ResolveProperty } from '@nestjs/graphql';
+import { Query, Resolver, Parent, ResolveField } from '@nestjs/graphql';
 import { PostsService } from './posts.service';
 import { Post } from './posts.interfaces';
 
 @Resolver('Post')
-export class PostsResolvers {
+export class PostsResolver {
   constructor(private postsService: PostsService) {}
 
   @Query('getPosts')
@@ -112,23 +189,28 @@ export class PostsResolvers {
     return this.postsService.findAll();
   }
 
-  @ResolveProperty('user')
+  @ResolveField('user')
   getUser(@Parent() post: Post) {
     return { __typename: 'User', id: post.userId };
   }
 }
 ```
 
-The Posts service has virtually the same module, but is included below for the sake of completeness:
+Lastly, we must register the `GraphQLModule`, similarly to what we did in the "Users service" section.
 
 ```typescript
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLFederationModule } from '@nestjs/graphql';
-import { PostsResolvers } from './posts.resolvers';
+import { GraphQLModule } from '@nestjs/graphql';
+import { PostsResolver } from './posts.resolver';
 
 @Module({
   imports: [
-    GraphQLFederationModule.forRoot({
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
       typePaths: ['**/*.graphql'],
     }),
   ],
@@ -137,25 +219,516 @@ import { PostsResolvers } from './posts.resolvers';
 export class AppModule {}
 ```
 
-#### Federated example: Gateway
+#### Code first
 
-First install the optional dependency for the gateway: `npm install --save @apollo/gateway`.
+First, we will have to declare a class representing the `User` entity. Although the entity itself lives in another service, we will be using it (extending its definition) here. Note the `@extends` and `@external` directives.
 
-Our gateway only needs a list of endpoints and will auto-discover the schemas from there. The code for our gateway is therefore very short:
+```ts
+import { Directive, ObjectType, Field, ID } from '@nestjs/graphql';
+import { Post } from './post.entity';
 
-```typescript
+@ObjectType()
+@Directive('@extends')
+@Directive('@key(fields: "id")')
+export class User {
+  @Field((type) => ID)
+  @Directive('@external')
+  id: number;
+
+  @Field((type) => [Post])
+  posts?: Post[];
+}
+```
+
+Now let's create the corresponding resolver for our extension on the `User` entity, as follows:
+
+```ts
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
+import { Post } from './post.entity';
+import { User } from './user.entity';
+
+@Resolver((of) => User)
+export class UsersResolver {
+  constructor(private readonly postsService: PostsService) {}
+
+  @ResolveField((of) => [Post])
+  public posts(@Parent() user: User): Post[] {
+    return this.postsService.forAuthor(user.id);
+  }
+}
+```
+
+We also have to define the `Post` entity class:
+
+```ts
+import { Directive, Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { User } from './user.entity';
+
+@ObjectType()
+@Directive('@key(fields: "id")')
+export class Post {
+  @Field((type) => ID)
+  id: number;
+
+  @Field()
+  title: string;
+
+  @Field((type) => Int)
+  authorId: number;
+
+  @Field((type) => User)
+  user?: User;
+}
+```
+
+And its resolver:
+
+```ts
+import { Query, Args, ResolveField, Resolver, Parent } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
+import { Post } from './post.entity';
+import { User } from './user.entity';
+
+@Resolver((of) => Post)
+export class PostsResolver {
+  constructor(private readonly postsService: PostsService) {}
+
+  @Query((returns) => Post)
+  findPost(@Args('id') id: number): Post {
+    return this.postsService.findOne(id);
+  }
+
+  @Query((returns) => [Post])
+  getPosts(): Post[] {
+    return this.postsService.all();
+  }
+
+  @ResolveField((of) => User)
+  user(@Parent() post: Post): any {
+    return { __typename: 'User', id: post.authorId };
+  }
+}
+```
+
+And finally, tie it together in a module. Note the schema build options, where we specify that `User` is an orphaned (external) type.
+
+```ts
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLGatewayModule } from '@nestjs/graphql';
+import { User } from './user.entity';
+import { PostsResolvers } from './posts.resolvers';
+import { UsersResolvers } from './users.resolvers';
+import { PostsService } from './posts.service'; // Not included in example
 
 @Module({
   imports: [
-    GraphQLGatewayModule.forRoot({
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: true,
+      buildSchemaOptions: {
+        orphanedTypes: [User],
+      },
+    }),
+  ],
+  providers: [PostsResolver, UsersResolver, PostsService],
+})
+export class AppModule {}
+```
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/posts-application) for the code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/posts-application) for the schema first mode.
+
+#### Federated example: Gateway
+
+Start by installing the required dependency:
+
+```bash
+$ npm install --save @apollo/gateway
+```
+
+The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway servce will remain the same for both code and schema first approaches.
+
+```typescript
+import { IntrospectAndCompose } from '@apollo/gateway';
+import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloGatewayDriverConfig>({
+      driver: ApolloGatewayDriver,
       server: {
         // ... Apollo server options
         cors: true,
       },
       gateway: {
-        serviceList: [
+        supergraphSdl: new IntrospectAndCompose({
+          subgraphs: [
+            { name: 'users', url: 'http://user-service/graphql' },
+            { name: 'posts', url: 'http://post-service/graphql' },
+          ],
+        }),
+      },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/31-graphql-federation-code-first/gateway) for the code first mode and [here](https://github.com/nestjs/nest/tree/master/sample/32-graphql-federation-schema-first/gateway) for the schema first mode.
+
+#### Federation with Mercurius
+
+Start by installing the required dependencies:
+
+```bash
+$ npm install --save @apollo/subgraph @nestjs/mercurius
+```
+
+> info **Note** The `@apollo/subgraph` package is required to build a subgraph schema (`buildSubgraphSchema`, `printSubgraphSchema` functions).
+
+#### Schema first
+
+The "User service" provides a simple schema. Note the `@key` directive: it instructs the Mercurius query planner that a particular instance of `User` can be fetched if you specify its `id`. Also, note that we `extend` the `Query` type.
+
+```graphql
+type User @key(fields: "id") {
+  id: ID!
+  name: String!
+}
+
+extend type Query {
+  getUser(id: ID!): User
+}
+```
+
+Resolver provides one additional method named `resolveReference()`. This method is triggered by the Mercurius Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later. Please note that the method must be annotated with the `@ResolveReference()` decorator.
+
+```typescript
+import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
+import { UsersService } from './users.service';
+
+@Resolver('User')
+export class UsersResolver {
+  constructor(private usersService: UsersService) {}
+
+  @Query()
+  getUser(@Args('id') id: string) {
+    return this.usersService.findById(id);
+  }
+
+  @ResolveReference()
+  resolveReference(reference: { __typename: string; id: string }) {
+    return this.usersService.findById(reference.id);
+  }
+}
+```
+
+Finally, we hook everything up by registering the `GraphQLModule` passing the `MercuriusFederationDriver` driver in the configuration object:
+
+```typescript
+import {
+  MercuriusFederationDriver,
+  MercuriusFederationDriverConfig,
+} from '@nestjs/mercurius';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { UsersResolver } from './users.resolver';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
+      driver: MercuriusFederationDriver,
+      typePaths: ['**/*.graphql'],
+      federationMetadata: true,
+    }),
+  ],
+  providers: [UsersResolver],
+})
+export class AppModule {}
+```
+
+#### Code first
+
+Start by adding some extra decorators to the `User` entity.
+
+```ts
+import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
+@Directive('@key(fields: "id")')
+export class User {
+  @Field((type) => ID)
+  id: number;
+
+  @Field()
+  name: string;
+}
+```
+
+Resolver provides one additional method named `resolveReference()`. This method is triggered by the Mercurius Gateway whenever a related resource requires a User instance. We'll see an example of this in the Posts service later. Please note that the method must be annotated with the `@ResolveReference()` decorator.
+
+```ts
+import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
+import { User } from './user.entity';
+import { UsersService } from './users.service';
+
+@Resolver((of) => User)
+export class UsersResolver {
+  constructor(private usersService: UsersService) {}
+
+  @Query((returns) => User)
+  getUser(@Args('id') id: number): User {
+    return this.usersService.findById(id);
+  }
+
+  @ResolveReference()
+  resolveReference(reference: { __typename: string; id: number }): User {
+    return this.usersService.findById(reference.id);
+  }
+}
+```
+
+Finally, we hook everything up by registering the `GraphQLModule` passing the `MercuriusFederationDriver` driver in the configuration object:
+
+```typescript
+import {
+  MercuriusFederationDriver,
+  MercuriusFederationDriverConfig,
+} from '@nestjs/mercurius';
+import { Module } from '@nestjs/common';
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service'; // Not included in this example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
+      driver: MercuriusFederationDriver,
+      autoSchemaFile: true,
+      federationMetadata: true,
+    }),
+  ],
+  providers: [UsersResolver, UsersService],
+})
+export class AppModule {}
+```
+
+#### Federated example: Posts
+
+Post service is supposed to serve aggregated posts through the `getPosts` query, but also extend our `User` type with the `user.posts` field.
+
+#### Schema first
+
+"Posts service" references the `User` type in its schema by marking it with the `extend` keyword. It also declares one additional property on the `User` type (`posts`). Note the `@key` directive used for matching instances of User, and the `@external` directive indicating that the `id` field is managed elsewhere.
+
+```graphql
+type Post @key(fields: "id") {
+  id: ID!
+  title: String!
+  body: String!
+  user: User
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  posts: [Post]
+}
+
+extend type Query {
+  getPosts: [Post]
+}
+```
+
+In the following example, the `PostsResolver` provides the `getUser()` method that returns a reference containing `__typename` and some additional properties your application may need to resolve the reference, in this case `id`. `__typename` is used by the GraphQL Gateway to pinpoint the microservice responsible for the User type and retrieve the corresponding instance. The "Users service" described above will be requested upon execution of the `resolveReference()` method.
+
+```typescript
+import { Query, Resolver, Parent, ResolveField } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
+import { Post } from './posts.interfaces';
+
+@Resolver('Post')
+export class PostsResolver {
+  constructor(private postsService: PostsService) {}
+
+  @Query('getPosts')
+  getPosts() {
+    return this.postsService.findAll();
+  }
+
+  @ResolveField('user')
+  getUser(@Parent() post: Post) {
+    return { __typename: 'User', id: post.userId };
+  }
+}
+```
+
+Lastly, we must register the `GraphQLModule`, similarly to what we did in the "Users service" section.
+
+```typescript
+import {
+  MercuriusFederationDriver,
+  MercuriusFederationDriverConfig,
+} from '@nestjs/mercurius';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { PostsResolver } from './posts.resolver';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
+      driver: MercuriusFederationDriver,
+      federationMetadata: true,
+      typePaths: ['**/*.graphql'],
+    }),
+  ],
+  providers: [PostsResolvers],
+})
+export class AppModule {}
+```
+
+#### Code first
+
+First, we will have to declare a class representing the `User` entity. Although the entity itself lives in another service, we will be using it (extending its definition) here. Note the `@extends` and `@external` directives.
+
+```ts
+import { Directive, ObjectType, Field, ID } from '@nestjs/graphql';
+import { Post } from './post.entity';
+
+@ObjectType()
+@Directive('@extends')
+@Directive('@key(fields: "id")')
+export class User {
+  @Field((type) => ID)
+  @Directive('@external')
+  id: number;
+
+  @Field((type) => [Post])
+  posts?: Post[];
+}
+```
+
+Now let's create the corresponding resolver for our extension on the `User` entity, as follows:
+
+```ts
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
+import { Post } from './post.entity';
+import { User } from './user.entity';
+
+@Resolver((of) => User)
+export class UsersResolver {
+  constructor(private readonly postsService: PostsService) {}
+
+  @ResolveField((of) => [Post])
+  public posts(@Parent() user: User): Post[] {
+    return this.postsService.forAuthor(user.id);
+  }
+}
+```
+
+We also have to define the `Post` entity class:
+
+```ts
+import { Directive, Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { User } from './user.entity';
+
+@ObjectType()
+@Directive('@key(fields: "id")')
+export class Post {
+  @Field((type) => ID)
+  id: number;
+
+  @Field()
+  title: string;
+
+  @Field((type) => Int)
+  authorId: number;
+
+  @Field((type) => User)
+  user?: User;
+}
+```
+
+And its resolver:
+
+```ts
+import { Query, Args, ResolveField, Resolver, Parent } from '@nestjs/graphql';
+import { PostsService } from './posts.service';
+import { Post } from './post.entity';
+import { User } from './user.entity';
+
+@Resolver((of) => Post)
+export class PostsResolver {
+  constructor(private readonly postsService: PostsService) {}
+
+  @Query((returns) => Post)
+  findPost(@Args('id') id: number): Post {
+    return this.postsService.findOne(id);
+  }
+
+  @Query((returns) => [Post])
+  getPosts(): Post[] {
+    return this.postsService.all();
+  }
+
+  @ResolveField((of) => User)
+  user(@Parent() post: Post): any {
+    return { __typename: 'User', id: post.authorId };
+  }
+}
+```
+
+And finally, tie it together in a module. Note the schema build options, where we specify that `User` is an orphaned (external) type.
+
+```ts
+import {
+  MercuriusFederationDriver,
+  MercuriusFederationDriverConfig,
+} from '@nestjs/mercurius';
+import { Module } from '@nestjs/common';
+import { User } from './user.entity';
+import { PostsResolvers } from './posts.resolvers';
+import { UsersResolvers } from './users.resolvers';
+import { PostsService } from './posts.service'; // Not included in example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
+      driver: MercuriusFederationDriver,
+      autoSchemaFile: true,
+      federationMetadata: true,
+      buildSchemaOptions: {
+        orphanedTypes: [User],
+      },
+    }),
+  ],
+  providers: [PostsResolver, UsersResolver, PostsService],
+})
+export class AppModule {}
+```
+
+#### Federated example: Gateway
+
+The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway servce will remain the same for both code and schema first approaches.
+
+```typescript
+import {
+  MercuriusGatewayDriver,
+  MercuriusGatewayDriverConfig,
+} from '@nestjs/mercurius';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<MercuriusGatewayDriverConfig>({
+      driver: MercuriusGatewayDriver,
+      gateway: {
+        services: [
           { name: 'users', url: 'http://user-service/graphql' },
           { name: 'posts', url: 'http://post-service/graphql' },
         ],
@@ -165,67 +738,3 @@ import { GraphQLGatewayModule } from '@nestjs/graphql';
 })
 export class AppModule {}
 ```
-
-> info **Hint** Apollo recommends that you don't rely on the service discovery in a production environment but use their [Graph Manager](https://www.apollographql.com/docs/graph-manager/federation/) instead.
-
-#### Sharing context
-
-You can customize the requests between the gateway and federated services using a build service. This allows you to share context about the request. You can easily extend the default `RemoteGraphQLDataSource` and implement one of the hooks. Please refer to [Apollo Docs](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/#remotegraphqldatasource) on `RemoteGraphQLDataSource` for more information about the possibilities.
-
-```typescript
-import { Module } from '@nestjs/common';
-import { GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from '@nestjs/graphql';
-import { RemoteGraphQLDataSource } from '@apollo/gateway';
-import { decode } from 'jsonwebtoken';
-
-class AuthenticatedDataSource extends RemoteGraphQLDataSource {
-  async willSendRequest({ request, context }) {
-    const { userId } = await decode(context.jwt);
-    request.http.headers.set('x-user-id', userId);
-  }
-}
-
-@Module({
-  providers: [
-    {
-      provide: AuthenticatedDataSource,
-      useValue: AuthenticatedDataSource,
-    },
-    {
-      provide: GATEWAY_BUILD_SERVICE,
-      useFactory: AuthenticatedDataSource => {
-        return ({ name, url }) => new AuthenticatedDataSource({ url });
-      },
-      inject: [AuthenticatedDataSource],
-    },
-  ],
-  exports: [GATEWAY_BUILD_SERVICE],
-})
-class BuildServiceModule {}
-
-@Module({
-  imports: [
-    GraphQLGatewayModule.forRootAsync({
-      useFactory: async () => ({
-        gateway: {
-          serviceList: [
-            /* services */
-          ],
-        },
-        server: {
-          context: ({ req }) => ({
-            jwt: req.headers.authorization,
-          }),
-        },
-      }),
-      imports: [BuildServiceModule],
-      inject: [GATEWAY_BUILD_SERVICE],
-    }),
-  ],
-})
-export class AppModule {}
-```
-
-#### Async configuration
-
-Both the Federation and Gateway modules support asynchronous initialization using the same `forRootAsync` that's documented in [Quick start](/graphql/quick-start#async-configuration).

@@ -21,6 +21,7 @@ $ npm i --save @nestjs/platform-fastify
 Once the Fastify platform is installed, we can use the `FastifyAdapter`.
 
 ```typescript
+@@filename(main)
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -38,13 +39,13 @@ async function bootstrap() {
 bootstrap();
 ```
 
-By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read more](https://www.fastify.io/docs/latest/Getting-Started/#your-first-server)). If you want to accept connections on other hosts, you should specify `'0.0.0.0'` in the `listen()` call:
+By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read more](https://www.fastify.io/docs/latest/Guides/Getting-Started/#your-first-server)). If you want to accept connections on other hosts, you should specify `'0.0.0.0'` in the `listen()` call:
 
 ```typescript
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    new FastifyAdapter(),
   );
   await app.listen(3000, '0.0.0.0');
 }

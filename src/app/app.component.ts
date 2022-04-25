@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
 
 @Component({
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     this.router.events
-      .filter(ev => ev instanceof NavigationEnd)
+      .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe((ev: NavigationEnd) => {
         this.updateTitle();
         this.updateMeta(ev);

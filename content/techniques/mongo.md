@@ -1,12 +1,11 @@
 ### Mongo
 
-Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](http://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
+Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
 
-Start by installing the required dependencies:
+Start by installing the [required dependencies](https://github.com/Automattic/mongoose):
 
 ```bash
 $ npm install --save @nestjs/mongoose mongoose
-$ npm install --save-dev @types/mongoose
 ```
 
 Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
@@ -37,8 +36,10 @@ Let's define the `CatSchema`:
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+export type CatDocument = Cat & Document;
+
 @Schema()
-export class Cat extends Document {
+export class Cat {
   @Prop()
   name: string;
 
@@ -70,6 +71,24 @@ Alternatively, the `@Prop()` decorator accepts an options object argument ([read
 name: string;
 ```
 
+In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in a different collection called `owners`, the property should have type and ref. For example:
+
+```typescript
+import * as mongoose from 'mongoose';
+import { Owner } from '../owners/schemas/owner.schema';
+
+// inside the class definition
+@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
+owner: Owner;
+```
+
+In case there are multiple owners, your property configuration should look as follows:
+
+```typescript
+@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' }] })
+owner: Owner[];
+```
+
 Finally, the **raw** schema definition can also be passed to the decorator. This is useful when, for example, a property represents a nested object which is not defined as a class. For this, use the `raw()` function from the `@nestjs/mongoose` package, as follows:
 
 ```typescript
@@ -90,7 +109,7 @@ export const CatSchema = new mongoose.Schema({
 });
 ```
 
-The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them them near their related **domain** objects, in the appropriate module directory.
+The `cat.schema` file resides in a folder in the `cats` directory, where we also define the `CatsModule`. While you can store schema files wherever you prefer, we recommend storing them near their related **domain** objects, in the appropriate module directory.
 
 Let's look at the `CatsModule`:
 
@@ -119,12 +138,12 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat } from './schemas/cat.schema';
+import { Cat, CatDocument } from './schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -222,6 +241,18 @@ export class CatsService {
 }
 ```
 
+To inject a given `Connection` to a custom provider (for example, factory provider), use the `getConnectionToken()` function passing the name of the connection as an argument.
+
+```typescript
+{
+  provide: CatsService,
+  useFactory: (catsConnection: Connection) => {
+    return new CatsService(catsConnection);
+  },
+  inject: [getConnectionToken('cats')],
+}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
@@ -234,7 +265,9 @@ Middleware (also called pre and post hooks) are functions which are passed contr
         name: Cat.name,
         useFactory: () => {
           const schema = CatsSchema;
-          schema.pre('save', () => console.log('Hello from pre save'));
+          schema.pre('save', function () {
+            console.log('Hello from pre save');
+          });
           return schema;
         },
       },
@@ -255,11 +288,11 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
           const schema = CatsSchema;
-          schema.pre('save', () =>
+          schema.pre('save', function() {
             console.log(
-              `${configService.get<string>('APP_NAME')}: Hello from pre save`,
+              `${configService.get('APP_NAME')}: Hello from pre save`,
             ),
-          );
+          });
           return schema;
         },
         inject: [ConfigService],
@@ -310,6 +343,91 @@ import { MongooseModule } from '@nestjs/mongoose';
   ],
 })
 export class AppModule {}
+```
+
+#### Discriminators
+
+[Discriminators](https://mongoosejs.com/docs/discriminators.html) are a schema inheritance mechanism. They enable you to have multiple models with overlapping schemas on top of the same underlying MongoDB collection.
+
+Suppose you wanted to track different types of events in a single collection. Every event will have a timestamp.
+
+```typescript
+@@filename(event.schema)
+@Schema({ discriminatorKey: 'kind' })
+export class Event {
+  @Prop({
+    type: String,
+    required: true,
+    enum: [ClickedLinkEvent.name, SignUpEvent.name],
+  })
+  kind: string;
+
+  @Prop({ type: Date, required: true })
+  time: Date;
+}
+
+export const EventSchema = SchemaFactory.createForClass(Event);
+```
+
+> info **Hint** The way mongoose tells the difference between the different discriminator models is by the "discriminator key", which is `__t` by default. Mongoose adds a String path called `__t` to your schemas that it uses to track which discriminator this document is an instance of.
+> You may also use the `discriminatorKey` option to define the path for discrimination.
+
+`SignedUpEvent` and `ClickedLinkEvent` instances will be stored in the same collection as generic events.
+
+Now, let's define the `ClickedLinkEvent` class, as follows:
+
+```typescript
+@@filename(click-link-event.schema)
+@Schema()
+export class ClickedLinkEvent {
+  kind: string;
+  time: Date;
+
+  @Prop({ type: String, required: true })
+  url: string;
+}
+
+export const ClickedLinkEventSchema = SchemaFactory.createForClass(ClickedLinkEvent);
+```
+
+And `SignUpEvent` class:
+
+```typescript
+@@filename(sign-up-event.schema)
+@Schema()
+export class SignUpEvent {
+  kind: string;
+  time: Date;
+
+  @Prop({ type: String, required: true })
+  user: string;
+}
+
+export const SignUpEventSchema = SchemaFactory.createForClass(SignUpEvent);
+```
+
+With this in place, use the `discriminators` option to register a discriminator for a given schema. It works on both `MongooseModule.forFeature` and `MongooseModule.forFeatureAsync`:
+
+```typescript
+@@filename(event.module)
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Event.name,
+        schema: EventSchema,
+        discriminators: [
+          { name: ClickedLinkEvent.name, schema: ClickedLinkEventSchema },
+          { name: SignUpEvent.name, schema: SignUpEventSchema },
+        ],
+      },
+    ]),
+  ]
+})
+export class EventsModule {}
 ```
 
 #### Testing
@@ -373,7 +491,7 @@ The construction above instantiates `MongooseConfigService` inside `MongooseModu
 
 ```typescript
 @Injectable()
-class MongooseConfigService implements MongooseOptionsFactory {
+export class MongooseConfigService implements MongooseOptionsFactory {
   createMongooseOptions(): MongooseModuleOptions {
     return {
       uri: 'mongodb://localhost/nest',

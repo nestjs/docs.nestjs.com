@@ -2,7 +2,7 @@
 
 Nest is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. You have a number of options available to you, depending on your preferences. At the most general level, connecting Nest to a database is simply a matter of loading an appropriate Node.js driver for the database, just as you would with [Express](https://expressjs.com/en/guide/database-integration.html) or Fastify.
 
-You can also directly use any general purpose Node.js database integration **library** or ORM, such as [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](http://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)) and [TypeORM](https://github.com/typeorm/typeorm), to operate at a higher level of abstraction.
+You can also directly use any general purpose Node.js database integration **library** or ORM, such as [MikroORM](https://mikro-orm.io/) also check the [recipe here](/recipes/mikroorm), [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](https://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)), [TypeORM](https://github.com/typeorm/typeorm), and [Prisma](https://www.github.com/prisma/prisma) ([recipe](/recipes/prisma)) , to operate at a higher level of abstraction.
 
 For convenience, Nest provides tight integration with TypeORM and Sequelize out-of-the-box with the `@nestjs/typeorm` and `@nestjs/sequelize` packages respectively, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
 
@@ -13,8 +13,10 @@ For integrating with SQL and NoSQL databases, Nest provides the `@nestjs/typeorm
 To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but TypeORM provides support for many relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, SQLite, and even NoSQL databases like MongoDB. The procedure we walk through in this chapter will be the same for any database supported by TypeORM. You'll simply need to install the associated client API libraries for your selected database.
 
 ```bash
-$ npm install --save @nestjs/typeorm typeorm mysql
+$ npm install --save @nestjs/typeorm typeorm@0.2 mysql2
 ```
+
+> warning **Warning** Note that we're using TypeORM v0.2, which isn't the latest version of TypeORM. The latter has substantial modifications and duplicate methods which are used on this page. You can read about `typeorm@0.3.0` changes [on their repository](https://github.com/typeorm/typeorm/releases/tag/0.3.0).
 
 Once the installation process is complete, we can import the `TypeOrmModule` into the root `AppModule`.
 
@@ -39,6 +41,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 })
 export class AppModule {}
 ```
+
+> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
 
 The `forRoot()` method supports all the configuration properties exposed by the `createConnection()` function from the [TypeORM](https://typeorm.io/#/connection-options) package. In addition, there are several extra configuration properties described below.
 
@@ -91,9 +95,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-> info **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
+> warning **Warning** Static glob paths (e.g., `dist/**/*.entity{{ '{' }} .ts,.js{{ '}' }}`) won't work properly with [webpack](https://webpack.js.org/).
 
-> warning **Warning** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied.
+> info **Hint** Note that the `ormconfig.json` file is loaded by the `typeorm` library. Thus, any of the extra properties described above (which are supported internally by way of the `forRoot()` method - for example, `autoLoadEntities` and `retryDelay`) won't be applied. Luckily, TypeORM provides the [`getConnectionOptions`](https://typeorm.io/#/using-ormconfig/overriding-options-defined-in-ormconfig) function that reads connection options from the `ormconfig` file or environment variables. With this, you can still use the configuration file and set Nest-specific options, as follows:
+>
+> ```typescript
+> TypeOrmModule.forRootAsync({
+>   useFactory: async () =>
+>     Object.assign(await getConnectionOptions(), {
+>       autoLoadEntities: true,
+>     }),
+> });
+> ```
 
 Once this is done, the TypeORM `Connection` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
 
@@ -271,7 +284,7 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectRepositor
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
+import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
@@ -283,7 +296,7 @@ import { UsersController } from './users.controller';
 export class UserHttpModule {}
 ```
 
-### Relations
+#### Relations
 
 Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
 
@@ -357,6 +370,63 @@ export class AppModule {}
 With that option specified, every entity registered through the `forFeature()` method will be automatically added to the `entities` array of the configuration object.
 
 > warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but are only referenced from the entity (via a relationship), won't be included by way of the `autoLoadEntities` setting.
+
+#### Separating entity definition
+
+You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
+
+```typescript
+import { EntitySchema } from 'typeorm';
+import { User } from './user.entity';
+
+export const UserSchema = new EntitySchema<User>({
+  name: 'User',
+  target: User,
+  columns: {
+    id: {
+      type: Number,
+      primary: true,
+      generated: true,
+    },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  relations: {
+    photos: {
+      type: 'one-to-many',
+      target: 'Photo', // the name of the PhotoSchema
+    },
+  },
+});
+```
+
+> warning error **Warning** If you provide the `target` option, the `name` option value has to be the same as the name of the target class.
+> If you do not provide the `target` you can use any name.
+
+Nest allows you to use an `EntitySchema` instance wherever an `Entity` is expected, for example:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserSchema } from './user.schema';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([UserSchema])],
+  providers: [UsersService],
+  controllers: [UsersController],
+})
+export class UsersModule {}
+```
 
 #### Transactions
 
@@ -534,6 +604,23 @@ export class AlbumsService {
 }
 ```
 
+It's also possible to inject any `Connection` to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsConnection: Connection) => {
+        return new AlbumsService(albumsConnection);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
+```
+
 #### Testing
 
 When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the connection instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
@@ -557,7 +644,7 @@ Now a substitute `mockRepository` will be used as the `UsersRepository`. Wheneve
 
 #### Custom repository
 
-TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](http://typeorm.io/#/custom-repository).
+TypeORM provides a feature called **custom repositories**. Custom repositories allow you to extend a base repository class, and enrich it with several special methods. To learn more about this feature, visit [this page](https://typeorm.io/#/custom-repository). Be aware that custom repositories are outside of NestJS's Dependency Injection system, thus you can't inject any values into them.
 
 In order to create your custom repository, use the `@EntityRepository()` decorator and extend the `Repository` class.
 
@@ -667,6 +754,41 @@ TypeOrmModule.forRootAsync({
 
 This construction works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
+> info **Hint** Make sure that the `name` property is defined at the same level as the `useFactory`, `useClass`, or `useValue` property. This will allow Nest to properly register the connection under the appropriate injection token.
+
+#### Custom Connection Factory
+
+In conjunction with async configuration using `useFactory`, `useClass`, or `useExisting`, you can optionally specify a `connectionFactory` function which will allow you to provide your own TypeORM connection rather than allowing `TypeOrmModule` to create the connection.
+
+`connectionFactory` receives the TypeORM `ConnectionOptions` configured during async configuration using `useFactory`, `useClass`, or `useExisting` and returns a `Promise` that resolves a TypeORM `Connection`.
+
+```typescript
+TypeOrmModule.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  // Use useFactory, useClass, or useExisting
+  // to configure the ConnectionOptions.
+  useFactory: (configService: ConfigService) => ({
+    type: 'mysql',
+    host: configService.get('HOST'),
+    port: +configService.get<number>('PORT'),
+    username: configService.get('USERNAME'),
+    password: configService.get('PASSWORD'),
+    database: configService.get('DATABASE'),
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: true,
+  }),
+  // connectionFactory receives the configured ConnectionOptions
+  // and returns a Promise<Connection>.
+  connectionFactory: async (options) => {
+    const connection = await createConnection(options);
+    return connection;
+  },
+});
+```
+
+> info **Hint** The `createConnection` function is imported from the `typeorm` package.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm).
@@ -728,7 +850,7 @@ The `forRoot()` method supports all the configuration properties exposed by the 
   </tr>
   <tr>
     <td><code>synchronize</code></td>
-    <td>If <code>true</code>, automatically loaded models will be synchronized (default: <code>false</code>)</td>
+    <td>If <code>true</code>, automatically loaded models will be synchronized (default: <code>true</code>)</td>
   </tr>
 </table>
 
@@ -765,7 +887,7 @@ Sequelize implements the Active Record pattern. With this pattern, you use model
 import { Column, Model, Table } from 'sequelize-typescript';
 
 @Table
-export class User extends Model<User> {
+export class User extends Model {
   @Column
   firstName: string;
 
@@ -909,7 +1031,7 @@ Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectModel(Use
 ```typescript
 @@filename(users-http.module)
 import { Module } from '@nestjs/common';
-import { UsersModule } from './user.module';
+import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
@@ -921,7 +1043,7 @@ import { UsersController } from './users.controller';
 export class UserHttpModule {}
 ```
 
-### Relations
+#### Relations
 
 Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
 
@@ -950,7 +1072,7 @@ import { Column, Model, Table, HasMany } from 'sequelize-typescript';
 import { Photo } from '../photos/photo.model';
 
 @Table
-export class User extends Model<User> {
+export class User extends Model {
   @Column
   firstName: string;
 
@@ -1101,6 +1223,23 @@ export class AlbumsService {
     private sequelize: Sequelize,
   ) {}
 }
+```
+
+It's also possible to inject any `Sequelize` instance to the providers:
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: AlbumsService,
+      useFactory: (albumsSequelize: Sequelize) => {
+        return new AlbumsService(albumsSequelize);
+      },
+      inject: [getConnectionToken('albumsConnection')],
+    },
+  ],
+})
+export class AlbumsModule {}
 ```
 
 #### Testing
