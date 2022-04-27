@@ -35,7 +35,7 @@ Once the installation is complete, apply the fastify-compress middleware as glob
 ```typescript
 import compression from 'fastify-compress';
 // somewhere in your initialization file
-app.register(compression);
+await app.register(compression);
 ```
 
 By default, fastify-compress will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli is quite efficient in terms of compression ratio, it's also quite slow. Due to this, you may want to tell fastify-compress to only use deflate and gzip to compress responses; you'll end up with larger responses but they'll be delivered much more quickly.
@@ -43,7 +43,7 @@ By default, fastify-compress will use Brotli compression (on Node >= 11.7.0) whe
 To specify encodings, provide a second argument to `app.register`:
 
 ```typescript
-app.register(compression, { encodings: ['gzip', 'deflate'] });
+await app.register(compression, { encodings: ['gzip', 'deflate'] });
 ```
 
 The above tells `fastify-compress` to only use gzip and deflate encodings, preferring gzip if the client supports both.

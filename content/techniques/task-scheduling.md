@@ -66,11 +66,11 @@ In the example above, we passed `45 * * * * *` to the decorator. The following k
 * * * * * *
 | | | | | |
 | | | | | day of week
-| | | | month
+| | | | months
 | | | day of month
-| | hour
-| minute
-second (optional)
+| | hours
+| minutes
+seconds (optional)
 </code></pre>
 
 Some sample cron patterns are:

@@ -15,7 +15,6 @@ First, we need to install the required package:
 ```bash
 $ npm i --save @nestjs/platform-fastify
 ```
-> warning **Warning** When using `@nestjs/platform-fastify` version `>=7.5.0` and `apollo-server-fastify`, GraphQL playground may not work due to incompatibility with `fastify` version `^3.0.0`. You may want to use the unstable `apollo-server-fastify` version `^3.0.0-alpha.3` or temporarily choose express instead.
 
 #### Adapter
 
@@ -40,13 +39,13 @@ async function bootstrap() {
 bootstrap();
 ```
 
-By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read more](https://www.fastify.io/docs/latest/Getting-Started/#your-first-server)). If you want to accept connections on other hosts, you should specify `'0.0.0.0'` in the `listen()` call:
+By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read more](https://www.fastify.io/docs/latest/Guides/Getting-Started/#your-first-server)). If you want to accept connections on other hosts, you should specify `'0.0.0.0'` in the `listen()` call:
 
 ```typescript
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    new FastifyAdapter(),
   );
   await app.listen(3000, '0.0.0.0');
 }

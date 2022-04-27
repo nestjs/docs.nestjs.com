@@ -5,7 +5,7 @@ To learn more about the new features we've added in the v8, check out this [link
 
 #### HTTP module
 
-The `HttpModule` exported from the `@nestjs/common` package has been deprecated and will be removed in the next major release.
+The `HttpModule` and `HttpService` exported from the `@nestjs/common` package have been deprecated and will be removed in the next major release.
 Instead, please use the `@nestjs/axios` package (otherwise, there are no API differences).
 
 #### gRPC strategy
@@ -91,3 +91,23 @@ Also, all `HttpException` errors thrown from your resolvers will be now automati
 #### RxJS
 
 Make sure to upgrade to the latest version of the `rxjs` package (v7).
+
+#### TestingModule / NestFactory
+
+If you are currently supplying a string to `NestApplication#get` to retrieve an instance of some provider that was not injected using a string as a token (for instance, the `ConfigService` from `@nestjs/config`), you'll receive an error message like the following: 
+```text
+Nest could not find ConfigService element (this provider does not exist in the current context)
+```
+
+Please change this to the actual reference.
+Before:
+```typescript
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
+const config = app.get<ConfigService>('ConfigService');
+```
+
+Now:
+```typescript
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
+const config = app.get<ConfigService>(ConfigService);
+```
