@@ -660,6 +660,65 @@ These arguments have the following meanings:
 
 <app-banner-shop></app-banner-shop>
 
+#### Accessing the Request and Response objects
+
+Sometimes you need to access the object representing your HTTP Response or Request from one of your resolvers. The request object is already accesible via the `GraphQLExecutionContext`. In order to access the `Response` object the context has to be extended when the module is initialized:
+
+```typescript
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ res }) => ({ res }),
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+For the best experience it is recommended to notify the typescript compiler about these changes. This can be done by simply creating a custom context type:
+
+```typescript
+import { GraphQLExecutionContext } from '@nestjs/graphql';
+import { Request, Response } from 'express';
+
+export type GraphQLContext = GraphQLExecutionContext & {
+  req: Request;
+  res: Response;
+};
+```
+
+> info **Hint** While the `Request` object is available by default it is not typed. You can add it here to get access to the correct type information for either express or fastify.
+
+In order to access the context you cann pass it as an argument annotedted with the `@Context()` decorator.
+
+#### Example
+
+One instance where you might want to access the response object is to set a [cookie](https://docs.nestjs.com/techniques/cookies#cookies) when a user logs in:
+
+```typescript
+@Resolver()
+export class LoginResolver {
+  constructor(private readonly authService: AuthService) {}
+
+  @Mutation(() => {
+    message: string;
+  })
+  public async login(
+    @Args('input') input: LoginInput,
+    @Context() context: GraphQLContext,
+  ) {
+    await this.authService.performLogin(input.email, input.password);
+
+    context.res.cookie('cookie_name', 'cookie_value');
+
+    return { message: 'Login in successful' };
+  }
+}
+```
+
+> info **Hint** You may want to do this when using a [JWT authentication strategy](https://docs.nestjs.com/security/authentication#jwt-functionality).
+
 #### Module
 
 Once we're done with the above steps, we have declaratively specified all the information needed by the `GraphQLModule` to generate a resolver map. The `GraphQLModule` uses reflection to introspect the meta data provided via the decorators, and transforms classes into the correct resolver map automatically.
