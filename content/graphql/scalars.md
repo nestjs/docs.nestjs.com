@@ -121,8 +121,9 @@ To define a custom scalar, create a new `GraphQLScalarType` instance. We'll crea
 const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function validate(uuid: unknown): string | never {
-  if (typeof uuid !== "string") throw new Error("invalid uuid");
-  if (!regex.test(uuid)) throw new Error("invalid uuid");
+  if (typeof uuid !== "string" || !regex.test(uuid)) {
+    throw new Error("invalid uuid");
+  }
   return uuid;
 }
 
