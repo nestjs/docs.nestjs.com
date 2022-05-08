@@ -222,7 +222,7 @@ export class AudioConsumer {
     let progress = 0;
     for (i = 0; i < 100; i++) {
       await doSomething(job.data);
-      progress += 10;
+      progress += 1;
       await job.progress(progress);
     }
     return {};
