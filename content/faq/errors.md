@@ -55,7 +55,7 @@ This likely happens when your project end up loading two Node modules of the pac
 
 Solutions:
 
-- For **Yarn** Workspaces, use the [nohoist feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) to prevent hosting the package `@nestjs/core`.
+- For **Yarn** Workspaces, use the [nohoist feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) to prevent hoisting the package `@nestjs/core`.
 
 #### "Circular dependency" error
 
