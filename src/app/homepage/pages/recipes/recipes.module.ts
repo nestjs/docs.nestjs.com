@@ -15,6 +15,7 @@ import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
+import { NestiaComponent } from './nestia/nestia.component';
 
 const routes: Routes = [
   {
@@ -94,6 +95,11 @@ const routes: Routes = [
     component: NestCommanderComponent,
     data: { title: 'Nest Commander' },
   },
+  {
+    path: 'nestia',
+    component: NestiaComponent,
+    data: { title: "Nestia" }
+  }
 ];
 
 @NgModule({
@@ -112,6 +118,7 @@ const routes: Routes = [
     RouterModuleComponent,
     ServeStaticComponent,
     NestCommanderComponent,
+    NestiaComponent,
   ],
 })
 export class RecipesModule {}
