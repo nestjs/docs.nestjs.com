@@ -707,7 +707,7 @@ When you've completed to reading the `IConfiguration` interface, let's make the 
 @@filename(nestia.config)
 import type { IConfiguration } from "nestia";
 
-export const NESTIA_CONFIG: nestia.IConfiguration = {
+export const NESTIA_CONFIG: IConfiguration = {
     input: "./src/controllers",
     output: "./src/api",
     json: true,
