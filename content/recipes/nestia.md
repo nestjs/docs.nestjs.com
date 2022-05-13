@@ -31,13 +31,13 @@ Don't write any swagger comment and DTO decorator. Just run the `nestia` up.
   - No swagger comment/decorator
   - No DTO comment/decorator
   - Only pure `interface`s and NestJS code are required
-    - Supports generic typed `interface`s and `controller`s
+    - Suppors generic typed `interface`s and `controller`s
     - Support union/intersection types
     - Support conditional types
 
 The `nestia` is an evolved automatic `SDK` and `Swagger` generator than ever, who does not require any type of swagger comment or DTO decorator function, by analyzing your `NestJS` developed backend server code in the compilation level (`nestia` utilizes the TypeScript Compiler API).
 
-Therefore, don't write any swagger comment and don't use any DTO related decorator function. Just use the pure interface type with pure the `NestJS` code. Reading below sections and looking at example codes of the `nestia`, feel how the `nestia` is much stronger than the legacy `@nestjs/swagger`.
+Therefore, don't write any swagger comment and don't use any DTO related decorator function. Just use the pure interface type with the pure `NestJS` code. Reading below sections and looking at example codes of the `nestia`, feel how the `nestia` is much stronger than the legacy `@nestjs/swagger`.
 
 Components | `nestia`::SDK | `nestia`::swagger | `@nestjs/swagger`
 -----------|---|---|---
@@ -118,17 +118,17 @@ The `nestia` can utilize the pure interface type as DTO.
 
 Unlike the legacy `@nestjs/swagger` who requires a class with decorator functions when defining the DTO, the `nestia` can use the pure interface directly. Also, `nestia` can use the descriptive comments of the pure DTO interface, too.
 
-Furthermore, as the `nestia` can use the pure interface type directly, it's possible to defining a generic typed DTO interface with inheritance. Of course, using alis type or union typed DTO are also possibble, too. Beside, `@nestjs/swagger` never can construct such generic typed DTO and constructing union typed DTO is possible but extremely difficult.
+Furthermore, as the `nestia` can use the pure interface type directly, it's possible to define a generic typed DTO interface with inheritance. Of course, using alis type or union typed DTO are also possibble, too. Besides, `@nestjs/swagger` never can construct such generic typed DTO and constructing union typed DTO is possible but extremely difficult.
 
   - Simple [`ISaleArticleComment`](https://github.com/samchon/nestia/tree/master/demo/simple/src/api/structures/ISaleArticleComment.ts)
   - Generic interfaces
-    - grand parent interface, [`ISaleArticle<Content>`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleArticle.ts)
+    - grandparent interface, [`ISaleArticle<Content>`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleArticle.ts)
     - parent interface, [`ISaleInquiry<Content>`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleInquiry.ts)
     - 1st sub-type interface, [`ISaleQuestion`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleQuestion.ts)
     - 2nd sub-type interface, [`ISaleReview`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleReview.ts)
   - Union alias type [`ISaleEntireArticle`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleArticle.ts)
 
-Looking at the below example code, then you may understand which differences between the `nestia` and `@nestjs/swagger` and what the pure interface DTO type means. Writing the legacy DTO class of the `@nestjs/swagger` after a very long time, I felt the feeling again "this is insane". 
+Looking at the below example code, then you may understand which differences between the `nestia` and `@nestjs/swagger` and what the pure interface DTO type means. Writing the legacy DTO class of the `@nestjs/swagger` after a very long time, I felt the feeling again, "this is insane". 
 
 > info **Tip** 
 >
@@ -308,7 +308,7 @@ Controller also can use the generic arguments.
 
 In the previous `DTO Interfaces` corner, we've learned that `nestia` can use the pure interface type as the DTO. Also, we've learned that using the pure interface type as DTO means that making generic typed interface or union typed interface as the DTO are also possible, too.
 
-In the Controller case, it's same with the upper interface story. In the `nestia`, as using generic typed interface as DTO was possible, defining generic typed controller class is also possible, too. By defining the generic typed controller class as the super type class, you can extremely reduce both duplicated code and duplicated description comments.
+In the Controller case, it's the same with the upper interface story. In the `nestia`, as using generic typed interface as DTO was possible, defining generic typed controller class is also possible, too. By defining the generic typed controller class as the super type class, you can extremely reduce both duplicated code and duplicated description comments.
 
 Look at the below code and feel how the `nestia` is powerful. I repeat that, `@nestjs/swagger` never can construct such generic or union typed controller classes, either.
 
