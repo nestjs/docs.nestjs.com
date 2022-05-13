@@ -35,7 +35,7 @@ Don't write any swagger comment and DTO decorator. Just run the `nestia` up.
     - Support union/intersection types
     - Support conditional types
 
-The `nestia` is an evolved automatic `SDK` and `Swagger` generator than ever, who does not require any type of swagger comment or DTO decorator function, by analyzing yout `NestJS` developed backend server code in the compilation level (`nestia` utilizes the TypeScript Compiler API).
+The `nestia` is an evolved automatic `SDK` and `Swagger` generator than ever, who does not require any type of swagger comment or DTO decorator function, by analyzing your `NestJS` developed backend server code in the compilation level (`nestia` utilizes the TypeScript Compiler API).
 
 Therefore, don't write any swagger comment and don't use any DTO related decorator function. Just use the pure interface type with pure the `NestJS` code. Reading below sections and looking at example codes of the `nestia`, feel how the `nestia` is much stronger than the legacy `@nestjs/swagger`.
 
