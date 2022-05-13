@@ -420,6 +420,7 @@ Furthermore, there's not any problem even when the generic typed abstract contro
 //================================================================
 import { Fetcher, Primitive } from "nestia-fetcher";
 import type { IConnection } from "nestia-fetcher";
+import { createStringifier } from "typescript-json";
 
 import type { ISaleReview } from "./../../../../structures/ISaleReview";
 import type { ISaleInquiry } from "./../../../../structures/ISaleInquiry";
@@ -456,7 +457,8 @@ export function store
         store.ENCRYPTED,
         store.METHOD,
         store.path(section, saleId),
-        input
+        input,
+        store.stringify
     );
 }
 export namespace store
@@ -475,6 +477,7 @@ export namespace store
     {
         return `/consumers/${section}/sales/${saleId}/reviews`;
     }
+    export const stringify = createStringifier<Input>();
 }
 
 /**
@@ -514,7 +517,8 @@ export function update
         update.ENCRYPTED,
         update.METHOD,
         update.path(section, saleId, id),
-        input
+        input,
+        update.stringify
     );
 }
 export namespace update
@@ -533,6 +537,7 @@ export namespace update
     {
         return `/consumers/${section}/sales/${saleId}/reviews/${id}`;
     }
+    export const stringify = createStringifier<Input>();
 }
 ```
 
