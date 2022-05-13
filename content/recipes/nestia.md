@@ -132,7 +132,7 @@ Looking at the below example code, then you may understand which differences bet
 
 > info **Tip** 
 >
-> The below example code would be shown by clicking the arrow button.
+> The below example code would be shown by clicking the arrow button or text.
 
 <details>
     <summary>
