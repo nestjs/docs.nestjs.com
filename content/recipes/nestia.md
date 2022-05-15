@@ -9,22 +9,31 @@
 
 
 
-#### Outline
+#### Setup
+Just like any other package, you've got to install it before you can use it.
 
 ```sh
-# INSTALL NESTIA
 npm install --save-dev nestia
-
-# BUILDING SDK LIBRARY
-npx nestia sdk "src/controller" --out "src/api"
-npx nestia sdk "src/**/*.controller.ts" --out "src/api"
-npx nestia sdk "src/controller" \ 
-    --exclude "src/controller/test" \
-    --out "src/api"
-
-# BUILDING SWAGGER.JSON IS ALSO POSSIBLE
-npx nestia swagger "src/controller" -- out "swagger.json"
 ```
+
+After the installation, you can generate `SDK` or `Swagger`, directory.
+
+```sh
+npx nestia sdk "src/**/*.controller" --out "src/api"
+npx nestia swagger "src/**/*.controller" -- out "swagger.json"
+```
+
+If all of your controller files are placed into a directory:
+
+```sh
+npx nestia sdk "src/controllers" --out "src/api"
+npx nestia swagger "src/controllers" -- out "swagger.json"
+```
+
+
+
+
+#### Preface
 
 Don't write any swagger comment and DTO decorator. Just run `nestia` up.
 
@@ -99,19 +108,75 @@ Unlike `@nestjs/swagger` who requires a class with decorator functions when defi
 
 Furthermore, as `nestia` can use the pure interface type directly, it's possible to define a generic typed DTO interface with inheritance. Of course, using alis type or union typed DTO are also possibble, too.
 
-  - Simple [`ISaleArticleComment`](https://github.com/samchon/nestia/tree/master/demo/simple/src/api/structures/ISaleArticleComment.ts)
-  - Generic interfaces
-    - grandparent interface, [`ISaleArticle<Content>`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleArticle.ts)
-    - parent interface, [`ISaleInquiry<Content>`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleInquiry.ts)
-    - 1st sub-type interface, [`ISaleQuestion`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleQuestion.ts)
-    - 2nd sub-type interface, [`ISaleReview`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleReview.ts)
-  - Union alias type [`ISaleEntireArticle`](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/structures/ISaleArticle.ts)
-
-Looking at the below example code, then you may understand which differences between `nestia` and `@nestjs/swagger` and what the pure interface DTO type means. Writing the traditional DTO class of `@nestjs/swagger` after a very long time, I felt the feeling again, "this is insane". 
+Look at the below example codes, then you may understand which differences between `nestia` and `@nestjs/swagger` and what the pure interface DTO type means.
 
 > info **Tip** 
 >
 > The below example code would be shown by clicking the arrow button or text.
+
+<details>
+    <summary>
+        Traditional DTO class using <code>@nestjs/swagger</code>
+    </summary>
+
+```typescript
+@@filename(SaleArticleComment)
+export class SaleArticleComment {
+    @ApiProperty({
+        description: 
+`Comment wrote on a sale related article.
+
+When an article of a sale has been enrolled, all of the participants like consumers and sellers can write a comment on that article. However, when the writer is a consumer, the consumer can hide its name through the annoymous option.
+
+Also, writing a reply comment for a specific comment is possible and in that case, the ISaleArticleComment.parent_id property would be activated.`
+    })
+    id: number;
+
+    @ApiProperty({
+        type: "number",
+        nullable: true,
+        description:
+`Parent comment ID.
+
+Only When this comment has been written as a reply.`
+    })
+    parent_id: number | null;
+
+    @ApiProperty({
+        type: "string",
+        description: "Type of the writer."
+    })
+    writer_type: "seller" | "consumer";
+
+    @ApiProperty({
+        type: "string",
+        nullable: true,
+        description:
+`Name of the writer.
+
+When this is a type of anonymous comment, writer name would be hidden.`
+    })
+    writer_name: string | null;
+
+    @ApiProperty({
+        type: "array",
+        items: {
+            schema: { $ref: getSchemaPath(SaleArticleComment.Content) }
+        },
+        description:
+`Contents of the comments.
+
+When the comment writer tries to modify content, it would not modify the comment content but would be accumulated Therefore, all of the people can read how the content has been changed.`
+    })
+    contents: SaleArticleComment.Content[];
+
+    @ApiProperty({
+        description: "Creation time."
+    })
+    created_at: string;
+}
+```
+</details>
 
 <details>
     <summary>
@@ -212,65 +277,101 @@ export namespace ISaleArticleComment {
 
 <details>
     <summary>
-        Traditional DTO class using <code>@nestjs/swagger</code>
+        Generic typed DTO
     </summary>
 
 ```typescript
-@@filename(SaleArticleComment)
-export class SaleArticleComment {
-    @ApiProperty({
-        description: 
-`Comment wrote on a sale related article.
-
-When an article of a sale has been enrolled, all of the participants like consumers and sellers can write a comment on that article. However, when the writer is a consumer, the consumer can hide its name through the annoymous option.
-
-Also, writing a reply comment for a specific comment is possible and in that case, the ISaleArticleComment.parent_id property would be activated.`
-    })
+@@filename(ISaleInquiry)
+/**
+ * Inquiry article.
+ * 
+ * Sub-type of article and super-type of question and answer.
+ * 
+ *  - List of the sub-types
+ *    - {@link ISaleQuestion}
+ *    - {@link ISaleReview}
+ * 
+ * @template Content Content type
+ * @author Jeongho Nam - https://github.com/samchon
+ */
+export interface ISaleInquiry<Content extends ISaleInquiry.IContent> 
+    extends ISaleArticle<Content> {
+    /**
+     * Primary Key.
+     */
     id: number;
 
-    @ApiProperty({
-        type: "number",
-        nullable: true,
-        description:
-`Parent comment ID.
+    /**
+     * Name of the writer.
+     */
+    writer: string;
 
-Only When this comment has been written as a reply.`
-    })
-    parent_id: number | null;
+    /**
+     * List of contents.
+     * 
+     * When the article writer tries to modify content, it would not modify the article
+     * content but would be accumulated. Therefore, all of the people can read how
+     * the content has been changed.
+     */
+    contents: Content[];
 
-    @ApiProperty({
-        type: "string",
-        description: "Type of the writer."
-    })
-    writer_type: "seller" | "consumer";
-
-    @ApiProperty({
-        type: "string",
-        nullable: true,
-        description:
-`Name of the writer.
-
-When this is a type of anonymous comment, writer name would be hidden.`
-    })
-    writer_name: string | null;
-
-    @ApiProperty({
-        type: "array",
-        items: {
-            schema: { $ref: getSchemaPath(SaleArticleComment.Content) }
-        },
-        description:
-`Contents of the comments.
-
-When the comment writer tries to modify content, it would not modify the comment content but would be accumulated Therefore, all of the people can read how the content has been changed.`
-    })
-    contents: SaleArticleComment.Content[];
-
-    @ApiProperty({
-        description: "Creation time."
-    })
-    created_at: string;
+    /**
+     * Creation time.
+     */
+    createdAat: string;
+        
+    /**
+     * Formal answer from the seller.
+     */
+    answer: ISaleInquiryAnswer | null;
 }
+export namespace ISaleInquiry {
+    /**
+     * Content info.
+     */
+    export interface IContent {
+        /**
+         * Primary Key
+         */
+        id: string;
+
+        /**
+         * Title of the content.
+         */
+        title: string;
+
+        /**
+         * Body of the content.
+         */
+        body: string;
+
+        /**
+         * Attached files.
+         */
+        files: IAttachmentFile[];
+
+        /**
+         * Creation time.
+         */
+        createdAt: string;
+    }
+}
+```
+</details>
+
+<details>
+    <summary>
+        Union typed DTO
+    </summary>
+
+```typescript
+@@filename(ISaleEntireArticle)
+/**
+ * Union type of the entire sub-type articles.
+ * 
+ * @author Jeongho Nam - https://github.com/samchon
+ */
+export type ISaleEntireArtcle = ISaleQuestion | ISaleReview;
 ```
 </details>
 
@@ -286,13 +387,6 @@ In the previous `Pure DTO Interface` corner, we've learned that `nestia` can use
 In the Controller case, it's the same with the upper interface story. With `nestia`, as using a generic typed interface as DTO was possible, defining a generic typed controller class is also possible, too. By defining the generic typed controller class as the super type class, you can reduce both duplicated code and duplicated description comments.
 
 Look at the below code and feel how `nestia` is powerful. It should be stated that, `@nestjs/swagger` can not easilsy construct such generic or union typed controller classes, either.
-
-  - Simple [`CustomerSaleArticleCommentsController`](https://github.com/samchon/nestia/blob/master/demo/simple/src/controllers/ConsumerSaleArticleCommentsController.ts)
-  - Generic controllers
-    - abstract controller, [`SaleInquiriesController<Content, Store, Json>`](https://github.com/samchon/nestia/tree/master/demo/generic/src/controllers/SaleInquiriesController.ts)
-    - 1st sub-type controller, [`ConsumerSaleQuestionsController`](https://github.com/samchon/nestia/tree/master/demo/generic/src/controllers/ConsumerSaleQuestionsController.ts)
-    - 2nd sub-type controller, [`ConsumerSaleQuestionsController`](https://github.com/samchon/nestia/tree/master/demo/generic/src/controllers/ConsumerSaleQuestionsController.ts)
-  - Union controller, [`ConsumerSaleEntireArticlesController`](https://github.com/samchon/nestia/tree/master/demo/union/src/controllers/ConsumerSaleEntireArticlesController.ts)
 
 ```typescript
 @@filename(src/controllers/SaleInquiriesController)
@@ -367,11 +461,6 @@ Looking at the SDK library file, generated by `nestia`, it seems perfect.
 Exact route method, path and parameters are constructed and DTO structures are perfectly imported. Also, descriptive comments written on the controller class methods, DTO interfaces and their properties are exactly revied in the SDK library.
 
 Furthermore, there's not any problem even when the generic typed abstract controller classes with generic typed DTO comes. `nestia` will specialize the generic arguments exactly, by analyzing your `NestJS` server code, in the compilation level.
-
-  - [simple/.../comments/index.ts](https://github.com/samchon/nestia/blob/master/demo/simple/src/api/functional/consumers/sales/articles/comments/index.ts)
-  - [generic/.../questions/index.ts](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/functional/consumers/sales/questions/index.ts)
-  - [generic/.../reviews/index.ts](https://github.com/samchon/nestia/tree/master/demo/generic/src/api/functional/consumers/sales/reviews/index.ts)
-  - [union/.../entire_articles/index.ts](https://github.com/samchon/nestia/tree/master/demo/union/src/api/functional/consumers/sales/entire_articles/index.ts)
 
 ```typescript
 @@filename(src/api/functional/consumers/sales/articles/reviews/index)
