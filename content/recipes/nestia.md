@@ -36,7 +36,7 @@ npx nestia swagger "src/controllers" --out "swagger.json"
 
 #### Preface
 
-Don't write any swagger comment and DTO decorator. Just run `nestia` up.
+With `nestia`, you don't need to write any swagger or class-validator decorators. All you need to do is use the `nestia` CLI as shown above.
 
   - No swagger comment/decorator
   - No DTO comment/decorator
@@ -105,9 +105,9 @@ export async function traceSaleQuestionAndComment(connection: api.IConnection): 
 
 `nestia` can utilize pure interface type as DTO.
 
-Unlike `@nestjs/swagger` which requires the DTO class with decorator functions, `nestia` can use the pure interface type directly. Also, `nestia` can utilize the pure descriptive comments, instead of using the `description` decorator. Furthermore, generic type, union/intersection type and even conditional type, `nestia` supports all of them.
+Unlike `@nestjs/swagger` which requires the DTO class with decorators, `nestia` can use the pure interface type directly. Also, `nestia` can utilize the pure descriptive comments, instead of using the `description` property of the decorators. Furthermore, `nestia` can even support generic types, union/intersection types and even conditional types.
 
-Look at the code below; you may see the difference between `nestia` and `@nestjs/swagger`, and thereby catch the meaning of the pure DTO interface.
+Look at the code below, you may see the difference between `nestia` and `@nestjs/swagger`, and thereby catch the meaning of the pure DTO interface.
 
 > info **Tip** 
 >
@@ -584,10 +584,6 @@ export namespace update
     export const stringify = createStringifier<Input>();
 }
 ```
-
-
-
-
 #### Swagger
 
 Building `Swagger` is also possible and even much powerful.
