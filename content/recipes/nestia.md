@@ -3,7 +3,6 @@
 [Nestia](https://github.com/samchon/nestia) is an evolved `SDK` and `Swagger` generator than ever. It does not require any DTO class. Instead, pure interface type can be the DTO. Furthermore, it supports generic, union and conditional types, even containing not only DTOs but also controllers.
 
   - [Guide Documents](https://github.com/samchon/nestia/wiki)
-> info **info** `nestia` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/samchon/nestia/issues/new/choose)
 
 > info **info** `nestia` is a third party package and is not managed by the `NestJS` core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/samchon/nestia/issues/new/choose).
 
