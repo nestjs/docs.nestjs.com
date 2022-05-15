@@ -45,6 +45,7 @@ Nest provides a set of short-hand **API response** decorators that inherit from 
 - `@ApiAcceptedResponse()`
 - `@ApiNoContentResponse()`
 - `@ApiMovedPermanentlyResponse()`
+- `@ApiFoundResponse()`
 - `@ApiBadRequestResponse()`
 - `@ApiUnauthorizedResponse()`
 - `@ApiNotFoundResponse()`
@@ -53,6 +54,7 @@ Nest provides a set of short-hand **API response** decorators that inherit from 
 - `@ApiNotAcceptableResponse()`
 - `@ApiRequestTimeoutResponse()`
 - `@ApiConflictResponse()`
+- `@ApiPreconditionFailedResponse()`
 - `@ApiTooManyRequestsResponse()`
 - `@ApiGoneResponse()`
 - `@ApiPayloadTooLargeResponse()`
