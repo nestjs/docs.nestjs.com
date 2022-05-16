@@ -431,7 +431,7 @@ export abstract class SaleInquiriesController<
      * @throw 401 unauthorized error when you've not logged in yet
      */
     @Post()
-    public store(
+    public async store(
             @Request() request: Request,
             @TypedParam("section", "string") section: string, 
             @TypedParam("saleId", "string") saleId: string,
@@ -460,7 +460,7 @@ export abstract class SaleInquiriesController<
      * @throw 403 forbidden error when the article is not yours
      */
     @Put(":id")
-    public update(
+    public async update(
             @Request() request: Request,
             @TypedParam("section", "string") section: string, 
             @TypedParam("saleId", "string") saleId: string,
