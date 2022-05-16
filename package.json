@@ -16,7 +16,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "docs": "npm run docs-only",
-    "docs-only": "ts-node -P tools/tsconfig.json tools/dgeni-cli.ts tools/transforms/nestjs-package/index"
+    "docs-only": "ts-node -P tools/tsconfig.json tools/dgeni-cli.ts tools/transforms/nestjs-package/index",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
@@ -76,10 +77,5 @@
     "typescript": "4.6.3",
     "uuid": "8.3.2",
     "yargs": "17.4.0"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -c .commitlintrc.json -E HUSKY_GIT_PARAMS"
-    }
   }
 }
