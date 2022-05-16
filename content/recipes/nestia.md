@@ -378,6 +378,27 @@ In the Controller case, it's same with the upper DTO story. With `nestia`, defin
 
 Look at the below code and feel how powerful `nestia` is. It should be stated that, `@nestjs/swagger` cannot construct such generic or union typed controller class.
 
+> info **Tip**
+> 
+> [typescript-is](https://github.com/woutervh-/typescript-is) can replace the class-validator with only one line.
+> 
+> ```typescript
+> @@filename(src/controllers/SaleQuestionsController)
+> import { Controller } from "@nestjs/common";
+> import { assertType } from "typescript-is";
+>
+> @Controller("consumers/:section/sales/:saleId/questions")
+> export class SaleQuestionsController
+>     extends SaleInquiriesController<
+>         ISaleQuestion,
+>         ISaleQuestion.IContent,
+>         ISaleQuestion.IStore> {
+>     public constructor() {
+>         super(input => assertType<ISaleQuestion.IStore>(input));
+>     }
+> }
+> ```
+
 ```typescript
 @@filename(src/controllers/SaleInquiriesController)
 import { Body, Post, Put } from "@nestjs/common";
@@ -387,9 +408,14 @@ import { TypedParam } from "nestia-helper";
 import { ISaleInquiry } from "@api/structures/ISaleInquiry";
 
 export abstract class SaleInquiriesController<
+        Json extends ISaleInquiry<Content>,
         Content extends ISaleInquiry.IContent,
-        Store extends ISaleInquiry.IStore,
-        Json extends ISaleInquiry<Content>> {
+        Store extends ISaleInquiry.IStore> {
+    /**
+     * Constructor with type assertion function.
+     */
+    protected constructor(private readonly assert: (input: Store) => void);
+    
     /**
      * Store a new inquiry.
      * 
@@ -410,7 +436,10 @@ export abstract class SaleInquiriesController<
             @TypedParam("section", "string") section: string, 
             @TypedParam("saleId", "string") saleId: string,
             @Body() input: Store
-        ): Promise<Json>;
+        ): Promise<Json> {
+        this.assert(input);
+        ...
+    }
 
     /**
      * Update an inquiry.
@@ -437,7 +466,10 @@ export abstract class SaleInquiriesController<
             @TypedParam("saleId", "string") saleId: string,
             @TypedParam("id", "number") id: number,
             @Body() input: Store
-        ): Promise<Json>;
+        ): Promise<Json> {
+        this.assert(input);
+        ...
+    }
 }
 ```
 
