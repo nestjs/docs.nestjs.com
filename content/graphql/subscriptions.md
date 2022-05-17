@@ -334,19 +334,22 @@ All subscriptions made with this connection will have the same `authToken`, and 
 If you're using the `graphql-ws` package, the signature of the `onConnect` callback will be slightly different:
 
 ```typescript
-subscriptions: {
-  'graphql-ws': {
-    onConnect: (context: Context<any>) => {
-      const { connectionParams, extra } = context;
-      // user validation will remain the same as in the example above
-      // when using with graphql-ws, additional context value should be stored in the extra field
-      extra.user = { user: {} };
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  subscriptions: {
+    'graphql-ws': {
+      onConnect: (context: Context<any>) => {
+        const { connectionParams, extra } = context;
+        // user validation will remain the same as in the example above
+        // when using with graphql-ws, additional context value should be stored in the extra field
+        extra.user = { user: {} };
+      },
     },
   },
   context: ({ extra }) => {
     // you can now access your additional context value through the extra field
-  }
-},
+  },
+});
 ```
 
 #### Enable subscriptions with Mercurius driver
