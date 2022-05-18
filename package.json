@@ -19,6 +19,9 @@
     "docs-only": "ts-node -P tools/tsconfig.json tools/dgeni-cli.ts tools/transforms/nestjs-package/index",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "packages/**/*.{ts,json}": []
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "13.3.2",
