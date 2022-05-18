@@ -72,6 +72,8 @@ To create a Nest application instance, we use the core `NestFactory` class. `Nes
 
 Note that a project scaffolded with the Nest CLI creates an initial project structure that encourages developers to follow the convention of keeping each module in its own dedicated directory.
 
+> info **Hint** By default, if any error happens while creating the application your app will exit with the code `1`. If you want to make it throw an error instead disable the option `abortOnError` (e.g., `NestFactory.create(AppModule, {{ '{' }} abortOnError: false {{ '}' }})`).
+
 <app-banner-courses></app-banner-courses>
 
 #### Platform
