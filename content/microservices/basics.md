@@ -33,7 +33,7 @@ async function bootstrap() {
       transport: Transport.TCP,
     },
   );
-  app.listen();
+  await app.listen();
 }
 bootstrap();
 @@switch
@@ -45,7 +45,7 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
     transport: Transport.TCP,
   });
-  app.listen(() => console.log('Microservice is listening'));
+  await app.listen();
 }
 bootstrap();
 ```
