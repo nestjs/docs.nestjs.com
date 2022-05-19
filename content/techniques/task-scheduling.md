@@ -52,6 +52,23 @@ export class TasksService {
 }
 ```
 
+Register the service in AppModule
+
+```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
+
+@Module({
+  imports: [
+    ScheduleModule.forRoot()
+  ],
+  providers: [TaskService],
+})
+export class AppModule {}
+```
+
+
 In this example, the `handleCron()` method will be called each time the current second is `45`. In other words, the method will be run once per minute, at the 45 second mark.
 
 The `@Cron()` decorator supports all standard [cron patterns](http://crontab.org/):
