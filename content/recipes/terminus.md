@@ -58,6 +58,14 @@ $ nest g controller health
 
 Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check.
 
+The `HTTPHealthIndicator` requires the `@nestjs/axios` package so make sure to have it installed:
+
+```bash
+$ npm i --save @nestjs/axios
+```
+
+Now we can setup our `HealthController`:
+
 ```typescript
 @@filename(health.controller)
 import { Controller, Get } from '@nestjs/common';
@@ -104,26 +112,26 @@ export class HealthController {
 @@filename(health.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
 import { HealthController } from './health.controller';
 
 @Module({
-  imports: [TerminusModule],
+  imports: [TerminusModule, HttpModule],
   controllers: [HealthController],
 })
 export class HealthModule {}
 @@switch
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
 import { HealthController } from './health.controller';
 
 @Module({
-  imports: [TerminusModule],
+  imports: [TerminusModule, HttpModule],
   controllers: [HealthController],
 })
 export class HealthModule {}
 ```
-
-> warning **Warning** `HttpHealthIndicator` requires the installation of the `@nestjs/axios` package and the import of `HttpModule`.
 
 Our health check will now send a _GET_-request to the `https://docs.nestjs.com` address. If
 we get a healthy response from that address, our route at `http://localhost:3000/health` will return
