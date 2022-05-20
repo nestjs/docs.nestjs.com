@@ -64,7 +64,7 @@ The `HTTPHealthIndicator` makes use of the `@nestjs/axios` package. In order to 
 $ npm i --save @nestjs/axios
 ```
 
-No we can setup our `HealthController`:
+Now we can setup our `HealthController`:
 
 ```typescript
 @@filename(health.controller)
