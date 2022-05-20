@@ -32,7 +32,11 @@ GraphQLModule.forRoot({
 }),
 ```
 
-In addition, you can create custom scalars. For example, to create a `Date` scalar, simply create a new class.
+In addition, you can create custom scalars.
+
+#### Override a default scalar
+
+To create a custom implementation for the `Date` scalar, simply create a new class.
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
@@ -73,6 +77,83 @@ Now we can use the `Date` type in our classes.
 ```typescript
 @Field()
 creationDate: Date;
+```
+
+#### Import a custom scalar
+
+To use a custom scalar, import and register it as a resolver. We’ll use the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type.
+
+Start by installing the package:
+
+```bash
+$ npm i --save graphql-type-json
+```
+
+Once the package is installed, we pass a custom resolver to the `forRoot()` method:
+
+```typescript
+import GraphQLJSON from 'graphql-type-json';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      resolvers: { JSON: GraphQLJSON },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Now we can use the `JSON` type in our classes.
+
+```typescript
+@Field((type) => GraphQLJSON)
+info: JSON;
+```
+
+For a suite of useful scalars, take a look at the [graphql-scalars](https://www.npmjs.com/package/graphql-scalars) package.
+
+#### Create a custom scalar
+
+To define a custom scalar, create a new `GraphQLScalarType` instance. We'll create a custom `UUID` scalar.
+
+```typescript
+const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function validate(uuid: unknown): string | never {
+  if (typeof uuid !== "string" || !regex.test(uuid)) {
+    throw new Error("invalid uuid");
+  }
+  return uuid;
+}
+
+export const CustomUuidScalar = new GraphQLScalarType({
+  name: 'UUID',
+  description: 'A simple UUID parser',
+  serialize: (value) => validate(value),
+  parseValue: (value) => validate(value),
+  parseLiteral: (ast) => validate(ast.value)
+})
+```
+
+We pass a custom resolver to the `forRoot()` method:
+
+```typescript
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      resolvers: { UUID: CustomUuidScalar },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Now we can use the `UUID` type in our classes.
+
+```typescript
+@Field((type) => CustomUuidScalar)
+uuid: string;
 ```
 
 #### Schema first
