@@ -63,7 +63,7 @@
     "concurrently": "7.1.0",
     "dgeni": "0.4.14",
     "dgeni-packages": "0.29.3",
-    "husky": "7.0.4",
+    "husky": "8.0.1",
     "jasmine-core": "4.0.1",
     "jasmine-spec-reporter": "7.0.0",
     "karma": "6.3.17",
