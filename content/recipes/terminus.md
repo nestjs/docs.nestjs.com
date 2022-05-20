@@ -58,7 +58,7 @@ $ nest g controller health
 
 Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check.
 
-The `HTTPHealthIndicator` makes use of the `@nestjs/axios` package. In order to use it, make sure you have the following package installed:
+The `HTTPHealthIndicator` requires the `@nestjs/axios` package so make sure to have it installed:
 
 ```bash
 $ npm i --save @nestjs/axios
