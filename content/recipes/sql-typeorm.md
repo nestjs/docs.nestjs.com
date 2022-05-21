@@ -18,23 +18,27 @@ The first step we need to do is to establish the connection with our database us
 
 ```typescript
 @@filename(database.providers)
-import { createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 export const databaseProviders = [
   {
-    provide: 'DATABASE_CONNECTION',
-    useFactory: async () => await createConnection({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'test',
-      entities: [
-          __dirname + '/../**/*.entity{.ts,.js}',
-      ],
-      synchronize: true,
-    }),
+    provide: 'DATA_SOURCE',
+    useFactory: async () => {
+      const dataSource = new DataSource({
+        type: 'mysql',
+        host: 'localhost',
+        port: 3306,
+        username: 'root',
+        password: 'root',
+        database: 'test',
+        entities: [
+            __dirname + '/../**/*.entity{.ts,.js}',
+        ],
+        synchronize: true,
+      });
+
+      return dataSource.initialize();
+    },
   },
 ];
 ```
@@ -95,14 +99,14 @@ The `Photo` entity belongs to the `photo` directory. This directory represents t
 
 ```typescript
 @@filename(photo.providers)
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Photo } from './photo.entity';
 
 export const photoProviders = [
   {
     provide: 'PHOTO_REPOSITORY',
-    useFactory: (connection: Connection) => connection.getRepository(Photo),
-    inject: ['DATABASE_CONNECTION'],
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(Photo),
+    inject: ['DATA_SOURCE'],
   },
 ];
 ```
