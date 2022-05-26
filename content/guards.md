@@ -129,6 +129,7 @@ Global guards are used across the whole application, for every controller and ev
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from 'roles.guard';
 
 @Module({
   providers: [
