@@ -18,6 +18,7 @@ As mentioned, **authorization** is a great use case for Guards because specific 
 @@filename(auth.guard)
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { validateRequest } from 'custom-authorization'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
