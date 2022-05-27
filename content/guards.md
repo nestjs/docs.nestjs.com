@@ -19,14 +19,14 @@ As mentioned, **authorization** is a great use case for Guards because specific 
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { validateRequest } from 'custom-authorization'
+import { validateRequest } from './my-custom-authorization'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
     return validateRequest(request);
   }
 }
@@ -37,8 +37,6 @@ import { Injectable } from '@nestjs/common';
 export class AuthGuard {
   async canActivate(context) {
     const request = context.switchToHttp().getRequest();
-    const ctx = context.switchToHttp();
-    const request = ctx.getRequest<Request>();
     return validateRequest(request);
   }
 }
