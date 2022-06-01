@@ -22,7 +22,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
   transport: Transport.REDIS,
   options: {
     host: 'localhost',
-    port: '6379,
+    port: 6379,
   },
 });
 @@switch
