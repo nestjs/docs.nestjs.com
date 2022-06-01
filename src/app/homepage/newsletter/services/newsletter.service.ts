@@ -7,10 +7,10 @@ import { catchError } from 'rxjs/operators';
 export class NewsletterService {
   constructor(private readonly httpClient: HttpClient) {}
 
-  async addToNewsletter(email: string): Promise<any> {
+  addToNewsletter(email: string): Promise<any> {
     const newsletterUrl =
       'https://z93f42xq2l.execute-api.us-east-2.amazonaws.com/Stage/newsletter?token=db1f899025b5a59a76b6b34b2a013893';
-    return await lastValueFrom(
+    return lastValueFrom(
       this.httpClient
         .post(newsletterUrl, { email })
         .pipe(catchError(() => EMPTY)),
