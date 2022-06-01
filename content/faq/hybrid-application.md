@@ -28,7 +28,7 @@ const microserviceRedis = app.connectMicroservice<MicroserviceOptions>({
   transport: Transport.REDIS,
   options: {
     host: 'localhost',
-    port: '6379,
+    port: 6379,
   },
 });
 
