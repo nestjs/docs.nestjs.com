@@ -20,7 +20,7 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "packages/**/*.{ts,json}": []
+    "**/*.{ts,json}": []
   },
   "private": true,
   "dependencies": {
