@@ -77,7 +77,7 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
         transport: Transport.REDIS,
         options: {
           host: 'localhost',
-          port: '6379,
+          port: 6379,
         }
       },
     ]),
