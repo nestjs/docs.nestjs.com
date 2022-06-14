@@ -261,21 +261,116 @@ One final note: for simplicity we used a string-based injection token (`'CONFIG_
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
 ```
 
-### Community Guidelines
+#### Example
+
+A full example of the code in this chapter can be found [here](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+
+#### Community guidelines
 
 You may have seen the use for methods like `forRoot`, `register`, and `forFeature` around some of the `@nestjs/` packages and may be wondering what the difference for all of these methods are. There is no hard rule about this, but the `@nestjs/` packages try to follow these guidelines:
 
 When creating a module with:
 
-* `register`, you are expecting to configure a dynamic module with a specific configuration for use only by the calling module . For example, with Nest's `@nestjs/axios`: `HttpModule.register({{ '{' }} baseUrl: 'someUrl' {{ '}' }})`. If, in another module you use `HttpModule.register({{ '{' }} baseUrl: 'somewhere else' {{ '}' }})`, it will have the different configuration. You can do this for as many modules as you want.
+- `register`, you are expecting to configure a dynamic module with a specific configuration for use only by the calling module. For example, with Nest's `@nestjs/axios`: `HttpModule.register({{ '{' }} baseUrl: 'someUrl' {{ '}' }})`. If, in another module you use `HttpModule.register({{ '{' }} baseUrl: 'somewhere else' {{ '}' }})`, it will have the different configuration. You can do this for as many modules as you want.
 
-* `forRoot`, you are expecting to configure a dynamic module once and reuse that configuration in multiple places (though possibly unknowingly as it's abstracted away). This is why you have one `GraphQLModule.forRoot()`, one `TypeOrmModule.forRoot()`, etc. 
+- `forRoot`, you are expecting to configure a dynamic module once and reuse that configuration in multiple places (though possibly unknowingly as it's abstracted away). This is why you have one `GraphQLModule.forRoot()`, one `TypeOrmModule.forRoot()`, etc.
 
-* `forFeature`, you are expecting to use the configuration of a dynamic module's `forRoot` but need to modify some configuration specific to the calling module's needs (i.e. which repository this module should have access to, or the context that a logger should use.)
-
+- `forFeature`, you are expecting to use the configuration of a dynamic module's `forRoot` but need to modify some configuration specific to the calling module's needs (i.e. which repository this module should have access to, or the context that a logger should use.)
 
 All of these, usually, have their `async` counterparts as well, `registerAsync`, `forRootAsync`, and `forFeatureAsync`, that mean the same thing, but use Nest's Dependency Injection for the configuration as well.
 
-### Example
+#### Configurable module builder
 
-A full example of the code in this chapter can be found [here](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+As manually creating highly configurable, dynamic modules that expose `async` methods (`registerAsync`, `forRootAsync`, etc.) is quite complicated, especially for newcomers, Nest exposes the `ConfigurableModuleBuilder` class that simplifies this process and lets you construct a module "blueprint" in just a few lines of code.
+
+For example, let's take the example we used above (`ConfigModule`) and convert it to use the `ConfigurableModuleBuilder`. Before we start, let's make sure we create a dedicated interface that represents what options our `ConfigModule` takes in.
+
+```typescript
+export interface ConfigModuleOptions {
+  folder: string;
+}
+```
+
+With this in place, create a new dedicated file (alongside the existing `config.module.ts` file) and name it `config.module-definition.ts`. In this file, let's utilize the `ConfigurableModuleBuilder` to construct `ConfigModule` definition.
+
+```typescript
+@@filename(config.module-definition)
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
+@@switch
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder().build();
+```
+
+Now let's open up the `config.module.ts` file and modify its implementation to leverage the auto-generated `ConfigurableModuleClass`:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ConfigService } from './config.service';
+import { ConfigurableModuleClass } from './config.module-definition';
+
+@Module({
+  providers: [ConfigService],
+  exports: [ConfigService],
+})
+export class ConfigModule extends ConfigurableModuleClass {}
+```
+
+Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now not only the `register` method (as previously with the custom implementation), but also the `registerAsync` method that lets consumers asynchronously configure that module, for example, by supplying async factories:
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.register({ folder: './config' }),
+    // or alternatively:
+    // ConfigModule.registerAsync({
+    //   useFactory: () => {
+    //     return {
+    //       folder: './config',
+    //     }
+    //   },
+    //   inject: [...any extra dependencies...]
+    // }),
+  ],
+})
+export class AppModule {}
+```
+
+Lastly, let's update the `ConfigService` class to inject the generated module options' provider instead of the `'CONFIG_OPTIONS'` that we used so far.
+
+```typescript
+@Injectable()
+export class ConfigService {
+  constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions) { ... }
+}
+```
+
+#### Custom method key
+
+`ConfigurableModuleClass` by default provides the `register` and its counterpart `registerAsync` methods. To use a different method name, use the `ConfigurableModuleBuilder#setClassMethodName` method, as follows:
+
+```typescript
+@@filename(config.module-definition)
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>().setClassMethodName('forRoot').build();
+@@switch
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder().setClassMethodName('forRoot').build();
+```
+
+This construction will instruct `ConfigurableModuleBuilder` to generate a class that exposes `forRoot` and `forRootAsync` instead.
+
+#### Custom options factory class
+
+Since the `registerAsync` method (or `forRootAsync` or any other name, depending on the configuration) lets consumer pass a provider definition that resolves to the module configuration, a library consumer could potentially supply a class to be used to construct the configuration object.
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.registerAsync({
+      useClass: ConfigModuleOptionsFactory,
+    }),
+  ],
+})
+export class AppModule {}
+```
