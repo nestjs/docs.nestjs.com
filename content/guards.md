@@ -18,7 +18,7 @@ As mentioned, **authorization** is a great use case for Guards because specific 
 @@filename(auth.guard)
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { validateRequest } from './my-custom-authorization'
 
 @Injectable()
@@ -127,7 +127,7 @@ Global guards are used across the whole application, for every controller and ev
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from 'roles.guard';
+import { RolesGuard } from './roles.guard';
 
 @Module({
   providers: [
