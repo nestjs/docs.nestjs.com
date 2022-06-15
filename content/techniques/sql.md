@@ -57,10 +57,6 @@ The `forRoot()` method supports all the configuration properties exposed by the 
     <td><code>autoLoadEntities</code></td>
     <td>If <code>true</code>, entities will be loaded automatically (default: <code>false</code>)</td>
   </tr>
-  <tr>
-    <td><code>keepConnectionAlive</code></td>
-    <td>If <code>true</code>, connection will not be closed on application shutdown (default: <code>false</code>)</td>
-  </tr>
 </table>
 
 > info **Hint** Learn more about the data source options [here](https://typeorm.io/data-source-options).
