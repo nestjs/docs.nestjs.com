@@ -379,10 +379,7 @@ Now, let's define the `ClickedLinkEvent` class, as follows:
 ```typescript
 @@filename(click-link-event.schema)
 @Schema()
-export class ClickedLinkEvent {
-  kind: string;
-  time: Date;
-
+export class ClickedLinkEvent extends OmitType(Event, ['kind']) {
   @Prop({ type: String, required: true })
   url: string;
 }
@@ -395,16 +392,15 @@ And `SignUpEvent` class:
 ```typescript
 @@filename(sign-up-event.schema)
 @Schema()
-export class SignUpEvent {
-  kind: string;
-  time: Date;
-
+export class SignUpEvent extends OmitType(Event, ['kind']) {
   @Prop({ type: String, required: true })
   user: string;
 }
 
 export const SignUpEventSchema = SchemaFactory.createForClass(SignUpEvent);
 ```
+
+We are using `OmitType` from `@nestjs/mapped-types` to add all properties from the `Event` class to the derived classes while also removing the discriminator key.
 
 With this in place, use the `discriminators` option to register a discriminator for a given schema. It works on both `MongooseModule.forFeature` and `MongooseModule.forFeatureAsync`:
 
