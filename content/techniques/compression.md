@@ -27,13 +27,13 @@ app.use(compression());
 If using the `FastifyAdapter`, you'll want to use [fastify-compress](https://github.com/fastify/fastify-compress):
 
 ```bash
-$ npm i --save fastify-compress
+$ npm i --save @fastify/compress
 ```
 
 Once the installation is complete, apply the fastify-compress middleware as global middleware.
 
 ```typescript
-import compression from 'fastify-compress';
+import compression from '@fastify/compress';
 // somewhere in your initialization file
 await app.register(compression);
 ```
@@ -46,4 +46,4 @@ To specify encodings, provide a second argument to `app.register`:
 await app.register(compression, { encodings: ['gzip', 'deflate'] });
 ```
 
-The above tells `fastify-compress` to only use gzip and deflate encodings, preferring gzip if the client supports both.
+The above tells `@fastify/compress` to only use gzip and deflate encodings, preferring gzip if the client supports both.
