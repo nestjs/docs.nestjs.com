@@ -35,7 +35,7 @@ Once the installation is complete, register the `fastify-csrf` plugin, as follow
 import fastifyCsrf from 'fastify-csrf';
 // ...
 // somewhere in your initialization file after registering some storage plugin
-app.register(fastifyCsrf);
+await app.register(fastifyCsrf);
 ```
 
 > warning **Warning** As explained in the `fastify-csrf` docs [here](https://github.com/fastify/fastify-csrf#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.
