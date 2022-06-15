@@ -11,7 +11,7 @@ With the gRPC transporter, Nest uses `.proto` files to dynamically bind clients 
 To start building gRPC-based microservices, first install the required packages:
 
 ```bash
-$ npm i --save @grpc/grpc-js @grpc/proto-loader
+$ npm i --save @grpc/grpc-js @grpc/proto-loader @nestjs/microservices
 ```
 
 #### Overview
