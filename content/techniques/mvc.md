@@ -129,7 +129,7 @@ A working example is available [here](https://github.com/nestjs/nest/tree/master
 As mentioned in this [chapter](/techniques/performance), we are able to use any compatible HTTP provider together with Nest. One such library is [Fastify](https://github.com/fastify/fastify). In order to create an MVC application with Fastify, we have to install the following packages:
 
 ```bash
-$ npm i --save fastify-static point-of-view handlebars
+$ npm i --save @fastify/static point-of-view handlebars
 ```
 
 The next steps cover almost the same process used with Express, with minor differences specific to the platform. Once the installation process is complete, open the `main.ts` file and update its contents:
