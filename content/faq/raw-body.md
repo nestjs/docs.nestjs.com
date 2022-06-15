@@ -1,6 +1,5 @@
 ### Raw body
 
-
 One of the most common use-case for having access to the raw request body is performing webhook signature verifications. Usually to perform webhook signature validations the unserialized request body is required to calculate an HMAC hash.
 
 #### Use with Express
