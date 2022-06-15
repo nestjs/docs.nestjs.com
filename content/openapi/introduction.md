@@ -10,10 +10,10 @@ To begin using it, we first install the required dependencies.
 $ npm install --save @nestjs/swagger swagger-ui-express
 ```
 
-If you use fastify, install `@fastify/swagger` instead of `swagger-ui-express`:
+If you use fastify, install `fastify-swagger` instead of `swagger-ui-express`:
 
 ```bash
-$ npm install --save @nestjs/swagger @fastify/swagger
+$ npm install --save @nestjs/swagger fastify-swagger
 ```
 
 #### Bootstrap

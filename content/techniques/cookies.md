@@ -58,13 +58,13 @@ findAll(@Res({ passthrough: true }) response: Response) {
 First install the required package:
 
 ```shell
-$ npm i @fastify/cookie
+$ npm i fastify-cookie
 ```
 
-Once the installation is complete, register the `@fastify/cookie` plugin:
+Once the installation is complete, register the `fastify-cookie` plugin:
 
 ```typescript
-import fastifyCookie from '@fastify/cookie';
+import fastifyCookie from 'fastify-cookie';
 
 // somewhere in your initialization file
 const app = await NestFactory.create<NestFastifyApplication>(
