@@ -396,7 +396,7 @@ onModuleInit() {
 
 #### Retriable exceptions
 
-Similar to other transporters, all unhandled exceptions are automatically wrapped into a `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exception be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message, instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
 
 For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
 
