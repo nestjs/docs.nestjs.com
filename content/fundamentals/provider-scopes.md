@@ -123,6 +123,8 @@ export class HelloService {
 }
 ```
 
+And then use it as follows:
+
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { HelloService } from './hello.service';
