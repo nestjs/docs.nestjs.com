@@ -19,7 +19,7 @@ Nest comes with a number of built-in pipes that you can use out-of-the-box. You 
 
 #### Built-in pipes
 
-Nest comes with eight pipes available out-of-the-box:
+Nest comes with nine pipes available out-of-the-box:
 
 - `ValidationPipe`
 - `ParseIntPipe`
@@ -29,6 +29,7 @@ Nest comes with eight pipes available out-of-the-box:
 - `ParseUUIDPipe`
 - `ParseEnumPipe`
 - `DefaultValuePipe`
+- `ParseFilePipe`
 
 They're exported from the `@nestjs/common` package.
 
