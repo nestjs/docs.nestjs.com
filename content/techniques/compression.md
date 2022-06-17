@@ -27,18 +27,18 @@ app.use(compression());
 If using the `FastifyAdapter`, you'll want to use [fastify-compress](https://github.com/fastify/fastify-compress):
 
 ```bash
-$ npm i --save fastify-compress
+$ npm i --save @fastify/compress
 ```
 
-Once the installation is complete, apply the fastify-compress middleware as global middleware.
+Once the installation is complete, apply the `@fastify/compress` middleware as global middleware.
 
 ```typescript
-import compression from 'fastify-compress';
+import compression from '@fastify/compress';
 // somewhere in your initialization file
 await app.register(compression);
 ```
 
-By default, fastify-compress will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli is quite efficient in terms of compression ratio, it's also quite slow. Due to this, you may want to tell fastify-compress to only use deflate and gzip to compress responses; you'll end up with larger responses but they'll be delivered much more quickly.
+By default, `@fastify/compress` will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli is quite efficient in terms of compression ratio, it's also quite slow. Due to this, you may want to tell fastify-compress to only use deflate and gzip to compress responses; you'll end up with larger responses but they'll be delivered much more quickly.
 
 To specify encodings, provide a second argument to `app.register`:
 
