@@ -5,7 +5,7 @@
   @extend .transition;
   @extend .box-sizing;
   @include transform(translateX(-100%));
-  padding: 90px 17px 40px 24px;
+  padding: 125px 17px 40px 24px;
   width: 250px;
   background: #f5f5f5;
   position: fixed !important;
@@ -27,7 +27,7 @@
     }
   }
   @include media(medium) {
-    padding: 85px 25px 20px 25px;
+    padding: 120px 25px 20px 25px;
   }
   @include media(small) {
     width: 100%;

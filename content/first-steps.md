@@ -72,6 +72,8 @@ To create a Nest application instance, we use the core `NestFactory` class. `Nes
 
 Note that a project scaffolded with the Nest CLI creates an initial project structure that encourages developers to follow the convention of keeping each module in its own dedicated directory.
 
+> info **Hint** By default, if any error happens while creating the application your app will exit with the code `1`. If you want to make it throw an error instead disable the option `abortOnError` (e.g., `NestFactory.create(AppModule, {{ '{' }} abortOnError: false {{ '}' }})`).
+
 <app-banner-courses></app-banner-courses>
 
 #### Platform
@@ -100,3 +102,11 @@ $ npm run start
 ```
 
 This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
+
+To watch for changes in your files, you can run the following command to start the application:
+
+```bash
+$ npm run start:dev
+```
+
+This command will watch your files, automatically recompiling and reloading the server.

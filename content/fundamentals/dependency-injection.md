@@ -236,37 +236,49 @@ Also, we have used the `ConfigService` class name as our token. For any class th
 The `useFactory` syntax allows for creating providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
 
 1. The factory function can accept (optional) arguments.
-2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order.
-
-The example below demonstrates this.
+2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. Also, these providers can be marked as optional. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order. The example below demonstrates this.
 
 ```typescript
 @@filename()
 const connectionFactory = {
   provide: 'CONNECTION',
-  useFactory: (optionsProvider: OptionsProvider) => {
+  useFactory: (optionsProvider: OptionsProvider, optionalProvider?: string) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider],
+  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \_____________/            \__________________/
+  //        This provider              The provider with this
+  //        is mandatory.              token can resolves to `undefined`.
 };
 
 @Module({
-  providers: [connectionFactory],
+  providers: [
+    connectionFactory,
+    OptionsProvider,
+    // { provide: 'SomeOptionalProvider', useValue: 'anything' },
+  ],
 })
 export class AppModule {}
 @@switch
 const connectionFactory = {
   provide: 'CONNECTION',
-  useFactory: (optionsProvider) => {
+  useFactory: (optionsProvider, optionalProvider) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider],
+  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \_____________/            \__________________/
+  //        This provider              The provider with this
+  //        is mandatory.              token can resolves to `undefined`.
 };
 
 @Module({
-  providers: [connectionFactory],
+  providers: [
+    connectionFactory,
+    OptionsProvider,
+    // { provide: 'SomeOptionalProvider', useValue: 'anything' },
+  ],
 })
 export class AppModule {}
 ```

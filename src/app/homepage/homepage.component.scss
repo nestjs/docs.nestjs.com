@@ -22,7 +22,7 @@
   //@include transform(translateX(250px));
   margin-left: 250px;
   width: calc(100% - 250px);
-  padding: 85px 85px 0;
+  padding: 120px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -38,7 +38,7 @@
     //@include transform(translateX(250px));
     margin-left: 250px;
     width: calc(100% - 250px);
-    padding: 85px 50px 0;
+    padding: 120px 50px 0;
     &.wide {
       width: 100%;
     }
@@ -47,7 +47,7 @@
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
-    padding: 85px 20px 0;
+    padding: 120px 20px 0;
   }
 
   @media print {
@@ -190,7 +190,7 @@
     }
   }
   .logo-sponsor {
-    width: 180px;
+    width: 160px;
     filter: grayscale(1);
 
     &:hover {

@@ -29,26 +29,35 @@ The WebSockets module is platform-agnostic, hence, you can bring your own librar
 
 The [socket.io](https://github.com/socketio/socket.io) package is wrapped in an `IoAdapter` class. What if you would like to enhance the basic functionality of the adapter? For instance, your technical requirements require a capability to broadcast events across multiple load-balanced instances of your web service. For this, you can extend `IoAdapter` and override a single method which responsibility is to instantiate new socket.io servers. But first of all, let's install the required package.
 
+> warning **Warning** To use socket.io with multiple load-balanced instances you either have to disable polling by setting `transports: ['websocket']` in your clients socket.io configuration or you have to enable cookie based routing in your load balancer. Redis alone is not enough. See [here](https://socket.io/docs/v4/using-multiple-nodes/#enabling-sticky-session) for more information.
+
 ```bash
-$ npm i --save socket.io-redis
+$ npm i --save redis socket.io @socket.io/redis-adapter
 ```
 
 Once the package is installed, we can create a `RedisIoAdapter` class.
 
 ```typescript
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import { RedisClient } from 'redis';
 import { ServerOptions } from 'socket.io';
-import { createAdapter } from 'socket.io-redis';
-
-const pubClient = new RedisClient({ host: 'localhost', port: 6379 });
-const subClient = pubClient.duplicate();
-const redisAdapter = createAdapter({ pubClient, subClient });
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from 'redis';
 
 export class RedisIoAdapter extends IoAdapter {
+  private adapterConstructor: ReturnType<typeof createAdapter>;
+
+  async connectToRedis(): Promise<void> {
+    const pubClient = createClient({ url: `redis://localhost:6379` });
+    const subClient = pubClient.duplicate();
+
+    await Promise.all([pubClient.connect(), subClient.connect()]);
+
+    this.adapterConstructor = createAdapter(pubClient, subClient);
+  }
+
   createIOServer(port: number, options?: ServerOptions): any {
     const server = super.createIOServer(port, options);
-    server.adapter(redisAdapter);
+    server.adapter(this.adapterConstructor);
     return server;
   }
 }
@@ -58,7 +67,10 @@ Afterward, simply switch to your newly created Redis adapter.
 
 ```typescript
 const app = await NestFactory.create(AppModule);
-app.useWebSocketAdapter(new RedisIoAdapter(app));
+const redisIoAdapter = new RedisIoAdapter(app);
+await redisIoAdapter.connectToRedis();
+
+app.useWebSocketAdapter(redisIoAdapter);
 ```
 
 #### Ws library

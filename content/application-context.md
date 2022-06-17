@@ -47,7 +47,7 @@ Following is a summary of the methods available for retrieving instance referenc
       <code>select()</code>
     </td>
     <td>
-      Navigates through the modules graph to pull out a specific instance from the selected module (used together with strict mode as described above).
+      Navigates through the module's graph to pull out a specific instance of the selected module (used together with strict mode as described above).
     </td>
   </tr>
 </table>
@@ -66,6 +66,6 @@ async function bootstrap() {
 bootstrap();
 ```
 
-#### Example 
+#### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/18-context).

@@ -1,6 +1,6 @@
 ### Interceptors
 
-An interceptor is a class annotated with the `@Injectable()` decorator. Interceptors should implement the `NestInterceptor` interface.
+An interceptor is a class annotated with the `@Injectable()` decorator, which implements the `NestInterceptor` interface.
 
 <figure><img src="/assets/Interceptors_1.png" /></figure>
 
@@ -236,7 +236,7 @@ export class ErrorsInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        catchError(err => throwError(new BadGatewayException())),
+        catchError(err => throwError(() => new BadGatewayException())),
       );
   }
 }
@@ -251,7 +251,7 @@ export class ErrorsInterceptor {
     return next
       .handle()
       .pipe(
-        catchError(err => throwError(new BadGatewayException())),
+        catchError(err => throwError(() => new BadGatewayException())),
       );
   }
 }
@@ -311,9 +311,9 @@ export class TimeoutInterceptor implements NestInterceptor {
       timeout(5000),
       catchError(err => {
         if (err instanceof TimeoutError) {
-          return throwError(new RequestTimeoutException());
+          return throwError(() => new RequestTimeoutException());
         }
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   };
@@ -330,9 +330,9 @@ export class TimeoutInterceptor {
       timeout(5000),
       catchError(err => {
         if (err instanceof TimeoutError) {
-          return throwError(new RequestTimeoutException());
+          return throwError(() => new RequestTimeoutException());
         }
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   };

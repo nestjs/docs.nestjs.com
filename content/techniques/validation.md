@@ -24,7 +24,7 @@ $ npm i --save class-validator class-transformer
 
 > info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
 
-Because this pipe uses the `class-validator` and `class-transformer` libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
+Because this pipe uses the [`class-validator`](https://github.com/typestack/class-validator) and [`class-transformer`](https://github.com/typestack/class-transformer) libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
 
 ```typescript
 export interface ValidationPipeOptions extends ValidatorOptions {
@@ -50,17 +50,17 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>skipUndefinedProperties</code></td>
     <td><code>boolean</code></td>
-    <td>If set to true, validator will skip validation of all properties that are null in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are undefined in the validating object.</td>
   </tr>
   <tr>
     <td><code>skipNullProperties</code></td>
     <td><code>boolean</code></td>
-    <td> If set to true, validator will skip validation of all properties that are null or undefined in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are null in the validating object.</td>
   </tr>
   <tr>
     <td><code>skipMissingProperties</code></td>
     <td><code>boolean</code></td>
-    <td>If set to true, validator will skip validation of all properties that are missing in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are null or undefined in the validating object.</td>
   </tr>
   <tr>
     <td><code>whitelist</code></td>

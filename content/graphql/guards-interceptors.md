@@ -88,7 +88,7 @@ async upvotePost(
 
 #### Execute enhancers at the field resolver level
 
-In the GraphQL context, Nest does not run **enhancers** (the generic name for interceptors, guards and filters) at the field level [see this issue](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only run for the top level `@Query()`/`@Mutation()` method. You can tell Nest to execute interceptors, guards or filters for methods annotated with `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`.  Pass it a list of `'interceptors'`, `'guards'`, and/or `'filters'` as appropriate:
+In the GraphQL context, Nest does not run **enhancers** (the generic name for interceptors, guards and filters) at the field level [see this issue](https://github.com/nestjs/graphql/issues/320#issuecomment-511193229): they only run for the top level `@Query()`/`@Mutation()` method. You can tell Nest to execute interceptors, guards or filters for methods annotated with `@ResolveField()` by setting the `fieldResolverEnhancers` option in `GqlModuleOptions`. Pass it a list of `'interceptors'`, `'guards'`, and/or `'filters'` as appropriate:
 
 ```typescript
 GraphQLModule.forRoot({
@@ -108,4 +108,40 @@ export function isResolvingGraphQLField(context: ExecutionContext): boolean {
   }
   return false;
 }
+```
+
+#### Creating a custom driver
+
+Nest provides two official drivers out-of-the-box: `@nestjs/apollo` and `@nestjs/mercurius`, as well as an API allowing developers to build new **custom drivers**. With a custom driver, you can integrate any GraphQL library or extend the existing integration, adding extra features on top.
+
+For example, to integrate the `express-graphql` package, you could create the following driver class:
+
+```typescript
+import { AbstractGraphQLDriver, GqlModuleOptions } from '@nestjs/graphql';
+import { graphqlHTTP } from 'express-graphql';
+
+class ExpressGraphQLDriver extends AbstractGraphQLDriver {
+  async start(options: GqlModuleOptions<any>): Promise<void> {
+    options = await this.graphQlFactory.mergeWithSchema(options);
+
+    const { httpAdapter } = this.httpAdapterHost;
+    httpAdapter.use(
+      '/graphql',
+      graphqlHTTP({
+        schema: options.schema,
+        graphiql: true,
+      }),
+    );
+  }
+
+  async stop() {}
+}
+```
+
+And then use it as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  driver: ExpressGraphQLDriver,
+});
 ```

@@ -3,6 +3,7 @@ import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-bash';
 
 import 'rxjs/internal/operators/mergeMap';
 import 'rxjs/internal/operators/delay';

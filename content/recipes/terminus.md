@@ -31,17 +31,19 @@ A health check represents a summary of **health indicators**. A health indicator
 - `MemoryHealthIndicator`
 - `DiskHealthIndicator`
 
-To get started with our first health check, we need to import the `TerminusModule` into our `AppModule`.
+To get started with our first health check, let's create the `HealthModule` and import the `TerminusModule` into it in its imports array.
+
+> info **Hint** To create the module using the [Nest CLI](cli/overview), simply execute the `$ nest g module health` command.
 
 ```typescript
-@@filename(app.module)
+@@filename(health.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
   imports: [TerminusModule]
 })
-export class AppModule {}
+export class HealthModule {}
 ```
 
 Our healthcheck(s) can be executed using a [controller](/controllers), which can be easily set up using the [Nest CLI](cli/overview).
@@ -55,6 +57,14 @@ $ nest g controller health
 #### HTTP Healthcheck
 
 Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and created a new controller, we are ready to create a health check.
+
+The `HTTPHealthIndicator` requires the `@nestjs/axios` package so make sure to have it installed:
+
+```bash
+$ npm i --save @nestjs/axios
+```
+
+Now we can setup our `HealthController`:
 
 ```typescript
 @@filename(health.controller)
@@ -98,7 +108,30 @@ export class HealthController {
 }
 ```
 
-> warning **Warning** `HttpHealthIndicator` requires the installation of the `@nestjs/axios` package and the import of `HttpModule`.
+```typescript
+@@filename(health.module)
+import { Module } from '@nestjs/common';
+import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
+import { HealthController } from './health.controller';
+
+@Module({
+  imports: [TerminusModule, HttpModule],
+  controllers: [HealthController],
+})
+export class HealthModule {}
+@@switch
+import { Module } from '@nestjs/common';
+import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
+import { HealthController } from './health.controller';
+
+@Module({
+  imports: [TerminusModule, HttpModule],
+  controllers: [HealthController],
+})
+export class HealthModule {}
+```
 
 Our health check will now send a _GET_-request to the `https://docs.nestjs.com` address. If
 we get a healthy response from that address, our route at `http://localhost:3000/health` will return
@@ -280,7 +313,7 @@ export class DogHealthIndicator extends HealthIndicator {
 The next thing we need to do is register the health indicator as a provider.
 
 ```typescript
-@@filename(app.module)
+@@filename(health.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { DogHealthIndicator } from './dog.health';
@@ -290,10 +323,10 @@ import { DogHealthIndicator } from './dog.health';
   imports: [TerminusModule],
   providers: [DogHealthIndicator]
 })
-export class AppModule { }
+export class HealthModule { }
 ```
 
-> info **Hint** In a real-world application the `DogHealthIndicator` should be provided in a separate module, for example, `DogModule`, which then will be imported by the `AppModule`.
+> info **Hint** In a real-world application the `DogHealthIndicator` should be provided in a separate module, for example, `DogModule`, which then will be imported by the `HealthModule`.
 
 The last required step is to add the now available health indicator in the required health check endpoint. For that, we go back to our `HealthController` and add it to our `check` function.
 

@@ -51,7 +51,7 @@ The `forRoot()` method is used to register a `bull` package configuration object
 
 All the options are optional, providing detailed control over queue behavior. These are passed directly to the Bull `Queue` constructor. Read more about these options [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue).
 
-To register a queue, import the `BullModule#registerQueue()` dynamic module, as follows:
+To register a queue, import the `BullModule.registerQueue()` dynamic module, as follows:
 
 ```typescript
 BullModule.registerQueue({
@@ -222,7 +222,7 @@ export class AudioConsumer {
     let progress = 0;
     for (i = 0; i < 100; i++) {
       await doSomething(job.data);
-      progress += 10;
+      progress += 1;
       await job.progress(progress);
     }
     return {};

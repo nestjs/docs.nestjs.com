@@ -10,38 +10,49 @@ A directive is an identifier preceded by a `@` character, optionally followed by
 
 #### Custom directives
 
-To create a custom schema directive, declare a class which extends the `SchemaDirectiveVisitor` class exported from the `@graphql-tools/utils` package.
+To instruct what should happen when Apollo/Mercurius encounters your directive, you can create a transformer function. This function uses the `mapSchema` function to iterate through locations in your schema (field definitions, type definitions, etc.) and perform corresponding transformations.
 
 ```typescript
-import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
-import { defaultFieldResolver, GraphQLField } from 'graphql';
+import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { defaultFieldResolver, GraphQLSchema } from 'graphql';
 
-export class UpperCaseDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field: GraphQLField<any, any>) {
-    const { resolve = defaultFieldResolver } = field;
-    field.resolve = async function(...args) {
-      const result = await resolve.apply(this, args);
-      if (typeof result === 'string') {
-        return result.toUpperCase();
+export function upperDirectiveTransformer(
+  schema: GraphQLSchema,
+  directiveName: string,
+) {
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
+      const upperDirective = getDirective(
+        schema,
+        fieldConfig,
+        directiveName,
+      )?.[0];
+
+      if (upperDirective) {
+        const { resolve = defaultFieldResolver } = fieldConfig;
+
+        // Replace the original resolver with a function that *first* calls
+        // the original resolver, then converts its result to upper case
+        fieldConfig.resolve = async function (source, args, context, info) {
+          const result = await resolve(source, args, context, info);
+          if (typeof result === 'string') {
+            return result.toUpperCase();
+          }
+          return result;
+        };
+        return fieldConfig;
       }
-      return result;
-    };
-  }
+    },
+  });
 }
 ```
 
-> info **Hint** Note that directives cannot be decorated with the `@Injectable()` decorator. Thus, they are not able to inject dependencies.
-
-> warning **Warning** `SchemaDirectiveVisitor` is exported from the `@graphql-tools/utils` package. Note that the 8.x release of `graphql-tools` removes this export and provides a different and incompatible approach to directives, so make sure to install `@graphql-tools/utils@^7` in your project.
-
-Now, register the `UpperCaseDirective` in the `GraphQLModule.forRoot()` method:
+Now, apply the `upperDirectiveTransformer` transformation function in the `GraphQLModule#forRoot` method using the `transformSchema` function:
 
 ```typescript
 GraphQLModule.forRoot({
   // ...
-  schemaDirectives: {
-    upper: UpperCaseDirective,
-  },
+  transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
 });
 ```
 
@@ -69,7 +80,26 @@ async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
 }
 ```
 
-Directives applied through the `@Directive()` decorator will not be reflected in the generated schema definition file.
+> warn **Warning** Directives applied through the `@Directive()` decorator will not be reflected in the generated schema definition file.
+
+Lastly, make sure to declare directives in the `GraphQLModule`, as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  // ...,
+  transformSchema: schema => upperDirectiveTransformer(schema, 'upper'),
+  buildSchemaOptions: {
+    directives: [
+      new GraphQLDirective({
+        name: 'upper',
+        locations: [DirectiveLocation.FIELD_DEFINITION],
+      }),
+    ],
+  },
+}),
+```
+
+> info **Hint** Both `GraphQLDirective` and `DirectiveLocation` are exported from the `graphql` package.
 
 #### Schema first
 

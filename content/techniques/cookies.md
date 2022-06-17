@@ -4,7 +4,7 @@ An **HTTP cookie** is a small piece of data stored by the user's browser. Cookie
 
 #### Use with Express (default)
 
-First install the required package (and its types for TypeScript users):
+First install the [required package](https://github.com/expressjs/cookie-parser) (and its types for TypeScript users):
 
 ```shell
 $ npm i cookie-parser
@@ -71,7 +71,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
 );
-app.register(fastifyCookie, {
+await app.register(fastifyCookie, {
   secret: 'my-secret', // for cookies signature
 });
 ```

@@ -1,6 +1,6 @@
 ### Pipes
 
-A pipe is a class annotated with the `@Injectable()` decorator. Pipes should implement the `PipeTransform` interface.
+A pipe is a class annotated with the `@Injectable()` decorator, which implements the `PipeTransform` interface.
 
 <figure>
   <img src="/assets/Pipe_1.png" />

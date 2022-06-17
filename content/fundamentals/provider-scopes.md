@@ -48,9 +48,9 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `scop
 
 > info **Hint** Import the `Scope` enum from `@nestjs/common`
 
-> warning **Notice** Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times.
-
 Singleton scope is used by default, and need not be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
+
+> warning **Notice** Websocket Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times. The limitation also applies to some other providers, like [_Passport strategies_](../security/authentication#request-scoped-strategies) or _Cron controllers_.
 
 #### Controller scope
 
@@ -68,9 +68,11 @@ export class CatsController {}
 
 #### Scope hierarchy
 
-Scope bubbles up the injection chain. A controller that depends on a request-scoped provider will, itself, be request-scoped.
+The `REQUEST` scope bubbles up the injection chain. A controller that depends on a request-scoped provider will, itself, be request-scoped.
 
 Imagine the following dependency graph: `CatsController <- CatsService <- CatsRepository`. If `CatsService` is request-scoped (and the others are default singletons), the `CatsController` will become request-scoped as it is dependent on the injected service. The `CatsRepository`, which is not dependent, would remain singleton-scoped.
+
+Transient-scoped dependencies don't follow that pattern. If a singleton-scoped `DogsService` injects a transient `LoggerService` provider, it will receive a fresh instance of it. However, `DogsService` will stay singleton-scoped, so injecting it anywhere would _not_ resolve to a new instance of `DogsService`. In case it's desired behavior, `DogsService` must be explicitly marked as `TRANSIENT` as well.
 
 <app-banner-courses></app-banner-courses>
 
@@ -102,6 +104,44 @@ export class CatsService {
 ```
 
 You then configure your `context` value (in the `GraphQLModule`) to contain `request` as its property.
+
+#### Inquirer provider
+
+If you want get the class where a provider was constructed, for instance in logging or metrics providers, you can inject the `INQUIRER` token.
+
+```typescript
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { INQUIRER } from '@nestjs/core';
+
+@Injectable({ scope: Scope.TRANSIENT })
+export class HelloService {
+  constructor(@Inject(INQUIRER) private parentClass: object) {}
+
+  sayHello(message: string) {
+    console.log(`${this.parentClass?.constructor?.name}: ${message}`);
+  }
+}
+```
+
+And then use it as follows:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { HelloService } from './hello.service';
+
+@Injectable()
+export class AppService {
+  constructor(private helloService: HelloService) {}
+
+  getRoot(): string {
+    this.helloService.sayHello('My name is getRoot');
+
+    return 'Hello world!';
+  }
+}
+```
+
+In the example above when `AppService#getRoot` is called, `"AppService: My name is getRoot"` will be logged to the console.
 
 #### Performance
 

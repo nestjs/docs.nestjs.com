@@ -6,7 +6,7 @@ As you build out features like CRUD (Create/Read/Update/Delete) it's often usefu
 
 #### Partial
 
-When building input validation types (also called DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
+When building input validation types (also called Data Transfer Objects or DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
 
 Nest provides the `PartialType()` utility function to make this task easier and minimize boilerplate.
 
@@ -35,7 +35,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {}
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/graphql` package.
 
-The `PartialType()` function takes an optional second argument that is a reference to a decorator factory.  This argument can be used to change the decorator function applied to the resulting (child) class.  If not specified, the child class effectively uses the same decorator as the **parent** class (the class referenced in the first argument). In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator.  Since we want `UpdateUserInput` to also be treated as if it were decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types are different, (e.g., the parent is decorated with `@ObjectType`), we would  pass `InputType` as the second argument. For example:
+The `PartialType()` function takes an optional second argument that is a reference to a decorator factory. This argument can be used to change the decorator function applied to the resulting (child) class. If not specified, the child class effectively uses the same decorator as the **parent** class (the class referenced in the first argument). In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator. Since we want `UpdateUserInput` to also be treated as if it were decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types are different, (e.g., the parent is decorated with `@ObjectType`), we would pass `InputType` as the second argument. For example:
 
 ```typescript
 @InputType()
@@ -64,7 +64,9 @@ We can pick a set of properties from this class using the `PickType()` utility f
 
 ```typescript
 @InputType()
-export class UpdateEmailInput extends PickType(CreateUserInput, ['email'] as const) {}
+export class UpdateEmailInput extends PickType(CreateUserInput, [
+  'email',
+] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/graphql` package.
@@ -91,7 +93,9 @@ We can generate a derived type that has every property **except** `email` as sho
 
 ```typescript
 @InputType()
-export class UpdateUserInput extends OmitType(CreateUserInput, ['email'] as const) {}
+export class UpdateUserInput extends OmitType(CreateUserInput, [
+  'email',
+] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/graphql` package.
@@ -114,7 +118,7 @@ class CreateUserInput {
 export class AdditionalUserInfo {
   @Field()
   firstName: string;
-  
+
   @Field()
   lastName: string;
 }
@@ -124,7 +128,10 @@ We can generate a new type that combines all properties in both types.
 
 ```typescript
 @InputType()
-export class UpdateUserInput extends IntersectionType(CreateUserInput, AdditionalUserInfo) {}
+export class UpdateUserInput extends IntersectionType(
+  CreateUserInput,
+  AdditionalUserInfo,
+) {}
 ```
 
 > info **Hint** The `IntersectionType()` function is imported from the `@nestjs/graphql` package.

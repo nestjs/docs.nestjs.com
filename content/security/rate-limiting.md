@@ -35,13 +35,46 @@ Once the module has been imported, you can then choose how you would like to bin
 
 There may be a time where you want to bind the guard to a controller or globally, but want to disable rate limiting for one or more of your endpoints. For that, you can use the `@SkipThrottle()` decorator, to negate the throttler for an entire class or a single route. The `@SkipThrottle()` decorator can also take in a boolean for if there is a case where you want to exclude _most_ of a controller, but not every route.
 
-There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. The order for this decorator does matter, as the arguments are in the order of `limit, ttl`.
+```typescript
+@SkipThrottle()
+@Controller('users')
+export class UsersController {}
+```
+
+This `@SkipThrottle()` decorator can be used to skip a route or a class or to negate the skipping of a route in a class that is skipped.
+
+```typescript
+@SkipThrottle()
+@Controller('users')
+export class UsersController {
+  // Rate limiting is applied to this route.
+  @SkipThrottle(false)
+  dontSkip() {
+    return "List users work with Rate limiting.";
+  }
+  // This route will skip rate limiting.
+  doSkip() {
+    return "List users work without Rate limiting.";
+  }
+}
+```
+
+There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. The order for this decorator does matter, as the arguments are in the order of `limit, ttl`. You have to configure it like this:
+
+```typescript
+// Override default configuration for Rate limiting and duration.
+@Throttle(3, 60)
+@Get()
+findAll() {
+  return "List users works with custom rate limiting.";
+}
+```
 
 #### Proxies
 
-If your application runs behind a proxy server, check the specific HTTP adapter options ([express](http://expressjs.com/en/guide/behind-proxies.html) and [fastify](https://www.fastify.io/docs/latest/Server/#trustproxy)) for the `trust proxy` option and enable it. Doing so will allow you to get the original IP address from the `X-Forward-For` header, and you can override the `getTracker()` method to pull the value from the header rather than from `req.ip`. The following example works with both express and fastify:
+If your application runs behind a proxy server, check the specific HTTP adapter options ([express](http://expressjs.com/en/guide/behind-proxies.html) and [fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy)) for the `trust proxy` option and enable it. Doing so will allow you to get the original IP address from the `X-Forwarded-For` header, and you can override the `getTracker()` method to pull the value from the header rather than from `req.ip`. The following example works with both express and fastify:
 
-```ts
+```typescript
 // throttler-behind-proxy.guard.ts
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
@@ -59,7 +92,7 @@ import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
 @UseGuards(ThrottlerBehindProxyGuard)
 ```
 
-> info **Hint** You can find the API of the `req` Request object for express [here](https://expressjs.com/en/api.html#req.ips) and for fastify [here](https://www.fastify.io/docs/latest/Request/).
+> info **Hint** You can find the API of the `req` Request object for express [here](https://expressjs.com/en/api.html#req.ips) and for fastify [here](https://www.fastify.io/docs/latest/Reference/Request/).
 
 #### Websockets
 
@@ -100,7 +133,7 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
   getRequestResponse(context: ExecutionContext) {
     const gqlCtx = GqlExecutionContext.create(context);
     const ctx = gqlCtx.getContext();
-    return { req: ctx.req, res: ctx.res }
+    return { req: ctx.req, res: ctx.res };
   }
 }
 ```

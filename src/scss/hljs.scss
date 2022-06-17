@@ -117,6 +117,11 @@ pre[class*='language-'] {
   color: white;
 }
 
+.language-bash .token.function,
+.language-bash .token.builtin {
+  color: #fff;
+}
+
 .token.selector,
 .token.attr-name,
 .token.string,
