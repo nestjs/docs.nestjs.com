@@ -263,3 +263,61 @@ export class AppModule {}
 ```
 
 The [Dynamic modules](/fundamentals/dynamic-modules) chapter covers this topic in greater detail, and includes a [working example](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+
+#### Troubleshooting
+
+The most common problem when you are new to Nest is importing and exporting services to be used in other modules.
+
+Do not import services from modules directly into another module, instead import modules into other modules.
+
+To make this more clear, let's look at a simple example.
+
+Imagine we have `ProductModule` that contains `ProductService`, and a second module `OrderModule` containing the `OrderService`. `OrderService` is dependent on `ProductService` to create an order.
+
+If you import `ProductService` directly into the imports of `OrderModule` like this:
+```
+@Module({
+  imports: [
+    ProductService // This is incorrectly imported
+  ],
+  providers: [
+    OrderService
+  ],
+  exports: [OrderService],
+})
+export class OrderModule {}
+```
+
+You will get the following error:
+```
+ERROR [ExceptionHandler] Nest can't resolve dependencies of the OrderService (?). Please make sure that the argument ProductService at index [0] is available in the OrderService context.
+```
+
+Instead you need to export the service in `ProductModule` like this:
+
+```
+@Module({
+  imports: [],
+  providers: [
+    ProductService
+  ],
+  exports: [ProductService], // Export ProductService
+})
+export class ProductModule {}
+```
+
+Then import the module in `OrderModule`:
+```
+@Module({
+  imports: [
+    ProductModule // Module imported, not the service
+  ],
+  providers: [
+    OrderService
+  ],
+  exports: [OrderService], // Export ProductService
+})
+export class OrderModule {}
+```
+
+This should resolve the error and give `OrderService` access to `ProductService`.
