@@ -199,6 +199,10 @@
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
     }
+    {
+      "logo": "/assets/logo/rebellionpay.png",
+      "url": "https://www.rebellionpay.com/"
+    }
   ],
   "Body": [
     "https://gorrion.io/",
