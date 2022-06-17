@@ -537,7 +537,7 @@ export class AppModule {}
 >   inject: ...,
 > }),
 > ```
-> See [`@nestjs/typeorm` issue](https://github.com/nestjs/typeorm/issues/86).
+> See [this issue](https://github.com/nestjs/typeorm/issues/86) for more details.
 
 At this point, you have `User` and `Album` entities registered with their own data source. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which data source should be used. If you do not pass any data source name, the `default` data source is used.
 
