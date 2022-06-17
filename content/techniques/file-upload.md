@@ -41,6 +41,113 @@ The `FileInterceptor()` decorator takes two arguments:
 
 > warning **Warning** `FileInterceptor()` may not be compatible with third party cloud providers like Google Firebase or others.
 
+#### File Validation
+
+Often times it can be useful to validate incoming file metadata, like file size or file mimetype. You can create your own [`Pipes`](https://docs.nestjs.com/pipes) and add them to the `FileInterceptor` decorator to achieve this, considering the `value` inside each pipe will be the file object. The example below demonstrates how a basic file size validator pipe could be implemented:
+
+```typescript
+
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+
+@Injectable()
+export class ValidationPipe implements PipeTransform {
+  transform(value: any, metadata: ArgumentMetadata) {
+    // "value" is actually the object containing the file's attributes and metadata.
+    const oneKb = 1000
+    return value.size < oneKb
+  }
+}
+
+```
+
+Nest provides a built-in pipe to handle common use cases and facilitate / standardize the addition of new ones. This pipe is called `ParseFilePipe`, and looks like the following:
+
+```typescript
+  @Post('file')
+  uploadFileAndPassValidation(
+    @Body() body: SampleDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          // ... Set of file validator instances here
+        ]
+      })
+    )
+    file: Express.Multer.File,
+  ) {
+    return {
+      body,
+      file: file.buffer.toString(),
+    };
+  }
+```
+
+As you can see it's necessary to specify an array of file validators as one of the `ParseFilePipe`'s options. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional **optional** options:
+
+| `errorHttpStatusCode` | The HTTP status code to be thrown in case **any** validator fails. Default is `400` (BAD REQUEST). |
+|---------------------------------|----------------------------------------------------------------------------------------------------|
+| `exceptionFactory`    | A factory which receives the error message and returns an error.                                   |
+
+Now, back to the `FileValidator` interface. To use validators in this pipe you have to either use built-in implementations or provide your own custom `FileValidator`. The code below describes such interface and its explanation:
+
+```typescript
+export abstract class FileValidator<TValidationOptions = Record<string, any>> {
+  constructor(protected readonly validationOptions: TValidationOptions) {}
+
+  /**
+   * Indicates if this file should be considered valid, according to the options passed in the constructor.
+   * @param file the file from the request object
+   */
+  abstract isValid(file?: any): boolean | Promise<boolean>;
+
+  /**
+   * Builds an error message in case the validation fails.
+   * @param file the file from the request object
+   */
+  abstract buildErrorMessage(file: any): string;
+}
+```
+
+> info **Hint** The `FileValidator` interfaces supports async validation via its `isValid` function.
+
+So, a `FileValidator` is basically a class that has access to the file object and validates it according to the options the client provided. Nest has two built-in `FileValidator` implementations you can use:
+
+- `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
+- `FileTypeValidator` - Checks if a given file's mimetype matches the given value. 
+
+To understand how these can be used in conjunction with the beforementioned `FileParsePipe`, we'll an altered snippet of the last presented example:
+
+```typescript
+@UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1000 }),
+          new FileTypeValidator({ fileType: 'jpeg' })
+        ]
+      })
+    )
+    file: Express.Multer.File,
+```
+> info **Hint** If the number of validators increase largely or their options are cluttering the file, you can define this array in a separate file and import it here as a named constant like `fileValidators`.
+
+As a final note, you can use the special `ParseFilePipeBuilder` class to create your validators. Using it as shown below you can avoid manual instantiation of each validator and just pass their options directly:
+
+```typescript
+@UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'jpeg',
+        })
+        .addMaxSizeValidator({
+          maxSize: 1000
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+        }),
+    )
+    file: Express.Multer.File,
+```
+
 #### Array of files
 
 To upload an array of files (identified with a single field name), use the `FilesInterceptor()` decorator (note the plural **Files** in the decorator name). This decorator takes three arguments:
