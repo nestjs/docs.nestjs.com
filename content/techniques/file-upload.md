@@ -115,7 +115,7 @@ So, a `FileValidator` is basically a class that has access to the file object an
 - `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
 - `FileTypeValidator` - Checks if a given file's mimetype matches the given value. 
 
-To understand how these can be used in conjunction with the beforementioned `FileParsePipe`, we'll an altered snippet of the last presented example:
+To understand how these can be used in conjunction with the beforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
 
 ```typescript
 @UploadedFile(
