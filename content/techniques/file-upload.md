@@ -108,7 +108,7 @@ export abstract class FileValidator<TValidationOptions = Record<string, any>> {
 }
 ```
 
-> info **Hint** The `FileValidator` interfaces supports async validation via its `isValid` function.
+> info **Hint** The `FileValidator` interfaces supports async validation via its `isValid` function. To leverage type security, you can also type the `file` parameter as `Express.Multer.File` in case you are using express (default) as a driver.
 
 So, a `FileValidator` is basically a class that has access to the file object and validates it according to the options the client provided. Nest has two built-in `FileValidator` implementations you can use:
 
