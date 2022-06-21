@@ -108,3 +108,63 @@ You then configure your `context` value (in the `GraphQLModule`) to contain `req
 #### Performance
 
 Using request-scoped providers will have an impact on application performance. While Nest tries to cache as much metadata as possible, it will still have to create an instance of your class on each request. Hence, it will slow down your average response time and overall benchmarking result. Unless a provider must be request-scoped, it is strongly recommended that you use the default singleton scope.
+
+> info **Hint** Although it all sounds somewhat intimidating, a properly designed application that leverages request-scoped providers should not slow down by more than ~5% latency-wise.
+
+#### Durable providers
+
+Request-scoped providers, as mentioned in the section above, may lead to increased latency since having at least 1 request-scoped provider (injected into the controller instance, or deeper - injected into one of its providers) makes the controller request-scoped as well. That means, it must be recreated (instantiated) per each individual request (and garbage collected afterwards). Now, that also means, that for let's say 30k requests in paralell, there will be 30k ephemeral instances of the controller (and its request-scoped providers).
+
+Having a common provider that most providers depend on (think of a database connection, or a logger service), automatically converts all those providers to request-scoped providers as well. This can pose a challenge for **multi-tenant applications**, especially for those that have a central request-scoped "data source" provider that grabs headers/token from the request object and based on its values, retrieves the corresponding database connection/schema (specific to the tenant).
+
+For instance, let's say you have an application alternately used by 10 different customers. Each customer has its **own dedicated data source**, and you want to make sure customer A will never be able to reach customer's B database. For this, you could declare a request-scoped "data source" provider that - based on the request object - determines what's the "current customer" and retrieves its corresponding database. With this approach, you can turn your application into a multi-tenant application in just a few minutes. The major downside is - since most likely a large chunk of your application' components rely on the "data source" provider, they will implicitly become "request-scoped", and therefore certainly impacting your app performance.
+
+But what if we had a better solution? Since we only have 10 customers, couldn't we have 10 individual [DI sub-trees](/fundamentals/module-ref#resolving-scoped-providers) per customer (instead of recreating each tree per request)? If your providers don't rely on any property that's truly unique for each consecutive request (e.g., request UUID) but instead there're some specific attributes that let us aggregate (classify) them, there's no reason to _recreate DI sub-tree_ on every incoming request.
+
+And that's when the **durable providers** may come in handy.
+
+Before we start flagging providers as durable, we must first register a **strategy** that instructs Nest what are those "common request attributes", provide logic that groups requests - associates them with their corresponding DI sub-trees.
+
+```typescript
+import {
+  HostComponentInfo,
+  ContextId,
+  ContextIdFactory,
+  ContextIdStrategy,
+} from '@nestjs/core';
+import { Request } from 'express';
+
+const tenants = new Map<string, ContextId>();
+
+export class AggregateByTenantContextIdStrategy implements ContextIdStrategy {
+  attach(contextId: ContextId, request: Request) {
+    const tenantId = request.headers['x-tenant-id'] as string;
+    let tenantSubTreeId: ContextId;
+
+    if (tenants.has(tenantId)) {
+      tenantSubTreeId = tenants.get(tenantId);
+    } else {
+      tenantSubTreeId = ContextIdFactory.create();
+      tenants.set(tenantId, tenantSubTreeId);
+    }
+
+    // If tree is not durable, return the original "contextId" object
+    return (info: HostComponentInfo) =>
+      info.isTreeDurable ? tenantSubTreeId : contextId;
+  }
+}
+```
+
+> info **Hint** Similar to the request scope, durability bubbles up the injection chain. That means if A depends on B which is flagged as `durable`, A implicitly becomes durable too (unless `durable` is explicitly set to `false` for A provider).
+
+> warning **Warning** Note this strategy is not ideal for applications operating with a large number of tenants.
+
+With the strategy in place, you can register it somewhere in your code (it applies globally anyway), for example, in the `main.ts` file:
+
+```typescript
+ContextIdFactory.apply(new AggregateByTenantContextIdStrategy());
+```
+
+As long as the registration occurs before any request hits your application, you should be fine.
+
+> info **Hint** The `ContextIdFactory` class is imported from the `@nestjs/core` package.
