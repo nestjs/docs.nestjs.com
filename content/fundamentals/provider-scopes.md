@@ -165,6 +165,26 @@ With this strategy in place, you can register it somewhere in your code (as it a
 ContextIdFactory.apply(new AggregateByTenantContextIdStrategy());
 ```
 
+> info **Hint** The `ContextIdFactory` class is imported from the `@nestjs/core` package.
+
 As long as the registration occurs before any request hits your application, everything will work as intended.
 
-> info **Hint** The `ContextIdFactory` class is imported from the `@nestjs/core` package.
+Lastly, to turn a regular provider into a durable provider, simply set the `durable` flag to `true`:
+
+```typescript
+import { Injectable, Scope } from '@nestjs/common';
+
+@Injectable({ scope: Scope.REQUEST, durable: true })
+export class CatsService {}
+```
+
+Similarly, for [custom providers](/fundamentals/custom-providers), set the `durable` property in the long-hand form for a provider registration:
+
+```typescript
+{
+  provide: 'CONNECTION_POOL',
+  useFactory: () => { ... },
+  scope: Scope.REQUEST,
+  durable: true,
+}
+```
