@@ -181,7 +181,7 @@ export class UsersService {
   }
 
   findOne(id: string): Promise<User> {
-    return this.usersRepository.findOneBy({ id: id });
+    return this.usersRepository.findOneBy({ id });
   }
 
   async remove(id: string): Promise<void> {
@@ -205,7 +205,7 @@ export class UsersService {
   }
 
   findOne(id) {
-    return this.usersRepository.findOne(id);
+    return this.usersRepository.findOneBy({ id });
   }
 
   async remove(id) {
