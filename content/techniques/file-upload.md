@@ -82,9 +82,16 @@ uploadFileAndPassValidation(
 
 As you can see, it's required to specify an array of file validators that will be executed by the `ParseFilePipe`. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional **optional** options:
 
-| `errorHttpStatusCode` | The HTTP status code to be thrown in case **any** validator fails. Default is `400` (BAD REQUEST). |
-|---------------------------------|----------------------------------------------------------------------------------------------------|
-| `exceptionFactory`    | A factory which receives the error message and returns an error.                                   |
+<table>
+  <tr>
+    <td><code>errorHttpStatusCode</code></td>
+    <td>The HTTP status code to be thrown in case **any** validator fails. Default is <code>400</code> (BAD REQUEST)</td>
+  </tr>
+  <tr>
+    <td><code>exceptionFactory</code></td>
+    <td>A factory which receives the error message and returns an error.</td>
+  </tr>
+</table>
 
 Now, back to the `FileValidator` interface. To integrate validators with this pipe, you have to either use built-in implementations or provide your own custom `FileValidator`. See example below:
 
