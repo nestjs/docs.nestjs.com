@@ -61,23 +61,23 @@ export class FileSizeValidationPipe implements PipeTransform {
 Nest provides a built-in pipe to handle common use cases and facilitate/standardize the addition of new ones. This pipe is called `ParseFilePipe`, and you can use it as follows:
 
 ```typescript
-  @Post('file')
-  uploadFileAndPassValidation(
-    @Body() body: SampleDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          // ... Set of file validator instances here
-        ]
-      })
-    )
-    file: Express.Multer.File,
-  ) {
-    return {
-      body,
-      file: file.buffer.toString(),
-    };
-  }
+@Post('file')
+uploadFileAndPassValidation(
+  @Body() body: SampleDto,
+  @UploadedFile(
+    new ParseFilePipe({
+      validators: [
+        // ... Set of file validator instances here
+      ]
+    })
+  )
+  file: Express.Multer.File,
+) {
+  return {
+    body,
+    file: file.buffer.toString(),
+  };
+}
 ```
 
 As you can see, it's required to specify an array of file validators that will be executed by the `ParseFilePipe`. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional **optional** options:
@@ -117,14 +117,14 @@ To understand how these can be used in conjunction with the beforementioned `Fil
 
 ```typescript
 @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1000 }),
-          new FileTypeValidator({ fileType: 'jpeg' })
-        ]
-      })
-    )
-    file: Express.Multer.File,
+  new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 1000 }),
+      new FileTypeValidator({ fileType: 'jpeg' }),
+    ],
+  }),
+)
+file: Express.Multer.File,
 ```
 > info **Hint** If the number of validators increase largely or their options are cluttering the file, you can define this array in a separate file and import it here as a named constant like `fileValidators`.
 
@@ -132,18 +132,18 @@ Finally, you can use the special `ParseFilePipeBuilder` class that lets you comp
 
 ```typescript
 @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: 'jpeg',
-        })
-        .addMaxSizeValidator({
-          maxSize: 1000
-        })
-        .build({
-          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
-        }),
-    )
-    file: Express.Multer.File,
+  new ParseFilePipeBuilder()
+    .addFileTypeValidator({
+      fileType: 'jpeg',
+    })
+    .addMaxSizeValidator({
+      maxSize: 1000
+    })
+    .build({
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+    }),
+)
+file: Express.Multer.File,
 ```
 
 #### Array of files
