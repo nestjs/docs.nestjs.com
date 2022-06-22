@@ -295,9 +295,14 @@ With this in place, create a new dedicated file (alongside the existing `config.
 
 ```typescript
 @@filename(config.module-definition)
+import { ConfigurableModuleBuilder } from '@nestjs/common';
+import { ConfigModuleOptions } from './interfaces/config-module-options.interface';
+
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
   new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
 @@switch
+import { ConfigurableModuleBuilder } from '@nestjs/common';
+
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
   new ConfigurableModuleBuilder().build();
 ```
