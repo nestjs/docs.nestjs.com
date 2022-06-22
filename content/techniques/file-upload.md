@@ -85,7 +85,7 @@ As you can see, it's required to specify an array of file validators that will b
 <table>
   <tr>
     <td><code>errorHttpStatusCode</code></td>
-    <td>The HTTP status code to be thrown in case **any** validator fails. Default is <code>400</code> (BAD REQUEST)</td>
+    <td>The HTTP status code to be thrown in case <b>any</b> validator fails. Default is <code>400</code> (BAD REQUEST)</td>
   </tr>
   <tr>
     <td><code>exceptionFactory</code></td>
