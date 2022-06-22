@@ -321,7 +321,7 @@ import { ConfigurableModuleClass } from './config.module-definition';
 export class ConfigModule extends ConfigurableModuleClass {}
 ```
 
-Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now not only the `register` method (as previously with the custom implementation), but also the `registerAsync` method that lets consumers asynchronously configure that module, for example, by supplying async factories:
+Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now not only the `register` method (as previously with the custom implementation), but also the `registerAsync` method which allows consumers asynchronously configure that module, for example, by supplying async factories:
 
 ```typescript
 @Module({
