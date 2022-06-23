@@ -225,6 +225,7 @@ export class MenuComponent implements OnInit {
       title: 'Recipes',
       isOpened: false,
       children: [
+        { title: 'REPL', path: '/recipes/repl' },
         { title: 'CRUD generator', path: '/recipes/crud-generator' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
