@@ -42,6 +42,24 @@ $ npm i ioredis
 
 In the previous version, the `interceptors` configuration property was exposed in the wrong location. In v9, make sure to pass `interceptors` as part of the `channelOptions` object, see example [here](https://github.com/nestjs/nest/issues/9079#issuecomment-1078744758).
 
+#### Testing module
+
+Previously, if you wanted to supply the configuration object to the `TestingModule#createNestApplication` method, and if you were using the default HTTP driver (express), you had to do this as follows:
+
+```typescript
+app = moduleFixture.createNestApplication<NestExpressApplication>(undefined, {
+  rawBody: true,
+});
+```
+
+In v9, you can skip the first argument (`undefined`):
+
+```typescript
+app = moduleFixture.createNestApplication<NestExpressApplication>({
+  rawBody: true,
+});
+```
+
 #### Fastify
 
 Fastify has been upgraded to v4. Also, all of the core Fastify plugins that were prefixed with `fastify-` are now renamed and published under the `@fastify` scope (for example, `fastify-cookie` becomes `@fastify/cookie`, `fastify-helmet` becomes `@fastify/helmet`, etc.). Read more [here](https://github.com/fastify/fastify/issues/3856).
