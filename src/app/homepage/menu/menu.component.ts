@@ -257,6 +257,10 @@ export class MenuComponent implements OnInit {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
         },
+        {
+          title: 'Packages Community',
+          externalUrl: 'https://github.com/nestjs/awesome-nestjs',
+        },
       ],
     },
     {
