@@ -2,7 +2,11 @@
 
 A guard is a class annotated with the `@Injectable()` decorator, which implements the `CanActivate` interface.
 
-<figure><img src="/assets/Guards_1.png" /></figure>
+<figure><img src="https://docs.nestjs.com/assets/Guards_1.png" /></figure>
+
+**Create guard via Nest cli**
+
+`nest generate guard common/guard/auth`
 
 Guards have a **single responsibility**. They determine whether a given request will be handled by the route handler or not, depending on certain conditions (like permissions, roles, ACLs, etc.) present at run-time. This is often referred to as **authorization**. Authorization (and its cousin, **authentication**, with which it usually collaborates) has typically been handled by [middleware](/middleware) in traditional Express applications. Middleware is a fine choice for authentication, since things like token validation and attaching properties to the `request` object are not strongly connected with a particular route context (and its metadata).
 
