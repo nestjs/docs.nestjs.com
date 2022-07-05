@@ -406,11 +406,11 @@ Alternatively, you can specify a **synchronous** `validate` function that takes 
 In this example, we'll proceed with the `class-transformer` and `class-validator` packages. First, we have to define:
 
 - a class with validation constraints,
-- a validate function that makes use of the `plainToClass` and `validateSync` functions.
+- a validate function that makes use of the `plainToInstance` and `validateSync` functions.
 
 ```typescript
 @@filename(env.validation)
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsNumber, validateSync } from 'class-validator';
 
 enum Environment {
@@ -429,7 +429,7 @@ class EnvironmentVariables {
 }
 
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(
+  const validatedConfig = plainToInstance(
     EnvironmentVariables,
     config,
     { enableImplicitConversion: true },
