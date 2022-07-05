@@ -253,6 +253,18 @@ To inject a given `Connection` to a custom provider (for example, factory provid
 }
 ```
 
+While if you use the `@InjectModel` decorator you have to pass the connection name as an argument in addition to the name of your Mongodb collection like this:
+
+```typescript
+@Injectable()
+export class CatsService {
+  constructor(
+    @InjectModel(Cat.name, 'name_connection')
+    private catsModel: Model<CatDocument>
+  ) {}
+}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
