@@ -60,6 +60,25 @@ app = moduleFixture.createNestApplication<NestExpressApplication>({
 });
 ```
 
+#### Kafka message/event handlers
+
+Previously, Kafka message and event handlers were receiving payloads as wrapped Kafka messaged with `key`, `value`, `headers`, and a few other properites. In v9, those payloads are automatically unwrapped and your handlers will only receive the `value` attribute's value. To retrieve the original Kafka message, you can use the `KafkaContext` object (read more [here](/microservices/kafka#context)).
+
+```typescript
+// Before
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  console.log(`Dragon ID: ${message.value.dragonId}`);
+}
+
+// Now
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  console.log(`Dragon ID: ${message.dragonId}`);
+  // Original message: "context.getMessage()"
+}
+```
+
 #### Fastify
 
 Fastify has been upgraded to v4. Also, all of the core Fastify plugins that were prefixed with `fastify-` are now renamed and published under the `@fastify` scope (for example, `fastify-cookie` becomes `@fastify/cookie`, `fastify-helmet` becomes `@fastify/helmet`, etc.). Read more [here](https://github.com/fastify/fastify/issues/3856).
