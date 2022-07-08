@@ -530,6 +530,7 @@ export class AppModule {}
 > warning **Notice** If you don't set the `name` for a data source, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
 > warning **Notice** If you are using `TypeOrmModule.forRootAsync`, you have to set the data source name outside `useFactory`. For example:
+>
 > ```typescript
 > TypeOrmModule.forRootAsync({
 >   name: 'albumsConnection',
@@ -537,6 +538,7 @@ export class AppModule {}
 >   inject: ...,
 > }),
 > ```
+>
 > See [this issue](https://github.com/nestjs/typeorm/issues/86) for more details.
 
 At this point, you have `User` and `Album` entities registered with their own data source. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which data source should be used. If you do not pass any data source name, the `default` data source is used.

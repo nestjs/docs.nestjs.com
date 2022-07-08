@@ -9,6 +9,7 @@ import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
+import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
@@ -94,6 +95,11 @@ const routes: Routes = [
     component: NestCommanderComponent,
     data: { title: 'Nest Commander' },
   },
+  {
+    path: 'repl',
+    component: ReplComponent,
+    data: { title: 'REPL' },
+  },
 ];
 
 @NgModule({
@@ -112,6 +118,7 @@ const routes: Routes = [
     RouterModuleComponent,
     ServeStaticComponent,
     NestCommanderComponent,
+    ReplComponent,
   ],
 })
 export class RecipesModule {}
