@@ -6,7 +6,7 @@ As you build out features like CRUD (Create/Read/Update/Delete) it's often usefu
 
 #### Partial
 
-When building input validation types (also called DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
+When building input validation types (also called Data Transfer Objects or DTOs), it's often useful to build **create** and **update** variations on the same type. For example, the **create** variant may require all fields, while the **update** variant may make all fields optional.
 
 Nest provides the `PartialType()` utility function to make this task easier and minimize boilerplate.
 

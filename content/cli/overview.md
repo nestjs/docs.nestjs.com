@@ -93,5 +93,4 @@ See [usage](/cli/usages) for detailed descriptions for each command.
 | `build`    |       | Compiles an application or workspace into an output folder.                                           |
 | `start`    |       | Compiles and runs an application (or default project in a workspace).                                 |
 | `add`      |       | Imports a library that has been packaged as a **nest library**, running its install schematic.        |
-| `update`   | `u`   | Update `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version. |
 | `info`     | `i`   | Displays information about installed nest packages and other helpful system info.                     |
