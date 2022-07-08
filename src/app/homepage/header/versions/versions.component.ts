@@ -32,14 +32,14 @@ export class VersionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.versionsService.addToVersionLatest().subscribe(
-      (data) => {
+    this.versionsService.addToVersionLatest().subscribe({
+      next: (data) => {
         this.versions = data['version'];
       },
-      (error) => {
+      error: (error) => {
         this.linkLatest = true;
         throw error;
       },
-    );
+    });
   }
 }
