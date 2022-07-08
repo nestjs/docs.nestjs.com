@@ -62,7 +62,7 @@ app = moduleFixture.createNestApplication<NestExpressApplication>({
 
 #### Kafka message/event handlers
 
-Previously, Kafka message and event handlers were receiving payloads as wrapped Kafka messaged with `key`, `value`, `headers`, and a few other properites. In v9, those payloads are automatically unwrapped and your handlers will only receive the `value` attribute's value. To retrieve the original Kafka message, you can use the `KafkaContext` object (read more [here](/microservices/kafka#context)).
+Previously, Kafka message and event handlers were receiving payloads as wrapped Kafka messages with `key`, `value`, `headers`, and a few other properites. In v9, those payloads are automatically unwrapped and your handlers will only receive the `value` attribute's value. To retrieve the original Kafka message, you can use the `KafkaContext` object (read more [here](/microservices/kafka#context)).
 
 ```typescript
 // Before
