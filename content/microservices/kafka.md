@@ -110,7 +110,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
   </tr>
   <tr>
     <td><code>producerOnlyMode</code></td>
-    <td><strong>boolean</strong> - Feature flag to skip consumer group registration and only act as a producer</td>
+    <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
   </tr>
 </table>
 
@@ -393,3 +393,15 @@ onModuleInit() {
 ```
 
 > info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+
+#### Retriable exceptions
+
+Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+
+For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
+
+```typescript
+throw new KafkaRetriableException('...');
+```
+
+> info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.

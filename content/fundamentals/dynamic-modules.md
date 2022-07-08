@@ -215,7 +215,7 @@ import { ConfigService } from './config.service';
 
 @Module({})
 export class ConfigModule {
-  static register(options): DynamicModule {
+  static register(options: Record<string, any>): DynamicModule {
     return {
       module: ConfigModule,
       providers: [
@@ -243,7 +243,7 @@ import { EnvConfig } from './interfaces';
 export class ConfigService {
   private readonly envConfig: EnvConfig;
 
-  constructor(@Inject('CONFIG_OPTIONS') private options) {
+  constructor(@Inject('CONFIG_OPTIONS') private options: Record<string, any>) {
     const filePath = `${process.env.NODE_ENV || 'development'}.env`;
     const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
@@ -278,3 +278,242 @@ When creating a module with:
 - `forFeature`, you are expecting to use the configuration of a dynamic module's `forRoot` but need to modify some configuration specific to the calling module's needs (i.e. which repository this module should have access to, or the context that a logger should use.)
 
 All of these, usually, have their `async` counterparts as well, `registerAsync`, `forRootAsync`, and `forFeatureAsync`, that mean the same thing, but use Nest's Dependency Injection for the configuration as well.
+
+#### Configurable module builder
+
+As manually creating highly configurable, dynamic modules that expose `async` methods (`registerAsync`, `forRootAsync`, etc.) is quite complicated, especially for newcomers, Nest exposes the `ConfigurableModuleBuilder` class that faciilities this process and lets you construct a module "blueprint" in just a few lines of code.
+
+For example, let's take the example we used above (`ConfigModule`) and convert it to use the `ConfigurableModuleBuilder`. Before we start, let's make sure we create a dedicated interface that represents what options our `ConfigModule` takes in.
+
+```typescript
+export interface ConfigModuleOptions {
+  folder: string;
+}
+```
+
+With this in place, create a new dedicated file (alongside the existing `config.module.ts` file) and name it `config.module-definition.ts`. In this file, let's utilize the `ConfigurableModuleBuilder` to construct `ConfigModule` definition.
+
+```typescript
+@@filename(config.module-definition)
+import { ConfigurableModuleBuilder } from '@nestjs/common';
+import { ConfigModuleOptions } from './interfaces/config-module-options.interface';
+
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
+@@switch
+import { ConfigurableModuleBuilder } from '@nestjs/common';
+
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder().build();
+```
+
+Now let's open up the `config.module.ts` file and modify its implementation to leverage the auto-generated `ConfigurableModuleClass`:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ConfigService } from './config.service';
+import { ConfigurableModuleClass } from './config.module-definition';
+
+@Module({
+  providers: [ConfigService],
+  exports: [ConfigService],
+})
+export class ConfigModule extends ConfigurableModuleClass {}
+```
+
+Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now not only the `register` method (as previously with the custom implementation), but also the `registerAsync` method which allows consumers asynchronously configure that module, for example, by supplying async factories:
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.register({ folder: './config' }),
+    // or alternatively:
+    // ConfigModule.registerAsync({
+    //   useFactory: () => {
+    //     return {
+    //       folder: './config',
+    //     }
+    //   },
+    //   inject: [...any extra dependencies...]
+    // }),
+  ],
+})
+export class AppModule {}
+```
+
+Lastly, let's update the `ConfigService` class to inject the generated module options' provider instead of the `'CONFIG_OPTIONS'` that we used so far.
+
+```typescript
+@Injectable()
+export class ConfigService {
+  constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions) { ... }
+}
+```
+
+#### Custom method key
+
+`ConfigurableModuleClass` by default provides the `register` and its counterpart `registerAsync` methods. To use a different method name, use the `ConfigurableModuleBuilder#setClassMethodName` method, as follows:
+
+```typescript
+@@filename(config.module-definition)
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>().setClassMethodName('forRoot').build();
+@@switch
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder().setClassMethodName('forRoot').build();
+```
+
+This construction will instruct `ConfigurableModuleBuilder` to generate a class that exposes `forRoot` and `forRootAsync` instead. Example:
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.forRoot({ folder: './config' }), // <-- note the use of "forRoot" instead of "register"
+    // or alternatively:
+    // ConfigModule.forRootAsync({
+    //   useFactory: () => {
+    //     return {
+    //       folder: './config',
+    //     }
+    //   },
+    //   inject: [...any extra dependencies...]
+    // }),
+  ],
+})
+export class AppModule {}
+```
+
+#### Custom options factory class
+
+Since the `registerAsync` method (or `forRootAsync` or any other name, depending on the configuration) lets consumer pass a provider definition that resolves to the module configuration, a library consumer could potentially supply a class to be used to construct the configuration object.
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.registerAsync({
+      useClass: ConfigModuleOptionsFactory,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+This class, by default, must provide the `create()` method that reuturns a module configuration object. However, if your library follows a different naming convention, you can change that behavior and instruct `ConfigurableModuleBuilder` to expect a different method, for example, `createConfigOptions`, using the `ConfigurableModuleBuilder#setFactoryMethodName` method:
+
+```typescript
+@@filename(config.module-definition)
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>().setFactoryMethodName('createConfigOptions').build();
+@@switch
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder().setFactoryMethodName('createConfigOptions').build();
+```
+
+Now, `ConfigModuleOptionsFactory` class must expose the `createConfigOptions` method (instead of `create`):
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.registerAsync({
+      useClass: ConfigModuleOptionsFactory, // <-- this class must provide the "createConfigOptions" method
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+#### Extra options
+
+There are edge-cases when your module may need to take extra options that determine how it is supposed to behave (a nice example of such an option is the `isGlobal` flag - or just `global`) that at the same time, shouldn't be included in the `MODULE_OPTIONS_TOKEN` provider (as they are irrelevant to services/providers registered within that module, for example, `ConfigService` does not need to know whether its host module is registered as a global module).
+
+In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following exxample:
+
+```typescript
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>()
+    .setExtras(
+      {
+        isGlobal: true,
+      },
+      (definition, extras) => ({
+        ...definition,
+        global: extras.isGlobal,
+      }),
+    )
+    .build();
+```
+
+In the example above, the first argument passed into the `setExtras` method is an object containing default values for the "extra" properties. The second argument is a function that takes an auto-generated module definitions (with `provider`, `exports`, etc.) and `extras` object which represents extra properties (either specified by the consumer or defaults). The returned value of this function is a modified module definition. In this specific example, we're taking the `extras.isGlobal` property and assigning it to the `global` property of the module definition (which in turn determines whether a module is global or not, read more [here](/modules#dynamic-modules)).
+
+Now when consuming this module, the additional `isGlobal` flag can be passed in, as follows:
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.register({
+      isGlobal: true,
+      folder: './config',
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+However, since `isGlobal` is declared as an "extra" property, it won't be available in the `MODULE_OPTIONS_TOKEN` provider:
+
+```typescript
+@Injectable()
+export class ConfigService {
+  constructor(
+    @Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions,
+  ) {
+    // "options" object will not have the "isGlobal" property
+    // ...
+  }
+}
+```
+
+#### Extending auto-generated methods
+
+The auto-generated static methods (`register`, `registerAsync`, etc.) can be extended if needed, as follows:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ConfigService } from './config.service';
+import {
+  ConfigurableModuleClass,
+  ASYNC_OPTIONS_TYPE,
+  OPTIONS_TYPE,
+} from './config.module-definition';
+
+@Module({
+  providers: [ConfigService],
+  exports: [ConfigService],
+})
+export class ConfigModule extends ConfigurableModuleClass {
+  static register(options: typeof OPTIONS_TYPE): DynamicModule {
+    return {
+      // your custom logic here
+      ...super.register(options),
+    };
+  }
+
+  static registerAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
+    return {
+      // your custom logic here
+      ...super.registerAsync(options),
+    };
+  }
+}
+```
+
+Note the use of `OPTIONS_TYPE` and `ASYNC_OPTIONS_TYPE` types that must be exported from the module definition file:
+
+```typescript
+export const {
+  ConfigurableModuleClass,
+  MODULE_OPTIONS_TOKEN,
+  OPTIONS_TYPE,
+  ASYNC_OPTIONS_TYPE,
+} = new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
+```

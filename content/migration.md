@@ -1,33 +1,20 @@
 ### Migration guide
 
-This article provides a set of guidelines for migrating from Nest version 7 to version 8.
-To learn more about the new features we've added in the v8, check out this [link](https://github.com/nestjs/nest/pull/6349).
+This article provides a set of guidelines for migrating from Nest version 8 to version 9.
+To learn more about the new features we've added in v9, check out this [link](https://github.com/nestjs/nest/pull/9588).
 
-#### HTTP module
+#### Redis strategy (microservices)
 
-The `HttpModule` and `HttpService` exported from the `@nestjs/common` package have been deprecated and will be removed in the next major release.
-Instead, please use the `@nestjs/axios` package (otherwise, there are no API differences).
-
-#### gRPC strategy
-
-The original Node gRPC library (`grpc`) has been deprecated and will no longer receive feature updates.
-With Nest v8, you should use the `@grpc/grpc-js` library instead.
-
-#### NATS strategy
-
-NATS has released a new major version (2.0) which has many changes and it is not API compatible with `nats@1.x.x`.
-If you interact with a Nest microservice (that uses NATS as a transfer layer), from a service written in a different framework, please, see their [migration document](https://github.com/nats-io/nats.js/blob/master/migration.md) to learn what's changed in v2. Otherwise, you should not see any major differences when communicating between Nest microservices.
-
-To upgrade, make sure to install the latest version of the `nats` package (`npm i nats@latest`). Also, update your [NATS configuration](https://github.com/nats-io/nats.js/blob/master/migration.md#changed-configuration-properties). Example:
+[Redis](/microservices/redis) strategy uses the [ioredis](https://github.com/luin/ioredis) driver instead of `redis` now.
 
 ```typescript
 // Before
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(
   AppModule,
   {
-    transport: Transport.NATS,
+    transport: Transport.REDIS,
     options: {
-      url: 'nats://localhost:4222',
+      url: 'redis://localhost:6379',
     },
   },
 );
@@ -36,78 +23,74 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(
   AppModule,
   {
-    transport: Transport.NATS,
+    transport: Transport.REDIS,
     options: {
-      servers: ['nats://localhost:4222'],
+      host: 'localhost',
+      port: 6379,
     },
   },
 );
 ```
 
-#### `@All()` decorator
+Also, make sure to install the `ioredis` package:
 
-Routes annotated with the `@All()` decorator will now map to the `router.all()` method instead of the `router.use()`.
+```bash
+$ npm i ioredis
+```
 
-#### Async listen/start methods
+#### gRPC client interceptors
 
-`listenAsync()` and `startAllMicroservicesAsync()` methods have been deprecated.
-Instead, simply use the `listen()` and `startAllMicroservices()` methods (they are `async` either way).
+In the previous version, the `interceptors` configuration property was exposed in the wrong location. In v9, make sure to pass `interceptors` as part of the `channelOptions` object, see example [here](https://github.com/nestjs/nest/issues/9079#issuecomment-1078744758).
 
-#### Socket.io
+#### Testing module
 
-The `@nestjs/platform-socket.io` package was upgraded to use the `socket.io@4.x.x` version (Nest v7 was based on the `socket.io` v2).
-To learn more, check out these articles: [Socket.io 3 Release](https://socket.io/blog/socket-io-3-release/) and [Socket.io 4 Release](https://socket.io/blog/socket-io-4-release/).
-
-#### Logger breaking changes
-
-For better extensibility, we separated out the `Logger` and `ConsoleLogger` classes ([PR](https://github.com/nestjs/nest/pull/6221), learn more in the [Logging](/techniques/logger) chapter). If your application uses a custom logger class that extends the built-in `Logger`, you should update it to extend the `ConsoleLogger` now.
-
-Before:
+Previously, if you wanted to supply the configuration object to the `TestingModule#createNestApplication` method, and if you were using the default HTTP driver (express), you had to do this as follows:
 
 ```typescript
-export class MyLogger extends Logger {}
+app = moduleFixture.createNestApplication<NestExpressApplication>(undefined, {
+  rawBody: true,
+});
 ```
 
-Now:
+In v9, you can skip the first argument (`undefined`):
 
 ```typescript
-export class MyLogger extends ConsoleLogger {}
+app = moduleFixture.createNestApplication<NestExpressApplication>({
+  rawBody: true,
+});
 ```
 
-#### `@nestjs/config` package
+#### Kafka message/event handlers
 
-There was a minor breaking change in the `registerAs` function (typings), you can see what has changed in [this PR](https://github.com/nestjs/config/pull/173).
+Previously, Kafka message and event handlers were receiving payloads as wrapped Kafka messaged with `key`, `value`, `headers`, and a few other properites. In v9, those payloads are automatically unwrapped and your handlers will only receive the `value` attribute's value. To retrieve the original Kafka message, you can use the `KafkaContext` object (read more [here](/microservices/kafka#context)).
 
-#### `@nestjs/graphql` package
-
-There might be some small differences in how your auto-generated schema file looks like (changed types order). Also, if you use the schema-first approach, the automatically generated type definitions will change as there was a new `Nullable<T>` type introduced in the latest release.
-
-Also, all `HttpException` errors thrown from your resolvers will be now automatically mapped to the corresponding `ApolloError` instances, unless you set the `autoTransformHttpErrors` configuration property (in the options object you pass into the `GraphQLModule#forRoot()` method) to `false`.
-
-#### `@nestjs/terminus` package
-
-`HttpHealthIndicator` requires `@nestjs/axios` to be installed as well as `HttpModule` to be imported. Also, the deprecated `TerminusModule.forRootAsync` has been removed. To migrate, check out the `@nestjs/terminus` v7.x.x [upgrade guide](https://docs.nestjs.com/v7/migration-guide#terminus).
-
-#### RxJS
-
-Make sure to upgrade to the latest version of the `rxjs` package (v7).
-
-#### TestingModule / NestFactory
-
-If you are currently supplying a string to `NestApplication#get` to retrieve an instance of some provider that was not injected using a string as a token (for instance, the `ConfigService` from `@nestjs/config`), you'll receive an error message like the following: 
-```text
-Nest could not find ConfigService element (this provider does not exist in the current context)
-```
-
-Please change this to the actual reference.
-Before:
 ```typescript
-const app = await NestFactory.create<NestExpressApplication>(AppModule);
-const config = app.get<ConfigService>('ConfigService');
+// Before
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  console.log(`Dragon ID: ${message.value.dragonId}`);
+}
+
+// Now
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  console.log(`Dragon ID: ${message.dragonId}`);
+  // Original message: "context.getMessage()"
+}
 ```
 
-Now:
-```typescript
-const app = await NestFactory.create<NestExpressApplication>(AppModule);
-const config = app.get<ConfigService>(ConfigService);
-```
+#### Fastify
+
+Fastify has been upgraded to v4. Also, all of the core Fastify plugins that were prefixed with `fastify-` are now renamed and published under the `@fastify` scope (for example, `fastify-cookie` becomes `@fastify/cookie`, `fastify-helmet` becomes `@fastify/helmet`, etc.). Read more [here](https://github.com/fastify/fastify/issues/3856).
+
+#### `@nestjs/swagger` package
+
+There are a few minor breaking changes in the `@nestjs/swagger` package (`swagger-ui-express` and `fastify-swagger` packages are no longer required). See this [PR](https://github.com/nestjs/swagger/pull/1886) for more details.
+
+#### Deprecations
+
+All deprecated methods & modules have been removed (e.g., the deprecated `listenAsync()` method).
+
+#### Node.js
+
+This release drops support for Node v10. We strongly recommend using the latest LTS version.
