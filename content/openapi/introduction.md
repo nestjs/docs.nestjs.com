@@ -149,26 +149,6 @@ export interface ExpressSwaggerCustomOptions {
 }
 ```
 
-If you use fastify, you can configure the user interface by passing the `FastifySwaggerCustomOptions` object.
-
-```Typescript
-export interface FastifySwaggerCustomOptions {
-  uiConfig?: Record<string, any>;
-}
-```
-
-For example, if you want to make sure that the authentication token persists after refreshing the page, or change the page title (that shows up in the browser), you can use the following settings:
-
-```TypeScript
-const customOptions: SwaggerCustomOptions = {
-  swaggerOptions: {
-    persistAuthorization: true,
-  },
-  customSiteTitle: 'My API Docs',
-};
-SwaggerModule.setup('docs', app, document, customOptions);
-```
-
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
