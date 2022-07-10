@@ -2,7 +2,7 @@
 
 (Base de dados)
 
-Nest é independente de banco de dados, permitindo que você integre facilmente com qualquer banco de dados SQL ou NoSQL. Você tem várias opções disponíveis para você, dependendo de suas preferências. No nível mais geral, conectar o Nest a um banco de dados é simplesmente uma questão de carregar um driver Node.js apropriado para o banco de dados, assim como você faria com o [Express](https://expressjs.com/en/guide/database- Integration.html) ou Fastify.
+Nest é independente de banco de dados, permitindo que você integre facilmente com qualquer banco de dados SQL ou NoSQL. Você tem várias opções disponíveis, dependendo de suas preferências. No nível mais geral, conectar o Nest a um banco de dados é simplesmente uma questão de carregar um driver Node.js apropriado para o banco de dados, assim como você faria com o [Express](https://expressjs.com/en/guide/database-integration.html) ou Fastify.
 
 Você também pode usar diretamente qualquer **biblioteca** ou ORM de integração de banco de dados Node.js de propósito geral, como [MikroORM](https://mikro-orm.io/) também verifique a [receita aqui](/recipes/mikroorm ), [Sequelize](https://sequelize.org/) (navegue até a seção [Sequelize integration](/techniques/database#sequelize-integration)), [Knex.js](https://knexjs.org/ ) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)), [TypeORM](https://github.com/typeorm/typeorm) e [Prisma](https://www.github.com/prisma/prisma) ([receita](/recipes/prisma)) , para operar em um nível mais alto de abstração.
 
@@ -551,14 +551,13 @@ export class AppModule {}
 
 > warning **Aviso** Se você não definir o `name` para uma fonte de dados, seu nome será definido como `default`. Observe que você não deve ter várias conexões sem nome ou com o mesmo nome, caso contrário elas serão substituídas.
 
-> warning **Aviso** Se você estiver usando `TypeOrmModule.forRootAsync`, você deve definir o nome da fonte de dados fora de `useFactory`. Por exemplo:
-
+> warning **Aviso** Se você estiver usando `TypeOrmModule.forRootAsync`, será necessário definir o nome da fonte de dados fora de `useFactory`. Por exemplo:
 >
 > ```typescript
 > TypeOrmModule.forRootAsync({
->  name: 'albumsConnection',
->  useFactory: ...,
->  inject: ...,
+>   name: 'albumsConnection',
+>   useFactory: ...,
+>   inject: ...,
 > }),
 > ```
 >
