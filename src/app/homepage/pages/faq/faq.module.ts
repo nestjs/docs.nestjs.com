@@ -7,6 +7,7 @@ import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
+import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
 import { ServerlessComponent } from './serverless/serverless.component';
 
@@ -30,6 +31,11 @@ const routes: Routes = [
     path: 'http-adapter',
     component: HttpAdapterComponent,
     data: { title: 'HTTP adapter - FAQ' },
+  },
+  {
+    path: 'raw-body',
+    component: RawBodyComponent,
+    data: { title: 'Raw Body' },
   },
   {
     path: 'request-lifecycle',

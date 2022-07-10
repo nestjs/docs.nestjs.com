@@ -16,7 +16,7 @@ $ npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
 # npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-fastify
 
 # For Fastify and Mercurius
-# npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
+# npm i @nestjs/graphql @nestjs/mercurius graphql mercurius@^9
 ```
 
 > warning **Warning** `@nestjs/graphql@>=9` and `@nestjs/apollo^10` packages are compatible with **Apollo v3** (check out Apollo Server 3 [migration guide](https://www.apollographql.com/docs/apollo-server/migration/) for more details), while `@nestjs/graphql@^8` only supports **Apollo v2** (e.g., `apollo-server-express@2.x.x` package).
