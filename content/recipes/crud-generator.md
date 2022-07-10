@@ -1,35 +1,41 @@
 ### CRUD generator
 
-Throughout the life span of a project, when we build new features, we often need to add new resources to our application. These resources typically require multiple, repetitive operations that we have to repeat each time we define a new resource.
+(Gerador CRUD)
+
+Ao longo da vida útil de um projeto, quando criamos novos recursos, geralmente precisamos adicionar novos recursos ao nosso aplicativo. Esses recursos normalmente exigem várias operações repetitivas que temos que repetir cada vez que definimos um novo recurso.
 
 #### Introduction
 
-Let's imagine a real-world scenario, where we need to expose CRUD endpoints for 2 entities, let's say **User** and **Product** entities.
-Following the best practices, for each entity we would have to perform several operations, as follows:
+(Introdução)
 
-- Generate a module (`nest g mo`) to keep code organized and establish clear boundaries (grouping related components)
-- Generate a controller (`nest g co`) to define CRUD routes (or queries/mutations for GraphQL applications)
-- Generate a service (`nest g s`) to implement & isolate business logic
-- Generate an entity class/interface to represent the resource data shape
-- Generate Data Transfer Objects (or inputs for GraphQL applications) to define how the data will be sent over the network
+Vamos imaginar um cenário do mundo real, onde precisamos expor endpoints CRUD para 2 entidades, digamos, **Usuário** e **Produto**.
+Seguindo as melhores práticas, para cada entidade teríamos que realizar várias operações, como segue:
 
-That's a lot of steps!
+- Gere um módulo (`nest g mo`) para manter o código organizado e estabelecer limites claros (agrupando componentes relacionados)
+- Gere um controlador (`nest g co`) para definir rotas CRUD (ou consultas/mutações para aplicativos GraphQL)
+- Gere um serviço (`nest g s`) para implementar e isolar a lógica de negócios
+- Gere uma classe/interface de entidade para representar a forma de dados do recurso
+- Gerar Objetos de Transferência de Dados (ou entradas para aplicativos GraphQL) para definir como os dados serão enviados pela rede
 
-To help speed up this repetitive process, [Nest CLI](/cli/overview) provides a generator (schematic) that automatically generates all the boilerplate code to help us avoid doing all of this, and make the developer experience much simpler.
+São muitos passos!
 
-> info **Note** The schematic supports generating **HTTP** controllers, **Microservice** controllers, **GraphQL** resolvers (both code first and schema first), and **WebSocket** Gateways.
+Para ajudar a acelerar esse processo repetitivo, o [Nest CLI](/cli/overview) fornece um gerador (esquemático) que gera automaticamente todo o código padrão para nos ajudar a evitar tudo isso e tornar a experiência do desenvolvedor muito mais simples.
+
+> info **Observação** O esquema suporta a geração de controladores **HTTP**, controladores **Microservice**, resolvedores **GraphQL** (primeiro código e esquema primeiro) e Gateways **WebSocket**.
 
 #### Generating a new resource
 
-To create a new resource, simply run the following command in the root directory of your project:
+(Gerando um novo recurso)
+
+Para criar um novo recurso, basta executar o seguinte comando no diretório raiz do seu projeto:
 
 ```shell
 $ nest g resource
 ```
 
-`nest g resource` command not only generates all the NestJS building blocks (module, service, controller classes) but also an entity class, DTO classes as well as the testing (`.spec`) files.
+O comando `nest g resource` não apenas gera todos os blocos de construção do NestJS (módulo, serviço, classes de controlador), mas também uma classe de entidade, classes DTO, bem como os arquivos de teste (`.spec`).
 
-Below you can see the generated controller file (for REST API):
+Abaixo você pode ver o arquivo do controlador gerado (para API REST):
 
 ```typescript
 @Controller('users')
@@ -63,13 +69,13 @@ export class UsersController {
 }
 ```
 
-Also, it automatically creates placeholders for all the CRUD endpoints (routes for REST APIs, queries and mutations for GraphQL, message subscribes for both Microservices and WebSocket Gateways) - all without having to lift a finger.
+Além disso, ele cria automaticamente espaços reservados para todos os endpoints CRUD (rotas para APIs REST, consultas e mutações para GraphQL, assinaturas de mensagens para Microservices e Gateways WebSocket) - tudo sem ter que levantar um dedo.
 
-> warning **Note** Generated service classes are **not** tied to any specific **ORM (or data source)**. This makes the generator generic enough to meet the needs of any project. By default, all methods will contain placeholders, allowing you to populate it with the data sources specific to your project.
+> aviso **Observação** As classes de serviço geradas **não** estão vinculadas a nenhum **ORM (ou fonte de dados)** específico. Isso torna o gerador genérico o suficiente para atender às necessidades de qualquer projeto. Por padrão, todos os métodos conterão espaços reservados, permitindo que você os preencha com as fontes de dados específicas do seu projeto.
 
-Likewise, if you want to generate resolvers for a GraphQL application, simply select the `GraphQL (code first)` (or `GraphQL (schema first)`) as your transport layer.
+Da mesma forma, se você quiser gerar resolvedores para um aplicativo GraphQL, basta selecionar o `GraphQL (code first)` (ou `GraphQL (schema first)`) como sua camada de transporte.
 
-In this case, NestJS will generate a resolver class instead of a REST API controller:
+Nesse caso, o NestJS gerará uma classe de resolução em vez de um controlador de API REST:
 
 ```shell
 $ nest g resource users
@@ -87,9 +93,9 @@ $ nest g resource users
 > UPDATE src/app.module.ts (312 bytes)
 ```
 
-> info **Hint** To avoid generating test files, you can pass the `--no-spec` flag, as follows: `nest g resource users --no-spec`
+> info **Dica** Para evitar a geração de arquivos de teste, você pode passar o sinalizador `--no-spec`, como segue: `nest g resource users --no-spec`
 
-We can see below, that not only were all boilerplate mutations and queries created, but everything is all tied together. We're utilizing the `UsersService`, `User` Entity, and our DTO's.
+Podemos ver abaixo que não apenas todas as mutações e consultas padrão foram criadas, mas tudo está amarrado. Estamos utilizando a entidade `UsersService`, `User` e nossos DTO's.
 
 ```typescript
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
