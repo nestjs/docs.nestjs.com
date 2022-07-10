@@ -35,6 +35,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(
 Also, make sure to install the `ioredis` package:
 
 ```bash
+$ npm uninstall redis
 $ npm i ioredis
 ```
 
