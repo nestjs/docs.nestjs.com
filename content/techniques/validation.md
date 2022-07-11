@@ -50,17 +50,17 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>skipUndefinedProperties</code></td>
     <td><code>boolean</code></td>
-    <td>If set to true, validator will skip validation of all properties that are null in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are undefined in the validating object.</td>
   </tr>
   <tr>
     <td><code>skipNullProperties</code></td>
     <td><code>boolean</code></td>
-    <td> If set to true, validator will skip validation of all properties that are null or undefined in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are null in the validating object.</td>
   </tr>
   <tr>
     <td><code>skipMissingProperties</code></td>
     <td><code>boolean</code></td>
-    <td>If set to true, validator will skip validation of all properties that are missing in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are null or undefined in the validating object.</td>
   </tr>
   <tr>
     <td><code>whitelist</code></td>
