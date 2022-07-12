@@ -63,8 +63,8 @@ $ nest g <schematic> <name> [options]
 | `filter`      | `f`   | Generate a filter declaration.                                                                               |
 | `gateway`     | `ga`  | Generate a gateway declaration.                                                                              |
 | `guard`       | `gu`  | Generate a guard declaration.                                                                                |
-| `interface`   |       | Generate an interface.                                                                                       |
-| `interceptor` | `in`  | Generate an interceptor declaration.                                                                         |
+| `interface`   | `itf` | Generate an interface.                                                                                       |
+| `interceptor` | `itc` | Generate an interceptor declaration.                                                                         |
 | `middleware`  | `mi`  | Generate a middleware declaration.                                                                           |
 | `module`      | `mo`  | Generate a module declaration.                                                                               |
 | `pipe`        | `pi`  | Generate a pipe declaration.                                                                                 |
