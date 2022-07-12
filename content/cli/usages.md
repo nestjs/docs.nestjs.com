@@ -152,17 +152,6 @@ $ nest add <name> [options]
 | -------- | ---------------------------------- |
 | `<name>` | The name of the library to import. |
 
-#### nest update
-
-Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version.
-
-##### Options
-
-| Option    | Description                                                             |
-| --------- | ----------------------------------------------------------------------- |
-| `--force` | Do **upgrade** instead of update <br/>Alias `-f`                        |
-| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |
-
 #### nest info
 
 Displays information about installed nest packages and other helpful system info. For example:
