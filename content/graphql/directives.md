@@ -10,7 +10,7 @@ A directive is an identifier preceded by a `@` character, optionally followed by
 
 #### Custom directives
 
-To instruct what should happen when Apollo/Mercurius encounters your directive, you can create a transformer function. This function uses the `mapSchema` function to iterate through locations in your schema (field definitions, type definitions, etc.) and perform corresponding transformations.
+To instruct what should happen when Apollo/Mercurius/Yoga encounters your directive, you can create a transformer function. This function uses the `mapSchema` function to iterate through locations in your schema (field definitions, type definitions, etc.) and perform corresponding transformations.
 
 ```typescript
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';

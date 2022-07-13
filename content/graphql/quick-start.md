@@ -2,7 +2,7 @@
 
 [GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you end-to-end typing.
 
-In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` can be configured to use [Apollo](https://www.apollographql.com/) server (with the `@nestjs/apollo` driver) and [Mercurius](https://github.com/mercurius-js/mercurius) (with the `@nestjs/mercurius`). We provide official integrations for these proven GraphQL packages to provide a simple way to use GraphQL with Nest. You can also build your own dedicated driver (read more on that [here](/graphql/other-features#creating-a-custom-driver)).
+In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` can be configured to use [Apollo](https://www.apollographql.com/) server (with the `@nestjs/apollo` driver), [Mercurius](https://github.com/mercurius-js/mercurius) (with the `@nestjs/mercurius`) and [GraphQL Yoga](https://github.com/charlypoly/graphql-yoga-nestjs) (with the `@graphql-yoga/nestjs`). We provide integrations for these proven GraphQL packages to provide a simple way to use GraphQL with Nest. You can also build your own dedicated driver (read more on that [here](/graphql/other-features#creating-a-custom-driver)).
 
 #### Installation
 
@@ -12,11 +12,17 @@ Start by installing the required packages:
 # For Express and Apollo (default)
 $ npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
 
+# For Express and GraphQL Yoga (default)
+$ npm i @nestjs/graphql @graphql-yoga/nestjs graphql
+
 # For Fastify and Apollo
 # npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-fastify
 
 # For Fastify and Mercurius
 # npm i @nestjs/graphql @nestjs/mercurius graphql mercurius@^9
+
+# For Fastify and GraphQL Yoga
+# npm i @nestjs/graphql @graphql-yoga/nestjs graphql
 ```
 
 > warning **Warning** `@nestjs/graphql@>=9` and `@nestjs/apollo^10` packages are compatible with **Apollo v3** (check out Apollo Server 3 [migration guide](https://www.apollographql.com/docs/apollo-server/migration/) for more details), while `@nestjs/graphql@^8` only supports **Apollo v2** (e.g., `apollo-server-express@2.x.x` package).
@@ -51,9 +57,9 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 export class AppModule {}
 ```
 
-> info **Hint** For `mercurius` integration, you should be using the `MercuriusDriver` and `MercuriusDriverConfig` instead. Both are exported from the `@nestjs/mercurius` package.
+> info **Hint** For `mercurius` integration, you should be using the `MercuriusDriver` and `MercuriusDriverConfig` instead. Both are exported from the `@nestjs/mercurius` package. Same goes for the GraphQL Yoga driver: `YogaDriver` from `@graphql-yoga/nestjs`.
 
-The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance (read more about available settings here: [Apollo](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt) and [Mercurius](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options)). For example, if you want to disable the `playground` and turn off `debug` mode (for Apollo), pass the following options:
+The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance (read more about available settings here: [Apollo](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt), [Mercurius](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options)) and [GraphQL Yoga](https://www.graphql-yoga.com/docs/quick-start#usage). For example, if you want to disable the `playground` and turn off `debug` mode (for Apollo), pass the following options:
 
 ```typescript
 @@filename()
@@ -321,6 +327,7 @@ GraphQLModule.forRootAsync<ApolloDriverConfig>({
 }),
 ```
 
+
 #### Mercurius integration
 
 Instead of using Apollo, Fastify users (read more [here](/techniques/performance)) can alternatively use the `@nestjs/mercurius` driver.
@@ -345,3 +352,27 @@ export class AppModule {}
 > info **Hint** Once the application is running, open your browser and navigate to `http://localhost:3000/graphiql`. You should see the [GraphQL IDE](https://github.com/graphql/graphiql).
 
 The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance. Read more about available settings [here](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options).
+
+#### GraphQL Yoga integration
+
+GraphQL Yoga comes with performance, fastify and express compatible GraphQL server with strong defaults and out-of-the-box support for modern GraphQL features (File uploads, subscriptions over WS or SSE, [and more](https://www.graphql-yoga.com/docs/quick-start)).
+
+```typescript
+import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs'
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      driver: YogaDriver,
+      autoSchemaFile: 'schema.gql',
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+> info **Hint** Once the application is running, open your browser and navigate to `http://localhost:3000/graphql`. You should see the [GraphiQL IDE](https://github.com/graphql/graphiql).
+
+The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance. Read more about available settings [here](https://www.graphql-yoga.com/docs/quick-start).

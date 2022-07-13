@@ -6,6 +6,8 @@ A common use case for subscriptions is notifying the client side about particula
 
 #### Enable subscriptions with Apollo driver
 
+> The subscriptions configuration of the GraphQL Yoga driver is identical as the Apollo driver's one.
+
 To enable subscriptions, set the `installSubscriptionHandlers` property to `true`.
 
 ```typescript
