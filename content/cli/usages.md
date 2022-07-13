@@ -63,8 +63,8 @@ $ nest g <schematic> <name> [options]
 | `filter`      | `f`   | Generate a filter declaration.                                                                               |
 | `gateway`     | `ga`  | Generate a gateway declaration.                                                                              |
 | `guard`       | `gu`  | Generate a guard declaration.                                                                                |
-| `interface`   |       | Generate an interface.                                                                                       |
-| `interceptor` | `in`  | Generate an interceptor declaration.                                                                         |
+| `interface`   | `itf` | Generate an interface.                                                                                       |
+| `interceptor` | `itc` | Generate an interceptor declaration.                                                                         |
 | `middleware`  | `mi`  | Generate a middleware declaration.                                                                           |
 | `module`      | `mo`  | Generate a module declaration.                                                                               |
 | `pipe`        | `pi`  | Generate a pipe declaration.                                                                                 |
@@ -151,17 +151,6 @@ $ nest add <name> [options]
 | Argument | Description                        |
 | -------- | ---------------------------------- |
 | `<name>` | The name of the library to import. |
-
-#### nest update
-
-Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version.
-
-##### Options
-
-| Option    | Description                                                             |
-| --------- | ----------------------------------------------------------------------- |
-| `--force` | Do **upgrade** instead of update <br/>Alias `-f`                        |
-| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |
 
 #### nest info
 
