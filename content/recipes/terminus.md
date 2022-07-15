@@ -368,10 +368,7 @@ export class HealthController {
 @Controller('health')
 @Dependencies(HealthCheckService, MemoryHealthIndicator)
 export class HealthController {
-  constructor(
-    private health,
-    private memory,
-  ) { }
+  constructor(health, memory) {}
 
   @Get()
   @HealthCheck()
