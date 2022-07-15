@@ -5,7 +5,7 @@ Nest supports two methods for integrating with the [MongoDB](https://www.mongodb
 Start by installing the [required dependencies](https://github.com/Automattic/mongoose):
 
 ```bash
-$ npm install --save @nestjs/mongoose mongoose
+$ npm i @nestjs/mongoose mongoose
 ```
 
 Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
