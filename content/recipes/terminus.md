@@ -310,10 +310,7 @@ export class HealthController {
 @Controller('health')
 @Dependencies(HealthCheckService, DiskHealthIndicator)
 export class HealthController {
-  constructor(
-    private health,
-    private disk,
-  ) { }
+  constructor(health, disk) {}
 
   @Get()
   @HealthCheck()
