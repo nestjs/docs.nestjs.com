@@ -171,7 +171,7 @@ check for that response code specifically and determine all other codes as unhea
 
 In case any other response code other than `204` gets returned, the following example would be unhealthy. The third parameter
 requires you to provide a function (sync or async) which returns a boolean whether the response is considered
-healthy `true` or unhealthy `false`. 
+healthy (`true`) or unhealthy (`false`).
 
 
 ```typescript
