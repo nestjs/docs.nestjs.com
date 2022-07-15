@@ -294,8 +294,8 @@ If that exceeds more than 50% of the total storage space it would response with 
 @Controller('health')
 export class HealthController {
   constructor(
-    private health: HealthCheckService,
-    private disk: DiskHealthIndicator,
+    private readonly health: HealthCheckService,
+    private readonly disk: DiskHealthIndicator,
   ) {}
 
   @Get()
