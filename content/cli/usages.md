@@ -34,6 +34,7 @@ Creates and initializes a new Nest project. Prompts for package manager.
 | `--package-manager [package-manager]` | Specify package manager. Use `npm`, `yarn`, or `pnpm`. Package manager must be installed globally.<br/> Alias: `-p` |
 | `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                       |
 | `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`     |
+| `--strict`                            | Start the project with the following TypeScript compiler flags enalbed: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
 
 #### nest generate
 

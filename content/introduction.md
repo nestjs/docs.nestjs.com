@@ -23,6 +23,8 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
+> info **Hint** If you want to create a new project with few flags of TypeScript's strict mode enabled, add the option `--strict` on `new` command. We highly recommend that! More on this option [here](./cli/usages).
+
 #### Alternatives
 
 Alternatively, to install the TypeScript starter project with **Git**:
