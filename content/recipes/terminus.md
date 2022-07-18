@@ -524,6 +524,6 @@ export class HealthController {
 }
 ```
 
-#### More Examples
+#### More examples
 
 More working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).
