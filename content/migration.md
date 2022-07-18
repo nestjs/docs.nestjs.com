@@ -98,4 +98,4 @@ This release drops support for Node v10. We strongly recommend using the latest 
 #### NestJS CLI
 
 Due to stability issues, the command `update` was removed in the v9 of `@nestjs/cli`.  
-You can use specialized tools like [`ncu`](https://www.npmjs.com/package/npm-check-updates), `npm update`, [`yarn upgrade-interactive`](https://classic.yarnpkg.com/en/docs/cli/upgrade-interactive), Renovate Bot, etc, if you want to upgrade your dependencies.
+You can use dedicated tools like [`ncu`](https://www.npmjs.com/package/npm-check-updates), `npm update`, [`yarn upgrade-interactive`](https://classic.yarnpkg.com/en/docs/cli/upgrade-interactive), etc., if you want to upgrade your dependencies.
