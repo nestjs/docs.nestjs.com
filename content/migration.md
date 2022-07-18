@@ -95,7 +95,7 @@ All deprecated methods & modules have been removed (e.g., the deprecated `listen
 
 This release drops support for Node v10. We strongly recommend using the latest LTS version.
 
-#### NestJS CLI
+#### CLI
 
 Due to stability issues, the command `update` was removed in the v9 of `@nestjs/cli`.  
 You can use dedicated tools like [`ncu`](https://www.npmjs.com/package/npm-check-updates), `npm update`, [`yarn upgrade-interactive`](https://classic.yarnpkg.com/en/docs/cli/upgrade-interactive), etc., if you want to upgrade your dependencies.
