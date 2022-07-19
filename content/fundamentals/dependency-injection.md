@@ -240,7 +240,7 @@ The `useFactory` syntax allows for creating providers **dynamically**. The actua
 
 ```typescript
 @@filename()
-const connectionFactory = {
+const connectionProvider = {
   provide: 'CONNECTION',
   useFactory: (optionsProvider: OptionsProvider, optionalProvider?: string) => {
     const options = optionsProvider.get();
@@ -254,14 +254,14 @@ const connectionFactory = {
 
 @Module({
   providers: [
-    connectionFactory,
+    connectionProvider,
     OptionsProvider,
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
 })
 export class AppModule {}
 @@switch
-const connectionFactory = {
+const connectionProvider = {
   provide: 'CONNECTION',
   useFactory: (optionsProvider, optionalProvider) => {
     const options = optionsProvider.get();
@@ -275,7 +275,7 @@ const connectionFactory = {
 
 @Module({
   providers: [
-    connectionFactory,
+    connectionProvider,
     OptionsProvider,
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
