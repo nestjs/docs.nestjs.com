@@ -362,7 +362,6 @@ async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaCon
 }
 ```
 
-
 #### Naming conventions
 
 The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
