@@ -313,16 +313,18 @@ To access the original Kafka `IncomingMessage` object, use the `getMessage()` me
 ```typescript
 @@filename()
 @MessagePattern('hero.kill.dragon')
-killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
   const originalMessage = context.getMessage();
-  const { headers, partition, timestamp } = originalMessage;
-}
-@@switch
-@Bind(Payload(), Ctx())
-@MessagePattern('hero.kill.dragon')
-killDragon(message, context) {
-  const originalMessage = context.getMessage();
-  const { headers, partition, timestamp } = originalMessage;
+  const heartbeat = context.getHeartbeat();
+  
+  // Do some slow processing:
+  await doWorkPart1();
+
+  // Send heartbeat when it's possible in order to not exceed the sessionTimeout
+  await heartbeat();
+
+  // Do some slow processing again:
+  await doWorkPart2();
 }
 ```
 
@@ -341,6 +343,26 @@ interface IncomingMessage {
   headers: Record<string, any>;
 }
 ```
+
+If your endpoint involves slow processing time for each message you should consider calling `heartbeat` callback, use `getHeartbeat()` method of `KafkaContext` which will send heartbeat to the broker, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  const originalMessage = context.getMessage();
+  const { headers, partition, timestamp } = originalMessage;
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('hero.kill.dragon')
+killDragon(message, context) {
+  const originalMessage = context.getMessage();
+  const { headers, partition, timestamp } = originalMessage;
+}
+```
+
+
 
 #### Naming conventions
 
