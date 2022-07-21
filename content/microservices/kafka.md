@@ -351,7 +351,7 @@ async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaCon
   const originalMessage = context.getMessage();
   const heartbeat = context.getHeartbeat();
   
-  // Do some slow processing:
+  // Do some slow processing
   await doWorkPart1();
 
   // Send heartbeat to not exceed the sessionTimeout
