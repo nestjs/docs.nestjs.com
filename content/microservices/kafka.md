@@ -348,7 +348,6 @@ If your handler involves a slow processing time for each received message you sh
 @@filename()
 @MessagePattern('hero.kill.dragon')
 async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
-  const originalMessage = context.getMessage();
   const heartbeat = context.getHeartbeat();
   
   // Do some slow processing
