@@ -354,7 +354,7 @@ async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaCon
   // Do some slow processing:
   await doWorkPart1();
 
-  // Send heartbeat when it's possible, in order to not exceed the sessionTimeout
+  // Send heartbeat to not exceed the sessionTimeout
   await heartbeat();
 
   // Do some slow processing again:
