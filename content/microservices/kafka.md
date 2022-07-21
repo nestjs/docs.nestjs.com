@@ -342,7 +342,7 @@ interface IncomingMessage {
 }
 ```
 
-If your endpoint involves slow processing time for each message you should consider using the `heartbeat` callback. To do this, use the `getHeartbeat()` method of the `KafkaContext` which will send heartbeat to the broker, as follows:
+If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
 
 ```typescript
 @@filename()
