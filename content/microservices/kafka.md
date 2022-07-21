@@ -342,6 +342,25 @@ interface IncomingMessage {
 }
 ```
 
+If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  const heartbeat = context.getHeartbeat();
+  
+  // Do some slow processing
+  await doWorkPart1();
+
+  // Send heartbeat to not exceed the sessionTimeout
+  await heartbeat();
+
+  // Do some slow processing again
+  await doWorkPart2();
+}
+```
+
 #### Naming conventions
 
 The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
