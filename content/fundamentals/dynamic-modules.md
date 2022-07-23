@@ -398,7 +398,7 @@ Since the `registerAsync` method (or `forRootAsync` or any other name, depending
 export class AppModule {}
 ```
 
-This class, by default, must provide the `create()` method that reuturns a module configuration object. However, if your library follows a different naming convention, you can change that behavior and instruct `ConfigurableModuleBuilder` to expect a different method, for example, `createConfigOptions`, using the `ConfigurableModuleBuilder#setFactoryMethodName` method:
+This class, by default, must provide the `create()` method that returns a module configuration object. However, if your library follows a different naming convention, you can change that behavior and instruct `ConfigurableModuleBuilder` to expect a different method, for example, `createConfigOptions`, using the `ConfigurableModuleBuilder#setFactoryMethodName` method:
 
 ```typescript
 @@filename(config.module-definition)
