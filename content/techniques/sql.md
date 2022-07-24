@@ -61,7 +61,7 @@ The `forRoot()` method supports all the configuration properties exposed by the 
 
 > info **Hint** Learn more about the data source options [here](https://typeorm.io/data-source-options).
 
-Once this is done, the TypeORM `DataSource` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
+Once this is done, the TypeORM `DataSource` and `EntityManager` objects will be available to inject across the entire Nest application's dependency tree (without needing to import any modules), for example:
 
 ```typescript
 @@filename(app.module)
