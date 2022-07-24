@@ -249,7 +249,7 @@ const connectionProvider = {
   inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
   //       \_____________/            \__________________/
   //        This provider              The provider with this
-  //        is mandatory.              token can resolves to `undefined`.
+  //        is mandatory.              token can resolve to `undefined`.
 };
 
 @Module({
@@ -270,7 +270,7 @@ const connectionProvider = {
   inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
   //       \_____________/            \__________________/
   //        This provider              The provider with this
-  //        is mandatory.              token can resolves to `undefined`.
+  //        is mandatory.              token can resolve to `undefined`.
 };
 
 @Module({
