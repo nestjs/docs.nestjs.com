@@ -426,7 +426,7 @@ export class AppModule {}
 
 There are edge-cases when your module may need to take extra options that determine how it is supposed to behave (a nice example of such an option is the `isGlobal` flag - or just `global`) that at the same time, shouldn't be included in the `MODULE_OPTIONS_TOKEN` provider (as they are irrelevant to services/providers registered within that module, for example, `ConfigService` does not need to know whether its host module is registered as a global module).
 
-In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following exxample:
+In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following example:
 
 ```typescript
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
