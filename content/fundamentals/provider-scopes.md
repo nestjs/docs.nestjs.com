@@ -107,7 +107,7 @@ You then configure your `context` value (in the `GraphQLModule`) to contain `req
 
 #### Inquirer provider
 
-If you want get the class where a provider was constructed, for instance in logging or metrics providers, you can inject the `INQUIRER` token.
+If you want to get the class where a provider was constructed, for instance in logging or metrics providers, you can inject the `INQUIRER` token.
 
 ```typescript
 import { Inject, Injectable, Scope } from '@nestjs/common';
