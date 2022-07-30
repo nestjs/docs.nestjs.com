@@ -949,7 +949,7 @@ Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
-In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
+In order to use an AuthGuard with [GraphQL](/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
 
 ```typescript
 @Injectable()

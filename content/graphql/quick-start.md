@@ -277,7 +277,7 @@ One technique is to use a factory function:
 }),
 ```
 
-Like other factory providers, our factory function can be <a href="https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory">async</a> and can inject dependencies through `inject`.
+Like other factory providers, our factory function can be [async](/fundamentals/custom-providers#factory-providers-usefactory) and can inject dependencies through `inject`.
 
 ```typescript
 GraphQLModule.forRootAsync<ApolloDriverConfig>({
