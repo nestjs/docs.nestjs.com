@@ -177,7 +177,7 @@ with the [Serverless](https://www.serverless.com/) framework (in this case, targ
 First, let's install the required packages:
 
 ```bash
-$ npm i @vendia/serverless-express aws-lambda
+$ npm i @vendia/serverless-express
 $ npm i -D @types/aws-lambda serverless-offline
 ```
 
@@ -191,13 +191,27 @@ service: serverless-example
 plugins:
   - serverless-offline
 
+package:
+  patterns:
+    # here you can ignore some files or folders to reduce the bundle size.
+    - '!node_modules/**/LICENSE'
+    - '!node_modules/**/*.md'
+    - '!node_modules/**/*.js.map'
+    - '!node_modules/**/*.d.ts.map'
+    - '!node_modules/**/*.d.ts'
+    - '!node_modules/typeorm/browser/**'
+    - '!.webpack/**'
+    - '!src/**'
+    - '!test/**'
+    - '!.idea/**'
+
 provider:
   name: aws
   runtime: nodejs14.x
 
 functions:
   main:
-    handler: dist/main.handler
+    handler: dist/lambda.handler
     events:
       - http:
           method: ANY
@@ -209,35 +223,52 @@ functions:
 
 > info **Hint** To learn more about the Serverless framework, visit the [official documentation](https://www.serverless.com/framework/docs/).
 
-With this place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
+With that in place, we can now create a file called `lambda.ts` inside `src` and place the necessary boilerplate:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import serverlessExpress from '@vendia/serverless-express';
-import { Callback, Context, Handler } from 'aws-lambda';
+import type { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
 let server: Handler;
 
 async function bootstrap(): Promise<Handler> {
   const app = await NestFactory.create(AppModule);
+
   await app.init();
 
   const expressApp = app.getHttpAdapter().getInstance();
+
   return serverlessExpress({ app: expressApp });
 }
+
+// This is a simple trick inspired by this article
+// https://aws.amazon.com/pt/blogs/compute/using-node-js-es-modules-and-top-level-await-in-aws-lambda/
+// This can save you up to one second from cold start.
+const delayedFactory: Promise<Handler> = Promise.resolve()
+  .then(() => bootstrap())
+  .then(app => {
+    server = app;
+
+    return app;
+  });
 
 export const handler: Handler = async (
   event: any,
   context: Context,
   callback: Callback,
 ) => {
-  server = server ?? (await bootstrap());
+  server = server ?? (await delayedFactory);
+
   return server(event, context, callback);
 };
+
 ```
 
 > info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](/cli/monorepo#monorepo-mode).
+
+> info **Hint** It's really recommended to have one file called `setup.ts` to share common configurations to use inside `lambda.ts` and `main.ts`.
 
 > warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [article](https://javascript.plainenglish.io/serverless-nestjs-document-your-api-with-swagger-and-aws-api-gateway-64a53962e8a2) for more information.
 
@@ -261,6 +292,11 @@ $ npx serverless offline
 
 Once the application is running, open your browser and navigate to `http://localhost:3000/dev/[ANY_ROUTE]` (where `[ANY_ROUTE]` is any endpoint registered in your application).
 
+> info **Hint** If you don't want to deploy using `npx serverless deploy` or if you already have AWS Lambda created, run `npx serverless package` to get the zip and then upload that zip directly to AWS Lambda using AWS Console.
+
+The workflow we recommend for you to work with serverless is to develop, run the NestJS application with `nest start`. 
+After developing some features, build your app and test with `npx serverless offline` and then deploy to AWS Lambda.
+
 In the sections above, we've shown that using `webpack` and bundling your app can have significant impact on the overall bootstrap time.
 However, to make it work with our example, there are a few additional configurations you must add in your `webpack.config.js` file. Generally,
 to make sure our `handler` function will be picked up, we must change the `output.libraryTarget` property to `commonjs2`.
@@ -268,9 +304,13 @@ to make sure our `handler` function will be picked up, we must change the `outpu
 ```javascript
 return {
   ...options,
+  entry: {
+    main: 'src/lambda.ts',
+  },
   externals: [],
   output: {
     ...options.output,
+    filename: 'lambda.js',
     libraryTarget: 'commonjs2',
   },
   // ... the rest of the configuration
@@ -286,6 +326,9 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 return {
   ...options,
+  entry: {
+    main: 'src/lambda.ts',
+  },
   externals: [],
   optimization: {
     minimizer: [
@@ -298,6 +341,7 @@ return {
   },
   output: {
     ...options.output,
+    filename: 'lambda.js',
     libraryTarget: 'commonjs2',
   },
   // ... the rest of the configuration
