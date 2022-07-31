@@ -71,7 +71,7 @@ interface BasicCommandOptions {
 }
 
 @Command({ name: 'basic', description: 'A parameter parse' })
-export class BasicCommand implements CommandRunner {
+export class BasicCommand extends CommandRunner {
   constructor(private readonly logService: LogService) {}
 
   async run(
