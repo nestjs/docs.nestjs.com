@@ -71,6 +71,7 @@ import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
+@Injectable()
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
