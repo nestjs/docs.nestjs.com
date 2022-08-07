@@ -255,7 +255,7 @@ export class HeroesGameSagas {
 }
 ```
 
-> info **Hint** The `ofType` operator is exported from the `@nestjs/cqrs` package.
+> info **Hint** The `ofType` operator and the `@Saga()` decorator are exported from the `@nestjs/cqrs` package.
 
 We declared a rule - when any hero kills the dragon, the ancient item should be dropped. With this in place, `DropAncientItemCommand` will be dispatched and processed by the appropriate handler.
 
