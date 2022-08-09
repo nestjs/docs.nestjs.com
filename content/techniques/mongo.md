@@ -253,6 +253,34 @@ To inject a given `Connection` to a custom provider (for example, factory provid
 }
 ```
 
+If you are just looking to inject the model from a named database, you can use the connection name as a second parameter to the `@InejctModel()` decorator.
+
+```typescript
+@@filename(cats.service)
+import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Cat, CatDocument } from './schemas/cat.schema';
+
+@Injectable()
+export class CatsService {
+  constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<CatDocument>) {}
+}
+@@switch
+import { Model } from 'mongoose';
+import { Injectable, Dependencies } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
+import { Cat } from './schemas/cat.schema';
+
+@Injectable()
+@Dependencies(getModelToken(Cat.name, 'cats'))
+export class CatsService {
+  constructor(catModel) {
+    this.catModel = catModel;
+  }
+}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
