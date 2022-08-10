@@ -253,7 +253,7 @@ To inject a given `Connection` to a custom provider (for example, factory provid
 }
 ```
 
-If you are just looking to inject the model from a named database, you can use the connection name as a second parameter to the `@InejctModel()` decorator.
+If you are just looking to inject the model from a named database, you can use the connection name as a second parameter to the `@InjectModel()` decorator.
 
 ```typescript
 @@filename(cats.service)
