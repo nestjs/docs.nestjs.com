@@ -207,7 +207,7 @@ import { Connection } from './connection.provider';
   providers: [Connection],
 })
 export class DatabaseModule {
-  static forRoot(entities = [], options?) {
+  static forRoot(entities = [], options) {
     const providers = createDatabaseProviders(options, entities);
     return {
       module: DatabaseModule,
