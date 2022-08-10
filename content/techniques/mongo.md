@@ -262,11 +262,6 @@ export class CatsService {
   constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<CatDocument>) {}
 }
 @@switch
-import { Model } from 'mongoose';
-import { Injectable, Dependencies } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
-import { Cat } from './schemas/cat.schema';
-
 @Injectable()
 @Dependencies(getModelToken(Cat.name, 'cats'))
 export class CatsService {
