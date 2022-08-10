@@ -257,11 +257,6 @@ If you are just looking to inject the model from a named database, you can use t
 
 ```typescript
 @@filename(cats.service)
-import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Cat, CatDocument } from './schemas/cat.schema';
-
 @Injectable()
 export class CatsService {
   constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<CatDocument>) {}
