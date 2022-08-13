@@ -244,7 +244,7 @@ await app.listen(3000);
 ```
 
 #### Default body-praser middleware
-The nest application registers `json` and `urlencoded` from the package `body-parser` by default. This can be turned off by setting the `bodyParser` flag when creating the application.
+The nest application registers `json` and `urlencoded` from the package `body-parser` by default. This can be turned off by setting the `bodyParser` flag when creating the application. The options used when registering the middleware can be seen in the `registerParserMiddleware` function in the (express)[https://github.com/nestjs/nest/blob/master/packages/platform-express/adapters/express-adapter.ts#L210] and (fastify)[https://github.com/nestjs/nest/blob/master/packages/platform-fastify/adapters/fastify-adapter.ts#L455] adapters.
 
 ```typescript
 const app = await NestFactory.create(AppModule, {bodyParser: false});
