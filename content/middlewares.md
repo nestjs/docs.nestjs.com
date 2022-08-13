@@ -243,4 +243,14 @@ app.use(logger);
 await app.listen(3000);
 ```
 
+#### Default body-praser middleware
+The nest application registers `json` and `urlencoded` from the package `body-parser` by default. This can be turned off by setting the `bodyParser` flag when creating the application.
+
+```typescript
+const app = await NestFactory.create(AppModule, {bodyParser: false});
+```
+
+Without doing that, you won't be able to apply custom bodyParser middleware to individual routes.
+
+
 > info **Hint** Accessing the DI container in a global middleware is not possible. You can use a [functional middleware](middleware#functional-middleware) instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')` within the `AppModule` (or any other module).
