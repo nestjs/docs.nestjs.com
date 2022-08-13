@@ -358,14 +358,14 @@ The above implementation is just a shell demonstrating the approach. Your implem
 
 Global filters **can** extend the base filter. This can be done in either of two ways.
 
-The first method is to inject the `HttpAdapter` reference when instantiating the custom global filter:
+The first method is to inject the `HttpAdapterHost` reference when instantiating the custom global filter:
 
 ```typescript
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  const httpAdapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
 
   await app.listen(3000);
 }
