@@ -89,6 +89,12 @@ $ nest g <schematic> <name> [options]
 
 Compiles an application or workspace into an output folder.
 
+Also, the `build` command is responsible for:
+
+- mapping paths (if using path aliases) via `tsconfig-paths`
+- annotating DTOs with OpenAPI decorators (if `@nestjs/swagger` CLI plugin is enabled)
+- annotating DTOs with GraphQL decorators (if `@nestjs/graphql` CLI plugin is enabled)
+
 ```bash
 $ nest build <name> [options]
 ```
