@@ -148,7 +148,8 @@ export interface ExpressSwaggerCustomOptions {
   urls?: Record<'url' | 'name', string>[];
 }
 ```
-If you use fastify you can use the `FastifySwaggerCustomOptions` interface exacly the same way as the express one.
+
+If you use Fastify you can use the `FastifySwaggerCustomOptions` interface exactly the same way as the Express one:
 
 ```TypeScript
 export interface FastifySwaggerCustomOptions {
