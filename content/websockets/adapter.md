@@ -62,7 +62,7 @@ export class RedisIoAdapter extends IoAdapter {
   }
 }
 ```
-Orther option is `ioredis` package.
+Another option is `ioredis` package instead of `redis`.
 
 ```bash
 $ npm i --save ioredis socket.io @socket.io/redis-adapter
