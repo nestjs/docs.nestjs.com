@@ -266,7 +266,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
 MulterModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    dest: configService.getString('MULTER_DEST'),
+    dest: configService.get<string>('MULTER_DEST'),
   }),
   inject: [ConfigService],
 });
