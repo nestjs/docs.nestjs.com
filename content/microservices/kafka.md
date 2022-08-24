@@ -349,7 +349,7 @@ If your handler involves a slow processing time for each received message you sh
 @MessagePattern('hero.kill.dragon')
 async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
   const heartbeat = context.getHeartbeat();
-  
+
   // Do some slow processing
   await doWorkPart1();
 
@@ -416,6 +416,8 @@ onModuleInit() {
 #### Retriable exceptions
 
 Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+
+> warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
 
 For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
 
