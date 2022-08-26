@@ -29,6 +29,8 @@ In the **code first** approach, you use decorators and TypeScript classes to gen
 
 In the **schema first** approach, the source of truth is GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions (using either classes or interfaces) based on the GraphQL schemas to reduce the need to write redundant boilerplate code.
 
+<app-banner-courses-graphql-cf></app-banner-courses-graphql-cf>
+
 #### Getting started with GraphQL & TypeScript
 
 > info **Hint** In the following chapters, we'll be integrating the `@nestjs/apollo` package. If you want to use `mercurius` package instead, navigate to [this section](/graphql/quick-start#mercurius-integration).
@@ -74,8 +76,6 @@ export class AppModule {}
 ```
 
 In this case, these options will be forwarded to the `ApolloServer` constructor.
-
-<app-banner-enterprise></app-banner-enterprise>
 
 #### GraphQL playground
 

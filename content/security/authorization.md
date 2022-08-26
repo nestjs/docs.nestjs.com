@@ -142,6 +142,8 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 
 > info **Hint** If you want to return a different error response, you should throw your own specific exception instead of returning a boolean value.
 
+<app-banner-courses-auth></app-banner-courses-auth>
+
 #### Claims-based authorization
 
 When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject can do, not what the subject is.

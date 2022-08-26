@@ -303,7 +303,7 @@ The answer is straightforward: by using another, slightly different type of Guar
 
 The second case enumerated above (logged in user) simply relies on the standard type of Guard we already discussed to enable access to protected routes for logged in users.
 
-<app-banner-courses></app-banner-courses>
+<app-banner-courses-auth></app-banner-courses-auth>
 
 #### Login route
 
