@@ -122,6 +122,8 @@ export class AppModule {
 
 > info **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
 
+> warning **Warning** When using the `express` adapter, the NestJS app will register `json` and `urlencoded` from the package `body-parser` by default. This means if you want to customize that middleware per route, you need to turn off the global middleware by setting the `bodyParser` flag to `false` when creating the application with `NestFactory.create()`.
+
 #### Route wildcards
 
 Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
@@ -244,17 +246,3 @@ await app.listen(3000);
 ```
 
 > info **Hint** Accessing the DI container in a global middleware is not possible. You can use a [functional middleware](middleware#functional-middleware) instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')` within the `AppModule` (or any other module).
-
-#### Default body parser middleware
-
-When using the `express` adapter, the NestJS app will register `json` and `urlencoded` from the package `body-parser` by default. 
-- `urlencoded` is used with the `extended: true` flag and the optional `rawBody` flag if set in your `NestApplicationOptions`.
-- `body-parser` is used with the optional `rawBody` flag if set in your `NestApplicationOptions`.
-
-This can be turned off by setting the `bodyParser` flag to `false` when creating the application.
-
-```typescript
-const app = await NestFactory.create(AppModule, {bodyParser: false});
-```
-
-Without doing that, you won't be able to apply custom bodyParser middleware to individual routes.
