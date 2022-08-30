@@ -66,15 +66,20 @@ Once this is done, the TypeORM `DataSource` and `EntityManager` objects will be 
 ```typescript
 @@filename(app.module)
 import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forRoot(), UsersModule],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource()
+    private dataSource: DataSource
+  ) {}
 }
 @@switch
 import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 @Dependencies(DataSource)
 @Module({
@@ -82,6 +87,7 @@ import { DataSource } from 'typeorm';
 })
 export class AppModule {
   constructor(dataSource) {
+    @InjectDataSource()
     this.dataSource = dataSource;
   }
 }
