@@ -8,9 +8,11 @@ const microservice = app.connectMicroservice({
   transport: Transport.TCP,
 });
 
-await app.startAllMicroservices();
 await app.listen(3001);
+await app.startAllMicroservices();
 ```
+
+> warning **Warning** Always start the microservices after starting the app to avoid consuming messages while the dependency injection in your app is not fully initialized.
 
 To connect multiple microservice instances, issue the call to `connectMicroservice()` for each microservice:
 
@@ -32,8 +34,8 @@ const microserviceRedis = app.connectMicroservice<MicroserviceOptions>({
   },
 });
 
-await app.startAllMicroservices();
 await app.listen(3001);
+await app.startAllMicroservices();
 ```
 
 To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument of type `Transport` which is an enum with all the built-in transport strategies defined.
