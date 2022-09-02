@@ -198,6 +198,11 @@
     {
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
+    },
+    {
+      "logo": "/assets/logo/lunes.svg",
+      "url": "https://lunes.io",
+      "width": "130px"
     }
   ],
   "Body": [
