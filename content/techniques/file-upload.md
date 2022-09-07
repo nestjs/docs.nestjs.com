@@ -181,7 +181,7 @@ uploadFile(files) {
 
 > info **Hint** The `FilesInterceptor()` decorator is exported from the `@nestjs/platform-express` package. The `@UploadedFiles()` decorator is exported from `@nestjs/common`.
 
-#### Multiple fields
+#### <a name="multiple-files"></a>Multiple fields
 
 To upload multiple fields (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
 
