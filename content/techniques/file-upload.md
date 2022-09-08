@@ -183,7 +183,7 @@ uploadFile(files) {
 
 #### Multiple files
 
-To upload multiple fields (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
+To upload multiple files (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
 
 - `uploadedFields`: an array of objects, where each object specifies a required `name` property with a string value specifying a field name, as described above, and an optional `maxCount` property, as described above
 - `options`: optional `MulterOptions` object, as described above
