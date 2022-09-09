@@ -349,7 +349,7 @@ Start by installing the required dependency:
 $ npm install --save @apollo/gateway
 ```
 
-The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway servce will remain the same for both code and schema first approaches.
+The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway service will remain the same for both code and schema first approaches.
 
 ```typescript
 import { IntrospectAndCompose } from '@apollo/gateway';
