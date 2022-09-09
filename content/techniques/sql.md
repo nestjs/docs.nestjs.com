@@ -559,7 +559,7 @@ You can also inject the `DataSource` or `EntityManager` for a given data source:
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectConnection('albumsConnection')
+    @InjectDataSource('albumsConnection')
     private dataSource: DataSource,
     @InjectEntityManager('albumsConnection')
     private entityManager: EntityManager,
@@ -1149,7 +1149,7 @@ You can also inject the `Sequelize` instance for a given connection:
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectConnection('albumsConnection')
+    @InjectDataSource('albumsConnection')
     private sequelize: Sequelize,
   ) {}
 }
@@ -1165,7 +1165,7 @@ It's also possible to inject any `Sequelize` instance to the providers:
       useFactory: (albumsSequelize: Sequelize) => {
         return new AlbumsService(albumsSequelize);
       },
-      inject: [getConnectionToken('albumsConnection')],
+      inject: [getDataSourceToken('albumsConnection')],
     },
   ],
 })
