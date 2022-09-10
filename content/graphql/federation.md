@@ -738,3 +738,87 @@ import { GraphQLModule } from '@nestjs/graphql';
 })
 export class AppModule {}
 ```
+
+### Federation 2
+
+To quote the [Apollo docs](https://www.apollographql.com/docs/federation/federation-2/new-in-federation-2), Federation 2 improves developer experience from the original Apollo Federation (called Federation 1 in this doc), which is backward compatible with most original supergraphs.
+
+> warning **Warning** Mercurius currently doesn't fully support Federation 2. You can see the list of libraries that support Federation 2 [here](https://www.apollographql.com/docs/federation/supported-subgraphs#javascript--typescript).
+
+In the following sections, we'll upgrade the previous example to Federation 2.
+
+### Federated example: Users
+
+One change in Federation 2 is that entities has no originating subgraph, so we don't need to extend `Query` anymore. For more detail please refer to [this topic](https://www.apollographql.com/docs/federation/federation-2/new-in-federation-2#entities) in Apollo docs.
+
+#### Schema first
+
+We can simply remove `extend` keyword from the schema.
+
+```graphql
+type User @key(fields: "id") {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  getUser(id: ID!): User
+}
+```
+
+#### Code first
+
+To use Federation 2, we need to specify in `autoSchemaFile` option.
+
+```ts
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service'; // Not included in this example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: {
+        federation: 2,
+      },
+    }),
+  ],
+  providers: [UsersResolver, UsersService],
+})
+export class AppModule {}
+```
+
+#### Federated example: Posts
+
+With the same reason as above, we don't need to extend `User` and `Query` anymore.
+
+#### Schema first
+
+We can simply remove `extend` and `external` directives from the schema
+
+```graphql
+type Post @key(fields: "id") {
+  id: ID!
+  title: String!
+  body: String!
+  user: User
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  posts: [Post]
+}
+
+type Query {
+  getPosts: [Post]
+}
+```
+
+#### Code first
+
+TBD
