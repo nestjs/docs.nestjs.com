@@ -747,7 +747,7 @@ To quote the [Apollo docs](https://www.apollographql.com/docs/federation/federat
 
 In the following sections, we'll upgrade the previous example to Federation 2.
 
-### Federated example: Users
+#### Federated example: Users
 
 One change in Federation 2 is that entities has no originating subgraph, so we don't need to extend `Query` anymore. For more detail please refer to [this topic](https://www.apollographql.com/docs/federation/federation-2/new-in-federation-2#entities) in Apollo docs.
 
