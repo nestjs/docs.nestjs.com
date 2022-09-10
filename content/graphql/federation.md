@@ -743,7 +743,7 @@ export class AppModule {}
 
 To quote the [Apollo docs](https://www.apollographql.com/docs/federation/federation-2/new-in-federation-2), Federation 2 improves developer experience from the original Apollo Federation (called Federation 1 in this doc), which is backward compatible with most original supergraphs.
 
-> warning **Warning** Mercurius currently doesn't fully support Federation 2. You can see the list of libraries that support Federation 2 [here](https://www.apollographql.com/docs/federation/supported-subgraphs#javascript--typescript).
+> warning **Warning** Mercurius doesn't fully support Federation 2. You can see the list of libraries that support Federation 2 [here](https://www.apollographql.com/docs/federation/supported-subgraphs#javascript--typescript).
 
 In the following sections, we'll upgrade the previous example to Federation 2.
 
@@ -821,4 +821,49 @@ type Query {
 
 #### Code first
 
-TBD
+Since we don't extend `User` entity anymore, we can simply remove `extends` and `external` directives from `User`.
+
+```ts
+import { Directive, ObjectType, Field, ID } from '@nestjs/graphql';
+import { Post } from './post.entity';
+
+@ObjectType()
+@Directive('@key(fields: "id")')
+export class User {
+  @Field((type) => ID)
+  id: number;
+
+  @Field((type) => [Post])
+  posts?: Post[];
+}
+```
+
+Also, similar to User service, we need to specify `GraphQLModule` to use Federation 2.
+
+```ts
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { User } from './user.entity';
+import { PostsResolvers } from './posts.resolvers';
+import { UsersResolvers } from './users.resolvers';
+import { PostsService } from './posts.service'; // Not included in example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: {
+        federation: 2,
+      },
+      buildSchemaOptions: {
+        orphanedTypes: [User],
+      },
+    }),
+  ],
+  providers: [PostsResolver, UsersResolver, PostsService],
+})
+export class AppModule {}
+```
