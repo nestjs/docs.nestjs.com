@@ -11,7 +11,7 @@ To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260
 
 > warning **Warning** Federation currently does not support subscriptions.
 
-In the following sections, we'll set up a demo application that consits of a gateway and two federated endpoints: Users service and Posts service.
+In the following sections, we'll set up a demo application that consists of a gateway and two federated endpoints: Users service and Posts service.
 
 #### Federation with Apollo
 
