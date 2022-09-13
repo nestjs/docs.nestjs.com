@@ -768,7 +768,7 @@ type Query {
 
 #### Code first
 
-To use Federation 2, we need to specify in `autoSchemaFile` option.
+To use Federation 2, we need to specify the federation version in `autoSchemaFile` option.
 
 ```ts
 import {
