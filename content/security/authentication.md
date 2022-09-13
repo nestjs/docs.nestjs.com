@@ -383,10 +383,9 @@ We'll need to install a couple more packages to support our JWT requirements:
 
 ```bash
 $ npm install --save @nestjs/jwt passport-jwt
-$ npm install --save-dev @types/passport-jwt
 ```
 
-The `@nestjs/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy and `@types/passport-jwt` provides the TypeScript type definitions.
+The `@nestjs/jwt` package (see more [here](https://github.com/nestjs/jwt)) is a utility package that helps with JWT manipulation. The `passport-jwt` package is the Passport package that implements the JWT strategy. (you can read more on the package own [github](https://github.com/mikenicholson/passport-jwt) and their nestjs [intergration](https://github.com/mikenicholson/passport-jwt/blob/master/docs/nestjs.md)).
 
 Let's take a closer look at how a `POST /auth/login` request is handled. We've decorated the route using the built-in `AuthGuard` provided by the passport-local strategy. This means that:
 
@@ -579,19 +578,20 @@ We can now address our final requirement: protecting endpoints by requiring a va
 
 ```typescript
 @@filename(auth/jwt.strategy)
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy, JwtStrategyOptions } from 'passport-jwt';
+import { NestJsJwtDriver } from 'passport-jwt/platform-nestjsjwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
-    });
+  constructor(jwtCore: JwtService) {
+      const opts: JwtStrategyOptions = {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        jwtDriver: new NestJsJwtDriver(jwtCore)
+      }
+      super(opts);
   }
 
   async validate(payload: any) {
@@ -600,17 +600,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 }
 @@switch
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { NestJsJwtDriver } from 'passport-jwt/platform-nestjsjwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(jwtCore: JwtService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        jwtDriver: new NestJsJwtDriver(jwtCore)
     });
   }
 
@@ -623,8 +623,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 With our `JwtStrategy`, we've followed the same recipe described earlier for all Passport strategies. This strategy requires some initialization, so we do that by passing in an options object in the `super()` call. You can read more about the available options [here](https://github.com/mikenicholson/passport-jwt#configure-strategy). In our case, these options are:
 
 - `jwtFromRequest`: supplies the method by which the JWT will be extracted from the `Request`. We will use the standard approach of supplying a bearer token in the Authorization header of our API requests. Other options are described [here](https://github.com/mikenicholson/passport-jwt#extracting-the-jwt-from-the-request).
-- `ignoreExpiration`: just to be explicit, we choose the default `false` setting, which delegates the responsibility of ensuring that a JWT has not expired to the Passport module. This means that if our route is supplied with an expired JWT, the request will be denied and a `401 Unauthorized` response sent. Passport conveniently handles this automatically for us.
-- `secretOrKey`: we are using the expedient option of supplying a symmetric secret for signing the token. Other options, such as a PEM-encoded public key, may be more appropriate for production apps (see [here](https://github.com/mikenicholson/passport-jwt#configure-strategy) for more information). In any case, as cautioned earlier, **do not expose this secret publicly**.
+- `jwtDriver`: this library works with drivers, these drivers validate the current signature of the jwt and cryptographically guarantee that it is signed by our secret. In our example, we use the `NestJsJwtDriver` because it integrates nicely with the `JwtModule`, for other drivers options view the documentation [here](https://github.com/mikenicholson/passport-jwt#drivers).
 
 The `validate()` method deserves some discussion. For the jwt-strategy, Passport first verifies the JWT's signature and decodes the JSON. It then invokes our `validate()` method passing the decoded JSON as its single parameter. Based on the way JWT signing works, **we're guaranteed that we're receiving a valid token** that we have previously signed and issued to a valid user.
 
@@ -754,7 +753,7 @@ export class AppController {
 }
 ```
 
-Once again, we're applying the `AuthGuard` that the `@nestjs/passport` module has automatically provisioned for us when we configured the passport-jwt module. This Guard is referenced by its default name, `jwt`. When our `GET /profile` route is hit, the Guard will automatically invoke our passport-jwt custom configured logic, validating the JWT, and assigning the `user` property to the `Request` object.
+Once again, we're applying the `AuthGuard` that the `@nestjs/passport` module has automatically provisioned for us when we configured the `passport-jwt` module. This Guard is referenced by its default name, `jwt`. When our `GET /profile` route is hit, the Guard will automatically invoke our `passport-jwt` custom configured logic, validating the JWT, and assigning the `user` property to the `Request` object.
 
 Ensure the app is running, and test the routes using `cURL`.
 
@@ -772,7 +771,7 @@ $ curl http://localhost:3000/profile -H "Authorization: Bearer eyJhbGciOiJIUzI1N
 $ # result -> {"userId":1,"username":"john"}
 ```
 
-Note that in the `AuthModule`, we configured the JWT to have an expiration of `60 seconds`. This is probably too short an expiration, and dealing with the details of token expiration and refresh is beyond the scope of this article. However, we chose that to demonstrate an important quality of JWTs and the passport-jwt strategy. If you wait 60 seconds after authenticating before attempting a `GET /profile` request, you'll receive a `401 Unauthorized` response. This is because Passport automatically checks the JWT for its expiration time, saving you the trouble of doing so in your application.
+Note that in the `AuthModule`, we configured the JWT to have an expiration of `60 seconds`. This is probably too short an expiration, and dealing with the details of token expiration and refresh is beyond the scope of this article. However, we chose that to demonstrate an important quality of JWTs and the `passport-jwt` strategy. If you wait 60 seconds after authenticating before attempting a `GET /profile` request, you'll receive a `401 Unauthorized` response. This is because Passport automatically checks the JWT for its expiration time, saving you the trouble of doing so in your application.
 
 We've now completed our JWT authentication implementation. JavaScript clients (such as Angular/React/Vue), and other JavaScript apps, can now authenticate and communicate securely with our API Server.
 
