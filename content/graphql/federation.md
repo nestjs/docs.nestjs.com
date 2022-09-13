@@ -838,7 +838,7 @@ export class User {
 }
 ```
 
-Also, similar to User service, we need to specify `GraphQLModule` to use Federation 2.
+Also, similarly to the User service, we need to specify in the `GraphQLModule` to use Federation 2.
 
 ```ts
 import {
