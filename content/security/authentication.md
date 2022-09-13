@@ -949,14 +949,18 @@ Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
-In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
+In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in `AuthGuard` class and override the `getRequest()` method, in which we will now return the correct request object, based on the context type.
 
 ```typescript
 @Injectable()
-export class GqlAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
-    const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    if (context.getType<GqlContextType>() === 'graphql') {
+      const ctx = GqlExecutionContext.create(context);
+      return ctx.getContext().req;
+    }
+
+    return context.switchToHttp().getRequest();
   }
 }
 ```
@@ -979,7 +983,7 @@ To use above decorator in your resolver, be sure to include it as a parameter of
 
 ```typescript
 @Query(returns => User)
-@UseGuards(GqlAuthGuard)
+@UseGuards(JwtAuthGuard)
 whoAmI(@CurrentUser() user: User) {
   return this.usersService.findById(user.id);
 }
