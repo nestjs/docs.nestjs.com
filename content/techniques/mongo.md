@@ -29,17 +29,26 @@ With Mongoose, everything is derived from a [Schema](http://mongoosejs.com/docs/
 
 Schemas can be created with NestJS decorators, or with Mongoose itself manually. Using decorators to create schemas greatly reduces boilerplate and improves overall code readability.
 
-Let's define the `CatSchema`:
+Create an interface the `ICat` representing a document in MongoDB as follows:
+
+```typescript
+interface ICat {
+  name: string;
+  age: number;
+  breed: string;
+}
+```
+
+Let's define the `CatSchema` corresponding to the document interface:
 
 ```typescript
 @@filename(schemas/cat.schema)
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-
-export type CatDocument = Cat & Document;
+import { ICat } from '../cat.interface';
 
 @Schema()
-export class Cat {
+export class Cat implements ICat {
   @Prop()
   name: string;
 
