@@ -42,9 +42,25 @@ findOne(): UserEntity {
 }
 ```
 
-> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
-
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
+
+Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized. If you want to serialize plain object properly, you can use `@SerializeOptions()` decorator before the handler.
+
+```typescript
+@SerializeOptions({type: UserEntity})
+@UseInterceptors(ClassSerializerInterceptor)
+@Get()
+findOne(): UserEntity {
+  return {
+    id: 1,
+    firstName: 'Kamil',
+    lastName: 'Mysliwiec',
+    password: 'password',
+  };
+}
+```
+
+> info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common`.
 
 When this endpoint is requested, the client receives the following response:
 
@@ -91,8 +107,6 @@ findOne(): UserEntity {
   return new UserEntity();
 }
 ```
-
-> info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common`.
 
 Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `instanceToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
 
