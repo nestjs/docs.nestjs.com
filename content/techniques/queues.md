@@ -411,7 +411,7 @@ One approach is to use a factory function:
 ```typescript
 BullModule.forRootAsync({
   useFactory: () => ({
-    redis: {
+    connection: {
       host: 'localhost',
       port: 6379,
     },
@@ -425,7 +425,7 @@ Our factory behaves like any other [asynchronous provider](https://docs.nestjs.c
 BullModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    redis: {
+    connection: {
       host: configService.get('QUEUE_HOST'),
       port: +configService.get('QUEUE_PORT'),
     },
@@ -449,7 +449,7 @@ The construction above will instantiate `BullConfigService` inside `BullModule` 
 class BullConfigService implements SharedBullConfigurationFactory {
   createSharedConfiguration(): BullModuleOptions {
     return {
-      redis: {
+      connection: {
         host: 'localhost',
         port: 6379,
       },
