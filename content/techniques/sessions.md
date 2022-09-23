@@ -64,13 +64,13 @@ findAll(@Session() session: Record<string, any>) {
 First install the required package:
 
 ```shell
-$ npm i fastify-secure-session
+$ npm i @fastify/secure-session
 ```
 
 Once the installation is complete, register the `fastify-secure-session` plugin:
 
 ```typescript
-import secureSession from 'fastify-secure-session';
+import secureSession from '@fastify/secure-session';
 
 // somewhere in your initialization file
 const app = await NestFactory.create<NestFastifyApplication>(
@@ -107,4 +107,4 @@ findAll(@Session() session: secureSession.Session) {
 }
 ```
 
-> info **Hint** The `@Session()` decorator is imported from the `@nestjs/common`, while `secureSession.Session` from the `fastify-secure-session` package (import statement: `import * as secureSession from 'fastify-secure-session'`).
+> info **Hint** The `@Session()` decorator is imported from the `@nestjs/common`, while `secureSession.Session` from the `@fastify/secure-session` package (import statement: `import * as secureSession from '@fastify/secure-session'`).
