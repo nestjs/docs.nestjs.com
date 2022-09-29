@@ -223,12 +223,31 @@ With this in place, import AST transformer within your `jest` configuration file
   "globals": {
     "ts-jest": {
       "astTransformers": {
-        "before": ["<path to the file created above>"],
+        "before": ["<path to the file created above>"]
       }
     }
   }
 }
 ```
+
+If you use jest v29, then use the snippet below, as the previous approach got deprecated.
+
+```json
+{
+  ... // other configuration
+  "transform": {
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "astTransformers": {
+          "before": ["<path to the file created above>"]
+        }
+      }
+    ]
+  }
+}
+```
+
 
 #### Troubleshooting `jest` (e2e tests)
 
