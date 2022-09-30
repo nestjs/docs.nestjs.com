@@ -113,7 +113,7 @@ $ npm run start:dev
 
 This command will watch your files, automatically recompiling and reloading the server.
 
-#### Linting / formatting
+#### Linting and formatting
 
 [Nest CLI](/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [eslint](https://eslint.org/) and [prettier](https://prettier.io/)).
 
