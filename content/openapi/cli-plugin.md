@@ -230,7 +230,7 @@ With this in place, import AST transformer within your `jest` configuration file
 }
 ```
 
-If you use jest v29, then use the snippet below, as the previous approach got deprecated.
+If you use `jest@^29`, then use the snippet below, as the previous approach got deprecated.
 
 ```json
 {
