@@ -198,11 +198,6 @@
     {
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
-    },
-    {
-      "logo": "/assets/logo/swyftlogistics.png",
-      "url": "https://swyftlogistics.com",
-      "width": "120px"
     }
   ],
   "Body": [
@@ -272,6 +267,7 @@
     "https://stijlbreuk.nl",
     "https://polygon-software.ch",
     "https://bewith.io",
-    "https://swetrix.com"
+    "https://swetrix.com",
+    "https://swyftlogistics.com"
   ]
 }
