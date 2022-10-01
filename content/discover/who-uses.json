@@ -198,6 +198,11 @@
     {
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
+    },
+    {
+      "logo": "/assets/logo/swyftlogistics.png",
+      "url": "https://swyftlogistics.com",
+      "width": "120px"
     }
   ],
   "Body": [
