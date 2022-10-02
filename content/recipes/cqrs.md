@@ -224,6 +224,9 @@ export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEv
 
 Now we can move the **write logic** into the event handlers.
 
+> info **hint** Keep in mind that when you start using event handlers you are leaving the traditional HTTP web content. Error handling in `CommandHandlers` can still be caught by the built-in `exception filters`, while in `EventHandlers` they will not, you will have to deal with them manually with a simple `try/catch`, using `Sagas`, `triggering a clearing event`, or whatever other solution you choose.
+As for the Http response in `CommandHandlers` can still be sent to the client instead in `EventHandlers` you cannot. If you want to get feedback to the client, you can use `WebSocket`, `SSE`, etc.
+
 #### Sagas
 
 This type of **Event-Driven Architecture** improves application **reactiveness and scalability**. Now, when we have events, we can simply react to them in various ways. **Sagas** are the final building block from an architectural point of view.
