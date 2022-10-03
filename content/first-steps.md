@@ -134,13 +134,6 @@ For headless environments where an IDE is not relevant (*Continuous Integration*
 npm run lint
 # Format with prettier
 npm run format
-
-# OR
-
-# Lint and autofix with eslint
-yarn lint
-# Format with prettier
-yarn format
 ```
 
 ##### Plugins and config
