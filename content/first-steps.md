@@ -119,12 +119,10 @@ This command will watch your files, automatically recompiling and reloading the 
 
 > info **Hint** Not sure about the role of formatters VS linters ? Learn the difference [here](https://prettier.io/docs/en/comparison.html).
 
-##### VSCode usage
-To ensure maximum stability and extensibility, we use official [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official tooling.
+##### IDE usage
+To ensure maximum stability and extensibility, we use raw [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
 
-For example with *VSCode*, a Nest project is compatible with [`vscode-eslint`](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [`prettier-vscode`](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) by design !
-
-> warning **Warning** You might be tempted to try [~~`vs-code-prettier-eslint`~~](https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint). This extension is meant to play with [~~`prettier-eslint`~~](https://github.com/prettier/prettier-eslint) package witch is **not** used inside a Nest project by default.
+> warning **Warning** A Nest project is not using [~~`prettier-eslint`~~](https://github.com/prettier/prettier-eslint) package, do not expect compatibility with extensions using it.
 
 ##### Scripted usage
 For headless environments where an IDE is not relevant (*Continuous Integration*, *Git hooks*, ...), a Nest project comes with ready-to-use `npm` (or `yarn`) scripts.
