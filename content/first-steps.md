@@ -147,6 +147,7 @@ A Nest cli scaffolded project uses
 ##### Code style
 
 With this stack setup, by default we ensure the resulting code follows:
+
 - Typescript eslint [recommended rules](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/configs/recommended.ts)
 - Improved with some [rules in `.eslintrc.js` file](https://github.com/nestjs/typescript-starter/blob/master/.eslintrc.js)
 - Prettier [default options](https://prettier.io/docs/en/options.html)
