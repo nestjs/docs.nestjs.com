@@ -126,7 +126,8 @@ To ensure maximum stability and extensibility, we use the base [`eslint`](https:
 > warning **Warning** A Nest project is not using the [~~`prettier-eslint`~~](https://github.com/prettier/prettier-eslint) package, do not expect compatibility with extensions using it.
 
 ##### Scripted usage
-For headless environments where an IDE is not relevant (*Continuous Integration*, *Git hooks*, ...), a Nest project comes with ready-to-use `npm` (or `yarn`) scripts.
+
+For headless environments where an IDE is not relevant (*Continuous Integration*, *Git hooks*, ...), a Nest project comes with ready-to-use `npm` scripts.
 
 ```bash
 # Lint and autofix with eslint
