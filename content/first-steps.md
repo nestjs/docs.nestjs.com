@@ -139,6 +139,7 @@ npm run format
 ##### Plugins and config
 
 A Nest cli scaffolded project uses
+
 - [`eslint-plugin-prettier`](https://github.com/prettier/eslint-plugin-prettier) to remove conflicting rules from `eslint` for use with `prettier`.
 - [`@typescript-eslint/plugin`](https://github.com/typescript-eslint/typescript-eslint/tree/main/packages/eslint-plugin) to enable Typescript linting
 
