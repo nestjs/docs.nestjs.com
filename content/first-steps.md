@@ -120,7 +120,8 @@ This command will watch your files, automatically recompiling and reloading the 
 > info **Hint** Not sure about the role of formatters VS linters ? Learn the difference [here](https://prettier.io/docs/en/comparison.html).
 
 ##### IDE usage
-To ensure maximum stability and extensibility, we use raw [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
+
+To ensure maximum stability and extensibility, we use the base [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
 
 > warning **Warning** A Nest project is not using [~~`prettier-eslint`~~](https://github.com/prettier/prettier-eslint) package, do not expect compatibility with extensions using it.
 
