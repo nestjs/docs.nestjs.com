@@ -295,6 +295,16 @@ In this case, we want to bind the pipe at the method call level. In our current 
 2. Pass the context-specific Joi schema in the class constructor of the pipe
 3. Bind the pipe to the method
 
+Joi schema example:
+
+```typescript
+const createCatSchema = Joi.object({
+  name: Joi.string().required(),
+  age: Joi.number().required(),
+  breed: Joi.string().required(),
+})
+```
+
 We do that using the `@UsePipes()` decorator as shown below:
 
 ```typescript
@@ -315,6 +325,8 @@ async create(createCatDto) {
 
 > info **Hint** The `@UsePipes()` decorator is imported from the `@nestjs/common` package.
 
+> info **Note** When a DTO already uses `class-validator` to validate each data element, the techniques above using both Joi schema and a DTO are not necessary. You only need one level of validation. However, if your DTO does not have `class-validator` in use, then the Joi schema method could be used like the above example, without worrying about breaking "DRY" principles.
+ 
 #### Class validator
 
 > warning **Warning** The techniques in this section require TypeScript, and are not available if your app is written using vanilla JavaScript.
