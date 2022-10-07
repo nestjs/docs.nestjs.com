@@ -303,6 +303,12 @@ const createCatSchema = Joi.object({
   age: Joi.number().required(),
   breed: Joi.string().required(),
 })
+
+export class CreateCatDto {
+  name: string;
+  age: number;
+  breed: string;
+}
 ```
 
 We do that using the `@UsePipes()` decorator as shown below:
