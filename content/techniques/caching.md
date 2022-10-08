@@ -122,7 +122,7 @@ All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // seconds
+  ttl: 5000, // 5 seconds in milliseconds
   max: 10, // maximum number of items in cache
 });
 ```
@@ -252,7 +252,7 @@ One approach is to use a factory function:
 ```typescript
 CacheModule.registerAsync({
   useFactory: () => ({
-    ttl: 5,
+    ttl: 5000, // 5 seconds in milliseconds
   }),
 });
 ```
@@ -284,7 +284,7 @@ The above construction will instantiate `CacheConfigService` inside `CacheModule
 class CacheConfigService implements CacheOptionsFactory {
   createCacheOptions(): CacheModuleOptions {
     return {
-      ttl: 5,
+      ttl: 5000, // 5 seconds in milliseconds
     };
   }
 }
