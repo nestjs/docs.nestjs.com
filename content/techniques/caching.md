@@ -220,28 +220,33 @@ class HttpCacheInterceptor extends CacheInterceptor {
 This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
 ```typescript
-import type { ClientOpts } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
-    CacheModule.register<ClientOpts>({
-      store: redisStore,
-
-      // Store-specific configuration:
-      host: 'localhost',
-      port: 6379,
+    CacheModule.register({
+      // @ts-ignore
+      store: async () => {
+        return await redisStore({
+          // Store-specific configuration:
+          socket: {
+            host: 'localhost',
+            port: 6379,
+          },
+        });
+      }
     }),
   ],
   controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
 ```
+> warning **Warning** Unfortunately you are going to need the `// @ts-ignore` for now, since the interface does not allow `Promise<CacheStore>` to be returned.
 
-> warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
-> latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
 
 #### Async configuration
 
