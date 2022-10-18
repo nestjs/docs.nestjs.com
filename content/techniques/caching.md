@@ -4,11 +4,10 @@ Caching is a great and simple **technique** that helps improve your app's perfor
 
 #### Installation
 
-First install [required packages](https://github.com/node-cache-manager/node-cache-manager) (and its types for TypeScript users):
+First install [required packages](https://github.com/node-cache-manager/node-cache-manager):
 
 ```bash
 $ npm install cache-manager
-$ npm install -D @types/cache-manager
 ```
 
 #### In-memory cache
