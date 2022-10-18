@@ -225,7 +225,7 @@ With this setup, you have to tell the `MongooseModule.forFeature()` function whi
     MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }], 'cats'),
   ],
 })
-export class AppModule {}
+export class CatsModule {}
 ```
 
 You can also inject the `Connection` for a given connection:
