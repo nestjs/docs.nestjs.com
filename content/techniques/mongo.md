@@ -85,7 +85,7 @@ owner: Owner;
 In case there are multiple owners, your property configuration should look as follows:
 
 ```typescript
-@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' }] })
+@Prop({ type: [ mongoose.Schema.Types.ObjectId ], ref: 'Owner' })
 owner: Owner[];
 ```
 
