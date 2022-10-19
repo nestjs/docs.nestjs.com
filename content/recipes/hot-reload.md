@@ -73,7 +73,7 @@ bootstrap();
 To simplify the execution process, add a script to your `package.json` file.
 
 ```json
-"start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch"
+"start:dev": "nest start --webpack --webpackPath webpack-hmr.config.js --watch"
 ```
 
 Now simply open your command line and run the following command:
