@@ -16,6 +16,7 @@ import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
+import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 
 const routes: Routes = [
   {
@@ -94,6 +95,11 @@ const routes: Routes = [
     path: 'nest-commander',
     component: NestCommanderComponent,
     data: { title: 'Nest Commander' },
+  },
+  {
+    path: 'async-local-storage',
+    component: AsyncLocalStorageComponent,
+    data: { title: 'Async Local Storage' },
   },
   {
     path: 'repl',
