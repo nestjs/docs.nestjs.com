@@ -364,8 +364,8 @@ The first method is to inject the `HttpAdapter` reference when instantiating the
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  const httpAdapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
 
   await app.listen(3000);
 }
