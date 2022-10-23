@@ -10,7 +10,7 @@ In the context of NestJS, that means if we can find a place within the request's
 
 NestJS itself does not provide any built-in abstraction for `AsyncLocalStorage`, so let's walk through how we could implement it ourselves for the simplest HTTP case to get a better understanding of the whole concept:
 
-> info **info** For a ready-made [dedicated package](#nestjs-cls), continue reading below.
+> info **info** For a ready-made [dedicated package](recipes/async-local-storage#nestjs-cls), continue reading below.
 
 1. First, create a new instance of the `AsyncLocalStorage` in some shared source file. Since we're using NestJS, let's also turn it into a module with a custom provider.
 
@@ -158,16 +158,13 @@ export class CatService {
 }
 ```
 
-3. To get strong typing of the store values managed by the `ClsService`, we can use an optional type parameter (`ClsService<MyStoreType>`), or use application-wide typescript module augmentation.
+3. To get strong typing of the store values managed by the `ClsService` (and also get auto-suggestions of the string keys), we can use an optional type parameter `ClsService<MyClsStore>` when injecting it.
 
 ```ts
-declare module `nestjs-cls` {
-  interface ClsStore {
-    userId: number
-  }
+export interface MyClsStore extends ClsStore {
+  userId: number
 }
 ```
-
 #### Testing
 
 Since the `ClsService` is just another injectable provider, it can be entirely mocked out in unit tests.
