@@ -58,7 +58,7 @@ async function bootstrap() {
       userId: req.headers['x-user-id'],
     };
     // and and pass the "next" function as callback
-    // to the "als.run" method with together the store.
+    // to the "als.run" method together with the store.
     als.run(store, () => next());
   });
 }
@@ -101,7 +101,7 @@ The store can then be accessed with an injectable `ClsService`, or entirely abst
 
 #### Installation
 
-Apart from a peer dependency on the `@nestjs` libs, it only depends on the built-in Node.js API. Install it as any other package.
+Apart from a peer dependency on the `@nestjs` libs, it only uses the built-in Node.js API. Install it as any other package.
 
 ```bash
 npm i nestjs-cls
@@ -165,6 +165,8 @@ export interface MyClsStore extends ClsStore {
   userId: number
 }
 ```
+
+> info **hint** It it also possible to let the package automatically generate a Request ID and access it later with `cls.getId()`, or to get the whole Request object using `cls.get(CLS_REQ)`.
 #### Testing
 
 Since the `ClsService` is just another injectable provider, it can be entirely mocked out in unit tests.
