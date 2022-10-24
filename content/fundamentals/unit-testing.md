@@ -178,6 +178,7 @@ describe('CatsController', () => {
       controllers: [CatsController],
     })
     .useMocker((token) => {
+      const results = ['test1', 'test2'];
       if (token === CatsService) {
         return { findAll: jest.fn().mockResolvedValue(results) };
       }
