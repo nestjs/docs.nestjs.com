@@ -150,7 +150,7 @@ export class CatsService {
 
 #### Full example
 
-Since the return of `HttpService` is an Observable, we can use `rxjs` `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
+Since the return value of the `HttpService` methods is an Observable, we can use `rxjs` - `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
 
 ```typescript
 import { catchError, firstValueFrom } from 'rxjs';
