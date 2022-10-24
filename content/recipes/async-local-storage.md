@@ -20,13 +20,11 @@ NestJS itself does not provide any built-in abstraction for `AsyncLocalStorage`,
 import { AsyncLocalStorage } from 'async_hooks';
 import { Module } from '@nestjs/core';
 
-export const asyncLocalStorage = new AsyncLocalStorage();
-
 @Module({
   providers: [
     {
       provide: AsyncLocalStorage,
-      useValue: asyncLocalStorage,
+      useValue: new AsyncLocalStorage(),
     },
   ],
   exports: [AsyncLocalStorage],
@@ -41,7 +39,7 @@ export class AlsModule {}
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { asyncLocalStorage } from './als.setup.ts';
+import { AsyncLocalStorage } from './als.module.ts';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -57,7 +55,7 @@ async function bootstrap() {
     const store = {
       userId: req.headers['x-user-id'],
     };
-    // and and pass the "next" function as callback
+    // and pass the "next" function as callback
     // to the "als.run" method together with the store.
     als.run(store, () => next());
   });
@@ -209,7 +207,7 @@ describe('CatService', () => {
         (id) => ({ userId: id })
       )
 
-      // Wrap the test call the `runWith` method
+      // Wrap the test call in the `runWith` method
       // in which we can pass hand-crafted store values.
       const cat = await cls.runWith(
         { userId: expectedUserId },
