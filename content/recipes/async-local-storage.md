@@ -4,7 +4,9 @@
 
 The main idea of Async Local Storage is that we can _wrap_ some function call with the `AsyncLocalStorage#run` call. All code that is invoked within the wrapped call gets access to the same `store`, which will be unique to each call chain.
 
-In the context of NestJS, that means if we can find a place within the request's lifecycle where we can wrap the rest of the request's code, we will be able to access and modify state visible only to that request, effectively eliminating the need for REQUEST scoped providers and their limitations.
+In the context of NestJS, that means if we can find a place within the request's lifecycle where we can wrap the rest of the request's code, we will be able to access and modify state visible only to that request, which may serve as an alternative to REQUEST-scoped providers and some of their limitations.
+
+Alternatively, we can use ALS to propagate context for only a part of the system (for example the _transaction_ object) without passing it around explicitly across services, which can increase isolation and encapsulation.
 
 #### Custom implementation
 
@@ -17,9 +19,6 @@ NestJS itself does not provide any built-in abstraction for `AsyncLocalStorage`,
 ```ts
 /** als.module.ts */
 
-import { AsyncLocalStorage } from 'async_hooks';
-import { Module } from '@nestjs/core';
-
 @Module({
   providers: [
     {
@@ -31,37 +30,41 @@ import { Module } from '@nestjs/core';
 })
 export class AlsModule {}
 ```
+>  info **Hint** `AsyncLocalStorage` is imported from `async_hooks`.
 
 2. We're only concerned with HTTP, so let's use a middleware to wrap the `next` function with `AsyncLocalStorage#run`. Since a middleware is the first thing that the request hits, this will make the `store` available in all enhancers and the rest of the system.
 
 ```ts
-/** main.ts */
+/** app.module.ts */
 
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { AsyncLocalStorage } from './als.module.ts';
+@Module({
+  imports: [AlsModule]
+  providers: [CatService],
+  controllers: [CatController],
+})
+export class AppModule implements NestModule {
+  constructor(
+    // inject the AsyncLocalStorage in the module constructor,
+    private readonly als: AsyncLocalStorage
+  ) {}
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Retrieve the instance from the container
-  // (given we've imported the AlsModule in our AppModule).
-  const als = app.get(AsyncLocalStorage);
-
-  // Here we can bind the middleware to all routes,
-  app.use((req, res, next) => {
-    // populate the store with some default values
-    // based on the request,
-    const store = {
-      userId: req.headers['x-user-id'],
-    };
-    // and pass the "next" function as callback
-    // to the "als.run" method together with the store.
-    als.run(store, () => next());
-  });
+  configure(consumer: MiddlewareConsumer) {
+    // bind the middleware,
+    consumer
+      .apply((req, res, next) => {
+        // populate the store with some default values
+        // based on the request,
+        const store = {
+          userId: req.headers['x-user-id'],
+        };
+        // and and pass the "next" function as callback
+        // to the "als.run" method together with the store.
+        als.run(store, () => next());
+      })
+      // and register it for all routes (in case of Fastify use '(.*)')
+      .forRoutes('*');
+  }
 }
-
-bootstrap();
 ```
 
 3. Now, anywhere within the lifecycle of a request, we can access the local store instance.
