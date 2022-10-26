@@ -63,18 +63,66 @@ export class AppModule implements NestModule {
       .forRoutes('*');
   }
 }
+@@switch
+@Module({
+  imports: [AlsModule]
+  providers: [CatService],
+  controllers: [CatController],
+})
+@Dependencies(AsyncLocalStorage)
+export class AppModule {
+  constructor(als) {
+    // inject the AsyncLocalStorage in the module constructor,
+    this.als = als
+  }
+
+  configure(consumer) {
+    // bind the middleware,
+    consumer
+      .apply((req, res, next) => {
+        // populate the store with some default values
+        // based on the request,
+        const store = {
+          userId: req.headers['x-user-id'],
+        };
+        // and and pass the "next" function as callback
+        // to the "als.run" method together with the store.
+        als.run(store, () => next());
+      })
+      // and register it for all routes (in case of Fastify use '(.*)')
+      .forRoutes('*');
+  }
+}
 ```
 
 3. Now, anywhere within the lifecycle of a request, we can access the local store instance.
 
 ```ts
 @@filename(cat.service)
+@Injectable()
 export class CatService {
   constructor(
     // We can inject the provided ALS instance.
     private readonly als: AsyncLocalStorage,
     private readonly catRepository: CatRepository,
   ) {}
+
+  getCatForUser() {
+    // The "getStore" method will always return the
+    // store instance associated with the given request.
+    const userId = this.als.getStore()["userId"] as number;
+    return this.catRepository.getForUser(userId);
+  }
+}
+@@switch
+@Injectable()
+@Dependencies(AsyncLocalStorage, CatRepository)
+export class CatService {
+  constructor(als, catRepository) {
+    // We can inject the provided ALS instance.
+    this.als = als
+    this.catRepository = catRepository
+  }
 
   getCatForUser() {
     // The "getStore" method will always return the
@@ -139,12 +187,29 @@ export class AppModule {}
 
 ```ts
 @@filename(cat.service)
+@Injectable()
 export class CatService {
   constructor(
     // We can inject the provided ClsService instance,
     private readonly cls: ClsService,
     private readonly catRepository: CatRepository,
   ) {}
+
+  getCatForUser() {
+    // and use the "get" method to retrieve any stored value.
+    const userId = this.cls.get('userId');
+    return this.catRepository.getForUser(userId);
+  }
+}
+@@switch
+@Injectable()
+@Dependencies(AsyncLocalStorage, CatRepository)
+export class CatService {
+  constructor(als, catRepository) {
+    // We can inject the provided ClsService instance,
+    this.als = als
+    this.catRepository = catRepository
+  }
 
   getCatForUser() {
     // and use the "get" method to retrieve any stored value.
