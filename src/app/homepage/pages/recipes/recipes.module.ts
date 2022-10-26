@@ -124,6 +124,7 @@ const routes: Routes = [
     RouterModuleComponent,
     ServeStaticComponent,
     NestCommanderComponent,
+    AsyncLocalStorageComponent,
     ReplComponent,
   ],
 })

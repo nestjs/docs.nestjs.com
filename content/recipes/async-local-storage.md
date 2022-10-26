@@ -17,8 +17,7 @@ NestJS itself does not provide any built-in abstraction for `AsyncLocalStorage`,
 1. First, create a new instance of the `AsyncLocalStorage` in some shared source file. Since we're using NestJS, let's also turn it into a module with a custom provider.
 
 ```ts
-/** als.module.ts */
-
+@@filename(als.module)
 @Module({
   providers: [
     {
@@ -35,8 +34,7 @@ export class AlsModule {}
 2. We're only concerned with HTTP, so let's use a middleware to wrap the `next` function with `AsyncLocalStorage#run`. Since a middleware is the first thing that the request hits, this will make the `store` available in all enhancers and the rest of the system.
 
 ```ts
-/** app.module.ts */
-
+@@filename(app.module)
 @Module({
   imports: [AlsModule]
   providers: [CatService],
@@ -70,8 +68,7 @@ export class AppModule implements NestModule {
 3. Now, anywhere within the lifecycle of a request, we can access the local store instance.
 
 ```ts
-/** cat.service.ts */
-
+@@filename(cat.service)
 export class CatService {
   constructor(
     // We can inject the provided ALS instance.
@@ -115,8 +112,7 @@ A similar functionality as described [above](#custom-implementation) can be impl
 1. Import the `ClsModule` in the root module.
 
 ```ts
-/** app.module.ts */
-
+@@filename(app.module)
 @Module({
   imports: [
     // Register the ClsModule,
@@ -142,8 +138,7 @@ export class AppModule {}
 2. And then can use the `ClsService` to access the store values.
 
 ```ts
-/** cat.service.ts */
-
+@@filename(cat.service)
 export class CatService {
   constructor(
     // We can inject the provided ClsService instance,
