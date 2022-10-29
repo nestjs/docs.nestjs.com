@@ -104,7 +104,7 @@ const routes: Routes = [
   {
     path: 'automock',
     component: AutomockComponent,
-    data: { title: 'AutoMock' },
+    data: { title: 'Automock' },
   },
 ];
 

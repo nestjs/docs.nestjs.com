@@ -1,33 +1,38 @@
-### AutoMock
+### Automock
 
-#### Philosophy
-AutoMock is a stand-alone library. It allows complete isolation of class-dependencies
-during unit-testing. Automock provides on-the-fly, small DI container that contains
-only the class dependencies, or rather - a mock for each class dependency.
-By using the TypeScript reflection mechanism, AutoMock can to emit class metadata,
-(specifically using `@Injectable` decorator), and thus can perform different manipulations
-on the class dependencies.
+Automock is a standalone library for unit testing. Using TypeScript Reflection
+API (`reflect-metadata`) internally to produce mock objects, Automock streamlines
+test development by automatically mocking class external dependencies.
 
-AutoMock cuts a lot of time when writing unit tests, and in addition, it also creates
-uniformity in the test writing style. It is important to say that AutoMock is intended
-for unit-tests only, and is not suitable for other types of tests, such as integration tests.
+#### Introduction
 
+The dependency injection container is an essential component of the Nest module system.
+This container is utilized both during the testing phase and the application runtime.
+
+Unit tests vary from other types of tests, such as integration tests, in that they must
+fully override providers/services within the DI container. External dependencies (providers)
+of the so-called "unit" should be totally isolated. That is, all dependencies within
+the DI container should be replaced by mock objects.
+
+As a result, loading the modules and replacing the providers inside them is a process that
+loops back on itself. Automock tackles this issue by automatically mocking all the
+external dependencies/providers, resulting in total isolation of the unit/class
+under test.
 
 #### Installation
 
-AutoMock does not require any additional setup with Nest,
-simply install it and start using it.
-
 ```bash
-$ npm i @automock/jest
+$ npm i -D @automock/jest
 ```
 
-> info **info** AutoMock only supports `jest`, soon there will be support for `sinon`
+Automock does not require any additional setup.
+
+> info **info** Jest is the only test framework currently supported by Automock.
+Sinon will shortly be released.
 
 #### Example
 
-Consider the following cats service, which takes three different class
-(constructor) parameters:
+Consider the following cats service, which takes three constructor parameters:
 
 ```ts
 @@filename(cats.service)
@@ -38,94 +43,115 @@ export class CatsService {
   constructor(
     private logger: Logger,
     private httpService: HttpService,
-    private fooService: FooService,
+    private catsDal: CatsDal,
   ) {}
 
-  public async getAllCats() {
+  async getAllCats() {
     const cats = await this.httpService.get('http://localhost:3000/api/cats');
-    this.logger.log('Fetched all the cats!')
+    this.logger.log('successfully fetched all cats');
     
-    this.fooService.doSomethingWithCats(cats);
+    this.catsDal.saveCats(cats);
   }
 }
 ```
 
-The following example shows how to create a unit-test for this service.
+The service contains one public methods, `getAllCats`, which is the method
+we use an example for the following unit test:
 
 ```ts
 @@filename(cats.service.spec)
-import { Spec } from '@automock/jest';
+import { TestBed } from '@automock/jest';
 import { CatsService } from './cats.service';
 
-import Mocked = jest.Mocked;
-
-describe('Cats Service Spec', () => {
-  let catsService: CatsService;
-  let logger: Mocked<Logger>;
-  let fooService: Mocked<FooService>;
+describe('Cats Service Unit Spec', () => {
+  let underTest: CatsService;
+  let logger: jest.Mocked<Logger>;
+  let httpService: jest.Mocked<HttpService>;
+  let catsDal: jest.Mocked<CatsDal>;
   
   beforeAll(() => {
-    const { unit, unitRef } = Spec.create(CatsService)
+    const { unit, unitRef } = TestBed.create(CatsService)
       .mock(HttpService)
-      .using({ get: async () => Promise.resolve([{ id: 1, name: 'Catty' }]), })
       .compile();
-    
-    catsService = unit;
+
+    underTest = unit;
+
     logger = unitRef.get(Logger);
-    fooService = unitRef.get(FooService);
+    httpService = unitRef.get(HttpService);
+    catsDal = unitRef.get(CatsDal);
   });
 
   describe('when getting all the cats', () => {
-    beforeAll(async () => await catsService.getAllCats());
+    test('then meet some expectations', async () => {
+      httpService.mockResolvedValueOnce([{ id: 1, name: 'Catty' }]);
+      await catsService.getAllCats();
 
-    test('then call the logger log', () => {
       expect(logger.log).toBeCalled();
-    });
-
-    test('then do something with fetched data', () => {
-      expect(fooService.doSomethingWithCats).toBeCalledWith([{ id: 1, name: 'Catty' }]);
+      expect(catsDal).toBeCalledWith([{ id: 1, name: 'Catty' }]);
     });
   });
 });
 ```
 
-> info **Hint** The `Mocked` type is imported directly from `Jest` namespace.
+> info **info** The jest.Mocked<Source> utility type returns the Source type
+> wrapped with type definitions of Jest mock function. ([reference](https://jestjs.io/docs/mock-function-api/#jestmockedsource))
 
-#### Handling different scenarios
-Vivamus at pellentesque turpis. Praesent tincidunt, tellus eu ultricies faucibus,
-nulla velit venenatis risus, sollicitudin sollicitudin dolor lectus in dui.
-Integer nec lacus eu lacus sodales efficitur sed nec ligula.
+\
+#### About `unit` and `unitRef`
+Let's examine the following code:
 
-##### Working with interfaces
+```typescript
+const { unit, unitRef } = Spec.create(CatsService).compile();
+```
+
+Calling `.compile()` returns an object with two properties, `unit`, and `unitRef`.
+
+`unitRef` is a small container which holds the class external dependencies (that
+has been replaced with mocks).
+It has one method, `get()`, which returns the mocked dependency, thus,
+it enables all the stubbing options from Jest.
+
+> info **info** unitRef.get() takes a string (token) or a class (dependency)
+
+`unit` is the actual unit under test, it's an instance of the tested class.
+
+#### Handling Different Scenarios
+Nest offers different ways to retrieve dependencies from the DI container:
+Actual class, injection tokens, and forwardRef functions. They all can be
+replaced with mocks using different techniques, in the next sections you
+can understand how to deal with each scenario
+
+##### Working with Interfaces
+Consider the following `CatsService` which takes one param which is an instance
+of the `Logger` interface.
+
+```typescript
+export interface Logger {
+  log(message: string): void;
+}
+
+export class CatsService {
+  constructor(private logger: Logger) {}
+}
+```
+
+After compiling,
+
+##### Working with Injection Tokens (`@Inject()`)
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget faucibus felis.
 Integer feugiat rhoncus nibh, in elementum dolor sodales a. Pellentesque non luctus dolor,
 id ultrices mauris. Nulla convallis diam rhoncus mauris ultrices malesuada.
 
 ##### Working with `forardRef()`
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget faucibus felis.
-Integer feugiat rhoncus nibh, in elementum dolor sodales a. Pellentesque non luctus dolor,
-id ultrices mauris. Nulla convallis diam rhoncus mauris ultrices malesuada.
 
-##### Working with injection tokens
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget faucibus felis.
-Integer feugiat rhoncus nibh, in elementum dolor sodales a. Pellentesque non luctus dolor,
-id ultrices mauris. Nulla convallis diam rhoncus mauris ultrices malesuada.
+```typescript
+export class HttpService {}
 
-##### Working with `forardRef()`
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget faucibus felis.
-Integer feugiat rhoncus nibh, in elementum dolor sodales a. Pellentesque non luctus dolor,
-id ultrices mauris. Nulla convallis diam rhoncus mauris ultrices malesuada.
-
-
-#### What's the difference from Nest's built-in testing tools?
-
-Nest suggests some built in tools for creating tests, usually you need to use the `Test` \
-factory from `@nestjs/testing` ([example]()) and create a new testing module. This technique \
-is great for creating integration/e2e tests, simply loading the whole module which includes all \
-the class dependencies
-
+export class CatsService {
+  constructor(@Inject(forwardRef(() => HttpService)) private httpService: HttpService) {}
+}
+```
 
 #### More Information
-
-Visit the [AutoMock docs site](https://automock.dev/docs) for more information, examples, and API documentation.
-
+Visit [Automock GitHub repository](https://github.com/omermorad/automock) for more
+information.
