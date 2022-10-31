@@ -379,7 +379,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-#### Transactions
+#### TypeORM Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
@@ -431,8 +431,6 @@ async createMany(users: User[]) {
   });
 }
 ```
-
-Using decorators to control the transaction (`@Transaction()` and `@TransactionManager()`) is not recommended.
 
 <app-banner-shop></app-banner-shop>
 
@@ -1044,7 +1042,7 @@ With that option specified, every model registered through the `forFeature()` me
 
 > warning **Warning** Note that models that aren't registered through the `forFeature()` method, but are only referenced from the model (via an association), won't be included.
 
-#### Transactions
+#### Sequelize Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
