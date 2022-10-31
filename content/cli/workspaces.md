@@ -197,8 +197,9 @@ These properties specify the compiler to use as well as various options that aff
 These properties specify the default generate options to be used by the `nest generate` command.
 
 | Property Name | Property Value Type | Description                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|---------------|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `spec`        | boolean _or_ object | If the value is boolean, a value of `true` enables `spec` generation by default and a value of `false` disables it. A flag passed on the CLI command line overrides this setting, as does a project-specific `generateOptions` setting (more below). If the value is an object, each key represents a schematic name, and the boolean value determines whether the default spec generation is enabled / disabled for that specific schematic. |
+| `flat`        | boolean             | If true, all generate commands will generate a flat structure                                                                                                                                                                                                                                                                                                                                                                                 |
 
 The following example uses a boolean value to specify that spec file generation should be disabled by default for all projects:
 
@@ -206,6 +207,17 @@ The following example uses a boolean value to specify that spec file generation 
 {
   "generateOptions": {
     "spec": false
+  },
+  ...
+}
+```
+
+The following example uses a boolean value to specify flat file generation should be the default for all projects:
+
+```javascript
+{
+  "generateOptions": {
+    "flat": true
   },
   ...
 }
