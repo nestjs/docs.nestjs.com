@@ -298,9 +298,18 @@ In this case, we want to bind the pipe at the method call level. In our current 
 We do that using the `@UsePipes()` decorator as shown below:
 
 ```typescript
+//...
+import * as Joi from 'joi';
+
 @@filename()
 @Post()
-@UsePipes(new JoiValidationPipe(createCatSchema))
+@UsePipes(new JoiValidationPipe(Joi.object({
+        name: Joi.string(),
+        age: Joi.number(),
+        breed: Joi.string(),
+      }),
+  ),
+)
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
