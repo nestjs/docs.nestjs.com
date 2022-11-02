@@ -331,7 +331,6 @@ async create(createCatDto) {
 
 > info **Hint** The `@UsePipes()` decorator is imported from the `@nestjs/common` package.
 
-> info **Note** When a DTO already uses `class-validator` to validate each data element, the techniques above using both Joi schema and a DTO are not necessary. You only need one level of validation. However, if your DTO does not have `class-validator` in use, then the Joi schema method could be used like the above example, without worrying about breaking "DRY" principles.
  
 #### Class validator
 
