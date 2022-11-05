@@ -51,7 +51,7 @@ export class CatsService {
 }
 ```
 
-The service contains one public methods, `getAllCats`, which is the method
+The service contains one public method, `getAllCats`, which is the method
 we use an example for the following unit test:
 
 ```ts
@@ -96,23 +96,27 @@ describe('Cats Service Unit Spec', () => {
 Let's examine the following code:
 
 ```typescript
-const { unit, unitRef } = Spec.create(CatsService).compile();
+const { unit, unitRef } = TestBed.create(CatsService).compile();
 ```
 
 Calling `.compile()` returns an object with two properties, `unit`, and `unitRef`.
 
-**`unitRef`** is a small container which holds the class external dependencies (that
-has been replaced with mocks).
-It has one method, `get()`, which returns the mocked dependency, thus,
-it enables all the stubbing options from Jest.
+**`unit`** is the "unit" (service/provider) under test, it is an actual instance of
+class being tested (also known as "unit under test").
 
-**`unit`** is the actual unit under test, it's an instance of the tested class.
+To store the mocked dependencies of the tested class, the "unit reference" (`unitRef`)
+serves as a small container. The container's `.get()` method returns the mocked
+dependency with all of its methods automatically stubbed (using `jest.fn()`).
 
-#### Handling Different Scenarios
-Nest offers different ways to retrieve dependencies from the DI container:
-Actual class, injection tokens, and forwardRef functions. They all can be
-replaced with mocks using different techniques, in the next sections you
-can understand how to deal with each scenario
+The `.get()` method can accept either a `string` or an actual class (`Type`) as its argument.
+This essentially depends on how the class dependency is being injected.
+Some specific usage scenarios, including when a `string` and when a `Type` are acceptable,
+are provided below.
+
+#### Handling Different Injections Types
+Providers are one of the most important ideas in Nest. A lot of the basic Nest classes,
+such as services, repositories, factories, helpers, and so on, can be treated of as providers.
+The main idea behind a provider is that it can be injected as a dependency.
 
 ##### Working with Interfaces
 Consider the following `CatsService` which takes one param which is an instance
