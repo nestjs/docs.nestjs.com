@@ -60,16 +60,25 @@ in the `response` argument. To override the entire JSON response body, pass an o
 The second constructor argument - `status` - should be a valid HTTP status code.
 Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
 
-Here's an example overriding the entire response body:
+There is a **third** constructor argument (optional) - `options` - That can be used to provide an error [cause](https://nodejs.org/en/blog/release/v16.9.0/#error-cause). This `cause` object is not serialized into the response object, but it can be useful for logging purposes, providing valuable information about the inner error that caused the HttpException to be thrown.
+
+
+Here's an example overriding the entire response body and providing an error cause:
 
 ```typescript
 @@filename(cats.controller)
 @Get()
 async findAll() {
-  throw new HttpException({
+  try {
+    await this.service.findAll()
+  } catch (error) { 
+    throw new HttpException({
     status: HttpStatus.FORBIDDEN,
     error: 'This is a custom message',
-  }, HttpStatus.FORBIDDEN);
+  }, HttpStatus.FORBIDDEN, {
+    cause: error
+  });
+  }
 }
 ```
 
@@ -129,6 +138,22 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `ServiceUnavailableException`
 - `GatewayTimeoutException`
 - `PreconditionFailedException`
+
+All the built-in exceptions can also provide both an error `cause` and an error description using the `options` parameter:
+
+```typescript
+throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' })
+```
+
+Using the above, this is how the response would look:
+
+```json
+{
+  "message": "ErrorMessage",
+  "error": "Some error description",
+  "statusCode": 400,
+}
+```
 
 #### Exception filters
 
