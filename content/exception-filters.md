@@ -60,8 +60,7 @@ in the `response` argument. To override the entire JSON response body, pass an o
 The second constructor argument - `status` - should be a valid HTTP status code.
 Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
 
-There is a **third** constructor argument (optional) - `options` - That can be used to provide an error [cause](https://nodejs.org/en/blog/release/v16.9.0/#error-cause). This `cause` object is not serialized into the response object, but it can be useful for logging purposes, providing valuable information about the inner error that caused the HttpException to be thrown.
-
+There is a **third** constructor argument (optional) - `options` - that can be used to provide an error [cause](https://nodejs.org/en/blog/release/v16.9.0/#error-cause). This `cause` object is not serialized into the response object, but it can be useful for logging purposes, providing valuable information about the inner error that caused the `HttpException` to be thrown.
 
 Here's an example overriding the entire response body and providing an error cause:
 
