@@ -149,7 +149,7 @@ Using the above, this is how the response would look:
 
 ```json
 {
-  "message": "ErrorMessage",
+  "message": "Something bad happened",
   "error": "Some error description",
   "statusCode": 400,
 }
