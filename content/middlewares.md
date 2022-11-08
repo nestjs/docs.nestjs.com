@@ -177,33 +177,6 @@ export class AppModule {
 
 > info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="/middleware#multiple-middleware">multiple middlewares</a>.
 
-#### Middleware versioning
-
-The `MiddlewareConsumer` can also use the [versioning](https://docs.nestjs.com/techniques/versioning) metadata to configure the middleware for a specific route's version.
-
-```typescript
-@@filename(app.module)
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller';
-
-@Module({
-  imports: [CatsModule],
-})
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: 'cats', method: RequestMethod.GET, version: '2' );
-  }
-}
-```
-
-With the code above, the `LoggerMiddleware` will only be applied to the version '2' of `/cats` endpoint.
-
-> info **Notice** Middlewares work with any versioning type described in the linked section: `URI`, `Header`, `Media Type` or `Custom`.
-
 #### Excluding routes
 
 At times we want to **exclude** certain routes from having the middleware applied. We can easily exclude certain routes with the `exclude()` method. This method can take a single string, multiple strings, or a `RouteInfo` object identifying routes to be excluded, as shown below:

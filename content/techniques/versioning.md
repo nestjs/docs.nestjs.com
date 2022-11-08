@@ -292,3 +292,30 @@ app.enableVersioning({
   defaultVersion: VERSION_NEUTRAL
 });
 ```
+
+#### Middleware versioning
+
+[Middlewares](https://docs.nestjs.com/middleware) can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the `MiddlewareConsumer.forRoutes()` method:
+
+```typescript
+@@filename(app.module)
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+import { CatsController } from './cats/cats.controller';
+
+@Module({
+  imports: [CatsModule],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'cats', method: RequestMethod.GET, version: '2' );
+  }
+}
+```
+
+With the code above, the `LoggerMiddleware` will only be applied to the version '2' of `/cats` endpoint.
+
+> info **Notice** Middlewares work with any versioning type described in the this section: `URI`, `Header`, `Media Type` or `Custom`.
