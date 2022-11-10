@@ -102,7 +102,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
     ])
   }
 }
@@ -163,6 +163,36 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 | `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
 | `details` | Object containing all information of each health indicator                                                                                                                                  | `object`                             |
 
+##### Check for specific HTTP response codes
+
+In certain cases, you might want to check for specific criteria and validate the response. As an example, let's assume
+`https://my-external-service.com` returns a response code `204`. With `HttpHealthIndicator.responseCheck` you can
+check for that response code specifically and determine all other codes as unhealthy.
+
+In case any other response code other than `204` gets returned, the following example would be unhealthy. The third parameter
+requires you to provide a function (sync or async) which returns a boolean whether the response is considered
+healthy (`true`) or unhealthy (`false`).
+
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () =>
+      this.http.responseCheck(
+        'my-external-service',
+        'https://my-external-service.com',
+        (res) => res.status === 204,
+      ),
+  ]);
+}
+```
+
+
 #### TypeOrm health indicator
 
 Terminus offers the capability to add database checks to your health check. In order to get started with this health indicator, you
@@ -200,7 +230,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.db.pingCheck('database'),
+      () => this.db.pingCheck('database'),
     ])
   }
 }
@@ -251,6 +281,126 @@ export class HealthController {
   }
 }
 ```
+
+
+#### Disk health indicator
+
+With the `DiskHealthIndicator` we can check how much storage is in use. To get started, make sure to inject the `DiskHealthIndicator`
+into your `HealthController`. The following example checks the storage used of the path `/` (or on Windows you can use `C:\\`).
+If that exceeds more than 50% of the total storage space it would response with an unhealthy Health Check.
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private readonly health: HealthCheckService,
+    private readonly disk: DiskHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.5 }),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, DiskHealthIndicator)
+export class HealthController {
+  constructor(health, disk) {}
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      () => this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.5 }),
+    ])
+  }
+}
+```
+
+With the `DiskHealthIndicator.checkStorage` function you also have the possibility to check for a fixed amount of space.
+The following example would be unhealthy in case the path `/my-app/` would exceed 250GB.
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () => this.disk.checkStorage('storage', {  path: '/', threshold: 250 * 1024 * 1024 * 1024, })
+  ]);
+}
+```
+
+#### Memory health indicator
+
+To make sure your process does not exceed a certain memory limit the `MemoryHealthIndicator` can be used. 
+The following example can be used to check the heap of your process.
+
+> info **Hint** Heap is the portion of memory where dynamically allocated memory resides (i.e. memory allocated via malloc). Memory allocated from the heap will remain allocated until one of the following occurs:
+> - The memory is _free_'d
+> - The program terminates
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private memory: MemoryHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, MemoryHealthIndicator)
+export class HealthController {
+  constructor(health, memory) {}
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    ])
+  }
+}
+```
+
+It is also possible to verify the memory RSS of your process with `MemoryHealthIndicator.checkRSS`. This example
+would return an unhealthy response code in case your process does have more than 150MB allocated.
+
+> info **Hint** RSS is the Resident Set Size and is used to show how much memory is allocated to that process and is in RAM.
+> It does not include memory that is swapped out. It does include memory from shared libraries as long as the pages from
+> those libraries are actually in memory. It does include all stack and heap memory.
+
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () => this.memory.checkRSS('memory_rss', 150 * 1024 * 1024),
+  ]);
+}
+```
+
 
 #### Custom health indicator
 
@@ -347,7 +497,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dogHealthIndicator.isHealthy('dog'),
+      () => this.dogHealthIndicator.isHealthy('dog'),
     ])
   }
 }
@@ -368,12 +518,12 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dogHealthIndicator.isHealthy('dog'),
+      () => this.dogHealthIndicator.isHealthy('dog'),
     ])
   }
 }
 ```
 
-#### Examples
+#### More examples
 
-Some working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).
+More working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).

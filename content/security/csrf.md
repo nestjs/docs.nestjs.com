@@ -26,16 +26,16 @@ app.use(csurf());
 Start by installing the required package:
 
 ```bash
-$ npm i --save fastify-csrf
+$ npm i --save @fastify/csrf-protection
 ```
 
-Once the installation is complete, register the `fastify-csrf` plugin, as follows:
+Once the installation is complete, register the `@fastify/csrf-protection` plugin, as follows:
 
 ```typescript
-import fastifyCsrf from 'fastify-csrf';
+import fastifyCsrf from '@fastify/csrf-protection';
 // ...
 // somewhere in your initialization file after registering some storage plugin
-app.register(fastifyCsrf);
+await app.register(fastifyCsrf);
 ```
 
-> warning **Warning** As explained in the `fastify-csrf` docs [here](https://github.com/fastify/fastify-csrf#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.
+> warning **Warning** As explained in the `@fastify/csrf-protection` docs [here](https://github.com/fastify/csrf-protection#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.

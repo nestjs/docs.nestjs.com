@@ -32,7 +32,7 @@ Next, inject `HttpService` using normal constructor injection.
 @@filename()
 @Injectable()
 export class CatsService {
-  constructor(private httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) {}
 
   findAll(): Observable<AxiosResponse<Cat[]>> {
     return this.httpService.get('http://localhost:3000/cats');
@@ -131,3 +131,47 @@ HttpModule.registerAsync({
   useExisting: HttpConfigService,
 });
 ```
+
+#### Using Axios directly
+
+If you think that `HttpModule.register`'s options are not enough for you, or if you just want to access the underlying Axios instance created by `@nestjs/axios`, you can access it via `HttpService#axiosRef` as follows:
+
+```typescript
+@Injectable()
+export class CatsService {
+  constructor(private readonly httpService: HttpService) {}
+
+  findAll(): Promise<AxiosResponse<Cat[]>> {
+    return this.httpService.axiosRef.get('http://localhost:3000/cats');
+    //                      ^ AxiosInstance interface
+  }
+}
+```
+
+#### Full example
+
+Since the return value of the `HttpService` methods is an Observable, we can use `rxjs` - `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
+
+```typescript
+import { catchError, firstValueFrom } from 'rxjs';
+
+@Injectable()
+export class CatsService {
+  private readonly logger = new Logger(CatsService.name);
+  constructor(private readonly httpService: HttpService) {}
+
+  findAll(): Promise<Cat[]> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw 'An error happened!';
+        }),
+      ),
+    );
+    return data;
+  }
+}
+```
+
+> info **Hint** Visit RxJS's documentation on [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) and [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) for differences between them.

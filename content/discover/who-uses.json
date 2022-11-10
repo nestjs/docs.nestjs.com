@@ -190,6 +190,14 @@
     {
       "logo": "/assets/logo/vue-storefront.png",
       "url": "https://www.vuestorefront.io/"
+    },
+    {
+      "logo": "/assets/logo/fuse-logo.svg",
+      "url": "https://fuseautotech.com"
+    },
+    {
+      "logo": "/assets/logo/amplication.svg",
+      "url": "https://amplication.com"
     }
   ],
   "Body": [
@@ -258,6 +266,9 @@
     "https://dyrector.io",
     "https://stijlbreuk.nl",
     "https://polygon-software.ch",
-    "https://bewith.io"
+    "https://bewith.io",
+    "https://swetrix.com",
+    "https://swyftlogistics.com",
+    "https://evershop.io"
   ]
 }

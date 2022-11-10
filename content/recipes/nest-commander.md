@@ -14,9 +14,9 @@ $ npm i nest-commander
 
 #### A Command file
 
-`nest-commander` makes it easy to write new command-line applications with [decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) via the `@Command()` decorator for classes and the `@Option()` decorator for methods of that class. Every command file should implement the `CommandRunner` interface and should be decorated with a `@Command()` decorator.
+`nest-commander` makes it easy to write new command-line applications with [decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) via the `@Command()` decorator for classes and the `@Option()` decorator for methods of that class. Every command file should implement the `CommandRunner` abstract class and should be decorated with a `@Command()` decorator.
 
-Every command is seen as an `@Injectable()` by Nest, so your normal Dependency Injection still works as you would expect it to. The only thing to take note of is the interface `CommandRunner`, which should be implemented by each command. The `CommandRunner` interface ensures that all commands have a `run` method that returns a `Promise<void>` and takes in the parameters `string[], Record<string, any>`. The `run` command is where you can kick all of your logic off from, it will take in whatever parameters did not match option flags and pass them in as an array, just in case you are really meaning to work with multiple parameters. As for the options, the `Record<string, any>`, the names of these properties match the `name` property given to the `@Option()` decorators, while their value matches the return of the option handler. If you'd like better type safety, you are welcome to create an interface for your options as well.
+Every command is seen as an `@Injectable()` by Nest, so your normal Dependency Injection still works as you would expect it to. The only thing to take note of is the abstract class `CommandRunner`, which should be implemented by each command. The `CommandRunner` abstract class ensures that all commands have a `run` method that returns a `Promise<void>` and takes in the parameters `string[], Record<string, any>`. The `run` command is where you can kick all of your logic off from, it will take in whatever parameters did not match option flags and pass them in as an array, just in case you are really meaning to work with multiple parameters. As for the options, the `Record<string, any>`, the names of these properties match the `name` property given to the `@Option()` decorators, while their value matches the return of the option handler. If you'd like better type safety, you are welcome to create an interface for your options as well.
 
 #### Running the Command
 
@@ -71,8 +71,10 @@ interface BasicCommandOptions {
 }
 
 @Command({ name: 'basic', description: 'A parameter parse' })
-export class BasicCommand implements CommandRunner {
-  constructor(private readonly logService: LogService) {}
+export class BasicCommand extends CommandRunner {
+  constructor(private readonly logService: LogService) {
+    super()
+  }
 
   async run(
     passedParam: string[],

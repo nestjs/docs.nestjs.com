@@ -5,7 +5,7 @@ Nest supports two methods for integrating with the [MongoDB](https://www.mongodb
 Start by installing the [required dependencies](https://github.com/Automattic/mongoose):
 
 ```bash
-$ npm install --save @nestjs/mongoose mongoose
+$ npm i @nestjs/mongoose mongoose
 ```
 
 Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
@@ -34,9 +34,9 @@ Let's define the `CatSchema`:
 ```typescript
 @@filename(schemas/cat.schema)
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type CatDocument = Cat & Document;
+export type CatDocument = HydratedDocument<Cat>;
 
 @Schema()
 export class Cat {
@@ -225,7 +225,7 @@ With this setup, you have to tell the `MongooseModule.forFeature()` function whi
     MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }], 'cats'),
   ],
 })
-export class AppModule {}
+export class CatsModule {}
 ```
 
 You can also inject the `Connection` for a given connection:
@@ -250,6 +250,24 @@ To inject a given `Connection` to a custom provider (for example, factory provid
     return new CatsService(catsConnection);
   },
   inject: [getConnectionToken('cats')],
+}
+```
+
+If you are just looking to inject the model from a named database, you can use the connection name as a second parameter to the `@InjectModel()` decorator.
+
+```typescript
+@@filename(cats.service)
+@Injectable()
+export class CatsService {
+  constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<CatDocument>) {}
+}
+@@switch
+@Injectable()
+@Dependencies(getModelToken(Cat.name, 'cats'))
+export class CatsService {
+  constructor(catModel) {
+    this.catModel = catModel;
+  }
 }
 ```
 

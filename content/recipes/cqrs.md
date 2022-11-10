@@ -224,6 +224,12 @@ export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEv
 
 Now we can move the **write logic** into the event handlers.
 
+> info **Hint** Be aware that when you start using event handlers you get out of the traditional HTTP web context.
+> - Errors in `CommandHandlers` can still be caught by built-in [Exception filters](/exception-filters).
+> - Errors in `EventHandlers` can't be caught by Exception filters: you will have to handle them manually. Either by a simple `try/catch`, using [Sagas](/recipes/cqrs#sagas) by triggering a compensating event, or whatever other solution you choose.
+> - HTTP Responses in `CommandHandlers` can still be sent back to the client.
+> - HTTP Responses in `EventHandlers` cannot. If you want to send information to the client you could use [WebSocket](/websockets/gateways), [SSE](/techniques/server-sent-events), or whatever other solution you choose.
+
 #### Sagas
 
 This type of **Event-Driven Architecture** improves application **reactiveness and scalability**. Now, when we have events, we can simply react to them in various ways. **Sagas** are the final building block from an architectural point of view.

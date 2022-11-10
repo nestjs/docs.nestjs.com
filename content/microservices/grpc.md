@@ -134,7 +134,7 @@ Next, we need to implement the service. To define a handler that fulfills this d
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService', 'FindOne')
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -170,7 +170,7 @@ Both `@GrpcMethod()` decorator arguments are optional. If called without the sec
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService')
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -199,7 +199,7 @@ You can also omit the first `@GrpcMethod()` argument. In this case, Nest automat
 @Controller()
 export class HeroesService {
   @GrpcMethod()
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -493,7 +493,7 @@ To send back metadata from the handler, use the `ServerUnaryCall#sendMetadata()`
 @Controller()
 export class HeroesService {
   @GrpcMethod()
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const serverMetadata = new Metadata();
     const items = [
       { id: 1, name: 'John' },

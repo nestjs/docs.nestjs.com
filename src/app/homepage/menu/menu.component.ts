@@ -225,6 +225,7 @@ export class MenuComponent implements OnInit {
       title: 'Recipes',
       isOpened: false,
       children: [
+        { title: 'REPL', path: '/recipes/repl' },
         { title: 'CRUD generator', path: '/recipes/crud-generator' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
@@ -248,6 +249,7 @@ export class MenuComponent implements OnInit {
         { title: 'Serverless', path: '/faq/serverless' },
         { title: 'HTTP adapter', path: '/faq/http-adapter' },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
+        { title: 'Raw body', path: '/faq/raw-body' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
         { title: 'Request lifecycle', path: '/faq/request-lifecycle' },

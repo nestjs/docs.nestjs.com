@@ -41,6 +41,120 @@ The `FileInterceptor()` decorator takes two arguments:
 
 > warning **Warning** `FileInterceptor()` may not be compatible with third party cloud providers like Google Firebase or others.
 
+#### File validation
+
+Often times it can be useful to validate incoming file metadata, like file size or file mime-type. For this, you can create your own [Pipe](https://docs.nestjs.com/pipes) and bind it to the parameter annotated with the `UploadedFile` decorator. The example below demonstrates how a basic file size validator pipe could be implemented:
+
+```typescript
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+
+@Injectable()
+export class FileSizeValidationPipe implements PipeTransform {
+  transform(value: any, metadata: ArgumentMetadata) {
+    // "value" is an object containing the file's attributes and metadata
+    const oneKb = 1000;
+    return value.size < oneKb;
+  }
+}
+```
+
+Nest provides a built-in pipe to handle common use cases and facilitate/standardize the addition of new ones. This pipe is called `ParseFilePipe`, and you can use it as follows:
+
+```typescript
+@Post('file')
+uploadFileAndPassValidation(
+  @Body() body: SampleDto,
+  @UploadedFile(
+    new ParseFilePipe({
+      validators: [
+        // ... Set of file validator instances here
+      ]
+    })
+  )
+  file: Express.Multer.File,
+) {
+  return {
+    body,
+    file: file.buffer.toString(),
+  };
+}
+```
+
+As you can see, it's required to specify an array of file validators that will be executed by the `ParseFilePipe`. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional **optional** options:
+
+<table>
+  <tr>
+    <td><code>errorHttpStatusCode</code></td>
+    <td>The HTTP status code to be thrown in case <b>any</b> validator fails. Default is <code>400</code> (BAD REQUEST)</td>
+  </tr>
+  <tr>
+    <td><code>exceptionFactory</code></td>
+    <td>A factory which receives the error message and returns an error.</td>
+  </tr>
+</table>
+
+Now, back to the `FileValidator` interface. To integrate validators with this pipe, you have to either use built-in implementations or provide your own custom `FileValidator`. See example below:
+
+```typescript
+export abstract class FileValidator<TValidationOptions = Record<string, any>> {
+  constructor(protected readonly validationOptions: TValidationOptions) {}
+
+  /**
+   * Indicates if this file should be considered valid, according to the options passed in the constructor.
+   * @param file the file from the request object
+   */
+  abstract isValid(file?: any): boolean | Promise<boolean>;
+
+  /**
+   * Builds an error message in case the validation fails.
+   * @param file the file from the request object
+   */
+  abstract buildErrorMessage(file: any): string;
+}
+```
+
+> info **Hint** The `FileValidator` interfaces supports async validation via its `isValid` function. To leverage type security, you can also type the `file` parameter as `Express.Multer.File` in case you are using express (default) as a driver.
+
+`FileValidator` is a regular class that has access to the file object and validates it according to the options provided by the client. Nest has two built-in `FileValidator` implementations you can use in your project:
+
+- `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
+- `FileTypeValidator` - Checks if a given file's mime-type matches the given value. 
+
+> warning **Warning** To verify file type, [FileTypeValidator](https://github.com/nestjs/nest/blob/master/packages/common/pipes/file/file-type.validator.ts) class uses the type as detected by multer. By default, multer derives file type from file extension on user's device. However, it does not check actual file contents. As files can be renamed to arbitraty extensions, consider using a custom implementation (like checking the file's [magic number](https://www.ibm.com/support/pages/what-magic-number)) if your app requires a safer solution.
+
+To understand how these can be used in conjunction with the beforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
+
+```typescript
+@UploadedFile(
+  new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 1000 }),
+      new FileTypeValidator({ fileType: 'jpeg' }),
+    ],
+  }),
+)
+file: Express.Multer.File,
+```
+> info **Hint** If the number of validators increase largely or their options are cluttering the file, you can define this array in a separate file and import it here as a named constant like `fileValidators`.
+
+Finally, you can use the special `ParseFilePipeBuilder` class that lets you compose & construct your validators. By using it as shown below you can avoid manual instantiation of each validator and just pass their options directly:
+
+```typescript
+@UploadedFile(
+  new ParseFilePipeBuilder()
+    .addFileTypeValidator({
+      fileType: 'jpeg',
+    })
+    .addMaxSizeValidator({
+      maxSize: 1000
+    })
+    .build({
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+    }),
+)
+file: Express.Multer.File,
+```
+
 #### Array of files
 
 To upload an array of files (identified with a single field name), use the `FilesInterceptor()` decorator (note the plural **Files** in the decorator name). This decorator takes three arguments:
@@ -71,7 +185,7 @@ uploadFile(files) {
 
 #### Multiple files
 
-To upload multiple fields (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
+To upload multiple files (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
 
 - `uploadedFields`: an array of objects, where each object specifies a required `name` property with a string value specifying a field name, as described above, and an optional `maxCount` property, as described above
 - `options`: optional `MulterOptions` object, as described above
@@ -154,7 +268,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
 MulterModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    dest: configService.getString('MULTER_DEST'),
+    dest: configService.get<string>('MULTER_DEST'),
   }),
   inject: [ConfigService],
 });

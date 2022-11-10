@@ -142,6 +142,8 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 
 > info **Hint** If you want to return a different error response, you should throw your own specific exception instead of returning a boolean value.
 
+<app-banner-courses-auth></app-banner-courses-auth>
+
 #### Claims-based authorization
 
 When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject can do, not what the subject is.
@@ -265,7 +267,7 @@ export class CaslAbilityFactory {
 
 > info **Hint** `detectSubjectType` option let CASL understand how to get subject type out of an object. For more information read [CASL documentation](https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types) for details.
 
-In the example above, we created the `Ability` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but has different meanings, `can` allows to do an action on the specified subject and `cannot` forbids. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v5/en/guide/intro).
+In the example above, we created the `Ability` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but have different meanings, `can` allows to do an action on the specified subject and `cannot` forbids. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v5/en/guide/intro).
 
 Lastly, make sure to add the `CaslAbilityFactory` to the `providers` and `exports` arrays in the `CaslModule` module definition:
 

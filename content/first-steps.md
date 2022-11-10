@@ -10,7 +10,7 @@ We'll mostly use TypeScript in the examples we provide, but you can always **swi
 
 #### Prerequisites
 
-Please make sure that [Node.js](https://nodejs.org/) (>= 10.13.0, except for v13) is installed on your operating system.
+Please make sure that [Node.js](https://nodejs.org) (version >= 12, except for v13) is installed on your operating system.
 
 #### Setup
 
@@ -20,6 +20,8 @@ Setting up a new project is quite simple with the [Nest CLI](/cli/overview). Wit
 $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
+
+> info **Hint** To create a new project with TypeScript's [strict](https://www.typescriptlang.org/tsconfig#strict) mode enabled, pass the `--strict` flag to the `nest new` command. 
 
 The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
 

@@ -41,7 +41,7 @@ module.exports = function (options, webpack) {
       new webpack.WatchIgnorePlugin({
         paths: [/\.js$/, /\.d\.ts$/],
       }),
-      new RunScriptWebpackPlugin({ name: options.output.filename }),
+      new RunScriptWebpackPlugin({ name: options.output.filename, autoRestart: false }),
     ],
   };
 };
@@ -129,7 +129,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new RunScriptWebpackPlugin({ name: 'server.js' }),
+    new RunScriptWebpackPlugin({ name: 'server.js', autoRestart: false }),
   ],
   output: {
     path: path.join(__dirname, 'dist'),
@@ -176,7 +176,3 @@ $ npm run start:dev
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
-
-#### TypeORM
-
-If you're using `@nestjs/typeorm`, you'll need to add `keepConnectionAlive: true` to your TypeORM configuration.

@@ -16,7 +16,7 @@ $ npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
 # npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-fastify
 
 # For Fastify and Mercurius
-# npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
+# npm i @nestjs/graphql @nestjs/mercurius graphql mercurius fastify
 ```
 
 > warning **Warning** `@nestjs/graphql@>=9` and `@nestjs/apollo^10` packages are compatible with **Apollo v3** (check out Apollo Server 3 [migration guide](https://www.apollographql.com/docs/apollo-server/migration/) for more details), while `@nestjs/graphql@^8` only supports **Apollo v2** (e.g., `apollo-server-express@2.x.x` package).
@@ -28,6 +28,8 @@ Nest offers two ways of building GraphQL applications, the **code first** and th
 In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
 
 In the **schema first** approach, the source of truth is GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions (using either classes or interfaces) based on the GraphQL schemas to reduce the need to write redundant boilerplate code.
+
+<app-banner-courses-graphql-cf></app-banner-courses-graphql-cf>
 
 #### Getting started with GraphQL & TypeScript
 
@@ -74,8 +76,6 @@ export class AppModule {}
 ```
 
 In this case, these options will be forwarded to the `ApolloServer` constructor.
-
-<app-banner-enterprise></app-banner-enterprise>
 
 #### GraphQL playground
 
@@ -284,7 +284,7 @@ GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    typePaths: configService.getString('GRAPHQL_TYPE_PATHS'),
+    typePaths: configService.get<string>('GRAPHQL_TYPE_PATHS'),
   }),
   inject: [ConfigService],
 }),

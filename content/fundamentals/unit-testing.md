@@ -166,7 +166,7 @@ Nest also allows you to define a mock factory to apply to all of your missing de
 
 ```typescript
 // ...
-import { ModuleMocker } from 'jest-mock';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -178,6 +178,7 @@ describe('CatsController', () => {
       controllers: [CatsController],
     })
     .useMocker((token) => {
+      const results = ['test1', 'test2'];
       if (token === CatsService) {
         return { findAll: jest.fn().mockResolvedValue(results) };
       }
