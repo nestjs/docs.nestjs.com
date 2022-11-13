@@ -10,6 +10,7 @@ Probably the most common error message is about Nest not being able to resolve d
 Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument <unknown_token> at index [<index>] is available in the <module> context.
 
 Potential solutions:
+- Is <module> a valid NestJS module?
 - If <unknown_token> is a provider, is it part of the current <module>?
 - If <unknown_token> is exported from a separate @Module, is that module imported within <module>?
   @Module({
