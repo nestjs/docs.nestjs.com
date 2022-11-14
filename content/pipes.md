@@ -238,7 +238,6 @@ Start by installing the required package:
 
 ```bash
 $ npm install --save joi
-$ npm install --save-dev @types/joi
 ```
 
 In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.validate()` method, which validates our incoming argument against the provided schema.
