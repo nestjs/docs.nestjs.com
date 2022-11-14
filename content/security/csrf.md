@@ -10,6 +10,8 @@ Start by installing the required package:
 $ npm i --save csurf
 ```
 
+> warning **Warning** This package is deprecated, refer to [`csurf` docs](https://github.com/expressjs/csurf#csurf) for more information.
+
 > warning **Warning** As explained in the [`csurf` docs](https://github.com/expressjs/csurf#csurf), this middleware requires either session middleware or `cookie-parser` to be initialized first. Please see that documentation for further instructions.
 
 Once the installation is complete, apply the `csurf` middleware as global middleware.
