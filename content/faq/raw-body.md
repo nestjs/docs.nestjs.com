@@ -35,7 +35,7 @@ First enable the option when creating your Nest Fastify application:
 ```typescript
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
-  new FastifyAdapter()
+  new FastifyAdapter(),
   {
     rawBody: true,
   }
