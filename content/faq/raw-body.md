@@ -2,6 +2,8 @@
 
 One of the most common use-case for having access to the raw request body is performing webhook signature verifications. Usually to perform webhook signature validations the unserialized request body is required to calculate an HMAC hash.
 
+> warning **Warning** Due to limitations, you can only use this feature if you have the built-in global body parser middleware enabled, ie., you must not pass `bodyParser: false` when creating the app.
+
 #### Use with Express
 
 First enable the option when creating your Nest Express application:
