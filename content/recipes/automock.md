@@ -6,16 +6,15 @@ test development by automatically mocking class external dependencies.
 
 #### Introduction
 
-The dependency injection container is an essential component of the Nest module system.
-This container is utilized both during the testing phase and the application runtime. \
+The dependency injection (DI) container is an essential component of the Nest module system.
+This container is utilized both during testing, and the application execution. \
 Unit tests vary from other types of tests, such as integration tests, in that they must
-fully override providers/services within the DI container. External dependencies (providers)
-of the so-called "unit" should be totally isolated. That is, all dependencies within
-the DI container should be replaced by mock objects. \
-As a result, loading the modules and replacing the providers inside them is a process that
-loops back on itself. Automock tackles this issue by automatically mocking all the
-external dependencies/providers, resulting in total isolation of the unit/class
-under test.
+fully override providers/services within the DI container. External class dependencies
+(providers) of the so-called "unit", have to be totally isolated. That is, all dependencies
+within the DI container should be replaced by mock objects. \
+As a result, loading the target module and replacing the providers inside it is a process
+that loops back on itself. Automock tackles this issue by automatically mocking all the
+class external providers, resulting in total isolation of the unit under test.
 
 #### Installation
 
@@ -101,26 +100,29 @@ const { unit, unitRef } = TestBed.create(CatsService).compile();
 
 Calling `.compile()` returns an object with two properties, `unit`, and `unitRef`.
 
-**`unit`** is the "unit" (service/provider) under test, it is an actual instance of
-class being tested (also known as "unit under test").
+**`unit`** is the unit under test, it is an actual instance of class being tested.
 
-To store the mocked dependencies of the tested class, the "unit reference" (`unitRef`)
-serves as a small container. The container's `.get()` method returns the mocked
-dependency with all of its methods automatically stubbed (using `jest.fn()`).
+**`unitRef`** is the "unit reference", where the mocked dependencies of the tested class
+are stored, in a small container. The container's `.get()` method returns the mocked
+dependency with all of its methods automatically stubbed (using `jest.fn()`):
 
-The `.get()` method can accept either a `string` or an actual class (`Type`) as its argument.
-This essentially depends on how the class dependency is being injected.
-Some specific usage scenarios, including when a `string` and when a `Type` are acceptable,
-are provided below.
+```typescript
+const { unit, unitRef } = TestBed.create(CatsService).compile();
 
-#### Handling Different Injections Types
-Providers are one of the most important ideas in Nest. A lot of the basic Nest classes,
-such as services, repositories, factories, helpers, and so on, can be treated of as providers.
-The main idea behind a provider is that it can be injected as a dependency.
+let httpServiceMock: jest.Mocked<HttpService> = unitRef.get(HttpService);
+```
 
-##### Working with Interfaces
-Consider the following `CatsService` which takes one param which is an instance
-of the `Logger` interface.
+> info **info** The `.get()` method can accept either a `string` or an actual class (`Type`) as its argument.
+> This essentially depends on how the provider is being injected to the class under test.
+
+#### Working with different providers
+Providers are one of the most important elements in Nest. You can think of many of
+the default Nest classes as providers, including services, repositories, factories,
+helpers, and so on. A provider's primary function is to take the form of an
+`Injectable` dependency.
+
+Consider the following `CatsService`, it takes one parameter, which is an instance
+of the following `Logger` interface:
 
 ```typescript
 export interface Logger {
@@ -132,21 +134,27 @@ export class CatsService {
 }
 ```
 
-After compiling,
-
-##### Working with Injection Tokens (`@Inject()`)
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget faucibus felis.
-Integer feugiat rhoncus nibh, in elementum dolor sodales a. Pellentesque non luctus dolor,
-id ultrices mauris. Nulla convallis diam rhoncus mauris ultrices malesuada.
-
-##### Working with `forardRef()`
+TypeScript's Reflection API does not support interface reflection yet.
+Nest solves this issue with string-based injection tokens (see [Custom Providers](https://docs.nestjs.com/fundamentals/custom-providers)):
 
 ```typescript
-export class HttpService {}
+export const MyLoggerProvider = {
+  provide: 'MY_LOGGER_TOKEN',
+  useValue: { ... },
+}
 
 export class CatsService {
-  constructor(@Inject(forwardRef(() => HttpService)) private httpService: HttpService) {}
+  constructor(@Inject('MY_LOGGER_TOKEN') private readonly logger: Logger) {}
 }
+```
+
+Automock follows this practice and lets you provide a string-based token instead
+of providing the actual class in the `unitRef.get()` method:
+
+```typescript
+const { unit, unitRef } = TestBed.create(CatsService).compile();
+
+let loggerMock: jest.Mocked<Logger> = unitRef.get('MY_LOGGER_TOKEN');
 ```
 
 #### More Information
