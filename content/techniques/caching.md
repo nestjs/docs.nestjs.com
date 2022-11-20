@@ -54,13 +54,13 @@ The default expiration time of the cache is 5 seconds.
 You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
 
 ```typescript
-await this.cacheManager.set('key', 'value', 1000);
+await this.cacheManager.set('key', 'value', { ttl: 1000 } as any);
 ```
 
 To disable expiration of the cache, set the `ttl` configuration property to `0`:
 
 ```typescript
-await this.cacheManager.set('key', 'value', 0);
+await this.cacheManager.set('key', 'value', { ttl: 0 } as any);
 ```
 
 To remove an item from the cache, use the `del` method:
@@ -220,7 +220,7 @@ This service takes advantage of [cache-manager](https://github.com/node-cache-ma
 
 ```typescript
 import type { ClientOpts } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-store';
 import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
