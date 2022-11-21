@@ -160,7 +160,7 @@ export class CatsService {
   private readonly logger = new Logger(CatsService.name);
   constructor(private readonly httpService: HttpService) {}
 
-  findAll(): Promise<Cat[]> {
+  async findAll(): Promise<Cat[]> {
     const { data } = await firstValueFrom(
       this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
         catchError((error: AxiosError) => {
