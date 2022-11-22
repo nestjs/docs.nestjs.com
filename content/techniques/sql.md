@@ -527,7 +527,7 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a data source, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-> warning **Notice** If you are using `TypeOrmModule.forRootAsync`, you have to set the data source name outside `useFactory`. For example:
+> warning **Notice** If you are using `TypeOrmModule.forRootAsync`, you have to **also** set the data source name outside `useFactory`. For example:
 >
 > ```typescript
 > TypeOrmModule.forRootAsync({
