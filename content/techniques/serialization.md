@@ -42,7 +42,23 @@ findOne(): UserEntity {
 }
 ```
 
-> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
+> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized. 
+
+> info **Hint** You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} UserEntity {{ '}' }})` to transform all responses to the instance of the dto without calling `plainToInstance`. Doing so will ensure that decorators on the `UserEntity` class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly.
+
+```typescript
+@UseInterceptors(ClassSerializerInterceptor)
+@Get()
+@SerializeOptions({ type : UserEntity })
+findOne(): UserEntity {
+  return {
+    id: 1,
+    firstName: 'Kamil',
+    lastName: 'Mysliwiec',
+    password: 'password',
+  };
+}
+```
 
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
