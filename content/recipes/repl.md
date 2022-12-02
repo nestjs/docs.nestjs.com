@@ -26,6 +26,15 @@ async function bootstrap() {
 bootstrap();
 ```
 
+You can also enable or change where the REPL's history will be stored:
+
+```typescript
+@@filename(repl-with-history)
+await repl(AppModule, { historyPath: '/some/path/to/a/file' });
+@@switch
+await repl(AppModule, { historyPath: '/some/path/to/a/file' });
+```
+
 Now in your terminal, start the REPL with the following command:
 
 ```bash
