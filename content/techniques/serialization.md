@@ -44,22 +44,6 @@ findOne(): UserEntity {
 
 > **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized. 
 
-> info **Hint** You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} UserEntity {{ '}' }})` to transform all responses to the instance of the dto without calling `plainToInstance`. Doing so will ensure that decorators on the `UserEntity` class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly.
-
-```typescript
-@UseInterceptors(ClassSerializerInterceptor)
-@Get()
-@SerializeOptions({ type : UserEntity })
-findOne(): UserEntity {
-  return {
-    id: 1,
-    firstName: 'Kamil',
-    lastName: 'Mysliwiec',
-    password: 'password',
-  };
-}
-```
-
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
 When this endpoint is requested, the client receives the following response:
@@ -73,6 +57,38 @@ When this endpoint is requested, the client receives the following response:
 ```
 
 Note that the interceptor can be applied application-wide (as covered [here](https://docs.nestjs.com/interceptors#binding-interceptors)). The combination of the interceptor and the entity class declaration ensures that **any** method that returns a `UserEntity` will be sure to remove the `password` property. This gives you a measure of centralized enforcement of this business rule.
+
+
+#### Using the SerializeOptions to transform plain objects to the class instance.
+
+You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} <CLASS_INSTANCE> {{ '}' }})` to transform all responses to the instance. Doing so will ensure that decorators on the class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly. 
+
+In this example, even though a plain js object was returned in both conditional statements, they will all be converted into `UserEntity` with annotated class-validator or class-transformer decorators applied.
+
+```typescript
+@UseInterceptors(ClassSerializerInterceptor)
+@Get()
+@SerializeOptions({ type : UserEntity })
+findOne(@Query() { id }: { id: number }): UserEntity {
+  if (id === 1) {
+    return {
+      id: 1,
+      firstName: 'Kamil',
+      lastName: 'Mysliwiec',
+      password: 'password',
+    };
+  }
+
+  return {
+    id: 2,
+    firstName: 'Kamil2',
+    lastName: 'Mysliwiec2',
+    password: 'password2',
+  };
+}
+```
+
+> info **Hint** By stating the return type, we take advantage of Typescript to check if the plain js object conforms to the class shape.`plainToInstance`'s second argument does not check if the object has the same shape as the class instance (somewhat equivalent to typecasting), and could lead to bugs in your application.
 
 #### Expose properties
 
