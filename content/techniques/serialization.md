@@ -61,7 +61,7 @@ Note that the interceptor can be applied application-wide (as covered [here](htt
 
 #### Using the SerializeOptions to transform plain objects to the class instance.
 
-You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} <CLASS_INSTANCE> {{ '}' }})` to transform all responses to the instance. Doing so will ensure that decorators on the class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly. 
+You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} <CLASS> {{ '}' }})` to transform all responses to the instance. Doing so will ensure that decorators on the class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly. 
 
 In this example, even though a plain js object was returned in both conditional statements, they will all be converted into `UserEntity` with annotated class-validator or class-transformer decorators applied.
 
@@ -88,7 +88,7 @@ findOne(@Query() { id }: { id: number }): UserEntity {
 }
 ```
 
-> info **Hint** By stating the return type, we take advantage of Typescript to check if the plain js object conforms to the class shape.`plainToInstance`'s second argument does not check if the object has the same shape as the class instance (somewhat equivalent to typecasting), and could lead to bugs in your application.
+> info **Hint** By stating the expecting controller return type, we can take advantage of Typescript to check if the returned plain object conforms to the DTO/entity shape. `plainToInstance`' does not hint if the plain object conforms to the the DTO/entity class instance you are transforming it into (somewhat equivalent to typecasting). This could lead to bugs in your application.
 
 #### Expose properties
 
