@@ -2,7 +2,12 @@
 
 [GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you end-to-end typing.
 
-In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` can be configured to use [Apollo](https://www.apollographql.com/) server (with the `@nestjs/apollo` driver) and [Mercurius](https://github.com/mercurius-js/mercurius) (with the `@nestjs/mercurius`). We provide official integrations for these proven GraphQL packages to provide a simple way to use GraphQL with Nest. You can also build your own dedicated driver (read more on that [here](/graphql/other-features#creating-a-custom-driver)).
+In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` can be configured to use [Apollo](https://www.apollographql.com/) server (with the `@nestjs/apollo` driver) and [Mercurius](https://github.com/mercurius-js/mercurius) (with the `@nestjs/mercurius`). We provide official integrations for these proven GraphQL packages to provide a simple way to use GraphQL with Nest. 
+
+[The Guild](https://the-guild.dev/) are offering [official integration and support](https://the-guild.dev/graphql/yoga-server/docs/integrations/integration-with-nestjs) for NestJS and [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server) (using the `@graphql-yoga/nestjs` driver), you can find their
+docs [here](https://the-guild.dev/graphql/yoga-server/docs/integrations/integration-with-nestjs). 
+
+You can also build your own dedicated driver (read more on that [here](/graphql/other-features#creating-a-custom-driver)).
 
 #### Installation
 
