@@ -136,7 +136,7 @@ You can configure Swagger UI by passing the options object which fulfills the `E
 ```TypeScript
 export interface ExpressSwaggerCustomOptions {
   explorer?: boolean;
-  swaggerOptions?: Record<string, any>;
+  swaggerOptions?: SwaggerUiOptions;
   customCss?: string;
   customCssUrl?: string;
   customJs?: string;
