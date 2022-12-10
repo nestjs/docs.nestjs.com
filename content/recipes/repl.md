@@ -107,3 +107,27 @@ Interface: $(token: InjectionToken) => any
 | `methods`    | Display all public methods available on a given provider or controller.                                            | `methods(token: ClassRef \| string) => void`                          |
 | `resolve`    | Resolves transient or request-scoped instance of either injectable or controller, otherwise, throws exception.     | `resolve(token: InjectionToken, contextId: any) => Promise<any>`      |
 | `select`     | Allows navigating through the modules tree, for example, to pull out a specific instance from the selected module. | `select(token: DynamicModule \| ClassRef) => INestApplicationContext` |
+
+#### Watch mode
+
+During development it is useful to run REPL in a watch mode to reflect all the code changes automatically:
+
+```bash
+$ npm run start -- --watch --entryFile repl
+```
+
+This has one flaw, the REPL's command history is discarded after each reload which might be cumbersome.
+Fortunately, there is a very simple solution. Modify your `bootstrap` function like this:
+
+```typescript
+async function bootstrap() {
+  const replServer = await repl(AppModule);
+  replServer.setupHistory(".nestjs_repl_history", (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+}
+```
+
+Now the history is preserved between the runs/reloads.
