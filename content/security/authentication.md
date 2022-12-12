@@ -205,12 +205,12 @@ Now we can implement our Passport **local authentication strategy**. Create a fi
 ```typescript
 @@filename(auth/local.strategy)
 import { Strategy } from 'passport-local';
-import { PassportStrategy } from '@nestjs/passport';
+import { PassportStrategy, AbstractStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy) implements AbstractStrategy {
   constructor(private authService: AuthService) {
     super();
   }
@@ -580,12 +580,12 @@ We can now address our final requirement: protecting endpoints by requiring a va
 ```typescript
 @@filename(auth/jwt.strategy)
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
+import { PassportStrategy, AbstractStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from './constants';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) implements AbstractStrategy {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
