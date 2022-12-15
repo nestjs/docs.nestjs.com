@@ -198,10 +198,6 @@
     {
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
-    },
-    {
-      "logo": "/assets/logo/growthmill.svg",
-      "url": "https://growthmill.com"
     }
   ],
   "Body": [
@@ -274,6 +270,7 @@
     "https://swetrix.com",
     "https://swyftlogistics.com",
     "https://evershop.io",
-    "https://e-design.ca"
+    "https://e-design.ca",
+    "https://growthmill.com"
   ]
 }
