@@ -632,7 +632,7 @@ TypeOrmModule.forRootAsync({
   useFactory: (configService: ConfigService) => ({
     type: 'mysql',
     host: configService.get('HOST'),
-    port: +configService.get('PORT'),
+    port: configService.get('PORT'),
     username: configService.get('USERNAME'),
     password: configService.get('PASSWORD'),
     database: configService.get('DATABASE'),
@@ -699,7 +699,7 @@ TypeOrmModule.forRootAsync({
   useFactory: (configService: ConfigService) => ({
     type: 'mysql',
     host: configService.get('HOST'),
-    port: +configService.get('PORT'),
+    port: configService.get('PORT'),
     username: configService.get('USERNAME'),
     password: configService.get('PASSWORD'),
     database: configService.get('DATABASE'),
@@ -1219,7 +1219,7 @@ SequelizeModule.forRootAsync({
   useFactory: (configService: ConfigService) => ({
     dialect: 'mysql',
     host: configService.get('HOST'),
-    port: +configService.get('PORT'),
+    port: configService.get('PORT'),
     username: configService.get('USERNAME'),
     password: configService.get('PASSWORD'),
     database: configService.get('DATABASE'),
