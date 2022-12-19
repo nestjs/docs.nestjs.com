@@ -343,7 +343,7 @@ With `@UseGuards(AuthGuard('local'))` we are using an `AuthGuard` that `@nestjs/
 
 In order to test our route we'll have our `/auth/login` route simply return the user for now. This also lets us demonstrate another Passport feature: Passport automatically creates a `user` object, based on the value we return from the `validate()` method, and assigns it to the `Request` object as `req.user`. Later, we'll replace this with code to create and return a JWT instead.
 
-Since these are API routes, we'll test them using the commonly available [cURL](https://curl.haxx.se/) library. You can test with any of the `user` objects hard-coded in the `UsersService`.
+Since these are API routes, we'll test them using the commonly available [curl](https://curl.haxx.se/) library. You can test with any of the `user` objects hard-coded in the `UsersService`.
 
 ```bash
 $ # POST to /auth/login
