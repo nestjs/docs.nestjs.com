@@ -57,7 +57,7 @@ This likely happens when your project end up loading two Node modules of the pac
 Solutions:
 
 - For **Yarn** Workspaces, use the [nohoist feature](https://classic.yarnpkg.com/blog/2018/02/15/nohoist) to prevent hoisting the package `@nestjs/core`.
-- For **pnpm** Workspaces, set `@nestjs/core` as a peerDependencies in your other module and `"dependenciesMeta": {"other-package-name": {"injected": true}}` in the app package.json where the module is imported. see: [dependenciesmetainjected](https://pnpm.io/package_json#dependenciesmetainjected)
+- For **pnpm** Workspaces, set `@nestjs/core` as a peerDependencies in your other module and `"dependenciesMeta": {"other-module-name": {"injected": true}}` in the app package.json where the module is imported. see: [dependenciesmetainjected](https://pnpm.io/package_json#dependenciesmetainjected)
 
 #### "Circular dependency" error
 
