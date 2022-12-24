@@ -6,7 +6,7 @@ A set of helper libraries for NestJS, supporting the below features:
   - `@nestia/sdk` - SDK and Swagger Documents generator for `@nestia/core`
   - `nestia` - just CLI tool
 
-> info **info** `nestia` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
+> info **info** `nestia` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/samchon/nestia).
 
 
 
