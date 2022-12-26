@@ -18,26 +18,14 @@ Here is a short description of each package.
  - **@typegoose/typegoose** - the Typegoose library
  - **@m8a/nestjs-typegoose** - the package containing the Typegoose module for plugging in Typegoose into Nest
 
-> info **Hint** Some of the content in this recipe was taken from the [documentation of the Typegoose module](https://nestjs-typegoose.m8a.io/). You can get further details there and also further details about Typegoose at their [docs website](https://typegoose.github.io/typegoose/docs/guides/quick-start-guide). 
+> info **Hint** Some of the content in this recipe was taken from the [documentation website of the @m8a/nestjs-typegoose module](https://nestjs-typegoose.m8a.io/). You can get further details there about the Typegoose module and can also get further details about Typegoose at their [docs website](https://typegoose.github.io/typegoose/docs/guides/quick-start-guide). 
 
 #### Setting up the DB Connection
 For the next step, we will need to configure the connection to the MongoDB database. To do that, we'll use the `TypegooseModule.forRoot` static method. 
 
 ```typescript
-@@filename(app.module)
-import { Module } from "@nestjs/common";
-import { TypegooseModule } from "@m8a/nestjs-typegoose";
+// app.module.ts
 
-@Module({
-  imports: [
-    TypegooseModule.forRoot("mongodb://localhost:27017/otherdb", {
-      // other connection options
-    }),
-    CatsModule
-  ]
-})
-export class ApplicationModule {}
-@@switch
 import { Module } from "@nestjs/common";
 import { TypegooseModule } from "@m8a/nestjs-typegoose";
 
@@ -62,14 +50,8 @@ If you have requirements to use multiple databases, you can also implement [mult
 Now that you have the dependencies installed and the database connection is set up, let's create our first entity. This is a very simplified example.
 
 ```typescript
-@@filename(cat.entity)
-import { Prop } from "@typegoose/typegoose";
+// cat.entity.ts
 
-export class Cat {
-  @Prop({ required: true })
-  public name!: string;
-}
-@@switch
 import { Prop } from "@typegoose/typegoose";
 
 export class Cat {
@@ -87,28 +69,8 @@ Entity classes, like above, are basically schema definitions, which Typegoose co
 In order to inject a Mongoose model into any Nest provider, you need to use the `@InjectModel` decorator inside your provider class' constructor as shown in the following example of a service.
 
 ```typescript
-@@filename(cat.service)
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@m8a/nestjs-typegoose";
-import { Cat } from "./cat.model";
-import { ReturnModelType } from "@typegoose/typegoose";
+// cat.service.ts
 
-@Injectable()
-export class CatsService {
-  constructor(
-    @InjectModel(Cat) private readonly catModel: ReturnModelType<typeof Cat>
-  ) {}
-
-  async create(createCatDto: { name: string }): Promise<Cat> {
-    const createdCat = new this.catModel(createCatDto);
-    return await createdCat.save();
-  }
-
-  async findAll(): Promise<Cat[] | null> {
-    return await this.catModel.find().exec();
-  }
-}
-@@switch
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@m8a/nestjs-typegoose";
 import { Cat } from "./cat.model";
@@ -137,29 +99,7 @@ From the example above, you can see a more specific type used by Typegoose to de
 We have to make sure we provide the needed models to our service with `TypegooseModule.forFeature` for the `@InjectModel` to work. This helps prevents unauthorized access to other models.
 
 ```typescript
-@@filename(cat.module)
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@m8a/nestjs-typegoose";
-import { Cat } from "./cat.model";
-import { ReturnModelType } from "@typegoose/typegoose";
-
-@Injectable()
-export class CatsService {
-  constructor(
-    @InjectModel(Cat) private readonly catModel: ReturnModelType<typeof Cat>
-  ) {}
-
-  async create(createCatDto: { name: string }): Promise<Cat> {
-    const createdCat = new this.catModel(createCatDto);
-    return await createdCat.save();
-  }
-
-  async findAll(): Promise<Cat[] | null> {
-    return await this.catModel.find().exec();
-  }
-}
-
-@@switch
+// cat.module.ts
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@m8a/nestjs-typegoose";
 import { Cat } from "./cat.model";
@@ -186,21 +126,8 @@ export class CatsService {
 To provide asynchronous mongoose schema options (similar to NestJS' Mongoose module implementation) you can use the `TypegooseModule.forRootAsync`
 
 ```typescript
-@@filename(cat.module)
-@Module({
-  imports: [
-    TypegooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.getString("MONGODB_URI")
-        // ...typegooseOptions (Note: config is spread with the uri)
-      }),
-      inject: [ConfigService]
-    })
-  ]
-})
-export class CatsModule {}
-@@switch
+// cat.module.ts
+
 @Module({
   imports: [
     TypegooseModule.forRootAsync({
@@ -219,31 +146,8 @@ The `typegooseOptions` is spread with the `uri`. The `uri` is required!
 
 You can also use a class with `useClass`.
 ```typescript
-@@filename(cat.module)
-import {
-  TypegooseOptionsFactory,
-  TypegooseModuleOptions
-} from "nestjs-typegoose";
+// cat.module.ts
 
-class TypegooseConfigService extends TypegooseOptionsFactory {
-  createTypegooseOptions():
-    | Promise<TypegooseModuleOptions>
-    | TypegooseModuleOptions {
-    return {
-      uri: "mongodb://localhost/nest"
-    };
-  }
-}
-
-@Module({
-  imports: [
-    TypegooseModule.forRootAsync({
-      useClass: TypegooseConfigService
-    })
-  ]
-})
-export class CatsModule {}
-@@switch
 import {
   TypegooseOptionsFactory,
   TypegooseModuleOptions
@@ -270,17 +174,8 @@ export class CatsModule {}
 ```
 Or, if you want to prevent creating another `TypegooseConfigService` class and want to use it from another imported module then use `useExisting`.
 ```typescript
-@@filename(cat.module)
-@Module({
-  imports: [
-    TypegooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useExisting: ConfigService
-    })
-  ]
-})
-export class CatsModule {}
-@@switch
+// cat.module.ts
+
 @Module({
   imports: [
     TypegooseModule.forRootAsync({
@@ -295,17 +190,8 @@ export class CatsModule {}
 #### Testing
 Like Nest's Mongoose module (see the [testing section](http://localhost:4200/techniques/mongodb#testing)), nestjs-typegoose's `forFeature` and `forRoot` rely on a database connection to work. To unit test your `CatService` without connecting to a MongoDB database, you'll need to create a fake model using a [custom provider](/fundamentals/custom-providers).
 ```typescript
-@@filename(cat.module)
-import { getModelToken } from "@m8a/nestjs-typegoose";
+// cat.module.ts
 
-@Module({
-  CatService,
-  {
-    provide: getModelToken('Cat'),
-    useValue: fakeCatModel
-  }
-})
-@@switch
 import { getModelToken } from "@m8a/nestjs-typegoose";
 
 @Module({
@@ -318,19 +204,8 @@ import { getModelToken } from "@m8a/nestjs-typegoose";
 ```
 In a spec file this would look like:
 ```typescript
-@@filename(cat.service.spec)
-const fakeCatModel = jest.fn();
+// cat.service.spec.ts
 
-const module: TestingModule = await Test.createTestingModule({
-  providers: [
-    {
-      provide: getModelToken(Cat.name),
-      useValue: fakeCatModel
-    },
-    CatService
-  ]
-}).compile();
-@@switch
 const fakeCatModel = jest.fn();
 
 const module: TestingModule = await Test.createTestingModule({
