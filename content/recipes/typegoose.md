@@ -18,7 +18,7 @@ Here is a short description of each package.
  - **@typegoose/typegoose** - the Typegoose library
  - **@m8a/nestjs-typegoose** - the package containing the Typegoose module for plugging in Typegoose into Nest
 
-> info **Hint** Some of the content in this recipe was taken from the [documentation website of the @m8a/nestjs-typegoose module](https://nestjs-typegoose.m8a.io/). You can get further details there about the Typegoose module and can also get further details about Typegoose at their [docs website](https://typegoose.github.io/typegoose/docs/guides/quick-start-guide). 
+> info **Hint** Some of the content in this recipe was taken from the [documentation website of the @m8a/nestjs-typegoose package](https://nestjs-typegoose.m8a.io/). You can get further details there about the Typegoose module and can also get further details about Typegoose at their [docs website](https://typegoose.github.io/typegoose/docs/guides/quick-start-guide). 
 
 #### Setting up the DB Connection
 For the next step, we will need to configure the connection to the MongoDB database. To do that, we'll use the `TypegooseModule.forRoot` static method. 
