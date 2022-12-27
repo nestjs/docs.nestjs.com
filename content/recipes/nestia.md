@@ -56,7 +56,7 @@ If you want to install and configure `nestia` manually, read [Guide Documents - 
 Superfast validation decorators for NestJS.
 
   - 15,000x faster request body validation than class-validator
-  - 10x faster JSON response, even type safe
+  - 10x faster JSON response than `JSON.stringify()` and it's type safe
   - Do not need DTO class definition, just fine with interface
 
 `@nestia/core` is a transformer library of NestJS, supporting superfast validation decorators, by wrapping [typia](https://github.com/samchon/typia). Comparing validation speed with `class-validator`, `typia` is maximum **15,000x times faster**, and it is even much safer.
