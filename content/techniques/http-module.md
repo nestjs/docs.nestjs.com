@@ -113,7 +113,7 @@ The construction above instantiates `HttpConfigService` inside `HttpModule`, usi
 
 ```typescript
 @Injectable()
-class HttpConfigService implements HttpModuleOptionsFactory {
+export class HttpConfigService implements HttpModuleOptionsFactory {
   createHttpOptions(): HttpModuleOptions {
     return {
       timeout: 5000,
