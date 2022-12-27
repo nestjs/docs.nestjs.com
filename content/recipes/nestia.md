@@ -55,7 +55,7 @@ If you want to install and configure `nestia` manually, read [Guide Documents - 
 
 Superfast validation decorators for NestJS.
 
-  - 15,000x faster request body validation
+  - 15,000x faster request body validation than class-validator
   - 10x faster JSON response, even type safe
   - Do not need DTO class definition, just fine with interface
 
