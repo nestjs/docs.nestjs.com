@@ -11,6 +11,7 @@ To begin, you'll need to install the following dependencies into your [already c
 ```typescript
 $ npm install --save mongoose @typegoose/typegoose @m8a/nestjs-typegoose
 ```
+> info **info** [Typegoose](https://github.com/typegoose/typegoose) and the [Typegoose module](https://github.com/m8a-io/m8a) are third party packages and are not managed by the entirety of the NestJS core team. Please, report any issues found with either library in their respective repositories (linked above).
 
 Here is a short description of each package. 
 
@@ -218,4 +219,6 @@ const module: TestingModule = await Test.createTestingModule({
   ]
 }).compile();
 ```
-Overall, between the docs of the Typegoose module and Typegoose, you can attain a strong basis to  work with Mongoose in a much more powerful/ typed manner with NestJS. Should you have any further questions, you can ask them on the [NestJS Discord channel](https://discord.gg/nestjs). Go to the .
+Overall, between the docs of the Typegoose module and Typegoose, you can attain a strong basis to work with Mongoose and NestJS in a much more powerful and typed manner. 
+
+Should you have any further questions, you can ask them on the [NestJS Discord channel](https://discord.gg/nestjs). Should you find issues with the [Typegoose](https://github.com/typegoose/typegoose) or the [Typegoose module](https://github.com/m8a-io/m8a) packages, please report them to their respective repositories, as the Nest team do not maintain these libraries. 
