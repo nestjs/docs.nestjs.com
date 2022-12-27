@@ -148,9 +148,6 @@ export namespace IBbsArticle {
     }
 }
 ```
-
-
-
 #### `@nestia/sdk`
 
 Automatic *SDK* and *Swagger* generator for `@nestia/core`.
