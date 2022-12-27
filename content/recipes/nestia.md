@@ -176,7 +176,7 @@ npx nestia swagger
 
 ##### Demonstration
 
-When you run `npx nestia sdk` command, `@nestia/sdk` will generate below code.
+When you run `npx nestia sdk` command, `@nestia/sdk` will generate an SDK library interacting with your backend server, composed with some codes like below. If you want to learn how to distribute and utilize the SDK library, visit and read [Guide Documents - Distribution](https://github.com/samchon/nestia/wiki/Distribution).
 
 ```typescript
 import { Fetcher, IConnection } from "@nestia/fetcher";
@@ -205,31 +205,5 @@ export namespace store {
     export function path(): string {
         return "/bbs/articles";
     }
-}
-```
-
-With the SDK library, client developers can get benefits of TypeScript like below.
-
-If you want to learn how to distribute SDK library, visit and read [Guide Documents - Distribution](https://github.com/samchon/nestia/wiki/Distribution).
-
-```typescript
-import api from "@bbs-api";
-import { IBbsArticle } from "@bbs-api/lib/structures/IBbsArticle";
-import typia from "typia";
-
-export async function some_test_code_by_client(
-    connection: api.IConnection
-): Promise<IBbsArticle> {
-    const article: IBbsArticle = await api.functional.bbs.articles.store(
-        connection,
-        {
-            name: "John Doe",
-            title: "some title",
-            content: "some content",
-        }
-    );
-    typia.assert(article);
-    console.log(article);
-    return article;
 }
 ```
