@@ -38,7 +38,7 @@ npx nestia setup --project tsconfig.json
 npx nestia setup --project tsconfig.test.json
 ```
 
-After the setup, you can compile `@nestia/core` utilization code by using `ttsc` ([ttypescript](https://github.com/cevek/ttypescript)) command. If you want to run your TypeScript file directly through `ts-node`, add `-C ttypescript` argument like below:
+After the setup, you only can compile `@nestia/core` utilization code by using `ttsc` ([ttypescript](https://github.com/cevek/ttypescript)) command, because `@nestia/core` is a type of tranformer library generating validation code by analyzing DTO types. If you want to run your TypeScript file directly through `ts-node` without compilation, add `-C ttypescript` argument like below:
 
 ```bash
 # COMPILE THROUGH TTYPESCRIPT
@@ -208,15 +208,18 @@ export namespace store {
 }
 ```
 
-With the SDK library, client developers would get take advantages of TypeScript like below. 
+With the SDK library, client developers can get benefits of TypeScript like below.
 
 If you want to learn how to distribute SDK library, visit and read [Guide Documents - Distribution](https://github.com/samchon/nestia/wiki/Distribution).
 
 ```typescript
 import api from "@bbs-api";
+import { IBbsArticle } from "@bbs-api/lib/structures/IBbsArticle";
 import typia from "typia";
 
-export async function test_bbs_article_store(connection: api.IConnection) {
+export async function some_test_code_by_client(
+    connection: api.IConnection
+): Promise<IBbsArticle> {
     const article: IBbsArticle = await api.functional.bbs.articles.store(
         connection,
         {
@@ -227,5 +230,6 @@ export async function test_bbs_article_store(connection: api.IConnection) {
     );
     typia.assert(article);
     console.log(article);
+    return article;
 }
 ```
