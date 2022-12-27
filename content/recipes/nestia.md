@@ -51,11 +51,6 @@ npx ts-node -C ttypescript src/index.ts
 ##### Manual Setup
 
 If you want to install and configure `nestia` manually, read [Guide Documents - Setup](https://github.com/samchon/nestia/wiki/Setup).
-
-
-
-
-
 #### `@nestia/core`
 
 Superfast validation decorators for NestJS.
