@@ -7,11 +7,11 @@ test development by automatically mocking class external dependencies.
 #### Introduction
 
 The dependency injection (DI) container is an essential component of the Nest module system.
-This container is utilized both during testing, and the application execution. \
+This container is utilized both during testing, and the application execution.
 Unit tests vary from other types of tests, such as integration tests, in that they must
 fully override providers/services within the DI container. External class dependencies
 (providers) of the so-called "unit", have to be totally isolated. That is, all dependencies
-within the DI container should be replaced by mock objects. \
+within the DI container should be replaced by mock objects.
 As a result, loading the target module and replacing the providers inside it is a process
 that loops back on itself. Automock tackles this issue by automatically mocking all the
 class external providers, resulting in total isolation of the unit under test.
@@ -28,7 +28,9 @@ Automock does not require any additional setup.
 Sinon will shortly be released.
 
 #### Example
+
 Consider the following cats service, which takes three constructor parameters:
+
 ```ts
 @@filename(cats.service)
 import { Injectable } from '@nestjs/core';
@@ -92,6 +94,7 @@ describe('Cats Service Unit Spec', () => {
 > wrapped with type definitions of Jest mock function. ([reference](https://jestjs.io/docs/mock-function-api/#jestmockedsource))
 
 #### About `unit` and `unitRef`
+
 Let's examine the following code:
 
 ```typescript
