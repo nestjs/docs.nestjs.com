@@ -3,7 +3,6 @@
 Automock is a standalone library for unit testing. Using TypeScript Reflection
 API (`reflect-metadata`) internally to produce mock objects, Automock streamlines
 test development by automatically mocking class external dependencies.
-
 > info **info** `Automock` is a third party package and is not managed by the NestJS core team.
 > Please, report any issues found with the library in the [appropriate repository](https://github.com/omermorad/automock)
 
