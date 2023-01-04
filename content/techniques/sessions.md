@@ -35,6 +35,29 @@ Likewise, enabling the `saveUninitialized` option Forces a session that is "unin
 
 You can pass several other options to the `session` middleware, read more about them in the [API documentation](https://github.com/expressjs/session#options).
 
+In case we need to save our session in a storage such as `Redis`, we should add the `store` option in our session, as follows:
+
+```typescript
+import * as RedisStore from 'connect-redis';
+import * as Redis from 'redis';
+
+const redisClient = Redis.createClient({
+  url: 'redis://:@127.0.0.1:6379',
+  legacyMode: true,
+});
+redisClient.connect().catch(console.error);
+
+app.use(session({
+  store: new (RedisStore(session))({
+    client: redisClient
+    logErrors: true,
+  }),
+  secret: 'my-secret',
+  resave: false,
+  saveUninitialized: false,
+}));
+```
+
 > info **Hint** Please note that `secure: true` is a recommended option. However, it requires an https-enabled website, i.e., HTTPS is necessary for secure cookies. If secure is set, and you access your site over HTTP, the cookie will not be set. If you have your node.js behind a proxy and are using `secure: true`, you need to set `"trust proxy"` in express.
 
 With this in place, you can now set and read session values from within the route handlers, as follows:
