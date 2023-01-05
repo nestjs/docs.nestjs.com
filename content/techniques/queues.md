@@ -207,6 +207,16 @@ export class AudioConsumer {}
 
 > info **Hint** Consumers must be registered as `providers` so the `@nestjs/bull` package can pick them up.
 
+Once registered as providers, the consumer will start consuming from the queue only if the app is either listening or the `init` hook has been called:
+
+```typescript
+// main.ts
+
+await app.listen(3000);
+// OR
+await app.init();
+```
+
 Where the decorator's string argument (e.g., `'audio'`) is the name of the queue to be associated with the class methods.
 
 Within a consumer class, declare job handlers by decorating handler methods with the `@Process()` decorator.
