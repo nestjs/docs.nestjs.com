@@ -142,6 +142,8 @@ export class AppModule {}
 > where the guard (`RolesGuard` in the example above) is defined. Also, `useClass` is not the only way of dealing with
 > custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
+> warning **Warning** When using the provider syntax with `APP_GUARD`, it is not necessary to use the `useGlobalGuards()` method of the Nest application instance in the `main.ts` file.
+
 #### Setting roles per handler
 
 Our `RolesGuard` is working, but it's not very smart yet. We're not yet taking advantage of the most important guard feature - the [execution context](/fundamentals/execution-context). It doesn't yet know about roles, or which roles are allowed for each handler. The `CatsController`, for example, could have different permission schemes for different routes. Some might be available only for an admin user, and others could be open for everyone. How can we match roles to routes in a flexible and reusable way?
