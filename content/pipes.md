@@ -9,7 +9,7 @@ A pipe is a class annotated with the `@Injectable()` decorator, which implements
 Pipes have two typical use cases:
 
 - **transformation**: transform input data to the desired form (e.g., from string to integer)
-- **validation**: evaluate input data and if valid, simply pass it through unchanged; otherwise, throw an exception when the data is incorrect
+- **validation**: evaluate input data and if valid, simply pass it through unchanged; otherwise, throw an exception
 
 In both cases, pipes operate on the `arguments` being processed by a <a href="controllers#route-parameters">controller route handler</a>. Nest interposes a pipe just before a method is invoked, and the pipe receives the arguments destined for the method and operates on them. Any transformation or validation operation takes place at that time, after which the route handler is invoked with any (potentially) transformed arguments.
 
