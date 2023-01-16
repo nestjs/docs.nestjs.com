@@ -12,7 +12,7 @@ $ npm install cache-manager
 
 > warning **Warning**  As of version `>=9.2.1` of NestJS is compatible with both `cache-manager` v4 and v5.
 
-> warning **Warning**  `Cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. Current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
+> warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
 > * If using `cache-manager` v4, provide ttl in seconds
 > * If using `cache-manager` v5 or newer, provide ttl in milliseconds
 > * Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
