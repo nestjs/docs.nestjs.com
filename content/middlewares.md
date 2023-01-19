@@ -20,6 +20,10 @@ Nest middleware are, by default, equivalent to [express](https://expressjs.com/e
 
 You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
 
+>  warning **Warning** `Express` and `fastify` treat middleware differently and have different syntaxes for middleware.
+
+#### Use with Express
+
 ```typescript
 @@filename(logger.middleware)
 import { Injectable, NestMiddleware } from '@nestjs/common';
@@ -28,6 +32,36 @@ import { Request, Response, NextFunction } from 'express';
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
+    console.log('Request...');
+    next();
+  }
+}
+@@switch
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class LoggerMiddleware {
+  use(req, res, next) {
+    console.log('Request...');
+    next();
+  }
+}
+```
+
+#### Use with Fastify
+
+The middleware with `fastify` "works", but it retrieves only the raw `req` and `res` objects and not the fastify wrapper. This is a side effect of how `middie` works and `fastify` already talks about it in its documents for more information see [here](https://www.fastify.io/docs/latest/Reference/Middleware/).
+
+> warning **Warning** The middleware in `fastify` has an IncomingMessage request type `FastifyRequest['raw']` and a ServerResponse type `FastifyReply['raw']`.
+
+```typescript
+@@filename(logger.middleware)
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { FastifyRequest, FastifyReply } from 'fastify';
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  use(req: FastifyRequest, res: FastifyReply, next: () => void) {
     console.log('Request...');
     next();
   }
