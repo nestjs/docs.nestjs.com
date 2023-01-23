@@ -89,6 +89,6 @@ In general, the request lifecycle looks like the following:
 
 #### Global Filters
 
-> info **Hint** When using a Catch-Everything filter as a global filter, it should be configured before any other global specific filters, otherwise the Cach-Everything filter will catch all types regardless of a more targetted filter existing. See #9696 for details.
+> info **Hint** When using a Catch-Everything filter as a global filter, it should be configured before any other global specific filters, otherwise the Cach-Everything filter will catch all types regardless of a more targetted filter existing. See [ISSUE-9696](https://github.com/nestjs/nest/issues/9696) for details.
 
 

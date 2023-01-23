@@ -359,7 +359,7 @@ app.useGlobalFilters(new MySpecificFilter(), new CatchAllFilter())
 app.useGlobalFilters(new CatchAllFilter(), new MySpecificFilter())
 ```
 
-See #9696 for details.
+See [ISSUE-9696](https://github.com/nestjs/nest/issues/9696) for details.
 
 
 #### Inheritance
