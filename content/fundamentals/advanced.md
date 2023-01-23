@@ -1,10 +1,23 @@
 ### Advanced Concepts
 
-So far we've breezed over a couple of advanced topics in TypeScript like decorators and how the DI system is actually working under the hood. If all you want is a system that works, ou can probably move on to another section, but if you want to get a deeper understanding of how Nest works, this is the section for you.
+So far we've breezed over a couple of advanced topics in TypeScript like
+decorators and how the DI system is actually working under the hood.
+If all you want is a system that works, you can probably move on to another
+section, but if you want to get a deeper understanding of how Nest works, this
+is the section for you.
 
 #### The @Injectable() Decorator
 
-Earlier in the docs we mentioned that "The `@Injectable()` decorator attaches metadata, which declares that `CatsService` is a class that can be managed by the Nest IoC container.". This is only a half truth, in reality, adding the provider to a module's `providers` array is what makes the provider able to be injected via the IoC container. What `@njectable()` is doing is forcing TypeScript to emit metadata about the class's `constructor`, specifically the `design:paramtypes` metadata that will be read at start up. If there is an `@Inject()` decorator in the constructor, by technicality this does enough to make TypeScript emit all the same metadata. Take a look at the compiled JavaScript from the following TypeScript class:
+Earlier in the docs we mentioned that "The `@Injectable()` decorator attaches
+metadata, which declares that `CatsService` is a class that can be managed by
+the Nest IoC container.". This is only a half truth. In reality, adding the
+provider to a module's `providers` array is what makes the provider able to be
+injected via the IoC container. What `@Injectable()` is doing is forcing
+TypeScript to emit metadata about the class's `constructor`, specifically the
+`design:paramtypes` metadata that will be read at start up. If there is an
+`@Inject()` decorator in the constructor, by technicality this does enough to
+make TypeScript emit all the same metadata. Take a look at the compiled
+JavaScript from the following TypeScript class:
 
 ```typescript
 export class Foo {
@@ -41,7 +54,8 @@ export class FooBar {
 }
 ```
 
-Now, let's add the `@Injectable()` decorator to the classes. We get the following output in our `dist`
+Now, let's add the `@Injectable()` decorator to the classes. We get the
+following output in our `dist`
 
 ```javascript
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -86,8 +100,18 @@ FooBar = __decorate([
 export { FooBar };
 ```
 
-There's a lot going on in the above snippet, so let's ignore the `__decorate` and `__metadata` method definitions and look just at the class portions. Notice that now there are metadata definitions for the `design:paramtypes` metadata key of `[String]` for `Foo` and `Bar` and `[Foo, Bar]` for `FooBar`. This tells Nest what parameters are expected in each position of the constructor for each class.
+There's a lot going on in the above snippet, so let's ignore the `__decorate`
+and `__metadata` method definitions and look just at the class portions.
+Notice that now there are metadata definitions for the `design:paramtypes`
+metadata key of `[String]` for `Foo` and `Bar` and `[Foo, Bar]` for `FooBar`.
+This tells Nest what parameters are expected in each position of the
+constructor for each class.
 
-> info **Hint** When you use `@Inject('SomeString')` Nest will set `design:paramtypes` to `SomeString` for the position that you are decorating.
+> info **Hint** When you use `@Inject('SomeString')` Nest will set
+`design:paramtypes` to `SomeString` for the position that you are decorating.
 
-What Nest will do when reading this metadata is match it up with the class or injection token that exists in the current module's provider list and use that provider in the proper location for the constructor. This is why it is very important to either use a class, or `@Inject()` on the right parameter, and why all decorators cannot be used wherever you want.
+What Nest will do when reading this metadata is match it up with the class or
+injection token that exists in the current module's provider list and use that
+provider in the proper location for the constructor. This is why it is very
+important to either use a class, or `@Inject()` on the right parameter, and
+why all decorators cannot be used wherever you want.
