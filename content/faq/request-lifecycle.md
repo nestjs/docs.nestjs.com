@@ -86,3 +86,9 @@ In general, the request lifecycle looks like the following:
 18. Global interceptor (post-request)
 19. Exception filters (route, then controller, then global)
 20. Server response
+
+#### Global Filters
+
+> info **Hint** When using a Catch-Everything filter as a global filter, it should be configured before any other global specific filters, otherwise the Cach-Everything filter will catch all types regardless of a more targetted filter existing. See #9696 for details.
+
+
