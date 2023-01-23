@@ -352,7 +352,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 ##### Catch-Anything Example
 
-```
+```typescript
 // wrong
 app.useGlobalFilters(new MySpecificFilter(), new CatchAllFilter())
 // right
