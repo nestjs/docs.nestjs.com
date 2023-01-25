@@ -16,7 +16,7 @@ $ npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
 # npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-fastify
 
 # For Fastify and Mercurius
-# npm i @nestjs/graphql @nestjs/mercurius graphql mercurius fastify
+# npm i @nestjs/graphql @nestjs/mercurius graphql mercurius 
 ```
 
 > warning **Warning** `@nestjs/graphql@>=9` and `@nestjs/apollo^10` packages are compatible with **Apollo v3** (check out Apollo Server 3 [migration guide](https://www.apollographql.com/docs/apollo-server/migration/) for more details), while `@nestjs/graphql@^8` only supports **Apollo v2** (e.g., `apollo-server-express@2.x.x` package).
@@ -345,3 +345,7 @@ export class AppModule {}
 > info **Hint** Once the application is running, open your browser and navigate to `http://localhost:3000/graphiql`. You should see the [GraphQL IDE](https://github.com/graphql/graphiql).
 
 The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance. Read more about available settings [here](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options).
+
+#### Example
+
+A first example of fully working code with Mercurius is available [here](https://github.com/nestjs/nest/tree/master/sample/33-graphql-mercurius).
