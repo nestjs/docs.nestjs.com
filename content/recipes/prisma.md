@@ -181,6 +181,11 @@ With your Prisma models in place, you can generate your SQL migration files and 
 ```bash
 $ npx prisma migrate dev --name init
 ```
+OR for prisma using mongodb
+
+```bash
+$ prisma db push
+```
 
 This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files was created in the existing `prisma` directory:
 
