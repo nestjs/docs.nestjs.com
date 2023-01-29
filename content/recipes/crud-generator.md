@@ -24,7 +24,7 @@ To help speed up this repetitive process, [Nest CLI](/cli/overview) provides a g
 To create a new resource, simply run the following command in the root directory of your project:
 
 ```shell
-$ nest g resource
+$ nest g resource <resource-name>
 ```
 
 `nest g resource` command not only generates all the NestJS building blocks (module, service, controller classes) but also an entity class, DTO classes as well as the testing (`.spec`) files.
