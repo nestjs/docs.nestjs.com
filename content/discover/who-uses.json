@@ -198,6 +198,10 @@
     {
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
+    },
+    {
+      "logo": "/assets/logo/wepublish.png",
+      "url": "https://en.wepublish.com/"
     }
   ],
   "Body": [
