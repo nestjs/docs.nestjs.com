@@ -2,9 +2,12 @@
 
 A set of helper libraries for NestJS, supporting the below features:
 
-  - `@nestia/core` - 15,000x faster validation decorators using [typia](https://github.com/samchon/typia)
-  - `@nestia/sdk` - SDK and Swagger Documents generator for `@nestia/core`
-  - `nestia` - just CLI tool
+  - `@nestia/core`: **15,000x times faster** validation decorators
+  - `@nestia/sdk`: evolved **SDK** and **Swagger** generators
+    - SDK (Software Development Kit)
+      - interaction library for client developers
+      - almost same with `tRPC`
+  - `nestia`: just CLI (command line interface) tool
 
 > info **info** `nestia` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/samchon/nestia).
 
@@ -51,7 +54,7 @@ npx ts-node -C ttypescript src/index.ts
 
 ##### Manual Setup
 
-If you want to install and configure `nestia` manually, read [Guide Documents - Setup](https://github.com/samchon/nestia/wiki/Setup).
+If you want to install and configure `nestia` manually, read [Guide Documents / Setup](https://github.com/samchon/nestia/wiki/Setup).
 #### `@nestia/core`
 
 Superfast validation decorators for NestJS.
@@ -66,22 +69,30 @@ Furthermore, `@nestia/core` can use pure interface typed DTO with **only one lin
 
 ```typescript
 import { Controller } from "@nestjs/common";
-import { TypedBody, TypedRoute } from "@nestia/core";
+import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 
 import type { IBbsArticle } from "@bbs-api/structures/IBbsArticle";
 
-@Controller("bbs/articles")
+@Controller("bbs/articles/:section")
 export class BbsArticlesController {
-    /** 
-     * Store a new content.
-     * 
-     * @param inupt Content to store
-     * @returns Newly archived article
+    /**
+     * Update article.
+     *
+     * When updating, this BBS system does not overwrite the content, but accumulate it.
+     * Therefore, whenever an article being updated, length of {@link IBbsArticle.contents}
+     * would be increased and accumulated.
+     *
+     * @param section Target section
+     * @param id Target articles id
+     * @param input Content to update
+     * @returns Newly created content info
      */
-    @TypedRoute.Post() // 10x faster and safer JSON.stringify()
-    public async store(
-        @TypedBody() input: IBbsArticle.IStore // superfast validator
-    ): Promise<IBbsArticle>; 
+    @TypedRoute.Post(":id") // 10x faster and safer JSON.stringify()
+    public async update(
+        @TypedParam("section", "string") section: string,
+        @TypedParam("id", "uuid") id: strig, // type-safe parameter
+        @TypedBody() input: IBbsArticle.IUpdate // super-fast validator
+    ): Promise<IBbsArticle.IContent>; 
         // do not need DTO class definition, 
         // just fine with interface
 }
@@ -109,7 +120,7 @@ Also, it supports safe and fast JSON stringify function pipe, which is maximum 1
 
 You can enhance DTO type validation by writing comment tags.
 
-If you want to know more about it, read [Guide Documents of `typia`](https://github.com/samchon/typia/wiki/Runtime-Validators#comment-tags).
+If you want to know more about it, read [Guide Documents / Core Library / Comment Tags](https://github.com/samchon/nestia/wiki/Core-Library#comment-tags).
 
 ```typescript
 export interface IBbsArticle {
@@ -147,6 +158,8 @@ export namespace IBbsArticle {
          */
         age: number;
     }
+    export interface IContent { ... }
+    export interface IUpdate { ... }
 }
 ```
 #### `@nestia/sdk`
@@ -168,7 +181,7 @@ npx nestia swagger "src/controllers" --out "dist/swagger.json"
 
 You can generate SDK (Software Development Kit) library or Swagger Documents from above commands.
 
-If you've configured `nestia.config.ts` file, you can generate them much easily like below. About the configuration file, read [Guide Documents - Configuration](https://github.com/samchon/nestia/wiki/Configuration)
+If you've configured `nestia.config.ts` file, you can generate them much easily like below. About the configuration file, read [Guide Documents / SDK Generator / Configuration](https://github.com/samchon/nestia/wiki/SDK-Generator#configuration)
 
 ```bash
 npx nestia sdk
@@ -177,34 +190,58 @@ npx nestia swagger
 
 ##### Demonstration
 
-When you run `npx nestia sdk` command, `@nestia/sdk` will generate an SDK library interacting with your backend server, composed with some codes like below. If you want to learn how to distribute and utilize the SDK library, visit and read [Guide Documents - Distribution](https://github.com/samchon/nestia/wiki/Distribution).
+When you run `npx nestia sdk` command, `@nestia/sdk` will generate an SDK library interacting with your backend server, composed with some codes like below. If you want to learn how to distribute and utilize the SDK library, visit and read [Guide Documents / SDK Generator / Distribution](https://github.com/samchon/nestia/wiki/SDK-Generator#distribution).
 
 ```typescript
-import { Fetcher, IConnection } from "@nestia/fetcher";
-import { IBbsArticle } from "../../../structures/IBbsArticle";
+import { Fetcher } from "@nestia/fetcher";
+import type { IConnection } from "@nestia/fetcher";
+
+import type { IBbsArticle } from "../../../structures/IBbsArticle";
 
 /**
- * Store a new content.
+ * Update article.
  * 
- * @param input Content to store
- * @returns Newly archived article
+ * When updating, this BBS system does not overwrite the content, but accumulate it.
+ * Therefore, whenever an article being updated, length of {@link IBbsArticle.contents}
+ * would be increased and accumulated.
+ * 
+ * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
+ * @param section Target section
+ * @param id Target articles id
+ * @param input Content to update
+ * @returns Newly created content info
+ * 
+ * @controller BbsArticlesController.update()
+ * @path PUT /bbs/articles/:section/:id
+ * @nestia Generated by Nestia - https://github.com/samchon/nestia
  */
-export function store(
-    connection: api.IConnection, 
-    input: IBbsArticle.IStore
-): Promise<IBbsArticle> {
+export function update(
+    connection: IConnection,
+    section: string,
+    id: string,
+    input: IBbsArticle.IUpdate
+): Promise<update.Output> {
     return Fetcher.fetch(
         connection,
-        store.ENCRYPTED,
-        store.METHOD,
-        store.path(),
+        update.ENCRYPTED,
+        update.METHOD,
+        update.path(section, id),
         input
     );
 }
-export namespace store {
-    export const METHOD = "POST" as const;
-    export function path(): string {
-        return "/bbs/articles";
+export namespace update {
+    export type Input = IBbsArticle.IUpdate;
+    export type Output = IBbsArticle.IContent;
+
+    export const METHOD = "PUT" as const;
+    export const PATH: string = "/bbs/articles/:section/:id";
+    export const ENCRYPTED: Fetcher.IEncrypted = {
+        request: false,
+        response: false,
+    };
+
+    export function path(section: string, id: string): string {
+        return `/bbs/articles/${encodeURIComponent(section)}/${encodeURIComponent(id)}`;
     }
 }
 ```
