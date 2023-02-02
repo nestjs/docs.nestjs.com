@@ -51,7 +51,7 @@ await this.cacheManager.set('key', 'value');
 
 The default expiration time of the cache is 5 seconds.
 
-You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
+You can manually specify a TTL (expiration time) **in milliseconds** for this specific key, as follows:
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
@@ -121,7 +121,7 @@ All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // seconds
+  ttl: 5000, // milliseconds
   max: 10, // maximum number of items in cache
 });
 ```
