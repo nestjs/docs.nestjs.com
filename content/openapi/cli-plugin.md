@@ -53,7 +53,7 @@ export class CreateUserDto {
 }
 ```
 
-> info **Hint** When using `PartialType, OmitType, PickType, IntersectionType` in dtos import them from `@nestjs/swagger` instead of `@nestjs/mapped-types` for the plugin to pick up the schema
+> info **Hint** When using [mapped types utilities](https://docs.nestjs.com/openapi/mapped-types) (like `PartialType`) in DTOs import them from `@nestjs/swagger` instead of `@nestjs/mapped-types` for the plugin to pick up the schema.
 
 The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Thus you won't have to struggle with `@ApiProperty` decorators scattered throughout the code.
 
