@@ -47,7 +47,7 @@ export class CatsService {
 
   async getAllCats() {
     const cats = await this.httpService.get('http://localhost:3000/api/cats');
-    this.logger.log('successfully fetched all cats');
+    this.logger.log('Successfully fetched all cats');
     
     this.catsDal.saveCats(cats);
   }
