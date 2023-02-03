@@ -62,7 +62,7 @@ we use an example for the following unit test:
 import { TestBed } from '@automock/jest';
 import { CatsService } from './cats.service';
 
-describe('Cats Service Unit Spec', () => {
+describe('CatsService unit spec', () => {
   let underTest: CatsService;
   let logger: jest.Mocked<Logger>;
   let httpService: jest.Mocked<HttpService>;
