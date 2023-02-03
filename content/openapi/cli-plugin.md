@@ -186,7 +186,7 @@ export interface PluginOptions {
   </tr>
 </table>
 
-On the first run and when ever plugin options are changed. Delete `/dist` folder and build the application using
+Make sure to delete the `/dist` folder and rebuild your application whenever plugin options are updated.
 
 ```bash
 $ nest build
