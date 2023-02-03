@@ -240,6 +240,7 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
+        { title: 'Automock', path: '/recipes/automock' },
       ],
     },
     {

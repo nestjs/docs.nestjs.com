@@ -16,6 +16,7 @@ import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
+import { AutomockComponent } from './automock/automock.component';
 
 const routes: Routes = [
   {
@@ -100,6 +101,11 @@ const routes: Routes = [
     component: ReplComponent,
     data: { title: 'REPL' },
   },
+  {
+    path: 'automock',
+    component: AutomockComponent,
+    data: { title: 'Automock' },
+  },
 ];
 
 @NgModule({
@@ -118,6 +124,7 @@ const routes: Routes = [
     RouterModuleComponent,
     ServeStaticComponent,
     NestCommanderComponent,
+    AutomockComponent,
     ReplComponent,
   ],
 })
