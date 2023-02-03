@@ -348,4 +348,4 @@ The `forRoot()` method takes an options object as an argument. These options are
 
 #### Example
 
-A first example of fully working code with Mercurius is available [here](https://github.com/nestjs/nest/tree/master/sample/33-graphql-mercurius).
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/33-graphql-mercurius).
