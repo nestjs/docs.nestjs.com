@@ -187,26 +187,6 @@ export interface PluginOptions {
 </table>
 
 Make sure to delete the `/dist` folder and rebuild your application whenever plugin options are updated.
-
-```bash
-$ nest build
-```
-
-Or you can configure `package.json` with the following scripts
-
-```json
-"prebuild": "rimraf dist",
-"build": "nest build",
-```
-
-and run it using
-
-```bash
-$ npm run build
-```
-
-> info **Hint** Setting `"deleteOutDir": true` in  [Global Compiler Options](https://docs.nestjs.com/cli/monorepo#global-compiler-options) will remove the compilation output directory everytime `nest build` is invoked
-
 If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
 
 ```javascript
