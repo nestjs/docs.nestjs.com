@@ -114,7 +114,6 @@ async listen(callback: () => void) {
   if (isObservable(streamOrResult)) {
     streamOrResult.subscribe();
   }
-  console.log(streamOrResult);
   callback();
 }
 ```
