@@ -53,6 +53,8 @@ export class CreateUserDto {
 }
 ```
 
+> info **Hint** When using [mapped types utilities](https://docs.nestjs.com/openapi/mapped-types) (like `PartialType`) in DTOs import them from `@nestjs/swagger` instead of `@nestjs/mapped-types` for the plugin to pick up the schema.
+
 The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Thus you won't have to struggle with `@ApiProperty` decorators scattered throughout the code.
 
 > info **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@ApiProperty()`.
@@ -184,6 +186,7 @@ export interface PluginOptions {
   </tr>
 </table>
 
+Make sure to delete the `/dist` folder and rebuild your application whenever plugin options are updated.
 If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
 
 ```javascript

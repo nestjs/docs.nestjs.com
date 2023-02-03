@@ -26,7 +26,7 @@ To enable monorepo mode, you start with a _standard mode_ structure, and add **p
 If we run:
 
 ```bash
-nest new my-project
+$ nest new my-project
 ```
 
 We've constructed a _standard mode_ structure, with a folder structure that looks like this:
@@ -49,8 +49,8 @@ We've constructed a _standard mode_ structure, with a folder structure that look
 We can convert this to a monorepo mode structure as follows:
 
 ```bash
-cd my-project
-nest generate app my-app
+$ cd my-project
+$ nest generate app my-app
 ```
 
 At this point, `nest` converts the existing structure to a **monorepo mode** structure. This results in a few important changes. The folder structure now looks like this:

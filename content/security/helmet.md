@@ -42,21 +42,27 @@ await app.register(helmet)
 >
 > ```typescript
 > await app.register(fastifyHelmet, {
->   contentSecurityPolicy: {
->     directives: {
->       defaultSrc: [`'self'`],
->       styleSrc: [
->         `'self'`,
->         `'unsafe-inline'`,
->         'cdn.jsdelivr.net',
->         'fonts.googleapis.com',
->       ],
->       fontSrc: [`'self'`, 'fonts.gstatic.com'],
->       imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
->       scriptSrc: [`'self'`, `https: 'unsafe-inline'`, `cdn.jsdelivr.net`],
->     },
->   },
-> });
+>    contentSecurityPolicy: {
+>      directives: {
+>        defaultSrc: [`'self'`, 'unpkg.com'],
+>        styleSrc: [
+>          `'self'`,
+>          `'unsafe-inline'`,
+>          'cdn.jsdelivr.net',
+>          'fonts.googleapis.com',
+>          'unpkg.com',
+>        ],
+>        fontSrc: [`'self'`, 'fonts.gstatic.com', 'data:'],
+>        imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
+>        scriptSrc: [
+>          `'self'`,
+>          `https: 'unsafe-inline'`,
+>          `cdn.jsdelivr.net`,
+>          `'unsafe-eval'`,
+>        ],
+>      },
+>    },
+>  });
 >
 > // If you are not going to use CSP at all, you can use this:
 > await app.register(fastifyHelmet, {

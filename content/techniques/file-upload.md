@@ -129,7 +129,7 @@ To understand how these can be used in conjunction with the beforementioned `Fil
   new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator({ maxSize: 1000 }),
-      new FileTypeValidator({ fileType: 'jpeg' }),
+      new FileTypeValidator({ fileType: 'image/jpeg' }),
     ],
   }),
 )

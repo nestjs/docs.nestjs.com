@@ -34,7 +34,7 @@ Interceptors, for the most part, follow the same pattern as guards, with one cat
 
 #### Pipes
 
-Pipes follow the standard global to controller to route bound sequence, with the same first in first out in regards to the `@usePipes()` parameters. However, at a route parameter level, if you have multiple pipes running, they will run in the order of the last parameter with a pipe to the first. This also applies to the route level and controller level pipes. For example, if we have the following controller:
+Pipes follow the standard global to controller to route bound sequence, with the same first in first out in regards to the `@UsePipes()` parameters. However, at a route parameter level, if you have multiple pipes running, they will run in the order of the last parameter with a pipe to the first. This also applies to the route level and controller level pipes. For example, if we have the following controller:
 
 ```typescript
 @UsePipes(GeneralValidationPipe)

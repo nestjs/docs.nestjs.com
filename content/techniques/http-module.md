@@ -6,10 +6,10 @@
 
 #### Installation
 
-To begin using it, we first install the required dependency.
+To begin using it, we first install required dependencies.
 
 ```bash
-$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/axios axios
 ```
 
 #### Getting started
@@ -160,7 +160,7 @@ export class CatsService {
   private readonly logger = new Logger(CatsService.name);
   constructor(private readonly httpService: HttpService) {}
 
-  findAll(): Promise<Cat[]> {
+  async findAll(): Promise<Cat[]> {
     const { data } = await firstValueFrom(
       this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
         catchError((error: AxiosError) => {
