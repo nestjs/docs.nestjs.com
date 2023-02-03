@@ -26,7 +26,7 @@ In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onAp
 
 > warning **Warning** The lifecycle hooks listed above are not triggered for **request-scoped** classes. Request-scoped classes are not tied to the application lifecycle and their lifespan is unpredictable. They are exclusively created for each request and automatically garbage-collected after the response is sent.
 
-> info **Info** Execution order of `onModuleInit()` and `onApplicationBootstrap()` directly depends on the order of module imports, awaiting previous hook. If services are imported via providers option then `onModuleInit()` and `onApplicationBootstrap()` will be called simultaneously.
+> info **Hint** Execution order of `onModuleInit()` and `onApplicationBootstrap()` directly depends on the order of module imports, awaiting the previous hook.
 
 #### Usage
 
