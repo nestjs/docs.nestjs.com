@@ -348,6 +348,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 ```
 
 > warning **Warning** When combining an exception filter that catches everything with a filter that is bound to a specific type, the "Catch anything" filter should be declared first to allow the specific filter to correctly handle the bound type.
+
 #### Inheritance
 
 Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the built-in default **global exception filter**, and override the behavior based on certain factors.
