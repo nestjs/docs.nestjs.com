@@ -8,6 +8,7 @@ import { DocumentationComponent } from './documentation/documentation.component'
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
+import { TypegooseComponent } from './typegoose/typegoose.component';
 import { PrismaComponent } from './prisma/prisma.component';
 import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
@@ -100,6 +101,11 @@ const routes: Routes = [
     component: ReplComponent,
     data: { title: 'REPL' },
   },
+  {
+    path: 'typegoose',
+    component: TypegooseComponent,
+    data: { title: 'Typegoose (Mongoose)' },
+  },
 ];
 
 @NgModule({
@@ -119,6 +125,7 @@ const routes: Routes = [
     ServeStaticComponent,
     NestCommanderComponent,
     ReplComponent,
+    TypegooseComponent
   ],
 })
 export class RecipesModule {}

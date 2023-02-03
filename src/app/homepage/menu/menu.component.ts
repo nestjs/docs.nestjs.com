@@ -231,6 +231,7 @@ export class MenuComponent implements OnInit {
         { title: 'MikroORM', path: '/recipes/mikroorm' },
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
+        { title: 'Typegoose', path: '/recipes/typegoose' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
         { title: 'Router module', path: '/recipes/router-module' },
         { title: 'Swagger', path: '/recipes/swagger' },
