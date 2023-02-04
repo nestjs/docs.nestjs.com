@@ -101,4 +101,4 @@ In order to fix this problem, you need to add a setting to your tsconfig.json fi
   }
 ```
 This tells TypeScript to use the polling method for checking for file changes instead of file system events (the new default method), which can cause issues on some machines.
-You can read more about the `"watchFile"` options you can use in [this link](https://www.typescriptlang.org/tsconfig#watch-watchDirectory).
+You can read more about the `"watchFile"` option in [TypeScript documentation](https://www.typescriptlang.org/tsconfig#watch-watchDirectory).
