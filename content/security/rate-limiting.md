@@ -104,8 +104,7 @@ This module can work with websockets, but it requires some class extension. You 
 export class WsThrottlerGuard extends ThrottlerGuard {
   async handleRequest(context: ExecutionContext, limit: number, ttl: number): Promise<boolean> {
     const client = context.switchToWs().getClient();
-    // this is a generic method to switch between `ws` and `socket.io`. You can choose what is appropriate for you
-    const ip = ['conn', '_socket']
+    const ip = ['_socket']
       .map((key) => client[key])
       .filter((obj) => obj)
       .shift().remoteAddress;
@@ -120,6 +119,7 @@ export class WsThrottlerGuard extends ThrottlerGuard {
   }
 }
 ```
+> info **Hint** If you using ws, it is necessary to replace the `_socket` with `conn`
 
 There are some things to take keep in mind when working with websockets:
 
