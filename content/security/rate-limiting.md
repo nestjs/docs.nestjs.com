@@ -104,10 +104,7 @@ This module can work with websockets, but it requires some class extension. You 
 export class WsThrottlerGuard extends ThrottlerGuard {
   async handleRequest(context: ExecutionContext, limit: number, ttl: number): Promise<boolean> {
     const client = context.switchToWs().getClient();
-    const ip = ['_socket']
-      .map((key) => client[key])
-      .filter((obj) => obj)
-      .shift().remoteAddress;
+    const ip = ['_socket'].shift().remoteAddress;
     const key = this.generateKey(context, ip);
     const { totalHits } = await this.storageService.increment(key, ttl);
 
