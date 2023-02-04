@@ -11,7 +11,7 @@ Nest can't resolve dependencies of the <provider> (?). Please make sure that the
 
 Potential solutions:
 - Is <module> a valid NestJS module?
-- If <unknown_token> is a provider, is it part of the current <module>? 
+- If <unknown_token> is a provider, is it part of the current <module>?
 - If <unknown_token> is exported from a separate @Module, is that module imported within <module>?
   @Module({
     imports: [ /* the Module containing <unknown_token> */ ]
