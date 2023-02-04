@@ -102,25 +102,29 @@ This module can work with websockets, but it requires some class extension. You 
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
-  async handleRequest(
-    context: ExecutionContext,
-    limit: number,
-    ttl: number,
-  ): Promise<boolean> {
+  async handleRequest(context: ExecutionContext, limit: number, ttl: number): Promise<boolean> {
     const client = context.switchToWs().getClient();
-    const ip = client.conn.remoteAddress;
+    // this is a generic method to switch between `ws` and `socket.io`. You can choose what is appropriate for you
+    const ip = ['conn', '_socket']
+      .map((key) => client[key])
+      .filter((obj) => obj)
+      .shift().remoteAddress;
     const key = this.generateKey(context, ip);
-    const ttls = await this.storageService.getRecord(key);
+    const { totalHits } = await this.storageService.increment(key, ttl);
 
-    if (ttls.length >= limit) {
+    if (totalHits > limit) {
       throw new ThrottlerException();
     }
 
-    await this.storageService.addRecord(key, ttl);
     return true;
   }
 }
 ```
+
+There are some things to take keep in mind when working with websockets:
+
+- You cannot bind the guard with `APP_GUARD` or `app.useGlobalGuards()` due to how Nest binds global guards.
+- When a limit is reached, Nest will emit an `exception` event, so make sure there is a listener ready for this.
 
 > info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
 
