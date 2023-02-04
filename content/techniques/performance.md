@@ -74,6 +74,38 @@ You can pass options into the Fastify constructor through the `FastifyAdapter` c
 new FastifyAdapter({ logger: true });
 ```
 
+
+#### Middleware
+
+The middleware with `fastify` "works", but it retrieves only the raw `req` and `res` objects and not the fastify wrapper. This is a side effect of how `middie` works and `fastify` already talks about it in its documents for more information see [here](https://www.fastify.io/docs/latest/Reference/Middleware/).
+
+> warning **Warning** The middleware in `fastify` has an IncomingMessage request type `FastifyRequest['raw']` and a ServerResponse type `FastifyReply['raw']`.
+
+```typescript
+@@filename(logger.middleware)
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { FastifyRequest, FastifyReply } from 'fastify';
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  use(req: FastifyRequest['raw'], res: FastifyReply['raw'], next: () => void) {
+    console.log('Request...');
+    next();
+  }
+}
+@@switch
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class LoggerMiddleware {
+  use(req, res, next) {
+    console.log('Request...');
+    next();
+  }
+}
+```
+
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
