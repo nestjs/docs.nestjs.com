@@ -99,7 +99,6 @@ When you're using the NestJS CLI to start your application in watch mode it is d
 In order to fix this problem, you need to add a setting to your tsconfig.json file after the `"compilerOptions"` option as follows:
 
 ```bash
-```bash
   "watchOptions": {
     "watchFile": "fixedPollingInterval"
   }
