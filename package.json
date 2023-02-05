@@ -55,7 +55,7 @@
     "@types/jasminewd2": "2.0.10",
     "@types/lodash": "4.14.191",
     "@types/marked": "1.2.2",
-    "@types/node": "18.11.18",
+    "@types/node": "18.11.19",
     "@types/prismjs": "1.26.0",
     "@types/rimraf": "3.0.2",
     "chokidar": "3.5.3",
