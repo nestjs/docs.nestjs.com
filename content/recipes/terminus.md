@@ -569,7 +569,6 @@ imports: [
 export class HealthModule {}
 ```
 
-##### Disable the Terminus Logger completely 
 
 To completely suppress any log messages coming from Terminus, including error messages, configure Terminus as such.
 
