@@ -121,7 +121,7 @@ export class WsThrottlerGuard extends ThrottlerGuard {
 There's a few things to keep in mind when working with WebSockets:
 
 - You cannot bind the guard with `APP_GUARD` or `app.useGlobalGuards()` due to how Nest binds global guards.
-- When a limit is reached, Nest will emit an `exception` event, so make sure there is a listener ready for this.
+- When a limit is reached, Nest will emit an `exception` event, so make sure there is a listener ready for this
 
 > info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
 
