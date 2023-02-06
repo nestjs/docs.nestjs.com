@@ -396,14 +396,13 @@ Committing offsets is essential when working with Kafka. Per default, messages w
 
 ```typescript
 @@filename()
-
-constructor(@Inject(KAFKA) client: ClientKafka) {}
-
-@EventPattern('user_created')
-async handleUserCreated(@Payload() data: IncomingMessage) {
+@EventPattern('user.created')
+async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
   // business logic
-
-  await this.client.commitOffsets([ { topic: data.topic, partition: data.partition, offset: data.offset } ])
+  
+  const originalMessage = context.getMessage();
+  const { topic, partition, offset } = originalMessage;
+  await this.client.commitOffsets([{ topic, partition, offset }])
 }
 @@switch
 @Bind(Payload(), Ctx())
