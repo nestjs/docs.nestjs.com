@@ -406,14 +406,14 @@ async handleUserCreated(@Payload() data: IncomingMessage) {
   await this.client.commitOffsets([ { topic: data.topic, partition: data.partition, offset: data.offset } ])
 }
 @@switch
-
-constructor(@Inject(KAFKA) client: ClientKafka) {}
-
-@EventPattern('user_created')
-async handleUserCreated(data) {
+@Bind(Payload(), Ctx())
+@EventPattern('user.created')
+async handleUserCreated(data, context) {
   // business logic
 
-  await this.client.commitOffsets([ { topic: data.topic, partition: data.partition, offset: data.offset } ])
+  const originalMessage = context.getMessage();
+  const { topic, partition, offset } = originalMessage;
+  await this.client.commitOffsets([{ topic, partition, offset }])
 }
 ```
 
