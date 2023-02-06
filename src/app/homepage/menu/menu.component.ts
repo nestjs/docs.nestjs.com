@@ -86,9 +86,9 @@ export class MenuComponent implements OnInit {
       title: 'Techniques',
       isOpened: false,
       children: [
+        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
-        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
