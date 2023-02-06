@@ -417,7 +417,7 @@ async handleUserCreated(data) {
 }
 ```
 
-To disable auto-committing of messages set `autoCommit: false` in the `run` config.
+To disable auto-committing of messages set `autoCommit: false` in the `run` configuration, as follows:
 
 ```typescript
 @@filename(main)
