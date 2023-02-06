@@ -158,7 +158,7 @@ the following object with a 200 status code.
 The interface of this response object can be accessed from the `@nestjs/terminus` package with the `HealthCheckResult` interface.
 
 |           |                                                                                                                                                                                             |                                      |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
 | `status`  | If any health indicator failed the status will be `'error'`. If the NestJS app is shutting down but still accepting HTTP requests, the health check will have the `'shutting_down'` status. | `'error' \| 'ok' \| 'shutting_down'` |
 | `info`    | Object containing information of each health indicator which is of status `'up'`, or in other words "healthy".                                                                              | `object`                             |
 | `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
@@ -523,6 +523,88 @@ export class HealthController {
     ])
   }
 }
+```
+
+#### Logging
+
+Terminus only logs error messages, for instance when a Healthcheck has failed. With the `TerminusModule.forRoot()` method you have more control over how errors are being logged
+as well as completely take over the logging itself.
+
+In this section, we are going to walk you through how you create a custom logger `TerminusLogger`. This logger extends the built-in logger.
+Therefore you can pick and choose which part of the logger you would like to overwrite
+
+> info **Info** If you want to learn more about custom loggers in NestJS, [read more here](/techniques/logger#injecting-a-custom-logger).
+
+
+```typescript
+@@filename(terminus-logger.service)
+import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
+
+@Injectable({ scope: Scope.TRANSIENT })
+export class TerminusLogger extends ConsoleLogger {
+  error(message: any, stack?: string, context?: string): void;
+  error(message: any, ...optionalParams: any[]): void;
+  error(
+    message: unknown,
+    stack?: unknown,
+    context?: unknown,
+    ...rest: unknown[]
+  ): void {
+    // Overwrite here how error messages should be logged
+  }
+}
+```
+
+Once you have created your custom logger, all you need to do is simply pass it into the `TerminusModule.forRoot()` as such.
+
+```typescript
+@@filename(health.module)
+@Module({
+imports: [
+  TerminusModule.forRoot({
+    logger: TerminusLogger,
+  }),
+],
+})
+export class HealthModule {}
+```
+
+
+To completely suppress any log messages coming from Terminus, including error messages, configure Terminus as such.
+
+```typescript
+@@filename(health.module)
+@Module({
+imports: [
+  TerminusModule.forRoot({
+    logger: false,
+  }),
+],
+})
+export class HealthModule {}
+```
+
+
+
+Terminus allows you to configure how Healthcheck errors should be displayed in your logs.
+
+| Error Log Style          | Description                                                                                                                        | Example                                                              |
+|:------------------|:-----------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|
+| `json`  (default) | Prints a summary of the health check result in case of an error as JSON object                                                     | <figure><img src="/assets/Terminus_Error_Log_Json.png" /></figure>   |
+| `pretty`          | Prints a summary of the health check result in case of an error within formatted boxes and highlights successful/erroneous results | <figure><img src="/assets/Terminus_Error_Log_Pretty.png" /></figure> |
+
+You can change the log style using the `errorLogStyle` configuration option as in the following snippet.
+
+```typescript
+@@filename(health.module)
+@Module({
+  imports: [
+    TerminusModule.forRoot({
+      errorLogStyle: 'pretty',
+    }),
+  ]
+})
+export class HealthModule {}
 ```
 
 #### More examples
