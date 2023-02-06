@@ -590,7 +590,7 @@ Terminus allows you to configure how Healthcheck errors should be displayed in y
 
 | Error Log Style          | Description                                                                                                                        | Example                                                              |
 |:------------------|:-----------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|
-| `json`  **(Default)** | Prints a summary of the health check result in case of an error as JSON object                                                     | <figure><img src="/assets/Terminus_Error_Log_Json.png" /></figure>   |
+| `json`  (default) | Prints a summary of the health check result in case of an error as JSON object                                                     | <figure><img src="/assets/Terminus_Error_Log_Json.png" /></figure>   |
 | `pretty`          | Prints a summary of the health check result in case of an error within formatted boxes and highlights successful/erroneous results | <figure><img src="/assets/Terminus_Error_Log_Pretty.png" /></figure> |
 
 You can change the log style using the `errorLogStyle` configuration option as in the following snippet.
