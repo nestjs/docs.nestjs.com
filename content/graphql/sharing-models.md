@@ -1,7 +1,5 @@
 ### Sharing models
 
-
-
 > warning **Warning** This chapter applies only to the code first approach.
 
 One of the biggest advantages of using Typescript for the backend of your project is the ability to reuse the same models in a Typescript-based frontend application, by using a common Typescript package.    
