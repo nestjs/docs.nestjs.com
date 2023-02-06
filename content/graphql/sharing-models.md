@@ -1,4 +1,5 @@
-### Sharing Models
+### Sharing models
+
 
 
 > warning **Warning** This chapter applies only to the code first approach.
