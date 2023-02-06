@@ -392,7 +392,7 @@ onModuleInit() {
 
 #### Commit offsets
 
-Comitting offsets is essential when working with kafka. Per default messages will be automatically committed after a specific time. For more information visit [kafkajs docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that functions like the [native kafkajs implementation](https://kafka.js.org/docs/consuming#manual-committing).
+Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that work like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
 
 ```typescript
 @@filename()
