@@ -108,6 +108,10 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         >here</a
       >)</td>
   </tr>
+  <tr>
+    <td><code>producerOnlyMode</code></td>
+    <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
+  </tr>
 </table>
 
 #### Client
@@ -175,7 +179,7 @@ To prevent the `ClientKafka` consumers from losing response messages, a Nest-spe
 
 #### Message response subscription
 
-> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePatern` decorator and the `ClientKafka#send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafka#emit` method).
+> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafka#send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafka#emit` method).
 
 The `ClientKafka` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
 
@@ -338,6 +342,25 @@ interface IncomingMessage {
 }
 ```
 
+If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  const heartbeat = context.getHeartbeat();
+
+  // Do some slow processing
+  await doWorkPart1();
+
+  // Send heartbeat to not exceed the sessionTimeout
+  await heartbeat();
+
+  // Do some slow processing again
+  await doWorkPart2();
+}
+```
+
 #### Naming conventions
 
 The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
@@ -389,6 +412,20 @@ onModuleInit() {
 ```
 
 > info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+
+#### Retriable exceptions
+
+Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+
+> warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
+
+For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
+
+```typescript
+throw new KafkaRetriableException('...');
+```
+
+> info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
 
 #### Commit offsets
 

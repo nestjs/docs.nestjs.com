@@ -9,7 +9,7 @@ A pipe is a class annotated with the `@Injectable()` decorator, which implements
 Pipes have two typical use cases:
 
 - **transformation**: transform input data to the desired form (e.g., from string to integer)
-- **validation**: evaluate input data and if valid, simply pass it through unchanged; otherwise, throw an exception when the data is incorrect
+- **validation**: evaluate input data and if valid, simply pass it through unchanged; otherwise, throw an exception
 
 In both cases, pipes operate on the `arguments` being processed by a <a href="controllers#route-parameters">controller route handler</a>. Nest interposes a pipe just before a method is invoked, and the pipe receives the arguments destined for the method and operates on them. Any transformation or validation operation takes place at that time, after which the route handler is invoked with any (potentially) transformed arguments.
 
@@ -19,7 +19,7 @@ Nest comes with a number of built-in pipes that you can use out-of-the-box. You 
 
 #### Built-in pipes
 
-Nest comes with eight pipes available out-of-the-box:
+Nest comes with nine pipes available out-of-the-box:
 
 - `ValidationPipe`
 - `ParseIntPipe`
@@ -29,6 +29,7 @@ Nest comes with eight pipes available out-of-the-box:
 - `ParseUUIDPipe`
 - `ParseEnumPipe`
 - `DefaultValuePipe`
+- `ParseFilePipe`
 
 They're exported from the `@nestjs/common` package.
 
@@ -237,7 +238,6 @@ Start by installing the required package:
 
 ```bash
 $ npm install --save joi
-$ npm install --save-dev @types/joi
 ```
 
 In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.validate()` method, which validates our incoming argument against the provided schema.
@@ -294,6 +294,22 @@ In this case, we want to bind the pipe at the method call level. In our current 
 2. Pass the context-specific Joi schema in the class constructor of the pipe
 3. Bind the pipe to the method
 
+Joi schema example:
+
+```typescript
+const createCatSchema = Joi.object({
+  name: Joi.string().required(),
+  age: Joi.number().required(),
+  breed: Joi.string().required(),
+})
+
+export interface CreateCatDto {
+  name: string;
+  age: number;
+  breed: string;
+}
+```
+
 We do that using the `@UsePipes()` decorator as shown below:
 
 ```typescript
@@ -314,6 +330,7 @@ async create(createCatDto) {
 
 > info **Hint** The `@UsePipes()` decorator is imported from the `@nestjs/common` package.
 
+ 
 #### Class validator
 
 > warning **Warning** The techniques in this section require TypeScript, and are not available if your app is written using vanilla JavaScript.
@@ -352,7 +369,7 @@ Now we can create a `ValidationPipe` class that uses these annotations.
 @@filename(validation.pipe)
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
@@ -360,7 +377,7 @@ export class ValidationPipe implements PipeTransform<any> {
     if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
-    const object = plainToClass(metatype, value);
+    const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
       throw new BadRequestException('Validation failed');
@@ -383,7 +400,7 @@ Next note that we are using destructuring to extract the metatype field (extract
 
 Next, note the helper function `toValidate()`. It's responsible for bypassing the validation step when the current argument being processed is a native JavaScript type (these can't have validation decorators attached, so there's no reason to run them through the validation step).
 
-Next, we use the class-transformer function `plainToClass()` to transform our plain JavaScript argument object into a typed object so that we can apply validation. The reason we must do this is that the incoming post body object, when deserialized from the network request, does **not have any type information** (this is the way the underlying platform, such as Express, works). Class-validator needs to use the validation decorators we defined for our DTO earlier, so we need to perform this transformation to treat the incoming body as an appropriately decorated object, not just a plain vanilla object.
+Next, we use the class-transformer function `plainToInstance()` to transform our plain JavaScript argument object into a typed object so that we can apply validation. The reason we must do this is that the incoming post body object, when deserialized from the network request, does **not have any type information** (this is the way the underlying platform, such as Express, works). Class-validator needs to use the validation decorators we defined for our DTO earlier, so we need to perform this transformation to treat the incoming body as an appropriately decorated object, not just a plain vanilla object.
 
 Finally, as noted earlier, since this is a **validation pipe** it either returns the value unchanged, or throws an exception.
 

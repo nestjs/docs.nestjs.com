@@ -86,9 +86,9 @@ export class MenuComponent implements OnInit {
       title: 'Techniques',
       isOpened: false,
       children: [
+        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
-        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
@@ -143,6 +143,7 @@ export class MenuComponent implements OnInit {
         { title: 'Extensions', path: '/graphql/extensions' },
         { title: 'CLI Plugin', path: '/graphql/cli-plugin' },
         { title: 'Generating SDL', path: '/graphql/generating-sdl' },
+        { title: 'Sharing models', path: '/graphql/sharing-models' },
         {
           title: 'Other features',
           path: '/graphql/other-features',
@@ -225,6 +226,7 @@ export class MenuComponent implements OnInit {
       title: 'Recipes',
       isOpened: false,
       children: [
+        { title: 'REPL', path: '/recipes/repl' },
         { title: 'CRUD generator', path: '/recipes/crud-generator' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
@@ -239,6 +241,8 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
+        { title: 'Async Local Storage', path: '/recipes/async-local-storage' },
+        { title: 'Automock', path: '/recipes/automock' },
       ],
     },
     {
@@ -248,6 +252,7 @@ export class MenuComponent implements OnInit {
         { title: 'Serverless', path: '/faq/serverless' },
         { title: 'HTTP adapter', path: '/faq/http-adapter' },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
+        { title: 'Raw body', path: '/faq/raw-body' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
         { title: 'Request lifecycle', path: '/faq/request-lifecycle' },

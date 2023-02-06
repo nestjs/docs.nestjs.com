@@ -9,12 +9,15 @@ import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
+import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
+import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
+import { AutomockComponent } from './automock/automock.component';
 
 const routes: Routes = [
   {
@@ -94,6 +97,21 @@ const routes: Routes = [
     component: NestCommanderComponent,
     data: { title: 'Nest Commander' },
   },
+  {
+    path: 'async-local-storage',
+    component: AsyncLocalStorageComponent,
+    data: { title: 'Async Local Storage' },
+  },
+  {
+    path: 'repl',
+    component: ReplComponent,
+    data: { title: 'REPL' },
+  },
+  {
+    path: 'automock',
+    component: AutomockComponent,
+    data: { title: 'Automock' },
+  },
 ];
 
 @NgModule({
@@ -112,6 +130,9 @@ const routes: Routes = [
     RouterModuleComponent,
     ServeStaticComponent,
     NestCommanderComponent,
+    AsyncLocalStorageComponent,
+    AutomockComponent,
+    ReplComponent,
   ],
 })
 export class RecipesModule {}

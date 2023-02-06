@@ -4,12 +4,18 @@ Caching is a great and simple **technique** that helps improve your app's perfor
 
 #### Installation
 
-First install required packages:
+First install [required packages](https://github.com/node-cache-manager/node-cache-manager):
 
 ```bash
 $ npm install cache-manager
-$ npm install -D @types/cache-manager
 ```
+
+> info **Hint**  As of version `>=9.2.1`, NestJS is compatible with both `cache-manager` v4 and v5.
+
+> warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
+> * If using `cache-manager` v4, provide ttl in seconds
+> * If using `cache-manager` v5, provide ttl in milliseconds
+> * Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
 
 #### In-memory cache
 
@@ -55,13 +61,13 @@ The default expiration time of the cache is 5 seconds.
 You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
 
 ```typescript
-await this.cacheManager.set('key', 'value', { ttl: 1000 });
+await this.cacheManager.set('key', 'value', 1000);
 ```
 
 To disable expiration of the cache, set the `ttl` configuration property to `0`:
 
 ```typescript
-await this.cacheManager.set('key', 'value', { ttl: 0 });
+await this.cacheManager.set('key', 'value', 0);
 ```
 
 To remove an item from the cache, use the `del` method:
@@ -217,7 +223,7 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Different stores
 
-This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
+This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
 ```typescript
 import type { RedisClientOptions } from 'redis';
@@ -229,18 +235,19 @@ import { AppController } from './app.controller';
   imports: [
     CacheModule.register<RedisClientOptions>({
       store: redisStore,
-      
+
       // Store-specific configuration:
-      socket: {
-        host: 'localhost',
-        port: 6379,
-      },
+      host: 'localhost',
+      port: 6379,
     }),
   ],
   controllers: [AppController],
 })
 export class AppModule {}
 ```
+
+> warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
+> latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
 
 #### Async configuration
 

@@ -42,7 +42,7 @@ export class CreateUserDto {
 
 While not a significant issue with medium-sized projects, it becomes verbose & hard to maintain once you have a large set of classes.
 
-By [enabling the Swagger plugin](#using-the-cli-plugin), the above class definition can be declared simply:
+By [enabling the Swagger plugin](/openapi/cli-plugin#using-the-cli-plugin), the above class definition can be declared simply:
 
 ```typescript
 export class CreateUserDto {
@@ -52,6 +52,8 @@ export class CreateUserDto {
   isEnabled?: boolean = true;
 }
 ```
+
+> info **Hint** When using [mapped types utilities](https://docs.nestjs.com/openapi/mapped-types) (like `PartialType`) in DTOs import them from `@nestjs/swagger` instead of `@nestjs/mapped-types` for the plugin to pick up the schema.
 
 The plugin adds appropriate decorators on the fly based on the **Abstract Syntax Tree**. Thus you won't have to struggle with `@ApiProperty` decorators scattered throughout the code.
 
@@ -103,7 +105,7 @@ By default, these options are set to `"description"`. This means the plugin will
 @ApiOperation({ description: "Create some resource" })
 ```
 
-> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead. 
+> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead.
 
 #### Using the CLI plugin
 
@@ -184,6 +186,7 @@ export interface PluginOptions {
   </tr>
 </table>
 
+Make sure to delete the `/dist` folder and rebuild your application whenever plugin options are updated.
 If you don't use the CLI but instead have a custom `webpack` configuration, you can use this plugin in combination with `ts-loader`:
 
 ```javascript
@@ -223,12 +226,31 @@ With this in place, import AST transformer within your `jest` configuration file
   "globals": {
     "ts-jest": {
       "astTransformers": {
-        "before": ["<path to the file created above>"],
+        "before": ["<path to the file created above>"]
       }
     }
   }
 }
 ```
+
+If you use `jest@^29`, then use the snippet below, as the previous approach got deprecated.
+
+```json
+{
+  ... // other configuration
+  "transform": {
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "astTransformers": {
+          "before": ["<path to the file created above>"]
+        }
+      }
+    ]
+  }
+}
+```
+
 
 #### Troubleshooting `jest` (e2e tests)
 

@@ -32,7 +32,11 @@ GraphQLModule.forRoot({
 }),
 ```
 
-In addition, you can create custom scalars. For example, to create a `Date` scalar, simply create a new class.
+In addition, you can create custom scalars.
+
+#### Override a default scalar
+
+To create a custom implementation for the `Date` scalar, simply create a new class.
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
@@ -73,6 +77,83 @@ Now we can use the `Date` type in our classes.
 ```typescript
 @Field()
 creationDate: Date;
+```
+
+#### Import a custom scalar
+
+To use a custom scalar, import and register it as a resolver. We’ll use the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type.
+
+Start by installing the package:
+
+```bash
+$ npm i --save graphql-type-json
+```
+
+Once the package is installed, we pass a custom resolver to the `forRoot()` method:
+
+```typescript
+import GraphQLJSON from 'graphql-type-json';
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      resolvers: { JSON: GraphQLJSON },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Now we can use the `JSON` type in our classes.
+
+```typescript
+@Field((type) => GraphQLJSON)
+info: JSON;
+```
+
+For a suite of useful scalars, take a look at the [graphql-scalars](https://www.npmjs.com/package/graphql-scalars) package.
+
+#### Create a custom scalar
+
+To define a custom scalar, create a new `GraphQLScalarType` instance. We'll create a custom `UUID` scalar.
+
+```typescript
+const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function validate(uuid: unknown): string | never {
+  if (typeof uuid !== "string" || !regex.test(uuid)) {
+    throw new Error("invalid uuid");
+  }
+  return uuid;
+}
+
+export const CustomUuidScalar = new GraphQLScalarType({
+  name: 'UUID',
+  description: 'A simple UUID parser',
+  serialize: (value) => validate(value),
+  parseValue: (value) => validate(value),
+  parseLiteral: (ast) => validate(ast.value)
+})
+```
+
+We pass a custom resolver to the `forRoot()` method:
+
+```typescript
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      resolvers: { UUID: CustomUuidScalar },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Now we can use the `UUID` type in our classes.
+
+```typescript
+@Field((type) => CustomUuidScalar)
+uuid: string;
 ```
 
 #### Schema first
@@ -160,7 +241,7 @@ But, you can configure how Nest generates typings for your custom scalars when y
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
 import { join } from 'path';
 
-const definitionsFactory = new GraphQLDefinitionsFactory()
+const definitionsFactory = new GraphQLDefinitionsFactory();
 
 definitionsFactory.generate({
   typePaths: ['./src/**/*.graphql'],
@@ -172,7 +253,7 @@ definitionsFactory.generate({
     BigNumber: '_BigNumber',
   },
   additionalHeader: "import _BigNumber from 'bignumber.js'",
-})
+});
 ```
 
 > info **Hint** Alternatively, you can use a type reference instead, for example: `DateTime: Date`. In this case, `GraphQLDefinitionsFactory` will extract the name property of the specified type (`Date.name`) to generate TS definitions. Note: adding an import statement for non-built-in types (custom types) is required.
@@ -188,11 +269,11 @@ scalar Payload
 We will now see the following generated TypeScript definitions in `src/graphql.ts`:
 
 ```typescript
-import _BigNumber from 'bignumber.js'
+import _BigNumber from 'bignumber.js';
 
-export type DateTime = Date
-export type BigNumber = _BigNumber
-export type Payload = unknown
+export type DateTime = Date;
+export type BigNumber = _BigNumber;
+export type Payload = unknown;
 ```
 
 Here, we've used the `customScalarTypeMapping` property to supply a map of the types we wish to declare for our custom scalars. We've

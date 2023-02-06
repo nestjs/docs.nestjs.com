@@ -10,7 +10,7 @@ We'll mostly use TypeScript in the examples we provide, but you can always **swi
 
 #### Prerequisites
 
-Please make sure that [Node.js](https://nodejs.org/) (>= 10.13.0, except for v13) is installed on your operating system.
+Please make sure that [Node.js](https://nodejs.org) (version >= 12, except for v13) is installed on your operating system.
 
 #### Setup
 
@@ -20,6 +20,8 @@ Setting up a new project is quite simple with the [Nest CLI](/cli/overview). Wit
 $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
+
+> info **Hint** To create a new project with TypeScript's [strict](https://www.typescriptlang.org/tsconfig#strict) mode enabled, pass the `--strict` flag to the `nest new` command. 
 
 The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
 
@@ -72,6 +74,8 @@ To create a Nest application instance, we use the core `NestFactory` class. `Nes
 
 Note that a project scaffolded with the Nest CLI creates an initial project structure that encourages developers to follow the convention of keeping each module in its own dedicated directory.
 
+> info **Hint** By default, if any error happens while creating the application your app will exit with the code `1`. If you want to make it throw an error instead disable the option `abortOnError` (e.g., `NestFactory.create(AppModule, {{ '{' }} abortOnError: false {{ '}' }})`).
+
 <app-banner-courses></app-banner-courses>
 
 #### Platform
@@ -102,6 +106,7 @@ $ npm run start
 This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
 
 To watch for changes in your files, you can run the following command to start the application:
+
 ```bash
 $ npm run start:dev
 ```

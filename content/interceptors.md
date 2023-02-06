@@ -1,6 +1,6 @@
 ### Interceptors
 
-An interceptor is a class annotated with the `@Injectable()` decorator, which implements the `NestInterceptor` interface.
+An interceptor is a class annotated with the `@Injectable()` decorator and implements the `NestInterceptor` interface.
 
 <figure><img src="/assets/Interceptors_1.png" /></figure>
 

@@ -11,7 +11,7 @@ To quote the [Apollo docs](https://blog.apollographql.com/apollo-federation-f260
 
 > warning **Warning** Federation currently does not support subscriptions.
 
-In the following sections, we'll set up a demo application that consits of a gateway and two federated endpoints: Users service and Posts service.
+In the following sections, we'll set up a demo application that consists of a gateway and two federated endpoints: Users service and Posts service.
 
 #### Federation with Apollo
 
@@ -349,7 +349,7 @@ Start by installing the required dependency:
 $ npm install --save @apollo/gateway
 ```
 
-The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway servce will remain the same for both code and schema first approaches.
+The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway service will remain the same for both code and schema first approaches.
 
 ```typescript
 import { IntrospectAndCompose } from '@apollo/gateway';
@@ -735,6 +735,135 @@ import { GraphQLModule } from '@nestjs/graphql';
       },
     }),
   ],
+})
+export class AppModule {}
+```
+
+### Federation 2
+
+To quote the [Apollo docs](https://www.apollographql.com/docs/federation/federation-2/new-in-federation-2), Federation 2 improves developer experience from the original Apollo Federation (called Federation 1 in this doc), which is backward compatible with most original supergraphs.
+
+> warning **Warning** Mercurius doesn't fully support Federation 2. You can see the list of libraries that support Federation 2 [here](https://www.apollographql.com/docs/federation/supported-subgraphs#javascript--typescript).
+
+In the following sections, we'll upgrade the previous example to Federation 2.
+
+#### Federated example: Users
+
+One change in Federation 2 is that entities have no originating subgraph, so we don't need to extend `Query` anymore. For more detail please refer to [the entities topic](https://www.apollographql.com/docs/federation/federation-2/new-in-federation-2#entities) in Apollo Federation 2 docs.
+
+#### Schema first
+
+We can simply remove `extend` keyword from the schema.
+
+```graphql
+type User @key(fields: "id") {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  getUser(id: ID!): User
+}
+```
+
+#### Code first
+
+To use Federation 2, we need to specify the federation version in `autoSchemaFile` option.
+
+```ts
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service'; // Not included in this example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: {
+        federation: 2,
+      },
+    }),
+  ],
+  providers: [UsersResolver, UsersService],
+})
+export class AppModule {}
+```
+
+#### Federated example: Posts
+
+With the same reason as above, we don't need to extend `User` and `Query` anymore.
+
+#### Schema first
+
+We can simply remove `extend` and `external` directives from the schema
+
+```graphql
+type Post @key(fields: "id") {
+  id: ID!
+  title: String!
+  body: String!
+  user: User
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  posts: [Post]
+}
+
+type Query {
+  getPosts: [Post]
+}
+```
+
+#### Code first
+
+Since we don't extend `User` entity anymore, we can simply remove `extends` and `external` directives from `User`.
+
+```ts
+import { Directive, ObjectType, Field, ID } from '@nestjs/graphql';
+import { Post } from './post.entity';
+
+@ObjectType()
+@Directive('@key(fields: "id")')
+export class User {
+  @Field((type) => ID)
+  id: number;
+
+  @Field((type) => [Post])
+  posts?: Post[];
+}
+```
+
+Also, similarly to the User service, we need to specify in the `GraphQLModule` to use Federation 2.
+
+```ts
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
+import { User } from './user.entity';
+import { PostsResolvers } from './posts.resolvers';
+import { UsersResolvers } from './users.resolvers';
+import { PostsService } from './posts.service'; // Not included in example
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: {
+        federation: 2,
+      },
+      buildSchemaOptions: {
+        orphanedTypes: [User],
+      },
+    }),
+  ],
+  providers: [PostsResolver, UsersResolver, PostsService],
 })
 export class AppModule {}
 ```

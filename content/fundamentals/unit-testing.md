@@ -165,6 +165,9 @@ Instead of using the production version of any provider, you can override it wit
 Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The below is an example of creating a generic mocker using [`jest-mock`](https://www.npmjs.com/package/jest-mock) and a specific mock for `CatsService` using `jest.fn()`.
 
 ```typescript
+// ...
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+
 const moduleMocker = new ModuleMocker(global);
 
 describe('CatsController', () => {
@@ -175,6 +178,7 @@ describe('CatsController', () => {
       controllers: [CatsController],
     })
     .useMocker((token) => {
+      const results = ['test1', 'test2'];
       if (token === CatsService) {
         return { findAll: jest.fn().mockResolvedValue(results) };
       }
@@ -188,12 +192,14 @@ describe('CatsController', () => {
     
     controller = moduleRef.get(CatsController);
   });
-})
+});
 ```
+
+You can also retrieve these mocks out of the testing container as you normally would custom providers, `moduleRef.get(CatsService)`.
 
 > info **Hint** A general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can also be passed directly.
 
-You can also retrieve these mocks out of the testing container as you normally would custom providers, `moduleRef.get(CatsService)`.
+> info **Hint** `REQUEST` and `INQUIRER` providers cannot be auto-mocked because they're already pre-defined in the context. However, they can be _overwritten_ using the custom provider syntax or by utilizing the `.overrideProvider` method.
 
 #### End-to-end testing
 
@@ -299,7 +305,7 @@ describe('Cats', () => {
 >       expect(result.payload).toEqual(/* expectedPayload */);
 >     });
 > });
->  
+>
 > afterAll(async () => {
 >   await app.close();
 > });
@@ -320,6 +326,8 @@ Each of the override methods returns an object with 3 different methods that mir
 Each of the override method types, in turn, returns the `TestingModule` instance, and can thus be chained with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). You should use `compile()` at the end of such a chain to cause Nest to instantiate and initialize the module.
 
 Also, sometimes you may want to provide a custom logger e.g. when the tests are run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to instruct the `TestModuleBuilder` how to log during tests (by default, only "error" logs will be logged to the console).
+  
+> warning **Warning** The `@nestjs/core` package exposes unique provider tokens with the `APP_` prefix to help on define global enhancers. Those tokens cannot be overriden since they can represent multiple providers. Thus you can't use `.overrideProvider(APP_GUARD)` (and so on). If you want to override some global enhancer, follow [this workaround](https://github.com/nestjs/nest/issues/4053#issuecomment-585612462).
 
 The compiled module has several useful methods, as described in the following table:
 

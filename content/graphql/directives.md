@@ -80,7 +80,26 @@ async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
 }
 ```
 
-Directives applied through the `@Directive()` decorator will not be reflected in the generated schema definition file.
+> warn **Warning** Directives applied through the `@Directive()` decorator will not be reflected in the generated schema definition file.
+
+Lastly, make sure to declare directives in the `GraphQLModule`, as follows:
+
+```typescript
+GraphQLModule.forRoot({
+  // ...,
+  transformSchema: schema => upperDirectiveTransformer(schema, 'upper'),
+  buildSchemaOptions: {
+    directives: [
+      new GraphQLDirective({
+        name: 'upper',
+        locations: [DirectiveLocation.FIELD_DEFINITION],
+      }),
+    ],
+  },
+}),
+```
+
+> info **Hint** Both `GraphQLDirective` and `DirectiveLocation` are exported from the `graphql` package.
 
 #### Schema first
 

@@ -4,7 +4,7 @@
 
 #### Use with Express (default)
 
-First install the required package (and its types for TypeScript users):
+First install the [required package](https://github.com/expressjs/session) (and its types for TypeScript users):
 
 ```shell
 $ npm i express-session
@@ -64,20 +64,20 @@ findAll(@Session() session: Record<string, any>) {
 First install the required package:
 
 ```shell
-$ npm i fastify-secure-session
+$ npm i @fastify/secure-session
 ```
 
 Once the installation is complete, register the `fastify-secure-session` plugin:
 
 ```typescript
-import secureSession from 'fastify-secure-session';
+import secureSession from '@fastify/secure-session';
 
 // somewhere in your initialization file
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
 );
-app.register(secureSession, {
+await app.register(secureSession, {
   secret: 'averylogphrasebiggerthanthirtytwochars',
   salt: 'mq9hDxBVDbspDR6n',
 });
@@ -107,4 +107,4 @@ findAll(@Session() session: secureSession.Session) {
 }
 ```
 
-> info **Hint** The `@Session()` decorator is imported from the `@nestjs/common`, while `secureSession.Session` from the `fastify-secure-session` package (import statement: `import * as secureSession from 'fastify-secure-session'`).
+> info **Hint** The `@Session()` decorator is imported from the `@nestjs/common`, while `secureSession.Session` from the `@fastify/secure-session` package (import statement: `import * as secureSession from '@fastify/secure-session'`).

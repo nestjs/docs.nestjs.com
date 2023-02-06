@@ -103,6 +103,21 @@ Hello world!
 
 Which means that our method handler was properly executed.
 
+When using a `CustomTransportStrategy` with [Interceptors](/interceptors) the handlers are wrapped into RxJS streams. This means that you need to subscribe to them in order to excute the streams underlying logic (e.g. continue into the controller logic after an interceptor has been excuted).
+
+An example of this can be seen below:
+
+```typescript
+async listen(callback: () => void) {
+  const echoHandler = this.messageHandlers.get('echo');
+  const streamOrResult = await echoHandler('Hello World');
+  if (isObservable(streamOrResult)) {
+    streamOrResult.subscribe();
+  }
+  callback();
+}
+```
+
 #### Client proxy
 
 As we mentioned in the first section, you don't necessarily need to use the `@nestjs/microservices` package to create microservices, but if you decide to do so and you need to integrate a custom strategy, you will need to provide a "client" class too.
@@ -247,4 +262,3 @@ export class AppModule
 ```
 
 > info **hint** This is the class itself being passed to `customClass`, not an instance of the class. Nest will create the instance under the hood for you, and will pass any options given to the `options` property to the new `ClientProxy`.
-> 

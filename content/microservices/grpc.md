@@ -2,7 +2,7 @@
 
 [gRPC](https://github.com/grpc/grpc-node) is a modern, open source, high performance RPC framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication.
 
-Like many RPC systems, gRPC is based on the concept of defining a service in terms of functions (methods) that can be called remotely. For each method, you define the parameters and return types. Services, parameters, and return types are defined in `.proto` files using Google's open source language-neutral <a href="https://developers.google.com/protocol-buffers">protocol buffers</a> mechanism.
+Like many RPC systems, gRPC is based on the concept of defining a service in terms of functions (methods) that can be called remotely. For each method, you define the parameters and return types. Services, parameters, and return types are defined in `.proto` files using Google's open source language-neutral <a href="https://protobuf.dev">protocol buffers</a> mechanism.
 
 With the gRPC transporter, Nest uses `.proto` files to dynamically bind clients and servers to make it easy to implement remote procedure calls, automatically serializing and deserializing structured data.
 
@@ -39,7 +39,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 > info **Hint** The `join()` function is imported from the `path` package; the `Transport` enum is imported from the `@nestjs/microservices` package.
 
-In the `nest-cli.json` file, we add the `assets` property that allows us to distribute non-TypeScript files, and `watchAssets` - to turn on watching all non-TypeScript assets. In our case, we want `.proto` files to be automatically copied to the `dist` folder. 
+In the `nest-cli.json` file, we add the `assets` property that allows us to distribute non-TypeScript files, and `watchAssets` - to turn on watching all non-TypeScript assets. In our case, we want `.proto` files to be automatically copied to the `dist` folder.
 
 ```json
 {
@@ -134,7 +134,7 @@ Next, we need to implement the service. To define a handler that fulfills this d
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService', 'FindOne')
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -170,7 +170,7 @@ Both `@GrpcMethod()` decorator arguments are optional. If called without the sec
 @Controller()
 export class HeroesController {
   @GrpcMethod('HeroesService')
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -199,7 +199,7 @@ You can also omit the first `@GrpcMethod()` argument. In this case, Nest automat
 @Controller()
 export class HeroesService {
   @GrpcMethod()
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const items = [
       { id: 1, name: 'John' },
       { id: 2, name: 'Doe' },
@@ -493,7 +493,7 @@ To send back metadata from the handler, use the `ServerUnaryCall#sendMetadata()`
 @Controller()
 export class HeroesService {
   @GrpcMethod()
-  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any>): Hero {
+  findOne(data: HeroById, metadata: Metadata, call: ServerUnaryCall<any, any>): Hero {
     const serverMetadata = new Metadata();
     const items = [
       { id: 1, name: 'John' },

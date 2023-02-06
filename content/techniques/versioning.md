@@ -4,7 +4,7 @@
 
 Versioning allows you to have **different versions** of your controllers or individual routes running within the same application. Applications change very often and it is not unusual that there are breaking changes that you need to make while still needing to support the previous version of the application.
 
-There are 3 types of versioning that are supported:
+There are 4 types of versioning that are supported:
 
 <table>
   <tr>
@@ -18,6 +18,10 @@ There are 3 types of versioning that are supported:
   <tr>
     <td><a href='techniques/versioning#media-type-versioning-type'><code>Media Type Versioning</code></a></td>
     <td>The <code>Accept</code> header of the request will specify the version</td>
+  </tr>
+  <tr>
+    <td><a href='techniques/versioning#custom-versioning-type'><code>Custom Versioning</code></a></td>
+    <td>Any aspect of the request may be used to specify the version(s). A custom function is provided to extract said version(s).</td>
   </tr>
 </table>
 
@@ -86,6 +90,48 @@ await app.listen(3000);
 The `key` property should be the key and separator of the key-value pair that contains the version. For the example `Accept: application/json;v=2`, the `key` property would be set to `v=`.
 
 > info **Hint** The `VersioningType` enum is available to use for the `type` property and is imported from the `@nestjs/common` package.
+
+#### Custom Versioning Type
+
+Custom Versioning uses any aspect of the request to specify the version (or versions). The incoming request is analyzed
+using an `extractor` function that returns a string or array of strings.
+
+If multiple versions are provided by the requester, the extractor function can return an array of strings, sorted in
+order of greatest/highest version to smallest/lowest version. Versions are matched to routes in order from highest to
+lowest.
+
+If an empty string or array is returned from the `extractor`, no routes are matched and a 404 is returned.
+
+For example, if an incoming request specifies it supports versions `1`, `2`, and `3`, the `extractor` **MUST** return `[3, 2, 1]`. This ensures that the highest possible route version is selected first.
+
+If versions `[3, 2, 1]` are extracted, but routes only exist for version `2` and `1`, the route that matches version `2`
+is selected (version `3` is automatically ignored).
+
+> warning **Notice** Selecting the highest matching version based on the array returned from `extractor` > **does not reliably work** with the Express adapter due to design limitations. A single version (either a string or
+> array of 1 element) works just fine in Express. Fastify correctly supports both highest matching version
+> selection and single version selection.
+
+To enable **Custom Versioning** for your application, create an `extractor` function and pass it into your application
+like so:
+
+```typescript
+@@filename(main)
+// Example extractor that pulls out a list of versions from a custom header and turns it into a sorted array.
+// This example uses Fastify, but Express requests can be processed in a similar way.
+const extractor = (request: FastifyRequest): string | string[] =>
+  [request.headers['custom-versioning-field'] ?? '']
+     .flatMap(v => v.split(','))
+     .filter(v => !!v)
+     .sort()
+     .reverse()
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.CUSTOM,
+  extractor,
+});
+await app.listen(3000);
+```
 
 #### Usage
 
@@ -246,3 +292,30 @@ app.enableVersioning({
   defaultVersion: VERSION_NEUTRAL
 });
 ```
+
+#### Middleware versioning
+
+[Middlewares](https://docs.nestjs.com/middleware) can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the `MiddlewareConsumer.forRoutes()` method:
+
+```typescript
+@@filename(app.module)
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+import { CatsController } from './cats/cats.controller';
+
+@Module({
+  imports: [CatsModule],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'cats', method: RequestMethod.GET, version: '2' );
+  }
+}
+```
+
+With the code above, the `LoggerMiddleware` will only be applied to the version '2' of `/cats` endpoint.
+
+> info **Notice** Middlewares work with any versioning type described in the this section: `URI`, `Header`, `Media Type` or `Custom`.

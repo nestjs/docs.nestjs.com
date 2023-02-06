@@ -33,7 +33,7 @@ async function bootstrap() {
       transport: Transport.TCP,
     },
   );
-  app.listen();
+  await app.listen();
 }
 bootstrap();
 @@switch
@@ -45,7 +45,7 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
     transport: Transport.TCP,
   });
-  app.listen(() => console.log('Microservice is listening'));
+  await app.listen();
 }
 bootstrap();
 ```
@@ -355,21 +355,19 @@ The `data` property is the message payload sent by the message producer. The `pa
 
 #### Handling timeouts
 
-In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the `RxJS` timeout operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
+In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the [RxJS](https://rxjs.dev) `timeout` operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
 
-To solve this problem you have to use [rxjs](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
+To solve this problem you have to use [`rxjs`](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
 
 ```typescript
 @@filename()
 this.client
       .send<TResult, TInput>(pattern, data)
-      .pipe(timeout(5000))
-      .toPromise();
+      .pipe(timeout(5000));
 @@switch
 this.client
       .send(pattern, data)
-      .pipe(timeout(5000))
-      .toPromise();
+      .pipe(timeout(5000));
 ```
 
 > info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.

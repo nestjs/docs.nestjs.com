@@ -14,27 +14,31 @@ To start the adventure with this library we have to install all required depende
 $ npm install --save typeorm mysql2
 ```
 
-The first step we need to do is to establish the connection with our database using `createConnection()` function imported from the `typeorm` package. The `createConnection()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
+The first step we need to do is to establish the connection with our database using `new DataSource().initialize()` class imported from the `typeorm` package. The `initialize()` function returns a `Promise`, and therefore we have to create an [async provider](/fundamentals/async-components).
 
 ```typescript
 @@filename(database.providers)
-import { createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 export const databaseProviders = [
   {
-    provide: 'DATABASE_CONNECTION',
-    useFactory: async () => await createConnection({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'test',
-      entities: [
-          __dirname + '/../**/*.entity{.ts,.js}',
-      ],
-      synchronize: true,
-    }),
+    provide: 'DATA_SOURCE',
+    useFactory: async () => {
+      const dataSource = new DataSource({
+        type: 'mysql',
+        host: 'localhost',
+        port: 3306,
+        username: 'root',
+        password: 'root',
+        database: 'test',
+        entities: [
+            __dirname + '/../**/*.entity{.ts,.js}',
+        ],
+        synchronize: true,
+      });
+
+      return dataSource.initialize();
+    },
   },
 ];
 ```
@@ -57,7 +61,7 @@ import { databaseProviders } from './database.providers';
 export class DatabaseModule {}
 ```
 
-Now we can inject the `Connection` object using `@Inject()` decorator. Each class that would depend on the `Connection` async provider will wait until a `Promise` is resolved.
+Now we can inject the `DATA_SOURCE` object using `@Inject()` decorator. Each class that would depend on the `DATA_SOURCE` async provider will wait until a `Promise` is resolved.
 
 #### Repository pattern
 
@@ -95,19 +99,19 @@ The `Photo` entity belongs to the `photo` directory. This directory represents t
 
 ```typescript
 @@filename(photo.providers)
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Photo } from './photo.entity';
 
 export const photoProviders = [
   {
     provide: 'PHOTO_REPOSITORY',
-    useFactory: (connection: Connection) => connection.getRepository(Photo),
-    inject: ['DATABASE_CONNECTION'],
+    useFactory: (dataSource: DataSource) => dataSource.getRepository(Photo),
+    inject: ['DATA_SOURCE'],
   },
 ];
 ```
 
-> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATABASE_CONNECTION` should be kept in the separated `constants.ts` file.
+> warning **Warning** In the real-world applications you should avoid **magic strings**. Both `PHOTO_REPOSITORY` and `DATA_SOURCE` should be kept in the separated `constants.ts` file.
 
 Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inject()` decorator:
 
