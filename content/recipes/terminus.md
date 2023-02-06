@@ -527,10 +527,8 @@ export class HealthController {
 
 #### Logging
 
-Terminus only logs error messages, for instance when a Healthcheck has failed. With the `TerminusModule.forRoot()`-method you have more control over how errors are being logged
+Terminus only logs error messages, for instance when a Healthcheck has failed. With the `TerminusModule.forRoot()` method you have more control over how errors are being logged
 as well as completely take over the logging itself.
-
-##### Custom Logger
 
 In this section, we are going to walk you through how you create a custom logger `TerminusLogger`. This logger extends the built-in logger.
 Therefore you can pick and choose which part of the logger you would like to overwrite
