@@ -585,7 +585,6 @@ export class HealthModule {}
 ```
 
 
-##### Change the error log style
 
 Terminus allows you to configure how Healthcheck errors should be displayed in your logs.
 
