@@ -34,9 +34,9 @@ Let's define the `CatSchema`:
 ```typescript
 @@filename(schemas/cat.schema)
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type CatDocument = Cat & Document;
+export type CatDocument = HydratedDocument<Cat>;
 
 @Schema()
 export class Cat {
@@ -225,7 +225,7 @@ With this setup, you have to tell the `MongooseModule.forFeature()` function whi
     MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }], 'cats'),
   ],
 })
-export class AppModule {}
+export class CatsModule {}
 ```
 
 You can also inject the `Connection` for a given connection:

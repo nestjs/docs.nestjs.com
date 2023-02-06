@@ -204,12 +204,11 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-    // enableTracing: !environment.production,
-    scrollPositionRestoration: 'enabled',
-    anchorScrolling: 'enabled',
-    preloadingStrategy: PreloadAllModules,
-    relativeLinkResolution: 'legacy'
-}),
+      // enableTracing: !environment.production,
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled',
+      preloadingStrategy: PreloadAllModules,
+    }),
   ],
   providers: [RedirectGuard],
   exports: [RouterModule],

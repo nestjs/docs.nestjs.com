@@ -19,7 +19,7 @@ Any functionality that is suitable for re-use is a candidate for being managed a
 To get started with creating a library, run the following command:
 
 ```bash
-nest g library my-library
+$ nest g library my-library
 ```
 
 When you run the command, the `library` schematic prompts you for a prefix (AKA alias) for the library:
@@ -78,7 +78,7 @@ As with application-type projects, libraries each have their own `tsconfig.lib.j
 You can build the library with the CLI command:
 
 ```bash
-nest build my-library
+$ nest build my-library
 ```
 
 #### Using libraries

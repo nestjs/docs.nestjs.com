@@ -241,6 +241,7 @@ export class MenuComponent implements OnInit {
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
         { title: 'Async Local Storage', path: '/recipes/async-local-storage' },
+        { title: 'Automock', path: '/recipes/automock' },
       ],
     },
     {

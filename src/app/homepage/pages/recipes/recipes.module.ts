@@ -17,6 +17,7 @@ import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
+import { AutomockComponent } from './automock/automock.component';
 
 const routes: Routes = [
   {
@@ -106,6 +107,11 @@ const routes: Routes = [
     component: ReplComponent,
     data: { title: 'REPL' },
   },
+  {
+    path: 'automock',
+    component: AutomockComponent,
+    data: { title: 'Automock' },
+  },
 ];
 
 @NgModule({
@@ -125,6 +131,7 @@ const routes: Routes = [
     ServeStaticComponent,
     NestCommanderComponent,
     AsyncLocalStorageComponent,
+    AutomockComponent,
     ReplComponent,
   ],
 })

@@ -181,3 +181,7 @@ export class CatsModule {}
 ```
 
 > info **Hint** Do not forget to import the `CatsModule` into the root `AppModule`.
+
+#### Example
+
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/14-mongoose-base).

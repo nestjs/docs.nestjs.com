@@ -98,7 +98,7 @@ export class CatsController {}
 
 > info **Hint** The `@UseGuards()` decorator is imported from the `@nestjs/common` package.
 
-Above, we passed the `RolesGuard` type (instead of an instance), leaving responsibility for instantiation to the framework and enabling dependency injection. As with pipes and exception filters, we can also pass an in-place instance:
+Above, we passed the `RolesGuard` class (instead of an instance), leaving responsibility for instantiation to the framework and enabling dependency injection. As with pipes and exception filters, we can also pass an in-place instance:
 
 ```typescript
 @@filename()
