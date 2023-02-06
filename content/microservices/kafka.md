@@ -426,3 +426,58 @@ throw new KafkaRetriableException('...');
 ```
 
 > info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
+
+#### Commit offsets
+
+Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that work like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+
+```typescript
+@@filename()
+@EventPattern('user.created')
+async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
+  // business logic
+  
+  const originalMessage = context.getMessage();
+  const { topic, partition, offset } = originalMessage;
+  await this.client.commitOffsets([{ topic, partition, offset }])
+}
+@@switch
+@Bind(Payload(), Ctx())
+@EventPattern('user.created')
+async handleUserCreated(data, context) {
+  // business logic
+
+  const originalMessage = context.getMessage();
+  const { topic, partition, offset } = originalMessage;
+  await this.client.commitOffsets([{ topic, partition, offset }])
+}
+```
+
+To disable auto-committing of messages set `autoCommit: false` in the `run` configuration, as follows:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+```
