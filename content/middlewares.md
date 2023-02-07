@@ -22,7 +22,6 @@ You implement custom Nest middleware in either a function, or in a class with an
 
 >  warning **Warning** `Express` and `fastify` treat middleware differently and have different syntaxes for middleware, for more information read [here](https://docs.nestjs.com/techniques/performance#middleware).
 
-#### Use with Express
 
 ```typescript
 @@filename(logger.middleware)
