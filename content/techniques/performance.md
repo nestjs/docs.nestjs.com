@@ -77,7 +77,7 @@ new FastifyAdapter({ logger: true });
 
 #### Middleware
 
-The middleware with `fastify` "works", but it retrieves only the raw `req` and `res` objects and not the fastify wrapper. This is a side effect of how `middie` works and `fastify` already talks about it in its documents for more information see [here](https://www.fastify.io/docs/latest/Reference/Middleware/).
+Middleware functions (when `@nestjs/platform-fastify` is used) retrieve the raw `req` and `res` objects instead of Fastify's wrappers. This is how the `middie` package works (that's used under the hood) and `fastify` - check out this [page(https://www.fastify.io/docs/latest/Reference/Middleware/) for more information,
 
 > warning **Warning** The middleware in `fastify` has an IncomingMessage request type `FastifyRequest['raw']` and a ServerResponse type `FastifyReply['raw']`.
 
