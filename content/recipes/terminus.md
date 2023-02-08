@@ -62,7 +62,7 @@ Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and cre
 The `HTTPHealthIndicator` requires the `@nestjs/axios` package so make sure to have it installed:
 
 ```bash
-$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/axios axios
 ```
 
 Now we can setup our `HealthController`:
