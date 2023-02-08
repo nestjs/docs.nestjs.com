@@ -103,7 +103,6 @@ export class LoggerMiddleware {
 }
 ```
 
-
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
