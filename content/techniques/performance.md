@@ -79,7 +79,6 @@ new FastifyAdapter({ logger: true });
 
 Middleware functions retrieve the raw `req` and `res` objects instead of Fastify's wrappers. This is how the `middie` package works (that's used under the hood) and `fastify` - check out this [page](https://www.fastify.io/docs/latest/Reference/Middleware/) for more information,
 
-
 ```typescript
 @@filename(logger.middleware)
 import { Injectable, NestMiddleware } from '@nestjs/common';
