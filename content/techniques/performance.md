@@ -79,7 +79,6 @@ new FastifyAdapter({ logger: true });
 
 Middleware functions retrieve the raw `req` and `res` objects instead of Fastify's wrappers. This is how the `middie` package works (that's used under the hood) and `fastify` - check out this [page](https://www.fastify.io/docs/latest/Reference/Middleware/) for more information,
 
-> warning **Warning** When using `fastify` as the HTTP engine the request parameter of middleware has a type of `FastifyRequest['raw']` and the response parameter has a type `FastifyReply['raw']`.
 
 ```typescript
 @@filename(logger.middleware)
