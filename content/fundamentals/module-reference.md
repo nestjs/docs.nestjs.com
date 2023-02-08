@@ -175,7 +175,7 @@ Occasionally, you may want to resolve an instance of a request-scoped provider w
 
 ```typescript
 @@filename(cats.service)
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class CatsService {
   constructor(
     @Inject(REQUEST) private request: Record<string, unknown>,
