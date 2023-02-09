@@ -172,7 +172,7 @@ Also, depending on whether you want to run a typical HTTP application with multi
 your application's code will look different (for example, for the endpoint-per-function approach you could use the `NestFactory.createApplicationContext` instead of booting the HTTP server, setting up middleware, etc.).
 
 Just for illustration purposes, we'll integrate Nest (using `@nestjs/platform-express` and so spinning up the whole, fully functional HTTP router)
-with the [Serverless](https://www.serverless.com/) framework (in this case, targetting AWS Lambda). As we've mentioned earlier, your code will differ depending on the cloud provider you choose, and many other factors.
+with the [Serverless](https://www.serverless.com/) framework (in this case, targeting AWS Lambda). As we've mentioned earlier, your code will differ depending on the cloud provider you choose, and many other factors.
 
 First, let's install the required packages:
 

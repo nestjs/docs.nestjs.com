@@ -103,7 +103,7 @@ Hello world!
 
 Which means that our method handler was properly executed.
 
-When using a `CustomTransportStrategy` with [Interceptors](/interceptors) the handlers are wrapped into RxJS streams. This means that you need to subscribe to them in order to excute the streams underlying logic (e.g. continue into the controller logic after an interceptor has been excuted).
+When using a `CustomTransportStrategy` with [Interceptors](/interceptors) the handlers are wrapped into RxJS streams. This means that you need to subscribe to them in order to execute the streams underlying logic (e.g. continue into the controller logic after an interceptor has been executed).
 
 An example of this can be seen below:
 
@@ -122,7 +122,7 @@ async listen(callback: () => void) {
 
 As we mentioned in the first section, you don't necessarily need to use the `@nestjs/microservices` package to create microservices, but if you decide to do so and you need to integrate a custom strategy, you will need to provide a "client" class too.
 
-> info **Hint** Again, implementing a fully-featured client class compatible with all `@nestjs/microservices` features (e.g., streaming) requires a good understading of communication techniques used by the framework. To learn more, check out this [article](https://dev.to/nestjs/part-4-basic-client-component-16f9).
+> info **Hint** Again, implementing a fully-featured client class compatible with all `@nestjs/microservices` features (e.g., streaming) requires a good understanding of communication techniques used by the framework. To learn more, check out this [article](https://dev.to/nestjs/part-4-basic-client-component-16f9).
 
 To communicate with an external service/emit & publish messages (or events) you can either use a library-specific SDK package, or implement a custom client class that extends the `ClientProxy`, as follows:
 
