@@ -50,7 +50,7 @@ const value = await next();
 return value?.toUpperCase();
 ```
 
-In this case, every title will be automatically be uppercased, when requested.
+In this case, every title will be automatically uppercased, when requested.
 
 Likewise, you can bind a field middleware to a custom field resolver (a method annotated with the `@ResolveField()` decorator), as follows:
 
