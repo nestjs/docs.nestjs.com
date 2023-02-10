@@ -86,9 +86,9 @@ export class MenuComponent implements OnInit {
       title: 'Techniques',
       isOpened: false,
       children: [
+        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
-        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
@@ -143,6 +143,7 @@ export class MenuComponent implements OnInit {
         { title: 'Extensions', path: '/graphql/extensions' },
         { title: 'CLI Plugin', path: '/graphql/cli-plugin' },
         { title: 'Generating SDL', path: '/graphql/generating-sdl' },
+        { title: 'Sharing models', path: '/graphql/sharing-models' },
         {
           title: 'Other features',
           path: '/graphql/other-features',
@@ -240,6 +241,8 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
+        { title: 'Async Local Storage', path: '/recipes/async-local-storage' },
+        { title: 'Automock', path: '/recipes/automock' },
         { title: `Nestia`, path: `/recipes/nestia` },
       ],
     },

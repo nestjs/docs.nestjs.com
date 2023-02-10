@@ -197,21 +197,20 @@ export class AggregateByTenantContextIdStrategy implements ContextIdStrategy {
 
 > warning **Warning** Note this strategy is not ideal for applications operating with a large number of tenants.
 
-The value returned from the `attach` method instructs Nest what context identifier should be used for a given host. In this case, we specified that the `tenantSubTreeId` should be used instead of the original, auto-generated `contextId` object, when the host component (e.g., request-scoped controller) is flagged as durable (you can learn how to mark providers as durable below). Also, in this example, no payload would be registered (where payload = `REQUEST`/`CONTEXT` provider that represents the "root" - parent of the sub-tree).
+The value returned from the `attach` method instructs Nest what context identifier should be used for a given host. In this case, we specified that the `tenantSubTreeId` should be used instead of the original, auto-generated `contextId` object, when the host component (e.g., request-scoped controller) is flagged as durable (you can learn how to mark providers as durable below). Also, in the above example, **no payload** would be registered (where payload = `REQUEST`/`CONTEXT` provider that represents the "root" - parent of the sub-tree).
 
 If you want to register the payload for a durable tree, use the following construction instead:
 
 ```typescript
+// The return of `AggregateByTenantContextIdStrategy#attach` method:
 return {
-  resolve: (info: HostComponentInfo) => {
-    const context = info.isTreeDurable ? tenantSubTreeId : contextId;
-    return context;
-  },
+  resolve: (info: HostComponentInfo) =>
+    info.isTreeDurable ? tenantSubTreeId : contextId,
   payload: { tenantId },
-}
+  }
 ```
 
-Now whenever you inject the `REQUEST` provider (or `CONTEXT` for GraphQL applications) using the `@Inject(REQUEST)`, the `payload` object would be injected (consisting of a single property - `tenantId` in this case).
+Now whenever you inject the `REQUEST` provider (or `CONTEXT` for GraphQL applications) using the `@Inject(REQUEST)`/`@Inject(CONTEXT)`, the `payload` object would be injected (consisting of a single property - `tenantId` in this case).
 
 Alright so with this strategy in place, you can register it somewhere in your code (as it applies globally anyway), so for example, you could place it in the `main.ts` file:
 
@@ -223,7 +222,7 @@ ContextIdFactory.apply(new AggregateByTenantContextIdStrategy());
 
 As long as the registration occurs before any request hits your application, everything will work as intended.
 
-Lastly, to turn a regular provider into a durable provider, simply set the `durable` flag to `true`:
+Lastly, to turn a regular provider into a durable provider, simply set the `durable` flag to `true` and change its scope to `Scope.REQUEST` (not needed if the REQUEST scope is in the injection chain already):
 
 ```typescript
 import { Injectable, Scope } from '@nestjs/common';
@@ -236,7 +235,7 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `dura
 
 ```typescript
 {
-  provide: 'CONNECTION_POOL',
+  provide: 'foobar',
   useFactory: () => { ... },
   scope: Scope.REQUEST,
   durable: true,

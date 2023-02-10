@@ -145,6 +145,12 @@ Also, you can supply additional options as the second parameter to the `@Cron()`
         This allows you to specify the offset of your timezone rather than using the <code>timeZone</code> param.
       </td>
     </tr>
+    <tr>
+      <td><code>disabled</code></td>
+      <td>
+       This indicates whether the job will be executed at all.
+      </td>
+    </tr>
   </tbody>
 </table>
 

@@ -465,11 +465,11 @@ First, create `constants.ts` in the `auth` folder, and add the following code:
 ```typescript
 @@filename(auth/constants)
 export const jwtConstants = {
-  secret: 'secretKey',
+  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
 };
 @@switch
 export const jwtConstants = {
-  secret: 'secretKey',
+  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
 };
 ```
 

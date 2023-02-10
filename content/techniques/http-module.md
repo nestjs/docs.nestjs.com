@@ -6,10 +6,10 @@
 
 #### Installation
 
-To begin using it, we first install the required dependency.
+To begin using it, we first install required dependencies.
 
 ```bash
-$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/axios axios
 ```
 
 #### Getting started

@@ -15,7 +15,7 @@ Out of the box, this action is performed by a built-in **global exception filter
 }
 ```
 
-> info **Hint** The global exception filter partially supports the `http-errors` library. Basically, any thrown exception containing the `statusCode` and `message` property will be properly populated and send back as a response (instead of the default `InternalServerErrorException` for unrecognized exceptions).
+> info **Hint** The global exception filter partially supports the `http-errors` library. Basically, any thrown exception containing the `statusCode` and `message` properties will be properly populated and sent back as a response (instead of the default `InternalServerErrorException` for unrecognized exceptions).
 
 #### Throwing standard exceptions
 
@@ -206,6 +206,8 @@ export class HttpExceptionFilter {
 
 > info **Hint** All exception filters should implement the generic `ExceptionFilter<T>` interface. This requires you to provide the `catch(exception: T, host: ArgumentsHost)` method with its indicated signature. `T` indicates the type of the exception.
 
+> warning **Warning** If you are using `@nestjs/platform-fastify` you can use `response.send()` instead of `response.json()`. Don't forget to import the correct types from `fastify`.
+
 The `@Catch(HttpException)` decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for exceptions of type `HttpException` and nothing else. The `@Catch()` decorator may take a single parameter, or a comma-separated list. This lets you set up the filter for several types of exceptions at once.
 
 #### Arguments host
@@ -346,6 +348,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 }
 ```
+
+> warning **Warning** When combining an exception filter that catches everything with a filter that is bound to a specific type, the "Catch anything" filter should be declared first to allow the specific filter to correctly handle the bound type.
 
 #### Inheritance
 
