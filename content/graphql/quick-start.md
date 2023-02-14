@@ -124,6 +124,17 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
   autoSchemaFile: true,
 }),
 ```
+The apollo federation version can also be specified by passing an object with the key `federation` as the value to `autoSchemaFile`:
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  autoSchemaFile: {
+    path: join(process.cwd(), 'src/schema.gql'), //skip to generated on-the-fly in memory
+    federation: 2 //defaults to 1
+  },
+}),
+```
 
 By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically, set the `sortSchema` property to `true`:
 
