@@ -1147,7 +1147,7 @@ You can also inject the `Sequelize` instance for a given connection:
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectDataSource('albumsConnection')
+    @InjectConnection('albumsConnection')
     private sequelize: Sequelize,
   ) {}
 }
