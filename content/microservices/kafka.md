@@ -342,6 +342,25 @@ interface IncomingMessage {
 }
 ```
 
+If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  const heartbeat = context.getHeartbeat();
+
+  // Do some slow processing
+  await doWorkPart1();
+
+  // Send heartbeat to not exceed the sessionTimeout
+  await heartbeat();
+
+  // Do some slow processing again
+  await doWorkPart2();
+}
+```
+
 #### Naming conventions
 
 The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
@@ -398,6 +417,8 @@ onModuleInit() {
 
 Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
 
+> warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
+
 For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
 
 ```typescript
@@ -405,3 +426,58 @@ throw new KafkaRetriableException('...');
 ```
 
 > info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
+
+#### Commit offsets
+
+Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that work like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+
+```typescript
+@@filename()
+@EventPattern('user.created')
+async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
+  // business logic
+  
+  const originalMessage = context.getMessage();
+  const { topic, partition, offset } = originalMessage;
+  await this.client.commitOffsets([{ topic, partition, offset }])
+}
+@@switch
+@Bind(Payload(), Ctx())
+@EventPattern('user.created')
+async handleUserCreated(data, context) {
+  // business logic
+
+  const originalMessage = context.getMessage();
+  const { topic, partition, offset } = originalMessage;
+  await this.client.commitOffsets([{ topic, partition, offset }])
+}
+```
+
+To disable auto-committing of messages set `autoCommit: false` in the `run` configuration, as follows:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+```

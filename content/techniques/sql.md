@@ -2,7 +2,7 @@
 
 Nest is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. You have a number of options available to you, depending on your preferences. At the most general level, connecting Nest to a database is simply a matter of loading an appropriate Node.js driver for the database, just as you would with [Express](https://expressjs.com/en/guide/database-integration.html) or Fastify.
 
-You can also directly use any general purpose Node.js database integration **library** or ORM, such as [MikroORM](https://mikro-orm.io/) also check the [recipe here](/recipes/mikroorm), [Sequelize](https://sequelize.org/) (navigate to the [Sequelize integration](/techniques/database#sequelize-integration) section), [Knex.js](https://knexjs.org/) ([tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)), [TypeORM](https://github.com/typeorm/typeorm), and [Prisma](https://www.github.com/prisma/prisma) ([recipe](/recipes/prisma)) , to operate at a higher level of abstraction.
+You can also directly use any general purpose Node.js database integration **library** or ORM, such as [MikroORM](https://mikro-orm.io/) (see [MikroORM recipe](/recipes/mikroorm)), [Sequelize](https://sequelize.org/) (see [Sequelize integration](/techniques/database#sequelize-integration)), [Knex.js](https://knexjs.org/) (see [Knex.js tutorial](https://dev.to/nestjs/build-a-nestjs-module-for-knex-js-or-other-resource-based-libraries-in-5-minutes-12an)), [TypeORM](https://github.com/typeorm/typeorm), and [Prisma](https://www.github.com/prisma/prisma) (see [Prisma recipe](/recipes/prisma)), to operate at a higher level of abstraction.
 
 For convenience, Nest provides tight integration with TypeORM and Sequelize out-of-the-box with the `@nestjs/typeorm` and `@nestjs/sequelize` packages respectively, which we'll cover in the current chapter, and Mongoose with `@nestjs/mongoose`, which is covered in [this chapter](/techniques/mongodb). These integrations provide additional NestJS-specific features, such as model/repository injection, testability, and asynchronous configuration to make accessing your chosen database even easier.
 
@@ -180,7 +180,7 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<User> {
+  findOne(id: number): Promise<User> {
     return this.usersRepository.findOneBy({ id });
   }
 
@@ -379,7 +379,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-#### Transactions
+#### TypeORM Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
@@ -431,8 +431,6 @@ async createMany(users: User[]) {
   });
 }
 ```
-
-Using decorators to control the transaction (`@Transaction()` and `@TransactionManager()`) is not recommended.
 
 <app-banner-shop></app-banner-shop>
 
@@ -529,7 +527,7 @@ export class AppModule {}
 
 > warning **Notice** If you don't set the `name` for a data source, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
 
-> warning **Notice** If you are using `TypeOrmModule.forRootAsync`, you have to set the data source name outside `useFactory`. For example:
+> warning **Notice** If you are using `TypeOrmModule.forRootAsync`, you have to **also** set the data source name outside `useFactory`. For example:
 >
 > ```typescript
 > TypeOrmModule.forRootAsync({
@@ -559,7 +557,7 @@ You can also inject the `DataSource` or `EntityManager` for a given data source:
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectConnection('albumsConnection')
+    @InjectDataSource('albumsConnection')
     private dataSource: DataSource,
     @InjectEntityManager('albumsConnection')
     private entityManager: EntityManager,
@@ -1044,7 +1042,7 @@ With that option specified, every model registered through the `forFeature()` me
 
 > warning **Warning** Note that models that aren't registered through the `forFeature()` method, but are only referenced from the model (via an association), won't be included.
 
-#### Transactions
+#### Sequelize Transactions
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
@@ -1149,7 +1147,7 @@ You can also inject the `Sequelize` instance for a given connection:
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectConnection('albumsConnection')
+    @InjectDataSource('albumsConnection')
     private sequelize: Sequelize,
   ) {}
 }
@@ -1165,7 +1163,7 @@ It's also possible to inject any `Sequelize` instance to the providers:
       useFactory: (albumsSequelize: Sequelize) => {
         return new AlbumsService(albumsSequelize);
       },
-      inject: [getConnectionToken('albumsConnection')],
+      inject: [getDataSourceToken('albumsConnection')],
     },
   ],
 })

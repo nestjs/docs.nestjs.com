@@ -281,7 +281,7 @@ All of these, usually, have their `async` counterparts as well, `registerAsync`,
 
 #### Configurable module builder
 
-As manually creating highly configurable, dynamic modules that expose `async` methods (`registerAsync`, `forRootAsync`, etc.) is quite complicated, especially for newcomers, Nest exposes the `ConfigurableModuleBuilder` class that faciilities this process and lets you construct a module "blueprint" in just a few lines of code.
+As manually creating highly configurable, dynamic modules that expose `async` methods (`registerAsync`, `forRootAsync`, etc.) is quite complicated, especially for newcomers, Nest exposes the `ConfigurableModuleBuilder` class that facilitates this process and lets you construct a module "blueprint" in just a few lines of code.
 
 For example, let's take the example we used above (`ConfigModule`) and convert it to use the `ConfigurableModuleBuilder`. Before we start, let's make sure we create a dedicated interface that represents what options our `ConfigModule` takes in.
 
@@ -398,7 +398,7 @@ Since the `registerAsync` method (or `forRootAsync` or any other name, depending
 export class AppModule {}
 ```
 
-This class, by default, must provide the `create()` method that reuturns a module configuration object. However, if your library follows a different naming convention, you can change that behavior and instruct `ConfigurableModuleBuilder` to expect a different method, for example, `createConfigOptions`, using the `ConfigurableModuleBuilder#setFactoryMethodName` method:
+This class, by default, must provide the `create()` method that returns a module configuration object. However, if your library follows a different naming convention, you can change that behavior and instruct `ConfigurableModuleBuilder` to expect a different method, for example, `createConfigOptions`, using the `ConfigurableModuleBuilder#setFactoryMethodName` method:
 
 ```typescript
 @@filename(config.module-definition)
@@ -426,7 +426,7 @@ export class AppModule {}
 
 There are edge-cases when your module may need to take extra options that determine how it is supposed to behave (a nice example of such an option is the `isGlobal` flag - or just `global`) that at the same time, shouldn't be included in the `MODULE_OPTIONS_TOKEN` provider (as they are irrelevant to services/providers registered within that module, for example, `ConfigService` does not need to know whether its host module is registered as a global module).
 
-In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following exxample:
+In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following example:
 
 ```typescript
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =

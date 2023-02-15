@@ -303,7 +303,7 @@ The answer is straightforward: by using another, slightly different type of Guar
 
 The second case enumerated above (logged in user) simply relies on the standard type of Guard we already discussed to enable access to protected routes for logged in users.
 
-<app-banner-courses></app-banner-courses>
+<app-banner-courses-auth></app-banner-courses-auth>
 
 #### Login route
 
@@ -465,11 +465,11 @@ First, create `constants.ts` in the `auth` folder, and add the following code:
 ```typescript
 @@filename(auth/constants)
 export const jwtConstants = {
-  secret: 'secretKey',
+  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
 };
 @@switch
 export const jwtConstants = {
-  secret: 'secretKey',
+  secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
 };
 ```
 

@@ -26,6 +26,7 @@ A health check represents a summary of **health indicators**. A health indicator
 - `TypeOrmHealthIndicator`
 - `MongooseHealthIndicator`
 - `SequelizeHealthIndicator`
+- `MikroOrmHealthIndicator`
 - `MicroserviceHealthIndicator`
 - `GRPCHealthIndicator`
 - `MemoryHealthIndicator`
@@ -61,7 +62,7 @@ Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and cre
 The `HTTPHealthIndicator` requires the `@nestjs/axios` package so make sure to have it installed:
 
 ```bash
-$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/axios axios
 ```
 
 Now we can setup our `HealthController`:
@@ -102,7 +103,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
+      () => this.http.pingCheck('nestjs-docs', 'https://docs.nestjs.com'),
     ])
   }
 }
@@ -157,11 +158,41 @@ the following object with a 200 status code.
 The interface of this response object can be accessed from the `@nestjs/terminus` package with the `HealthCheckResult` interface.
 
 |           |                                                                                                                                                                                             |                                      |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
 | `status`  | If any health indicator failed the status will be `'error'`. If the NestJS app is shutting down but still accepting HTTP requests, the health check will have the `'shutting_down'` status. | `'error' \| 'ok' \| 'shutting_down'` |
 | `info`    | Object containing information of each health indicator which is of status `'up'`, or in other words "healthy".                                                                              | `object`                             |
 | `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
 | `details` | Object containing all information of each health indicator                                                                                                                                  | `object`                             |
+
+##### Check for specific HTTP response codes
+
+In certain cases, you might want to check for specific criteria and validate the response. As an example, let's assume
+`https://my-external-service.com` returns a response code `204`. With `HttpHealthIndicator.responseCheck` you can
+check for that response code specifically and determine all other codes as unhealthy.
+
+In case any other response code other than `204` gets returned, the following example would be unhealthy. The third parameter
+requires you to provide a function (sync or async) which returns a boolean whether the response is considered
+healthy (`true`) or unhealthy (`false`).
+
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () =>
+      this.http.responseCheck(
+        'my-external-service',
+        'https://my-external-service.com',
+        (res) => res.status === 204,
+      ),
+  ]);
+}
+```
+
 
 #### TypeOrm health indicator
 
@@ -200,7 +231,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.db.pingCheck('database'),
+      () => this.db.pingCheck('database'),
     ])
   }
 }
@@ -251,6 +282,126 @@ export class HealthController {
   }
 }
 ```
+
+
+#### Disk health indicator
+
+With the `DiskHealthIndicator` we can check how much storage is in use. To get started, make sure to inject the `DiskHealthIndicator`
+into your `HealthController`. The following example checks the storage used of the path `/` (or on Windows you can use `C:\\`).
+If that exceeds more than 50% of the total storage space it would response with an unhealthy Health Check.
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private readonly health: HealthCheckService,
+    private readonly disk: DiskHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.5 }),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, DiskHealthIndicator)
+export class HealthController {
+  constructor(health, disk) {}
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      () => this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.5 }),
+    ])
+  }
+}
+```
+
+With the `DiskHealthIndicator.checkStorage` function you also have the possibility to check for a fixed amount of space.
+The following example would be unhealthy in case the path `/my-app/` would exceed 250GB.
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () => this.disk.checkStorage('storage', {  path: '/', threshold: 250 * 1024 * 1024 * 1024, })
+  ]);
+}
+```
+
+#### Memory health indicator
+
+To make sure your process does not exceed a certain memory limit the `MemoryHealthIndicator` can be used. 
+The following example can be used to check the heap of your process.
+
+> info **Hint** Heap is the portion of memory where dynamically allocated memory resides (i.e. memory allocated via malloc). Memory allocated from the heap will remain allocated until one of the following occurs:
+> - The memory is _free_'d
+> - The program terminates
+
+```typescript
+@@filename(health.controller)
+@Controller('health')
+export class HealthController {
+  constructor(
+    private health: HealthCheckService,
+    private memory: MemoryHealthIndicator,
+  ) {}
+
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    ]);
+  }
+}
+@@switch
+@Controller('health')
+@Dependencies(HealthCheckService, MemoryHealthIndicator)
+export class HealthController {
+  constructor(health, memory) {}
+
+  @Get()
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([
+      () => this.memory.checkHeap('memory_heap', 150 * 1024 * 1024),
+    ])
+  }
+}
+```
+
+It is also possible to verify the memory RSS of your process with `MemoryHealthIndicator.checkRSS`. This example
+would return an unhealthy response code in case your process does have more than 150MB allocated.
+
+> info **Hint** RSS is the Resident Set Size and is used to show how much memory is allocated to that process and is in RAM.
+> It does not include memory that is swapped out. It does include memory from shared libraries as long as the pages from
+> those libraries are actually in memory. It does include all stack and heap memory.
+
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () => this.memory.checkRSS('memory_rss', 150 * 1024 * 1024),
+  ]);
+}
+```
+
 
 #### Custom health indicator
 
@@ -347,7 +498,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dogHealthIndicator.isHealthy('dog'),
+      () => this.dogHealthIndicator.isHealthy('dog'),
     ])
   }
 }
@@ -368,12 +519,94 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      async () => this.dogHealthIndicator.isHealthy('dog'),
+      () => this.dogHealthIndicator.isHealthy('dog'),
     ])
   }
 }
 ```
 
-#### Examples
+#### Logging
 
-Some working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).
+Terminus only logs error messages, for instance when a Healthcheck has failed. With the `TerminusModule.forRoot()` method you have more control over how errors are being logged
+as well as completely take over the logging itself.
+
+In this section, we are going to walk you through how you create a custom logger `TerminusLogger`. This logger extends the built-in logger.
+Therefore you can pick and choose which part of the logger you would like to overwrite
+
+> info **Info** If you want to learn more about custom loggers in NestJS, [read more here](/techniques/logger#injecting-a-custom-logger).
+
+
+```typescript
+@@filename(terminus-logger.service)
+import { Injectable, Scope, ConsoleLogger } from '@nestjs/common';
+
+@Injectable({ scope: Scope.TRANSIENT })
+export class TerminusLogger extends ConsoleLogger {
+  error(message: any, stack?: string, context?: string): void;
+  error(message: any, ...optionalParams: any[]): void;
+  error(
+    message: unknown,
+    stack?: unknown,
+    context?: unknown,
+    ...rest: unknown[]
+  ): void {
+    // Overwrite here how error messages should be logged
+  }
+}
+```
+
+Once you have created your custom logger, all you need to do is simply pass it into the `TerminusModule.forRoot()` as such.
+
+```typescript
+@@filename(health.module)
+@Module({
+imports: [
+  TerminusModule.forRoot({
+    logger: TerminusLogger,
+  }),
+],
+})
+export class HealthModule {}
+```
+
+
+To completely suppress any log messages coming from Terminus, including error messages, configure Terminus as such.
+
+```typescript
+@@filename(health.module)
+@Module({
+imports: [
+  TerminusModule.forRoot({
+    logger: false,
+  }),
+],
+})
+export class HealthModule {}
+```
+
+
+
+Terminus allows you to configure how Healthcheck errors should be displayed in your logs.
+
+| Error Log Style          | Description                                                                                                                        | Example                                                              |
+|:------------------|:-----------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|
+| `json`  (default) | Prints a summary of the health check result in case of an error as JSON object                                                     | <figure><img src="/assets/Terminus_Error_Log_Json.png" /></figure>   |
+| `pretty`          | Prints a summary of the health check result in case of an error within formatted boxes and highlights successful/erroneous results | <figure><img src="/assets/Terminus_Error_Log_Pretty.png" /></figure> |
+
+You can change the log style using the `errorLogStyle` configuration option as in the following snippet.
+
+```typescript
+@@filename(health.module)
+@Module({
+  imports: [
+    TerminusModule.forRoot({
+      errorLogStyle: 'pretty',
+    }),
+  ]
+})
+export class HealthModule {}
+```
+
+#### More examples
+
+More working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).

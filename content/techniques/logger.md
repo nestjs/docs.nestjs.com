@@ -138,7 +138,7 @@ Because application instantiation (`NestFactory.create()`) happens outside the c
 We can then instruct Nest to use the same singleton instance of `MyLogger` with the following construction:
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   bufferLogs: true,
 });
 app.useLogger(app.get(MyLogger));
@@ -239,7 +239,7 @@ export class CatsService {
 Finally, instruct Nest to use an instance of the custom logger in your `main.ts` file as shown below. Of course in this example, we haven't actually customized the logger behavior (by extending the `Logger` methods like `log()`, `warn()`, etc.), so this step isn't actually needed. But it **would** be needed if you added custom logic to those methods and wanted Nest to use the same implementation.
 
 ```typescript
-const app = await NestFactory.create(ApplicationModule, {
+const app = await NestFactory.create(AppModule, {
   bufferLogs: true,
 });
 app.useLogger(new MyLogger());

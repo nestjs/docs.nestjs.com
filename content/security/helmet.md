@@ -15,12 +15,10 @@ $ npm i --save helmet
 Once the installation is complete, apply it as a global middleware.
 
 ```typescript
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 // somewhere in your initialization file
 app.use(helmet());
 ```
-
-> info **Hint** If you are getting the `This expression is not callable` error while trying to import `Helmet`, you very likely have the `allowSyntheticDefaultImports` and `esModuleInterop` options set to `true` in your project's `tsconfig.json` file. If that's the case, change the import statement to: `import helmet from 'helmet'` instead.
 
 #### Use with Fastify
 
@@ -33,30 +31,36 @@ $ npm i --save @fastify/helmet
 [fastify-helmet](https://github.com/fastify/fastify-helmet) should not be used as a middleware, but as a [Fastify plugin](https://www.fastify.io/docs/latest/Reference/Plugins/), i.e., by using `app.register()`:
 
 ```typescript
-import { fastifyHelmet } from '@fastify/helmet';
+import helmet from '@fastify/helmet'
 // somewhere in your initialization file
-await app.register(fastifyHelmet);
+await app.register(helmet)
 ```
 
 > warning **Warning** When using `apollo-server-fastify` and `@fastify/helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) on the GraphQL playground, to solve this collision, configure the CSP as shown below:
 >
 > ```typescript
 > await app.register(fastifyHelmet, {
->   contentSecurityPolicy: {
->     directives: {
->       defaultSrc: [`'self'`],
->       styleSrc: [
->         `'self'`,
->         `'unsafe-inline'`,
->         'cdn.jsdelivr.net',
->         'fonts.googleapis.com',
->       ],
->       fontSrc: [`'self'`, 'fonts.gstatic.com'],
->       imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
->       scriptSrc: [`'self'`, `https: 'unsafe-inline'`, `cdn.jsdelivr.net`],
->     },
->   },
-> });
+>    contentSecurityPolicy: {
+>      directives: {
+>        defaultSrc: [`'self'`, 'unpkg.com'],
+>        styleSrc: [
+>          `'self'`,
+>          `'unsafe-inline'`,
+>          'cdn.jsdelivr.net',
+>          'fonts.googleapis.com',
+>          'unpkg.com',
+>        ],
+>        fontSrc: [`'self'`, 'fonts.gstatic.com', 'data:'],
+>        imgSrc: [`'self'`, 'data:', 'cdn.jsdelivr.net'],
+>        scriptSrc: [
+>          `'self'`,
+>          `https: 'unsafe-inline'`,
+>          `cdn.jsdelivr.net`,
+>          `'unsafe-eval'`,
+>        ],
+>      },
+>    },
+>  });
 >
 > // If you are not going to use CSP at all, you can use this:
 > await app.register(fastifyHelmet, {

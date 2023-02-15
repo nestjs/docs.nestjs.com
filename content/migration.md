@@ -79,6 +79,10 @@ killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) 
 }
 ```
 
+#### Kafka retriable errors
+
+In v9, we introduced the **[Retriable exceptions](/microservices/kafka#retriable-exceptions)** feature. Note: for event handlers (**event-based communication**) all unhandled exceptions become "retriable exceptions" by default, and so they will be auto-delivered.
+
 #### Fastify
 
 Fastify has been upgraded to v4. Also, all of the core Fastify plugins that were prefixed with `fastify-` are now renamed and published under the `@fastify` scope (for example, `fastify-cookie` becomes `@fastify/cookie`, `fastify-helmet` becomes `@fastify/helmet`, etc.). Read more [here](https://github.com/fastify/fastify/issues/3856).
@@ -94,3 +98,8 @@ All deprecated methods & modules have been removed (e.g., the deprecated `listen
 #### Node.js
 
 This release drops support for Node v10. We strongly recommend using the latest LTS version.
+
+#### CLI
+
+Due to stability issues, the command `update` was removed in the v9 of `@nestjs/cli`.  
+You can use dedicated tools like [`ncu`](https://www.npmjs.com/package/npm-check-updates), `npm update`, [`yarn upgrade-interactive`](https://classic.yarnpkg.com/en/docs/cli/upgrade-interactive), etc., if you want to upgrade your dependencies.

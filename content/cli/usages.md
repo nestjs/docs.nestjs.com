@@ -34,6 +34,7 @@ Creates and initializes a new Nest project. Prompts for package manager.
 | `--package-manager [package-manager]` | Specify package manager. Use `npm`, `yarn`, or `pnpm`. Package manager must be installed globally.<br/> Alias: `-p` |
 | `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                       |
 | `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`     |
+| `--strict`                            | Start the project with the following TypeScript compiler flags enabled: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
 
 #### nest generate
 
@@ -63,8 +64,8 @@ $ nest g <schematic> <name> [options]
 | `filter`      | `f`   | Generate a filter declaration.                                                                               |
 | `gateway`     | `ga`  | Generate a gateway declaration.                                                                              |
 | `guard`       | `gu`  | Generate a guard declaration.                                                                                |
-| `interface`   |       | Generate an interface.                                                                                       |
-| `interceptor` | `in`  | Generate an interceptor declaration.                                                                         |
+| `interface`   | `itf` | Generate an interface.                                                                                       |
+| `interceptor` | `itc` | Generate an interceptor declaration.                                                                         |
 | `middleware`  | `mi`  | Generate a middleware declaration.                                                                           |
 | `module`      | `mo`  | Generate a module declaration.                                                                               |
 | `pipe`        | `pi`  | Generate a pipe declaration.                                                                                 |
@@ -87,6 +88,12 @@ $ nest g <schematic> <name> [options]
 #### nest build
 
 Compiles an application or workspace into an output folder.
+
+Also, the `build` command is responsible for:
+
+- mapping paths (if using path aliases) via `tsconfig-paths`
+- annotating DTOs with OpenAPI decorators (if `@nestjs/swagger` CLI plugin is enabled)
+- annotating DTOs with GraphQL decorators (if `@nestjs/graphql` CLI plugin is enabled)
 
 ```bash
 $ nest build <name> [options]
@@ -151,17 +158,6 @@ $ nest add <name> [options]
 | Argument | Description                        |
 | -------- | ---------------------------------- |
 | `<name>` | The name of the library to import. |
-
-#### nest update
-
-Updates `@nestjs` dependencies in the `package.json` `"dependencies"` list to their `@latest` version.
-
-##### Options
-
-| Option    | Description                                                             |
-| --------- | ----------------------------------------------------------------------- |
-| `--force` | Do **upgrade** instead of update <br/>Alias `-f`                        |
-| `--tag`   | Update to tagged version (use `@latest`, `@<tag>`, etc) <br/>Alias `-t` |
 
 #### nest info
 

@@ -120,6 +120,8 @@ export abstract class FileValidator<TValidationOptions = Record<string, any>> {
 - `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
 - `FileTypeValidator` - Checks if a given file's mime-type matches the given value. 
 
+> warning **Warning** To verify file type, [FileTypeValidator](https://github.com/nestjs/nest/blob/master/packages/common/pipes/file/file-type.validator.ts) class uses the type as detected by multer. By default, multer derives file type from file extension on user's device. However, it does not check actual file contents. As files can be renamed to arbitraty extensions, consider using a custom implementation (like checking the file's [magic number](https://www.ibm.com/support/pages/what-magic-number)) if your app requires a safer solution.
+
 To understand how these can be used in conjunction with the beforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
 
 ```typescript
@@ -127,7 +129,7 @@ To understand how these can be used in conjunction with the beforementioned `Fil
   new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator({ maxSize: 1000 }),
-      new FileTypeValidator({ fileType: 'jpeg' }),
+      new FileTypeValidator({ fileType: 'image/jpeg' }),
     ],
   }),
 )
@@ -183,7 +185,7 @@ uploadFile(files) {
 
 #### Multiple files
 
-To upload multiple fields (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
+To upload multiple files (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
 
 - `uploadedFields`: an array of objects, where each object specifies a required `name` property with a string value specifying a field name, as described above, and an optional `maxCount` property, as described above
 - `options`: optional `MulterOptions` object, as described above
@@ -266,7 +268,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
 MulterModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    dest: configService.getString('MULTER_DEST'),
+    dest: configService.get<string>('MULTER_DEST'),
   }),
   inject: [ConfigService],
 });

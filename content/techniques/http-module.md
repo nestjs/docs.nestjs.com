@@ -6,10 +6,10 @@
 
 #### Installation
 
-To begin using it, we first install the required dependency.
+To begin using it, we first install required dependencies.
 
 ```bash
-$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/axios axios
 ```
 
 #### Getting started
@@ -147,3 +147,31 @@ export class CatsService {
   }
 }
 ```
+
+#### Full example
+
+Since the return value of the `HttpService` methods is an Observable, we can use `rxjs` - `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
+
+```typescript
+import { catchError, firstValueFrom } from 'rxjs';
+
+@Injectable()
+export class CatsService {
+  private readonly logger = new Logger(CatsService.name);
+  constructor(private readonly httpService: HttpService) {}
+
+  async findAll(): Promise<Cat[]> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw 'An error happened!';
+        }),
+      ),
+    );
+    return data;
+  }
+}
+```
+
+> info **Hint** Visit RxJS's documentation on [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) and [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) for differences between them.
