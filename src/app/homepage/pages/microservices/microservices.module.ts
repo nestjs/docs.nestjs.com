@@ -14,6 +14,7 @@ import { MicroservicesPipesComponent } from './pipes/pipes.component';
 import { RabbitMQComponent } from './rabbitmq/rabbitmq.component';
 import { KafkaComponent } from './kafka/kafka.component';
 import { RedisComponent } from './redis/redis.component';
+import { MemphisComponent } from './memphis/memphis.component';
 
 const routes: Routes = [
   {
@@ -50,6 +51,11 @@ const routes: Routes = [
     path: 'kafka',
     component: KafkaComponent,
     data: { title: 'Kafka - Microservices' },
+  },
+  {
+    path: 'memphis',
+    component: MemphisComponent,
+    data: { title: 'Memphis - Microservices' },
   },
   {
     path: 'pipes',
@@ -93,6 +99,7 @@ const routes: Routes = [
     RabbitMQComponent,
     NatsComponent,
     KafkaComponent,
+    MemphisComponent,
   ],
 })
 export class MicroservicesModule {}
