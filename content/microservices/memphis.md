@@ -1,8 +1,21 @@
 ### Memphis
 
-[Memphis](https://memphis.dev) is a modern, powerful, and open-source message broker. It is a real-time data processing platform. It is as simple as RabbitMQ, robust as Apache Kafka, and perfect for busy developers.
+[Memphis](https://memphis.dev) is a next-generation alternative to traditional message brokers.
 
-Memphis has 3 major entities: consumers, producers, and stations. Consumers and Producers receive and send messages through stations. Stations are like topics in Kafka or like queues in RabbitMQ.
+A simple, robust, and durable cloud-native message broker wrapped with an entire ecosystem that enables cost-effective, fast, and reliable development of modern queue-based use cases.
+
+Memphis enables the building of modern queue-based applications that require large volumes of streamed and enriched data, modern protocols, zero ops, rapid development, extreme cost reduction, and a significantly lower amount of dev time for data-oriented developers and data engineers.
+
+Memphis focuses on four pillars:
+
+1. Developer Experience - Rapid Development, Modularity, inline processing, Schema management.
+2. Observability - Reduces troubleshooting time to near zero.
+3. Performance and Efficiency - Provide good performance while maintaining efficient resource consumption.
+4. Stability - Queues and brokers play a critical part in the modern application's structure and should be highly available and stable as possible.
+
+You can access the GitHub repo of Memphis.js SDK <a href="https://github.com/memphisdev/memphis.js" rel="nofollow" target="blank">here</a> and the Memphis docs <a href="https://docs.memphis.dev" rel="nofollow" target="blank">here</a>.
+
+Memphis has 3 major entities: consumers, producers, and stations. Consumers and Producers receive and send messages through stations. Stations store messages.
 
 #### Installation
 
@@ -111,7 +124,7 @@ export class ChatController {
 
 > info **Hint** The `@ConsumeMessage()` decorator is imported from the `@nestjs/microservices` package, while `Message` is from the `memphis-dev` package.
 
-It is important to acknowledge broker messages (`message.ack()`). If you don't acknowledge them, Memphis will keep sending them till some defined limit. After the limit, unacknowledged messages are moved to <a  href="https://docs.memphis.dev/memphis/memphis/concepts/dead-letter" rel="nofollow" target="blank">Dead-Letter Stations (DLS)</a> from where you can retrieve or discard them.
+It is important to acknowledge broker messages (`message.ack()`). If you don't acknowledge them, Memphis will keep sending them till some defined limit. After the limit, unacknowledged messages are moved to <a href="https://docs.memphis.dev/memphis/memphis/concepts/dead-letter" rel="nofollow" target="blank">Dead-Letter Stations (DLS)</a> from where you can retrieve or discard them.
 
 Method handlers (annotated by `@ConsumeMessage()`) must be declared within controllers. Note that the Nest runtime simply ignores `@ConsumeMessage()` decorators defined within service files.
 
