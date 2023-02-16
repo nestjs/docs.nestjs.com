@@ -119,17 +119,17 @@ appending `Repository` suffix, the repository will be registered automatically i
 the Nest DI container.
 
 ```ts
+// `**./author.repository.ts**`
+export class AuthorRepository extends EntityRepository<Author> {
+  // your custom methods...
+}
+
 // `**./author.entity.ts**`
-@Entity()
+// register the repository via `@Entity` decorator
+@Entity({ customRepository: () => AuthorRepository })
 export class Author {
   // to allow inference in `em.getRepository()`
   [EntityRepositoryType]?: AuthorRepository;
-}
-
-// `**./author.repository.ts**`
-@Repository(Author)
-export class AuthorRepository extends EntityRepository<Author> {
-  // your custom methods...
 }
 ```
 
