@@ -14,7 +14,7 @@ Install the CLI globally using the `npm install -g` command (see the **Note** ab
 $ npm install -g @nestjs/cli
 ```
 
-> info **Hint** Alternatively, you can use this command `npx nest` without installing the cli globally. 
+> info **Hint** Alternatively, you can use this command `npx @nestjs/cli@latest` without installing the cli globally. 
 
 #### Basic workflow
 
