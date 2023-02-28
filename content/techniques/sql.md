@@ -421,18 +421,18 @@ async createMany(users: User[]) {
 
 > info **Hint** Note that the `dataSource` is used only to create the `QueryRunner`. However, to test this class would require mocking the entire `DataSource` object (which exposes several methods). Thus, we recommend using a helper factory class (e.g., `QueryRunnerFactory`) and defining an interface with a limited set of methods required to maintain transactions. This technique makes mocking these methods pretty straightforward.
 
+<app-banner-devtools></app-banner-devtools>
+
 Alternatively, you can use the callback-style approach with the `transaction` method of the `DataSource` object ([read more](https://typeorm.io/#/transactions/creating-and-using-transactions)).
 
-```typescript
+````typescript
 async createMany(users: User[]) {
   await this.dataSource.transaction(async manager => {
     await manager.save(users[0]);
     await manager.save(users[1]);
   });
 }
-```
-
-<app-banner-shop></app-banner-shop>
+```∂
 
 #### Subscribers
 
@@ -461,7 +461,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     console.log(`BEFORE USER INSERTED: `, event.entity);
   }
 }
-```
+````
 
 > error **Warning** Event subscribers can not be [request-scoped](/fundamentals/injection-scopes).
 

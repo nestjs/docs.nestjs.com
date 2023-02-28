@@ -18,6 +18,7 @@ import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { AutomockComponent } from './automock/automock.component';
+import { SwcComponent } from './swc/swc.component';
 
 const routes: Routes = [
   {
@@ -108,6 +109,11 @@ const routes: Routes = [
     data: { title: 'REPL' },
   },
   {
+    path: 'swc',
+    component: SwcComponent,
+    data: { title: 'SWC (fast compiler)' },
+  },
+  {
     path: 'automock',
     component: AutomockComponent,
     data: { title: 'Automock' },
@@ -133,6 +139,7 @@ const routes: Routes = [
     AsyncLocalStorageComponent,
     AutomockComponent,
     ReplComponent,
+    SwcComponent,
   ],
 })
 export class RecipesModule {}
