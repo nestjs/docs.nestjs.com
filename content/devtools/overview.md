@@ -80,8 +80,7 @@ To see a list of all class nodes (controllers, providers, enhancers, etc.) and t
 
 #### Audit
 
-To see the auto-generated audit - errors/warnings/hints that the application came up with while analyzing your serialized graph, navigate to the **
-Audit** page:
+To see the auto-generated audit - errors/warnings/hints that the application came up with while analyzing your serialized graph, navigate to the **Audit** page:
 
 <figure><img src="/assets/devtools/audit.png" /></figure>
 
