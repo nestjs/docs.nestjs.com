@@ -432,7 +432,7 @@ async createMany(users: User[]) {
     await manager.save(users[1]);
   });
 }
-```∂
+```
 
 #### Subscribers
 
