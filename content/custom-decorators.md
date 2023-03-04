@@ -115,11 +115,8 @@ Let's define a decorator that takes a property name as key, and returns the asso
 @@filename(user.decorator)
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-// This should be a real class/interface representing a user entity
-export type UserEntity = any;
-
 export const User = createParamDecorator(
-  (data: keyof UserEntity, ctx: ExecutionContext) => {
+  (data: string, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     const user = request.user;
 
@@ -136,6 +133,7 @@ export const User = createParamDecorator((data, ctx) => {
   return data ? user && user[data] : user;
 });
 ```
+> info **Hint** The keyof operator could be used as the type of `data` in order to achieve better type-safety
 
 Here's how you could then access a particular property via the `@User()` decorator in the controller:
 
