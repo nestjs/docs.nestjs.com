@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-banner-courses-graphql-sf',
-  templateUrl: './banner-courses-graphql-sf.component.html',
+  selector: 'app-banner-devtools',
+  templateUrl: './banner-devtools.component.html',
   styles: [
     `
       .banner {
@@ -13,4 +13,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BannerCoursesGraphQLSchemaFirstComponent {}
+export class BannerDevtoolsComponent {}

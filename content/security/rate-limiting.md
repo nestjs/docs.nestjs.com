@@ -9,7 +9,7 @@ $ npm i --save @nestjs/throttler
 Once the installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync` methods.
 
 ```typescript
-@@filename(app.module.ts)
+@@filename(app.module)
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -102,25 +102,26 @@ This module can work with websockets, but it requires some class extension. You 
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
-  async handleRequest(
-    context: ExecutionContext,
-    limit: number,
-    ttl: number,
-  ): Promise<boolean> {
+  async handleRequest(context: ExecutionContext, limit: number, ttl: number): Promise<boolean> {
     const client = context.switchToWs().getClient();
-    const ip = client.conn.remoteAddress;
+    const ip = client._socket.remoteAddress
     const key = this.generateKey(context, ip);
-    const ttls = await this.storageService.getRecord(key);
+    const { totalHits } = await this.storageService.increment(key, ttl);
 
-    if (ttls.length >= limit) {
+    if (totalHits > limit) {
       throw new ThrottlerException();
     }
 
-    await this.storageService.addRecord(key, ttl);
     return true;
   }
 }
 ```
+> info **Hint** If you using ws, it is necessary to replace the `_socket` with `conn`
+
+There's a few things to keep in mind when working with WebSockets:
+
+- Guard cannot be registered with the `APP_GUARD` or `app.useGlobalGuards()`
+- When a limit is reached, Nest will emit an `exception` event, so make sure there is a listener ready for this
 
 > info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
 

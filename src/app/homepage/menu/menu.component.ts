@@ -86,9 +86,9 @@ export class MenuComponent implements OnInit {
       title: 'Techniques',
       isOpened: false,
       children: [
+        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Database', path: '/techniques/database' },
         { title: 'Mongo', path: '/techniques/mongodb' },
-        { title: 'Configuration', path: '/techniques/configuration' },
         { title: 'Validation', path: '/techniques/validation' },
         { title: 'Caching', path: '/techniques/caching' },
         { title: 'Serialization', path: '/techniques/serialization' },
@@ -143,6 +143,7 @@ export class MenuComponent implements OnInit {
         { title: 'Extensions', path: '/graphql/extensions' },
         { title: 'CLI Plugin', path: '/graphql/cli-plugin' },
         { title: 'Generating SDL', path: '/graphql/generating-sdl' },
+        { title: 'Sharing models', path: '/graphql/sharing-models' },
         {
           title: 'Other features',
           path: '/graphql/other-features',
@@ -227,6 +228,7 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'REPL', path: '/recipes/repl' },
         { title: 'CRUD generator', path: '/recipes/crud-generator' },
+        { title: 'SWC (fast compiler)', path: '/recipes/swc' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
@@ -240,6 +242,7 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
+        { title: 'Async local storage', path: '/recipes/async-local-storage' },
         { title: 'Automock', path: '/recipes/automock' },
       ],
     },
@@ -259,6 +262,15 @@ export class MenuComponent implements OnInit {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
         },
+      ],
+    },
+    {
+      title: 'Devtools',
+      isNew: true,
+      isOpened: false,
+      children: [
+        { title: 'Overview', path: '/devtools/overview' },
+        { title: 'CI/CD integration', path: '/devtools/ci-cd-integration' },
       ],
     },
     {
