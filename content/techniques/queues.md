@@ -269,7 +269,7 @@ Bull generates a set of useful events when queue and/or job state changes occur.
 Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
-import { Processor, Process } from '@nestjs/bull';
+import { Processor, Process, OnQueueActive } from '@nestjs/bull';
 import { Job } from 'bull';
 
 @Processor('audio')
