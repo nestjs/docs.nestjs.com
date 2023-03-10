@@ -9,7 +9,12 @@ One of the most common use-case for having access to the raw request body is per
 First enable the option when creating your Nest Express application:
 
 ```typescript
-const app = await NestFactory.create(AppModule, {
+import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from './app.module';
+
+// in the "bootstrap" function
+const app = await NestFactory.create<NestExpressApplication>(AppModule, {
   rawBody: true,
 });
 await app.listen(3000);
@@ -30,11 +35,26 @@ class CatsController {
 }
 ```
 
+#### Registering a different parser
+
+By default, only `json` and `urlencoded` parsers are registered. If you want to register a different parser on the fly, you will need to do so explicitly.
+
+For example, to register a `text` parser, you can use the following code:
+
+```typescript
+app.useBodyParser('text')
+```
+
 #### Use with Fastify
 
 First enable the option when creating your Nest Fastify application:
 
 ```typescript
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { AppModule } from './app.module';
+
+// in the "bootstrap" function
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
@@ -58,4 +78,14 @@ class CatsController {
     const raw = req.rawBody; // returns a `Buffer`.
   }
 }
+```
+
+#### Registering a different parser
+
+By default, only `application/json` and `application/x-www-form-urlencoded` parsers are registered. If you want to register a different parser on the fly, you will need to do so explicitly.
+
+For example, to register a `text/plain` parser, you can use the following code:
+
+```typescript
+app.useBodyParser('text/plain')
 ```
