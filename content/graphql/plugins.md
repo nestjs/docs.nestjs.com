@@ -6,18 +6,15 @@ Plugins enable you to extend Apollo Server's core functionality by performing cu
 
 #### Custom plugins
 
-To create a plugin, declare a class annotated with the `@Plugin` decorator exported from the `@nestjs/apollo` package. Also, for better code autocompletion, implement the `ApolloServerPlugin` interface from the `apollo-server-plugin-base` package.
+To create a plugin, declare a class annotated with the `@Plugin` decorator exported from the `@nestjs/apollo` package. Also, for better code autocompletion, implement the `ApolloServerPlugin` interface from the `@apollo/server` package.
 
 ```typescript
+import { ApolloServerPlugin, GraphQLRequestListener } from '@apollo/server';
 import { Plugin } from '@nestjs/apollo';
-import {
-  ApolloServerPlugin,
-  GraphQLRequestListener,
-} from 'apollo-server-plugin-base';
 
 @Plugin()
 export class LoggingPlugin implements ApolloServerPlugin {
-  async requestDidStart(): Promise<GraphQLRequestListener> {
+  async requestDidStart(): Promise<GraphQLRequestListener<any>> {
     console.log('Request started');
     return {
       async willSendResponse() {
@@ -50,4 +47,4 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> info **Hint** The `ApolloServerOperationRegistry` plugin is exported from the `apollo-server-plugin-operation-registry` package.
+> info **Hint** The `ApolloServerOperationRegistry` plugin is exported from the `@apollo/server-plugin-operation-registry` package.
