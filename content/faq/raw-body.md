@@ -35,7 +35,7 @@ class CatsController {
 }
 ```
 
-##### Registering a Different Parser Dynamically with Express Body Parser
+#### Registering a different parser
 
 By default, only `json` and `urlencoded` parsers are registered. If you want to register a different parser on the fly, you will need to do so explicitly.
 
