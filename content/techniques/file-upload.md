@@ -120,9 +120,9 @@ export abstract class FileValidator<TValidationOptions = Record<string, any>> {
 - `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
 - `FileTypeValidator` - Checks if a given file's mime-type matches the given value. 
 
-> warning **Warning** To verify file type, [FileTypeValidator](https://github.com/nestjs/nest/blob/master/packages/common/pipes/file/file-type.validator.ts) class uses the type as detected by multer. By default, multer derives file type from file extension on user's device. However, it does not check actual file contents. As files can be renamed to arbitraty extensions, consider using a custom implementation (like checking the file's [magic number](https://www.ibm.com/support/pages/what-magic-number)) if your app requires a safer solution.
+> warning **Warning** To verify file type, [FileTypeValidator](https://github.com/nestjs/nest/blob/master/packages/common/pipes/file/file-type.validator.ts) class uses the type as detected by multer. By default, multer derives file type from file extension on user's device. However, it does not check actual file contents. As files can be renamed to arbitrary extensions, consider using a custom implementation (like checking the file's [magic number](https://www.ibm.com/support/pages/what-magic-number)) if your app requires a safer solution.
 
-To understand how these can be used in conjunction with the beforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
+To understand how these can be used in conjunction with the aforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
 
 ```typescript
 @UploadedFile(
