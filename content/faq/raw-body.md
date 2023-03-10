@@ -79,7 +79,7 @@ class CatsController {
 }
 ```
 
-##### Registering a Different Parser Dynamically with Fastify Body Parser
+#### Registering a different parser
 
 By default, only `application/json` and `application/x-www-form-urlencoded` parsers are registered. If you want to register a different parser on the fly, you will need to do so explicitly.
 
