@@ -18,6 +18,16 @@ h3 {
   }
 }
 
+.new {
+  color: #fff;
+  background: $red-color;
+  font-size: 11px;
+  padding: 2px 4px;
+  margin-right: 5px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
 .active h3 {
   color: $red-color;
 }
