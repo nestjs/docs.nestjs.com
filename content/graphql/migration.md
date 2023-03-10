@@ -4,7 +4,7 @@ This chapter provides a set of guidelines for migrating from `@nestjs/graphql` v
 
 #### Apollo packages
 
-Instead of installing the `apollo-server-express` package, you'll have to install the `@apollo/server` instead:
+Instead of installing the `apollo-server-express` package, you'll have to install `@apollo/server`:
 
 ```bash
 $ npm uninstall apollo-server-express
