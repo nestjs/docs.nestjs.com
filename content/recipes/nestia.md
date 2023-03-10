@@ -27,22 +27,9 @@ Just run above command, then boilerplate project would be constructed.
 npx nestia setup
 ```
 
-When you want to use `nestia` in ordinary project, just type above command.
+Just type `npx nestia setup`, that's all.
 
-All installation and configuration processes would be automatically done.
-
-Also, you can specify package manager or target `tsconfig.json` file like below:
-
-```bash
-npx nestia setup --manager npm
-npx nestia setup --manager pnpm
-npx nestia setup --manager yarn
-
-npx nestia setup --project tsconfig.json
-npx nestia setup --project tsconfig.test.json
-```
-
-After the setup, you only can compile `@nestia/core` utilization code by using `ttsc` ([ttypescript](https://github.com/cevek/ttypescript)) command, because `@nestia/core` is a type of tranformer library generating validation code by analyzing DTO types. If you want to run your TypeScript file directly through `ts-node` without compilation, add `-C ttypescript` argument like below:
+If you've installed [ttypescript](https://github.com/cevek/ttypescript) during setup, you should compile `@nestia/core` utilization code through `ttsc` command, instead of `tsc`. 
 
 ```bash
 # COMPILE THROUGH TTYPESCRIPT
@@ -52,15 +39,30 @@ npx ttsc
 npx ts-node -C ttypescript src/index.ts
 ```
 
+Otherwise, you've chosen [ts-patch](https://github.com/nonara/ts-patch), you can use original `tsc` command. However, [ts-patch](https://github.com/nonara/ts-patch) hacks `node_modules/typescript` source code. Also, whenever update `typescript` version, you've to run `npm run prepare` command repeatedly.
+
+By the way, when using `@nest/cli`, you must just choose [ts-patch](https://github.com/nonara/ts-patch).
+
+```bash
+# USE ORIGINAL TSC COMMAND
+tsc
+npx ts-node src/index.ts
+
+# WHENVER UPDATE
+npm install --save-dev typescript@latest
+npm run prepare
+```
+
 ##### Manual Setup
 
 If you want to install and configure `nestia` manually, read [Guide Documents / Setup](https://github.com/samchon/nestia/wiki/Setup).
+
 #### `@nestia/core`
 
 Superfast validation decorators for NestJS.
 
-  - 15,000x faster request body validation than class-validator
-  - 10x faster JSON response than `JSON.stringify()` and it's type safe
+  - 15,000x faster request body validation than `class-validator`
+  - 50x faster JSON stringify than `class-transformer`
   - Do not need DTO class definition, just fine with interface
 
 `@nestia/core` is a transformer library of NestJS, supporting superfast validation decorators, by wrapping [typia](https://github.com/samchon/typia). Comparing validation speed with `class-validator`, `typia` is maximum **15,000x times faster**, and it is even much safer.
@@ -87,7 +89,7 @@ export class BbsArticlesController {
      * @param input Content to update
      * @returns Newly created content info
      */
-    @TypedRoute.Post(":id") // 10x faster and safer JSON.stringify()
+    @TypedRoute.Post(":id") // 50x faster and safer JSON.stringify()
     public async update(
         @TypedParam("section", "string") section: string,
         @TypedParam("id", "uuid") id: strig, // type-safe parameter
