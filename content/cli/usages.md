@@ -84,7 +84,7 @@ $ nest g <schematic> <name> [options]
 | `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
 | `--spec`                        | Enforce spec files generation (default)                                                                         |
 | `--no-spec`                     | Disable spec files generation                                                                                   |
-| `--spec-file-suffix [suffix]`   | Specify spec file suffix.</br> Default: `spec`                                                                  |
+| `--spec-file-suffix [suffix]`   | Specify spec file suffix. Default: `spec`                                                                       |
 
 #### nest build
 
