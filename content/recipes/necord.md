@@ -183,19 +183,19 @@ List of all built-in option decorators:
 To add autocomplete to your Slashcommand you will need a interceptor first. This class will intercept all requests from the user after typing in the autocomplete option field.
 
 ```typescript
-@@filename(anime.interceptor)
+@@filename(cats-autocomplete.interceptor)
 import { Injectable, UseInterceptors } from '@nestjs/common';
 import { AutocompleteInteraction, CommandInteraction } from 'discord.js';
 import { AutocompleteInterceptor } from 'necord';
 
 @Injectable()
-class AnimeAutocompleteInterceptor extends AutocompleteInterceptor {
+class CatsAutocompleteInterceptor extends AutocompleteInterceptor {
     public transformOptions(interaction: AutocompleteInteraction) {
         const focused = interaction.options.getFocused(true);
         let choices: string[];
 
-        if (focused.name === 'anime') {
-            choices = ['Hunter x Hunter', 'Naruto', 'One Piece'];
+        if (focused.name === 'cat') {
+						choices = ['Siamese', 'Persian', 'Maine Coon'];
         }
 
         return interaction.respond(
@@ -210,38 +210,38 @@ class AnimeAutocompleteInterceptor extends AutocompleteInterceptor {
 You'll then have to add `autocomplete: true` to your options class:
 
 ```typescript
-@@filename(anime.dto)
+@@filename(cat.dto)
 import { StringOption } from 'necord';
 
-export class AnimeDto {
+export class CatDto {
     @StringOption({
-        name: 'anime',
-        description: 'The anime to look up',
+        name: 'cat',
+        description: 'Breed of cat',
         autocomplete: true,
         required: true
     })
-    anime: string;
+    cat: string;
 }
 ```
 
 And last but not least, apply the interceptor to your slash command:
 
 ```typescript
-@@filename(anime.commands)
+@@filename(cats.commands)
 import { Injectable, UseInterceptors } from '@nestjs/common';
 import { Context, SlashCommand, Options, SlashCommandContext } from 'necord';
-import { AnimeDto } from './anime.dto';
-import { AnimeAutocompleteInterceptor } from './anime.interceptor';
+import { CatDto } from './cat.dto';
+import { CatsAutocompleteInterceptor } from './cats-autocomplete.interceptor';
 
 @Injectable()
-export class AnimeCommands {
-    @UseInterceptors(AnimeAutocompleteInterceptor)
+export class CatsCommands {
+    @UseInterceptors(CatsAutocompleteInterceptor)
     @SlashCommand({
-        name: 'anime',
-        description: 'Lookup information about an anime'
+        name: 'cat',
+        description: 'Lookup information about the cat breed'
     })
-    public async onSearch(@Context() [interaction]: SlashCommandContext, @Options() { anime }: AnimeDto) {
-        return interaction.reply({content: `I found the anime ${anime}`});
+    public async onSearch(@Context() [interaction]: SlashCommandContext, @Options() { cat }: CatDto) {
+        return interaction.reply({content: `I found the breed of ${cat} cat`});
     }
 }
 ```
