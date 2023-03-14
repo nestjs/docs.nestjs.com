@@ -19,127 +19,134 @@ import { NestCommanderComponent } from './nest-commander/nest-commander.componen
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { AutomockComponent } from './automock/automock.component';
 import { SwcComponent } from './swc/swc.component';
+import { NecordComponent } from './necord/necord.component';
 
 const routes: Routes = [
-  {
-    path: 'mikroorm',
-    component: MikroOrmComponent,
-    data: { title: 'MikroORM' },
-  },
-  {
-    path: 'sql-typeorm',
-    component: SqlTypeormComponent,
-    data: { title: 'SQL (TypeORM)' },
-  },
-  {
-    path: 'mongodb',
-    component: MongodbComponent,
-    data: { title: 'MongoDB (Mongoose)' },
-  },
-  {
-    path: 'sql-sequelize',
-    component: SqlSequelizeComponent,
-    data: { title: 'SQL (Sequelize)' },
-  },
-  {
-    path: 'cqrs',
-    component: CqrsComponent,
-    data: { title: 'CQRS' },
-  },
-  {
-    path: 'swagger',
-    redirectTo: '/openapi/introduction',
-  },
-  {
-    path: 'prisma',
-    component: PrismaComponent,
-    data: { title: 'Prisma' },
-  },
-  {
-    path: 'terminus',
-    component: TerminusComponent,
-    data: { title: 'Health checks (Terminus)' },
-  },
-  {
-    path: 'documentation',
-    component: DocumentationComponent,
-    data: { title: 'Documentation (Compodoc)' },
-  },
-  {
-    path: 'crud-utilities',
-    redirectTo: '/recipes/crud-generator',
-  },
-  {
-    path: 'crud',
-    redirectTo: '/recipes/crud-generator',
-  },
-  {
-    path: 'crud-generator',
-    component: CrudGeneratorComponent,
-    data: { title: 'CRUD generator' },
-  },
-  {
-    path: 'hot-reload',
-    component: HotReloadComponent,
-    data: { title: 'Hot reload' },
-  },
-  {
-    path: 'serve-static',
-    component: ServeStaticComponent,
-    data: { title: 'Serve static' },
-  },
-  {
-    path: 'router-module',
-    component: RouterModuleComponent,
-    data: { title: 'Router module' },
-  },
-  {
-    path: 'nest-commander',
-    component: NestCommanderComponent,
-    data: { title: 'Nest Commander' },
-  },
-  {
-    path: 'async-local-storage',
-    component: AsyncLocalStorageComponent,
-    data: { title: 'Async Local Storage' },
-  },
-  {
-    path: 'repl',
-    component: ReplComponent,
-    data: { title: 'REPL' },
-  },
-  {
-    path: 'swc',
-    component: SwcComponent,
-    data: { title: 'SWC (fast compiler)' },
-  },
-  {
-    path: 'automock',
-    component: AutomockComponent,
-    data: { title: 'Automock' },
-  },
+	{
+		path: 'mikroorm',
+		component: MikroOrmComponent,
+		data: { title: 'MikroORM' },
+	},
+	{
+		path: 'sql-typeorm',
+		component: SqlTypeormComponent,
+		data: { title: 'SQL (TypeORM)' },
+	},
+	{
+		path: 'mongodb',
+		component: MongodbComponent,
+		data: { title: 'MongoDB (Mongoose)' },
+	},
+	{
+		path: 'sql-sequelize',
+		component: SqlSequelizeComponent,
+		data: { title: 'SQL (Sequelize)' },
+	},
+	{
+		path: 'cqrs',
+		component: CqrsComponent,
+		data: { title: 'CQRS' },
+	},
+	{
+		path: 'swagger',
+		redirectTo: '/openapi/introduction',
+	},
+	{
+		path: 'prisma',
+		component: PrismaComponent,
+		data: { title: 'Prisma' },
+	},
+	{
+		path: 'terminus',
+		component: TerminusComponent,
+		data: { title: 'Health checks (Terminus)' },
+	},
+	{
+		path: 'documentation',
+		component: DocumentationComponent,
+		data: { title: 'Documentation (Compodoc)' },
+	},
+	{
+		path: 'crud-utilities',
+		redirectTo: '/recipes/crud-generator',
+	},
+	{
+		path: 'crud',
+		redirectTo: '/recipes/crud-generator',
+	},
+	{
+		path: 'crud-generator',
+		component: CrudGeneratorComponent,
+		data: { title: 'CRUD generator' },
+	},
+	{
+		path: 'hot-reload',
+		component: HotReloadComponent,
+		data: { title: 'Hot reload' },
+	},
+	{
+		path: 'serve-static',
+		component: ServeStaticComponent,
+		data: { title: 'Serve static' },
+	},
+	{
+		path: 'router-module',
+		component: RouterModuleComponent,
+		data: { title: 'Router module' },
+	},
+	{
+		path: 'nest-commander',
+		component: NestCommanderComponent,
+		data: { title: 'Nest Commander' },
+	},
+	{
+		path: 'async-local-storage',
+		component: AsyncLocalStorageComponent,
+		data: { title: 'Async Local Storage' },
+	},
+	{
+		path: 'repl',
+		component: ReplComponent,
+		data: { title: 'REPL' },
+	},
+	{
+		path: 'swc',
+		component: SwcComponent,
+		data: { title: 'SWC (fast compiler)' },
+	},
+	{
+		path: 'automock',
+		component: AutomockComponent,
+		data: { title: 'Automock' },
+	},
+	{
+		path: 'necord',
+		component: NecordComponent,
+		data: { title: 'Necord' }
+	}
 ];
 
 @NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    MikroOrmComponent,
-    SqlTypeormComponent,
-    SqlSequelizeComponent,
-    MongodbComponent,
-    PrismaComponent,
-    CqrsComponent,
-    HotReloadComponent,
-    TerminusComponent,
-    DocumentationComponent,
-    CrudGeneratorComponent,
-    RouterModuleComponent,
-    ServeStaticComponent,
-    NestCommanderComponent,
-    AsyncLocalStorageComponent,
-    AutomockComponent,
-    ReplComponent,
-    SwcComponent,
-  ],
+	imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
+	declarations: [
+		MikroOrmComponent,
+		SqlTypeormComponent,
+		SqlSequelizeComponent,
+		MongodbComponent,
+		PrismaComponent,
+		CqrsComponent,
+		HotReloadComponent,
+		TerminusComponent,
+		DocumentationComponent,
+		CrudGeneratorComponent,
+		RouterModuleComponent,
+		ServeStaticComponent,
+		NestCommanderComponent,
+		AsyncLocalStorageComponent,
+		AutomockComponent,
+		ReplComponent,
+		SwcComponent,
+		NecordComponent
+	],
 })
 export class RecipesModule {}
