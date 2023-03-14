@@ -195,7 +195,7 @@ class CatsAutocompleteInterceptor extends AutocompleteInterceptor {
         let choices: string[];
 
         if (focused.name === 'cat') {
-						choices = ['Siamese', 'Persian', 'Maine Coon'];
+            choices = ['Siamese', 'Persian', 'Maine Coon'];
         }
 
         return interaction.respond(
