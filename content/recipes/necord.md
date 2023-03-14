@@ -127,13 +127,13 @@ Global commands are cached for up to an hour, therefore to avoid the global comm
 
 ##### Options
 
-Use the option decorator to define a parameter in a slash command, let's create the `LengthDto` class:
+Use the option decorator to define a parameter in a slash command, let's create the `TextDto` class:
 
 ```typescript
-@@filename(length.dto)
+@@filename(text.dto)
 import { StringOption } from 'necord';
 
-export class LengthDto {
+export class TextDto {
     @StringOption({
         name: 'text',
         description: 'Your text',
@@ -149,7 +149,7 @@ It has only one basic properties. Thereafter we can use the newly created DTO in
 @@filename(app.commands)
 import { Injectable } from '@nestjs/common';
 import { Context, SlashCommand, Options, SlashCommandContext } from 'necord';
-import { LengthDto } from './dtos/length.dto';
+import { TextDto } from './text.dto';
 
 @Injectable()
 export class AppCommands {
@@ -157,7 +157,7 @@ export class AppCommands {
         name: 'length',
         description: 'Get length of text'
     })
-    public async onLength(@Context() [interaction]: SlashCommandContext, @Options() { text }: LengthDto) {
+    public async onLength(@Context() [interaction]: SlashCommandContext, @Options() { text }: TextDto) {
         return interaction.reply({content: `Length of your text ${text.length}`});
     }
 }
@@ -230,8 +230,8 @@ And last but not least, apply the interceptor to your slash command:
 @@filename(anime.commands)
 import { Injectable, UseInterceptors } from '@nestjs/common';
 import { Context, SlashCommand, Options, SlashCommandContext } from 'necord';
-import { AnimeDto } from './dtos/anime.dto';
-import { AnimeAutocompleteInterceptor } from './anime.interceptor.dto';
+import { AnimeDto } from './anime.dto';
+import { AnimeAutocompleteInterceptor } from './anime.interceptor';
 
 @Injectable()
 export class AnimeCommands {
