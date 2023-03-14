@@ -21,7 +21,7 @@ To use `Necord` you need to import the `NecordModule` and pass it the configurat
 ```typescript
 @@filename(app.module)
 import { Module } from '@nestjs/common';
-import { DiscordService } from './discord.service';
+import { AppService } from './app.service';
 import { IntentsBitField } from 'discord.js';
 
 @Module({
