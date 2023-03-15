@@ -163,20 +163,7 @@ export class AppCommands {
 }
 ```
 
-List of all built-in option decorators:
-
-| Decorator           | Type                          | Description          |
-| :------------------ | :---------------------------- | :------------------- |
-| `StringOption`      | `string`                      | A string option      |
-| `NumberOption`      | `number`                      | A number option      |
-| `IntegerOption`     | `number`                      | An integer option    |
-| `BooleanOption`     | `boolean`                     | A boolean option     |
-| `UserOption`        | `User`                        | A user option        |
-| `MemberOption`      | `GuildMember`                 | A member option      |
-| `ChannelOption`     | `GuildChannel`                | A channel option     |
-| `RoleOption`        | `Role`                        | A role option        |
-| `MentionableOption` | `GuildMember \| Role \| User` | A mentionable option |
-| `AttachmentOption`  | `AttachmentOption`            | An attachment option |
+[List of all built-in option decorators](https://necord.org/interactions/slash-commands#options)
 
 ##### Autocomplete
 
@@ -333,12 +320,7 @@ export class AppComponents {
 }
 ```
 
-All of built-in select menu components:
-- `@StringSelect`
-- `@UserSelect`
-- `@RoleSelect`
-- `@MentionableSelect`
-- `@ChannelSelect`
+[All of built-in select menu components](https://necord.org/interactions/message-components#select-menu)
 
 #### Modals
 
