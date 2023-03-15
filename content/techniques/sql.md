@@ -425,7 +425,7 @@ async createMany(users: User[]) {
 
 Alternatively, you can use the callback-style approach with the `transaction` method of the `DataSource` object ([read more](https://typeorm.io/#/transactions/creating-and-using-transactions)).
 
-````typescript
+```typescript
 async createMany(users: User[]) {
   await this.dataSource.transaction(async manager => {
     await manager.save(users[0]);
@@ -461,7 +461,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     console.log(`BEFORE USER INSERTED: `, event.entity);
   }
 }
-````
+```
 
 > error **Warning** Event subscribers can not be [request-scoped](/fundamentals/injection-scopes).
 
@@ -1147,7 +1147,7 @@ You can also inject the `Sequelize` instance for a given connection:
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectDataSource('albumsConnection')
+    @InjectConnection('albumsConnection')
     private sequelize: Sequelize,
   ) {}
 }

@@ -564,7 +564,7 @@ GraphQLModule.forRoot<MercuriusDriverConfig>({
 
 Checking whether the user is authenticated can be done inside the `verifyClient` callback function that you can specify in the `subscription` options.
 
-The `verifyClient` will receive the `info` object as a first argument which you can use to retrive the request's headers.
+The `verifyClient` will receive the `info` object as a first argument which you can use to retrieve the request's headers.
 
 ```typescript
 GraphQLModule.forRoot<MercuriusDriverConfig>({
