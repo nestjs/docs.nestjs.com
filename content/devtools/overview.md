@@ -60,6 +60,46 @@ Using the form controls located in the sidebar (on the left), you can control ed
 
 <figure><img src="/assets/devtools/subtree-view.png" /></figure>
 
+#### Investigating the "Cannot resolve dependency" error
+
+> info **Note** This feature is supported for `@nestjs/core` >= `v9.3.10`.
+
+Probably the most common error message you might have seen is about Nest not being able to resolve dependencies of a provider. Using Nest Devtools, you can effortlessly identify the issue and learn how to resolve it.
+
+First, open up the `main.ts` file and update the `bootstrap()` call, as follows:
+
+```typescript
+bootstrap().catch((err) => {
+  writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
+  process.exit(1);
+});
+```
+
+Also, make sure to set the `abortOnError` to `false`:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  snapshot: true,
+  abortOnError: false, // <--- THIS
+});
+```
+
+Now every time your application fails to bootstrap due to the **"Cannot resolve dependency"** error, you'll find the `graph.json` (that represents a partial graph) file in the root directory. You can then drag & drop this file into Devtools (make sure to switch the current mode from "Interactive" to "Preview"):
+
+<figure><img src="/assets/devtools/drag-and-drop.png" /></figure>
+
+Upon successful upload, you should see the following graph & dialog window:
+
+<figure><img src="/assets/devtools/partial-graph-modules-view.png" /></figure>
+
+As you can see, the highlighted `TasksModule` is the one we should look into. Also, in the dialog window you can already see some instructions on how to use fix this issue.
+
+If we switch to the "Classes" view instead, that's what we'll see:
+
+<figure><img src="/assets/devtools/partial-graph-classes-view.png" /></figure>
+
+This graph illustrates that the `DiagnosticsService` which we want to inject into the `TasksService` was not found in the context of the `TasksModule` module, and we should likely just import the `DiagnosticsModule` into the `TasksModule` module to fix this up!
+
 #### Routes explorer
 
 When you navigate to the **Routes explorer** page, you should see all of the registered entrypoints:
