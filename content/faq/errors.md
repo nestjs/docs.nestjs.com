@@ -4,6 +4,8 @@ During your development with NestJS, you may encounter various errors as you lea
 
 #### "Cannot resolve dependency" error
 
+> info **Hint** Check out the [NestJS Devtools](/devtools/overview#investigating-the-cannot-resolve-dependency-error) which can help you resolve the "Cannot resolve dependency" error effortlessly.
+
 Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
 
 ```bash
@@ -20,8 +22,6 @@ Potential solutions:
 
 The most common culprit of the error, is not having the `<provider>` in the module's `providers` array. Please make sure that the provider is indeed in the `providers` array and following [standard NestJS provider practices](/fundamentals/custom-providers#di-fundamentals).
 
-<app-banner-devtools></app-banner-devtools>
-
 There are a few gotchas, that are common. One is putting a provider in an `imports` array. If this is the case, the error will have the provider's name where `<module>` should be.
 
 If you run across this error while developing, take a look at the module mentioned in the error message and look at its `providers`. For each provider in the `providers` array, make sure the module has access to all of the dependencies. Often times, `providers` are duplicated in a "Feature Module" and a "Root Module" which means Nest will try to instantiate the provider twice. More than likely, the module containing the `<provider>` being duplicated should be added in the "Root Module"'s `imports` array instead.
@@ -31,6 +31,8 @@ If the `<unknown_token>` above is the string `dependency`, you might have a circ
 If the `<unknown_token>` above is the string `Object`, it means that you're injecting using an type/interface without a proper provider's token. To fix that, make sure you're importing the class reference or use a custom token with `@Inject()` decorator. Read the [custom providers page](/fundamentals/custom-providers).
 
 Also, make sure you didn't end up injecting the provider on itself because self-injections are not allowed in NestJS. When this happens, `<unknown_token>` will likely be equal to `<provider>`.
+
+<app-banner-devtools></app-banner-devtools>
 
 If you are in a **monorepo setup**, you may face the same error as above but for core provider called `ModuleRef` as a `<unknown_token>`:
 
