@@ -69,8 +69,10 @@ Probably the most common error message you might have seen is about Nest not bei
 First, open up the `main.ts` file and update the `bootstrap()` call, as follows:
 
 ```typescript
+import * as fs from 'fs';
+
 bootstrap().catch((err) => {
-  writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
+  fs.writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
   process.exit(1);
 });
 ```
