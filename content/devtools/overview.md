@@ -70,7 +70,7 @@ First, open up the `main.ts` file and update the `bootstrap()` call, as follows:
 
 ```typescript
 bootstrap().catch((err) => {
-  writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
+  fs.writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
   process.exit(1);
 });
 ```
