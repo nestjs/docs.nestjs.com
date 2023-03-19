@@ -130,7 +130,7 @@ To save a serialized graph to a file, use the following code:
 
 ```typescript
 await app.listen(3000); // OR await app.init()
-writeFileSync('./graph.json', app.get(SerializedGraph).toString());
+fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 
 > info **Hint** `SerializedGraph` is exported from the `@nestjs/core` package.
