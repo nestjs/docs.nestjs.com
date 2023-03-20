@@ -371,7 +371,7 @@ The Kafka microservice components append a description of their respective role 
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(AppModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {

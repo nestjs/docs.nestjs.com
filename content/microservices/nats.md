@@ -77,7 +77,7 @@ NATS provides a built-in load balancing feature called [distributed queues](http
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(AppModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.NATS,
   options: {
     servers: ['nats://localhost:4222'],
