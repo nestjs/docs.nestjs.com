@@ -441,8 +441,9 @@ Committing offsets is essential when working with Kafka. Per default, messages w
 async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
   // business logic
   
-  const originalMessage = context.getMessage();
-  const { topic, partition, offset } = originalMessage;
+  const { offset } = context.getMessage();
+  const partition = context.getPartition();
+  const topic = context.getTopic();
   await this.client.commitOffsets([{ topic, partition, offset }])
 }
 @@switch
@@ -451,8 +452,9 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
 async handleUserCreated(data, context) {
   // business logic
 
-  const originalMessage = context.getMessage();
-  const { topic, partition, offset } = originalMessage;
+  const { offset } = context.getMessage();
+  const partition = context.getPartition();
+  const topic = context.getTopic();
   await this.client.commitOffsets([{ topic, partition, offset }])
 }
 ```
