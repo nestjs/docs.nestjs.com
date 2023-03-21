@@ -241,6 +241,8 @@ You can designate that a job handler method will handle **only** jobs of a certa
 async transcode(job: Job<unknown>) { ... }
 ```
 
+> Warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({ concurrency: 1 })` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
+
 #### Request-scoped consumers
 
 When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
