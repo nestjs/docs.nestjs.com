@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
-  await app.listen(8001);
+  await app.listen(3000);
 }
 ```
 
@@ -44,7 +44,7 @@ Once the `DevtoolsModule` is imported and your application is up and running (`n
 
 <figure><img src="/assets/devtools/modules-graph.png" /></figure>
 
-So as we can see, `DevtoolsModule` makes your application expose an additional HTTP server (on port 8000) that the Devtools application will use to introspect your app.
+So as we can see, `DevtoolsModule` makes your application expose an additional HTTP server (on port 8001) that the Devtools application will use to introspect your app.
 
 Just to double-check that everything works as expected, change the graph view to "Classes". You should see the following screen:
 
@@ -129,7 +129,7 @@ To see the auto-generated audit - errors/warnings/hints that the application cam
 To save a serialized graph to a file, use the following code:
 
 ```typescript
-await app.listen(8001); // OR await app.init()
+await app.listen(3000); // OR await app.init()
 fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 
