@@ -71,6 +71,11 @@ describe('CatsService unit spec', () => {
   beforeAll(() => {
     const { unit, unitRef } = TestBed.create(CatsService)
       .mock(HttpService)
+      .use({ get: jest.fn() })
+      .mock(Logger)
+      .use({ log: jest.fn() })
+      .mock(CatsDal)
+      .use({ saveCats: jest.fn() })
       .compile();
 
     underTest = unit;
@@ -82,7 +87,7 @@ describe('CatsService unit spec', () => {
 
   describe('when getting all the cats', () => {
     test('then meet some expectations', async () => {
-      httpService.mockResolvedValueOnce([{ id: 1, name: 'Catty' }]);
+      httpService.get.mockResolvedValueOnce([{ id: 1, name: 'Catty' }]);
       await catsService.getAllCats();
 
       expect(logger.log).toBeCalled();
