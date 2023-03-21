@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
-  await app.listen(3000);
+  await app.listen(8001);
 }
 ```
 
@@ -129,7 +129,7 @@ To see the auto-generated audit - errors/warnings/hints that the application cam
 To save a serialized graph to a file, use the following code:
 
 ```typescript
-await app.listen(3000); // OR await app.init()
+await app.listen(8001); // OR await app.init()
 fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 
