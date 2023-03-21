@@ -241,7 +241,7 @@ You can designate that a job handler method will handle **only** jobs of a certa
 async transcode(job: Job<unknown>) { ... }
 ```
 
-> Warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({ concurrency: 1 })` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
+> warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({ concurrency: 1 })` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
 
 #### Request-scoped consumers
 
