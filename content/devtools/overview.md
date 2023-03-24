@@ -70,7 +70,7 @@ First, open up the `main.ts` file and update the `bootstrap()` call, as follows:
 
 ```typescript
 bootstrap().catch((err) => {
-  writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
+  fs.writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
   process.exit(1);
 });
 ```
@@ -130,7 +130,7 @@ To save a serialized graph to a file, use the following code:
 
 ```typescript
 await app.listen(3000); // OR await app.init()
-writeFileSync('./graph.json', app.get(SerializedGraph).toString());
+fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 
 > info **Hint** `SerializedGraph` is exported from the `@nestjs/core` package.

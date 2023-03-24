@@ -20,3 +20,5 @@ Alternatively, you can specify route as a string (it will apply to every request
 ```typescript
 app.setGlobalPrefix('v1', { exclude: ['cats'] });
 ```
+
+> info **Hint** The `path` property supports wildcard parameters using the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package. Note: this does not accept wildcard asterisks `*`. Instead, you must use parameters (e.g., `(.*)`, `:splat*`).
