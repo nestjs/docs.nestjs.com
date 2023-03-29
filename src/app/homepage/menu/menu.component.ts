@@ -229,6 +229,7 @@ export class MenuComponent implements OnInit {
         { title: 'REPL', path: '/recipes/repl' },
         { title: 'CRUD generator', path: '/recipes/crud-generator' },
         { title: 'SWC (fast compiler)', path: '/recipes/swc' },
+        { title: 'Passport (auth)', path: '/recipes/passport' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },

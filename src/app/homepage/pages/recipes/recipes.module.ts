@@ -19,6 +19,7 @@ import { NestCommanderComponent } from './nest-commander/nest-commander.componen
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { AutomockComponent } from './automock/automock.component';
 import { SwcComponent } from './swc/swc.component';
+import { PassportComponent } from './passport/passport.component';
 
 const routes: Routes = [
   {
@@ -118,6 +119,11 @@ const routes: Routes = [
     component: AutomockComponent,
     data: { title: 'Automock' },
   },
+  {
+    path: 'passport',
+    component: PassportComponent,
+    data: { title: 'passport' },
+  },
 ];
 
 @NgModule({
@@ -140,6 +146,7 @@ const routes: Routes = [
     AutomockComponent,
     ReplComponent,
     SwcComponent,
+    PassportComponent,
   ],
 })
 export class RecipesModule {}
