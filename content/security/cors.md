@@ -21,18 +21,3 @@ Or, pass a [CORS configuration object](https://github.com/expressjs/cors#configu
 const app = await NestFactory.create(AppModule, { cors: true });
 await app.listen(3000);
 ```
-
-Above method only applies to REST endpoints.
-
-To enable CORS in GraphQL, set `cors` property to `true` or pass [CORS configuration object](https://github.com/expressjs/cors#configuration-options) or a [callback function](https://github.com/expressjs/cors#configuring-cors-asynchronously) as the `cors` property value when you import GraphQL module.
-
-> warning **Warning** `CorsOptionsDelegate` solution is not working with the `apollo-server-fastify` package yet.
-
-```typescript
-GraphQLModule.forRoot({
-  cors: {
-    origin: 'http://localhost:3000',
-    credentials: true,
-  },
-}),
-```
