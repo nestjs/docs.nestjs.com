@@ -6,7 +6,7 @@ Serialization is a process that happens before objects are returned in a network
 
 Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `instanceToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer). In doing so, it can apply rules expressed by `class-transformer` decorators on an entity/DTO class, as described below.
 
-> info **Hint** The serialization does not applies to [`StreamableFile` class](https://docs.nestjs.com/techniques/streaming-files#streamable-file-class) responses.
+> info **Hint** The serialization does not apply to [StreamableFile](https://docs.nestjs.com/techniques/streaming-files#streamable-file-class) responses.
 
 #### Exclude properties
 
