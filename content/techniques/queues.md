@@ -18,7 +18,6 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/bull bull
-$ npm install --save-dev @types/bull
 ```
 
 Once the installation process is complete, we can import the `BullModule` into the root `AppModule`.
