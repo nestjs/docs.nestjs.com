@@ -393,6 +393,10 @@ header {
     border-bottom-color: $red-color;
     width: 190px;
   }
+
+  @media (min-width: 1200px) and (max-width: 1300px) {
+    width: 190px;
+  }
 }
 
 ::ng-deep .DocSearch-Button:hover,
@@ -400,6 +404,10 @@ header {
 ::ng-deep .DocSearch-Button:focus {
   border-bottom-color: $red-color;
   width: 240px;
+  
+  @media (min-width: 1200px) and (max-width: 1300px) {
+    width: 190px;
+  }
 }
 
 .search-input::placeholder {
