@@ -20,6 +20,7 @@ import { AsyncLocalStorageComponent } from './async-local-storage/async-local-st
 import { AutomockComponent } from './automock/automock.component';
 import { SwcComponent } from './swc/swc.component';
 import { NecordComponent } from './necord/necord.component';
+import { PassportComponent } from './passport/passport.component';
 
 const routes: Routes = [
   {
@@ -123,7 +124,12 @@ const routes: Routes = [
     path: 'necord',
     component: NecordComponent,
     data: { title: 'Necord' }
-  }
+  },
+  {
+    path: 'passport',
+    component: PassportComponent,
+    data: { title: 'passport' },
+  },
 ];
 
 @NgModule({
@@ -146,7 +152,8 @@ const routes: Routes = [
     AutomockComponent,
     ReplComponent,
     SwcComponent,
-    NecordComponent
+    NecordComponent,
+    PassportComponent,
   ],
 })
 export class RecipesModule {}

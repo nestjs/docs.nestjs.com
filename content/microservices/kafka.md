@@ -112,6 +112,10 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
     <td><code>producerOnlyMode</code></td>
     <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
   </tr>
+  <tr>
+    <td><code>postfixId</code></td>
+    <td>Change suffix of clientId value (<code>string</code>)</td>
+  </tr>
 </table>
 
 #### Client
@@ -367,7 +371,7 @@ The Kafka microservice components append a description of their respective role 
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(AppModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {

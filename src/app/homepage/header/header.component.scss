@@ -359,14 +359,23 @@ header {
   position: relative;
 }
 
-.search-icon {
+.search-icon,
+:host ::ng-deep .DocSearch-Search-Icon {
   position: absolute;
   margin-top: 7px;
-  color: #a5a5a5;
+  color: #a5a5a5 !important;
   font-size: 14px;
+  width: 14px;
 }
 
-.search-input {
+:host ::ng-deep .DocSearch-Search-Icon {
+  @media (max-width: 1150px) {
+    margin-top: 0;
+  }
+}
+
+.search-input,
+::ng-deep .DocSearch-Button {
   background: transparent;
   border: 0;
   border-bottom: 2px solid #414141;
@@ -377,11 +386,26 @@ header {
   font-size: 14px;
   outline: 0 !important;
   transition: all 90ms ease-in-out;
-  width: 165px;
+  width: 215px;
 
   &:active,
   &:focus {
     border-bottom-color: $red-color;
+    width: 190px;
+  }
+
+  @media (min-width: 1200px) and (max-width: 1300px) {
+    width: 190px;
+  }
+}
+
+::ng-deep .DocSearch-Button:hover,
+::ng-deep .DocSearch-Button:active
+::ng-deep .DocSearch-Button:focus {
+  border-bottom-color: $red-color;
+  width: 240px;
+  
+  @media (min-width: 1200px) and (max-width: 1300px) {
     width: 190px;
   }
 }
@@ -389,6 +413,33 @@ header {
 .search-input::placeholder {
   color: #a5a5a5;
   opacity: 1;
+}
+
+::ng-deep .DocSearch-Button {
+  border-radius: 0;
+  color: #a5a5a5;
+  padding: 5px;
+}
+
+::ng-deep .DocSearch-Button-Placeholder {
+  padding-left: 30px;
+  font-size: 14px;
+  margin-top: 7px;
+  display: block !important;
+
+  @media (max-width: 1150px) {
+    margin-top: 0;
+  }
+}
+
+::ng-deep .DocSearch-Button-Keys {
+  display: none;
+}
+
+::ng-deep .DocSearch-Button:active, 
+::ng-deep .DocSearch-Button:focus, 
+::ng-deep.DocSearch-Button:hover {
+  color: #a5a5a5;
 }
 
 .close-icon {
