@@ -44,7 +44,7 @@ Once the `DevtoolsModule` is imported and your application is up and running (`n
 
 <figure><img src="/assets/devtools/modules-graph.png" /></figure>
 
-> info **Hint** As you can see on the screenshot above, every module connect to the `InternalCoreModule`. `InternalCoreModule` is a global module that is always imported into the root module. Since it's registered as a global node, Nest automatically creates edges between all of the modules and the `InternalCoreModule` node. Now, if you want to hide global modules from the graph, you can use the "Hide global modules" checkbox (in the sidebar).
+> info **Hint** As you can see on the screenshot above, every module connects to the `InternalCoreModule`. `InternalCoreModule` is a global module that is always imported into the root module. Since it's registered as a global node, Nest automatically creates edges between all of the modules and the `InternalCoreModule` node. Now, if you want to hide global modules from the graph, you can use the "**Hide global modules**" checkbox (in the sidebar).
 
 So as we can see, `DevtoolsModule` makes your application expose an additional HTTP server (on port 8000) that the Devtools application will use to introspect your app.
 
@@ -65,6 +65,20 @@ Using the form controls located in the sidebar (on the left), you can control ed
 <figure><img src="/assets/devtools/subtree-view.png" /></figure>
 
 This can be particularly useful when you have **new developers** on your team and you want to show them how your application is structured. You can also use this feature to visualize a specific module (e.g. `TasksModule`) and all of its dependencies, which can come in handy when you're breaking down a large application into smaller modules (for example, individual micro-services).
+
+You can watch this video to see the **Graph Explorer** feature in action:
+
+<figure>
+  <iframe
+    width="800"
+    height="450"
+    src="https://www.youtube.com/embed/bW8V-ssfnvM"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  ></iframe>
+</figure>
 
 #### Investigating the "Cannot resolve dependency" error
 

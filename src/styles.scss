@@ -108,10 +108,13 @@ figure {
     margin: 60px 0;
   }
 
-  img {
+  img, iframe {
     max-width: 100%;
-    height: auto;
     box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  img {
+    height: auto;
   }
 }
 
