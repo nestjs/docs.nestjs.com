@@ -243,7 +243,7 @@ Or alternatively using `registerAsync()` method in case if you want to pass conf
         name: 'MATH_SERVICE',
         useFactory: async (configService: ConfigService) => ({
           options: {
-            url: configService.MQTT_URL,
+            url: configService.URL,
           },
           transport: configService.TRANSPORT,
         }),
