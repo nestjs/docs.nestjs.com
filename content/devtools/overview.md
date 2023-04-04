@@ -148,6 +148,21 @@ Just execute the code **on the fly** and see the results instantly, without havi
 
 > info **Hint** To pretty display an array of objects, use the `console.table()` (or just `table()`) function.
 
+You can watch this video to see the **Interactive Playground** feature in action:
+
+<figure>
+  <iframe
+    width="800"
+    height="450"
+    src="https://www.youtube.com/embed/liSxEN_VXKM"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  ></iframe>
+</figure>
+
+
 #### Bootstrap performance analyzer
 
 To see a list of all class nodes (controllers, providers, enhancers, etc.) and their corresponding instantiation times, navigate to the **Bootstrap performance** page:

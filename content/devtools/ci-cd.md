@@ -4,6 +4,20 @@
 
 CI/CD integration is available for users with the **[Enterprise](/settings)** plan.
 
+You can watch this video to learn why & how CI/CD integration can help you:
+
+<figure>
+  <iframe
+    width="800"
+    height="450"
+    src="https://www.youtube.com/embed/r5RXcBrnEQ8"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  ></iframe>
+</figure>
+
 #### Publishing graphs
 
 Let's first configure the application bootstrap file (`main.ts`) to use the `GraphPublisher` class (exported from the `@nestjs/devtools-integration` - see previous chapter for more details), as follows:
