@@ -70,8 +70,8 @@ You can watch this video to see the **Graph Explorer** feature in action:
 
 <figure>
   <iframe
-    width="800"
-    height="450"
+    width="1000"
+    height="565"
     src="https://www.youtube.com/embed/bW8V-ssfnvM"
     title="YouTube video player"
     frameBorder="0"
@@ -152,8 +152,8 @@ You can watch this video to see the **Interactive Playground** feature in action
 
 <figure>
   <iframe
-    width="800"
-    height="450"
+    width="1000"
+    height="565"
     src="https://www.youtube.com/embed/liSxEN_VXKM"
     title="YouTube video player"
     frameBorder="0"
@@ -161,7 +161,6 @@ You can watch this video to see the **Interactive Playground** feature in action
     allowFullScreen
   ></iframe>
 </figure>
-
 
 #### Bootstrap performance analyzer
 

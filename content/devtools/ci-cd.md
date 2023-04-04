@@ -8,8 +8,8 @@ You can watch this video to learn why & how CI/CD integration can help you:
 
 <figure>
   <iframe
-    width="800"
-    height="450"
+    width="1000"
+    height="565"
     src="https://www.youtube.com/embed/r5RXcBrnEQ8"
     title="YouTube video player"
     frameBorder="0"
