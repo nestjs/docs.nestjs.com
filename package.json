@@ -60,7 +60,7 @@
     "@types/prismjs": "1.26.0",
     "@types/rimraf": "3.0.2",
     "chokidar": "3.5.3",
-    "concurrently": "7.6.0",
+    "concurrently": "8.0.1",
     "dgeni": "0.4.14",
     "dgeni-packages": "0.30.0",
     "husky": "8.0.3",
