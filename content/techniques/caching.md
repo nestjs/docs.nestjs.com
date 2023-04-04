@@ -246,6 +246,8 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
+> warning**Warning** This snippets for configuration with Redis does not work with cache manager v5 but only with v4 version.
+
 > warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
 > latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
 
