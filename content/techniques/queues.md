@@ -18,7 +18,6 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/bull bull
-$ npm install --save-dev @types/bull
 ```
 
 Once the installation process is complete, we can import the `BullModule` into the root `AppModule`.
@@ -240,6 +239,8 @@ You can designate that a job handler method will handle **only** jobs of a certa
 @Process('transcode')
 async transcode(job: Job<unknown>) { ... }
 ```
+
+> warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({{ '{' }} concurrency: 1 {{ '}' }})` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
 
 #### Request-scoped consumers
 

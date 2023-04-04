@@ -9,7 +9,7 @@ export class CleanGeneratedFiles implements Processor {
   $runAfter = ['writing-files'];
   $runBefore = ['writeFilesProcessor'];
   $process() {
-    rimraf.sync(`${OUTPUT_PATH}/{docs,*.json}`);
+    rimraf.sync(`${OUTPUT_PATH}/{docs,*.json}`, { glob: { dot: true } });
   }
 }
 

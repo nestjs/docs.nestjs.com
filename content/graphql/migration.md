@@ -1,6 +1,40 @@
-### Migrating to v10
+### Migrating to v11 from v10
 
-This article provides a set of guidelines for migrating from `@nestjs/graphql` version 9 to version 10. The focus of this major-version release is to provide a lighter, platform-agnostic core library.
+This chapter provides a set of guidelines for migrating from `@nestjs/graphql` version 10 to version 11. As part of this major release, we updated the Apollo driver to be compatible with Apollo Server v4 (instead of v3). Note: there are several breaking changes in Apollo Server v4 (especially around plugins and ecosystem packages), so you'll have to update your codebase accordingly. For more information, see the [Apollo Server v4 migration guide](https://www.apollographql.com/docs/apollo-server/migration/).
+
+#### Apollo packages
+
+Instead of installing the `apollo-server-express` package, you'll have to install `@apollo/server`:
+
+```bash
+$ npm uninstall apollo-server-express
+$ npm install @apollo/server
+```
+
+If you use the Fastify adapter, you'll have to install the `@as-integrations/fastify` package instead:
+
+```bash
+$ npm uninstall apollo-server-fastify
+$ npm install @apollo/server @as-integrations/fastify
+```
+
+#### Mercurius packages
+
+Mercurius gateway is no longer a part of the `mercurius` package. Instead, you'll have to install the `@mercuriusjs/gateway` package separately:
+
+```bash
+$ npm install @mercuriusjs/gateway
+```
+
+Similarly, for creating federated schemas, you'll have to install the `@mercuriusjs/federation` package:
+
+```bash
+$ npm install @mercuriusjs/federation
+```
+
+### Migrating to v10 from v9
+
+This chapter provides a set of guidelines for migrating from `@nestjs/graphql` version 9 to version 10. The focus of this major-version release is to provide a lighter, platform-agnostic core library.
 
 #### Introducing "driver" packages
 

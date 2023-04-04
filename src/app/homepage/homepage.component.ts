@@ -157,14 +157,14 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   createDocSearchScriptTag(): HTMLScriptElement {
     const scriptTag = document.createElement('script');
     scriptTag.type = 'text/javascript';
-    scriptTag.src =
-      'https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js';
+    scriptTag.src = 'https://cdn.jsdelivr.net/npm/@docsearch/js@3';
     scriptTag.async = true;
     scriptTag.onload = () => {
       (window as any).docsearch({
         apiKey: environment.algoliaApiKey,
         indexName: 'nestjs',
-        inputSelector: '#search',
+        container: '#search',
+        appId: 'SDCBYAN96J',
         debug: false,
       });
     };

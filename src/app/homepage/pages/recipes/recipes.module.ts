@@ -20,6 +20,7 @@ import { AsyncLocalStorageComponent } from './async-local-storage/async-local-st
 import { AutomockComponent } from './automock/automock.component';
 import { NestiaComponent } from './nestia/nestia.component';
 import { SwcComponent } from './swc/swc.component';
+import { PassportComponent } from './passport/passport.component';
 
 const routes: Routes = [
   {
@@ -122,7 +123,12 @@ const routes: Routes = [
   {
     path: 'nestia',
     component: NestiaComponent,
-    data: { title: "Nestia" }
+    data: { title: "Nestia" },
+  },
+  {
+    path: 'passport',
+    component: PassportComponent,
+    data: { title: 'passport' },
   },
 ];
 
@@ -146,6 +152,7 @@ const routes: Routes = [
     AutomockComponent,
     ReplComponent,
     SwcComponent,
+    PassportComponent,
   ],
 })
 export class RecipesModule {}

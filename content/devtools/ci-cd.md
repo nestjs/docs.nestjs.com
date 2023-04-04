@@ -4,6 +4,20 @@
 
 CI/CD integration is available for users with the **[Enterprise](/settings)** plan.
 
+You can watch this video to learn why & how CI/CD integration can help you:
+
+<figure>
+  <iframe
+    width="1000"
+    height="565"
+    src="https://www.youtube.com/embed/r5RXcBrnEQ8"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  ></iframe>
+</figure>
+
 #### Publishing graphs
 
 Let's first configure the application bootstrap file (`main.ts`) to use the `GraphPublisher` class (exported from the `@nestjs/devtools-integration` - see previous chapter for more details), as follows:
@@ -51,6 +65,10 @@ To see reports, navigate to the project's corresponding page (see organizations)
 
 <figure><img src="/assets/devtools/report.png" /></figure>
 
+This is particularly helpful in identifying changes that may have gone unnoticed during code reviews. For instance, let's say someone has changed the scope of a **deeply nested provider**. This change might not be immediately obvious to the reviewer, but with Devtools, we can easily spot such changes and make sure that they're intentional. Or if we remove a guard from a specific endpoint, it will show up as affected in the report. Now if we didn't have integration or e2e tests for that route, we might not notice that it's no longer protected, and by the time we do, it could be too late.
+
+Similarly, if we're working on a **large codebase** and we modify a module to be global, we'll see how many edges were added to the graph, and this - in most cases - is a sign that we're doing something wrong.
+
 #### Build preview
 
 For every published graph we can go back in time and preview how it looked before by clicking at the **Preview** button. Furthermore, if the report was generated, we should see the differences higlighted on our graph:
@@ -62,6 +80,8 @@ For every published graph we can go back in time and preview how it looked befor
 See screenshot below:
 
 <figure><img src="/assets/devtools/nodes-selection.png" /></figure>
+
+The ability to go back in time lets you investigate and troubleshoot the issue by comparing the current graph with the previous one. Depending on how you set things up, every pull request (or even every commit) will have a corresponding snapshot in the registry, so you can easily go back in time and see what changed. Think of Devtools as a Git but with an understanding of how Nest constructs your application graph, and with the ability to **visualize** it.
 
 #### Integrations: Github Actions
 
