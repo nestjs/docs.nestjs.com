@@ -99,7 +99,7 @@ With this in place, you can now point to this configuration in the `registerQueu
 
 ```typescript
 BullModule.registerQueue({
-  configKey: 'alternative-queue'
+  configKey: 'alternative-queue',
   name: 'video',
 });
 ```
@@ -428,7 +428,7 @@ BullModule.forRootAsync({
   useFactory: async (configService: ConfigService) => ({
     redis: {
       host: configService.get('QUEUE_HOST'),
-      port: +configService.get('QUEUE_PORT'),
+      port: configService.get('QUEUE_PORT'),
     },
   }),
   inject: [ConfigService],
