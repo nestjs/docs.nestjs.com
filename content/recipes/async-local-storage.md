@@ -55,7 +55,7 @@ export class AppModule implements NestModule {
         const store = {
           userId: req.headers['x-user-id'],
         };
-        // and and pass the "next" function as callback
+        // and pass the "next" function as callback
         // to the "als.run" method together with the store.
         als.run(store, () => next());
       })
@@ -85,7 +85,7 @@ export class AppModule {
         const store = {
           userId: req.headers['x-user-id'],
         };
-        // and and pass the "next" function as callback
+        // and pass the "next" function as callback
         // to the "als.run" method together with the store.
         als.run(store, () => next());
       })
