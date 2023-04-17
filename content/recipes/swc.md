@@ -95,6 +95,7 @@ If your ORM does not provide a similar workaround, you can define the wrapper ty
  */
 export type WrapperType<T> = T; // WrapperType === Relation
 ```
+
 ### Vitest
 
 [Vitest](https://vitest.dev/) is a fast and lightweight test runner designed to work with Vite. It provides a modern, fast, and easy-to-use testing solution that can be integrated with NestJS projects.
@@ -113,23 +114,14 @@ Create a vitest.config.ts file in the root directory of your application with th
 
 ```ts
 import swc from 'unplugin-swc';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
     globals: true,
-    alias: {
-      '@src': './src',
-      '@test': './test',
-    },
     root: './',
   },
-  resolve: {
-    alias: {
-      '@src': './src',
-      '@test': './test',
-    },
-  },
+
   plugins: [swc.vite()], // This is required to build the test files with SWC
 });
 ```
@@ -139,7 +131,23 @@ file for e2e tests, with an additional field `include` that specifies the test p
 
 ```ts
 import swc from 'unplugin-swc';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    include: ['**/*.e2e-spec.ts'],
+    globals: true,
+    root: './',
+  },
+  plugins: [swc.vite()],
+});
+```
+
+Additionaly, you can set `include` and `alias` options to support typescript paths in your tests:
+
+```ts
+import swc from 'unplugin-swc';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -174,11 +182,13 @@ Lastly, update the test scripts in your package.json file to the following:
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --inspect --logHeapUsage --threads=false",
-    "test:e2e": "vitest run -c ./vitest.config.e2e.ts"
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   }
 }
 ```
+
 These scripts configure Vitest for running tests, watching for changes, generating code coverage reports, and debugging. The test:e2e script is specifically for running E2E tests with a custom configuration file.
 
 With this setup, you can now enjoy the benefits of using Vitest in your NestJS project, including faster test execution and a more modern testing experience.
+
 > info **Hint** You can check out a working example in this [repository](https://github.com/TrilonIO/nest-vitest)
