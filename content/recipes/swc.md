@@ -143,7 +143,7 @@ export default defineConfig({
 });
 ```
 
-Additionaly, you can set `include` and `alias` options to support typescript paths in your tests:
+Additionaly, you can set the `alias` options to support typescript paths in your tests:
 
 ```ts
 import swc from 'unplugin-swc';
