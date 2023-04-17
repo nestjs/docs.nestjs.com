@@ -273,7 +273,7 @@ Routes with static paths won't work when you need to accept **dynamic data** as 
 ```typescript
 @@filename()
 @Get(':id')
-findOne(@Param() params): string {
+findOne(@Param() params: any): string {
   console.log(params.id);
   return `This action returns a #${params.id} cat`;
 }
