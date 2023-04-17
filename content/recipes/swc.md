@@ -110,7 +110,7 @@ $ npm i --save-dev vitest unplugin-swc @swc/core @vitest/coverage-c8
 
 #### Configuration
 
-Create a vitest.config.ts file in the root directory of your application with the following contents:
+Create a `vitest.config.ts` file in the root directory of your application with the following content:
 
 ```ts
 import swc from 'unplugin-swc';
