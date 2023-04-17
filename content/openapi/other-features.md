@@ -47,10 +47,10 @@ async function bootstrap() {
     .addTag('cats')
     .build();
 
-  const catDocument = SwaggerModule.createDocument(app, options, {
+  const catDocumentFactory = () => SwaggerModule.createDocument(app, options, {
     include: [CatsModule],
   });
-  SwaggerModule.setup('api/cats', app, catDocument);
+  SwaggerModule.setup('api/cats', app, catDocumentFactory);
 
   const secondOptions = new DocumentBuilder()
     .setTitle('Dogs example')
@@ -59,10 +59,10 @@ async function bootstrap() {
     .addTag('dogs')
     .build();
 
-  const dogDocument = SwaggerModule.createDocument(app, secondOptions, {
+  const dogDocumentFactory = () => SwaggerModule.createDocument(app, secondOptions, {
     include: [DogsModule],
   });
-  SwaggerModule.setup('api/dogs', app, dogDocument);
+  SwaggerModule.setup('api/dogs', app, dogDocumentFactory);
 
   await app.listen(3000);
 }
