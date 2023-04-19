@@ -121,13 +121,12 @@ export default defineConfig({
     globals: true,
     root: './',
   },
-
   plugins: [swc.vite()], // This is required to build the test files with SWC
 });
 ```
 
-This configuration file sets up the Vitest environment with the necessary aliases, root directory, and SWC plugin. You should also create a separate configuration
-file for e2e tests, with an additional field `include` that specifies the test path regex:
+This configuration file sets up the Vitest environment, root directory, and SWC plugin. You should also create a separate configuration
+file for e2e tests, with an additional `include` field that specifies the test path regex:
 
 ```ts
 import swc from 'unplugin-swc';
@@ -143,7 +142,7 @@ export default defineConfig({
 });
 ```
 
-Additionaly, you can set the `alias` options to support typescript paths in your tests:
+Additionally, you can set the `alias` options to support TypeScript paths in your tests:
 
 ```ts
 import swc from 'unplugin-swc';
@@ -171,7 +170,7 @@ export default defineConfig({
 
 #### Update imports in E2E tests
 
-Change any E2E test imports using `import * as request from 'supertest'` to `import request from 'supertest';`. This is necessary because Vitest, when bundled with Vite, expects a default import for supertest. Using a namespace import may cause issues in this specific setup.
+Change any E2E test imports using `import * as request from 'supertest'` to `import request from 'supertest'`. This is necessary because Vitest, when bundled with Vite, expects a default import for supertest. Using a namespace import may cause issues in this specific setup.
 
 Lastly, update the test scripts in your package.json file to the following:
 
