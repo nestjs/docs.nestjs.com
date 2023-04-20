@@ -107,14 +107,14 @@ $ nest build <name> [options]
 
 ##### Options
 
-| Option            | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| `--path [path]`   | Path to `tsconfig` file. <br/>Alias `-p`               |
-| `--config [path]` | Path to `nest-cli` configuration file. <br/>Alias `-c` |
-| `--watch`         | Run in watch mode (live-reload) <br/>Alias `-w`        |
-| `--webpack`       | Use webpack for compilation.                           |
-| `--webpackPath`   | Path to webpack configuration.                         |
-| `--tsc`           | Force use `tsc` for compilation.                       |
+| Option            | Description                                                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `--path [path]`   | Path to `tsconfig` file. <br/>Alias `-p`                                                                                              |
+| `--config [path]` | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                                                |
+| `--watch`         | Run in watch mode (live-reload). If you're using `tsc` for compilation, you can type `rs` to restart the application. <br/>Alias `-w` |
+| `--webpack`       | Use webpack for compilation.                                                                                                          |
+| `--webpackPath`   | Path to webpack configuration.                                                                                                        |
+| `--tsc`           | Force use `tsc` for compilation.                                                                                                      |
 
 #### nest start
 
