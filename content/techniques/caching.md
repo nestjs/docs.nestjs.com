@@ -245,7 +245,7 @@ import { AppController } from './app.controller';
 
         return {
           store: store as unknown as CacheStore,
-          ttl: 60 * 60 * 24 * 7,  // 1 week
+          ttl: 3 * 60000,  // 3 minutes (milliseconds)
         };
       }
     })
