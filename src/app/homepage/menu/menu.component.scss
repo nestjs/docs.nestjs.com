@@ -85,3 +85,31 @@
     background: #151515;
   }
 }
+
+// Scroll bar
+nav.nav-container {
+  overflow-y: overlay;
+  overflow-x: hidden;
+  height: 100%;  
+}
+
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #dedede;
+}
+
+/* Chrome, Edge, and Safari */
+.nav-container::-webkit-scrollbar {
+  width: 5px;
+  position: inherit;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #dedede;
+  border-radius: 10px;
+}
