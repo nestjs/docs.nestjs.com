@@ -655,7 +655,7 @@ The construction above will instantiate `TypeOrmConfigService` inside `TypeOrmMo
 
 ```typescript
 @Injectable()
-class TypeOrmConfigService implements TypeOrmOptionsFactory {
+export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'mysql',
