@@ -2,6 +2,16 @@
 
 The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface tool that helps you to initialize, develop, and maintain your Nest applications. It assists in multiple ways, including scaffolding the project, serving it in development mode, and building and bundling the application for production distribution. It embodies best-practice architectural patterns to encourage well-structured apps.
 
+#### Requirements
+
+Nest CLI requires a node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
+
+```bash
+node -p process.versions.icu
+```
+
+If the command prints `undefined`, your node.js binary has no internationalization support.
+
 #### Installation
 
 **Note**: In this guide we describe using [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install packages, including the Nest CLI. Other package managers may be used at your discretion. With npm, you have several options available for managing how your OS command line resolves the location of the `nest` CLI binary file. Here, we describe installing the `nest` binary globally using the `-g` option. This provides a measure of convenience, and is the approach we assume throughout the documentation. Note that installing **any** `npm` package globally leaves the responsibility of ensuring they're running the correct version up to the user. It also means that if you have different projects, each will run the **same** version of the CLI. A reasonable alternative is to use the [npx](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) program, built into the `npm` cli (or similar features with other package managers) to ensure that you run a **managed version** of the Nest CLI. We recommend you consult the [npx documentation](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) and/or your DevOps support staff for more information.
