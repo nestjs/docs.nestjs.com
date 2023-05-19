@@ -8,6 +8,9 @@ Nest CLI requires a Node.js binary built with [internationalization support](htt
 
 ```bash
 node -p process.versions.icu
+```bash
+
+If the command prints `undefined`, your Node.js binary has no internationalization support.
 
 #### Installation
 
