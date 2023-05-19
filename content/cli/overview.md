@@ -4,7 +4,7 @@ The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface t
 
 #### Requirements
 
-Nest CLI requires a Node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
+Nest CLI requires a Node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [Node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
 
 ```bash
 node -p process.versions.icu
