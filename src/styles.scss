@@ -1,13 +1,11 @@
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
-
-@import './scss/hljs.scss';
-@import './scss/variables.scss';
-@import './scss/utils.scss';
+@use './scss/hljs';
+@use './scss/variables';
+@use './scss/utils';
 
 :root {
-  --docsearch-primary-color: $red-color;
-  --docsearch-highlight-color: $red-color;
-  --docsearch-logo-color: $red-color;
+  --docsearch-primary-color: variables.$red-color;
+  --docsearch-highlight-color: variables.$red-color;
+  --docsearch-logo-color: variables.$red-color;
   --docsearch-modal-background: #fafafa;
   --docsearch-searchbox-focus-background: transparent;
   --docsearch-searchbox-shadow: none;
@@ -20,7 +18,7 @@ body {
   font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
   background-color: #fdfdfd;
   font-display: swap;
-  color: $grey-color;
+  color: variables.$grey-color;
   margin: 0;
   -webkit-font-smoothing: antialiased;
 }
@@ -37,7 +35,7 @@ strong {
 hr {
   width: 40px;
   height: 4px;
-  background: $red-color;
+  background: variables.$red-color;
   border: 0;
   margin: 50px 0;
 }
@@ -58,7 +56,7 @@ blockquote {
     height: 100%;
     width: 4px;
     content: '';
-    background: $red-color;
+    background: variables.$red-color;
     display: block;
     position: absolute;
     top: 0;
@@ -69,7 +67,7 @@ blockquote {
   }
 
   strong {
-    color: $red-color;
+    color: variables.$red-color;
     &:first-of-type {
       display: block;
       text-transform: uppercase;
@@ -104,7 +102,7 @@ blockquote {
 figure {
   margin: 60px 30px;
   text-align: center;
-  @include media(medium) {
+  @include utils.media(medium) {
     margin: 60px 0;
   }
 
@@ -119,7 +117,7 @@ figure {
 }
 
 figcaption {
-  color: rgba($silver-color, 0.9);
+  color: rgba(variables.$silver-color, 0.9);
   font-size: 16px;
   margin: 20px 0;
 
@@ -134,7 +132,7 @@ table {
 }
 
 tr {
-  @include media(medium) {
+  @include utils.media(medium) {
     margin-bottom: 20px;
     display: block;
 
@@ -156,7 +154,7 @@ tr:nth-of-type(even) td {
 tr:nth-of-type(odd) td:first-of-type {
   border-right: 1px solid #f0f2f3;
 
-  @include media(medium) {
+  @include utils.media(medium) {
     border-right: 0;
     border-bottom: 1px solid #f0f2f3;
   }
@@ -164,7 +162,7 @@ tr:nth-of-type(odd) td:first-of-type {
 
 tr:nth-of-type(even) td:first-of-type {
   border-right: 1px solid #fff;
-  @include media(medium) {
+  @include utils.media(medium) {
     border-right: 0;
     border-bottom: 1px solid #fff;
   }
@@ -174,7 +172,7 @@ tr td {
   padding: 20px 30px;
   vertical-align: top;
 
-  @include media(medium) {
+  @include utils.media(medium) {
     display: block;
     padding: 20px;
   }
