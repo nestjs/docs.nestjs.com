@@ -71,11 +71,11 @@ describe('CatsService unit spec', () => {
   beforeAll(() => {
     const { unit, unitRef } = TestBed.create(CatsService)
       .mock(HttpService)
-      .use({ get: jest.fn() })
+      .using({ get: jest.fn() })
       .mock(Logger)
-      .use({ log: jest.fn() })
+      .using({ log: jest.fn() })
       .mock(CatsDal)
-      .use({ saveCats: jest.fn() })
+      .using({ saveCats: jest.fn() })
       .compile();
 
     underTest = unit;
