@@ -18,15 +18,15 @@ export class MenuComponent implements OnInit {
   isSidebarOpened = true;
   readonly items = [
     {
-      title: 'Introduction',
+      title: 'Introducción',
       isOpened: false,
       path: '/',
     },
     {
-      title: 'Overview',
+      title: 'Conceptos básicos',
       isOpened: true,
       children: [
-        { title: 'First steps', path: '/first-steps' },
+        { title: 'Primeros pasos', path: '/first-steps' },
         { title: 'Controllers', path: '/controllers' },
         { title: 'Providers', path: '/providers' },
         { title: 'Modules', path: '/modules' },
