@@ -12,8 +12,8 @@
   bottom: 0;
   top: 0;
   z-index: 1000;
-  overflow: hidden;
-
+  overflow: overlay;
+   
   &.opened {
     @include transform(translateX(0));
   }
@@ -84,32 +84,4 @@
   &:hover {
     background: #151515;
   }
-}
-
-// Scroll bar
-nav.nav-container {
-  overflow-y: overlay;
-  overflow-x: hidden;
-  height: 100%;  
-}
-
-/* Firefox */
-* {
-  scrollbar-width: auto;
-  scrollbar-color: #dedede;
-}
-
-/* Chrome, Edge, and Safari */
-.nav-container::-webkit-scrollbar {
-  width: 5px;
-  position: inherit;
-}
-
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: #dedede;
-  border-radius: 10px;
 }

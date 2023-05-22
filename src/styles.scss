@@ -321,3 +321,18 @@ tr td span.table-code-asterisk {
   z-index: 20000;
   background: rgba(0, 0, 0, 0.6);
 }
+
+// Scollbar sidebar
+
+app-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+app-menu:hover::-webkit-scrollbar-thumb {
+  background: #dedede;
+  border-radius: 10px;
+}
+
+app-menu::-webkit-scrollbar-thumb:hover {
+  -webkit-transition: #dedede 1s linear;
+}
