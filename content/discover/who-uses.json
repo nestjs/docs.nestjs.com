@@ -1,6 +1,11 @@
 {
   "Header": [
     {
+      "logo": "/assets/logo/asurion.png",
+      "url": "https://www.asurion.com/",
+      "width": "200px"
+    },
+    {
       "logo": "/assets/logo/roche-logo.png",
       "url": "https://roche.com",
       "width": "90px"
