@@ -10,14 +10,14 @@ is the section for you.
 
 Earlier in the docs we mentioned that "The `@Injectable()` decorator attaches
 metadata, which declares that `CatsService` is a class that can be managed by
-the Nest IoC container.". This is only a half truth. In reality, adding the
-provider to a module's `providers` array is what makes the provider able to be
-injected via the IoC container. What `@Injectable()` is doing is forcing
-TypeScript to emit metadata about the class's `constructor`, specifically the
-`design:paramtypes` metadata that will be read at start up. If there is an
-`@Inject()` decorator in the constructor, by technicality this does enough to
-make TypeScript emit all the same metadata. Take a look at the compiled
-JavaScript from the following TypeScript class:
+the Nest IoC (Inversion of Control) container.". This is only a half truth. In
+reality, adding the provider to a module's `providers` array is what makes the
+provider able to be injected via the IoC container. What `@Injectable()` is
+doing is forcing TypeScript to emit metadata about the class's `constructor`,
+specifically the `design:paramtypes` metadata that will be read at start up. If
+there is an `@Inject()` decorator in the constructor, by technicality this does
+enough to make TypeScript emit all the same metadata. Take a look at the
+compiled JavaScript from the following TypeScript class:
 
 ```typescript
 export class Foo {
