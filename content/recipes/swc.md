@@ -3,7 +3,7 @@
 [SWC](https://swc.rs/) (Speedy Web Compiler) is an extensible Rust-based platform that can be used for both compilation and bundling.
 Using SWC with Nest CLI is a great and simple way to significantly speed up your development process.
 
-> info **Hint** SWC is approximately **x10 times faster** than the default TypeScript compiler.
+> info **Hint** SWC is approximately **x20 times faster** than the default TypeScript compiler.
 
 #### Installation
 
