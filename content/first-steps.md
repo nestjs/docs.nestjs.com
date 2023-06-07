@@ -21,7 +21,7 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-> info **Hint** To create a new project with TypeScript's [strict](https://www.typescriptlang.org/tsconfig#strict) mode enabled, pass the `--strict` flag to the `nest new` command. 
+> info **Hint** To create a new project with TypeScript's [stricter](https://www.typescriptlang.org/tsconfig#strict) feature set, pass the `--strict` flag to the `nest new` command.
 
 The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
 
@@ -102,6 +102,8 @@ Once the installation process is complete, you can run the following command at 
 ```bash
 $ npm run start
 ```
+
+> info **Hint** To speed up the development process (x10 times faster rebuilds), you can use the [SWC builder](/recipes/swc) by passing the `-b swc` flag to the `start` script, as follows `npm run start -- -b swc`.
 
 This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
 

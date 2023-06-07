@@ -1,74 +1,157 @@
 ### SWC
 
-> warning **Warning** SWC isn't compatible with **NestJS CLI plugins**. If you're using a plugin, you should stick to `tsc` or `webpack` (`nest build` and `nest start`).
-
 [SWC](https://swc.rs/) (Speedy Web Compiler) is an extensible Rust-based platform that can be used for both compilation and bundling.
+Using SWC with Nest CLI is a great and simple way to significantly speed up your development process.
 
-> info **Hint** SWC is 20x faster than Babel on a single thread and 70x faster on four cores.
+> info **Hint** SWC is approximately **x10 times faster** than the default TypeScript compiler.
 
 #### Installation
 
 To get started, first install a few packages:
 
 ```bash
-$ npm i --save-dev @swc/cli @swc/core nodemon
+$ npm i --save-dev @swc/cli @swc/core
 ```
 
-Once the installation process is complete, let's create a new `.swcrc` file in the root directory of your application:
+#### Getting started
+
+Once the installation process is complete, you can use the `swc` builder with Nest CLI, as follows:
+
+```bash
+$ nest start -b swc
+# OR nest start --builder swc
+```
+
+> info **Hint** If your repository is a monorepo, check out [this section](/recipes/swc#monorepo).
+
+Instead of passing the `-b` flag you can also just set the `compilerOptions.builder` property to `"swc"` in your `nest-cli.json` file, like so:
+
+```json
+{
+  "compilerOptions": {
+    "builder": "swc"
+  }
+}
+```
+
+To run the application in watch mode, use the following command:
+
+```bash
+$ nest start -b swc -w
+# OR nest start --builder swc --watch
+```
+
+#### Type checking
+
+SWC does not perform any type checking itself (as opposed to the default TypeScript compiler), so to turn it on, you need to use the `--type-check` flag:
+
+```bash
+$ nest start -b swc --type-check
+```
+
+This command will instruct the Nest CLI to run `tsc` in `noEmit` mode alongside SWC, which will asynchronously perform type checking. Again, instead of passing the `--type-check` flag you can also just set the `compilerOptions.typeCheck` property to `true` in your `nest-cli.json` file, like so:
+
+```json
+{
+  "compilerOptions": {
+    "builder": "swc",
+    "typeCheck": true
+  }
+}
+```
+
+#### CLI Plugins (SWC)
+
+The `--type-check` flag will automatically execute **NestJS CLI plugins** and produce a serialized metadata file which then can be loaded by the application at runtime.
+
+#### SWC configuration
+
+SWC builder is pre-configured to match the requirements of NestJS applications. However, you can customize the configuration by creating a `.swcrc` file in the root directory and tweaking the options as you wish.
 
 ```json
 {
   "$schema": "https://json.schemastore.org/swcrc",
   "sourceMaps": true,
-  "module": {
-    "type": "commonjs"
-  },
   "jsc": {
-    "target": "es2017",
     "parser": {
       "syntax": "typescript",
       "decorators": true,
       "dynamicImport": true
     },
-    "transform": {
-      "legacyDecorator": true,
-      "decoratorMetadata": true
-    },
-    "keepClassNames": true,
     "baseUrl": "./"
   },
   "minify": false
 }
 ```
 
-#### Scripts
+#### Monorepo
 
-To make the development process easier, let's add a few scripts to the `package.json` file:
+If your repository is a monorepo, then instead of using `swc` builder you have to configure `webpack` to use `swc-loader`.
 
-```json
-{
-  "scripts": {
-    "build:swc": "npx swc --out-dir dist -w src",
-    "start:swc": "nodemon dist/main"
-  }
-}
-```
-
-> info **Hint** Both scripts are dedicated for development purposes only.
-
-Now, open up the terminal and run the follwoing command:
+First, let's install the required package:
 
 ```bash
-$ npm run build:swc
+$ npm i --save-dev swc-loader
 ```
 
-In another terminal window, run the following command:
+Once the installation is complete, create a `webpack.config.js` file in the root directory of your application with the following content:
+
+```js
+const swcDefaultConfig = require('@nestjs/cli/lib/compiler/defaults/swc-defaults').swcDefaultsFactory().swcOptions;
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'swc-loader',
+          options: swcDefaultConfig,
+        },
+      },
+    ],
+  },
+};
+```
+
+#### Monorepo and CLI plugins
+
+Now if you use CLI plugins, `swc-loader` will not load them automatically. Instead, you have to create a separate file that will load them manually. To do so,
+declare a `generate-metadata.ts` file near the `main.ts` file with the following content:
+
+```ts
+import { PluginMetadataGenerator } from '@nestjs/cli/lib/compiler/plugins';
+import { ReadonlyVisitor } from '@nestjs/swagger';
+
+const generator = new PluginMetadataGenerator();
+generator.generate({
+  visitors: [new ReadonlyVisitor({ introspectComments: true, pathToSource: __dirname })],
+  outputDir: __dirname,
+  watch: true,
+  tsconfigPath: 'tsconfig.build.json',
+});
+```
+
+> info **Hint** In this example we used `@nestjs/swagger` plugin, but you can use any plugin of your choice.
+
+The `generate()` method accepts the following options:
+
+|                    |                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------- |
+| `watch`            | Whether to watch the project for changes.                                                      |
+| `tsconfigPath`     | Path to the `tsconfig.json` file. Relative to the current working directory (`process.cwd()`). |
+| `outputDir`        | Path to the directory where the metadata file will be saved.                                   |
+| `visitors`         | An array of visitors that will be used to generate metadata.                                   |
+| `filename`         | The name of the metadata file. Defaults to `metadata.ts`.                                      |
+| `printDiagnostics` | Whether to print diagnostics to the console. Defaults to `true`.                               |
+
+Finally, you can run the `generate-metadata` script in a separate terminal window with the following command:
 
 ```bash
-$ npm run start:swc
+$ npx ts-node src/generate-metadata.ts
+# OR npx ts-node apps/{YOUR_APP}/src/generate-metadata.ts
 ```
-
-Every time you make a change to your application, the `build:swc` script will recompile your application and the `start:swc` script will restart the application.
 
 #### Common pitfalls
 
@@ -95,6 +178,28 @@ If your ORM does not provide a similar workaround, you can define the wrapper ty
  */
 export type WrapperType<T> = T; // WrapperType === Relation
 ```
+
+### Jest + SWC
+
+To use SWC with Jest, you need to install the following packages:
+
+```bash
+$ npm i --save-dev jest @swc/core @swc/jest
+```
+
+Once the installation is complete, update the `package.json`/`jest.config.js` file (depending on your configuration) with the following content:
+
+```json
+{
+  "jest": {
+    "transform": {
+      "^.+\\.(t|j)s?$": "@swc/jest"
+    }
+  }
+}
+```
+
+If you use NestJS CLI Plugins in your project, you'll have to run `PluginMetadataGenerator` manually. Navigate to [this section](/recipes/swc#monorepo-and-cli-plugins) to learn more.
 
 ### Vitest
 
