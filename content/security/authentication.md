@@ -477,9 +477,10 @@ providers: [
 
 With this in place, Nest will automatically bind `AuthGuard` to all endpoints.
 
-Now we must provide a mechanism for declaring routes as public. For this, we can create a custom decorator using the `SetMetadata` decorator factory function.
+Now we must provide a mechanism for declaring routes as public. For this, we can create a custom decorator using the `SetMetadata` decorator factory function. Create a folder named `decorators` under auth module, create a file named `public.decorators.ts` and update it as shown below
 
 ```typescript
+@@filename(public.decorators)
 import { SetMetadata } from '@nestjs/common';
 
 export const IS_PUBLIC_KEY = 'isPublic';
