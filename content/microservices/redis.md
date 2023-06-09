@@ -58,6 +58,10 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
     <td><code>retryDelay</code></td>
     <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
   </tr>
+   <tr>
+    <td><code>wildcards</code></td>
+    <td>Enables Redis wilcard subscriptions, instructing transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood. (default: <code>false</code>)</td>
+  </tr>
 </table>
 
 All the properties supported by the official [ioredis](https://luin.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
