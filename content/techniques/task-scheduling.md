@@ -100,7 +100,7 @@ Some sample cron patterns are:
   </tbody>
 </table>
 
-The `@nestjs/schedule` package provides a convenience enum with commonly used cron patterns. You can use this enum as follows:
+The `@nestjs/schedule` package provides a convenient enum with commonly used cron patterns. You can use this enum as follows:
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
