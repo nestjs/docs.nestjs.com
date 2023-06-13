@@ -483,8 +483,8 @@ The last required step is to add the now available health indicator in the requi
 
 ```typescript
 @@filename(health.controller)
-import { HealthCheckService } from '@nestjs/terminus';
-import { Injectable } from '@nestjs/common';
+import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
+import { Injectable, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()
@@ -503,8 +503,8 @@ export class HealthController {
   }
 }
 @@switch
-import { HealthCheckService } from '@nestjs/terminus';
-import { Injectable } from '@nestjs/common';
+import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
+import { Injectable, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()

@@ -228,6 +228,8 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'REPL', path: '/recipes/repl' },
         { title: 'CRUD generator', path: '/recipes/crud-generator' },
+        { title: 'SWC (fast compiler)', path: '/recipes/swc' },
+        { title: 'Passport (auth)', path: '/recipes/passport' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
@@ -241,7 +243,7 @@ export class MenuComponent implements OnInit {
         { title: 'Prisma', path: '/recipes/prisma' },
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
-        { title: 'Async Local Storage', path: '/recipes/async-local-storage' },
+        { title: 'Async local storage', path: '/recipes/async-local-storage' },
         { title: 'Automock', path: '/recipes/automock' },
       ],
     },
@@ -261,6 +263,15 @@ export class MenuComponent implements OnInit {
           title: 'Examples',
           externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
         },
+      ],
+    },
+    {
+      title: 'Devtools',
+      isNew: true,
+      isOpened: false,
+      children: [
+        { title: 'Overview', path: '/devtools/overview' },
+        { title: 'CI/CD integration', path: '/devtools/ci-cd-integration' },
       ],
     },
     {

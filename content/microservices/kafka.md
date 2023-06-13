@@ -112,6 +112,10 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
     <td><code>producerOnlyMode</code></td>
     <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
   </tr>
+  <tr>
+    <td><code>postfixId</code></td>
+    <td>Change suffix of clientId value (<code>string</code>)</td>
+  </tr>
 </table>
 
 #### Client
@@ -315,14 +319,16 @@ To access the original Kafka `IncomingMessage` object, use the `getMessage()` me
 @MessagePattern('hero.kill.dragon')
 killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
   const originalMessage = context.getMessage();
-  const { headers, partition, timestamp } = originalMessage;
+  const partition = context.getPartition();
+  const { headers, timestamp } = originalMessage;
 }
 @@switch
 @Bind(Payload(), Ctx())
 @MessagePattern('hero.kill.dragon')
 killDragon(message, context) {
   const originalMessage = context.getMessage();
-  const { headers, partition, timestamp } = originalMessage;
+  const partition = context.getPartition();
+  const { headers, timestamp } = originalMessage;
 }
 ```
 
@@ -367,7 +373,7 @@ The Kafka microservice components append a description of their respective role 
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(AppModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {
@@ -437,8 +443,9 @@ Committing offsets is essential when working with Kafka. Per default, messages w
 async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
   // business logic
   
-  const originalMessage = context.getMessage();
-  const { topic, partition, offset } = originalMessage;
+  const { offset } = context.getMessage();
+  const partition = context.getPartition();
+  const topic = context.getTopic();
   await this.client.commitOffsets([{ topic, partition, offset }])
 }
 @@switch
@@ -447,8 +454,9 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
 async handleUserCreated(data, context) {
   // business logic
 
-  const originalMessage = context.getMessage();
-  const { topic, partition, offset } = originalMessage;
+  const { offset } = context.getMessage();
+  const partition = context.getPartition();
+  const topic = context.getTopic();
   await this.client.commitOffsets([{ topic, partition, offset }])
 }
 ```

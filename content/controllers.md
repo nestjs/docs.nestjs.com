@@ -37,7 +37,7 @@ export class CatsController {
 }
 ```
 
-> info **Hint** To create a controller using the CLI, simply execute the `$ nest g controller cats` command.
+> info **Hint** To create a controller using the CLI, simply execute the `$ nest g controller [name]` command.
 
 The `@Get()` HTTP request method decorator before the `findAll()` method tells Nest to create a handler for a specific endpoint for HTTP requests. The endpoint corresponds to the HTTP request method (GET in this case) and the route path. What is the route path? The route path for a handler is determined by concatenating the (optional) prefix declared for the controller, and any path specified in the method's decorator. Since we've declared a prefix for every route ( `cats`), and haven't added any path information in the decorator, Nest will map `GET /cats` requests to this handler. As mentioned, the path includes both the optional controller path prefix **and** any path string declared in the request method decorator. For example, a path prefix of `cats` combined with the decorator `@Get('breed')` would produce a route mapping for requests like `GET /cats/breed`.
 
@@ -67,7 +67,7 @@ This method will return a 200 status code and the associated response, which in 
 
 > warning **Warning** Nest detects when the handler is using either `@Res()` or `@Next()`, indicating you have chosen the library-specific option. If both approaches are used at the same time, the Standard approach is **automatically disabled** for this single route and will no longer work as expected. To use both approaches at the same time (for example, by injecting the response object to only set cookies/headers but still leave the rest to the framework), you must set the `passthrough` option to `true` in the `@Res({{ '{' }} passthrough: true {{ '}' }})` decorator.
 
-<app-banner-enterprise></app-banner-enterprise>
+<app-banner-devtools></app-banner-devtools>
 
 #### Request object
 
@@ -273,7 +273,7 @@ Routes with static paths won't work when you need to accept **dynamic data** as 
 ```typescript
 @@filename()
 @Get(':id')
-findOne(@Param() params): string {
+findOne(@Param() params: any): string {
   console.log(params.id);
   return `This action returns a #${params.id} cat`;
 }

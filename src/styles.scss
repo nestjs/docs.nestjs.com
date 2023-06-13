@@ -5,7 +5,12 @@
 @import './scss/utils.scss';
 
 :root {
-  // scroll-behavior: smooth;
+  --docsearch-primary-color: #ed2945;
+  --docsearch-highlight-color: #ed2945;
+  --docsearch-logo-color: #ed2945;
+  --docsearch-modal-background: #fafafa;
+  --docsearch-searchbox-focus-background: transparent;
+  --docsearch-searchbox-shadow: none;
 }
 
 body {
@@ -103,10 +108,13 @@ figure {
     margin: 60px 0;
   }
 
-  img {
+  img, iframe {
     max-width: 100%;
-    height: auto;
     box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  img {
+    height: auto;
   }
 }
 
@@ -707,4 +715,14 @@ perfect-scrollbar.ps-show-active.ps-show-limits
       background: transparent;
     }
   }
+}
+
+.DocSearch-Modal {
+  margin-top: 120px;
+  border-radius: 3px;
+}
+
+.DocSearch-Container {
+  z-index: 20000;
+  background: rgba(0, 0, 0, 0.6);
 }

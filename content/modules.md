@@ -99,7 +99,7 @@ export class CatsModule {}
 
 Now any module that imports the `CatsModule` has access to the `CatsService` and will share the same instance with all other modules that import it as well.
 
-<app-banner-enterprise></app-banner-enterprise>
+<app-banner-devtools></app-banner-devtools>
 
 #### Module re-exporting
 

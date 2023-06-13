@@ -198,6 +198,11 @@
     {
       "logo": "/assets/logo/amplication.svg",
       "url": "https://amplication.com"
+    },
+    {
+      "logo": "/assets/logo/hingehealth.png",
+      "url": "https://hingehealth.com",
+      "width": "120px"
     }
   ],
   "Body": [
@@ -272,6 +277,8 @@
     "https://evershop.io",
     "https://e-design.ca",
     "https://growthmill.com",
-    "https://tarken.com.br"
+    "https://tarken.com.br",
+    "https://remato.com",
+    "https://remberg.de/en"
   ]
 }

@@ -18,7 +18,6 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/bull bull
-$ npm install --save-dev @types/bull
 ```
 
 Once the installation process is complete, we can import the `BullModule` into the root `AppModule`.
@@ -100,8 +99,8 @@ With this in place, you can now point to this configuration in the `registerQueu
 
 ```typescript
 BullModule.registerQueue({
-  configKey: 'alternative-queue'
-  name: 'video',
+  configKey: 'alternative-config',
+  name: 'video'
 });
 ```
 
@@ -241,6 +240,8 @@ You can designate that a job handler method will handle **only** jobs of a certa
 async transcode(job: Job<unknown>) { ... }
 ```
 
+> warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({{ '{' }} concurrency: 1 {{ '}' }})` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
+
 #### Request-scoped consumers
 
 When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
@@ -269,7 +270,7 @@ Bull generates a set of useful events when queue and/or job state changes occur.
 Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
-import { Processor, Process } from '@nestjs/bull';
+import { Processor, Process, OnQueueActive } from '@nestjs/bull';
 import { Job } from 'bull';
 
 @Processor('audio')
@@ -427,7 +428,7 @@ BullModule.forRootAsync({
   useFactory: async (configService: ConfigService) => ({
     redis: {
       host: configService.get('QUEUE_HOST'),
-      port: +configService.get('QUEUE_PORT'),
+      port: configService.get('QUEUE_PORT'),
     },
   }),
   inject: [ConfigService],

@@ -183,6 +183,7 @@ That nicely handles passing an `options` object to our dynamic module. How do we
 import { Injectable } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import * as path from 'path';
 import { EnvConfig } from './interfaces';
 
 @Injectable()
@@ -236,6 +237,7 @@ Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider int
 ```typescript
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import * as path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
 import { EnvConfig } from './interfaces';
 

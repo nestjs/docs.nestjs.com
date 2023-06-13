@@ -12,10 +12,10 @@ Start by installing the required packages:
 
 ```bash
 # For Express and Apollo (default)
-$ npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
+$ npm i @nestjs/graphql @nestjs/apollo @apollo/server graphql
 
 # For Fastify and Apollo
-# npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-fastify
+# npm i @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/fastify graphql
 
 # For Fastify and Mercurius
 # npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
@@ -69,7 +69,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      debug: false,
       playground: false,
     }),
   ],
@@ -101,7 +100,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> warning **Warning** If you use the `apollo-server-fastify` package with multiple GraphQL endpoints in a single application, make sure to enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
+> warning **Warning** If you use the `@apollo/server` with `@as-integrations/fastify` package with multiple GraphQL endpoints in a single application, make sure to enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
 
 #### Code first
 
@@ -234,7 +233,7 @@ To use [Apollo Sandbox](https://www.apollographql.com/blog/announcement/platform
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [

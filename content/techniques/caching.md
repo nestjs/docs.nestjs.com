@@ -4,13 +4,11 @@ Caching is a great and simple **technique** that helps improve your app's perfor
 
 #### Installation
 
-First install [required packages](https://github.com/node-cache-manager/node-cache-manager):
+First install required packages:
 
 ```bash
-$ npm install cache-manager
+$ npm install @nestjs/cache-manager cache-manager
 ```
-
-> info **Hint**  As of version `>=9.2.1`, NestJS is compatible with both `cache-manager` v4 and v5.
 
 > warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
 > * If using `cache-manager` v4, provide ttl in seconds
@@ -24,7 +22,8 @@ Nest provides a unified API for various cache storage providers. The built-in on
 In order to enable caching, import the `CacheModule` and call its `register()` method.
 
 ```typescript
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 
 @Module({
@@ -42,7 +41,7 @@ To interact with the cache manager instance, inject it to your class using the `
 constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 ```
 
-> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/common` package.
+> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/cache-manager` package.
 
 The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `null` will be returned.
 
@@ -105,7 +104,8 @@ export class AppController {
 To reduce the amount of required boilerplate, you can bind `CacheInterceptor` to all endpoints globally:
 
 ```typescript
-import { CacheModule, Module, CacheInterceptor } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
@@ -158,7 +158,7 @@ export class AppController {
 }
 ```
 
-> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/common` package.
+> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/cache-manager` package.
 
 The `@CacheKey()` decorator may be used with or without a corresponding `@CacheTTL()` decorator and vice versa. One may choose to override only the `@CacheKey()` or only the `@CacheTTL()`. Settings that are not overridden with a decorator will use the default values as registered globally (see [Customize caching](https://docs.nestjs.com/techniques/caching#customize-caching)).
 
@@ -228,7 +228,8 @@ This service takes advantage of [cache-manager](https://github.com/node-cache-ma
 ```typescript
 import type { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 
 @Module({
