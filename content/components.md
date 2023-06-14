@@ -15,14 +15,15 @@ Let's start by creating a simple `CatsService`. This service will be responsible
 ```typescript
 @@filename(cats.service)
 import { Injectable } from '@nestjs/common';
+import { CreateCatDto } from './dto/create-cat.dto';
 import { Cat } from './interfaces/cat.interface';
 
 @Injectable()
 export class CatsService {
   private readonly cats: Cat[] = [];
 
-  create(cat: Cat) {
-    this.cats.push(cat);
+  create(createCatDto: CreateCatDto) {
+    this.cats.push({...createCatDto});
   }
 
   findAll(): Cat[] {
