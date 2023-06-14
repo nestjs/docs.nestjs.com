@@ -9,6 +9,22 @@ To begin using it, we first install the required dependency.
 ```bash
 $ npm install --save @nestjs/swagger
 ```
+Include the plugin `@nestjs/swagger` in the compiler option in the `nest-cli.json` file:
+```json
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "introspectComments": true
+        }
+      }
+    ]
+  }
+}
+```
+
 
 #### Bootstrap
 
