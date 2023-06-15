@@ -1,8 +1,8 @@
 ### Migration guide
 
 This article provides a set of guidelines for migrating from Nest version 9 to version 10.
-To learn more about the new features we've added in v10, check out this [article](https://trilon.io/blog/nestjs-10-is-now-available).
-There were some very minor breaking changes that shouldn't affect most users - you can find the full list of them [here](https://github.com/nestjs/nest/pull/11517).
+To learn more about the new features we've added in v10, check out this (_ARTICLE AVAILABLE SOON_).
+There were some very minor breaking changes that shouldn't affect most users - you can find the full list of them [here](https://github.com/nestjs/nest/releases/tag/v10.0.0).
 
 ### Cache module
 
