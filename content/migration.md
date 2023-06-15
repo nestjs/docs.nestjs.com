@@ -1,105 +1,25 @@
 ### Migration guide
 
-This article provides a set of guidelines for migrating from Nest version 8 to version 9.
-To learn more about the new features we've added in v9, check out this [link](https://github.com/nestjs/nest/pull/9588).
+This article provides a set of guidelines for migrating from Nest version 9 to version 10.
+To learn more about the new features we've added in v10, check out this [article](https://trilon.io/blog/nestjs-10-is-now-available).
+There were some very minor breaking changes that shouldn't affect most users - you can find the full list of them [here](https://github.com/nestjs/nest/pull/11517).
 
-#### Redis strategy (microservices)
+### Cache module
 
-[Redis](/microservices/redis) strategy uses the [ioredis](https://github.com/luin/ioredis) driver instead of `redis` now.
-
-```typescript
-// Before
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-  AppModule,
-  {
-    transport: Transport.REDIS,
-    options: {
-      url: 'redis://localhost:6379',
-    },
-  },
-);
-
-// Now
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-  AppModule,
-  {
-    transport: Transport.REDIS,
-    options: {
-      host: 'localhost',
-      port: 6379,
-    },
-  },
-);
-```
-
-Also, make sure to install the `ioredis` package:
-
-```bash
-$ npm i ioredis
-```
-
-#### gRPC client interceptors
-
-In the previous version, the `interceptors` configuration property was exposed in the wrong location. In v9, make sure to pass `interceptors` as part of the `channelOptions` object, see example [here](https://github.com/nestjs/nest/issues/9079#issuecomment-1078744758).
-
-#### Testing module
-
-Previously, if you wanted to supply the configuration object to the `TestingModule#createNestApplication` method, and if you were using the default HTTP driver (express), you had to do this as follows:
-
-```typescript
-app = moduleFixture.createNestApplication<NestExpressApplication>(undefined, {
-  rawBody: true,
-});
-```
-
-In v9, you can skip the first argument (`undefined`):
-
-```typescript
-app = moduleFixture.createNestApplication<NestExpressApplication>({
-  rawBody: true,
-});
-```
-
-#### Kafka message/event handlers
-
-Previously, Kafka message and event handlers were receiving payloads as wrapped Kafka messages with `key`, `value`, `headers`, and a few other properties. In v9, those payloads are automatically unwrapped and your handlers will only receive the `value` attribute's value. To retrieve the original Kafka message, you can use the `KafkaContext` object (read more [here](/microservices/kafka#context)).
-
-```typescript
-// Before
-@MessagePattern('hero.kill.dragon')
-killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
-  console.log(`Dragon ID: ${message.value.dragonId}`);
-}
-
-// Now
-@MessagePattern('hero.kill.dragon')
-killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
-  console.log(`Dragon ID: ${message.dragonId}`);
-  // Original message: "context.getMessage()"
-}
-```
-
-#### Kafka retriable errors
-
-In v9, we introduced the **[Retriable exceptions](/microservices/kafka#retriable-exceptions)** feature. Note: for event handlers (**event-based communication**) all unhandled exceptions become "retriable exceptions" by default, and so they will be auto-delivered.
-
-#### Fastify
-
-Fastify has been upgraded to v4. Also, all of the core Fastify plugins that were prefixed with `fastify-` are now renamed and published under the `@fastify` scope (for example, `fastify-cookie` becomes `@fastify/cookie`, `fastify-helmet` becomes `@fastify/helmet`, etc.). Read more [here](https://github.com/fastify/fastify/issues/3856).
-
-#### `@nestjs/swagger` package
-
-There are a few minor breaking changes in the `@nestjs/swagger` package (`swagger-ui-express` and `fastify-swagger` packages are no longer required). See this [PR](https://github.com/nestjs/swagger/pull/1886) for more details.
+The `CacheModule` has been removed from the `@nestjs/common` package and is now available as a standalone package - `@nestjs/cache-manager`. This change was made to avoid unnecessary dependencies in the `@nestjs/common` package. You can learn more about the `@nestjs/cache-manager` package [here](https://docs.nestjs.com/techniques/caching).
 
 #### Deprecations
 
-All deprecated methods & modules have been removed (e.g., the deprecated `listenAsync()` method).
+All deprecated methods & modules have been removed.
 
-#### Node.js
+### CLI Plugins and TypeScript >= 4.8
 
-This release drops support for Node v10. We strongly recommend using the latest LTS version.
+NestJS CLI Plugins (available for `@nestjs/swagger` and `@nestjs/graphql` packages) will now require TypeScript >= v4.8 and so older versions of TypeScript will no longer be supported. The reason for this change is that in [TypeScript v4.8 introduced several breaking changes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-8.html#decorators-are-placed-on-modifiers-on-typescripts-syntax-trees) in its Abstract Syntax Tree (AST) which we use to auto-generate OpenAPI and GraphQL schemas.
 
-#### CLI
+### Dropping support for Node.js v12
 
-Due to stability issues, the command `update` was removed in the v9 of `@nestjs/cli`.  
-You can use dedicated tools like [`ncu`](https://www.npmjs.com/package/npm-check-updates), `npm update`, [`yarn upgrade-interactive`](https://classic.yarnpkg.com/en/docs/cli/upgrade-interactive), etc., if you want to upgrade your dependencies.
+As of NestJS 10, we no longer support Node.js v12, as [v12 went EOL](https://twitter.com/nodejs/status/1524081123579596800) on April 30, 2022. This means that NestJS 10 requires Node.js v16 or higher. This decision was made to allow us to finally set target to `ES2021` in our TypeScript configuration, instead of shipping polyfills as we did in the past.
+
+From now on, every official NestJS package will be compiled to `ES2021` by default, which should result in a smaller library size and sometimes even (slightly) better performance.
+
+We also strongly recommend using the latest LTS version.
