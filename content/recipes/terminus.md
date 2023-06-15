@@ -88,7 +88,7 @@ export class HealthController {
   }
 }
 @@switch
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Dependencies, Get } from '@nestjs/common';
 import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
 
 @Controller('health')
@@ -484,7 +484,7 @@ The last required step is to add the now available health indicator in the requi
 ```typescript
 @@filename(health.controller)
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
-import { Injectable, Get } from '@nestjs/common';
+import { Injectable, Dependencies, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()
