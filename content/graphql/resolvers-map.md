@@ -26,7 +26,7 @@ In this case, using the code first approach, we define schemas using TypeScript 
 ```typescript
 @@filename(authors/models/author.model)
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Post } from './post';
+import { Post } from '../../posts/models/post.model';
 
 @ObjectType()
 export class Author {
@@ -581,13 +581,12 @@ Assuming that we use the schema first approach and have enabled the typings gene
 
 ```typescript
 @@filename(graphql)
-export class Author {
+export (class Author {
   id: number;
   firstName?: string;
   lastName?: string;
   posts?: Post[];
-}
-
+})
 export class Post {
   id: number;
   title: string;
