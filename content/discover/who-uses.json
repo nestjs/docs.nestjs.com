@@ -203,11 +203,6 @@
       "logo": "/assets/logo/hingehealth.png",
       "url": "https://hingehealth.com",
       "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/uninterrupted.svg",
-      "url": "https://uninterrupted.tech",
-      "width": "130px"
     }
   ],
   "Body": [
@@ -284,6 +279,7 @@
     "https://growthmill.com",
     "https://tarken.com.br",
     "https://remato.com",
-    "https://remberg.de/en"
+    "https://remberg.de/en",
+    "https://uninterrupted.tech"
   ]
 }
