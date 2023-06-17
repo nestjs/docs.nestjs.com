@@ -193,9 +193,31 @@ Once the installation is complete, update the `package.json`/`jest.config.js` fi
 {
   "jest": {
     "transform": {
-      "^.+\\.(t|j)s?$": "@swc/jest"
+      "^.+\\.(t|j)s?$": ["@swc/jest"]
     }
   }
+}
+```
+
+Additionally you would need to add the following `transform` properties to your `.swcrc` file: `legacyDecorator`, `decoratorMetadata`:
+
+```json
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "sourceMaps": true,
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "baseUrl": "./"
+  },
+  "minify": false
 }
 ```
 
