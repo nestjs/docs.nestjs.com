@@ -27,6 +27,7 @@ A health check represents a summary of **health indicators**. A health indicator
 - `MongooseHealthIndicator`
 - `SequelizeHealthIndicator`
 - `MikroOrmHealthIndicator`
+- `PrismaHealthIndicator`
 - `MicroserviceHealthIndicator`
 - `GRPCHealthIndicator`
 - `MemoryHealthIndicator`
