@@ -6,7 +6,7 @@ There were some very minor breaking changes that shouldn't affect most users - y
 
 ### Upgrading Packages
 
-The Nest CLI does not include an `update` command. While you can upgrade your packages manually, we recommend using [ncu (npm check updates)](https://npmjs.com/package/npm-check-updates).
+While you can upgrade your packages manually, we recommend using [ncu (npm check updates)](https://npmjs.com/package/npm-check-updates).
 
 ### Cache module
 
