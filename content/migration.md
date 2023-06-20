@@ -4,6 +4,10 @@ This article provides a set of guidelines for migrating from Nest version 9 to v
 To learn more about the new features we've added in v10, check out this (_ARTICLE AVAILABLE SOON_).
 There were some very minor breaking changes that shouldn't affect most users - you can find the full list of them [here](https://github.com/nestjs/nest/releases/tag/v10.0.0).
 
+### Upgrading packages
+
+While you can upgrade your packages manually, we recommend using [ncu (npm check updates)](https://npmjs.com/package/npm-check-updates).
+
 ### Cache module
 
 The `CacheModule` has been removed from the `@nestjs/common` package and is now available as a standalone package - `@nestjs/cache-manager`. This change was made to avoid unnecessary dependencies in the `@nestjs/common` package. You can learn more about the `@nestjs/cache-manager` package [here](https://docs.nestjs.com/techniques/caching).
