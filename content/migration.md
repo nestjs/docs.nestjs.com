@@ -4,7 +4,7 @@ This article provides a set of guidelines for migrating from Nest version 9 to v
 To learn more about the new features we've added in v10, check out this (_ARTICLE AVAILABLE SOON_).
 There were some very minor breaking changes that shouldn't affect most users - you can find the full list of them [here](https://github.com/nestjs/nest/releases/tag/v10.0.0).
 
-### Upgrading Packages
+### Upgrading packages
 
 While you can upgrade your packages manually, we recommend using [ncu (npm check updates)](https://npmjs.com/package/npm-check-updates).
 
