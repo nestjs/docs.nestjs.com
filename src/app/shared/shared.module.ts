@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { BannerCoursesAuthComponent } from './components/banner-courses-auth/banner-courses-auth.component';
 import { BannerCoursesGraphQLCodeFirstComponent } from './components/banner-courses-graphql-cf/banner-courses-graphql-cf.component';
 import { BannerDevtoolsComponent } from './components/banner-devtools/banner-devtools.component';
@@ -12,7 +13,7 @@ import { HeaderAnchorDirective } from './directives/header-anchor.directive';
 import { ExtensionPipe } from './pipes/extension.pipe';
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [CommonModule, PerfectScrollbarModule],
   declarations: [
     ExtensionPipe,
     TabsComponent,
