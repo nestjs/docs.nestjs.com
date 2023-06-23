@@ -61,6 +61,14 @@ While the application is running, open your browser and navigate to `http://loca
 As you can see, the `SwaggerModule` automatically reflects all of your endpoints.
 
 > info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> It is also possible to expose it on a route of your choice using only the setup method from `@nestjs/swagger`, like this:
+> ```typescript
+> SwaggerModule.setup('swagger', app, document, {
+>   jsonDocumentUrl: 'swagger/json',
+> });
+> ```
+> Which would expose it at `http://localhost:3000/swagger/json`
+
 
 > warning **Warning** When using `fastify` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as shown below:
 >
