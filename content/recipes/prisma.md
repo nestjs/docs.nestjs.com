@@ -88,7 +88,7 @@ Now, open up `.env` and adjust the `DATABASE_URL` environment variable to look a
 DATABASE_URL="file:./dev.db"
 ```
 
-Make sure [you have a ConfigModule configured](https://docs.nestjs.com/techniques/configuration), otherwise the `DATABASE_URL` variable will not be picked up from `.env`.
+Make sure you have a [ConfigModule](https://docs.nestjs.com/techniques/configuration) configured, otherwise the `DATABASE_URL` variable will not be picked up from `.env`.
 
 SQLite databases are simple files; no server is required to use a SQLite database. So instead of configuring a connection URL with a _host_ and _port_, you can just point it to a local file which in this case is called `dev.db`. This file will be created in the next step.
 
