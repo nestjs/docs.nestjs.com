@@ -1,6 +1,4 @@
-### Plugins
-
-#### For `@nestjs/apollo` driver
+### Plugins with Apollo
 
 Plugins enable you to extend Apollo Server's core functionality by performing custom operations in response to certain events. Currently, these events correspond to individual phases of the GraphQL request lifecycle, and to the startup of Apollo Server itself (read more [here](https://www.apollographql.com/docs/apollo-server/integrations/plugins/)). For example, a basic logging plugin might log the GraphQL query string associated with each request that's sent to Apollo Server.
 
@@ -49,13 +47,13 @@ GraphQLModule.forRoot({
 
 > info **Hint** The `ApolloServerOperationRegistry` plugin is exported from the `@apollo/server-plugin-operation-registry` package.
 
-#### For `@nestjs/mercurius` driver
+#### Plugins with Mercurius
 
-Some mercurius specific fastify plugins have to be loaded after the mercurius plugin (read more [here](https://mercurius.dev/#/docs/plugins)) on the plugin tree.
+Some of the existing mercurius-specific Fastify plugins must be loaded after the mercurius plugin (read more [here](https://mercurius.dev/#/docs/plugins)) on the plugin tree.
 
 > warning **Warning** [mercurius-upload](https://github.com/mercurius-js/mercurius-upload) is an exception and should be registered in the main file.
 
-There is an optional `plugins` array parameter inside the `MercuriusDriver`, this array takes an object with the plugin function on the `plugin` parameter and its options inside an optional `options` parameter. Therefore, registering the [cache plugin](https://github.com/mercurius-js/cache) would be as follows:
+For this, `MercuriusDriver` exposes an optional `plugins` configuration option. It represents an array of objects that consist of two attributes: `plugin` and its `options`. Therefore, registering the [cache plugin](https://github.com/mercurius-js/cache) would look like this:
 
 ```typescript
 GraphQLModule.forRoot({
