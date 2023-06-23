@@ -114,3 +114,44 @@ $ npm run start:dev
 ```
 
 This command will watch your files, automatically recompiling and reloading the server.
+
+#### Linting and formatting
+
+[Nest CLI](/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [eslint](https://eslint.org/) and [prettier](https://prettier.io/)).
+
+> info **Hint** Not sure about the role of formatters VS linters ? Learn the difference [here](https://prettier.io/docs/en/comparison.html).
+
+##### IDE usage
+
+To ensure maximum stability and extensibility, we use the base [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
+
+> warning **Warning** A Nest project is not using the [~~`prettier-eslint`~~](https://github.com/prettier/prettier-eslint) package, do not expect compatibility with extensions using it.
+
+##### Scripted usage
+
+For headless environments where an IDE is not relevant (*Continuous Integration*, *Git hooks*, ...), a Nest project comes with ready-to-use `npm` scripts.
+
+```bash
+# Lint and autofix with eslint
+npm run lint
+# Format with prettier
+npm run format
+```
+
+##### Plugins and config
+
+A Nest cli scaffolded project uses
+
+- [`eslint-plugin-prettier`](https://github.com/prettier/eslint-plugin-prettier) to remove conflicting rules from `eslint` for use with `prettier`.
+- [`@typescript-eslint/plugin`](https://github.com/typescript-eslint/typescript-eslint/tree/main/packages/eslint-plugin) to enable Typescript linting
+
+> info **Hint** You can learn more about the behavior of `eslint-plugin-prettier` in its [documentation](https://github.com/prettier/eslint-plugin-prettier#recommended-configuration) and discover the actual configuration inside generated [`.eslintrc.js`](https://github.com/nestjs/typescript-starter/blob/master/.eslintrc.js) file
+
+##### Code style
+
+With this stack setup, by default we ensure the resulting code follows:
+
+- Typescript eslint [recommended rules](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/configs/recommended.ts)
+- Improved with some [rules in `.eslintrc.js` file](https://github.com/nestjs/typescript-starter/blob/master/.eslintrc.js)
+- Prettier [default options](https://prettier.io/docs/en/options.html)
+- Improved with some [options in `.prettierrc` file](https://github.com/nestjs/typescript-starter/blob/master/.prettierrc)
