@@ -457,8 +457,6 @@ import { validate } from './env.validation';
 export class AppModule {}
 ```
 
-<app-banner-shop></app-banner-shop>
-
 #### Custom getter functions
 
 `ConfigService` defines a generic `get()` method to retrieve a configuration value by key. We may also add `getter` functions to enable a little more natural coding style:

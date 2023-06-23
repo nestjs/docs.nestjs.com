@@ -288,10 +288,10 @@ export class MenuComponent implements OnInit {
       isOpened: false,
       children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
     },
-    {
-      title: 'T-Shirts and Hoodies',
-      externalUrl: 'https://nestjs.threadless.com/',
-    },
+    // {
+    //   title: 'T-Shirts and Hoodies',
+    //   externalUrl: 'https://nestjs.threadless.com/',
+    // },
     {
       title: 'Support us',
       isOpened: false,
