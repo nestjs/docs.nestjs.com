@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { BannerCoursesAuthComponent } from './components/banner-courses-auth/banner-courses-auth.component';
 import { BannerCoursesGraphQLCodeFirstComponent } from './components/banner-courses-graphql-cf/banner-courses-graphql-cf.component';
-import { BannerCoursesGraphQLSchemaFirstComponent } from './components/banner-courses-graphql-sf/banner-courses-graphql-sf.component';
+import { BannerDevtoolsComponent } from './components/banner-devtools/banner-devtools.component';
 import { BannerCoursesComponent } from './components/banner-courses/banner-courses.component';
 import { BannerEnterpriseComponent } from './components/banner-enterprise/banner-enterprise.component';
 import { BannerShopComponent } from './components/banner-shop/banner-shop.component';
@@ -23,7 +23,7 @@ import { ExtensionPipe } from './pipes/extension.pipe';
     BannerEnterpriseComponent,
     BannerShopComponent,
     BannerCoursesGraphQLCodeFirstComponent,
-    BannerCoursesGraphQLSchemaFirstComponent,
+    BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
   ],
   exports: [
@@ -35,7 +35,7 @@ import { ExtensionPipe } from './pipes/extension.pipe';
     BannerEnterpriseComponent,
     BannerShopComponent,
     BannerCoursesGraphQLCodeFirstComponent,
-    BannerCoursesGraphQLSchemaFirstComponent,
+    BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
   ],
 })

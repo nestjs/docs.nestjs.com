@@ -6,9 +6,7 @@ import { openCloseAnimation } from '../../../common';
   templateUrl: './menu-item.component.html',
   styleUrls: ['./menu-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    openCloseAnimation
-  ]
+  animations: [openCloseAnimation],
 })
 export class MenuItemComponent {
   @Input() isOpen = false;
@@ -17,6 +15,7 @@ export class MenuItemComponent {
   @Input() title: string;
   @Input() icon: string;
   @Input() externalUrl: string;
+  @Input() isNew?: boolean;
 
   toggle() {
     this.isOpen = !this.isOpen;

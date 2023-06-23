@@ -31,22 +31,29 @@ In addition, you can define hierarchical structures. This means each module can 
 The children modules will inherit their parent's prefix. In the following example, we'll register the `AdminModule` as a parent module of `DashboardModule` and `MetricsModule`.
 
 ```typescript
-RouterModule.register([
-  {
-    path: 'admin',
-    module: AdminModule,
-    children: [
+@Module({
+  imports: [
+    AdminModule,
+    DashboardModule,
+    MetricsModule,
+    RouterModule.register([
       {
-        path: 'dashboard',
-        module: DashboardModule,
+        path: 'admin',
+        module: AdminModule,
+        children: [
+          {
+            path: 'dashboard',
+            module: DashboardModule,
+          },
+          {
+            path: 'metrics',
+            module: MetricsModule,
+          },
+        ],
       },
-      {
-        path: 'metrics',
-        module: MetricsModule,
-      },
-    ],
-  },
-]);
+    ])
+  ],
+});
 ```
 
 > info **Hint** This feature should be used very carefully, as overusing it can make code difficult to maintain over time.

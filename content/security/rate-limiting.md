@@ -9,7 +9,7 @@ $ npm i --save @nestjs/throttler
 Once the installation is complete, the `ThrottlerModule` can be configured as any other Nest package with `forRoot` or `forRootAsync` methods.
 
 ```typescript
-@@filename(app.module.ts)
+@@filename(app.module)
 @Module({
   imports: [
     ThrottlerModule.forRoot({

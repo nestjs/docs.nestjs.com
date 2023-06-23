@@ -71,3 +71,13 @@ In order to resolve circular dependencies between modules, use the same `forward
 })
 export class CommonModule {}
 ```
+
+That covers one side of the relationship. Now let's do the same with `CatsModule`:
+
+```typescript
+@@filename(cats.module)
+@Module({
+  imports: [forwardRef(() => CommonModule)],
+})
+export class CatsModule {}
+```

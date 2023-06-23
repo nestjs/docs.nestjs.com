@@ -62,7 +62,7 @@ Once we have installed `@nestjs/terminus`, imported our `TerminusModule` and cre
 The `HTTPHealthIndicator` requires the `@nestjs/axios` package so make sure to have it installed:
 
 ```bash
-$ npm i --save @nestjs/axios
+$ npm i --save @nestjs/axios axios
 ```
 
 Now we can setup our `HealthController`:
@@ -88,7 +88,7 @@ export class HealthController {
   }
 }
 @@switch
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Dependencies, Get } from '@nestjs/common';
 import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
 
 @Controller('health')
@@ -483,8 +483,8 @@ The last required step is to add the now available health indicator in the requi
 
 ```typescript
 @@filename(health.controller)
-import { HealthCheckService } from '@nestjs/terminus';
-import { Injectable } from '@nestjs/common';
+import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
+import { Injectable, Dependencies, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()
@@ -503,8 +503,8 @@ export class HealthController {
   }
 }
 @@switch
-import { HealthCheckService } from '@nestjs/terminus';
-import { Injectable } from '@nestjs/common';
+import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
+import { Injectable, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()

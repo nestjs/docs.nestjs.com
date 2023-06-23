@@ -192,6 +192,13 @@ const routes: Routes = [
             (m) => m.OpenApiModule,
           ),
       },
+      {
+        path: 'devtools',
+        loadChildren: () =>
+          import('./homepage/pages/devtools/devtools.module').then(
+            (m) => m.DevtoolsModule,
+          ),
+      },
     ],
   },
   {

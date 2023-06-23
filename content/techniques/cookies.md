@@ -14,7 +14,7 @@ $ npm i -D @types/cookie-parser
 Once the installation is complete, apply the `cookie-parser` middleware as global middleware (for example, in your `main.ts` file).
 
 ```typescript
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 // somewhere in your initialization file
 app.use(cookieParser());
 ```
@@ -26,7 +26,7 @@ You can pass several options to the `cookieParser` middleware:
 
 The middleware will parse the `Cookie` header on the request and expose the cookie data as the property `req.cookies` and, if a secret was provided, as the property `req.signedCookies`. These properties are name value pairs of the cookie name to cookie value.
 
-When secret is provided, this module will unsign and validate any signed cookie values and move those name value pairs from req.cookies into `req.signedCookies`. A signed cookie is a cookie that has a value prefixed with `s:`. Signed cookies that fail signature validation will have the value `false` instead of the tampered value.
+When secret is provided, this module will unsign and validate any signed cookie values and move those name value pairs from `req.cookies` into `req.signedCookies`. A signed cookie is a cookie that has a value prefixed with `s:`. Signed cookies that fail signature validation will have the value `false` instead of the tampered value.
 
 With this in place, you can now read cookies from within the route handlers, as follows:
 

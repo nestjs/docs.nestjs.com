@@ -45,9 +45,9 @@
   <ng-content></ng-content>
   <app-social-wrapper></app-social-wrapper>
   <div class="menu-wrapper">
-    <div class="search-wrapper">
-      <i class="fa fa-search search-icon"></i>
-      <input id="search" class="search-input" placeholder="Search..." />
+    <div class="search-wrapper" id="search">
+      <!-- <i class="fa fa-search search-icon"></i>
+      <input class="search-input" placeholder="Search..." /> -->
     </div>
     <ul>
       <li>
@@ -66,7 +66,13 @@
           >Courses</a
         >
       </li>
-      <li><a routerLink="/support">Sponsor us</a></li>
+      <li>
+        <a 
+          href="https://devtools.nestjs.com"
+          target="_blank"
+          title="Devtools | NestJS - A node.js framework built on top of TypeScript">
+          <span class="new">NEW</span> Devtools</a>
+      </li>
       <li>
         <a
           href="https://enterprise.nestjs.com"

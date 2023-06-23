@@ -20,6 +20,21 @@ import helmet from 'helmet';
 app.use(helmet());
 ```
 
+> warning **Warning** When using `helmet`, `@apollo/server` (4.x), and the [Apollo Sandbox](https://docs.nestjs.com/graphql/quick-start#apollo-sandbox), there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) on the Apollo Sandbox. To solve this issue configure the CSP as shown below:
+>
+> ```typescript
+> app.use(helmet({
+>   crossOriginEmbedderPolicy: false,
+>   contentSecurityPolicy: {
+>     directives: {
+>       imgSrc: [`'self'`, 'data:', 'apollo-server-landing-page.cdn.apollographql.com'],
+>       scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+>       manifestSrc: [`'self'`, 'apollo-server-landing-page.cdn.apollographql.com'],
+>       frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+>     },
+>   },
+> }));
+
 #### Use with Fastify
 
 If you are using the `FastifyAdapter`, install the [@fastify/helmet](https://github.com/fastify/fastify-helmet) package:

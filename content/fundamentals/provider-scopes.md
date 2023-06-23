@@ -205,10 +205,9 @@ If you want to register the payload for a durable tree, use the following constr
 // The return of `AggregateByTenantContextIdStrategy#attach` method:
 return {
   resolve: (info: HostComponentInfo) =>
-    info.isTreeDurable ? tenantSubTreeId : contextId;
-  },
+    info.isTreeDurable ? tenantSubTreeId : contextId,
   payload: { tenantId },
-}
+  }
 ```
 
 Now whenever you inject the `REQUEST` provider (or `CONTEXT` for GraphQL applications) using the `@Inject(REQUEST)`/`@Inject(CONTEXT)`, the `payload` object would be injected (consisting of a single property - `tenantId` in this case).

@@ -138,12 +138,12 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat, CatDocument } from './schemas/cat.schema';
+import { Cat } from './schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -259,7 +259,7 @@ If you are just looking to inject the model from a named database, you can use t
 @@filename(cats.service)
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<CatDocument>) {}
+  constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<Cat>) {}
 }
 @@switch
 @Injectable()
