@@ -14,7 +14,7 @@ The `CacheModule` has been removed from the `@nestjs/common` package and is now 
 
 ### Logger
 
-Refactore the values of the `verbose` and `debug` log levels (see [PR](https://github.com/nestjs/nest/pull/11036/files)), now the debug value is set to `1` while verbose is set to `0`.
+Refactor the values of the `verbose` and `debug` log levels (see [PR](https://github.com/nestjs/nest/pull/11036/files)), now the debug value is set to `1` while verbose is set to `0`.
 ### Deprecations
 
 All deprecated methods & modules have been removed.
