@@ -267,6 +267,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
 > info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. For more info on `enableShutdownHooks`, please see [Issues with `enableShutdownHooks`](recipes/prisma#issues-with-enableshutdownhooks)
 
+To use the PrismaService in your NestJS application, you need to add it as a dependency in a module that you will be using.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [PrismaService],
+})
+export class AppModule {}
+```
+
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
 Still inside the `src` directory, create a new file called `user.service.ts` and add the following code to it:
