@@ -1,10 +1,10 @@
-@import '../../../scss/variables.scss';
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 :host {
   @extend .transition;
   @extend .box-sizing;
-  background: $black-color;
+  background: variables.$black-color;
   display: block;
   padding: 40px 0;
   margin: 0 -85px;
@@ -13,11 +13,11 @@
   position: relative;
   z-index: 12;
 
-  @include media(large) {
+  @include utils.media(large) {
     margin: 0 -50px;
   }
 
-  @include media(medium) {
+  @include utils.media(medium) {
     padding: 15px;
     margin: 0 -20px;
     width: calc(100% + 40px);
@@ -35,10 +35,10 @@ footer {
 
   a {
     @extend .transition;
-    color: $red-color;
+    color: variables.$red-color;
     font-weight: 600;
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
     }
   }
 
@@ -65,7 +65,7 @@ footer {
     @extend .transition;
     display: inline-block;
     vertical-align: middle;
-    color: $silver-color;
+    color: variables.$silver-color;
     font-size: 20px;
     margin-left: 15px;
     cursor: pointer;
@@ -74,7 +74,7 @@ footer {
       font-size: 20px;
     }
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
     }
   }
 
