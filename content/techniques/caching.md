@@ -249,6 +249,7 @@ export class AppModule {}
 
 > warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
 > latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
+> Using [cache-manager-redis-yet](https://www.npmjs.com/package/cache-manager-redis-yet) could be a better solution for the latest version of `redis` and `cache-manager`.
 
 #### Async configuration
 
