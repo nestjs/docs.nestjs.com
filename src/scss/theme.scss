@@ -1,5 +1,8 @@
 .light-mode {
   --primary: #ed2945;
+  --primary-1dp: #d71e38;
+  --primary-2dp: #ed2945;
+  --primary-3dp:#db2840;
 
   --color: #404040;
   --color-1dp: #151515;
@@ -31,15 +34,21 @@
 
   --company-filter: grayscale(100%);
   --company-filter-hover: grayscale(0%);
+  --company-logo-filter: grayscale(1);
+
+  --company-logo-opacity: 0.5;
 }
 
 .dark-mode {
-  --primary: #ff677c;
+  --primary: #da001e;
+  --primary-1dp: #ff445e;
+  --primary-2dp: #f55168;
+  --primary-3dp: #ff586f;
 
   --color: rgba(255, 255, 255, 0.9);
   --color-1dp: rgba(255, 255, 255, 0.8);
 
-  --background: #2c2c2c;
+  --background: #1D1D1D;
   --background-1dp: #272727;
   --background-2dp: #212121;
   --background-3dp: #272727;
@@ -47,11 +56,11 @@
   --header-background: #151515;
 
   --menu-color: white;
-  --menu-background: #272727;
+  --menu-background: #222222;
 
   --inline-code-color: #8ec2ff;
 
-  --code-background: #1d1d1d;
+  --code-background: #151313;
 
   --warning: #ffb36f;
   --warning-color: #ed8529;
@@ -64,6 +73,9 @@
   --error: #ff677c;
   --error-background: #3a2f30;
 
-  --company-filter: opacity(1);
+  --company-filter: contrast(0.5);
   --company-filter-hover: opacity(1);
+  --company-logo-filter: contrast(0.5);
+
+  --company-logo-opacity: unset;
 }

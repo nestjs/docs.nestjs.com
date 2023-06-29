@@ -1,6 +1,7 @@
 @use './scss/hljs';
 @use './scss/variables';
 @use './scss/utils';
+@use './scss/theme.scss';
 
 :root {
   --docsearch-primary-color: variables.$red-color;
@@ -157,7 +158,7 @@ tr {
 
 th {
   padding: 20px;
-  background: #efefef;
+  background: var(--background-1dp);
 }
 
 tr:nth-of-type(even) td {

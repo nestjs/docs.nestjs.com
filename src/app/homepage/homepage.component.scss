@@ -63,7 +63,7 @@
 
   a {
     font-weight: 600;
-    color: var(--primary);
+    color: var(--primary-2dp);
     &:hover {
       color: #0894e2;
     }
@@ -190,7 +190,7 @@
   }
   .logo-sponsor {
     width: 160px;
-    filter: grayscale(1);
+    filter: var(--company-logo-filter);
 
     &:hover {
       filter: grayscale(0);
@@ -404,7 +404,7 @@
   max-height: 90px;
   -webkit-filter: var(--company-filter);
   filter: var(--company-filter);
-  opacity: 0.5;
+  opacity: var(--company-logo-opacity);
 
   &:hover {
     -webkit-filter: var(--company-filter-hover);
@@ -467,7 +467,7 @@
     bottom: 20px;
     overflow: hidden;
     padding: 1em;
-    background: var(--background);
+    background: var(--background-2dp) !important;
     text-align: center;
     line-height: 1.5;
     font-size: 13px;
