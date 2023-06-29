@@ -16,17 +16,10 @@ To instruct what should happen when Apollo/Mercurius encounters your directive, 
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
 import { defaultFieldResolver, GraphQLSchema } from 'graphql';
 
-export function upperDirectiveTransformer(
-  schema: GraphQLSchema,
-  directiveName: string,
-) {
+export function upperDirectiveTransformer(schema: GraphQLSchema, directiveName: string) {
   return mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
-      const upperDirective = getDirective(
-        schema,
-        fieldConfig,
-        directiveName,
-      )?.[0];
+      const upperDirective = getDirective(schema, fieldConfig, directiveName)?.[0];
 
       if (upperDirective) {
         const { resolve = defaultFieldResolver } = fieldConfig;
@@ -74,7 +67,7 @@ Directives can be applied on fields, field resolvers, input and object types, as
 
 ```typescript
 @Directive('@deprecated(reason: "This query will be removed in the next version")')
-@Query(returns => Author, { name: 'author' })
+@Query(() => Author, { name: 'author' })
 async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
   return this.authorsService.findOneById(id);
 }
