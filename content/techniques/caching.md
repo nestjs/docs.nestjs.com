@@ -223,23 +223,23 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Different stores
 
-This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
+This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/node-cache-manager/node-cache-manager-redis-yet). A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
 ```typescript
 import type { RedisClientOptions } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    CacheModule.register<RedisClientOptions>({
-      store: redisStore,
-
-      // Store-specific configuration:
-      host: 'localhost',
-      port: 6379,
+    CacheModule.registerAsync<RedisClientOptions>({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        store: await redisStore({ url: config.get<string>('REDIS_URL') })
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],
@@ -247,8 +247,7 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
-> warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
-> latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
+> info **Hint** Previously used `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you can use [cache-manager-redis-yet](https://github.com/node-cache-manager/node-cache-manager-redis-yet) which is forked from `cache-manager-redis-store` and maintained.
 
 #### Async configuration
 
