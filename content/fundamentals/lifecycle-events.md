@@ -20,11 +20,13 @@ In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onAp
 | `onApplicationBootstrap()`      | Called once all modules have been initialized, but before listening for connections.                                                                                                                              |
 | `onModuleDestroy()`\*           | Called after a termination signal (e.g., `SIGTERM`) has been received.                                                                                                                                            |
 | `beforeApplicationShutdown()`\* | Called after all `onModuleDestroy()` handlers have completed (Promises resolved or rejected);<br />once complete (Promises resolved or rejected), all existing connections will be closed (`app.close()` called). |
-| `onApplicationShutdown()`\*     | Called after connections close (`app.close()` resolves).                                                                                                                                                           |
+| `onApplicationShutdown()`\*     | Called after connections close (`app.close()` resolves).                                                                                                                                                          |
 
 \* For these events, if you're not calling `app.close()` explicitly, you must opt-in to make them work with system signals such as `SIGTERM`. See [Application shutdown](fundamentals/lifecycle-events#application-shutdown) below.
 
 > warning **Warning** The lifecycle hooks listed above are not triggered for **request-scoped** classes. Request-scoped classes are not tied to the application lifecycle and their lifespan is unpredictable. They are exclusively created for each request and automatically garbage-collected after the response is sent.
+
+> info **Hint** Execution order of `onModuleInit()` and `onApplicationBootstrap()` directly depends on the order of module imports, awaiting the previous hook.
 
 #### Usage
 
@@ -109,3 +111,5 @@ class UsersService implements OnApplicationShutdown {
   }
 }
 ```
+
+> info **Info** Calling `app.close()` doesn't terminate the Node process but only triggers the `onModuleDestroy()` and `onApplicationShutdown()` hooks, so if there are some intervals, long-running background tasks, etc. the process won't be automatically terminated.

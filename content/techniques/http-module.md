@@ -2,7 +2,19 @@
 
 [Axios](https://github.com/axios/axios) is richly featured HTTP client package that is widely used. Nest wraps Axios and exposes it via the built-in `HttpModule`. The `HttpModule` exports the `HttpService` class, which exposes Axios-based methods to perform HTTP requests. The library also transforms the resulting HTTP responses into `Observables`.
 
-To use the `HttpService`, first import `HttpModule`.
+> info **Hint** You can also use any general purpose Node.js HTTP client library directly, including [got](https://github.com/sindresorhus/got) or [undici](https://github.com/nodejs/undici).
+
+#### Installation
+
+To begin using it, we first install required dependencies.
+
+```bash
+$ npm i --save @nestjs/axios axios
+```
+
+#### Getting started
+
+Once the installation process is complete, to use the `HttpService`, first import `HttpModule`.
 
 ```typescript
 @Module({
@@ -14,13 +26,13 @@ export class CatsModule {}
 
 Next, inject `HttpService` using normal constructor injection.
 
-> info **Hint** `HttpModule` and `HttpService` are imported from `@nestjs/common` package.
+> info **Hint** `HttpModule` and `HttpService` are imported from `@nestjs/axios` package.
 
 ```typescript
 @@filename()
 @Injectable()
 export class CatsService {
-  constructor(private httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) {}
 
   findAll(): Observable<AxiosResponse<Cat[]>> {
     return this.httpService.get('http://localhost:3000/cats');
@@ -39,6 +51,8 @@ export class CatsService {
   }
 }
 ```
+
+> info **Hint** `AxiosResponse` is an interface exported from the `axios` package (`$ npm i axios`).
 
 All `HttpService` methods return an `AxiosResponse` wrapped in an `Observable` object.
 
@@ -80,8 +94,8 @@ Like other factory providers, our factory function can be [async](https://docs.n
 HttpModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    timeout: configService.getString('HTTP_TIMEOUT'),
-    maxRedirects: configService.getString('HTTP_MAX_REDIRECTS'),
+    timeout: configService.get('HTTP_TIMEOUT'),
+    maxRedirects: configService.get('HTTP_MAX_REDIRECTS'),
   }),
   inject: [ConfigService],
 });
@@ -114,6 +128,50 @@ If you want to reuse an existing options provider instead of creating a private 
 ```typescript
 HttpModule.registerAsync({
   imports: [ConfigModule],
-  useExisting: ConfigService,
+  useExisting: HttpConfigService,
 });
 ```
+
+#### Using Axios directly
+
+If you think that `HttpModule.register`'s options are not enough for you, or if you just want to access the underlying Axios instance created by `@nestjs/axios`, you can access it via `HttpService#axiosRef` as follows:
+
+```typescript
+@Injectable()
+export class CatsService {
+  constructor(private readonly httpService: HttpService) {}
+
+  findAll(): Promise<AxiosResponse<Cat[]>> {
+    return this.httpService.axiosRef.get('http://localhost:3000/cats');
+    //                      ^ AxiosInstance interface
+  }
+}
+```
+
+#### Full example
+
+Since the return value of the `HttpService` methods is an Observable, we can use `rxjs` - `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
+
+```typescript
+import { catchError, firstValueFrom } from 'rxjs';
+
+@Injectable()
+export class CatsService {
+  private readonly logger = new Logger(CatsService.name);
+  constructor(private readonly httpService: HttpService) {}
+
+  async findAll(): Promise<Cat[]> {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw 'An error happened!';
+        }),
+      ),
+    );
+    return data;
+  }
+}
+```
+
+> info **Hint** Visit RxJS's documentation on [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) and [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) for differences between them.

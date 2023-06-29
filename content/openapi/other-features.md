@@ -1,5 +1,7 @@
 ### Other features
 
+This page lists all the other available features that you may find useful.
+
 #### Global prefix
 
 To ignore a global prefix for routes set through `setGlobalPrefix()`, use `ignoreGlobalPrefix`:
@@ -7,6 +9,17 @@ To ignore a global prefix for routes set through `setGlobalPrefix()`, use `ignor
 ```typescript
 const document = SwaggerModule.createDocument(app, options, {
   ignoreGlobalPrefix: true,
+});
+```
+
+#### Global parameters
+
+You can add parameter definitions to all routes using `DocumentBuilder`:
+
+```typescript
+const options = new DocumentBuilder().addGlobalParameters({
+  name: 'tenantId',
+  in: 'header',
 });
 ```
 
@@ -23,6 +36,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { CatsModule } from './cats/cats.module';
+import { DogsModule } from './dogs/dogs.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

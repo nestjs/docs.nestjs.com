@@ -13,7 +13,7 @@ sse(): Observable<MessageEvent> {
 }
 ```
 
-> info **Hint** The `@Sse()` decorator is imported from the `@nestjs/common`, while `Observable`, `interval`, `and map` are imported from the `rxjs` package.
+> info **Hint** The `@Sse()` decorator and `MessageEvent` interface are imported from the `@nestjs/common`, while `Observable`, `interval`, and `map` are imported from the `rxjs` package.
 
 > warning **Warning** Server-Sent Events routes must return an `Observable` stream.
 

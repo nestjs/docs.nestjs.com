@@ -1,4 +1,5 @@
-@import '../../scss/utils.scss';
+@use '../../scss/utils';
+@use '../../scss/variables';
 
 .container-fluid {
   position: relative;
@@ -21,7 +22,7 @@
   //@include transform(translateX(250px));
   margin-left: 250px;
   width: calc(100% - 250px);
-  padding: 85px 85px 0;
+  padding: 120px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -33,20 +34,20 @@
     display: block;
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     //@include transform(translateX(250px));
     margin-left: 250px;
     width: calc(100% - 250px);
-    padding: 85px 50px 0;
+    padding: 120px 50px 0;
     &.wide {
       width: 100%;
     }
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
-    padding: 85px 20px 0;
+    padding: 120px 20px 0;
   }
 
   @media print {
@@ -88,14 +89,14 @@
   h3,
   h4 {
     a {
-      @include opacity(0);
+      @include utils.opacity(0);
       margin-left: 0.1em;
       padding: 0 0.25rem;
     }
     span:hover + a,
     span + a:hover,
     a:focus {
-      @include opacity(1);
+      @include utils.opacity(1);
     }
     &::before {
       content: '';
@@ -168,24 +169,45 @@
     color: var(--color);
   }
 
-  .logo-sponsor {
-    //width: 280px;
+  .logo-sponsor-container {
+    display: inline-block;
     margin-top: 10px;
-    width: 180px;
-    filter: grayscale(1);
-    &:first-of-type {
-      margin-right: 30px;
-      margin-bottom: 10px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+
+    &:last-of-type {
+      margin-right: 0;
+      margin-bottom: 0;
     }
+    @media (max-width: 480px) {
+      display: block;
+      margin-bottom: 20px;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .logo-sponsor {
+    width: 160px;
+    filter: grayscale(1);
+
     &:hover {
       filter: grayscale(0);
     }
   }
 
-  .logo-sponsor-small {
-    width: 150px;
-    margin-bottom: 30px;
-    display: block;
+  .logo-sponsor--high {
+    width: 160px;
+  }
+
+  .logo-sponsor--slim {
+    width: auto;
+    max-height: 40px;
+    margin-left: 10px;
+    @media (max-width: 480px) {
+      margin-left: 0;
+    }
   }
 
   .logo-blueanchor {
@@ -226,7 +248,7 @@
   margin: 0;
   float: left;
 
-  @include media(normal) {
+  @include utils.media(normal) {
     width: 100%;
     float: none;
   }
@@ -245,13 +267,13 @@
   @media print {
     width: 100%;
   }
-  @include media(large) {
+  @include utils.media(large) {
     width: 100%;
   }
 
   .row {
     display: flex;
-    @include media(normal) {
+    @include utils.media(normal) {
       display: block;
     }
   }
@@ -259,7 +281,7 @@
   .thumbnail {
     width: 400px;
 
-    @include media(normal) {
+    @include utils.media(normal) {
       width: 100%;
       max-width: 400px;
       margin: 0 auto;
@@ -275,7 +297,7 @@
     &.p-l-30 img {
       padding-left: 30px;
 
-      @include media(normal) {
+      @include utils.media(normal) {
         padding-left: 0;
       }
     }
@@ -283,7 +305,7 @@
     &.p-r-30 img {
       padding-right: 30px;
 
-      @include media(normal) {
+      @include utils.media(normal) {
         padding-right: 0;
       }
     }
@@ -302,7 +324,7 @@
     display: flex;
     align-items: center;
 
-    @include media(medium) {
+    @include utils.media(medium) {
       display: block;
       text-align: center;
       p {
@@ -334,7 +356,7 @@
         color: #fff;
       }
 
-      @include media(medium) {
+      @include utils.media(medium) {
         width: 150px;
         margin: 15px auto 0;
         float: none;
@@ -366,7 +388,7 @@
 }
 
 .toc-wrapper {
-  @include media(large) {
+  @include utils.media(large) {
     display: none;
   }
 }
@@ -452,7 +474,7 @@
     max-width: 130px;
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     #carbonads {
       padding: 30px 0 30px 30px;
       float: right;
@@ -460,7 +482,7 @@
     }
   }
 
-  @include media(medium) {
+  @include utils.media(medium) {
     #carbonads {
       padding: 30px 0 15px 25px;
       text-align: left;

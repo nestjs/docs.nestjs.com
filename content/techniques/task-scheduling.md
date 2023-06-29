@@ -1,6 +1,6 @@
 ### Task Scheduling
 
-Task scheduling allows you to schedule arbitrary code (methods/functions) to execute at a fixed date/time, at recurring intervals, or once after a specified interval. In the Linux world, this is often handled by packages like [cron](https://en.wikipedia.org/wiki/Cron) at the OS level. For Node.js apps, there are several packages that emulate cron-like functionality. Nest provides the `@nestjs/schedule` package, which integrates with the popular Node.js [node-cron](https://github.com/kelektiv/node-cron) package. We'll cover this package in the current chapter.
+Task scheduling allows you to schedule arbitrary code (methods/functions) to execute at a fixed date/time, at recurring intervals, or once after a specified interval. In the Linux world, this is often handled by packages like [cron](https://en.wikipedia.org/wiki/Cron) at the OS level. For Node.js apps, there are several packages that emulate cron-like functionality. Nest provides the `@nestjs/schedule` package, which integrates with the popular Node.js [cron](https://github.com/kelektiv/node-cron) package. We'll cover this package in the current chapter.
 
 #### Installation
 
@@ -66,11 +66,11 @@ In the example above, we passed `45 * * * * *` to the decorator. The following k
 * * * * * *
 | | | | | |
 | | | | | day of week
-| | | | month
+| | | | months
 | | | day of month
-| | hour
-| minute
-second (optional)
+| | hours
+| minutes
+seconds (optional)
 </code></pre>
 
 Some sample cron patterns are:
@@ -100,7 +100,7 @@ Some sample cron patterns are:
   </tbody>
 </table>
 
-The `@nestjs/schedule` package provides a convenience enum with commonly used cron patterns. You can use this enum as follows:
+The `@nestjs/schedule` package provides a convenient enum with commonly used cron patterns. You can use this enum as follows:
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
@@ -110,14 +110,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class TasksService {
   private readonly logger = new Logger(TasksService.name);
 
-  @Cron(CronExpression.EVERY_45_SECONDS)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   handleCron() {
-    this.logger.debug('Called every 45 seconds');
+    this.logger.debug('Called every 30 seconds');
   }
 }
 ```
 
-In this example, the `handleCron()` method will be called every `45` seconds.
+In this example, the `handleCron()` method will be called every `30` seconds.
 
 Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator. Doing so causes the job to execute exactly once, at the specified date.
 
@@ -143,6 +143,12 @@ Also, you can supply additional options as the second parameter to the `@Cron()`
       <td><code>utcOffset</code></td>
       <td>
         This allows you to specify the offset of your timezone rather than using the <code>timeZone</code> param.
+      </td>
+    </tr>
+    <tr>
+      <td><code>disabled</code></td>
+      <td>
+       This indicates whether the job will be executed at all.
       </td>
     </tr>
   </tbody>

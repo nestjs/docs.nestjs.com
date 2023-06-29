@@ -74,6 +74,10 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
     <td><code>socketOptions</code></td>
     <td>Additional socket options (read more <a href="https://www.squaremobius.net/amqp.node/channel_api.html#socket-options" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
+  <tr>
+    <td><code>headers</code></td>
+    <td>Headers to be sent along with every message</td>
+  </tr>
 </table>
 
 #### Client
@@ -193,5 +197,43 @@ getNotifications(data, context) {
   const originalMsg = context.getMessage();
 
   channel.ack(originalMsg);
+}
+```
+
+#### Record builders
+
+To configure message options, you can use the `RmqRecordBuilder` class (note: this is doable for event-based flows as well). For example, to set `headers` and `priority` properties, use the `setOptions` method, as follows:
+
+```typescript
+const message = ':cat:';
+const record = new RmqRecordBuilder(message)
+  .setOptions({
+    headers: {
+      ['x-version']: '1.0.0',
+    },
+    priority: 3,
+  })
+  .build();
+
+this.client.send('replace-emoji', record).subscribe(...);
+```
+
+> info **Hint** `RmqRecordBuilder` class is exported from the `@nestjs/microservices` package.
+
+And you can read these values on the server-side as well, by accessing the `RmqContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('replace-emoji')
+replaceEmoji(@Payload() data: string, @Ctx() context: RmqContext): string {
+  const { properties: { headers } } = context.getMessage();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+}
+@@switch
+@Bind(Payload(), Ctx())
+@MessagePattern('replace-emoji')
+replaceEmoji(data, context) {
+  const { properties: { headers } } = context.getMessage();
+  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
 }
 ```

@@ -30,7 +30,7 @@ import { RpcException } from '@nestjs/microservices';
 @Catch(RpcException)
 export class ExceptionFilter implements RpcExceptionFilter<RpcException> {
   catch(exception: RpcException, host: ArgumentsHost): Observable<any> {
-    return throwError(exception.getError());
+    return throwError(() => exception.getError());
   }
 }
 @@switch
@@ -40,12 +40,12 @@ import { throwError } from 'rxjs';
 @Catch(RpcException)
 export class ExceptionFilter {
   catch(exception, host) {
-    return throwError(exception.getError());
+    return throwError(() => exception.getError());
   }
 }
 ```
 
-> warning **Warning** You cannot set up global microservice exception filters when using a [hybrid application](/faq/hybrid-application).
+> warning **Warning** Global microservice exception filters aren't enabled by default when using a [hybrid application](/faq/hybrid-application).
 
 The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
 

@@ -18,6 +18,8 @@ $ npm i --save @nestjs/config
 
 > info **Hint** The `@nestjs/config` package internally uses [dotenv](https://github.com/motdotla/dotenv).
 
+> warning **Note** `@nestjs/config` requires TypeScript 4.1 or later.
+
 #### Getting started
 
 Once the installation process is complete, we can import the `ConfigModule`. Typically, we'll import it into the root `AppModule` and control its behavior using the `.forRoot()` static method. During this step, environment variable key/value pairs are parsed and resolved. Later, we'll see several options for accessing the `ConfigService` class of the `ConfigModule` in our other feature modules.
@@ -148,18 +150,18 @@ import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
 
-const YAML_CONFIG_FILENAME = 'config.yml';
+const YAML_CONFIG_FILENAME = 'config.yaml';
 
 export default () => {
   return yaml.load(
-    fs.readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
   ) as Record<string, any>;
 };
 ```
 
 > warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in the `compilerOptions#assets` object in the `nest-cli.json` file. As an example, if the `config` folder is at the same level as the `src` folder, add `compilerOptions#assets` with the value `"assets": [{{ '{' }}"include": "../config/*.yaml", "outDir": "./dist/config"{{ '}' }}]`. Read more [here](/cli/monorepo#assets).
 
-<app-banner-enterprise></app-banner-enterprise>
+<app-banner-devtools></app-banner-devtools>
 
 #### Using the `ConfigService`
 
@@ -214,7 +216,7 @@ The `get()` method also takes an optional second argument defining a default val
 const dbHost = this.configService.get<string>('database.host', 'localhost');
 ```
 
-`ConfigService` has an optional generic (type argument) to help prevent accessing a config property that does not exist. Use it as shown below:
+`ConfigService` has two optional generics (type arguments). The first one is to help prevent accessing a config property that does not exist. Use it as shown below:
 
 ```typescript
 interface EnvironmentVariables {
@@ -224,15 +226,35 @@ interface EnvironmentVariables {
 
 // somewhere in the code
 constructor(private configService: ConfigService<EnvironmentVariables>) {
-  // this is valid
-  const port = this.configService.get<number>('PORT');
+  const port = this.configService.get('PORT', { infer: true });
 
-  // this is invalid as URL is not a property on the EnvironmentVariables interface
-  const url = this.configService.get<string>('URL');
+  // TypeScript Error: this is invalid as the URL property is not defined in EnvironmentVariables
+  const url = this.configService.get('URL', { infer: true });
 }
 ```
 
-> warning **Notice** If you have nested properties in your config, like in the `database.host` example above, the interface must have a matching `'database.host': string;` property. Otherwise a TypeScript error will be thrown.
+With the `infer` property set to `true`, the `ConfigService#get` method will automatically infer the property type based on the interface, so for example, `typeof port === "number"` (if you're not using `strictNullChecks` flag from TypeScript) since `PORT` has a `number` type in the `EnvironmentVariables` interface.
+
+Also, with the `infer` feature, you can infer the type of a nested custom configuration object's property, even when using dot notation, as follows:
+
+```typescript
+constructor(private configService: ConfigService<{ database: { host: string } }>) {
+  const dbHost = this.configService.get('database.host', { infer: true })!;
+  // typeof dbHost === "string"                                          |
+  //                                                                     +--> non-null assertion operator
+}
+```
+
+The second generic relies on the first one, acting as a type assertion to get rid of all `undefined` types that `ConfigService`'s methods can return when `strictNullChecks` is on. For instance:
+
+```typescript
+// ...
+constructor(private configService: ConfigService<{ PORT: number }, true>) {
+  //                                                               ^^^^
+  const port = this.configService.get('PORT', { infer: true });
+  //    ^^^ The type of port will be 'number' thus you don't need TS type assertions anymore
+}
+```
 
 #### Configuration namespaces
 
@@ -320,8 +342,6 @@ To use Joi, we must install Joi package:
 $ npm install --save joi
 ```
 
-> warning **Notice** The latest version of `joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their 17.0.0 release notes](https://github.com/sideway/joi/issues/2262).
-
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
@@ -384,11 +404,11 @@ Alternatively, you can specify a **synchronous** `validate` function that takes 
 In this example, we'll proceed with the `class-transformer` and `class-validator` packages. First, we have to define:
 
 - a class with validation constraints,
-- a validate function that makes use of the `plainToClass` and `validateSync` functions.
+- a validate function that makes use of the `plainToInstance` and `validateSync` functions.
 
 ```typescript
 @@filename(env.validation)
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsNumber, validateSync } from 'class-validator';
 
 enum Environment {
@@ -407,7 +427,7 @@ class EnvironmentVariables {
 }
 
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(
+  const validatedConfig = plainToInstance(
     EnvironmentVariables,
     config,
     { enableImplicitConversion: true },
@@ -436,8 +456,6 @@ import { validate } from './env.validation';
 })
 export class AppModule {}
 ```
-
-<app-banner-shop></app-banner-shop>
 
 #### Custom getter functions
 
@@ -490,6 +508,19 @@ export class AppService {
   }
 }
 ```
+
+#### Environment variables loaded hook
+
+If a module configuration depends on the environment variables, and these variables are loaded from the `.env` file, you can use the `ConfigModule.envVariablesLoaded` hook to ensure that the file was loaded before interacting with the `process.env` object, see the following example:
+
+```typescript
+export async function getStorageModule() {
+  await ConfigModule.envVariablesLoaded;
+  return process.env.STORAGE === 'S3' ? S3StorageModule : DefaultStorageModule;
+}
+```
+
+This construction guarantees that after the `ConfigModule.envVariablesLoaded` Promise resolves, all configuration variables are loaded up.
 
 #### Expandable variables
 

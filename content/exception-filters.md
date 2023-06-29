@@ -15,6 +15,8 @@ Out of the box, this action is performed by a built-in **global exception filter
 }
 ```
 
+> info **Hint** The global exception filter partially supports the `http-errors` library. Basically, any thrown exception containing the `statusCode` and `message` properties will be properly populated and sent back as a response (instead of the default `InternalServerErrorException` for unrecognized exceptions).
+
 #### Throwing standard exceptions
 
 Nest provides a built-in `HttpException` class, exposed from the `@nestjs/common` package. For typical HTTP REST/GraphQL API based applications, it's best practice to send standard HTTP response objects when certain error conditions occur.
@@ -58,16 +60,24 @@ in the `response` argument. To override the entire JSON response body, pass an o
 The second constructor argument - `status` - should be a valid HTTP status code.
 Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
 
-Here's an example overriding the entire response body:
+There is a **third** constructor argument (optional) - `options` - that can be used to provide an error [cause](https://nodejs.org/en/blog/release/v16.9.0/#error-cause). This `cause` object is not serialized into the response object, but it can be useful for logging purposes, providing valuable information about the inner error that caused the `HttpException` to be thrown.
+
+Here's an example overriding the entire response body and providing an error cause:
 
 ```typescript
 @@filename(cats.controller)
 @Get()
 async findAll() {
-  throw new HttpException({
-    status: HttpStatus.FORBIDDEN,
-    error: 'This is a custom message',
-  }, HttpStatus.FORBIDDEN);
+  try {
+    await this.service.findAll()
+  } catch (error) { 
+    throw new HttpException({
+      status: HttpStatus.FORBIDDEN,
+      error: 'This is a custom message',
+    }, HttpStatus.FORBIDDEN, {
+      cause: error
+    });
+  }
 }
 ```
 
@@ -128,6 +138,22 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 - `GatewayTimeoutException`
 - `PreconditionFailedException`
 
+All the built-in exceptions can also provide both an error `cause` and an error description using the `options` parameter:
+
+```typescript
+throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' })
+```
+
+Using the above, this is how the response would look:
+
+```json
+{
+  "message": "Something bad happened",
+  "error": "Some error description",
+  "statusCode": 400,
+}
+```
+
 #### Exception filters
 
 While the base (built-in) exception filter can automatically handle many cases for you, you may want **full control** over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors. **Exception filters** are designed for exactly this purpose. They let you control the exact flow of control and the content of the response sent back to the client.
@@ -179,6 +205,8 @@ export class HttpExceptionFilter {
 ```
 
 > info **Hint** All exception filters should implement the generic `ExceptionFilter<T>` interface. This requires you to provide the `catch(exception: T, host: ArgumentsHost)` method with its indicated signature. `T` indicates the type of the exception.
+
+> warning **Warning** If you are using `@nestjs/platform-fastify` you can use `response.send()` instead of `response.json()`. Don't forget to import the correct types from `fastify`.
 
 The `@Catch(HttpException)` decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for exceptions of type `HttpException` and nothing else. The `@Catch()` decorator may take a single parameter, or a comma-separated list. This lets you set up the filter for several types of exceptions at once.
 
@@ -282,6 +310,8 @@ You can add as many filters with this technique as needed; simply add each to th
 
 In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
 
+In the example below we have a code that is platform-agnostic because it uses the [HTTP adapter](./faq/http-adapter) to deliver the response, and doesn't use any of the platform-specific objects (`Request` and `Response`) directly:
+
 ```typescript
 import {
   ExceptionFilter,
@@ -290,29 +320,36 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
-    const request = ctx.getRequest();
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
-    const status =
+  catch(exception: unknown, host: ArgumentsHost): void {
+    // In certain situations `httpAdapter` might not be available in the
+    // constructor method, thus we should resolve it here.
+    const { httpAdapter } = this.httpAdapterHost;
+
+    const ctx = host.switchToHttp();
+
+    const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    response.status(status).json({
-      statusCode: status,
+    const responseBody = {
+      statusCode: httpStatus,
       timestamp: new Date().toISOString(),
-      path: request.url,
-    });
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }
 ```
 
-In the example above the filter will catch each exception thrown, regardless of its type (class).
+> warning **Warning** When combining an exception filter that catches everything with a filter that is bound to a specific type, the "Catch anything" filter should be declared first to allow the specific filter to correctly handle the bound type.
 
 #### Inheritance
 
@@ -349,7 +386,7 @@ The above implementation is just a shell demonstrating the approach. Your implem
 
 Global filters **can** extend the base filter. This can be done in either of two ways.
 
-The first method is to inject the `HttpServer` reference when instantiating the custom global filter:
+The first method is to inject the `HttpAdapter` reference when instantiating the custom global filter:
 
 ```typescript
 async function bootstrap() {

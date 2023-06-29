@@ -45,6 +45,7 @@ Nest provides a set of short-hand **API response** decorators that inherit from 
 - `@ApiAcceptedResponse()`
 - `@ApiNoContentResponse()`
 - `@ApiMovedPermanentlyResponse()`
+- `@ApiFoundResponse()`
 - `@ApiBadRequestResponse()`
 - `@ApiUnauthorizedResponse()`
 - `@ApiNotFoundResponse()`
@@ -53,6 +54,7 @@ Nest provides a set of short-hand **API response** decorators that inherit from 
 - `@ApiNotAcceptableResponse()`
 - `@ApiRequestTimeoutResponse()`
 - `@ApiConflictResponse()`
+- `@ApiPreconditionFailedResponse()`
 - `@ApiTooManyRequestsResponse()`
 - `@ApiGoneResponse()`
 - `@ApiPayloadTooLargeResponse()`
@@ -256,6 +258,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
   model: TModel,
 ) => {
   return applyDecorators(
+    ApiExtraModels(model),
     ApiOkResponse({
       schema: {
         allOf: [
@@ -276,6 +279,8 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
 ```
 
 > info **Hint** `Type<any>` interface and `applyDecorators` function are imported from the `@nestjs/common` package.
+
+To ensure that `SwaggerModule` will generate a definition for our model, we must add it as an extra model, like we did earlier with the `PaginatedDto` in the controller.
 
 With this in place, we can use the custom `@ApiPaginatedResponse()` decorator on our endpoint:
 

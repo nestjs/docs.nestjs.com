@@ -18,7 +18,6 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/bull bull
-$ npm install --save-dev @types/bull
 ```
 
 Once the installation process is complete, we can import the `BullModule` into the root `AppModule`.
@@ -51,7 +50,7 @@ The `forRoot()` method is used to register a `bull` package configuration object
 
 All the options are optional, providing detailed control over queue behavior. These are passed directly to the Bull `Queue` constructor. Read more about these options [here](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue).
 
-To register a queue, import the `BullModule#registerQueue()` dynamic module, as follows:
+To register a queue, import the `BullModule.registerQueue()` dynamic module, as follows:
 
 ```typescript
 BullModule.registerQueue({
@@ -100,8 +99,8 @@ With this in place, you can now point to this configuration in the `registerQueu
 
 ```typescript
 BullModule.registerQueue({
-  configKey: 'alternative-queue'
-  name: 'video',
+  configKey: 'alternative-config',
+  name: 'video'
 });
 ```
 
@@ -222,8 +221,8 @@ export class AudioConsumer {
     let progress = 0;
     for (i = 0; i < 100; i++) {
       await doSomething(job.data);
-      progress += 10;
-      job.progress(progress);
+      progress += 1;
+      await job.progress(progress);
     }
     return {};
   }
@@ -240,6 +239,8 @@ You can designate that a job handler method will handle **only** jobs of a certa
 @Process('transcode')
 async transcode(job: Job<unknown>) { ... }
 ```
+
+> warning **Warning** When defining multiple consumers for the same queue, the `concurrency` option in `@Process({{ '{' }} concurrency: 1 {{ '}' }})` won't take effect. The minimum `concurrency` will match the number of consumers defined. This also applies even if `@Process()` handlers use a different `name` to handle named jobs.
 
 #### Request-scoped consumers
 
@@ -269,7 +270,7 @@ Bull generates a set of useful events when queue and/or job state changes occur.
 Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
-import { Processor, Process } from '@nestjs/bull';
+import { Processor, Process, OnQueueActive } from '@nestjs/bull';
 import { Job } from 'bull';
 
 @Processor('audio')
@@ -427,7 +428,7 @@ BullModule.forRootAsync({
   useFactory: async (configService: ConfigService) => ({
     redis: {
       host: configService.get('QUEUE_HOST'),
-      port: +configService.get('QUEUE_PORT'),
+      port: configService.get('QUEUE_PORT'),
     },
   }),
   inject: [ConfigService],
@@ -447,7 +448,7 @@ The construction above will instantiate `BullConfigService` inside `BullModule` 
 ```typescript
 @Injectable()
 class BullConfigService implements SharedBullConfigurationFactory {
-  createSharedConfiguration(): SharedBullConfigurationFactory {
+  createSharedConfiguration(): BullModuleOptions {
     return {
       redis: {
         host: 'localhost',

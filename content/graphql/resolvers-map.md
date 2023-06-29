@@ -17,7 +17,7 @@ type Author {
   id: Int!
   firstName: String
   lastName: String
-  posts: [Post]
+  posts: [Post!]!
 }
 ```
 
@@ -57,7 +57,7 @@ type Author {
   id: Int!
   firstName: String
   lastName: String
-  posts: [Post]
+  posts: [Post!]!
 }
 ```
 
@@ -152,7 +152,6 @@ export class AuthorsResolver {
   }
 }
 ```
-
 
 > info **Hint** All decorators (e.g., `@Resolver`, `@ResolveField`, `@Args`, etc.) are exported from the `@nestjs/graphql` package.
 
@@ -410,7 +409,19 @@ We saw one use of generics above. This powerful TypeScript feature can be used t
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
-export function Paginated<T>(classRef: Type<T>): any {
+interface IEdgeType<T> {
+  cursor: string;
+  node: T;
+}
+
+export interface IPaginatedType<T> {
+  edges: IEdgeType<T>[];
+  nodes: T[];
+  totalCount: number;
+  hasNextPage: boolean;
+}
+
+export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
     @Field((type) => String)
@@ -421,7 +432,7 @@ export function Paginated<T>(classRef: Type<T>): any {
   }
 
   @ObjectType({ isAbstract: true })
-  abstract class PaginatedType {
+  abstract class PaginatedType implements IPaginatedType<T> {
     @Field((type) => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
@@ -434,7 +445,7 @@ export function Paginated<T>(classRef: Type<T>): any {
     @Field()
     hasNextPage: boolean;
   }
-  return PaginatedType;
+  return PaginatedType as Type<IPaginatedType<T>>;
 }
 ```
 
@@ -570,13 +581,12 @@ Assuming that we use the schema first approach and have enabled the typings gene
 
 ```typescript
 @@filename(graphql)
-export class Author {
+export (class Author {
   id: number;
   firstName?: string;
   lastName?: string;
   posts?: Post[];
-}
-
+})
 export class Post {
   id: number;
   title: string;
@@ -647,7 +657,7 @@ These arguments have the following meanings:
 - `info`: an object that contains information about the execution state of the query.
 - `args`: an object with the arguments passed into the field in the query.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>
 
 #### Module
 

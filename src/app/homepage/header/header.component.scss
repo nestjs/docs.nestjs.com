@@ -1,4 +1,5 @@
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 :host {
   background: var(--header-background);
@@ -7,17 +8,53 @@
   height: 70px;
   position: fixed;
   z-index: 10000;
+  width: 100%;
+  height: 105px;
 
   @media print {
     position: relative;
   }
 }
 
+.top-bar {
+  background: #0a0a0a;
+  text-align: center;
+  height: 35px;
+  padding: 4px;
+  letter-spacing: 0.2px;
+  box-sizing: border-box;
+
+  span {
+    margin: 0;
+  }
+
+  a {
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+    @include utils.media(small) {
+      font-size: 15px;
+    }
+  }
+}
+
+.new {
+  background: #232323;
+  color: #ea2845;
+  border: 1px solid #ea2845;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  margin-right: 2px;
+}
+
 header {
-  height: 100%;
-  width: 100%;
   display: block;
   position: relative;
+  background: variables.$black-color;
+  width: 100%;
+  height: 70px;
+  z-index: 10000;
 }
 
 .icon-wrapper {
@@ -29,6 +66,8 @@ header {
   display: inline-block;
   position: relative;
   z-index: 10000;
+  border: none;
+  background: transparent;
 
   &:hover {
     cursor: pointer;
@@ -37,10 +76,10 @@ header {
   &.opened {
     width: 250px;
 
-    @include media(large) {
+    @include utils.media(large) {
       width: 250px;
     }
-    @include media(normal) {
+    @include utils.media(normal) {
       width: 80px;
     }
   }
@@ -53,7 +92,7 @@ header {
       fill: #fff;
     }
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     background: transparent;
   }
 
@@ -69,10 +108,10 @@ header {
   vertical-align: top;
   padding-left: 85px;
 
-  @include media(large) {
+  @include utils.media(large) {
     padding-left: 15px;
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     padding-left: 10px;
   }
 
@@ -124,18 +163,18 @@ header {
     }
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     margin-right: 0;
     padding: 14px 5px;
   }
 
-  @include media(normal) {
+  @include utils.media(normal) {
     ul {
       display: none !important;
     }
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     .search-wrapper {
       display: none;
     }
@@ -156,7 +195,7 @@ header {
     }
 
     &:last-of-type a {
-      @include radius(2px);
+      @include utils.radius(2px);
       padding: 4px 6px;
       background: var(--primary);
 
@@ -165,7 +204,7 @@ header {
       }
     }
 
-    @include media(large) {
+    @include utils.media(large) {
       margin-left: 20px;
     }
   }
@@ -190,18 +229,18 @@ header {
   float: right;
   padding: 14px 25px;
 
-  @include media(medium) {
+  @include utils.media(medium) {
     padding: 23px 15px;
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     display: none;
   }
 
   img {
     margin-right: 10px;
     width: 55px;
-    @include media(medium) {
+    @include utils.media(medium) {
       display: none !important;
     }
   }
@@ -221,13 +260,13 @@ header {
 
   .short-title {
     display: none;
-    @include media(medium) {
+    @include utils.media(medium) {
       display: block;
     }
   }
 
   .long-title {
-    @include media(medium) {
+    @include utils.media(medium) {
       display: none;
     }
   }
@@ -292,7 +331,7 @@ header {
   margin-top: 5px;
   cursor: pointer;
 
-  @include media(large) {
+  @include utils.media(large) {
     display: inline-block;
   }
 
@@ -312,7 +351,7 @@ header {
 }
 
 .desktop-nav-icon {
-  @include media(large) {
+  @include utils.media(large) {
     display: none;
   }
 }
@@ -324,14 +363,23 @@ header {
   position: relative;
 }
 
-.search-icon {
+.search-icon,
+:host ::ng-deep .DocSearch-Search-Icon {
   position: absolute;
   margin-top: 7px;
-  color: #a5a5a5;
+  color: #a5a5a5 !important;
   font-size: 14px;
+  width: 14px;
 }
 
-.search-input {
+:host ::ng-deep .DocSearch-Search-Icon {
+  @media (max-width: 1150px) {
+    margin-top: 0;
+  }
+}
+
+.search-input,
+::ng-deep .DocSearch-Button {
   background: transparent;
   border: 0;
   border-bottom: 2px solid #414141;
@@ -342,11 +390,26 @@ header {
   font-size: 14px;
   outline: 0 !important;
   transition: all 90ms ease-in-out;
-  width: 165px;
+  width: 215px;
 
   &:active,
   &:focus {
     border-bottom-color: var(--primary);
+    width: 190px;
+  }
+
+  @media (min-width: 1200px) and (max-width: 1300px) {
+    width: 190px;
+  }
+}
+
+::ng-deep .DocSearch-Button:hover,
+::ng-deep .DocSearch-Button:active
+::ng-deep .DocSearch-Button:focus {
+  border-bottom-color: variables.$red-color;
+  width: 240px;
+  
+  @media (min-width: 1200px) and (max-width: 1300px) {
     width: 190px;
   }
 }
@@ -354,6 +417,33 @@ header {
 .search-input::placeholder {
   color: #a5a5a5;
   opacity: 1;
+}
+
+::ng-deep .DocSearch-Button {
+  border-radius: 0;
+  color: #a5a5a5;
+  padding: 5px;
+}
+
+::ng-deep .DocSearch-Button-Placeholder {
+  padding-left: 30px;
+  font-size: 14px;
+  margin-top: 7px;
+  display: block !important;
+
+  @media (max-width: 1150px) {
+    margin-top: 0;
+  }
+}
+
+::ng-deep .DocSearch-Button-Keys {
+  display: none;
+}
+
+::ng-deep .DocSearch-Button:active, 
+::ng-deep .DocSearch-Button:focus, 
+::ng-deep.DocSearch-Button:hover {
+  color: #a5a5a5;
 }
 
 .close-icon {

@@ -3,9 +3,9 @@
 Nest has two modes for organizing code:
 
 - **standard mode**: useful for building individual project-focused applications that have their own dependencies and settings, and don't need to optimize for sharing modules, or optimizing complex builds. This is the default mode.
-- **monorepo mode**: this mode treats code artifacts as part of a lightweight **monorepo**, and may be more appropriate for teams of developers and/or multi-project environments. It automates parts of the build process to make it easy to create and compose modular components, promotes code re-use, makes integration testing easier, makes it easy to share project-wide artifacts like `tslint` rules and other configuration policies, and is easier to use than alternatives like github submodules. Monorepo mode employs the concept of a **workspace**, represented in the `nest-cli.json` file, to coordinate the relationship between the components of the monorepo.
+- **monorepo mode**: this mode treats code artifacts as part of a lightweight **monorepo**, and may be more appropriate for teams of developers and/or multi-project environments. It automates parts of the build process to make it easy to create and compose modular components, promotes code re-use, makes integration testing easier, makes it easy to share project-wide artifacts like `eslint` rules and other configuration policies, and is easier to use than alternatives like github submodules. Monorepo mode employs the concept of a **workspace**, represented in the `nest-cli.json` file, to coordinate the relationship between the components of the monorepo.
 
-It's important to note that virtually all of Nest's features are independent of your code organization mode. The **only** affect of this choice is how your projects are composed and how build artifacts are generated. All other functionality, from the CLI to core modules to add-on modules work the same in either mode.
+It's important to note that virtually all of Nest's features are independent of your code organization mode. The **only** effect of this choice is how your projects are composed and how build artifacts are generated. All other functionality, from the CLI to core modules to add-on modules work the same in either mode.
 
 Also, you can easily switch from **standard mode** to **monorepo mode** at any time, so you can delay this decision until the benefits of one or the other approach become more clear.
 
@@ -26,7 +26,7 @@ To enable monorepo mode, you start with a _standard mode_ structure, and add **p
 If we run:
 
 ```bash
-nest new my-project
+$ nest new my-project
 ```
 
 We've constructed a _standard mode_ structure, with a folder structure that looks like this:
@@ -43,14 +43,14 @@ We've constructed a _standard mode_ structure, with a folder structure that look
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
-  <div class="item">tslint.json</div>
+  <div class="item">.eslintrc.js</div>
 </div>
 
 We can convert this to a monorepo mode structure as follows:
 
 ```bash
-cd my-project
-nest generate app my-app
+$ cd my-project
+$ nest generate app my-app
 ```
 
 At this point, `nest` converts the existing structure to a **monorepo mode** structure. This results in a few important changes. The folder structure now looks like this:
@@ -84,7 +84,7 @@ At this point, `nest` converts the existing structure to a **monorepo mode** str
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
-  <div class="item">tslint.json</div>
+  <div class="item">.eslintrc.js</div>
 </div>
 
 The `generate app` schematic has reorganized the code - moving each **application** project under the `apps` folder, and adding a project-specific `tsconfig.app.json` file in each project's root folder. Our original `my-project` app has become the **default project** for the monorepo, and is now a peer with the just-added `my-app`, located under the `apps` folder. We'll cover default projects below.
@@ -118,7 +118,7 @@ $ nest start my-app
 
 Application-type projects, or what we might informally refer to as just "applications", are complete Nest applications that you can run and deploy. You generate an application-type project with `nest generate app`.
 
-This command automatically generates a project skeleton, including the standard `src` and `test` folders from the [typescript starter](https://github.com/nestjs/typescript-starter). Unlike standard mode, an application project in a monorepo does not have any of the package dependency (`package.json`) or other project configuration artifacts like `.prettierrc` and `tslint.json`. Instead, the monorepo-wide dependencies and config files are used.
+This command automatically generates a project skeleton, including the standard `src` and `test` folders from the [typescript starter](https://github.com/nestjs/typescript-starter). Unlike standard mode, an application project in a monorepo does not have any of the package dependency (`package.json`) or other project configuration artifacts like `.prettierrc` and `.eslintrc.js`. Instead, the monorepo-wide dependencies and config files are used.
 
 However, the schematic does generate a project-specific `tsconfig.app.json` file in the root folder of the project. This config file automatically sets appropriate build options, including setting the compilation output folder properly. The file extends the top-level (monorepo) `tsconfig.json` file, so you can manage global settings monorepo-wide, but override them if needed at the project level.
 
@@ -183,14 +183,17 @@ The top-level properties are as follows:
 
 These properties specify the compiler to use as well as various options that affect **any** compilation step, whether as part of `nest build` or `nest start`, and regardless of the compiler, whether `tsc` or webpack.
 
-| Property Name       | Property Value Type | Description                                                                                                                                                                                                                           |
-| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `webpack`           | boolean             | If `true`, use [webpack compiler](https://webpack.js.org/). If `false` or not present, use `tsc`. In monorepo mode, the default is `true` (use webpack), in standard mode, the default is `false` (use `tsc`). See below for details. |
-| `tsConfigPath`      | string              | (**monorepo only**) Points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).         |
-| `webpackConfigPath` | string              | Points at a webpack options file. If not specified, Nest looks for the file `webpack.config.js`. See below for more details.                                                                                                          |
-| `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                 |
-| `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode). See below for details.                                |
-| `watchAssets`       | boolean             | If `true`, run in watch-mode, watching **all** non-TypeScript assets. (For more fine-grained control of the assets to watch, see [Assets](cli/monorepo#assets) section below).                                                        |
+| Property Name       | Property Value Type | Description                                                                                                                                                                                                                                                               |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `webpack`           | boolean             | If `true`, use [webpack compiler](https://webpack.js.org/). If `false` or not present, use `tsc`. In monorepo mode, the default is `true` (use webpack), in standard mode, the default is `false` (use `tsc`). See below for details. (deprecated: use `builder` instead) |
+| `tsConfigPath`      | string              | (**monorepo only**) Points at the file containing the `tsconfig.json` settings that will be used when `nest build` or `nest start` is called without a `project` option (e.g., when the default project is built or started).                                             |
+| `webpackConfigPath` | string              | Points at a webpack options file. If not specified, Nest looks for the file `webpack.config.js`. See below for more details.                                                                                                                                              |
+| `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                                                     |
+| `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode). See below for details.                                                                    |
+| `watchAssets`       | boolean             | If `true`, run in watch-mode, watching **all** non-TypeScript assets. (For more fine-grained control of the assets to watch, see [Assets](cli/monorepo#assets) section below).                                                                                            |
+| `manualRestart`     | boolean             | If `true`, enables the shortcut `rs` to manually restart the server. Default value is `false`.                                                                                                                                                                            |
+| `builder`           | string              | Instructs CLI on what `builder` to use to compile the project (`tsc`, `swc`, or `webpack`)                                                                                                                                                                                |
+| `typeCheck`         | boolean             | If `true`, enables type checking for SWC-driven projects (when `builder` is `swc`). Default value is `false`.                                                                                                                                                             |
 
 #### Global generate options
 
@@ -199,6 +202,7 @@ These properties specify the default generate options to be used by the `nest ge
 | Property Name | Property Value Type | Description                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | ------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `spec`        | boolean _or_ object | If the value is boolean, a value of `true` enables `spec` generation by default and a value of `false` disables it. A flag passed on the CLI command line overrides this setting, as does a project-specific `generateOptions` setting (more below). If the value is an object, each key represents a schematic name, and the boolean value determines whether the default spec generation is enabled / disabled for that specific schematic. |
+| `flat`        | boolean             | If true, all generate commands will generate a flat structure                                                                                                                                                                                                                                                                                                                                                                                 |
 
 The following example uses a boolean value to specify that spec file generation should be disabled by default for all projects:
 
@@ -206,6 +210,17 @@ The following example uses a boolean value to specify that spec file generation 
 {
   "generateOptions": {
     "spec": false
+  },
+  ...
+}
+```
+
+The following example uses a boolean value to specify flat file generation should be the default for all projects:
+
+```javascript
+{
+  "generateOptions": {
+    "flat": true
   },
   ...
 }
@@ -264,7 +279,7 @@ Project-specific generate options override global generate options.
 
 #### Specified compiler
 
-The reason for the different default compilers is that for larger projects (e.g., more typical in a monorepo) webpack can have significant advantages in build times and in producing a single file bundling all project components together. If you wish to generate individual files, set `"webpack"` to `false`, which will cause the build process to use `tsc`.
+The reason for the different default compilers is that for larger projects (e.g., more typical in a monorepo) webpack can have significant advantages in build times and in producing a single file bundling all project components together. If you wish to generate individual files, set `"webpack"` to `false`, which will cause the build process to use `tsc` (or `swc`).
 
 #### Webpack options
 
@@ -279,7 +294,7 @@ module.exports = {
 Since the webpack config file is a JavaScript file, you can even expose a function that takes default options and returns a modified object:
 
 ```javascript
-module.exports = function(options) {
+module.exports = function (options) {
   return {
     ...options,
     externals: [],
@@ -290,6 +305,7 @@ module.exports = function(options) {
 #### Assets
 
 TypeScript compilation automatically distributes compiler output (`.js` and `.d.ts` files) to the specified output directory. It can also be convenient to distribute non-TypeScript files, such as `.graphql` files, `images`, `.html` files and other assets. This allows you to treat `nest build` (and any initial compilation step) as a lightweight **development build** step, where you may be editing non-TypeScript files and iteratively compiling and testing.
+The assets should be located in the `src` folder otherwise they will not be copied.
 
 The value of the `assets` key should be an array of elements specifying the files to be distributed. The elements can be simple strings with `glob`-like file specs, for example:
 

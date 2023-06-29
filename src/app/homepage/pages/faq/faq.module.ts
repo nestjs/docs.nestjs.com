@@ -7,7 +7,9 @@ import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
+import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
+import { ServerlessComponent } from './serverless/serverless.component';
 
 const routes: Routes = [
   {
@@ -31,6 +33,11 @@ const routes: Routes = [
     data: { title: 'HTTP adapter - FAQ' },
   },
   {
+    path: 'raw-body',
+    component: RawBodyComponent,
+    data: { title: 'Raw Body' },
+  },
+  {
     path: 'request-lifecycle',
     component: RequestLifecycleComponent,
     data: { title: 'Request lifecycle - FAQ' },
@@ -38,8 +45,13 @@ const routes: Routes = [
   {
     path: 'common-errors',
     component: ErrorsComponent,
-    data: { title: 'Common errors - FAQ' }
-  }
+    data: { title: 'Common errors - FAQ' },
+  },
+  {
+    path: 'serverless',
+    component: ServerlessComponent,
+    data: { title: 'Serverless - FAQ' },
+  },
 ];
 
 @NgModule({
@@ -51,6 +63,7 @@ const routes: Routes = [
     HttpAdapterComponent,
     RequestLifecycleComponent,
     ErrorsComponent,
+    ServerlessComponent,
   ],
 })
 export class FaqModule {}

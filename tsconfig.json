@@ -1,24 +1,35 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
+    "noImplicitOverride": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
     "allowUnusedLabels": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2015",
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": true,
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2016",
+      "ES2022",
       "dom"
     ],
-    "module": "esnext",
-    "baseUrl": "./"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": false,
+    "strictInputAccessModifiers": false,
+    "strictTemplates": false
   }
 }

@@ -33,19 +33,19 @@ async function bootstrap() {
       transport: Transport.TCP,
     },
   );
-  app.listen(() => console.log('Microservice is listening'));
+  await app.listen();
 }
 bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
-import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
     transport: Transport.TCP,
   });
-  app.listen(() => console.log('Microservice is listening'));
+  await app.listen();
 }
 bootstrap();
 ```
@@ -181,6 +181,8 @@ async handleUserCreated(data) {
 }
 ```
 
+> info **Hint** You can register multiple event handlers for a **single** event pattern and all of them will be automatically triggered in parallel.
+
 The `handleUserCreated()` **event handler** listens for the `'user_created'` event. The event handler takes a single argument, the `data` passed from the client (in this case, an event payload which has been sent over the network).
 
 <app-banner-enterprise></app-banner-enterprise>
@@ -206,6 +208,8 @@ getDate(data, context) {
 ```
 
 > info **Hint** `@Payload()`, `@Ctx()` and `NatsContext` are imported from `@nestjs/microservices`.
+
+> info **Hint** You can also pass in a property key to the `@Payload()` decorator to extract a specific property from the incoming payload object, for example, `@Payload('id')`.
 
 #### Client
 
@@ -318,7 +322,7 @@ async publish() {
 
 The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern`should match one defined in an `@EventPattern()` decorator. The `payload` is an event payload that we want to transmit to the remote microservice. This method returns a **hot `Observable`** (unlike the cold `Observable` returned by `send()`), which means that whether or not you explicitly subscribe to the observable, the proxy will immediately try to deliver the event.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>
 
 #### Scopes
 
@@ -351,21 +355,19 @@ The `data` property is the message payload sent by the message producer. The `pa
 
 #### Handling timeouts
 
-In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the `RxJS` timeout operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
+In distributed systems, sometimes microservices might be down or not available. To avoid infinitely long waiting, you can use Timeouts. A timeout is an incredibly useful pattern when communicating with other services. To apply timeouts to your microservice calls, you can use the [RxJS](https://rxjs.dev) `timeout` operator. If the microservice does not respond to the request within a certain time, an exception is thrown, which can be caught and handled appropriately.
 
-To solve this problem you have to use [rxjs](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
+To solve this problem you have to use [`rxjs`](https://github.com/ReactiveX/rxjs) package. Just use the `timeout` operator in the pipe:
 
 ```typescript
 @@filename()
 this.client
       .send<TResult, TInput>(pattern, data)
-      .pipe(timeout(5000))
-      .toPromise();
+      .pipe(timeout(5000));
 @@switch
 this.client
       .send(pattern, data)
-      .pipe(timeout(5000))
-      .toPromise();
+      .pipe(timeout(5000));
 ```
 
 > info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.

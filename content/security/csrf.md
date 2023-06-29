@@ -10,12 +10,15 @@ Start by installing the required package:
 $ npm i --save csurf
 ```
 
-> warning **Warning** As explained on the [csurf middleware page](https://github.com/expressjs/csurf#csurf), the csurf module requires either session middleware or a cookie-parser to be initialized first. Please see that documentation for further instructions.
+> warning **Warning** This package is deprecated, refer to [`csurf` docs](https://github.com/expressjs/csurf#csurf) for more information.
 
-Once the installation is complete, apply the csurf middleware as global middleware.
+> warning **Warning** As explained in the [`csurf` docs](https://github.com/expressjs/csurf#csurf), this middleware requires either session middleware or `cookie-parser` to be initialized first. Please see that documentation for further instructions.
+
+Once the installation is complete, apply the `csurf` middleware as global middleware.
 
 ```typescript
 import * as csurf from 'csurf';
+// ...
 // somewhere in your initialization file
 app.use(csurf());
 ```
@@ -25,13 +28,16 @@ app.use(csurf());
 Start by installing the required package:
 
 ```bash
-$ npm i --save fastify-csrf
+$ npm i --save @fastify/csrf-protection
 ```
 
-Once the installation is complete, register the `fastify-csrf` plugin, as follows:
+Once the installation is complete, register the `@fastify/csrf-protection` plugin, as follows:
 
 ```typescript
-import fastifyCsrf from 'fastify-csrf';
-// somewhere in your initialization file
-app.register(fastifyCsrf);
+import fastifyCsrf from '@fastify/csrf-protection';
+// ...
+// somewhere in your initialization file after registering some storage plugin
+await app.register(fastifyCsrf);
 ```
+
+> warning **Warning** As explained in the `@fastify/csrf-protection` docs [here](https://github.com/fastify/csrf-protection#usage), this plugin requires a storage plugin to be initialized first. Please, see that documentation for further instructions.

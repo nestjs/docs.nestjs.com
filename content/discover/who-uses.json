@@ -186,6 +186,23 @@
       "logo": "/assets/logo/rivvy.png",
       "url": "https://rivvy.app",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/vue-storefront.png",
+      "url": "https://www.vuestorefront.io/"
+    },
+    {
+      "logo": "/assets/logo/fuse-logo.svg",
+      "url": "https://fuseautotech.com"
+    },
+    {
+      "logo": "/assets/logo/amplication.svg",
+      "url": "https://amplication.com"
+    },
+    {
+      "logo": "/assets/logo/hingehealth.png",
+      "url": "https://hingehealth.com",
+      "width": "120px"
     }
   ],
   "Body": [
@@ -244,6 +261,27 @@
     "https://bemum.co",
     "https://weoptimeye.ai",
     "https://nemovote.com",
-    "https://selleo.com"
+    "https://selleo.com",
+    "https://pchas.ir",
+    "https://tayeh.ir",
+    "https://forwardigital.co.uk",
+    "https://rozetka.com.ua",
+    "https://www.itrio.net",
+    "https://alexishr.com",
+    "https://dyrector.io",
+    "https://stijlbreuk.nl",
+    "https://polygon-software.ch",
+    "https://bewith.io",
+    "https://swetrix.com",
+    "https://swyftlogistics.com",
+    "https://evershop.io",
+    "https://e-design.ca",
+    "https://growthmill.com",
+    "https://tarken.com.br",
+    "https://remato.com",
+    "https://remberg.de/en",
+    "https://uninterrupted.tech",
+    "https://www.digando.com",
+    "https://novu.co"
   ]
 }

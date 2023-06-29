@@ -103,11 +103,26 @@ Hello world!
 
 Which means that our method handler was properly executed.
 
+When using a `CustomTransportStrategy` with [Interceptors](/interceptors) the handlers are wrapped into RxJS streams. This means that you need to subscribe to them in order to execute the streams underlying logic (e.g. continue into the controller logic after an interceptor has been executed).
+
+An example of this can be seen below:
+
+```typescript
+async listen(callback: () => void) {
+  const echoHandler = this.messageHandlers.get('echo');
+  const streamOrResult = await echoHandler('Hello World');
+  if (isObservable(streamOrResult)) {
+    streamOrResult.subscribe();
+  }
+  callback();
+}
+```
+
 #### Client proxy
 
 As we mentioned in the first section, you don't necessarily need to use the `@nestjs/microservices` package to create microservices, but if you decide to do so and you need to integrate a custom strategy, you will need to provide a "client" class too.
 
-> info **Hint** Again, implementing a fully-featured client class compatible with all `@nestjs/microservices` features (e.g., streaming) requires a good understading of communication techniques used by the framework. To learn more, check out this [article](https://dev.to/nestjs/part-4-basic-client-component-16f9).
+> info **Hint** Again, implementing a fully-featured client class compatible with all `@nestjs/microservices` features (e.g., streaming) requires a good understanding of communication techniques used by the framework. To learn more, check out this [article](https://dev.to/nestjs/part-4-basic-client-component-16f9).
 
 To communicate with an external service/emit & publish messages (or events) you can either use a library-specific SDK package, or implement a custom client class that extends the `ClientProxy`, as follows:
 
@@ -215,3 +230,35 @@ And that's what you should see in the console:
 connect
 event to dispatch:  { pattern: 'event', data: 'Hello world!' }
 ```
+
+#### Message serialization
+
+If you need to add some custom logic around the serialization of responses on the client side, you can use a custom class that extends the `ClientProxy` class or one of its child classes. For modifying successful requests you can override the `serializeResponse` method, and for modifying any errors that go through this client you can override the `serializeError` method. To make use of this custom class, you can pass the class itself to the `ClientsModule.register()` method using the `customClass` property. Below is an example of a custom `ClientProxy` that serializes each error into an `RpcException`.
+
+```typescript
+@@filename(error-handling.proxy)
+import { ClientTcp, RpcException } from '@nestjs/microservices';
+
+class ErrorHandlingProxy extends ClientTCP {
+  serializeError(err: Error) {
+    return new RpcException(err);
+  }
+}
+```
+
+and then use it in the `ClientsModule` like so:
+
+```typescript
+@@filename(app.module)
+@Module({
+  imports: [
+    ClientsModule.register({
+      name: 'CustomProxy',
+      customClass: ErrorHandlingProxy,
+    }),
+  ]
+})
+export class AppModule
+```
+
+> info **hint** This is the class itself being passed to `customClass`, not an instance of the class. Nest will create the instance under the hood for you, and will pass any options given to the `options` property to the new `ClientProxy`.

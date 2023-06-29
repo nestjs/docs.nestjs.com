@@ -1,4 +1,5 @@
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 :host {
   @extend .transition;
@@ -12,11 +13,11 @@
   position: relative;
   z-index: 12;
 
-  @include media(large) {
+  @include utils.media(large) {
     margin: 0 -50px;
   }
 
-  @include media(medium) {
+  @include utils.media(medium) {
     padding: 15px;
     margin: 0 -20px;
     width: calc(100% + 40px);
@@ -64,6 +65,7 @@ footer {
     @extend .transition;
     display: inline-block;
     vertical-align: middle;
+    color: variables.$silver-color;
     font-size: 20px;
     margin-left: 15px;
     cursor: pointer;

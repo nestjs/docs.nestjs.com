@@ -9,7 +9,7 @@ The [Redis](https://redis.io/) transporter implements the publish/subscribe mess
 To start building Redis-based microservices, first install the required package:
 
 ```bash
-$ npm i --save redis
+$ npm i --save ioredis
 ```
 
 #### Overview
@@ -21,14 +21,16 @@ To use the Redis transporter, pass the following options object to the `createMi
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.REDIS,
   options: {
-    url: 'redis://localhost:6379',
+    host: 'localhost',
+    port: 6379,
   },
 });
 @@switch
 const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.REDIS,
   options: {
-    url: 'redis://localhost:6379',
+    host: 'localhost',
+    port: 6379,
   },
 });
 ```
@@ -41,8 +43,12 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
 
 <table>
   <tr>
-    <td><code>url</code></td>
+    <td><code>host</code></td>
     <td>Connection url</td>
+  </tr>
+  <tr>
+    <td><code>port</code></td>
+    <td>Connection port</td>
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
@@ -52,9 +58,13 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
     <td><code>retryDelay</code></td>
     <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
   </tr>
+   <tr>
+    <td><code>wildcards</code></td>
+    <td>Enables Redis wilcard subscriptions, instructing transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood. (default: <code>false</code>)</td>
+  </tr>
 </table>
 
-All the properties supported by the official [redis](https://www.npmjs.com/package/redis#options-object-properties) client are also supported by this transporter.
+All the properties supported by the official [ioredis](https://luin.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
 
 #### Client
 
@@ -70,7 +80,8 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
         name: 'MATH_SERVICE',
         transport: Transport.REDIS,
         options: {
-          url: 'redis://localhost:6379',
+          host: 'localhost',
+          port: 6379,
         }
       },
     ]),

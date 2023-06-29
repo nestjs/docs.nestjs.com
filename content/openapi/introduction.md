@@ -4,16 +4,10 @@ The [OpenAPI](https://swagger.io/specification/) specification is a language-agn
 
 #### Installation
 
-To begin using it, we first install the required dependencies.
+To begin using it, we first install the required dependency.
 
 ```bash
-$ npm install --save @nestjs/swagger swagger-ui-express
-```
-
-If you use fastify, install `fastify-swagger` instead of `swagger-ui-express`:
-
-```bash
-$ npm install --save @nestjs/swagger fastify-swagger
+$ npm install --save @nestjs/swagger
 ```
 
 #### Bootstrap
@@ -64,11 +58,11 @@ While the application is running, open your browser and navigate to `http://loca
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
-The `SwaggerModule` automatically reflects all of your endpoints. Note that the Swagger UI is created using either `swagger-ui-express` or `fastify-swagger`, depending on the platform.
+As you can see, the `SwaggerModule` automatically reflects all of your endpoints.
 
-> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (`swagger-ui-express`) or `http://localhost:3000/api/json` (`fastify-swagger`) in your browser (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
+> info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
 
-> warning **Warning** When using `fastify-swagger` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as shown below:
+> warning **Warning** When using `fastify` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as shown below:
 >
 > ```typescript
 > app.register(helmet, {
@@ -137,10 +131,10 @@ const document = SwaggerModule.createDocument(app, config, options);
 
 #### Setup options
 
-You can configure Swagger UI by passing the options object which fulfills the `SwaggerCustomOptions` interface as a fourth argument of the `SwaggerModule#setup` method.
+You can configure Swagger UI by passing the options object which fulfills the `ExpressSwaggerCustomOptions` (if you use express) interface as a fourth argument of the `SwaggerModule#setup` method.
 
 ```TypeScript
-export interface SwaggerCustomOptions {
+export interface ExpressSwaggerCustomOptions {
   explorer?: boolean;
   swaggerOptions?: Record<string, any>;
   customCss?: string;
@@ -153,18 +147,6 @@ export interface SwaggerCustomOptions {
   url?: string;
   urls?: Record<'url' | 'name', string>[];
 }
-```
-
-For example, if you want to make sure that the authentication token persists after refreshing the page, or change the page title (that shows up in the browser), you can use the following settings:
-
-```TypeScript
-const customOptions: SwaggerCustomOptions = {
-  swaggerOptions: {
-    persistAuthorization: true,
-  },
-  customSiteTitle: 'My API Docs',
-};
-SwaggerModule.setup('docs', app, document, customOptions);
 ```
 
 #### Example

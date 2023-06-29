@@ -7,9 +7,13 @@ Caching is a great and simple **technique** that helps improve your app's perfor
 First install required packages:
 
 ```bash
-$ npm install cache-manager
-$ npm install -D @types/cache-manager
+$ npm install @nestjs/cache-manager cache-manager
 ```
+
+> warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
+> * If using `cache-manager` v4, provide ttl in seconds
+> * If using `cache-manager` v5, provide ttl in milliseconds
+> * Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
 
 #### In-memory cache
 
@@ -18,7 +22,8 @@ Nest provides a unified API for various cache storage providers. The built-in on
 In order to enable caching, import the `CacheModule` and call its `register()` method.
 
 ```typescript
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 
 @Module({
@@ -36,12 +41,12 @@ To interact with the cache manager instance, inject it to your class using the `
 constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 ```
 
-> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/common` package.
+> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/cache-manager` package.
 
-The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, an exception will be thrown.
+The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `null` will be returned.
 
 ```typescript
-const value = this.cacheManager.get('key');
+const value = await this.cacheManager.get('key');
 ```
 
 To add an item to the cache, use the `set` method:
@@ -52,16 +57,16 @@ await this.cacheManager.set('key', 'value');
 
 The default expiration time of the cache is 5 seconds.
 
-You can manually specify a TTL (expiration time) for this specific key, as follows:
+You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
 
 ```typescript
-await this.cacheManager.set('key', 'value', { ttl: 1000 });
+await this.cacheManager.set('key', 'value', 1000);
 ```
 
-To disable expiration of the cache, set the `ttl` configuration property to `null`:
+To disable expiration of the cache, set the `ttl` configuration property to `0`:
 
 ```typescript
-await this.cacheManager.set('key', 'value', { ttl: null });
+await this.cacheManager.set('key', 'value', 0);
 ```
 
 To remove an item from the cache, use the `del` method:
@@ -99,7 +104,8 @@ export class AppController {
 To reduce the amount of required boilerplate, you can bind `CacheInterceptor` to all endpoints globally:
 
 ```typescript
-import { CacheModule, Module, CacheInterceptor } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
@@ -118,12 +124,22 @@ export class AppModule {}
 
 #### Customize caching
 
-All cached data has its own expiration time (TTL). To customize default values, pass the options object to the `register()` method.
+All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). To customize default values, pass the options object to the `register()` method.
 
 ```typescript
 CacheModule.register({
   ttl: 5, // seconds
   max: 10, // maximum number of items in cache
+});
+```
+
+#### Use module globally
+
+When you want to use `CacheModule` in other modules, you'll need to import it (as is standard with any Nest module). Alternatively, declare it as a [global module](https://docs.nestjs.com/modules#global-modules) by setting the options object's `isGlobal` property to `true`, as shown below. In that case, you will not need to import `CacheModule` in other modules once it's been loaded in the root module (e.g., `AppModule`).
+
+```typescript
+CacheModule.register({
+  isGlobal: true,
 });
 ```
 
@@ -142,7 +158,7 @@ export class AppController {
 }
 ```
 
-> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/common` package.
+> info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/cache-manager` package.
 
 The `@CacheKey()` decorator may be used with or without a corresponding `@CacheTTL()` decorator and vice versa. One may choose to override only the `@CacheKey()` or only the `@CacheTTL()`. Settings that are not overridden with a decorator will use the default values as registered globally (see [Customize caching](https://docs.nestjs.com/techniques/caching#customize-caching)).
 
@@ -207,17 +223,21 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Different stores
 
-This service takes advantage of [cache-manager](https://github.com/BryanDonovan/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis](https://github.com/dabroek/node-cache-manager-redis-store) store. A full list of supported stores is available [here](https://github.com/BryanDonovan/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
+This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
 ```typescript
+import type { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    CacheModule.register({
+    CacheModule.register<RedisClientOptions>({
       store: redisStore,
+
+      // Store-specific configuration:
       host: 'localhost',
       port: 6379,
     }),
@@ -226,6 +246,9 @@ import { AppController } from './app.controller';
 })
 export class AppModule {}
 ```
+
+> warning**Warning** `cache-manager-redis-store` does not support redis v4. In order for the `ClientOpts` interface to exist and work correctly you need to install the
+> latest `redis` 3.x.x major release. See this [issue](https://github.com/dabroek/node-cache-manager-redis-store/issues/40) to track the progress of this upgrade.
 
 #### Async configuration
 
@@ -284,6 +307,8 @@ CacheModule.registerAsync({
 ```
 
 This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
+
+> info **Hint** `CacheModule#register` and `CacheModule#registerAsync` and `CacheOptionsFactory` has an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
 
 #### Example
 

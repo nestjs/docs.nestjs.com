@@ -2,10 +2,10 @@
 
 Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the built-in [TypeORM](https://github.com/typeorm/typeorm) module described [here](/techniques/database), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. In this chapter we'll describe the latter, using the dedicated `@nestjs/mongoose` package.
 
-Start by installing the required dependencies:
+Start by installing the [required dependencies](https://github.com/Automattic/mongoose):
 
 ```bash
-$ npm install --save @nestjs/mongoose mongoose
+$ npm i @nestjs/mongoose mongoose
 ```
 
 Once the installation process is complete, we can import the `MongooseModule` into the root `AppModule`.
@@ -34,9 +34,9 @@ Let's define the `CatSchema`:
 ```typescript
 @@filename(schemas/cat.schema)
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type CatDocument = Cat & Document;
+export type CatDocument = HydratedDocument<Cat>;
 
 @Schema()
 export class Cat {
@@ -138,12 +138,12 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat, CatDocument } from './schemas/cat.schema';
+import { Cat } from './schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat.dto';
 
 @Injectable()
 export class CatsService {
-  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
 
   async create(createCatDto: CreateCatDto): Promise<Cat> {
     const createdCat = new this.catModel(createCatDto);
@@ -225,7 +225,7 @@ With this setup, you have to tell the `MongooseModule.forFeature()` function whi
     MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }], 'cats'),
   ],
 })
-export class AppModule {}
+export class CatsModule {}
 ```
 
 You can also inject the `Connection` for a given connection:
@@ -253,6 +253,24 @@ To inject a given `Connection` to a custom provider (for example, factory provid
 }
 ```
 
+If you are just looking to inject the model from a named database, you can use the connection name as a second parameter to the `@InjectModel()` decorator.
+
+```typescript
+@@filename(cats.service)
+@Injectable()
+export class CatsService {
+  constructor(@InjectModel(Cat.name, 'cats') private catModel: Model<Cat>) {}
+}
+@@switch
+@Injectable()
+@Dependencies(getModelToken(Cat.name, 'cats'))
+export class CatsService {
+  constructor(catModel) {
+    this.catModel = catModel;
+  }
+}
+```
+
 #### Hooks (middleware)
 
 Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. Middleware is specified on the schema level and is useful for writing plugins ([source](https://mongoosejs.com/docs/middleware.html)). Calling `pre()` or `post()` after compiling a model does not work in Mongoose. To register a hook **before** model registration, use the `forFeatureAsync()` method of the `MongooseModule` along with a factory provider (i.e., `useFactory`). With this technique, you can access a schema object, then use the `pre()` or `post()` method to register a hook on that schema. See example below:
@@ -265,7 +283,9 @@ Middleware (also called pre and post hooks) are functions which are passed contr
         name: Cat.name,
         useFactory: () => {
           const schema = CatsSchema;
-          schema.pre('save', function() { console.log('Hello from pre save') });
+          schema.pre('save', function () {
+            console.log('Hello from pre save');
+          });
           return schema;
         },
       },
@@ -489,7 +509,7 @@ The construction above instantiates `MongooseConfigService` inside `MongooseModu
 
 ```typescript
 @Injectable()
-class MongooseConfigService implements MongooseOptionsFactory {
+export class MongooseConfigService implements MongooseOptionsFactory {
   createMongooseOptions(): MongooseModuleOptions {
     return {
       uri: 'mongodb://localhost/nest',

@@ -1,4 +1,5 @@
-@import '../../../../scss/utils.scss';
+@use '../../../../scss/variables';
+@use '../../../../scss/utils';
 
 :host {
   position: relative;
@@ -17,6 +18,16 @@ h3 {
   }
 }
 
+.new {
+  color: #fff;
+  background: variables.$red-color;
+  font-size: 11px;
+  padding: 2px 4px;
+  margin-right: 5px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
 .active h3 {
   color: var(--primary);
 }
@@ -27,7 +38,7 @@ h3 {
 
 .arrow-icon {
   @extend .transition;
-  @include transform(rotate(90deg));
+  @include utils.transform(rotate(90deg));
 
   position: absolute;
   top: 1px;
@@ -74,8 +85,9 @@ li {
   }
   &.opened {
     .arrow-icon {
-      @include transform(rotate(-90deg));
+      @include utils.transform(rotate(-90deg));
       fill: var(--primary);
+      
     }
   }
 }

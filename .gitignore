@@ -5,6 +5,9 @@ dist/*
 !/dist/v4
 !/dist/v5
 !/dist/v6
+!/dist/v7
+!/dist/v8
+!/dist/v9
 
 /tmp
 /out-tsc
@@ -39,7 +42,7 @@ dist/*
 npm-debug.log
 testem.log
 /typings
-
+.angular
 # e2e
 /e2e/*.js
 /e2e/*.map

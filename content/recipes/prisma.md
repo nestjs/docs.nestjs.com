@@ -1,10 +1,10 @@
 ### Prisma
 
-[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. It is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](https://knexjs.org/)) or ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL, SQL Server and SQLite.
+[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. It is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](https://knexjs.org/)) or ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL, SQL Server, SQLite, MongoDB and CockroachDB ([Preview](https://www.prisma.io/docs/reference/database-reference/supported-databases)).
 
 While Prisma can be used with plain JavaScript, it embraces TypeScript and provides a level to type-safety that goes beyond the guarantees other ORMs in the TypeScript ecosystem. You can find an in-depth comparison of the type-safety guarantees of Prisma and TypeORM [here](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm#type-safety).
 
-> info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/). There also are ready-to-run examples for [REST](https://github.com/prisma/prisma-examples/tree/latest/typescript/rest-nestjs) and [GraphQL](https://github.com/prisma/prisma-examples/tree/latest/typescript/graphql-nestjs) in the [`prisma-examples`](https://github.com/prisma/prisma-examples/) repo. 
+> info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/). There also are ready-to-run examples for [REST](https://github.com/prisma/prisma-examples/tree/latest/typescript/rest-nestjs) and [GraphQL](https://github.com/prisma/prisma-examples/tree/latest/typescript/graphql-nestjs) in the [`prisma-examples`](https://github.com/prisma/prisma-examples/) repo.
 
 #### Getting started
 
@@ -13,7 +13,6 @@ In this recipe, you'll learn how to get started with NestJS and Prisma from scra
 For the purpose of this guide, you'll use a [SQLite](https://sqlite.org/) database to save the overhead of setting up a database server. Note that you can still follow this guide, even if you're using PostgreSQL or MySQL – you'll get extra instructions for using these databases at the right places.
 
 > info **Note** If you already have an existing project and consider migrating to Prisma, you can follow the guide for [adding Prisma to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project-typescript-postgres). If you are migrating from TypeORM, you can read the guide [Migrating from TypeORM to Prisma](https://www.prisma.io/docs/guides/migrate-to-prisma/migrate-from-typeorm).
-
 
 #### Create your NestJS project
 
@@ -88,6 +87,8 @@ Now, open up `.env` and adjust the `DATABASE_URL` environment variable to look a
 ```bash
 DATABASE_URL="file:./dev.db"
 ```
+
+Make sure you have a [ConfigModule](https://docs.nestjs.com/techniques/configuration) configured, otherwise the `DATABASE_URL` variable will not be picked up from `.env`.
 
 SQLite databases are simple files; no server is required to use a SQLite database. So instead of configuring a connection URL with a _host_ and _port_, you can just point it to a local file which in this case is called `dev.db`. This file will be created in the next step.
 
@@ -247,21 +248,24 @@ When setting up your NestJS application, you'll want to abstract away the Prisma
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class PrismaService extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy {
+export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
   }
 
-  async onModuleDestroy() {
-    await this.$disconnect();
+  async enableShutdownHooks(app: INestApplication) {
+    this.$on('beforeExit', async () => {
+      await app.close();
+    });
   }
 }
 ```
+
+> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. For more info on `enableShutdownHooks`, please see [Issues with `enableShutdownHooks`](recipes/prisma#issues-with-enableshutdownhooks)
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
@@ -270,16 +274,15 @@ Still inside the `src` directory, create a new file called `user.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import {
-  User,
-  Prisma
-} from '@prisma/client';
+import { User, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async user(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async user(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: userWhereUniqueInput,
     });
@@ -290,7 +293,7 @@ export class UserService {
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<User[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.user.findMany({
@@ -336,16 +339,15 @@ Still inside the `src` directory, create a new file called `post.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import {
-  Post,
-  Prisma,
-} from '@prisma/client';
+import { Post, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService) {}
 
-  async post(postWhereUniqueInput: Prisma.PostWhereUniqueInput): Promise<Post | null> {
+  async post(
+    postWhereUniqueInput: Prisma.PostWhereUniqueInput,
+  ): Promise<Post | null> {
     return this.prisma.post.findUnique({
       where: postWhereUniqueInput,
     });
@@ -356,7 +358,7 @@ export class PostService {
     take?: number;
     cursor?: Prisma.PostWhereUniqueInput;
     where?: Prisma.PostWhereInput;
-    orderBy?: Prisma.PostOrderByInput;
+    orderBy?: Prisma.PostOrderByWithRelationInput;
   }): Promise<Post[]> {
     const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.post.findMany({
@@ -516,6 +518,26 @@ This controller implements the following routes:
 
 - `/post/:id`: Delete a post by its `id`
 
+#### Issues with `enableShutdownHooks`
+
+Prisma interferes with NestJS `enableShutdownHooks`. Prisma listens for shutdown signals and will call `process.exit()` before your application shutdown hooks fire. To deal with this, you would need to add a listener for Prisma `beforeExit` event.
+
+```typescript
+// main.ts
+...
+import { PrismaService } from './services/prisma/prisma.service';
+...
+async function bootstrap() {
+  ...
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app)
+  ...
+}
+bootstrap()
+```
+
+You can [read more](https://github.com/prisma/prisma/issues/2917#issuecomment-708340112) about Prisma handling of shutdown signal, and `beforeExit` event.
+
 #### Summary
 
 In this recipe, you learned how to use Prisma along with NestJS to implement a REST API. The controller that implements the routes of the API is calling a `PrismaService` which in turn uses Prisma Client to send queries to a database to fulfill the data needs of incoming requests.
@@ -524,5 +546,5 @@ If you want to learn more about using NestJS with Prisma, be sure to check out t
 
 - [NestJS & Prisma](https://www.prisma.io/nestjs)
 - [Ready-to-run example projects for REST & GraphQL](https://github.com/prisma/prisma-examples/)
-- [Production-ready starter kit](https://github.com/fivethree-team/nestjs-prisma-starter#instructions)
+- [Production-ready starter kit](https://github.com/notiz-dev/nestjs-prisma-starter#instructions)
 - [Video: Accessing Databases using NestJS with Prisma (5min)](https://www.youtube.com/watch?v=UlVJ340UEuk&ab_channel=Prisma) by [Marc Stammerjohann](https://github.com/marcjulian)

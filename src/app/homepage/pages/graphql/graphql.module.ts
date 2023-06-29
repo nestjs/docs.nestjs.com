@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
+import { MigrationComponent } from './migration/migration.component';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { ComplexityComponent } from './complexity/complexity.component';
 import { DirectivesComponent } from './directives/directives.component';
@@ -17,6 +18,7 @@ import { QuickStartComponent } from './quick-start/quick-start.component';
 import { ResolversMapComponent } from './resolvers-map/resolvers-map.component';
 import { ScalarsComponent } from './scalars/scalars.component';
 import { SchemaGeneratorComponent } from './schema-generator/schema-generator.component';
+import { SharingModelsComponent } from "./sharing-models/sharing-models.component";
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { UnionsAndEnumsComponent } from './unions-and-enums/unions.component';
 
@@ -74,6 +76,11 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Directives' },
   },
   {
+    path: 'migration-guide',
+    component: MigrationComponent,
+    data: { title: 'GraphQL + TypeScript - Migration guide' },
+  },
+  {
     path: 'field-middleware',
     component: FieldMiddlewareComponent,
     data: { title: 'GraphQL + TypeScript - Field middleware' },
@@ -112,6 +119,11 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Interfaces' },
   },
   {
+    path: 'sharing-models',
+    component: SharingModelsComponent,
+    data: { title: "GraphQL + TypeScript - Sharing models"}
+  },
+  {
     path: 'mapped-types',
     component: MappedTypesComponent,
     data: { title: 'GraphQL + TypeScript - Mapped types' },
@@ -142,11 +154,13 @@ const routes: Routes = [
     ScalarsComponent,
     SchemaGeneratorComponent,
     MappedTypesComponent,
+    SharingModelsComponent,
     CliPluginComponent,
     FederationComponent,
     ComplexityComponent,
     ExtensionsComponent,
     FieldMiddlewareComponent,
+    MigrationComponent,
   ],
 })
 export class GraphqlModule {}

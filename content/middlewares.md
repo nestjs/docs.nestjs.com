@@ -20,6 +20,9 @@ Nest middleware are, by default, equivalent to [express](https://expressjs.com/e
 
 You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
 
+>  warning **Warning** `Express` and `fastify` handle middleware differently and provide different method signatures, read more [here](/techniques/performance#middleware).
+
+
 ```typescript
 @@filename(logger.middleware)
 import { Injectable, NestMiddleware } from '@nestjs/common';
@@ -122,6 +125,8 @@ export class AppModule {
 
 > info **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
 
+> warning **Warning** When using the `express` adapter, the NestJS app will register `json` and `urlencoded` from the package `body-parser` by default. This means if you want to customize that middleware via the `MiddlewareConsumer`, you need to turn off the global middleware by setting the `bodyParser` flag to `false` when creating the application with `NestFactory.create()`.
+
 #### Route wildcards
 
 Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
@@ -143,7 +148,7 @@ The `MiddlewareConsumer` is a helper class. It provides several built-in methods
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller.ts';
+import { CatsController } from './cats/cats.controller';
 
 @Module({
   imports: [CatsModule],
@@ -159,7 +164,7 @@ export class AppModule implements NestModule {
 import { Module } from '@nestjs/common';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller.ts';
+import { CatsController } from './cats/cats.controller';
 
 @Module({
   imports: [CatsModule],
@@ -237,6 +242,7 @@ consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
 If we want to bind middleware to every registered route at once, we can use the `use()` method that is supplied by the `INestApplication` instance:
 
 ```typescript
+@@filename(main)
 const app = await NestFactory.create(AppModule);
 app.use(logger);
 await app.listen(3000);

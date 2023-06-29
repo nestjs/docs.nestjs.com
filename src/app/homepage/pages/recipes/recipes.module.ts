@@ -6,14 +6,27 @@ import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { DocumentationComponent } from './documentation/documentation.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
+import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
+import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
+import { RouterModuleComponent } from './router-module/router-module.component';
+import { NestCommanderComponent } from './nest-commander/nest-commander.component';
+import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
+import { AutomockComponent } from './automock/automock.component';
+import { SwcComponent } from './swc/swc.component';
+import { PassportComponent } from './passport/passport.component';
 
 const routes: Routes = [
+  {
+    path: 'mikroorm',
+    component: MikroOrmComponent,
+    data: { title: 'MikroORM' },
+  },
   {
     path: 'sql-typeorm',
     component: SqlTypeormComponent,
@@ -74,13 +87,49 @@ const routes: Routes = [
   {
     path: 'serve-static',
     component: ServeStaticComponent,
-    data: { title: 'Serve Static' },
+    data: { title: 'Serve static' },
+  },
+  {
+    path: 'router-module',
+    component: RouterModuleComponent,
+    data: { title: 'Router module' },
+  },
+  {
+    path: 'nest-commander',
+    component: NestCommanderComponent,
+    data: { title: 'Nest Commander' },
+  },
+  {
+    path: 'async-local-storage',
+    component: AsyncLocalStorageComponent,
+    data: { title: 'Async Local Storage' },
+  },
+  {
+    path: 'repl',
+    component: ReplComponent,
+    data: { title: 'REPL' },
+  },
+  {
+    path: 'swc',
+    component: SwcComponent,
+    data: { title: 'SWC (fast compiler)' },
+  },
+  {
+    path: 'automock',
+    component: AutomockComponent,
+    data: { title: 'Automock' },
+  },
+  {
+    path: 'passport',
+    component: PassportComponent,
+    data: { title: 'passport' },
   },
 ];
 
 @NgModule({
   imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
   declarations: [
+    MikroOrmComponent,
     SqlTypeormComponent,
     SqlSequelizeComponent,
     MongodbComponent,
@@ -90,7 +139,14 @@ const routes: Routes = [
     TerminusComponent,
     DocumentationComponent,
     CrudGeneratorComponent,
+    RouterModuleComponent,
     ServeStaticComponent,
+    NestCommanderComponent,
+    AsyncLocalStorageComponent,
+    AutomockComponent,
+    ReplComponent,
+    SwcComponent,
+    PassportComponent,
   ],
 })
 export class RecipesModule {}

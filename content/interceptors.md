@@ -1,6 +1,6 @@
 ### Interceptors
 
-An interceptor is a class annotated with the `@Injectable()` decorator. Interceptors should implement the `NestInterceptor` interface.
+An interceptor is a class annotated with the `@Injectable()` decorator and implements the `NestInterceptor` interface.
 
 <figure><img src="/assets/Interceptors_1.png" /></figure>
 
@@ -28,7 +28,7 @@ This approach means that the `intercept()` method effectively **wraps** the requ
 
 Consider, for example, an incoming `POST /cats` request. This request is destined for the `create()` handler defined inside the `CatsController`. If an interceptor which does not call the `handle()` method is called anywhere along the way, the `create()` method won't be executed. Once `handle()` is called (and its `Observable` has been returned), the `create()` handler will be triggered. And once the response stream is received via the `Observable`, additional operations can be performed on the stream, and a final result returned to the caller.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>
 
 #### Aspect interception
 
@@ -236,7 +236,7 @@ export class ErrorsInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        catchError(err => throwError(new BadGatewayException())),
+        catchError(err => throwError(() => new BadGatewayException())),
       );
   }
 }
@@ -251,7 +251,7 @@ export class ErrorsInterceptor {
     return next
       .handle()
       .pipe(
-        catchError(err => throwError(new BadGatewayException())),
+        catchError(err => throwError(() => new BadGatewayException())),
       );
   }
 }
@@ -311,9 +311,9 @@ export class TimeoutInterceptor implements NestInterceptor {
       timeout(5000),
       catchError(err => {
         if (err instanceof TimeoutError) {
-          return throwError(new RequestTimeoutException());
+          return throwError(() => new RequestTimeoutException());
         }
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   };
@@ -330,9 +330,9 @@ export class TimeoutInterceptor {
       timeout(5000),
       catchError(err => {
         if (err instanceof TimeoutError) {
-          return throwError(new RequestTimeoutException());
+          return throwError(() => new RequestTimeoutException());
         }
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   };

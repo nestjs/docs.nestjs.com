@@ -1,6 +1,6 @@
 ### Custom providers
 
-In earlier chapters, we touched on various aspects of **Dependency Injection (DI)** and how it is used in Nest. One example of this is the [constructor based](https://docs.nestjs.com/providers#dependency-injection) dependency injection used to inject instances (often service providers) into classes. You won't be surprised to learn that Dependency Injection is built in to the Nest core in a fundamental way. So far, we've only explored one main pattern. As your application grows more complex, you may need to take advantage of the full features of the DI system, so let's explore them in more detail.
+In earlier chapters, we touched on various aspects of **Dependency Injection (DI)** and how it is used in Nest. One example of this is the [constructor based](https://docs.nestjs.com/providers#dependency-injection) dependency injection used to inject instances (often service providers) into classes. You won't be surprised to learn that Dependency Injection is built into the Nest core in a fundamental way. So far, we've only explored one main pattern. As your application grows more complex, you may need to take advantage of the full features of the DI system, so let's explore them in more detail.
 
 #### DI fundamentals
 
@@ -137,6 +137,8 @@ What happens when your requirements go beyond those offered by _Standard provide
 
 Nest allows you to define Custom providers to handle these cases. It provides several ways to define custom providers. Let's walk through them.
 
+> info **Hint** If you are having problems with dependency resolution you can set the `NEST_DEBUG` environment variable and get extra dependency resolution logs during startup.
+
 #### Value providers: `useValue`
 
 The `useValue` syntax is useful for injecting a constant value, putting an external library into the Nest container, or replacing a real implementation with a mock object. Let's say you'd like to force Nest to use a mock `CatsService` for testing purposes.
@@ -234,37 +236,49 @@ Also, we have used the `ConfigService` class name as our token. For any class th
 The `useFactory` syntax allows for creating providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
 
 1. The factory function can accept (optional) arguments.
-2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order.
-
-The example below demonstrates this.
+2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. Also, these providers can be marked as optional. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order. The example below demonstrates this.
 
 ```typescript
 @@filename()
-const connectionFactory = {
+const connectionProvider = {
   provide: 'CONNECTION',
-  useFactory: (optionsProvider: OptionsProvider) => {
+  useFactory: (optionsProvider: OptionsProvider, optionalProvider?: string) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider],
+  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \_____________/            \__________________/
+  //        This provider              The provider with this
+  //        is mandatory.              token can resolve to `undefined`.
 };
 
 @Module({
-  providers: [connectionFactory],
+  providers: [
+    connectionProvider,
+    OptionsProvider,
+    // { provide: 'SomeOptionalProvider', useValue: 'anything' },
+  ],
 })
 export class AppModule {}
 @@switch
-const connectionFactory = {
+const connectionProvider = {
   provide: 'CONNECTION',
-  useFactory: (optionsProvider) => {
+  useFactory: (optionsProvider, optionalProvider) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider],
+  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \_____________/            \__________________/
+  //        This provider              The provider with this
+  //        is mandatory.              token can resolve to `undefined`.
 };
 
 @Module({
-  providers: [connectionFactory],
+  providers: [
+    connectionProvider,
+    OptionsProvider,
+    // { provide: 'SomeOptionalProvider', useValue: 'anything' },
+  ],
 })
 export class AppModule {}
 ```

@@ -8,24 +8,12 @@ Each application has at least one module, a **root module**. The root module is 
 
 The `@Module()` decorator takes a single object whose properties describe the module:
 
-<table>
-  <tr>
-    <td><code>providers</code></td>
-    <td>the providers that will be instantiated by the Nest injector and that may be shared at least across this module</td>
-  </tr>
-  <tr>
-    <td><code>controllers</code></td>
-    <td>the set of controllers defined in this module which have to be instantiated</td>
-  </tr>
-  <tr>
-    <td><code>imports</code></td>
-    <td>the list of imported modules that export the providers which are required in this module</td>
-  </tr>
-  <tr>
-    <td><code>exports</code></td>
-    <td>the subset of <code>providers</code> that are provided by this module and should be available in other modules which import this module</td>
-  </tr>
-</table>
+|               |                                                                                                                                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `providers`   | the providers that will be instantiated by the Nest injector and that may be shared at least across this module                                                                                          |
+| `controllers` | the set of controllers defined in this module which have to be instantiated                                                                                                                              |
+| `imports`     | the list of imported modules that export the providers which are required in this module                                                                                                                 |
+| `exports`     | the subset of `providers` that are provided by this module and should be available in other modules which import this module. You can use either the provider itself or just its token (`provide` value) |
 
 The module **encapsulates** providers by default. This means that it's impossible to inject providers that are neither directly part of the current module nor exported from the imported modules. Thus, you may consider the exported providers from a module as the module's public interface, or API.
 
@@ -111,7 +99,7 @@ export class CatsModule {}
 
 Now any module that imports the `CatsModule` has access to the `CatsService` and will share the same instance with all other modules that import it as well.
 
-<app-banner-enterprise></app-banner-enterprise>
+<app-banner-devtools></app-banner-devtools>
 
 #### Module re-exporting
 
@@ -219,7 +207,7 @@ import { Connection } from './connection.provider';
   providers: [Connection],
 })
 export class DatabaseModule {
-  static forRoot(entities = [], options?) {
+  static forRoot(entities = [], options) {
     const providers = createDatabaseProviders(options, entities);
     return {
       module: DatabaseModule,
@@ -275,3 +263,5 @@ export class AppModule {}
 ```
 
 The [Dynamic modules](/fundamentals/dynamic-modules) chapter covers this topic in greater detail, and includes a [working example](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+
+> info **Hint** Learn how to build highly customizable dynamic modules with the use of `ConfigurableModuleBuilder` here in [this chapter](/fundamentals/dynamic-modules#configurable-module-builder).

@@ -4,11 +4,11 @@ A hybrid application is one that both listens for HTTP requests, as well as make
 
 ```typescript
 const app = await NestFactory.create(AppModule);
-const microservice = app.connectMicroservice({
+const microservice = app.connectMicroservice<MicroserviceOptions>({
   transport: Transport.TCP,
 });
 
-await app.startAllMicroservicesAsync();
+await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
@@ -27,11 +27,12 @@ const microserviceTcp = app.connectMicroservice<MicroserviceOptions>({
 const microserviceRedis = app.connectMicroservice<MicroserviceOptions>({
   transport: Transport.REDIS,
   options: {
-    url: 'redis://localhost:6379',
+    host: 'localhost',
+    port: 6379,
   },
 });
 
-await app.startAllMicroservicesAsync();
+await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
@@ -70,7 +71,10 @@ By default a hybrid application will not inherit global pipes, interceptors, gua
 To inherit these configuration properties from the main application, set the `inheritAppConfig` property in the second argument (an optional options object) of the `connectMicroservice()` call, as follow:
 
 ```typescript
-const microservice = app.connectMicroservice({
-  transport: Transport.TCP
-}, { inheritAppConfig: true });
+const microservice = app.connectMicroservice<MicroserviceOptions>(
+  {
+    transport: Transport.TCP,
+  },
+  { inheritAppConfig: true },
+);
 ```

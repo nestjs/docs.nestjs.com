@@ -16,9 +16,15 @@ In the [Pipes](/pipes) chapter, we went through the process of building simple p
 
 #### Using the built-in ValidationPipe
 
+To begin using it, we first install the required dependency.
+
+```bash
+$ npm i --save class-validator class-transformer
+```
+
 > info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
 
-Because this pipe uses the `class-validator` and `class-transformer` libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
+Because this pipe uses the [`class-validator`](https://github.com/typestack/class-validator) and [`class-transformer`](https://github.com/typestack/class-transformer) libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
 
 ```typescript
 export interface ValidationPipeOptions extends ValidatorOptions {
@@ -37,9 +43,24 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <th>Description</th>
   </tr>
   <tr>
+    <td><code>enableDebugMessages</code></td>
+    <td><code>boolean</code></td>
+    <td>If set to true, validator will print extra warning messages to the console when something is not right.</td>
+  </tr>
+  <tr>
+    <td><code>skipUndefinedProperties</code></td>
+    <td><code>boolean</code></td>
+    <td>If set to true then validator will skip validation of all properties that are undefined in the validating object.</td>
+  </tr>
+  <tr>
+    <td><code>skipNullProperties</code></td>
+    <td><code>boolean</code></td>
+    <td>If set to true then validator will skip validation of all properties that are null in the validating object.</td>
+  </tr>
+  <tr>
     <td><code>skipMissingProperties</code></td>
     <td><code>boolean</code></td>
-    <td>If set to true, validator will skip validation of all properties that are missing in the validating object.</td>
+    <td>If set to true then validator will skip validation of all properties that are null or undefined in the validating object.</td>
   </tr>
   <tr>
     <td><code>whitelist</code></td>
@@ -77,6 +98,17 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td>Groups to be used during validation of the object.</td>
   </tr>
   <tr>
+    <td><code>always</code></td>
+    <td><code>boolean</code></td>
+    <td>Set default for <code>always</code> option of decorators. Default can be overridden in decorator options</td>
+  </tr>
+
+  <tr>
+    <td><code>strictGroups</code></td>
+    <td><code>boolean</code></td>
+    <td>If <code>groups</code> is not given or is empty, ignore decorators with at least one group.</td>
+  </tr>
+  <tr>
     <td><code>dismissDefaultMessages</code></td>
     <td><code>boolean</code></td>
     <td>If set to true, the validation will not use default messages. Error message always will be <code>undefined</code>        if
@@ -92,10 +124,14 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>boolean</code></td>
     <td>Indicates if validated value should be exposed in <code>ValidationError</code>.</td>
   </tr>
+  <tr>
+    <td><code>stopAtFirstError</code></td>
+    <td><code>boolean</code></td>
+    <td>When set to true, validation of the given property will stop after encountering the first error. Defaults to false.</td>
+  </tr>
 </table>
 
 > info **Notice** Find more information about the `class-validator` package in its [repository](https://github.com/typestack/class-validator).
-
 
 #### Auto-validation
 
@@ -281,6 +317,7 @@ export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/mapped-types` package.
+
 The `PickType()` function constructs a new type (class) by picking a set of properties from an input type. For example, suppose we start with a type like:
 
 ```typescript
@@ -298,6 +335,7 @@ export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
 > info **Hint** The `PickType()` function is imported from the `@nestjs/mapped-types` package.
+
 The `OmitType()` function constructs a type by picking all properties from an input type and then removing a particular set of keys. For example, suppose we start with a type like:
 
 ```typescript
@@ -315,6 +353,7 @@ export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
 > info **Hint** The `OmitType()` function is imported from the `@nestjs/mapped-types` package.
+
 The `IntersectionType()` function combines two types into one new type (class). For example, suppose we start with two types like:
 
 ```typescript
@@ -375,7 +414,7 @@ In addition, the `ParseArrayPipe` may come in handy when parsing query parameter
 ```typescript
 @Get()
 findByIds(
-  @Query('id', new ParseArrayPipe({ items: Number, separator: ',' }))
+  @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
   ids: number[],
 ) {
   return 'This action returns users by ids';

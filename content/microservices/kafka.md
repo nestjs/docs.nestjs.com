@@ -8,8 +8,6 @@
 
 The Kafka project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. It integrates very well with Apache Storm and Spark for real-time streaming data analysis.
 
-**Kafka transporter is experimental.**
-
 #### Installation
 
 To start building Kafka-based microservices, first install the required package:
@@ -110,6 +108,14 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
         >here</a
       >)</td>
   </tr>
+  <tr>
+    <td><code>producerOnlyMode</code></td>
+    <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
+  </tr>
+  <tr>
+    <td><code>postfixId</code></td>
+    <td>Change suffix of clientId value (<code>string</code>)</td>
+  </tr>
 </table>
 
 #### Client
@@ -163,7 +169,21 @@ Use the `@Client()` decorator as follows:
 client: ClientKafka;
 ```
 
+#### Message pattern
+
+The Kafka microservice message pattern utilizes two topics for the request and reply channels. The `ClientKafka#send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafka` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
+
+Subsequently, you need to have at least one reply topic partition for every Nest application running. For example, if you are running 4 Nest applications but the reply topic only has 3 partitions, then 1 of the Nest applications will error out when trying to send a message.
+
+When new `ClientKafka` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
+
+Normally, topic partitions are assigned using the round robin partitioner, which assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch. However, when a new consumer joins the consumer group, the new consumer can be positioned anywhere within the collection of consumers. This creates a condition where pre-existing consumers can be assigned different partitions when the pre-existing consumer is positioned after the new consumer. As a result, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
+
+To prevent the `ClientKafka` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
+
 #### Message response subscription
+
+> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafka#send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafka#emit` method).
 
 The `ClientKafka` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
 
@@ -183,18 +203,6 @@ async onModuleInit() {
   await this.client.connect();
 }
 ```
-
-#### Message pattern
-
-The Kafka microservice message pattern utilizes two topics for the request and reply channels. The `ClientKafka#send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafka` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
-
-Subsequently, you need to have at least one reply topic partition for every Nest application running. For example, if you are running 4 Nest applications but the reply topic only has 3 partitions, then 1 of the Nest applications will error out when trying to send a message.
-
-When new `ClientKafka` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
-
-Normally, topic partitions are assigned using the round robin partitioner, which assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch. However, when a new consumer joins the consumer group, the new consumer can be positioned anywhere within the collection of consumers. This creates a condition where pre-existing consumers can be assigned different partitions when the pre-existing consumer is positioned after the new consumer. As a result, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
-
-To prevent the `ClientKafka` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
 
 #### Incoming
 
@@ -278,6 +286,12 @@ export class HeroesController {
 }
 ```
 
+#### Event-based
+
+While the request-response method is ideal for exchanging messages between services, it is less suitable when your message style is event-based (which in turn is ideal for Kafka) - when you just want to publish events **without waiting for a response**. In that case, you do not want the overhead required by request-response for maintaining two topics.
+
+Check out these two sections to learn more about this: [Overview: Event-based](/microservices/basics#event-based) and [Overview: Publishing events](/microservices/basics#publishing-events).
+
 #### Context
 
 In more sophisticated scenarios, you may want to access more information about the incoming request. When using the Kafka transporter, you can access the `KafkaContext` object.
@@ -305,14 +319,16 @@ To access the original Kafka `IncomingMessage` object, use the `getMessage()` me
 @MessagePattern('hero.kill.dragon')
 killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
   const originalMessage = context.getMessage();
-  const { headers, partition, timestamp } = originalMessage;
+  const partition = context.getPartition();
+  const { headers, timestamp } = originalMessage;
 }
 @@switch
 @Bind(Payload(), Ctx())
 @MessagePattern('hero.kill.dragon')
 killDragon(message, context) {
   const originalMessage = context.getMessage();
-  const { headers, partition, timestamp } = originalMessage;
+  const partition = context.getPartition();
+  const { headers, timestamp } = originalMessage;
 }
 ```
 
@@ -332,13 +348,32 @@ interface IncomingMessage {
 }
 ```
 
+If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
+
+```typescript
+@@filename()
+@MessagePattern('hero.kill.dragon')
+async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaContext) {
+  const heartbeat = context.getHeartbeat();
+
+  // Do some slow processing
+  await doWorkPart1();
+
+  // Send heartbeat to not exceed the sessionTimeout
+  await heartbeat();
+
+  // Do some slow processing again
+  await doWorkPart2();
+}
+```
+
 #### Naming conventions
 
 The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice(AppModule, {
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
   transport: Transport.KAFKA,
   options: {
     client: {
@@ -383,3 +418,74 @@ onModuleInit() {
 ```
 
 > info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+
+#### Retriable exceptions
+
+Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+
+> warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
+
+For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
+
+```typescript
+throw new KafkaRetriableException('...');
+```
+
+> info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
+
+#### Commit offsets
+
+Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that work like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+
+```typescript
+@@filename()
+@EventPattern('user.created')
+async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
+  // business logic
+  
+  const { offset } = context.getMessage();
+  const partition = context.getPartition();
+  const topic = context.getTopic();
+  await this.client.commitOffsets([{ topic, partition, offset }])
+}
+@@switch
+@Bind(Payload(), Ctx())
+@EventPattern('user.created')
+async handleUserCreated(data, context) {
+  // business logic
+
+  const { offset } = context.getMessage();
+  const partition = context.getPartition();
+  const topic = context.getTopic();
+  await this.client.commitOffsets([{ topic, partition, offset }])
+}
+```
+
+To disable auto-committing of messages set `autoCommit: false` in the `run` configuration, as follows:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: {
+      brokers: ['localhost:9092'],
+    },
+    run: {
+      autoCommit: false
+    }
+  }
+});
+```

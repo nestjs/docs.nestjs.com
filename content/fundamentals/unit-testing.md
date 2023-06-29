@@ -160,6 +160,47 @@ Instead of using the production version of any provider, you can override it wit
 
 <app-banner-courses></app-banner-courses>
 
+#### Auto mocking
+
+Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The below is an example of creating a generic mocker using [`jest-mock`](https://www.npmjs.com/package/jest-mock) and a specific mock for `CatsService` using `jest.fn()`.
+
+```typescript
+// ...
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+
+const moduleMocker = new ModuleMocker(global);
+
+describe('CatsController', () => {
+  let controller: CatsController;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      controllers: [CatsController],
+    })
+      .useMocker((token) => {
+        const results = ['test1', 'test2'];
+        if (token === CatsService) {
+          return { findAll: jest.fn().mockResolvedValue(results) };
+        }
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
+
+    controller = moduleRef.get(CatsController);
+  });
+});
+```
+
+You can also retrieve these mocks out of the testing container as you normally would custom providers, `moduleRef.get(CatsService)`.
+
+> info **Hint** A general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can also be passed directly.
+
+> info **Hint** `REQUEST` and `INQUIRER` providers cannot be auto-mocked because they're already pre-defined in the context. However, they can be _overwritten_ using the custom provider syntax or by utilizing the `.overrideProvider` method.
+
 #### End-to-end testing
 
 Unlike unit testing, which focuses on individual modules and classes, end-to-end (e2e) testing covers the interaction of classes and modules at a more aggregate level -- closer to the kind of interaction that end-users will have with the production system. As an application grows, it becomes hard to manually test the end-to-end behavior of each API endpoint. Automated end-to-end tests help us ensure that the overall behavior of the system is correct and meets project requirements. To perform e2e tests we use a similar configuration to the one we just covered in **unit testing**. In addition, Nest makes it easy to use the [Supertest](https://github.com/visionmedia/supertest) library to simulate HTTP requests.
@@ -243,43 +284,59 @@ describe('Cats', () => {
 >
 > ```ts
 > let app: NestFastifyApplication;
-> 
+>
 > beforeAll(async () => {
->   app = moduleRef.createNestApplication<NestFastifyApplication>(
->     new FastifyAdapter(),
->   );
+>   app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
 >
 >   await app.init();
 >   await app.getHttpAdapter().getInstance().ready();
-> })
-> 
+> });
+>
 > it(`/GET cats`, () => {
 >   return app
 >     .inject({
 >       method: 'GET',
->       url: '/cats'
->     }).then(result => {
->       expect(result.statusCode).toEqual(200)
->       expect(result.payload).toEqual(/* expectedPayload */)
+>       url: '/cats',
+>     })
+>     .then((result) => {
+>       expect(result.statusCode).toEqual(200);
+>       expect(result.payload).toEqual(/* expectedPayload */);
 >     });
-> })
+> });
+>
+> afterAll(async () => {
+>   await app.close();
+> });
 > ```
 
 In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
 
 We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
 
-In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override guards, interceptors, filters and pipes with the`overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
+In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override modules, guards, interceptors, filters and pipes with the `overrideModule()`, `overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
 
-Each of the override methods returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
+Each of the override methods (except for `overrideModule()`) returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
 
 - `useClass`: you supply a class that will be instantiated to provide the instance to override the object (provider, guard, etc.).
 - `useValue`: you supply an instance that will override the object.
 - `useFactory`: you supply a function that returns an instance that will override the object.
 
+On the other hand, `overrideModule()` returns an object with the `useModule()` method, which you can use to supply a module that will override the original module, as follows:
+
+```typescript
+const moduleRef = await Test.createTestingModule({
+  imports: [AppModule],
+})
+  .overrideModule(CatsModule)
+  .useModule(AlternateCatsModule)
+  .compile();
+```
+
 Each of the override method types, in turn, returns the `TestingModule` instance, and can thus be chained with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). You should use `compile()` at the end of such a chain to cause Nest to instantiate and initialize the module.
 
 Also, sometimes you may want to provide a custom logger e.g. when the tests are run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to instruct the `TestModuleBuilder` how to log during tests (by default, only "error" logs will be logged to the console).
+
+> warning **Warning** The `@nestjs/core` package exposes unique provider tokens with the `APP_` prefix to help on define global enhancers. Those tokens cannot be overridden since they can represent multiple providers. Thus you can't use `.overrideProvider(APP_GUARD)` (and so on). If you want to override some global enhancer, follow [this workaround](https://github.com/nestjs/nest/issues/4053#issuecomment-585612462).
 
 The compiled module has several useful methods, as described in the following table:
 
@@ -349,6 +406,7 @@ providers: [
   {
     provide: APP_GUARD,
     useExisting: JwtAuthGuard,
+    // ^^^^^^^^ notice the use of 'useExisting' instead of 'useClass'
   },
   JwtAuthGuard,
 ],
@@ -381,9 +439,7 @@ To accomplish this, use `jest.spyOn()` on the `ContextIdFactory`:
 
 ```typescript
 const contextId = ContextIdFactory.create();
-jest
-  .spyOn(ContextIdFactory, 'getByRequest')
-  .mockImplementation(() => contextId);
+jest.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
 ```
 
 Now we can use the `contextId` to access a single generated DI container sub-tree for any subsequent request.

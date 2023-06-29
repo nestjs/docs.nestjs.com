@@ -5,16 +5,16 @@ ISSUES MISSING IMPORTANT INFORMATION MAY BE CLOSED WITHOUT INVESTIGATION.
 -->
 
 ## I'm submitting a...
-<!-- 
+<!--
 Please search GitHub for a similar issue or PR before submitting.
 Check one of the following options with "x" -->
-<pre><code>
-[ ] Regression <!--(a behavior that used to work and stopped working in a new release)-->
-[ ] Bug report
-[ ] Feature request
-[ ] Documentation issue or request (new chapter/page)
-[ ] Support request => Please do not submit support request here, instead post your question on Stack Overflow.
-</code></pre>
+
+- [ ] Regression <!--(a behavior that used to work and stopped working in a new release)-->
+- [ ] Bug report
+- [ ] Feature request
+- [ ] Documentation issue or request (new chapter/page)
+- [ ] Support request => Please do not submit support request here, instead post your question on Stack Overflow.
+
 
 ## Current behavior
 <!-- Describe how the issue manifests. -->
@@ -33,11 +33,12 @@ Check one of the following options with "x" -->
 
 ## Environment
 
-<pre><code>
-For Tooling issues:
-- Node version: XX  <!-- run `node --version` -->
-- Platform:  <!-- Mac, Linux, Windows -->
+#### For Tooling issues:
+<!-- Run `node --version` -->
+- Node version: XX
 
-Others:
+<!-- Mac, Linux, Windows -->
+- Platform:
+
+#### Others:
 <!-- Anything else relevant?  Operating system version, IDE, package manager, ... -->
-</code></pre>

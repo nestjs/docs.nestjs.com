@@ -4,7 +4,7 @@
   *ngIf="children; else withoutChildren"
 >
   <div class="heading" (click)="toggle()">
-    <h3>{{ title }}</h3>
+    <h3><span *ngIf="isNew" class="new">NEW</span>{{ title }}</h3>
     <svg
       class="arrow-icon"
       width="20"

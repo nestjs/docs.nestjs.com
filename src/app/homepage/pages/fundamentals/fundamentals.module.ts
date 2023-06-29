@@ -12,6 +12,7 @@ import { ExecutionContextComponent } from './execution-context/execution-context
 import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-agnosticism.component';
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
+import { LazyLoadingModulesComponent } from './lazy-loading-modules/lazy-loading-modules.component';
 
 const routes: Routes = [
   {
@@ -46,6 +47,11 @@ const routes: Routes = [
     path: 'module-ref',
     component: ModuleRefComponent,
     data: { title: 'Module reference' },
+  },
+  {
+    path: 'lazy-loading-modules',
+    component: LazyLoadingModulesComponent,
+    data: { title: 'Lazy-loading modules' },
   },
   {
     path: 'unit-testing',
@@ -95,6 +101,7 @@ const routes: Routes = [
     ProviderScopesComponent,
     LifecycleEventsComponent,
     ModuleRefComponent,
+    LazyLoadingModulesComponent,
   ],
 })
 export class FundamentalsModule {}
