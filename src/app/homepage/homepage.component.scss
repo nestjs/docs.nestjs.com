@@ -199,7 +199,7 @@
   }
 
   .logo-sponsor--high {
-    width: 160px;
+    width: 140px;
   }
 
   .logo-sponsor--slim {
@@ -402,7 +402,8 @@
 
 .company-logo img {
   max-width: 130px;
-  max-height: 90px;
+  max-height: 60px;
+  padding: 6px;
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
   opacity: 0.5;
