@@ -20,7 +20,7 @@ const routes: Routes = [
     path: 'monorepo',
     component: CliWorkspacesComponent,
     data: {
-      title: 'Monorepo - CLI',
+      title: 'Workspaces - CLI',
     },
   },
   {
