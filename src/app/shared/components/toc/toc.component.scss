@@ -38,17 +38,17 @@
     margin-bottom: 6px;
 
     &:hover {
-      color: var(--primary);
+      color: var(--toc-primary-title);
     }
   }
 
   .current {
-    color: var(--primary-3dp);
+    color: var(--toc-primary-title);
     font-weight: 600;
 
     &::before {
-      background: var(--primary);
-      border-color: var(--primary);
+      background: var(--toc-primary-title);
+      border-color: var(--toc-primary-title);
       border-width: 1px;
       left: -3px;
     }
@@ -80,12 +80,12 @@
     color: var(--color);
     font-weight: normal;
     &:hover {
-      color: var(--primary);
+      color: var(--toc-primary-title);
     }
   }
 
   .current a {
     font-weight: 600;
-    color: var(--primary);
+    color: var(--toc-primary-title);
   }
 }

@@ -20,7 +20,7 @@ h3 {
 
 .new {
   color: #fff;
-  background: variables.$red-color;
+  background: var(--primary);
   font-size: 11px;
   padding: 2px 4px;
   margin-right: 5px;
