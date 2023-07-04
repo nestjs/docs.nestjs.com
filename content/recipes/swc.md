@@ -135,7 +135,7 @@ declare a `generate-metadata.ts` file near the `main.ts` file with the following
 
 ```ts
 import { PluginMetadataGenerator } from '@nestjs/cli/lib/compiler/plugins';
-import { ReadonlyVisitor } from '@nestjs/swagger';
+import { ReadonlyVisitor } from '@nestjs/swagger/dist/plugin';
 
 const generator = new PluginMetadataGenerator();
 generator.generate({
