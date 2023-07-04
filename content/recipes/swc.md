@@ -142,7 +142,7 @@ generator.generate({
   visitors: [new ReadonlyVisitor({ introspectComments: true, pathToSource: __dirname })],
   outputDir: __dirname,
   watch: true,
-  tsconfigPath: 'tsconfig.build.json',
+  tsconfigPath: 'apps/<name>/tsconfig.app.json',
 });
 ```
 
