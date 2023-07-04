@@ -35,10 +35,10 @@ footer {
 
   a {
     @extend .transition;
-    color: var(--primary);
+    color: var(--primary-5dp);
     font-weight: 600;
     &:hover {
-      color: var(--primary);
+      color: var(--primary-5dp);
     }
   }
 

@@ -61,7 +61,8 @@
   font-size: 13px;
   height: 40px;
   padding: 10px 20px;
-  background: #fdfdfd;
+  background: var(--background);
+  color: var(--color);
   width: calc(100% - 70px);
   // box-shadow: -2px 2px 3px var(--background);
   border-radius: 3px;
