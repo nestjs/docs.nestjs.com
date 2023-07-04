@@ -146,6 +146,7 @@ export interface ExpressSwaggerCustomOptions {
   validatorUrl?: string;
   url?: string;
   urls?: Record<'url' | 'name', string>[];
+  patchDocumentOnRequest?: <TRequest = any, TResponse = any> (req: TRequest, res: TResponse, document: OpenAPIObject) => OpenAPIObject;
 }
 ```
 
