@@ -116,7 +116,7 @@ export class WsThrottlerGuard extends ThrottlerGuard {
   }
 }
 ```
-> info **Hint** If you using ws, it is necessary to replace the `_socket` with `conn`
+> info **Hint** If you are using ws, it is necessary to replace the `_socket` with `conn`
 
 There's a few things to keep in mind when working with WebSockets:
 
