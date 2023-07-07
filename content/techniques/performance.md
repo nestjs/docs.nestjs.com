@@ -103,6 +103,20 @@ export class LoggerMiddleware {
 }
 ```
 
+#### Route Config
+
+You can use the [route config](https://fastify.dev/docs/latest/Reference/Routes/#config) feature of Fastify with the `@RouteConfig()` decorator.
+
+```typescript
+@RouteConfig({ output: 'hello world' })
+@Get()
+index(@Req() req) {
+  return req.routeConfig.output;
+}
+```
+
+> info **Hint** `@RouteConfig()` is imported from `@nestjs/platform-fastify`.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
