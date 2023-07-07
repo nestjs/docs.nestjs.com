@@ -49,7 +49,7 @@ findAll(@Res({ passthrough: true }) response: Response) {
 }
 ```
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#library-specific-approach).
 
 > info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `Response` from the `express` package.
 
