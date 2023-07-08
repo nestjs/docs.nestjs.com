@@ -439,12 +439,7 @@ async createMany(users: User[]) {
 With TypeORM [subscribers](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber), you can listen to specific entity events.
 
 ```typescript
-import {
-  DataSource,
-  EntitySubscriberInterface,
-  EventSubscriber,
-  InsertEvent,
-} from 'typeorm';
+import { DataSource, EntitySubscriberInterface, EventSubscriber, InsertEvent } from 'typeorm';
 import { User } from './user.entity';
 
 @EventSubscriber()
@@ -543,10 +538,7 @@ At this point, you have `User` and `Album` entities registered with their own da
 
 ```typescript
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User]),
-    TypeOrmModule.forFeature([Album], 'albumsConnection'),
-  ],
+  imports: [TypeOrmModule.forFeature([User]), TypeOrmModule.forFeature([Album], 'albumsConnection')],
 })
 export class AppModule {}
 ```
@@ -992,10 +984,10 @@ There are three types of relations:
   </tr>
 </table>
 
-To define relations in entities, use the corresponding **decorators**. For example, to define that each `User` can have multiple photos, use the `@HasMany()` decorator.
+To define relations in models, use the corresponding **decorators**. For example, to define that each `User` can have multiple photos, use the `@HasMany()` decorator.
 
 ```typescript
-@@filename(user.entity)
+@@filename(user.model)
 import { Column, Model, Table, HasMany } from 'sequelize-typescript';
 import { Photo } from '../photos/photo.model';
 
@@ -1133,10 +1125,7 @@ At this point, you have `User` and `Album` models registered with their own conn
 
 ```typescript
 @Module({
-  imports: [
-    SequelizeModule.forFeature([User]),
-    SequelizeModule.forFeature([Album], 'albumsConnection'),
-  ],
+  imports: [SequelizeModule.forFeature([User]), SequelizeModule.forFeature([Album], 'albumsConnection')],
 })
 export class AppModule {}
 ```
