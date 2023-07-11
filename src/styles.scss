@@ -4,9 +4,9 @@
 @use './scss/theme.scss';
 
 :root {
-  --docsearch-primary-color: variables.$red-color;
-  --docsearch-highlight-color: variables.$red-color;
-  --docsearch-logo-color: variables.$red-color;
+  --docsearch-primary-color: #ed2945;
+  --docsearch-highlight-color: #ed2945;
+  --docsearch-logo-color: #ed2945;
   --docsearch-modal-background: #fafafa;
   --docsearch-searchbox-focus-background: transparent;
   --docsearch-searchbox-shadow: none;
