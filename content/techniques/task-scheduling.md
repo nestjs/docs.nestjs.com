@@ -225,7 +225,7 @@ The `@nestjs/schedule` module provides a dynamic API that enables managing decla
 Obtain a reference to a `CronJob` instance by name from anywhere in your code using the `SchedulerRegistry` API. First, inject `SchedulerRegistry` using standard constructor injection:
 
 ```typescript
-constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
+constructor(private schedulerRegistry: SchedulerRegistry) {}
 ```
 
 > info **Hint** Import the `SchedulerRegistry` from the `@nestjs/schedule` package.
