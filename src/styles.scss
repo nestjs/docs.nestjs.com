@@ -235,7 +235,7 @@ tr td span.table-code-asterisk {
 }
 
 .external {
-  background: #f7f7f7;
+  background: var(--background-2dp);
 
   &::before {
     background: #e8e8e8;
