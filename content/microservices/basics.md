@@ -4,7 +4,7 @@ In addition to traditional (sometimes called monolithic) application architectur
 
 In Nest, a microservice is fundamentally an application that uses a different **transport** layer than HTTP.
 
-<figure><img src="/assets/Microservices_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Microservices_1.png" /></figure>
 
 Nest supports several built-in transport layer implementations, called **transporters**, which are responsible for transmitting messages between different microservice instances. Most transporters natively support both **request-response** and **event-based** message styles. Nest abstracts the implementation details of each transporter behind a canonical interface for both request-response and event-based messaging. This makes it easy to switch from one transport layer to another -- for example to leverage the specific reliability or performance features of a particular transport layer -- without impacting your application code.
 

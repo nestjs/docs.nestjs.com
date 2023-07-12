@@ -42,6 +42,9 @@
   --company-logo-filter: grayscale(1);
 
   --company-logo-opacity: 0.5;
+
+  --images-filter: unset;
+  --images-box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
 }
 
 .dark-mode {
@@ -87,4 +90,7 @@
   --company-logo-filter: contrast(0.5);
 
   --company-logo-opacity: unset;
+
+  --images-filter: invert(1) contrast(0.85);
+  --images-box-shadow: 0 0 0px 0 rgba(0, 0, 0, 0.08);
 }

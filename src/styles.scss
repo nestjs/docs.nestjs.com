@@ -130,6 +130,11 @@ figure {
   }
 }
 
+.illustrative-image {
+  filter: var(--images-filter);
+  box-shadow: var(--images-box-shadow);
+}
+
 figcaption {
   color: rgba(variables.$silver-color, 0.9);
   font-size: 16px;
