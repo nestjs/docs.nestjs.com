@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { StorageService } from './services/storage.service';
+import { DarkModeToggleComponent } from './components/dark-mode-toggle/dark-mode-toggle.component';
 import { BannerCoursesAuthComponent } from './components/banner-courses-auth/banner-courses-auth.component';
 import { BannerCoursesGraphQLCodeFirstComponent } from './components/banner-courses-graphql-cf/banner-courses-graphql-cf.component';
 import { BannerDevtoolsComponent } from './components/banner-devtools/banner-devtools.component';
@@ -24,6 +26,7 @@ import { ExtensionPipe } from './pipes/extension.pipe';
     BannerCoursesGraphQLCodeFirstComponent,
     BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
+    DarkModeToggleComponent,
   ],
   exports: [
     ExtensionPipe,
@@ -36,6 +39,8 @@ import { ExtensionPipe } from './pipes/extension.pipe';
     BannerCoursesGraphQLCodeFirstComponent,
     BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
+    DarkModeToggleComponent,
   ],
+  providers: [StorageService],
 })
 export class SharedModule {}

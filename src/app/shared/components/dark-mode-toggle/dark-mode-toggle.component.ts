@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-dark-mode-toggle',
@@ -14,6 +15,7 @@ export class DarkModeToggleComponent implements OnInit {
     @Inject(DOCUMENT)
     private readonly document: Document,
     private readonly mediaMatcher: MediaMatcher,
+    private readonly storageService: StorageService,
   ) {}
 
   ngOnInit() {
@@ -27,12 +29,12 @@ export class DarkModeToggleComponent implements OnInit {
 
   toggleDarkMode() {
     const isDarkMode = !this.isDarkMode;
-    localStorage.setItem('theme-mode', isDarkMode.toString());
+    this.storageService.set('theme-mode', isDarkMode.toString());
     this.setDarkMode(isDarkMode);
   }
 
   private getUserSettingsIsDarkMode(): boolean {
-    return localStorage.getItem('theme-mode') === 'true';
+    return this.storageService.get('theme-mode') === 'true';
   }
 
   private setDarkMode(isDarkMode: boolean) {
