@@ -4,11 +4,11 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { StorageService } from '../../services/storage.service';
 
 @Component({
-  selector: 'app-dark-mode-toggle',
-  templateUrl: './dark-mode-toggle.component.html',
-  styleUrls: ['./dark-mode-toggle.component.scss'],
+  selector: 'app-theme-mode-toggle',
+  templateUrl: './theme-mode-toggle.component.html',
+  styleUrls: ['./theme-mode-toggle.component.scss'],
 })
-export class DarkModeToggleComponent implements OnInit {
+export class ThemeModeToggleComponent implements OnInit {
   isDarkMode: boolean;
 
   constructor(
@@ -19,25 +19,25 @@ export class DarkModeToggleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const userPrefersDark =
+    const userPrefersTheme =
       this.mediaMatcher.matchMedia &&
-      this.mediaMatcher.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.mediaMatcher.matchMedia('(prefers-color-scheme: light)').matches;
     // In case the user has used the toggle button, we prioritize it over the
     // system settings
-    this.setDarkMode(this.getUserSettingsIsDarkMode() || userPrefersDark);
+    this.setThemeMode(this.getUserSettingsIsDarkMode() || userPrefersTheme);
   }
 
-  toggleDarkMode() {
+  toggleThemeMode() {
     const isDarkMode = !this.isDarkMode;
     this.storageService.set('theme-mode', isDarkMode.toString());
-    this.setDarkMode(isDarkMode);
+    this.setThemeMode(isDarkMode);
   }
 
   private getUserSettingsIsDarkMode(): boolean {
     return this.storageService.get('theme-mode') === 'true';
   }
 
-  private setDarkMode(isDarkMode: boolean) {
+  private setThemeMode(isDarkMode: boolean) {
     this.isDarkMode = isDarkMode;
     this.document.documentElement.setAttribute(
       'mode',
