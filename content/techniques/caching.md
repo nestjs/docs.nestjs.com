@@ -145,10 +145,13 @@ CacheModule.register({
 
 #### Global cache overrides
 
-While global cache is enabled, cache entries are stored under a `CacheKey` that is auto-generated based on the route path. You may override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis, allowing customized caching strategies for individual controller methods. This may be most relevant while using [different cache stores.](https://docs.nestjs.com/techniques/caching#different-stores)
+While global cache is enabled, cache entries are stored under a `CacheKey` that is auto-generated based on the route path. You may override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis or per-controller basis, allowing customized caching strategies for individual controller methods or for the entire controller. This may be most relevant while using [different cache stores.](https://docs.nestjs.com/techniques/caching#different-stores)
+
+In scenarios where both controller-level and method-level cache settings are defined, the cache settings specified at the method level take precedence over the ones set at the controller level.
 
 ```typescript
 @Controller()
+@CacheTTL(50)
 export class AppController {
   @CacheKey('custom_key')
   @CacheTTL(20)
