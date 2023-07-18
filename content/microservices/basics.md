@@ -232,7 +232,7 @@ The `options` property is an object with the same properties we saw in the `crea
 })
 ```
 
-Or alternatively using `registerAsync()` method in case if you want to pass configuration or doing any other async progress.
+Or alternatively use the `registerAsync()` method in case you want to pass configuration or do any other async progress.
 
 ```typescript
 @Module({
@@ -243,7 +243,7 @@ Or alternatively using `registerAsync()` method in case if you want to pass conf
         name: 'MATH_SERVICE',
         useFactory: async (configService: ConfigService) => ({
           options: {
-            url: configService.URL,
+            url: configService.get<string>('URL'),
           },
           transport: configService.TRANSPORT,
         }),
