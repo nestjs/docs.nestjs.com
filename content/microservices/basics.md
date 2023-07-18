@@ -245,7 +245,7 @@ Or alternatively use the `registerAsync()` method in case you want to pass confi
           options: {
             url: configService.get<string>('URL'),
           },
-          transport: configService.TRANSPORT,
+          transport: Transport.TCP,
         }),
         inject: [ConfigService],
       },
