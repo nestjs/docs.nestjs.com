@@ -199,7 +199,7 @@ For all [circular dependency injections](/fundamentals/circular-dependency) in y
 export class UserService {
   constructor(
     @Inject(forwardRef(() => ProfileService))
-    private readonly mainServicesService: WrapperType<ProfileService>,
+    private readonly profileService: WrapperType<ProfileService>,
   ) {};
 }
 ```
