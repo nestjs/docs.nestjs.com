@@ -103,7 +103,7 @@
 }
 
 .newsletter-form .btn-success[disabled] {
-  background: #d3e6d4;
+  background: var(--background);
   color: #1dd81c;
   pointer-events: none;
 }
