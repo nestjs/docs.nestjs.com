@@ -106,6 +106,8 @@ module.exports = (options, webpack) => {
 
 > info **Hint** To instruct Nest CLI to use this configuration, create a new `webpack.config.js` file in the root directory of your project.
 
+> warning **Warning** It is not recommended to bundle `node_modules` for Node.js applications. This is for demonstration purposes only. Check out this [comment](https://github.com/nestjs/nest/issues/1706#issuecomment-579248915) for more information.
+
 With this configuration, we received the following results:
 
 |                                      |                  |
