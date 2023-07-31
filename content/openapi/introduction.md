@@ -141,6 +141,7 @@ export interface ExpressSwaggerCustomOptions {
   customCssUrl?: string;
   customJs?: string;
   customfavIcon?: string;
+  customSwaggerUiPath?: string;
   swaggerUrl?: string;
   customSiteTitle?: string;
   validatorUrl?: string;
