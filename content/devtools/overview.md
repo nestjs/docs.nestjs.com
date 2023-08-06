@@ -191,7 +191,7 @@ fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 
 > info **Hint** `SerializedGraph` is exported from the `@nestjs/core` package.
 
-Then you can drag and drop this/upload this file:
+Then you can drag and drop/upload this file:
 
 <figure><img src="/assets/devtools/drag-and-drop.png" /></figure>
 

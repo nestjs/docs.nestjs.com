@@ -34,6 +34,19 @@ Instead of passing the `-b` flag you can also just set the `compilerOptions.buil
 }
 ```
 
+To customize builder's behavior, you can pass an object containing two attributes, `type` (`"swc"`) and `options`, as follows:
+
+```json
+"compilerOptions": {
+  "builder": {
+    "type": "swc",
+    "options": {
+      "swcrcPath": "infrastructure/.swcrc",
+    }
+  }
+}
+```
+
 To run the application in watch mode, use the following command:
 
 ```bash
@@ -122,14 +135,14 @@ declare a `generate-metadata.ts` file near the `main.ts` file with the following
 
 ```ts
 import { PluginMetadataGenerator } from '@nestjs/cli/lib/compiler/plugins';
-import { ReadonlyVisitor } from '@nestjs/swagger';
+import { ReadonlyVisitor } from '@nestjs/swagger/dist/plugin';
 
 const generator = new PluginMetadataGenerator();
 generator.generate({
   visitors: [new ReadonlyVisitor({ introspectComments: true, pathToSource: __dirname })],
   outputDir: __dirname,
   watch: true,
-  tsconfigPath: 'tsconfig.build.json',
+  tsconfigPath: 'apps/<name>/tsconfig.app.json',
 });
 ```
 
@@ -177,6 +190,18 @@ If your ORM does not provide a similar workaround, you can define the wrapper ty
  * caused by reflection metadata saving the type of the property.
  */
 export type WrapperType<T> = T; // WrapperType === Relation
+```
+
+For all [circular dependency injections](/fundamentals/circular-dependency) in your project, you will also need to use the custom wrapper type described above:
+
+```typescript
+@Injectable()
+export class UserService {
+  constructor(
+    @Inject(forwardRef(() => ProfileService))
+    private readonly profileService: WrapperType<ProfileService>,
+  ) {};
+}
 ```
 
 ### Jest + SWC

@@ -581,13 +581,12 @@ Assuming that we use the schema first approach and have enabled the typings gene
 
 ```typescript
 @@filename(graphql)
-export class Author {
+export (class Author {
   id: number;
   firstName?: string;
   lastName?: string;
   posts?: Post[];
-}
-
+})
 export class Post {
   id: number;
   title: string;
@@ -658,7 +657,7 @@ These arguments have the following meanings:
 - `info`: an object that contains information about the execution state of the query.
 - `args`: an object with the arguments passed into the field in the query.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>
 
 #### Module
 

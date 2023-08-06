@@ -12,6 +12,17 @@ const document = SwaggerModule.createDocument(app, options, {
 });
 ```
 
+#### Global parameters
+
+You can add parameter definitions to all routes using `DocumentBuilder`:
+
+```typescript
+const options = new DocumentBuilder().addGlobalParameters({
+  name: 'tenantId',
+  in: 'header',
+});
+```
+
 #### Multiple specifications
 
 The `SwaggerModule` provides a way to support multiple specifications. In other words, you can serve different documentation, with different UIs, on different endpoints.

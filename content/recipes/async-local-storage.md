@@ -57,7 +57,7 @@ export class AppModule implements NestModule {
         };
         // and pass the "next" function as callback
         // to the "als.run" method together with the store.
-        als.run(store, () => next());
+        this.als.run(store, () => next());
       })
       // and register it for all routes (in case of Fastify use '(.*)')
       .forRoutes('*');
@@ -87,7 +87,7 @@ export class AppModule {
         };
         // and pass the "next" function as callback
         // to the "als.run" method together with the store.
-        als.run(store, () => next());
+        this.als.run(store, () => next());
       })
       // and register it for all routes (in case of Fastify use '(.*)')
       .forRoutes('*');
@@ -205,9 +205,9 @@ export class CatService {
 @Injectable()
 @Dependencies(AsyncLocalStorage, CatRepository)
 export class CatService {
-  constructor(als, catRepository) {
+  constructor(cls, catRepository) {
     // We can inject the provided ClsService instance,
-    this.als = als
+    this.cls = cls
     this.catRepository = catRepository
   }
 
@@ -223,7 +223,7 @@ export class CatService {
 
 ```ts
 export interface MyClsStore extends ClsStore {
-  userId: number
+  userId: number;
 }
 ```
 

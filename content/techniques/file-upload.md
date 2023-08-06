@@ -236,6 +236,18 @@ uploadFile(files) {
 }
 ```
 
+#### No files
+
+To accept `multipart/form-data` but not allow any files to be uploaded, use the `NoFilesInterceptor`. This sets multipart data as attributes on the request body. Any files sent with the request will throw a `BadRequestException`.
+
+```typescript
+@Post('upload')
+@UseInterceptors(NoFilesInterceptor())
+handleMultiPartData(@Body() body) {
+  console.log(body)
+}
+```
+
 #### Default options
 
 You can specify multer options in the file interceptors as described above. To set default options, you can call the static `register()` method when you import the `MulterModule`, passing in supported options. You can use all options listed [here](https://github.com/expressjs/multer#multeropts).

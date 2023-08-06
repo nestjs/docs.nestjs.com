@@ -14,7 +14,7 @@ $ npm i -D @types/cookie-parser
 Once the installation is complete, apply the `cookie-parser` middleware as global middleware (for example, in your `main.ts` file).
 
 ```typescript
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 // somewhere in your initialization file
 app.use(cookieParser());
 ```
@@ -49,7 +49,7 @@ findAll(@Res({ passthrough: true }) response: Response) {
 }
 ```
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#library-specific-approach).
 
 > info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `Response` from the `express` package.
 
@@ -98,7 +98,7 @@ findAll(@Res({ passthrough: true }) response: FastifyReply) {
 
 To read more about `FastifyReply#setCookie()` method, check out this [page](https://github.com/fastify/fastify-cookie#sending).
 
-> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#appendix-library-specific-approach).
+> warning **Warning** If you want to leave the response handling logic to the framework, remember to set the `passthrough` option to `true`, as shown above. Read more [here](/controllers#library-specific-approach).
 
 > info **Hint** The `@Res()` decorator is imported from the `@nestjs/common`, while `FastifyReply` from the `fastify` package.
 

@@ -231,4 +231,4 @@ export class CatsService {
 
 This technique enables you to conditionally instantiate different classes outside of the framework container.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>

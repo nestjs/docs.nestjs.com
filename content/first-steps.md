@@ -114,3 +114,21 @@ $ npm run start:dev
 ```
 
 This command will watch your files, automatically recompiling and reloading the server.
+
+#### Linting and formatting
+
+[CLI](/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [eslint](https://eslint.org/) and [prettier](https://prettier.io/)).
+
+> info **Hint** Not sure about the role of formatters vs linters? Learn the difference [here](https://prettier.io/docs/en/comparison.html).
+
+To ensure maximum stability and extensibility, we use the base [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
+
+For headless environments where an IDE is not relevant (Continuous Integration, Git hooks, etc.) a Nest project comes with ready-to-use `npm` scripts.
+
+```bash
+# Lint and autofix with eslint
+$ npm run lint
+
+# Format with prettier
+$ npm run format
+```

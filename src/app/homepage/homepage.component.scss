@@ -1,5 +1,5 @@
-@import '../../scss/utils.scss';
-@import '../../scss/variables.scss';
+@use '../../scss/utils';
+@use '../../scss/variables';
 
 .container-fluid {
   position: relative;
@@ -34,7 +34,7 @@
     display: block;
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     //@include transform(translateX(250px));
     margin-left: 250px;
     width: calc(100% - 250px);
@@ -43,7 +43,7 @@
       width: 100%;
     }
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
@@ -58,12 +58,12 @@
 }
 
 .page-wrapper {
-  color: $grey-color;
+  color: variables.$grey-color;
   line-height: 26px;
 
   a {
     font-weight: 600;
-    color: $red-color;
+    color: variables.$red-color;
     &:hover {
       color: #0894e2;
     }
@@ -75,7 +75,7 @@
   h4,
   h5,
   h6 {
-    color: $black-color;
+    color: variables.$black-color;
   }
   h3 {
     font-size: 24px;
@@ -89,14 +89,14 @@
   h3,
   h4 {
     a {
-      @include opacity(0);
+      @include utils.opacity(0);
       margin-left: 0.1em;
       padding: 0 0.25rem;
     }
     span:hover + a,
     span + a:hover,
     a:focus {
-      @include opacity(1);
+      @include utils.opacity(1);
     }
     &::before {
       content: '';
@@ -109,7 +109,7 @@
     }
   }
   h5 {
-    color: $grey-color;
+    color: variables.$grey-color;
     margin-top: 5px;
     font-weight: 600;
     font-size: 16px;
@@ -137,7 +137,7 @@
   }
 
   a {
-    color: $red-color;
+    color: variables.$red-color;
     font-weight: 600;
     &:hover {
       color: #0894e2;
@@ -199,7 +199,7 @@
   }
 
   .logo-sponsor--high {
-    width: 160px;
+    width: 140px;
   }
 
   .logo-sponsor--slim {
@@ -216,8 +216,8 @@
   }
 
   .btn-primary {
-    border: 2px solid $red-color;
-    color: $red-color;
+    border: 2px solid variables.$red-color;
+    color: variables.$red-color;
     padding: 12px 20px;
     display: inline-block;
 
@@ -249,7 +249,7 @@
   margin: 0;
   float: left;
 
-  @include media(normal) {
+  @include utils.media(normal) {
     width: 100%;
     float: none;
   }
@@ -268,13 +268,13 @@
   @media print {
     width: 100%;
   }
-  @include media(large) {
+  @include utils.media(large) {
     width: 100%;
   }
 
   .row {
     display: flex;
-    @include media(normal) {
+    @include utils.media(normal) {
       display: block;
     }
   }
@@ -282,7 +282,7 @@
   .thumbnail {
     width: 400px;
 
-    @include media(normal) {
+    @include utils.media(normal) {
       width: 100%;
       max-width: 400px;
       margin: 0 auto;
@@ -298,7 +298,7 @@
     &.p-l-30 img {
       padding-left: 30px;
 
-      @include media(normal) {
+      @include utils.media(normal) {
         padding-left: 0;
       }
     }
@@ -306,7 +306,7 @@
     &.p-r-30 img {
       padding-right: 30px;
 
-      @include media(normal) {
+      @include utils.media(normal) {
         padding-right: 0;
       }
     }
@@ -317,7 +317,7 @@
   }
 
   .contact-us {
-    background: $red-color;
+    background: variables.$red-color;
     color: #fff;
     padding: 20px 30px;
     border-radius: 3px;
@@ -325,7 +325,7 @@
     display: flex;
     align-items: center;
 
-    @include media(medium) {
+    @include utils.media(medium) {
       display: block;
       text-align: center;
       p {
@@ -357,7 +357,7 @@
         color: #fff;
       }
 
-      @include media(medium) {
+      @include utils.media(medium) {
         width: 150px;
         margin: 15px auto 0;
         float: none;
@@ -381,15 +381,15 @@
 
   svg {
     font-size: 17px;
-    color: $black-color;
+    color: variables.$black-color;
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
     }
   }
 }
 
 .toc-wrapper {
-  @include media(large) {
+  @include utils.media(large) {
     display: none;
   }
 }
@@ -402,7 +402,8 @@
 
 .company-logo img {
   max-width: 130px;
-  max-height: 90px;
+  max-height: 60px;
+  padding: 6px;
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
   opacity: 0.5;
@@ -475,7 +476,7 @@
     max-width: 130px;
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     #carbonads {
       padding: 30px 0 30px 30px;
       float: right;
@@ -483,7 +484,7 @@
     }
   }
 
-  @include media(medium) {
+  @include utils.media(medium) {
     #carbonads {
       padding: 30px 0 15px 25px;
       text-align: left;
@@ -523,7 +524,7 @@
 }
 
 .algolia-autocomplete .algolia-docsearch-suggestion--highlight {
-  color: $red-color;
+  color: variables.$red-color;
   background: #fff2f4;
 }
 

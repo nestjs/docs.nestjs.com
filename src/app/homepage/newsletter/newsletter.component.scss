@@ -1,5 +1,5 @@
-@import '../../../scss/variables.scss';
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 .newsletter-wrapper {
   background: #e8e8e8;
@@ -9,12 +9,12 @@
   margin: 0 -85px;
   width: auto;
 
-  @include media(large) {
+  @include utils.media(large) {
     margin: 0 -50px;
     padding: 40px 50px;
   }
 
-  @include media(medium) {
+  @include utils.media(medium) {
     margin: 0 -20px;
     padding: 40px 20px;
     width: 100%;
