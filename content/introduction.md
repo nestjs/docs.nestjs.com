@@ -42,7 +42,7 @@ Open your browser and navigate to [`http://localhost:3000/`](http://localhost:30
 
 To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
 
-You can also manually create a new project from scratch by installing the core and supporting files with **npm** (or **yarn**). In this case, of course, you'll be responsible for creating the project boilerplate files yourself.
+You can also manually create a new project from scratch by installing the core and supporting files with **npm** (or **yarn**/**pnpm**/**bun**). In this case, of course, you'll be responsible for creating the project boilerplate files yourself.
 
 ```bash
 $ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata
