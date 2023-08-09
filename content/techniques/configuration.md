@@ -565,3 +565,29 @@ You can then use it as usual, by calling the `get` method with the configuration
 ```typescript
 const port = configService.get('PORT');
 ```
+
+#### Edge Cases
+
+If a decorator depends on an environment variable's existance, `dotenv` can be used directly in the `main.ts` file. This is particularly useful for the `@Cron` decorator.
+
+Preload the environment variables:
+
+```typescript
+@@filename(main)
+import dotenv from 'dotenv'
+dotenv.config()
+import {AppModule} from ./app.module
+```
+
+Then the environment variables can be used in decorators:
+
+```typescript
+@@filename(cats.controller)
+@Controller('cats')
+export class CatsController(){
+  @Cron(process.env.CATS_TASK_INTERVAL)
+  handleCron() {
+    // Scheduled Task Handler
+  }
+}
+```
