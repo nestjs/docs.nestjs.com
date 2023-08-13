@@ -67,22 +67,30 @@ Filters are the only component that do not resolve global first. Instead, filter
 In general, the request lifecycle looks like the following:
 
 1. Incoming request
-2. Globally bound middleware
-3. Module bound middleware
-4. Global guards
-5. Controller guards
-6. Route guards
-7. Global interceptors (pre-controller)
-8. Controller interceptors (pre-controller)
-9. Route interceptors (pre-controller)
-10. Global pipes
-11. Controller pipes
-12. Route pipes
-13. Route parameter pipes
-14. Controller (method handler)
-15. Service (if exists)
-16. Route interceptor (post-request)
-17. Controller interceptor (post-request)
-18. Global interceptor (post-request)
-19. Exception filters (route, then controller, then global)
-20. Server response
+2. Middleware
+   - 2.1. Globally bound middleware
+   - 2.2. Module bound middleware
+3. Guards
+   - 3.1 Global guards
+   - 3.2 Controller guards
+   - 3.3 Route guards
+4. Interceptors(pre-controller)
+   - 4.1 Global interceptors (pre-controller)
+   - 4.2 Controller interceptors (pre-controller)
+   - 4.3 Route interceptors (pre-controller)
+5. Pipes
+   - 5.1 Global pipes
+   - 5.2 Controller pipes
+   - 5.3 Route pipes
+   - 5.4 Route parameter pipes
+6. Controller (method handler)
+7. Service (if exists)
+8. Interceptors
+   - 8.1 Route interceptor (post-request)
+   - 8.2 Controller interceptor (post-request)
+   - 8.3 Global interceptor (post-request)
+9. Exception filters
+   - 9.1 route
+   - 9.2 controller
+   - 9.3 global
+11. Server response
