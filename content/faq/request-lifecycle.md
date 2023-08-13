@@ -93,4 +93,4 @@ In general, the request lifecycle looks like the following:
    - 9.1 route
    - 9.2 controller
    - 9.3 global
-11. Server response
+10. Server response
