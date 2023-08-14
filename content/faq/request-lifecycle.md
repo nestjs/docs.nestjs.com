@@ -74,10 +74,10 @@ In general, the request lifecycle looks like the following:
    - 3.1 Global guards
    - 3.2 Controller guards
    - 3.3 Route guards
-4. Interceptors(pre-controller)
-   - 4.1 Global interceptors (pre-controller)
-   - 4.2 Controller interceptors (pre-controller)
-   - 4.3 Route interceptors (pre-controller)
+4. Interceptors (pre-controller)
+   - 4.1 Global interceptors
+   - 4.2 Controller interceptors
+   - 4.3 Route interceptors
 5. Pipes
    - 5.1 Global pipes
    - 5.2 Controller pipes
@@ -85,10 +85,10 @@ In general, the request lifecycle looks like the following:
    - 5.4 Route parameter pipes
 6. Controller (method handler)
 7. Service (if exists)
-8. Interceptors
-   - 8.1 Route interceptor (post-request)
-   - 8.2 Controller interceptor (post-request)
-   - 8.3 Global interceptor (post-request)
+8. Interceptors (post-request)
+   - 8.1 Route interceptor
+   - 8.2 Controller interceptor
+   - 8.3 Global interceptor
 9. Exception filters
    - 9.1 route
    - 9.2 controller
