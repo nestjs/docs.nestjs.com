@@ -161,7 +161,7 @@ export class HttpService<T> {
 }
 ```
 
-> warning **Warning** If your class doesn't extend another provider, you should always prefer using **constructor-based** injection.
+> warning **Warning** If your class doesn't extend another class, you should always prefer using **constructor-based** injection.
 
 #### Provider registration
 

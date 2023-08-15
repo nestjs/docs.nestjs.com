@@ -192,6 +192,18 @@ If your ORM does not provide a similar workaround, you can define the wrapper ty
 export type WrapperType<T> = T; // WrapperType === Relation
 ```
 
+For all [circular dependency injections](/fundamentals/circular-dependency) in your project, you will also need to use the custom wrapper type described above:
+
+```typescript
+@Injectable()
+export class UserService {
+  constructor(
+    @Inject(forwardRef(() => ProfileService))
+    private readonly profileService: WrapperType<ProfileService>,
+  ) {};
+}
+```
+
 ### Jest + SWC
 
 To use SWC with Jest, you need to install the following packages:
