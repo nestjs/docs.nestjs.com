@@ -8,7 +8,6 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/schedule
-$ npm install --save-dev @types/cron
 ```
 
 To activate job scheduling, import the `ScheduleModule` into the root `AppModule` and run the `forRoot()` static method as shown below:
