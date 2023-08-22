@@ -313,7 +313,7 @@ export type CreateCatDto = z.infer<typeof createCatSchema>;
 We do that using the `@UsePipes()` decorator as shown below:
 
 ```typescript
-@@filename()
+@@filename(cats.controller)
 @Post()
 @UsePipes(new ZodValidationPipe(createCatSchema))
 async create(@Body() createCatDto: CreateCatDto) {
