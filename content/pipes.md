@@ -228,7 +228,7 @@ This is, of course, exactly the use case for which pipes are designed. So let's 
 
 <app-banner-courses></app-banner-courses>
 
-#### Object schema validation
+#### Object schema validation (with Zod)
 
 There are several approaches available for doing object validation in a clean, [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) way. One common approach is to use **schema-based** validation. Let's go ahead and try that approach.
 
