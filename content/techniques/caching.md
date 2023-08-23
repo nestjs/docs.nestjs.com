@@ -128,7 +128,7 @@ All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // seconds
+  ttl: 2000, // milliseconds
   max: 10, // maximum number of items in cache
 });
 ```
