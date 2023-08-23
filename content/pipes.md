@@ -248,10 +248,9 @@ In the next section, you'll see how we supply the appropriate schema for a given
 
 ```typescript
 @@filename()
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { ZodObject } from 'zod';
 
-@Injectable()
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodObject<any>) {}
 
@@ -265,10 +264,9 @@ export class ZodValidationPipe implements PipeTransform {
   }
 }
 @@switch
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { ZodObject } from 'zod';
 
-@Injectable()
 export class ZodValidationPip {
   constructor(private schema) {}
 
@@ -315,7 +313,7 @@ export type CreateCatDto = z.infer<typeof createCatSchema>;
 We do that using the `@UsePipes()` decorator as shown below:
 
 ```typescript
-@@filename()
+@@filename(cats.controller)
 @Post()
 @UsePipes(new ZodValidationPipe(createCatSchema))
 async create(@Body() createCatDto: CreateCatDto) {
