@@ -53,11 +53,13 @@ export class TasksService {
 
 In this example, the `handleCron()` method will be called each time the current second is `45`. In other words, the method will be run once per minute, at the 45 second mark.
 
-The `@Cron()` decorator supports all standard [cron patterns](http://crontab.org/):
+The `@Cron()` decorator supports the followings standard [cron patterns](http://crontab.org/):
 
 - Asterisk (e.g. `*`)
 - Ranges (e.g. `1-3,5`)
 - Steps (e.g. `*/2`)
+
+> warning **Warning** Some cron patterns may not work properly with the `@nestjs/schedule` package because they are not compatible.
 
 In the example above, we passed `45 * * * * *` to the decorator. The following key shows how each position in the cron pattern string is interpreted:
 
