@@ -217,7 +217,7 @@ const routes: Routes = [
       preloadingStrategy: PreloadAllModules,
     }),
   ],
-  providers: [RedirectGuard],
+  providers: [],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
