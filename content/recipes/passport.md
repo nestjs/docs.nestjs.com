@@ -779,11 +779,7 @@ We've now completed our JWT authentication implementation. JavaScript clients (s
 In most cases, using a provided `AuthGuard` class is sufficient. However, there might be use-cases when you would like to simply extend the default error handling or authentication logic. For this, you can extend the built-in class and override methods within a sub-class.
 
 ```typescript
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
@@ -848,7 +844,7 @@ findAll() {
 }
 ```
 
-Lastly, we need the `JwtAuthGuard` to return `true` when the `"isPublic"` metadata is found. For this, we'll use the `Reflector` class (read more [here](/guards#putting-it-all-together)).
+Lastly, we need the `JwtAuthGuard` to return `true` when the `"isPublic"` metadata is found and there is no authorization header present in the request. For this, we'll use the `Reflector` class (read more [here](/guards#putting-it-all-together)).
 
 ```typescript
 @Injectable()
@@ -858,11 +854,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (isPublic) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [context.getHandler(), context.getClass()]);
+    const request = context.switchToHttp().getRequest();
+    if (isPublic && !request.headers.authorization) {
       return true;
     }
     return super.canActivate(context);
@@ -961,12 +955,10 @@ To get the current authenticated user in your graphql resolver, you can define a
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-export const CurrentUser = createParamDecorator(
-  (data: unknown, context: ExecutionContext) => {
-    const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req.user;
-  },
-);
+export const CurrentUser = createParamDecorator((data: unknown, context: ExecutionContext) => {
+  const ctx = GqlExecutionContext.create(context);
+  return ctx.getContext().req.user;
+});
 ```
 
 To use above decorator in your resolver, be sure to include it as a parameter of your query or mutation:
