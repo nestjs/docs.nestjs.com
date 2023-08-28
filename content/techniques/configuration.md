@@ -568,7 +568,8 @@ const port = configService.get('PORT');
 
 #### Edge Cases
 
-If a decorator depends on an environment variable's existance, `dotenv` can be used directly in the `main.ts` file. This is particularly useful for the `@Cron` decorator.
+If a decorator depends on an environment variable's existence, `dotenv` can be used directly in the `main.ts` file. This is particularly useful for the `@Cron` decorator.
+Ensure `dotenv.config()` is called before the `AppModule` is imported.
 
 Preload the environment variables:
 
@@ -576,7 +577,7 @@ Preload the environment variables:
 @@filename(main)
 import dotenv from 'dotenv'
 dotenv.config()
-import {AppModule} from ./app.module
+import {AppModule} from './app.module'
 ```
 
 Then the environment variables can be used in decorators:
