@@ -213,7 +213,7 @@ With this place, we can now navigate to the `main.ts` file and update our bootst
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import serverlessExpress from '@vendia/serverless-express';
+import { configure as serverlessExpress } from '@vendia/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
