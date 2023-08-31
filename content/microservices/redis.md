@@ -64,7 +64,7 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
   </tr>
 </table>
 
-All the properties supported by the official [ioredis](https://luin.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
+All the properties supported by the official [ioredis](https://redis.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
 
 #### Client
 
