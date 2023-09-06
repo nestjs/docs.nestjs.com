@@ -12,10 +12,10 @@ Once the installation is complete, the `ThrottlerModule` can be configured as an
 @@filename(app.module)
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
+    ThrottlerModule.forRoot([{
       ttl: 60,
       limit: 10,
-    }),
+    }]),
   ],
 })
 export class AppModule {}
