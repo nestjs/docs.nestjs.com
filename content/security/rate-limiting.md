@@ -12,16 +12,18 @@ Once the installation is complete, the `ThrottlerModule` can be configured as an
 @@filename(app.module)
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 10,
-    }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60,
+        limit: 10,
+      },
+    ]),
   ],
 })
 export class AppModule {}
 ```
 
-The above will set the global options for the `ttl`, the time to live, and the `limit`, the maximum number of requests within the ttl, for the routes of your application that are guarded.
+The above configuration will set the global options for the `ttl`, the time to live (in ms), and the `limit`, the maximum number of requests within the ttl, for the routes of your application that are guarded. This effectively restricts users from making more than 10 requests every 60 ms. Any request beyond the limit throws a [429 HTTP error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429).
 
 Once the module has been imported, you can then choose how you would like to bind the `ThrottlerGuard`. Any kind of binding as mentioned in the [guards](https://docs.nestjs.com/guards) section is fine. If you wanted to bind the guard globally, for example, you could do so by adding this provider to any module:
 
@@ -30,6 +32,33 @@ Once the module has been imported, you can then choose how you would like to bin
   provide: APP_GUARD,
   useClass: ThrottlerGuard
 }
+```
+
+To apply the throttling to your entire application, here is what your `app.module.ts` file would look like:
+
+```typescript
+@@filename(app.module)
+import { Module } from "@nestjs/common";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { APP_GUARD } from "@nestjs/core";
+
+@Module({
+  imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60,
+        limit: 10,
+      },
+    ]),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
+})
+export class AppModule {}
 ```
 
 #### Customization
@@ -76,7 +105,7 @@ findAll() {
 If your application runs behind a proxy server, check the specific HTTP adapter options ([express](http://expressjs.com/en/guide/behind-proxies.html) and [fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy)) for the `trust proxy` option and enable it. Doing so will allow you to get the original IP address from the `X-Forwarded-For` header, and you can override the `getTracker()` method to pull the value from the header rather than from `req.ip`. The following example works with both express and fastify:
 
 ```typescript
-// throttler-behind-proxy.guard.ts
+@@filename(throttler-behind-proxy.guard)
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
 
@@ -86,8 +115,10 @@ export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
     return req.ips.length ? req.ips[0] : req.ip; // individualize IP extraction to meet your own needs
   }
 }
+```
 
-// app.controller.ts
+```typescript
+@@filename(app.controller)
 import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
 
 @UseGuards(ThrottlerBehindProxyGuard)
