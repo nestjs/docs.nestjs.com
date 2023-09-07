@@ -52,6 +52,8 @@ bootstrap();
 
 > info **Hint** Microservices use the **TCP** transport layer by default.
 
+> info **Hint** Multiple microservice listeners can be instantiated within the same NestJS application if needed as well. See the [Hybrid Application](https://docs.nestjs.com/faq/hybrid-application) section for details on how to do so.
+
 The second argument of the `createMicroservice()` method is an `options` object. This object may consist of two members:
 
 <table>
