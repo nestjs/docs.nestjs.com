@@ -245,7 +245,7 @@ To redirect a response to a specific URL, you can either use a `@Redirect()` dec
 @Redirect('https://nestjs.com', 301)
 ```
 
-> info **Hint** Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning a `HttpRedirectResponse` imported from `@nestjs/common`.
+> info **Hint** Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object following the `HttpRedirectResponse` interface (from `@nestjs/common`).
 
 Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
 
