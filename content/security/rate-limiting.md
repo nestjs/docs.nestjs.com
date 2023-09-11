@@ -232,14 +232,19 @@ One approach would be to use a factory function:
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ([{
-        ttl: config.get('THROTTLE_TTL'),
-        limit: config.get('THROTTLE_LIMIT'),
+        throttlers: [
+          {
+            ttl: config.get('THROTTLE_TTL'),
+            limit: config.get('THROTTLE_LIMIT'),
+          },
+        ],
       }]),
     }),
   ],
 })
 export class AppModule {}
 ```
+> info **Note** `ThrottlerStorage` can be imported from `@nestjs/throttler`.
 
 You can also use the `useClass` syntax:
 
