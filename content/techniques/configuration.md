@@ -522,7 +522,7 @@ export async function getStorageModule() {
 
 This construction guarantees that after the `ConfigModule.envVariablesLoaded` Promise resolves, all configuration variables are loaded up.
 
-#### Conditional Module Configuration
+#### Conditional module configuration
 
 There may be times where you want to conditionally load in a module and specify the condition in an env variable. Fortunately, `@nestjs/config` provides a `ConditionalModule` that allows you to do just that.
 
