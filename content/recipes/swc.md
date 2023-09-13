@@ -257,7 +257,7 @@ If you use NestJS CLI Plugins in your project, you'll have to run `PluginMetadat
 To get started, first install the required packages:
 
 ```bash
-$ npm i --save-dev vitest unplugin-swc @swc/core @vitest/coverage-c8
+$ npm i --save-dev vitest unplugin-swc @swc/core @vitest/coverage-v8
 ```
 
 #### Configuration
