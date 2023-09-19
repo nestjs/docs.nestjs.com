@@ -71,9 +71,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
 );
-await app.register(() => fastifyCookie, {
-  secret: 'my-secret', // for cookies signature
-});
+await app.register(fastifyCookie);
 ```
 
 With this in place, you can now read cookies from within the route handlers, as follows:
