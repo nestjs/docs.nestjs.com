@@ -71,7 +71,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
 );
-await app.register(() => fastifyCookie, {
+await app.register(fastifyCookie, {
   secret: 'my-secret', // for cookies signature
 });
 ```
