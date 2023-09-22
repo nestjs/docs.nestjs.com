@@ -42,7 +42,7 @@ There may come upon times where you want to set up multiple throttling definitio
   imports: [
     ThrottlerModule.forRoot([
       {
-        name: 'short'
+        name: 'short',
         ttl: 1000,
         limit: 3,
       },
@@ -198,7 +198,7 @@ The following options are valid for the object passed to the array of the `Throt
   </tr>
 </table>
 
-If you need to set up storages instead, or want to use a some of the above options in a more global sense, applying to each throttler set, you can pass the options above via the `throttlers` option key and use the below table
+If you need to set up storage instead, or want to use some of the above options in a more global sense, applying to each throttler set, you can pass the options above via the `throttlers` option key and use the below table
 
 <table>
   <tr>
@@ -273,7 +273,7 @@ There are a couple of helper methods to make the timings more readable if you pr
 
 For most people, wrapping your options in an array will be enough.
 
-If you are using a custom storage, you should wrap you `ttl` and `limit` in an
+If you are using a custom storage, you should wrap your `ttl` and `limit` in an
 array and assign it to the `throttlers` property of the options object.
 
 Any `@ThrottleSkip()` should now take in an object with `string: boolean` props.
