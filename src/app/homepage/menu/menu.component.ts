@@ -253,6 +253,10 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Serverless', path: '/faq/serverless' },
         { title: 'HTTP adapter', path: '/faq/http-adapter' },
+        {
+          title: 'Keep-Alive connections',
+          path: '/faq/keep-alive-connections',
+        },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Raw body', path: '/faq/raw-body' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
