@@ -241,7 +241,7 @@ Occasionally, you may want to have a direct access to the native, **platform-spe
 server: Server;
 ```
 
-Also, you can get namespace instance when you passed `namespace` property to `@WebSocketGateway` decorator.
+Also, you can get namespace instance when you passed `namespace` option to `@WebSocketGateway()` decorator.
 
 ```typescript
 @WebSocketServer()
