@@ -6,6 +6,7 @@ import { ErrorsComponent } from './errors/errors.component';
 import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
+import { KeepAliveConnectionsComponent } from './keep-alive-connections/keep-alive-connections.component';
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
 import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
@@ -31,6 +32,11 @@ const routes: Routes = [
     path: 'http-adapter',
     component: HttpAdapterComponent,
     data: { title: 'HTTP adapter - FAQ' },
+  },
+  {
+    path: 'keep-alive-connections',
+    component: KeepAliveConnectionsComponent,
+    data: { title: 'Keep-Alive connections - FAQ' },
   },
   {
     path: 'raw-body',
@@ -61,6 +67,7 @@ const routes: Routes = [
     HybridApplicationComponent,
     MultipleServersComponent,
     HttpAdapterComponent,
+    KeepAliveConnectionsComponent,
     RequestLifecycleComponent,
     ErrorsComponent,
     ServerlessComponent,
