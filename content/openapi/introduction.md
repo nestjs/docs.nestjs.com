@@ -54,7 +54,7 @@ Now you can run the following command to start the HTTP server:
 $ npm run start
 ```
 
-While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see the Swagger UI.
+While the application is running, open your browser and navigate to `http://localhost:3000/api`. You should see the Swagger UI. By appending `-json` to the url (like so: `http://localhost:3000/api-json`), you get the specification as json, which can be useful to generate api client with tools like [OpenAPI Generator](https://openapi-generator.tech/)
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
