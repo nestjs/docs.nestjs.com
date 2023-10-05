@@ -1,172 +1,229 @@
 ### Automock
 
-Automock is a standalone library for unit testing. Using TypeScript Reflection
-API (`reflect-metadata`) internally to produce mock objects, Automock streamlines
-test development by automatically mocking class external dependencies.
+Automock is a powerful standalone library designed for unit testing. It leverages the TypeScript Reflection API
+internally to generate mock objects, simplifying the process of testing by automatically mocking external dependencies
+of classes. Automock enables you to streamline test development and focus on writing robust and efficient unit tests.
+
 > info **info** `Automock` is a third party package and is not managed by the NestJS core team.
-> Please, report any issues found with the library in the [appropriate repository](https://github.com/omermorad/automock)
+> Please, report any issues found with the library in the [appropriate repository](https://github.com/automock/automock)
 
 #### Introduction
 
-The dependency injection (DI) container is an essential component of the Nest module system.
-This container is utilized both during testing, and the application execution.
-Unit tests vary from other types of tests, such as integration tests, in that they must
-fully override providers/services within the DI container. External class dependencies
-(providers) of the so-called "unit", have to be totally isolated. That is, all dependencies
-within the DI container should be replaced by mock objects.
-As a result, loading the target module and replacing the providers inside it is a process
-that loops back on itself. Automock tackles this issue by automatically mocking all the
-class external providers, resulting in total isolation of the unit under test.
+The Dependency Injection (DI) container is a foundational element of the Nest module system, integral to both application
+runtime and testing phases. In unit tests, mock dependencies are essential for isolating and assessing the behavior of
+specific components. However, the manual configuration and management of these mock objects can be intricate and prone to
+errors.
+
+Automock offers a streamlined solution. Rather than interacting with the actual Nest DI container, Automock introduces a
+virtual container where dependencies are automatically mocked. This approach bypasses the manual task of substituting each
+provider in the DI container with mock implementations. With Automock, the generation of mock objects for all dependencies
+is automated, simplifying the unit test setup process.
 
 #### Installation
 
+Automock support both Jest and Sinon. Just install the appropriate package for your testing framework of choice.
+Furthermore, you need to install the `@automock/adapters.nestjs` (as Automock supports other adapters).
+
 ```bash
-$ npm i -D @automock/jest
+npm i -D @automock/jest @automock/adapters.nestjs
 ```
 
-Automock does not require any additional setup.
+Or, for Sinon:
 
-> info **info** Jest is the only test framework currently supported by Automock.
-Sinon will shortly be released.
+```bash
+npm i -D @automock/sinon @automock/adapters.nestjs
+```
 
 #### Example
 
-Consider the following cats service, which takes three constructor parameters:
+The example provided here showcase the integration of Automock with Jest. However, the same principles
+and functionality applies for Sinon.
 
-```ts
-@@filename(cats.service)
-import { Injectable } from '@nestjs/core';
+Consider the following `CatService` class that depends on a `Database` class to fetch cats. We'll mock
+the `Database` class to test the `CatsService` class in isolation.
+
+```typescript
+@Injectable()
+export class Database {
+  getCats(): Promise<Cat[]> { ... }
+}
 
 @Injectable()
-export class CatsService {
-  constructor(
-    private logger: Logger,
-    private httpService: HttpService,
-    private catsDal: CatsDal,
-  ) {}
+class CatsService {
+  constructor(private database: Database) {}
 
-  async getAllCats() {
-    const cats = await this.httpService.get('http://localhost:3000/api/cats');
-    this.logger.log('Successfully fetched all cats');
-    
-    this.catsDal.saveCats(cats);
+  async getAllCats(): Promise<Cat[]> {
+    return this.database.getCats();
   }
 }
 ```
 
-The service contains one public method, `getAllCats`, which is the method
-we use an example for the following unit test:
+Let's set up a unit test for the `CatsService` class.
 
-```ts
-@@filename(cats.service.spec)
+We'll use the `TestBed` from the `@automock/jest` package to create our test environment.
+
+```typescript
 import { TestBed } from '@automock/jest';
-import { CatsService } from './cats.service';
 
-describe('CatsService unit spec', () => {
-  let underTest: CatsService;
-  let logger: jest.Mocked<Logger>;
-  let httpService: jest.Mocked<HttpService>;
-  let catsDal: jest.Mocked<CatsDal>;
-  
+describe('Cats Service Unit Test', () => {
+  let catsService: CatsService;
+  let database: jest.Mocked<Database>;
+
   beforeAll(() => {
-    const { unit, unitRef } = TestBed.create(CatsService)
-      .mock(HttpService)
-      .using({ get: jest.fn() })
-      .mock(Logger)
-      .using({ log: jest.fn() })
-      .mock(CatsDal)
-      .using({ saveCats: jest.fn() })
-      .compile();
+    const { unit, unitRef } = TestBed.create(CatsService).compile();
 
-    underTest = unit;
-
-    logger = unitRef.get(Logger);
-    httpService = unitRef.get(HttpService);
-    catsDal = unitRef.get(CatsDal);
+    catsService = unit;
+    database = unitRef.get(Database);
   });
 
-  describe('when getting all the cats', () => {
-    test('then meet some expectations', async () => {
-      httpService.get.mockResolvedValueOnce([{ id: 1, name: 'Catty' }]);
-      await catsService.getAllCats();
+  it('should retrieve cats from the database', async () => {
+    const mockCats: Cat[] = [{ id: 1, name: 'Catty' }, { id: 2, name: 'Mitzy' }];
+    database.getCats.mockResolvedValue(mockCats);
 
-      expect(logger.log).toBeCalled();
-      expect(catsDal).toBeCalledWith([{ id: 1, name: 'Catty' }]);
-    });
+    const cats = await catsService.getAllCats();
+
+    expect(database.getCats).toHaveBeenCalled();
+    expect(cats).toEqual(mockCats);
   });
 });
 ```
 
-> info **info** The jest.Mocked<Source> utility type returns the Source type
-> wrapped with type definitions of Jest mock function. ([reference](https://jestjs.io/docs/mock-function-api/#jestmockedsource))
+In the test setup, we:
 
-#### About `unit` and `unitRef`
+1. Create a test environment for `CatsService` using `TestBed.create(CatsService).compile()`.
+2. Obtain the actual instance of `CatsService` and a mocked instance of `Database` using `unit`
+   and `unitRef.get(Database)`, respectively.
+3. We mock the `getCats` method of the `Database` class to return a predefined list of cats.
+4. We then call the `getAllCats` method of `CatsService` and verify that it correctly interacts with the `Database`
+   class and returns the expected cats.
 
-Let's examine the following code:
+**Adding a Logger**
 
-```typescript
-const { unit, unitRef } = TestBed.create(CatsService).compile();
-```
-
-Calling `.compile()` returns an object with two properties, `unit`, and `unitRef`.
-
-**`unit`** is the unit under test, it is an actual instance of class being tested.
-
-**`unitRef`** is the "unit reference", where the mocked dependencies of the tested class
-are stored, in a small container. The container's `.get()` method returns the mocked
-dependency with all of its methods automatically stubbed (using `jest.fn()`):
+Let's extend our example by adding a `Logger` interface and integrating it into the `CatsService` class.
 
 ```typescript
-const { unit, unitRef } = TestBed.create(CatsService).compile();
+@Injectable()
+class Logger {
+  log(message: string): void { ... }
+}
 
-let httpServiceMock: jest.Mocked<HttpService> = unitRef.get(HttpService);
+@Injectable()
+class CatsService {
+  constructor(private database: Database, private logger: Logger) {}
+
+  async getAllCats(): Promise<Cat[]> {
+    this.logger.log('Fetching all cats..');
+    return this.database.getCats();
+  }
+}
 ```
 
-> info **info** The `.get()` method can accept either a `string` or an actual class (`Type`) as its argument.
-> This essentially depends on how the provider is being injected to the class under test.
+Now, when you set up your test, you'll also need to mock the `Logger` dependency:
 
-#### Working with different providers
-Providers are one of the most important elements in Nest. You can think of many of
-the default Nest classes as providers, including services, repositories, factories,
-helpers, and so on. A provider's primary function is to take the form of an
+```typescript
+beforeAll(() => {
+  let logger: jest.Mocked<Logger>;
+  const { unit, unitRef } = TestBed.create(CatsService).compile();
+
+  catsService = unit;
+  database = unitRef.get(Database);
+  logger = unitRef.get(Logger);
+});
+
+it('should log a message and retrieve cats from the database', async () => {
+  const mockCats: Cat[] = [{ id: 1, name: 'Catty' }, { id: 2, name: 'Mitzy' }];
+  database.getCats.mockResolvedValue(mockCats);
+
+  const cats = await catsService.getAllCats();
+
+  expect(logger.log).toHaveBeenCalledWith('Fetching all cats..');
+  expect(database.getCats).toHaveBeenCalled();
+  expect(cats).toEqual(mockCats);
+});
+```
+
+**Using `.mock().using()` for Mock Implementation**
+
+Automock provides a more declarative way to specify mock implementations using the `.mock().using()` method chain.
+This allows you to define the mock behavior directly when setting up the `TestBed`.
+
+Here's how you can modify the test setup to use this approach:
+
+```typescript
+beforeAll(() => {
+  const mockCats: Cat[] = [{ id: 1, name: 'Catty' }, { id: 2, name: 'Mitzy' }];
+
+  const { unit, unitRef } = TestBed.create(CatsService)
+    .mock(Database)
+    .using({ getCats: async () => mockCats })
+    .compile();
+
+  catsService = unit;
+  database = unitRef.get(Database);
+});
+```
+
+In this approach, we've eliminated the need to manually mock the `getCats` method in the test body.
+Instead, we've defined the mock behavior directly in the test setup using `.mock().using()`.
+
+#### Dependency References and Instance Access
+
+When utilizing `TestBed`, the `compile()` method returns an object with two important properties: `unit` and `unitRef`.
+These properties provide access to the instance of the class under test and references to its dependencies, respectively.
+
+`unit` - The unit property represents the actual instance of the class under test. In our example, it corresponds to an
+instance of the `CatsService` class. This allows you to directly interact with the class and invoke its methods during
+your test scenarios.
+
+`unitRef` - The unitRef property serves as a reference to the dependencies of the class under test. In our example, it
+refers to the `Logger` dependency used by the `CatsService`. By accessing `unitRef`, you can retrieve the automatically
+generated mock object for the dependency. This enables you to stub methods, define behaviors, and assert method
+invocations on the mock object.
+
+#### Working with Different Providers
+
+Providers are one of the most important elements in Nest. You can think of many of the default Nest classes as
+providers, including services, repositories, factories, helpers, and so on. A provider's primary function is to take the
+form of an
 `Injectable` dependency.
 
-Consider the following `CatsService`, it takes one parameter, which is an instance
-of the following `Logger` interface:
+Consider the following `CatsService`, it takes one parameter, which is an instance of the following `Logger` interface:
 
 ```typescript
 export interface Logger {
   log(message: string): void;
 }
 
+@Injectable()
 export class CatsService {
   constructor(private logger: Logger) {}
 }
 ```
 
-TypeScript's Reflection API does not support interface reflection yet.
-Nest solves this issue with string-based injection tokens (see [Custom Providers](https://docs.nestjs.com/fundamentals/custom-providers)):
+TypeScript's Reflection API does not support interface reflection yet. Nest solves this issue with string/symbol-based
+injection tokens (see [Custom Providers](https://docs.nestjs.com/fundamentals/custom-providers)):
 
 ```typescript
 export const MyLoggerProvider = {
-  provide: 'MY_LOGGER_TOKEN',
+  provide: 'LOGGER_TOKEN',
   useValue: { ... },
 }
 
+@Injectable()
 export class CatsService {
-  constructor(@Inject('MY_LOGGER_TOKEN') private readonly logger: Logger) {}
+  constructor(@Inject('LOGGER_TOKEN') readonly logger: Logger) {}
 }
 ```
 
-Automock follows this practice and lets you provide a string-based token instead
-of providing the actual class in the `unitRef.get()` method:
+Automock follows this practice and lets you provide a string-based (or symbol-based) token instead of providing the actual
+class in the `unitRef.get()` method:
 
 ```typescript
 const { unit, unitRef } = TestBed.create(CatsService).compile();
 
-let loggerMock: jest.Mocked<Logger> = unitRef.get('MY_LOGGER_TOKEN');
+let loggerMock: jest.Mocked<Logger> = unitRef.get('LOGGER_TOKEN');
 ```
 
 #### More Information
-Visit [Automock GitHub repository](https://github.com/omermorad/automock) for more
-information.
+
+Visit [Automock GitHub repository](https://github.com/automock/automock), or [Automock website](https://automock.dev) for more information.
