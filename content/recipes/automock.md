@@ -25,13 +25,13 @@ Automock support both Jest and Sinon. Just install the appropriate package for y
 Furthermore, you need to install the `@automock/adapters.nestjs` (as Automock supports other adapters).
 
 ```bash
-npm i -D @automock/jest @automock/adapters.nestjs
+$ npm i -D @automock/jest @automock/adapters.nestjs
 ```
 
 Or, for Sinon:
 
 ```bash
-npm i -D @automock/sinon @automock/adapters.nestjs
+$ npm i -D @automock/sinon @automock/adapters.nestjs
 ```
 
 #### Example
