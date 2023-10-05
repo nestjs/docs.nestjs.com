@@ -21,3 +21,15 @@ Or, pass a [CORS configuration object](https://github.com/expressjs/cors#configu
 const app = await NestFactory.create(AppModule, { cors: true });
 await app.listen(3000);
 ```
+
+#### With Fastify
+
+To use with Fastify, install the `@fastify/cors` package and register it as a plugin:
+
+```typescript
+import cors from '@fastify/cors'
+const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+app.register(cors, {
+  // put your options here
+})
+```
