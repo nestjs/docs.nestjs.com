@@ -244,7 +244,7 @@ server: Server;
 Also, you can get namespace instance when you passed `namespace` option to `@WebSocketGateway()` decorator.
 
 ```typescript
-@WebSocketServer()
+@WebSocketServer({ namespace: 'something' })
 namespace: Namespace;
 ```
 
