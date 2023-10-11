@@ -407,7 +407,7 @@ Next, we use the class-transformer function `plainToInstance()` to transform our
 
 Finally, as noted earlier, since this is a **validation pipe** it either returns the value unchanged, or throws an exception.
 
-The last step is to bind the `ValidationPipe`. Pipes can be parameter-scoped, method-scoped, controller-scoped, or global-scoped. Earlier, with our Joi-based validation pipe, we saw an example of binding the pipe at the method level.
+The last step is to bind the `ValidationPipe`. Pipes can be parameter-scoped, method-scoped, controller-scoped, or global-scoped. Earlier, with our Zod-based validation pipe, we saw an example of binding the pipe at the method level.
 In the example below, we'll bind the pipe instance to the route handler `@Body()` decorator so that our pipe is called to validate the post body.
 
 ```typescript
