@@ -1,4 +1,4 @@
-### Migrating to v11 from v10
+### Migrating to v10 from v11
 
 This chapter provides a set of guidelines for migrating from `@nestjs/graphql` version 10 to version 11. As part of this major release, we updated the Apollo driver to be compatible with Apollo Server v4 (instead of v3). Note: there are several breaking changes in Apollo Server v4 (especially around plugins and ecosystem packages), so you'll have to update your codebase accordingly. For more information, see the [Apollo Server v4 migration guide](https://www.apollographql.com/docs/apollo-server/migration/).
 
