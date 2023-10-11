@@ -91,11 +91,6 @@
       "logo": "/assets/logo/hingehealth.png",
       "url": "https://hingehealth.com",
       "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/phalcode.svg",
-      "url": "https://phalco.de",
-      "width": "120px"
     }
   ],
   "Body": [
