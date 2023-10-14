@@ -59,20 +59,21 @@ Once the installation is complete, you can use the `hash` function, as follows:
 ```typescript
 import * as bcrypt from 'bcrypt';
 
-const saltOrRounds = 10;
+const saltRounds = 10;
+const salt = await bcrypt.genSalt(saltRounds);
 const password = 'random_password';
-const hash = await bcrypt.hash(password, saltOrRounds);
+
+const hash = await bcrypt.hash(password, salt);
+// Store hash in your password DB.
 ```
 
-To generate a salt, use the `genSalt` function:
-
-```typescript
-const salt = await bcrypt.genSalt();
-```
 
 To compare/check a password, use the `compare` function:
 
+The salt is incorporated into the hash (as plaintext). The compare function simply pulls the salt out of the hash and then uses it to hash the password and perform the comparison.
+
 ```typescript
+// Load hash from your password DB.
 const isMatch = await bcrypt.compare(password, hash);
 ```
 
