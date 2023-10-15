@@ -229,6 +229,8 @@ This service takes advantage of [cache-manager](https://github.com/node-cache-ma
 import { Module } from '@nestjs/common';
 import type { RedisClientOptions } from 'redis';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AppController } from './app.controller';
+
 @Module({
   imports: [
     CacheModule.register<RedisClientOptions>({
