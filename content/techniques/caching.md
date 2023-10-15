@@ -226,20 +226,18 @@ class HttpCacheInterceptor extends CacheInterceptor {
 This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/dabroek/node-cache-manager-redis-store). A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, simply pass the package together with corresponding options to the `register()` method.
 
 ```typescript
-import type { RedisClientOptions } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
 import { Module } from '@nestjs/common';
+import type { RedisClientOptions } from 'redis';
 import { CacheModule } from '@nestjs/cache-manager';
-import { AppController } from './app.controller';
-
 @Module({
   imports: [
     CacheModule.register<RedisClientOptions>({
-      store: redisStore,
-
-      // Store-specific configuration:
-      host: 'localhost',
-      port: 6379,
+        // Store-specific configuration:
+        socket: {
+          host: 'localhost',
+          port: '6379',
+        },
+        database: 0,
     }),
   ],
   controllers: [AppController],
