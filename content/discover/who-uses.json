@@ -91,6 +91,14 @@
       "logo": "/assets/logo/hingehealth.png",
       "url": "https://hingehealth.com",
       "width": "120px"
+    },
+    {
+      "logo": "/assets/logo/subquery-network.png",
+      "url": "https://subquery.network"
+    },
+    {
+      "logo": "/assets/logo/api-table.webp",
+      "url": "https://github.com/apitable/apitable"
     }
   ],
   "Body": [
