@@ -103,7 +103,10 @@ Once the installation process is complete, you can run the following command at 
 $ npm run start
 ```
 
-> info **Hint** To speed up the development process (x20 times faster builds), you can use the [SWC builder](/recipes/swc) by passing the `-b swc` flag to the `start` script, as follows `npm run start -- -b swc`.
+> info **Hint** To speed up the development process (x20 times faster builds), you can use the [SWC builder](/recipes/swc) by passing the `-b swc` flag to the `start` script, as follows `npm run start -- -b swc`. You will need to install the SWC dependencies first.
+> ```bash
+> npm i -D @swc/cli @swc/core
+> ```
 
 This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
 
