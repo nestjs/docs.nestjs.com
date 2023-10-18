@@ -117,7 +117,7 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 }
 ```
 
-> info **Hint** read more about ([listener options object](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
+> info **Hint** read more about the [`OnOptions` options object from `eventemitter2`](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean).
 
 
 To use namespaces/wildcards, pass the `wildcard` option into the `EventEmitterModule#forRoot()` method. When namespaces/wildcards are enabled, events can either be strings (`foo.bar`) separated by a delimiter or arrays (`['foo', 'bar']`). The delimiter is also configurable as a configuration property (`delimiter`). With namespaces feature enabled, you can subscribe to events using a wildcard:
