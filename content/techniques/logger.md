@@ -33,7 +33,7 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(3000);
 ```
 
-Values in the array can be any combination of `'log'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
+Values in the array can be any combination of `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
 
 > info **Hint** To disable color in the default logger's messages, set the `NO_COLOR` environment variable to some non-empty string.
 
@@ -58,6 +58,11 @@ export class MyLogger implements LoggerService {
    * Write a 'log' level log.
    */
   log(message: any, ...optionalParams: any[]) {}
+
+  /**
+   * Write a 'fatal' level log.
+   */
+  fatal(message: any, ...optionalParams: any[]) {}
 
   /**
    * Write an 'error' level log.
