@@ -46,7 +46,7 @@ import { constants } from 'zlib';
 await app.register(compression, { brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } } });
 ```
 
-To simplify, you may want to tell fastify-compress to only use deflate and gzip to compress responses; you'll end up with potentially larger responses but they'll be delivered much more quickly.
+To simplify, you may want to tell `fastify-compress` to only use deflate and gzip to compress responses; you'll end up with potentially larger responses but they'll be delivered much more quickly.
 
 To specify encodings, provide a second argument to `app.register`:
 
