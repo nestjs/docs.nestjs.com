@@ -85,7 +85,32 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 
 > warning **Warning** Event subscribers cannot be request-scoped.
 
-The first argument can be a `string` or `symbol` for a simple event emitter and a `string | symbol | Array<string | symbol>` in a case of a wildcard emitter. The second argument (optional) is a listener options object ([read more](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean)).
+The first argument can be a `string` or `symbol` for a simple event emitter and a `string | symbol | Array<string | symbol>` in a case of a wildcard emitter.  
+
+The second argument (optional) is a listener options object as follows:
+
+
+```typescript
+export type OnEventOptions = OnOptions & {
+  /**
+   * If "true", prepends (instead of append) the given listener to the array of listeners.
+   *
+   * @see https://github.com/EventEmitter2/EventEmitter2#emitterprependlistenerevent-listener-options
+   *
+   * @default false
+   */
+  prependListener?: boolean;
+
+  /**
+   * If "true", the onEvent callback will not throw an error while handling the event. Otherwise, if "false" it will throw an error.
+   * 
+   * @default true
+   */
+  suppressErrors?: boolean;
+};
+```
+
+> info **Hint** Read more about the `OnOptions` options object from [`eventemitter2`](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean).
 
 ```typescript
 @OnEvent('order.created', { async: true })
