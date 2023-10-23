@@ -110,7 +110,7 @@ export type OnEventOptions = OnOptions & {
 };
 ```
 
-> info **Hint** Read more about the [`OnOptions` options object from `eventemitter2`](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean).
+> info **Hint** Read more about the `OnOptions` options object from [`eventemitter2`](https://github.com/EventEmitter2/EventEmitter2#emitteronevent-listener-options-objectboolean).
 
 ```typescript
 @OnEvent('order.created', { async: true })
