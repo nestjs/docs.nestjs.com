@@ -261,7 +261,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
 > info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database.
 > 
-Next, createa a new file called `prisma.module.ts` and add the following code to it:
+Next, create a new file called `prisma.module.ts` and add the following code to it:
 
 ```typescript
 import { Module } from '@nestjs/common';
