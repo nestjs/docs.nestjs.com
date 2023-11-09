@@ -162,7 +162,7 @@ export class CatsService {
 
 Manually generated context identifiers (with `ContextIdFactory.create()`) represent DI sub-trees in which `REQUEST` provider is `undefined` as they are not instantiated and managed by the Nest dependency injection system.
 
-To register a custom `REQUEST` object for a manually created DI sub-tree, use the `ModuleRef#registerRequestByContextId()` method, as follows:
+To register a custom `REQUEST` object for a manually created DI sub-tree, use the `ModuleRef.registerRequestByContextId()` method, as follows:
 
 ```typescript
 const contextId = ContextIdFactory.create();
