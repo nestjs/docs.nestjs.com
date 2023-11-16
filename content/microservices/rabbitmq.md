@@ -66,9 +66,9 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
     <td><code>noAck</code></td>
     <td>If <code>false</code>, manual acknowledgment mode enabled</td>
   </tr>
-   <tr>
+  <tr>
     <td><code>consumerTag</code></td>
-    <td>Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank"/>here</a>)</td>
+    <td>Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
