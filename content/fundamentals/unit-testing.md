@@ -336,8 +336,6 @@ Each of the override method types, in turn, returns the `TestingModule` instance
 
 Also, sometimes you may want to provide a custom logger e.g. when the tests are run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to instruct the `TestModuleBuilder` how to log during tests (by default, only "error" logs will be logged to the console).
 
-> warning **Warning** The `@nestjs/core` package exposes unique provider tokens with the `APP_` prefix to help on define global enhancers. Those tokens cannot be overridden since they can represent multiple providers. Thus you can't use `.overrideProvider(APP_GUARD)` (and so on). If you want to override some global enhancer, follow [this workaround](https://github.com/nestjs/nest/issues/4053#issuecomment-585612462).
-
 The compiled module has several useful methods, as described in the following table:
 
 <table>
