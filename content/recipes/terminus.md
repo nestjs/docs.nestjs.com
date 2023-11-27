@@ -608,6 +608,24 @@ You can change the log style using the `errorLogStyle` configuration option as i
 export class HealthModule {}
 ```
 
+#### Graceful shutdown timeout
+
+If your application requires postponing its shutdown process, Terminus can handle it for you.
+This setting can prove particularly beneficial when working with an orchestrator such as Kubernetes.
+By setting a delay slightly longer than the readiness check interval, you can achieve zero downtime when shutting down containers.
+
+```typescript
+@@filename(health.module)
+@Module({
+  imports: [
+    TerminusModule.forRoot({
+      gracefulShutdownTimeoutMs: 1000,
+    }),
+  ]
+})
+export class HealthModule {}
+```
+
 #### More examples
 
 More working examples are available [here](https://github.com/nestjs/terminus/tree/master/sample).
