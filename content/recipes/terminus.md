@@ -610,7 +610,7 @@ export class HealthModule {}
 
 #### Graceful shutdown timeout
 
-If your application requires postponing its shutdown process, Terminus can be handle it for you.
+If your application requires postponing its shutdown process, Terminus can handle it for you.
 This setting can prove particularly beneficial when working with an orchestrator such as Kubernetes.
 By setting a delay slightly longer than the readiness check interval, you can achieve zero downtime when shutting down containers.
 
