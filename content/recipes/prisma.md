@@ -391,7 +391,7 @@ export class PostService {
 
 Your `UserService` and `PostService` currently wrap the CRUD queries that are available in Prisma Client. In a real world application, the service would also be the place to add business logic to your application. For example, you could have a method called `updatePassword` inside the `UserService` that would be responsible for updating the password of a user.
 
-We need to register the new services with Nest so that it can perform the injection. We do this by editing our module file (`app.module.ts`) and adding the service to the `providers` array of the `@Module()` decorator.
+We need to register the new services with Nest so that it can perform the injection. We do this by editing our module file (`app.module.ts`) and adding the new services to the `providers` array of the `@Module()` decorator.
 
 ```typescript
 import { Module } from '@nestjs/common';
