@@ -394,17 +394,14 @@ Your `UserService` and `PostService` currently wrap the CRUD queries that are av
 We need to register the new services with Nest so that it can perform the injection. We do this by editing our module file (`app.module.ts`) and adding the new services to the `providers` array of the `@Module()` decorator.
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+…
 import { PrismaService } from './prisma.service';
 import { UserService } from './user.service';
 import { PostService } from './post.service';
 
 @Module({
   …
-  providers: [CatsService, PrismaService, UserService, PostService],
+  providers: [AppService, PrismaService, UserService, PostService],
 })
 export class AppModule {}
 ```
