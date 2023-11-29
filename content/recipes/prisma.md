@@ -391,6 +391,24 @@ export class PostService {
 
 Your `UserService` and `PostService` currently wrap the CRUD queries that are available in Prisma Client. In a real world application, the service would also be the place to add business logic to your application. For example, you could have a method called `updatePassword` inside the `UserService` that would be responsible for updating the password of a user.
 
+We need to register the new services with Nest so that it can perform the injection. We do this by editing our module file (`app.module.ts`) and adding the service to the `providers` array of the `@Module()` decorator.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { PrismaService } from './prisma.service';
+import { UserService } from './user.service';
+import { PostService } from './post.service';
+
+@Module({
+  …
+  providers: [CatsService, PrismaService, UserService, PostService],
+})
+export class AppModule {}
+```
+
 ##### Implement your REST API routes in the main app controller
 
 Finally, you'll use the services you created in the previous sections to implement the different routes of your app. For the purpose of this guide, you'll put all your routes into the already existing `AppController` class.
