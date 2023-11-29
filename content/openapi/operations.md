@@ -258,7 +258,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
   model: TModel,
 ) => {
   return applyDecorators(
-    ApiExtraModels(model),
+    ApiExtraModels(PaginatedDto, model),
     ApiOkResponse({
       schema: {
         allOf: [
