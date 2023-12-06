@@ -17,7 +17,7 @@ $ npm i --save compression
 Once the installation is complete, apply the compression middleware as global middleware.
 
 ```typescript
-import * as compression from 'compression';
+import compression from 'compression';
 // somewhere in your initialization file
 app.use(compression());
 ```
