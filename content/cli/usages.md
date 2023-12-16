@@ -187,3 +187,16 @@ testing version : 10.0.0
 common version : 10.0.0
 core version : 10.0.0
 ```
+
+A warning message could be displayed in the case where NestJS packages are not of the same version.
+
+```bash
+[Warnings]
+The following packages are not in the same minor version
+This could lead to runtime errors
+* Under version 10.0
+- @nestjs/schematics 10.0.1
+* Under version 9.2
+- @nestjs/common 9.2.1
+- @nestjs/core 9.2.1
+```
