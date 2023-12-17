@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { HomepageComponent } from './homepage/homepage.component';
 import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
-import { ComponentsComponent } from './homepage/pages/components/components.component';
+import { ProvidersComponent } from './homepage/pages/providers/providers.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
@@ -44,7 +44,7 @@ const routes: Routes = [
       },
       {
         path: 'providers',
-        component: ComponentsComponent,
+        component: ProvidersComponent,
         data: { title: 'Providers' },
       },
       {
