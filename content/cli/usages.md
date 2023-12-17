@@ -188,7 +188,7 @@ common version : 10.0.0
 core version : 10.0.0
 ```
 
-A warning message could be displayed in the case where NestJS packages are not of the same version.
+A warning message could be displayed in the case where NestJS packages are not in the same version. Do note that this isn't true to all `@nestjs/*` packages.
 
 ```bash
 ...
