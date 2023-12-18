@@ -249,34 +249,33 @@ In the next section, you'll see how we supply the appropriate schema for a given
 ```typescript
 @@filename()
 import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { ZodObject } from 'zod';
+import { ZodSchema  } from 'zod';
 
 export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema: ZodObject<any>) {}
+  constructor(private schema: ZodSchema) {}
 
   transform(value: unknown, metadata: ArgumentMetadata) {
     try {
-      this.schema.parse(value);
+      const parsedValue = this.schema.parse(value);
+      return parsedValue;
     } catch (error) {
       throw new BadRequestException('Validation failed');
     }
-    return value;
   }
 }
 @@switch
 import { BadRequestException } from '@nestjs/common';
-import { ZodObject } from 'zod';
 
-export class ZodValidationPip {
+export class ZodValidationPipe {
   constructor(private schema) {}
 
   transform(value, metadata) {
     try {
-      this.schema.parse(value);
+      const parsedValue = this.schema.parse(value);
+      return parsedValue;
     } catch (error) {
       throw new BadRequestException('Validation failed');
     }
-    return value;
   }
 }
 
