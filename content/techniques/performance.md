@@ -115,7 +115,19 @@ index(@Req() req) {
 }
 ```
 
-> info **Hint** `@RouteConfig()` is imported from `@nestjs/platform-fastify`.
+#### Route Constraints
+
+As of v10.3.0, `@nestjs/platform-fastify` supports [route constraints](https://fastify.dev/docs/latest/Reference/Routes/#constraints) feature of Fastify with `@RouteConstraints` decorator.
+
+```typescript
+@RouteConstraints({ version: '1.2.x' })
+newFeature() {
+  return 'This works only for version >= 1.2.x';
+}
+```
+
+> info **Hint** `@RouteConfig()` and `@RouteConstraints` are imported from `@nestjs/platform-fastify`.
+
 
 #### Example
 
