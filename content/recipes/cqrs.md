@@ -300,6 +300,88 @@ The `@Saga()` decorator marks the method as a saga. The `events$` argument is an
 
 In this example, we map the `HeroKilledDragonEvent` to the `DropAncientItemCommand` command. The `DropAncientItemCommand` command is then auto-dispatched by the `CommandBus`.
 
+The previous example is just a simple startup example, we can use `Saga` in a more advanced ways
+1. Saga with time-based workflows:
+This example, CascadingAlarmsSaga, uses a time-based approach. It groups AlarmCreatedEvent events by alarm name, buffers these events for 5 seconds or until 3 events are received, and then triggers a notification command if 3 alarms occur within this timeframe. This is useful for scenarios where the response to events is contingent on their frequency or timing, like in alarm monitoring systems.
+```typescript
+@Injectable()
+export class CascadingAlarmsSaga {
+  private readonly logger = new Logger(CascadingAlarmsSaga.name);
+  @Saga()
+  start = (events$: Observable<any>): Observable<ICommand> => {
+    return events$.pipe(
+      ofType(AlarmCreatedEvent),
+      groupBy((event) => event.alarm.name),
+      mergeMap((groupedEvents$) =>
+        // Buffer events for 5 seconds or until 3 events are received
+        groupedEvents$.pipe(bufferTime(5000, undefined, 3)),
+      ),
+      filter((events) => events.length >= 3),
+      map((events) => {
+        this.logger.debug('⚠️⚠️⚠️ 3 alarms in 5 seconds!');
+        return new NotifyFacilitySupervisorCommand(
+          facilityId,
+          events.map((event) => event.alarm.id),
+        );
+      }),
+    );
+  };
+}
+```
+
+notice how in this example we wait for an event of type `AlarmCreatedEvent` to appear 3 times in a 5 second period and if that happens we trigger a new `NotifyFacilitySupervisorCommand` command
+
+2. Saga with Transactional Events:
+The UnacknowledgedAlarmsSaga example represents a transactional event handling approach. It listens for AlarmCreatedEvent and AlarmAcknowledgedEvent events. If an alarm is not acknowledged within 15 seconds of its creation, it triggers a notification command. This pattern is suitable for systems where certain actions must be taken if a specific response to an event is not received within a predefined time window.
+```typescript
+
+@Injectable()
+export class UnacknowledgedAlarmsSaga {
+  private readonly logger = new Logger(UnacknowledgedAlarmsSaga.name);
+  @Saga()
+  start = (events$: Observable<any>): Observable<ICommand> => {
+    // A stream of alarm acknowledged events
+    const alarmAcknowledgedEvents$ = events$.pipe(
+      ofType(AlarmAcknowledgedEvent),
+    );
+
+    // A stream of alarm created events
+    const alarmCreatedEvents$ = events$.pipe(ofType(AlarmCreatedEvent));
+
+    return alarmCreatedEvents$.pipe(
+      // Wait for an alarm to be acknowledged or 10 seconds to pass
+      mergeMap((alarmCreatedEvent) =>
+        race(
+          alarmAcknowledgedEvents$.pipe(
+            filter(
+              (alarmAcknowledgedEvent) =>
+                alarmAcknowledgedEvent.alarmId === alarmCreatedEvent.alarm.id,
+            ),
+            first(),
+            // If the alarm is acknowledged, we don't need to do anything
+            // Just return an empty observable that never emits
+            mergeMap(() => EMPTY),
+          ),
+          timer(15000).pipe(map(() => alarmCreatedEvent)),
+        ),
+      ),
+      map((alarmCreatedEvent) => {
+        this.logger.debug(
+          `⚠️⚠️⚠️ Alarm "${alarmCreatedEvent.alarm.name}" not acknowledged in 15 seconds!`,
+        );
+
+        const facilityId = '12345';
+        return new NotifyFacilitySupervisorCommand(facilityId, [
+          alarmCreatedEvent.alarm.id,
+        ]);
+      }),
+    );
+  };
+}
+```
+
+in this example, we wait for the `alarmCreatedEvents` event to get an acknowledge from `AlarmAcknowledgedEvent` through a timeline of 15 seconds and if no notification is arrived then we trigger a new command called `NotifyFacilitySupervisorCommand` 
+
 #### Setup
 
 To wrap up, we need to register all command handlers, event handlers, and sagas in the `HeroesGameModule`:
