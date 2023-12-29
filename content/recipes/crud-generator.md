@@ -1,4 +1,4 @@
-### CRUD generator
+### CRUD generator (Typescript Only)
 
 Throughout the life span of a project, when we build new features, we often need to add new resources to our application. These resources typically require multiple, repetitive operations that we have to repeat each time we define a new resource.
 
