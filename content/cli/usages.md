@@ -71,7 +71,7 @@ $ nest g <schematic> <name> [options]
 | `pipe`        | `pi`  | Generate a pipe declaration.                                                                                          |
 | `provider`    | `pr`  | Generate a provider declaration.                                                                                      |
 | `resolver`    | `r`   | Generate a resolver declaration.                                                                                      |
-| `resource`    | `res` | Generate a new CRUD resource. See the [CRUD (resource) generator](/recipes/crud-generator) for more details. (TS Only)|
+| `resource`    | `res` | Generate a new CRUD resource. See the [CRUD (resource) generator](/recipes/crud-generator) for more details. (TS only)|
 | `service`     | `s`   | Generate a service declaration.                                                                                       |
 
 ##### Options
