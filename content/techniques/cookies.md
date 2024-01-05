@@ -14,7 +14,7 @@ $ npm i -D @types/cookie-parser
 Once the installation is complete, apply the `cookie-parser` middleware as global middleware (for example, in your `main.ts` file).
 
 ```typescript
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 // somewhere in your initialization file
 app.use(cookieParser());
 ```
