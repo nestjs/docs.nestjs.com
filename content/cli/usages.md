@@ -146,6 +146,7 @@ $ nest start <name> [options]
 | `--webpackPath`         | Path to webpack configuration.                                                                                       |
 | `--tsc`                 | Force use `tsc` for compilation.                                                                                     |
 | `--exec [binary]`       | Binary to run (default: `node`). <br/>Alias `-e`                                                                     |
+| `-- [key=value]`        | Command-line arguments that can be referenced with `process.argv`.                                                   |
 
 #### nest add
 
