@@ -177,7 +177,7 @@ with the [Serverless](https://www.serverless.com/) framework (in this case, targ
 First, let's install the required packages:
 
 ```bash
-$ npm i @vendia/serverless-express aws-lambda
+$ npm i @codegenie/serverless-express aws-lambda
 $ npm i -D @types/aws-lambda serverless-offline
 ```
 
@@ -213,7 +213,7 @@ With this place, we can now navigate to the `main.ts` file and update our bootst
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import serverlessExpress from '@vendia/serverless-express';
+import serverlessExpress from '@codegenie/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
@@ -241,7 +241,7 @@ export const handler: Handler = async (
 
 > warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [thread](https://github.com/nestjs/swagger/issues/199) for more information.
 
-Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@vendia/serverless-express` package load properly.
+Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@codegenie/serverless-express` package load properly.
 
 ```json
 {
