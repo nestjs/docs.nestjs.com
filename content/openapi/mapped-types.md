@@ -31,7 +31,7 @@ By default, all of these fields are required. To create a type with the same fie
 export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
 
-> info **Hint** The `PartialType()` function is imported from the `@nestjs/swagger` package.
+> info **Hint** The `PartialType()` function is imported from the `@nestjs/mapped-types` package.
 
 #### Pick
 
@@ -58,7 +58,7 @@ We can pick a set of properties from this class using the `PickType()` utility f
 export class UpdateCatAgeDto extends PickType(CreateCatDto, ['age'] as const) {}
 ```
 
-> info **Hint** The `PickType()` function is imported from the `@nestjs/swagger` package.
+> info **Hint** The `PickType()` function is imported from the `@nestjs/mapped-types` package.
 
 #### Omit
 
@@ -85,7 +85,7 @@ We can generate a derived type that has every property **except** `name` as show
 export class UpdateCatDto extends OmitType(CreateCatDto, ['name'] as const) {}
 ```
 
-> info **Hint** The `OmitType()` function is imported from the `@nestjs/swagger` package.
+> info **Hint** The `OmitType()` function is imported from the `@nestjs/mapped-types` package.
 
 #### Intersection
 
@@ -117,7 +117,7 @@ export class UpdateCatDto extends IntersectionType(
 ) {}
 ```
 
-> info **Hint** The `IntersectionType()` function is imported from the `@nestjs/swagger` package.
+> info **Hint** The `IntersectionType()` function is imported from the `@nestjs/mapped-types` package.
 
 #### Composition
 
