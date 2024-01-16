@@ -149,12 +149,12 @@ A message handler is also able to return an `Observable`, in which case the res
 @@filename()
 @MessagePattern({ cmd: 'sum' })
 accumulate(data: number[]): Observable<number> {
-  return from([1, 2, 3]);
+  return Array.from([1, 2, 3]);
 }
 @@switch
 @MessagePattern({ cmd: 'sum' })
 accumulate(data: number[]): Observable<number> {
-  return from([1, 2, 3]);
+  return Array.from([1, 2, 3]);
 }
 ```
 
