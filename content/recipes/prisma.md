@@ -92,7 +92,7 @@ Make sure you have a [ConfigModule](https://docs.nestjs.com/techniques/configura
 
 SQLite databases are simple files; no server is required to use a SQLite database. So instead of configuring a connection URL with a _host_ and _port_, you can just point it to a local file which in this case is called `dev.db`. This file will be created in the next step.
 
-<details><summary>Expand if you're using PostgreSQL or MySQL</summary>
+<details><summary>Expand if you're using PostgreSQL, MySQL, MsSQL or Azure SQL</summary>
 
 With PostgreSQL and MySQL, you need to configure the connection URL to point to the _database server_. You can learn more about the required connection URL format [here](https://www.prisma.io/docs/reference/database-reference/connection-urls).
 
@@ -151,6 +151,31 @@ DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 ```
 
 Replace the placeholders spelled in all uppercase letters with your database credentials.
+
+**Microsoft SQL Server / Azure SQL Server**
+
+If you're using Microsoft SQL Server or Azure SQL Server, you have to adjust the `schema.prisma` and `.env` files as follows:
+
+**`schema.prisma`**
+
+```groovy
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+```
+
+**`.env`**
+
+Replace the placeholders spelled in all uppercase letters with your database credentials. Note that if you're unsure what to provide for the `encrypt` placeholder, it's most likely the default value `true`:
+
+```bash
+DATABASE_URL="sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWORD;encrypt=true"
+```
 
 </details>
 
