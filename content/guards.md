@@ -179,7 +179,7 @@ async create(createCatDto) {
 
 Here we've attached the `Roles` decorator metadata to the `create()` method, indicating that only users with the `admin` role should be allowed to access this route.
 
-Alernatively, instead of using the `Reflector#createDecorator` method, we could use the built-in `@SetMetadata()` decorator. Learn more about [here](/fundamentals/execution-context#low-level-approach).
+Alternatively, instead of using the `Reflector#createDecorator` method, we could use the built-in `@SetMetadata()` decorator. Learn more about [here](/fundamentals/execution-context#low-level-approach).
 
 #### Putting it all together
 
