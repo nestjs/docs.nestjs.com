@@ -423,7 +423,7 @@ Parameter-scoped pipes are useful when the validation logic concerns only one sp
 
 #### Global scoped pipes
 
-Since the `ValidationPipe` was created to be as generic as possible, we can realize it's full utility by setting it up as a **global-scoped** pipe so that it is applied to every route handler across the entire application.
+Since the `ValidationPipe` was created to be as generic as possible, we can realize its full utility by setting it up as a **global-scoped** pipe so that it is applied to every route handler across the entire application.
 
 ```typescript
 @@filename(main)
