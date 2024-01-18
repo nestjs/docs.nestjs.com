@@ -12,7 +12,7 @@ import { MenuItemComponent } from './homepage/menu/menu-item/menu-item.component
 import { MenuComponent } from './homepage/menu/menu.component';
 import { NewsletterComponent } from './homepage/newsletter/newsletter.component';
 import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
-import { ComponentsComponent } from './homepage/pages/components/components.component';
+import { ProvidersComponent } from './homepage/pages/providers/providers.component';
 import { ControllersComponent } from './homepage/pages/controllers/controllers.component';
 import { CustomDecoratorsComponent } from './homepage/pages/custom-decorators/custom-decorators.component';
 import { WhoUsesComponent } from './homepage/pages/discover/who-uses/who-uses.component';
@@ -49,7 +49,7 @@ import { SharedModule } from './shared/shared.module';
     FirstStepsComponent,
     ControllersComponent,
     BasePageComponent,
-    ComponentsComponent,
+    ProvidersComponent,
     ModulesComponent,
     MiddlewaresComponent,
     PipesComponent,

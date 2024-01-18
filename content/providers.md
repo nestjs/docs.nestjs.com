@@ -2,7 +2,7 @@
 
 Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can be **injected** as a dependency; this means objects can create various relationships with each other, and the function of "wiring up" these objects can largely be delegated to the Nest runtime system.
 
-<figure><img src="/assets/Components_1.png" /></figure>
+<figure><img src="/assets/Providers_1.png" /></figure>
 
 In the previous chapter, we built a simple `CatsController`. Controllers should handle HTTP requests and delegate more complex tasks to **providers**. Providers are plain JavaScript classes that are declared as `providers` in a [module](/modules).
 

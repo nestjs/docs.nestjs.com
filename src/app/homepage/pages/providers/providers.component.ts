@@ -3,7 +3,7 @@ import { BasePageComponent } from '../page/page.component';
 
 @Component({
   selector: 'app-components',
-  templateUrl: './components.component.html',
+  templateUrl: './providers.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComponentsComponent extends BasePageComponent {}
+export class ProvidersComponent extends BasePageComponent {}
