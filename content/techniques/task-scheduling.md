@@ -122,6 +122,8 @@ Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decora
 
 > info **Hint** Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, `@Cron(new Date(Date.now() + 10 * 1000))` to schedule a job to run 10 seconds after the app starts.
 
+> info **Hint** When using `@Cron` your function is automatically wrapped with a try catch block to log unhandled exceptions
+
 Also, you can supply additional options as the second parameter to the `@Cron()` decorator.
 
 <table>
@@ -182,6 +184,8 @@ handleInterval() {
 
 > info **Hint** This mechanism uses the JavaScript `setInterval()` function under the hood. You can also utilize a cron job to schedule recurring jobs.
 
+> info **Hint** When using `@Interval` your function is automatically wrapped with a try catch block to log unhandled exceptions
+
 If you want to control your declarative interval from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>, associate the interval with a name using the following construction:
 
 ```typescript
@@ -205,6 +209,8 @@ handleTimeout() {
 ```
 
 > info **Hint** This mechanism uses the JavaScript `setTimeout()` function under the hood.
+
+> info **Hint** When using `@Timeout` your function is automatically wrapped with a try catch block to log unhandled exceptions
 
 If you want to control your declarative timeout from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>, associate the timeout with a name using the following construction:
 
@@ -278,6 +284,8 @@ In this code, we use the `CronJob` object from the `cron` package to create the 
 
 > warning **Warning** Remember to inject the `SchedulerRegistry` before accessing it. Import `CronJob` from the `cron` package.
 
+> warning **Warning** Remember to catch exceptions in your callback, it is your responsibility to handle them, otherwise, the process would be halted.
+
 **Delete** a named cron job using the `SchedulerRegistry#deleteCronJob` method, as follows:
 
 ```typescript
@@ -337,6 +345,8 @@ addInterval(name: string, milliseconds: number) {
 In this code, we create a standard JavaScript interval, then pass it to the `SchedulerRegistry#addInterval` method.
 That method takes two arguments: a name for the interval, and the interval itself.
 
+> warning **Warning** Remember to catch exceptions in your callback, it is your responsibility to handle them, otherwise, the process would be halted.
+
 **Delete** a named interval using the `SchedulerRegistry#deleteInterval` method, as follows:
 
 ```typescript
@@ -385,6 +395,8 @@ addTimeout(name: string, milliseconds: number) {
 
 In this code, we create a standard JavaScript timeout, then pass it to the `SchedulerRegistry#addTimeout` method.
 That method takes two arguments: a name for the timeout, and the timeout itself.
+
+> warning **Warning** Remember to catch exceptions in your callback, it is your responsibility to handle them, otherwise, the process would be halted.
 
 **Delete** a named timeout using the `SchedulerRegistry#deleteTimeout` method, as follows:
 
