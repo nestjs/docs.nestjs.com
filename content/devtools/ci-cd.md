@@ -83,9 +83,9 @@ See screenshot below:
 
 The ability to go back in time lets you investigate and troubleshoot the issue by comparing the current graph with the previous one. Depending on how you set things up, every pull request (or even every commit) will have a corresponding snapshot in the registry, so you can easily go back in time and see what changed. Think of Devtools as a Git but with an understanding of how Nest constructs your application graph, and with the ability to **visualize** it.
 
-#### Integrations: Github Actions
+#### Integrations: GitHub Actions
 
-First let's start from creating a new Github workflow in the `.github/workflows` directory in our project and call it, for example, `publish-graph.yml`. Inside this file, let's use the following definition:
+First let's start from creating a new GitHub workflow in the `.github/workflows` directory in our project and call it, for example, `publish-graph.yml`. Inside this file, let's use the following definition:
 
 ```yaml
 name: Devtools
@@ -130,7 +130,7 @@ jobs:
           TARGET_SHA: {{ '${{' }} github.event.pull_request.base.sha {{ '}}' }}
 ```
 
-Ideally, `DEVTOOLS_API_KEY` environment variable should be retrieved from Github Secrets, read more [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) .
+Ideally, `DEVTOOLS_API_KEY` environment variable should be retrieved from GitHub Secrets, read more [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) .
 
 This workflow will run per each pull request that's targeting the `master` branch OR in case there's a direct commit to the `master` branch. Feel free to align this configuration to whatever your project needs. What's essential here is that we provide necessary environment varaiables for our `GraphPublisher` class (to run).
 
@@ -150,7 +150,7 @@ const publishOptions = {
 };
 ```
 
-For the best developer experience, make sure to integrate the **Github application** for your project by clicking on the "Integrate Github app" button (see screenshot below). Note - this isn't required.
+For the best developer experience, make sure to integrate the **GitHub application** for your project by clicking on the "Integrate GitHub app" button (see screenshot below). Note - this isn't required.
 
 <figure><img src="/assets/devtools/integrate-github-app.png" /></figure>
 
