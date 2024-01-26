@@ -209,7 +209,7 @@ functions:
 
 > info **Hint** To learn more about the Serverless framework, visit the [official documentation](https://www.serverless.com/framework/docs/).
 
-With this place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
+With this in place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
