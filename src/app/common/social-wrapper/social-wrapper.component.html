@@ -1,4 +1,10 @@
 <div class="social-wrapper">
+  <a
+      (click)="changeTheme()"
+     [title]="this.theme=='light'?'Switch to dark mode':'Switch to light mode'"
+     target="_blank">
+     <i class="fa-solid fa-wand-magic-sparkles"></i>
+  </a>
   <a href="https://twitter.com/nestframework"
      title="Twitter account"
      target="_blank">

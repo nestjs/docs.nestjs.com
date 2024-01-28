@@ -1,32 +1,18 @@
 @use '../../../scss/variables';
 @use '../../../scss/utils';
 
-.newsletter-wrapper {
-  background: #e8e8e8;
-  padding: 40px 85px;
-  overflow: hidden;
-  position: relative;
-  margin: 0 -85px;
-  width: auto;
-
-  @include utils.media(large) {
-    margin: 0 -50px;
-    padding: 40px 50px;
-  }
-
-  @include utils.media(medium) {
-    margin: 0 -20px;
-    padding: 40px 20px;
-    width: 100%;
-    text-align: center;
-  }
-}
-
 .newsletter-wrapper h3 {
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 4px;
   color: #111;
+}
+
+.dark .newsletter-wrapper h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #fff;
 }
 
 .newsletter-wrapper p {

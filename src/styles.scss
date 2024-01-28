@@ -7,6 +7,7 @@
   --docsearch-highlight-color: #ed2945;
   --docsearch-logo-color: #ed2945;
   --docsearch-modal-background: #fafafa;
+  --docsearch-modal-dark-background: #1b1b1b;
   --docsearch-searchbox-focus-background: transparent;
   --docsearch-searchbox-shadow: none;
 }
@@ -18,9 +19,14 @@ body {
   font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
   background-color: #fdfdfd;
   font-display: swap;
-  color: variables.$grey-color;
+  color: variables.$white-color;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+}
+
+.dark body {
+  background-color: #1f1f1f;
+  color: variables.$white-color;
 }
 
 a {
@@ -29,6 +35,11 @@ a {
 
 strong {
   color: #2d2d2d;
+  font-weight: 600;
+}
+
+.dark strong {
+  color: #c9c9c9;
   font-weight: 600;
 }
 
@@ -99,6 +110,61 @@ blockquote {
   }
 }
 
+.dark blockquote {
+  line-height: 1.6;
+  position: relative;
+  margin: 35px 0;
+  background: #1d1d1d;
+  padding: 20px;
+  border-radius: 3px;
+
+  &::before {
+    height: 100%;
+    width: 4px;
+    content: '';
+    background: variables.$red-color;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  strong {
+    color: variables.$red-color;
+    &:first-of-type {
+      display: block;
+      text-transform: uppercase;
+      font-size: 15px;
+      font-weight: bold;
+    }
+  }
+
+  &.warning {
+    background: #1d1d1d;
+    &::before {
+      background: #ffb36f;
+    }
+    strong,
+    a {
+      color: #ed8529;
+    }
+  }
+
+  &.info {
+    background: rgba(8, 148, 226, 0.038);
+    &::before {
+      background: #0894e2;
+    }
+    strong,
+    a {
+      color: #0894e2;
+    }
+  }
+}
+
 figure {
   margin: 60px 30px;
   text-align: center;
@@ -147,8 +213,17 @@ th {
   background: #efefef;
 }
 
+.dark th {
+  padding: 20px;
+  background: #151515;
+}
+
 tr:nth-of-type(even) td {
   background: #f7f7f7;
+}
+
+.dark tr:nth-of-type(even) td {
+  background: #1b1b1b;
 }
 
 tr:nth-of-type(odd) td:first-of-type {
@@ -194,6 +269,43 @@ tr td span.table-code-asterisk {
     line-height: 32px;
     font-size: 15px;
     color: #5a5a5a;
+  }
+
+  .children {
+    padding-left: 30px;
+    position: relative;
+    overflow: hidden;
+
+    .item {
+      position: relative;
+    }
+
+    .item:before {
+      content: '';
+      left: -18px;
+      bottom: 16px;
+      width: 16px;
+      height: 9999px;
+      position: absolute;
+      border-width: 0 0 1px 1px;
+      border-style: solid;
+      border-color: #dbdbdb;
+      border-radius: 0 0 0 3px;
+    }
+  }
+}
+
+.dark .file-tree {
+  background: #1b1b1b;
+  border: 4px solid #1f1f1f;
+  margin: 40px 0;
+  padding: 16px 32px;
+
+  .item {
+    display: block;
+    line-height: 32px;
+    font-size: 15px;
+    color: #dddddd;
   }
 
   .children {
@@ -322,6 +434,10 @@ tr td span.table-code-asterisk {
 .DocSearch-Modal {
   margin-top: 120px;
   border-radius: 3px;
+}
+
+.DocSearch-Commands li {
+  display: flex;
 }
 
 .DocSearch-Container {

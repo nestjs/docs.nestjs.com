@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ViewEncapsulation,
 } from '@angular/core';
 import { NewsletterService } from './services/newsletter.service';
 
@@ -10,6 +11,7 @@ import { NewsletterService } from './services/newsletter.service';
   templateUrl: './newsletter.component.html',
   styleUrls: ['./newsletter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class NewsletterComponent {
   isDisabled: boolean;

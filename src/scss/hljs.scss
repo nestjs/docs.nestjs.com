@@ -32,6 +32,17 @@ code {
   background: #f0f2f3;
 }
 
+.dark code {
+  font-family: Inconsolata, Consolas, 'Courier New', monospace;
+  font-display: swap;
+  padding: 2px 6px;
+  color: #2876d2;
+  border-radius: 4px;
+  font-size: 15px;
+  white-space: pre-wrap;
+  background: #383838;
+}
+
 code[class*='language-'],
 pre[class*='language-'] {
   letter-spacing: normal;

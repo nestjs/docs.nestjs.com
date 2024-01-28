@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
 import { openCloseAnimation } from '../../../common';
 
 @Component({
@@ -7,6 +7,7 @@ import { openCloseAnimation } from '../../../common';
   styleUrls: ['./menu-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [openCloseAnimation],
+  encapsulation: ViewEncapsulation.None
 })
 export class MenuItemComponent {
   @Input() isOpen = false;

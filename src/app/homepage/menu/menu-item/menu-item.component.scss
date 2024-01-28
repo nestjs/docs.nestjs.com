@@ -18,6 +18,18 @@ h3 {
   }
 }
 
+.dark h3 {
+  @extend .transition;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: variables.$white-color;
+  font-size: 15px;
+  margin: 10px 0;
+  &:hover {
+    color: variables.$red-color;
+  }
+}
+
 .new {
   color: #fff;
   background: variables.$red-color;
@@ -47,6 +59,10 @@ h3 {
   cursor: pointer;
 }
 
+svg.arrow-icon {
+  color : "red";
+}
+
 li {
   display: block;
   padding: 2.5px 0;
@@ -57,6 +73,34 @@ li {
 
   a {
     color: variables.$black-color;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      color: variables.$red-color;
+    }
+    &.active {
+      font-weight: 600;
+      color: variables.$red-color;
+    }
+  }
+
+  .pending {
+    color: #afafaf !important;
+    pointer-events: none;
+  }
+}
+
+.dark ul.sub-nav li {
+  display: block;
+  padding: 2.5px 0;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
+
+  a {
+    color: variables.$white-color;
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
