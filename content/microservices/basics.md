@@ -85,6 +85,22 @@ The second argument of the `createMicroservice()` method is an `options` object.
     <td><code>retryDelay</code></td>
     <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
   </tr>
+  <tr>
+    <td><code>serializer</code></td>
+    <td>Custom <a href="https://github.com/nestjs/nest/blob/master/packages/microservices/interfaces/serializer.interface.ts" target="_blank">serializer</a> for outcoming messages</td>
+  </tr>
+  <tr>
+    <td><code>deserializer</code></td>
+    <td>Custom <a href="https://github.com/nestjs/nest/blob/master/packages/microservices/interfaces/deserializer.interface.ts" target="_blank">deserializer</a> for incoming messages</td>
+  </tr>
+  <tr>
+    <td><code>socketClass</code></td>
+    <td>A custom Socket that extends <code>TcpSocket</code> (default: <code>JsonSocket</code>)</td>
+  </tr>
+  <tr>
+    <td><code>tlsOptions</code></td>
+    <td>Options to configure the tls protocol</td>
+  </tr>
 </table>
 
 #### Patterns
