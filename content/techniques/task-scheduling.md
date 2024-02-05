@@ -252,10 +252,11 @@ The `getCronJob()` method returns the named cron job. The returned `CronJob` obj
 - `stop()` - stops a job that is scheduled to run.
 - `start()` - restarts a job that has been stopped.
 - `setTime(time: CronTime)` - stops a job, sets a new time for it, and then starts it
-- `lastDate()` - returns a string representation of the last date a job executed
-- `nextDates(count: number)` - returns an array (size `count`) of `moment` objects representing upcoming job execution dates.
+- `lastDate()` - returns a `DateTime` representation of the date on which the last execution of a job occurred.
+- `nextDate()` - returns a `DateTime` representation of the date when the next execution of a job is scheduled.
+- `nextDates(count: number)` - Provides an array (size `count`) of `DateTime` representations for the next set of dates that will trigger job execution. `count` defaults to 0, returning an empty array.
 
-> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form.
+> info **Hint** Use `toJSDate()` on `DateTime` objects to render them as a JavaScript Date equivalent to this DateTime.
 
 **Create** a new cron job dynamically using the `SchedulerRegistry#addCronJob` method, as follows:
 
@@ -295,7 +296,7 @@ getCrons() {
   jobs.forEach((value, key, map) => {
     let next;
     try {
-      next = value.nextDates().toDate();
+      next = value.nextDate().toJSDate();
     } catch (e) {
       next = 'error: next fire date is in the past!';
     }
@@ -304,7 +305,7 @@ getCrons() {
 }
 ```
 
-The `getCronJobs()` method returns a `map`. In this code, we iterate over the map and attempt to access the `nextDates()` method of each `CronJob`. In the `CronJob` API, if a job has already fired and has no future firing dates, it throws an exception.
+The `getCronJobs()` method returns a `map`. In this code, we iterate over the map and attempt to access the `nextDate()` method of each `CronJob`. In the `CronJob` API, if a job has already fired and has no future firing date, it throws an exception.
 
 #### Dynamic intervals
 
