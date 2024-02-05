@@ -238,7 +238,7 @@ export class HealthController {
 }
 ```
 
-If your database is reachable, you should now see the following JSON-result when requesting `http://localhost:3000` with a `GET` request:
+If your database is reachable, you should now see the following JSON-result when requesting `http://localhost:3000/health` with a `GET` request:
 
 ```json
 {
