@@ -234,7 +234,7 @@ export class MyService {
 }
 ```
 
-> As the name suggests, this decorator always creates new context, as opposed to its alternative `@EnsureRequestContext` that only creates on if it's already not inside another.
+> warning **Note** As the name suggests, this decorator always creates new context, as opposed to its alternative `@EnsureRequestContext` that only creates it if it's already not inside another one.
 
 #### Testing
 
