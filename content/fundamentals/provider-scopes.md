@@ -80,6 +80,8 @@ Transient-scoped dependencies don't follow that pattern. If a singleton-scoped `
 
 In an HTTP server-based application (e.g., using `@nestjs/platform-express` or `@nestjs/platform-fastify`), you may want to access a reference to the original request object when using request-scoped providers. You can do this by injecting the `REQUEST` object.
 
+The `REQUEST` provider is request-scoped, so you don't need to explicitly use the `REQUEST` scope in this case.
+
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
