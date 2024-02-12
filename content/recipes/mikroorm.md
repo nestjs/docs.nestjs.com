@@ -1,8 +1,8 @@
 ### MikroORM
 
-This recipe is here to help users getting started with MikroORM in Nest. MikroORM is the TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. It is a great alternative to TypeORM and migration from TypeORM should be fairly easy. The complete documentation on MikroORM can be found [here](https://mikro-orm.io/docs).
+This recipe is here to help users get started with MikroORM in Nest. MikroORM is the TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. It is a great alternative to TypeORM and migration from TypeORM should be fairly easy. The complete documentation on MikroORM can be found [here](https://mikro-orm.io/docs).
 
-> info **info** `@mikro-orm/nestjs` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
+> info **info** `@mikro-orm/nestjs` is a third party package and is not managed by the NestJS core team. Please report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
 
 #### Installation
 
@@ -10,7 +10,7 @@ Easiest way to integrate MikroORM to Nest is via [`@mikro-orm/nestjs` module](ht
 Simply install it next to Nest, MikroORM and underlying driver:
 
 ```bash
-$ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mysql # for mysql/mariadb
+$ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/sqlite
 ```
 
 MikroORM also supports `postgres`, `sqlite`, and `mongo`. See the [official docs](https://mikro-orm.io/docs/usage-with-sql/) for all drivers.
@@ -18,24 +18,27 @@ MikroORM also supports `postgres`, `sqlite`, and `mongo`. See the [official docs
 Once the installation process is completed, we can import the `MikroOrmModule` into the root `AppModule`.
 
 ```typescript
+import { SqliteDriver } from '@mikro-orm/sqlite';
+
 @Module({
   imports: [
     MikroOrmModule.forRoot({
       entities: ['./dist/entities'],
       entitiesTs: ['./src/entities'],
       dbName: 'my-db-name.sqlite3',
-      type: 'sqlite',
+      driver: SqliteDriver,
     }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}
 ```
 
 The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package. Check [this page](https://mikro-orm.io/docs/configuration) for the complete configuration documentation.
 
-Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) by creating a configuration file `mikro-orm.config.ts` and then call the `forRoot()` without any arguments. This won't work when you use a build tools that use tree shaking.
+Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) by creating a configuration file `mikro-orm.config.ts` and then call the `forRoot()` without any arguments.
 
 ```typescript
 @Module({
@@ -47,12 +50,25 @@ Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#
 export class AppModule {}
 ```
 
-Afterward, the `EntityManager` will be available to inject across entire project (without importing any module elsewhere).
+But this won't work when you use a build tools that use tree shaking, for that it is better to provide the config explicitly:
+
+```typescript
+import config from './mikro-orm.config'; // your ORM config
+
+@Module({
+  imports: [
+    MikroOrmModule.forRoot(config),
+  ],
+  ...
+})
+export class AppModule {}
+```
+
+Afterward, the `EntityManager` will be available to inject across the entire project (without importing any module elsewhere).
 
 ```ts
-import { MikroORM } from '@mikro-orm/core';
-// Import EntityManager from your driver package or `@mikro-orm/knex`
-import { EntityManager } from '@mikro-orm/mysql';
+// Import everytyhing from your driver package or `@mikro-orm/knex`
+import { EntityManager, MikroORM } from '@mikro-orm/sqlite';
 
 @Injectable()
 export class MyService {
@@ -67,7 +83,7 @@ export class MyService {
 
 #### Repositories
 
-MikroORM supports the repository design pattern. For every entity we can create a repository. Read the complete documentation on repositories [here](https://mikro-orm.io/docs/repositories). To define which repositories should be registered in the current scope you can use the `forFeature()` method. For example, in this way:
+MikroORM supports the repository design pattern. For every entity, we can create a repository. Read the complete documentation on repositories [here](https://mikro-orm.io/docs/repositories). To define which repositories should be registered in the current scope you can use the `forFeature()` method. For example, in this way:
 
 > info **info** You should **not** register your base entities via `forFeature()`, as there are no
 > repositories for those. On the other hand, base entities need to be part of the list in `forRoot()` (or in the ORM config in general).
@@ -106,28 +122,18 @@ export class PhotoService {
 
 #### Using custom repositories
 
-When using custom repositories, we can get around the need for `@InjectRepository()`
-decorator by naming our repositories the same way as `getRepositoryToken()` method do:
-
-```ts
-export const getRepositoryToken = <T>(entity: EntityName<T>) =>
-  `${Utils.className(entity)}Repository`;
-```
-
-In other words, as long as we name the repository same was as the entity is called,
-appending `Repository` suffix, the repository will be registered automatically in
-the Nest DI container.
+When using custom repositories, we no longer need the `@InjectRepository()`
+decorator, as Nest DI resolved based on the class references.
 
 ```ts
 // `**./author.entity.ts**`
-@Entity()
+@Entity({ repository: () => AuthorRepository })
 export class Author {
   // to allow inference in `em.getRepository()`
   [EntityRepositoryType]?: AuthorRepository;
 }
 
 // `**./author.repository.ts**`
-@Repository(Author)
 export class AuthorRepository extends EntityRepository<Author> {
   // your custom methods...
 }
@@ -144,8 +150,6 @@ export class MyService {
 ```
 
 #### Load entities automatically
-
-> info **info** `autoLoadEntities` option was added in v4.1.0
 
 Manually adding entities to the entities array of the connection options can be
 tedious. In addition, referencing entities from the root module breaks application
@@ -207,15 +211,13 @@ export class Book {
 
 #### Request scoped handlers in queues
 
-> info **info** `@UseRequestContext()` decorator was added in v4.1.0
-
 As mentioned in the [docs](https://mikro-orm.io/docs/identity-map), we need a clean state for each request. That is handled automatically thanks to the `RequestContext` helper registered via middleware.
 
 But middlewares are executed only for regular HTTP request handles, what if we need
 a request scoped method outside of that? One example of that is queue handlers or
 scheduled tasks.
 
-We can use the `@UseRequestContext()` decorator. It requires you to first inject the
+We can use the `@CreateRequestContext()` decorator. It requires you to first inject the
 `MikroORM` instance to current context, it will be then used to create the context
 for you. Under the hood, the decorator will register new request context for your
 method and execute it inside the context.
@@ -225,43 +227,14 @@ method and execute it inside the context.
 export class MyService {
   constructor(private readonly orm: MikroORM) {}
 
-  @UseRequestContext()
+  @CreateRequestContext()
   async doSomething() {
     // this will be executed in a separate context
   }
 }
 ```
 
-#### Using `AsyncLocalStorage` for request context
-
-By default, the `domain` api is used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
-you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
-
-```typescript
-// create new (global) storage instance
-const storage = new AsyncLocalStorage<EntityManager>();
-
-@Module({
-  imports: [
-    MikroOrmModule.forRoot({
-      // ...
-      registerRequestContext: false, // disable automatic middleware
-      context: () => storage.getStore(), // use our AsyncLocalStorage instance
-    }),
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-
-// register the request context middleware
-const app = await NestFactory.create(AppModule, { ... });
-const orm = app.get(MikroORM);
-
-app.use((req, res, next) => {
-  storage.run(orm.em.fork(true, true), next);
-});
-```
+> warning **Note** As the name suggests, this decorator always creates new context, as opposed to its alternative `@EnsureRequestContext` that only creates it if it's already not inside another one.
 
 #### Testing
 
@@ -272,7 +245,8 @@ The `@mikro-orm/nestjs` package exposes `getRepositoryToken()` function that ret
   providers: [
     PhotoService,
     {
-      provide: getRepositoryToken(Photo),
+      // or when you have a custom repository: `provide: PhotoRepository`
+      provide: getRepositoryToken(Photo), 
       useValue: mockedRepository,
     },
   ],
