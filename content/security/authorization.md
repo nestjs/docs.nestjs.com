@@ -28,6 +28,7 @@ With this in place, we can create a `@Roles()` decorator. This decorator allows 
 @@filename(roles.decorator)
 import { SetMetadata } from '@nestjs/common';
 import { Role } from '../enums/role.enum';
+import { ROLES_KEY } from '../decorators/roles.decorator';
 
 export const ROLES_KEY = 'roles';
 export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
