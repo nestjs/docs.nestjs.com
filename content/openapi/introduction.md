@@ -156,13 +156,13 @@ export interface SwaggerCustomOptions {
 
   /**
    * Path of the JSON API definition to serve.
-   * Default: `{{path}}-json`.
+   * Default: `<path>-json`.
    */
   jsonDocumentUrl?: string;
 
   /**
    * Path of the YAML API definition to serve.
-   * Default: `{{path}}-json`.
+   * Default: `<path>-json`.
    */
   yamlDocumentUrl?: string;
 
