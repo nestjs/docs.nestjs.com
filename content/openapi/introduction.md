@@ -162,7 +162,7 @@ export interface SwaggerCustomOptions {
 
   /**
    * Path of the YAML API definition to serve.
-   * Default: `<path>-json`.
+   * Default: `<path>-yaml`.
    */
   yamlDocumentUrl?: string;
 
