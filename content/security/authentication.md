@@ -29,8 +29,11 @@ Replace the default contents of these generated files as shown below. For our sa
 @@filename(users/users.service)
 import { Injectable } from '@nestjs/common';
 
-// This should be a real class/interface representing a user entity
-export type User = any;
+export interface User {
+  userId: number;
+  username: string;
+  password: string;
+}
 
 @Injectable()
 export class UsersService {
@@ -48,7 +51,7 @@ export class UsersService {
   ];
 
   async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+    return this.users.find((user) => user.username === username);
   }
 }
 @@switch
@@ -72,7 +75,7 @@ export class UsersService {
   }
 
   async findOne(username) {
-    return this.users.find(user => user.username === username);
+    return this.users.find((user) => user.username === username);
   }
 }
 ```
@@ -184,6 +187,7 @@ With this in place, let's open up the `AuthController` and add a `signIn()` meth
 ```typescript
 @@filename(auth/auth.controller)
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { User } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -192,13 +196,13 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
+  signIn(@Body() signInDto: Pick<User, 'username' | 'password'>) {
     return this.authService.signIn(signInDto.username, signInDto.password);
   }
 }
 ```
 
-> info **Hint** Ideally, instead of using the `Record<string, any>` type, we should use a DTO class to define the shape of the request body. See the [validation](/techniques/validation) chapter for more information.
+> info **Hint** Ideally, instead of using the `Pick<User, 'username' | 'password'>` type, we should use a DTO class to define the shape of the request body. See the [validation](/techniques/validation) chapter for more information.
 
 <app-banner-courses-auth></app-banner-courses-auth>
 
