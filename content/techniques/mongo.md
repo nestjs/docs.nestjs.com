@@ -192,6 +192,7 @@ export class CatsService {
   constructor(@InjectConnection() private connection: Connection) {}
 }
 ```
+
 ### Sessions
 To start a session with mongoose you shouldn't use `mongoose.startSession()` directly. Instead inject the connection using [@InjectConnection](http://localhost:4200/techniques/mongodb#connection), then use the connection object to start the session.
 
