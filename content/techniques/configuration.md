@@ -355,7 +355,7 @@ import * as Joi from 'joi';
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
           .default('development'),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().port().default(3000),
       }),
     }),
   ],
@@ -378,7 +378,7 @@ import * as Joi from 'joi';
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
           .default('development'),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().port().default(3000),
       }),
       validationOptions: {
         allowUnknown: false,
@@ -423,6 +423,8 @@ class EnvironmentVariables {
   NODE_ENV: Environment;
 
   @IsNumber()
+  @Min(0)
+  @Max(65535)
   PORT: number;
 }
 
