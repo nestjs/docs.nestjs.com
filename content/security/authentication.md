@@ -187,7 +187,7 @@ With this in place, let's open up the `AuthController` and add a `signIn()` meth
 ```typescript
 @@filename(auth/auth.controller)
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
-import { User } from 'src/users/users.service';
+import { User } from '../users/users.service';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
