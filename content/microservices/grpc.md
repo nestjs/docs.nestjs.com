@@ -68,7 +68,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
   </tr>
   <tr>
     <td><code>url</code></td>
-    <td>Connection url.  String in the format <code>ip address/dns name:port</code> (for example, <code>'localhost:50051'</code>) defining the address/port on which the transporter establishes a connection.  Optional.  Defaults to <code>'localhost:5000'</code></td>
+    <td>Connection url.  String in the format <code>ip address/dns name:port</code> (for example, <code>'0.0.0.0:50051'</code> for a Docker server) defining the address/port on which the transporter establishes a connection.  Optional.  Defaults to <code>'localhost:5000'</code></td>
   </tr>
   <tr>
     <td><code>protoLoader</code></td>
