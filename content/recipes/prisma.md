@@ -448,16 +448,17 @@ export class AppController {
     });
   }
 
-  @Post('post')
+ @Post('post')
   async createDraft(
-    @Body() postData: { title: string; content?: string; authorEmail: string },
+    @Body() postData: { title: string; content?: string; authorId: number },
   ): Promise<PostModel> {
-    const { title, content, authorEmail } = postData;
+    const { title, content, authorId } = postData;
+
     return this.postService.createPost({
       title,
       content,
       author: {
-        connect: { email: authorEmail },
+        connect: { id: authorId },
       },
     });
   }
