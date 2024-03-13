@@ -72,7 +72,7 @@ async findAll() {
     await this.service.findAll()
   } catch (error) { 
     throw new HttpException({
-      statusCode: HttpStatus.FORBIDDEN,
+      status: HttpStatus.FORBIDDEN,
       error: 'This is a custom message',
     }, HttpStatus.FORBIDDEN, {
       cause: error
