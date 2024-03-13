@@ -210,7 +210,7 @@ This will make an output like this:
 [Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Doing something with timestamp here -> +5ms
 ```
 
-For each logger the timedifference to the last message will be calculated and printed at the end of the logline.
+For each logger the time difference to the last message will be calculated and printed at the end of the log line.
 
 #### Injecting a custom logger
 
