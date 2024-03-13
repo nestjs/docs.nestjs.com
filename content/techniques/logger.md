@@ -187,6 +187,31 @@ That way if we follow the steps from the previous section and call `app.useLogge
 
 This should be suitable for most cases. But if you need more customization (like adding and calling custom methods), move to the next section.
 
+#### Logs with timestamps
+
+To enable timestamp in your application like the Nest system logging we can use the optional options `timestamp: true` when creating the logger.
+
+```typescript
+import { Logger, Injectable } from '@nestjs/common';
+
+@Injectable()
+class MyService {
+  private readonly logger = new Logger(MyService.name, { timestamp: true }); // optional timestamp parameter to enable timestamps
+
+  doSomething() {
+    this.logger.log('Doing something with timestamp here ->');
+  }
+}
+```
+
+This will make an output like this:
+
+```bash
+[Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Doing something with timestamp here -> +5ms
+```
+
+For each logger the timedifference to the last message will be calculated and printed at the end of the logline.
+
 #### Injecting a custom logger
 
 To start, extend the built-in logger with code like the following. We supply the `scope` option as configuration metadata for the `ConsoleLogger` class, specifying a [transient](/fundamentals/injection-scopes) scope, to ensure that we'll have a unique instance of the `MyLogger` in each feature module. In this example, we do not extend the individual `ConsoleLogger` methods (like `log()`, `warn()`, etc.), though you may choose to do so.
