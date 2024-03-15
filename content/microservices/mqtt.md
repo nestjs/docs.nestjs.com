@@ -116,6 +116,33 @@ getTemperature(context) {
 }
 ```
 
+#### Quality of Service (QoS)
+
+Any subscription created with the `@MessagePattern` decorator will subscribe with QoS 0. If a higher QoS is required, it can be set globally using the `subscribeOptions` block when establishing the connection as follows:
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.MQTT,
+  options: {
+    url: 'mqtt://localhost:1883',
+    subscribeOptions: {
+      qos: 2
+    },
+  },
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.MQTT,
+  options: {
+    url: 'mqtt://localhost:1883',
+    subscribeOptions: {
+      qos: 2
+    },
+  },
+});
+```
+If a topic specific QoS is required, consider creating a [Custom transporter](https://docs.nestjs.com/microservices/custom-transport).
+
 #### Record builders
 
 To configure message options (adjust the QoS level, set the Retain or DUP flags, or add additional properties to the payload), you can use the `MqttRecordBuilder` class. For example, to set `QoS` to `2` use the `setQoS` method, as follows:
