@@ -337,7 +337,7 @@ Please note that this would require updating the `HeroesService` interface that 
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc).
+A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/04-grpc) for a hybrid application (HTTP + gRPC) and [here](https://github.com/nestjs/nest/tree/master/sample/34-grpc-client-server) for independent gRPC Client / Server respectively.
 
 #### gRPC Streaming
 
