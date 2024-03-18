@@ -44,7 +44,7 @@ findOne(): UserEntity {
 }
 ```
 
-> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
+> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized. 
 
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
@@ -59,6 +59,38 @@ When this endpoint is requested, the client receives the following response:
 ```
 
 Note that the interceptor can be applied application-wide (as covered [here](https://docs.nestjs.com/interceptors#binding-interceptors)). The combination of the interceptor and the entity class declaration ensures that **any** method that returns a `UserEntity` will be sure to remove the `password` property. This gives you a measure of centralized enforcement of this business rule.
+
+
+#### Using the SerializeOptions to transform plain objects to the class instance.
+
+You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} <CLASS> {{ '}' }})` to transform all responses to the instance. Doing so will ensure that decorators on the class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly. 
+
+In this example, even though a plain js object was returned in both conditional statements, they will all be converted into `UserEntity` with annotated class-validator or class-transformer decorators applied.
+
+```typescript
+@UseInterceptors(ClassSerializerInterceptor)
+@Get()
+@SerializeOptions({ type : UserEntity })
+findOne(@Query() { id }: { id: number }): UserEntity {
+  if (id === 1) {
+    return {
+      id: 1,
+      firstName: 'Kamil',
+      lastName: 'Mysliwiec',
+      password: 'password',
+    };
+  }
+
+  return {
+    id: 2,
+    firstName: 'Kamil2',
+    lastName: 'Mysliwiec2',
+    password: 'password2',
+  };
+}
+```
+
+> info **Hint** By stating the expecting controller return type, we can take advantage of Typescript to check if the returned plain object conforms to the DTO/entity shape. `plainToInstance`' does not hint if the plain object conforms to the the DTO/entity class instance you are transforming it into (somewhat equivalent to typecasting). This could lead to bugs in your application.
 
 #### Expose properties
 
