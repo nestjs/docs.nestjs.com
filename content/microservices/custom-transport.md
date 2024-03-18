@@ -252,10 +252,10 @@ and then use it in the `ClientsModule` like so:
 @@filename(app.module)
 @Module({
   imports: [
-    ClientsModule.register({
+    ClientsModule.register([{
       name: 'CustomProxy',
       customClass: ErrorHandlingProxy,
-    }),
+    }]),
   ]
 })
 export class AppModule
