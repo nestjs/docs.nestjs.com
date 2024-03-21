@@ -187,6 +187,7 @@ import { Connection } from './connection.provider';
 
 @Module({
   providers: [Connection],
+  exports: [Connection],
 })
 export class DatabaseModule {
   static forRoot(entities = [], options?): DynamicModule {
@@ -205,6 +206,7 @@ import { Connection } from './connection.provider';
 
 @Module({
   providers: [Connection],
+  exports: [Connection],
 })
 export class DatabaseModule {
   static forRoot(entities = [], options) {
