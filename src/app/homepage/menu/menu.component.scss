@@ -7,7 +7,7 @@
   @include utils.transform(translateX(-100%));
   padding: 125px 17px 40px 24px;
   width: 250px;
-  background: #f5f5f5;
+  background: var(--menu-background);
   position: fixed !important;
   bottom: 0;
   top: 0;
@@ -78,7 +78,7 @@
 
 .btn-support {
   margin-top: 20px;
-  background: variables.$red-color;
+  background: var(--primary);
   color: #fff;
 
   &:hover {
