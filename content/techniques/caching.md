@@ -17,6 +17,8 @@ $ npm install @nestjs/cache-manager cache-manager
 
 #### In-memory cache
 
+> warning **Note** `In-memory cache` can only store values of types that are supported by [the structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
+
 Nest provides a unified API for various cache storage providers. The built-in one is an in-memory data store. However, you can easily switch to a more comprehensive solution, like Redis.
 
 In order to enable caching, import the `CacheModule` and call its `register()` method.
