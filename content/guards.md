@@ -202,8 +202,17 @@ export class RolesGuard implements CanActivate {
     }
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    return matchRoles(roles, user.roles);
+    return this.matchRoles(roles, user.roles);
   }
+
+  private matchRoles(requiredRoles: string[], userRoles: string[]): boolean {  
+    for (const role of requiredRoles) {  
+      if (userRoles.includes(role)) {  
+        return true;  
+      }  
+    }  
+    return false;  
+  } 
 }
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
@@ -224,7 +233,16 @@ export class RolesGuard {
     }
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    return matchRoles(roles, user.roles);
+    return this.matchRoles(roles, user.roles);
+  }
+
+    private matchRoles(requiredRoles: string[], userRoles: string[]): boolean {  
+    for (const role of requiredRoles) {  
+      if (userRoles.includes(role)) {  
+        return true;  
+      }  
+    }  
+    return false;  
   }
 }
 ```
