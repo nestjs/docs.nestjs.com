@@ -8,7 +8,6 @@ To begin using it, we first install the required dependencies.
 
 ```bash
 $ npm install --save @nestjs/schedule
-$ npm install --save-dev @types/cron
 ```
 
 To activate job scheduling, import the `ScheduleModule` into the root `AppModule` and run the `forRoot()` static method as shown below:
@@ -100,7 +99,7 @@ Some sample cron patterns are:
   </tbody>
 </table>
 
-The `@nestjs/schedule` package provides a convenience enum with commonly used cron patterns. You can use this enum as follows:
+The `@nestjs/schedule` package provides a convenient enum with commonly used cron patterns. You can use this enum as follows:
 
 ```typescript
 import { Injectable, Logger } from '@nestjs/common';
@@ -253,12 +252,13 @@ The `getCronJob()` method returns the named cron job. The returned `CronJob` obj
 - `stop()` - stops a job that is scheduled to run.
 - `start()` - restarts a job that has been stopped.
 - `setTime(time: CronTime)` - stops a job, sets a new time for it, and then starts it
-- `lastDate()` - returns a string representation of the last date a job executed
-- `nextDates(count: number)` - returns an array (size `count`) of `moment` objects representing upcoming job execution dates.
+- `lastDate()` - returns a `DateTime` representation of the date on which the last execution of a job occurred.
+- `nextDate()` - returns a `DateTime` representation of the date when the next execution of a job is scheduled.
+- `nextDates(count: number)` - Provides an array (size `count`) of `DateTime` representations for the next set of dates that will trigger job execution. `count` defaults to 0, returning an empty array.
 
-> info **Hint** Use `toDate()` on `moment` objects to render them in human readable form.
+> info **Hint** Use `toJSDate()` on `DateTime` objects to render them as a JavaScript Date equivalent to this DateTime.
 
-**Create** a new cron job dynamically using the `SchedulerRegistry.addCronJob()` method, as follows:
+**Create** a new cron job dynamically using the `SchedulerRegistry#addCronJob` method, as follows:
 
 ```typescript
 addCronJob(name: string, seconds: string) {
@@ -275,11 +275,11 @@ addCronJob(name: string, seconds: string) {
 }
 ```
 
-In this code, we use the `CronJob` object from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (just like the `@Cron()` <a href="techniques/task-scheduling#declarative-cron-jobs">decorator</a>) as its first argument, and a callback to be executed when the cron timer fires as its second argument. The `SchedulerRegistry.addCronJob()` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
+In this code, we use the `CronJob` object from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (just like the `@Cron()` <a href="techniques/task-scheduling#declarative-cron-jobs">decorator</a>) as its first argument, and a callback to be executed when the cron timer fires as its second argument. The `SchedulerRegistry#addCronJob` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
 
 > warning **Warning** Remember to inject the `SchedulerRegistry` before accessing it. Import `CronJob` from the `cron` package.
 
-**Delete** a named cron job using the `SchedulerRegistry.deleteCronJob()` method, as follows:
+**Delete** a named cron job using the `SchedulerRegistry#deleteCronJob` method, as follows:
 
 ```typescript
 deleteCron(name: string) {
@@ -288,7 +288,7 @@ deleteCron(name: string) {
 }
 ```
 
-**List** all cron jobs using the `SchedulerRegistry.getCronJobs()` method as follows:
+**List** all cron jobs using the `SchedulerRegistry#getCronJobs` method as follows:
 
 ```typescript
 getCrons() {
@@ -296,7 +296,7 @@ getCrons() {
   jobs.forEach((value, key, map) => {
     let next;
     try {
-      next = value.nextDates().toDate();
+      next = value.nextDate().toJSDate();
     } catch (e) {
       next = 'error: next fire date is in the past!';
     }
@@ -305,11 +305,11 @@ getCrons() {
 }
 ```
 
-The `getCronJobs()` method returns a `map`. In this code, we iterate over the map and attempt to access the `nextDates()` method of each `CronJob`. In the `CronJob` API, if a job has already fired and has no future firing dates, it throws an exception.
+The `getCronJobs()` method returns a `map`. In this code, we iterate over the map and attempt to access the `nextDate()` method of each `CronJob`. In the `CronJob` API, if a job has already fired and has no future firing date, it throws an exception.
 
 #### Dynamic intervals
 
-Obtain a reference to an interval with the `SchedulerRegistry.getInterval()` method. As above, inject `SchedulerRegistry` using standard constructor injection:
+Obtain a reference to an interval with the `SchedulerRegistry#getInterval` method. As above, inject `SchedulerRegistry` using standard constructor injection:
 
 ```typescript
 constructor(private schedulerRegistry: SchedulerRegistry) {}
@@ -322,7 +322,7 @@ const interval = this.schedulerRegistry.getInterval('notifications');
 clearInterval(interval);
 ```
 
-**Create** a new interval dynamically using the `SchedulerRegistry.addInterval()` method, as follows:
+**Create** a new interval dynamically using the `SchedulerRegistry#addInterval` method, as follows:
 
 ```typescript
 addInterval(name: string, milliseconds: number) {
@@ -335,10 +335,10 @@ addInterval(name: string, milliseconds: number) {
 }
 ```
 
-In this code, we create a standard JavaScript interval, then pass it to the `ScheduleRegistry.addInterval()` method.
+In this code, we create a standard JavaScript interval, then pass it to the `SchedulerRegistry#addInterval` method.
 That method takes two arguments: a name for the interval, and the interval itself.
 
-**Delete** a named interval using the `SchedulerRegistry.deleteInterval()` method, as follows:
+**Delete** a named interval using the `SchedulerRegistry#deleteInterval` method, as follows:
 
 ```typescript
 deleteInterval(name: string) {
@@ -347,7 +347,7 @@ deleteInterval(name: string) {
 }
 ```
 
-**List** all intervals using the `SchedulerRegistry.getIntervals()` method as follows:
+**List** all intervals using the `SchedulerRegistry#getIntervals` method as follows:
 
 ```typescript
 getIntervals() {
@@ -358,10 +358,10 @@ getIntervals() {
 
 #### Dynamic timeouts
 
-Obtain a reference to a timeout with the `SchedulerRegistry.getTimeout()` method. As above, inject `SchedulerRegistry` using standard constructor injection:
+Obtain a reference to a timeout with the `SchedulerRegistry#getTimeout` method. As above, inject `SchedulerRegistry` using standard constructor injection:
 
 ```typescript
-constructor(private schedulerRegistry: SchedulerRegistry) {}
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 ```
 
 And use it as follows:
@@ -371,7 +371,7 @@ const timeout = this.schedulerRegistry.getTimeout('notifications');
 clearTimeout(timeout);
 ```
 
-**Create** a new timeout dynamically using the `SchedulerRegistry.addTimeout()` method, as follows:
+**Create** a new timeout dynamically using the `SchedulerRegistry#addTimeout` method, as follows:
 
 ```typescript
 addTimeout(name: string, milliseconds: number) {
@@ -384,10 +384,10 @@ addTimeout(name: string, milliseconds: number) {
 }
 ```
 
-In this code, we create a standard JavaScript timeout, then pass it to the `ScheduleRegistry.addTimeout()` method.
+In this code, we create a standard JavaScript timeout, then pass it to the `SchedulerRegistry#addTimeout` method.
 That method takes two arguments: a name for the timeout, and the timeout itself.
 
-**Delete** a named timeout using the `SchedulerRegistry.deleteTimeout()` method, as follows:
+**Delete** a named timeout using the `SchedulerRegistry#deleteTimeout` method, as follows:
 
 ```typescript
 deleteTimeout(name: string) {
@@ -396,7 +396,7 @@ deleteTimeout(name: string) {
 }
 ```
 
-**List** all timeouts using the `SchedulerRegistry.getTimeouts()` method as follows:
+**List** all timeouts using the `SchedulerRegistry#getTimeouts` method as follows:
 
 ```typescript
 getTimeouts() {

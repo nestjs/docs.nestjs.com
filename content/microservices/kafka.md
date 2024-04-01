@@ -228,7 +228,7 @@ export class HeroesController {
 }
 ```
 
-> info **Hint** `@Payload()` is imported from the `@nestjs/microservices`.
+> info **Hint** `@Payload()` is imported from the `@nestjs/microservices` package.
 
 Outgoing messages can also be keyed by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 

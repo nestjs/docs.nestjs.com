@@ -218,11 +218,11 @@ export class CreateCatDto {
 }
 ```
 
-We want to ensure that any incoming request to the create method contains a valid body. So we have to validate the three members of the `createCatDto` object. We could do this inside the route handler method, but doing so is not ideal as it would break the **single responsibility rule** (SRP).
+We want to ensure that any incoming request to the create method contains a valid body. So we have to validate the three members of the `createCatDto` object. We could do this inside the route handler method, but doing so is not ideal as it would break the **single responsibility principle** (SRP).
 
 Another approach could be to create a **validator class** and delegate the task there. This has the disadvantage that we would have to remember to call this validator at the beginning of each method.
 
-How about creating validation middleware? This could work, but unfortunately it's not possible to create **generic middleware** which can be used across all contexts across the whole application. This is because middleware is unaware of the **execution context**, including the handler that will be called and any of its parameters.
+How about creating validation middleware? This could work, but unfortunately, it's not possible to create **generic middleware** which can be used across all contexts across the whole application. This is because middleware is unaware of the **execution context**, including the handler that will be called and any of its parameters.
 
 This is, of course, exactly the use case for which pipes are designed. So let's go ahead and refine our validation pipe.
 
@@ -232,54 +232,53 @@ This is, of course, exactly the use case for which pipes are designed. So let's 
 
 There are several approaches available for doing object validation in a clean, [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) way. One common approach is to use **schema-based** validation. Let's go ahead and try that approach.
 
-The [Joi](https://github.com/sideway/joi) library allows you to create schemas in a straightforward way, with a readable API. Let's build a validation pipe that makes use of Joi-based schemas.
+The [Zod](https://zod.dev/) library allows you to create schemas in a straightforward way, with a readable API. Let's build a validation pipe that makes use of Zod-based schemas.
 
 Start by installing the required package:
 
 ```bash
-$ npm install --save joi
+$ npm install --save zod
 ```
 
-In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.validate()` method, which validates our incoming argument against the provided schema.
+In the code sample below, we create a simple class that takes a schema as a `constructor` argument. We then apply the `schema.parse()` method, which validates our incoming argument against the provided schema.
 
-As noted earlier, a **validation pipe** either returns the value unchanged, or throws an exception.
+As noted earlier, a **validation pipe** either returns the value unchanged or throws an exception.
 
-In the next section, you'll see how we supply the appropriate schema for a given controller method using the `@UsePipes()` decorator. Doing so makes our validation pipe re-usable across contexts, just as we set out to do.
+In the next section, you'll see how we supply the appropriate schema for a given controller method using the `@UsePipes()` decorator. Doing so makes our validation pipe reusable across contexts, just as we set out to do.
 
 ```typescript
 @@filename()
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { ObjectSchema } from 'joi';
+import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { ZodSchema  } from 'zod';
 
-@Injectable()
-export class JoiValidationPipe implements PipeTransform {
-  constructor(private schema: ObjectSchema) {}
+export class ZodValidationPipe implements PipeTransform {
+  constructor(private schema: ZodSchema) {}
 
-  transform(value: any, metadata: ArgumentMetadata) {
-    const { error } = this.schema.validate(value);
-    if (error) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
+    try {
+      const parsedValue = this.schema.parse(value);
+      return parsedValue;
+    } catch (error) {
       throw new BadRequestException('Validation failed');
     }
-    return value;
   }
 }
 @@switch
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
-@Injectable()
-export class JoiValidationPipe {
-  constructor(schema) {
-    this.schema = schema;
-  }
+export class ZodValidationPipe {
+  constructor(private schema) {}
 
   transform(value, metadata) {
-    const { error } = this.schema.validate(value);
-    if (error) {
+    try {
+      const parsedValue = this.schema.parse(value);
+      return parsedValue;
+    } catch (error) {
       throw new BadRequestException('Validation failed');
     }
-    return value;
   }
 }
+
 ```
 
 #### Binding validation pipes
@@ -288,41 +287,41 @@ Earlier, we saw how to bind transformation pipes (like `ParseIntPipe` and the re
 
 Binding validation pipes is also very straightforward.
 
-In this case, we want to bind the pipe at the method call level. In our current example, we need to do the following to use the `JoiValidationPipe`:
+In this case, we want to bind the pipe at the method call level. In our current example, we need to do the following to use the `ZodValidationPipe`:
 
-1. Create an instance of the `JoiValidationPipe`
-2. Pass the context-specific Joi schema in the class constructor of the pipe
+1. Create an instance of the `ZodValidationPipe`
+2. Pass the context-specific Zod schema in the class constructor of the pipe
 3. Bind the pipe to the method
 
-Joi schema example:
+Zod schema example:
 
 ```typescript
-const createCatSchema = Joi.object({
-  name: Joi.string().required(),
-  age: Joi.number().required(),
-  breed: Joi.string().required(),
-})
+import { z } from 'zod';
 
-export interface CreateCatDto {
-  name: string;
-  age: number;
-  breed: string;
-}
+export const createCatSchema = z
+  .object({
+    name: z.string(),
+    age: z.number(),
+    breed: z.string(),
+  })
+  .required();
+
+export type CreateCatDto = z.infer<typeof createCatSchema>;
 ```
 
 We do that using the `@UsePipes()` decorator as shown below:
 
 ```typescript
-@@filename()
+@@filename(cats.controller)
 @Post()
-@UsePipes(new JoiValidationPipe(createCatSchema))
+@UsePipes(new ZodValidationPipe(createCatSchema))
 async create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 @@switch
 @Post()
 @Bind(Body())
-@UsePipes(new JoiValidationPipe(createCatSchema))
+@UsePipes(new ZodValidationPipe(createCatSchema))
 async create(createCatDto) {
   this.catsService.create(createCatDto);
 }
@@ -330,10 +329,11 @@ async create(createCatDto) {
 
 > info **Hint** The `@UsePipes()` decorator is imported from the `@nestjs/common` package.
 
- 
+> warning **Warning** `zod` library requires the `strictNullChecks` configuration to be enabled in your `tsconfig.json` file.
+
 #### Class validator
 
-> warning **Warning** The techniques in this section require TypeScript, and are not available if your app is written using vanilla JavaScript.
+> warning **Warning** The techniques in this section require TypeScript and are not available if your app is written using vanilla JavaScript.
 
 Let's look at an alternate implementation for our validation technique.
 
@@ -392,7 +392,9 @@ export class ValidationPipe implements PipeTransform<any> {
 }
 ```
 
-> warning **Notice** Above, we have used the [class-transformer](https://github.com/typestack/class-transformer) library. It's made by the same author as the **class-validator** library, and as a result, they play very well together.
+> info **Hint** As a reminder, you don't have to build a generic validation pipe on your own since the `ValidationPipe` is provided by Nest out-of-the-box. The built-in `ValidationPipe` offers more options than the sample we built in this chapter, which has been kept basic for the sake of illustrating the mechanics of a custom-built pipe. You can find full details, along with lots of examples [here](/techniques/validation).
+
+> warning **Notice** We used the [class-transformer](https://github.com/typestack/class-transformer) library above which is made by the same author as the **class-validator** library, and as a result, they play very well together.
 
 Let's go through this code. First, note that the `transform()` method is marked as `async`. This is possible because Nest supports both synchronous and **asynchronous** pipes. We make this method `async` because some of the class-validator validations [can be async](https://github.com/typestack/class-validator#custom-validation-classes) (utilize Promises).
 
@@ -404,7 +406,7 @@ Next, we use the class-transformer function `plainToInstance()` to transform our
 
 Finally, as noted earlier, since this is a **validation pipe** it either returns the value unchanged, or throws an exception.
 
-The last step is to bind the `ValidationPipe`. Pipes can be parameter-scoped, method-scoped, controller-scoped, or global-scoped. Earlier, with our Joi-based validation pipe, we saw an example of binding the pipe at the method level.
+The last step is to bind the `ValidationPipe`. Pipes can be parameter-scoped, method-scoped, controller-scoped, or global-scoped. Earlier, with our Zod-based validation pipe, we saw an example of binding the pipe at the method level.
 In the example below, we'll bind the pipe instance to the route handler `@Body()` decorator so that our pipe is called to validate the post body.
 
 ```typescript
@@ -421,7 +423,7 @@ Parameter-scoped pipes are useful when the validation logic concerns only one sp
 
 #### Global scoped pipes
 
-Since the `ValidationPipe` was created to be as generic as possible, we can realize it's full utility by setting it up as a **global-scoped** pipe so that it is applied to every route handler across the entire application.
+Since the `ValidationPipe` was created to be as generic as possible, we can realize its full utility by setting it up as a **global-scoped** pipe so that it is applied to every route handler across the entire application.
 
 ```typescript
 @@filename(main)

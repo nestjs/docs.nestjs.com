@@ -6,15 +6,13 @@ The [Nest CLI](https://github.com/nestjs/nest-cli) is a command-line interface t
 
 **Note**: In this guide we describe using [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install packages, including the Nest CLI. Other package managers may be used at your discretion. With npm, you have several options available for managing how your OS command line resolves the location of the `nest` CLI binary file. Here, we describe installing the `nest` binary globally using the `-g` option. This provides a measure of convenience, and is the approach we assume throughout the documentation. Note that installing **any** `npm` package globally leaves the responsibility of ensuring they're running the correct version up to the user. It also means that if you have different projects, each will run the **same** version of the CLI. A reasonable alternative is to use the [npx](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) program, built into the `npm` cli (or similar features with other package managers) to ensure that you run a **managed version** of the Nest CLI. We recommend you consult the [npx documentation](https://github.com/npm/cli/blob/latest/docs/lib/content/commands/npx.md) and/or your DevOps support staff for more information.
 
-
-
 Install the CLI globally using the `npm install -g` command (see the **Note** above for details about global installs).
 
 ```bash
 $ npm install -g @nestjs/cli
 ```
 
-> info **Hint** Alternatively, you can use this command `npx @nestjs/cli@latest` without installing the cli globally. 
+> info **Hint** Alternatively, you can use this command `npx @nestjs/cli@latest` without installing the cli globally.
 
 #### Basic workflow
 
@@ -39,6 +37,8 @@ $ npm run start:dev
 ```
 
 In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. The app will automatically recompile and reload when you change any of the source files.
+
+> info **Hint** We recommend using the [SWC builder](/recipes/swc) for faster builds (10x more performant than the default TypeScript compiler).
 
 #### Project structure
 
@@ -90,11 +90,21 @@ Run `nest <command> --help` for any of the following commands to see command-spe
 
 See [usage](/cli/usages) for detailed descriptions for each command.
 
-| Command    | Alias | Description                                                                                           |
-| ---------- | ----- | ----------------------------------------------------------------------------------------------------- |
-| `new`      | `n`   | Scaffolds a new _standard mode_ application with all boilerplate files needed to run.                 |
-| `generate` | `g`   | Generates and/or modifies files based on a schematic.                                                 |
-| `build`    |       | Compiles an application or workspace into an output folder.                                           |
-| `start`    |       | Compiles and runs an application (or default project in a workspace).                                 |
-| `add`      |       | Imports a library that has been packaged as a **nest library**, running its install schematic.        |
-| `info`     | `i`   | Displays information about installed nest packages and other helpful system info.                     |
+| Command    | Alias | Description                                                                                    |
+| ---------- | ----- | ---------------------------------------------------------------------------------------------- |
+| `new`      | `n`   | Scaffolds a new _standard mode_ application with all boilerplate files needed to run.          |
+| `generate` | `g`   | Generates and/or modifies files based on a schematic.                                          |
+| `build`    |       | Compiles an application or workspace into an output folder.                                    |
+| `start`    |       | Compiles and runs an application (or default project in a workspace).                          |
+| `add`      |       | Imports a library that has been packaged as a **nest library**, running its install schematic. |
+| `info`     | `i`   | Displays information about installed nest packages and other helpful system info.              |
+
+#### Requirements
+
+Nest CLI requires a Node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [Node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
+
+```bash
+node -p process.versions.icu
+```
+
+If the command prints `undefined`, your Node.js binary has no internationalization support.

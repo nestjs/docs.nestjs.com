@@ -1,5 +1,5 @@
-@import '../../../scss/variables.scss';
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 :host {
   position: fixed;
@@ -28,7 +28,7 @@
     color: #fff;
     font-weight: 600;
     font-size: 18px;
-    @include media(small) {
+    @include utils.media(small) {
       font-size: 15px;
     }
   }
@@ -47,7 +47,7 @@
 header {
   display: block;
   position: relative;
-  background: $black-color;
+  background: variables.$black-color;
   width: 100%;
   height: 70px;
   z-index: 10000;
@@ -72,10 +72,10 @@ header {
   &.opened {
     width: 250px;
 
-    @include media(large) {
+    @include utils.media(large) {
       width: 250px;
     }
-    @include media(normal) {
+    @include utils.media(normal) {
       width: 80px;
     }
   }
@@ -88,7 +88,7 @@ header {
       fill: #fff;
     }
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     background: transparent;
   }
 
@@ -104,10 +104,10 @@ header {
   vertical-align: top;
   padding-left: 85px;
 
-  @include media(large) {
+  @include utils.media(large) {
     padding-left: 15px;
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     padding-left: 10px;
   }
 
@@ -159,18 +159,18 @@ header {
     }
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     margin-right: 0;
     padding: 14px 5px;
   }
 
-  @include media(normal) {
+  @include utils.media(normal) {
     ul {
       display: none !important;
     }
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     .search-wrapper {
       display: none;
     }
@@ -191,16 +191,16 @@ header {
     }
 
     &:last-of-type a {
-      @include radius(2px);
+      @include utils.radius(2px);
       padding: 4px 6px;
-      background: $red-color;
+      background: variables.$red-color;
 
       &:hover {
         background: #262626;
       }
     }
 
-    @include media(large) {
+    @include utils.media(large) {
       margin-left: 20px;
     }
   }
@@ -213,7 +213,7 @@ header {
     font-weight: 600;
 
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
     }
   }
   @media print {
@@ -225,18 +225,18 @@ header {
   float: right;
   padding: 14px 25px;
 
-  @include media(medium) {
+  @include utils.media(medium) {
     padding: 23px 15px;
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     display: none;
   }
 
   img {
     margin-right: 10px;
     width: 55px;
-    @include media(medium) {
+    @include utils.media(medium) {
       display: none !important;
     }
   }
@@ -256,13 +256,13 @@ header {
 
   .short-title {
     display: none;
-    @include media(medium) {
+    @include utils.media(medium) {
       display: block;
     }
   }
 
   .long-title {
-    @include media(medium) {
+    @include utils.media(medium) {
       display: none;
     }
   }
@@ -274,9 +274,9 @@ header {
     position: relative;
 
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
       &::after {
-        background: $red-color;
+        background: variables.$red-color;
       }
     }
 
@@ -327,7 +327,7 @@ header {
   margin-top: 5px;
   cursor: pointer;
 
-  @include media(large) {
+  @include utils.media(large) {
     display: inline-block;
   }
 
@@ -347,7 +347,7 @@ header {
 }
 
 .desktop-nav-icon {
-  @include media(large) {
+  @include utils.media(large) {
     display: none;
   }
 }
@@ -390,7 +390,7 @@ header {
 
   &:active,
   &:focus {
-    border-bottom-color: $red-color;
+    border-bottom-color: variables.$red-color;
     width: 190px;
   }
 
@@ -402,7 +402,7 @@ header {
 ::ng-deep .DocSearch-Button:hover,
 ::ng-deep .DocSearch-Button:active
 ::ng-deep .DocSearch-Button:focus {
-  border-bottom-color: $red-color;
+  border-bottom-color: variables.$red-color;
   width: 240px;
   
   @media (min-width: 1200px) and (max-width: 1300px) {
@@ -459,7 +459,7 @@ header {
   &::after,
   &::before {
     content: '';
-    background: $red-color;
+    background: variables.$red-color;
     display: block;
     height: 2px;
     position: absolute;

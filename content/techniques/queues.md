@@ -219,7 +219,7 @@ export class AudioConsumer {
   @Process()
   async transcode(job: Job<unknown>) {
     let progress = 0;
-    for (i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
       await doSomething(job.data);
       progress += 1;
       await job.progress(progress);

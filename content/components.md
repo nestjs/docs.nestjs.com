@@ -1,6 +1,6 @@
 ### Providers
 
-Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can be **injected** as a dependency; this means objects can create various relationships with each other, and the function of "wiring up" instances of objects can largely be delegated to the Nest runtime system.
+Providers are a fundamental concept in Nest. Many of the basic Nest classes may be treated as a provider – services, repositories, factories, helpers, and so on. The main idea of a provider is that it can be **injected** as a dependency; this means objects can create various relationships with each other, and the function of "wiring up" these objects can largely be delegated to the Nest runtime system.
 
 <figure><img src="/assets/Components_1.png" /></figure>
 
@@ -112,7 +112,7 @@ The `CatsService` is **injected** through the class constructor. Notice the use 
 
 #### Dependency injection
 
-Nest is built around the strong design pattern commonly known as **Dependency injection**. We recommend reading a great article about this concept in the official [Angular](https://angular.io/guide/dependency-injection) documentation.
+Nest is built around the strong design pattern commonly known as **Dependency injection**. We recommend reading a great article about this concept in the official [Angular](https://angular.dev/guide/di) documentation.
 
 In Nest, thanks to TypeScript capabilities, it's extremely easy to manage dependencies because they are resolved just by type. In the example below, Nest will resolve the `catsService` by creating and returning an instance of `CatsService` (or, in the normal case of a singleton, returning the existing instance if it has already been requested elsewhere). This dependency is resolved and passed to your controller's constructor (or assigned to the indicated property):
 
@@ -161,7 +161,7 @@ export class HttpService<T> {
 }
 ```
 
-> warning **Warning** If your class doesn't extend another provider, you should always prefer using **constructor-based** injection.
+> warning **Warning** If your class doesn't extend another class, you should always prefer using **constructor-based** injection.
 
 #### Provider registration
 

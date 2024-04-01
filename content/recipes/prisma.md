@@ -88,6 +88,8 @@ Now, open up `.env` and adjust the `DATABASE_URL` environment variable to look a
 DATABASE_URL="file:./dev.db"
 ```
 
+Make sure you have a [ConfigModule](https://docs.nestjs.com/techniques/configuration) configured, otherwise the `DATABASE_URL` variable will not be picked up from `.env`.
+
 SQLite databases are simple files; no server is required to use a SQLite database. So instead of configuring a connection URL with a _host_ and _port_, you can just point it to a local file which in this case is called `dev.db`. This file will be created in the next step.
 
 <details><summary>Expand if you're using PostgreSQL or MySQL</summary>
@@ -246,7 +248,7 @@ When setting up your NestJS application, you'll want to abstract away the Prisma
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { INestApplication, Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -254,16 +256,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
     await this.$connect();
   }
-
-  async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
-      await app.close();
-    });
-  }
 }
 ```
 
-> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database. We don't bother with `onModuleDestroy`, since Prisma has its own shutdown hooks where it will destroy the connection. For more info on `enableShutdownHooks`, please see [Issues with `enableShutdownHooks`](recipes/prisma#issues-with-enableshutdownhooks)
+> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database.
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
@@ -515,26 +511,6 @@ This controller implements the following routes:
 ###### `DELETE`
 
 - `/post/:id`: Delete a post by its `id`
-
-#### Issues with `enableShutdownHooks`
-
-Prisma interferes with NestJS `enableShutdownHooks`. Prisma listens for shutdown signals and will call `process.exit()` before your application shutdown hooks fire. To deal with this, you would need to add a listener for Prisma `beforeExit` event.
-
-```typescript
-// main.ts
-...
-import { PrismaService } from './services/prisma/prisma.service';
-...
-async function bootstrap() {
-  ...
-  const prismaService = app.get(PrismaService);
-  await prismaService.enableShutdownHooks(app)
-  ...
-}
-bootstrap()
-```
-
-You can [read more](https://github.com/prisma/prisma/issues/2917#issuecomment-708340112) about Prisma handling of shutdown signal, and `beforeExit` event.
 
 #### Summary
 

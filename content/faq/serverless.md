@@ -177,7 +177,7 @@ with the [Serverless](https://www.serverless.com/) framework (in this case, targ
 First, let's install the required packages:
 
 ```bash
-$ npm i @vendia/serverless-express aws-lambda
+$ npm i @codegenie/serverless-express aws-lambda
 $ npm i -D @types/aws-lambda serverless-offline
 ```
 
@@ -209,11 +209,11 @@ functions:
 
 > info **Hint** To learn more about the Serverless framework, visit the [official documentation](https://www.serverless.com/framework/docs/).
 
-With this place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
+With this in place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import serverlessExpress from '@vendia/serverless-express';
+import serverlessExpress from '@codegenie/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
@@ -239,9 +239,9 @@ export const handler: Handler = async (
 
 > info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](/cli/monorepo#monorepo-mode).
 
-> warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [article](https://javascript.plainenglish.io/serverless-nestjs-document-your-api-with-swagger-and-aws-api-gateway-64a53962e8a2) for more information.
+> warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [thread](https://github.com/nestjs/swagger/issues/199) for more information.
 
-Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@vendia/serverless-express` package load properly.
+Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@codegenie/serverless-express` package load properly.
 
 ```json
 {

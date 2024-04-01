@@ -112,7 +112,7 @@ Upon successful upload, you should see the following graph & dialog window:
 
 <figure><img src="/assets/devtools/partial-graph-modules-view.png" /></figure>
 
-As you can see, the highlighted `TasksModule` is the one we should look into. Also, in the dialog window you can already see some instructions on how to use fix this issue.
+As you can see, the highlighted `TasksModule` is the one we should look into. Also, in the dialog window you can already see some instructions on how to fix this issue.
 
 If we switch to the "Classes" view instead, that's what we'll see:
 
@@ -191,7 +191,7 @@ fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 
 > info **Hint** `SerializedGraph` is exported from the `@nestjs/core` package.
 
-Then you can drag and drop this/upload this file:
+Then you can drag and drop/upload this file:
 
 <figure><img src="/assets/devtools/drag-and-drop.png" /></figure>
 

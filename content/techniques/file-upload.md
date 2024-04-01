@@ -155,6 +155,8 @@ Finally, you can use the special `ParseFilePipeBuilder` class that lets you comp
 file: Express.Multer.File,
 ```
 
+> info **Hint** File presence is required by default, but you can make it optional by adding `fileIsRequired: false` parameter inside `build` function options (at the same level as `errorHttpStatusCode`).
+
 #### Array of files
 
 To upload an array of files (identified with a single field name), use the `FilesInterceptor()` decorator (note the plural **Files** in the decorator name). This decorator takes three arguments:
@@ -233,6 +235,18 @@ uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
 @UseInterceptors(AnyFilesInterceptor())
 uploadFile(files) {
   console.log(files);
+}
+```
+
+#### No files
+
+To accept `multipart/form-data` but not allow any files to be uploaded, use the `NoFilesInterceptor`. This sets multipart data as attributes on the request body. Any files sent with the request will throw a `BadRequestException`.
+
+```typescript
+@Post('upload')
+@UseInterceptors(NoFilesInterceptor())
+handleMultiPartData(@Body() body) {
+  console.log(body)
 }
 ```
 

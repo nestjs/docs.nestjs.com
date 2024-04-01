@@ -342,8 +342,6 @@ To use Joi, we must install Joi package:
 $ npm install --save joi
 ```
 
-> warning **Notice** The latest version of `joi` requires you to be running Node v12 or later. For older versions of node, please install `v16.1.8`. This is mainly after the release of `v17.0.2` which causes errors during build time. For more information, please refer to [their 17.0.0 release notes](https://github.com/sideway/joi/issues/2262).
-
 Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
@@ -357,7 +355,7 @@ import * as Joi from 'joi';
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
           .default('development'),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().port().default(3000),
       }),
     }),
   ],
@@ -380,7 +378,7 @@ import * as Joi from 'joi';
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
           .default('development'),
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().port().default(3000),
       }),
       validationOptions: {
         allowUnknown: false,
@@ -425,6 +423,8 @@ class EnvironmentVariables {
   NODE_ENV: Environment;
 
   @IsNumber()
+  @Min(0)
+  @Max(65535)
   PORT: number;
 }
 
@@ -458,8 +458,6 @@ import { validate } from './env.validation';
 })
 export class AppModule {}
 ```
-
-<app-banner-shop></app-banner-shop>
 
 #### Custom getter functions
 
@@ -525,6 +523,28 @@ export async function getStorageModule() {
 ```
 
 This construction guarantees that after the `ConfigModule.envVariablesLoaded` Promise resolves, all configuration variables are loaded up.
+
+#### Conditional module configuration
+
+There may be times where you want to conditionally load in a module and specify the condition in an env variable. Fortunately, `@nestjs/config` provides a `ConditionalModule` that allows you to do just that.
+
+```typescript
+@Module({
+  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooModule, 'USE_FOO')],
+})
+export class AppModule {}
+```
+
+The above module would only load in the `FooModule` if in the `.env` file there is not a `false` value for the env variable `USE_FOO`. You can also pass a custom condition yourself, a function receiving the `process.env` reference that should return a boolean for the `ConditionalModule` to handle:
+
+```typescript
+@Module({
+  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooBarModule, (env: NodeJS.ProcessEnv) => !!env['foo'] && !!env['bar'])],
+})
+export class AppModule {}
+```
+
+It is important to be sure that when using the `ConditionalModule` you also have the `ConfigModule` loaded in the application, so that the `ConfigModule.envVariablesLoaded` hook can be properly referenced and utilized. If the hook is not flipped to true within 5 seconds, or a timeout in milliseconds, set by the user in the third options parameter of the `registerWhen` method, then the `ConditionalModule` will throw an error and Nest will abort starting the application.
 
 #### Expandable variables
 

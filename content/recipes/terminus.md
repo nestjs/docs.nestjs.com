@@ -27,6 +27,7 @@ A health check represents a summary of **health indicators**. A health indicator
 - `MongooseHealthIndicator`
 - `SequelizeHealthIndicator`
 - `MikroOrmHealthIndicator`
+- `PrismaHealthIndicator`
 - `MicroserviceHealthIndicator`
 - `GRPCHealthIndicator`
 - `MemoryHealthIndicator`
@@ -88,7 +89,7 @@ export class HealthController {
   }
 }
 @@switch
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Dependencies, Get } from '@nestjs/common';
 import { HealthCheckService, HttpHealthIndicator, HealthCheck } from '@nestjs/terminus';
 
 @Controller('health')
@@ -237,7 +238,7 @@ export class HealthController {
 }
 ```
 
-If your database is reachable, you should now see the following JSON-result when requesting `http://localhost:3000` with a `GET` request:
+If your database is reachable, you should now see the following JSON-result when requesting `http://localhost:3000/health` with a `GET` request:
 
 ```json
 {
@@ -484,7 +485,7 @@ The last required step is to add the now available health indicator in the requi
 ```typescript
 @@filename(health.controller)
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
-import { Injectable, Get } from '@nestjs/common';
+import { Injectable, Dependencies, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health';
 
 @Injectable()
@@ -601,6 +602,24 @@ You can change the log style using the `errorLogStyle` configuration option as i
   imports: [
     TerminusModule.forRoot({
       errorLogStyle: 'pretty',
+    }),
+  ]
+})
+export class HealthModule {}
+```
+
+#### Graceful shutdown timeout
+
+If your application requires postponing its shutdown process, Terminus can handle it for you.
+This setting can prove particularly beneficial when working with an orchestrator such as Kubernetes.
+By setting a delay slightly longer than the readiness check interval, you can achieve zero downtime when shutting down containers.
+
+```typescript
+@@filename(health.module)
+@Module({
+  imports: [
+    TerminusModule.forRoot({
+      gracefulShutdownTimeoutMs: 1000,
     }),
   ]
 })

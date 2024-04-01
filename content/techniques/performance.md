@@ -103,6 +103,32 @@ export class LoggerMiddleware {
 }
 ```
 
+#### Route Config
+
+You can use the [route config](https://fastify.dev/docs/latest/Reference/Routes/#config) feature of Fastify with the `@RouteConfig()` decorator.
+
+```typescript
+@RouteConfig({ output: 'hello world' })
+@Get()
+index(@Req() req) {
+  return req.routeConfig.output;
+}
+```
+
+#### Route Constraints
+
+As of v10.3.0, `@nestjs/platform-fastify` supports [route constraints](https://fastify.dev/docs/latest/Reference/Routes/#constraints) feature of Fastify with `@RouteConstraints` decorator.
+
+```typescript
+@RouteConstraints({ version: '1.2.x' })
+newFeature() {
+  return 'This works only for version >= 1.2.x';
+}
+```
+
+> info **Hint** `@RouteConfig()` and `@RouteConstraints` are imported from `@nestjs/platform-fastify`.
+
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).

@@ -67,7 +67,7 @@ The challenge is that the configuration module itself, since it's generic (simil
 
 In other words, dynamic modules provide an API for importing one module into another, and customizing the properties and behavior of that module when it is imported, as opposed to using the static bindings we've seen so far.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>
 
 #### Config module example
 
@@ -431,18 +431,17 @@ There are edge-cases when your module may need to take extra options that determ
 In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following example:
 
 ```typescript
-export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
-  new ConfigurableModuleBuilder<ConfigModuleOptions>()
-    .setExtras(
-      {
-        isGlobal: true,
-      },
-      (definition, extras) => ({
-        ...definition,
-        global: extras.isGlobal,
-      }),
-    )
-    .build();
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new ConfigurableModuleBuilder<ConfigModuleOptions>()
+  .setExtras(
+    {
+      isGlobal: true,
+    },
+    (definition, extras) => ({
+      ...definition,
+      global: extras.isGlobal,
+    }),
+  )
+  .build();
 ```
 
 In the example above, the first argument passed into the `setExtras` method is an object containing default values for the "extra" properties. The second argument is a function that takes an auto-generated module definitions (with `provider`, `exports`, etc.) and `extras` object which represents extra properties (either specified by the consumer or defaults). The returned value of this function is a modified module definition. In this specific example, we're taking the `extras.isGlobal` property and assigning it to the `global` property of the module definition (which in turn determines whether a module is global or not, read more [here](/modules#dynamic-modules)).
@@ -466,9 +465,7 @@ However, since `isGlobal` is declared as an "extra" property, it won't be availa
 ```typescript
 @Injectable()
 export class ConfigService {
-  constructor(
-    @Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions,
-  ) {
+  constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions) {
     // "options" object will not have the "isGlobal" property
     // ...
   }
@@ -482,11 +479,7 @@ The auto-generated static methods (`register`, `registerAsync`, etc.) can be ext
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigService } from './config.service';
-import {
-  ConfigurableModuleClass,
-  ASYNC_OPTIONS_TYPE,
-  OPTIONS_TYPE,
-} from './config.module-definition';
+import { ConfigurableModuleClass, ASYNC_OPTIONS_TYPE, OPTIONS_TYPE } from './config.module-definition';
 
 @Module({
   providers: [ConfigService],
@@ -512,10 +505,5 @@ export class ConfigModule extends ConfigurableModuleClass {
 Note the use of `OPTIONS_TYPE` and `ASYNC_OPTIONS_TYPE` types that must be exported from the module definition file:
 
 ```typescript
-export const {
-  ConfigurableModuleClass,
-  MODULE_OPTIONS_TOKEN,
-  OPTIONS_TYPE,
-  ASYNC_OPTIONS_TYPE,
-} = new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE, ASYNC_OPTIONS_TYPE } = new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
 ```

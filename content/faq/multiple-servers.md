@@ -39,8 +39,41 @@ const app = await NestFactory.create(
 );
 await app.init();
 
-http.createServer(server).listen(3000);
-https.createServer(httpsOptions, server).listen(443);
+const httpServer = http.createServer(server).listen(3000);
+const httpsServer = https.createServer(httpsOptions, server).listen(443);
+```
+
+Because we called `http.createServer` / `https.createServer` ourselves, NestJS doesn't close them when calling `app.close` / on termination signal. We need to do this ourselves:
+
+```typescript
+@Injectable()
+export class ShutdownObserver implements OnApplicationShutdown {
+  private httpServers: http.Server[] = [];
+
+  public addHttpServer(server: http.Server): void {
+    this.httpServers.push(server);
+  }
+
+  public async onApplicationShutdown(): Promise<void> {
+    await Promise.all(
+      this.httpServers.map((server) =>
+        new Promise((resolve, reject) => {
+          server.close((error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(null);
+            }
+          });
+        })
+      ),
+    );
+  }
+}
+
+const shutdownObserver = app.get(ShutdownObserver);
+shutdownObserver.addHttpServer(httpServer);
+shutdownObserver.addHttpServer(httpsServer);
 ```
 
 > info **Hint** The `ExpressAdapter` is imported from the `@nestjs/platform-express` package. The `http` and `https` packages are native Node.js packages.
