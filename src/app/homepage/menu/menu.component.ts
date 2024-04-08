@@ -191,7 +191,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Standalone apps',
       isOpened: false,
-      path: '/application-context',
+      path: '/standalone-applications',
     },
     {
       title: 'CLI',
