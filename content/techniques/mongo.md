@@ -527,6 +527,26 @@ MongooseModule.forRootAsync({
 });
 ```
 
+#### Connection Events
+
+You can declare & define the [mongoose connection events](https://mongoosejs.com/docs/connections.html#connection-events) in the following manner.
+
+```typescript
+MongooseModule.forRoot('mongodb://localhost/test', {
+  onConnectionCreate: (connection: Connection) => {
+    connection.on('connected', () => console.log('connected'));
+    connection.on('open', () => console.log('open'));
+    connection.on('disconnected', () => console.log('disconnected'));
+    connection.on('reconnected', () => console.log('reconnected'));
+    connection.on('disconnecting', () => console.log('disconnecting'));
+
+    return connection;
+  },
+}),
+```
+
+Similarly, you can add the `onConnectionCreate` property to async configurations built using `MongooseModule.forRootAsync()`.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).
