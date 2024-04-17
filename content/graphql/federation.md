@@ -18,7 +18,7 @@ In the following sections, we'll set up a demo application that consists of a ga
 Start by installing the required dependencies:
 
 ```bash
-$ npm install --save @apollo/federation @apollo/subgraph
+$ npm install --save @apollo/subgraph
 ```
 
 #### Schema first
