@@ -189,7 +189,7 @@ This should be suitable for most cases. But if you need more customization (like
 
 #### Logs with timestamps
 
-To enable timestamp in your application like the Nest system logging we can use the optional options `timestamp: true` when creating the logger.
+You can enable Nest like system logging by providing the optional `timestamp: true` setting when creating the logger instance.
 
 ```typescript
 import { Logger, Injectable } from '@nestjs/common';
