@@ -207,7 +207,7 @@ class MyService {
 This will print the output in the following manner:
 
 ```bash
-[Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Doing something with timestamp here -> +5ms
+[Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Doing something with timestamp here +5ms
 ```
 
 For each logger the time difference to the last message will be calculated and printed at the end of the log line.
