@@ -204,7 +204,7 @@ class MyService {
 }
 ```
 
-This will make an output like this:
+This will print the output in the following manner:
 
 ```bash
 [Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Doing something with timestamp here -> +5ms
