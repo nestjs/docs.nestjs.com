@@ -527,16 +527,24 @@
 
   @include utils.media(large) {
     #carbonads {
-      padding: 30px 0 30px 30px;
+      margin: 16px 0 16px 16px;
+      padding: 12px;
       float: right;
       position: static;
     }
   }
 
-  @include utils.media(medium) {
+  @include utils.media(normal) {
     #carbonads {
-      padding: 30px 0 15px 25px;
+      margin: 16px 0 16px 16px;
+      padding: 12px;
       text-align: left;
+    }
+  }
+
+  @media (max-width: 360px) {
+    #carbonads {
+      display: none;
     }
   }
 
