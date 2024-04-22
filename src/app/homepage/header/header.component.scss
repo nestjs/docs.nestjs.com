@@ -35,13 +35,12 @@
 }
 
 .new {
-  background: #232323;
-  color: #ea2845;
-  border: 1px solid #ea2845;
+  background: var(--primary-gradient);
   font-size: 11px;
   padding: 2px 4px;
   border-radius: 2px;
   margin-right: 2px;
+  -webkit-text-fill-color: #fff;
 }
 
 header {
@@ -192,8 +191,9 @@ header {
 
     &:last-of-type a {
       @include utils.radius(2px);
+      transition: none;
       padding: 4px 6px;
-      background: variables.$red-color;
+      background: variables.$red-gradient;
 
       &:hover {
         background: #262626;

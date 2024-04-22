@@ -19,23 +19,20 @@
 .container {
   @extend .transition;
   @extend .box-sizing;
-  //@include transform(translateX(250px));
   margin-left: 250px;
   width: calc(100% - 250px);
-  padding: 120px 85px 0;
+  padding: 85px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
 
   &.wide {
-    //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
     display: block;
   }
 
   @include utils.media(large) {
-    //@include transform(translateX(250px));
     margin-left: 250px;
     width: calc(100% - 250px);
     padding: 120px 50px 0;
@@ -64,9 +61,35 @@
   a {
     font-weight: 600;
     color: variables.$red-color;
+
     &:hover {
       color: #0894e2;
     }
+  }
+
+  .content a {
+    @include utils.text-gradient();
+
+    &:hover {
+      background: #0894e2;
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+    }
+  }
+
+  .content #carbonads a, .content blockquote a, .content blockquote strong, .content a:has(> code) {
+    -webkit-text-fill-color: unset !important;
+    -webkit-background-clip: unset !important;
+    background: none;
+
+    &:hover {
+      background: none;
+    }
+  }
+
+  .content .banner a {
+    -webkit-text-fill-color: unset !important;
+    -webkit-background-clip: unset !important;
   }
 
   h1,
@@ -216,14 +239,40 @@
   }
 
   .btn-primary {
-    border: 2px solid variables.$red-color;
     color: variables.$red-color;
     padding: 12px 20px;
     display: inline-block;
+    border-radius: 2px;
+    position: relative;
+
+    span {
+      @include utils.text-gradient();
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 2px;
+      padding: 2px;
+      background: var(--primary-gradient);
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+      z-index: 2;
+    }
 
     &:hover {
       color: #0894e2;
-      border-color: #0894e2;
+      &::before {
+        background: #0894e2;
+      }
+      span {
+        background: #0894e2;
+      }
     }
   }
 }
