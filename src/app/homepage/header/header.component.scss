@@ -2,6 +2,10 @@
 @use '../../../scss/utils';
 
 :host {
+  background: var(--header-background);
+  display: block;
+  width: 100%;
+  height: 70px;
   position: fixed;
   z-index: 10000;
   width: 100%;
@@ -36,8 +40,8 @@
 
 .new {
   background: #232323;
-  color: #ea2845;
-  border: 1px solid #ea2845;
+  color: var(--label-new);
+  border: 1px solid var(--label-new);
   font-size: 11px;
   padding: 2px 4px;
   border-radius: 2px;
@@ -193,7 +197,7 @@ header {
     &:last-of-type a {
       @include utils.radius(2px);
       padding: 4px 6px;
-      background: variables.$red-color;
+      background: var(--primary);
 
       &:hover {
         background: #262626;
@@ -213,7 +217,7 @@ header {
     font-weight: 600;
 
     &:hover {
-      color: variables.$red-color;
+      color: var(--primary);
     }
   }
   @media print {
@@ -274,9 +278,9 @@ header {
     position: relative;
 
     &:hover {
-      color: variables.$red-color;
+      color: var(--primary);
       &::after {
-        background: variables.$red-color;
+        background: var(--primary);
       }
     }
 
@@ -390,7 +394,7 @@ header {
 
   &:active,
   &:focus {
-    border-bottom-color: variables.$red-color;
+    border-bottom-color: var(--primary);
     width: 190px;
   }
 
@@ -459,7 +463,7 @@ header {
   &::after,
   &::before {
     content: '';
-    background: variables.$red-color;
+    background: var(--primary);
     display: block;
     height: 2px;
     position: absolute;
