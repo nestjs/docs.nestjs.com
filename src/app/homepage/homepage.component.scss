@@ -35,7 +35,7 @@
   @include utils.media(large) {
     margin-left: 250px;
     width: calc(100% - 250px);
-    padding: 120px 50px 0;
+    padding: 85px 50px 0;
     &.wide {
       width: 100%;
     }
@@ -44,7 +44,7 @@
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
-    padding: 120px 20px 0;
+    padding: 85px 20px 0;
   }
 
   @media print {
