@@ -161,7 +161,7 @@ export class HttpService<T> {
 }
 ```
 
-> warning **Warning** If your class doesn't extend another class, you should always prefer using **constructor-based** injection. The constructor explicitly outlines what dependencies are required and is more difficult to miss than class attributes annotated with `@Inject`.
+> warning **Warning** If your class doesn't extend another class, you should always prefer using **constructor-based** injection. The constructor explicitly outlines what dependencies are required and provides better visibility than class attributes annotated with `@Inject`.
 
 #### Provider registration
 
