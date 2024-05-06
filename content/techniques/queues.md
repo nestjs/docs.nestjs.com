@@ -81,7 +81,7 @@ Each queue can have one or many producers, consumers, and listeners. Consumers r
 
 #### Named configurations
 
-If your queues connect to multiple different Redis instances, you can use a technique called **named configurations**. This feature allows you to register several configurations under specified keys, which then you can refer to in the queue options.
+If your queues connect to multiple Redis instances, you can use a technique called **named configurations**. This feature allows you to register several configurations under specified keys, which then you can refer to in the queue options.
 
 For example, assuming that you have an additional Redis instance (apart from the default one) used by a few queues registered in your application, you can register its configuration as follows:
 
