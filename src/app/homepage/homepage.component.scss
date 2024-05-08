@@ -77,7 +77,17 @@
     }
   }
 
-  .content #carbonads a, .content blockquote a, .content blockquote strong, .content a:has(> code) {
+  .content blockquote strong, .content #carbonads a, .content blockquote a {
+    -webkit-text-fill-color: unset !important;
+    -webkit-background-clip: unset !important;
+    background: none;
+
+    &:hover {
+      background: none;
+    }
+  }
+
+  .content a:has(> code) {
     -webkit-text-fill-color: unset !important;
     -webkit-background-clip: unset !important;
     background: none;
