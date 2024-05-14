@@ -203,6 +203,31 @@ CatBreed:
 
 > info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
 
+#### Examples Of Properties
+
+You can set a single example for a property by utilizing the `example` key like this:
+
+```typescript
+@ApiProperty({
+  example: 'persian',
+})
+breed: string;
+```
+
+If you want to give multiple examples, you can utilize the `examples` key by passing in an object structured like this:
+
+```typescript
+@ApiProperty({
+  examples: {
+    Persian: { value: 'persian' },
+    Tabby: { value: 'tabby' },
+    Siamese: { value: 'siamese' },
+    'Scottish Fold': { value: 'scottish_fold' },
+  },
+})
+breed: string;
+```
+
 #### Raw definitions
 
 In some specific scenarios (e.g., deeply nested arrays, matrices), you may want to describe your type by hand.
