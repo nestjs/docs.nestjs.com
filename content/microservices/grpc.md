@@ -50,6 +50,33 @@ In the `nest-cli.json` file, we add the `assets` property that allows us to dist
 }
 ```
 
+#### gRPC Reflection
+
+The [gRPC Server Reflection Specification](https://grpc.io/docs/guides/reflection/#overview) is a standard which allows gRPC clients to request details about the API that the server exposes, akin to exposing an OpenAPI document for a REST API. This can make working with developer debugging tools such as grpc-ui or postman significantly easier.
+
+To add gRPC reflection support to your server, first install the required implementation package:
+
+```bash
+$ npm i --save @grpc/reflection
+```
+
+then it can be hooked into the gRPC server using the `onLoadPackageDefinition` hook in your gRPC server options.
+
+```typescript
+@@filename(main)
+import { ReflectionService } from '@grpc/reflection';
+
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  options: {
+    onLoadPackageDefinition: (pkg, server) => {
+      new ReflectionService(pkg).addToServer(server);
+    },
+  },
+});
+```
+
+now your server will respond to messages requesting API details using the reflection specification
+
 #### Options
 
 The <strong>gRPC</strong> transporter options object exposes the properties described below.
