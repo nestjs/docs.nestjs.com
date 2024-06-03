@@ -215,6 +215,7 @@ const routes: Routes = [
       scrollPositionRestoration: 'enabled',
       anchorScrolling: 'enabled',
       preloadingStrategy: PreloadAllModules,
+      onSameUrlNavigation: 'reload',
     }),
   ],
   providers: [],
