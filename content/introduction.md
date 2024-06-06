@@ -18,22 +18,25 @@ To get started, you can either scaffold the project with the [Nest CLI](/cli/ove
 
 To scaffold the project with the Nest CLI, run the following commands. This will create a new project directory, and populate the directory with the initial core Nest files and supporting modules, creating a conventional base structure for your project. Creating a new project with the **Nest CLI** is recommended for first-time users. We'll continue with this approach in [First Steps](first-steps).
 
-```bash
-$ npm i -g @nestjs/cli
-$ nest new project-name
-```
+<div style="position: relative; display: inline-block;">
+  <button onclick="copyToClipboard('#nest-cli-code')" style="position: absolute; right: 0; top: 0;">Copy</button>
+  <pre id="nest-cli-code"><code>npm i -g @nestjs/cli
+nest new project-name</code></pre>
+</div>
 
 > info **Hint** To create a new TypeScript project with stricter feature set, pass the `--strict` flag to the `nest new` command.
 
 #### Alternatives
 
 Alternatively, to install the TypeScript starter project with **Git**:
-
-```bash
-$ git clone https://github.com/nestjs/typescript-starter.git project
-$ cd project
-$ npm install
-$ npm run start
+```
+<div style="position: relative; display: inline-block;">
+  <button onclick="copyToClipboard('#git-clone-code')" style="position: absolute; right: 0; top: 0;">Copy</button>
+  <pre id="git-clone-code"><code>git clone https://github.com/nestjs/typescript-starter.git project
+cd project
+npm install
+npm run start</code></pre>
+</div>
 ```
 
 > info **Hint** If you'd like to clone the repository without the git history, you can use [degit](https://github.com/Rich-Harris/degit).
@@ -43,7 +46,20 @@ Open your browser and navigate to [`http://localhost:3000/`](http://localhost:30
 To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
 
 You can also manually create a new project from scratch by installing the core and supporting files with **npm** (or **yarn**). In this case, of course, you'll be responsible for creating the project boilerplate files yourself.
+```
+<div style="position: relative; display: inline-block;">
+  <button onclick="copyToClipboard('#npm-install-code')" style="position: absolute; right: 0; top: 0;">Copy</button>
+  <pre id="npm-install-code"><code>npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata</code></pre>
+</div>
 
-```bash
-$ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata
+<script>
+  function copyToClipboard(elementId) {
+    var copyText = document.querySelector(elementId).textContent;
+    navigator.clipboard.writeText(copyText).then(function() {
+      console.log('Copied to clipboard');
+    }, function(err) {
+      console.error('Could not copy text: ', err);
+    });
+  }
+</script>
 ```
