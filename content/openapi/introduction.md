@@ -46,7 +46,7 @@ Once we create a document, we can call the `setup()` method. It accepts:
 1. The path to mount the Swagger UI
 2. An application instance
 3. The document object instantiated above
-4. Optional configuration parameter (read more [here](/openapi/introduction#document-options))
+4. Optional configuration parameter (read more [here](/openapi/introduction#setup-options))
 
 Now you can run the following command to start the HTTP server:
 
