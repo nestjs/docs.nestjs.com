@@ -10,24 +10,28 @@ To create a Nest standalone application, use the following construction:
 @@filename()
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  // application logic...
+  // your application logic here ...
 }
 bootstrap();
 ```
 
-The standalone application object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a `TasksService` in the `TasksModule`. This class provides a set of methods that we want to call from within a CRON job.
+#### Retrieving providers for static modules
+
+The standalone application object allows you to obtain a reference to any instance registered within the Nest application.  
+Let's imagine that we have a `TasksService` provider in the `TasksModule` module that was imported by our `AppModule` module. This class provides a set of methods that we want to call from within a CRON job.
 
 ```typescript
 @@filename()
-const app = await NestFactory.createApplicationContext(AppModule);
+// ...
 const tasksService = app.get(TasksService);
 ```
 
-To access the `TasksService` instance we use the `get()` method. The `get()` method acts like a **query** that searches for an instance in each registered module. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
+To access the `TasksService` instance we use the `get()` method.  
+The `get()` method acts like a **query** that searches for an instance in each registered module. You can pass any provider's token to it. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
 
 ```typescript
 @@filename()
-const app = await NestFactory.createApplicationContext(AppModule);
+// ...
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
@@ -54,7 +58,32 @@ Following is a summary of the methods available for retrieving instance referenc
 
 > info **Hint** In non-strict mode, the root module is selected by default. To select any other module, you need to navigate the modules graph manually, step by step.
 
-If you want the node application to close after the script finishes (e.g., for a script running CRON jobs), add `await app.close()` to the end of your `bootstrap` function:
+#### Retrieving providers for dynamic modules
+
+When dealing with [dynamic modules](./fundamentals/dynamic-modules.md), we should supply the same object that represents the registered dynamic module in the application to `app.select`. For example:
+
+```typescript
+@@filename()
+export const dynamicConfigModule = ConfigModule.register({ folder: './config' });
+
+@Module({
+  imports: [dynamicConfigModule],
+})
+export class AppModule {}
+```
+
+then youn can select that module later on:
+
+```typescript
+@@filename()
+const configService = app.select(dynamicConfigModule).get(ConfigService, { strict: true });
+```
+
+this is because we didn't registered the static version of `ConfigModule`, only the dynamic version.
+
+#### Terminating phase
+
+If you want the Node application to close after the script finishes (e.g., for a script running CRON jobs), you must call the `app.close()` method in the end of your `bootstrap` function like this:
 
 ```typescript
 @@filename()
@@ -65,6 +94,8 @@ async function bootstrap() {
 }
 bootstrap();
 ```
+
+And as mentioned at [Lifecycle events](./fundamentals/lifecycle-events.md) chapter, that will trigger few lifecycle hooks.
 
 #### Example
 
