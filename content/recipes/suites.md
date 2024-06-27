@@ -271,21 +271,9 @@ describe('CatsModule Integration Test', () => {
     }).compile();
   });
 
-  it('should resolve CatsService and its dependencies from the DI container', async () => {
+  it('should resolve exported providers from the DI container', async () => {
     const catsService = moduleRef.get<CatsService>(CatsService);
     expect(catsService).toBeDefined();
-
-    const catsApiService = moduleRef.get<CatsApiService>(CatsApiService);
-    expect(catsApiService).toBeDefined();
-
-    const catsDAL = moduleRef.get<CatsDAL>(CatsDAL);
-    expect(catsDAL).toBeDefined();
-
-    const httpClient = moduleRef.get<HttpClient>(HttpClient);
-    expect(httpClient).toBeDefined();
-
-    const logger = moduleRef.get<Logger>(Logger);
-    expect(logger).toBeDefined();
   });
 });
 ```
@@ -314,9 +302,3 @@ describe('CatsModule Integration Test', () => {
 - **Example**: Testing the `CatsModule` using `Supertest` to simulate HTTP requests.
 
 Refer to the [NestJS official testing guide](https://docs.nestjs.com/fundamentals/testing#end-to-end-testing) for more details on setting up and running E2E tests.
-
-#### Conclusion
-
-By combining solitary, sociable, and integration tests, and emphasizing the importance of verifying the DI container configuration, you can create a robust testing strategy for your NestJS applications. This approach aligns well with Martin Fowler's guidance and helps ensure that all aspects of your application are thoroughly tested, reducing the risk of runtime errors and improving maintainability.
-
-For more comprehensive examples and detailed usage, please visit the [Suites documentation](https://suites.dev/docs/getting-started/examples).
