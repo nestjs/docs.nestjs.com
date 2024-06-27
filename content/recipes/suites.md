@@ -244,7 +244,7 @@ It's crucial to ensure that your DI container is correctly configured to avoid r
 
 #### Verifying DI Container Configuration
 
-According to Martin Fowler, it's crucial to ensure that your DI container is correctly configured to avoid runtime errors. This involves verifying that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration helps catch misconfigurations early and prevents issues that might only surface at runtime.
+It's crucial to ensure that your DI container is correctly configured to avoid runtime errors. This involves verifying that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration helps catch misconfigurations early and prevents issues that might only surface at runtime.
 
 #### Practical Implementation
 
