@@ -240,8 +240,6 @@ For `CatsDAL`, it is possible to test against a real database like SQLite or Pos
 
 Be careful when using mocks. Ensure to test I/O operations and DI configurations when HTTP or database interactions are involved. After verifying these components with integration tests, you can safely mock them for sociable tests to focus on behavior and interactions. Suites sociable tests focus on verifying the behavior of units in isolation from their direct dependencies, while integration tests ensure that the overall system configuration and I/O operations are functioning correctly.
 
-It's crucial to ensure that your DI container is correctly configured to avoid runtime errors. This involves verifying that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration helps catch misconfigurations early and prevents issues that might only surface at runtime. Integration tests cover both I/O and DI configurations.
-
 #### Verifying DI Container Configuration
 
 It's crucial to ensure that your DI container is correctly configured to avoid runtime errors. This involves verifying that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration helps catch misconfigurations early and prevents issues that might only surface at runtime.
