@@ -31,7 +31,7 @@ $ npm i -D @suites/unit @suites/di.nestjs @suites/doubles.jest
 **Base Module Setup**
 
 Consider a module setup for `CatsService` that includes `CatsApiService`, `CatsDAL`, `HttpClient`, and `Logger`. This
-will be our base for the examples:
+will be our base for the examples in this recipe:
 
 ```typescript
 @@filename(cats.module)
@@ -121,6 +121,8 @@ simplifies the setup, as you don't need to manually mock each dependency.
 
 For `CatsApiService`, we want to verify that the `HttpModule` is correctly imported and configured in the `CatsModule`
 host module. This includes ensuring that the base URL (and other configurations) for `Axios` is set correctly.
+
+For this case we won't use Suites, rather we'll use Nest's `TestingModule` to test the real configuration of `HttpModule`.
 We'll use `nock` to mock HTTP requests without mocking the `HttpClient` in this case:
 
 ```typescript
@@ -164,7 +166,7 @@ describe('Cats Api Service Integration Test', () => {
   it('should fetch cat by id using real HttpClient', async () => {
     const catFixture: Cat = { id: 1, name: 'Catty' };
 
-    nock('https://api.cats.com') // Making this URL identical to the one in HttpModule.
+    nock('https://api.cats.com') // Making this URL identical to the one in HttpModule registration
       .get('/cats/1')
       .reply(200, catFixture);
 
@@ -253,26 +255,32 @@ We used the `.expose()` method to expose `CatsDAL` to real interactions, while m
 tests.
 
 This approach focuses on testing `CatsService` with real interactions with `CatsDAL`, which involves handling `Prisma`.
-**It's important to clarify that this approach is for verifying behavior** and can be set up for different scenarios.
+Suites will use `CatsDAL` as is, and only its dependencies will be mocked, e.g., `Prisma` in that case.
+
+**It's important to clarify that this approach is for verifying behavior only**, and it's different from loading the full testing module.
+Sociable tests are useful for verifying the behavior of units in isolation from their direct dependencies, when you want to focus on the
+behavior and interactions of units.
 
 #### Integration Testing and Database
 
 For `CatsDAL`, it is possible to test against a real database like SQLite or PostgreSQL (e.g., using Docker Compose).
-However, for this example, we mock `Prisma` and focus on sociable testing.
+However, for this example, we mock `Prisma` and focus on sociable testing. The reason we mock `Prisma` here is to avoid
+I/O operations and focus on the behavior of `CatsService` in isolation, but you can also test it with real I/O operations
+and a real database.
 
-#### Suites Differentiation
+#### Sociable Unit Test, Integration Tests and Mocking
 
-- **Sociable Tests**: Focus on testing the interactions between units while mocking deeper dependencies. In this
-  example, we mock `Prisma` and expose `CatsDAL`.
+- **Sociable Unit Tests**: Focus on testing the interactions and behavior between units while mocking deeper dependencies.
+  In this example, we mock `Prisma` and expose `CatsDAL`.
+
 - **Integration Tests**: Involve real I/O operations and fully configured DI. Testing `CatsApiService` with `HttpModule`
-  and `nock` is an integration test, as it verifies the real configuration and interaction of `HttpClient`.
+  and `nock` is an integration test, as it verifies the real configuration and interaction of `HttpClient`. In this kind of
+  test, we will use Nest's `TestingModule` to load the actual module configuration.
 
-#### Best Practices
-
-Be careful when using mocks. Ensure to test I/O operations and DI configurations when HTTP or database interactions are
-involved. After verifying these components with integration tests, you can safely mock them for sociable tests to focus
-on behavior and interactions. Suites sociable tests focus on verifying the behavior of units in isolation from their
-direct dependencies, while integration tests ensure that the overall system configuration and I/O operations are
+**Be careful when using mocks.** Ensure to test I/O operations and DI configurations (when HTTP or database interactions are
+involved, for example). After verifying these components with integration tests, you can safely mock them for sociable unit
+tests to focus on behavior and interactions. Suites sociable tests focus on verifying the behavior of units in isolation from
+their direct dependencies, while integration tests ensure that the overall system configuration and I/O operations are
 functioning correctly.
 
 #### Testing IoC Container Registration
@@ -281,13 +289,8 @@ It's crucial to ensure that your DI container is correctly configured to avoid r
 that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration
 helps catch misconfigurations early and prevents issues that might only surface at runtime.
 
-#### Practical Implementation
-
-To ensure that the DI container is correctly configured, follow these best practices:
-
-1. **Integration Tests for IoC Container**:
-   Create integration tests that load the actual module configuration and verify that all providers are correctly
-   registered and injected.
+To ensure that the IoC container is correctly configured, let's create an integration test that loads the actual module
+configuration and verify that all providers are correctly registered and injected:
 
 ```typescript
 import { Test, TestingModule } from '@nestjs/testing';
@@ -303,22 +306,23 @@ describe('Cats Module Integration Test', () => {
     }).compile();
   });
 
-  it('should resolve exported providers from the DI container', () => {
-    const catsService = moduleRef.get<CatsService>(CatsService);
+  it('should resolve exported providers from the ioc container', () => {
+    const catsService = moduleRef.get(CatsService);
     expect(catsService).toBeDefined();
   });
 });
 ```
 
-#### Comparison Between Sociable, Integration, and E2E Testing
+#### Comparison Between Solitary, Sociable, Integration, and E2E Testing
 
 #### Solitary Unit Tests
 
-#### Sociable Unit Tests
 - **Focus**: Test single unit (class) in full isolation.
 - **Use Case**: Testing `CatsHttpService`.
 - **Tools**: Suites' `TestBed.solitary()` method.
 - **Example**: Mocking `HttpClient` and testing `CatsHttpService`.
+
+#### Sociable Unit Tests
 
 - **Focus**: Verify interactions between units while mocking deeper dependencies.
 - **Use Case**: Testing `CatsService` with a mocked `CatsApiService` and exposing `CatsDAL`.

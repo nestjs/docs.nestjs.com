@@ -121,7 +121,7 @@ const routes: Routes = [
   {
     path: 'suites',
     component: SuitesComponent,
-    data: { title: 'Suites' },
+    data: { title: 'Suites (Automock)' },
   },
   {
     path: 'passport',
