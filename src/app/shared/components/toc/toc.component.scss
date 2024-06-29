@@ -1,12 +1,12 @@
-@import '../../../../scss/utils.scss';
-@import '../../../../scss/variables.scss';
+@use '../../../../scss/utils.scss';
+@use '../../../../scss/variables.scss';
 
 .toc-wrapper {
   width: 250px;
   padding-left: 45px;
   box-sizing: border-box;
   position: fixed;
-  top: 125px;
+  top: 90px;
   right: 20px;
   max-height: 350px;
   max-height: calc(100vh - 350px);
@@ -39,17 +39,19 @@
     margin-bottom: 6px;
 
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
+      @include utils.text-gradient();
     }
   }
 
   .current {
-    color: $red-color;
+    color: variables.$red-color;
+    @include utils.text-gradient();
     font-weight: 600;
 
     &::before {
-      background: $red-color;
-      border-color: $red-color;
+      background: variables.$red-gradient;
+      border-color: variables.$red-gradient;
       border-width: 1px;
       left: -3px;
     }
@@ -57,8 +59,8 @@
 
   li {
     &::before {
-      @include radius(50%);
-      @include transform(translateY(-50%));
+      @include utils.radius(50%);
+      @include utils.transform(translateY(-50%));
 
       content: '';
       background: #fdfdfd;
@@ -81,12 +83,14 @@
     color: #404040;
     font-weight: normal;
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
+      @include utils.text-gradient();
     }
   }
 
   .current a {
     font-weight: 600;
-    color: $red-color;
+    color: variables.$red-color;
+    @include utils.text-gradient();
   }
 }

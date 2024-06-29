@@ -34,11 +34,15 @@ footer {
   text-align: center;
 
   a {
-    @extend .transition;
     color: variables.$red-color;
     font-weight: 600;
+
+    @include utils.text-gradient();
+
     &:hover {
       color: variables.$red-color;
+      background: #fff;
+      
     }
   }
 

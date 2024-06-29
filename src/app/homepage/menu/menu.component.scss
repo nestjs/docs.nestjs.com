@@ -5,7 +5,8 @@
   @extend .transition;
   @extend .box-sizing;
   @include utils.transform(translateX(-100%));
-  padding: 125px 17px 40px 24px;
+  
+  padding: 90px 17px 40px 24px;
   width: 250px;
   background: #f5f5f5;
   position: fixed !important;
@@ -27,7 +28,7 @@
     }
   }
   @include utils.media(medium) {
-    padding: 120px 25px 20px 25px;
+    padding: 85px 25px 20px 25px;
   }
   @include utils.media(small) {
     width: 100%;
@@ -78,7 +79,8 @@
 
 .btn-support {
   margin-top: 20px;
-  background: variables.$red-color;
+  background: variables.$red-gradient;
+  transition: none;
   color: #fff;
 
   &:hover {

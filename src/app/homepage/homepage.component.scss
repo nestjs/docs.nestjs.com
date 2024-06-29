@@ -19,26 +19,23 @@
 .container {
   @extend .transition;
   @extend .box-sizing;
-  //@include transform(translateX(250px));
   margin-left: 250px;
   width: calc(100% - 250px);
-  padding: 120px 85px 0;
+  padding: 85px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
 
   &.wide {
-    //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
     display: block;
   }
 
   @include utils.media(large) {
-    //@include transform(translateX(250px));
     margin-left: 250px;
     width: calc(100% - 250px);
-    padding: 120px 50px 0;
+    padding: 85px 50px 0;
     &.wide {
       width: 100%;
     }
@@ -47,7 +44,7 @@
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
-    padding: 120px 20px 0;
+    padding: 85px 20px 0;
   }
 
   @media print {
@@ -64,9 +61,45 @@
   a {
     font-weight: 600;
     color: variables.$red-color;
+
     &:hover {
       color: #0894e2;
     }
+  }
+
+  .content a {
+    @include utils.text-gradient();
+
+    &:hover {
+      background: #0894e2;
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+    }
+  }
+
+  .content blockquote strong, .content #carbonads a, .content blockquote a {
+    -webkit-text-fill-color: unset !important;
+    -webkit-background-clip: unset !important;
+    background: none;
+
+    &:hover {
+      background: none;
+    }
+  }
+
+  .content a:has(> code) {
+    -webkit-text-fill-color: unset !important;
+    -webkit-background-clip: unset !important;
+    background: none;
+
+    &:hover {
+      background: none;
+    }
+  }
+
+  .content .banner a {
+    -webkit-text-fill-color: unset !important;
+    -webkit-background-clip: unset !important;
   }
 
   h1,
@@ -204,8 +237,7 @@
 
   .logo-sponsor--slim {
     width: auto;
-    max-height: 40px;
-    margin-left: 10px;
+    max-height: 60px;
     @media (max-width: 480px) {
       margin-left: 0;
     }
@@ -216,14 +248,40 @@
   }
 
   .btn-primary {
-    border: 2px solid variables.$red-color;
     color: variables.$red-color;
     padding: 12px 20px;
     display: inline-block;
+    border-radius: 2px;
+    position: relative;
+
+    span {
+      @include utils.text-gradient();
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 2px;
+      padding: 2px;
+      background: var(--primary-gradient);
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+      z-index: 2;
+    }
 
     &:hover {
       color: #0894e2;
-      border-color: #0894e2;
+      &::before {
+        background: #0894e2;
+      }
+      span {
+        background: #0894e2;
+      }
     }
   }
 }
@@ -478,16 +536,24 @@
 
   @include utils.media(large) {
     #carbonads {
-      padding: 30px 0 30px 30px;
+      margin: 16px 0 16px 16px;
+      padding: 12px;
       float: right;
       position: static;
     }
   }
 
-  @include utils.media(medium) {
+  @include utils.media(normal) {
     #carbonads {
-      padding: 30px 0 15px 25px;
+      margin: 16px 0 16px 16px;
+      padding: 12px;
       text-align: left;
+    }
+  }
+
+  @media (max-width: 360px) {
+    #carbonads {
+      display: none;
     }
   }
 

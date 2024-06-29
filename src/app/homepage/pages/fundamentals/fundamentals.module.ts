@@ -51,7 +51,7 @@ const routes: Routes = [
   {
     path: 'lazy-loading-modules',
     component: LazyLoadingModulesComponent,
-    data: { title: 'Lazy-loading modules' },
+    data: { title: 'Lazy loading modules' },
   },
   {
     path: 'unit-testing',

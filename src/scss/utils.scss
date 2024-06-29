@@ -216,3 +216,9 @@ $screen-xlarge: 'only screen and (max-width: 1349px)';
   -webkit-transform-origin: $origin;
   transform-origin: $origin;
 }
+
+@mixin text-gradient() {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent;
+}

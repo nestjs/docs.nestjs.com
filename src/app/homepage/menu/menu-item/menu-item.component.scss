@@ -15,21 +15,24 @@ h3 {
   margin: 10px 0;
   &:hover {
     color: variables.$red-color;
+    @include utils.text-gradient();
   }
 }
 
 .new {
   color: #fff;
-  background: variables.$red-color;
+  background: variables.$red-gradient;
   font-size: 11px;
   padding: 2px 4px;
   margin-right: 5px;
   font-weight: 700;
   border-radius: 2px;
+  -webkit-text-fill-color: #fff;
 }
 
 .active h3 {
   color: variables.$red-color;
+  @include utils.text-gradient();
 }
 
 .material-icons {
@@ -62,10 +65,12 @@ li {
     cursor: pointer;
     &:hover {
       color: variables.$red-color;
+      @include utils.text-gradient();
     }
     &.active {
       font-weight: 600;
       color: variables.$red-color;
+      @include utils.text-gradient();
     }
   }
 
@@ -110,4 +115,5 @@ ul {
 
 .has-icon h3 {
   color: variables.$red-color;
+  @include utils.text-gradient();
 }

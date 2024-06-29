@@ -191,7 +191,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Standalone apps',
       isOpened: false,
-      path: '/application-context',
+      path: '/standalone-applications',
     },
     {
       title: 'CLI',
@@ -290,7 +290,10 @@ export class MenuComponent implements OnInit {
     {
       title: 'Discover',
       isOpened: false,
-      children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
+      children: [
+        { title: 'Who is using Nest?', path: '/discover/companies' },
+        { title: 'Jobs board', externalUrl: 'https://jobs.nestjs.com/' },
+      ],
     },
     // {
     //   title: 'T-Shirts and Hoodies',

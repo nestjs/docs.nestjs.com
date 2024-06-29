@@ -349,7 +349,7 @@ The `forRoot()` method takes an options object as an argument. These options are
 
 #### Third-party integrations
 
-- [GraphQL Yoga](https://github.com/charlypoly/graphql-yoga-nestjs)
+- [GraphQL Yoga](https://github.com/dotansimha/graphql-yoga)
 
 #### Example
 

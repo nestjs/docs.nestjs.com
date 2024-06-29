@@ -9,6 +9,9 @@
   --docsearch-modal-background: #fafafa;
   --docsearch-searchbox-focus-background: transparent;
   --docsearch-searchbox-shadow: none;
+  --primary-color: #ea2845;
+  --primary-accent-color: #ea2868;
+  --primary-gradient: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-accent-color) 100%);
 }
 
 body {
@@ -35,7 +38,7 @@ strong {
 hr {
   width: 40px;
   height: 4px;
-  background: variables.$red-color;
+  background: variables.$red-gradient;
   border: 0;
   margin: 50px 0;
 }
@@ -56,7 +59,7 @@ blockquote {
     height: 100%;
     width: 4px;
     content: '';
-    background: variables.$red-color;
+    background: variables.$red-gradient;
     display: block;
     position: absolute;
     top: 0;
@@ -68,6 +71,8 @@ blockquote {
 
   strong {
     color: variables.$red-color;
+    @include utils.text-gradient();
+    
     &:first-of-type {
       display: block;
       text-transform: uppercase;
@@ -307,14 +312,30 @@ tr td span.table-code-asterisk {
     font-size: 14px;
     font-weight: 600;
     border-radius: 2px;
-    padding: 2px 13px;
+    padding: 4px 13px;
     background: #e31d61;
-    border: 2px solid #e31d61;
-    transition: all 100ms linear;
+    transition: none;
+    position: relative;
 
     &:hover {
       color: #e31d61;
-      background: transparent;
+      background: transparent !important;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 2px;
+      padding: 2px;
+      background: var(--primary-gradient);
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+      z-index: 2;
     }
   }
 }
