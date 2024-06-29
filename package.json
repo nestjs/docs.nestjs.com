@@ -17,7 +17,9 @@
     "e2e": "ng e2e",
     "docs": "npm run docs-only",
     "docs-only": "ts-node -P tools/tsconfig.json tools/dgeni-cli.ts tools/transforms/nestjs-package/index",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "audit": "npm audit",
+    "audit:fix": "npm audit fix"
   },
   "lint-staged": {
     "**/*.{ts,json}": []
