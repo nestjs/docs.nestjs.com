@@ -197,6 +197,17 @@ export class AppController {
   }
 }
 ```
+Alternatively, you can inject the `@Res()` decorator and response which view you want as follows:
+
+```typescript
+import { Res } from '@nestjs/common';
+import { FastifyReply } from 'fastify';
+
+@Get()
+root(@Res() res: FastifyReply) {
+  return res.view('index.hbs', { title: 'Hello world!' });
+}
+```
 
 While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
