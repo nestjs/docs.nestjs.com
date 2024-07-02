@@ -427,13 +427,9 @@ BullModule.forRootAsync({
 
 This construction works the same as `useClass` with one critical difference - `BullModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
-<!-- #### Example
+#### Bull installation
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/26-queues). -->
-
-[TODO(saratscheff): Create a working example with BullMQ]
-
-##### Bull Installation
+>  warning **Note** If you decided to use BullMQ, skip this section and the following chapters.
 
 To begin using Bull, we first install the required dependencies.
 
