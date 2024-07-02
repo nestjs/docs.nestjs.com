@@ -12,11 +12,7 @@ Both BullMQ and Bull use [Redis](https://redis.io/) to persist job data, so you'
 
 This chapter covers the `@nestjs/bullmq` and `@nestjs/bull` packages. We also recommend reading the [BullMQ](https://docs.bullmq.io/) and [Bull](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md) documentation for more background and specific implementation details.
 
-#### Installation
-
-Find below two similar sections, one adapted for <a href="techniques/queues#bullmq-installation">BullMQ</a> and one for <a href="techniques/queues#bull-installation">Bull</a>.
-
-##### BullMQ Installation
+#### BullMQ installation
 
 To begin using BullMQ, we first install the required dependencies.
 
