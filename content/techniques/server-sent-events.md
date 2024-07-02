@@ -13,6 +13,16 @@ sse(): Observable<MessageEvent> {
 }
 ```
 
+If you would want to use `Post` method and want to accept a request body, use the following code, 
+
+```typescript
+@Sse('sse')
+@Post('sse')
+sse(@Body() requestBody:any): Observable<MessageEvent> {
+  return interval(1000).pipe(map((_) => ({ data: { hello: 'world' } })));
+}
+```
+
 > info **Hint** The `@Sse()` decorator and `MessageEvent` interface are imported from the `@nestjs/common`, while `Observable`, `interval`, and `map` are imported from the `rxjs` package.
 
 > warning **Warning** Server-Sent Events routes must return an `Observable` stream.
