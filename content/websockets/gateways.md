@@ -246,6 +246,7 @@ Also, you can retrieve the corresponding namespace using the `namespace` attribu
 ```typescript
 @WebSocketServer({ namespace: 'my-namespace' })
 namespace: Namespace;
+```
 
 > warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.
 
