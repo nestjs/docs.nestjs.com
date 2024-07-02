@@ -1,0 +1,249 @@
+### Nestia
+
+A set of helper libraries for NestJS, supporting the below features:
+
+  - `@nestia/core`: **15,000x times faster** validation decorators
+  - `@nestia/sdk`: evolved **SDK** and **Swagger** generators
+    - SDK (Software Development Kit)
+      - interaction library for client developers
+      - almost same with `tRPC`
+  - `nestia`: just CLI (command line interface) tool
+
+> info **info** `nestia` is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the [appropriate repository](https://github.com/samchon/nestia).
+
+#### Setup
+
+##### Boilerplate Project
+
+```bash
+npx nestia start <directory>
+```
+
+Just run above command, then boilerplate project would be constructed.
+
+##### Setup Wizard
+
+```bash
+npx nestia setup
+```
+
+Just type `npx nestia setup`, that's all.
+
+If you've installed [ttypescript](https://github.com/cevek/ttypescript) during setup, you should compile `@nestia/core` utilization code through `ttsc` command, instead of `tsc`. 
+
+```bash
+# COMPILE THROUGH TTYPESCRIPT
+npx ttsc
+
+# RUN TS-NODE WITH TTYPESCRIPT
+npx ts-node -C ttypescript src/index.ts
+```
+
+Otherwise, you've chosen [ts-patch](https://github.com/nonara/ts-patch), you can use original `tsc` command. However, [ts-patch](https://github.com/nonara/ts-patch) hacks `node_modules/typescript` source code. Also, whenever update `typescript` version, you've to run `npm run prepare` command repeatedly.
+
+By the way, when using `@nest/cli`, you must just choose [ts-patch](https://github.com/nonara/ts-patch).
+
+```bash
+# USE ORIGINAL TSC COMMAND
+tsc
+npx ts-node src/index.ts
+
+# WHENVER UPDATE
+npm install --save-dev typescript@latest
+npm run prepare
+```
+
+##### Manual Setup
+
+If you want to install and configure `nestia` manually, read [Guide Documents / Setup](https://github.com/samchon/nestia/wiki/Setup).
+
+#### `@nestia/core`
+
+Superfast validation decorators for NestJS.
+
+  - 15,000x faster request body validation than `class-validator`
+  - 50x faster JSON stringify than `class-transformer`
+  - Do not need DTO class definition, just fine with interface
+
+`@nestia/core` is a transformer library of NestJS, supporting superfast validation decorators, by wrapping [typia](https://github.com/samchon/typia). Comparing validation speed with `class-validator`, `typia` is maximum **15,000x times faster**, and it is even much safer.
+
+Furthermore, `@nestia/core` can use pure interface typed DTO with **only one line**. With `@nestia/core`, you don't need any extra dedication like defining JSON schema (`@nestjs/swagger`), or using class definition with decorator function calls (`class-validator`). Just enjoy the superfast decorators with pure TypeScript type.
+
+```typescript
+import { Controller } from "@nestjs/common";
+import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
+
+import type { IBbsArticle } from "@bbs-api/structures/IBbsArticle";
+
+@Controller("bbs/articles/:section")
+export class BbsArticlesController {
+    /**
+     * Update article.
+     *
+     * When updating, this BBS system does not overwrite the content, but accumulate it.
+     * Therefore, whenever an article being updated, length of {@link IBbsArticle.contents}
+     * would be increased and accumulated.
+     *
+     * @param section Target section
+     * @param id Target articles id
+     * @param input Content to update
+     * @returns Newly created content info
+     */
+    @TypedRoute.Post(":id") // 50x faster and safer JSON.stringify()
+    public async update(
+        @TypedParam("section", "string") section: string,
+        @TypedParam("id", "uuid") id: strig, // type-safe parameter
+        @TypedBody() input: IBbsArticle.IUpdate // super-fast validator
+    ): Promise<IBbsArticle.IContent>; 
+        // do not need DTO class definition, 
+        // just fine with interface
+}
+```
+
+##### TypedBody
+
+`TypedBody()` is a decorator function of `application/json` typed request body.
+
+Also, it supports superfast validation pipe, which is maximum **15,000x times faster** than `nest.Body()` function using `class-validator`.
+
+##### TypedRoute
+
+`TypedRoute` is a set of decorator functions for `application/json` typed response body.
+
+Also, it supports safe and fast JSON stringify function pipe, which is maximum 10x times faster than native `JSON.stringify()` function. Furthermore, it is **type safe** through validation.
+
+  - `TypedRoute.Get()`
+  - `TypedRoute.Post()`
+  - `TypedRoute.Put()`
+  - `TypedRoute.Patch()`
+  - `TypedRoute.Delete()`
+
+##### Comment Tags
+
+You can enhance DTO type validation by writing comment tags.
+
+If you want to know more about it, read [Guide Documents / Core Library / Comment Tags](https://github.com/samchon/nestia/wiki/Core-Library#comment-tags).
+
+```typescript
+export interface IBbsArticle {
+    /**
+     * @format uuid
+     */
+    id: string;
+
+    writer: IBbsArticle.IWriter;
+
+    /**
+     * @minItems 1
+     */
+    contents: IBbsArticle.IContent[];
+}
+export namespace IBbsArticle {
+    export interface IWriter {
+        /**
+         * @minLength 3
+         */
+        name: string;
+
+        /**
+         * @format email
+         */
+        email: string;
+
+        /**
+         * @pattern ^0[0-9]{7,16}
+         */
+        mobile: string;
+
+        /**
+         * @minimum 18
+         */
+        age: number;
+    }
+    export interface IContent { ... }
+    export interface IUpdate { ... }
+}
+```
+#### `@nestia/sdk`
+
+Automatic *SDK* and *Swagger* generator for `@nestia/core`.
+
+##### Usage
+
+```bash
+# BASIC COMMAND
+npx nestia <sdk|swagger> <source_directories_or_patterns> \
+    --exclude <exclude_directory_or_pattern> \
+    --out <output_directory_or_file>
+
+# EXAMPLES
+npx nestia sdk "src/**/*.controller.ts" --out "src/api"
+npx nestia swagger "src/controllers" --out "dist/swagger.json"
+```
+
+You can generate SDK (Software Development Kit) library or Swagger Documents from above commands.
+
+If you've configured `nestia.config.ts` file, you can generate them much easily like below. About the configuration file, read [Guide Documents / SDK Generator / Configuration](https://github.com/samchon/nestia/wiki/SDK-Generator#configuration)
+
+```bash
+npx nestia sdk
+npx nestia swagger
+```
+
+##### Demonstration
+
+When you run `npx nestia sdk` command, `@nestia/sdk` will generate an SDK library interacting with your backend server, composed with some codes like below. If you want to learn how to distribute and utilize the SDK library, visit and read [Guide Documents / SDK Generator / Distribution](https://github.com/samchon/nestia/wiki/SDK-Generator#distribution).
+
+```typescript
+import { Fetcher } from "@nestia/fetcher";
+import type { IConnection } from "@nestia/fetcher";
+
+import type { IBbsArticle } from "../../../structures/IBbsArticle";
+
+/**
+ * Update article.
+ * 
+ * When updating, this BBS system does not overwrite the content, but accumulate it.
+ * Therefore, whenever an article being updated, length of {@link IBbsArticle.contents}
+ * would be increased and accumulated.
+ * 
+ * @param connection connection Information of the remote HTTP(s) server with headers (+encryption password)
+ * @param section Target section
+ * @param id Target articles id
+ * @param input Content to update
+ * @returns Newly created content info
+ * 
+ * @controller BbsArticlesController.update()
+ * @path PUT /bbs/articles/:section/:id
+ * @nestia Generated by Nestia - https://github.com/samchon/nestia
+ */
+export function update(
+    connection: IConnection,
+    section: string,
+    id: string,
+    input: IBbsArticle.IUpdate
+): Promise<update.Output> {
+    return Fetcher.fetch(
+        connection,
+        update.ENCRYPTED,
+        update.METHOD,
+        update.path(section, id),
+        input
+    );
+}
+export namespace update {
+    export type Input = IBbsArticle.IUpdate;
+    export type Output = IBbsArticle.IContent;
+
+    export const METHOD = "PUT" as const;
+    export const PATH: string = "/bbs/articles/:section/:id";
+    export const ENCRYPTED: Fetcher.IEncrypted = {
+        request: false,
+        response: false,
+    };
+
+    export function path(section: string, id: string): string {
+        return `/bbs/articles/${encodeURIComponent(section)}/${encodeURIComponent(id)}`;
+    }
+}
+```
