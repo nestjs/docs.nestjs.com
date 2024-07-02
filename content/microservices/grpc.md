@@ -60,7 +60,7 @@ To add gRPC reflection support to your server, first install the required implem
 $ npm i --save @grpc/reflection
 ```
 
-then it can be hooked into the gRPC server using the `onLoadPackageDefinition` hook in your gRPC server options.
+Then it can be hooked into the gRPC server using the `onLoadPackageDefinition` hook in your gRPC server options, as follows:
 
 ```typescript
 @@filename(main)
