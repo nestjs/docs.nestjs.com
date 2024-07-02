@@ -311,7 +311,7 @@ export class AudioConsumer {
       `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
     );
   }
-  ...
+  // ...
 ```
 
 You can see the complete list of events as properties of QueueEventsListener [here](https://api.docs.bullmq.io/interfaces/v4.QueueEventsListener.html).
