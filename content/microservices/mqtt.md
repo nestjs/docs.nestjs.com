@@ -118,7 +118,7 @@ getTemperature(context) {
 
 #### Quality of Service (QoS)
 
-Any subscription created with the `@MessagePattern` decorator will subscribe with QoS 0. If a higher QoS is required, it can be set globally using the `subscribeOptions` block when establishing the connection as follows:
+Any subscription created with `@MessagePattern` or `@EventPattern` decorators will subscribe with QoS 0. If a higher QoS is required, it can be set globally using the `subscribeOptions` block when establishing the connection as follows:
 ```typescript
 @@filename(main)
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
