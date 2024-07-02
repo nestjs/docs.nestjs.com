@@ -57,7 +57,7 @@ BullModule.registerQueue({
 });
 ```
 
-> info **Hint** Create multiple queues by passing multiple comma-separated configuration objects to the `registerQueue()` method. [TODO(saratscheff): Does this apply to BullMQ as well?]
+> info **Hint** Create multiple queues by passing multiple comma-separated configuration objects to the `registerQueue()` method.
 
 The `registerQueue()` method is used to instantiate and/or register queues. Queues are shared across modules and processes that connect to the same underlying Redis database with the same credentials. Each queue is unique by its name property. A queue name is used as both an injection token (for injecting the queue into controllers/providers), and as an argument to decorators to associate consumer classes and listeners with queues.
 
