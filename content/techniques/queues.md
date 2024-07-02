@@ -270,11 +270,6 @@ export class AudioConsumer extends WorkerHost {
 
 This is covered in the [named processor](https://docs.bullmq.io/patterns/named-processor) section of the BullMQ documentation.
 
-#### Rate limiting
-
-It is possible to configure the workers so that they obey a given rate limiting option as described in the [Rate Limiting](https://docs.bullmq.io/guide/rate-limiting) section.
-
-[TODO(saratscheff): It seems @nestjs/bullmq hasn't added support for this yet. In Bull it was handled at a queue level. In bullmq it was moved to be handled at a worker level.]
 
 #### Request-scoped consumers
 
