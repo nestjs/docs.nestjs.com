@@ -75,7 +75,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
 });
 ```
 
-now your server will respond to messages requesting API details using the reflection specification
+Now your server will respond to messages requesting API details using the reflection specification.
 
 #### Options
 
