@@ -318,7 +318,7 @@ You can see the complete list of events as properties of QueueEventsListener [he
 
 #### Queue management
 
-Queue's have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API [here](https://api.docs.bullmq.io/classes/v4.Queue.html). Invoke any of these methods directly on the `Queue` object, as shown below with the pause/resume examples.
+Queues have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API [here](https://api.docs.bullmq.io/classes/v4.Queue.html). Invoke any of these methods directly on the `Queue` object, as shown below with the pause/resume examples.
 
 Pause a queue with the `pause()` method call. A paused queue will not process new jobs until resumed, but current jobs being processed will continue until they are finalized.
 
