@@ -61,10 +61,7 @@ export class UsersResolver {
 Finally, we hook everything up by registering the `GraphQLModule` passing the `ApolloFederationDriver` driver in the configuration object:
 
 ```typescript
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UsersResolver } from './users.resolver';
@@ -91,7 +88,7 @@ import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
@@ -106,11 +103,11 @@ import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
-  @Query((returns) => User)
+  @Query(() => User)
   getUser(@Args('id') id: number): User {
     return this.usersService.findById(id);
   }
@@ -125,10 +122,7 @@ export class UsersResolver {
 Finally, we hook everything up by registering the `GraphQLModule` passing the `ApolloFederationDriver` driver in the configuration object:
 
 ```typescript
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service'; // Not included in this example
@@ -199,10 +193,7 @@ export class PostsResolver {
 Lastly, we must register the `GraphQLModule`, similarly to what we did in the "Users service" section.
 
 ```typescript
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PostsResolver } from './posts.resolver';
@@ -231,11 +222,11 @@ import { Post } from './post.entity';
 @Directive('@extends')
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   @Directive('@external')
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }
 ```
@@ -248,11 +239,11 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @ResolveField((of) => [Post])
+  @ResolveField(() => [Post])
   public posts(@Parent() user: User): Post[] {
     return this.postsService.forAuthor(user.id);
   }
@@ -268,16 +259,16 @@ import { User } from './user.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class Post {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
   title: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   authorId: number;
 
-  @Field((type) => User)
+  @Field(() => User)
   user?: User;
 }
 ```
@@ -290,21 +281,21 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => Post)
+@Resolver(() => Post)
 export class PostsResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @Query((returns) => Post)
+  @Query(() => Post)
   findPost(@Args('id') id: number): Post {
     return this.postsService.findOne(id);
   }
 
-  @Query((returns) => [Post])
+  @Query(() => [Post])
   getPosts(): Post[] {
     return this.postsService.all();
   }
 
-  @ResolveField((of) => User)
+  @ResolveField(() => User)
   user(@Parent() post: Post): any {
     return { __typename: 'User', id: post.authorId };
   }
@@ -314,10 +305,7 @@ export class PostsResolver {
 And finally, tie it together in a module. Note the schema build options, where we specify that `User` is an orphaned (external) type.
 
 ```ts
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { User } from './user.entity';
 import { PostsResolvers } from './posts.resolvers';
@@ -431,10 +419,7 @@ export class UsersResolver {
 Finally, we hook everything up by registering the `GraphQLModule` passing the `MercuriusFederationDriver` driver in the configuration object:
 
 ```typescript
-import {
-  MercuriusFederationDriver,
-  MercuriusFederationDriverConfig,
-} from '@nestjs/mercurius';
+import { MercuriusFederationDriver, MercuriusFederationDriverConfig } from '@nestjs/mercurius';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UsersResolver } from './users.resolver';
@@ -462,7 +447,7 @@ import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
@@ -477,11 +462,11 @@ import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
-  @Query((returns) => User)
+  @Query(() => User)
   getUser(@Args('id') id: number): User {
     return this.usersService.findById(id);
   }
@@ -496,10 +481,7 @@ export class UsersResolver {
 Finally, we hook everything up by registering the `GraphQLModule` passing the `MercuriusFederationDriver` driver in the configuration object:
 
 ```typescript
-import {
-  MercuriusFederationDriver,
-  MercuriusFederationDriverConfig,
-} from '@nestjs/mercurius';
+import { MercuriusFederationDriver, MercuriusFederationDriverConfig } from '@nestjs/mercurius';
 import { Module } from '@nestjs/common';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service'; // Not included in this example
@@ -569,10 +551,7 @@ export class PostsResolver {
 Lastly, we must register the `GraphQLModule`, similarly to what we did in the "Users service" section.
 
 ```typescript
-import {
-  MercuriusFederationDriver,
-  MercuriusFederationDriverConfig,
-} from '@nestjs/mercurius';
+import { MercuriusFederationDriver, MercuriusFederationDriverConfig } from '@nestjs/mercurius';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PostsResolver } from './posts.resolver';
@@ -602,11 +581,11 @@ import { Post } from './post.entity';
 @Directive('@extends')
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   @Directive('@external')
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }
 ```
@@ -619,11 +598,11 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @ResolveField((of) => [Post])
+  @ResolveField(() => [Post])
   public posts(@Parent() user: User): Post[] {
     return this.postsService.forAuthor(user.id);
   }
@@ -639,16 +618,16 @@ import { User } from './user.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class Post {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
   title: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   authorId: number;
 
-  @Field((type) => User)
+  @Field(() => User)
   user?: User;
 }
 ```
@@ -661,21 +640,21 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => Post)
+@Resolver(() => Post)
 export class PostsResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @Query((returns) => Post)
+  @Query(() => Post)
   findPost(@Args('id') id: number): Post {
     return this.postsService.findOne(id);
   }
 
-  @Query((returns) => [Post])
+  @Query(() => [Post])
   getPosts(): Post[] {
     return this.postsService.all();
   }
 
-  @ResolveField((of) => User)
+  @ResolveField(() => User)
   user(@Parent() post: Post): any {
     return { __typename: 'User', id: post.authorId };
   }
@@ -685,10 +664,7 @@ export class PostsResolver {
 And finally, tie it together in a module. Note the schema build options, where we specify that `User` is an orphaned (external) type.
 
 ```ts
-import {
-  MercuriusFederationDriver,
-  MercuriusFederationDriverConfig,
-} from '@nestjs/mercurius';
+import { MercuriusFederationDriver, MercuriusFederationDriverConfig } from '@nestjs/mercurius';
 import { Module } from '@nestjs/common';
 import { User } from './user.entity';
 import { PostsResolvers } from './posts.resolvers';
@@ -716,10 +692,7 @@ export class AppModule {}
 The gateway requires a list of endpoints to be specified and it will auto-discover the corresponding schemas. Therefore the implementation of the gateway service will remain the same for both code and schema first approaches.
 
 ```typescript
-import {
-  MercuriusGatewayDriver,
-  MercuriusGatewayDriverConfig,
-} from '@nestjs/mercurius';
+import { MercuriusGatewayDriver, MercuriusGatewayDriverConfig } from '@nestjs/mercurius';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 
@@ -771,10 +744,7 @@ type Query {
 To use Federation 2, we need to specify the federation version in `autoSchemaFile` option.
 
 ```ts
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service'; // Not included in this example
@@ -830,10 +800,10 @@ import { Post } from './post.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }
 ```
@@ -841,10 +811,7 @@ export class User {
 Also, similarly to the User service, we need to specify in the `GraphQLModule` to use Federation 2.
 
 ```ts
-import {
-  ApolloFederationDriver,
-  ApolloFederationDriverConfig,
-} from '@nestjs/apollo';
+import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { User } from './user.entity';
 import { PostsResolvers } from './posts.resolvers';
