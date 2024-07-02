@@ -232,7 +232,7 @@ There are 3 useful lifecycle hooks available. All of them have corresponding int
 
 > info **Hint** Each lifecycle interface is exposed from `@nestjs/websockets` package.
 
-#### Server
+#### Server and Namespace
 
 Occasionally, you may want to have a direct access to the native, **platform-specific** server instance. The reference to this object is passed as an argument to the `afterInit()` method (`OnGatewayInit` interface). Another option is to use the `@WebSocketServer()` decorator.
 
@@ -240,6 +240,12 @@ Occasionally, you may want to have a direct access to the native, **platform-spe
 @WebSocketServer()
 server: Server;
 ```
+
+Also, you can retrieve the corresponding namespace using the `namespace` attribute, as follows:
+
+```typescript
+@WebSocketServer({ namespace: 'my-namespace' })
+namespace: Namespace;
 
 > warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.
 
