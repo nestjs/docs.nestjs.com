@@ -527,6 +527,74 @@ MongooseModule.forRootAsync({
 });
 ```
 
+#### Subdocuments and subdocument arrays
+
+If you want to nest subdocuments within a parent document you can define your schema as shown below:
+
+```typescript
+@Schema
+class Name {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+}
+
+const NameSchema = SchemaFactory.createForClass(Name);
+
+@Schema()
+class Person {
+
+  @Prop(NameSchema)
+  name: Name;
+}
+
+const PersonSchema = SchemaFactory.createForClass(Person);
+
+type PersonDocumentOverride = {
+  name: Types.Subdocument<Types.ObjectId & Name>;
+}
+
+type PersonDocument = HydratedDocument<
+  Person,
+  PersonDocumentOverride
+>;
+```
+
+If you want to have multiple documents you can use a subdocuments array. Important is to override the type of the property.
+
+```typescript
+@Schema
+class Name {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+}
+
+const NameSchema = SchemaFactory.createForClass(Name);
+
+@Schema()
+class Person {
+
+  @Prop([NameSchema])
+  name: Name[];
+}
+
+const PersonSchema = SchemaFactory.createForClass(Person);
+
+type PersonDocumentOverride = {
+  name: Types.DocumentArray<Name>;
+}
+
+type PersonDocument = HydratedDocument<
+  Person,
+  PersonDocumentOverride
+>;
+```
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).
