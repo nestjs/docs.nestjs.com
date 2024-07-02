@@ -391,6 +391,8 @@ export class PostService {
 
 Your `UserService` and `PostService` currently wrap the CRUD queries that are available in Prisma Client. In a real world application, the service would also be the place to add business logic to your application. For example, you could have a method called `updatePassword` inside the `UserService` that would be responsible for updating the password of a user.
 
+Remember to register the new services in the app module.
+
 ##### Implement your REST API routes in the main app controller
 
 Finally, you'll use the services you created in the previous sections to implement the different routes of your app. For the purpose of this guide, you'll put all your routes into the already existing `AppController` class.
