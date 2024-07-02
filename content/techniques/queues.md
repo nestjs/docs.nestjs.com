@@ -358,7 +358,7 @@ import { join } from 'path';
 export class AppModule {}
 ```
 
-Please note that because your function is being executed in a forked process, Dependency Injection (and IoC container) won't be available. That means that your processor function will need to contain (or create) all instances of external dependencies it needs.
+> warning **Warning** Please note that because your function is being executed in a forked process, Dependency Injection (and IoC container) won't be available. That means that your processor function will need to contain (or create) all instances of external dependencies it needs.
 
 #### Async configuration
 
