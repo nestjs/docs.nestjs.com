@@ -429,7 +429,7 @@ This construction works the same as `useClass` with one critical difference - `B
 
 #### Bull installation
 
->  warning **Note** If you decided to use BullMQ, skip this section and the following chapters.
+> warning **Note** If you decided to use BullMQ, skip this section and the following chapters.
 
 To begin using Bull, we first install the required dependencies.
 
