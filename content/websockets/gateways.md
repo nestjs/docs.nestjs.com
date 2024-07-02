@@ -241,12 +241,11 @@ Occasionally, you may want to have a direct access to the native, **platform-spe
 server: Server;
 ```
 
-Also, you can get namespace instance when you passed `namespace` option to `@WebSocketGateway()` decorator.
+Also, you can retrieve the corresponding namespace using the `namespace` attribute, as follows:
 
 ```typescript
-@WebSocketServer({ namespace: 'something' })
+@WebSocketServer({ namespace: 'my-namespace' })
 namespace: Namespace;
-```
 
 > warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.
 
