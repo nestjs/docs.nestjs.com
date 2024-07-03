@@ -14,7 +14,7 @@ Nest provides an out-of-the-box application architecture which allows developers
 
 #### Installation
 
-To get started, you can either scaffold the project with the [Nest CLI](/cli/overview), or clone a starter project (both will produce the same outcome).
+To get started, you can either scaffold the project with the [Nest CLI](/cli/overview), or [clone a starter project](#alternatives) (both will produce the same outcome).
 
 To scaffold the project with the Nest CLI, run the following commands. This will create a new project directory, and populate the directory with the initial core Nest files and supporting modules, creating a conventional base structure for your project. Creating a new project with the **Nest CLI** is recommended for first-time users. We'll continue with this approach in [First Steps](first-steps).
 
@@ -42,8 +42,6 @@ Open your browser and navigate to [`http://localhost:3000/`](http://localhost:30
 
 To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
 
-You can also manually create a new project from scratch by installing the core and supporting files with **npm** (or **yarn**). In this case, of course, you'll be responsible for creating the project boilerplate files yourself.
-
-```bash
-$ npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata
-```
+You can also manually create a new project from scratch by installing the core and supporting packages. In this case, of course, you'll be responsible for creating the project boilerplate files yourself.  
+In this case you should at least has the following dependencies: `@nestjs/core`, `@nestjs/common`, `rxjs` and `reflect-metadata`  
+Here is a short article on how to create a full project: [5 steps to create a bare minimum NestJS app from scratch!](https://dev.to/micalevisk/5-steps-to-create-a-bare-minimum-nestjs-app-from-scratch-5c3b)
