@@ -18,7 +18,7 @@ async function bootstrap() {
 bootstrap();
 @@switch
 import { repl } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './src/app.module';
 
 async function bootstrap() {
   await repl(AppModule);
