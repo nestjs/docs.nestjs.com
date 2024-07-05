@@ -94,7 +94,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-And as mentioned at [Lifecycle events](./fundamentals/lifecycle-events.md) chapter, that will trigger few lifecycle hooks.
+And as mentioned in the [Lifecycle events](./fundamentals/lifecycle-events.md) chapter, that will trigger lifecycle hooks.
 
 #### Example
 
