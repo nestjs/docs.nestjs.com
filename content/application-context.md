@@ -30,7 +30,6 @@ The `get()` method acts like a **query** that searches for an instance in each r
 
 ```typescript
 @@filename()
-// ...
 const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
 ```
 
