@@ -72,7 +72,7 @@ export const dynamicConfigModule = ConfigModule.register({ folder: './config' })
 export class AppModule {}
 ```
 
-then youn can select that module later on:
+Then you can select that module later on:
 
 ```typescript
 @@filename()
