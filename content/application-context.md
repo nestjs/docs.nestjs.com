@@ -79,7 +79,6 @@ Then you can select that module later on:
 const configService = app.select(dynamicConfigModule).get(ConfigService, { strict: true });
 ```
 
-this is because we didn't registered the static version of `ConfigModule`, only the dynamic version.
 
 #### Terminating phase
 
