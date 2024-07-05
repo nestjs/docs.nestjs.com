@@ -71,7 +71,7 @@ Similarly, if we're working on a **large codebase** and we modify a module to be
 
 #### Build preview
 
-For every published graph we can go back in time and preview how it looked before by clicking at the **Preview** button. Furthermore, if the report was generated, we should see the differences higlighted on our graph:
+For every published graph we can go back in time and preview how it looked before by clicking at the **Preview** button. Furthermore, if the report was generated, we should see the differences highlighted on our graph:
 
 - green nodes represent added elements
 - light white nodes represent updated elements
