@@ -22,7 +22,6 @@ Let's imagine that we have a `TasksService` provider in the `TasksModule` module
 
 ```typescript
 @@filename()
-// ...
 const tasksService = app.get(TasksService);
 ```
 
