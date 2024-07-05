@@ -354,7 +354,7 @@ async findAll() {
 }
 ```
 
-The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return RxJS [observable streams](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html). Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).
+The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return RxJS [observable streams](https://rxjs-dev.firebaseapp.com/guide/observable). Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).
 
 ```typescript
 @@filename(cats.controller)
