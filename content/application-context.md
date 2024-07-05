@@ -24,8 +24,7 @@ The standalone application object allows you to obtain a reference to any instan
 const tasksService = app.get(TasksService);
 ```
 
-To access the `TasksService` instance we use the `get()` method.  
-The `get()` method acts like a **query** that searches for an instance in each registered module. You can pass any provider's token to it. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
+To access the `TasksService` instance we use the `get()` method.  The `get()` method acts like a **query** that searches for an instance in each registered module. You can pass any provider's token to it. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
 
 ```typescript
 @@filename()
