@@ -58,7 +58,7 @@ Following is a summary of the methods available for retrieving instance referenc
 
 > info **Hint** In non-strict mode, the root module is selected by default. To select any other module, you need to navigate the modules graph manually, step by step.
 
-#### Retrieving providers for dynamic modules
+#### Retrieving providers from dynamic modules
 
 When dealing with [dynamic modules](./fundamentals/dynamic-modules.md), we should supply the same object that represents the registered dynamic module in the application to `app.select`. For example:
 
