@@ -60,7 +60,7 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
   </tr>
    <tr>
     <td><code>wildcards</code></td>
-    <td>Enables Redis wilcard subscriptions, instructing transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood. (default: <code>false</code>)</td>
+    <td>Enables Redis wildcard subscriptions, instructing transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood. (default: <code>false</code>)</td>
   </tr>
 </table>
 
