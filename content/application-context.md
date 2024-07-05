@@ -17,8 +17,7 @@ bootstrap();
 
 #### Retrieving providers from static modules
 
-The standalone application object allows you to obtain a reference to any instance registered within the Nest application.  
-Let's imagine that we have a `TasksService` provider in the `TasksModule` module that was imported by our `AppModule` module. This class provides a set of methods that we want to call from within a CRON job.
+The standalone application object allows you to obtain a reference to any instance registered within the Nest application.  Let's imagine that we have a `TasksService` provider in the `TasksModule` module that was imported by our `AppModule` module. This class provides a set of methods that we want to call from within a CRON job.
 
 ```typescript
 @@filename()
