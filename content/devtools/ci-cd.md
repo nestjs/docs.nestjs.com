@@ -71,7 +71,7 @@ Similarly, if we're working on a **large codebase** and we modify a module to be
 
 #### Build preview
 
-For every published graph we can go back in time and preview how it looked before by clicking at the **Preview** button. Furthermore, if the report was generated, we should see the differences higlighted on our graph:
+For every published graph we can go back in time and preview how it looked before by clicking at the **Preview** button. Furthermore, if the report was generated, we should see the differences highlighted on our graph:
 
 - green nodes represent added elements
 - light white nodes represent updated elements
@@ -132,7 +132,7 @@ jobs:
 
 Ideally, `DEVTOOLS_API_KEY` environment variable should be retrieved from GitHub Secrets, read more [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) .
 
-This workflow will run per each pull request that's targeting the `master` branch OR in case there's a direct commit to the `master` branch. Feel free to align this configuration to whatever your project needs. What's essential here is that we provide necessary environment varaiables for our `GraphPublisher` class (to run).
+This workflow will run per each pull request that's targeting the `master` branch OR in case there's a direct commit to the `master` branch. Feel free to align this configuration to whatever your project needs. What's essential here is that we provide necessary environment variables for our `GraphPublisher` class (to run).
 
 However, there's one variable that needs to be updated before we can start using this workflow - `DEVTOOLS_API_KEY`. We can generate an API key dedicated for our project on this [page](https://devtools.nestjs.com/settings/manage-api-keys).
 
