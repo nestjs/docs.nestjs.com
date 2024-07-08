@@ -576,7 +576,7 @@ export class AppModule {}
 
 #### Using in the `main.ts`
 
-While our config is a stored in a service, it can still be used in the `main.ts` file. This way, you can use it to store variables such as the application port or the CORS host.
+While our config is stored in a service, it can still be used in the `main.ts` file. This way, you can use it to store variables such as the application port or the CORS host.
 
 To access it, you must use the `app.get()` method, followed by the service reference:
 
