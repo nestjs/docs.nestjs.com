@@ -94,6 +94,42 @@ In this code, we are specifying the template to use in the `@Render()` decorator
 
 While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
+#### Aliasing Routes
+
+You can alias routes with the `@WithAlias()` decorator in your controller, and then reference the alias inside your view.
+
+Suppose in your user controller, you have some routes to a list of users or to a specific user:
+```typescript
+@@filename(users.controller)
+import { Get, Controller, Render, WithAlias } from '@nestjs/common';
+import { User } from './user.entity.ts';
+
+@Controller('users')
+export class UserController {
+  @Get()
+  @Render('users-list')
+  @WithAlias('users')
+  root(): User[] {
+    return [ /* list of users */ ];
+  }
+  
+  @Get('/:user')
+  @Render('user')
+  @WithAlias('user')
+  getUser(): User {
+    return { /* user */ }
+  }
+}
+```
+Once you have registered route aliases, you can access them via the `getUrl(routeAlias: string, routeParams?: object): string` method that is injected into the template render context.
+
+```njk
+<a href="{{ getUrl('users') }}">Users</a>
+<a href="{{ getUrl('user', { user: user.id }) }}">User With Specific ID</a>
+```
+
+> warn **Note** Some templating engines (like handlebars) do not support evaluation of functions inside your template. 
+
 #### Dynamic template rendering
 
 If the application logic must dynamically decide which template to render, then we should use the `@Res()` decorator, and supply the view name in our route handler, rather than in the `@Render()` decorator:
