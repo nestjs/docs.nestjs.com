@@ -16,15 +16,15 @@ The `nest` command is an OS level binary (i.e., runs from the OS command line). 
 
 #### Build
 
-`nest build` is a wrapper on top of the standard `tsc` compiler or `swc` compiler (for [standard projects](https://docs.nestjs.com/cli/overview#project-structure)) or the webpack bundler using the `ts-loader` (for [monorepos](https://docs.nestjs.com/cli/overview#project-structure)). It does not add any other compilation features or steps except for handling `tsconfig-paths` out of the box. The reason it exists is that most developers, especially when starting out with Nest, do not need to adjust compiler options (e.g., `tsconfig.json` file) which can sometimes be tricky.
+`nest build` is a wrapper on top of the standard `tsc` compiler or `swc` compiler (for [standard projects](/cli/overview#project-structure)) or the webpack bundler using the `ts-loader` (for [monorepos](/cli/overview#project-structure)). It does not add any other compilation features or steps except for handling `tsconfig-paths` out of the box. The reason it exists is that most developers, especially when starting out with Nest, do not need to adjust compiler options (e.g., `tsconfig.json` file) which can sometimes be tricky.
 
-See the [nest build](https://docs.nestjs.com/cli/usages#nest-build) documentation for more details.
+See the [nest build](/cli/usages#nest-build) documentation for more details.
 
 #### Execution
 
 `nest start` simply ensures the project has been built (same as `nest build`), then invokes the `node` command in a portable, easy way to execute the compiled application. As with builds, you are free to customize this process as needed, either using the `nest start` command and its options, or completely replacing it. The entire process is a standard TypeScript application build and execute pipeline, and you are free to manage the process as such.
 
-See the [nest start](https://docs.nestjs.com/cli/usages#nest-start) documentation for more details.
+See the [nest start](/cli/usages#nest-start) documentation for more details.
 
 #### Generation
 

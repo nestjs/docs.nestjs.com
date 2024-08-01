@@ -6,7 +6,7 @@ The highest impact on your application's bootstrapping process is **TypeScript c
 
 ### With CLI
 
-If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use of the `HotModuleReplacementPlugin`.
+If you are using the [Nest CLI](/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use of the `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -84,7 +84,7 @@ $ npm run start:dev
 
 ### Without CLI
 
-If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration will be slightly more complex (will require more manual steps).
+If you are not using the [Nest CLI](/cli/overview), the configuration will be slightly more complex (will require more manual steps).
 
 #### Installation
 

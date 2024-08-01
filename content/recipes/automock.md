@@ -201,7 +201,7 @@ export class CatsService {
 ```
 
 TypeScript's Reflection API does not support interface reflection yet. Nest solves this issue with string/symbol-based
-injection tokens (see [Custom Providers](https://docs.nestjs.com/fundamentals/custom-providers)):
+injection tokens (see [Custom Providers](/fundamentals/custom-providers)):
 
 ```typescript
 export const MyLoggerProvider = {

@@ -295,7 +295,7 @@ app.enableVersioning({
 
 #### Middleware versioning
 
-[Middlewares](https://docs.nestjs.com/middleware) can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the `MiddlewareConsumer.forRoutes()` method:
+[Middlewares](/middleware) can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the `MiddlewareConsumer.forRoutes()` method:
 
 ```typescript
 @@filename(app.module)
