@@ -199,6 +199,21 @@ consumer
 
 With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the three passed to the `exclude()` method.
 
+#### Chaining the exclude() Method
+
+In addition to excluding routes in a single `exclude()` call, you can also chain multiple `exclude()` calls. This allows for better organization and readability, especially when handling a large number of routes to exclude.
+
+
+```typescript
+consumer
+  .apply(LoggerMiddleware)
+  .exclude('cats/(.*)')
+  .exclude('dogs/(.*)')
+  .forRoutes(AppController);
+```
+
+In the above example, `LoggerMiddleware` will be applied to all routes in `AppController` **except** those matching `cats/(.*)` and  `dogs/(.*)`. Each `exclude()` call appends to the list of excluded routes, ensuring none of the specified routes will have the middleware applied.
+
 #### Functional middleware
 
 The `LoggerMiddleware` class we've been using is quite simple. It has no members, no additional methods, and no dependencies. Why can't we just define it in a simple function instead of a class? In fact, we can. This type of middleware is called **functional middleware**. Let's transform the logger middleware from class-based into functional middleware to illustrate the difference:
