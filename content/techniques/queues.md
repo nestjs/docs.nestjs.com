@@ -294,27 +294,50 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 
 #### Event listeners
 
-Bull generates a set of useful events when queue and/or job state changes occur. Nest provides the `@OnQueueEvent(event)` decorator that allows subscribing to a core set of standard events.
+BullMQ generates a set of useful events when queue and/or job state changes occur. These events can be subscribed to at the Worker level using the `@OnWorkerEvent(event)` decorator, or at the Queue level with a dedicated listener class and the `@OnQueueEvent(event)` decorator.
 
-Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use the `@OnQueueEvent(event)` decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
+Worker events must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use the `@OnWorkerEvent(event)` decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
-import { Processor, Process, OnQueueEvent } from '@nestjs/bullmq';
+import { Processor, Process, OnWorkerEvent } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 
 @Processor('audio')
 export class AudioConsumer {
 
-  @OnQueueEvent('active')
+  @OnWorkerEvent('active')
   onActive(job: Job) {
     console.log(
       `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
     );
   }
+
   // ...
 ```
 
-You can see the complete list of events as properties of QueueEventsListener [here](https://api.docs.bullmq.io/interfaces/v4.QueueEventsListener.html).
+You can see the complete list of events and their arguments as properties of WorkerListener [here](https://api.docs.bullmq.io/interfaces/v4.WorkerListener.html).
+
+QueueEvent listeners must use the `@QueueEventsListener(queue)` decorator and extend the `QueueEventsHost` class provided by `@nestjs/bullmq`. To listen for an event, use the `@OnQueueEvent(event)` decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
+
+```typescript
+import { QueueEventsHost, QueueEventsListener, OnQueueEvent } from '@nestjs/bullmq';
+
+@QueueEventsListener('audio')
+export class AudioEventsListener extends QueueEventsHost {
+
+  @OnQueueEvent('active')
+  onActive(job: { jobId: string; prev?: string; }) {
+    console.log(
+      `Processing job ${job.jobId}...`,
+    );
+  }
+
+  // ...
+```
+
+> info **Hint** QueueEvent Listeners must be registered as `providers` so the `@nestjs/bullmq` package can pick them up.
+
+You can see the complete list of events and their arguments as properties of QueueEventsListener [here](https://api.docs.bullmq.io/interfaces/v4.QueueEventsListener.html).
 
 #### Queue management
 
