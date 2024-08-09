@@ -248,6 +248,30 @@ The `options` property is an object with the same properties we saw in the `crea
 })
 ```
 
+Or alternatively use the `registerAsync()` method in case you want to pass configuration or do any other async progress.
+
+```typescript
+@Module({
+  imports: [
+    ClientsModule.registerAsync([
+      {
+        imports: [ConfigModule],
+        name: 'MATH_SERVICE',
+        useFactory: async (configService: ConfigService) => ({
+          options: {
+            url: configService.get<string>('URL'),
+          },
+          transport: Transport.TCP,
+        }),
+        inject: [ConfigService],
+      },
+    ]),
+  ]
+  ...
+})
+```
+
+
 Once the module has been imported, we can inject an instance of the `ClientProxy` configured as specified via the `'MATH_SERVICE'` transporter options shown above, using the `@Inject()` decorator.
 
 ```typescript
