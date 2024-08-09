@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-mode-toggle {
+  // Button reset
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  font: inherit;
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-appearance: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+  cursor: pointer;
+  color: #fff;
+  padding-left: 15px;
+  position: relative;
+  &:hover {
+    color: var(--primary);
+  }
+
+  .material-icons {
+    font-size: 20px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      background: #fff;
+      opacity: 0.2;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+    }
+  }
+}

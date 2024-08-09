@@ -2,7 +2,7 @@
 
 Controllers are responsible for handling incoming **requests** and returning **responses** to the client.
 
-<figure><img src="/assets/Controllers_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Controllers_1.png" /></figure>
 
 A controller's purpose is to receive specific requests for the application. The **routing** mechanism controls which controller receives which requests. Frequently, each controller has more than one route, and different routes can perform different actions.
 

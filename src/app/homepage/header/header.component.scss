@@ -2,10 +2,14 @@
 @use '../../../scss/utils';
 
 :host {
+  background: var(--header-background);
+  display: block;
+  width: 100%;
+  height: 70px;
   position: fixed;
   z-index: 10000;
   width: 100%;
-  height: 105px;
+  height: 70px;
 
   @media print {
     position: relative;
@@ -46,7 +50,7 @@
 header {
   display: block;
   position: relative;
-  background: variables.$black-color;
+  background: var(--header-background);
   width: 100%;
   height: 70px;
   z-index: 10000;
@@ -129,7 +133,7 @@ header {
   padding: 14px 25px;
 
   @media (min-width: 1500px) {
-    margin-right: 80px;
+    margin-right: 30px;
   }
 
   @media (max-width: 1499px) {
@@ -142,8 +146,12 @@ header {
     }
   }
 
-  @media (max-width: 1250px) {
+  @media (max-width: 1350px) {
     padding: 14px 5px;
+
+    li:nth-of-type(3) {
+      display: none;
+    }
   }
 
   @media (max-width: 1150px) {
@@ -213,7 +221,7 @@ header {
     font-weight: 600;
 
     &:hover {
-      color: variables.$red-color;
+      color: var(--primary-4dp);
     }
   }
   @media print {
@@ -274,9 +282,9 @@ header {
     position: relative;
 
     &:hover {
-      color: variables.$red-color;
+      color: var(--primary);
       &::after {
-        background: variables.$red-color;
+        background: var(--primary);
       }
     }
 
@@ -390,11 +398,11 @@ header {
 
   &:active,
   &:focus {
-    border-bottom-color: variables.$red-color;
+    border-bottom-color: var(--primary);
     width: 190px;
   }
 
-  @media (min-width: 1200px) and (max-width: 1300px) {
+  @media (max-width: 1300px) {
     width: 190px;
   }
 }
@@ -459,7 +467,7 @@ header {
   &::after,
   &::before {
     content: '';
-    background: variables.$red-color;
+    background: var(--primary);
     display: block;
     height: 2px;
     position: absolute;
