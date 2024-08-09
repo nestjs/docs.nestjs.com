@@ -304,7 +304,6 @@ import { Job } from 'bullmq';
 
 @Processor('audio')
 export class AudioConsumer {
-
   @OnWorkerEvent('active')
   onActive(job: Job) {
     console.log(
