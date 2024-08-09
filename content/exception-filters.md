@@ -141,7 +141,7 @@ Nest provides a set of standard exceptions that inherit from the base `HttpExcep
 All the built-in exceptions can also provide both an error `cause` and an error description using the `options` parameter:
 
 ```typescript
-throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' })
+throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' });
 ```
 
 Using the above, this is how the response would look:
@@ -214,7 +214,7 @@ The `@Catch(HttpException)` decorator binds the required metadata to the excepti
 
 Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a powerful utility object that we'll examine further in the [execution context chapter](/fundamentals/execution-context)\*. In this code sample, we use it to obtain a reference to the `Request` and `Response` objects that are being passed to the original request handler (in the controller where the exception originates). In this code sample, we've used some helper methods on `ArgumentsHost` to get the desired `Request` and `Response` objects. Learn more about `ArgumentsHost` [here](/fundamentals/execution-context).
 
-\*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and WebSockets). In the execution context chapter we'll see how we can access the appropriate <a href="https://docs.nestjs.com/fundamentals/execution-context#host-methods">underlying arguments</a> for **any** execution context with the power of `ArgumentsHost` and its helper functions. This will allow us to write generic exception filters that operate across all contexts.
+\*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and WebSockets). In the execution context chapter we'll see how we can access the appropriate <a href="/fundamentals/execution-context#host-methods">underlying arguments</a> for **any** execution context with the power of `ArgumentsHost` and its helper functions. This will allow us to write generic exception filters that operate across all contexts.
 
 <app-banner-courses></app-banner-courses>
 

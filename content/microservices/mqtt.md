@@ -39,9 +39,9 @@ The `options` object is specific to the chosen transporter. The <strong>MQTT</st
 
 #### Client
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a MQTT `ClientProxy` instance.
+Like other microservice transporters, you have <a href="/microservices/basics#client">several options</a> for creating a MQTT `ClientProxy` instance.
 
-One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+One method for creating an instance is to use use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="/microservices/basics#client">here</a>.
 
 ```typescript
 @Module({
@@ -60,7 +60,7 @@ One method for creating an instance is to use use the `ClientsModule`. To create
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="/microservices/basics#client">here</a>.
 
 #### Context
 
@@ -119,6 +119,7 @@ getTemperature(context) {
 #### Quality of Service (QoS)
 
 Any subscription created with `@MessagePattern` or `@EventPattern` decorators will subscribe with QoS 0. If a higher QoS is required, it can be set globally using the `subscribeOptions` block when establishing the connection as follows:
+
 ```typescript
 @@filename(main)
 const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
@@ -141,7 +142,8 @@ const app = await NestFactory.createMicroservice(AppModule, {
   },
 });
 ```
-If a topic specific QoS is required, consider creating a [Custom transporter](https://docs.nestjs.com/microservices/custom-transport).
+
+If a topic specific QoS is required, consider creating a [Custom transporter](/microservices/custom-transport).
 
 #### Record builders
 
