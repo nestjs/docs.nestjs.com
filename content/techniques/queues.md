@@ -324,7 +324,6 @@ import { QueueEventsHost, QueueEventsListener, OnQueueEvent } from '@nestjs/bull
 
 @QueueEventsListener('audio')
 export class AudioEventsListener extends QueueEventsHost {
-
   @OnQueueEvent('active')
   onActive(job: { jobId: string; prev?: string; }) {
     console.log(
@@ -333,6 +332,7 @@ export class AudioEventsListener extends QueueEventsHost {
   }
 
   // ...
+}
 ```
 
 > info **Hint** QueueEvent Listeners must be registered as `providers` so the `@nestjs/bullmq` package can pick them up.
