@@ -23,16 +23,13 @@
   align-items: center;
   justify-content: center;
   margin-left: 15px;
-  cursor: pointer;
   color: #fff;
   padding-left: 15px;
   position: relative;
-  &:hover {
-    color: var(--primary);
-  }
 
   .material-icons {
     font-size: 20px;
+    cursor: pointer;
 
     &::before {
       content: '';
@@ -44,5 +41,9 @@
       bottom: 0;
       width: 2px;
     }
+
+    &:hover {
+      color: var(--primary);
+    }  
   }
 }
