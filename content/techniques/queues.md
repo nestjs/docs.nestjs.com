@@ -312,6 +312,7 @@ export class AudioConsumer {
   }
 
   // ...
+}
 ```
 
 You can see the complete list of events and their arguments as properties of WorkerListener [here](https://api.docs.bullmq.io/interfaces/v4.WorkerListener.html).
