@@ -18,6 +18,7 @@ import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { AutomockComponent } from './automock/automock.component';
+import { NestiaComponent } from './nestia/nestia.component';
 import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
 
@@ -118,6 +119,11 @@ const routes: Routes = [
     path: 'automock',
     component: AutomockComponent,
     data: { title: 'Automock' },
+  },
+  {
+    path: 'nestia',
+    component: NestiaComponent,
+    data: { title: "Nestia" },
   },
   {
     path: 'passport',
