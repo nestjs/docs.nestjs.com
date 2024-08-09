@@ -10,7 +10,7 @@ h3 {
   @extend .transition;
   text-transform: uppercase;
   font-weight: bold;
-  color: variables.$black-color;
+  color: var(--color-1dp);
   font-size: 15px;
   margin: 10px 0;
   &:hover {
@@ -59,7 +59,7 @@ li {
   }
 
   a {
-    color: variables.$black-color;
+    color: var(--menu-color);
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
@@ -85,10 +85,14 @@ li {
     margin: 10px 0 15px;
   }
 
+  .arrow-icon {
+    fill: var(--color);
+  }
   &.opened {
     .arrow-icon {
       @include utils.transform(rotate(-90deg));
-      fill: variables.$red-color;
+      fill: var(--primary);
+      
     }
   }
 }
@@ -97,7 +101,7 @@ li {
   cursor: pointer;
   &:hover {
     .arrow-icon {
-      color: variables.$red-color;
+      color: var(--primary);
     }
   }
 }

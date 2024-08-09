@@ -55,25 +55,25 @@
 }
 
 .page-wrapper {
-  color: variables.$grey-color;
+  color: var(--color);
   line-height: 26px;
 
   a {
     font-weight: 600;
-    color: variables.$red-color;
-
+    color: var(--primary-3dp);
     &:hover {
       color: #0894e2;
     }
   }
 
   .content a {
+    transition: none;
     @include utils.text-gradient();
 
     &:hover {
       background: #0894e2;
+      -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent;
-      -webkit-background-clip: text;
     }
   }
 
@@ -108,7 +108,7 @@
   h4,
   h5,
   h6 {
-    color: variables.$black-color;
+    color: var(--color-1dp);
   }
   h3 {
     font-size: 24px;
@@ -142,7 +142,7 @@
     }
   }
   h5 {
-    color: variables.$grey-color;
+    color: var(--color);
     margin-top: 5px;
     font-weight: 600;
     font-size: 16px;
@@ -159,7 +159,7 @@
 }
 
 .sponsors-wrapper {
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--background-2dp);
   padding: 10px 0 60px;
   margin-top: 20px;
   position: relative;
@@ -170,7 +170,7 @@
   }
 
   a {
-    color: variables.$red-color;
+    color: var(--primary);
     font-weight: 600;
     &:hover {
       color: #0894e2;
@@ -180,11 +180,10 @@
   h3 {
     font-size: 24px;
     font-weight: 700;
-    color: #1d1d1d;
   }
 
   h4 {
-    color: #1b2247;
+    color: var(--color-1dp);
     font-weight: 600;
     margin: 0;
     font-size: 18px;
@@ -200,7 +199,7 @@
     line-height: 26px;
     font-size: 16px;
     font-weight: 500;
-    color: #4e4e4e;
+    color: var(--color);
   }
 
   .logo-sponsor-container {
@@ -224,7 +223,7 @@
   }
   .logo-sponsor {
     width: 160px;
-    filter: grayscale(1);
+    filter: var(--company-logo-filter);
 
     &:hover {
       filter: grayscale(0);
@@ -248,7 +247,7 @@
   }
 
   .btn-primary {
-    color: variables.$red-color;
+    color: var(--primary-4dp);
     padding: 12px 20px;
     display: inline-block;
     border-radius: 2px;
@@ -375,7 +374,7 @@
   }
 
   .contact-us {
-    background: variables.$red-color;
+    background: var(--primary);
     color: #fff;
     padding: 20px 30px;
     border-radius: 3px;
@@ -439,10 +438,11 @@
 
   svg {
     font-size: 17px;
-    color: variables.$black-color;
-    &:hover {
-      color: variables.$red-color;
-    }
+    color: var(--color-1dp);
+  }
+
+  a:hover svg {
+    color: var(--primary);
   }
 }
 
@@ -462,19 +462,19 @@
   max-width: 130px;
   max-height: 60px;
   padding: 6px;
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
-  opacity: 0.5;
-
+  -webkit-filter: var(--company-filter);
+  filter: var(--company-filter);
+  opacity: var(--company-logo-opacity);
+  
   &:hover {
-    -webkit-filter: grayscale(0%);
-    filter: grayscale(0%);
+    -webkit-filter: var(--company-filter-hover);
+    filter: var(--company-filter-hover);
     opacity: 1;
   }
 }
 
 .companies-list a {
-  color: #404040;
+  color: var(--color);
   font-size: 15px;
   font-weight: 400;
 }
@@ -527,7 +527,7 @@
     bottom: 20px;
     overflow: hidden;
     padding: 1em;
-    background: #fdfdfd;
+    background: var(--background-2dp) !important;
     text-align: center;
     line-height: 1.5;
     font-size: 13px;
@@ -590,7 +590,7 @@
 }
 
 .algolia-autocomplete .algolia-docsearch-suggestion--highlight {
-  color: variables.$red-color;
+  color: var(--primary);
   background: #fff2f4;
 }
 

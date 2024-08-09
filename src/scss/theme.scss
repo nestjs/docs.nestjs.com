@@ -1,0 +1,99 @@
+.light-mode {
+  --primary: #ea2845;
+  --primary-accent: #ea2868;
+  --primary-1dp: #d71e38;
+  --primary-2dp: #da2640;
+  --primary-3dp:#db2840;
+  --primary-4dp: #e40020;
+  --primary-5dp: #ff0023;
+  --primary-gradient: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+
+  --color: #404040;
+  --color-1dp: #151515;
+
+  --background: #fdfdfd;
+  --background-1dp: #f7f7f7;
+  --background-2dp: #f0f2f3;
+  --background-3dp: #e8e8e8;
+  --background-4dp: #efefef;
+  --background-5dp: #cccccc;
+
+  --header-background: #151515;
+
+  --menu-color: #151515;
+  --menu-background: #f5f5f5;
+
+  --inline-code-color: #2876d2;
+
+  --code-background: #1d1d1d;
+
+  --warning: #ffb36f;
+  --warning-color: #ed8529;
+  --warning-background: #fff5ec;
+
+  --info: #0894e2;
+  --info-color: #0894e2;
+  --info-background: rgba(8, 148, 226, 0.038);
+
+  --error: #ed2945;
+  --error-background: #f9eff1;
+
+  --company-filter: grayscale(100%);
+  --company-filter-hover: grayscale(0%);
+  --company-logo-filter: grayscale(1);
+
+  --company-logo-opacity: 0.5;
+
+  --images-filter: unset;
+  --images-box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode {
+  --primary: #f23551;
+  --primary-accent: #e23770;
+  --primary-1dp: #f45f75;
+  --primary-2dp: #f4526a;
+  --primary-3dp: #f1455f;
+  --primary-4dp: #f23c57;
+  --primary-5dp: #f23551;
+  --primary-gradient: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+
+  --color: #dfdfe3;
+  --color-1dp: #d0d0d4;
+
+  --background: #1f1f22;
+  --background-1dp: #232327;
+  --background-2dp: #252528;
+  --background-3dp: #29292d;
+  --background-4dp: #3d3d41;
+  --background-5dp: #39393e;
+
+  --header-background: #1b1b1d;
+
+  --menu-color: #dfdfe3;
+  --menu-background: #242427;
+
+  --inline-code-color: #8ec2ff;
+
+  --code-background: #18181a;
+
+  --warning: #ffb36f;
+  --warning-color: #ed8529;
+  --warning-background: #504337;
+
+  --info: #0894e2;
+  --info-color: #0894e2;
+  --info-background: rgba(8, 148, 226, 0.038);
+
+  --error: #ff677c;
+  --error-background: #3a2f30;
+
+  --company-filter: contrast(0.5);
+  --company-filter-hover: opacity(1);
+  --company-logo-filter: contrast(0.5) grayscale(100%);
+
+  --company-logo-opacity: unset;
+
+  --images-filter: invert(1) contrast(0.85);
+  --images-box-shadow: 0 0 0px 0 rgba(0, 0, 0, 0.08);
+}

@@ -8,7 +8,7 @@
   
   padding: 90px 17px 40px 24px;
   width: 250px;
-  background: #f5f5f5;
+  background: var(--menu-background);
   position: fixed !important;
   bottom: 0;
   top: 0;
@@ -68,12 +68,12 @@
 }
 
 .btn-version {
-  background: #dfdfdf;
+  background: var(--background-3dp);
   margin-top: 5px;
-  color: #151515;
+  color: var(--color-1dp);
 
   &:hover {
-    background: #cccccc;
+    background: var(--background-5dp);
   }
 }
 

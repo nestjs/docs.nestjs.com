@@ -2,7 +2,7 @@
 
 An interceptor is a class annotated with the `@Injectable()` decorator and implements the `NestInterceptor` interface.
 
-<figure><img src="/assets/Interceptors_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Interceptors_1.png" /></figure>
 
 Interceptors have a set of useful capabilities which are inspired by the [Aspect Oriented Programming](https://en.wikipedia.org/wiki/Aspect-oriented_programming) (AOP) technique. They make it possible to:
 

@@ -4,7 +4,7 @@
 :host {
   @extend .transition;
   @extend .box-sizing;
-  background: variables.$black-color;
+  background: var(--header-background);
   display: block;
   padding: 40px 0;
   margin: 0 -85px;
@@ -34,15 +34,13 @@ footer {
   text-align: center;
 
   a {
-    color: variables.$red-color;
+    color: var(--primary-5dp);
     font-weight: 600;
 
     @include utils.text-gradient();
 
     &:hover {
-      color: variables.$red-color;
       background: #fff;
-      
     }
   }
 
@@ -73,12 +71,13 @@ footer {
     font-size: 20px;
     margin-left: 15px;
     cursor: pointer;
+    color: #fff;
 
     &:first-of-type {
       font-size: 20px;
     }
     &:hover {
-      color: variables.$red-color;
+      color: var(--primary);
     }
   }
 
