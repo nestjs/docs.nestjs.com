@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 
 @Component({
-  selector: 'app-automock',
-  templateUrl: './automock.component.html',
+  selector: 'app-suites',
+  templateUrl: './suites.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AutomockComponent extends BasePageComponent {}
+export class SuitesComponent extends BasePageComponent {}
