@@ -79,7 +79,7 @@ Here is how our directory structure looks now:
 
 In Nest, modules are **singletons** by default, and thus you can share the same instance of any provider between multiple modules effortlessly.
 
-<figure><img src="/assets/Shared_Module_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Shared_Module_1.png" /></figure>
 
 Every module is automatically a **shared module**. Once created it can be reused by any module. Let's imagine that we want to share an instance of the `CatsService` between several other modules. In order to do that, we first need to **export** the `CatsService` provider by adding it to the module's `exports` array, as shown below:
 
