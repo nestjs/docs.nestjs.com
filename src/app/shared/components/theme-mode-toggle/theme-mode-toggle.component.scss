@@ -1,3 +1,5 @@
+@import '../../../../scss//utils.scss';
+
 :host {
   display: block;
   display: flex;
@@ -27,6 +29,11 @@
   padding-left: 15px;
   position: relative;
 
+  @include media(small) {
+    padding: 0;
+    margin: 0;
+  }
+
   .material-icons {
     font-size: 20px;
     cursor: pointer;
@@ -36,14 +43,22 @@
       position: absolute;
       background: #fff;
       opacity: 0.2;
-      left: 0;
+      left: 2px;
       top: 0;
-      bottom: 0;
+      bottom: 2px;
       width: 2px;
     }
 
     &:hover {
       color: var(--primary);
     }  
+
+    @include media(small) {
+      font-size: 24px;
+
+      &::before {
+        display: none;
+      }
+    }
   }
 }

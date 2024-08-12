@@ -1,5 +1,14 @@
 @import '../../../scss/utils.scss';
 
+:host {
+  @include media(small) {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+  }
+}
+
 .social-wrapper {
   @extend .center-top;
   float: right;
@@ -9,7 +18,7 @@
 
   a {
     @extend .transition-fast;
-    display: inline-block;
+    display: inline-flex;
     vertical-align: middle;
     color: #fff;
     font-size: 18px;
@@ -36,7 +45,13 @@
     padding-right: 20px;
   }
   @include media(small) {
-    display: none;
+    top: 0;
+    transform: none;
+    padding-right: 0;
+
+    a {
+      display: none;
+    }
   }
   @media print {
     display: none;
