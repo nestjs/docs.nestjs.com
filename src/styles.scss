@@ -207,8 +207,8 @@ tr td span.table-code-asterisk {
 }
 
 .file-tree {
-  background: var(--code-background);
-  border: 4px solid rgba(var(--background-2dp), 0.8);
+  background: var(--background-1dp);
+  border: 4px solid color-mix(in srgb,var(--background-3dp),#0000 50%);
   margin: 40px 0;
   padding: 16px 32px;
 
