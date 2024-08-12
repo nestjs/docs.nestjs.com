@@ -18,6 +18,7 @@ html[mode='dark'] {
   @extend .dark-mode;
 }
 
+html:not([mode='dark']):not([mode='light']),
 html[mode='light'] {
   @extend .light-mode;
 }
