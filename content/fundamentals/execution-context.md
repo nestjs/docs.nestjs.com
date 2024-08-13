@@ -255,7 +255,7 @@ const roles = this.reflector.getAllAndMerge(Roles, [context.getHandler(), contex
 
 This would result in `roles` containing `['user', 'admin']`.
 
-For both of these merge methods, you pass the metadata key as the first argument, and an array of metadata target contexts (i.e., calls to the `getHandler()` and/or `getClass())` methods) as the second argument.
+For both of these merge methods, you pass the metadata key as the first argument, and an array of metadata target contexts (i.e., calls to the `getHandler()` and/or `getClass()` methods) as the second argument.
 
 #### Low-level approach
 
