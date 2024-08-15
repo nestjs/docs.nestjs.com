@@ -12,7 +12,6 @@
 .social-wrapper {
   @extend .center-top;
   float: right;
-  padding-right: 40px;
   position: relative;
   display: flex;
 
@@ -41,18 +40,16 @@
       color: var(--primary);
     }
   }
-  @include media(medium) {
-    padding-right: 20px;
-  }
+
   @include media(small) {
     top: 0;
     transform: none;
-    padding-right: 0;
 
     a {
       display: none;
     }
   }
+  
   @media print {
     display: none;
   }

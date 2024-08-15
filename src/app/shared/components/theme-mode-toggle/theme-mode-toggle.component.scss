@@ -1,10 +1,23 @@
-@import '../../../../scss//utils.scss';
+@use '../../../../scss/utils';
 
 :host {
-  display: block;
-  display: flex;
+  @extend .center-top;
+  position: relative;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  float: right;
+  padding-right: 40px;
+
+  @include utils.media(medium) {
+    padding-right: 20px;
+  }
+
+  @include utils.media(small) {
+    position: absolute;
+    right: 20px;
+    padding-right: 0;
+  }
 }
 
 .theme-mode-toggle {
@@ -29,7 +42,7 @@
   padding-left: 15px;
   position: relative;
 
-  @include media(small) {
+  @include utils.media(small) {
     padding: 0;
     margin: 0;
   }
@@ -37,23 +50,32 @@
   .material-icons {
     font-size: 20px;
     cursor: pointer;
+    @include utils.text-gradient();
+
+    @include utils.media(small) {
+      background: #fff;
+    }
 
     &::before {
       content: '';
       position: absolute;
       background: #fff;
       opacity: 0.2;
-      left: 2px;
-      top: 0;
+      left: 0px;
+      top: 2px;
       bottom: 2px;
       width: 2px;
     }
 
     &:hover {
-      color: var(--primary);
+      background: #fff;
+
+      @include utils.media(small) {
+        @include utils.text-gradient();
+      }
     }  
 
-    @include media(small) {
+    @include utils.media(small) {
       font-size: 24px;
 
       &::before {

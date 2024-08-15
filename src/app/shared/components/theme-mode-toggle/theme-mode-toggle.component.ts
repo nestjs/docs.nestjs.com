@@ -19,12 +19,14 @@ export class ThemeModeToggleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const userPrefersTheme =
-      this.mediaMatcher.matchMedia &&
-      this.mediaMatcher.matchMedia('(prefers-color-scheme: light)').matches;
-    // In case the user has used the toggle button, we prioritize it over the
-    // system settings
-    this.setThemeMode(this.getUserSettingsIsDarkMode() || userPrefersTheme);
+    // This is commented out because by default the theme mode is set to light (at least for now)
+    // const userPrefersTheme =
+    //   this.mediaMatcher.matchMedia &&
+    //   this.mediaMatcher.matchMedia('(prefers-color-scheme: light)').matches;
+    // this.setThemeMode(this.getUserSettingsIsDarkMode() || userPrefersTheme);
+
+    const isDarkMode = this.getUserSettingsIsDarkMode();
+    this.setThemeMode(isDarkMode);
   }
 
   toggleThemeMode() {
