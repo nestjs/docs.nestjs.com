@@ -3,7 +3,7 @@
 Nest comes with a built-in **exceptions layer** which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
 
 <figure>
-  <img src="/assets/Filter_1.png" />
+  <img class="illustrative-image" src="/assets/Filter_1.png" />
 </figure>
 
 Out of the box, this action is performed by a built-in **global exception filter**, which handles exceptions of type `HttpException` (and subclasses of it). When an exception is **unrecognized** (is neither `HttpException` nor a class that inherits from `HttpException`), the built-in exception filter generates the following default JSON response:
@@ -70,7 +70,7 @@ Here's an example overriding the entire response body and providing an error cau
 async findAll() {
   try {
     await this.service.findAll()
-  } catch (error) { 
+  } catch (error) {
     throw new HttpException({
       status: HttpStatus.FORBIDDEN,
       error: 'This is a custom message',
@@ -260,7 +260,8 @@ async create(createCatDto) {
 
 > info **Hint** Prefer applying filters by using classes instead of instances when possible. It reduces **memory usage** since Nest can easily reuse instances of the same class across your entire module.
 
-In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, making it method-scoped. Exception filters can be scoped at different levels: method-scoped, controller-scoped, or global-scoped. For example, to set up a filter as controller-scoped, you would do the following:
+In the example above, the `HttpExceptionFilter` is applied only to the single `create()` route handler, making it method-scoped. Exception filters can be scoped at different levels: method-scoped of the controller/resolver/gateway, controller-scoped, or global-scoped.
+For example, to set up a filter as controller-scoped, you would do the following:
 
 ```typescript
 @@filename(cats.controller)
@@ -381,8 +382,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
 ```
 
 > warning **Warning** Method-scoped and Controller-scoped filters that extend the `BaseExceptionFilter` should not be instantiated with `new`. Instead, let the framework instantiate them automatically.
-
-The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business** logic (e.g., handling various conditions).
 
 Global filters **can** extend the base filter. This can be done in either of two ways.
 

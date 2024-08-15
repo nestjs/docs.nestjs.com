@@ -55,6 +55,8 @@ To add an item to the cache, use the `set` method:
 await this.cacheManager.set('key', 'value');
 ```
 
+> warning **Note** The in-memory cache storage can only store values of types that are supported by [the structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
+
 The default expiration time of the cache is 5 seconds.
 
 You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
@@ -147,8 +149,11 @@ CacheModule.register({
 
 While global cache is enabled, cache entries are stored under a `CacheKey` that is auto-generated based on the route path. You may override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis, allowing customized caching strategies for individual controller methods. This may be most relevant while using [different cache stores.](https://docs.nestjs.com/techniques/caching#different-stores)
 
+You can apply the `@CacheTTL()` decorator on a per-controller basis to set a caching TTL for the entire controller. In situations where both controller-level and method-level cache TTL settings are defined, the cache TTL settings specified at the method level will take priority over the ones set at the controller level.
+
 ```typescript
 @Controller()
+@CacheTTL(50)
 export class AppController {
   @CacheKey('custom_key')
   @CacheTTL(20)

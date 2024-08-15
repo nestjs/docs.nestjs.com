@@ -4,12 +4,12 @@
       href="https://docs.nestjs.com/"
       title="Documentation | NestJS - A node.js framework built on top of TypeScript"
     >
-      <img alt="NestJS Logo" src="/assets/logo-small.svg" />
+      <img alt="NestJS Logo" src="/assets/logo-small-gradient.svg" />
     </a>
   </div>
 </app-header>
 <div class="container-fluid">
-  <app-menu [class.opened]="isSidebarOpened" perfectScrollbar></app-menu>
+  <app-menu [class.opened]="isSidebarOpened"></app-menu>
   <div class="container" [class.wide]="!isSidebarOpened">
     <div class="page-wrapper">
       <app-toc [contentReference]="contentRef"></app-toc>
@@ -33,17 +33,10 @@
                 class="logo-sponsor"
               />
             </a>
-            <a href="https://www.redhat.com/" target="_blank" class="logo-sponsor-container">
+            <!-- <a href="https://www.redhat.com/" target="_blank" class="logo-sponsor-container">
               <img src="/assets/sponsors/red-hat-logo.svg" alt="Red Hat Logo" class="logo-sponsor" />
-            </a>
-            <a href="https://valor-software.com/" target="_blank" class="logo-sponsor-container">
-              <img
-                src="/assets/sponsors/valor-software.png"
-                alt="Valor Software Logo"
-                class="logo-sponsor logo-sponsor--high"
-              />
-            </a>
-            <a href="https://github.com/Sanofi-IADC" target="_blank" class="logo-sponsor-container">
+            </a> -->
+            <!-- <a href="https://github.com/Sanofi-IADC" target="_blank" class="logo-sponsor-container">
               <img
                 src="/assets/sponsors/sanofi.png"
                 alt="Sanofi Logo"
@@ -54,6 +47,20 @@
               <img
                 src="/assets/sponsors/nx-logo.png"
                 alt="Nx Logo"
+                class="logo-sponsor logo-sponsor--slim"
+              />
+            </a>-->
+            <a href="https://marblism.com?utm_source=nest" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/marblism-logo.png"
+                alt="Marblism Logo"
+                class="logo-sponsor"
+              />
+            </a>
+            <a href="https://mojam.co" target="_blank" class="logo-sponsor-container">
+              <img
+                src="/assets/sponsors/mojam-logo.png"
+                alt="Mojam Logo"
                 class="logo-sponsor logo-sponsor--slim"
               />
             </a>
@@ -73,7 +80,7 @@
               target="_blank"
               rel="nofollow"
             >
-              Become a sponsor
+              <span>Become a sponsor</span>
             </a>
           </div>
         </div>

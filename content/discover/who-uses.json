@@ -36,6 +36,34 @@
       "url": "https://www.neo4j.com/"
     },
     {
+      "logo": "/assets/logo/bmw.svg",
+      "url": "https://bmw.com"
+    },
+    {
+      "logo": "/assets/logo/gitlab.png",
+      "url": "https://gitlab.com/"
+    },
+    {
+      "logo": "/assets/logo/ibm.svg",
+      "url": "https://www.ibm.com/"
+    },
+    {
+      "logo": "/assets/logo/jetbrains.svg",
+      "url": "https://www.jetbrains.com/"
+    },
+    {
+      "logo": "/assets/logo/mercedes.png",
+      "url": "https://www.mercedes-benz.com/"
+    },
+    {
+      "logo": "/assets/logo/totalenergies.svg",
+      "url": "https://totalenergies.com/"
+    },
+    {
+      "logo": "/assets/logo/bytedance.png",
+      "url": "https://www.bytedance.com"
+    },
+    {
       "logo": "/assets/logo/shipt.png",
       "url": "https://www.shipt.com/"
     },
@@ -44,165 +72,25 @@
       "url": "https://github.com/Sanofi-IADC"
     },
     {
-      "logo": "https://nestjs.com/img/valor-software.png",
-      "url": "https://valor-software.com/"
-    },
-    {
       "logo": "/assets/logo/sitepen.svg",
       "url": "https://sitepen.com"
-    },
-    {
-      "logo": "https://nestjs.com/img/gojob-logo.png",
-      "url": "https://gojob.com/",
-      "width": "100px"
-    },
-    {
-      "logo": "https://nestjs.com/img/neoteric.png",
-      "url": "https://neoteric.eu/"
-    },
-    {
-      "logo": "/assets/logo/trellis.png",
-      "url": "https://trellis.org/",
-      "width": "70px"
-    },
-    {
-      "logo": "https://nestjs.com/img/scalio-logo.svg",
-      "url": "https://scal.io",
-      "width": "120px"
-    },
-    {
-      "logo": "https://nestjs.com/img/swingdev-logo.svg",
-      "url": "https://swingdev.io/"
-    },
-    {
-      "logo": "/assets/logo/cultura-colectiva.png",
-      "url": "https://culturacolectiva.com",
-      "width": "90px"
     },
     {
       "logo": "https://nestjs.com/img/trilon.png",
       "url": "https://trilon.io"
     },
     {
-      "logo": "/assets/logo/architectnow.png",
-      "url": "http://architectnow.net",
-      "width": "150px"
-    },
-    {
-      "logo": "/assets/logo/iflix.svg",
-      "url": "https://www.iflix.com",
-      "width": "70px"
-    },
-    {
-      "logo": "https://nestjs.com/img/genuinebee.svg",
-      "url": "https://genuinebee.com/"
-    },
-    {
-      "logo": "/assets/logo/run-players-league.png",
-      "url": "https://runplayersleague.com",
-      "width": "80px"
-    },
-    {
-      "logo": "/assets/logo/yanrongyun.svg",
-      "url": "http://www.yanrongyun.com",
-      "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/sclable.svg",
-      "url": "https://sclable.com",
-      "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/dozto.png",
-      "url": "https://www.dozto.com",
-      "width": "117px"
-    },
-    {
-      "logo": "/assets/logo/qingtui.png",
-      "url": "https://www.qingtui.cn/",
-      "width": "90px"
-    },
-    {
-      "logo": "/assets/logo/crowdlinker.svg",
-      "url": "https://crowdlinker.com/",
-      "width": "110px"
-    },
-    {
-      "logo": "/assets/logo/nothing.svg",
-      "url": "https://nothing.ch/",
-      "width": "110px"
-    },
-    {
-      "logo": "/assets/logo/swissdevjobs-devops-logo.png",
-      "url": "https://swissdevjobs.ch/jobs/Dev-Ops/All",
-      "width": "65px"
-    },
-    {
-      "logo": "/assets/logo/zeoagency.svg",
-      "url": "https://zeo.org/tr/",
-      "width": "80px"
-    },
-    {
-      "logo": "/assets/logo/valueadd.png",
-      "url": "https://valueadd.pl/",
-      "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/bedu.svg",
-      "url": "https://bedu.org",
-      "width": "100px"
-    },
-    {
-      "logo": "/assets/logo/shopback.png",
-      "url": "https://shopback.com",
-      "width": "100px"
-    },
-    {
-      "logo": "/assets/logo/facile.png",
-      "url": "https://www.facile.it",
-      "width": "100px"
-    },
-    {
-      "logo": "/assets/logo/interfacewerk.png",
-      "url": "https://interfacewerk.de",
-      "width": "130px"
-    },
-    {
-      "logo": "/assets/logo/ottonova.png",
-      "url": "https://www.ottonova.de",
-      "width": "130px"
-    },
-    {
-      "logo": "/assets/logo/radity.png",
-      "url": "https://radity.com",
-      "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/global-cto-forum.png",
-      "url": "https://globalctoforum.org/",
-      "width": "120px"
-    },
-    {
-      "logo": "/assets/logo/rivvy.png",
-      "url": "https://rivvy.app",
-      "width": "120px"
-    },
-    {
       "logo": "/assets/logo/vue-storefront.png",
       "url": "https://www.vuestorefront.io/"
-    },
-    {
-      "logo": "/assets/logo/fuse-logo.svg",
-      "url": "https://fuseautotech.com"
-    },
-    {
-      "logo": "/assets/logo/amplication.svg",
-      "url": "https://amplication.com"
     },
     {
       "logo": "/assets/logo/hingehealth.png",
       "url": "https://hingehealth.com",
       "width": "120px"
+    },
+     {
+      "logo": "/assets/logo/whiskey-house.svg",
+      "url": "https://whiskeyhouse.com"
     }
   ],
   "Body": [
@@ -279,6 +167,15 @@
     "https://growthmill.com",
     "https://tarken.com.br",
     "https://remato.com",
-    "https://remberg.de/en"
+    "https://remberg.de/en",
+    "https://uninterrupted.tech",
+    "https://www.digando.com",
+    "https://novu.co",
+    "https://aqreach.com",
+    "https://phalco.de",
+    "https://www.tesseractpro.io",
+    "https://www.kwanso.com",
+    "https://cmdn.io",
+    "https://ayo.so"
   ]
 }

@@ -1,0 +1,64 @@
+@import '../../../../scss//utils.scss';
+
+:host {
+  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-mode-toggle {
+  // Button reset
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  font: inherit;
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  -webkit-appearance: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+  color: #fff;
+  padding-left: 15px;
+  position: relative;
+
+  @include media(small) {
+    padding: 0;
+    margin: 0;
+  }
+
+  .material-icons {
+    font-size: 20px;
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      background: #fff;
+      opacity: 0.2;
+      left: 2px;
+      top: 0;
+      bottom: 2px;
+      width: 2px;
+    }
+
+    &:hover {
+      color: var(--primary);
+    }  
+
+    @include media(small) {
+      font-size: 24px;
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+}

@@ -35,4 +35,4 @@ The following methods have been added:
 - `addSecurity`
 - `addSecurityRequirements`
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>

@@ -1,20 +1,20 @@
-@import '../../../scss/variables.scss';
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 .newsletter-wrapper {
-  background: #e8e8e8;
+  background: var(--background-3dp);
   padding: 40px 85px;
   overflow: hidden;
   position: relative;
   margin: 0 -85px;
   width: auto;
 
-  @include media(large) {
+  @include utils.media(large) {
     margin: 0 -50px;
     padding: 40px 50px;
   }
 
-  @include media(medium) {
+  @include utils.media(medium) {
     margin: 0 -20px;
     padding: 40px 20px;
     width: 100%;
@@ -26,13 +26,13 @@
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 4px;
-  color: #111;
+  color: var(--color-1dp);
 }
 
 .newsletter-wrapper p {
   font-size: 15px;
   margin: 0;
-  color: #7b7b7b;
+  color: var(--color);
   font-weight: 500;
   line-height: 22px;
 }
@@ -58,12 +58,14 @@
 
 .newsletter-form .form-control {
   border: 0;
-  font-size: 13px;
+  font-size: 14px;
+  font-family: 'Source Sans Pro';
   height: 40px;
   padding: 10px 20px;
-  background: #fdfdfd;
+  background: var(--background);
+  color: var(--color);
   width: calc(100% - 70px);
-  box-shadow: -2px 2px 3px gainsboro;
+  // box-shadow: -2px 2px 3px var(--background);
   border-radius: 3px;
   max-width: 100%;
   vertical-align: middle;
@@ -72,7 +74,7 @@
 }
 
 .newsletter-form button {
-  background: #ed1543;
+  background: var(--primary-gradient);
   height: 40px;
   padding: 10px 18px;
   border: 0;
@@ -82,7 +84,7 @@
   vertical-align: middle;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
-  transition: all 200ms ease-in-out;
+  transition: none;
   box-sizing: border-box;
   cursor: pointer;
   outline: 0;
@@ -102,7 +104,7 @@
 }
 
 .newsletter-form .btn-success[disabled] {
-  background: #d3e6d4;
+  background: var(--background);
   color: #1dd81c;
   pointer-events: none;
 }
@@ -115,7 +117,7 @@
   position: absolute;
   margin-top: -50px;
   margin-left: 60px;
-  color: #dedede;
+  color: rgba(0,0,0,0.1);
   z-index: 0;
   transform: rotate(-30deg);
 }

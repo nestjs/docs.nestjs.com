@@ -46,18 +46,30 @@ export class FileController {
 }
 ```
 
-The default content type is `application/octet-stream`, if you need to customize the response you can use the `res.set` method or the [`@Header()`](/controllers#headers) decorator, like this:
+The default content type (the value for `Content-Type` HTTP response header) is `application/octet-stream`. If you need to customize this value you can use the `type` option from `StreamableFile`, or use the `res.set` method or the [`@Header()`](/controllers#headers) decorator, like this:
 
 ```ts
 import { Controller, Get, StreamableFile, Res } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { join } from 'path';
-import type { Response } from 'express';
+import type { Response } from 'express'; // Assuming that we are using the ExpressJS HTTP Adapter
 
 @Controller('file')
 export class FileController {
   @Get()
-  getFile(@Res({ passthrough: true }) res: Response): StreamableFile {
+  getFile(): StreamableFile {
+    const file = createReadStream(join(process.cwd(), 'package.json'));
+    return new StreamableFile(file, {
+      type: 'application/json',
+      disposition: 'attachment; filename="package.json"',
+      // If you want to define the Content-Length value to another value instead of file's length:
+      // length: 123,
+    });
+  }
+
+  // Or even:
+  @Get()
+  getFileChangingResponseObjDirectly(@Res({ passthrough: true }) res: Response): StreamableFile {
     const file = createReadStream(join(process.cwd(), 'package.json'));
     res.set({
       'Content-Type': 'application/json',
@@ -70,7 +82,7 @@ export class FileController {
   @Get()
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="package.json"')
-  getStaticFile(): StreamableFile {
+  getFileUsingStaticValues(): StreamableFile {
     const file = createReadStream(join(process.cwd(), 'package.json'));
     return new StreamableFile(file);
   }  

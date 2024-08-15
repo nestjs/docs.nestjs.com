@@ -1,15 +1,24 @@
-@import '../../../scss/variables.scss';
 @import '../../../scss/utils.scss';
+
+:host {
+  @include media(small) {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+  }
+}
 
 .social-wrapper {
   @extend .center-top;
   float: right;
   padding-right: 40px;
   position: relative;
+  display: flex;
 
   a {
     @extend .transition-fast;
-    display: inline-block;
+    display: inline-flex;
     vertical-align: middle;
     color: #fff;
     font-size: 18px;
@@ -21,7 +30,7 @@
       position: relative;
 
       &:hover {
-        fill: $red-color;
+        fill: var(--primary);
       }
     }
 
@@ -29,14 +38,20 @@
       font-size: 20px;
     }
     &:hover {
-      color: $red-color;
+      color: var(--primary);
     }
   }
   @include media(medium) {
     padding-right: 20px;
   }
   @include media(small) {
-    display: none;
+    top: 0;
+    transform: none;
+    padding-right: 0;
+
+    a {
+      display: none;
+    }
   }
   @media print {
     display: none;

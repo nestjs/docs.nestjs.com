@@ -133,7 +133,7 @@ That means, if your serverless function on average requires 2s to connect to the
 As you can see, the way you structure your providers is somewhat different in a **serverless environment** where bootstrap time is important.
 Another good example is if you use Redis for caching, but only in certain scenarios. Perhaps, in this case, you should not define a Redis connection as an async provider, as it would slow down the bootstrap time, even if it's not required for this specific function invocation.
 
-Also, sometimes you could lazy-load entire modules, using the `LazyModuleLoader` class, as described in [this chapter](/fundamentals/lazy-loading-modules). Caching is a great example here too.
+Also, sometimes you could lazy load entire modules, using the `LazyModuleLoader` class, as described in [this chapter](/fundamentals/lazy-loading-modules). Caching is a great example here too.
 Imagine that your application has, let's say, `CacheModule` which internally connects to Redis and also, exports the `CacheService` to interact with the Redis storage. If you don't need it for all potential function invocations,
 you can just load it on-demand, lazily. This way you'll get a faster startup time (when a cold start occurs) for all invocations that don't require caching.
 
@@ -177,7 +177,7 @@ with the [Serverless](https://www.serverless.com/) framework (in this case, targ
 First, let's install the required packages:
 
 ```bash
-$ npm i @vendia/serverless-express aws-lambda
+$ npm i @codegenie/serverless-express aws-lambda
 $ npm i -D @types/aws-lambda serverless-offline
 ```
 
@@ -209,11 +209,11 @@ functions:
 
 > info **Hint** To learn more about the Serverless framework, visit the [official documentation](https://www.serverless.com/framework/docs/).
 
-With this place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
+With this in place, we can now navigate to the `main.ts` file and update our bootstrap code with the required boilerplate:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import serverlessExpress from '@vendia/serverless-express';
+import serverlessExpress from '@codegenie/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from './app.module';
 
@@ -239,9 +239,9 @@ export const handler: Handler = async (
 
 > info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](/cli/monorepo#monorepo-mode).
 
-> warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [article](https://javascript.plainenglish.io/serverless-nestjs-document-your-api-with-swagger-and-aws-api-gateway-64a53962e8a2) for more information.
+> warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [thread](https://github.com/nestjs/swagger/issues/199) for more information.
 
-Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@vendia/serverless-express` package load properly.
+Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@codegenie/serverless-express` package load properly.
 
 ```json
 {

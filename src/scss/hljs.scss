@@ -25,11 +25,11 @@ code {
   font-family: Inconsolata, Consolas, 'Courier New', monospace;
   font-display: swap;
   padding: 2px 6px;
-  color: #2876d2;
+  color: var(--inline-code-color);
   border-radius: 4px;
   font-size: 15px;
   white-space: pre-wrap;
-  background: #f0f2f3;
+  background: var(--background-2dp);
 }
 
 code[class*='language-'],
@@ -65,7 +65,7 @@ pre[class*='language-'] {
 
 pre[class*='language-'],
 :not(pre) > code[class*='language-'] {
-  background: #1d1d1d;
+  background: var(--code-background);
   // box-shadow: 0 5px 20px rgba(6, 6, 6, 0.35);
   border-radius: 6px;
 }

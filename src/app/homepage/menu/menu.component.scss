@@ -1,35 +1,36 @@
-@import '../../../scss/variables.scss';
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 :host {
   @extend .transition;
   @extend .box-sizing;
-  @include transform(translateX(-100%));
-  padding: 125px 17px 40px 24px;
+  @include utils.transform(translateX(-100%));
+  
+  padding: 90px 17px 40px 24px;
   width: 250px;
-  background: #f5f5f5;
+  background: var(--menu-background);
   position: fixed !important;
   bottom: 0;
   top: 0;
   z-index: 1000;
-  overflow: hidden;
+  overflow: overlay;
 
   &.opened {
-    @include transform(translateX(0));
+    @include utils.transform(translateX(0));
   }
-  @include media(large) {
+  @include  utils.media(large) {
     width: 250px;
   }
-  @include media(normal) {
+  @include utils.media(normal) {
     &.opened {
       z-index: 1000;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
   }
-  @include media(medium) {
-    padding: 120px 25px 20px 25px;
+  @include utils.media(medium) {
+    padding: 85px 25px 20px 25px;
   }
-  @include media(small) {
+  @include utils.media(small) {
     width: 100%;
   }
 
@@ -54,7 +55,7 @@
 .btn-version,
 .btn-support {
   @extend .transition;
-  @include radius(2px);
+  @include utils.radius(2px);
 
   padding: 10px;
   box-sizing: border-box;
@@ -67,18 +68,19 @@
 }
 
 .btn-version {
-  background: #dfdfdf;
+  background: var(--background-3dp);
   margin-top: 5px;
-  color: #151515;
+  color: var(--color-1dp);
 
   &:hover {
-    background: #cccccc;
+    background: var(--background-5dp);
   }
 }
 
 .btn-support {
   margin-top: 20px;
-  background: $red-color;
+  background: variables.$red-gradient;
+  transition: none;
   color: #fff;
 
   &:hover {

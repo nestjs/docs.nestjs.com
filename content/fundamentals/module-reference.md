@@ -22,7 +22,7 @@ export class CatsService {
 
 #### Retrieving instances
 
-The `ModuleRef` instance (hereafter we'll refer to it as the **module reference**) has a `get()` method. This method retrieves a provider, controller, or injectable (e.g., guard, interceptor, etc.) that exists (has been instantiated) in the **current** module using its injection token/class name.
+The `ModuleRef` instance (hereafter we'll refer to it as the **module reference**) has a `get()` method. By default, this method returns a provider, controller, or injectable (e.g., guard, interceptor, etc.) that was registered and has been instantiated in the *current module* using its injection token/class name. If the instance is not found, an exception will be raised.
 
 ```typescript
 @@filename(cats.service)
@@ -231,4 +231,4 @@ export class CatsService {
 
 This technique enables you to conditionally instantiate different classes outside of the framework container.
 
-<app-banner-shop></app-banner-shop>
+<app-banner-devtools></app-banner-devtools>

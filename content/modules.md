@@ -2,7 +2,7 @@
 
 A module is a class annotated with a `@Module()` decorator. The `@Module()` decorator provides metadata that **Nest** makes use of to organize the application structure.
 
-<figure><img src="/assets/Modules_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Modules_1.png" /></figure>
 
 Each application has at least one module, a **root module**. The root module is the starting point Nest uses to build the **application graph** - the internal data structure Nest uses to resolve module and provider relationships and dependencies. While very small applications may theoretically have just the root module, this is not the typical case. We want to emphasize that modules are **strongly** recommended as an effective way to organize your components. Thus, for most applications, the resulting architecture will employ multiple modules, each encapsulating a closely related set of **capabilities**.
 
@@ -79,7 +79,7 @@ Here is how our directory structure looks now:
 
 In Nest, modules are **singletons** by default, and thus you can share the same instance of any provider between multiple modules effortlessly.
 
-<figure><img src="/assets/Shared_Module_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Shared_Module_1.png" /></figure>
 
 Every module is automatically a **shared module**. Once created it can be reused by any module. Let's imagine that we want to share an instance of the `CatsService` between several other modules. In order to do that, we first need to **export** the `CatsService` provider by adding it to the module's `exports` array, as shown below:
 
@@ -151,7 +151,7 @@ However, module classes themselves cannot be injected as providers due to [circu
 
 #### Global modules
 
-If you have to import the same set of modules everywhere, it can get tedious. Unlike in Nest, [Angular](https://angular.io) `providers` are registered in the global scope. Once defined, they're available everywhere. Nest, however, encapsulates providers inside the module scope. You aren't able to use a module's providers elsewhere without first importing the encapsulating module.
+If you have to import the same set of modules everywhere, it can get tedious. Unlike in Nest, [Angular](https://angular.dev) `providers` are registered in the global scope. Once defined, they're available everywhere. Nest, however, encapsulates providers inside the module scope. You aren't able to use a module's providers elsewhere without first importing the encapsulating module.
 
 When you want to provide a set of providers which should be available everywhere out-of-the-box (e.g., helpers, database connections, etc.), make the module **global** with the `@Global()` decorator.
 
@@ -187,6 +187,7 @@ import { Connection } from './connection.provider';
 
 @Module({
   providers: [Connection],
+  exports: [Connection],
 })
 export class DatabaseModule {
   static forRoot(entities = [], options?): DynamicModule {
@@ -205,6 +206,7 @@ import { Connection } from './connection.provider';
 
 @Module({
   providers: [Connection],
+  exports: [Connection],
 })
 export class DatabaseModule {
   static forRoot(entities = [], options) {

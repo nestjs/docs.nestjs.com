@@ -4,7 +4,7 @@ Most of the concepts discussed elsewhere in this documentation, such as dependen
 
 In Nest, a gateway is simply a class annotated with `@WebSocketGateway()` decorator. Technically, gateways are platform-agnostic which makes them compatible with any WebSockets library once an adapter is created. There are two WS platforms supported out-of-the-box: [socket.io](https://github.com/socketio/socket.io) and [ws](https://github.com/websockets/ws). You can choose the one that best suits your needs. Also, you can build your own adapter by following this [guide](/websockets/adapter).
 
-<figure><img src="/assets/Gateways_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Gateways_1.png" /></figure>
 
 > info **Hint** Gateways can be treated as [providers](/providers); this means they can inject dependencies through the class constructor. Also, gateways can be injected by other classes (providers and controllers) as well.
 
@@ -232,13 +232,20 @@ There are 3 useful lifecycle hooks available. All of them have corresponding int
 
 > info **Hint** Each lifecycle interface is exposed from `@nestjs/websockets` package.
 
-#### Server
+#### Server and Namespace
 
 Occasionally, you may want to have a direct access to the native, **platform-specific** server instance. The reference to this object is passed as an argument to the `afterInit()` method (`OnGatewayInit` interface). Another option is to use the `@WebSocketServer()` decorator.
 
 ```typescript
 @WebSocketServer()
 server: Server;
+```
+
+Also, you can retrieve the corresponding namespace using the `namespace` attribute, as follows:
+
+```typescript
+@WebSocketServer({ namespace: 'my-namespace' })
+namespace: Namespace;
 ```
 
 > warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.

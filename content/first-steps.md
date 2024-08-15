@@ -4,13 +4,13 @@ In this set of articles, you'll learn the **core fundamentals** of Nest. To get 
 
 #### Language
 
-We're in love with [TypeScript](https://www.typescriptlang.org/), but above all - we love [Node.js](https://nodejs.org/en/). That's why Nest is compatible with both TypeScript and **pure JavaScript**. Nest takes advantage of the latest language features, so to use it with vanilla JavaScript we need a [Babel](https://babeljs.io/) compiler.
+We're in love with [TypeScript](https://www.typescriptlang.org/), but above all - we love [Node.js](https://nodejs.org/en/). That's why Nest is compatible with both TypeScript and pure JavaScript. Nest takes advantage of the latest language features, so to use it with vanilla JavaScript we need a [Babel](https://babeljs.io/) compiler.
 
 We'll mostly use TypeScript in the examples we provide, but you can always **switch the code snippets** to vanilla JavaScript syntax (simply click to toggle the language button in the upper right hand corner of each snippet).
 
 #### Prerequisites
 
-Please make sure that [Node.js](https://nodejs.org) (version >= 12, except for v13) is installed on your operating system.
+Please make sure that [Node.js](https://nodejs.org) (version >= 16) is installed on your operating system.
 
 #### Setup
 
@@ -21,7 +21,7 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-> info **Hint** To create a new project with TypeScript's [strict](https://www.typescriptlang.org/tsconfig#strict) mode enabled, pass the `--strict` flag to the `nest new` command. 
+> info **Hint** To create a new project with TypeScript's [stricter](https://www.typescriptlang.org/tsconfig#strict) feature set, pass the `--strict` flag to the `nest new` command.
 
 The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
 
@@ -103,6 +103,8 @@ Once the installation process is complete, you can run the following command at 
 $ npm run start
 ```
 
+> info **Hint** To speed up the development process (x20 times faster builds), you can use the [SWC builder](/recipes/swc) by passing the `-b swc` flag to the `start` script, as follows `npm run start -- -b swc`.
+
 This command starts the app with the HTTP server listening on the port defined in the `src/main.ts` file. Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
 
 To watch for changes in your files, you can run the following command to start the application:
@@ -112,3 +114,21 @@ $ npm run start:dev
 ```
 
 This command will watch your files, automatically recompiling and reloading the server.
+
+#### Linting and formatting
+
+[CLI](/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [eslint](https://eslint.org/) and [prettier](https://prettier.io/)).
+
+> info **Hint** Not sure about the role of formatters vs linters? Learn the difference [here](https://prettier.io/docs/en/comparison.html).
+
+To ensure maximum stability and extensibility, we use the base [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
+
+For headless environments where an IDE is not relevant (Continuous Integration, Git hooks, etc.) a Nest project comes with ready-to-use `npm` scripts.
+
+```bash
+# Lint and autofix with eslint
+$ npm run lint
+
+# Format with prettier
+$ npm run format
+```

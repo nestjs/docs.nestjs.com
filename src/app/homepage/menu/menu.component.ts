@@ -191,7 +191,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Standalone apps',
       isOpened: false,
-      path: '/application-context',
+      path: '/standalone-applications',
     },
     {
       title: 'CLI',
@@ -253,6 +253,10 @@ export class MenuComponent implements OnInit {
       children: [
         { title: 'Serverless', path: '/faq/serverless' },
         { title: 'HTTP adapter', path: '/faq/http-adapter' },
+        {
+          title: 'Keep-Alive connections',
+          path: '/faq/keep-alive-connections',
+        },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
         { title: 'Raw body', path: '/faq/raw-body' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
@@ -286,12 +290,15 @@ export class MenuComponent implements OnInit {
     {
       title: 'Discover',
       isOpened: false,
-      children: [{ title: 'Who is using Nest?', path: '/discover/companies' }],
+      children: [
+        { title: 'Who is using Nest?', path: '/discover/companies' },
+        { title: 'Jobs board', externalUrl: 'https://jobs.nestjs.com/' },
+      ],
     },
-    {
-      title: 'T-Shirts and Hoodies',
-      externalUrl: 'https://nestjs.threadless.com/',
-    },
+    // {
+    //   title: 'T-Shirts and Hoodies',
+    //   externalUrl: 'https://nestjs.threadless.com/',
+    // },
     {
       title: 'Support us',
       isOpened: false,

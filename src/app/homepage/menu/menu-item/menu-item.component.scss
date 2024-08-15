@@ -1,5 +1,5 @@
-@import '../../../../scss/variables.scss';
-@import '../../../../scss/utils.scss';
+@use '../../../../scss/variables';
+@use '../../../../scss/utils';
 
 :host {
   position: relative;
@@ -10,26 +10,29 @@ h3 {
   @extend .transition;
   text-transform: uppercase;
   font-weight: bold;
-  color: $black-color;
+  color: var(--color-1dp);
   font-size: 15px;
   margin: 10px 0;
   &:hover {
-    color: $red-color;
+    color: variables.$red-color;
+    @include utils.text-gradient();
   }
 }
 
 .new {
   color: #fff;
-  background: $red-color;
+  background: variables.$red-gradient;
   font-size: 11px;
   padding: 2px 4px;
   margin-right: 5px;
   font-weight: 700;
   border-radius: 2px;
+  -webkit-text-fill-color: #fff;
 }
 
 .active h3 {
-  color: $red-color;
+  color: variables.$red-color;
+  @include utils.text-gradient();
 }
 
 .material-icons {
@@ -38,7 +41,7 @@ h3 {
 
 .arrow-icon {
   @extend .transition;
-  @include transform(rotate(90deg));
+  @include utils.transform(rotate(90deg));
 
   position: absolute;
   top: 1px;
@@ -56,16 +59,18 @@ li {
   }
 
   a {
-    color: $black-color;
+    color: var(--menu-color);
     font-size: 14px;
     text-decoration: none;
     cursor: pointer;
     &:hover {
-      color: $red-color;
+      color: variables.$red-color;
+      @include utils.text-gradient();
     }
     &.active {
       font-weight: 600;
-      color: $red-color;
+      color: variables.$red-color;
+      @include utils.text-gradient();
     }
   }
 
@@ -80,10 +85,14 @@ li {
     margin: 10px 0 15px;
   }
 
+  .arrow-icon {
+    fill: var(--color);
+  }
   &.opened {
     .arrow-icon {
-      @include transform(rotate(-90deg));
-      fill: $red-color;
+      @include utils.transform(rotate(-90deg));
+      fill: var(--primary);
+      
     }
   }
 }
@@ -92,7 +101,7 @@ li {
   cursor: pointer;
   &:hover {
     .arrow-icon {
-      color: $red-color;
+      color: var(--primary);
     }
   }
 }
@@ -109,5 +118,6 @@ ul {
 }
 
 .has-icon h3 {
-  color: $red-color;
+  color: variables.$red-color;
+  @include utils.text-gradient();
 }

@@ -2,7 +2,7 @@
 
 Controllers are responsible for handling incoming **requests** and returning **responses** to the client.
 
-<figure><img src="/assets/Controllers_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Controllers_1.png" /></figure>
 
 A controller's purpose is to receive specific requests for the application. The **routing** mechanism controls which controller receives which requests. Frequently, each controller has more than one route, and different routes can perform different actions.
 
@@ -202,6 +202,8 @@ findAll() {
 
 The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
+> warning **Warning** A wildcard in the middle of the route is only supported by express.
+
 #### Status code
 
 As mentioned, the response **status code** is always **200** by default, except for POST requests which are **201**. We can easily change this behavior by adding the `@HttpCode(...)` decorator at a handler level.
@@ -243,14 +245,7 @@ To redirect a response to a specific URL, you can either use a `@Redirect()` dec
 @Redirect('https://nestjs.com', 301)
 ```
 
-Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object from the route handler method with the shape:
-
-```json
-{
-  "url": string,
-  "statusCode": number
-}
-```
+> info **Hint** Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object following the `HttpRedirectResponse` interface (from `@nestjs/common`).
 
 Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
 
@@ -359,7 +354,7 @@ async findAll() {
 }
 ```
 
-The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return RxJS [observable streams](http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html). Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).
+The above code is fully valid. Furthermore, Nest route handlers are even more powerful by being able to return RxJS [observable streams](https://rxjs-dev.firebaseapp.com/guide/observable). Nest will automatically subscribe to the source underneath and take the last emitted value (once the stream is completed).
 
 ```typescript
 @@filename(cats.controller)
@@ -509,8 +504,6 @@ export class AppModule {}
 ```
 
 We attached the metadata to the module class using the `@Module()` decorator, and Nest can now easily reflect which controllers have to be mounted.
-
-<app-banner-shop></app-banner-shop>
 
 #### Library-specific approach
 

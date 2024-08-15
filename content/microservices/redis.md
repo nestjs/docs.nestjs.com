@@ -2,7 +2,7 @@
 
 The [Redis](https://redis.io/) transporter implements the publish/subscribe messaging paradigm and leverages the [Pub/Sub](https://redis.io/topics/pubsub) feature of Redis. Published messages are categorized in channels, without knowing what subscribers (if any) will eventually receive the message. Each microservice can subscribe to any number of channels. In addition, more than one channel can be subscribed to at a time. Messages exchanged through channels are **fire-and-forget**, which means that if a message is published and there are no subscribers interested in it, the message is removed and cannot be recovered. Thus, you don't have a guarantee that either messages or events will be handled by at least one service. A single message can be subscribed to (and received) by multiple subscribers.
 
-<figure><img src="/assets/Redis_1.png" /></figure>
+<figure><img class="illustrative-image" src="/assets/Redis_1.png" /></figure>
 
 #### Installation
 
@@ -58,9 +58,13 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
     <td><code>retryDelay</code></td>
     <td>Delay between message retry attempts (ms) (default: <code>0</code>)</td>
   </tr>
+   <tr>
+    <td><code>wildcards</code></td>
+    <td>Enables Redis wildcard subscriptions, instructing transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood. (default: <code>false</code>)</td>
+  </tr>
 </table>
 
-All the properties supported by the official [ioredis](https://luin.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
+All the properties supported by the official [ioredis](https://redis.github.io/ioredis/index.html#RedisOptions) client are also supported by this transporter.
 
 #### Client
 

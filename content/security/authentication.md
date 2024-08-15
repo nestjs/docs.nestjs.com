@@ -232,7 +232,10 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signIn(username, pass) {
+  async signIn(
+    username: string,
+    pass: string,
+  ): Promise<{ access_token: string }> {
     const user = await this.usersService.findOne(username);
     if (user?.password !== pass) {
       throw new UnauthorizedException();
@@ -269,7 +272,7 @@ export class AuthService {
 }
 ```
 
-We're using the `@nestjs/jwt` library, which supplies a `signAsync()` function to generate our JWT from a subset of the `user` object properties, which we then return as a simple object with a single `access_token` property. Note: we choose a property name of `sub` to hold our `userId` value to be consistent with JWT standards. Don't forget to inject the JwtService provider into the `AuthService`.
+We're using the `@nestjs/jwt` library, which supplies a `signAsync()` function to generate our JWT from a subset of the `user` object properties, which we then return as a simple object with a single `access_token` property. Note: we choose a property name of `sub` to hold our `userId` value to be consistent with JWT standards.
 
 We now need to update the `AuthModule` to import the new dependencies and configure the `JwtModule`.
 
@@ -339,7 +342,7 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 ```
 
-> hint **Hint** We're registering the `JwtModule` as global to make things easier for us. This means that we don't need to import the `JwtModule` anywhere else in our application.
+> info **Hint** We're registering the `JwtModule` as global to make things easier for us. This means that we don't need to import the `JwtModule` anywhere else in our application.
 
 We configure the `JwtModule` using `register()`, passing in a configuration object. See [here](https://github.com/nestjs/jwt/blob/master/README.md) for more on the Nest `JwtModule` and [here](https://github.com/auth0/node-jsonwebtoken#usage) for more details on the available configuration options.
 

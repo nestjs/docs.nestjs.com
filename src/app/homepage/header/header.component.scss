@@ -1,11 +1,15 @@
-@import '../../../scss/variables.scss';
-@import '../../../scss/utils.scss';
+@use '../../../scss/variables';
+@use '../../../scss/utils';
 
 :host {
+  background: var(--header-background);
+  display: block;
+  width: 100%;
+  height: 70px;
   position: fixed;
   z-index: 10000;
   width: 100%;
-  height: 105px;
+  height: 70px;
 
   @media print {
     position: relative;
@@ -28,26 +32,25 @@
     color: #fff;
     font-weight: 600;
     font-size: 18px;
-    @include media(small) {
+    @include utils.media(small) {
       font-size: 15px;
     }
   }
 }
 
 .new {
-  background: #232323;
-  color: #ea2845;
-  border: 1px solid #ea2845;
+  background: var(--primary-gradient);
   font-size: 11px;
   padding: 2px 4px;
   border-radius: 2px;
   margin-right: 2px;
+  -webkit-text-fill-color: #fff;
 }
 
 header {
   display: block;
   position: relative;
-  background: $black-color;
+  background: var(--header-background);
   width: 100%;
   height: 70px;
   z-index: 10000;
@@ -72,10 +75,10 @@ header {
   &.opened {
     width: 250px;
 
-    @include media(large) {
+    @include utils.media(large) {
       width: 250px;
     }
-    @include media(normal) {
+    @include utils.media(normal) {
       width: 80px;
     }
   }
@@ -88,7 +91,7 @@ header {
       fill: #fff;
     }
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     background: transparent;
   }
 
@@ -104,10 +107,10 @@ header {
   vertical-align: top;
   padding-left: 85px;
 
-  @include media(large) {
+  @include utils.media(large) {
     padding-left: 15px;
   }
-  @include media(medium) {
+  @include utils.media(medium) {
     padding-left: 10px;
   }
 
@@ -130,7 +133,7 @@ header {
   padding: 14px 25px;
 
   @media (min-width: 1500px) {
-    margin-right: 80px;
+    margin-right: 30px;
   }
 
   @media (max-width: 1499px) {
@@ -143,8 +146,12 @@ header {
     }
   }
 
-  @media (max-width: 1250px) {
+  @media (max-width: 1350px) {
     padding: 14px 5px;
+
+    li:nth-of-type(3) {
+      display: none;
+    }
   }
 
   @media (max-width: 1150px) {
@@ -159,18 +166,18 @@ header {
     }
   }
 
-  @include media(large) {
+  @include utils.media(large) {
     margin-right: 0;
     padding: 14px 5px;
   }
 
-  @include media(normal) {
+  @include utils.media(normal) {
     ul {
       display: none !important;
     }
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     .search-wrapper {
       display: none;
     }
@@ -191,16 +198,17 @@ header {
     }
 
     &:last-of-type a {
-      @include radius(2px);
+      @include utils.radius(2px);
+      transition: none;
       padding: 4px 6px;
-      background: $red-color;
+      background: variables.$red-gradient;
 
       &:hover {
         background: #262626;
       }
     }
 
-    @include media(large) {
+    @include utils.media(large) {
       margin-left: 20px;
     }
   }
@@ -213,7 +221,7 @@ header {
     font-weight: 600;
 
     &:hover {
-      color: $red-color;
+      color: var(--primary-4dp);
     }
   }
   @media print {
@@ -225,18 +233,18 @@ header {
   float: right;
   padding: 14px 25px;
 
-  @include media(medium) {
+  @include utils.media(medium) {
     padding: 23px 15px;
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     display: none;
   }
 
   img {
     margin-right: 10px;
     width: 55px;
-    @include media(medium) {
+    @include utils.media(medium) {
       display: none !important;
     }
   }
@@ -256,13 +264,13 @@ header {
 
   .short-title {
     display: none;
-    @include media(medium) {
+    @include utils.media(medium) {
       display: block;
     }
   }
 
   .long-title {
-    @include media(medium) {
+    @include utils.media(medium) {
       display: none;
     }
   }
@@ -274,9 +282,9 @@ header {
     position: relative;
 
     &:hover {
-      color: $red-color;
+      color: var(--primary);
       &::after {
-        background: $red-color;
+        background: var(--primary);
       }
     }
 
@@ -327,7 +335,7 @@ header {
   margin-top: 5px;
   cursor: pointer;
 
-  @include media(large) {
+  @include utils.media(large) {
     display: inline-block;
   }
 
@@ -347,7 +355,7 @@ header {
 }
 
 .desktop-nav-icon {
-  @include media(large) {
+  @include utils.media(large) {
     display: none;
   }
 }
@@ -390,11 +398,11 @@ header {
 
   &:active,
   &:focus {
-    border-bottom-color: $red-color;
+    border-bottom-color: var(--primary);
     width: 190px;
   }
 
-  @media (min-width: 1200px) and (max-width: 1300px) {
+  @media (max-width: 1300px) {
     width: 190px;
   }
 }
@@ -402,7 +410,7 @@ header {
 ::ng-deep .DocSearch-Button:hover,
 ::ng-deep .DocSearch-Button:active
 ::ng-deep .DocSearch-Button:focus {
-  border-bottom-color: $red-color;
+  border-bottom-color: variables.$red-color;
   width: 240px;
   
   @media (min-width: 1200px) and (max-width: 1300px) {
@@ -459,7 +467,7 @@ header {
   &::after,
   &::before {
     content: '';
-    background: $red-color;
+    background: var(--primary);
     display: block;
     height: 2px;
     position: absolute;

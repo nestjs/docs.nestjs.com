@@ -228,7 +228,7 @@ export class HeroesController {
 }
 ```
 
-> info **Hint** `@Payload()` is imported from the `@nestjs/microservices`.
+> info **Hint** `@Payload()` is imported from the `@nestjs/microservices` package.
 
 Outgoing messages can also be keyed by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 
@@ -435,7 +435,7 @@ throw new KafkaRetriableException('...');
 
 #### Commit offsets
 
-Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `ClientKafka` offers a way to manually commit offsets that work like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `KafkaContext` offers a way to access the active consumer for manually committing offsets. The consumer is the KafkaJS consumer and works as the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
 
 ```typescript
 @@filename()
@@ -446,7 +446,8 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
   const { offset } = context.getMessage();
   const partition = context.getPartition();
   const topic = context.getTopic();
-  await this.client.commitOffsets([{ topic, partition, offset }])
+  const consumer = context.getConsumer();
+  await consumer.commitOffsets([{ topic, partition, offset }])
 }
 @@switch
 @Bind(Payload(), Ctx())
@@ -457,7 +458,8 @@ async handleUserCreated(data, context) {
   const { offset } = context.getMessage();
   const partition = context.getPartition();
   const topic = context.getTopic();
-  await this.client.commitOffsets([{ topic, partition, offset }])
+  const consumer = context.getConsumer();
+  await consumer.commitOffsets([{ topic, partition, offset }])
 }
 ```
 

@@ -215,9 +215,10 @@ const routes: Routes = [
       scrollPositionRestoration: 'enabled',
       anchorScrolling: 'enabled',
       preloadingStrategy: PreloadAllModules,
+      onSameUrlNavigation: 'reload',
     }),
   ],
-  providers: [RedirectGuard],
+  providers: [],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
