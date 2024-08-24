@@ -62,7 +62,7 @@ The default expiration time of the cache is 5 seconds.
 You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
 
 ```typescript
-await this.cacheManager.set('key', 'value', 1000);
+await this.cacheManager.set('key', 'value', {ttl: 1} as any);
 ```
 
 To disable expiration of the cache, set the `ttl` configuration property to `0`:
