@@ -242,20 +242,20 @@ The `useFactory` syntax allows for creating providers **dynamically**. The actua
 @@filename()
 const connectionProvider = {
   provide: 'CONNECTION',
-  useFactory: (optionsProvider: OptionsProvider, optionalProvider?: string) => {
+  useFactory: (optionsProvider: MyOptionsProvider, optionalProvider?: string) => {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
-  //       \_____________/            \__________________/
-  //        This provider              The provider with this
-  //        is mandatory.              token can resolve to `undefined`.
+  inject: [MyOptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \______________/             \__________________/
+  //        This provider                The provider with this token
+  //        is mandatory.                can resolve to `undefined`.
 };
 
 @Module({
   providers: [
     connectionProvider,
-    OptionsProvider,
+    MyOptionsProvider, // class-based provider
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
 })
@@ -267,16 +267,16 @@ const connectionProvider = {
     const options = optionsProvider.get();
     return new DatabaseConnection(options);
   },
-  inject: [OptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
-  //       \_____________/            \__________________/
-  //        This provider              The provider with this
-  //        is mandatory.              token can resolve to `undefined`.
+  inject: [MyOptionsProvider, { token: 'SomeOptionalProvider', optional: true }],
+  //       \______________/            \__________________/
+  //        This provider               The provider with this token
+  //        is mandatory.               can resolve to `undefined`.
 };
 
 @Module({
   providers: [
     connectionProvider,
-    OptionsProvider,
+    MyOptionsProvider, // class-base provider
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
 })
