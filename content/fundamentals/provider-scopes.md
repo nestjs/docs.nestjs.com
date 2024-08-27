@@ -48,7 +48,7 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `scop
 
 > info **Hint** Import the `Scope` enum from `@nestjs/common`
 
-Singleton scope is used by default, and need not be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
+Singleton scope is used by default and does not need be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
 
 > warning **Notice** Websocket Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times. The limitation also applies to some other providers, like [_Passport strategies_](../security/authentication#request-scoped-strategies) or _Cron controllers_.
 
