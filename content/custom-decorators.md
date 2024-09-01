@@ -210,7 +210,7 @@ You can then use this custom `@Auth()` decorator as follows:
 
 ```typescript
 @Get('users')
-@Auth('admin')
+@Auth(['admin'])
 findAllUsers() {}
 ```
 
