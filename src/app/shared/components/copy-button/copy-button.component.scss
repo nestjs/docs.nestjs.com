@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  position: relative;
+  .clipboard {
+    color: #dfdfdf;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    padding: 12px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    z-index: 10;
+  }  
+}

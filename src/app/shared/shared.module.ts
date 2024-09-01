@@ -12,9 +12,11 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { TocComponent } from './components/toc/toc.component';
 import { HeaderAnchorDirective } from './directives/header-anchor.directive';
 import { ExtensionPipe } from './pipes/extension.pipe';
+import { CopyButtonComponent } from './components/copy-button/copy-button.component';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [CommonModule, ClipboardModule],
   declarations: [
     ExtensionPipe,
     TabsComponent,
@@ -27,6 +29,7 @@ import { ExtensionPipe } from './pipes/extension.pipe';
     BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
     ThemeModeToggleComponent,
+    CopyButtonComponent,
   ],
   exports: [
     ExtensionPipe,
@@ -40,6 +43,7 @@ import { ExtensionPipe } from './pipes/extension.pipe';
     BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
     ThemeModeToggleComponent,
+    CopyButtonComponent,
   ],
   providers: [StorageService],
 })
