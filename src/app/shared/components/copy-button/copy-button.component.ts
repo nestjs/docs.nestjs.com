@@ -14,7 +14,6 @@ export class CopyButtonComponent {
   onCopy() {
     this.buttonText.next('Copied!');
     timer(2000).pipe(take(1)).subscribe(() => {
-      console.log('OI');
       this.buttonText.next('Copy');
     });
   }
