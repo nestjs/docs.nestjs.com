@@ -55,7 +55,7 @@ export class CreateUserDto {
 
 > info **Note** The Swagger plugin will derive the @ApiProperty() annotations from the TypeScript types and class-validator decorators. This helps in clearly describing your API for the generated Swagger UI documentation. However, the validation at runtime would still be handled by class-validator decorators. So, it is required to continue using validators like `IsEmail()`, `IsNumber()`, etc.
 
-Hence, if you intend to relay on automatic annotations for generating documentations and still wish for runtime validations, then the class-validator decorators are still necessary.
+Hence, if you intend to rely on automatic annotations for generating documentations and still wish for runtime validations, then the class-validator decorators are still necessary.
 
 > info **Hint** When using [mapped types utilities](https://docs.nestjs.com/openapi/mapped-types) (like `PartialType`) in DTOs import them from `@nestjs/swagger` instead of `@nestjs/mapped-types` for the plugin to pick up the schema.
 
