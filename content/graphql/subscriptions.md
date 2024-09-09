@@ -80,7 +80,7 @@ Now, to publish the event, we use the `PubSub#publish` method. This is often use
 
 ```typescript
 @@filename(posts/posts.resolver)
-@Mutation(returns => Post)
+@Mutation(returns => Comment)
 async addComment(
   @Args('postId', { type: () => Int }) postId: number,
   @Args('comment', { type: () => Comment }) comment: CommentInput,
@@ -413,7 +413,7 @@ Now, to publish the event, we use the `PubSub#publish` method. This is often use
 
 ```typescript
 @@filename(posts/posts.resolver)
-@Mutation(returns => Post)
+@Mutation(returns => Comment)
 async addComment(
   @Args('postId', { type: () => Int }) postId: number,
   @Args('comment', { type: () => Comment }) comment: CommentInput,
