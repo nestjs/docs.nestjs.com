@@ -445,9 +445,11 @@ import {
   EventSubscriber,
   InsertEvent,
 } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 
 @EventSubscriber()
+@Injectable()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
   constructor(dataSource: DataSource) {
     dataSource.subscribers.push(this);
