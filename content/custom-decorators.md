@@ -183,22 +183,24 @@ Nest provides a helper method to compose multiple decorators. For example, suppo
 
 ```typescript
 @@filename(auth.decorator)
-import { applyDecorators } from '@nestjs/common';
+import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 export function Auth(...roles: Role[]) {
   return applyDecorators(
-    SetMetadata('roles', roles),
+    SetMetadata('roles', roles), // custom metadata
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
   );
 }
 @@switch
-import { applyDecorators } from '@nestjs/common';
+import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 export function Auth(...roles) {
   return applyDecorators(
-    SetMetadata('roles', roles),
+    SetMetadata('roles', roles), // custom metadata
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
