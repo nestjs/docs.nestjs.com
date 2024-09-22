@@ -179,16 +179,21 @@ async findOne(user) {
 
 #### Decorator composition
 
-Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
+Nest provides a helper method to compose multiple decorators.  
+For example, suppose you want to combine all decorators related to authentication into a single decorator. Here we can use those decorators created via `Reflector#createDecorator` (as explained in the [execution context chapter](/fundamentals/execution-context#reflection-and-metadata)).
+
+This could be done with the following construction:
 
 ```typescript
 @@filename(auth.decorator)
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Roles } from './roles.decorator'; // an example for `Reflector#createDecorator`
 
 export function Auth(...roles: Role[]) {
   return applyDecorators(
-    SetMetadata('roles', roles), // custom metadata
+    SetMetadata('has_auth', true), // custom metadata
+    Roles(roles), // custom decorator created via Reflector#createDecorator
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
@@ -197,10 +202,12 @@ export function Auth(...roles: Role[]) {
 @@switch
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Roles } from './roles.decorator'; // an example for `Reflector#createDecorator`
 
 export function Auth(...roles) {
   return applyDecorators(
-    SetMetadata('roles', roles), // custom metadata
+    SetMetadata('has_auth', true), // custom metadata
+    Roles(roles), // custom decorator created via Reflector#createDecorator
     UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
