@@ -204,6 +204,10 @@ The following options are valid for the object passed to the array of the `Throt
     <td>the maximum number of requests within the TTL limit</td>
   </tr>
   <tr>
+    <td><code>blockDuration</code></td>
+    <td>the number of milliseconds that request will be blocked for that time</td>
+  </tr>
+  <tr>
     <td><code>ignoreUserAgents</code></td>
     <td>an array of regular expressions of user-agents to ignore when it comes to throttling requests</td>
   </tr>
@@ -231,6 +235,18 @@ If you need to set up storage instead, or want to use some of the above options 
   <tr>
     <td><code>throttlers</code></td>
     <td>an array of throttler sets, defined using the table above</td>
+  </tr>
+  <tr>
+    <td><code>errorMessage</code></td>
+    <td>a <code>string</code> OR a function that takes in the <code>ExecutionContext</code> and the <code>ThrottlerLimitDetail</code> and returns a <code>string</code> which overrides the default throttler error message</td>
+  </tr>
+  <tr>
+    <td><code>getTracker</code></td>
+    <td>a function that takes in the <code>Request</code> and returns a <code>string</code> to override the default logic of the <code>getTracker</code> method</td>
+  </tr>
+  <tr>
+    <td><code>generateKey</code></td>
+    <td>a function that takes in the <code>ExecutionContext</code>, the tacker <code>string</code> and the throttler name as a <code>string</code> and returns a <code>string</code> to override the final key which will be used to store the rate limit value. This overrides the default logic of the <code>generateKey</code> method</td>
   </tr>
 </table>
 
