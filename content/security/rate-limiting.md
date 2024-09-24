@@ -132,14 +132,29 @@ This module can work with websockets, but it requires some class extension. You 
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
-  async handleRequest(context: ExecutionContext, limit: number, ttl: number, throttler: ThrottlerOptions): Promise<boolean> {
-    const client = context.switchToWs().getClient();
-    const ip = client._socket.remoteAddress;
-    const key = this.generateKey(context, ip, throttler.name);
-    const { totalHits } = await this.storageService.increment(key, ttl);
+  async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
+    const { context, limit, ttl, throttler, blockDuration, getTracker, generateKey } = requestProps;
 
-    if (totalHits > limit) {
-      throw new ThrottlerException();
+    const client = context.switchToWs().getClient();
+    const tracker = client._socket.remoteAddress;
+    const key = generateKey(context, tracker, throttler.name);
+    const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
+      await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name);
+
+    const getThrottlerSuffix = (name: string) => (name === 'default' ? '' : `-${name}`);
+
+    // Throw an error when the user reached their limit.
+    if (isBlocked) {
+      await this.throwThrottlingException(context, {
+        limit,
+        ttl,
+        key,
+        tracker,
+        totalHits,
+        timeToExpire,
+        isBlocked,
+        timeToBlockExpire,
+      });
     }
 
     return true;
