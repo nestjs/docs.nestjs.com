@@ -178,7 +178,10 @@ export class User {
 }
 ```
 
-> info **Hint** `Relation` type is exported from the `typeorm` package.
+> info **Hint** `Relation` type is exported from the `typeorm` package and should be imported as a type.
+> ```typescript
+>  import type { Relation } from 'typeorm';
+> ```
 
 Doing this prevents the type of the property from being saved in the transpiled code in the property metadata, preventing circular dependency issues.
 
