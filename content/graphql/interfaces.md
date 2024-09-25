@@ -11,7 +11,7 @@ import { Field, ID, InterfaceType } from '@nestjs/graphql';
 
 @InterfaceType()
 export abstract class Character {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string;
 
   @Field()
@@ -58,7 +58,7 @@ To provide a customized `resolveType()` function, pass the `resolveType` propert
   },
 })
 export abstract class Book {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string;
 
   @Field()
@@ -73,7 +73,7 @@ So far, using interfaces, you could only share field definitions with your objec
 ```typescript
 import { Resolver, ResolveField, Parent, Info } from '@nestjs/graphql';
 
-@Resolver(type => Character) // Reminder: Character is an interface
+@Resolver(() => Character) // Reminder: Character is an interface
 export class CharacterInterfaceResolver {
   @ResolveField(() => [Character])
   friends(
