@@ -132,14 +132,29 @@ This module can work with websockets, but it requires some class extension. You 
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
-  async handleRequest(context: ExecutionContext, limit: number, ttl: number, throttler: ThrottlerOptions): Promise<boolean> {
-    const client = context.switchToWs().getClient();
-    const ip = client._socket.remoteAddress;
-    const key = this.generateKey(context, ip, throttler.name);
-    const { totalHits } = await this.storageService.increment(key, ttl);
+  async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
+    const { context, limit, ttl, throttler, blockDuration, getTracker, generateKey } = requestProps;
 
-    if (totalHits > limit) {
-      throw new ThrottlerException();
+    const client = context.switchToWs().getClient();
+    const tracker = client._socket.remoteAddress;
+    const key = generateKey(context, tracker, throttler.name);
+    const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
+      await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name);
+
+    const getThrottlerSuffix = (name: string) => (name === 'default' ? '' : `-${name}`);
+
+    // Throw an error when the user reached their limit.
+    if (isBlocked) {
+      await this.throwThrottlingException(context, {
+        limit,
+        ttl,
+        key,
+        tracker,
+        totalHits,
+        timeToExpire,
+        isBlocked,
+        timeToBlockExpire,
+      });
     }
 
     return true;
@@ -189,6 +204,10 @@ The following options are valid for the object passed to the array of the `Throt
     <td>the maximum number of requests within the TTL limit</td>
   </tr>
   <tr>
+    <td><code>blockDuration</code></td>
+    <td>the number of milliseconds that request will be blocked for that time</td>
+  </tr>
+  <tr>
     <td><code>ignoreUserAgents</code></td>
     <td>an array of regular expressions of user-agents to ignore when it comes to throttling requests</td>
   </tr>
@@ -216,6 +235,18 @@ If you need to set up storage instead, or want to use some of the above options 
   <tr>
     <td><code>throttlers</code></td>
     <td>an array of throttler sets, defined using the table above</td>
+  </tr>
+  <tr>
+    <td><code>errorMessage</code></td>
+    <td>a <code>string</code> OR a function that takes in the <code>ExecutionContext</code> and the <code>ThrottlerLimitDetail</code> and returns a <code>string</code> which overrides the default throttler error message</td>
+  </tr>
+  <tr>
+    <td><code>getTracker</code></td>
+    <td>a function that takes in the <code>Request</code> and returns a <code>string</code> to override the default logic of the <code>getTracker</code> method</td>
+  </tr>
+  <tr>
+    <td><code>generateKey</code></td>
+    <td>a function that takes in the <code>ExecutionContext</code>, the tacker <code>string</code> and the throttler name as a <code>string</code> and returns a <code>string</code> to override the final key which will be used to store the rate limit value. This overrides the default logic of the <code>generateKey</code> method</td>
   </tr>
 </table>
 
