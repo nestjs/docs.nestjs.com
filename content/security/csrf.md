@@ -1,26 +1,65 @@
 ### CSRF Protection
 
-Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website where **unauthorized** commands are transmitted from a user that the web application trusts. To mitigate this kind of attack you can use the [csurf](https://github.com/expressjs/csurf) package.
+Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website where **unauthorized** commands are transmitted from a user that the web application trusts. To mitigate this kind of attack you can use the [ncsrf](https://www.npmjs.com/package/ncsrf) package.
 
 #### Use with Express (default)
+
+Requires either a **session middleware** or **cookie-parser** to be initialized first, and need enableCors.
+
+```typescript
+app.use(cookieParser());
+```
 
 Start by installing the required package:
 
 ```bash
-$ npm i --save csurf
+$ npm install ncsrf --save
 ```
 
-> warning **Warning** This package is deprecated, refer to [`csurf` docs](https://github.com/expressjs/csurf#csurf) for more information.
+or
 
-> warning **Warning** As explained in the [`csurf` docs](https://github.com/expressjs/csurf#csurf), this middleware requires either session middleware or `cookie-parser` to be initialized first. Please see that documentation for further instructions.
+```bash
+$ yarn add ncsrf
+```
 
-Once the installation is complete, apply the `csurf` middleware as global middleware.
+Once the installation is complete, apply the `ncsrf` middleware as global middleware.
 
 ```typescript
-import * as csurf from 'csurf';
-// ...
-// somewhere in your initialization file
-app.use(csurf());
+import { nestCsrf, CsrfFilter } from 'ncsrf';
+import cookieParser from 'cookie-parser';
+
+app.use(cookieParser());
+app.use(nestCsrf());
+```
+
+**nestCsrf([options])**
+
+- signed - indicates if the cookie should be signed (defaults to false).
+- key - the name of the cookie to use to store the token secret (defaults to '\_csrf').
+- ttl - The time to live of the cookie use to store the token secret (default 300s).
+
+**Generate token here**
+
+```typescript
+  @Get('/token')
+  getCsrfToken(@Req() req): any {
+    return {
+      token: req.csrfToken()
+    }
+  }
+```
+
+**Protected route with csrf**
+
+```typescript
+  // import {CsrfQL} from "ncsrf"; // for graphql
+  import {Csrf} from "ncsrf";
+  ...
+  @Post()
+  @Csrf()
+  needProtect(): string{
+    return "Protected!";
+  }
 ```
 
 #### Use with Fastify
