@@ -943,7 +943,8 @@ Then, you refer to this via a decorator like `@UseGuards(AuthGuard('myjwt'))`.
 
 #### GraphQL
 
-In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method.
+In order to use an AuthGuard with [GraphQL](https://docs.nestjs.com/graphql/quick-start), extend the built-in AuthGuard class and override the getRequest() method. 
+In the case of passport-local strategy you will also have to attach the GraphQL context's arguments into the request's body so that Passport can use them for validation.
 
 ```typescript
 @Injectable()
@@ -951,6 +952,22 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     return ctx.getContext().req;
+  }
+}
+```
+
+In the case of passport-local strategy you will also have to attach the GraphQL context's arguments into the request's body so that Passport can access them for validation (if not done so an Unauthorized error gets issued).
+
+```typescript
+@Injectable()
+export class GqlLocalAuthGuard extends AuthGuard('local') {
+  getRequest(context: ExecutionContext) {
+    const gqlExecutionContext = GqlExecutionContext.create(context);
+    const gqlContext = gqlExecutionContext.getContext();
+    const gqlCArgs = gqlExecutionContext.getArgs();
+
+    gqlContext.req.body = { ...gqlContext.req.body, ...gqlArgs };
+    return gqlContext.req;
   }
 }
 ```
