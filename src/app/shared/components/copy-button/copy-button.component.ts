@@ -8,13 +8,13 @@ import { BehaviorSubject, take, timer } from 'rxjs';
 })
 export class CopyButtonComponent {
   public elRef = inject<ElementRef<HTMLElement>>(ElementRef<HTMLElement>);
-  public buttonText = new BehaviorSubject<string>('Copy');
+  public buttonIcon = new BehaviorSubject<string>('content_copy');
 
 
   onCopy() {
-    this.buttonText.next('Copied!');
+    this.buttonIcon.next('check');
     timer(2000).pipe(take(1)).subscribe(() => {
-      this.buttonText.next('Copy');
+      this.buttonIcon.next('content_copy');
     });
   }
 }

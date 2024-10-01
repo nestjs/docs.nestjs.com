@@ -14,9 +14,10 @@ import { HeaderAnchorDirective } from './directives/header-anchor.directive';
 import { ExtensionPipe } from './pipes/extension.pipe';
 import { CopyButtonComponent } from './components/copy-button/copy-button.component';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
-  imports: [CommonModule, ClipboardModule],
+  imports: [CommonModule, ClipboardModule, MatIconModule],
   declarations: [
     ExtensionPipe,
     TabsComponent,
@@ -43,7 +44,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     BannerDevtoolsComponent,
     BannerCoursesAuthComponent,
     ThemeModeToggleComponent,
-    CopyButtonComponent,
+    CopyButtonComponent
   ],
   providers: [StorageService],
 })
