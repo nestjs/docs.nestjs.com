@@ -94,8 +94,8 @@ describe('CatsController', () => {
         providers: [CatsService],
       }).compile();
 
-    catsService = moduleRef.get<CatsService>(CatsService);
-    catsController = moduleRef.get<CatsController>(CatsController);
+    catsService = moduleRef.get(CatsService);
+    catsController = moduleRef.get(CatsController);
   });
 
   describe('findAll', () => {
