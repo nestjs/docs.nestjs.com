@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { SocialWrapperComponent } from './common/social-wrapper/social-wrapper.component';
 import { FooterComponent } from './homepage/footer/footer.component';
 import { HeaderComponent } from './homepage/header/header.component';
+import { VersionsComponent } from './homepage/header/versions/versions.component';
 import { HomepageComponent } from './homepage/homepage.component';
 import { MenuItemComponent } from './homepage/menu/menu-item/menu-item.component';
 import { MenuComponent } from './homepage/menu/menu.component';
@@ -64,6 +65,7 @@ import { SharedModule } from './shared/shared.module';
     EnterpriseComponent,
     SocialWrapperComponent,
     NewsletterComponent,
+    VersionsComponent
   ],
   bootstrap: [AppComponent],
   providers: [],
