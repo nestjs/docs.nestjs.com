@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  position: relative;
+  
+  .clipboard {
+    color: #dfdfdf;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    padding: 12px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    z-index: 10;
+    
+    & > * {
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+    }
+  }  
+}
