@@ -10,7 +10,7 @@ While you can upgrade your packages manually, we recommend using [ncu (npm check
 
 #### Cache module
 
-The `CacheModule` has been removed from the `@nestjs/common` package and is now available as a standalone package - `@nestjs/cache-manager`. This change was made to avoid unnecessary dependencies in the `@nestjs/common` package. You can learn more about the `@nestjs/cache-manager` package [here](https://docs.nestjs.com/techniques/caching).
+The `CacheModule` has been removed from the `@nestjs/common` package and is now available as a standalone package - `@nestjs/cache-manager`. This change was made to avoid unnecessary dependencies in the `@nestjs/common` package. You can learn more about the `@nestjs/cache-manager` package [here](/techniques/caching).
 
 #### Deprecations
 

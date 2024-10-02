@@ -28,7 +28,7 @@ async upvotePost(@Args('postId') postId: number) {
 
 #### Execution context
 
-Since GraphQL receives a different type of data in the incoming request, the [execution context](https://docs.nestjs.com/fundamentals/execution-context) received by both guards and interceptors is somewhat different with GraphQL vs. REST. GraphQL resolvers have a distinct set of arguments: `root`, `args`, `context`, and `info`. Thus guards and interceptors must transform the generic `ExecutionContext` to a `GqlExecutionContext`. This is straightforward:
+Since GraphQL receives a different type of data in the incoming request, the [execution context](/fundamentals/execution-context) received by both guards and interceptors is somewhat different with GraphQL vs. REST. GraphQL resolvers have a distinct set of arguments: `root`, `args`, `context`, and `info`. Thus guards and interceptors must transform the generic `ExecutionContext` to a `GqlExecutionContext`. This is straightforward:
 
 ```typescript
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
