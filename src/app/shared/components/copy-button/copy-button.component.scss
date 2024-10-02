@@ -1,6 +1,7 @@
 :host {
   display: block;
   position: relative;
+  
   .clipboard {
     color: #dfdfdf;
     cursor: pointer;
@@ -12,7 +13,13 @@
     -webkit-box-sizing: border-box;
     position: absolute;
     right: 10px;
-    top: 50px;
+    top: 60px;
     z-index: 10;
+    
+    & > * {
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+    }
   }  
 }
