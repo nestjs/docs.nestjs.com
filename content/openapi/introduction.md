@@ -29,15 +29,15 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('cats')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  const makeDocument = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, makeDocument);
 
   await app.listen(3000);
 }
 bootstrap();
 ```
 
-> info **Hint** `document` (returned by the `SwaggerModule#createDocument()` method) is a serializable object conforming to [OpenAPI Document](https://swagger.io/specification/#openapi-document). Instead of hosting it via HTTP, you could also save it as a JSON/YAML file, and consume it in different ways.
+> info **Hint** `document` (returned by the `SwaggerModule#createDocument()` method) is a serializable object conforming to [OpenAPI Document](https://swagger.io/specification/#openapi-document). Instead of hosting it via HTTP, you could also save it as a JSON/YAML file, and consume it in different ways. Since it can take some time depending on the number of endpoints that your application has, we are passing a function fo `SwaggerModule.setup` instead of the created document to avoid impacting the bootstrapping time.
 
 The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
