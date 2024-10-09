@@ -3,13 +3,15 @@ import { DOCUMENT } from '@angular/common';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { StorageService } from '../../services/storage.service';
 
+type Theme = 'light' | 'dark';
+
 @Component({
   selector: 'app-theme-mode-toggle',
   templateUrl: './theme-mode-toggle.component.html',
   styleUrls: ['./theme-mode-toggle.component.scss'],
 })
 export class ThemeModeToggleComponent implements OnInit {
-  isDarkMode: boolean;
+  theme: Theme;
 
   constructor(
     @Inject(DOCUMENT)
@@ -19,31 +21,35 @@ export class ThemeModeToggleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // This is commented out because by default the theme mode is set to light (at least for now)
-    // const userPrefersTheme =
-    //   this.mediaMatcher.matchMedia &&
-    //   this.mediaMatcher.matchMedia('(prefers-color-scheme: light)').matches;
-    // this.setThemeMode(this.getUserSettingsIsDarkMode() || userPrefersTheme);
-
-    const isDarkMode = this.getUserSettingsIsDarkMode();
-    this.setThemeMode(isDarkMode);
-  }
-
-  toggleThemeMode() {
-    const isDarkMode = !this.isDarkMode;
-    this.storageService.set('theme-mode', isDarkMode.toString());
-    this.setThemeMode(isDarkMode);
-  }
-
-  private getUserSettingsIsDarkMode(): boolean {
-    return this.storageService.get('theme-mode') === 'true';
-  }
-
-  private setThemeMode(isDarkMode: boolean) {
-    this.isDarkMode = isDarkMode;
-    this.document.documentElement.setAttribute(
-      'mode',
-      isDarkMode ? 'dark' : 'light',
+    const preferredScheme = this.mediaMatcher.matchMedia(
+      '(prefers-color-scheme: dark)',
     );
+
+    preferredScheme.onchange = () => {
+      if (!this.getStoredTheme()) this.toggleTheme(true);
+    };
+
+    const isDarkSchemePreferred = preferredScheme.matches;
+    const storedTheme = this.getStoredTheme();
+
+    this.theme = storedTheme ?? (isDarkSchemePreferred ? 'dark' : 'light');
+    this.setTheme(this.theme);
+  }
+
+  toggleTheme(skipStorage = false) {
+    this.theme = this.theme === 'dark' ? 'light' : 'dark';
+    // NOTE: We should skip saving theme in storage when toggle is caused by matchMedia change event
+    // Otherwise, once saved, it'll no longer correspond to the system preferences,
+    // despite the user not touching the toggle button themselves
+    if (!skipStorage) this.storageService.set('theme', this.theme);
+    this.setTheme(this.theme);
+  }
+
+  private getStoredTheme() {
+    return this.storageService.get('theme') as Theme | null;
+  }
+
+  private setTheme(theme: Theme) {
+    this.document.documentElement.setAttribute('mode', theme);
   }
 }
