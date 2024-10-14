@@ -21,18 +21,18 @@ export class ThemeModeToggleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const preferredScheme = this.mediaMatcher.matchMedia(
+    const darkSchemeMatcher = this.mediaMatcher.matchMedia(
       '(prefers-color-scheme: dark)',
     );
 
-    preferredScheme.onchange = () => {
-      if (!this.getStoredTheme()) this.toggleTheme(true);
+    darkSchemeMatcher.onchange = ({ matches }) => {
+      if (!this.getStoredTheme()) this.setTheme(matches ? 'dark' : 'light');
     };
 
-    const isDarkSchemePreferred = preferredScheme.matches;
+    const preferredScheme = darkSchemeMatcher.matches ? 'dark' : 'light';
     const storedTheme = this.getStoredTheme();
 
-    this.theme = storedTheme ?? (isDarkSchemePreferred ? 'dark' : 'light');
+    this.theme = storedTheme ?? preferredScheme;
     this.setTheme(this.theme);
   }
 
