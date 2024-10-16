@@ -16,6 +16,47 @@
 
 html[mode='dark'] {
   @extend .dark-mode;
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #494951 !important;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #6d6d6d;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background-3dp);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--background-3dp);
+  }
+
+  .app-menu {
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+  }
+
+  .app-menu:not(:hover) {
+    &::-webkit-scrollbar-thumb {
+      background: var(--menu-background) !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--menu-background);
+    }
+  
+    &::-webkit-scrollbar-corner {
+      background: var(--menu-background);
+    }
+  }
 }
 
 html:not([mode='dark']):not([mode='light']),
