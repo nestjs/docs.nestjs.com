@@ -1,0 +1,32 @@
+<div 
+  class="dropdown dropdown-item"
+  [class.opened]="isOpen"
+>
+  <a 
+    href="#" 
+    class="drop-wrapper menu-wrapper" 
+    (click)="toggle()"
+  >
+    Versions
+    <svg
+      class="arrow-icon"
+      width="20"
+      height="20"
+      viewBox="0 0 1792 1792"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M1171 960q0 13-10 23l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23z"
+      />
+    </svg>
+  </a>
+  <div class="dropdown-content"  [@openCloseAnimation]="isOpen">
+    <a *ngIf="linkLatest != true" class="dropdown-item" href="#">Latest(v{{ versions }})</a>
+    <div class="dropdown-divider"></div>  
+    <a href="https://docs.nestjs.com/v8/" target="_blank">8.x</a>
+    <a href="https://docs.nestjs.com/v7/" target="_blank">7.x</a>
+    <a href="https://docs.nestjs.com/v6/" target="_blank">6.x</a>
+    <a href="https://docs.nestjs.com/v5/" target="_blank">5.x</a>
+    <a href="https://docs.nestjs.com/v4/" target="_blank">4.x</a>
+  </div>
+</div>
