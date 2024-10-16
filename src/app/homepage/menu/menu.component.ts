@@ -189,6 +189,11 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'Deployment',
+      isNew: true,
+      path: '/deployment',
+    },
+    {
       title: 'Standalone apps',
       isOpened: false,
       path: '/standalone-applications',
@@ -221,11 +226,6 @@ export class MenuComponent implements OnInit {
         { title: 'Other features', path: '/openapi/other-features' },
         { title: 'Migration guide', path: '/openapi/migration-guide' },
       ],
-    },
-    {
-      title: 'Deployment',
-      isNew: true,
-      path: '/deployment',
     },
     {
       title: 'Recipes',
