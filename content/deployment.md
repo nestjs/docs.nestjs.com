@@ -224,6 +224,6 @@ With Mau, provisioning and maintaining your infrastructure is as simple as click
 
 [Mau](https://mau.nestjs.com/) is perfect for startups, small-to-medium businesses, large enterprises, and developers who want to get up and running quickly without having to spend a lot of time on learning and managing infrastructure. It's incredibly easy to use, and you can have your infrastructure up and running in minutes. It also leverages AWS behind the scenes, giving you all the advantages of AWS without the hassle of managing its complexities.
 
-<figure><img class="illustrative-image" src="/assets/mau-metrics.png" /></figure>
+<figure><img src="/assets/mau-metrics.png" /></figure>
 
 Sign up for [Mau](https://mau.nestjs.com/) today and deploy your NestJS applications with ease!
