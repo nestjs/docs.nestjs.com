@@ -223,6 +223,11 @@ export class MenuComponent implements OnInit {
       ],
     },
     {
+      title: 'Deployment',
+      isNew: true,
+      path: '/deployment',
+    },
+    {
       title: 'Recipes',
       isOpened: false,
       children: [
@@ -271,7 +276,6 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Devtools',
-      isNew: true,
       isOpened: false,
       children: [
         { title: 'Overview', path: '/devtools/overview' },

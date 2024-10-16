@@ -54,7 +54,7 @@
         <i class="material-icons" *ngIf="icon">
           {{ icon }}
         </i>
-        {{ title }}
+        <span *ngIf="isNew" class="new">NEW</span>{{ title }}
       </h3></a
     >
     <a *ngIf="!!externalUrl" href="{{ externalUrl }}" target="_blank"
@@ -62,7 +62,7 @@
         <i class="material-icons" *ngIf="icon">
           {{ icon }}
         </i>
-        {{ title }}
+        <span *ngIf="isNew" class="new">NEW</span>{{ title }}
       </h3>
     </a>
   </div>

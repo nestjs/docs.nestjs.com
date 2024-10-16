@@ -29,6 +29,7 @@ import { BasePageComponent } from './homepage/pages/page/page.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { SharedModule } from './shared/shared.module';
+import { DeploymentComponent } from './homepage/pages/deployment/deployment.component';
 
 @NgModule({
   imports: [
@@ -64,6 +65,7 @@ import { SharedModule } from './shared/shared.module';
     EnterpriseComponent,
     SocialWrapperComponent,
     NewsletterComponent,
+    DeploymentComponent,
   ],
   bootstrap: [AppComponent],
   providers: [],

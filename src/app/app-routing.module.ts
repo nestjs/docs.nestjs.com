@@ -18,6 +18,7 @@ import { ModulesComponent } from './homepage/pages/modules/modules.component';
 import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { RedirectGuard } from './shared/guards/redirect.guard';
+import { DeploymentComponent } from './homepage/pages/deployment/deployment.component';
 
 const routes: Routes = [
   {
@@ -100,6 +101,11 @@ const routes: Routes = [
         path: 'migration-guide',
         component: MigrationComponent,
         data: { title: 'Migration guide - FAQ' },
+      },
+      {
+        path: 'deployment',
+        component: DeploymentComponent,
+        data: { title: 'Deployment' },
       },
       {
         path: 'support',
