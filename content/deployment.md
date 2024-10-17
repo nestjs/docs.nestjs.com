@@ -12,6 +12,8 @@ Before deploying your NestJS application, ensure you have:
 - Any required services, like a database, set up and ready to go.
 - At least an LTS version of Node.js installed on your deployment platform.
 
+> info **Hint** If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com/), our official platform for deploying NestJS applications on AWS.
+
 #### Building your application
 
 To build your NestJS application, you need to compile your TypeScript code into JavaScript. This process generates a `dist` directory containing the compiled files. You can build your application by running the following command:
@@ -114,7 +116,7 @@ This process is straightforward with containerization technologies like [Docker]
 
 There are a few more tips to keep in mind when deploying your NestJS application:
 
-- **Security**: Ensure your application is secure and protected from common threats like SQL injection, XSS, etc. Check out [Helmet chapter](/security/helmet) for more details.
+- **Security**: Ensure your application is secure and protected from common threats like SQL injection, XSS, etc. See the "Security" category for more details.
 - **Monitoring**: Use monitoring tools like [Prometheus](https://prometheus.io/) or [New Relic](https://newrelic.com/) to track your application's performance and health. If you're using a cloud provider/Mau, they mau offer built-in monitoring services (like [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) etc.)
 - **Do not hardcode environment variables**: Avoid hardcoding sensitive information like API keys, passwords, or tokens in your code. Use environment variables or a secrets manager to store and access these values securely.
 - **Backups**: Regularly back up your data to prevent data loss in case of an incident.
@@ -225,5 +227,30 @@ With Mau, provisioning and maintaining your infrastructure is as simple as click
 [Mau](https://mau.nestjs.com/) is perfect for startups, small-to-medium businesses, large enterprises, and developers who want to get up and running quickly without having to spend a lot of time on learning and managing infrastructure. It's incredibly easy to use, and you can have your infrastructure up and running in minutes. It also leverages AWS behind the scenes, giving you all the advantages of AWS without the hassle of managing its complexities.
 
 <figure><img src="/assets/mau-metrics.png" /></figure>
+
+With [Mau](https://mau.nestjs.com/), you can:
+
+- Deploy your NestJS applications with just a few clicks (APIs, microservices, etc.).
+- Provision **databases** such as:
+  - PostgreSQL
+  - MySQL
+  - MongoDB (DocumentDB)
+  - Redis
+  - more
+- Set up broker services like:
+  - RabbitMQ
+  - Kafka
+  - NATS
+- Deploy scheduled tasks (**CRON jobs**) and background workers.
+- Deploy lambda functions and serverless applications.
+- Setup **CI/CD pipelines** for automated deployments.
+- And much more!
+
+To deploy your NestJS application with Mau, just run the following command:
+
+```bash
+$ npm install -g @nestjs/mau
+$ mau deploy
+```
 
 Sign up for [Mau](https://mau.nestjs.com/) today and deploy your NestJS applications with ease!
