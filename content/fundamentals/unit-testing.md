@@ -313,9 +313,9 @@ In this example, we build on some of the concepts described earlier. In addition
 
 We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
 
-In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override modules, guards, interceptors, filters and pipes with the `overrideModule()`, `overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
+In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override modules, middleware, guards, interceptors, filters and pipes with the `overrideModule()`, `overrideMiddleware()`, `overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
 
-Each of the override methods (except for `overrideModule()`) returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
+Except for `overrideModule()` and `overrideMiddleware()`, each of the override methods returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
 
 - `useClass`: you supply a class that will be instantiated to provide the instance to override the object (provider, guard, etc.).
 - `useValue`: you supply an instance that will override the object.
@@ -329,6 +329,17 @@ const moduleRef = await Test.createTestingModule({
 })
   .overrideModule(CatsModule)
   .useModule(AlternateCatsModule)
+  .compile();
+```
+
+Similarly, `overrideMiddleware()` returns an object that has a `use()` method which receives middleware that should override the original middleware. In the following example, we replace `CatsMiddleware` with `AlternateMiddlewareCalledFirst` and `AlternateMiddlewareCalledSecond` in the middleware stack:
+
+```typescript
+const moduleRef = await Test.createTestingModule({
+  imports: [AppModule],
+})
+  .overrideMiddleware(CatsMiddleware)
+  .use(AlternateMiddlewareCalledFirst, AlternateMiddlewareCalledSecond)
   .compile();
 ```
 
