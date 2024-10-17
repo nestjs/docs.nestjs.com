@@ -42,6 +42,8 @@ Open your browser and navigate to [`http://localhost:3000/`](http://localhost:30
 
 To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
 
-You can also manually create a new project from scratch by installing the core and supporting packages. In this case, of course, you'll be responsible for creating the project boilerplate files yourself.  
-In this case you should at least has the following dependencies: `@nestjs/core`, `@nestjs/common`, `rxjs` and `reflect-metadata`  
-Here is a short article on how to create a full project: [5 steps to create a bare minimum NestJS app from scratch!](https://dev.to/micalevisk/5-steps-to-create-a-bare-minimum-nestjs-app-from-scratch-5c3b)
+You can also start a new project from scratch by installing the core and supporting packages. Keep in mind that you'll need to set up the project boilerplate files on your own.
+
+At a minimum, you'll need these dependencies: `@nestjs/core`, `@nestjs/common`, `rxjs`, and `reflect-metadata`. 
+
+Check out this short article on how to create a complete project: [5 Steps to Create a Bare Minimum NestJS App from Scratch!](https://dev.to/micalevisk/5-steps-to-create-a-bare-minimum-nestjs-app-from-scratch-5c3b).)
