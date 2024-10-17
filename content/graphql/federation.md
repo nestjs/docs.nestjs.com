@@ -91,7 +91,7 @@ import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
@@ -106,11 +106,11 @@ import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
-  @Query((returns) => User)
+  @Query(() => User)
   getUser(@Args('id') id: number): User {
     return this.usersService.findById(id);
   }
@@ -231,11 +231,11 @@ import { Post } from './post.entity';
 @Directive('@extends')
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   @Directive('@external')
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }
 ```
@@ -248,11 +248,11 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @ResolveField((of) => [Post])
+  @ResolveField(() => [Post])
   public posts(@Parent() user: User): Post[] {
     return this.postsService.forAuthor(user.id);
   }
@@ -268,16 +268,16 @@ import { User } from './user.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class Post {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
   title: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   authorId: number;
 
-  @Field((type) => User)
+  @Field(() => User)
   user?: User;
 }
 ```
@@ -290,21 +290,21 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => Post)
+@Resolver(() => Post)
 export class PostsResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @Query((returns) => Post)
+  @Query(() => Post)
   findPost(@Args('id') id: number): Post {
     return this.postsService.findOne(id);
   }
 
-  @Query((returns) => [Post])
+  @Query(() => [Post])
   getPosts(): Post[] {
     return this.postsService.all();
   }
 
-  @ResolveField((of) => User)
+  @ResolveField(() => User)
   user(@Parent() post: Post): any {
     return { __typename: 'User', id: post.authorId };
   }
@@ -462,7 +462,7 @@ import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
@@ -477,11 +477,11 @@ import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
-  @Query((returns) => User)
+  @Query(() => User)
   getUser(@Args('id') id: number): User {
     return this.usersService.findById(id);
   }
@@ -602,11 +602,11 @@ import { Post } from './post.entity';
 @Directive('@extends')
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   @Directive('@external')
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }
 ```
@@ -619,11 +619,11 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => User)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @ResolveField((of) => [Post])
+  @ResolveField(() => [Post])
   public posts(@Parent() user: User): Post[] {
     return this.postsService.forAuthor(user.id);
   }
@@ -639,16 +639,16 @@ import { User } from './user.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class Post {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
   @Field()
   title: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   authorId: number;
 
-  @Field((type) => User)
+  @Field(() => User)
   user?: User;
 }
 ```
@@ -661,21 +661,21 @@ import { PostsService } from './posts.service';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
-@Resolver((of) => Post)
+@Resolver(() => Post)
 export class PostsResolver {
   constructor(private readonly postsService: PostsService) {}
 
-  @Query((returns) => Post)
+  @Query(() => Post)
   findPost(@Args('id') id: number): Post {
     return this.postsService.findOne(id);
   }
 
-  @Query((returns) => [Post])
+  @Query(() => [Post])
   getPosts(): Post[] {
     return this.postsService.all();
   }
 
-  @ResolveField((of) => User)
+  @ResolveField(() => User)
   user(@Parent() post: Post): any {
     return { __typename: 'User', id: post.authorId };
   }
@@ -830,10 +830,10 @@ import { Post } from './post.entity';
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }
 ```

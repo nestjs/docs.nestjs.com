@@ -74,7 +74,7 @@ Directives can be applied on fields, field resolvers, input and object types, as
 
 ```typescript
 @Directive('@deprecated(reason: "This query will be removed in the next version")')
-@Query(returns => Author, { name: 'author' })
+@Query(() => Author, { name: 'author' })
 async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
   return this.authorsService.findOneById(id);
 }

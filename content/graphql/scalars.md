@@ -42,7 +42,7 @@ To create a custom implementation for the `Date` scalar, simply create a new cla
 import { Scalar, CustomScalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
-@Scalar('Date', (type) => Date)
+@Scalar('Date', () => Date)
 export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
@@ -107,7 +107,7 @@ export class AppModule {}
 Now we can use the `JSON` type in our classes.
 
 ```typescript
-@Field((type) => GraphQLJSON)
+@Field(() => GraphQLJSON)
 info: JSON;
 ```
 
@@ -121,8 +121,8 @@ To define a custom scalar, create a new `GraphQLScalarType` instance. We'll crea
 const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function validate(uuid: unknown): string | never {
-  if (typeof uuid !== "string" || !regex.test(uuid)) {
-    throw new Error("invalid uuid");
+  if (typeof uuid !== 'string' || !regex.test(uuid)) {
+    throw new Error('invalid uuid');
   }
   return uuid;
 }
@@ -132,8 +132,8 @@ export const CustomUuidScalar = new GraphQLScalarType({
   description: 'A simple UUID parser',
   serialize: (value) => validate(value),
   parseValue: (value) => validate(value),
-  parseLiteral: (ast) => validate(ast.value)
-})
+  parseLiteral: (ast) => validate(ast.value),
+});
 ```
 
 We pass a custom resolver to the `forRoot()` method:
@@ -152,7 +152,7 @@ export class AppModule {}
 Now we can use the `UUID` type in our classes.
 
 ```typescript
-@Field((type) => CustomUuidScalar)
+@Field(() => CustomUuidScalar)
 uuid: string;
 ```
 

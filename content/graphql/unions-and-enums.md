@@ -42,7 +42,7 @@ export const ResultUnion = createUnionType({
 Now, we can reference the `ResultUnion` in our query:
 
 ```typescript
-@Query(returns => [ResultUnion])
+@Query(() => [ResultUnion])
 search(): Array<typeof ResultUnion> {
   return [new Author(), new Book()];
 }

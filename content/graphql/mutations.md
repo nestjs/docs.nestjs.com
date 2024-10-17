@@ -9,7 +9,7 @@ The official [Apollo](https://www.apollographql.com/docs/graphql-tools/generate-
 Let's add another method to the `AuthorResolver` used in the previous section (see [resolvers](/graphql/resolvers)).
 
 ```typescript
-@Mutation(returns => Post)
+@Mutation(() => Post)
 async upvotePost(@Args({ name: 'postId', type: () => Int }) postId: number) {
   return this.postsService.upvoteById({ id: postId });
 }
@@ -44,7 +44,7 @@ export class UpvotePostInput {
 We can then use this type in the resolver class:
 
 ```typescript
-@Mutation(returns => Post)
+@Mutation(() => Post)
 async upvotePost(
   @Args('upvotePostData') upvotePostData: UpvotePostInput,
 ) {}

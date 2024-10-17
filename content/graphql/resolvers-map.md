@@ -133,14 +133,14 @@ At this point, we've defined the objects (type definitions) that can exist in ou
 
 ```typescript
 @@filename(authors/authors.resolver)
-@Resolver(of => Author)
+@Resolver(() => Author)
 export class AuthorsResolver {
   constructor(
     private authorsService: AuthorsService,
     private postsService: PostsService,
   ) {}
 
-  @Query(returns => Author)
+  @Query(() => Author)
   async author(@Args('id', { type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
@@ -176,7 +176,7 @@ We can define multiple `@Query()` resolver functions (both within this class, an
 In the above examples, the `@Query()` decorator generates a GraphQL schema query type name based on the method name. For example, consider the following construction from the example above:
 
 ```typescript
-@Query(returns => Author)
+@Query(() => Author)
 async author(@Args('id', { type: () => Int }) id: number) {
   return this.authorsService.findOneById(id);
 }
@@ -196,19 +196,19 @@ Conventionally, we prefer to decouple these names; for example, we prefer to use
 
 ```typescript
 @@filename(authors/authors.resolver)
-@Resolver(of => Author)
+@Resolver(() => Author)
 export class AuthorsResolver {
   constructor(
     private authorsService: AuthorsService,
     private postsService: PostsService,
   ) {}
 
-  @Query(returns => Author, { name: 'author' })
+  @Query(() => Author, { name: 'author' })
   async getAuthor(@Args('id', { type: () => Int }) id: number) {
     return this.authorsService.findOneById(id);
   }
 
-  @ResolveField('posts', returns => [Post])
+  @ResolveField('posts', () => [Post])
   async getPosts(@Parent() author: Author) {
     const { id } = author;
     return this.postsService.findAll({ authorId: id });
@@ -246,7 +246,7 @@ Usually your `@Args()` decorator will be simple, and not require an object argum
 In the `getAuthor()` case, the `number` type is used, which presents a challenge. The `number` TypeScript type doesn't give us enough information about the expected GraphQL representation (e.g., `Int` vs. `Float`). Thus we have to **explicitly** pass the type reference. We do that by passing a second argument to the `Args()` decorator, containing argument options, as shown below:
 
 ```typescript
-@Query(returns => Author, { name: 'author' })
+@Query(() => Author, { name: 'author' })
 async getAuthor(@Args('id', { type: () => Int }) id: number) {
   return this.authorsService.findOneById(id);
 }
@@ -316,10 +316,10 @@ Base `@ArgsType()` class:
 ```typescript
 @ArgsType()
 class PaginationArgs {
-  @Field((type) => Int)
+  @Field(() => Int)
   offset: number = 0;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   limit: number = 10;
 }
 ```
@@ -343,7 +343,7 @@ The same approach can be taken with `@ObjectType()` objects. Define generic prop
 ```typescript
 @ObjectType()
 class Character {
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -367,7 +367,7 @@ You can use inheritance with a resolver as well. You can ensure type safety by c
 function BaseResolver<T extends Type<unknown>>(classRef: T): any {
   @Resolver({ isAbstract: true })
   abstract class BaseResolverHost {
-    @Query((type) => [classRef], { name: `findAll${classRef.name}` })
+    @Query(() => [classRef], { name: `findAll${classRef.name}` })
     async findAll(): Promise<T[]> {
       return [];
     }
@@ -385,7 +385,7 @@ Note the following:
 Here's how you could generate a concrete sub-class of the `BaseResolver`:
 
 ```typescript
-@Resolver((of) => Recipe)
+@Resolver(() => Recipe)
 export class RecipesResolver extends BaseResolver(Recipe) {
   constructor(private recipesService: RecipesService) {
     super();
@@ -424,22 +424,22 @@ export interface IPaginatedType<T> {
 export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-    @Field((type) => String)
+    @Field(() => String)
     cursor: string;
 
-    @Field((type) => classRef)
+    @Field(() => classRef)
     node: T;
   }
 
   @ObjectType({ isAbstract: true })
   abstract class PaginatedType implements IPaginatedType<T> {
-    @Field((type) => [EdgeType], { nullable: true })
+    @Field(() => [EdgeType], { nullable: true })
     edges: EdgeType[];
 
-    @Field((type) => [classRef], { nullable: true })
+    @Field(() => [classRef], { nullable: true })
     nodes: T[];
 
-    @Field((type) => Int)
+    @Field(() => Int)
     totalCount: number;
 
     @Field()

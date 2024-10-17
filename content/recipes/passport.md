@@ -972,7 +972,7 @@ export const CurrentUser = createParamDecorator(
 To use above decorator in your resolver, be sure to include it as a parameter of your query or mutation:
 
 ```typescript
-@Query(returns => User)
+@Query(() => User)
 @UseGuards(GqlAuthGuard)
 whoAmI(@CurrentUser() user: User) {
   return this.usersService.findById(user.id);

@@ -39,10 +39,10 @@ The following subscription handler takes care of **subscribing** to an event by 
 ```typescript
 const pubSub = new PubSub();
 
-@Resolver((of) => Author)
+@Resolver(() => Author)
 export class AuthorResolver {
   // ...
-  @Subscription((returns) => Comment)
+  @Subscription(() => Comment)
   commentAdded() {
     return pubSub.asyncIterator('commentAdded');
   }
@@ -64,7 +64,7 @@ type Subscription {
 Note that subscriptions, by definition, return an object with a single top level property whose key is the name of the subscription. This name is either inherited from the name of the subscription handler method (i.e., `commentAdded` above), or is provided explicitly by passing an option with the key `name` as the second argument to the `@Subscription()` decorator, as shown below.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   name: 'commentAdded',
 })
 subscribeToCommentAdded() {
@@ -80,7 +80,7 @@ Now, to publish the event, we use the `PubSub#publish` method. This is often use
 
 ```typescript
 @@filename(posts/posts.resolver)
-@Mutation(returns => Comment)
+@Mutation(() => Comment)
 async addComment(
   @Args('postId', { type: () => Int }) postId: number,
   @Args('comment', { type: () => Comment }) comment: CommentInput,
@@ -106,7 +106,7 @@ This tells us that the subscription must return an object with a top-level prope
 To filter out specific events, set the `filter` property to a filter function. This function acts similar to the function passed to an array `filter`. It takes two arguments: `payload` containing the event payload (as sent by the event publisher), and `variables` taking any arguments passed in during the subscription request. It returns a boolean determining whether this event should be published to client listeners.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   filter: (payload, variables) =>
     payload.commentAdded.title === variables.title,
 })
@@ -120,7 +120,7 @@ commentAdded(@Args('title') title: string) {
 To mutate the published event payload, set the `resolve` property to a function. The function receives the event payload (as sent by the event publisher) and returns the appropriate value.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   resolve: value => value,
 })
 commentAdded() {
@@ -133,7 +133,7 @@ commentAdded() {
 If you need to access injected providers (e.g., use an external service to validate the data), use the following construction.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   resolve(this: AuthorResolver, value) {
     // "this" refers to an instance of "AuthorResolver"
     return value;
@@ -147,7 +147,7 @@ commentAdded() {
 The same construction works with filters:
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   filter(this: AuthorResolver, payload, variables) {
     // "this" refers to an instance of "AuthorResolver"
     return payload.commentAdded.title === variables.title;
@@ -372,10 +372,10 @@ To create a subscription using the code first approach, we use the `@Subscriptio
 The following subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterator`. This method takes a single argument, the `triggerName`, which corresponds to an event topic name.
 
 ```typescript
-@Resolver((of) => Author)
+@Resolver(() => Author)
 export class AuthorResolver {
   // ...
-  @Subscription((returns) => Comment)
+  @Subscription(() => Comment)
   commentAdded(@Context('pubsub') pubSub: PubSub) {
     return pubSub.subscribe('commentAdded');
   }
@@ -397,7 +397,7 @@ type Subscription {
 Note that subscriptions, by definition, return an object with a single top level property whose key is the name of the subscription. This name is either inherited from the name of the subscription handler method (i.e., `commentAdded` above), or is provided explicitly by passing an option with the key `name` as the second argument to the `@Subscription()` decorator, as shown below.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   name: 'commentAdded',
 })
 subscribeToCommentAdded(@Context('pubsub') pubSub: PubSub) {
@@ -413,7 +413,7 @@ Now, to publish the event, we use the `PubSub#publish` method. This is often use
 
 ```typescript
 @@filename(posts/posts.resolver)
-@Mutation(returns => Comment)
+@Mutation(() => Comment)
 async addComment(
   @Args('postId', { type: () => Int }) postId: number,
   @Args('comment', { type: () => Comment }) comment: CommentInput,
@@ -445,7 +445,7 @@ This tells us that the subscription must return an object with a top-level prope
 To filter out specific events, set the `filter` property to a filter function. This function acts similar to the function passed to an array `filter`. It takes two arguments: `payload` containing the event payload (as sent by the event publisher), and `variables` taking any arguments passed in during the subscription request. It returns a boolean determining whether this event should be published to client listeners.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   filter: (payload, variables) =>
     payload.commentAdded.title === variables.title,
 })
@@ -457,7 +457,7 @@ commentAdded(@Args('title') title: string, @Context('pubsub') pubSub: PubSub) {
 If you need to access injected providers (e.g., use an external service to validate the data), use the following construction.
 
 ```typescript
-@Subscription(returns => Comment, {
+@Subscription(() => Comment, {
   filter(this: AuthorResolver, payload, variables) {
     // "this" refers to an instance of "AuthorResolver"
     return payload.commentAdded.title === variables.title;
