@@ -182,7 +182,9 @@ async function bootstrap() {
 bootstrap();
 ```
 
-The Fastify API is slightly different but the end result of those methods calls remains the same. One difference to notice with Fastify is that the template name passed into the `@Render()` decorator must include a file extension.
+The Fastify API has a few differences, but the end result of these method calls is the same. One notable difference is that when using Fastify, the template name you pass into the `@Render()` decorator must include the file extension.
+
+Here’s how you can set it up:
 
 ```typescript
 @@filename(app.controller)
@@ -195,6 +197,18 @@ export class AppController {
   root() {
     return { message: 'Hello world!' };
   }
+}
+```
+
+Alternatively, you can use the `@Res()` decorator to directly inject the response and specify the view you want to render, as shown below:
+
+```typescript
+import { Res } from '@nestjs/common';
+import { FastifyReply } from 'fastify';
+
+@Get()
+root(@Res() res: FastifyReply) {
+  return res.view('index.hbs', { title: 'Hello world!' });
 }
 ```
 
