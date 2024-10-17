@@ -1,0 +1,8 @@
+<button
+  class="clipboard"
+  (click)="onCopy()"
+  [cdkCopyToClipboard]="elRef.nativeElement.lastElementChild.textContent"
+>
+  <mat-icon>{{ buttonIcon | async }}</mat-icon>
+</button>
+<ng-content></ng-content>

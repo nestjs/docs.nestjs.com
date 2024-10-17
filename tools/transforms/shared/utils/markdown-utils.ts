@@ -32,6 +32,7 @@ export function replaceFilename(
   const filename = text.slice(startIndex + 1, endIndex);
   return (
     `
+    <app-copy-button>
 <span class="filename">` +
     (filename.length > 0
       ? `
@@ -40,7 +41,8 @@ export function replaceFilename(
     `
 <app-tabs #${directiveRef}></app-tabs>
 </span>` +
-    renderer(text.slice(endIndex + 1), directiveRef).trim()
+    renderer(text.slice(endIndex + 1), directiveRef).trim() +
+    `</app-copy-button>`
   );
 }
 
