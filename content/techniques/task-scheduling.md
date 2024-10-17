@@ -116,7 +116,7 @@ export class TasksService {
 }
 ```
 
-In this example, the `handleCron()` method will be called every `30` seconds.
+In this example, the `handleCron()` method will be called every `30` seconds. If an exception occurs, it will be logged to the console, as every method annotated with `@Cron()` is automatically wrapped in a `try-catch` block.
 
 Alternatively, you can supply a JavaScript `Date` object to the `@Cron()` decorator. Doing so causes the job to execute exactly once, at the specified date.
 
@@ -189,6 +189,8 @@ If you want to control your declarative interval from outside the declaring clas
 handleInterval() {}
 ```
 
+If an exception occurs, it will be logged to the console, as every method annotated with `@Interval()` is automatically wrapped in a `try-catch` block.
+
 The <a href="techniques/task-scheduling#dynamic-intervals">Dynamic API</a> also enables **creating** dynamic intervals, where the interval's properties are defined at runtime, and **listing and deleting** them.
 
 <app-banner-enterprise></app-banner-enterprise>
@@ -205,6 +207,8 @@ handleTimeout() {
 ```
 
 > info **Hint** This mechanism uses the JavaScript `setTimeout()` function under the hood.
+
+If an exception occurs, it will be logged to the console, as every method annotated with `@Timeout()` is automatically wrapped in a `try-catch` block.
 
 If you want to control your declarative timeout from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">Dynamic API</a>, associate the timeout with a name using the following construction:
 
