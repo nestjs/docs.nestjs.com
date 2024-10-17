@@ -29,15 +29,15 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('cats')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
 
-> info **Hint** `document` (returned by the `SwaggerModule#createDocument()` method) is a serializable object conforming to [OpenAPI Document](https://swagger.io/specification/#openapi-document). Instead of hosting it via HTTP, you could also save it as a JSON/YAML file, and consume it in different ways.
+> info **Hint** The factory method `SwaggerModule#createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
 
 The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
@@ -135,7 +135,7 @@ const options: SwaggerDocumentOptions =  {
     methodKey: string
   ) => methodKey
 };
-const document = SwaggerModule.createDocument(app, config, options);
+const documentFactory = () => SwaggerModule.createDocument(app, config, options);
 ```
 
 #### Setup options
