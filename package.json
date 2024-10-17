@@ -37,7 +37,7 @@
     "@angular/service-worker": "18.2.8",
     "core-js": "3.31.0",
     "hammerjs": "2.0.8",
-    "nodemon": "2.0.22",
+    "nodemon": "3.1.7",
     "prismjs": "1.29.0",
     "rxjs": "7.8.1",
     "rxjs-compat": "6.6.7",
