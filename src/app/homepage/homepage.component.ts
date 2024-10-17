@@ -16,6 +16,8 @@ import { debounceTime, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { BasePageComponent } from './pages/page/page.component';
 
+const CARBON_WIDTH_BREAKPOINT = 1200;
+
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
@@ -133,16 +135,26 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!nativeElement) {
       return;
     }
+
     this.contentRef = nativeElement.querySelector('.content');
     if (this.contentRef && !this.contentRef.querySelector('.carbon-wrapper')) {
       const scriptTag = this.createCarbonScriptTag();
       const carbonWrapper = document.createElement('div');
       carbonWrapper.classList.add('carbon-wrapper');
+
+      if (window.innerWidth > CARBON_WIDTH_BREAKPOINT) {
+        carbonWrapper.classList.add('hide');
+      }
       carbonWrapper.prepend(scriptTag);
 
       this.contentRef.prepend(carbonWrapper);
     }
+
     this.cd.markForCheck();
+
+    // Schedule check as TOC might not be rendered yet
+    const adOverlapCheckDelay = 300;
+    setTimeout(() => this.hideAdIfTocOverflow(), adOverlapCheckDelay);
   }
 
   createCarbonScriptTag(): HTMLScriptElement {
@@ -169,5 +181,26 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     };
     return scriptTag;
+  }
+
+  hideAdIfTocOverflow() {
+    const carbonHeight = 160;
+    const offset = 200;
+    const viewportHeight = window.innerHeight;
+    const maxTocHeight = viewportHeight - carbonHeight - offset;
+
+    const tocElRef = document.querySelector('.toc-wrapper ul');
+    if (!tocElRef) {
+      return;
+    }
+
+    if (
+      tocElRef.clientHeight > maxTocHeight &&
+      window.innerWidth > CARBON_WIDTH_BREAKPOINT
+    ) {
+      this.contentRef.querySelector('.carbon-wrapper').classList.add('hide');
+    } else {
+      this.contentRef.querySelector('.carbon-wrapper').classList.remove('hide');
+    }
   }
 }
