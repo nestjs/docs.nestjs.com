@@ -5,8 +5,7 @@
       "name": "app",
       "installMode": "prefetch",
       "resources": {
-        "files": [ "/index.html" ],
-        "versionedFiles": ["/*.bundle.css", "/*.bundle.js", "/*.chunk.js"]
+        "files": ["/index.html", "/*.bundle.css", "/*.bundle.js", "/*.chunk.js"]
       }
     },
     {

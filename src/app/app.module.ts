@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -32,13 +35,6 @@ import { SharedModule } from './shared/shared.module';
 import { DeploymentComponent } from './homepage/pages/deployment/deployment.component';
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    SharedModule,
-  ],
   declarations: [
     AppComponent,
     HomepageComponent,
@@ -68,6 +64,12 @@ import { DeploymentComponent } from './homepage/pages/deployment/deployment.comp
     DeploymentComponent,
   ],
   bootstrap: [AppComponent],
-  providers: [],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    SharedModule,
+  ],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class AppModule {}

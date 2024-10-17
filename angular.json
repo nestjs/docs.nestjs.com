@@ -14,8 +14,8 @@
             "aot": true,
             "allowedCommonJsDependencies": ["prismjs"],
             "outputPath": "dist",
-            "index": "src/index.html",
             "main": "src/main.ts",
+            "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": ["zone.js"],
             "assets": [
@@ -50,10 +50,7 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "serviceWorker": false,
-              "ngswConfigPath": "/src/ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
