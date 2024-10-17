@@ -52,7 +52,7 @@
     "@angular/language-service": "18.2.8",
     "@commitlint/cli": "19.5.0",
     "@commitlint/config-angular": "19.5.0",
-    "@types/jasmine": "4.3.4",
+    "@types/jasmine": "5.1.4",
     "@types/jasminewd2": "2.0.10",
     "@types/lodash": "4.14.195",
     "@types/marked": "6.0.0",
