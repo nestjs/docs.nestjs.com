@@ -193,6 +193,15 @@ export class CatsService {
 }
 ```
 
+### Sessions
+To start a session with mongoose you shouldn't use `mongoose.startSession()` directly. Instead inject the connection using [@InjectConnection](http://localhost:4200/techniques/mongodb#connection), then use the connection object to start the session.
+
+```typescript
+const session = await this.connection.startSession();
+session.startTransaction();
+
+```
+
 #### Multiple databases
 
 Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, connection naming becomes **mandatory**.
