@@ -40,7 +40,7 @@ export function applyCodeRenderer(renderer: Renderer) {
         filenameIndex,
       );
 
-      return `<app-copy-button>${output}</app-copy-button>`;
+      return `<app-copy-button class="with-heading">${output}</app-copy-button>`;
     }
 
     const switchKey = '@@switch';
