@@ -250,6 +250,7 @@ export class MenuComponent implements OnInit {
         { title: 'Commander', path: '/recipes/nest-commander' },
         { title: 'Async local storage', path: '/recipes/async-local-storage' },
         { title: 'Automock', path: '/recipes/automock' },
+        { title: `Nestia`, path: `/recipes/nestia` },
       ],
     },
     {
