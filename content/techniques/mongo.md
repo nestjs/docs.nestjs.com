@@ -193,6 +193,30 @@ export class CatsService {
 }
 ```
 
+#### Sessions
+
+To start a session with Mongoose, it's recommended to inject the database connection using `@InjectConnection` rather than calling `mongoose.startSession()` directly. This approach allows better integration with the NestJS dependency injection system, ensuring proper connection management.
+
+Here's an example of how to start a session:
+
+```typescript
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+
+@Injectable()
+export class CatsService {
+  constructor(@InjectConnection() private readonly connection: Connection) {}
+
+  async startTransaction() {
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    // Your transaction logic here
+  }
+}
+```
+
+In this example, `@InjectConnection()` is used to inject the Mongoose connection into the service. Once the connection is injected, you can use `connection.startSession()` to begin a new session. This session can be used to manage database transactions, ensuring atomic operations across multiple queries. After starting the session, remember to commit or abort the transaction based on your logic.
+
 #### Multiple databases
 
 Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, connection naming becomes **mandatory**.
