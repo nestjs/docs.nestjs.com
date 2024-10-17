@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "18.2.9",
-    "@angular-eslint/eslint-plugin": "16.0.3",
+    "@angular-eslint/eslint-plugin": "18.3.1",
     "@angular/cli": "18.2.9",
     "@angular/compiler-cli": "18.2.8",
     "@angular/language-service": "18.2.8",
