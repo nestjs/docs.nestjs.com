@@ -294,7 +294,7 @@ This is doable, as long as `ThrottlerConfigService` implements the interface `Th
 
 The built in storage is an in memory cache that keeps track of the requests made until they have passed the TTL set by the global options. You can drop in your own storage option to the `storage` option of the `ThrottlerModule` so long as the class implements the `ThrottlerStorage` interface.
 
-For distributed servers you could use the community storage provider for [Redis](https://github.com/kkoomen/nestjs-throttler-storage-redis) to have a single source of truth.
+For distributed servers you could use the community storage provider for [Redis](https://github.com/jmcdo29/nest-lab/tree/main/packages/throttler-storage-redis) to have a single source of truth.
 
 > info **Note** `ThrottlerStorage` can be imported from `@nestjs/throttler`.
 
