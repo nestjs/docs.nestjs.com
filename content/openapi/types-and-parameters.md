@@ -251,7 +251,7 @@ export class CreateCatDto {}
 Alternatively, you can pass an options object with the `extraModels` property specified to the `SwaggerModule#createDocument()` method, as follows:
 
 ```typescript
-const document = SwaggerModule.createDocument(app, options, {
+const documentFactory = () => SwaggerModule.createDocument(app, options, {
   extraModels: [ExtraModel],
 });
 ```
