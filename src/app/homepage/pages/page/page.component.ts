@@ -5,6 +5,12 @@ import {
   ElementRef,
 } from '@angular/core';
 import * as Prism from 'prismjs';
+import 'prismjs/prism';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-graphql';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-bash';
 
 @Component({
   selector: 'app-base-page',
@@ -41,6 +47,6 @@ export class BasePageComponent implements AfterViewChecked {
         this.isHljsInitialized = true;
       }
     });
-    setTimeout(() => this.applicationRef.tick(), 100);
+    setTimeout(() => this.applicationRef.tick(), 1000);
   }
 }

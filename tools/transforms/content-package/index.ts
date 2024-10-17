@@ -15,15 +15,12 @@ export default new Package('content', [])
   .factory(renderNestJSMarkdown)
   .factory(nestjsMarkedNunjucksTag)
   .factory(nestjsMarkedNunjucksFilter)
-
   .processor(extractContentTitleProcessor)
   .processor(computeOutputPathProcessor)
   .processor(computeWhoUsesProcessor)
-
   .config((readFilesProcessor: any, contentFileReader: ContentFileReader) => {
     readFilesProcessor.fileReaders.push(contentFileReader);
   })
-
   .config(
     (
       templateEngine: any,
@@ -34,8 +31,7 @@ export default new Package('content', [])
       templateEngine.filters.push(nestjsMarkedNunjucksFilter);
     },
   )
-
-  .config(computeIdsProcessor => {
+  .config((computeIdsProcessor) => {
     computeIdsProcessor.idTemplates.push({
       docTypes: ['content', 'who-uses'],
       getId: (doc: Document) => {

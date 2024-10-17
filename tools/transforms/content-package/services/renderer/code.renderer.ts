@@ -3,16 +3,29 @@ import {
   replaceFilename,
   parseSwitcher,
   escapeBrackets,
-  appendEmptyLine
+  appendEmptyLine,
+  escapeAts,
 } from '../../../shared';
+
+const encodedSpecialChar = '&amp;#125';
 
 export function applyCodeRenderer(renderer: Renderer) {
   const originalCodeRenderer = renderer.code;
-  renderer.code = function(
+  const originalCodeSpanRenderer = renderer.codespan;
+
+  renderer.codespan = function (code: string) {
+    const escaped = escapeAts(originalCodeSpanRenderer.call(renderer, code));
+    if (escaped.indexOf(encodedSpecialChar) >= 0) {
+      return escaped.replace(new RegExp(encodedSpecialChar, 'g'), '&#125');
+    }
+    return escaped;
+  };
+
+  renderer.code = function (
     code: string,
     language: string,
     isEscaped: boolean,
-    switcherKey?: string
+    switcherKey?: string,
   ) {
     const filenameKey = '@@filename';
     const filenameIndex = code.indexOf(filenameKey);
@@ -23,7 +36,7 @@ export function applyCodeRenderer(renderer: Renderer) {
           renderer.code(text, language, isEscaped, directiveRef),
         code,
         filenameKey,
-        filenameIndex
+        filenameIndex,
       );
     }
 
@@ -35,17 +48,17 @@ export function applyCodeRenderer(renderer: Renderer) {
         code,
         switchKey,
         switchIndex,
-        switcherKey
+        switcherKey,
       );
-      return escapeBrackets(result);
+      return escapeAts(escapeBrackets(result));
     }
     let output: string = originalCodeRenderer.call(
       renderer,
       code,
       language,
-      isEscaped
+      isEscaped,
     );
     output = switcherKey ? output : appendEmptyLine(output);
-    return escapeBrackets(output);
+    return escapeAts(escapeBrackets(output));
   };
 }

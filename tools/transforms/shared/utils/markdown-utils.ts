@@ -6,6 +6,10 @@ export function escapeBrackets(text: string): string {
   return text;
 }
 
+export function escapeAts(text: string) {
+  return text.replace(/@/g, '&#64;');
+}
+
 export function appendEmptyLine(text: string) {
   const codeEscape = '">';
   const codeEscId = text.indexOf(codeEscape);
