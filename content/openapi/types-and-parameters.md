@@ -298,3 +298,24 @@ pets: Pet[];
 > info **Hint** The `getSchemaPath()` function is imported from `@nestjs/swagger`.
 
 Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
+
+#### Multiple responses in controller
+
+In case your app returns different exceptions with under the same HTTP status code, you might use `@ApiExtraModels()` in this way:
+
+```typescript
+@Injectable()
+export class CatController {
+  @ApiExtraModels(BadAppCodeException, BadEmailException)
+  @ApiBadRequestResponse({
+    schema: {
+      oneOf: refs(BadAppCodeException, BadEmailException),
+    },
+  })
+  multipleErrorsResponse() { ... }
+}
+```
+
+First, you tell swagger that `BadAppCodeException` and `BadEmailException` are models it needs to look at. After that, you use `oneOf` and `refs` to set the different exceptions your API might throw.
+
+> info **Hint** The `refs()` function is imported from `@nestjs/swagger`.
