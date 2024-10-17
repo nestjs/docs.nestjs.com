@@ -7,15 +7,17 @@
     cursor: pointer;
     background: transparent;
     border: none;
-    font-weight: 600;
-    padding: 12px;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+    padding: 10px;
     position: absolute;
     right: 10px;
-    top: 60px;
+    top: 65px;
     z-index: 10;
+    opacity: 0.7;
     
+    &:hover:not(.copied) {
+      opacity: 1;
+    }
+
     & > * {
       width: 18px;
       height: 18px;

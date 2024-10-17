@@ -26,25 +26,28 @@ export function applyCodeRenderer(renderer: Renderer) {
     language: string,
     isEscaped: boolean,
     switcherKey?: string,
+    skipCopyButton?: boolean,
   ) {
     const filenameKey = '@@filename';
     const filenameIndex = code.indexOf(filenameKey);
     if (filenameIndex >= 0) {
-      return replaceFilename(
+      const output = replaceFilename(
         (text, directiveRef) =>
           // @ts-ignore
-          renderer.code(text, language, isEscaped, directiveRef),
+          renderer.code(text, language, isEscaped, directiveRef, true),
         code,
         filenameKey,
         filenameIndex,
       );
+
+      return `<app-copy-button>${output}</app-copy-button>`;
     }
 
     const switchKey = '@@switch';
     const switchIndex = code.indexOf(switchKey);
     if (switchIndex >= 0) {
       const result = parseSwitcher(
-        (text, lang) => renderer.code(text, lang, isEscaped),
+        (text, lang) => renderer.code(text, lang, isEscaped, undefined, true),
         code,
         switchKey,
         switchIndex,
@@ -59,6 +62,14 @@ export function applyCodeRenderer(renderer: Renderer) {
       isEscaped,
     );
     output = switcherKey ? output : appendEmptyLine(output);
-    return escapeAts(escapeBrackets(output));
+
+    const escaped = escapeAts(escapeBrackets(output));
+    if (language === 'typescript' || language === 'ts') {
+      if (!skipCopyButton) {
+        return `<app-copy-button>${escaped}</app-copy-button>`;
+      }
+      return escaped;
+    }
+    return escaped;
   };
 }

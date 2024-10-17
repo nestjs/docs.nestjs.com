@@ -71,6 +71,7 @@ const routes: Routes = [
     IntroductionComponent,
     DecoratorsComponent,
     CliPluginComponent,
+    OpenApiSecurityComponent,
   ],
 })
 export class OpenApiModule {}
