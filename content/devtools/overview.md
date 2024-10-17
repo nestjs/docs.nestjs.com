@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 ```
 
@@ -185,7 +185,7 @@ This page comes in handy when you want to identify potential issues in your appl
 To save a serialized graph to a file, use the following code:
 
 ```typescript
-await app.listen(3000); // OR await app.init()
+await app.listen(process.env.PORT ?? 3000); // OR await app.init()
 fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 

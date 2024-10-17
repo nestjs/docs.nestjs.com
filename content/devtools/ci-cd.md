@@ -40,7 +40,7 @@ async function bootstrap() {
 
     await app.close();
   } else {
-    await app.listen(3000);
+    await app.listen(process.env.PORT ?? 3000);
   }
 }
 ```
@@ -232,9 +232,7 @@ const publishOptions = {
   sha: process.env.CI_COMMIT_SHA,
   target: process.env.CI_MERGE_REQUEST_DIFF_BASE_SHA,
   trigger: process.env.CI_MERGE_REQUEST_DIFF_BASE_SHA ? 'pull' : 'push',
-  branch:
-    process.env.CI_COMMIT_BRANCH ??
-    process.env.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME,
+  branch: process.env.CI_COMMIT_BRANCH ?? process.env.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME,
 };
 ```
 

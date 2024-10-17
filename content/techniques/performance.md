@@ -34,7 +34,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter()
   );
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```
@@ -73,7 +73,6 @@ You can pass options into the Fastify constructor through the `FastifyAdapter` c
 ```typescript
 new FastifyAdapter({ logger: true });
 ```
-
 
 #### Middleware
 
@@ -127,7 +126,6 @@ newFeature() {
 ```
 
 > info **Hint** `@RouteConfig()` and `@RouteConstraints` are imported from `@nestjs/platform-fastify`.
-
 
 #### Example
 

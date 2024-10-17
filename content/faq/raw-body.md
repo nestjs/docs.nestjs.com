@@ -17,7 +17,7 @@ import { AppModule } from './app.module';
 const app = await NestFactory.create<NestExpressApplication>(AppModule, {
   rawBody: true,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 To access the raw request body in a controller, a convenience interface `RawBodyRequest` is provided to expose a `rawBody` field on the request: use the interface `RawBodyRequest` type:
@@ -77,7 +77,7 @@ const app = await NestFactory.create<NestFastifyApplication>(
     rawBody: true,
   },
 );
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 To access the raw request body in a controller, a convenience interface `RawBodyRequest` is provided to expose a `rawBody` field on the request: use the interface `RawBodyRequest` type:

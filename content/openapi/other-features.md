@@ -75,7 +75,7 @@ async function bootstrap() {
   });
   SwaggerModule.setup('api/dogs', app, dogDocument);
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
 ```

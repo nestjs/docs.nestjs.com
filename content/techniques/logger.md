@@ -21,7 +21,7 @@ To disable logging, set the `logger` property to `false` in the (optional) Nest 
 const app = await NestFactory.create(AppModule, {
   logger: false,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 To enable specific logging levels, set the `logger` property to an array of strings specifying the log levels to display, as follows:
@@ -30,7 +30,7 @@ To enable specific logging levels, set the `logger` property to an array of stri
 const app = await NestFactory.create(AppModule, {
   logger: ['error', 'warn'],
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Values in the array can be any combination of `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
@@ -45,7 +45,7 @@ You can provide a custom logger implementation to be used by Nest for system log
 const app = await NestFactory.create(AppModule, {
   logger: console,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 Implementing your own custom logger is straightforward. Simply implement each of the methods of the `LoggerService` interface as shown below.
@@ -93,7 +93,7 @@ You can then supply an instance of `MyLogger` via the `logger` property of the N
 const app = await NestFactory.create(AppModule, {
   logger: new MyLogger(),
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 This technique, while simple, doesn't utilize dependency injection for the `MyLogger` class. This can pose some challenges, particularly for testing, and limit the reusability of `MyLogger`. For a better solution, see the <a href="techniques/logger#dependency-injection">Dependency Injection</a> section below.
@@ -148,7 +148,7 @@ const app = await NestFactory.create(AppModule, {
   bufferLogs: true,
 });
 app.useLogger(app.get(MyLogger));
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Note** In the example above, we set the `bufferLogs` to `true` to make sure all logs will be buffered until a custom logger is attached (`MyLogger` in this case) and the application initialisation process either completes or fails. If the initialisation process fails, Nest will fallback to the original `ConsoleLogger` to print out any reported error messages. Also, you can set the `autoFlushLogs` to `false` (default `true`) to manually flush logs (using the `Logger#flush()` method).
@@ -249,7 +249,7 @@ const app = await NestFactory.create(AppModule, {
   bufferLogs: true,
 });
 app.useLogger(new MyLogger());
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Hint** Alternatively, instead of setting `bufferLogs` to `true`, you could temporarily disable the logger with `logger: false` instruction. Be mindful that if you supply `logger: false` to `NestFactory.create`, nothing will be logged until you call `useLogger`, so you may miss some important initialization errors. If you don't mind that some of your initial messages will be logged with the default logger, you can just omit the `logger: false` option.

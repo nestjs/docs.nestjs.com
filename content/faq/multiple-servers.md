@@ -10,7 +10,7 @@ const httpsOptions = {
 const app = await NestFactory.create(AppModule, {
   httpsOptions,
 });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 If you use the `FastifyAdapter`, create the application as follows:
@@ -33,10 +33,7 @@ const httpsOptions = {
 };
 
 const server = express();
-const app = await NestFactory.create(
-  AppModule,
-  new ExpressAdapter(server),
-);
+const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 await app.init();
 
 const httpServer = http.createServer(server).listen(3000);
@@ -56,16 +53,17 @@ export class ShutdownObserver implements OnApplicationShutdown {
 
   public async onApplicationShutdown(): Promise<void> {
     await Promise.all(
-      this.httpServers.map((server) =>
-        new Promise((resolve, reject) => {
-          server.close((error) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(null);
-            }
-          });
-        })
+      this.httpServers.map(
+        (server) =>
+          new Promise((resolve, reject) => {
+            server.close((error) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(null);
+              }
+            });
+          }),
       ),
     );
   }

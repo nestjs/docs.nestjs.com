@@ -20,8 +20,7 @@ Nest middleware are, by default, equivalent to [express](https://expressjs.com/e
 
 You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
 
->  warning **Warning** `Express` and `fastify` handle middleware differently and provide different method signatures, read more [here](/techniques/performance#middleware).
-
+> warning **Warning** `Express` and `fastify` handle middleware differently and provide different method signatures, read more [here](/techniques/performance#middleware).
 
 ```typescript
 @@filename(logger.middleware)
@@ -132,7 +131,10 @@ export class AppModule {
 Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
 
 ```typescript
-forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
+forRoutes({
+  path: 'ab*cd',
+  method: RequestMethod.ALL,
+});
 ```
 
 The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
@@ -245,7 +247,7 @@ If we want to bind middleware to every registered route at once, we can use the 
 @@filename(main)
 const app = await NestFactory.create(AppModule);
 app.use(logger);
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Hint** Accessing the DI container in a global middleware is not possible. You can use a [functional middleware](middleware#functional-middleware) instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')` within the `AppModule` (or any other module).

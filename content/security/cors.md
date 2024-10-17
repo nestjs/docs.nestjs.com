@@ -9,7 +9,7 @@ To enable CORS, call the `enableCors()` method on the Nest application object.
 ```typescript
 const app = await NestFactory.create(AppModule);
 app.enableCors();
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 The `enableCors()` method takes an optional configuration object argument. The available properties of this object are described in the official [CORS](https://github.com/expressjs/cors#configuration-options) documentation. Another way is to pass a [callback function](https://github.com/expressjs/cors#configuring-cors-asynchronously) that lets you define the configuration object asynchronously based on the request (on the fly).
@@ -19,5 +19,5 @@ Or, pass a [CORS configuration object](https://github.com/expressjs/cors#configu
 
 ```typescript
 const app = await NestFactory.create(AppModule, { cors: true });
-await app.listen(3000);
+await app.listen(process.env.PORT ?? 3000);
 ```
