@@ -71,6 +71,7 @@ const routes: Routes = [
     RequestLifecycleComponent,
     ErrorsComponent,
     ServerlessComponent,
+    RawBodyComponent,
   ],
 })
 export class FaqModule {}

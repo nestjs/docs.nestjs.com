@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  position: relative;
+  
+  .clipboard {
+    color: #dfdfdf;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    top: 65px;
+    z-index: 10;
+    opacity: 0.7;
+    
+    &:hover:not(.copied) {
+      opacity: 1;
+    }
+
+    & > * {
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+    }
+  }  
+}

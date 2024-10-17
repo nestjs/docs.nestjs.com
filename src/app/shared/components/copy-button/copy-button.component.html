@@ -1,0 +1,8 @@
+<button
+  class="clipboard"
+  [class.copied]="copied"
+  (click)="onCopy()"
+>
+  <mat-icon>{{ copied ? 'check': 'content_copy' }}</mat-icon>
+</button>
+<ng-content></ng-content>
