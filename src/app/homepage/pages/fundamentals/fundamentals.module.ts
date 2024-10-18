@@ -13,6 +13,7 @@ import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-ag
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
 import { LazyLoadingModulesComponent } from './lazy-loading-modules/lazy-loading-modules.component';
+import { AdvancedComponent } from './advanced/advanced.component';
 
 const routes: Routes = [
   {
@@ -86,6 +87,11 @@ const routes: Routes = [
     component: CircularDependencyComponent,
     data: { title: 'Circular Dependency' },
   },
+  {
+    path: 'advanced',
+    component: AdvancedComponent,
+    data: { title: 'Advanced Concepts' },
+  },
 ];
 
 @NgModule({
@@ -102,6 +108,7 @@ const routes: Routes = [
     LifecycleEventsComponent,
     ModuleRefComponent,
     LazyLoadingModulesComponent,
+    AdvancedComponent,
   ],
 })
 export class FundamentalsModule {}
