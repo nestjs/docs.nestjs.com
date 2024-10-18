@@ -58,9 +58,10 @@ async function bootstrap() {
     .addTag('cats')
     .build();
 
-  const catDocumentFactory = () => SwaggerModule.createDocument(app, options, {
-    include: [CatsModule],
-  });
+  const catDocumentFactory = () =>
+    SwaggerModule.createDocument(app, options, {
+      include: [CatsModule],
+    });
   SwaggerModule.setup('api/cats', app, catDocumentFactory);
 
   const secondOptions = new DocumentBuilder()
@@ -70,9 +71,10 @@ async function bootstrap() {
     .addTag('dogs')
     .build();
 
-  const dogDocumentFactory = () => SwaggerModule.createDocument(app, secondOptions, {
-    include: [DogsModule],
-  });
+  const dogDocumentFactory = () =>
+    SwaggerModule.createDocument(app, secondOptions, {
+      include: [DogsModule],
+    });
   SwaggerModule.setup('api/dogs', app, dogDocumentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
@@ -93,3 +95,97 @@ Navigate to `http://localhost:3000/api/cats` to see the Swagger UI for cats:
 In turn, `http://localhost:3000/api/dogs` will expose the Swagger UI for dogs:
 
 <figure><img src="/assets/swagger-dogs.png" /></figure>
+
+#### Dropdown in the explorer bar
+
+To enable support for multiple specifications in the dropdown menu of the explorer bar, you'll need to set `explorer: true` and configure `swaggerOptions.urls` in your `SwaggerCustomOptions`.
+
+> info **Hint** Ensure that `swaggerOptions.urls` points to the JSON format of your Swagger documents! To specify the JSON document, use `jsonDocumentUrl` within `SwaggerCustomOptions`. For more setup options, check [here](/openapi/introduction#setup-options).
+
+Here’s how to set up multiple specifications from a dropdown in the explorer bar:
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+import { CatsModule } from './cats/cats.module';
+import { DogsModule } from './dogs/dogs.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Main API options
+  const options = new DocumentBuilder()
+    .setTitle('Multiple Specifications Example')
+    .setDescription('Description for multiple specifications')
+    .setVersion('1.0')
+    .build();
+
+  // Create main API document
+  const document = SwaggerModule.createDocument(app, options);
+
+  // Setup main API Swagger UI with dropdown support
+  SwaggerModule.setup('api', app, document, {
+    explorer: true,
+    swaggerOptions: {
+      urls: [
+        {
+          name: '1. API',
+          url: 'api/swagger.json',
+        },
+        {
+          name: '2. Cats API',
+          url: 'api/cats/swagger.json',
+        },
+        {
+          name: '3. Dogs API',
+          url: 'api/dogs/swagger.json',
+        },
+      ],
+    },
+    jsonDocumentUrl: '/api/swagger.json',
+  });
+
+  // Cats API options
+  const catOptions = new DocumentBuilder()
+    .setTitle('Cats Example')
+    .setDescription('Description for the Cats API')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+
+  // Create Cats API document
+  const catDocument = SwaggerModule.createDocument(app, catOptions, {
+    include: [CatsModule],
+  });
+
+  // Setup Cats API Swagger UI
+  SwaggerModule.setup('api/cats', app, catDocument, {
+    jsonDocumentUrl: '/api/cats/swagger.json',
+  });
+
+  // Dogs API options
+  const dogOptions = new DocumentBuilder()
+    .setTitle('Dogs Example')
+    .setDescription('Description for the Dogs API')
+    .setVersion('1.0')
+    .addTag('dogs')
+    .build();
+
+  // Create Dogs API document
+  const dogDocument = SwaggerModule.createDocument(app, dogOptions, {
+    include: [DogsModule],
+  });
+
+  // Setup Dogs API Swagger UI
+  SwaggerModule.setup('api/dogs', app, dogDocument, {
+    jsonDocumentUrl: '/api/dogs/swagger.json',
+  });
+
+  await app.listen(3000);
+}
+
+bootstrap();
+```
+
+In this example, we set up a main API along with separate specifications for Cats and Dogs, each accessible from the dropdown in the explorer bar.
