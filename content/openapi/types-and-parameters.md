@@ -203,6 +203,31 @@ CatBreed:
 
 > info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
 
+#### Property value examples
+
+You can set a single example for a property by using the `example` key, like this:
+
+```typescript
+@ApiProperty({
+  example: 'persian',
+})
+breed: string;
+```
+
+If you want to provide multiple examples, you can use the `examples` key by passing in an object structured like this:
+
+```typescript
+@ApiProperty({
+  examples: {
+    Persian: { value: 'persian' },
+    Tabby: { value: 'tabby' },
+    Siamese: { value: 'siamese' },
+    'Scottish Fold': { value: 'scottish_fold' },
+  },
+})
+breed: string;
+```
+
 #### Raw definitions
 
 In some specific scenarios (e.g., deeply nested arrays, matrices), you may want to describe your type by hand.
@@ -251,9 +276,10 @@ export class CreateCatDto {}
 Alternatively, you can pass an options object with the `extraModels` property specified to the `SwaggerModule#createDocument()` method, as follows:
 
 ```typescript
-const documentFactory = () => SwaggerModule.createDocument(app, options, {
-  extraModels: [ExtraModel],
-});
+const documentFactory = () =>
+  SwaggerModule.createDocument(app, options, {
+    extraModels: [ExtraModel],
+  });
 ```
 
 To get a reference (`$ref`) to your model, use the `getSchemaPath(ExtraModel)` function:
