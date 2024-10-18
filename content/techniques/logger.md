@@ -190,14 +190,14 @@ This should be suitable for most cases. But if you need more customization (like
 
 #### Logs with timestamps
 
-You can enable Nest like system logging by providing the optional `timestamp: true` setting when creating the logger instance.
+To enable timestamp logging for every logged message, you can use the optional `timestamp: true` setting when creating the logger instance.
 
 ```typescript
 import { Logger, Injectable } from '@nestjs/common';
 
 @Injectable()
 class MyService {
-  private readonly logger = new Logger(MyService.name, { timestamp: true }); // optional timestamp parameter to enable timestamps
+  private readonly logger = new Logger(MyService.name, { timestamp: true });
 
   doSomething() {
     this.logger.log('Doing something with timestamp here ->');
@@ -205,15 +205,13 @@ class MyService {
 }
 ```
 
-This will print the output in the following manner:
+This will produce output in the following format:
 
 ```bash
 [Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Doing something with timestamp here +5ms
 ```
 
-Notice the `+5ms` at the end of the line above. 
-
-For each log statement, the time difference from the last message will be calculated and printed at the end of the line.
+Note the `+5ms` at the end of the line. For each log statement, the time difference from the previous message is calculated and displayed at the end of the line.
 
 #### Injecting a custom logger
 
