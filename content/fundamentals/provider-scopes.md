@@ -80,7 +80,7 @@ Transient-scoped dependencies don't follow that pattern. If a singleton-scoped `
 
 In an HTTP server-based application (e.g., using `@nestjs/platform-express` or `@nestjs/platform-fastify`), you may want to access a reference to the original request object when using request-scoped providers. You can do this by injecting the `REQUEST` object.
 
-The `REQUEST` provider is request-scoped, so you don't need to explicitly use the `REQUEST` scope in this case.
+The `REQUEST` provider is inherently request-scoped, meaning you don't need to specify the `REQUEST` scope explicitly when using it. Additionally, even if you attempt to do so, it will be disregarded. Any provider that relies on a request-scoped provider automatically adopts a request scope, and this behavior cannot be altered.
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
@@ -209,7 +209,7 @@ return {
   resolve: (info: HostComponentInfo) =>
     info.isTreeDurable ? tenantSubTreeId : contextId,
   payload: { tenantId },
-}
+};
 ```
 
 Now whenever you inject the `REQUEST` provider (or `CONTEXT` for GraphQL applications) using the `@Inject(REQUEST)`/`@Inject(CONTEXT)`, the `payload` object would be injected (consisting of a single property - `tenantId` in this case).
