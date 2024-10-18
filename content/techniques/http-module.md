@@ -132,6 +132,18 @@ HttpModule.registerAsync({
 });
 ```
 
+You can also pass so-called `extraProviders` to the `registerAsync()` method. These providers will be merged with the module providers.
+
+```typescript
+HttpModule.registerAsync({
+  imports: [ConfigModule],
+  useClass: HttpConfigService,
+  extraProviders: [MyAdditionalProvider],
+});
+```
+
+This is useful when you want to provide additional dependencies to the factory function or the class constructor.
+
 #### Using Axios directly
 
 If you think that `HttpModule.register`'s options are not enough for you, or if you just want to access the underlying Axios instance created by `@nestjs/axios`, you can access it via `HttpService#axiosRef` as follows:

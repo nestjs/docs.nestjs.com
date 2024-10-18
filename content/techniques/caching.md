@@ -11,9 +11,10 @@ $ npm install @nestjs/cache-manager cache-manager
 ```
 
 > warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
-> * If using `cache-manager` v4, provide ttl in seconds
-> * If using `cache-manager` v5, provide ttl in milliseconds
-> * Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
+>
+> - If using `cache-manager` v4, provide ttl in seconds
+> - If using `cache-manager` v5, provide ttl in milliseconds
+> - Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
 
 #### In-memory cache
 
@@ -314,6 +315,18 @@ CacheModule.registerAsync({
 This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
 
 > info **Hint** `CacheModule#register` and `CacheModule#registerAsync` and `CacheOptionsFactory` has an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
+
+You can also pass so-called `extraProviders` to the `registerAsync()` method. These providers will be merged with the module providers.
+
+```typescript
+CacheModule.registerAsync({
+  imports: [ConfigModule],
+  useClass: ConfigService,
+  extraProviders: [MyAdditionalProvider],
+});
+```
+
+This is useful when you want to provide additional dependencies to the factory function or the class constructor.
 
 #### Example
 
