@@ -1,10 +1,8 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -54,7 +52,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.scrollSubscription = fromEvent(window, 'scroll')
       .pipe(debounceTime(this.scrollDebounceTime))
-      .subscribe((_) => {
+      .subscribe(() => {
         this.findCurrentHeading();
         this.checkViewportBoundaries();
       });
@@ -70,6 +68,7 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     this.scrollSubscription && this.scrollSubscription.unsubscribe();
+
     this.timerSubscription && this.timerSubscription.unsubscribe();
   }
 

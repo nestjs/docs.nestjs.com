@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { Dgeni } from 'dgeni';
 import { resolve } from 'path';
 
 const argv = require('yargs').argv;
 const packagePaths = argv._;
 
-const packages = packagePaths.map(packagePath => {
+const packages = packagePaths.map((packagePath) => {
   if (packagePath.indexOf('.') === 0) {
     packagePath = resolve(packagePath);
   }
@@ -13,10 +14,10 @@ const packages = packagePaths.map(packagePath => {
 
 new Dgeni(packages)
   .generate()
-  .then(docs => {
+  .then((docs) => {
     console.log(`${docs.length} docs generated.`);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err);
     process.exit(1);
   });

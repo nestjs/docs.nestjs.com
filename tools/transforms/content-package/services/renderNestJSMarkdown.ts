@@ -25,6 +25,5 @@ export function renderNestJSMarkdown() {
   applyHeadingRenderer(renderer);
   applyBlockQuoteRenderer(renderer);
 
-  // @ts-ignore
   return (content: string) => marked(content, { renderer });
 }

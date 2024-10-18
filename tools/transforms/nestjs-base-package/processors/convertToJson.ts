@@ -15,7 +15,7 @@ export class ConvertToJsonProcessor implements Processor {
     const docTypes = this.docTypes;
     docs.forEach((doc: any) => {
       if (docTypes.includes(doc.docType)) {
-        let contents = doc.renderedContent || '';
+        const contents = doc.renderedContent || '';
 
         let title = doc.title;
 

@@ -54,7 +54,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.scrollSubscription = fromEvent(window, 'scroll')
       .pipe(debounceTime(this.scrollDebounceTime))
-      .subscribe((_) => {
+      .subscribe(() => {
         this.checkViewportBoundaries();
       });
   }

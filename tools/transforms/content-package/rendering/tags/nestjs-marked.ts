@@ -10,8 +10,8 @@ export function nestjsMarkedNunjucksTag(renderNestJSMarkdown: RenderNestJSMarkdo
     parse: function(parser: any, nodes: any) {
       parser.advanceAfterBlockEnd();
 
-      var content = parser.parseUntilBlocks('endmarked');
-      var tag = new nodes.CallExtension(this, 'process', null, [content]);
+      const content = parser.parseUntilBlocks('endmarked');
+      const tag = new nodes.CallExtension(this, 'process', null, [content]);
       parser.advanceAfterBlockEnd();
 
       return tag;

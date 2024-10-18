@@ -33,7 +33,6 @@ export function applyCodeRenderer(renderer: Renderer) {
     if (filenameIndex >= 0) {
       const output = replaceFilename(
         (text, directiveRef) =>
-          // @ts-ignore
           renderer.code(text, language, isEscaped, directiveRef, true),
         code,
         filenameKey,
