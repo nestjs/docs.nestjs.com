@@ -413,87 +413,64 @@ After 5 seconds, if the microservice isn't responding, it will throw an error.
 
 #### TLS support
 
-Whenever we leave a private network we should encrypt our traffic. Nest supports TLS over TCP with the default TCP client by utilizing Nodes [TLS](https://nodejs.org/api/tls.html) module. In order to use TLS we need to pass `useTls: true` to the options.
+WWhen communicating outside of a private network, it’s important to encrypt traffic to ensure security. In NestJS, this can be achieved with TLS over TCP using Node's built-in [TLS](https://nodejs.org/api/tls.html) module. Nest provides built-in support for TLS in its TCP transport, allowing us to encrypt communication between microservices or clients.
 
-For creating a TLS Server we need to create or obtain a private key in PEM format as well as a certificate in PEM format and add it to the servers options:
+To enable TLS for a TCP server, you'll need both a private key and a certificate in PEM format. These are added to the server's options by setting the `tlsOptions` and specifying the key and cert files, as shown below:
 
 ```typescript
 import * as fs from 'fs';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const key = fs.readFileSync(<pathToKeyFile>);
-  const cert = fs.readFileSync(<pathToCertFile>);
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
-  {
-    transport: Transport.TCP,
-    options: {
-      useTls: true,
-      key,
-      cert
-    }
-  });
+  const key = fs.readFileSync('<pathToKeyFile>', 'utf8').toString();
+  const cert = fs.readFileSync('<pathToCertFile>', 'utf8').toString();
+
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        tlsOptions: {
+          key,
+          cert,
+        },
+      },
+    },
+  );
+
   await app.listen();
 }
+bootstrap();
 ```
 
-A TCP TLS client can be created using the same approach as the TCP client from above, but we need to set `useTls = true` as well.  
-The client will fetch the servers certificate by default:
+For a client to communicate securely over TLS, we also define the `tlsOptions` object but this time with the CA certificate. This is the certificate of the authority that signed the server's certificate. This ensures that the client trusts the server's certificate and can establish a secure connection.
 
 ```typescript
-@Module({
-  imports: [
-    ClientsModule.register([
-      { name: 'MATH_SERVICE', transport: Transport.TCP, options: { useTls: true} },
-    ]),
-  ]
-  ...
-})
-
-```
-
-If we are using self-signed certificates we need to pass the CA(s) in PEM format to our client as well:
-
-```typescript
-import * as fs from 'fs';
-
-const ca = fs.readFileSync(<pathToCAFile>);
+import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     ClientsModule.register([
-      { name: 'MATH_SERVICE',
+      {
+        name: 'MATH_SERVICE',
         transport: Transport.TCP,
-        options: { useTls: true, ca}
+        options: {
+          tlsOptions: {
+            ca: [fs.readFileSync('<pathToCaFile>', 'utf-8').toString()],
+          },
+        },
       },
     ]),
-  ]
-  ...
+  ],
 })
+export class AppModule {}
 ```
 
-We can also pass an array of CAs to the Client:
+You can also pass an array of CAs if your setup involves multiple trusted authorities.
 
-```typescript
-import * as fs from 'fs';
+Once everything is set up, you can inject the `ClientProxy` as usual using the `@Inject()` decorator to use the client in your services. This ensures encrypted communication across your NestJS microservices, with Node's `TLS` module handling the encryption details.
 
-const ca1 = fs.readFileSync(<pathToCAFile1>);
-const ca2 = fs.readFileSync(<pathToCAFile2>);
-
-@Module({
-  imports: [
-    ClientsModule.register([
-      { name: 'MATH_SERVICE',
-        transport: Transport.TCP,
-        options: { useTls: true, ca: [ca1, ca2]}
-      },
-    ]),
-  ]
-  ...
-})
-```
-
-Then we can inject the `ClientProxy` as usual using `@Inject('MATH_SERVICE')`
-
-For further information refer to Nodes [TLS](https://nodejs.org/api/tls.html) module:  
-The server uses the `createServer(options)` method.  
-The client uses the `TLSSocket()` constructor.
+For more information, refer to Node’s [TLS documentation](https://nodejs.org/api/tls.html).
