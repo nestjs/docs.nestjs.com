@@ -25,3 +25,4 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiResponse()`          | Method / Controller |
 | `@ApiSecurity()`          | Method / Controller |
 | `@ApiTags()`              | Method / Controller |
+| `@ApiCallbacks()`         | Method / Controller |
