@@ -410,3 +410,67 @@ this.client
 > info **Hint** The `timeout` operator is imported from the `rxjs/operators` package.
 
 After 5 seconds, if the microservice isn't responding, it will throw an error.
+
+#### TLS support
+
+WWhen communicating outside of a private network, it’s important to encrypt traffic to ensure security. In NestJS, this can be achieved with TLS over TCP using Node's built-in [TLS](https://nodejs.org/api/tls.html) module. Nest provides built-in support for TLS in its TCP transport, allowing us to encrypt communication between microservices or clients.
+
+To enable TLS for a TCP server, you'll need both a private key and a certificate in PEM format. These are added to the server's options by setting the `tlsOptions` and specifying the key and cert files, as shown below:
+
+```typescript
+import * as fs from 'fs';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+
+async function bootstrap() {
+  const key = fs.readFileSync('<pathToKeyFile>', 'utf8').toString();
+  const cert = fs.readFileSync('<pathToCertFile>', 'utf8').toString();
+
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        tlsOptions: {
+          key,
+          cert,
+        },
+      },
+    },
+  );
+
+  await app.listen();
+}
+bootstrap();
+```
+
+For a client to communicate securely over TLS, we also define the `tlsOptions` object but this time with the CA certificate. This is the certificate of the authority that signed the server's certificate. This ensures that the client trusts the server's certificate and can establish a secure connection.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+
+@Module({
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'MATH_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          tlsOptions: {
+            ca: [fs.readFileSync('<pathToCaFile>', 'utf-8').toString()],
+          },
+        },
+      },
+    ]),
+  ],
+})
+export class AppModule {}
+```
+
+You can also pass an array of CAs if your setup involves multiple trusted authorities.
+
+Once everything is set up, you can inject the `ClientProxy` as usual using the `@Inject()` decorator to use the client in your services. This ensures encrypted communication across your NestJS microservices, with Node's `TLS` module handling the encryption details.
+
+For more information, refer to Node’s [TLS documentation](https://nodejs.org/api/tls.html).
