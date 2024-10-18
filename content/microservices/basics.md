@@ -235,7 +235,7 @@ One technique is to import the `ClientsModule`, which exposes the static `regist
 
 The `name` property serves as an **injection token** that can be used to inject an instance of a `ClientProxy` where needed. The value of the `name` property, as an injection token, can be an arbitrary string or JavaScript symbol, as described [here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
 
-The `options` property is an object with the same properties we saw in the `createMicroservice()` method earlier.
+The `options` property is an object that contains the same properties we saw in the `createMicroservice()` method earlier.
 
 ```typescript
 @Module({
@@ -243,12 +243,11 @@ The `options` property is an object with the same properties we saw in the `crea
     ClientsModule.register([
       { name: 'MATH_SERVICE', transport: Transport.TCP },
     ]),
-  ]
-  ...
+  ],
 })
 ```
 
-Or alternatively use the `registerAsync()` method in case you want to pass configuration or do any other async progress.
+Alternatively, you can use the `registerAsync()` method if you need to pass in configuration or perform any other asynchronous processes.
 
 ```typescript
 @Module({
@@ -258,21 +257,19 @@ Or alternatively use the `registerAsync()` method in case you want to pass confi
         imports: [ConfigModule],
         name: 'MATH_SERVICE',
         useFactory: async (configService: ConfigService) => ({
-          options: {
-            url: configService.get<string>('URL'),
-          },
           transport: Transport.TCP,
+          options: {
+            url: configService.get('URL'),
+          },
         }),
         inject: [ConfigService],
       },
     ]),
-  ]
-  ...
+  ],
 })
 ```
 
-
-Once the module has been imported, we can inject an instance of the `ClientProxy` configured as specified via the `'MATH_SERVICE'` transporter options shown above, using the `@Inject()` decorator.
+Once the module has been imported, you can inject an instance of the `ClientProxy` configured with the specified options for the `'MATH_SERVICE'` transporter using the `@Inject()` decorator.
 
 ```typescript
 constructor(
