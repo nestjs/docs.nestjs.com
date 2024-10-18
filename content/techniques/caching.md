@@ -229,7 +229,7 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Different stores
 
-This service takes advantage of [cache-manager](https://github.com/node-cache-manager/node-cache-manager) under the hood. The `cache-manager` package supports a wide-range of useful stores, for example, [Redis store](https://github.com/node-cache-manager/node-cache-manager-redis-yet) official package for node-cache-manager. A full list of supported stores is available [here](https://github.com/node-cache-manager/node-cache-manager#store-engines). To set up the Redis store, use the `registerAsync()` method to initialize the store, as follows:
+The `cache-manager` package offers a variety of useful storage options, including the [Redis store](https://www.npmjs.com/package/cache-manager-redis-yet), which is the official package for integrating Redis with cache-manager. You can find a comprehensive list of supported stores [here](https://github.com/jaredwray/cacheable/blob/main/packages/cache-manager/READMEv5.md#store-engines). To configure the Redis store, use the `registerAsync()` method to initialize it, as shown below:
 
 ```typescript
 import { redisStore } from 'cache-manager-redis-yet';
@@ -250,17 +250,17 @@ import { AppController } from './app.controller';
 
         return {
           store: store as unknown as CacheStore,
-          ttl: 3 * 60000,  // 3 minutes (milliseconds)
+          ttl: 3 * 60000, // 3 minutes (milliseconds)
         };
-      }
-    })
+      },
+    }),
   ],
   controllers: [AppController],
 })
 export class AppModule {}
 ```
 
-> warning**Warning** `cache-manager-redis-yet` requires the ttl to be passed directly rather than as module options.
+> warning **Warning** The `cache-manager-redis-yet` package requires the `ttl` (time-to-live) setting to be specified directly rather than as part of the module options.
 
 #### Async configuration
 
