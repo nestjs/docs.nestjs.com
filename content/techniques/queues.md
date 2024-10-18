@@ -270,7 +270,6 @@ export class AudioConsumer extends WorkerHost {
 
 This is covered in the [named processor](https://docs.bullmq.io/patterns/named-processor) section of the BullMQ documentation.
 
-
 #### Request-scoped consumers
 
 When a consumer is flagged as request-scoped (learn more about the injection scopes [here](/fundamentals/injection-scopes#provider-scope)), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
@@ -320,15 +319,17 @@ You can see the complete list of events and their arguments as properties of Wor
 QueueEvent listeners must use the `@QueueEventsListener(queue)` decorator and extend the `QueueEventsHost` class provided by `@nestjs/bullmq`. To listen for an event, use the `@OnQueueEvent(event)` decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
-import { QueueEventsHost, QueueEventsListener, OnQueueEvent } from '@nestjs/bullmq';
+import {
+  QueueEventsHost,
+  QueueEventsListener,
+  OnQueueEvent,
+} from '@nestjs/bullmq';
 
 @QueueEventsListener('audio')
 export class AudioEventsListener extends QueueEventsHost {
   @OnQueueEvent('active')
-  onActive(job: { jobId: string; prev?: string; }) {
-    console.log(
-      `Processing job ${job.jobId}...`,
-    );
+  onActive(job: { jobId: string; prev?: string }) {
+    console.log(`Processing job ${job.jobId}...`);
   }
 
   // ...
@@ -449,6 +450,20 @@ BullModule.forRootAsync({
 ```
 
 This construction works the same as `useClass` with one critical difference - `BullModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
+
+Likewise, if you want to pass queue options asynchronously, use the `registerQueueAsync()` method, just keep in mind to specify the `name` attribute outside the factory function.
+
+```typescript
+BullModule.registerQueueAsync({
+  name: 'audio',
+  useFactory: () => ({
+    redis: {
+      host: 'localhost',
+      port: 6379,
+    },
+  }),
+});
+```
 
 #### Bull installation
 
@@ -845,7 +860,7 @@ export default function (job: Job, cb: DoneCallback) {
 
 #### Async configuration
 
-You may want to pass `bull` options asynchronously instead of statically. In this case, use the `forRootAsync()` method which provides several ways to deal with async configuration. Likewise, if you want to pass queue options asynchronously, use the `registerQueueAsync()` method.
+You may want to pass `bull` options asynchronously instead of statically. In this case, use the `forRootAsync()` method which provides several ways to deal with async configuration.
 
 One approach is to use a factory function:
 
@@ -909,6 +924,20 @@ BullModule.forRootAsync({
 ```
 
 This construction works the same as `useClass` with one critical difference - `BullModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
+
+Likewise, if you want to pass queue options asynchronously, use the `registerQueueAsync()` method, just keep in mind to specify the `name` attribute outside the factory function.
+
+```typescript
+BullModule.registerQueueAsync({
+  name: 'audio',
+  useFactory: () => ({
+    redis: {
+      host: 'localhost',
+      port: 6379,
+    },
+  }),
+});
+```
 
 #### Example
 
