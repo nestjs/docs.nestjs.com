@@ -73,7 +73,7 @@ findAll() {
 #### Proxies
 
 If your application runs behind a proxy server, check the specific HTTP adapter options ([express](http://expressjs.com/en/guide/behind-proxies.html) and [fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy)) for the `trust proxy` option and enable it. 
-Following example enables `trust proxy` for express adapter:
+The following example enables `trust proxy` for the `express` adapter:
 
 ```typescript
 //main.ts
