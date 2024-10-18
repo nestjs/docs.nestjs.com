@@ -103,26 +103,41 @@ findAll() {
 
 #### Proxies
 
-If your application runs behind a proxy server, check the specific HTTP adapter options ([express](http://expressjs.com/en/guide/behind-proxies.html) and [fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy)) for the `trust proxy` option and enable it. 
-The following example enables `trust proxy` for the `express` adapter:
+If your application is running behind a proxy server, it’s essential to configure the HTTP adapter to trust the proxy. You can refer to the specific HTTP adapter options for [Express](http://expressjs.com/en/guide/behind-proxies.html) and [Fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy) to enable the `trust proxy` setting.
+
+Here's an example that demonstrates how to enable `trust proxy` for the Express adapter:
 
 ```typescript
-//main.ts
+@@filename(main.ts)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { NestExpressApplication } from "@nestjs/platform-express"
+import { NestExpressApplication } from '@nestjs/platform-express';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.set('trust proxy', 'loopback') // specify a single subnet
-  await app.listen(3000)
+  app.set('trust proxy', 'loopback'); // Trust requests from the loopback address
+  await app.listen(3000);
 }
+
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.set('trust proxy', 'loopback'); // Trust requests from the loopback address
+  await app.listen(3000);
+}
+
 bootstrap();
 ```
 
-Doing so will allow you to get the original IP address from the `X-Forwarded-For` header, and you can override the `getTracker()` method to pull the value from the header rather than from `req.ip`. The following example works with both express and fastify:
+Enabling `trust proxy` allows you to retrieve the original IP address from the `X-Forwarded-For` header. You can also customize the behavior of your application by overriding the `getTracker()` method to extract the IP address from this header instead of relying on `req.ip`. The following example demonstrates how to achieve this for both Express and Fastify:
 
 ```typescript
-// throttler-behind-proxy.guard.ts
+@@filename(throttler-behind-proxy.guard)
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
 
@@ -132,11 +147,6 @@ export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
     return req.ips.length ? req.ips[0] : req.ip; // individualize IP extraction to meet your own needs
   }
 }
-
-// app.controller.ts
-import { ThrottlerBehindProxyGuard } from './throttler-behind-proxy.guard';
-
-@UseGuards(ThrottlerBehindProxyGuard)
 ```
 
 > info **Hint** You can find the API of the `req` Request object for express [here](https://expressjs.com/en/api.html#req.ips) and for fastify [here](https://www.fastify.io/docs/latest/Reference/Request/).
@@ -149,15 +159,30 @@ This module can work with websockets, but it requires some class extension. You 
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
   async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
-    const { context, limit, ttl, throttler, blockDuration, getTracker, generateKey } = requestProps;
+    const {
+      context,
+      limit,
+      ttl,
+      throttler,
+      blockDuration,
+      getTracker,
+      generateKey,
+    } = requestProps;
 
     const client = context.switchToWs().getClient();
     const tracker = client._socket.remoteAddress;
     const key = generateKey(context, tracker, throttler.name);
     const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
-      await this.storageService.increment(key, ttl, limit, blockDuration, throttler.name);
+      await this.storageService.increment(
+        key,
+        ttl,
+        limit,
+        blockDuration,
+        throttler.name,
+      );
 
-    const getThrottlerSuffix = (name: string) => (name === 'default' ? '' : `-${name}`);
+    const getThrottlerSuffix = (name: string) =>
+      name === 'default' ? '' : `-${name}`;
 
     // Throw an error when the user reached their limit.
     if (isBlocked) {
