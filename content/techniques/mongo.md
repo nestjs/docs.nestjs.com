@@ -593,6 +593,62 @@ MongooseModule.forRootAsync({
 
 This provides a flexible way to manage connection events, enabling you to handle changes in connection status effectively.
 
+#### Subdocuments
+
+To nest subdocuments within a parent document, you can define your schemas as follows:
+
+```typescript
+@@filename(name.schema)
+@Schema()
+export class Name {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+}
+
+export const NameSchema = SchemaFactory.createForClass(Name);
+```
+
+And then reference the subdocument in the parent schema:
+
+```typescript
+@@filename(person.schema)
+@Schema()
+export class Person {
+  @Prop(NameSchema)
+  name: Name;
+}
+
+export const PersonSchema = SchemaFactory.createForClass(Person);
+
+export type PersonDocumentOverride = {
+  name: Types.Subdocument<Types.ObjectId & Name>;
+};
+
+export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
+```
+
+If you want to include multiple subdocuments, you can use an array of subdocuments. It's important to override the type of the property accordingly:
+
+```typescript
+@@filename(name.schema)
+@Schema()
+export class Person {
+  @Prop([NameSchema])
+  name: Name[];
+}
+
+export const PersonSchema = SchemaFactory.createForClass(Person);
+
+export type PersonDocumentOverride = {
+  name: Types.DocumentArray<Name>;
+};
+
+export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
+```
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).
