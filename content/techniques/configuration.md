@@ -304,6 +304,35 @@ constructor(
 
 > info **Hint** The `ConfigType` is exported from the `@nestjs/config` package.
 
+#### Namespaced configurations in modules
+
+To use a namespaced configuration as a configuration object for another module in your application, you can utilize the `.asProvider()` method of the configuration object. This method converts your namespaced configuration into a provider, which can then be passed to the `forRootAsync()` (or any equivalent method) of the module you want to use.
+
+Here's an example:
+
+```typescript
+import databaseConfig from './config/database.config';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync(databaseConfig.asProvider()),
+  ],
+})
+```
+
+To understand how the `.asProvider()` method functions, let's examine the return value:
+
+```typescript
+// Return value of the .asProvider() method
+{
+  imports: [ConfigModule.forFeature(databaseConfig)],
+  useFactory: (configuration: ConfigType<typeof databaseConfig>) => configuration,
+  inject: [databaseConfig.KEY]
+}
+```
+
+This structure allows you to seamlessly integrate namespaced configurations into your modules, ensuring that your application remains organized and modular, without writing boilerplate, repetitive code.
+
 #### Cache environment variables
 
 As accessing `process.env` can be slow, you can set the `cache` property of the options object passed to `ConfigModule.forRoot()` to increase the performance of `ConfigService#get` method when it comes to variables stored in `process.env`.
@@ -530,7 +559,10 @@ There may be times where you want to conditionally load in a module and specify 
 
 ```typescript
 @Module({
-  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooModule, 'USE_FOO')],
+  imports: [
+    ConfigModule.forRoot(),
+    ConditionalModule.registerWhen(FooModule, 'USE_FOO'),
+  ],
 })
 export class AppModule {}
 ```
@@ -539,7 +571,13 @@ The above module would only load in the `FooModule` if in the `.env` file there 
 
 ```typescript
 @Module({
-  imports: [ConfigModule.forRoot(), ConditionalModule.registerWhen(FooBarModule, (env: NodeJS.ProcessEnv) => !!env['foo'] && !!env['bar'])],
+  imports: [
+    ConfigModule.forRoot(),
+    ConditionalModule.registerWhen(
+      FooBarModule,
+      (env: NodeJS.ProcessEnv) => !!env['foo'] && !!env['bar'],
+    ),
+  ],
 })
 export class AppModule {}
 ```
