@@ -17,14 +17,14 @@ bootstrap();
 
 #### Retrieving providers from static modules
 
-The standalone application object allows you to obtain a reference to any instance registered within the Nest application.  Let's imagine that we have a `TasksService` provider in the `TasksModule` module that was imported by our `AppModule` module. This class provides a set of methods that we want to call from within a CRON job.
+The standalone application object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a `TasksService` provider in the `TasksModule` module that was imported by our `AppModule` module. This class provides a set of methods that we want to call from within a CRON job.
 
 ```typescript
 @@filename()
 const tasksService = app.get(TasksService);
 ```
 
-To access the `TasksService` instance we use the `get()` method.  The `get()` method acts like a **query** that searches for an instance in each registered module. You can pass any provider's token to it. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
+To access the `TasksService` instance we use the `get()` method. The `get()` method acts like a **query** that searches for an instance in each registered module. You can pass any provider's token to it. Alternatively, for strict context checking, pass an options object with the `strict: true` property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
 
 ```typescript
 @@filename()
@@ -54,6 +54,10 @@ Following is a summary of the methods available for retrieving instance referenc
 
 > info **Hint** In non-strict mode, the root module is selected by default. To select any other module, you need to navigate the modules graph manually, step by step.
 
+Keep in mind that a standalone application does not have any network listeners, so any Nest features related to HTTP (e.g., middleware, interceptors, pipes, guards, etc.) are not available in this context.
+
+For example, even if you register a global interceptor in your application and then retrieve a controller's instance using the `app.get()` method, the interceptor will not be executed.
+
 #### Retrieving providers from dynamic modules
 
 When dealing with [dynamic modules](./fundamentals/dynamic-modules.md), we should supply the same object that represents the registered dynamic module in the application to `app.select`. For example:
@@ -74,7 +78,6 @@ Then you can select that module later on:
 @@filename()
 const configService = app.select(dynamicConfigModule).get(ConfigService, { strict: true });
 ```
-
 
 #### Terminating phase
 
