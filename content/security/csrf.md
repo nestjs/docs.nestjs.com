@@ -1,26 +1,30 @@
 ### CSRF Protection
 
-Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website where **unauthorized** commands are transmitted from a user that the web application trusts. To mitigate this kind of attack you can use the [csurf](https://github.com/expressjs/csurf) package.
+Cross-site request forgery (CSRF or XSRF) is a type of attack where **unauthorized** commands are sent from a trusted user to a web application. To help prevent this, you can use the [csrf-csrf](https://github.com/Psifi-Solutions/csrf-csrf) package.
 
 #### Use with Express (default)
 
 Start by installing the required package:
 
 ```bash
-$ npm i --save csurf
+$ npm i csrf-csrf
 ```
 
-> warning **Warning** This package is deprecated, refer to [`csurf` docs](https://github.com/expressjs/csurf#csurf) for more information.
+> warning **Warning** As noted in the [csrf-csrf documentation](https://github.com/Psifi-Solutions/csrf-csrf?tab=readme-ov-file#getting-started), this middleware requires session middleware or `cookie-parser` to be initialized beforehand. Please refer to the documentation for further details.
 
-> warning **Warning** As explained in the [`csurf` docs](https://github.com/expressjs/csurf#csurf), this middleware requires either session middleware or `cookie-parser` to be initialized first. Please see that documentation for further instructions.
-
-Once the installation is complete, apply the `csurf` middleware as global middleware.
+Once the installation is complete, register the `csrf-csrf` middleware as global middleware.
 
 ```typescript
-import * as csurf from 'csurf';
+import { doubleCsrf } from 'csrf-csrf';
 // ...
 // somewhere in your initialization file
-app.use(csurf());
+const {
+  invalidCsrfTokenError, // This is provided purely for convenience if you plan on creating your own middleware.
+  generateToken, // Use this in your routes to generate and provide a CSRF hash, along with a token cookie and token.
+  validateRequest, // Also a convenience if you plan on making your own middleware.
+  doubleCsrfProtection, // This is the default CSRF protection middleware.
+} = doubleCsrf(doubleCsrfOptions);
+app.use(doubleCsrfProtection);
 ```
 
 #### Use with Fastify
