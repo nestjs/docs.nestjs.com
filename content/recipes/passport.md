@@ -370,6 +370,18 @@ async login(@Request() req) {
 }
 ```
 
+#### Logout route
+
+To log out, we can create an additional route that invokes `res.logout()` to clear the user's session. This is a typical approach used in session-based authentication, but it does not apply to JWTs.
+
+```typescript
+@UseGuards(LocalAuthGuard)
+@Post('auth/logout')
+async logout(@Request() req) {
+  return req.logout();
+}
+```
+
 #### JWT functionality
 
 We're ready to move on to the JWT portion of our auth system. Let's review and refine our requirements:
