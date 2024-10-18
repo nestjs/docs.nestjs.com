@@ -327,7 +327,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
+export class CatchEverythingFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
