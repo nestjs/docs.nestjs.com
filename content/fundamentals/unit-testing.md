@@ -183,7 +183,9 @@ describe('CatsController', () => {
           return { findAll: jest.fn().mockResolvedValue(results) };
         }
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -286,7 +288,9 @@ describe('Cats', () => {
 > let app: NestFastifyApplication;
 >
 > beforeAll(async () => {
->   app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
+>   app = moduleRef.createNestApplication<NestFastifyApplication>(
+>     new FastifyAdapter(),
+>   );
 >
 >   await app.init();
 >   await app.getHttpAdapter().getInstance().ready();
@@ -309,7 +313,13 @@ describe('Cats', () => {
 > });
 > ```
 
-In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment. We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
+In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment.
+
+One caveat to consider is that when your application is compiled using the `compile()` method, the `HttpAdapterHost#httpAdapter` will be undefined at that time. This is because there isn't an HTTP adapter or server created yet during this compilation phase. If your test requires the `httpAdapter`, you should use the `createNestApplication()` method to create the application instance, or refactor your project to avoid this dependency when initializing the dependencies graph.
+
+Alright, let's break down the example:
+
+We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
 
 We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
 
@@ -437,7 +447,9 @@ To accomplish this, use `jest.spyOn()` on the `ContextIdFactory`:
 
 ```typescript
 const contextId = ContextIdFactory.create();
-jest.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+jest
+  .spyOn(ContextIdFactory, 'getByRequest')
+  .mockImplementation(() => contextId);
 ```
 
 Now we can use the `contextId` to access a single generated DI container sub-tree for any subsequent request.
