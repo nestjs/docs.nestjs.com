@@ -24,7 +24,7 @@ $ npm run build
 
 This command typically runs the `nest build` command and other the hood, which is basically a wrapper around the TypeScript compiler with some additional features (assets copying, etc.). In case you have a custom build script, you can run it directly. Also, for NestJS CLI mono-repos, make sure to pass the name of the project to build as an argument (`npm run build my-app`).
 
-Upon successful compilation, you should see a `dist` directory in your project root containing the compiled files, with the entry point being `main.js`. If you have any `.ts` files located in the root directory of your project (and your `tsconfig.json` configured to compile them), they will be copied to the `dist` directory as well, modyfing the directory structure a bit (instead of `dist/main.js`, you will have `dist/src/main.js` so keep that in mind when configuring your server).
+Upon successful compilation, you should see a `dist` directory in your project root containing the compiled files, with the entry point being `main.js`. If you have any `.ts` files located in the root directory of your project (and your `tsconfig.json` configured to compile them), they will be copied to the `dist` directory as well, modifying the directory structure a bit (instead of `dist/main.js`, you will have `dist/src/main.js` so keep that in mind when configuring your server).
 
 #### Production environment
 
@@ -117,7 +117,7 @@ This process is straightforward with containerization technologies like [Docker]
 There are a few more tips to keep in mind when deploying your NestJS application:
 
 - **Security**: Ensure your application is secure and protected from common threats like SQL injection, XSS, etc. See the "Security" category for more details.
-- **Monitoring**: Use monitoring tools like [Prometheus](https://prometheus.io/) or [New Relic](https://newrelic.com/) to track your application's performance and health. If you're using a cloud provider/Mau, they mau offer built-in monitoring services (like [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) etc.)
+- **Monitoring**: Use monitoring tools like [Prometheus](https://prometheus.io/) or [New Relic](https://newrelic.com/) to track your application's performance and health. If you're using a cloud provider/Mau, they may offer built-in monitoring services (like [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) etc.)
 - **Do not hardcode environment variables**: Avoid hardcoding sensitive information like API keys, passwords, or tokens in your code. Use environment variables or a secrets manager to store and access these values securely.
 - **Backups**: Regularly back up your data to prevent data loss in case of an incident.
 - **Automate deployments**: Use CI/CD pipelines to automate your deployment process and ensure consistency across environments.
