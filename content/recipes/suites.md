@@ -1,20 +1,12 @@
 ### Suites (formerly Automock)
 
-Suites is an opinionated, flexible testing meta-framework aimed at elevating the software testing experience within
-backend systems. By integrating a wide array of testing tools into a cohesive framework, Suites simplifies the process
-of creating reliable tests, thereby ensuring the development of high-quality software.
+Suites is an opinionated and flexible testing meta-framework designed to enhance the software testing experience for backend systems. By bringing together a variety of testing tools into a unified framework, Suites streamlines the creation of reliable tests, helping to ensure the development of high-quality software.
 
-> info **Hint** `Suites` is a third-party package and is not managed by the NestJS core team. Please report any issues found with the
-library in the [appropriate repository](https://github.com/suites-dev/suites).
+> info **Hint** `Suites` is a third-party package and is not maintained by the NestJS core team. Please report any issues with the library to the [appropriate repository](https://github.com/suites-dev/suites).
 
 #### Introduction
 
-Inversion of Control (IoC) is a cornerstone of the NestJS framework, enabling a modular and testable architecture. While
-NestJS provides built-in tools for creating testing modules, Suites offers an alternative approach that focuses on the
-behavior of isolated units or a few units together. Suites operates with a virtual container for dependencies, where mocks
-are automatically generated. This means you don't need to manually replace each provider with a mock in the IoC (or DI)
-container. This approach can be used instead of or alongside the built-in `Test.createTestingModule` method, providing more
-flexibility in unit testing, depending on the case.
+Inversion of Control (IoC) is a fundamental principle in the NestJS framework, enabling a modular, testable architecture. While NestJS offers built-in tools for creating testing modules, Suites provides an alternative approach that emphasizes testing isolated units or small groups of units together. Suites uses a virtual container for dependencies, where mocks are automatically generated, eliminating the need to manually replace each provider with a mock in the IoC (or DI) container. This approach can be used either in place of or alongside NestJS’s `Test.createTestingModule` method, offering more flexibility for unit testing based on your needs.
 
 #### Installation
 
@@ -26,9 +18,7 @@ $ npm i -D @suites/unit @suites/di.nestjs @suites/doubles.jest
 
 > info **Hint** `Suites` supports Vitest and Sinon as test doubles as well, `@suites/doubles.vitest` and `@suites/doubles.sinon` respectively.
 
-#### Example and Module Setup
-
-**Base Module Setup**
+#### Example and module setup
 
 Consider a module setup for `CatsService` that includes `CatsApiService`, `CatsDAL`, `HttpClient`, and `Logger`. This
 will be our base for the examples in this recipe:
@@ -46,14 +36,9 @@ import { PrismaModule } from '../prisma.module';
 export class CatsModule {}
 ```
 
-The `HttpModule` and the `PrismaModule` are both exporting providers to the host module.
+Both the `HttpModule` and `PrismaModule` are exporting providers to the host module.
 
-#### Solitary Testing Example
-
-**Example: Testing `CatsHttpService`**
-
-Let's start by testing the `CatsHttpService` in isolation. This service fetches cat data from an API and logs the
-operation:
+Let's start by testing the `CatsHttpService` in isolation. This service is responsible for fetching cat data from an API and logging the operation.
 
 ```typescript
 @@filename(cats-http.service)
@@ -103,27 +88,19 @@ describe('Cats Http Service Unit Test', () => {
 });
 ```
 
-**Explanation**
+In the example above, Suites automatically mocks the dependencies of `CatsHttpService` using `TestBed.solitary()`. This makes the setup easier since you don’t have to manually mock each dependency.
 
-In the above example, Suites automatically mocks the dependencies of `CatsHttpService` using `TestBed.solitary()`. This
-simplifies the setup, as you don't need to manually mock each dependency.
-
-- **Auto-Mocking of Dependencies**: Suites generates mocks for all dependencies of the unit under test.
-- **Empty Behavior of Mocks**: Initially, these mocks have no predefined behavior. You need to specify the behavior as
-  required for your tests.
-- **`unit` and `unitRef`** properties:
-  - `unit` is the actual instance of the class under test, with its mocked dependencies.
+- Auto-Mocking of Dependencies: Suites generates mocks for all dependencies of the unit being tested.
+- Empty Behavior of Mocks: Initially, these mocks don’t have any predefined behavior. You’ll need to specify their behavior as needed for your tests.
+- `unit` and `unitRef` properties:
+  - `unit` refers to the actual instance of the class being tested, complete with its mocked dependencies.
   - `unitRef` is a reference that allows you to access the mocked dependencies.
 
 #### Testing `CatsApiService` with `TestingModule`
 
-**Example: Using HttpModule and Nock**
+For `CatsApiService`, we want to ensure that the `HttpModule` is properly imported and configured in the `CatsModule` host module. This includes verifying that the base URL (and other configurations) for `Axios` is set correctly.
 
-For `CatsApiService`, we want to verify that the `HttpModule` is correctly imported and configured in the `CatsModule`
-host module. This includes ensuring that the base URL (and other configurations) for `Axios` is set correctly.
-
-For this case we won't use Suites, rather we'll use Nest's `TestingModule` to test the real configuration of `HttpModule`.
-We'll use `nock` to mock HTTP requests without mocking the `HttpClient` in this case:
+In this case, we won’t use Suites; instead, we’ll use Nest’s `TestingModule` to test the actual configuration of `HttpModule`. We’ll utilize `nock` to mock HTTP requests without mocking the `HttpClient` in this scenario.
 
 ```typescript
 @@filename(cats-api.service)
@@ -178,8 +155,6 @@ describe('Cats Api Service Integration Test', () => {
 
 #### Sociable Testing Example
 
-**Example: Testing `CatsService` with Mocked Dependencies**
-
 Next, let's test `CatsService`, which depends on `CatsApiService` and `CatsDAL`. We'll mock `CatsApiService` and
 expose `CatsDAL`.
 
@@ -197,6 +172,8 @@ export class CatsDAL {
 }
 ```
 
+Next up, we have the `CatsService`, which depends on `CatsApiService` and `CatsDAL`:
+
 ```typescript
 @@filename(cats.service)
 @Injectable()
@@ -212,6 +189,8 @@ export class CatsService {
   }
 }
 ```
+
+And now, let's test `CatsService` using sociable testing with Suites:
 
 ```typescript
 @@filename(cats.service.spec)
@@ -247,50 +226,29 @@ describe('Cats Service Sociable Unit Test', () => {
 });
 ```
 
-**Explanation**
+In this example, we use the `.sociable()` method to set up the test environment. We utilize the `.expose()` method to allow real interactions with `CatsDAL`, while mocking `CatsApiService` with the `.mock()` method. The `.final()` method establishes fixed behavior for `CatsApiService`, ensuring consistent outcomes across tests.
 
-In this example, we use the `.sociable()` method to set up the test environment.
-We used the `.expose()` method to expose `CatsDAL` to real interactions, while mocking `CatsApiService` with the
-`.mock()` method. The `.final()` method defines fixed behavior for `CatsApiService`, ensuring consistent behavior across
-tests.
+This approach emphasizes testing `CatsService` with genuine interactions with `CatsDAL`, which involves handling `Prisma`. Suites will use `CatsDAL` as is, and only its dependencies, like `Prisma`, will be mocked in this case.
 
-This approach focuses on testing `CatsService` with real interactions with `CatsDAL`, which involves handling `Prisma`.
-Suites will use `CatsDAL` as is, and only its dependencies will be mocked, e.g., `Prisma` in that case.
-
-**It's important to clarify that this approach is for verifying behavior only**, and it's different from loading the full testing module.
-Sociable tests are useful for verifying the behavior of units in isolation from their direct dependencies, when you want to focus on the
-behavior and interactions of units.
+It's important to note that this approach is **solely for verifying behavior** and differs from loading the entire testing module. Sociable tests are valuable for confirming the behavior of units in isolation from their direct dependencies, especially when you want to focus on the behavior and interactions of units.
 
 #### Integration Testing and Database
 
-For `CatsDAL`, it is possible to test against a real database like SQLite or PostgreSQL (e.g., using Docker Compose).
-However, for this example, we mock `Prisma` and focus on sociable testing. The reason we mock `Prisma` here is to avoid
-I/O operations and focus on the behavior of `CatsService` in isolation, but you can also test it with real I/O operations
-and a real database.
+For `CatsDAL`, it's possible to test against a real database such as SQLite or PostgreSQL (for instance, using Docker Compose). However, for this example, we will mock `Prisma` and focus on sociable testing. The reason for mocking `Prisma` is to avoid I/O operations and concentrate on the behavior of `CatsService` in isolation. That said, you can also conduct tests with real I/O operations and a live database.
 
-#### Sociable Unit Test, Integration Tests and Mocking
+#### Sociable Unit Tests, Integration Tests, and Mocking
 
-- **Sociable Unit Tests**: Focus on testing the interactions and behavior between units while mocking deeper dependencies.
-  In this example, we mock `Prisma` and expose `CatsDAL`.
+- Sociable Unit Tests: These focus on testing the interactions and behaviors between units while mocking their deeper dependencies. In this example, we mock `Prisma` and expose `CatsDAL`.
 
-- **Integration Tests**: Involve real I/O operations and fully configured DI. Testing `CatsApiService` with `HttpModule`
-  and `nock` is an integration test, as it verifies the real configuration and interaction of `HttpClient`. In this kind of
-  test, we will use Nest's `TestingModule` to load the actual module configuration.
+- Integration Tests: These involve real I/O operations and a fully configured dependency injection (DI) setup. Testing `CatsApiService` with `HttpModule` and `nock` is considered an integration test, as it verifies the real configuration and interactions of `HttpClient`. In this scenario, we will use Nest's `TestingModule` to load the actual module configuration.
 
-**Be careful when using mocks.** Ensure to test I/O operations and DI configurations (when HTTP or database interactions are
-involved, for example). After verifying these components with integration tests, you can safely mock them for sociable unit
-tests to focus on behavior and interactions. Suites sociable tests focus on verifying the behavior of units in isolation from
-their direct dependencies, while integration tests ensure that the overall system configuration and I/O operations are
-functioning correctly.
+**Exercise caution when using mocks.** Be sure to test I/O operations and DI configurations (especially when HTTP or database interactions are involved). After validating these components with integration tests, you can confidently mock them for sociable unit tests to focus on behavior and interactions. Suites sociable tests are geared towards verifying the behavior of units in isolation from their direct dependencies, while integration tests ensure that the overall system configuration and I/O operations function correctly.
 
 #### Testing IoC Container Registration
 
-It's crucial to ensure that your DI container is correctly configured to avoid runtime errors. This involves verifying
-that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration
-helps catch misconfigurations early and prevents issues that might only surface at runtime.
+It's essential to verify that your DI container is properly configured to prevent runtime errors. This includes ensuring that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration helps catch misconfigurations early, preventing issues that might only arise at runtime.
 
-To ensure that the IoC container is correctly configured, let's create an integration test that loads the actual module
-configuration and verify that all providers are correctly registered and injected:
+To confirm that the IoC container is set up correctly, let's create an integration test that loads the actual module configuration and verifies that all providers are registered and injected properly.
 
 ```typescript
 import { Test, TestingModule } from '@nestjs/testing';
