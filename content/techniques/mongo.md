@@ -551,6 +551,48 @@ MongooseModule.forRootAsync({
 });
 ```
 
+#### Connection events
+
+You can listen to Mongoose [connection events](https://mongoosejs.com/docs/connections.html#connection-events) by using the `onConnectionCreate` configuration option. This allows you to implement custom logic whenever a connection is established. For instance, you can register event listeners for the `connected`, `open`, `disconnected`, `reconnected`, and `disconnecting` events, as demonstrated below:
+
+```typescript
+MongooseModule.forRoot('mongodb://localhost/test', {
+  onConnectionCreate: (connection: Connection) => {
+    connection.on('connected', () => console.log('connected'));
+    connection.on('open', () => console.log('open'));
+    connection.on('disconnected', () => console.log('disconnected'));
+    connection.on('reconnected', () => console.log('reconnected'));
+    connection.on('disconnecting', () => console.log('disconnecting'));
+
+    return connection;
+  },
+}),
+```
+
+In this code snippet, we are establishing a connection to a MongoDB database at `mongodb://localhost/test`. The `onConnectionCreate` option enables you to set up specific event listeners for monitoring the connection's status:
+
+- `connected`: Triggered when the connection is successfully established.
+- `open`: Fires when the connection is fully opened and ready for operations.
+- `disconnected`: Called when the connection is lost.
+- `reconnected`: Invoked when the connection is re-established after being disconnected.
+- `disconnecting`: Occurs when the connection is in the process of closing.
+
+You can also incorporate the `onConnectionCreate` property into async configurations created with `MongooseModule.forRootAsync()`:
+
+```typescript
+MongooseModule.forRootAsync({
+  useFactory: () => ({
+    uri: 'mongodb://localhost/test',
+    onConnectionCreate: (connection: Connection) => {
+      // Register event listeners here
+      return connection;
+    },
+  }),
+}),
+```
+
+This provides a flexible way to manage connection events, enabling you to handle changes in connection status effectively.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).
