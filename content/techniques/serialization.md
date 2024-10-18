@@ -37,14 +37,14 @@ Now consider a controller with a method handler that returns an instance of this
 findOne(): UserEntity {
   return new UserEntity({
     id: 1,
-    firstName: 'Kamil',
-    lastName: 'Mysliwiec',
+    firstName: 'John',
+    lastName: 'Doe',
     password: 'password',
   });
 }
 ```
 
-> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized. 
+> **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
 
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
@@ -53,44 +53,43 @@ When this endpoint is requested, the client receives the following response:
 ```json
 {
   "id": 1,
-  "firstName": "Kamil",
-  "lastName": "Mysliwiec"
+  "firstName": "John",
+  "lastName": "Doe"
 }
 ```
 
 Note that the interceptor can be applied application-wide (as covered [here](https://docs.nestjs.com/interceptors#binding-interceptors)). The combination of the interceptor and the entity class declaration ensures that **any** method that returns a `UserEntity` will be sure to remove the `password` property. This gives you a measure of centralized enforcement of this business rule.
 
+#### Transform plain objects
 
-#### Using the SerializeOptions to transform plain objects to the class instance.
+You can enforce transformations at the controller level by using the `@SerializeOptions({ type: <CLASS> })` decorator. This ensures that all responses are transformed into instances of the specified class, applying any decorators from class-validator or class-transformer, even when plain objects are returned. This approach leads to cleaner code without the need to repeatedly instantiate the class or call `plainToInstance`.
 
-You could enforce transformations at the controller level by stating `@SerializeOptions({{ '{' }} type {{ ':' }} <CLASS> {{ '}' }})` to transform all responses to the instance. Doing so will ensure that decorators on the class will always be applied, even if plain objects are returned. This allows for terser code, without the added verbosity of instantiating the class or calling `plainToInstance` repeatedly. 
-
-In this example, even though a plain js object was returned in both conditional statements, they will all be converted into `UserEntity` with annotated class-validator or class-transformer decorators applied.
+In the example below, despite returning plain JavaScript objects in both conditional branches, they will be automatically converted into `UserEntity` instances, with the relevant decorators applied:
 
 ```typescript
 @UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ type: UserEntity })
 @Get()
-@SerializeOptions({ type : UserEntity })
 findOne(@Query() { id }: { id: number }): UserEntity {
   if (id === 1) {
     return {
       id: 1,
-      firstName: 'Kamil',
-      lastName: 'Mysliwiec',
+      firstName: 'John',
+      lastName: 'Doe',
       password: 'password',
     };
   }
 
   return {
     id: 2,
-    firstName: 'Kamil2',
-    lastName: 'Mysliwiec2',
+    firstName: 'Kamil',
+    lastName: 'Mysliwiec',
     password: 'password2',
   };
 }
 ```
 
-> info **Hint** By stating the expecting controller return type, we can take advantage of Typescript to check if the returned plain object conforms to the DTO/entity shape. `plainToInstance`' does not hint if the plain object conforms to the the DTO/entity class instance you are transforming it into (somewhat equivalent to typecasting). This could lead to bugs in your application.
+> info **Hint** By specifying the expected return type for the controller, you can leverage TypeScript's type-checking capabilities to ensure that the returned plain object adheres to the shape of the DTO or entity. The `plainToInstance` function doesn't provide this level of type hinting, which can lead to potential bugs if the plain object doesn't match the expected DTO or entity structure.
 
 #### Expose properties
 
