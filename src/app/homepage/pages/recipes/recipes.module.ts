@@ -19,6 +19,7 @@ import { NestCommanderComponent } from './nest-commander/nest-commander.componen
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { SuitesComponent } from './suites/suites.component';
 import { SwcComponent } from './swc/swc.component';
+import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
 
 const routes: Routes = [
@@ -124,6 +125,11 @@ const routes: Routes = [
     data: { title: 'Suites (Automock)' },
   },
   {
+    path: 'necord',
+    component: NecordComponent,
+    data: { title: 'Necord' },
+  },
+  {
     path: 'passport',
     component: PassportComponent,
     data: { title: 'passport' },
@@ -150,6 +156,7 @@ const routes: Routes = [
     SuitesComponent,
     ReplComponent,
     SwcComponent,
+    NecordComponent,
     PassportComponent,
   ],
 })
