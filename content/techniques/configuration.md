@@ -161,6 +161,27 @@ export default () => {
 
 > warning **Note** Nest CLI does not automatically move your "assets" (non-TS files) to the `dist` folder during the build process. To make sure that your YAML files are copied, you have to specify this in the `compilerOptions#assets` object in the `nest-cli.json` file. As an example, if the `config` folder is at the same level as the `src` folder, add `compilerOptions#assets` with the value `"assets": [{{ '{' }}"include": "../config/*.yaml", "outDir": "./dist/config"{{ '}' }}]`. Read more [here](/cli/monorepo#assets).
 
+Just a quick note - configuration files aren't automatically validated, even if you're using the `validationSchema` option in NestJS's `ConfigModule`. If you need validation or want to apply any transformations, you'll have to handle that within the factory function where you have complete control over the configuration object. This allows you to implement any custom validation logic as needed.
+
+For example, if you want to ensure that port is within a certain range, you can add a validation step to the factory function:
+
+```typescript
+@@filename(config/configuration)
+export default () => {
+  const config = yaml.load(
+    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+  ) as Record<string, any>;
+
+  if (config.http.port < 1024 || config.http.port > 49151) {
+    throw new Error('HTTP port must be between 1024 and 49151');
+  }
+
+  return config;
+};
+```
+
+Now, if the port is outside the specified range, the application will throw an error during startup.
+
 <app-banner-devtools></app-banner-devtools>
 
 #### Using the `ConfigService`
