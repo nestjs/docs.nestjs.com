@@ -12,7 +12,7 @@ Before deploying your NestJS application, ensure you have:
 - Any required services, like a database, set up and ready to go.
 - At least an LTS version of Node.js installed on your deployment platform.
 
-> info **Hint** If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com/), our official platform for deploying NestJS applications on AWS.
+> info **Hint** If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com/ 'Deploy with Mau'), our official platform for deploying NestJS applications on AWS.
 
 #### Building your application
 
@@ -30,9 +30,9 @@ Upon successful compilation, you should see a `dist` directory in your project r
 
 Your production environment is where your application will be accessible to external users. This could be a cloud-based platform like [AWS](https://aws.amazon.com/) (with EC2, ECS, etc.), [Azure](https://azure.microsoft.com/), or [Google Cloud](https://cloud.google.com/), or even a dedicated server you manage, such as [Hetzner](https://www.hetzner.com/).
 
-To simplify the deployment process and avoid manual setup, you can use a service like [Mau](https://mau.nestjs.com/), our official platform for deploying NestJS applications on AWS. For more details, check out [this section](todo).
+To simplify the deployment process and avoid manual setup, you can use a service like [Mau](https://mau.nestjs.com/ 'Deploy with Mau'), our official platform for deploying NestJS applications on AWS. For more details, check out [this section](todo).
 
-Some of the pros of using a **cloud-based platform** or service like [Mau](https://mau.nestjs.com/) include:
+Some of the pros of using a **cloud-based platform** or service like [Mau](https://mau.nestjs.com/ 'Deploy with Mau') include:
 
 - Scalability: Easily scale your application as your user base grows.
 - Security: Benefit from built-in security features and compliance certifications.
@@ -84,7 +84,7 @@ Best practices for logging:
 - Use Correlation IDs: In distributed systems, include unique identifiers (like correlation IDs) in your logs to trace requests across different services.
 - Use Log Levels: Categorize logs by severity (e.g., `info`, `warn`, `error`) and disable debug or verbose logs in production to reduce noise.
 
-> info **Hint** If you're using [AWS](https://aws.amazon.com/) (with [Mau](https://mau.nestjs.com/) or directly), consider JSON logging to make it easier to parse and analyze your logs.
+> info **Hint** If you're using [AWS](https://aws.amazon.com/) (with [Mau](https://mau.nestjs.com/ 'Deploy with Mau') or directly), consider JSON logging to make it easier to parse and analyze your logs.
 
 For distributed applications, using a centralized logging service like ElasticSearch, Loggly, or Datadog can be incredibly useful. These tools offer powerful features like log aggregation, search, and visualization, making it easier to monitor and analyze your application's performance and behavior.
 
@@ -110,7 +110,7 @@ Example: For a NestJS application experiencing high traffic, you can deploy mult
 
 This process is straightforward with containerization technologies like [Docker](https://www.docker.com/) and container orchestration platforms such as [Kubernetes](https://kubernetes.io/). Additionally, you can leverage cloud-specific load balancers like [AWS Elastic Load Balancing](https://aws.amazon.com/elasticloadbalancing/) or [Azure Load Balancer](https://azure.microsoft.com/en-us/services/load-balancer/) to distribute traffic across your application instances.
 
-> info **Hint** [Mau](https://mau.nestjs.com/) offers built-in support for horizontal scaling on AWS, allowing you to easily deploy multiple instances of your NestJS application and manage them with just a few clicks.
+> info **Hint** [Mau](https://mau.nestjs.com/ 'Deploy with Mau') offers built-in support for horizontal scaling on AWS, allowing you to easily deploy multiple instances of your NestJS application and manage them with just a few clicks.
 
 #### Some other tips
 
@@ -220,15 +220,15 @@ Cloud providers like AWS, Azure, and Google Cloud offer managed container servic
 
 #### Easy deployment with Mau
 
-[Mau](https://mau.nestjs.com/) is our official platform for deploying NestJS applications on [AWS](https://aws.amazon.com/). If you're not ready to manage your infrastructure manually (or just want to save time), Mau is the perfect solution for you.
+[Mau](https://mau.nestjs.com/ 'Deploy with Mau') is our official platform for deploying NestJS applications on [AWS](https://aws.amazon.com/). If you're not ready to manage your infrastructure manually (or just want to save time), Mau is the perfect solution for you.
 
 With Mau, provisioning and maintaining your infrastructure is as simple as clicking just a few buttons. Mau is designed to be simple and intuitive, so you can focus on building your applications and not worry about the underlying infrastructure. Under the hood, we use **Amazon Web Services** to provide you with a powerful and reliable platform, while abstracting away all the complexity of AWS. We take care of all the heavy lifting for you, so you can focus on building your applications and growing your business.
 
-[Mau](https://mau.nestjs.com/) is perfect for startups, small-to-medium businesses, large enterprises, and developers who want to get up and running quickly without having to spend a lot of time on learning and managing infrastructure. It's incredibly easy to use, and you can have your infrastructure up and running in minutes. It also leverages AWS behind the scenes, giving you all the advantages of AWS without the hassle of managing its complexities.
+[Mau](https://mau.nestjs.com/ 'Deploy with Mau') is perfect for startups, small-to-medium businesses, large enterprises, and developers who want to get up and running quickly without having to spend a lot of time on learning and managing infrastructure. It's incredibly easy to use, and you can have your infrastructure up and running in minutes. It also leverages AWS behind the scenes, giving you all the advantages of AWS without the hassle of managing its complexities.
 
 <figure><img src="/assets/mau-metrics.png" /></figure>
 
-With [Mau](https://mau.nestjs.com/), you can:
+With [Mau](https://mau.nestjs.com/ 'Deploy with Mau'), you can:
 
 - Deploy your NestJS applications with just a few clicks (APIs, microservices, etc.).
 - Provision **databases** such as:
@@ -253,4 +253,4 @@ $ npm install -g @nestjs/mau
 $ mau deploy
 ```
 
-Sign up for [Mau](https://mau.nestjs.com/) today and deploy your NestJS applications with ease!
+Sign up today and [Deploy with Mau](https://mau.nestjs.com/ 'Deploy with Mau') to get your NestJS applications up and running on AWS in minutes!
