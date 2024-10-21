@@ -662,7 +662,7 @@ class Person {
   lastName: string;
 
   @Virtual({
-    get: function () {
+    get: function (this: Person) {
       return `${this.firstName} ${this.lastName}`;
     },
   })
