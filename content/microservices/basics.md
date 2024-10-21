@@ -413,7 +413,7 @@ After 5 seconds, if the microservice isn't responding, it will throw an error.
 
 #### TLS support
 
-WWhen communicating outside of a private network, it’s important to encrypt traffic to ensure security. In NestJS, this can be achieved with TLS over TCP using Node's built-in [TLS](https://nodejs.org/api/tls.html) module. Nest provides built-in support for TLS in its TCP transport, allowing us to encrypt communication between microservices or clients.
+When communicating outside of a private network, it’s important to encrypt traffic to ensure security. In NestJS, this can be achieved with TLS over TCP using Node's built-in [TLS](https://nodejs.org/api/tls.html) module. Nest provides built-in support for TLS in its TCP transport, allowing us to encrypt communication between microservices or clients.
 
 To enable TLS for a TCP server, you'll need both a private key and a certificate in PEM format. These are added to the server's options by setting the `tlsOptions` and specifying the key and cert files, as shown below:
 
