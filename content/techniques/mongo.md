@@ -649,6 +649,31 @@ export type PersonDocumentOverride = {
 export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
 ```
 
+#### Virtuals
+
+In Mongoose, a **virtual** is a property that exists on a document but is not persisted to MongoDB. It is not stored in the database but is computed dynamically whenever it's accessed. Virtuals are typically used for derived or computed values, like combining fields (e.g., creating a `fullName` property by concatenating `firstName` and `lastName`), or for creating properties that rely on existing data in the document.
+
+```ts
+class Person {
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+
+  @Virtual({
+    get: function () {
+      return `${this.firstName} ${this.lastName}`;
+    },
+  })
+  fullName: string;
+}
+```
+
+> info **Hint** The `@Virtual()` decorator is imported from the `@nestjs/mongoose` package.
+
+In this example, the `fullName` virtual is derived from `firstName` and `lastName`. Even though it behaves like a normal property when accessed, it’s never saved to the MongoDB document.:
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).
