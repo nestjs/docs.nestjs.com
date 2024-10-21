@@ -50,7 +50,7 @@ EventEmitterModule.forRoot({
 });
 ```
 
-#### Dispatching Events
+#### Dispatching events
 
 To dispatch (i.e., fire) an event, first inject `EventEmitter2` using standard constructor injection:
 
@@ -72,7 +72,7 @@ this.eventEmitter.emit(
 );
 ```
 
-#### Listening to Events
+#### Listening to events
 
 To declare an event listener, decorate a method with the `@OnEvent()` decorator preceding the method definition containing the code to be executed, as follows:
 
@@ -85,10 +85,9 @@ handleOrderCreatedEvent(payload: OrderCreatedEvent) {
 
 > warning **Warning** Event subscribers cannot be request-scoped.
 
-The first argument can be a `string` or `symbol` for a simple event emitter and a `string | symbol | Array<string | symbol>` in a case of a wildcard emitter.  
+The first argument can be a `string` or `symbol` for a simple event emitter and a `string | symbol | Array<string | symbol>` in a case of a wildcard emitter.
 
 The second argument (optional) is a listener options object as follows:
-
 
 ```typescript
 export type OnEventOptions = OnOptions & {
@@ -103,7 +102,7 @@ export type OnEventOptions = OnOptions & {
 
   /**
    * If "true", the onEvent callback will not throw an error while handling the event. Otherwise, if "false" it will throw an error.
-   * 
+   *
    * @default true
    */
   suppressErrors?: boolean;
@@ -141,6 +140,22 @@ handleEverything(payload: any) {
 ```
 
 > info **Hint** `EventEmitter2` class provides several useful methods for interacting with events, like `waitFor` and `onAny`. You can read more about them [here](https://github.com/EventEmitter2/EventEmitter2).
+
+#### Preventing event loss
+
+Events triggered before or during the `onApplicationBootstrap` lifecycle hook—such as those from module constructors or the `onModuleInit` method—may be missed because the `EventSubscribersLoader` might not have finished setting up the listeners.
+
+To avoid this issue, you can use the `waitUntilReady` method of the `EventEmitterReadinessWatcher`, which returns a promise that resolves once all listeners have been registered. This method can be called in the `onApplicationBootstrap` lifecycle hook of a module to ensure that all events are properly captured.
+
+```typescript
+await this.eventEmitterReadinessWatcher.waitUntilReady();
+await this.eventEmitter.emit(
+  'order.created',
+  new OrderCreatedEvent({ orderId: 1, payload: {} }),
+);
+```
+
+> info **Note** This is only necessary for events emitted before the `onApplicationBootstrap` lifecycle hook is complete.
 
 #### Example
 
