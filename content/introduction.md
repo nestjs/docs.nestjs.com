@@ -33,7 +33,6 @@ Or with **Git**:
 ```bash
 $ git clone --depth=1 https://github.com/nestjs/typescript-starter.git project
 $ cd project
-$ rm -r .git
 $ npm install
 $ npm run start
 ```
