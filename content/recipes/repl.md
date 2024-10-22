@@ -29,7 +29,7 @@ bootstrap();
 Now in your terminal, start the REPL with the following command:
 
 ```bash
-$ npm run start -- --entryFile repl
+$ npm run start --entryFile repl
 ```
 
 > info **Hint** `repl` returns a [Node.js REPL server](https://nodejs.org/api/repl.html) object.
@@ -113,7 +113,7 @@ Interface: $(token: InjectionToken) => any
 During development it is useful to run REPL in a watch mode to reflect all the code changes automatically:
 
 ```bash
-$ npm run start -- --watch --entryFile repl
+$ npm run start --watch --entryFile repl
 ```
 
 This has one flaw, the REPL's command history is discarded after each reload which might be cumbersome.
