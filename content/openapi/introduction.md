@@ -123,6 +123,11 @@ export interface SwaggerDocumentOptions {
    * @default () => controllerKey_methodKey
    */
   operationIdFactory?: (controllerKey: string, methodKey: string) => string;
+
+  /**
+   * If `true`, the name of the nest controller is included as a tag
+   */
+  includeControllerTag?: boolean;
 }
 ```
 
