@@ -123,6 +123,15 @@ export interface SwaggerDocumentOptions {
    * @default () => controllerKey_methodKey
    */
   operationIdFactory?: (controllerKey: string, methodKey: string) => string;
+
+  /*
+   * Generate tags automatically based on the controller name.
+   * If `false`, you must use the `@ApiTags()` decorator to define tags.
+   * Otherwise, the controller name without the suffix `Controller` will be used.
+   *
+   * @default true
+   */
+  autoTagControllers?: boolean;
 }
 ```
 

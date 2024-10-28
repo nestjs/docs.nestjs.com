@@ -91,7 +91,7 @@ You must duplicate both description and example values. With `introspectComments
 roles: RoleEnum[] = [];
 ```
 
-There are `dtoKeyOfComment` and `controllerKeyOfComment` plugin options that you can use to customize how the plugin will set the value for `ApiProperty` and `ApiOperation` decorators respectively. Take a look at the following example:
+There are `dtoKeyOfComment` and `controllerKeyOfComment` plugin options available for customizing how the plugin assigns values to the `ApiProperty` and `ApiOperation` decorators, respectively. See the example below:
 
 ```typescript
 export class SomeController {
@@ -103,13 +103,29 @@ export class SomeController {
 }
 ```
 
-By default, these options are set to `"description"`. This means the plugin will assign `"Create some resource"` to `description` key on the `ApiOperation` operator. Like so:
+This is equivalent to the following instruction:
 
-```ts
-@ApiOperation({ description: "Create some resource" })
+```typescript
+@ApiOperation({ summary: "Create some resource" })
 ```
 
-> info **Hint** For models, the same logic applies but to `ApiProperty` decorator instead.
+> info **Hint** For models, the same logic applies but is used with the `ApiProperty` decorator instead.
+
+For controllers, you can provide not only a summary but also a description (remarks), tags (such as` @deprecated`), and response examples, like this:
+
+```ts
+/**
+ * Create a new cat
+ *
+ * @remarks This operation allows you to create a new cat.
+ *
+ * @deprecated
+ * @throws {500} Something went wrong.
+ * @throws {400} Bad Request.
+ */
+@Post()
+async create(): Promise<Cat> {}
+```
 
 #### Using the CLI plugin
 
@@ -180,11 +196,11 @@ export interface PluginOptions {
   </tr>
   <tr>
     <td><code>controllerKeyOfComment</code></td>
-    <td><code>'description'</code></td>
+    <td><code>'summary'</code></td>
     <td>The property key to set the comment text to on <code>ApiOperation</code>.</td>
   </tr>
   <tr>
-  <td><code>introspectComments</code></td>
+    <td><code>introspectComments</code></td>
     <td><code>false</code></td>
     <td>If set to true, plugin will generate descriptions and example values for properties based on comments</td>
   </tr>

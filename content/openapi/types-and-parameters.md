@@ -230,7 +230,7 @@ breed: string;
 
 #### Raw definitions
 
-In some specific scenarios (e.g., deeply nested arrays, matrices), you may want to describe your type by hand.
+In certain cases, such as deeply nested arrays or matrices, you may need to manually define your type:
 
 ```typescript
 @ApiProperty({
@@ -245,7 +245,27 @@ In some specific scenarios (e.g., deeply nested arrays, matrices), you may want 
 coords: number[][];
 ```
 
-Likewise, in order to define your input/output content manually in controller classes, use the `schema` property:
+You can also specify raw object schemas, like this:
+
+```typescript
+@ApiProperty({
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      example: 'Error'
+    },
+    status: {
+      type: 'number',
+      example: 400
+    }
+  },
+  required: ['name', 'status']
+})
+rawDefinition: Record<string, any>;
+```
+
+To manually define input/output content in controller classes, use the `schema` property:
 
 ```typescript
 @ApiBody({
