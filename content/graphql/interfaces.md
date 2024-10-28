@@ -89,6 +89,8 @@ export class CharacterInterfaceResolver {
 
 Now the `friends` field resolver is auto-registered for all object types that implement the `Character` interface.
 
+> warning **Warning** This requires the `inheritResolversFromInterfaces` property set to be true in the `GraphQLModule` configuration.
+
 #### Schema first
 
 To define an interface in the schema first approach, simply create a GraphQL interface with SDL.
