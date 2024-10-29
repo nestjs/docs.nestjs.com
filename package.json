@@ -57,7 +57,7 @@
     "@types/jasminewd2": "2.0.13",
     "@types/lodash": "4.17.10",
     "@types/marked": "6.0.0",
-    "@types/node": "20.16.12",
+    "@types/node": "22.8.2",
     "@types/prismjs": "1.26.0",
     "@types/rimraf": "4.0.5",
     "angular-eslint": "^18.3.1",
