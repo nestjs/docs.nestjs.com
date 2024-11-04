@@ -12,6 +12,8 @@ The following diagram depicts the sequence of key application lifecycle events, 
 
 Lifecycle events happen during application bootstrapping and shutdown. Nest calls registered lifecycle hook methods on modules, providers and controllers at each of the following lifecycle events (**shutdown hooks** need to be enabled first, as described [below](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)). As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
 
+In the following table, `onModuleInit` and `onApplicationBootstrap` are only triggered if you explicitly call `app.init()` or `app.listen()`.
+
 In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onApplicationShutdown` are only triggered if you explicitly call `app.close()` or if the process receives a special system signal (such as SIGTERM) and you have correctly called `enableShutdownHooks` at application bootstrap (see below **Application shutdown** part).
 
 | Lifecycle hook method           | Lifecycle event triggering the hook method call                                                                                                                                                                   |
