@@ -58,6 +58,19 @@ export class FileSizeValidationPipe implements PipeTransform {
 }
 ```
 
+This can be used in conjunction with the `FileInterceptor` as follows:
+
+```typescript
+@Post('file')
+@UseInterceptors(FileInterceptor('file'))
+uploadFileAndValidate(@UploadedFile(
+  new FileSizeValidationPipe(),
+  // other pipes can be added here
+) file: Express.Multer.File, ) {
+  return file;
+}
+```
+
 Nest provides a built-in pipe to handle common use cases and facilitate/standardize the addition of new ones. This pipe is called `ParseFilePipe`, and you can use it as follows:
 
 ```typescript
