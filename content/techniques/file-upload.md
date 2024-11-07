@@ -65,7 +65,7 @@ This can be used in conjunction with the `FileInterceptor` as follows:
 @UseInterceptors(FileInterceptor('file'))
 uploadFileAndValidate(@UploadedFile(
   new FileSizeValidationPipe(),
-  // all other validators here
+  // other pipes can be added here
 ) file: Express.Multer.File, ) {
   return file;
 }
