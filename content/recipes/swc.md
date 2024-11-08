@@ -134,7 +134,7 @@ Now if you use CLI plugins, `swc-loader` will not load them automatically. Inste
 declare a `generate-metadata.ts` file near the `main.ts` file with the following content:
 
 ```ts
-import { PluginMetadataGenerator } from '@nestjs/cli/lib/compiler/plugins';
+import { PluginMetadataGenerator } from '@nestjs/cli/lib/compiler/plugins/plugin-metadata-generator';
 import { ReadonlyVisitor } from '@nestjs/swagger/dist/plugin';
 
 const generator = new PluginMetadataGenerator();
