@@ -12,7 +12,14 @@ Before deploying your NestJS application, ensure you have:
 - Any required services, like a database, set up and ready to go.
 - At least an LTS version of Node.js installed on your deployment platform.
 
-> info **Hint** If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com/ 'Deploy Nest'), our official platform for deploying NestJS applications on AWS.
+> info **Hint** If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com/ 'Deploy Nest'), our official platform for deploying NestJS applications on AWS. With Mau, deploying your NestJS application is as simple as clicking a few buttons and running a single command:
+>
+> ```bash
+> $ npm install -g @nestjs/mau
+> $ mau deploy
+> ```
+>
+> Once the deployment is complete, you'll have your NestJS application up and running on AWS in seconds!
 
 #### Building your application
 

@@ -159,6 +159,16 @@ blockquote {
   }
 }
 
+blockquote {
+  code[class*=language-], pre[class*=language-] {
+    margin: 20px 0;
+  }
+  
+  p:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
 figure {
   margin: 60px 30px;
   text-align: center;
