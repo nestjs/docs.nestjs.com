@@ -14,7 +14,7 @@ const app = await NestFactory.create(AppModule);
 const httpAdapter = app.getHttpAdapter();
 ```
 
-#### In-context strategy
+#### As injectable
 
 To get a reference to the `HttpAdapterHost` from within the application context, inject it using the same technique as any other existing provider (e.g., using constructor injection).
 
@@ -47,4 +47,22 @@ The adapter object exposes several useful methods to interact with the HTTP serv
 
 ```typescript
 const instance = httpAdapter.getInstance();
+```
+
+#### Listening event
+
+To execute an action when the server begins listening for incoming requests, you can subscribe to the `listen$` stream, as demonstrated below:
+
+```typescript
+this.httpAdapterHost.listen$.subscribe(() =>
+  console.log('HTTP server is listening'),
+);
+```
+
+Additionally, the `HttpAdapterHost` provides a `listening` boolean property that indicates whether the server is currently active and listening:
+
+```typescript
+if (this.httpAdapterHost.listening) {
+  console.log('HTTP server is listening');
+}
 ```
