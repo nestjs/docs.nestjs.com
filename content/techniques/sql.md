@@ -971,52 +971,6 @@ import { UsersController } from './users.controller';
 export class UserHttpModule {}
 ```
 
-#### Relations
-
-Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
-
-There are three types of relations:
-
-<table>
-  <tr>
-    <td><code>One-to-one</code></td>
-    <td>Every row in the primary table has one and only one associated row in the foreign table</td>
-  </tr>
-  <tr>
-    <td><code>One-to-many / Many-to-one</code></td>
-    <td>Every row in the primary table has one or more related rows in the foreign table</td>
-  </tr>
-  <tr>
-    <td><code>Many-to-many</code></td>
-    <td>Every row in the primary table has many related rows in the foreign table, and every record in the foreign table has many related rows in the primary table</td>
-  </tr>
-</table>
-
-To define relations in models, use the corresponding **decorators**. For example, to define that each `User` can have multiple photos, use the `@HasMany()` decorator.
-
-```typescript
-@@filename(user.model)
-import { Column, Model, Table, HasMany } from 'sequelize-typescript';
-import { Photo } from '../photos/photo.model';
-
-@Table
-export class User extends Model {
-  @Column
-  firstName: string;
-
-  @Column
-  lastName: string;
-
-  @Column({ defaultValue: true })
-  isActive: boolean;
-
-  @HasMany(() => Photo)
-  photos: Photo[];
-}
-```
-
-> info **Hint** To learn more about associations in Sequelize, read [this](https://github.com/RobinBuschmann/sequelize-typescript#model-association) chapter.
-
 #### Auto-load models
 
 Manually adding models to the `models` array of the connection options can be tedious. In addition, referencing models from the root module breaks application domain boundaries and causes leaking implementation details to other parts of the application. To solve this issue, automatically load models by setting both `autoLoadModels` and `synchronize` properties of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
