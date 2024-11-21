@@ -67,7 +67,7 @@ The type function is required when there's the potential for ambiguity between t
 
 The options object can have any of the following key/value pairs:
 
-- `nullable`: for specifying whether a field is nullable (in SDL, each field is non-nullable by default); `boolean`
+- `nullable`: for specifying whether a field is nullable (in `@nestjs/graphql`, each field is non-nullable by default); `boolean`
 - `description`: for setting a field description; `string`
 - `deprecationReason`: for marking a field as deprecated; `string`
 
@@ -77,6 +77,12 @@ For example:
 @Field({ description: `Book title`, deprecationReason: 'Not useful in v2 schema' })
 title: string;
 ```
+
+> info **Hint** When a field is nullable you need to type it verbosely in order to prevent any runtime issue: `@Field(() => String, {nullable: true}) title?: string | null;`. This particularly important when dealing with parcial updates in your API, especially if the corresponding database field is non-nullable (e.g. `author.title`).
+>
+> **Problem**: assume the `title` field is defined like this: `@Field(() => String, { nullable: true }) title?: string;`, indicating that user can skip `title` entirely in an update mutation. However if a user sends `null` explicitly for `title` and you pass the DTO directly to your database: `prisma.author.update({ where: { id: author.id }, data: dto })` your database will throw an error because `null` is not assignable to `title` which is non-nullable.
+>
+> **Solution**: To prevent this from happening you can be more specific when you're defining `title`'s type: `@Field(() => String, {nullable: true}) title?: string | null;`. Now when you're passing your DTO directly to the underlying ORM TS complain that `null` is not assignable to `string`.
 
 > info **Hint** You can also add a description to, or deprecate, the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
 
