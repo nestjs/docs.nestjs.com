@@ -10,13 +10,13 @@ The following example uses a manually instantiated method-scoped pipe. Just as w
 
 ```typescript
 @@filename()
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new RpcException(errors) }))
 @MessagePattern({ cmd: 'sum' })
 accumulate(data: number[]): number {
   return (data || []).reduce((a, b) => a + b);
 }
 @@switch
-@UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new RpcException(errors) }))
 @MessagePattern({ cmd: 'sum' })
 accumulate(data) {
   return (data || []).reduce((a, b) => a + b);
