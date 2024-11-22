@@ -41,35 +41,6 @@ export class UpvotePostInput {
 
 > info **Hint** The `@InputType()` decorator takes an options object as an argument, so you can, for example, specify the input type's description. Note that, due to TypeScript's metadata reflection system limitations, you must either use the `@Field` decorator to manually indicate a type, or use a [CLI plugin](/graphql/cli-plugin).
 
-> info **Hint** When a field is nullable you need to type it verbosely in order to prevent any runtime issue:
->
-> ```ts
-> @Field(() => String, {{ '{' }} nullable: true {{ '}' }}) title?: string | null;
-> ```
->
-> This is particularly important when dealing with partial updates in your API, especially if the corresponding database field is non-nullable (let's assume `author.title` is a mandatory field in database).
->
-> Problem: assume you want to allow users to perform partial updates on `author`'s info. So you define the `title` field in your `Input` object type:
->
-> ```ts
-> @Field(() => String, {{ '{' }} nullable: true {{ '}' }}) title?: string;
-> ```
->
-> Indicating that user can skip `title` entirely in an update mutation. However if a user sends `null` explicitly for `title` and you pass the DTO directly to your database, something like this:
->
-> ```ts
-> prisma.author.update({{ '{' }}
->   where: {{ '{' }}
->     id: author.id
->   {{ '}' }},
->   data: dto
-> {{ '}' }})
-> ```
->
-> Then your database will throw an error because `null` is not assignable to `title` which is non-nullable.
->
-> Solution: To prevent this from happening you can be more specific when you're defining `title`'s type: `@Field(() => String, {{ '{' }} nullable: true {{ '}' }}) title?: string | null;`. Now when you're passing your DTO directly to the underlying ORM TS complain that `null` is not assignable to `string`.
-
 We can then use this type in the resolver class:
 
 ```typescript
