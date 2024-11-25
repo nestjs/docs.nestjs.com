@@ -416,6 +416,10 @@ header {
   @media (min-width: 1200px) and (max-width: 1300px) {
     width: 190px;
   }
+
+  @media (max-width: 680px) {
+    width: 190px;
+  }
 }
 
 .search-input::placeholder {
