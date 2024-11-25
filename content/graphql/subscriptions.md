@@ -34,7 +34,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 
 To create a subscription using the code first approach, we use the `@Subscription()` decorator (exported from the `@nestjs/graphql` package) and the `PubSub` class from the `graphql-subscriptions` package, which provides a simple **publish/subscribe API**.
 
-The following subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterator`. This method takes a single argument, the `triggerName`, which corresponds to an event topic name.
+The following subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterableIterator`. This method takes a single argument, the `triggerName`, which corresponds to an event topic name.
 
 ```typescript
 const pubSub = new PubSub();
@@ -44,7 +44,7 @@ export class AuthorResolver {
   // ...
   @Subscription(() => Comment)
   commentAdded() {
-    return pubSub.asyncIterator('commentAdded');
+    return pubSub.asyncIterableIterator('commentAdded');
   }
 }
 ```
@@ -68,7 +68,7 @@ Note that subscriptions, by definition, return an object with a single top level
   name: 'commentAdded',
 })
 subscribeToCommentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -111,7 +111,7 @@ To filter out specific events, set the `filter` property to a filter function. T
     payload.commentAdded.title === variables.title,
 })
 commentAdded(@Args('title') title: string) {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -124,7 +124,7 @@ To mutate the published event payload, set the `resolve` property to a function.
   resolve: value => value,
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -140,7 +140,7 @@ If you need to access injected providers (e.g., use an external service to valid
   }
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -154,7 +154,7 @@ The same construction works with filters:
   }
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -170,7 +170,7 @@ export class AuthorResolver {
   // ...
   @Subscription()
   commentAdded() {
-    return pubSub.asyncIterator('commentAdded');
+    return pubSub.asyncIterableIterator('commentAdded');
   }
 }
 ```
@@ -183,7 +183,7 @@ To filter out specific events based on context and arguments, set the `filter` p
     payload.commentAdded.title === variables.title,
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -194,7 +194,7 @@ To mutate the published payload, we can use a `resolve` function.
   resolve: value => value,
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -208,7 +208,7 @@ If you need to access injected providers (e.g., use an external service to valid
   }
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -222,7 +222,7 @@ The same construction works with filters:
   }
 })
 commentAdded() {
-  return pubSub.asyncIterator('commentAdded');
+  return pubSub.asyncIterableIterator('commentAdded');
 }
 ```
 
@@ -369,7 +369,7 @@ GraphQLModule.forRoot<MercuriusDriverConfig>({
 
 To create a subscription using the code first approach, we use the `@Subscription()` decorator (exported from the `@nestjs/graphql` package) and the `PubSub` class from the `mercurius` package, which provides a simple **publish/subscribe API**.
 
-The following subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterator`. This method takes a single argument, the `triggerName`, which corresponds to an event topic name.
+The following subscription handler takes care of **subscribing** to an event by calling `PubSub#asyncIterableIterator`. This method takes a single argument, the `triggerName`, which corresponds to an event topic name.
 
 ```typescript
 @Resolver(() => Author)
