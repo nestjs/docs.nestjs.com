@@ -4,7 +4,7 @@ Providers are a fundamental concept in Nest. Many of the basic Nest classes may 
 
 <figure><img class="illustrative-image" src="/assets/Components_1.png" /></figure>
 
-In the previous chapter, we built a simple `CatsController`. Controllers should handle HTTP requests and delegate more complex tasks to **providers**. Providers are plain JavaScript classes that are declared as `providers` in a NestJS module. For more information, refer to the NestJS Module documentation.
+In the previous chapter, we built a simple `CatsController`. Controllers should handle HTTP requests and delegate more complex tasks to **providers**. Providers are plain JavaScript classes that are declared as `providers` in a NestJS module. For more information, see the "Modules" chapter.
 
 > info **Hint** Since Nest enables the possibility to design and organize dependencies in a more OO way, we strongly recommend following the [SOLID principles](https://en.wikipedia.org/wiki/SOLID).
 
@@ -122,13 +122,13 @@ constructor(private catsService: CatsService) {}
 
 #### Scopes
 
-Providers normally have a lifetime ("scope") synchronized with the application lifecycle. When the application is bootstrapped, every dependency must be resolved, and therefore every provider has to be instantiated. Similarly, when the application shuts down, each provider will be destroyed. However, there are ways to make your provider lifetime **request-scoped** as well. You can read more about these techniques in the [Injection Scopes documentation](/fundamentals/injection-scopes).
+Providers normally have a lifetime ("scope") synchronized with the application lifecycle. When the application is bootstrapped, every dependency must be resolved, and therefore every provider has to be instantiated. Similarly, when the application shuts down, each provider will be destroyed. However, there are ways to make your provider lifetime **request-scoped** as well. You can read more about these techniques in the [Injection Scopes](/fundamentals/injection-scopes) chapter.
 
 <app-banner-courses></app-banner-courses>
 
 #### Custom providers
 
-Nest has a built-in inversion of control ("IoC") container that resolves relationships between providers. This feature underlies the dependency injection feature described above, but is in fact far more powerful than what we've described so far. There are several ways to define a provider: you can use plain values, classes, and either asynchronous or synchronous factories. More examples of defining providers can be found in the [Dependency Injection documentation](/fundamentals/dependency-injection).
+Nest has a built-in inversion of control ("IoC") container that resolves relationships between providers. This feature underlies the dependency injection feature described above, but is in fact far more powerful than what we've described so far. There are several ways to define a provider: you can use plain values, classes, and either asynchronous or synchronous factories. More examples of defining providers can be found in the [Dependency Injection](/fundamentals/dependency-injection) chapter.
 
 #### Optional providers
 
@@ -145,7 +145,7 @@ export class HttpService<T> {
 }
 ```
 
-Note that in the example above we are using a custom provider, which is the reason we include the `HTTP_OPTIONS` custom **token**. Previous examples showed constructor-based injection indicating a dependency through a class in the constructor. You can read more about custom providers and their associated tokens in the [Custom Providers documentation](/fundamentals/custom-providers).
+Note that in the example above we are using a custom provider, which is the reason we include the `HTTP_OPTIONS` custom **token**. Previous examples showed constructor-based injection indicating a dependency through a class in the constructor. You can read more about custom providers and their associated tokens in the [Custom Providers](/fundamentals/custom-providers) chapter.
 
 #### Property-based injection
 
