@@ -13,7 +13,7 @@ $ npm install @nestjs/cache-manager cache-manager
 > warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
 >
 > - If using `cache-manager` v4, provide ttl in seconds
-> - If using `cache-manager` v5, provide ttl in milliseconds
+> - If using `cache-manager` v5 or later, provide ttl in milliseconds
 > - Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
 
 #### In-memory cache
@@ -43,6 +43,8 @@ constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 ```
 
 > info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/cache-manager` package.
+
+> warning **Note** For `cache-manager` v6, use the `CacheManagerStore` type instead of the `Cache` class.
 
 The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `null` will be returned.
 
