@@ -345,7 +345,7 @@ pets: Pet[];
 
 Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
 
-#### Schema name
+#### Schema name and description
 
 As you may have noticed, the name of the generated schema is based on the name of the original model class (for example, the `CreateCatDto` model generates a `CreateCatDto` schema). If you'd like to change the schema name, you can use the `@ApiSchema()` decorator.
 
@@ -357,3 +357,19 @@ class CreateCatDto {}
 ```
 
 The model above will be translated into the `CreateCatRequest` schema.
+
+By default, no description is added to the generated schema. You can add one like this
+
+```typescript
+@ApiSchema({ description: 'Description of the CreateCatDto schema' })
+class CreateCatDto {}
+```
+
+That way, the description will be rendered like this
+
+```yaml
+schemas:
+  CreateCatDto:
+    type: object
+    description: Description of the CreateCatDto schema
+```
