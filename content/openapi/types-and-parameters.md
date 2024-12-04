@@ -365,7 +365,7 @@ By default, no description is added to the generated schema. You can add one usi
 class CreateCatDto {}
 ```
 
-That way, the description will be rendered like this
+That way, the description will be included in the schema, as follows:
 
 ```yaml
 schemas:
