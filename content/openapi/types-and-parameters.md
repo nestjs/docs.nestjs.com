@@ -358,7 +358,7 @@ class CreateCatDto {}
 
 The model above will be translated into the `CreateCatRequest` schema.
 
-By default, no description is added to the generated schema. You can add one like this
+By default, no description is added to the generated schema. You can add one using the `description` attribute:
 
 ```typescript
 @ApiSchema({ description: 'Description of the CreateCatDto schema' })
