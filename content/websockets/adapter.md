@@ -104,6 +104,9 @@ const wsAdapter = new WsAdapter(app, {
     return { event, data: payload };
   },
 });
+```
+
+Alternatively, you can configure the message parser after the adapter is created by using the `setMessageParser` method.
 
 #### Advanced (custom adapter)
 
