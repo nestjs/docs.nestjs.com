@@ -94,19 +94,16 @@ app.useWebSocketAdapter(new WsAdapter(app));
 
 > info **Hint** The `WsAdapter` is imported from `@nestjs/platform-ws`.
 
-The `wsAdapter` can only route messages in the `{{ '{' }} event: string, data: any {{ '}' }}` format. If you need to receive and process messages in other formats, you should set up an appropriate message parser to convert the messages into the `{{ '{' }} event: string, data: any {{ '}' }}` format.
+The `wsAdapter` is designed to handle messages in the `{{ '{' }} event: string, data: any {{ '}' }}` format. If you need to receive and process messages in a different format, you'll need to configure a message parser to convert them into this required format.
 
 ```typescript
 const wsAdapter = new WsAdapter(app, {
-  // to process [event, data] format messages
+  // To handle messages in the [event, data] format
   messageParser: (data) => {
     const [event, payload] = JSON.parse(data.toString());
     return { event, data: payload };
   },
 });
-```
-
-You can also set up after the adapter is created using the `setMessageParser` method.
 
 #### Advanced (custom adapter)
 
