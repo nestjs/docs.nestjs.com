@@ -62,6 +62,8 @@ Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
 
 There is a **third** constructor argument (optional) - `options` - that can be used to provide an error [cause](https://nodejs.org/en/blog/release/v16.9.0/#error-cause). This `cause` object is not serialized into the response object, but it can be useful for logging purposes, providing valuable information about the inner error that caused the `HttpException` to be thrown.
 
+> warning **Warning** When using NestJS with TypeScript, ensure the lib option or target in your tsconfig.json is set to at least "es2022" to avoid compilation errors.
+
 Here's an example overriding the entire response body and providing an error cause:
 
 ```typescript
