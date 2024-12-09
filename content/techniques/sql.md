@@ -757,7 +757,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 export class AppModule {}
 ```
 
-The `forRoot()` method supports all the configuration properties exposed by the Sequelize constructor ([read more](https://sequelize.org/v5/manual/getting-started.html#setting-up-a-connection)). In addition, there are several extra configuration properties described below.
+The `forRoot()` method supports all the configuration properties exposed by the Sequelize constructor ([read more](https://sequelize.org/docs/v6/getting-started/#connecting-to-a-database)). In addition, there are several extra configuration properties described below.
 
 <table>
   <tr>
@@ -1046,7 +1046,7 @@ With that option specified, every model registered through the `forFeature()` me
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
-There are many different strategies to handle [Sequelize transactions](https://sequelize.org/v5/manual/transactions.html). Below is a sample implementation of a managed transaction (auto-callback).
+There are many different strategies to handle [Sequelize transactions](https://sequelize.org/docs/v6/other-topics/transactions/). Below is a sample implementation of a managed transaction (auto-callback).
 
 First, we need to inject the `Sequelize` object into a class in the normal way:
 
@@ -1087,9 +1087,9 @@ async createMany() {
 
 #### Migrations
 
-[Migrations](https://sequelize.org/v5/manual/migrations.html) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, Sequelize provides a dedicated [CLI](https://sequelize.org/v5/manual/migrations.html#the-cli).
+[Migrations](https://sequelize.org/docs/v6/other-topics/migrations/) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, Sequelize provides a dedicated [CLI](https://sequelize.org/docs/v6/other-topics/migrations/#installing-the-cli).
 
-Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the Sequelize CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [Sequelize documentation](https://sequelize.org/v5/manual/migrations.html#the-cli).
+Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the Sequelize CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [Sequelize documentation](https://sequelize.org/docs/v6/other-topics/migrations/#installing-the-cli).
 
 <app-banner-courses></app-banner-courses>
 
