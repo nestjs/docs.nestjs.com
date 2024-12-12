@@ -115,7 +115,7 @@ Other options to create a client (either `ClientProxyFactory` or `@Client()`) ca
 
 #### Context
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. When using the RabbitMQ transporter, you can access the `RmqContext` object.
+In more complex scenarios, you may need to access additional information about the incoming request. When using the RabbitMQ transporter, you can access the `RmqContext` object.
 
 ```typescript
 @@filename()
@@ -240,4 +240,63 @@ replaceEmoji(data, context) {
   const { properties: { headers } } = context.getMessage();
   return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
 }
+```
+
+#### Instance status updates
+
+To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the RMQ driver, the `status` stream emits `connected` and `disconnected` events.
+
+```typescript
+this.client.status.subscribe((status: RmqStatus) => {
+  console.log(status);
+});
+```
+
+> info **Hint** The `RmqStatus` type is imported from the `@nestjs/microservices` package.
+
+Similarly, you can subscribe to the server's `status` stream to receive notifications about the server's status.
+
+```typescript
+const server = app.connectMicroservice<MicroserviceOptions>(...);
+server.status.subscribe((status: RmqStatus) => {
+  console.log(status);
+});
+```
+
+#### Listening to RabbitMQ events
+
+In some cases, you might want to listen to internal events emitted by the microservice. For example, you could listen for the `error` event to trigger additional operations when an error occurs. To do this, use the `on()` method, as shown below:
+
+```typescript
+this.client.on('error', (err) => {
+  console.error(err);
+});
+```
+
+Similarly, you can listen to the server's internal events:
+
+```typescript
+server.on<RmqEvents>('error', (err) => {
+  console.error(err);
+});
+```
+
+> info **Hint** The `RmqEvents` type is imported from the `@nestjs/microservices` package.
+
+#### Underlying driver access
+
+For more advanced use cases, you may need to access the underlying driver instance. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
+
+To do so, you can use the `unwrap()` method, which returns the underlying driver instance. The generic type parameter should specify the type of driver instance you expect.
+
+```typescript
+const managerRef =
+  this.client.unwrap<import('amqp-connection-manager').AmqpConnectionManager>();
+```
+
+Similarly, you can access the server's underlying driver instance:
+
+```typescript
+const managerRef =
+  server.unwrap<import('amqp-connection-manager').AmqpConnectionManager>();
 ```
