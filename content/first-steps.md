@@ -10,7 +10,7 @@ We'll mostly use TypeScript in the examples we provide, but you can always **swi
 
 #### Prerequisites
 
-Please make sure that [Node.js](https://nodejs.org) (version >= 16) is installed on your operating system.
+Please make sure that [Node.js](https://nodejs.org) (version >= 20) is installed on your operating system.
 
 #### Setup
 

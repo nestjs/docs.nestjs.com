@@ -128,18 +128,23 @@ export class AppModule {
 
 #### Route wildcards
 
-Pattern based routes are supported as well. For instance, the asterisk is used as a **wildcard**, and will match any combination of characters:
+Pattern-based routes are also supported in NestJS middleware. For example, the named wildcard (`*splat`) can be used as a wildcard to match any combination of characters in a route. In the following example, the middleware will be executed for any route that starts with `abcd/`, regardless of the number of characters that follow.
 
 ```typescript
 forRoutes({
-  path: 'ab*cd',
+  path: 'abcd/*splat',
   method: RequestMethod.ALL,
 });
 ```
 
-The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
+The `'abcd/*'` route path will match `abcd/1`, `abcd/123`, `abcd/abc`, and so on. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths. However, `abcd/` with no additional characters will not match the route. For this, you need to wrap the wildcard in braces to make it optional:
 
-> warning **Warning** The `fastify` package uses the latest version of the `path-to-regexp` package, which no longer supports wildcard asterisks `*`. Instead, you must use parameters (e.g., `(.*)`, `:splat*`).
+```typescript
+forRoutes({
+  path: 'abcd/{*splat}',
+  method: RequestMethod.ALL,
+});
+```
 
 #### Middleware consumer
 
@@ -184,7 +189,9 @@ export class AppModule {
 
 #### Excluding routes
 
-At times we want to **exclude** certain routes from having the middleware applied. We can easily exclude certain routes with the `exclude()` method. This method can take a single string, multiple strings, or a `RouteInfo` object identifying routes to be excluded, as shown below:
+At times, we may want to **exclude** certain routes from having middleware applied. This can be easily achieved using the `exclude()` method. The `exclude()` method accepts a single string, multiple strings, or a `RouteInfo` object to identify the routes to be excluded.
+
+Here's an example of how to use it:
 
 ```typescript
 consumer
@@ -192,7 +199,7 @@ consumer
   .exclude(
     { path: 'cats', method: RequestMethod.GET },
     { path: 'cats', method: RequestMethod.POST },
-    'cats/(.*)',
+    'cats/{*splat}',
   )
   .forRoutes(CatsController);
 ```
@@ -200,6 +207,8 @@ consumer
 > info **Hint** The `exclude()` method supports wildcard parameters using the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package.
 
 With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the three passed to the `exclude()` method.
+
+This approach provides flexibility in applying or excluding middleware based on specific routes or route patterns.
 
 #### Functional middleware
 
