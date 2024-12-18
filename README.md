@@ -9,7 +9,7 @@ Translate the official nestjs documentation into Korean.
 
 ## Stay in touch
 
-- Author - [OverFlowBIN]([https://twitter.com/kammysliwiec](https://github.com/overFlowBIN/))
+- Author - [OverFlowBIN](https://github.com/overFlowBIN/)
 
 
 ## License
