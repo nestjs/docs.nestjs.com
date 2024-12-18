@@ -6,6 +6,10 @@
 
 Translate the official nestjs documentation into Korean.
 
+## History
+
+- [2024.12.18] Beginning transalte
+
 
 ## Stay in touch
 
