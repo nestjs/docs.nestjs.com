@@ -14,7 +14,6 @@ Translate the official nestjs documentation into Korean.
 ## Stay in touch
 
 - Github - [OverFlowBIN](https://github.com/overFlowBIN/)
-- Email - [OverFlowBIN](bin11788@gmail.com)
 
 
 ## License
