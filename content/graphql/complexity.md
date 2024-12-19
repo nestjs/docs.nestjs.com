@@ -19,12 +19,13 @@ $ npm install --save graphql-query-complexity
 Once the installation process is complete, we can define the `ComplexityPlugin` class:
 
 ```typescript
-import { GraphQLSchemaHost } from "@nestjs/graphql";
-import { Plugin } from "@nestjs/apollo";
+import { GraphQLSchemaHost } from '@nestjs/graphql';
+import { Plugin } from '@nestjs/apollo';
 import {
   ApolloServerPlugin,
+  BaseContext,
   GraphQLRequestListener,
-} from 'apollo-server-plugin-base';
+} from '@apollo/server';
 import { GraphQLError } from 'graphql';
 import {
   fieldExtensionsEstimator,
@@ -36,7 +37,7 @@ import {
 export class ComplexityPlugin implements ApolloServerPlugin {
   constructor(private gqlSchemaHost: GraphQLSchemaHost) {}
 
-  async requestDidStart(): Promise<GraphQLRequestListener> {
+  async requestDidStart(): Promise<GraphQLRequestListener<BaseContext>> {
     const maxComplexity = 20;
     const { schema } = this.gqlSchemaHost;
 
