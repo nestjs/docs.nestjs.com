@@ -148,16 +148,15 @@ The `Dockerfile` is a text file that contains the instructions Docker uses to bu
 Here's a sample Dockerfile for a NestJS application:
 
 ```bash
-# Use the official Node.js image as the base image
-FROM node:20
+# Build stage
+FROM node:20-alpine AS builder
 
-# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package files
 COPY package*.json ./
 
-# Install the application dependencies
+# Install all dependencies (including dev dependencies)
 RUN npm install
 
 # Copy the rest of the application files
@@ -165,6 +164,20 @@ COPY . .
 
 # Build the NestJS application
 RUN npm run build
+
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+# Copy package files
+COPY package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production
+
+# Copy the built application from builder stage
+COPY --from=builder /usr/src/app/dist ./dist
 
 # Expose the application port
 EXPOSE 3000
