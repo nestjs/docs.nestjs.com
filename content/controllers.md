@@ -191,18 +191,18 @@ It's that simple. Nest provides decorators for all of the standard HTTP methods:
 
 #### Route wildcards
 
-Pattern based routes are supported as well. For instance, the asterisk is used as a wildcard, and will match any combination of characters.
+Pattern-based routes are also supported in NestJS. For example, the asterisk (`*`) can be used as a wildcard to match any combination of characters in a route at the end of a path. In the following example, the `findAll()` method will be executed for any route that starts with `abcd/`, regardless of the number of characters that follow.
 
 ```typescript
-@Get('ab*cd')
+@Get('abcd/*')
 findAll() {
   return 'This route uses a wildcard';
 }
 ```
 
-The `'ab*cd'` route path will match `abcd`, `ab_cd`, `abecd`, and so on. The characters `?`, `+`, `*`, and `()` may be used in a route path, and are subsets of their regular expression counterparts. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
+The `'abcd/*'` route path will match `abcd/`, `abcd/123`, `abcd/abc`, and so on. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
-> warning **Warning** A wildcard in the middle of the route is only supported by express.
+When it comes to asterisks used in the **middle of a route**, Express requires named wildcards (e.g., `ab{{ '{' }}*splat&#125;cd`), while Fastify does not support them at all.
 
 #### Status code
 
@@ -313,7 +313,7 @@ export class AdminController {
 }
 ```
 
-> **Warning** Since **Fastify** lacks support for nested routers, when using sub-domain routing, the (default) Express adapter should be used instead.
+> warning **Warning** Since **Fastify** does not support nested routers, if you are using sub-domain routing, it is recommended to use the default Express adapter instead.
 
 Similar to a route `path`, the `hosts` option can use tokens to capture the dynamic value at that position in the host name. The host parameter token in the `@Controller()` decorator example below demonstrates this usage. Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
 

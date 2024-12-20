@@ -44,6 +44,12 @@ DATABASE_USER=test
 DATABASE_PASSWORD=test
 ```
 
+If you need some env variables to be available even before the `ConfigModule` is loaded and Nest application is bootstrapped (for example, to pass the microservice configuration to the `NestFactory#createMicroservice` method), you can use the `--env-file` option of the Nest CLI. This option allows you to specify the path to the `.env` file that should be loaded before the application starts. `--env-file` flag support was introduced in Node v20, see [the documentation](https://nodejs.org/dist/v20.18.1/docs/api/cli.html#--env-fileconfig) for more details.
+
+```bash
+$ nest start --env-file .env
+```
+
 #### Custom env file path
 
 By default, the package looks for a `.env` file in the root directory of the application. To specify another path for the `.env` file, set the `envFilePath` property of an (optional) options object you pass to `forRoot()`, as follows:
