@@ -1,33 +1,34 @@
-### Introduction
 
-Nest (NestJS) is a framework for building efficient, scalable [Node.js](https://nodejs.org/) server-side applications. It uses progressive JavaScript, is built with and fully supports [TypeScript](http://www.typescriptlang.org/) (yet still enables developers to code in pure JavaScript) and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).
+### 소개
 
-Under the hood, Nest makes use of robust HTTP Server frameworks like [Express](https://expressjs.com/) (the default) and optionally can be configured to use [Fastify](https://github.com/fastify/fastify) as well!
+Nest (NestJS)는 효율적이고 확장 가능한 [Node.js](https://nodejs.org/) 서버 사이드 애플리케이션을 구축하기 위한 프레임워크입니다. 최신 JavaScript를 사용하며, [TypeScript](http://www.typescriptlang.org/)로 작성되고 이를 완벽히 지원하지만, 순수 JavaScript로 코딩하는 것도 가능합니다. 또한 OOP(객체 지향 프로그래밍), FP(함수형 프로그래밍), FRP(함수형 반응형 프로그래밍)의 요소를 결합하고 있습니다.
 
-Nest provides a level of abstraction above these common Node.js frameworks (Express/Fastify), but also exposes their APIs directly to the developer. This gives developers the freedom to use the myriad of third-party modules which are available for the underlying platform.
+Nest는 기본적으로 [Express](https://expressjs.com/)와 같은 강력한 HTTP 서버 프레임워크를 사용하며, 선택적으로 [Fastify](https://github.com/fastify/fastify)를 구성하여 사용할 수도 있습니다.
 
-#### Philosophy
+Nest는 이러한 일반적인 Node.js 프레임워크(Express/Fastify) 위에 추상화를 제공하면서도, 개발자에게 이들의 API를 직접 노출합니다. 이를 통해 기본 플랫폼에서 사용할 수 있는 수많은 서드파티 모듈들을 자유롭게 활용할 수 있습니다.
 
-In recent years, thanks to Node.js, JavaScript has become the “lingua franca” of the web for both front and backend applications. This has given rise to awesome projects like [Angular](https://angular.dev/), [React](https://github.com/facebook/react) and [Vue](https://github.com/vuejs/vue), which improve developer productivity and enable the creation of fast, testable, and extensible frontend applications. However, while plenty of superb libraries, helpers, and tools exist for Node (and server-side JavaScript), none of them effectively solve the main problem of **architecture**.
+#### 철학
 
-Nest provides an out-of-the-box application architecture which allows developers and teams to create highly testable, scalable, loosely coupled, and easily maintainable applications. The architecture is heavily inspired by Angular.
+최근 몇 년 동안 Node.js 덕분에 JavaScript는 프론트엔드와 백엔드 애플리케이션 모두에서 "웹의 공통 언어"로 자리 잡았습니다. 이는 [Angular](https://angular.dev/), [React](https://github.com/facebook/react), [Vue](https://github.com/vuejs/vue)와 같은 놀라운 프로젝트들의 탄생을 이끌었습니다. 이러한 프로젝트들은 개발자의 생산성을 향상시키고, 빠르고 테스트 가능하며 확장 가능한 프론트엔드 애플리케이션을 만드는데 기여합니다. 하지만 Node와 서버 사이드 JavaScript에는 훌륭한 라이브러리와 도구들이 많음에도 불구하고, **아키텍처**라는 주요 문제를 효과적으로 해결하는 솔루션이 없었습니다.
 
-#### Installation
+Nest는 아키텍처를 즉시 제공하여, 개발자와 팀이 테스트 가능하고, 확장 가능하며, 느슨하게 결합되고, 쉽게 유지 관리할 수 있는 애플리케이션을 만들 수 있게 해줍니다. 이 아키텍처는 Angular에서 많은 영감을 받았습니다.
 
-To get started, you can either scaffold the project with the [Nest CLI](/cli/overview), or [clone a starter project](#alternatives) (both will produce the same outcome).
+#### 설치
 
-To scaffold the project with the Nest CLI, run the following commands. This will create a new project directory, and populate the directory with the initial core Nest files and supporting modules, creating a conventional base structure for your project. Creating a new project with the **Nest CLI** is recommended for first-time users. We'll continue with this approach in [First Steps](first-steps).
+시작하려면 [Nest CLI](/cli/overview)를 사용하여 프로젝트를 스캐폴딩하거나 [스타터 프로젝트를 복제](#alternatives)할 수 있습니다(둘 다 동일한 결과를 생성합니다).
+
+Nest CLI로 프로젝트를 스캐폴딩하려면 다음 명령어를 실행하세요. 이 명령어는 새로운 프로젝트 디렉토리를 생성하고, 해당 디렉토리에 초기 핵심 Nest 파일 및 지원 모듈을 채워 프로젝트의 기본 구조를 만듭니다. **Nest CLI**를 사용해 새 프로젝트를 생성하는 것은 처음 사용자에게 권장됩니다. [First Steps](first-steps)에서 이 방법으로 계속 진행하겠습니다.
 
 ```bash
 $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-> info **Hint** To create a new TypeScript project with stricter feature set, pass the `--strict` flag to the `nest new` command.
+> info **힌트** TypeScript 프로젝트를 더 엄격한 기능 집합으로 생성하려면 `nest new` 명령에 `--strict` 플래그를 추가하세요.
 
-#### Alternatives
+#### 대안
 
-Alternatively, to install the TypeScript starter project with **Git**:
+대안으로 **Git**을 사용하여 TypeScript 스타터 프로젝트를 설치하려면:
 
 ```bash
 $ git clone https://github.com/nestjs/typescript-starter.git project
@@ -36,10 +37,10 @@ $ npm install
 $ npm run start
 ```
 
-> info **Hint** If you'd like to clone the repository without the git history, you can use [degit](https://github.com/Rich-Harris/degit).
+> info **힌트** Git 기록 없이 저장소를 복제하려면 [degit](https://github.com/Rich-Harris/degit)을 사용할 수 있습니다.
 
-Open your browser and navigate to [`http://localhost:3000/`](http://localhost:3000/).
+브라우저를 열고 [`http://localhost:3000/`](http://localhost:3000/)으로 이동하세요.
 
-To install the JavaScript flavor of the starter project, use `javascript-starter.git` in the command sequence above.
+스타터 프로젝트의 JavaScript 버전을 설치하려면 위 명령에서 `javascript-starter.git`을 사용하세요.
 
-You can also start a new project from scratch by installing the core and supporting packages. Keep in mind that you'll need to set up the project boilerplate files on your own. At a minimum, you'll need these dependencies: `@nestjs/core`, `@nestjs/common`, `rxjs`, and `reflect-metadata`. Check out this short article on how to create a complete project: [5 steps to create a bare minimum NestJS app from scratch!](https://dev.to/micalevisk/5-steps-to-create-a-bare-minimum-nestjs-app-from-scratch-5c3b).
+핵심 패키지와 지원 패키지를 설치하여 새 프로젝트를 처음부터 시작할 수도 있습니다. 이 경우 프로젝트 보일러플레이트 파일을 직접 설정해야 합니다. 최소한 `@nestjs/core`, `@nestjs/common`, `rxjs`, `reflect-metadata` 패키지가 필요합니다. 간단한 프로젝트를 만드는 방법에 대한 짧은 글을 확인하세요: [5 steps to create a bare minimum NestJS app from scratch!](https://dev.to/micalevisk/5-steps-to-create-a-bare-minimum-nestjs-app-from-scratch-5c3b).
