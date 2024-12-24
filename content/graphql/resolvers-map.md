@@ -456,6 +456,54 @@ With the above base class defined, we can now easily create specialized types th
 class PaginatedAuthor extends Paginated(Author) {}
 ```
 
+#### Adding state to context
+
+If you need to share some state, or event an instance of a class between different resolvers you can attach them to the context object and then you can access them with `@Context` decorator. To do that first we need to attach those states to the context, let's say that we need to have access to the `request`, and `response` objects in our resolver. To do so we need to configure the `context` option:
+
+```typescript
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      // ...
+      context: ({ req, res }) => {
+        return { req, res };
+      },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+And now you can define a custom type (let's call it `graphql-context.type.ts`) for your GraphQL context like this:
+
+```typescript
+import { Response, Request } from 'express';
+
+export interface GraphQLResolveContext {
+  req: Request;
+  res: Response;
+}
+```
+
+And then in your resolver you can access it like this:
+
+```typescript
+import { GraphQLResolveContext } from 'graphql-context.type';
+
+@Resolver(() => Author)
+export class AuthorsResolver {
+  @Query(() => Author)
+  author(
+    @Args('id', { type: () => Int }) id: number,
+    @Context() context: GraphQLResolveContext,
+  ) {
+    // context.req
+  }
+}
+```
+
+> info **Hint** You're content will be recreated for each request. This means that if you're attaching something like a [Dataloader](https://www.npmjs.com/package/dataloader) to your context object it will be recreated for each request which is exactly most people need when using Dataloader.
+
 #### Schema first
 
 As mentioned in the [previous](/graphql/quick-start) chapter, in the schema first approach we start by manually defining schema types in SDL (read [more](https://graphql.org/learn/schema/#type-language)). Consider the following SDL type definitions.
