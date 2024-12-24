@@ -502,7 +502,7 @@ export class AuthorsResolver {
 }
 ```
 
-> info **Hint** You're content will be recreated for each request. This means that if you're attaching something like a [Dataloader](https://www.npmjs.com/package/dataloader) to your context object it will be recreated for each request which is exactly most people need when using Dataloader.
+> info **Hint** context object will be recreated for each request. This means that if you're attaching something like a [Dataloader](https://www.npmjs.com/package/dataloader) to your context object NestJS will instantiate a new instance for each request which is exactly what most people need when they are configuring Dataloader.
 
 #### Schema first
 
