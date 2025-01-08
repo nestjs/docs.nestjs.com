@@ -10,6 +10,7 @@ First, install the required dependencies:
 ```bash
 $ npm install --save @sentry/nestjs @sentry/profiling-node
 ```
+> info **Hint** we support `yarn` and `pnpm` as well. @sentry/profiling-node is optional, but recommended for performance profiling.
 
 
 #### Basic Setup
@@ -17,18 +18,27 @@ $ npm install --save @sentry/nestjs @sentry/profiling-node
 To get started with Sentry, you'll need to create an initialization file (e.g., `sentry.init.ts`) that should be imported before any other modules in your application:
 
 ```typescript
-import as Sentry from '@sentry/nestjs';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
+@@filename(instrument)
+const Sentry = require("@sentry/nestjs");
+const { nodeProfilingIntegration } = require("@sentry/profiling-node");
+
+// Ensure to call this before requiring any other modules!
 Sentry.init({
-dsn: 'your-sentry-dsn',
-integrations: [
-nodeProfilingIntegration(),
-],
-// Set sampling rate for tracing (adjust in production)
-tracesSampleRate: 1.0,
-// Set sampling rate for profiling
-profilesSampleRate: 1.0,
+  dsn: SENTRY_DSN,
+  integrations: [
+    // Add our Profiling integration
+    nodeProfilingIntegration(),
+  ],
+
+  // Add Tracing by setting tracesSampleRate
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+
+  // Set sampling rate for profiling
+  // This is relative to tracesSampleRate
+  profilesSampleRate: 1.0,
 });
+
 
 ```
 
@@ -37,15 +47,21 @@ Update your `main.ts` file to import the Sentry initialization before other impo
 
 
 ```typescript
-// Import Sentry initialization first
-import './sentry.init';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+@@filename(main)
+// Import this first!
+import "./instrument";
+
+// Now import other modules
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+
 async function bootstrap() {
-const app = await NestFactory.create(AppModule);
-await app.listen(3000);
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
 }
+
 bootstrap();
+
 ```
 
 
@@ -55,55 +71,34 @@ Add the SentryModule to your application's root module:
 
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { SentryModule } from '@sentry/nestjs/setup';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+@@filename(app.module)
+import { Module } from "@nestjs/common";
+import { SentryModule } from "@sentry/nestjs/setup";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+
 @Module({
-imports: [
-SentryModule.forRoot(),
-// other modules...
-],
-controllers: [AppController],
-providers: [AppService],
+  imports: [
+    SentryModule.forRoot(),
+    // ...other modules
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
 ```
 
-
-#### Exception Handling
-
-To ensure Sentry captures unhandled exceptions, you can add the SentryGlobalFilter to your application module:
-
-```typescript
-import { Module } from '@nestjs/common';
-import { APP_FILTER } from '@nestjs/core';
-import { SentryGlobalFilter } from '@sentry/nestjs/setup';
-@Module({
-providers: [
-{
-provide: APP_FILTER,
-useClass: SentryGlobalFilter,
-},
-// other providers...
-],
-})
-export class AppModule {}
-```
+> info **Hint**  *Running with ESM*: If you run your application with ESM, you'll need to import the Sentry Initialization file before importing any other modules. Read about [running Sentry with ESM](https://docs.sentry.io/platforms/javascript/guides/nestjs/install/esm/). If you're not sure about how you're running your application, see [Installation Methods](https://docs.sentry.io/platforms/javascript/guides/nestjs/install/) for more information.
 
 
-For custom exception filters, you can use the `@SentryExceptionCaptured()` decorator:
+#### Add Readable Stack Traces to Errors
 
-```typescript
-import { Catch, ExceptionFilter } from '@nestjs/common';
-import { SentryExceptionCaptured } from '@sentry/nestjs';
-@Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
-@SentryExceptionCaptured()
-catch(exception: unknown, host: ArgumentsHost) {
-// Your exception handling logic
-}
-}
+Depending on how you've set up your project, the stack traces in your Sentry errors probably won't look like your actual code.
+
+To fix this, upload your source maps to Sentry. The easiest way to do this is by using the Sentry Wizard:
+
+```bash
+npx @sentry/wizard@latest -i sourcemaps
 ```
 
 
@@ -112,18 +107,18 @@ catch(exception: unknown, host: ArgumentsHost) {
 To verify your Sentry integration is working, you can add a test endpoint that throws an error:
 
 ```typescript
-import { Controller, Get } from '@nestjs/common';
-@Controller()
-export class AppController {
-@Get('debug-sentry')
-testSentry() {
-throw new Error('Test Sentry Integration!');
+@Get("/debug-sentry")
+getError() {
+  throw new Error("My first Sentry error!");
 }
-}
-```
 
+```
 
 Visit `/debug-sentry` in your application, and you should see the error appear in your Sentry dashboard.
 
-> info **Hint** For complete documentation about Sentry's NestJS integration, including advanced configuration options and features, visit the [official Sentry documentation](https://docs.sentry.io/platforms/javascript/guides/nestjs/).
 
+### Summary
+
+For complete documentation about Sentry's NestJS SDK, including advanced configuration options and features, visit the [official Sentry documentation](https://docs.sentry.io/platforms/javascript/guides/nestjs/).
+
+While software bugs are Sentry's thing, we still write them. If you come across any problems while installing our SDK, please open a [GitHub Issue](https://github.com/getsentry/sentry-javascript/issues) or reach out on [Discord](https://discord.com/invite/sentry).
