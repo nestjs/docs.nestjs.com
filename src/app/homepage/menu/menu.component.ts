@@ -246,6 +246,7 @@ export class MenuComponent implements OnInit {
         { title: 'CQRS', path: '/recipes/cqrs' },
         { title: 'Compodoc', path: '/recipes/documentation' },
         { title: 'Prisma', path: '/recipes/prisma' },
+        { title: 'Sentry', path: '/recipes/sentry' },
         { title: 'Serve static', path: '/recipes/serve-static' },
         { title: 'Commander', path: '/recipes/nest-commander' },
         { title: 'Async local storage', path: '/recipes/async-local-storage' },
