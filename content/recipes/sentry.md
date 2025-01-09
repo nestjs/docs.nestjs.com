@@ -85,9 +85,6 @@ import { AppService } from "./app.service";
 export class AppModule {}
 ```
 
-> info **Hint**  *Running with ESM*: If you run your application with ESM, you'll need to import the Sentry Initialization file before importing any other modules. Read about [running Sentry with ESM](https://docs.sentry.io/platforms/javascript/guides/nestjs/install/esm/). If you're not sure about how you're running your application, see [Installation Methods](https://docs.sentry.io/platforms/javascript/guides/nestjs/install/) for more information.
-
-
 #### Add Readable Stack Traces to Errors
 
 Depending on how you've set up your project, the stack traces in your Sentry errors probably won't look like your actual code.
