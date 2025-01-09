@@ -43,7 +43,7 @@ Sentry.init({
 ```
 
 
-Update your `main.ts` file to import `instrume.js` before other imports:
+Update your `main.ts` file to import `instrument.js` before other imports:
 
 
 ```typescript
