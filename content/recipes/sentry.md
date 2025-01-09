@@ -1,6 +1,6 @@
 ### Sentry
 
-[Sentry](https://sentry.io) is an error monitoring and performance tracking platform that helps developers identify and fix issues in real-time. This recipe shows how to integrate Sentry with your NestJS application for error monitoring and distributed tracing.
+[Sentry](https://sentry.io) is an error tracking and performance monitoring platform that helps developers identify and fix issues in real-time. This recipe shows how to integrate Sentry with your NestJS application.
 
 #### Installation
 
@@ -15,7 +15,7 @@ $ npm install --save @sentry/nestjs @sentry/profiling-node
 
 #### Basic Setup
 
-To get started with Sentry, you'll need to create an initialization file (e.g., `sentry.init.ts`) that should be imported before any other modules in your application:
+To get started with Sentry, you'll need to create a file named `instrument.js` that should be imported before any other modules in your application:
 
 ```typescript
 @@filename(instrument)
@@ -43,7 +43,7 @@ Sentry.init({
 ```
 
 
-Update your `main.ts` file to import the Sentry initialization before other imports:
+Update your `main.ts` file to import `instrume.js` before other imports:
 
 
 ```typescript
@@ -64,10 +64,7 @@ bootstrap();
 
 ```
 
-
-#### Module Integration
-
-Add the SentryModule to your application's root module:
+Afterward, add the `SentryModule` as a root module to your main module:
 
 
 ```typescript
