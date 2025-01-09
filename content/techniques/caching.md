@@ -229,6 +229,10 @@ class HttpCacheInterceptor extends CacheInterceptor {
 
 #### Different stores
 
+##### cache-manager-redis-yet
+
+> warning **Warning** This package has been deprecated. With cache-manager v6 we now are using Keyv.
+
 The `cache-manager` package offers a variety of useful storage options, including the [Redis store](https://www.npmjs.com/package/cache-manager-redis-yet), which is the official package for integrating Redis with cache-manager. You can find a comprehensive list of supported stores [here](https://github.com/jaredwray/cacheable/blob/main/packages/cache-manager/READMEv5.md#store-engines). To configure the Redis store, use the `registerAsync()` method to initialize it, as shown below:
 
 ```typescript
@@ -261,6 +265,42 @@ export class AppModule {}
 ```
 
 > warning **Warning** The `cache-manager-redis-yet` package requires the `ttl` (time-to-live) setting to be specified directly rather than as part of the module options.
+
+##### keyv
+
+The `keyv` package is a lightweight, simple and powerful caching library that supports multiple storage engines. It is compatible with cache-manager v6.
+
+```bash
+$ npm install keyv @keyv/redis cache-manager @nestjs/cache-manager@next
+```
+
+```typescript
+import KeyvRedis, { Keyv } from '@keyv/redis';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { AppController } from './app.controller';
+
+@Module({
+  imports: [
+    CacheModule.registerAsync({
+      useFactory: async () => {
+        const redisOptions = {
+          url: `redis://localhost:6379`,
+        };
+        return {
+          stores: [
+            new Keyv({
+              store: new KeyvRedis(redisOptions),
+            })
+          ],
+        };
+      },
+    }),
+  ],
+  controllers: [AppController],
+})
+export class AppModule {}
+```
 
 #### Async configuration
 
