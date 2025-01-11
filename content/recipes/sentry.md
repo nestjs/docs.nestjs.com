@@ -64,7 +64,7 @@ bootstrap();
 
 ```
 
-Afterward, add the `SentryModule` as a root module to your main module:
+Afterwards, add the `SentryModule` as a root module to your main module:
 
 
 ```typescript {2, 8}
