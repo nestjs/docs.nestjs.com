@@ -31,6 +31,7 @@ export class CopyButtonComponent implements OnDestroy {
       this.cdr.detectChanges();
     }, 2000);
   }
+  
   ngOnDestroy(): void {
     if (this.revertIconTimeout) {
       clearTimeout(this.revertIconTimeout);
