@@ -29,6 +29,7 @@ export class CopyButtonComponent implements OnDestroy {
     this.revertIconTimeout = setTimeout(() => {
       this.copied = false;
       this.cdr.detectChanges();
+      this.revertIconTimeout = null;
     }, 2000);
   }
   
