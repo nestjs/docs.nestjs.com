@@ -283,6 +283,8 @@ constructor(private configService: ConfigService<{ PORT: number }, true>) {
 }
 ```
 
+> info **Hint** To make sure the `ConfigService#get` method retrieves values exclusively from custom configuration files and ignores `process.env` variables, set the `skipProcessEnv` option to `true` in the options object of the `ConfigModule`'s `forRoot()` method.
+
 #### Configuration namespaces
 
 The `ConfigModule` allows you to define and load multiple custom configuration files, as shown in <a href="techniques/configuration#custom-configuration-files">Custom configuration files</a> above. You can manage complex configuration object hierarchies with nested configuration objects as shown in that section. Alternatively, you can return a "namespaced" configuration object with the `registerAs()` function as follows:
@@ -452,6 +454,8 @@ The `@nestjs/config` package uses default settings of:
 - `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
 
 Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
+
+> info **Hint** To disable validation of predefined environment variables, set the `validatePredefined` attribute to `false` in the `forRoot()` method's options object. Predefined environment variables are process variables (`process.env` variables) that were set before the module was imported. For example, if you start your application with `PORT=3000 node main.js`, then `PORT` is a predefined environment variable.
 
 #### Custom validate function
 
