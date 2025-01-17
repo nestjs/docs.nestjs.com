@@ -120,9 +120,9 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
 
 #### Client
 
-There is a small difference in Kafka compared to other microservice transporters. Instead of the `ClientProxy` class, we use the `ClientKafka` class.
+There is a small difference in Kafka compared to other microservice transporters. Instead of the `ClientProxy` class, we use the `ClientKafkaProxy` class.
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a `ClientKafka` instance.
+Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a `ClientKafkaProxy` instance.
 
 One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
 
@@ -166,26 +166,26 @@ Use the `@Client()` decorator as follows:
     }
   }
 })
-client: ClientKafka;
+client: ClientKafkaProxy;
 ```
 
 #### Message pattern
 
-The Kafka microservice message pattern utilizes two topics for the request and reply channels. The `ClientKafka#send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafka` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
+The Kafka microservice message pattern utilizes two topics for the request and reply channels. The `ClientKafkaProxy#send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafkaProxy` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
 
 Subsequently, you need to have at least one reply topic partition for every Nest application running. For example, if you are running 4 Nest applications but the reply topic only has 3 partitions, then 1 of the Nest applications will error out when trying to send a message.
 
-When new `ClientKafka` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
+When new `ClientKafkaProxy` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
 
 Normally, topic partitions are assigned using the round robin partitioner, which assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch. However, when a new consumer joins the consumer group, the new consumer can be positioned anywhere within the collection of consumers. This creates a condition where pre-existing consumers can be assigned different partitions when the pre-existing consumer is positioned after the new consumer. As a result, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
 
-To prevent the `ClientKafka` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
+To prevent the `ClientKafkaProxy` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
 
 #### Message response subscription
 
-> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafka#send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafka#emit` method).
+> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafkaProxy#send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafkaProxy#emit` method).
 
-The `ClientKafka` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
+The `ClientKafkaProxy` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
 
 ```typescript
 @@filename(heroes.controller)
@@ -194,7 +194,7 @@ onModuleInit() {
 }
 ```
 
-If the `ClientKafka` instance is created asynchronously, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
+If the `ClientKafkaProxy` instance is created asynchronously, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
 
 ```typescript
 @@filename(heroes.controller)
@@ -210,7 +210,7 @@ Nest receives incoming Kafka messages as an object with `key`, `value`, and `hea
 
 #### Outgoing
 
-Nest sends outgoing Kafka messages after a serialization process when publishing events or sending messages. This occurs on arguments passed to the `ClientKafka` `emit()` and `send()` methods or on values returned from a `@MessagePattern` method. This serialization "stringifies" objects that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+Nest sends outgoing Kafka messages after a serialization process when publishing events or sending messages. This occurs on arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods or on values returned from a `@MessagePattern` method. This serialization "stringifies" objects that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
 
 ```typescript
 @@filename(heroes.controller)
@@ -294,7 +294,7 @@ Check out these two sections to learn more about this: [Overview: Event-based](/
 
 #### Context
 
-In more sophisticated scenarios, you may want to access more information about the incoming request. When using the Kafka transporter, you can access the `KafkaContext` object.
+In more complex scenarios, you may need to access additional information about the incoming request. When using the Kafka transporter, you can access the `KafkaContext` object.
 
 ```typescript
 @@filename()
@@ -369,7 +369,7 @@ async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaCon
 
 #### Naming conventions
 
-The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafka` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
+The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafkaProxy` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
 
 ```typescript
 @@filename(main)
@@ -403,10 +403,10 @@ And for the client:
     }
   }
 })
-client: ClientKafka;
+client: ClientKafkaProxy;
 ```
 
-> info **Hint** Kafka client and consumer naming conventions can be customized by extending `ClientKafka` and `KafkaServer` in your own custom provider and overriding the constructor.
+> info **Hint** Kafka client and consumer naming conventions can be customized by extending `ClientKafkaProxy` and `KafkaServer` in your own custom provider and overriding the constructor.
 
 Since the Kafka microservice message pattern utilizes two topics for the request and reply channels, a reply pattern should be derived from the request topic. By default, the name of the reply topic is the composite of the request topic name with `.reply` appended.
 
@@ -417,7 +417,7 @@ onModuleInit() {
 }
 ```
 
-> info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafka` in your own custom provider and overriding the `getResponsePatternName` method.
+> info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafkaProxy` in your own custom provider and overriding the `getResponsePatternName` method.
 
 #### Retriable exceptions
 
@@ -442,7 +442,7 @@ Committing offsets is essential when working with Kafka. Per default, messages w
 @EventPattern('user.created')
 async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaContext) {
   // business logic
-  
+
   const { offset } = context.getMessage();
   const partition = context.getPartition();
   const topic = context.getTopic();
@@ -490,4 +490,36 @@ const app = await NestFactory.createMicroservice(AppModule, {
     }
   }
 });
+```
+
+#### Instance status updates
+
+To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the Kafka driver, the `status` stream emits `connected`, `disconnected`, `rebalancing`, `crashed`, and `stopped` events.
+
+```typescript
+this.client.status.subscribe((status: KafkaStatus) => {
+  console.log(status);
+});
+```
+
+> info **Hint** The `KafkaStatus` type is imported from the `@nestjs/microservices` package.
+
+Similarly, you can subscribe to the server's `status` stream to receive notifications about the server's status.
+
+```typescript
+const server = app.connectMicroservice<MicroserviceOptions>(...);
+server.status.subscribe((status: KafkaStatus) => {
+  console.log(status);
+});
+```
+
+#### Underlying producer and consumer
+
+For more advanced use cases, you may need to access the underlying prodocuer and consumer instances. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
+
+To do so, you can use `producer` and `consumer` getters exposed by the `ClientKafkaProxy` instance.
+
+```typescript
+const producer = this.client.producer;
+const consumer = this.client.consumer;
 ```

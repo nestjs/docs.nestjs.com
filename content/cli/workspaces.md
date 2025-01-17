@@ -43,7 +43,7 @@ We've constructed a _standard mode_ structure, with a folder structure that look
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
-  <div class="item">.eslintrc.js</div>
+  <div class="item">eslint.config.mjs</div>
 </div>
 
 We can convert this to a monorepo mode structure as follows:
@@ -84,7 +84,7 @@ At this point, `nest` converts the existing structure to a **monorepo mode** str
   <div class="item">nest-cli.json</div>
   <div class="item">package.json</div>
   <div class="item">tsconfig.json</div>
-  <div class="item">.eslintrc.js</div>
+  <div class="item">eslint.config.mjs</div>
 </div>
 
 The `generate app` schematic has reorganized the code - moving each **application** project under the `apps` folder, and adding a project-specific `tsconfig.app.json` file in each project's root folder. Our original `my-project` app has become the **default project** for the monorepo, and is now a peer with the just-added `my-app`, located under the `apps` folder. We'll cover default projects below.
@@ -118,7 +118,7 @@ $ nest start my-app
 
 Application-type projects, or what we might informally refer to as just "applications", are complete Nest applications that you can run and deploy. You generate an application-type project with `nest generate app`.
 
-This command automatically generates a project skeleton, including the standard `src` and `test` folders from the [typescript starter](https://github.com/nestjs/typescript-starter). Unlike standard mode, an application project in a monorepo does not have any of the package dependency (`package.json`) or other project configuration artifacts like `.prettierrc` and `.eslintrc.js`. Instead, the monorepo-wide dependencies and config files are used.
+This command automatically generates a project skeleton, including the standard `src` and `test` folders from the [typescript starter](https://github.com/nestjs/typescript-starter). Unlike standard mode, an application project in a monorepo does not have any of the package dependency (`package.json`) or other project configuration artifacts like `.prettierrc` and `eslint.config.mjs`. Instead, the monorepo-wide dependencies and config files are used.
 
 However, the schematic does generate a project-specific `tsconfig.app.json` file in the root folder of the project. This config file automatically sets appropriate build options, including setting the compilation output folder properly. The file extends the top-level (monorepo) `tsconfig.json` file, so you can manage global settings monorepo-wide, but override them if needed at the project level.
 
