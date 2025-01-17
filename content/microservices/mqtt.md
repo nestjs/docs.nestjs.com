@@ -199,3 +199,42 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 })
 export class ApiModule {}
 ```
+
+### Creating a Custom Strategy for Handling Broker Events
+In some cases, you might need to execute custom logic when certain events occur in the broker to which your NestJS microservice is connected. These events can include connection losses, reconnections, or other broker-specific scenarios. To achieve this, you can extend the built-in transporter to create your own custom strategy.
+
+#### Customizing MQTT Strategy
+
+To add custom behavior for MQTT, you can extend the `ServerMqtt` class and override the `bindEvents` method. In the example below, we listen to the `reconnect` event and log a message when a reconnection attempt is made.
+
+```typescript
+@@filename(mqtt-custom.strategy)
+import { ServerMqtt } from '@nestjs/microservices';
+import { MqttClient } from '@nestjs/microservices/external/mqtt-client.interface';
+
+class MyCustomMqttStrategy extends ServerMqtt {
+  bindEvents(mqttClient: MqttClient) {
+    super.bindEvents(mqttClient);
+    mqttClient.on('reconnect', () => console.log('Reconnecting...')); // Add your custom logic here
+  }
+}
+```
+
+#### Integrating the Custom Strategy into AppModule
+
+Once your custom strategy is defined, you can then use it in the `AppModule`. In the setup, replace the default `strategy` with an instance of your custom strategy. Below is an example that demonstrates how to incorporate `MyCustomMqttStrategy`.
+
+```typescript
+@@filename(app.module)
+import { MicroserviceOptions, NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { MyCustomMqttStrategy } from './mqtt-custom.strategy';
+
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  strategy: new MyCustomMqttStrategy({ // Replace the default strategy with your custom strategy
+    url: 'mqtt://0.0.0.0:1883',
+  }),
+});
+
+await app.listen();
+```
