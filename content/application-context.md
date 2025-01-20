@@ -60,7 +60,7 @@ For example, even if you register a global interceptor in your application and t
 
 #### Retrieving providers from dynamic modules
 
-When dealing with [dynamic modules](./fundamentals/dynamic-modules.md), we should supply the same object that represents the registered dynamic module in the application to `app.select`. For example:
+When dealing with [dynamic modules](/fundamentals/dynamic-modules), we should supply the same object that represents the registered dynamic module in the application to `app.select`. For example:
 
 ```typescript
 @@filename()
@@ -93,7 +93,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-And as mentioned in the [Lifecycle events](./fundamentals/lifecycle-events.md) chapter, that will trigger lifecycle hooks.
+And as mentioned in the [Lifecycle events](/fundamentals/lifecycle-events) chapter, that will trigger lifecycle hooks.
 
 #### Example
 
