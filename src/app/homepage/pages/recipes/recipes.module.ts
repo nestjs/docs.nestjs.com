@@ -10,6 +10,7 @@ import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
 import { ReplComponent } from './repl/repl.component';
+import { SentryComponent } from './sentry/sentry.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
 import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
@@ -47,6 +48,11 @@ const routes: Routes = [
     path: 'cqrs',
     component: CqrsComponent,
     data: { title: 'CQRS' },
+  },
+  {
+    path: 'sentry',
+    component: SentryComponent,
+    data: { title: 'Sentry' },
   },
   {
     path: 'swagger',
@@ -142,6 +148,7 @@ const routes: Routes = [
     MikroOrmComponent,
     SqlTypeormComponent,
     SqlSequelizeComponent,
+    SentryComponent,
     MongodbComponent,
     PrismaComponent,
     CqrsComponent,
