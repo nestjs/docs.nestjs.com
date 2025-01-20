@@ -4,6 +4,7 @@ Nest comes with a built-in text-based logger which is used during application bo
 
 - disable logging entirely
 - specify the log level of detail (e.g., display errors, warnings, debug information, etc.)
+- configure formatting of log messages (raw, json, colorized, etc.)
 - override timestamp in the default logger (e.g., use ISO8601 standard as date format)
 - completely override the default logger
 - customize the default logger by extending it
@@ -11,7 +12,7 @@ Nest comes with a built-in text-based logger which is used during application bo
 
 You can also make use of the built-in logger, or create your own custom implementation, to log your own application-level events and messages.
 
-For more advanced logging functionality, you can make use of any Node.js logging package, such as [Winston](https://github.com/winstonjs/winston), to implement a completely custom, production grade logging system.
+If your application requires integration with external logging systems, automatic file-based logging, or forwarding logs to a centralized logging service, you can implement a fully custom logging solution using a Node.js logging library. One popular choice is [Pino](https://github.com/pinojs/pino), known for its high performance and flexibility.
 
 #### Basic customization
 
@@ -35,7 +36,134 @@ await app.listen(process.env.PORT ?? 3000);
 
 Values in the array can be any combination of `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
 
-> info **Hint** To disable color in the default logger's messages, set the `NO_COLOR` environment variable to some non-empty string.
+To disable colorized output, pass the `ConsoleLogger` object with the `colors` property set to `false` as the value of the `logger` property.
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    colors: false,
+  }),
+});
+```
+
+To configure a prefix for each log message, pass the `ConsoleLogger` object with the `prefix` attribute set:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    prefix: 'MyApp', // Default is "Nest"
+  }),
+});
+```
+
+Here are all the available options listed in the table below:
+
+| Option            | Description                                                                                                                                                                                                                                                                                                                                          | Default                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `logLevels`       | Enabled log levels.                                                                                                                                                                                                                                                                                                                                  | `['log', 'error', 'warn', 'debug', 'verbose']` |
+| `timestamp`       | If enabled, will print timestamp (time difference) between current and previous log message. Note: This option is not used when `json` is enabled.                                                                                                                                                                                                   | `false`                                        |
+| `prefix`          | A prefix to be used for each log message. Note: This option is not used when `json` is enabled.                                                                                                                                                                                                                                                      | `Nest`                                         |
+| `json`            | If enabled, will print the log message in JSON format.                                                                                                                                                                                                                                                                                               | `false`                                        |
+| `colors`          | If enabled, will print the log message in color. Default true if json is disabled, false otherwise.                                                                                                                                                                                                                                                  | `true`                                         |
+| `context`         | The context of the logger.                                                                                                                                                                                                                                                                                                                           | `undefined`                                    |
+| `compact`         | If enabled, will print the log message in a single line, even if it is an object with multiple properties. If set to a number, the most n inner elements are united on a single line as long as all properties fit into breakLength. Short array elements are also grouped together.                                                                 | `true`                                         |
+| `maxArrayLength`  | Specifies the maximum number of Array, TypedArray, Map, Set, WeakMap, and WeakSet elements to include when formatting. Set to null or Infinity to show all elements. Set to 0 or negative to show no elements. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.             | `100`                                          |
+| `maxStringLength` | Specifies the maximum number of characters to include when formatting. Set to null or Infinity to show all elements. Set to 0 or negative to show no characters. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.                                                           | `10000`                                        |
+| `sorted`          | If enabled, will sort keys while formatting objects. Can also be a custom sorting function. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.                                                                                                                                | `false`                                        |
+| `depth`           | Specifies the number of times to recurse while formatting object. This is useful for inspecting large objects. To recurse up to the maximum call stack size pass Infinity or null. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.                                         | `5`                                            |
+| `showHidden`      | If true, object's non-enumerable symbols and properties are included in the formatted result. WeakMap and WeakSet entries are also included as well as user defined prototype properties                                                                                                                                                             | `false`                                        |
+| `breakLength`     | The length at which input values are split across multiple lines. Set to Infinity to format the input as a single line (in combination with "compact" set to true). Default Infinity when "compact" is true, 80 otherwise. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output. | `Infinity`                                     |
+
+#### JSON logging
+
+JSON logging is essential for modern application observability and integration with log management systems. To enable JSON logging in your NestJS application, configure the `ConsoleLogger` object with its `json` property set to `true`. Then, provide this logger configuration as the value for the `logger` property when creating the application instance.
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    json: true,
+  }),
+});
+```
+
+This configuration outputs logs in a structured JSON format, making it easier to integrate with external systems such as log aggregators and cloud platforms. For example, platforms like **AWS ECS** (Elastic Container Service) natively support JSON logs, enabling advanced features like:
+
+- **Log Filtering**: Easily narrow down logs based on fields like log level, timestamp, or custom metadata.
+- **Search and Analysis**: Use query tools to analyze and track trends in your application's behavior.
+
+Additionally, if you're using [NestJS Mau](https://mau.nestjs.com), JSON logging simplifies the process of viewing logs in a well-organized, structured format, which is especially useful for debugging and performance monitoring.
+
+> info **Note** When `json` is set to `true`, the `ConsoleLogger` automatically disables text colorization by setting the `colors` property to `false`. This ensures that the output remains valid JSON, free of formatting artifacts. However, for development purposes, you can override this behavior by explicitly setting `colors` to `true`. This adds colorized JSON logs, which can make log entries more readable during local debugging.
+
+When JSON logging is enabled, the log output will look like this (in a single line):
+
+```json
+{
+  "level": "log",
+  "pid": 19096,
+  "timestamp": 1607370779834,
+  "message": "Starting Nest application...",
+  "context": "NestFactory"
+}
+```
+
+You can see different variants in this [Pull Request](https://github.com/nestjs/nest/pull/14121).
+
+#### Using the logger for application logging
+
+We can combine several of the techniques above to provide consistent behavior and formatting across both Nest system logging and our own application event/message logging.
+
+A good practice is to instantiate `Logger` class from `@nestjs/common` in each of our services. We can supply our service name as the `context` argument in the `Logger` constructor, like so:
+
+```typescript
+import { Logger, Injectable } from '@nestjs/common';
+
+@Injectable()
+class MyService {
+  private readonly logger = new Logger(MyService.name);
+
+  doSomething() {
+    this.logger.log('Doing something...');
+  }
+}
+```
+
+In the default logger implementation, `context` is printed in the square brackets, like `NestFactory` in the example below:
+
+```bash
+[Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
+```
+
+If we supply a custom logger via `app.useLogger()`, it will actually be used by Nest internally. That means that our code remains implementation agnostic, while we can easily substitute the default logger for our custom one by calling `app.useLogger()`.
+
+That way if we follow the steps from the previous section and call `app.useLogger(app.get(MyLogger))`, the following calls to `this.logger.log()` from `MyService` would result in calls to method `log` from `MyLogger` instance.
+
+This should be suitable for most cases. But if you need more customization (like adding and calling custom methods), move to the next section.
+
+#### Logs with timestamps
+
+To enable timestamp logging for every logged message, you can use the optional `timestamp: true` setting when creating the logger instance.
+
+```typescript
+import { Logger, Injectable } from '@nestjs/common';
+
+@Injectable()
+class MyService {
+  private readonly logger = new Logger(MyService.name, { timestamp: true });
+
+  doSomething() {
+    this.logger.log('Doing something with timestamp here ->');
+  }
+}
+```
+
+This will produce output in the following format:
+
+```bash
+[Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Doing something with timestamp here +5ms
+```
+
+Note the `+5ms` at the end of the line. For each log statement, the time difference from the previous message is calculated and displayed at the end of the line.
 
 #### Custom implementation
 
@@ -156,62 +284,6 @@ await app.listen(process.env.PORT ?? 3000);
 Here we use the `get()` method on the `NestApplication` instance to retrieve the singleton instance of the `MyLogger` object. This technique is essentially a way to "inject" an instance of a logger for use by Nest. The `app.get()` call retrieves the singleton instance of `MyLogger`, and depends on that instance being first injected in another module, as described above.
 
 You can also inject this `MyLogger` provider in your feature classes, thus ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> and <a href="techniques/logger#injecting-a-custom-logger">Injecting a custom logger</a> below for more information.
-
-#### Using the logger for application logging
-
-We can combine several of the techniques above to provide consistent behavior and formatting across both Nest system logging and our own application event/message logging.
-
-A good practice is to instantiate `Logger` class from `@nestjs/common` in each of our services. We can supply our service name as the `context` argument in the `Logger` constructor, like so:
-
-```typescript
-import { Logger, Injectable } from '@nestjs/common';
-
-@Injectable()
-class MyService {
-  private readonly logger = new Logger(MyService.name);
-
-  doSomething() {
-    this.logger.log('Doing something...');
-  }
-}
-```
-
-In the default logger implementation, `context` is printed in the square brackets, like `NestFactory` in the example below:
-
-```bash
-[Nest] 19096   - 12/08/2019, 7:12:59 AM   [NestFactory] Starting Nest application...
-```
-
-If we supply a custom logger via `app.useLogger()`, it will actually be used by Nest internally. That means that our code remains implementation agnostic, while we can easily substitute the default logger for our custom one by calling `app.useLogger()`.
-
-That way if we follow the steps from the previous section and call `app.useLogger(app.get(MyLogger))`, the following calls to `this.logger.log()` from `MyService` would result in calls to method `log` from `MyLogger` instance.
-
-This should be suitable for most cases. But if you need more customization (like adding and calling custom methods), move to the next section.
-
-#### Logs with timestamps
-
-To enable timestamp logging for every logged message, you can use the optional `timestamp: true` setting when creating the logger instance.
-
-```typescript
-import { Logger, Injectable } from '@nestjs/common';
-
-@Injectable()
-class MyService {
-  private readonly logger = new Logger(MyService.name, { timestamp: true });
-
-  doSomething() {
-    this.logger.log('Doing something with timestamp here ->');
-  }
-}
-```
-
-This will produce output in the following format:
-
-```bash
-[Nest] 19096   - 04/19/2024, 7:12:59 AM   [MyService] Doing something with timestamp here +5ms
-```
-
-Note the `+5ms` at the end of the line. For each log statement, the time difference from the previous message is calculated and displayed at the end of the line.
 
 #### Injecting a custom logger
 
