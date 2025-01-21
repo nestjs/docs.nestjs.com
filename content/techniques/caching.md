@@ -54,13 +54,13 @@ await this.cacheManager.set('key', 'value');
 
 > warning **Note** The in-memory cache storage can only store values of types that are supported by [the structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
 
-The default expiration time of the cache is 5 seconds.
-
-You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
+You can manually specify a TTL (expiration time in miliseconds) for this specific key, as follows:
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
 ```
+
+Where `1000` is the TTL in milliseconds - in this case, the cache item will expire after one second.
 
 To disable expiration of the cache, set the `ttl` configuration property to `0`:
 
@@ -121,14 +121,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class AppModule {}
 ```
 
-#### Customize caching
+#### Time-to-live (TTL)
 
-All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). To customize default values, pass the options object to the `register()` method.
+The default value for `ttl` is `0`, meaning the cache will never expire. To specify a custom [TTL](https://en.wikipedia.org/wiki/Time_to_live), you can provide the `ttl` option in the `register()` method, as demonstrated below:
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // seconds
-  max: 10, // maximum number of items in cache
+  ttl: 5000, // milliseconds
 });
 ```
 
