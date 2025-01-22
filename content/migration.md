@@ -70,6 +70,13 @@ In NestJS v10 and earlier, dynamic modules were assigned a unique opaque key gen
 
 With the release of NestJS v11, we no longer generate predictable hashes for dynamic modules. Instead, object references are now used to determine if one module is equivalent to another. To share the same dynamic module across multiple modules, simply assign it to a variable and import it wherever needed. This new approach provides more flexibility and ensures that dynamic modules are handled more efficiently.
 
+This new algorithm might impact your integration tests if you use a lot of dynamic modules, because without the manually deduplication mentioned above, your TestingModule could have multiple instances of a dependency. This makes it a bit trickier to stub a method, because you'll need to target the correct instance. Your options are to either:
+
+- Deduplicate the dynamic module you'd like to stub
+- Use `module.select(ParentModule).get(Target)` to find the correct instance
+- Stub all instances using `module.get(Target, {{ '{' }} each: true &#125;)`
+- Or switch your test back to the old algorithm using `Test.createTestingModule({{ '{' }}&#125;, {{ '{' }} moduleIdGeneratorAlgorithm: 'deep-hash' &#125;)`
+
 #### Reflector type inference
 
 NestJS 11 introduces several improvements to the `Reflector` class, enhancing its functionality and type inference for metadata values. These updates provide a more intuitive and robust experience when working with metadata.
