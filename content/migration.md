@@ -12,7 +12,7 @@ After years of development, Express v5 was officially released in 2024 and becam
 
 One of the most notable updates in Express v5 is the revised path route matching algorithm. The following changes have been introduced to how path strings are matched with incoming requests:
 
-- The wildcard `*` must have a name, matching the behavior of parameters :, use `/*splat` or `/{{ '{' }}*splat&#125;` instead of `/*`
+- The wildcard `*` must have a name, matching the behavior of parameters: use `/*splat` or `/{{ '{' }}*splat&#125;` instead of `/*`. `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like, for example, `*wildcard`
 - The optional character `?` is no longer supported, use braces instead: `/:file{{ '{' }}.:ext&#125;`.
 - Regexp characters are not supported.
 - Some characters have been reserved to avoid confusion during upgrade `(()[]?+!)`, use `\` to escape them.
@@ -38,7 +38,7 @@ findAll() {
 }
 ```
 
-> warning **Warning** Note that `*splat` is a named wildcard that matches any path without the root path. If you need to match the root path as well (`/users`), you can use `/users/{{ '{' }}*splat&#125;`, wrapping the wildcard in braces (optional group).
+> warning **Warning** Note that `*splat` is a named wildcard that matches any path without the root path. If you need to match the root path as well (`/users`), you can use `/users/{{ '{' }}*splat&#125;`, wrapping the wildcard in braces (optional group). Note that `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like, for example, `*wildcard`.
 
 Similarly, if you have a middleware that runs on all routes, you may need to update the path to use a named wildcard:
 

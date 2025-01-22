@@ -202,6 +202,8 @@ findAll() {
 
 The `'abcd/*'` route path will match `abcd/`, `abcd/123`, `abcd/abc`, and so on. The hyphen ( `-`) and the dot (`.`) are interpreted literally by string-based paths.
 
+This approach works on both Express and Fastify. However, with the latest release of Express (v5), the routing system has become more strict. In pure Express, you must use a named wildcard to make the route work—for example, `abcd/*splat`, where `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like. That said, since Nest provides a compatibility layer for Express, you can still use the asterisk (`*`) as a wildcard.
+
 When it comes to asterisks used in the **middle of a route**, Express requires named wildcards (e.g., `ab{{ '{' }}*splat&#125;cd`), while Fastify does not support them at all.
 
 #### Status code
