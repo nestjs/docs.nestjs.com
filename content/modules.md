@@ -17,7 +17,7 @@ The `@Module()` decorator takes a single object with properties that describe th
 
 The module **encapsulates** providers by default, meaning you can only inject providers that are either part of the current module or explicitly exported from other imported modules. The exported providers from a module essentially serve as the module's public interface or API.
 
-#### Feature Modules
+#### Feature modules
 
 In our example, the `CatsController` and `CatsService` are closely related and serve the same application domain. It makes sense to group them into a feature module. A feature module organizes code that is relevant to a specific feature, helping to maintain clear boundaries and better organization. This is particularly important as the application or team grows, and it aligns with the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles.
 
