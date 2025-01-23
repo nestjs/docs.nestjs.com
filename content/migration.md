@@ -206,3 +206,17 @@ A new `skipProcessEnv` option has also been introduced. This option allows you t
 Starting with NestJS 11, Node.js v16 is no longer supported, as it reached its end-of-life (EOL) on September 11, 2023. NestJS 11 now requires **Node.js v20 or higher**.
 
 To ensure the best experience, we strongly recommend using the latest LTS version of Node.js.
+
+#### Mau official deployment platform
+
+In case you missed the announcement, we launched our official deployment platform, [Mau](https://www.mau.nestjs.com/), in 2024.
+Mau is a fully managed platform that simplifies the deployment process for NestJS applications. With Mau, you can deploy your applications to the cloud (**AWS**; Amazon Web Services) with a single command, manage your environment variables, and monitor your application's performance in real-time.
+
+Mau makes provisioning and maintaining your infrastructure as simple as clicking just a few buttons. Mau is designed to be simple and intuitive, so you can focus on building your applications and not worry about the underlying infrastructure. Under the hood, we use Amazon Web Services to provide you with a powerful and reliable platform, while abstracting away all the complexity of AWS. We take care of all the heavy lifting for you, so you can focus on building your applications and growing your business.
+
+```bash
+$ npm install -g @nestjs/mau
+$ mau deploy
+```
+
+You can learn more about Mau [in this chapter](/deployment#easy-deployment-with-mau).
