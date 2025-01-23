@@ -86,7 +86,7 @@ bootstrap();
 
 #### Fastify v5
 
-Fastify v5 was released in 2024 and is now the default version integrated into NestJS 11. This update should be seamless for most users; however, Fastify v5 introduces a few breaking changes, though these are unlikely to affect the majority of NestJS users. For more detailed information, refer to the [Fastify v5 migration guide](https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
+`@nestjs/platform-fastify` v11 now finally supports Fastify v5. This update should be seamless for most users; however, Fastify v5 introduces a few breaking changes, though these are unlikely to affect the majority of NestJS users. For more detailed information, refer to the [Fastify v5 migration guide](https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
 
 > info **Hint** There have been no changes to path matching in Fastify v5, so you can continue using the wildcard syntax as you did before. The behavior remains the same, and routes defined with wildcards (like `*`) will still work as expected.
 
