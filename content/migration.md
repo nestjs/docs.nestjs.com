@@ -1,6 +1,6 @@
 ### Migration guide
 
-This article offers a comprehensive guide for migrating from NestJS version 10 to version 11. To explore the new features introduced in v11, take a look at [this article](#). While the update includes a few minor breaking changes, they are unlikely to impact most users. You can review the complete list of breaking changes [here](#).
+This article offers a comprehensive guide for migrating from NestJS version 10 to version 11. To explore the new features introduced in v11, take a look at [this article](https://trilon.io/blog/announcing-nestjs-11-whats-new). While the update includes a few minor breaking changes, they are unlikely to impact most users. You can review the complete list of changes [here](https://github.com/nestjs/nest/releases/tag/v11.0.0).
 
 #### Upgrading packages
 
