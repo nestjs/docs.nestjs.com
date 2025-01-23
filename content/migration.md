@@ -56,6 +56,34 @@ forRoutes('{*splat}'); // <-- This will work in Express v5
 
 Note that `{{ '{' }}*splat&#125;` is a named wildcard that matches any path including the root path. Outer braces make path optional.
 
+#### Query parameters parsing
+
+> info **Note** This change only applies to Express v5.
+
+In Express v5, query parameters are no longer parsed using the `qs` library by default. Instead, the `simple` parser is used, which does not support nested objects or arrays.
+
+As a result, query strings like these:
+
+```plaintext
+?filter[where][name]=John&filter[where][age]=30
+?item[]=1&item[]=2
+```
+
+will no longer be parsed as expected. To revert to the previous behavior, you can configure Express to use the `extended` parser (the default in Express v4) by setting the `query parser` option to `extended`:
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule); // <-- Make sure to use <NestExpressApplication>
+  app.set('query parser', 'extended'); // <-- Add this line
+  await app.listen(3000);
+}
+bootstrap();
+```
+
 #### Fastify v5
 
 Fastify v5 was released in 2024 and is now the default version integrated into NestJS 11. This update should be seamless for most users; however, Fastify v5 introduces a few breaking changes, though these are unlikely to affect the majority of NestJS users. For more detailed information, refer to the [Fastify v5 migration guide](https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
@@ -111,6 +139,12 @@ A -> B -> C
 ```
 
 > info **Hint** Global modules are treated as if they depend on all other modules. This means that global modules are initialized first and destroyed last.
+
+#### Middleware registration order
+
+In NestJS v11, the behavior of middleware registration has been updated. Previously, the order of middleware registration was determined by the topological sort of the module dependency graph, where the distance from the root module defined the order of middleware registration, regardless of whether the middleware was registered in a global module or a regular module. Global modules were treated like regular modules in this respect, which led to inconsistent behavior, especially when compared to other framework features.
+
+From v11 onwards, middleware registered in global modules is now **executed first**, regardless of its position in the module dependency graph. This change ensures that global middleware always runs before any middleware from imported modules, maintaining a consistent and predictable order.
 
 #### Cache module
 
