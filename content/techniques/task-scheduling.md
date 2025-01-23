@@ -145,6 +145,12 @@ Also, you can supply additional options as the second parameter to the `@Cron()`
       </td>
     </tr>
     <tr>
+      <td><code>waitForCompletion</code></td>
+      <td>
+        If <code>true</code>, no additional instances of the cron job will run until the current onTick callback has been completed. Any new scheduled executions that occur while the current cron job is running will be skipped entirely.
+      </td>
+    </tr>
+    <tr>
       <td><code>disabled</code></td>
       <td>
        This indicates whether the job will be executed at all.
