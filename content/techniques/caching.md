@@ -1,26 +1,20 @@
 ### Caching
 
-Caching is a great and simple **technique** that helps improve your app's performance. It acts as a temporary data store providing high performance data access.
+Caching is a powerful and straightforward **technique** for enhancing your application's performance. By acting as a temporary storage layer, it allows for quicker access to frequently used data, reducing the need to repeatedly fetch or compute the same information. This results in faster response times and improved overall efficiency.
 
 #### Installation
 
-First install required packages:
+To get started with caching in Nest, you need to install the `@nestjs/cache-manager` package along with the `cache-manager` package.
 
 ```bash
 $ npm install @nestjs/cache-manager cache-manager
 ```
 
-> warning **Warning** `cache-manager` version 4 uses seconds for `TTL (Time-To-Live)`. The current version of `cache-manager` (v5) has switched to using milliseconds instead. NestJS doesn't convert the value, and simply forwards the ttl you provide to the library. In other words:
->
-> - If using `cache-manager` v4, provide ttl in seconds
-> - If using `cache-manager` v5, provide ttl in milliseconds
-> - Documentation is referring to seconds, since NestJS was released targeting version 4 of cache-manager.
+By default, everything is stored in memory; Since `cache-manager` uses [Keyv](https://keyv.org/docs/) under the hood, you can easily switch to a more advanced storage solution, such as Redis, by installing the appropriate package. We'll cover this in more detail later.
 
 #### In-memory cache
 
-Nest provides a unified API for various cache storage providers. The built-in one is an in-memory data store. However, you can easily switch to a more comprehensive solution, like Redis.
-
-In order to enable caching, import the `CacheModule` and call its `register()` method.
+To enable caching in your application, import the `CacheModule` and configure it using the `register()` method:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -33,6 +27,8 @@ import { AppController } from './app.controller';
 })
 export class AppModule {}
 ```
+
+This setup initializes in-memory caching with default settings, allowing you to start caching data immediately.
 
 #### Interacting with the Cache store
 
@@ -58,13 +54,13 @@ await this.cacheManager.set('key', 'value');
 
 > warning **Note** The in-memory cache storage can only store values of types that are supported by [the structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
 
-The default expiration time of the cache is 5 seconds.
-
-You can manually specify a TTL (expiration time in seconds) for this specific key, as follows:
+You can manually specify a TTL (expiration time in miliseconds) for this specific key, as follows:
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
 ```
+
+Where `1000` is the TTL in milliseconds - in this case, the cache item will expire after one second.
 
 To disable expiration of the cache, set the `ttl` configuration property to `0`:
 
@@ -125,14 +121,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 export class AppModule {}
 ```
 
-#### Customize caching
+#### Time-to-live (TTL)
 
-All cached data has its own expiration time ([TTL](https://en.wikipedia.org/wiki/Time_to_live)). To customize default values, pass the options object to the `register()` method.
+The default value for `ttl` is `0`, meaning the cache will never expire. To specify a custom [TTL](https://en.wikipedia.org/wiki/Time_to_live), you can provide the `ttl` option in the `register()` method, as demonstrated below:
 
 ```typescript
 CacheModule.register({
-  ttl: 5, // seconds
-  max: 10, // maximum number of items in cache
+  ttl: 5000, // milliseconds
 });
 ```
 
@@ -227,30 +222,35 @@ class HttpCacheInterceptor extends CacheInterceptor {
 }
 ```
 
-#### Different stores
+#### Using alternative Cache stores
 
-The `cache-manager` package offers a variety of useful storage options, including the [Redis store](https://www.npmjs.com/package/cache-manager-redis-yet), which is the official package for integrating Redis with cache-manager. You can find a comprehensive list of supported stores [here](https://github.com/jaredwray/cacheable/blob/main/packages/cache-manager/READMEv5.md#store-engines). To configure the Redis store, use the `registerAsync()` method to initialize it, as shown below:
+Switching to a different cache store is straightforward. First, install the appropriate package. For example, to use Redis, install the `@keyv/redis` package:
+
+```bash
+$ npm install @keyv/redis
+```
+
+With this in place, you can register the `CacheModule` with multiple stores as shown below:
 
 ```typescript
-import { redisStore } from 'cache-manager-redis-yet';
 import { Module } from '@nestjs/common';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
+import KeyvRedis from '@keyv/redis';
+import { Keyv } from 'keyv';
+import { CacheableMemory } from 'cacheable';
 
 @Module({
   imports: [
     CacheModule.registerAsync({
       useFactory: async () => {
-        const store = await redisStore({
-          socket: {
-            host: 'localhost',
-            port: 6379,
-          },
-        });
-
         return {
-          store: store as unknown as CacheStore,
-          ttl: 3 * 60000, // 3 minutes (milliseconds)
+          stores: [
+            new Keyv({
+              store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
+            }),
+            new KeyvRedis('redis://localhost:6379'),
+          ],
         };
       },
     }),
@@ -260,7 +260,9 @@ import { AppController } from './app.controller';
 export class AppModule {}
 ```
 
-> warning **Warning** The `cache-manager-redis-yet` package requires the `ttl` (time-to-live) setting to be specified directly rather than as part of the module options.
+In this example, we've registered two stores: `CacheableMemory` and `KeyvRedis`. The `CacheableMemory` store is a simple in-memory store, while `KeyvRedis` is a Redis store. The `stores` array is used to specify the stores you want to use. The first store in the array is the default store, and the rest are fallback stores.
+
+Check out the [Keyv documentation](https://keyv.org/docs/) for more information on available stores.
 
 #### Async configuration
 

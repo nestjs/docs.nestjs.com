@@ -83,7 +83,7 @@ SWC builder is pre-configured to match the requirements of NestJS applications. 
 
 ```json
 {
-  "$schema": "https://json.schemastore.org/swcrc",
+  "$schema": "https://swc.rs/schema.json",
   "sourceMaps": true,
   "jsc": {
     "parser": {
@@ -228,7 +228,7 @@ Additionally you would need to add the following `transform` properties to your 
 
 ```json
 {
-  "$schema": "https://json.schemastore.org/swcrc",
+  "$schema": "https://swc.rs/schema.json",
   "sourceMaps": true,
   "jsc": {
     "parser": {

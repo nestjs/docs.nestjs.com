@@ -149,7 +149,6 @@ export class MenuComponent implements OnInit {
           path: '/graphql/other-features',
         },
         { title: 'Federation', path: '/graphql/federation' },
-        { title: 'Migration guide', path: '/graphql/migration-guide' },
       ],
     },
     {
@@ -224,7 +223,6 @@ export class MenuComponent implements OnInit {
         { title: 'Decorators', path: '/openapi/decorators' },
         { title: 'CLI Plugin', path: '/openapi/cli-plugin' },
         { title: 'Other features', path: '/openapi/other-features' },
-        { title: 'Migration guide', path: '/openapi/migration-guide' },
       ],
     },
     {
