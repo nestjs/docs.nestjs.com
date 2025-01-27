@@ -201,6 +201,93 @@ Additionally, the `ignoreEnvVars` configuration option, which previously allowed
 
 A new `skipProcessEnv` option has also been introduced. This option allows you to prevent the `ConfigService#get` method from accessing the `process.env` object entirely, which can be helpful when you want to restrict the service from reading environment variables directly.
 
+#### Terminus module
+
+If you are using the `TerminusModule` and have built your own custom health indicator, a new API has been introduced in version 11. The new `HealthIndicatorService` is designed to enhance the readability and testability of custom health indicators.
+
+Before version 11, a health indicator might have looked like this:
+
+```typescript
+@Injectable()
+export class DogHealthIndicator extends HealthIndicator {
+  constructor(private readonly httpService: HttpService) {
+    super();
+  }
+
+  async isHealthy(key: string) {
+    try {
+      const badboys = await this.getBadboys();
+      const isHealthy = badboys.length === 0;
+
+      const result = this.getStatus(key, isHealthy, {
+        badboys: badboys.length,
+      });
+
+      if (!isHealthy) {
+        throw new HealthCheckError('Dog check failed', result);
+      }
+
+      return result;
+    } catch (error) {
+      const result = this.getStatus(key, isHealthy);
+      throw new HealthCheckError('Dog check failed', result);
+    }
+  }
+
+  private getBadboys() {
+    return firstValueFrom(
+      this.httpService.get<Dog[]>('https://example.com/dog').pipe(
+        map((response) => response.data),
+        map((dogs) => dogs.filter((dog) => dog.state === DogState.BAD_BOY)),
+      ),
+    );
+  }
+}
+```
+
+Starting with version 11, it is recommended to use the new `HealthIndicatorService` API, which streamlines the implementation process. Here's how the same health indicator can now be implemented:
+
+```typescript
+@Injectable()
+export class DogHealthIndicator {
+  constructor(
+    private readonly httpService: HttpService,
+    //  Inject the `HealthIndicatorService` provided by the `TerminusModule`
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {}
+
+  async isHealthy(key: string) {
+    // Start the health indicator check for the given key
+    const indicator = this.healthIndicatorService.check(key);
+
+    try {
+      const badboys = await this.getBadboys();
+
+      if (badboys.length === 0) {
+        // Mark the indicator as "down" and add additional info to the response
+        return indicator.down({ badboys: badboys.length });
+      }
+
+      // Mark the health indicator as up
+      return indicator.up();
+    } catch (error) {
+      return indicator.down('Unable to retrieve dogs');
+    }
+  }
+
+  private getBadboys() {
+    // ...
+  }
+}
+```
+
+Key changes:
+
+- The `HealthIndicatorService` replaces the legacy `HealthIndicator` and `HealthCheckError` classes, providing a cleaner API for health checks.
+- The `check` method allows for easy state tracking (`up` or `down`) while supporting the inclusion of additional metadata in health check responses.
+
+> info **Info** Please note that the `HealthIndicator` and `HealthCheckError` classes have been marked as deprecated and are scheduled for removal in the next major release.
+
 #### Node.js v16 no longer supported
 
 Starting with NestJS 11, Node.js v16 is no longer supported, as it reached its end-of-life (EOL) on September 11, 2023. NestJS 11 now requires **Node.js v20 or higher**.
