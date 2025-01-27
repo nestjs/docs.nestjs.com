@@ -205,8 +205,6 @@ A new `skipProcessEnv` option has also been introduced. This option allows you t
 
 If you are using the `TerminusModule` and have built your own custom health indicator, a new API has been introduced in version 11. The new `HealthIndicatorService` is designed to enhance the readability and testability of custom health indicators.
 
-**Previous Approach**
-
 Before version 11, a health indicator might have looked like this:
 
 ```typescript
@@ -216,21 +214,14 @@ export class DogHealthIndicator extends HealthIndicator {
     super();
   }
 
-  private getBadboys() {
-    return firstValueFrom(
-      this.httpService.get<Dog[]>('https://example.com/dog').pipe(
-        map((response) => response.data),
-        map((dogs) => dogs.filter((dog) => dog.state === DogState.BAD_BOY)),
-      ),
-    );
-  }
-
   async isHealthy(key: string) {
     try {
       const badboys = await this.getBadboys();
       const isHealthy = badboys.length === 0;
 
-      const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
+      const result = this.getStatus(key, isHealthy, {
+        badboys: badboys.length,
+      });
 
       if (!isHealthy) {
         throw new HealthCheckError('Dog check failed', result);
@@ -242,12 +233,19 @@ export class DogHealthIndicator extends HealthIndicator {
       throw new HealthCheckError('Dog check failed', result);
     }
   }
+
+  private getBadboys() {
+    return firstValueFrom(
+      this.httpService.get<Dog[]>('https://example.com/dog').pipe(
+        map((response) => response.data),
+        map((dogs) => dogs.filter((dog) => dog.state === DogState.BAD_BOY)),
+      ),
+    );
+  }
 }
 ```
 
-**Updated Approach (NestJS Terminus v11)**
-
-In version 11, it is recommended to use the new `HealthIndicatorService` API, which simplifies the implementation. Here's how the same health indicator can be implemented:
+Starting with version 11, it is recommended to use the new `HealthIndicatorService` API, which streamlines the implementation process. Here's how the same health indicator can now be implemented:
 
 ```typescript
 @Injectable()
@@ -257,8 +255,6 @@ export class DogHealthIndicator {
     //  Inject the `HealthIndicatorService` provided by the `TerminusModule`
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}
-
-  private getBadboys() { // ... }
 
   async isHealthy(key: string) {
     // Start the health indicator check for the given key
@@ -278,15 +274,19 @@ export class DogHealthIndicator {
       return indicator.down('Unable to retrieve dogs');
     }
   }
+
+  private getBadboys() {
+    // ...
+  }
 }
 ```
 
-**Key changes**
+Key changes:
 
-- The `HealthIndicatorService` replaces the older `HealthIndicator` and `HealthCheckError` classes, providing a cleaner API for health checks.
-- The `check` method allows easy state tracking (`up` or `down`) while supporting additional metadata to be included in health check responses.
+- The `HealthIndicatorService` replaces the legacy `HealthIndicator` and `HealthCheckError` classes, providing a cleaner API for health checks.
+- The `check` method allows for easy state tracking (`up` or `down`) while supporting the inclusion of additional metadata in health check responses.
 
-> info **Info** Please note that the `HealthIndicator` and `HealthCheckError` classes have been marked as deprecated and are scheduled for removal in the next major release. 
+> info **Info** Please note that the `HealthIndicator` and `HealthCheckError` classes have been marked as deprecated and are scheduled for removal in the next major release.
 
 #### Node.js v16 no longer supported
 
