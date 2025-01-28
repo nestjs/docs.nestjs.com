@@ -264,6 +264,8 @@ In this example, we've registered two stores: `CacheableMemory` and `KeyvRedis`.
 
 Check out the [Keyv documentation](https://keyv.org/docs/) for more information on available stores.
 
+> warning **Warning** With this update, cached data managed by the Keyv library is now wrapped in an object with value and expires fields, e.g.: `{{ '{' }}"value": "yourData", "expires": 1678901234567{{ '}' }}`. While `Keyv` automatically extracts the `value` field when retrieving data through its API, this is a critical change to be aware of if you access cache data directly (e.g. outside the cache-manager API) or if you need to support data written with the previous version of `@nestjs/cache-manager`.
+
 #### Async configuration
 
 You may want to asynchronously pass in module options instead of passing them statically at compile time. In this case, use the `registerAsync()` method, which provides several ways to deal with async configuration.
