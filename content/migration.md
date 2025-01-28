@@ -187,7 +187,7 @@ CacheModule.registerAsync({
 
 Where `KeyvRedis` is imported from the `@keyv/redis` package. See the [Caching documentation](/techniques/caching) to learn more.
 
-> warning **Warning** With this update, cached data managed by the Keyv library is now wrapped in an object with value and expires fields, e.g.: `{{ '{' }}"value": "yourData", "expires": 1678901234567{{ '}' }}`. While `Keyv` automatically extracts the `value` field when retrieving data through its API, this is a critical change to be aware of if you access cache data directly (e.g. outside the cache-manager API) or if you need to support data written with the previous version of `@nestjs/cache-manager`.
+> warning **Warning** In this update, cached data handled by the Keyv library is now structured as an object containing `value` and `expires` fields, for example: `{{ '{' }}"value": "yourData", "expires": 1678901234567{{ '}' }}`. While Keyv automatically retrieves the `value` field when accessing data through its API, it’s important to note this change if you interact with the cache data directly (e.g., outside of the cache-manager API) or need to support data written using the previous version of `@nestjs/cache-manager`.`.
 
 #### Config module
 
