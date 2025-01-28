@@ -80,6 +80,7 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/platform-agnosticism',
         },
         { title: 'Testing', path: '/fundamentals/testing' },
+        { title: 'Advanced', path: '/fundamentals/advanced' },
       ],
     },
     {
