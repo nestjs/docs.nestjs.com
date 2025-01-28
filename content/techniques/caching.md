@@ -264,7 +264,6 @@ In this example, we've registered two stores: `CacheableMemory` and `KeyvRedis`.
 
 Check out the [Keyv documentation](https://keyv.org/docs/) for more information on available stores.
 
-
 #### Async configuration
 
 You may want to asynchronously pass in module options instead of passing them statically at compile time. In this case, use the `registerAsync()` method, which provides several ways to deal with async configuration.
