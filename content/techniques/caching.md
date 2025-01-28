@@ -74,10 +74,10 @@ To remove an item from the cache, use the `del` method:
 await this.cacheManager.del('key');
 ```
 
-To clear the entire cache, use the `reset` method:
+To clear the entire cache, use the `clear` method:
 
 ```typescript
-await this.cacheManager.reset();
+await this.cacheManager.clear();
 ```
 
 #### Auto-caching responses
