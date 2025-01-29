@@ -6,14 +6,13 @@
 
 First, install the required dependencies:
 
-
 ```bash
 $ npm install --save @sentry/nestjs @sentry/profiling-node
 ```
-> info **Hint** we support `yarn` and `pnpm` as well. @sentry/profiling-node is optional, but recommended for performance profiling.
 
+> info **Hint** `@sentry/profiling-node` is optional, but recommended for performance profiling.
 
-#### Basic Setup
+#### Basic setup
 
 To get started with Sentry, you'll need to create a file named `instrument.js` that should be imported before any other modules in your application:
 
@@ -38,13 +37,9 @@ Sentry.init({
   // This is relative to tracesSampleRate
   profilesSampleRate: 1.0,
 });
-
-
 ```
 
-
 Update your `main.ts` file to import `instrument.js` before other imports:
-
 
 ```typescript
 @@filename(main)
@@ -61,13 +56,11 @@ async function bootstrap() {
 }
 
 bootstrap();
-
 ```
 
 Afterwards, add the `SentryModule` as a root module to your main module:
 
-
-```typescript {2, 8}
+```typescript
 @@filename(app.module)
 import { Module } from "@nestjs/common";
 import { SentryModule } from "@sentry/nestjs/setup";
@@ -85,11 +78,11 @@ import { AppService } from "./app.service";
 export class AppModule {}
 ```
 
-#### Exception Handling
+#### Exception handling
 
 If you're using a global catch-all exception filter (which is either a filter registered with `app.useGlobalFilters()` or a filter registered in your app module providers annotated with a `@Catch()` decorator without arguments), add a `@SentryExceptionCaptured()` decorator to the filter's `catch()` method. This decorator will report all unexpected errors that are received by your global error filter to Sentry:
 
-```typescript {2, 6}
+```typescript
 import { Catch, ExceptionFilter } from '@nestjs/common';
 import { SentryExceptionCaptured } from '@sentry/nestjs';
 
@@ -104,15 +97,15 @@ export class YourCatchAllExceptionFilter implements ExceptionFilter {
 
 By default, only unhandled exceptions that are not caught by an error filter are reported to Sentry. `HttpExceptions` (including [derivatives](https://docs.nestjs.com/exception-filters#built-in-http-exceptions)) are also not captured by default because they mostly act as control flow vehicles.
 
-If you don't have a global catch-all exception filter, add the `SentryGlobalFilter` to the providers of your main module. This filter will report any unhandled errors that aren't caught by other error filters to Sentry. 
+If you don't have a global catch-all exception filter, add the `SentryGlobalFilter` to the providers of your main module. This filter will report any unhandled errors that aren't caught by other error filters to Sentry.
 
-> warning **Important** The `SentryGlobalFilter` needs to be registered before any other exception filters.
+> warning **Warning** The `SentryGlobalFilter` needs to be registered before any other exception filters.
 
-```typescript {3, 9}
+```typescript
 @@filename(app.module)
 import { Module } from "@nestjs/common";
 import { APP_FILTER } from "@nestjs/core";
-+import { SentryGlobalFilter } from "@sentry/nestjs/setup";
+import { SentryGlobalFilter } from "@sentry/nestjs/setup";
 
 @Module({
   providers: [
@@ -126,7 +119,7 @@ import { APP_FILTER } from "@nestjs/core";
 export class AppModule {}
 ```
 
-#### Add Readable Stack Traces to Errors
+#### Readable stack traces
 
 Depending on how you've set up your project, the stack traces in your Sentry errors probably won't look like your actual code.
 
@@ -136,21 +129,18 @@ To fix this, upload your source maps to Sentry. The easiest way to do this is by
 npx @sentry/wizard@latest -i sourcemaps
 ```
 
-
-#### Testing the Integration
+#### Testing the integration
 
 To verify your Sentry integration is working, you can add a test endpoint that throws an error:
 
 ```typescript
-@Get("/debug-sentry")
+@Get("debug-sentry")
 getError() {
   throw new Error("My first Sentry error!");
 }
-
 ```
 
 Visit `/debug-sentry` in your application, and you should see the error appear in your Sentry dashboard.
-
 
 ### Summary
 
