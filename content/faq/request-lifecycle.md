@@ -94,3 +94,7 @@ In general, the request lifecycle looks like the following:
    - 9.2 controller
    - 9.3 global
 10. Server response
+
+<figure>
+  <img class="illustrative-image" src="/assets/nest-request-flow.png" />
+</figure>
