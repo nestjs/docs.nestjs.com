@@ -413,7 +413,7 @@ Let's get started by creating a service that will represent our custom indicator
 ```typescript
 @@filename(dog.health)
 import { Injectable } from '@nestjs/common';
-import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus';
+import { HealthIndicatorService } from '@nestjs/terminus';
 
 export interface Dog {
   name: string;
@@ -421,43 +421,54 @@ export interface Dog {
 }
 
 @Injectable()
-export class DogHealthIndicator extends HealthIndicator {
+export class DogHealthIndicator {
+  constructor(
+    private readonly healthIndicatorService: HealthIndicatorService
+  ) {}
+
   private dogs: Dog[] = [
     { name: 'Fido', type: 'goodboy' },
     { name: 'Rex', type: 'badboy' },
   ];
 
-  async isHealthy(key: string): Promise<HealthIndicatorResult> {
+  async isHealthy(key: string){
+    const indicator = this.healthIndicatorService.check(key);
     const badboys = this.dogs.filter(dog => dog.type === 'badboy');
     const isHealthy = badboys.length === 0;
-    const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
 
-    if (isHealthy) {
-      return result;
+    if (!isHealthy) {
+      return indicator.down({ badboys: badboys.length });
     }
-    throw new HealthCheckError('Dogcheck failed', result);
+
+    return indicator.up();
   }
 }
 @@switch
 import { Injectable } from '@nestjs/common';
-import { HealthCheckError } from '@godaddy/terminus';
+import { HealthIndicatorService } from '@nestjs/terminus';
 
 @Injectable()
-export class DogHealthIndicator extends HealthIndicator {
-  dogs = [
+@Dependencies(HealthIndicatorService)
+export class DogHealthIndicator {
+  constructor(healthIndicatorService) {
+    this.healthIndicatorService = healthIndicatorService;
+  }
+
+  private dogs = [
     { name: 'Fido', type: 'goodboy' },
     { name: 'Rex', type: 'badboy' },
   ];
 
-  async isHealthy(key) {
+  async isHealthy(key){
+    const indicator = this.healthIndicatorService.check(key);
     const badboys = this.dogs.filter(dog => dog.type === 'badboy');
     const isHealthy = badboys.length === 0;
-    const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
 
-    if (isHealthy) {
-      return result;
+    if (!isHealthy) {
+      return indicator.down({ badboys: badboys.length });
     }
-    throw new HealthCheckError('Dogcheck failed', result);
+
+    return indicator.up();
   }
 }
 ```
@@ -512,9 +523,12 @@ import { DogHealthIndicator } from './dog.health';
 @Dependencies(HealthCheckService, DogHealthIndicator)
 export class HealthController {
   constructor(
-    private health,
-    private dogHealthIndicator
-  ) {}
+    health,
+    dogHealthIndicator
+  ) {
+    this.health = health;
+    this.dogHealthIndicator = dogHealthIndicator;
+  }
 
   @Get()
   @HealthCheck()

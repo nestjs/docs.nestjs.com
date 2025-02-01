@@ -19,18 +19,37 @@ import { CustomTransportStrategy, Server } from '@nestjs/microservices';
 
 class GoogleCloudPubSubServer
   extends Server
-  implements CustomTransportStrategy {
+  implements CustomTransportStrategy
+{
   /**
-   * This method is triggered when you run "app.listen()".
+   * Triggered when you run "app.listen()".
    */
   listen(callback: () => void) {
     callback();
   }
 
   /**
-   * This method is triggered on application shutdown.
+   * Triggered on application shutdown.
    */
   close() {}
+
+  /**
+   * You can ignore this method if you don't want transporter users
+   * to be able to register event listeners. Most custom implementations
+   * will not need this.
+   */
+  on(event: string, callback: Function) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * You can ignore this method if you don't want transporter users
+   * to be able to retrieve the underlying native server. Most custom implementations
+   * will not need this.
+   */
+  unwrap<T = never>(): T {
+    throw new Error('Method not implemented.');
+  }
 }
 ```
 
@@ -137,6 +156,9 @@ class GoogleCloudPubSubClient extends ClientProxy {
     packet: ReadPacket<any>,
     callback: (packet: WritePacket<any>) => void,
   ): Function {}
+  unwrap<T = never>(): T {
+    throw new Error('Method not implemented.');
+  }
 }
 ```
 
@@ -173,6 +195,10 @@ class GoogleCloudPubSubClient extends ClientProxy {
     setTimeout(() => callback({ response: packet.data }), 5000);
 
     return () => console.log('teardown');
+  }
+
+  unwrap<T = never>(): T {
+    throw new Error('Method not implemented.');
   }
 }
 ```

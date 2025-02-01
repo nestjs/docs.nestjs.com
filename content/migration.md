@@ -187,6 +187,8 @@ CacheModule.registerAsync({
 
 Where `KeyvRedis` is imported from the `@keyv/redis` package. See the [Caching documentation](/techniques/caching) to learn more.
 
+> warning **Warning** In this update, cached data handled by the Keyv library is now structured as an object containing `value` and `expires` fields, for example: `{{ '{' }}"value": "yourData", "expires": 1678901234567{{ '}' }}`. While Keyv automatically retrieves the `value` field when accessing data through its API, it’s important to note this change if you interact with the cache data directly (e.g., outside of the cache-manager API) or need to support data written using the previous version of `@nestjs/cache-manager`.
+
 #### Config module
 
 If you're using the `ConfigModule` from the `@nestjs/config` package, be aware of several breaking changes introduced in `@nestjs/config@4.0.0`. Most notably, the order in which configuration variables are read by the `ConfigService#get` method has been updated. The new order is:
@@ -200,6 +202,93 @@ Previously, validated environment variables and the `process.env` object were re
 Additionally, the `ignoreEnvVars` configuration option, which previously allowed disabling validation of the `process.env` object, has been deprecated. Instead, use the `validatePredefined` option (set to `false` to disable validation of predefined environment variables). Predefined environment variables refer to `process.env` variables that were set before the module was imported. For example, if you start your application with `PORT=3000 node main.js`, the `PORT` variable is considered predefined. However, variables loaded by the `ConfigModule` from a `.env` file are not classified as predefined.
 
 A new `skipProcessEnv` option has also been introduced. This option allows you to prevent the `ConfigService#get` method from accessing the `process.env` object entirely, which can be helpful when you want to restrict the service from reading environment variables directly.
+
+#### Terminus module
+
+If you are using the `TerminusModule` and have built your own custom health indicator, a new API has been introduced in version 11. The new `HealthIndicatorService` is designed to enhance the readability and testability of custom health indicators.
+
+Before version 11, a health indicator might have looked like this:
+
+```typescript
+@Injectable()
+export class DogHealthIndicator extends HealthIndicator {
+  constructor(private readonly httpService: HttpService) {
+    super();
+  }
+
+  async isHealthy(key: string) {
+    try {
+      const badboys = await this.getBadboys();
+      const isHealthy = badboys.length === 0;
+
+      const result = this.getStatus(key, isHealthy, {
+        badboys: badboys.length,
+      });
+
+      if (!isHealthy) {
+        throw new HealthCheckError('Dog check failed', result);
+      }
+
+      return result;
+    } catch (error) {
+      const result = this.getStatus(key, isHealthy);
+      throw new HealthCheckError('Dog check failed', result);
+    }
+  }
+
+  private getBadboys() {
+    return firstValueFrom(
+      this.httpService.get<Dog[]>('https://example.com/dog').pipe(
+        map((response) => response.data),
+        map((dogs) => dogs.filter((dog) => dog.state === DogState.BAD_BOY)),
+      ),
+    );
+  }
+}
+```
+
+Starting with version 11, it is recommended to use the new `HealthIndicatorService` API, which streamlines the implementation process. Here's how the same health indicator can now be implemented:
+
+```typescript
+@Injectable()
+export class DogHealthIndicator {
+  constructor(
+    private readonly httpService: HttpService,
+    //  Inject the `HealthIndicatorService` provided by the `TerminusModule`
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {}
+
+  async isHealthy(key: string) {
+    // Start the health indicator check for the given key
+    const indicator = this.healthIndicatorService.check(key);
+
+    try {
+      const badboys = await this.getBadboys();
+
+      if (badboys.length === 0) {
+        // Mark the indicator as "down" and add additional info to the response
+        return indicator.down({ badboys: badboys.length });
+      }
+
+      // Mark the health indicator as up
+      return indicator.up();
+    } catch (error) {
+      return indicator.down('Unable to retrieve dogs');
+    }
+  }
+
+  private getBadboys() {
+    // ...
+  }
+}
+```
+
+Key changes:
+
+- The `HealthIndicatorService` replaces the legacy `HealthIndicator` and `HealthCheckError` classes, providing a cleaner API for health checks.
+- The `check` method allows for easy state tracking (`up` or `down`) while supporting the inclusion of additional metadata in health check responses.
+
+> info **Info** Please note that the `HealthIndicator` and `HealthCheckError` classes have been marked as deprecated and are scheduled for removal in the next major release.
 
 #### Node.js v16 no longer supported
 
