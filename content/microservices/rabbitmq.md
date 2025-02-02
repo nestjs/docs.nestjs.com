@@ -16,27 +16,43 @@ To use the RabbitMQ transporter, pass the following options object to the `creat
 
 ```typescript
 @@filename(main)
-const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-  transport: Transport.RMQ,
-  options: {
-    urls: ['amqp://localhost:5672'],
-    queue: 'cats_queue',
-    queueOptions: {
-      durable: false
+import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'],
+      queue: 'cats_queue',
+      queueOptions: {
+        durable: false
+      },
     },
-  },
-});
+  });
+  await app.listen();
+}
+bootstrap();
 @@switch
-const app = await NestFactory.createMicroservice(AppModule, {
-  transport: Transport.RMQ,
-  options: {
-    urls: ['amqp://localhost:5672'],
-    queue: 'cats_queue',
-    queueOptions: {
-      durable: false
+import { NestFactory } from '@nestjs/core';
+import { Transport } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice(AppModule, {
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'],
+      queue: 'cats_queue',
+      queueOptions: {
+        durable: false
+      },
     },
-  },
-});
+  });
+  await app.listen();
+}
+bootstrap();
 ```
 
 > info **Hint** The `Transport` enum is imported from the `@nestjs/microservices` package.
@@ -118,20 +134,30 @@ Other options to create a client (either `ClientProxyFactory` or `@Client()`) ca
 In more complex scenarios, you may need to access additional information about the incoming request. When using the RabbitMQ transporter, you can access the `RmqContext` object.
 
 ```typescript
-@@filename()
-@MessagePattern('notifications')
-getNotifications(@Payload() data: number[], @Ctx() context: RmqContext) {
-  console.log(`Pattern: ${context.getPattern()}`);
+@@filename(app.controller)
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
+
+@Controller()
+export class AppController {
+  @MessagePattern('notifications')
+  getNotifications(@Payload() data: number[], @Ctx() context: RmqContext) {
+    console.log(`Pattern: ${context.getPattern()}`);
+  }
 }
 @@switch
-@Bind(Payload(), Ctx())
-@MessagePattern('notifications')
-getNotifications(data, context) {
-  console.log(`Pattern: ${context.getPattern()}`);
+import { Controller, Bind } from '@nestjs/common';
+import { MessagePattern, Payload, Ctx } from '@nestjs/microservices';
+
+@Controller()
+export class AppController {
+  @Bind(Payload(), Ctx())
+  @MessagePattern('notifications')
+  getNotifications(data, context) {
+    console.log(`Pattern: ${context.getPattern()}`);
+  }
 }
 ```
-
-> info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from the `@nestjs/microservices` package.
 
 To access the original RabbitMQ message (with the `properties`, `fields`, and `content`), use the `getMessage()` method of the `RmqContext` object, as follows:
 
