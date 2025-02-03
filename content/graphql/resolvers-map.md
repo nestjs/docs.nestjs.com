@@ -269,7 +269,7 @@ getAuthor(
 ) {}
 ```
 
-> info **Hint** Again, in the case of `firstName`, which is a GraphQL nullable field, it isn't necessary to add the non-value types of `null` or `undefined` to the type of this field. Just be aware, you'll need to type guard for these possible non-value types in your resolvers, because a GraphQL nullable field will allow those types to pass through to your resolver.
+> info **Hint** In the case of `firstName`, which is a GraphQL nullable field, it isn't necessary to add the non-value types of `null` or `undefined` to the type of this field. Just be aware, you'll need to type guard for these possible non-value types in your resolvers, because a GraphQL nullable field will allow those types to pass through to your resolver.
 
 #### Dedicated arguments class
 
