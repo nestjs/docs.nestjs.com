@@ -468,16 +468,17 @@ BullModule.registerQueueAsync({
 
 #### Manual registration
 
-By default, `BullModule` is automatically registring BullMQ components (queues processors and event listeners services) in an `onModuleInit` life-cycle function. In some use cases this behavior isn't ideal, so to prevent this you should enable `manualRegistration` in `BullModule` as such:
+By default, `BullModule` automatically registers BullMQ components (queues, processors, and event listener services) in the `onModuleInit` lifecycle function. However, in some cases, this behavior may not be ideal. To prevent automatic registration, enable `manualRegistration` in `BullModule` like this:
 
 ```typescript
 BullModule.forRoot({
   extraOptions: {
     manualRegistration: true,
-  },});
+  },
+});
 ```
 
-In order to regiter those components you should inject `BullRegistrar` and call the `register` function (ideally in an `OnModuleInit` or `OnApplicationBoostrap`).
+To register these components manually, inject `BullRegistrar` and call the `register` function, ideally within `OnModuleInit` or `OnApplicationBootstrap`.
 
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -488,14 +489,14 @@ export class AudioService implements OnModuleInit {
   constructor(private bullRegistrar: BullRegistrar) {}
 
   onModuleInit() {
-    if (something) {
+    if (yourConditionHere) {
       this.bullRegistrar.register();
     }
   }
 }
-``` 
+```
 
-Unless you're calling the `BullRegistrar#register` function no BullMQ component will work (e.g no job will be processed).
+Unless you call the `BullRegistrar#register` function, no BullMQ components will work—meaning no jobs will be processed.
 
 #### Bull installation
 
