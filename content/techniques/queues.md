@@ -46,6 +46,7 @@ The `forRoot()` method is used to register a `bullmq` package configuration obje
 - `prefix: string` - Prefix for all queue keys. Optional.
 - `defaultJobOptions: JobOpts` - Options to control the default settings for new jobs. See [JobOpts](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd) for more information. Optional.
 - `settings: AdvancedSettings` - Advanced Queue configuration settings. These should usually not be changed. See [AdvancedSettings](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
+- `extraOptions` - Extra options for module init. See [Manual Registration](https://docs.nestjs.com/techniques/queues#manual-registration)
 
 All the options are optional, providing detailed control over queue behavior. These are passed directly to the BullMQ `Queue` constructor. Read more about these options and other options [here](https://api.docs.bullmq.io/interfaces/v4.QueueOptions.html).
 
@@ -464,6 +465,38 @@ BullModule.registerQueueAsync({
   }),
 });
 ```
+
+#### Manual registration
+
+By default, `BullModule` automatically registers BullMQ components (queues, processors, and event listener services) in the `onModuleInit` lifecycle function. However, in some cases, this behavior may not be ideal. To prevent automatic registration, enable `manualRegistration` in `BullModule` like this:
+
+```typescript
+BullModule.forRoot({
+  extraOptions: {
+    manualRegistration: true,
+  },
+});
+```
+
+To register these components manually, inject `BullRegistrar` and call the `register` function, ideally within `OnModuleInit` or `OnApplicationBootstrap`.
+
+```typescript
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BullRegistrar } from '@nestjs/bullmq';
+
+@Injectable()
+export class AudioService implements OnModuleInit {
+  constructor(private bullRegistrar: BullRegistrar) {}
+
+  onModuleInit() {
+    if (yourConditionHere) {
+      this.bullRegistrar.register();
+    }
+  }
+}
+```
+
+Unless you call the `BullRegistrar#register` function, no BullMQ components will work—meaning no jobs will be processed.
 
 #### Bull installation
 
