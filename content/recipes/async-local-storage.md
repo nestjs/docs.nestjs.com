@@ -59,8 +59,7 @@ export class AppModule implements NestModule {
         // to the "als.run" method together with the store.
         this.als.run(store, () => next());
       })
-      // and register it for all routes (in case of Fastify use '(.*)')
-      .forRoutes('*');
+      .forRoutes('*path');
   }
 }
 @@switch
@@ -89,8 +88,7 @@ export class AppModule {
         // to the "als.run" method together with the store.
         this.als.run(store, () => next());
       })
-      // and register it for all routes (in case of Fastify use '(.*)')
-      .forRoutes('*');
+      .forRoutes('*path');
   }
 }
 ```

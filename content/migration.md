@@ -88,7 +88,26 @@ bootstrap();
 
 `@nestjs/platform-fastify` v11 now finally supports Fastify v5. This update should be seamless for most users; however, Fastify v5 introduces a few breaking changes, though these are unlikely to affect the majority of NestJS users. For more detailed information, refer to the [Fastify v5 migration guide](https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
 
-> info **Hint** There have been no changes to path matching in Fastify v5, so you can continue using the wildcard syntax as you did before. The behavior remains the same, and routes defined with wildcards (like `*`) will still work as expected.
+> info **Hint** There have been no changes to path matching in Fastify v5 (except for middleware, see the section below), so you can continue using the wildcard syntax as you did before. The behavior remains the same, and routes defined with wildcards (like `*`) will still work as expected.
+
+#### Fastify middleware registration
+
+NestJS 11 now uses the latest version of the [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package to match **middleware paths** in `@nestjs/platform-fastify`. As a result, the `(.*)` syntax for matching all paths is no longer supported. Instead, you should use named wildcards.
+
+For example, if you have a middleware that applies to all routes:
+
+```typescript
+// In NestJS 11, this will automatically be converted to a valid route, even if you don't update it.
+.forRoutes('(.*)');
+```
+
+You'll need to update it to use a named wildcard instead:
+
+```typescript
+.forRoutes('*splat');
+```
+
+Where `splat` is just an arbitrary name for the wildcard parameter. You can name it anything you like.
 
 #### Module resolution algorithm
 
@@ -290,9 +309,11 @@ Key changes:
 
 > info **Info** Please note that the `HealthIndicator` and `HealthCheckError` classes have been marked as deprecated and are scheduled for removal in the next major release.
 
-#### Node.js v16 no longer supported
+#### Node.js v16 and v18 no longer supported
 
-Starting with NestJS 11, Node.js v16 is no longer supported, as it reached its end-of-life (EOL) on September 11, 2023. NestJS 11 now requires **Node.js v20 or higher**.
+Starting with NestJS 11, Node.js v16 is no longer supported, as it reached its end-of-life (EOL) on September 11, 2023. Likewise, the security support is scheduled to end on April 30, 2025 for Node.js v18, so we went ahead and dropped support for it as well.
+
+NestJS 11 now requires **Node.js v20 or higher**.
 
 To ensure the best experience, we strongly recommend using the latest LTS version of Node.js.
 
