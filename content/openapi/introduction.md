@@ -64,7 +64,7 @@ As you can see, the `SwaggerModule` automatically reflects all of your endpoints
 > It is also possible to expose it on a route of your choice using only the setup method from `@nestjs/swagger`, like this:
 >
 > ```typescript
-> SwaggerModule.setup('swagger', app, document, {
+> SwaggerModule.setup('swagger', app, documentFactory, {
 >   jsonDocumentUrl: 'swagger/json',
 > });
 > ```
