@@ -30,7 +30,7 @@ Because this pipe uses the [`class-validator`](https://github.com/typestack/clas
 export interface ValidationPipeOptions extends ValidatorOptions {
   transform?: boolean;
   disableErrorMessages?: boolean;
-  exceptionFactory?: (errors: ValidationError[]) => any;
+  exceptionFactory?: (errors: ValidationError[] | string[]) => any;
 }
 ```
 
@@ -128,6 +128,16 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>stopAtFirstError</code></td>
     <td><code>boolean</code></td>
     <td>When set to true, validation of the given property will stop after encountering the first error. Defaults to false.</td>
+  </tr>
+  <tr>
+    <td><code>disableFlattenErrorMessages</code></td>
+    <td><code>boolean</code></td>
+    <td>When set to true, the validation errors array will maintain its original structured format as <code>ValidationError</code> objects, rather than being flattened into an array of strings.</td>
+  </tr>
+  <tr>
+    <td><code>flatExceptionFactoryMessage</code></td>
+    <td><code>boolean</code></td>
+    <td>When set to true and an exceptionFactory is provided, the validation errors array will be flattened into an array of strings.</td>
   </tr>
 </table>
 
