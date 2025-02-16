@@ -283,8 +283,9 @@ export class DogHealthIndicator {
 
     try {
       const badboys = await this.getBadboys();
+      const isHealthy = badboys.length === 0;
 
-      if (badboys.length === 0) {
+      if (!isHealthy) {
         // Mark the indicator as "down" and add additional info to the response
         return indicator.down({ badboys: badboys.length });
       }
