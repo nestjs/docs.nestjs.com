@@ -280,6 +280,12 @@ export default defineConfig({
       module: { type: 'es6' },
     }),
   ],
+  resolve: {
+    alias: {
+      // Ensure Vitest correctly resolves TypeScript path aliases
+      'src': resolve(__dirname, './src'),
+    },
+  },
 });
 ```
 
@@ -326,6 +332,23 @@ export default defineConfig({
 });
 ```
 
+### Handling Path Aliases in Vitest
+
+Unlike Jest, Vitest does not automatically resolve TypeScript path aliases like `src/`. This may lead to dependency resolution errors during testing. To resolve this issue, add the following `resolve.alias` configuration in your `vitest.config.ts` file:
+
+```ts
+import { resolve } from 'path';
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      'src': resolve(__dirname, './src'),
+    },
+  },
+});
+```
+This ensures that Vitest correctly resolves module imports, preventing errors related to missing dependencies.
+
 #### Update imports in E2E tests
 
 Change any E2E test imports using `import * as request from 'supertest'` to `import request from 'supertest'`. This is necessary because Vitest, when bundled with Vite, expects a default import for supertest. Using a namespace import may cause issues in this specific setup.
@@ -343,6 +366,7 @@ Lastly, update the test scripts in your package.json file to the following:
   }
 }
 ```
+
 
 These scripts configure Vitest for running tests, watching for changes, generating code coverage reports, and debugging. The test:e2e script is specifically for running E2E tests with a custom configuration file.
 
