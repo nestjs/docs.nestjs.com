@@ -174,11 +174,29 @@ export interface SwaggerCustomOptions {
   useGlobalPrefix?: boolean;
 
   /**
-   * If `false`, only API definitions (JSON and YAML) will be served (on `/{path}-json` and `/{path}-yaml`).
-   * This is particularly useful if you are already hosting a Swagger UI somewhere else and just want to serve API definitions.
+   * If `false`, the Swagger UI will not be served. Only API definitions (JSON and YAML)
+   * will be accessible (on `/{path}-json` and `/{path}-yaml`). To fully disable both the Swagger UI and API definitions, use `raw: false`.
    * Default: `true`.
+   * @deprecated Use `ui` instead.
    */
   swaggerUiEnabled?: boolean;
+
+  /**
+   * If `false`, the Swagger UI will not be served. Only API definitions (JSON and YAML)
+   * will be accessible (on `/{path}-json` and `/{path}-yaml`). To fully disable both the Swagger UI and API definitions, use `raw: false`.
+   * Default: `true`.
+   */
+  ui?: boolean;
+
+  /**
+   * If `true`, raw definitions for all formats will be served.
+   * Alternatively, you can pass an array to specify the formats to be served, e.g., `raw: ['json']` to serve only JSON definitions.
+   * If omitted or set to an empty array, no definitions (JSON or YAML) will be served.
+   * Use this option to control the availability of Swagger-related endpoints.
+   * Default: `true`.
+   */
+  raw?: boolean | Array<'json' | 'yaml'>;
+
 
   /**
    * Url point the API definition to load in Swagger UI.
@@ -270,6 +288,20 @@ export interface SwaggerCustomOptions {
 
 }
 ```
+> info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML).  
+> Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.  
+>
+> For example, the following configuration will disable the Swagger UI but still allow access to API definitions:
+> ```typescript
+>const options: SwaggerCustomOptions = {
+>    ui: false, // Swagger UI is disabled
+>    raw: ['json'], // JSON API definition is still accessible (YAML is disabled)
+>};
+>SwaggerModule.setup('api', app, options);
+> ```
+>
+> In this case, http://localhost:3000/api-json will still be accessible, but http://localhost:3000/api (Swagger UI) will not.
+
 
 #### Example
 
