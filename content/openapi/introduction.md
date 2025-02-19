@@ -284,7 +284,6 @@ export interface SwaggerCustomOptions {
    * @deprecated This property has no effect.
    */
   urls?: Record<'url' | 'name', string>[];
-
 }
 ```
 > info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML).  Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.  
