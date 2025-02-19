@@ -332,7 +332,7 @@ export default defineConfig({
 });
 ```
 
-### Handling Path Aliases in Vitest
+### Path aliases
 
 Unlike Jest, Vitest does not automatically resolve TypeScript path aliases like `src/`. This may lead to dependency resolution errors during testing. To resolve this issue, add the following `resolve.alias` configuration in your `vitest.config.ts` file:
 
