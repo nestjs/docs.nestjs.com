@@ -287,8 +287,7 @@ export interface SwaggerCustomOptions {
 
 }
 ```
-> info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML).  
-> Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.  
+> info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML).  Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.  
 >
 > For example, the following configuration will disable the Swagger UI but still allow access to API definitions:
 > ```typescript
