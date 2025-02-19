@@ -197,7 +197,6 @@ export interface SwaggerCustomOptions {
    */
   raw?: boolean | Array<'json' | 'yaml'>;
 
-
   /**
    * Url point the API definition to load in Swagger UI.
    */
