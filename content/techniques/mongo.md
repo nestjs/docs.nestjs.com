@@ -624,7 +624,7 @@ export class Person {
 export const PersonSchema = SchemaFactory.createForClass(Person);
 
 export type PersonDocumentOverride = {
-  name: Types.Subdocument<Types.ObjectId & Name>;
+  name: Types.Subdocument<Types.ObjectId> & Name;
 };
 
 export type PersonDocument = HydratedDocument<Person, PersonDocumentOverride>;
