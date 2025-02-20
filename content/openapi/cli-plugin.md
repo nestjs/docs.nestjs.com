@@ -144,15 +144,21 @@ To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)
 You can use the `options` property to customize the behavior of the plugin.
 
 ```javascript
-"plugins": [
-  {
-    "name": "@nestjs/swagger",
-    "options": {
-      "classValidatorShim": false,
-      "introspectComments": true
-    }
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "classValidatorShim": false,
+          "introspectComments": true
+        }
+      }
+    ]
   }
-]
+}
 ```
 
 The `options` property has to fulfill the following interface:

@@ -99,15 +99,22 @@ To enable the plugin, open `nest-cli.json` (if you use [Nest CLI](/cli/overview)
 You can use the `options` property to customize the behavior of the plugin.
 
 ```javascript
-"plugins": [
-  {
-    "name": "@nestjs/graphql",
-    "options": {
-      "typeFileNameSuffix": [".input.ts", ".args.ts"],
-      "introspectComments": true
-    }
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "typeFileNameSuffix": [".input.ts", ".args.ts"],
+          "introspectComments": true
+        }
+      }
+    ]
   }
-]
+}
+
 ```
 
 The `options` property has to fulfill the following interface:

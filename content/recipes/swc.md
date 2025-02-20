@@ -37,11 +37,13 @@ Instead of passing the `-b` flag you can also just set the `compilerOptions.buil
 To customize builder's behavior, you can pass an object containing two attributes, `type` (`"swc"`) and `options`, as follows:
 
 ```json
-"compilerOptions": {
-  "builder": {
-    "type": "swc",
-    "options": {
-      "swcrcPath": "infrastructure/.swcrc",
+{
+  "compilerOptions": {
+    "builder": {
+      "type": "swc",
+      "options": {
+        "swcrcPath": "infrastructure/.swcrc",
+      }
     }
   }
 }
