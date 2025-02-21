@@ -43,6 +43,7 @@ You can set the path to render your static app, specify excluded paths, enable o
 > warning **Notice** The default `renderPath` of the Static App is `*` (all paths), and the module will send "index.html" files in response.
 > It lets you create Client-Side routing for your SPA. Paths, specified in your controllers will fallback to the server.
 > You can change this behavior setting `serveRoot`, `renderPath` combining them with other options.
+> Additionally, the option `serveStaticOptions.fallthrough` has been implemented in the Fastify adapter to mimic Express's fallthrough behavior and needs to be set to `true` to send `index.html` instead of a 404 error for non existing route.
 
 #### Example
 
