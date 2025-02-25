@@ -276,6 +276,7 @@ For example, to set up a filter as controller-scoped, you would do the following
 
 ```typescript
 @@filename(cats.controller)
+@Controller()
 @UseFilters(new HttpExceptionFilter())
 export class CatsController {}
 ```
