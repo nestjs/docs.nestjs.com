@@ -42,7 +42,7 @@ To use a pipe, we need to bind an instance of the pipe class to the appropriate 
 
 ```typescript
 @Get(':id')
-async findOne(@Param('id', ParseIntPipe) id: number) {
+findOne(@Param('id', ParseIntPipe) id: number) {
   return this.catsService.findOne(id);
 }
 ```
@@ -71,7 +71,7 @@ In the example above, we pass a class (`ParseIntPipe`), not an instance, leaving
 
 ```typescript
 @Get(':id')
-async findOne(
+findOne(
   @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
   id: number,
 ) {
@@ -85,7 +85,7 @@ For example with a query string parameter:
 
 ```typescript
 @Get()
-async findOne(@Query('id', ParseIntPipe) id: number) {
+findOne(@Query('id', ParseIntPipe) id: number) {
   return this.catsService.findOne(id);
 }
 ```
@@ -95,13 +95,13 @@ Here's an example of using the `ParseUUIDPipe` to parse a string parameter and v
 ```typescript
 @@filename()
 @Get(':uuid')
-async findOne(@Param('uuid', new ParseUUIDPipe()) uuid: string) {
+findOne(@Param('uuid', new ParseUUIDPipe()) uuid: string) {
   return this.catsService.findOne(uuid);
 }
 @@switch
 @Get(':uuid')
 @Bind(Param('uuid', new ParseUUIDPipe()))
-async findOne(uuid) {
+findOne(uuid) {
   return this.catsService.findOne(uuid);
 }
 ```
@@ -198,12 +198,12 @@ Let's make our validation pipe a little more useful. Take a closer look at the `
 ```typescript
 @@filename()
 @Post()
-async create(@Body() createCatDto: CreateCatDto) {
+create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 @@switch
 @Post()
-async create(@Body() createCatDto) {
+create(@Body() createCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
@@ -316,14 +316,14 @@ We do that using the `@UsePipes()` decorator as shown below:
 @@filename(cats.controller)
 @Post()
 @UsePipes(new ZodValidationPipe(createCatSchema))
-async create(@Body() createCatDto: CreateCatDto) {
+create(@Body() createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 @@switch
 @Post()
 @Bind(Body())
 @UsePipes(new ZodValidationPipe(createCatSchema))
-async create(createCatDto) {
+create(createCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
@@ -413,9 +413,7 @@ In the example below, we'll bind the pipe instance to the route handler `@Body()
 ```typescript
 @@filename(cats.controller)
 @Post()
-async create(
-  @Body(new ValidationPipe()) createCatDto: CreateCatDto,
-) {
+create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
   this.catsService.create(createCatDto);
 }
 ```
@@ -506,13 +504,13 @@ We can then bind this pipe to the selected param as shown below:
 ```typescript
 @@filename()
 @Get(':id')
-async findOne(@Param('id', new ParseIntPipe()) id) {
+findOne(@Param('id', new ParseIntPipe()) id) {
   return this.catsService.findOne(id);
 }
 @@switch
 @Get(':id')
 @Bind(Param('id', new ParseIntPipe()))
-async findOne(id) {
+findOne(id) {
   return this.catsService.findOne(id);
 }
 ```
@@ -542,7 +540,7 @@ We leave the implementation of this pipe to the reader, but note that like all o
 ```typescript
 @@filename()
 @Get()
-async findAll(
+findAll(
   @Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
   @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
 ) {
