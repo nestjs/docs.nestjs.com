@@ -23,7 +23,7 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-> info **Hint** To create a new TypeScript project with stricter feature set, pass the `--strict` flag to the `nest new` command.
+> info **Hint** To create a new TypeScript project with stricter feature set, pass the `--strict` flag to the `nest new` command. currently, the latest version of the cli is required to support this parameter. eg: `npx @nestjs/cli@latest new project-name --strict`
 
 #### Alternatives
 
