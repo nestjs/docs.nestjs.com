@@ -91,6 +91,10 @@
      {
       "logo": "/assets/logo/whiskey-house.svg",
       "url": "https://whiskeyhouse.com"
+    },
+    {
+      "logo": "/assets/logo/vbdhub.svg",
+      "url": "https://vbdhub.org"
     }
   ],
   "Body": [
