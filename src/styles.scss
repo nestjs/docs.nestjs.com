@@ -64,6 +64,54 @@ html[mode='light'] {
   @extend .light-mode;
 }
 
+html[mode='light'] {
+  @extend .light-mode;
+
+  /* Light Mode Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #c0c0c0 !important; /* Light gray for visibility */
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background-default);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--background-default);
+  }
+
+  /* Light Mode App Menu Scrollbar */
+  .app-menu {
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+  }
+
+  .app-menu:not(:hover) {
+    &::-webkit-scrollbar-thumb {
+      background: var(--menu-background) !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--menu-background);
+    }
+  
+    &::-webkit-scrollbar-corner {
+      background: var(--menu-background);
+    }
+  }
+}
+
+
 body {
   font-size: 16px;
   font-weight: 400;
