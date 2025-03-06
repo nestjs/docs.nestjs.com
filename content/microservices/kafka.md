@@ -433,6 +433,108 @@ throw new KafkaRetriableException('...');
 
 > info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
 
+### Kafka Exception Handling
+
+In addition to the default error handling mechanisms, you can implement a custom Exception Filter for Kafka events to handle retry logic. For example, the following sample shows how to skip a problematic event after a configurable number of retries:
+
+```typescript
+import { Catch, ArgumentsHost, Logger } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
+import { KafkaContext } from '../ctx-host';
+
+@Catch()
+export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
+  private readonly logger = new Logger(KafkaMaxRetryExceptionFilter.name);
+
+  constructor(
+    private readonly maxRetries: number,
+    // Optional custom function executed when max retries are exceeded
+    private readonly skipHandler?: (message: any) => Promise<void>,
+  ) {
+    super();
+  }
+
+  async catch(exception: unknown, host: ArgumentsHost) {
+    const kafkaContext = host.switchToRpc().getContext<KafkaContext>();
+    const message = kafkaContext.getMessage();
+
+    // Assume that the retryCount can be retrieved from the KafkaContext (or message headers)
+    const currentRetryCount = this.getRetryCountFromContext(kafkaContext);
+
+    if (currentRetryCount >= this.maxRetries) {
+      this.logger.warn(
+        `Max retries (${this.maxRetries}) exceeded for message: ${JSON.stringify(message)}`,
+      );
+
+      if (this.skipHandler) {
+        try {
+          await this.skipHandler(message);
+        } catch (err) {
+          this.logger.error('Error in skipHandler:', err);
+        }
+      }
+
+      // Attempt to commit the message offset
+      try {
+        await this.commitOffset(kafkaContext);
+      } catch (commitError) {
+        this.logger.error('Failed to commit offset:', commitError);
+      }
+      return; // Stop propagating the exception
+    }
+
+    // If retry count is below the maximum, proceed with the default Exception Filter logic
+    super.catch(exception, host);
+  }
+
+  // Extracts retryCount from the KafkaContext or message headers
+  private getRetryCountFromContext(context: KafkaContext): number {
+    const headers = context.getMessage().headers || {};
+    const retryHeader = headers['retryCount'] || headers['retry-count'];
+    return retryHeader ? Number(retryHeader) : 0;
+  }
+
+  // Commits the offset of the message (dependent on the KafkaJS API)
+  private async commitOffset(context: KafkaContext): Promise<void> {
+    const consumer = context.getConsumer && context.getConsumer();
+    if (!consumer) {
+      throw new Error('Consumer instance is not available from KafkaContext.');
+    }
+
+    const topic = context.getTopic && context.getTopic();
+    const partition = context.getPartition && context.getPartition();
+    const message = context.getMessage();
+    const offset = message.offset;
+
+    if (!topic || partition === undefined || offset === undefined) {
+      throw new Error('Incomplete Kafka message context for committing offset.');
+    }
+
+    await consumer.commitOffsets([
+      {
+        topic,
+        partition,
+        // When committing an offset, commit the next number (i.e., current offset + 1)
+        offset: (Number(offset) + 1).toString(),
+      },
+    ]);
+  }
+}
+```
+
+This filter provides a mechanism to retry processing a Kafka event up to a configurable number of times. Once the maximum retries are reached, it executes a custom skipHandler (if provided) and commits the offset, effectively skipping the problematic event. This ensures that subsequent events can be processed.
+You can integrate this filter by adding it to your event handlers:
+
+```typescript
+@UseFilters(new KafkaMaxRetryExceptionFilter(5))
+export class MyEventHandler {
+  @EventPattern('your-topic')
+  async handleEvent(@Payload() data: any, @Ctx() context: KafkaContext) {
+    // Your event processing logic...
+  }
+}
+```
+
 #### Commit offsets
 
 Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `KafkaContext` offers a way to access the active consumer for manually committing offsets. The consumer is the KafkaJS consumer and works as the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
