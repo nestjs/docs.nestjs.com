@@ -296,7 +296,7 @@ import { PrismaService } from './prisma.service';
 import { User, Prisma } from '@prisma/client';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async user(
@@ -361,7 +361,7 @@ import { PrismaService } from './prisma.service';
 import { Post, Prisma } from '@prisma/client';
 
 @Injectable()
-export class PostService {
+export class PostsService {
   constructor(private prisma: PrismaService) {}
 
   async post(
@@ -414,7 +414,7 @@ export class PostService {
 }
 ```
 
-Your `UserService` and `PostService` currently wrap the CRUD queries that are available in Prisma Client. In a real world application, the service would also be the place to add business logic to your application. For example, you could have a method called `updatePassword` inside the `UserService` that would be responsible for updating the password of a user.
+Your `UsersService` and `PostsService` currently wrap the CRUD queries that are available in Prisma Client. In a real world application, the service would also be the place to add business logic to your application. For example, you could have a method called `updatePassword` inside the `UsersService` that would be responsible for updating the password of a user.
 
 Remember to register the new services in the app module.
 
@@ -434,15 +434,15 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { PostService } from './post.service';
+import { UsersService } from './users.service';
+import { PostsService } from './posts.service';
 import { User as UserModel, Post as PostModel } from '@prisma/client';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly userService: UserService,
-    private readonly postService: PostService,
+    private readonly userService: UsersService,
+    private readonly postService: PostsService,
   ) {}
 
   @Get('post/:id')

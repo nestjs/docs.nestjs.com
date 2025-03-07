@@ -36,9 +36,9 @@ export class AlsModule {}
 ```ts
 @@filename(app.module)
 @Module({
-  imports: [AlsModule]
-  providers: [CatService],
-  controllers: [CatController],
+  imports: [AlsModule],
+  providers: [CatsService],
+  controllers: [CatsController],
 })
 export class AppModule implements NestModule {
   constructor(
@@ -64,9 +64,9 @@ export class AppModule implements NestModule {
 }
 @@switch
 @Module({
-  imports: [AlsModule]
-  providers: [CatService],
-  controllers: [CatController],
+  imports: [AlsModule],
+  providers: [CatsService],
+  controllers: [CatsController],
 })
 @Dependencies(AsyncLocalStorage)
 export class AppModule {
@@ -96,37 +96,37 @@ export class AppModule {
 3. Now, anywhere within the lifecycle of a request, we can access the local store instance.
 
 ```ts
-@@filename(cat.service)
+@@filename(cats.service)
 @Injectable()
-export class CatService {
+export class CatsService {
   constructor(
     // We can inject the provided ALS instance.
     private readonly als: AsyncLocalStorage,
-    private readonly catRepository: CatRepository,
+    private readonly catsRepository: CatsRepository,
   ) {}
 
   getCatForUser() {
     // The "getStore" method will always return the
     // store instance associated with the given request.
     const userId = this.als.getStore()["userId"] as number;
-    return this.catRepository.getForUser(userId);
+    return this.catsRepository.getForUser(userId);
   }
 }
 @@switch
 @Injectable()
-@Dependencies(AsyncLocalStorage, CatRepository)
-export class CatService {
-  constructor(als, catRepository) {
+@Dependencies(AsyncLocalStorage, CatsRepository)
+export class CatsService {
+  constructor(als, catsRepository) {
     // We can inject the provided ALS instance.
     this.als = als
-    this.catRepository = catRepository
+    this.catsRepository = catsRepository
   }
 
   getCatForUser() {
     // The "getStore" method will always return the
     // store instance associated with the given request.
     const userId = this.als.getStore()["userId"] as number;
-    return this.catRepository.getForUser(userId);
+    return this.catsRepository.getForUser(userId);
   }
 }
 ```
@@ -175,8 +175,8 @@ A similar functionality as described [above](recipes/async-local-storage#custom-
       },
     }),
   ],
-  providers: [CatService],
-  controllers: [CatController],
+  providers: [CatsService],
+  controllers: [CatsController],
 })
 export class AppModule {}
 ```
@@ -184,35 +184,35 @@ export class AppModule {}
 2. And then can use the `ClsService` to access the store values.
 
 ```ts
-@@filename(cat.service)
+@@filename(cats.service)
 @Injectable()
-export class CatService {
+export class CatsService {
   constructor(
     // We can inject the provided ClsService instance,
     private readonly cls: ClsService,
-    private readonly catRepository: CatRepository,
+    private readonly catsRepository: CatsRepository,
   ) {}
 
   getCatForUser() {
     // and use the "get" method to retrieve any stored value.
     const userId = this.cls.get('userId');
-    return this.catRepository.getForUser(userId);
+    return this.catsRepository.getForUser(userId);
   }
 }
 @@switch
 @Injectable()
-@Dependencies(AsyncLocalStorage, CatRepository)
-export class CatService {
-  constructor(cls, catRepository) {
+@Dependencies(AsyncLocalStorage, CatsRepository)
+export class CatsService {
+  constructor(cls, catsRepository) {
     // We can inject the provided ClsService instance,
     this.cls = cls
-    this.catRepository = catRepository
+    this.catsRepository = catsRepository
   }
 
   getCatForUser() {
     // and use the "get" method to retrieve any stored value.
     const userId = this.cls.get('userId');
-    return this.catRepository.getForUser(userId);
+    return this.catsRepository.getForUser(userId);
   }
 }
 ```
@@ -233,19 +233,19 @@ Since the `ClsService` is just another injectable provider, it can be entirely m
 However, in certain integration tests, we might still want to use the real `ClsService` implementation. In that case, we will need to wrap the context-aware piece of code with a call to `ClsService#run` or `ClsService#runWith`.
 
 ```ts
-describe('CatService', () => {
-  let service: CatService
+describe('CatsService', () => {
+  let service: CatsService
   let cls: ClsService
-  const mockCatRepository = createMock<CatRepository>()
+  const mockCatsRepository = createMock<CatsRepository>()
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       // Set up most of the testing module as we normally would.
       providers: [
-        CatService,
+        CatsService,
         {
-          provide: CatRepository
-          useValue: mockCatRepository
+          provide: CatsRepository
+          useValue: mockCatsRepository
         }
       ],
       imports: [
@@ -255,7 +255,7 @@ describe('CatService', () => {
       ],
     }).compile()
 
-    service = module.get(CatService)
+    service = module.get(CatsService)
 
     // Also retrieve the ClsService for later use.
     cls = module.get(ClsService)
@@ -264,7 +264,7 @@ describe('CatService', () => {
   describe('getCatForUser', () => {
     it('retrieves cat based on user id', async () => {
       const expectedUserId = 42
-      mockCatRepository.getForUser.mockImplementationOnce(
+      mocksCatsRepository.getForUser.mockImplementationOnce(
         (id) => ({ userId: id })
       )
 

@@ -198,7 +198,7 @@ For all [circular dependency injections](/fundamentals/circular-dependency) in y
 
 ```typescript
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @Inject(forwardRef(() => ProfileService))
     private readonly profileService: WrapperType<ProfileService>,

@@ -148,7 +148,7 @@ export interface SwaggerDocumentOptions {
 }
 ```
 
-For example, if you want to make sure that the library generates operation names like `createUser` instead of `UserController_createUser`, you can set the following:
+For example, if you want to make sure that the library generates operation names like `createUser` instead of `UsersController_createUser`, you can set the following:
 
 ```TypeScript
 const options: SwaggerDocumentOptions =  {
