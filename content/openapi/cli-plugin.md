@@ -153,7 +153,8 @@ You can use the `options` property to customize the behavior of the plugin.
         "name": "@nestjs/swagger",
         "options": {
           "classValidatorShim": false,
-          "introspectComments": true
+          "introspectComments": true,
+          "skipAutoHttpCode": true
         }
       }
     ]
@@ -171,6 +172,7 @@ export interface PluginOptions {
   dtoKeyOfComment?: string;
   controllerKeyOfComment?: string;
   introspectComments?: boolean;
+  skipAutoHttpCode?: boolean;
 }
 ```
 
@@ -209,6 +211,11 @@ export interface PluginOptions {
     <td><code>introspectComments</code></td>
     <td><code>false</code></td>
     <td>If set to true, plugin will generate descriptions and example values for properties based on comments</td>
+  </tr>
+  <tr>
+    <td><code>skipAutoHttpCode</code></td>
+    <td><code>false</code></td>
+    <td>Disables the automatic addition of <code>@HttpCode()</code> in controllers</td>
   </tr>
 </table>
 
