@@ -2,9 +2,6 @@
 
 The `DiscoveryService` is a utility provided by `@nestjs/core` that allows developers to dynamically discover providers, controllers, and other metadata within a NestJS application. This can be particularly useful for building plugins, decorators, or features that rely on runtime introspection.
 
-
-### Import Module & Service
-
 Before using the `DiscoveryService`, you need to import the `DiscoveryModule` in your module:
 
 ```typescript
@@ -39,8 +36,6 @@ export class ExampleService {
 ```
 
 > info **Hint** The `DiscoveryService` class is imported from the `@nestjs/core` package.
-
-### Use Cases
 
 #### Discovering Providers
 
