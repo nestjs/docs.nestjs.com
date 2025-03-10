@@ -108,6 +108,7 @@ const routes: Routes = [
     LifecycleEventsComponent,
     ModuleRefComponent,
     LazyLoadingModulesComponent,
+    DiscoveryServiceComponent,
   ],
 })
 export class FundamentalsModule {}
