@@ -2,11 +2,11 @@
 
 The `DiscoveryService` is a utility provided by `@nestjs/core` that allows developers to dynamically discover providers, controllers, and other metadata within a NestJS application. This can be particularly useful for building plugins, decorators, or features that rely on runtime introspection.
 
-## Installation
+### Installation
 
 `DiscoveryService` is part of `@nestjs/core`, so it does not require separate installation. You can use it directly within your NestJS application.
 
-## Importing DiscoveryService and DiscoveryModule
+### Importing DiscoveryService and DiscoveryModule
 
 Before using the `DiscoveryService`, you need to import the `DiscoveryModule` in your module:
 
@@ -43,9 +43,9 @@ export class ExampleService {
 
 > info **Hint** The `DiscoveryService` class is imported from the `@nestjs/core` package.
 
-## Use Cases
+### Use Cases
 
-### 1. Discovering Providers
+#### 1. Discovering Providers
 
 You can retrieve all registered providers in the application:
 
@@ -56,7 +56,7 @@ console.log(providers);
 
 Each provider object contains information about the instance, token, and metadata.
 
-### 2. Discovering Controllers
+#### 2. Discovering Controllers
 
 Retrieve all registered controllers:
 
@@ -65,7 +65,7 @@ const controllers = this.discoveryService.getControllers();
 console.log(controllers);
 ```
 
-### 3. Finding Metadata
+#### 3. Finding Metadata
 
 `DiscoveryService` can help find metadata attached to providers or controllers. This is useful when working with decorators that add metadata.
 
@@ -80,7 +80,7 @@ for (const provider of providers) {
 }
 ```
 
-## Example: Custom Decorator with DiscoveryService
+##### Example: Custom Decorator with DiscoveryService
 
 Suppose you have a custom decorator that adds metadata to a provider:
 
@@ -114,6 +114,6 @@ const filteredProviders = providers.filter((provider) => {
 console.log('Providers with custom metadata:', filteredProviders);
 ```
 
-## Conclusion
+### Conclusion
 
 `DiscoveryService` is a powerful tool for runtime introspection in NestJS applications. It allows you to discover providers, controllers, and metadata dynamically, making it useful for plugin development, custom decorators, and advanced framework-level features.
