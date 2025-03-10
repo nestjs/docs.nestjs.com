@@ -3,7 +3,7 @@ import { BasePageComponent } from '../../page/page.component';
 
 @Component({
   selector: 'app-discovery-service',
-  templateUrl: './dependency-injection.component.html',
+  templateUrl: './discovery-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiscoveryServiceComponent extends BasePageComponent {}
