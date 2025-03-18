@@ -12,7 +12,7 @@ First install the required package:
 
 ```bash
 $ npm i --save compression
-$ npm install --save-dev @types/compression
+$ npm i --save-dev @types/compression
 ```
 
 Once the installation is complete, apply the compression middleware as global middleware.
