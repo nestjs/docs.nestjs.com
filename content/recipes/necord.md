@@ -27,7 +27,7 @@ import { AppService } from './app.service';
   imports: [
     NecordModule.forRoot({
       token: process.env.DISCORD_TOKEN,
-      intents: [IntentsBitField.Guilds],
+      intents: [IntentsBitField.Flags.Guilds],
       development: [process.env.DISCORD_DEVELOPMENT_GUILD_ID],
     }),
   ],
