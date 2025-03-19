@@ -433,9 +433,9 @@ throw new KafkaRetriableException('...');
 
 > info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
 
-### Kafka Exception Handling
+### Custom exception handling
 
-In addition to the default error handling mechanisms, you can implement a custom Exception Filter for Kafka events to handle retry logic. For example, the following sample shows how to skip a problematic event after a configurable number of retries:
+Along with the default error handling mechanisms, you can create a custom Exception Filter for Kafka events to manage retry logic. For instance, the example below demonstrates how to skip a problematic event after a configurable number of retries:
 
 ```typescript
 import { Catch, ArgumentsHost, Logger } from '@nestjs/common';
@@ -457,13 +457,13 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
   async catch(exception: unknown, host: ArgumentsHost) {
     const kafkaContext = host.switchToRpc().getContext<KafkaContext>();
     const message = kafkaContext.getMessage();
-
-    // Assume that the retryCount can be retrieved from the KafkaContext (or message headers)
     const currentRetryCount = this.getRetryCountFromContext(kafkaContext);
 
     if (currentRetryCount >= this.maxRetries) {
       this.logger.warn(
-        `Max retries (${this.maxRetries}) exceeded for message: ${JSON.stringify(message)}`,
+        `Max retries (${
+          this.maxRetries
+        }) exceeded for message: ${JSON.stringify(message)}`,
       );
 
       if (this.skipHandler) {
@@ -474,7 +474,6 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
         }
       }
 
-      // Attempt to commit the message offset
       try {
         await this.commitOffset(kafkaContext);
       } catch (commitError) {
@@ -487,14 +486,12 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
     super.catch(exception, host);
   }
 
-  // Extracts retryCount from the KafkaContext or message headers
   private getRetryCountFromContext(context: KafkaContext): number {
     const headers = context.getMessage().headers || {};
     const retryHeader = headers['retryCount'] || headers['retry-count'];
     return retryHeader ? Number(retryHeader) : 0;
   }
 
-  // Commits the offset of the message (dependent on the KafkaJS API)
   private async commitOffset(context: KafkaContext): Promise<void> {
     const consumer = context.getConsumer && context.getConsumer();
     if (!consumer) {
@@ -507,7 +504,9 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
     const offset = message.offset;
 
     if (!topic || partition === undefined || offset === undefined) {
-      throw new Error('Incomplete Kafka message context for committing offset.');
+      throw new Error(
+        'Incomplete Kafka message context for committing offset.',
+      );
     }
 
     await consumer.commitOffsets([
@@ -522,7 +521,8 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
 }
 ```
 
-This filter provides a mechanism to retry processing a Kafka event up to a configurable number of times. Once the maximum retries are reached, it executes a custom skipHandler (if provided) and commits the offset, effectively skipping the problematic event. This ensures that subsequent events can be processed.
+This filter offers a way to retry processing a Kafka event up to a configurable number of times. Once the maximum retries are reached, it triggers a custom `skipHandler` (if provided) and commits the offset, effectively skipping the problematic event. This allows subsequent events to be processed without interruption.
+
 You can integrate this filter by adding it to your event handlers:
 
 ```typescript
