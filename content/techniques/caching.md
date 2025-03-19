@@ -249,7 +249,7 @@ import { CacheableMemory } from 'cacheable';
             new Keyv({
               store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
             }),
-            createKeyv('redis://localhost:6379'),
+            new KeyvRedis('redis://localhost:6379'),
           ],
         };
       },
