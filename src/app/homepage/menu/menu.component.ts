@@ -60,6 +60,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/circular-dependency',
         },
         {
+          title: 'Discovery Service',
+          path: '/fundamentals/discovery-service',
+        },
+        {
           title: 'Module reference',
           path: '/fundamentals/module-ref',
         },
