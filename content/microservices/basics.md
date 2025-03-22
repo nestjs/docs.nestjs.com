@@ -535,3 +535,33 @@ You can also pass an array of CAs if your setup involves multiple trusted author
 Once everything is set up, you can inject the `ClientProxy` as usual using the `@Inject()` decorator to use the client in your services. This ensures encrypted communication across your NestJS microservices, with Node's `TLS` module handling the encryption details.
 
 For more information, refer to Node’s [TLS documentation](https://nodejs.org/api/tls.html).
+
+
+#### Dynamic Configuration
+
+In scenarios where the microservice needs to be configured using the `ConfigService`, but the injection context becomes available only after the microservice instance is created, the `AsyncMicroserviceOptions` provides a solution. This approach enables dynamic configuration of the microservice, ensuring seamless integration with the `ConfigService`.
+
+```typescript
+import { ConfigService } from '@nestjs/config';
+import { AsyncMicroserviceOptions, Transport } from '@nestjs/microservices';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.createMicroservice<AsyncMicroserviceOptions>(
+    AppModule, 
+    {
+      useFactory: (confService: ConfigService) => ({
+        transport: Transport.TCP,
+        options: {
+          host: confService.get<string>('HOST'),
+          port: confService.get<number>('PORT'),
+        },
+      }),
+      inject: [ConfigService],
+    }
+  );
+
+  await app.listen();
+}
+bootstrap();
+```
