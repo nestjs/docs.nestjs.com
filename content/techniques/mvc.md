@@ -94,6 +94,84 @@ In this code, we are specifying the template to use in the `@Render()` decorator
 
 While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
+#### Adding Layout
+
+When using `hbs` with `Express`, you can configure layouts and templates by setting local variables using [app.setLocal](https://expressjs.com/en/4x/api.html#app.locals). You can modify the previous code as follows:
+
+```typescript
+@@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+  );
+
+  app.setLocal('layout', 'layouts/app');
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { join } from 'path';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(
+    AppModule,
+  );
+
+  app.setLocal('layout', 'layouts/app');
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
+
+Next, create a `layouts` folder and add an `app.hbs` file with the following content:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>App</title>
+  </head>
+  <body>
+    {{{body}}}
+  </body>
+</html>
+```
+
+Then, update the `index.hbs` file to:
+
+```html
+{{ message }}
+```
+
+You will have a file structure as follows:
+
+<div class="file-tree">
+  <div class="item">views</div>
+  <div class="children">
+    <div class="item">layouts</div>
+    <div class="children">
+      <div class="item">app.hbs</div>
+    </div>
+    <div class="item">index.hbs</div>
+  </div>
+</div>
+
 #### Dynamic template rendering
 
 If the application logic must dynamically decide which template to render, then we should use the `@Res()` decorator, and supply the view name in our route handler, rather than in the `@Render()` decorator:
