@@ -536,10 +536,9 @@ Once everything is set up, you can inject the `ClientProxy` as usual using the `
 
 For more information, refer to Node’s [TLS documentation](https://nodejs.org/api/tls.html).
 
+#### Dynamic configuration
 
-#### Dynamic Configuration
-
-In scenarios where the microservice needs to be configured using the `ConfigService`, but the injection context becomes available only after the microservice instance is created, the `AsyncMicroserviceOptions` provides a solution. This approach enables dynamic configuration of the microservice, ensuring seamless integration with the `ConfigService`.
+When a microservice needs to be configured using the `ConfigService` (from the `@nestjs/config` package), but the injection context is only available after the microservice instance is created, `AsyncMicroserviceOptions` offers a solution. This approach allows for dynamic configuration, ensuring smooth integration with the `ConfigService`.
 
 ```typescript
 import { ConfigService } from '@nestjs/config';
@@ -548,17 +547,17 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<AsyncMicroserviceOptions>(
-    AppModule, 
+    AppModule,
     {
-      useFactory: (confService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         transport: Transport.TCP,
         options: {
-          host: confService.get<string>('HOST'),
-          port: confService.get<number>('PORT'),
+          host: configService.get<string>('HOST'),
+          port: configService.get<number>('PORT'),
         },
       }),
       inject: [ConfigService],
-    }
+    },
   );
 
   await app.listen();
