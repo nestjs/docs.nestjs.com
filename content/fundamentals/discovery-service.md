@@ -59,22 +59,7 @@ console.log(controllers);
 
 #### Finding Metadata
 
-`DiscoveryService` can help find metadata attached to providers or controllers. This is useful when working with decorators that add metadata.
-
-```typescript
-const providers = this.discoveryService.getProviders();
-
-for (const provider of providers) {
-  const metadata = this.reflector.get('custom:metadataKey', provider.instance.constructor);
-  if (metadata) {
-    console.log(`Metadata found:`, metadata);
-  }
-}
-```
-
-##### Example: Custom Decorator with DiscoveryService
-
-Suppose you have a custom decorator that adds metadata to a provider:
+`DiscoveryService` can help find metadata attached to providers or controllers. This is useful when working with decorators that add metadata. Let's see an example. Suppose you have a custom decorator that adds metadata to a provider:
 
 ```typescript
 import { DiscoveryService } from '@nestjs/core';
