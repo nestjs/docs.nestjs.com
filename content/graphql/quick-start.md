@@ -207,21 +207,30 @@ definitionsFactory.generate({
 });
 ```
 
-To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option.
+To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option:
 
 ```typescript
 definitionsFactory.generate({
-  // ...,
+  // ...
   emitTypenameField: true,
 });
 ```
 
-To generate resolvers (queries, mutations, subscriptions) as plain fields without arguments, enable the `skipResolverArgs` option.
+To generate resolvers (queries, mutations, subscriptions) as plain fields without arguments, enable the `skipResolverArgs` option:
 
 ```typescript
 definitionsFactory.generate({
-  // ...,
+  // ...
   skipResolverArgs: true,
+});
+```
+
+To generate enums as TypeScript union types instead of regular TypeScript enums, set the `enumsAsTypes` option to `true`:
+
+```typescript
+definitionsFactory.generate({
+  // ...
+  enumsAsTypes: true,
 });
 ```
 
