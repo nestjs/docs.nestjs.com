@@ -234,7 +234,7 @@ With this in place, you can register the `CacheModule` with multiple stores as s
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CacheModule, CacheStore } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { createKeyv } from '@keyv/redis';
 import { Keyv } from 'keyv';
