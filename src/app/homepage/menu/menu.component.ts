@@ -292,6 +292,10 @@ export class MenuComponent implements OnInit {
       path: '/migration-guide',
     },
     {
+      title: 'API Reference',
+      externalUrl: 'https://api-references-nestjs.netlify.app/',
+    },
+    {
       title: 'Official courses',
       externalUrl: 'https://courses.nestjs.com/',
     },
