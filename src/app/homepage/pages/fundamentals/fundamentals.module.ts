@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../../shared/shared.module';
 import { AsyncComponentsComponent } from './async-components/async-components.component';
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
+import { DiscoveryServiceComponent } from './discovery-service/discovery-service.component';
 import { DependencyInjectionComponent } from './dependency-injection/dependency-injection.component';
 import { DynamicModulesComponent } from './dynamic-modules/dynamic-modules.component';
 import { LifecycleEventsComponent } from './lifecycle-events/lifecycle-events.component';
@@ -84,7 +85,12 @@ const routes: Routes = [
   {
     path: 'circular-dependency',
     component: CircularDependencyComponent,
-    data: { title: 'Circular Dependency' },
+    data: { title: 'Circular dependency' },
+  },
+  {
+    path: 'discovery-service',
+    component: DiscoveryServiceComponent,
+    data: { title: 'Discovery service' },
   },
 ];
 
@@ -102,6 +108,7 @@ const routes: Routes = [
     LifecycleEventsComponent,
     ModuleRefComponent,
     LazyLoadingModulesComponent,
+    DiscoveryServiceComponent,
   ],
 })
 export class FundamentalsModule {}

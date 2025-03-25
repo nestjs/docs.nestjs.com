@@ -76,6 +76,10 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/lifecycle-events',
         },
         {
+          title: 'Discovery service',
+          path: '/fundamentals/discovery-service',
+        },
+        {
           title: 'Platform agnosticism',
           path: '/fundamentals/platform-agnosticism',
         },
