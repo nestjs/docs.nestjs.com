@@ -60,10 +60,6 @@ export class MenuComponent implements OnInit {
           path: '/fundamentals/circular-dependency',
         },
         {
-          title: 'Discovery Service',
-          path: '/fundamentals/discovery-service',
-        },
-        {
           title: 'Module reference',
           path: '/fundamentals/module-ref',
         },
@@ -82,6 +78,10 @@ export class MenuComponent implements OnInit {
         {
           title: 'Platform agnosticism',
           path: '/fundamentals/platform-agnosticism',
+        },
+        {
+          title: 'Discovery service',
+          path: '/fundamentals/discovery-service',
         },
         { title: 'Testing', path: '/fundamentals/testing' },
       ],

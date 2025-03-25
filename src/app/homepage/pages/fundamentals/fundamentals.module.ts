@@ -85,12 +85,12 @@ const routes: Routes = [
   {
     path: 'circular-dependency',
     component: CircularDependencyComponent,
-    data: { title: 'Circular Dependency' },
+    data: { title: 'Circular dependency' },
   },
   {
     path: 'discovery-service',
     component: DiscoveryServiceComponent,
-    data: { title: 'Discovery Service' },
+    data: { title: 'Discovery service' },
   },
 ];
 
