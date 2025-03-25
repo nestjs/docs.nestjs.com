@@ -115,6 +115,18 @@ Let's open the browser and verify the generated `Cat` model:
 
 <figure><img src="/assets/swagger-response-type.png" /></figure>
 
+Instead of defining responses for each endpoint or controller individually, you can define a global response for all endpoints using the `DocumentBuilder` class. This approach is useful when you want to define a global response for all endpoints in your application (e.g., for errors like `401 Unauthorized` or `500 Internal Server Error`).
+
+```typescript
+const config = new DocumentBuilder()
+  .addGlobalResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  // other configurations
+  .build();
+```
+
 #### File upload
 
 You can enable file upload for a specific method with the `@ApiBody` decorator together with `@ApiConsumes()`. Here's a full example using the [File Upload](/techniques/file-upload) technique:
@@ -299,7 +311,9 @@ findAll(): Observable<{ total: number, limit: number, offset: number, results: C
 As you can see, the **Return Type** here is ambiguous. To workaround this issue, you can add a `title` property to the `schema` for `ApiPaginatedResponse`:
 
 ```typescript
-export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
   return applyDecorators(
     ApiOkResponse({
       schema: {
