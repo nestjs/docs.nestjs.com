@@ -59,37 +59,22 @@ console.log(controllers);
 
 #### Finding Metadata
 
-`DiscoveryService` can help find metadata attached to providers or controllers. This is useful when working with decorators that add metadata.
+`DiscoveryService` can help find metadata attached to providers or controllers. This is useful when working with decorators that add metadata. Let's see an example. Suppose you have a custom decorator that adds metadata to a provider:
 
 ```typescript
-const providers = this.discoveryService.getProviders();
+import { DiscoveryService } from '@nestjs/core';
 
-for (const provider of providers) {
-  const metadata = this.reflector.get('custom:metadataKey', provider.instance.constructor);
-  if (metadata) {
-    console.log(`Metadata found:`, metadata);
-  }
-}
-```
-
-##### Example: Custom Decorator with DiscoveryService
-
-Suppose you have a custom decorator that adds metadata to a provider:
-
-```typescript
-import { SetMetadata } from '@nestjs/common';
-
-export const CustomMetadata = (value: string) => SetMetadata('custom:metadataKey', value);
+export const Pets = DiscoveryService.createDecorator();
 ```
 
 And you use it in a service:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { CustomMetadata } from './custom-metadata.decorator';
+import { Pets } from './custom-metadata.decorator';
 
 @Injectable()
-@CustomMetadata('example-value')
+@Pets('cats')
 export class CustomService {}
 ```
 
@@ -98,12 +83,11 @@ Now, you can use `DiscoveryService` to find all providers with this metadata:
 ```typescript
 const providers = this.discoveryService.getProviders();
 
-const filteredProviders = providers.filter((provider) => {
-  if (!provider.instance) return null;
-  return !!this.reflector.get(metadataPathToken, provider.instance.constructor);
-});
+const [provider] = providers.filter(
+  (prov) => this.discoveryService.getMetadataByDecorator(Pets, prov) === 'cats',
+);
 
-console.log('Providers with custom metadata:', filteredProviders);
+console.log('Providers with cats metadata:', provider);
 ```
 
 ### Conclusion
