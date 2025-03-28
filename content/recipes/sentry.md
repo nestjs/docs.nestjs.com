@@ -14,7 +14,7 @@ $ npm install --save @sentry/nestjs @sentry/profiling-node
 
 #### Basic setup
 
-To get started with Sentry, you'll need to create a file named `instrument.js` that should be imported before any other modules in your application:
+To get started with Sentry, you'll need to create a file named `instrument.ts` that should be imported before any other modules in your application:
 
 ```typescript
 @@filename(instrument)
