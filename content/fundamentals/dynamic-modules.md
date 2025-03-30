@@ -181,9 +181,9 @@ That nicely handles passing an `options` object to our dynamic module. How do we
 
 ```typescript
 import { Injectable } from '@nestjs/common';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import * as path from 'path';
 import { EnvConfig } from './interfaces';
 
 @Injectable()
@@ -235,9 +235,9 @@ export class ConfigModule {
 Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider into the `ConfigService`. Recall that when we define a provider using a non-class token we need to use the `@Inject()` decorator [as described here](https://docs.nestjs.com/fundamentals/custom-providers#non-class-based-provider-tokens).
 
 ```typescript
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import * as path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
 import { EnvConfig } from './interfaces';
 

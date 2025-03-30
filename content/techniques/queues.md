@@ -370,7 +370,7 @@ Job handlers can also be run in a separate (forked) process ([source](https://do
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { join } from 'path';
+import { join } from 'node:path';
 
 @Module({
   imports: [
