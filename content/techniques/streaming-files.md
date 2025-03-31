@@ -33,8 +33,8 @@ You can find a simple example of returning the `package.json` as a file instead 
 
 ```ts
 import { Controller, Get, StreamableFile } from '@nestjs/common';
-import { createReadStream } from 'fs';
-import { join } from 'path';
+import { createReadStream } from 'node:fs';
+import { join } from 'node:path';
 
 @Controller('file')
 export class FileController {
@@ -50,8 +50,8 @@ The default content type (the value for `Content-Type` HTTP response header) is 
 
 ```ts
 import { Controller, Get, StreamableFile, Res } from '@nestjs/common';
-import { createReadStream } from 'fs';
-import { join } from 'path';
+import { createReadStream } from 'node:fs';
+import { join } from 'node:path';
 import type { Response } from 'express'; // Assuming that we are using the ExpressJS HTTP Adapter
 
 @Controller('file')
