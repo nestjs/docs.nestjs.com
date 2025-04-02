@@ -377,6 +377,42 @@ Nest supports GRPC stream handlers in two possible ways:
 
 <app-banner-enterprise></app-banner-enterprise>
 
+#### Health checks
+
+When running a gRPC application in an orchestrator such a Kubernetes, you may need to know if it is running and in a healthy state. The [gRPC Health Check specification](https://grpc.io/docs/guides/health-checking/) is a standard that allow gRPC clients to expose their health status to allow the orchestrator to act accordingly.
+
+To add gRPC health check support, first install the [grpc-node](https://github.com/grpc/grpc-node/tree/master/packages/grpc-health-check) package:
+
+```bash
+$ npm i --save grpc-health-check
+```
+
+Then it can be hooked into the gRPC service using the `onLoadPackageDefinition` hook in your gRPC server options, as follows. Note that the `protoPath` needs to have both the health check and the hero package.
+
+```typescript
+@@filename(main)
+import { HealthImplementation, protoPath as healthCheckProtoPath } from 'grpc-health-check';
+
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  options: {
+    protoPath: [
+      healthCheckProtoPath,
+      protoPath: join(__dirname, 'hero/hero.proto'),
+    ],
+    onLoadPackageDefinition: (pkg, server) => {
+      const healthImpl = new HealthImplementation({
+        '': 'UNKNOWN',
+      });
+
+      healthImpl.addToServer(server);
+      healthImpl.setStatus('', 'SERVING');
+    },
+  },
+});
+```
+
+> info **Hint** The [gRPC health probe](https://github.com/grpc-ecosystem/grpc-health-probe) is a useful CLI to test gRPC health checks in a containerized environment.
+
 #### Streaming sample
 
 Let's define a new sample gRPC service called `HelloService`. The `hello.proto` file is structured using <a href="https://developers.google.com/protocol-buffers">protocol buffers</a>. Here's what it looks like:
