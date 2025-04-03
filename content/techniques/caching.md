@@ -227,7 +227,7 @@ class HttpCacheInterceptor extends CacheInterceptor {
 Switching to a different cache store is straightforward. First, install the appropriate package. For example, to use Redis, install the `@keyv/redis` package:
 
 ```bash
-$ npm install @keyv/redis
+$ npm install keyv @keyv/redis
 ```
 
 With this in place, you can register the `CacheModule` with multiple stores as shown below:
