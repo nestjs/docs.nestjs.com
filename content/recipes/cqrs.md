@@ -494,7 +494,7 @@ Using request-scoped providers alongside CQRS can be complex because the `Comman
 To make a handler request-scoped, you can either:
 
 1. Depend on a request-scoped provider.
-2. Explicitly set its scope to `REQUEST` using the `@CommandHandler`, `@QueryHandler`, or `@EventHandler` decorator, as shown:
+2. Explicitly set its scope to `REQUEST` using the `@CommandHandler`, `@QueryHandler`, or `@EventsHandler` decorator, as shown:
 
 ```typescript
 @CommandHandler(KillDragonCommand, {
