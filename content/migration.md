@@ -90,6 +90,28 @@ bootstrap();
 
 > info **Hint** There have been no changes to path matching in Fastify v5 (except for middleware, see the section below), so you can continue using the wildcard syntax as you did before. The behavior remains the same, and routes defined with wildcards (like `*`) will still work as expected.
 
+#### Fastify CORS
+
+> warning **Warning** Allowed HTTP methods have changed to the [CORS-safelisted methods](https://fetch.spec.whatwg.org/#methods) by default. To allow other methods (e.g., `PUT`, `PATCH`, `DELETE`), you must explicitly specify them in the `methods` option.
+
+```typescript
+const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']; // OR comma-delimited string 'GET,POST,PUT,PATH,DELETE'
+
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter(),
+  { cors: { methods }} 
+);
+
+// OR
+
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter()
+);
+app.enableCors({ methods );
+```
+
 #### Fastify middleware registration
 
 NestJS 11 now uses the latest version of the [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package to match **middleware paths** in `@nestjs/platform-fastify`. As a result, the `(.*)` syntax for matching all paths is no longer supported. Instead, you should use named wildcards.
