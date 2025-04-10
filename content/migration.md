@@ -92,7 +92,7 @@ bootstrap();
 
 #### Fastify CORS
 
-> warning **Warning** Allowed HTTP methods have changed to the [CORS-safelisted methods](https://fetch.spec.whatwg.org/#methods) by default. To allow other methods (e.g., `PUT`, `PATCH`, `DELETE`), you must explicitly specify them in the `methods` option.
+By default, only [CORS-safelisted methods](https://fetch.spec.whatwg.org/#methods) are allowed. If you need to enable additional methods (such as `PUT`, `PATCH`, or `DELETE`), you must explicitly define them in the `methods` option.
 
 ```typescript
 const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']; // OR comma-delimited string 'GET,POST,PUT,PATH,DELETE'
@@ -100,16 +100,15 @@ const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']; // OR comma-delimited
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter(),
-  { cors: { methods }} 
+  { cors: { methods } },
 );
 
-// OR
-
+// OR alternatively, you can use the `enableCors` method
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
-  new FastifyAdapter()
+  new FastifyAdapter(),
 );
-app.enableCors({ methods );
+app.enableCors({ methods });
 ```
 
 #### Fastify middleware registration
