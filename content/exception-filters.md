@@ -69,16 +69,23 @@ Here's an example overriding the entire response body and providing an error cau
 @Get()
 async findAll() {
   try {
-    await this.service.findAll()
+    const result = await this.service.findAll();
+    return result;
   } catch (error) {
-    throw new HttpException({
-      status: HttpStatus.FORBIDDEN,
-      error: 'This is a custom message',
-    }, HttpStatus.FORBIDDEN, {
-      cause: error
-    });
+    throw new HttpException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        message: 'Failed to fetch data',
+        error: error?.message || 'Unknown error',
+      },
+      HttpStatus.FORBIDDEN,
+      {
+        cause: error,
+      }
+    );
   }
 }
+
 ```
 
 Using the above, this is how the response would look:
