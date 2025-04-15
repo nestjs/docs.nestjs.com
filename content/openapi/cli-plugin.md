@@ -173,6 +173,7 @@ export interface PluginOptions {
   controllerKeyOfComment?: string;
   introspectComments?: boolean;
   skipAutoHttpCode?: boolean;
+  esmCompatible?: boolean;
 }
 ```
 
@@ -216,6 +217,11 @@ export interface PluginOptions {
     <td><code>skipAutoHttpCode</code></td>
     <td><code>false</code></td>
     <td>Disables the automatic addition of <code>@HttpCode()</code> in controllers</td>
+  </tr>
+  <tr>
+    <td><code>esmCompatible</code></td>
+    <td><code>false</code></td>
+    <td>If set to true, resolves syntax errors encountered when using ESM (<code>&#123; "type": "module" &#125;</code>).</td>
   </tr>
 </table>
 
