@@ -18,6 +18,8 @@ $ npm i -D @suites/unit @suites/di.nestjs @suites/doubles.jest
 
 > info **Hint** `Suites` supports Vitest and Sinon as test doubles as well, `@suites/doubles.vitest` and `@suites/doubles.sinon` respectively.
 
+> info **Hint** Make sure to have `"emitDecoratorMetadata": true` in your tsconfig `compilerOptions` (nestJS standard) 
+
 #### Example and module setup
 
 Consider a module setup for `CatsService` that includes `CatsApiService`, `CatsDAL`, `HttpClient`, and `Logger`. This
