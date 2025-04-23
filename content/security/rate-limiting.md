@@ -112,7 +112,7 @@ If your application is running behind a proxy server, it’s essential to config
 Here's an example that demonstrates how to enable `trust proxy` for the Express adapter:
 
 ```typescript
-@@filename(main.ts)
+@@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
