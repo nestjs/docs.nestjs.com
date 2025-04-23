@@ -48,7 +48,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
 <table>
   <tr>
     <td><code>urls</code></td>
-    <td>Connection urls</td>
+    <td>An array of connection URLs to try in order</td>
   </tr>
   <tr>
     <td><code>queue</code></td>
@@ -68,7 +68,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>consumerTag</code></td>
-    <td>Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">here</a>)</td>
+    <td>A name which the server will use to distinguish message deliveries for the consumer; mustn’t be already in use on the channel. It’s usually easier to omit this, in which case the server will create a random name and supply it in the reply. Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
@@ -81,6 +81,38 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   <tr>
     <td><code>headers</code></td>
     <td>Headers to be sent along with every message</td>
+  </tr>
+  <tr>
+    <td><code>replyQueue</code></td>
+    <td>Reply queue for the producer. Default is <code>amq.rabbitmq.reply-to</code></td>
+  </tr>
+  <tr>
+    <td><code>persistent</code></td>
+    <td>If truthy, the message will survive broker restarts provided it’s in a queue that also survives restarts</td>
+  </tr>
+  <tr>
+    <td><code>noAssert</code></td>
+    <td>When false, a queue will not be asserted before consuming</td>
+  </tr>
+  <tr>
+    <td><code>wildcards</code></td>
+    <td>Set to true only if you want to use Topic Exchange for routing messages to queues. Enabling this will allow you to use wildcards (*, #) as message and event patterns</td>
+  </tr>
+  <tr>
+    <td><code>exchange</code></td>
+    <td>Name for the exchange. Defaults to the queue name when "wildcards" is set to true</td>
+  </tr>
+  <tr>
+    <td><code>exchangeType</code></td>
+    <td>Type of the exchange. Default is <code>topic</code>. Valid values are <code>direct</code>, <code>fanout</code>, <code>topic</code>, and <code>headers</code></td>
+  </tr>
+  <tr>
+    <td><code>routingKey</code></td>
+    <td>Additional routing key for the topic exchange</td>
+  </tr>
+  <tr>
+    <td><code>maxConnectionAttempts</code></td>
+    <td>Maximum number of connection attempts. Applies only to the consumer configuration. -1 === infinite</td>
   </tr>
 </table>
 
@@ -299,4 +331,47 @@ Similarly, you can access the server's underlying driver instance:
 ```typescript
 const managerRef =
   server.unwrap<import('amqp-connection-manager').AmqpConnectionManager>();
+```
+
+#### Wildcards
+
+RabbitMQ supports the use of wildcards in routing keys to allow for flexible message routing. The `#` wildcard matches zero or more words, while the `*` wildcard matches exactly one word.
+
+For example, the routing key `cats.#` matches `cats`, `cats.meow`, and `cats.meow.purr`. The routing key `cats.*` matches `cats.meow` but not `cats.meow.purr`.
+
+To enable wildcard support in your RabbitMQ microservice, set the `wildcards` configuration option to `true` in the options object:
+
+```typescript
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+  AppModule,
+  {
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'],
+      queue: 'cats_queue',
+      wildcards: true,
+    },
+  },
+);
+```
+
+With this configuration, you can use wildcards in your routing keys when subscribing to events/messages. For example, to listen for messages with the routing key `cats.#`, you can use the following code:
+
+```typescript
+@MessagePattern('cats.#')
+getCats(@Payload() data: { message: string }, @Ctx() context: RmqContext) {
+  console.log(`Received message with routing key: ${context.getPattern()}`);
+
+  return {
+    message: 'Hello from the cats service!',
+  }
+}
+```
+
+To send a message with a specific routing key, you can use the `send()` method of the `ClientProxy` instance:
+
+```typescript
+this.client.send('cats.meow', { message: 'Meow!' }).subscribe((response) => {
+  console.log(response);
+});
 ```
