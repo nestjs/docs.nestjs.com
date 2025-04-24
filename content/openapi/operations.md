@@ -138,7 +138,7 @@ You can enable file upload for a specific method with the `@ApiBody` decorator t
   description: 'List of cats',
   type: FileUploadDto,
 })
-uploadFile(@UploadedFile() file) {}
+uploadFile(@UploadedFile() file: Express.Multer.File) {}
 ```
 
 Where `FileUploadDto` is defined as follows:
