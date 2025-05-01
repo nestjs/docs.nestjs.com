@@ -86,6 +86,10 @@
       color: variables.$red-color; 
       @include utils.text-gradient();
     }
+    &:visited {
+      font-weight: 600;
+      color: variables.$darksilver-color;
+    }
   }
 
   .current a {
