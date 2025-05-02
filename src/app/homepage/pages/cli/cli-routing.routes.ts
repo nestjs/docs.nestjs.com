@@ -1,14 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from './../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { CliLibrariesComponent } from './libraries/libraries.component';
 import { CliOverviewComponent } from './overview/overview.component';
 import { CliUsagesComponent } from './usages/usages.component';
 import { CliWorkspacesComponent } from './workspaces/workspaces.component';
 import { CliScriptsComponent } from './scripts/scripts.component';
 
-const routes: Routes = [
+export const CLI_ROUTES: Routes = [
   {
     path: 'overview',
     component: CliOverviewComponent,
@@ -49,15 +46,3 @@ const routes: Routes = [
     },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    CliOverviewComponent,
-    CliWorkspacesComponent,
-    CliUsagesComponent,
-    CliLibrariesComponent,
-    CliScriptsComponent,
-  ],
-})
-export class CliModule {}

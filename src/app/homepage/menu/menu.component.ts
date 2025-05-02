@@ -6,12 +6,15 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { MenuItemComponent } from './menu-item/menu-item.component';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MenuItemComponent],
 })
 export class MenuComponent implements OnInit {
   @Input()
@@ -323,7 +326,7 @@ export class MenuComponent implements OnInit {
     private readonly router: Router,
   ) {}
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.router.events
       .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe(() => this.toggleCategory());
@@ -331,7 +334,7 @@ export class MenuComponent implements OnInit {
     this.toggleCategory();
   }
 
-  toggleCategory() {
+  public toggleCategory(): void {
     const { firstChild } = this.route.snapshot;
     if (
       (firstChild.url && firstChild.url[1]) ||

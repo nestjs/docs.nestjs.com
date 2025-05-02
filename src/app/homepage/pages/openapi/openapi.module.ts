@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { DecoratorsComponent } from './decorators/decorators.component';
 import { IntroductionComponent } from './introduction/introduction.component';
@@ -11,7 +8,7 @@ import { OpenApiOtherFeaturesComponent } from './other-features/other-features.c
 import { OpenApiSecurityComponent } from './security/security.component';
 import { TypesAndParametersComponent } from './types-and-parameters/types-and-parameters.component';
 
-const routes: Routes = [
+export const OPENAPI_ROUTES: Routes = [
   {
     path: 'introduction',
     component: IntroductionComponent,
@@ -53,18 +50,3 @@ const routes: Routes = [
     data: { title: 'Other features - OpenAPI' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    TypesAndParametersComponent,
-    OpenApiOtherFeaturesComponent,
-    OperationsComponent,
-    MappedTypesComponent,
-    IntroductionComponent,
-    DecoratorsComponent,
-    CliPluginComponent,
-    OpenApiSecurityComponent,
-  ],
-})
-export class OpenApiModule {}

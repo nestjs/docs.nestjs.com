@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { BasicsComponent } from './basics/basics.component';
 import { CustomTransportComponent } from './custom-transport/custom-transport.component';
 import { MicroservicesExceptionFiltersComponent } from './exception-filters/exception-filters.component';
@@ -15,7 +12,7 @@ import { RabbitMQComponent } from './rabbitmq/rabbitmq.component';
 import { KafkaComponent } from './kafka/kafka.component';
 import { RedisComponent } from './redis/redis.component';
 
-const routes: Routes = [
+export const MICROSERVICES_ROUTES: Routes = [
   {
     path: 'basics',
     component: BasicsComponent,
@@ -77,22 +74,3 @@ const routes: Routes = [
     data: { title: 'Custom transporters - Microservices' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    BasicsComponent,
-    RedisComponent,
-    CustomTransportComponent,
-    MicroservicesExceptionFiltersComponent,
-    MicroservicesPipesComponent,
-    MicroservicesInterceptorsComponent,
-    MicroservicesGuardsComponent,
-    MqttComponent,
-    GrpcComponent,
-    RabbitMQComponent,
-    NatsComponent,
-    KafkaComponent,
-  ],
-})
-export class MicroservicesModule {}

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class StorageService {
-  set(key, val: unknown): void {
+  public set(key, val: unknown): void {
     localStorage.setItem(key, JSON.stringify(val));
   }
 
@@ -12,13 +12,13 @@ export class StorageService {
    * Returns the localStorage item for the given key, if any.
    * Returns null elsewhere
    */
-  get(key: string): unknown | null {
+  public get(key: string): unknown | null {
     const result = localStorage.getItem(key);
 
     return result ? JSON.parse(result) : null;
   }
 
-  remove(key: string): void {
+  public remove(key: string): void {
     const hasStorageKey = this.get(key);
 
     if (hasStorageKey) {

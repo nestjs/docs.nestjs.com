@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { AuthorizationComponent } from './authorization/authorization.component';
 import { CorsComponent } from './cors/cors.component';
@@ -10,7 +7,7 @@ import { EncryptionHashingComponent } from './encryption-hashing/encryption-hash
 import { HelmetComponent } from './helmet/helmet.component';
 import { RateLimitingComponent } from './rate-limiting/rate-limiting.component';
 
-const routes: Routes = [
+export const SECURITY_ROUTES: Routes = [
   {
     path: 'authentication',
     component: AuthenticationComponent,
@@ -47,17 +44,3 @@ const routes: Routes = [
     data: { title: 'Authorization' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    AuthenticationComponent,
-    RateLimitingComponent,
-    CsrfComponent,
-    AuthorizationComponent,
-    CorsComponent,
-    EncryptionHashingComponent,
-    HelmetComponent,
-  ],
-})
-export class SecurityModule {}
