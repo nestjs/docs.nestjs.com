@@ -87,7 +87,7 @@ The second argument of the `createMicroservice()` method is an `options` object.
   </tr>
   <tr>
     <td><code>serializer</code></td>
-    <td>Custom <a href="https://github.com/nestjs/nest/blob/master/packages/microservices/interfaces/serializer.interface.ts" target="_blank">serializer</a> for outcoming messages</td>
+    <td>Custom <a href="https://github.com/nestjs/nest/blob/master/packages/microservices/interfaces/serializer.interface.ts" target="_blank">serializer</a> for outgoing messages</td>
   </tr>
   <tr>
     <td><code>deserializer</code></td>
