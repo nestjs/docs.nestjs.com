@@ -234,14 +234,12 @@ With this in place, we can define the `createForUser()` method on the `CaslAbili
 ```typescript
 type Subjects = InferSubjects<typeof Article | typeof User> | 'all';
 
-export type AppAbility = Ability<[Action, Subjects]>;
+export type AppAbility = MongoAbility<[Action, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    const { can, cannot, build } = new AbilityBuilder<
-      Ability<[Action, Subjects]>
-    >(Ability as AbilityClass<AppAbility>);
+    const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
 
     if (user.isAdmin) {
       can(Action.Manage, 'all'); // read-write access to everything
@@ -263,11 +261,13 @@ export class CaslAbilityFactory {
 
 > warning **Notice** `all` is a special keyword in CASL that represents "any subject".
 
-> info **Hint** `Ability`, `AbilityBuilder`, `AbilityClass`, and `ExtractSubjectType` classes are exported from the `@casl/ability` package.
+> info **Hint** Since CASL v6, `MongoAbility` serves as the default ability class, replacing the legacy `Ability` to better support condition-based permissions using MongoDB-like syntax. Despite the name, it is not tied to MongoDB — it works with any kind of data by simply comparing objects against conditions written in Mongo-like syntax.
+
+> info **Hint** `MongoAbility`, `AbilityBuilder`, `AbilityClass`, and `ExtractSubjectType` classes are exported from the `@casl/ability` package.
 
 > info **Hint** `detectSubjectType` option let CASL understand how to get subject type out of an object. For more information read [CASL documentation](https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types) for details.
 
-In the example above, we created the `Ability` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but have different meanings, `can` allows to do an action on the specified subject and `cannot` forbids. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
+In the example above, we created the `MongoAbility` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but have different meanings, `can` allows to do an action on the specified subject and `cannot` forbids. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
 
 Lastly, make sure to add the `CaslAbilityFactory` to the `providers` and `exports` arrays in the `CaslModule` module definition:
 
@@ -297,7 +297,7 @@ if (ability.can(Action.Read, 'all')) {
 }
 ```
 
-> info **Hint** Learn more about the `Ability` class in the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
+> info **Hint** Learn more about the `MongoAbility` class in the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
 
 For example, let's say we have a user who is not an admin. In this case, the user should be able to read articles, but creating new ones or removing the existing articles should be prohibited.
 
@@ -311,7 +311,7 @@ ability.can(Action.Delete, Article); // false
 ability.can(Action.Create, Article); // false
 ```
 
-> info **Hint** Although both `Ability` and `AbilityBuilder` classes provide `can` and `cannot` methods, they have different purposes and accept slightly different arguments.
+> info **Hint** Although both `MongoAbility` and `AbilityBuilder` classes provide `can` and `cannot` methods, they have different purposes and accept slightly different arguments.
 
 Also, as we have specified in our requirements, the user should be able to update its articles:
 
@@ -329,7 +329,7 @@ article.authorId = 2;
 ability.can(Action.Update, article); // false
 ```
 
-As you can see, `Ability` instance allows us to check permissions in pretty readable way. Likewise, `AbilityBuilder` allows us to define permissions (and specify various conditions) in a similar fashion. To find more examples, visit the official documentation.
+As you can see, `MongoAbility` instance allows us to check permissions in pretty readable way. Likewise, `AbilityBuilder` allows us to define permissions (and specify various conditions) in a similar fashion. To find more examples, visit the official documentation.
 
 #### Advanced: Implementing a `PoliciesGuard`
 
