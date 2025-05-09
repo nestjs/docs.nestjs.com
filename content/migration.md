@@ -51,10 +51,10 @@ forRoutes('*'); // <-- This should not work in Express v5
 Instead, you can update the path to use a named wildcard:
 
 ```typescript
-forRoutes('{*splat}'); // <-- This will work in Express v5
+forRoutes('/{*splat}'); // <-- This will work in Express v5
 ```
 
-Note that `{{ '{' }}*splat&#125;` is a named wildcard that matches any path including the root path. Outer braces make path optional.
+Note that `{{ '{' }}*splat&#125;` is a named wildcard that matches any path without the root path. Outer braces make path optional.
 
 #### Query parameters parsing
 
