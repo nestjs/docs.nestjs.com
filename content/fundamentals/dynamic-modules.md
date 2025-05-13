@@ -343,6 +343,45 @@ Extending the `ConfigurableModuleClass` means that `ConfigModule` provides now n
 export class AppModule {}
 ```
 
+The `registerAsync` method takes the following object as an argument:
+
+```typescript
+{
+  /**
+   * Injection token resolving to a class that will be instantiated as a provider.
+   * The class must implement the corresponding interface.
+   */
+  useClass?: Type<
+    ConfigurableModuleOptionsFactory<ModuleOptions, FactoryClassMethodKey>
+  >;
+  /**
+   * Function returning options (or a Promise resolving to options) to configure the
+   * module.
+   */
+  useFactory?: (...args: any[]) => Promise<ModuleOptions> | ModuleOptions;
+  /**
+   * Dependencies that a Factory may inject.
+   */
+  inject?: FactoryProvider['inject'];
+  /**
+   * Injection token resolving to an existing provider. The provider must implement
+   * the corresponding interface.
+   */
+  useExisting?: Type<
+    ConfigurableModuleOptionsFactory<ModuleOptions, FactoryClassMethodKey>
+  >;
+}
+```
+
+Let's go through the above properties one by one:
+
+- `useFactory` - a function that returns the configuration object. It can be either synchronous or asynchronous. To inject dependencies into the factory function, use the `inject` property. We used this variant in the example above.
+- `inject` - an array of dependencies that will be injected into the factory function. The order of the dependencies must match the order of the parameters in the factory function.
+- `useClass` - a class that will be instantiated as a provider. The class must implement the corresponding interface. Typically, this is a class that provides a `create()` method that returns the configuration object. Read more about this in the [Custom method key](/fundamentals/dynamic-modules#custom-method-key) section below.
+- `useExisting` - a variant of `useClass` that allows you to use an existing provider instead of instructing Nest to create a new instance of the class. This is useful when you want to use a provider that is already registered in the module. Keep in mind that the class must implement the same interface as the one used in `useClass` (and so it must provide the `create()` method, unless you override the default method name, see [Custom method key](/fundamentals/dynamic-modules#custom-method-key) section below).
+
+Always choose one of the above options (`useFactory`, `useClass`, or `useExisting`), as they are mutually exclusive.
+
 Lastly, let's update the `ConfigService` class to inject the generated module options' provider instead of the `'CONFIG_OPTIONS'` that we used so far.
 
 ```typescript
@@ -431,17 +470,18 @@ There are edge-cases when your module may need to take extra options that determ
 In such cases, the `ConfigurableModuleBuilder#setExtras` method can be used. See the following example:
 
 ```typescript
-export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new ConfigurableModuleBuilder<ConfigModuleOptions>()
-  .setExtras(
-    {
-      isGlobal: true,
-    },
-    (definition, extras) => ({
-      ...definition,
-      global: extras.isGlobal,
-    }),
-  )
-  .build();
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
+  new ConfigurableModuleBuilder<ConfigModuleOptions>()
+    .setExtras(
+      {
+        isGlobal: true,
+      },
+      (definition, extras) => ({
+        ...definition,
+        global: extras.isGlobal,
+      }),
+    )
+    .build();
 ```
 
 In the example above, the first argument passed into the `setExtras` method is an object containing default values for the "extra" properties. The second argument is a function that takes an auto-generated module definitions (with `provider`, `exports`, etc.) and `extras` object which represents extra properties (either specified by the consumer or defaults). The returned value of this function is a modified module definition. In this specific example, we're taking the `extras.isGlobal` property and assigning it to the `global` property of the module definition (which in turn determines whether a module is global or not, read more [here](/modules#dynamic-modules)).
@@ -465,7 +505,9 @@ However, since `isGlobal` is declared as an "extra" property, it won't be availa
 ```typescript
 @Injectable()
 export class ConfigService {
-  constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions) {
+  constructor(
+    @Inject(MODULE_OPTIONS_TOKEN) private options: ConfigModuleOptions,
+  ) {
     // "options" object will not have the "isGlobal" property
     // ...
   }
@@ -479,7 +521,11 @@ The auto-generated static methods (`register`, `registerAsync`, etc.) can be ext
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigService } from './config.service';
-import { ConfigurableModuleClass, ASYNC_OPTIONS_TYPE, OPTIONS_TYPE } from './config.module-definition';
+import {
+  ConfigurableModuleClass,
+  ASYNC_OPTIONS_TYPE,
+  OPTIONS_TYPE,
+} from './config.module-definition';
 
 @Module({
   providers: [ConfigService],
@@ -505,5 +551,10 @@ export class ConfigModule extends ConfigurableModuleClass {
 Note the use of `OPTIONS_TYPE` and `ASYNC_OPTIONS_TYPE` types that must be exported from the module definition file:
 
 ```typescript
-export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN, OPTIONS_TYPE, ASYNC_OPTIONS_TYPE } = new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
+export const {
+  ConfigurableModuleClass,
+  MODULE_OPTIONS_TOKEN,
+  OPTIONS_TYPE,
+  ASYNC_OPTIONS_TYPE,
+} = new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
 ```
