@@ -100,7 +100,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>always</code></td>
     <td><code>boolean</code></td>
-    <td>Set default for <code>always</code> option of decorators. Default can be overridden in decorator options</td>
+    <td>Set default for <code>always</code> option of decorators. Default can be overridden in decorator options.</td>
   </tr>
 
   <tr>
