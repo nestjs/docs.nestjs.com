@@ -322,7 +322,7 @@ CacheModule.registerAsync({
 
 This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
 
-> info **Hint** `CacheModule#register` and `CacheModule#registerAsync` and `CacheOptionsFactory` has an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
+> info **Hint** `CacheModule#register`, `CacheModule#registerAsync` and `CacheOptionsFactory` have an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
 
 You can also pass so-called `extraProviders` to the `registerAsync()` method. These providers will be merged with the module providers.
 
