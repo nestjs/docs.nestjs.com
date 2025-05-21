@@ -617,7 +617,7 @@ server.status.subscribe((status: KafkaStatus) => {
 
 #### Underlying producer and consumer
 
-For more advanced use cases, you may need to access the underlying prodocuer and consumer instances. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
+For more advanced use cases, you may need to access the underlying producer and consumer instances. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
 
 To do so, you can use `producer` and `consumer` getters exposed by the `ClientKafkaProxy` instance.
 
