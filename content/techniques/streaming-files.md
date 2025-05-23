@@ -46,7 +46,7 @@ export class FileController {
 }
 ```
 
-The default content type (the value for `Content-Type` HTTP response header) is `application/octet-stream`. If you need to customize this value you can use the `type` option from `StreamableFile`, or use the `res.set` method or the [`@Header()`](/controllers#headers) decorator, like this:
+The default content type (the value for `Content-Type` HTTP response header) is `application/octet-stream`. If you need to customize this value you can use the `type` option from `StreamableFile`, or use the `res.set` method or the [`@Header()`](/controllers#response-headers) decorator, like this:
 
 ```ts
 import { Controller, Get, StreamableFile, Res } from '@nestjs/common';
