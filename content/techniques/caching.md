@@ -54,7 +54,7 @@ await this.cacheManager.set('key', 'value');
 
 > warning **Note** The in-memory cache storage can only store values of types that are supported by [the structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
 
-You can manually specify a TTL (expiration time in miliseconds) for this specific key, as follows:
+You can manually specify a TTL (expiration time in milliseconds) for this specific key, as follows:
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
