@@ -238,7 +238,7 @@ The following options are valid for the object passed to the array of the `Throt
 <table>
   <tr>
     <td><code>name</code></td>
-    <td>the name for internal tracking of which throttler set is being used. Defaults to `default` if not passed</td>
+    <td>the name for internal tracking of which throttler set is being used. Defaults to <code>default</code> if not passed</td>
   </tr>
   <tr>
     <td><code>ttl</code></td>
