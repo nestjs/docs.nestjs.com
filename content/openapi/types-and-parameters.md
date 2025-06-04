@@ -293,7 +293,7 @@ export class CreateCatDto {}
 
 > info **Hint** You only need to use `@ApiExtraModels()` once for a specific model class.
 
-Alternatively, you can pass an options object with the `extraModels` property specified to the `SwaggerModule#createDocument()` method, as follows:
+Alternatively, you can pass an options object with the `extraModels` property specified to the `SwaggerModule.createDocument()` method, as follows:
 
 ```typescript
 const documentFactory = () =>
