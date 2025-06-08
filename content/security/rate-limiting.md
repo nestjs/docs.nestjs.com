@@ -354,9 +354,7 @@ For most people, wrapping your options in an array will be enough.
 If you are using a custom storage, you should wrap your `ttl` and `limit` in an
 array and assign it to the `throttlers` property of the options object.
 
-Any `@ThrottleSkip()` should now take in an object with `string: boolean` props.
-The strings are the names of the throttlers. If you do not have a name, pass the
-string `'default'`, as this is what will be used under the hood otherwise.
+Any `@SkipThrottle()` decorator can be used to bypass throttling for specific routes or methods. It accepts an optional boolean parameter, which defaults to `true`. This is useful when you want to skip rate limiting on particular endpoints.
 
 Any `@Throttle()` decorators should also now take in an object with string keys,
 relating to the names of the throttler contexts (again, `'default'` if no name)
