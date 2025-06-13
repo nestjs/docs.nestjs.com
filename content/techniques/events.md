@@ -149,7 +149,7 @@ To avoid this issue, you can use the `waitUntilReady` method of the `EventEmitte
 
 ```typescript
 await this.eventEmitterReadinessWatcher.waitUntilReady();
-await this.eventEmitter.emit(
+this.eventEmitter.emit(
   'order.created',
   new OrderCreatedEvent({ orderId: 1, payload: {} }),
 );
