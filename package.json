@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "18.2.9",
-    "@angular-eslint/eslint-plugin": "19.0.0",
+    "@angular-eslint/eslint-plugin": "20.1.1",
     "@angular/cli": "18.2.9",
     "@angular/compiler-cli": "18.2.8",
     "@angular/language-service": "18.2.8",
@@ -60,7 +60,7 @@
     "@types/node": "22.8.2",
     "@types/prismjs": "1.26.0",
     "@types/rimraf": "4.0.5",
-    "angular-eslint": "^19.0.0",
+    "angular-eslint": "^20.0.0",
     "chokidar": "4.0.1",
     "concurrently": "9.0.1",
     "dgeni": "0.4.14",
