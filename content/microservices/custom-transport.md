@@ -192,7 +192,13 @@ class GoogleCloudPubSubClient extends ClientProxy {
     // In a real-world application, the "callback" function should be executed
     // with payload sent back from the responder. Here, we'll simply simulate (5 seconds delay)
     // that response came through by passing the same "data" as we've originally passed in.
-    setTimeout(() => callback({ response: packet.data }), 5000);
+    //
+    // The "isDisposed" bool on the WritePacket tells the response that no further data is
+    // expected. If not sent or is false, this will simply emit data to the Observable.
+    setTimeout(() => callback({ 
+      response: packet.data,
+      isDisposed: true,
+    }), 5000);
 
     return () => console.log('teardown');
   }
