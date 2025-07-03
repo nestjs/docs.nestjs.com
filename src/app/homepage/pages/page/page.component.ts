@@ -32,6 +32,16 @@ export class BasePageComponent implements AfterViewChecked {
     return this.isHljsInitialized;
   }
 
+  copyAsMarkdown() {
+    const rawMarkdownEl = this.el.nativeElement.querySelector('#raw-markdown');
+    if (!rawMarkdownEl) {
+      return;
+    }
+    const encoded = rawMarkdownEl.textContent;
+    const decoded = atob(encoded);
+    navigator.clipboard.writeText(decoded);
+  }
+
   ngAfterViewChecked() {
     this.initHljs();
   }

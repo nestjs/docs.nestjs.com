@@ -1,13 +1,27 @@
 {% block content %}
 <div class="content" #contentReference>
-  <div class="github-links">
-    <a
-      href="https://github.com/nestjs/docs.nestjs.com/edit/master/{$ doc.fileInfo.projectRelativePath $}"
-      aria-label="Suggest Edits"
-      title="Suggest Edits"
-    >
-      <i class="fas fa-edit"></i>
-    </a>
+  <div id="raw-markdown" style="display: none">
+    {$ doc.rawContent | base64 $}
+  </div>
+  <div class="content-actions">
+    <div class="content-buttons">
+      <button
+        (click)="copyAsMarkdown()"
+        aria-label="Copy as Markdown"
+        title="Copy as Markdown"
+      >
+        <i class="fas fa-copy"></i>
+      </button>
+    </div>
+    <div class="github-links">
+      <a
+        href="https://github.com/nestjs/docs.nestjs.com/edit/master/{$ doc.fileInfo.projectRelativePath $}"
+        aria-label="Suggest Edits"
+        title="Suggest Edits"
+      >
+        <i class="fas fa-edit"></i>
+      </a>
+    </div>
   </div>
   {$ doc.description | nestjsmarked $}
 </div>

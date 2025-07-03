@@ -77,7 +77,9 @@
     }
   }
 
-  .content blockquote strong, .content #carbonads a, .content blockquote a {
+  .content blockquote strong,
+  .content #carbonads a,
+  .content blockquote a {
     -webkit-text-fill-color: unset !important;
     -webkit-background-clip: unset !important;
     background: none;
@@ -258,17 +260,16 @@
     }
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       border-radius: 2px;
       padding: 2px;
       background: var(--primary-gradient);
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
+      -webkit-mask: linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
-              mask-composite: exclude;
+      mask-composite: exclude;
       pointer-events: none;
       z-index: 2;
     }
@@ -432,16 +433,37 @@
   }
 }
 
-.github-links {
+.content-actions {
   float: right;
   margin-top: 24px;
+  display: flex;
+  gap: 8px;
+}
 
+.github-links {
   svg {
     font-size: 17px;
     color: var(--color-1dp);
   }
 
   a:hover svg {
+    color: var(--primary);
+  }
+}
+
+.content-buttons {
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  svg {
+    font-size: 17px;
+    color: var(--color-1dp);
+  }
+
+  button:hover svg {
     color: var(--primary);
   }
 }
@@ -465,7 +487,7 @@
   -webkit-filter: var(--company-filter);
   filter: var(--company-filter);
   opacity: var(--company-logo-opacity);
-  
+
   &:hover {
     -webkit-filter: var(--company-filter-hover);
     filter: var(--company-filter-hover);
