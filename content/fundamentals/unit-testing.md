@@ -186,7 +186,9 @@ describe('CatsController', () => {
           const mockMetadata = moduleMocker.getMetadata(
             token,
           ) as MockMetadata<any, any>;
-          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          const Mock = moduleMocker.generateFromMetadata(
+            mockMetadata,
+          ) as ObjectConstructor;
           return new Mock();
         }
       })
