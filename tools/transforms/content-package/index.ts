@@ -4,6 +4,7 @@ import {
   computeOutputPathProcessor,
   computeWhoUsesProcessor,
   extractContentTitleProcessor,
+  outputCleanMarkdownProcessor,
 } from './processors';
 import { ContentFileReader, contentFileReader } from './readers';
 import { cleanMarkdownNunjucksFilter } from './rendering/filters/base64';
@@ -20,6 +21,7 @@ export default new Package('content', [])
   .processor(extractContentTitleProcessor)
   .processor(computeOutputPathProcessor)
   .processor(computeWhoUsesProcessor)
+  .processor(outputCleanMarkdownProcessor)
   .config((readFilesProcessor: any, contentFileReader: ContentFileReader) => {
     readFilesProcessor.fileReaders.push(contentFileReader);
   })
