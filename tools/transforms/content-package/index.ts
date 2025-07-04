@@ -7,7 +7,6 @@ import {
   outputCleanMarkdownProcessor,
 } from './processors';
 import { ContentFileReader, contentFileReader } from './readers';
-import { cleanMarkdownNunjucksFilter } from './rendering/filters/base64';
 import { nestjsMarkedNunjucksFilter } from './rendering/filters/nestjs-marked';
 import { nestjsMarkedNunjucksTag } from './rendering/tags/nestjs-marked';
 import { renderNestJSMarkdown } from './services';
@@ -17,7 +16,6 @@ export default new Package('content', [])
   .factory(renderNestJSMarkdown)
   .factory(nestjsMarkedNunjucksTag)
   .factory(nestjsMarkedNunjucksFilter)
-  .factory(cleanMarkdownNunjucksFilter)
   .processor(extractContentTitleProcessor)
   .processor(computeOutputPathProcessor)
   .processor(computeWhoUsesProcessor)
@@ -30,11 +28,9 @@ export default new Package('content', [])
       templateEngine: any,
       nestjsMarkedNunjucksTag: any,
       nestjsMarkedNunjucksFilter: any,
-      cleanMarkdownNunjucksFilter: any,
     ) => {
       templateEngine.tags.push(nestjsMarkedNunjucksTag);
       templateEngine.filters.push(nestjsMarkedNunjucksFilter);
-      templateEngine.filters.push(cleanMarkdownNunjucksFilter);
     },
   )
   .config((computeIdsProcessor) => {
