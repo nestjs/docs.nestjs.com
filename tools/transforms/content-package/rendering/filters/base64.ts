@@ -1,6 +1,6 @@
-export function base64NunjucksFilter() {
+export function cleanMarkdownNunjucksFilter() {
   return {
-    name: 'base64',
+    name: 'cleanMarkdown',
     process(str: string) {
       // Fix relative URLs to absolute URLs for copying
       const fixedMarkdown = str
