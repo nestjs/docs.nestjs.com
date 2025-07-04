@@ -11,7 +11,6 @@ export class ContentFileReader implements FileReader {
       {
         docType: fileInfo.baseName === 'who-uses' ? 'who-uses' : 'content',
         content: fileInfo.content,
-        rawContent: fileInfo.content,
       },
     ];
   }
