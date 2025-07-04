@@ -437,7 +437,7 @@
   float: right;
   margin-top: 24px;
   display: flex;
-  gap: 8px;
+  gap: 16px;
 }
 
 .github-links {
@@ -456,15 +456,35 @@
     background: none;
     border: none;
     cursor: pointer;
+    padding: 0;
   }
 
   svg {
     font-size: 17px;
-    color: var(--color-1dp);
   }
+}
 
-  button:hover svg {
+.content-action {
+  color: var(--color-1dp);
+
+  &:hover {
     color: var(--primary);
+  }
+}
+
+.content-action--success {
+  color: var(--success);
+
+  &:hover {
+    color: var(--success);
+  }
+}
+
+.content-action--error {
+  color: var(--error);
+
+  &:hover {
+    color: var(--error);
   }
 }
 

@@ -6,9 +6,12 @@
   <div class="content-actions">
     <div class="content-buttons">
       <button
-        (click)="copyAsMarkdown()"
+        (click)="copyAsMarkdown($event)"
+        (mouseleave)="onCopyButtonMouseLeave($event)"
+        class="content-action"
         aria-label="Copy as Markdown"
         title="Copy as Markdown"
+        id="copy-markdown-btn"
       >
         <i class="fas fa-copy"></i>
       </button>
