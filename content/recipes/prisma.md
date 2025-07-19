@@ -67,6 +67,29 @@ This command creates a new `prisma` directory with the following contents:
 - `schema.prisma`: Specifies your database connection and contains the database schema
 - `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in a group of environment variables
 
+#### Set the generator output path
+
+> warning **Warning** In Prisma ORM 7, Prisma Client will no longer be generated in `node_modules` by default and will require an output path to be defined. [Learn more below on how to define an output path](https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/generating-prisma-client#using-a-custom-output-path).
+
+Specify your output `path` for the generated Prisma client either by passing `--output ../generated/prisma` during prisma init, or directly in your Prisma schema:
+
+```groovy
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+}
+```
+
+By default, Nest does not include the generated Prisma client in the build. To fix this, the path should be explicitly defined in `tsconfig.build.json`:
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "include": ["src", "generated"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}
+```
+
 #### Set the database connection
 
 Your database connection is configured in the `datasource` block in your `schema.prisma` file. By default it's set to `postgresql`, but since you're using a SQLite database in this guide you need to adjust the `provider` field of the `datasource` block to `sqlite`:
