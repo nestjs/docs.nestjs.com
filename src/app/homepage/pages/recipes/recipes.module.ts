@@ -22,6 +22,7 @@ import { SuitesComponent } from './suites/suites.component';
 import { SwcComponent } from './swc/swc.component';
 import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
+import { NestFailoverComponent } from './nest-failover/nest-failover.component';
 
 const routes: Routes = [
   {
@@ -140,6 +141,11 @@ const routes: Routes = [
     component: PassportComponent,
     data: { title: 'passport' },
   },
+  {
+    path: 'nest-failover',
+    component: NestFailoverComponent,
+    data: { title: 'Nest Failover' },
+  },
 ];
 
 @NgModule({
@@ -165,6 +171,7 @@ const routes: Routes = [
     SwcComponent,
     NecordComponent,
     PassportComponent,
+    NestFailoverComponent,
   ],
 })
 export class RecipesModule {}
