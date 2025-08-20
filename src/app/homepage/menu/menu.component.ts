@@ -254,6 +254,7 @@ export class MenuComponent implements OnInit {
         { title: 'Async local storage', path: '/recipes/async-local-storage' },
         { title: 'Necord', path: '/recipes/necord' },
         { title: 'Suites (Automock)', path: '/recipes/suites' },
+        { title: 'Apitally (monitoring)', path: '/recipes/apitally' },
       ],
     },
     {

@@ -22,6 +22,7 @@ import { SuitesComponent } from './suites/suites.component';
 import { SwcComponent } from './swc/swc.component';
 import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
+import { ApitallyComponent } from './apitally/apitally.component';
 
 const routes: Routes = [
   {
@@ -140,6 +141,11 @@ const routes: Routes = [
     component: PassportComponent,
     data: { title: 'passport' },
   },
+  {
+    path: 'apitally',
+    component: ApitallyComponent,
+    data: { title: 'Apitally (monitoring)' },
+  },
 ];
 
 @NgModule({
@@ -165,6 +171,7 @@ const routes: Routes = [
     SwcComponent,
     NecordComponent,
     PassportComponent,
+    ApitallyComponent,
   ],
 })
 export class RecipesModule {}
