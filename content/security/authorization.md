@@ -220,7 +220,7 @@ export enum Action {
 }
 ```
 
-> warning **Notice** `manage` is a special keyword in CASL which represents "any" action.
+> warning **Notice** `manage` is a special keyword in CASL which represents "any action".
 
 To encapsulate CASL library, let's generate the `CaslModule` and `CaslAbilityFactory` now.
 
