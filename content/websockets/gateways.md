@@ -244,9 +244,14 @@ server: Server;
 Also, you can retrieve the corresponding namespace using the `namespace` attribute, as follows:
 
 ```typescript
-@WebSocketServer({ namespace: 'my-namespace' })
-namespace: Namespace;
+@WebSocketGateway({ namespace: 'my-namespace' })
+export class EventsGateway {
+  @WebSocketServer()
+  namespace: Namespace;
+}
 ```
+
+`@WebSocketServer()` decorator injects a server instance by referencing the metadata stored by the `@WebSocketGateway()` decorator. If you provide the namespace option to the `@WebSocketGateway()` decorator, `@WebSocketServer()` decorator returns a `Namespace` instance instead of a `Server` instance.
 
 > warning **Notice** The `@WebSocketServer()` decorator is imported from the `@nestjs/websockets` package.
 
