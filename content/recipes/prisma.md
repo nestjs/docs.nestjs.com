@@ -262,7 +262,7 @@ $ npm install @prisma/client
 
 Note that during installation, Prisma automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
 
-> info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
+> info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `generated/prisma`.
 
 #### Use Prisma Client in your NestJS services
 
@@ -274,7 +274,7 @@ Inside the `src` directory, create a new file called `prisma.service.ts` and add
 
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+@import { PrismaClient } from 'generated/prisma';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -293,7 +293,7 @@ Still inside the `src` directory, create a new file called `user.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class UsersService {
@@ -358,7 +358,7 @@ Still inside the `src` directory, create a new file called `post.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { Post, Prisma } from '@prisma/client';
+import { Post, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class PostsService {
@@ -436,7 +436,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { PostsService } from './post.service';
-import { User as UserModel, Post as PostModel } from '@prisma/client';
+import { User as UserModel, Post as PostModel } from 'generated/prisma';
 
 @Controller()
 export class AppController {
