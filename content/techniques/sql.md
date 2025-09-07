@@ -603,6 +603,34 @@ export class UsersModule {}
 
 Now a substitute `mockRepository` will be used as the `UsersRepository`. Whenever any class asks for `UsersRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
 
+Sometimes, however, it is useful to test with an actual database, not the least, because it saves you from implementing potentially complex mocks of your TypeORM repositories. Sometimes, the logic you want to test is implemented in the database itself. While you can test with any database supported by [TypeORM](https://typeorm.io/), an in-memory SQLite database would be recommended for most use cases, as it provides the best performance, and has no external dependencies.
+
+```typescript
+beforeEach(async () => {
+  const moduleFixture: TestingModule = await Test.createTestingModule({
+    imports: [
+      TypeOrmModule.forRoot({
+        type: 'better-sqlite3',
+        database: ':memory:',
+        dropSchema: true,
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
+      TypeOrmModule.forFeature([User]),
+    ],
+    providers: [UsersService],
+    controllers: [UsersController],
+  }).compile();
+
+  app = moduleFixture.createNestApplication();
+  await app.init();
+});
+```
+
+> info **Hint** It is recommended to keep the test database configuration in a separate file, to not have to repeat it in every test.
+
+> warning **Warning** If you import a module, in your testing module, that already imports the `TypeOrmModule`, the test database will not automatically override that configuration and you will likely see the `TypeOrmModule` trying to connect to the application database. To avoid this, it is recommended that you instead import the controllers and providers you need from that module and [auto-mock](/fundamentals/testing#auto-mocking) whatever dependencies aren't relevant to your test. This is generally a good approach to avoid initializing external dependencies that you don't want to load in your tests.
+
 #### Async configuration
 
 You may want to pass your repository module options asynchronously instead of statically. In this case, use the `forRootAsync()` method, which provides several ways to deal with async configuration.
