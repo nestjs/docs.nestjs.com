@@ -89,7 +89,9 @@ export class KillDragonCommand extends Command<{
   constructor(
     public readonly heroId: string,
     public readonly dragonId: string,
-  ) {}
+  ) {
+    super();
+  }
 }
 @@switch
 export class KillDragonCommand extends Command {

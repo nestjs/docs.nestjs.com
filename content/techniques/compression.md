@@ -33,9 +33,15 @@ $ npm i --save @fastify/compress
 
 Once the installation is complete, apply the `@fastify/compress` middleware as global middleware.
 
+> warning **Warning** Please ensure, that you use the type `NestFastifyApplication` when creating the application. Otherwise, you cannot use `register` to apply the compression-middleware.
+
 ```typescript
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+
 import compression from '@fastify/compress';
-// somewhere in your initialization file
+
+// inside bootstrap()
+const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 await app.register(compression);
 ```
 

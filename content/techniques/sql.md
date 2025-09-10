@@ -113,7 +113,7 @@ export class User {
 }
 ```
 
-> info **Hint** Learn more about entities in the [TypeORM documentation](https://typeorm.io/#/entities).
+> info **Hint** Learn more about entities in the [TypeORM documentation](https://typeorm.io/docs/entity/entities/).
 
 The `User` entity file sits in the `users` directory. This directory contains all files related to the `UsersModule`. You can decide where to keep your model files, however, we recommend creating them near their **domain**, in the corresponding module directory.
 
