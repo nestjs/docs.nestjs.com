@@ -102,6 +102,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -133,6 +134,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -164,6 +166,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -189,6 +192,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -297,7 +301,7 @@ Inside the `src` directory, create a new file called `prisma.service.ts` and add
 
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from 'generated/prisma';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -316,7 +320,7 @@ Still inside the `src` directory, create a new file called `user.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class UsersService {
@@ -381,7 +385,7 @@ Still inside the `src` directory, create a new file called `post.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { Post, Prisma } from '@prisma/client';
+import { Post, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class PostsService {
@@ -459,7 +463,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { PostsService } from './post.service';
-import { User as UserModel, Post as PostModel } from '@prisma/client';
+import { User as UserModel, Post as PostModel } from 'generated/prisma';
 
 @Controller()
 export class AppController {
