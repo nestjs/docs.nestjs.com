@@ -52,7 +52,7 @@ html[mode='dark'] {
     &::-webkit-scrollbar-track {
       background: var(--menu-background);
     }
-  
+
     &::-webkit-scrollbar-corner {
       background: var(--menu-background);
     }
@@ -127,7 +127,7 @@ blockquote {
   strong {
     color: variables.$red-color;
     @include utils.text-gradient();
-    
+
     &:first-of-type {
       display: block;
       text-transform: uppercase;
@@ -163,7 +163,7 @@ blockquote {
   code[class*=language-], pre[class*=language-] {
     margin: 20px 0;
   }
-  
+
   p:last-of-type {
     margin-bottom: 0;
   }
@@ -399,8 +399,8 @@ tr td span.table-code-asterisk {
       border-radius: 2px;
       padding: 2px;
       background: var(--primary-gradient);
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
               mask-composite: exclude;
@@ -420,7 +420,7 @@ tr td span.table-code-asterisk {
   background: rgba(0, 0, 0, 0.6);
 }
 
-// Scollbar sidebar
+// Scrollbar sidebar
 
 app-menu::-webkit-scrollbar {
   width: 6px;
