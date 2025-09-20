@@ -60,7 +60,7 @@ easily using the `.solitary()` method from `TestBed`.
 ```typescript
 @@filename(cats-http.service.spec)
 import { TestBed } from '@suites/unit';
-import type { Mocked } from "@suites/doubles.jest";
+import type { Mocked } from '@suites/doubles.jest';
 
 describe('Cats Http Service Unit Test', () => {
   let catsHttpService: CatsHttpService;
@@ -196,7 +196,7 @@ And now, let's test `CatsService` using sociable testing with Suites:
 ```typescript
 @@filename(cats.service.spec)
 import { TestBed } from '@suites/unit';
-import type { Mocked } from '@suites/doubles.jest"
+import type { Mocked } from '@suites/doubles.jest';
 import { PrismaClient } from '@prisma/client';
 
 describe('Cats Service Sociable Unit Test', () => {
