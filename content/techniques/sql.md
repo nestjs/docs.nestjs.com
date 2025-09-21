@@ -483,8 +483,6 @@ import { UserSubscriber } from './user.subscriber';
 export class UsersModule {}
 ```
 
-> info **Hint** Learn more about entity subscribers [here](https://typeorm.io/docs/advanced-topics/listeners-and-subscribers#what-is-a-subscriber).
-
 #### Migrations
 
 [Migrations](https://typeorm.io/#/migrations) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/#/migrations/creating-a-new-migration).
