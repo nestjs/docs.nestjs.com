@@ -436,7 +436,7 @@ async createMany(users: User[]) {
 
 #### Subscribers
 
-With TypeORM [subscribers](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber), you can listen to specific entity events.
+With TypeORM [subscribers](https://typeorm.io/docs/advanced-topics/listeners-and-subscribers#what-is-a-subscriber), you can listen to specific entity events.
 
 ```typescript
 import {
@@ -482,8 +482,6 @@ import { UserSubscriber } from './user.subscriber';
 })
 export class UsersModule {}
 ```
-
-> info **Hint** Learn more about entity subscribers [here](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber).
 
 #### Migrations
 
