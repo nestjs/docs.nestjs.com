@@ -12,10 +12,10 @@ Start by installing the required packages:
 
 ```bash
 # For Express and Apollo (default)
-$ npm i @nestjs/graphql @nestjs/apollo @apollo/server@^4.12.2 graphql
+$ npm i @nestjs/graphql @nestjs/apollo @apollo/server graphql
 
 # For Fastify and Apollo
-# npm i @nestjs/graphql @nestjs/apollo @apollo/server@^4.12.2 @as-integrations/fastify graphql
+# npm i @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/fastify graphql
 
 # For Fastify and Mercurius
 # npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
