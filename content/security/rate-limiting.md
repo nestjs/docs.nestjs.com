@@ -162,6 +162,13 @@ This module can work with websockets, but it requires some class extension. You 
 ```typescript
 @Injectable()
 export class WsThrottlerGuard extends ThrottlerGuard {
+  getRequestResponse(context: ExecutionContext) {
+    // We switch the context to WS here so we can
+    // access the client's socket
+    const client = context.switchToWs().getClient();
+    return { req: client, res: client };
+  }
+
   async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
     const {
       context,
@@ -172,7 +179,6 @@ export class WsThrottlerGuard extends ThrottlerGuard {
       getTracker,
       generateKey,
     } = requestProps;
-
     const client = context.switchToWs().getClient();
     const tracker = client._socket.remoteAddress;
     const key = generateKey(context, tracker, throttler.name);
@@ -184,10 +190,6 @@ export class WsThrottlerGuard extends ThrottlerGuard {
         blockDuration,
         throttler.name,
       );
-
-    const getThrottlerSuffix = (name: string) =>
-      name === 'default' ? '' : `-${name}`;
-
     // Throw an error when the user reached their limit.
     if (isBlocked) {
       await this.throwThrottlingException(context, {
@@ -201,7 +203,6 @@ export class WsThrottlerGuard extends ThrottlerGuard {
         timeToBlockExpire,
       });
     }
-
     return true;
   }
 }
@@ -211,10 +212,99 @@ export class WsThrottlerGuard extends ThrottlerGuard {
 
 There's a few things to keep in mind when working with WebSockets:
 
+- The `canActivate` method will call `handleRequest` for each throttle limit configuration when multiple limits are defined, so the `handleRequest` method might be called multiple times for a single request.
 - Guard cannot be registered with the `APP_GUARD` or `app.useGlobalGuards()`
 - When a limit is reached, Nest will emit an `exception` event, so make sure there is a listener ready for this
 
+When configuring multiple throttle limits, here's a more comprehensive example:
+
+```typescript
+// app.module.ts
+@Module({
+  imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20
+      }
+    ]),
+  ],
+})
+export class AppModule {}
+
+// ws-throttler.guard.ts
+@Injectable()
+export class WsThrottlerGuard extends ThrottlerGuard {
+  getRequestResponse(context: ExecutionContext) {
+    const client = context.switchToWs().getClient();
+    return { req: client, res: client };
+  }
+
+  async handleRequest(requestProps: ThrottlerRequest): Promise<boolean> {
+    const {
+      context,
+      limit,
+      ttl,
+      throttler,
+      blockDuration,
+      getTracker,
+      generateKey,
+    } = requestProps;
+    
+    // The throttler.name will contain the name of the current throttle configuration
+    // being processed (e.g., 'short', 'medium', or 'default' if no name was provided)
+    console.log(`Processing throttle configuration: ${throttler.name}`);
+    
+    const client = context.switchToWs().getClient();
+    const tracker = client._socket.remoteAddress;
+    const key = generateKey(context, tracker, throttler.name);
+    const { totalHits, timeToExpire, isBlocked, timeToBlockExpire } =
+      await this.storageService.increment(
+        key,
+        ttl,
+        limit,
+        blockDuration,
+        throttler.name,
+      );
+    
+    // Throw an error when the user reached their limit.
+    if (isBlocked) {
+      await this.throwThrottlingException(context, {
+        limit,
+        ttl,
+        key,
+        tracker,
+        totalHits,
+        timeToExpire,
+        isBlocked,
+        timeToBlockExpire,
+      });
+    }
+    
+    return true;
+  }
+}
+
+// gateway.ts
+@WebSocketGateway()
+export class EventsGateway {
+  @UseGuards(WsThrottlerGuard)
+  @SubscribeMessage('events')
+  handleEvent() {
+    // This handler will be protected by both 'short' and 'medium' throttle configurations
+  }
+}
+```
+
 > info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
+
+Remember that each throttle configuration (in this example, both 'short' and 'medium') will be evaluated separately for each request, and the `handleRequest` method will be called once for each configuration. The `canActivate` method returns `true` only if all throttle configurations pass the rate limiting check.
 
 #### GraphQL
 
