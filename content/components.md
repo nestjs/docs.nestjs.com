@@ -82,7 +82,7 @@ export class CatsController {
   }
 
   @Get()
-  async findAll(): Promise<Cat[]> {
+  findAll(): Cat[] {
     return this.catsService.findAll();
   }
 }
@@ -104,7 +104,7 @@ export class CatsController {
   }
 
   @Get()
-  async findAll() {
+  findAll() {
     return this.catsService.findAll();
   }
 }
