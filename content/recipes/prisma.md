@@ -67,6 +67,29 @@ This command creates a new `prisma` directory with the following contents:
 - `schema.prisma`: Specifies your database connection and contains the database schema
 - `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in a group of environment variables
 
+#### Set the generator output path
+
+> warning **Warning** In Prisma ORM 7, Prisma Client will no longer be generated in `node_modules` by default and will require an output path to be defined. [Learn more below on how to define an output path](https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/generating-prisma-client#using-a-custom-output-path).
+
+Specify your output `path` for the generated Prisma client either by passing `--output ../generated/prisma` during prisma init, or directly in your Prisma schema:
+
+```groovy
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+}
+```
+
+By default, Nest does not include the generated Prisma client in the build. To fix this, the path should be explicitly defined in `tsconfig.build.json`:
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "include": ["src", "generated"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}
+```
+
 #### Set the database connection
 
 Your database connection is configured in the `datasource` block in your `schema.prisma` file. By default it's set to `postgresql`, but since you're using a SQLite database in this guide you need to adjust the `provider` field of the `datasource` block to `sqlite`:
@@ -79,6 +102,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -110,6 +134,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -141,6 +166,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -166,6 +192,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output          = "../generated/prisma"
 }
 ```
 
@@ -274,7 +301,7 @@ Inside the `src` directory, create a new file called `prisma.service.ts` and add
 
 ```typescript
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from 'generated/prisma';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -293,7 +320,7 @@ Still inside the `src` directory, create a new file called `user.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class UsersService {
@@ -358,7 +385,7 @@ Still inside the `src` directory, create a new file called `post.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { Post, Prisma } from '@prisma/client';
+import { Post, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class PostsService {
@@ -436,7 +463,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { PostsService } from './post.service';
-import { User as UserModel, Post as PostModel } from '@prisma/client';
+import { User as UserModel, Post as PostModel } from 'generated/prisma';
 
 @Controller()
 export class AppController {
