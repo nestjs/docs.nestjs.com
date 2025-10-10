@@ -17,7 +17,7 @@ Nest provides an out-of-the-box application architecture which allows developers
 To get started, you can either scaffold the project with the [Nest CLI](/cli/overview), or [clone a starter project](#alternatives) (both will produce the same outcome).
 
 To scaffold the project with the Nest CLI, run the following commands. This will create a new project directory, and populate the directory with the initial core Nest files and supporting modules, creating a conventional base structure for your project. Creating a new project with the **Nest CLI** is recommended for first-time users. We'll continue with this approach in [First Steps](first-steps).
-
+ANAM GANTENG
 ```bash
 $ npm i -g @nestjs/cli
 $ nest new project-name
