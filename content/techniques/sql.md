@@ -296,7 +296,7 @@ export class User {
 }
 ```
 
-> info **Hint** To learn more about relations in TypeORM, visit the [TypeORM documentation](https://typeorm.io/#/relations).
+> info **Hint** To learn more about relations in TypeORM, visit the [TypeORM documentation](https://typeorm.io/docs/relations/relations).
 
 #### Auto-load entities
 
@@ -324,7 +324,7 @@ With that option specified, every entity registered through the `forFeature()` m
 
 #### Separating entity definition
 
-You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
+You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/docs/entity/separating-entity-definition).
 
 ```typescript
 import { EntitySchema } from 'typeorm';
@@ -485,9 +485,9 @@ export class UsersModule {}
 
 #### Migrations
 
-[Migrations](https://typeorm.io/#/migrations) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/#/migrations/creating-a-new-migration).
+[Migrations](https://typeorm.io/docs/advanced-topics/migrations/) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/docs/advanced-topics/migrations/#creating-a-new-migration).
 
-Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the TypeORM CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [TypeORM documentation](https://typeorm.io/#/migrations/creating-a-new-migration).
+Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the TypeORM CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [TypeORM documentation](https://typeorm.io/docs/advanced-topics/migrations/).
 
 #### Multiple databases
 
