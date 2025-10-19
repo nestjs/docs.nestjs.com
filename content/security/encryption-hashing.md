@@ -11,8 +11,8 @@ Node.js provides a built-in [crypto module](https://nodejs.org/api/crypto.html) 
 As an example, let's use AES (Advanced Encryption System) `'aes-256-ctr'` algorithm CTR encryption mode.
 
 ```typescript
-import { createCipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
+import { createCipheriv, randomBytes, scrypt } from 'node:crypto';
+import { promisify } from 'node:util';
 
 const iv = randomBytes(16);
 const password = 'Password used to generate key';
@@ -32,7 +32,7 @@ const encryptedText = Buffer.concat([
 Now to decrypt `encryptedText` value:
 
 ```typescript
-import { createDecipheriv } from 'crypto';
+import { createDecipheriv } from 'node:crypto';
 
 const decipher = createDecipheriv('aes-256-ctr', key, iv);
 const decryptedText = Buffer.concat([
