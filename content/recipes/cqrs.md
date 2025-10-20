@@ -185,7 +185,7 @@ export class GetHeroHandler implements IQueryHandler<GetHeroQuery> {
   constructor(private repository: HeroesRepository) {}
 
   async execute(query: GetHeroQuery) {
-    return this.repository.findOneById(query.hero);
+    return this.repository.findOneById(query.heroId);
   }
 }
 @@switch
