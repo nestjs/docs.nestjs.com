@@ -136,6 +136,28 @@ The `handleEvent()` method will be executed. In order to listen for messages emi
 socket.emit('events', { name: 'Nest' }, (data) => console.log(data));
 ```
 
+While returning a value from a message handler implicitly sends an acknowledgement, advanced scenarios often require direct control over the acknowledgement callback.
+
+The `@Ack()` parameter decorator allows injecting the `ack` callback function directly into a message handler.
+Without using the decorator, this callback is passed as the third argument of the method.
+
+```typescript
+@@filename(events.gateway)
+@SubscribeMessage('events')
+handleEvent(
+  @MessageBody() data: string,
+  @Ack() ack: (response: { status: string; data: string }) => void,
+) {
+  ack({ status: 'received', data });
+}
+@@switch
+@Bind(MessageBody(), Ack())
+@SubscribeMessage('events')
+handleEvent(data, ack) {
+  ack({ status: 'received', data });
+}
+```
+
 #### Multiple responses
 
 The acknowledgment is dispatched only once. Furthermore, it is not supported by native WebSockets implementation. To solve this limitation, you may return an object which consists of two properties. The `event` which is a name of the emitted event and the `data` that has to be forwarded to the client.
