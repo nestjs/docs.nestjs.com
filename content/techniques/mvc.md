@@ -164,6 +164,7 @@ import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { join } from 'path';
+import '@fastify/view'; // Needs to be imported to augment the fastify reply type with the view property
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new FastifyAdapter());
