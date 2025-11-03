@@ -177,7 +177,7 @@ The above approach dynamically generates TypeScript definitions each time the ap
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const definitionsFactory = new GraphQLDefinitionsFactory();
 definitionsFactory.generate({
