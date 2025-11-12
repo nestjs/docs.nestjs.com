@@ -77,6 +77,7 @@ Specify your output `path` for the generated Prisma client either by passing `--
 generator client {
   provider        = "prisma-client"
   output          = "../generated/prisma"
+  engineType      = "client"
 }
 ```
 
@@ -294,6 +295,24 @@ $ npm install @prisma/client
 Note that during installation, Prisma automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
 
 > info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
+
+#### Install the corresponding database Adapter
+
+Prisma requires a database driver adapter to connect to your database. The driver adapter required depends on the database in use.
+
+For PostgreSQL:
+
+```bash
+$ npm install @prisma/adapter-pg
+```
+
+For MSSQL:
+
+```bash
+$ npm install @prisma/adapter-mssql
+```
+
+> info **Note** The list of database driver adapters can be found in the [Prisma documentation](https://www.prisma.io/docs/orm/overview/databases/database-drivers#database-driver-adapters).
 
 #### Use Prisma Client in your NestJS services
 
