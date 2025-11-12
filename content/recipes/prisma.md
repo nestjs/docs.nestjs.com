@@ -349,6 +349,34 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
 > info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database.
 
+In order to inject the database adapter into the `PrismaService`, use a factory in the corresponding module. In this example, the `PrismaService` is registered in the AppModule.
+
+```typescript
+
+function prismaServiceFactory() {
+  // Read the database URL directly from environment or use ConfigService
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  // Initialize the database driver adapter
+  const pg = new PrismaPg({ connectionString: databaseUrl });
+
+  // Inject the adapter
+  return new PrismaService({ adapter: pg });
+}
+
+@Module({
+  providers: [
+    {
+      provide: PrismaService,
+      useFactory: prismaServiceFactory
+    }]
+})
+export class AppModule {}
+```
+
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
 Still inside the `src` directory, create a new file called `user.service.ts` and add the following code to it:
