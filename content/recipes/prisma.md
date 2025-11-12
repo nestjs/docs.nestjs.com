@@ -75,7 +75,7 @@ Specify your output `path` for the generated Prisma client either by passing `--
 
 ```groovy
 generator client {
-  provider        = "prisma-client-js"
+  provider        = "prisma-client"
   output          = "../generated/prisma"
 }
 ```
@@ -96,13 +96,14 @@ Your database connection is configured in the `datasource` block in your `schema
 
 ```groovy
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider    = "sqlite"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -128,13 +129,14 @@ If you're using PostgreSQL, you have to adjust the `schema.prisma` and `.env` fi
 
 ```groovy
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider    = "postgresql"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -160,13 +162,14 @@ If you're using MySQL, you have to adjust the `schema.prisma` and `.env` files a
 
 ```groovy
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider    = "mysql"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -186,13 +189,14 @@ If you're using Microsoft SQL Server or Azure SQL Server, you have to adjust the
 
 ```groovy
 datasource db {
-  provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  provider    = "sqlserver"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -300,13 +304,26 @@ When setting up your NestJS application, you'll want to abstract away the Prisma
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma';
+import { PrismaPg } from "@prisma/adapter-pg"; // Postgres Adapter
+
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor(options: { adapter: PrismaPg})
+  {
+    super({
+      adapter: options.adapter,
+    });
+  }
+
   async onModuleInit() {
     await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
   }
 }
 ```
