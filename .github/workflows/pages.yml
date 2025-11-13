@@ -1,0 +1,34 @@
+name: GitHub Pages
+on:
+  push:
+    branches: ["master"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+      - name: Setup GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - run: npm clean-install
+      - run: npm run build:prod -- --base-href /docs.nestjs.com/
+      - run: mv dist _site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+  deploy:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
