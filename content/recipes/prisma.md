@@ -75,8 +75,9 @@ Specify your output `path` for the generated Prisma client either by passing `--
 
 ```groovy
 generator client {
-  provider        = "prisma-client-js"
+  provider        = "prisma-client"
   output          = "../generated/prisma"
+  engineType      = "client"
 }
 ```
 
@@ -96,13 +97,14 @@ Your database connection is configured in the `datasource` block in your `schema
 
 ```groovy
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider    = "sqlite"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -128,13 +130,14 @@ If you're using PostgreSQL, you have to adjust the `schema.prisma` and `.env` fi
 
 ```groovy
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider    = "postgresql"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -160,13 +163,14 @@ If you're using MySQL, you have to adjust the `schema.prisma` and `.env` files a
 
 ```groovy
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider    = "mysql"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -186,13 +190,14 @@ If you're using Microsoft SQL Server or Azure SQL Server, you have to adjust the
 
 ```groovy
 datasource db {
-  provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  provider    = "sqlserver"
+  url         = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output          = "../generated/prisma"
+  provider    = "prisma-client"
+  output      = "../generated/prisma"
+  engineType  = "client"
 }
 ```
 
@@ -291,6 +296,24 @@ Note that during installation, Prisma automatically invokes the `prisma generate
 
 > info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
 
+#### Install the corresponding database Adapter
+
+Prisma requires a database driver adapter to connect to your database. The driver adapter required depends on the database in use.
+
+For PostgreSQL:
+
+```bash
+$ npm install @prisma/adapter-pg
+```
+
+For MSSQL:
+
+```bash
+$ npm install @prisma/adapter-mssql
+```
+
+> info **Note** The list of database driver adapters can be found in the [Prisma documentation](https://www.prisma.io/docs/orm/overview/databases/database-drivers#database-driver-adapters).
+
 #### Use Prisma Client in your NestJS services
 
 You're now able to send database queries with Prisma Client. If you want to learn more about building queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
@@ -300,18 +323,59 @@ When setting up your NestJS application, you'll want to abstract away the Prisma
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma';
+import { PrismaPg } from "@prisma/adapter-pg"; // Postgres Adapter
+
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor(options: { adapter: PrismaPg})
+  {
+    super({
+      adapter: options.adapter,
+    });
+  }
+
   async onModuleInit() {
     await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
   }
 }
 ```
 
 > info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database.
+
+In order to inject the database adapter into the `PrismaService`, use a factory in the corresponding module. In this example, the `PrismaService` is registered in the AppModule.
+
+```typescript
+
+function prismaServiceFactory() {
+  // Read the database URL directly from environment or use ConfigService
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  // Initialize the database driver adapter
+  const pg = new PrismaPg({ connectionString: databaseUrl });
+
+  // Inject the adapter
+  return new PrismaService({ adapter: pg });
+}
+
+@Module({
+  providers: [
+    {
+      provide: PrismaService,
+      useFactory: prismaServiceFactory
+    }]
+})
+export class AppModule {}
+```
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
