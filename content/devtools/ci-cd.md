@@ -2,7 +2,7 @@
 
 > info **Hint** This chapter covers the Nest Devtools integration with the Nest framework. If you are looking for the Devtools application, please visit the [Devtools](https://devtools.nestjs.com) website.
 
-CI/CD integration is available for users with the **[Enterprise](/settings)** plan.
+CI/CD integration is available for users with the **Enterprise** plan.
 
 You can watch this video to learn why & how CI/CD integration can help you:
 
