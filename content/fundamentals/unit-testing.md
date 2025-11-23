@@ -203,6 +203,10 @@ You can also retrieve these mocks out of the testing container as you normally w
 
 > info **Hint** A general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can also be passed directly.
 
+> info **Hint** For focused unit testing with automatic mock generation without module setup, see
+> the [Suites](/recipes/suites) recipe. Suites automatically generates typed mocks for all dependencies by reading service
+> metadata.
+
 > info **Hint** `REQUEST` and `INQUIRER` providers cannot be auto-mocked because they're already pre-defined in the context. However, they can be _overwritten_ using the custom provider syntax or by utilizing the `.overrideProvider` method.
 
 #### End-to-end testing
