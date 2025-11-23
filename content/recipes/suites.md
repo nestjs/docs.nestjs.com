@@ -150,6 +150,43 @@ describe('User Service Unit Spec', () => {
 `TestBed.solitary()` analyzes the constructor and creates typed mocks for all dependencies.
 The `Mocked<T>` type provides IntelliSense support for mock configuration.
 
+#### Pre-compile mock configuration
+
+Configure mock behavior before compilation using `.mock().impl()`:
+
+```typescript
+@@filename(user.service.spec)
+import { TestBed } from '@suites/unit';
+import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
+
+describe('User Service Unit Spec - pre-configured', () => {
+  let unit: UserService;
+  let repository: Mocked<UserRepository>;
+  
+  beforeAll(async () => {
+    const { unit: underTest, unitRef } = await TestBed.solitary(UserService)
+      .mock(UserRepository)
+      .impl(stubFn => ({
+        findById: stubFn().mockResolvedValue({ id: '1', email: 'test@example.com', name: 'Test' })
+      }))
+      .compile();
+    
+    repository = unitRef.get(UserRepository);
+    unit = underTest;
+  })
+  
+  it('should find user with pre-configured mock', async () => {
+    const result = await unit.findById('1');
+    
+    expect(repository.findById).toHaveBeenCalled();
+    expect(result.email).toBe('test@example.com');
+  });
+});
+```
+
+The `stubFn` parameter corresponds to the installed doubles adapter (`jest.fn()` for Jest, `vi.fn()` for Vitest, `sinon.stub()` for Sinon).
+
 #### Testing with real dependencies
 
 Use `TestBed.sociable()` with `.expose()` to use real implementations for specific dependencies:
