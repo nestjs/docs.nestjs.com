@@ -1,305 +1,315 @@
-### Suites (formerly Automock)
+### Suites
 
-Suites is an opinionated and flexible testing meta-framework designed to enhance the software testing experience for backend systems. By bringing together a variety of testing tools into a unified framework, Suites streamlines the creation of reliable tests, helping to ensure the development of high-quality software.
+[Suites](https://suites.dev) is an [open-source](https://github.com/suites-dev/suites) unit-testing framework for TypeScript dependency injection frameworks. It is used as an **alternative** to manually creating mocks, verbose test setup with multiple mock configurations, or working with untyped test doubles (like mocks and stubs).
 
-> info **Hint** `Suites` is a third-party package and is not maintained by the NestJS core team. Please report any issues with the library to the [appropriate repository](https://github.com/suites-dev/suites).
+Suites reads metadata from nestjs services at runtime and automatically generates fully-typed mocks for all dependencies.
+This removes boilerplate mock setup and ensures type-safe tests. While Suites can be used alongside `Test.createTestingModule()`, it excels at focused unit testing.
+Use `Test.createTestingModule()` when validating module wiring, decorators, guards, and interceptors.
+Use Suites for fast unit tests with automatic mock generation.
 
-#### Introduction
+For more information on module-based testing, see the [testing fundamentals](/fundamentals/testing) chapter.
 
-Inversion of Control (IoC) is a fundamental principle in the NestJS framework, enabling a modular, testable architecture. While NestJS offers built-in tools for creating testing modules, Suites provides an alternative approach that emphasizes testing isolated units or small groups of units together. Suites uses a virtual container for dependencies, where mocks are automatically generated, eliminating the need to manually replace each provider with a mock in the IoC (or DI) container. This approach can be used either in place of or alongside NestJS’s `Test.createTestingModule` method, offering more flexibility for unit testing based on your needs.
+> info **Note** `Suites` is a third-party package and is not maintained by the NestJS core team. Please report any issues to the [appropriate repository](https://github.com/suites-dev/suites).
 
-#### Installation
+#### Getting started
 
-To use Suites with NestJS, install the necessary packages:
+This guide demonstrates using Suites to test NestJS services. It covers both isolated testing (all dependencies mocked) and sociable testing (selected real implementations).
+
+#### Install Suites
+
+Verify NestJS runtime dependencies are installed:
 
 ```bash
-$ npm i -D @suites/unit @suites/di.nestjs @suites/doubles.jest
+$ npm install @nestjs/common @nestjs/core reflect-metadata
 ```
 
-> info **Hint** `Suites` supports Vitest and Sinon as test doubles as well, `@suites/doubles.vitest` and `@suites/doubles.sinon` respectively.
+Install Suites core, the NestJS adapter, and the doubles adapter:
 
-#### Example and module setup
-
-Consider a module setup for `CatsService` that includes `CatsApiService`, `CatsDAL`, `HttpClient`, and `Logger`. This
-will be our base for the examples in this recipe:
-
-```typescript
-@@filename(cats.module)
-import { HttpModule } from '@nestjs/axios';
-import { PrismaModule } from '../prisma.module';
-
-@Module({
-  imports: [HttpModule.register({ baseUrl: 'https://api.cats.com/' }), PrismaModule],
-  providers: [CatsService, CatsApiService, CatsDAL, Logger],
-  exports: [CatsService],
-})
-export class CatsModule {}
+```bash
+$ npm install --save-dev @suites/unit @suites/di.nestjs @suites/doubles.jest
 ```
 
-Both the `HttpModule` and `PrismaModule` are exporting providers to the host module.
+The doubles adapter (`@suites/doubles.jest`) provides wrappers around Jest's mocking capabilities. It exposes `mock()` and `stub()` functions that create type-safe test doubles.
 
-Let's start by testing the `CatsHttpService` in isolation. This service is responsible for fetching cat data from an API and logging the operation.
+Ensure Jest and TypeScript are available:
+
+```bash
+$ npm install --save-dev ts-jest @types/jest jest typescript
+```
+
+<details><summary>Expand if you're using Vitest</summary>
+
+```bash
+$ npm install --save-dev @suites/unit @suites/di.nestjs @suites/doubles.vitest
+```
+
+</details>
+
+<details><summary>Expand if you're using Sinon</summary>
+
+```bash
+$ npm install --save-dev @suites/unit @suites/di.nestjs @suites/doubles.sinon
+```
+
+</details>
+
+#### Set up type definitions
+
+Create `global.d.ts` at your project root:
 
 ```typescript
-@@filename(cats-http.service)
+/// <reference types="@suites/doubles.jest/unit" />
+/// <reference types="@suites/di.nestjs/metadata" />
+```
+
+#### Create a sample service
+
+This guide uses a simple `UserService` with two dependencies:
+
+```typescript
+@@filename(user.repository)
+import { Injectable } from '@nestjs/common';
+
 @Injectable()
-export class CatsHttpService {
-  constructor(private httpClient: HttpClient, private logger: Logger) {}
+export class UserRepository {
+  async findById(id: string): Promise<User | null> {
+    // Database query
+  }
 
-  async fetchCats(): Promise<Cat[]> {
-    this.logger.log('Fetching cats from the API');
-    const response = await this.httpClient.get('/cats');
-    return response.data;
+  async save(user: User): Promise<User> {
+    // Database save
+  }
+}
+```
+```typescript
+@@filename(user.service)
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+
+@Injectable()
+export class UserService {
+  constructor(
+    private repository: UserRepository,
+    private logger: Logger,
+  ) {}
+
+  async findById(id: string): Promise<User> {
+    const user = await this.repository.findById(id);
+    if (!user) {
+      throw new NotFoundException(`User ${id} not found`);
+    }
+    this.logger.log(`Found user ${id}`);
+    return user;
+  }
+
+  async create(email: string, name: string): Promise<User> {
+    const user = { id: generateId(), email, name };
+    await this.repository.save(user);
+    this.logger.log(`Created user ${user.id}`);
+    return user;
   }
 }
 ```
 
-We want to isolate `CatsHttpService` and mock its dependencies, `HttpClient` and `Logger`. Suites allows us to do this
-easily using the `.solitary()` method from `TestBed`.
+#### Write a unit test
+
+Use `TestBed.solitary()` to create isolated tests with all dependencies mocked:
 
 ```typescript
-@@filename(cats-http.service.spec)
-import { TestBed, Mocked } from '@suites/unit';
+@@filename(user.service.spec)
+import { TestBed, type Mocked } from '@suites/unit';
+import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
+import { Logger } from '@nestjs/common';
 
-describe('Cats Http Service Unit Test', () => {
-  let catsHttpService: CatsHttpService;
-  let httpClient: Mocked<HttpClient>;
+describe('User Service Unit Spec', () => {
+  let userService: UserService;
+  let repository: Mocked<UserRepository>;
   let logger: Mocked<Logger>;
 
   beforeAll(async () => {
-    // Isolate CatsHttpService and mock HttpClient and Logger
-    const { unit, unitRef } = await TestBed.solitary(CatsHttpService).compile();
+    const { unit, unitRef } = await TestBed.solitary(UserService).compile();
 
-    catsHttpService = unit;
-    httpClient = unitRef.get(HttpClient);
+    userService = unit;
+    repository = unitRef.get(UserRepository);
     logger = unitRef.get(Logger);
   });
 
-  it('should fetch cats from the API and log the operation', async () => {
-    const catsFixtures: Cat[] = [{ id: 1, name: 'Catty' }, { id: 2, name: 'Mitzy' }];
-    httpClient.get.mockResolvedValue({ data: catsFixtures });
+  it('should find user by id', async () => {
+    const user = { id: '1', email: 'test@example.com', name: 'Test' };
+    repository.findById.mockResolvedValue(user);
 
-    const cats = await catsHttpService.fetchCats();
+    const result = await userService.findById('1');
 
-    expect(logger.log).toHaveBeenCalledWith('Fetching cats from the API');
-    expect(httpClient.get).toHaveBeenCalledWith('/cats');
-    expect(cats).toEqual<Cat[]>(catsFixtures);
+    expect(result).toEqual(user);
+    expect(logger.log).toHaveBeenCalled();
   });
 });
 ```
 
-In the example above, Suites automatically mocks the dependencies of `CatsHttpService` using `TestBed.solitary()`. This makes the setup easier since you don’t have to manually mock each dependency.
+`TestBed.solitary()` analyzes the constructor and creates typed mocks for all dependencies.
+The `Mocked<T>` type provides IntelliSense support for mock configuration.
 
-- Auto-Mocking of Dependencies: Suites generates mocks for all dependencies of the unit being tested.
-- Empty Behavior of Mocks: Initially, these mocks don’t have any predefined behavior. You’ll need to specify their behavior as needed for your tests.
-- `unit` and `unitRef` properties:
-  - `unit` refers to the actual instance of the class being tested, complete with its mocked dependencies.
-  - `unitRef` is a reference that allows you to access the mocked dependencies.
+#### Pre-compile mock configuration
 
-#### Testing `CatsApiService` with `TestingModule`
-
-For `CatsApiService`, we want to ensure that the `HttpModule` is properly imported and configured in the `CatsModule` host module. This includes verifying that the base URL (and other configurations) for `Axios` is set correctly.
-
-In this case, we won’t use Suites; instead, we’ll use Nest’s `TestingModule` to test the actual configuration of `HttpModule`. We’ll utilize `nock` to mock HTTP requests without mocking the `HttpClient` in this scenario.
+Configure mock behavior before compilation using `.mock().impl()`:
 
 ```typescript
-@@filename(cats-api.service)
-import { HttpClient } from '@nestjs/axios';
+@@filename(user.service.spec)
+import { TestBed } from '@suites/unit';
+import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
 
-@Injectable()
-export class CatsApiService {
-  constructor(private httpClient: HttpClient) {}
-
-  async getCatById(id: number): Promise<Cat> {
-    const response = await this.httpClient.get(`/cats/${id}`);
-    return response.data;
-  }
-}
-```
-
-We need to test `CatsApiService` with a real, unmocked `HttpClient` to ensure the DI and configuration of `Axios` (http)
-are correct. This involves importing the `CatsModule` and using `nock` for HTTP request mocking.
-
-```typescript
-@@filename(cats-api.service.integration.test)
-import { Test } from '@nestjs/testing';
-import * as nock from 'nock';
-
-describe('Cats Api Service Integration Test', () => {
-  let catsApiService: CatsApiService;
-
+describe('User Service Unit Spec - pre-configured', () => {
+  let unit: UserService;
+  let repository: Mocked<UserRepository>;
+  
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [CatsModule],
-    }).compile();
-
-    catsApiService = moduleRef.get(CatsApiService);
-  });
-
-  afterEach(() => {
-    nock.cleanAll();
-  });
-
-  it('should fetch cat by id using real HttpClient', async () => {
-    const catFixture: Cat = { id: 1, name: 'Catty' };
-
-    nock('https://api.cats.com') // Making this URL identical to the one in HttpModule registration
-      .get('/cats/1')
-      .reply(200, catFixture);
-
-    const cat = await catsApiService.getCatById(1);
-    expect(cat).toEqual<Cat>(catFixture);
+    const { unit: underTest, unitRef } = await TestBed.solitary(UserService)
+      .mock(UserRepository)
+      .impl(stubFn => ({
+        findById: stubFn().mockResolvedValue({ id: '1', email: 'test@example.com', name: 'Test' })
+      }))
+      .compile();
+    
+    repository = unitRef.get(UserRepository);
+    unit = underTest;
+  })
+  
+  it('should find user with pre-configured mock', async () => {
+    const result = await unit.findById('1');
+    
+    expect(repository.findById).toHaveBeenCalled();
+    expect(result.email).toBe('test@example.com');
   });
 });
 ```
 
-#### Sociable Testing Example
+The `stubFn` parameter corresponds to the installed doubles adapter (`jest.fn()` for Jest, `vi.fn()` for Vitest, `sinon.stub()` for Sinon).
 
-Next, let's test `CatsService`, which depends on `CatsApiService` and `CatsDAL`. We'll mock `CatsApiService` and
-expose `CatsDAL`.
+#### Testing with real dependencies
 
-```typescript
-@@filename(cats.dal)
-import { PrismaClient } from '@prisma/client';
-
-@Injectable()
-export class CatsDAL {
-  constructor(private prisma: PrismaClient) {}
-
-  async saveCat(cat: Cat): Promise<Cat> {
-    return this.prisma.cat.create({data: cat});
-  }
-}
-```
-
-Next up, we have the `CatsService`, which depends on `CatsApiService` and `CatsDAL`:
+Use `TestBed.sociable()` with `.expose()` to use real implementations for specific dependencies:
 
 ```typescript
-@@filename(cats.service)
-@Injectable()
-export class CatsService {
-  constructor(
-    private catsApiService: CatsApiService,
-    private catsDAL: CatsDAL
-  ) {}
-
-  async getAndSaveCat(id: number): Promise<Cat> {
-    const cat = await this.catsApiService.getCatById(id);
-    return this.catsDAL.saveCat(cat);
-  }
-}
-```
-
-And now, let's test `CatsService` using sociable testing with Suites:
-
-```typescript
-@@filename(cats.service.spec)
+@@filename(user.service.spec)
 import { TestBed, Mocked } from '@suites/unit';
-import { PrismaClient } from '@prisma/client';
+import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
+import { Logger } from '@nestjs/common';
 
-describe('Cats Service Sociable Unit Test', () => {
-  let catsService: CatsService;
-  let prisma: Mocked<PrismaClient>;
-  let catsApiService: Mocked<CatsApiService>;
+describe('UserService - with real logger', () => {
+  let userService: UserService;
+  let repository: Mocked<UserRepository>;
 
   beforeAll(async () => {
-    // Sociable test setup, exposing CatsDAL and mocking CatsApiService
-    const { unit, unitRef } = await TestBed.sociable(CatsService)
-      .expose(CatsDAL)
-      .mock(CatsApiService)
-      .final({ getCatById: async () => ({ id: 1, name: 'Catty' })})
+    const { unit, unitRef } = await TestBed.sociable(UserService)
+      .expose(Logger)
       .compile();
 
-    catsService = unit;
-    prisma = unitRef.get(PrismaClient);
+    userService = unit;
+    repository = unitRef.get(UserRepository);
   });
 
-  it('should get cat by id and save it', async () => {
-    const catFixture: Cat = { id: 1, name: 'Catty' };
-    prisma.cat.create.mockResolvedValue(catFixture);
+  it('should log when finding user', async () => {
+    const user = { id: '1', email: 'test@example.com' };
+    repository.findById.mockResolvedValue(user);
 
-    const savedCat = await catsService.getAndSaveCat(1);
+    await userService.findById('1');
 
-    expect(prisma.cat.create).toHaveBeenCalledWith({ data: catFixture });
-    expect(savedCat).toEqual(catFixture);
+    // Logger actually executes, no mock needed
   });
 });
 ```
 
-In this example, we use the `.sociable()` method to set up the test environment. We utilize the `.expose()` method to allow real interactions with `CatsDAL`, while mocking `CatsApiService` with the `.mock()` method. The `.final()` method establishes fixed behavior for `CatsApiService`, ensuring consistent outcomes across tests.
+`.expose(Logger)` instantiates `Logger` with its real implementation while keeping other dependencies mocked.
 
-This approach emphasizes testing `CatsService` with genuine interactions with `CatsDAL`, which involves handling `Prisma`. Suites will use `CatsDAL` as is, and only its dependencies, like `Prisma`, will be mocked in this case.
+#### Token-based dependencies
 
-It's important to note that this approach is **solely for verifying behavior** and differs from loading the entire testing module. Sociable tests are valuable for confirming the behavior of units in isolation from their direct dependencies, especially when you want to focus on the behavior and interactions of units.
-
-#### Integration Testing and Database
-
-For `CatsDAL`, it's possible to test against a real database such as SQLite or PostgreSQL (for instance, using Docker Compose). However, for this example, we will mock `Prisma` and focus on sociable testing. The reason for mocking `Prisma` is to avoid I/O operations and concentrate on the behavior of `CatsService` in isolation. That said, you can also conduct tests with real I/O operations and a live database.
-
-#### Sociable Unit Tests, Integration Tests, and Mocking
-
-- Sociable Unit Tests: These focus on testing the interactions and behaviors between units while mocking their deeper dependencies. In this example, we mock `Prisma` and expose `CatsDAL`.
-
-- Integration Tests: These involve real I/O operations and a fully configured dependency injection (DI) setup. Testing `CatsApiService` with `HttpModule` and `nock` is considered an integration test, as it verifies the real configuration and interactions of `HttpClient`. In this scenario, we will use Nest's `TestingModule` to load the actual module configuration.
-
-**Exercise caution when using mocks.** Be sure to test I/O operations and DI configurations (especially when HTTP or database interactions are involved). After validating these components with integration tests, you can confidently mock them for sociable unit tests to focus on behavior and interactions. Suites sociable tests are geared towards verifying the behavior of units in isolation from their direct dependencies, while integration tests ensure that the overall system configuration and I/O operations function correctly.
-
-#### Testing IoC Container Registration
-
-It's essential to verify that your DI container is properly configured to prevent runtime errors. This includes ensuring that all providers, services, and modules are registered and injected correctly. Testing the DI container configuration helps catch misconfigurations early, preventing issues that might only arise at runtime.
-
-To confirm that the IoC container is set up correctly, let's create an integration test that loads the actual module configuration and verifies that all providers are registered and injected properly.
+Suites handles custom injection tokens (strings or symbols):
 
 ```typescript
-import { Test, TestingModule } from '@nestjs/testing';
-import { CatsModule } from './cats.module';
-import { CatsService } from './cats.service';
+@@filename(config.service)
+import { Injectable, Inject } from '@nestjs/common';
 
-describe('Cats Module Integration Test', () => {
-  let moduleRef: TestingModule;
+export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
+
+@Injectable()
+export class ConfigService {
+  constructor(
+    @Inject(CONFIG_OPTIONS) private options: { apiKey: string },
+  ) {}
+
+  getApiKey(): string {
+    return this.options.apiKey;
+  }
+}
+```
+
+Access token-based dependencies with `unitRef.get()`:
+
+```typescript
+@@filename(config.service.spec)
+import { TestBed } from '@suites/unit';
+import { ConfigService, CONFIG_OPTIONS, ConfigOptions } from './config.service';
+
+describe('Config Service Unit Spec', () => {
+  let configService: ConfigService;
+  let options: ConfigOptions;
 
   beforeAll(async () => {
-    moduleRef = await Test.createTestingModule({
-      imports: [CatsModule],
-    }).compile();
+    const { unit, unitRef } = await TestBed.solitary(ConfigService).compile();
+    configService = unit;
+
+    options = unitRef.get<ConfigOptions>(CONFIG_OPTIONS);
   });
 
-  it('should resolve exported providers from the ioc container', () => {
-    const catsService = moduleRef.get(CatsService);
-    expect(catsService).toBeDefined();
+  it('should return api key', () => { ... });
+});
+```
+
+#### Using mock() and stub() directly
+
+For those who prefer direct control without `TestBed`, the doubles adapter package provides `mock()` and `stub()` functions:
+
+```typescript
+@@filename(user.service.spec)
+import { mock } from '@suites/unit';
+import { UserRepository } from './user.repository';
+
+describe('User Service Unit Spec', () => {
+  it('should work with direct mocks', async () => {
+    const repository = mock<UserRepository>();
+    const logger = mock<Logger>();
+
+    const service = new UserService(repository, logger);
+
+    // ...
   });
 });
 ```
 
-#### Comparison Between Solitary, Sociable, Integration, and E2E Testing
+`mock()` creates a typed mock object, and `stub()` wraps the underlying mocking library (Jest in this example) to provide methods like `mockResolvedValue()`
+These functions come from the installed doubles adapter (`@suites/doubles.jest`), which adapts the native mocking capabilities of the test framework.
 
-#### Solitary Unit Tests
+> info **Hint** The `mock()` function is an alternative to `createMock` from `@golevelup/ts-jest`. Both create typed mock objects. See the [testing fundamentals](/fundamentals/testing#auto-mocking) chapter for more on `createMock`.
 
-- **Focus**: Test single unit (class) in full isolation.
-- **Use Case**: Testing `CatsHttpService`.
-- **Tools**: Suites' `TestBed.solitary()` method.
-- **Example**: Mocking `HttpClient` and testing `CatsHttpService`.
+#### Summary
 
-#### Sociable Unit Tests
+**Use `Test.createTestingModule()` for:**
+- Validating module configuration and provider wiring
+- Testing decorators, guards, interceptors, and pipes
+- Verifying dependency injection across modules
+- Testing full application context with middleware
 
-- **Focus**: Verify interactions between units while mocking deeper dependencies.
-- **Use Case**: Testing `CatsService` with a mocked `CatsApiService` and exposing `CatsDAL`.
-- **Tools**: Suites' `TestBed.sociable()` method.
-- **Example**: Mocking `Prisma` and testing `CatsService`.
+**Use Suites for:**
+- Fast unit tests focused on business logic
+- Automatic mock generation for multiple dependencies
+- Type-safe test doubles with IntelliSense
 
-#### Integration Tests
+Organize tests by purpose: use Suites for unit tests verifying individual service behavior, and use `Test.createTestingModule()` for integration tests verifying module configuration.
 
-- **Focus**: Involve real I/O operations and fully configured modules (IoC container).
-- **Use Case**: Testing `CatsApiService` with `HttpModule` and `nock`.
-- **Tools**: Nest's `TestingModule`.
-- **Example**: Testing the real configuration and interaction of `HttpClient`.
-
-#### E2E Tests
-
-- **Focus**: Cover the interaction of classes and modules at a more aggregate level.
-- **Use Case**: Testing the full behavior of the system from the perspective of the end-user.
-- **Tools**: Nest's `TestingModule`, `supertest`.
-- **Example**: Testing the `CatsModule` using `supertest` to simulate HTTP requests.
-
-Refer to the [NestJS official testing guide](https://docs.nestjs.com/fundamentals/testing#end-to-end-testing) for more
-details on setting up and running E2E tests.
+For more information:
+- [Suites Documentation](https://suites.dev/docs)
+- [Suites GitHub Repository](https://github.com/suites-dev/suites)
+- [NestJS Testing Documentation](/fundamentals/testing)
