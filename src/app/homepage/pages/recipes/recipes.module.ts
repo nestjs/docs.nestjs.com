@@ -22,6 +22,7 @@ import { SuitesComponent } from './suites/suites.component';
 import { SwcComponent } from './swc/swc.component';
 import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
+import { PrismaV7Component } from './prisma-v7/prisma-v7.component';
 
 const routes: Routes = [
   {
@@ -62,6 +63,11 @@ const routes: Routes = [
     path: 'prisma',
     component: PrismaComponent,
     data: { title: 'Prisma' },
+  },
+  {
+    path: 'prisma-v7',
+    component: PrismaV7Component,
+    data: { title: 'Prisma v7' },
   },
   {
     path: 'terminus',
@@ -151,6 +157,7 @@ const routes: Routes = [
     SentryComponent,
     MongodbComponent,
     PrismaComponent,
+    PrismaV7Component,
     CqrsComponent,
     HotReloadComponent,
     TerminusComponent,
