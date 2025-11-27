@@ -79,6 +79,19 @@ generator client {
 }
 ```
 
+#### Configure the module format
+
+Set `moduleFormat` in the generator to `cjs`:
+
+```groovy
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat    = "cjs"
+}
+```
+
+> info **Note** The `moduleFormat` configuration is required because Prisma v7 ships as an ES module by default, which does not work with NestJS's CommonJS setup. Setting `moduleFormat` to `cjs` forces Prisma to generate a CommonJS module instead of ESM.
 
 #### Set the database connection
 
@@ -90,8 +103,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output          = "../src/generated/prisma"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -123,6 +137,7 @@ datasource db {
 generator client {
   provider = "prisma-client"
   output          = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -154,6 +169,7 @@ datasource db {
 generator client {
   provider = "prisma-client"
   output          = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -179,6 +195,7 @@ datasource db {
 generator client {
   provider = "prisma-client"
   output          = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -265,7 +282,7 @@ CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 #### Install and generate Prisma Client
 
-Prisma Client is a type-safe database client that's _generated_ from your Prisma model definition. Because of this approach, Prisma Client can expose [CRUD](https://www.prisma.io/docs/concepts/components/prisma-client/crud) operations that are _tailored_ specifically to your models. 
+Prisma Client is a type-safe database client that's _generated_ from your Prisma model definition. Because of this approach, Prisma Client can expose [CRUD](https://www.prisma.io/docs/concepts/components/prisma-client/crud) operations that are _tailored_ specifically to your models.
 
 To install Prisma Client in your project, run the following command in your terminal:
 
@@ -288,11 +305,13 @@ npm install @prisma/adapter-better-sqlite3
 <details> <summary>Expand if you're using PostgreSQL, MySQL, MsSQL, or AzureSQL</summary>
 
 - For PostgreSQL
+
 ```bash
 npm install @prisma/adapter-pg
 ```
 
-- For MySQL, MsSQL, AzureSQL: 
+- For MySQL, MsSQL, AzureSQL:
+
 ```bash
 npm install @prisma/adapter-mariadb`
 ```
