@@ -194,7 +194,7 @@ DATABASE_URL="sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWOR
 
 #### Create two database tables with Prisma Migrate
 
-In this section, you'll create two new tables in your database using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate). Prisma Migrate generates SQL migration files for your declarative data model definition in the Prisma schema. These migration files are fully customizable so that you can configure any additional features of the underlying database or include additional commands, e.g. for seeding.
+In this section, you'll create two new tables in your database using [Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate/getting-started). Prisma Migrate generates SQL migration files for your declarative data model definition in the Prisma schema. These migration files are fully customizable so that you can configure any additional features of the underlying database or include additional commands, e.g. for seeding.
 
 Add the following two models to your `schema.prisma` file:
 
