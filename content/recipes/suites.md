@@ -59,7 +59,7 @@ Create `global.d.ts` at your project root:
 
 ```typescript
 /// <reference types="@suites/doubles.jest/unit" />
-/// <reference types="@suites/di.nestjs/metadata" />
+/// <reference types="@suites/di.nestjs/types" />
 ```
 
 #### Create a sample service
