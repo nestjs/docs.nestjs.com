@@ -82,6 +82,6 @@
     "typescript": "5.4.5",
     "typescript-eslint": "^8.10.0",
     "uuid": "11.0.1",
-    "yargs": "17.7.2"
+    "yargs": "18.0.0"
   }
 }
