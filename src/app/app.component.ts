@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ViewportScroller } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
 
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
     private readonly metaService: Meta,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly viewportScroller: ViewportScroller,
   ) {}
 
   async ngOnInit() {
@@ -25,6 +27,7 @@ export class AppComponent implements OnInit {
       .subscribe((ev: NavigationEnd) => {
         this.updateTitle();
         this.updateMeta(ev);
+        this.handleFragmentScroll(ev);
       });
   }
 
@@ -56,6 +59,22 @@ export class AppComponent implements OnInit {
     } else if (this.robotsElement) {
       this.metaService.removeTagElement(this.robotsElement);
       this.robotsElement = undefined;
+    }
+  }
+
+  private handleFragmentScroll(event: NavigationEnd) {
+    const fragment = event.url.split('#')[1];
+    if (fragment) {
+      setTimeout(() => {
+        const element = document.getElementById(fragment);
+        if (element) {
+          const offsetTop = element.offsetTop - 100;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     }
   }
 }
