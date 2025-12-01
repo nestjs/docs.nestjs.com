@@ -10,6 +10,12 @@ To begin using it, we first install the required dependency.
 $ npm install --save @nestjs/swagger
 ```
 
+> warning **Warning** When using `fastify` you also need to instal `@fastify/static`:
+>
+> ```bash
+> $ npm install --save @fastify/static
+> ```
+
 #### Bootstrap
 
 Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
