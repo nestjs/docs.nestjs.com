@@ -14,7 +14,8 @@
             "aot": true,
             "allowedCommonJsDependencies": ["prismjs"],
             "outputPath": {
-              "base": "dist"
+              "base": "dist",
+              "browser": ""
             },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
