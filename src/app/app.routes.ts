@@ -18,17 +18,6 @@ import { PipesComponent } from './homepage/pages/pipes/pipes.component';
 import { SupportComponent } from './homepage/pages/support/support.component';
 import { RedirectGuard } from './shared/guards/redirect.guard';
 import { DeploymentComponent } from './homepage/pages/deployment/deployment.component';
-import { WEBSOCKETS_ROUTES } from './homepage/pages/websockets/websockets.routes';
-import { MICROSERVICES_ROUTES } from './homepage/pages/microservices/microservices.routes';
-import { DEVTOOLS_ROUTES } from './homepage/pages/devtools/devtools.routes';
-import { CLI_ROUTES } from './homepage/pages/cli/cli-routing.routes';
-import { FAQ_ROUTES } from './homepage/pages/faq/faq-routing.module';
-import { SECURITY_ROUTES } from './homepage/pages/security/security.module';
-import { TECHNIQUES_ROUTES } from './homepage/pages/techniques/techniques.routes';
-import { OPENAPI_ROUTES } from './homepage/pages/openapi/openapi.module';
-import { FUNDAMENTALS_ROUTES } from './homepage/pages/fundamentals/fundamentals.routes';
-import { RECIPES_ROUTES } from './homepage/pages/recipes/recipes.routes';
-import { GRAPHQL_ROUTES } from './homepage/pages/graphql/graphql.routes';
 
 export const routes: Routes = [
   {
@@ -120,47 +109,80 @@ export const routes: Routes = [
       },
       {
         path: 'fundamentals',
-        children: FUNDAMENTALS_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/fundamentals/fundamentals.routes').then(
+            (r) => r.FUNDAMENTALS_ROUTES,
+          ),
       },
       {
         path: 'techniques',
-        children: TECHNIQUES_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/techniques/techniques.routes').then(
+            (r) => r.TECHNIQUES_ROUTES,
+          ),
       },
       {
         path: 'security',
-        children: SECURITY_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/security/security.routes').then(
+            (r) => r.SECURITY_ROUTES,
+          ),
       },
       {
         path: 'graphql',
-        children: GRAPHQL_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/graphql/graphql.routes').then(
+            (r) => r.GRAPHQL_ROUTES,
+          ),
       },
       {
         path: 'websockets',
-        children: WEBSOCKETS_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/websockets/websockets.routes').then(
+            (r) => r.WEBSOCKETS_ROUTES,
+          ),
       },
       {
         path: 'microservices',
-        children: MICROSERVICES_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/microservices/microservices.routes').then(
+            (r) => r.MICROSERVICES_ROUTES,
+          ),
       },
       {
         path: 'recipes',
-        children: RECIPES_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/recipes/recipes.routes').then(
+            (r) => r.RECIPES_ROUTES,
+          ),
       },
       {
         path: 'faq',
-        children: FAQ_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/faq/faq.routes').then(
+            (r) => r.FAQ_ROUTES,
+          ),
       },
       {
         path: 'cli',
-        children: CLI_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/cli/cli-routing.routes').then(
+            (r) => r.CLI_ROUTES,
+          ),
       },
       {
         path: 'openapi',
-        children: OPENAPI_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/openapi/openapi.routes').then(
+            (r) => r.OPENAPI_ROUTES,
+          ),
       },
       {
         path: 'devtools',
-        children: DEVTOOLS_ROUTES,
+        loadChildren: () =>
+          import('./homepage/pages/devtools/devtools.routes').then(
+            (r) => r.DEVTOOLS_ROUTES,
+          ),
       },
     ],
   },
