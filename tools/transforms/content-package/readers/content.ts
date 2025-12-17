@@ -9,11 +9,9 @@ export class ContentFileReader implements FileReader {
   getDocs(fileInfo: FileInfo) {
     return [
       {
-        docType: fileInfo.baseName === 'who-uses'
-          ? 'who-uses'
-          : 'content',
-        content: fileInfo.content
-      }
+        docType: fileInfo.baseName === 'who-uses' ? 'who-uses' : 'content',
+        content: fileInfo.content,
+      },
     ];
   }
 }

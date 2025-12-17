@@ -3,10 +3,14 @@
   --primary-accent: #ea2868;
   --primary-1dp: #d71e38;
   --primary-2dp: #da2640;
-  --primary-3dp:#db2840;
+  --primary-3dp: #db2840;
   --primary-4dp: #e40020;
   --primary-5dp: #ff0023;
-  --primary-gradient: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+  --primary-gradient: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    var(--primary-accent) 100%
+  );
 
   --color: #404040;
   --color-1dp: #151515;
@@ -38,6 +42,8 @@
   --error: #ed2945;
   --error-background: #f9eff1;
 
+  --success: #28a745;
+
   --company-filter: grayscale(100%);
   --company-filter-hover: grayscale(0%);
   --company-logo-filter: grayscale(1);
@@ -56,7 +62,11 @@
   --primary-3dp: #f1455f;
   --primary-4dp: #f23c57;
   --primary-5dp: #f23551;
-  --primary-gradient: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
+  --primary-gradient: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    var(--primary-accent) 100%
+  );
 
   --color: #dfdfe3;
   --color-1dp: #d0d0d4;
@@ -87,6 +97,8 @@
 
   --error: #ff677c;
   --error-background: #3a2f30;
+
+  --success: #28a745;
 
   --company-filter: contrast(0.5);
   --company-filter-hover: opacity(1);
