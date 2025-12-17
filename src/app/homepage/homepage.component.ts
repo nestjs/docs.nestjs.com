@@ -141,7 +141,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  public onRouteActivate(component: BasePageComponent) {
+  public onRouteActivate(component: BasePageComponent): void {
     if (!component) {
       return;
     }
