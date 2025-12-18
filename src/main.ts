@@ -12,7 +12,8 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneChangeDetection(),importProvidersFrom(BrowserModule, RoutingModule),
+    provideZoneChangeDetection(),
+    importProvidersFrom(BrowserModule, RoutingModule),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
   ],

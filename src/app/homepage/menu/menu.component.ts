@@ -19,7 +19,8 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
 export class MenuComponent implements OnInit {
   @Input()
   isSidebarOpened = true;
-  readonly items = [
+
+  public readonly items = [
     {
       title: 'Introduction',
       isOpened: false,

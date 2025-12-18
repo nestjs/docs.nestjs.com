@@ -10,5 +10,5 @@ import { DatePipe } from '@angular/common';
     imports: [DatePipe],
 })
 export class FooterComponent {
-  currentDate = Date.now();
+  public currentDate = Date.now();
 }
