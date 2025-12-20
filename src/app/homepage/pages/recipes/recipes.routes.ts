@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { DocumentationComponent } from './documentation/documentation.component';
@@ -23,7 +20,7 @@ import { SwcComponent } from './swc/swc.component';
 import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
 
-const routes: Routes = [
+export const RECIPES_ROUTES: Routes = [
   {
     path: 'mikroorm',
     component: MikroOrmComponent,
@@ -141,30 +138,3 @@ const routes: Routes = [
     data: { title: 'passport' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    MikroOrmComponent,
-    SqlTypeormComponent,
-    SqlSequelizeComponent,
-    SentryComponent,
-    MongodbComponent,
-    PrismaComponent,
-    CqrsComponent,
-    HotReloadComponent,
-    TerminusComponent,
-    DocumentationComponent,
-    CrudGeneratorComponent,
-    RouterModuleComponent,
-    ServeStaticComponent,
-    NestCommanderComponent,
-    AsyncLocalStorageComponent,
-    SuitesComponent,
-    ReplComponent,
-    SwcComponent,
-    NecordComponent,
-    PassportComponent,
-  ],
-})
-export class RecipesModule {}

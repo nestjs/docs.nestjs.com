@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { ComplexityComponent } from './complexity/complexity.component';
 import { DirectivesComponent } from './directives/directives.component';
@@ -21,7 +18,7 @@ import { SharingModelsComponent } from './sharing-models/sharing-models.componen
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { UnionsAndEnumsComponent } from './unions-and-enums/unions.component';
 
-const routes: Routes = [
+export const GRAPHQL_ROUTES: Routes = [
   {
     path: 'quick-start',
     component: QuickStartComponent,
@@ -133,28 +130,3 @@ const routes: Routes = [
     data: { title: 'GraphQL + TypeScript - Generating SDL' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    QuickStartComponent,
-    ResolversMapComponent,
-    MutationsComponent,
-    SubscriptionsComponent,
-    DirectivesComponent,
-    UnionsAndEnumsComponent,
-    PluginsComponent,
-    GuardsInterceptorsComponent,
-    ScalarsComponent,
-    SchemaGeneratorComponent,
-    MappedTypesComponent,
-    SharingModelsComponent,
-    CliPluginComponent,
-    FederationComponent,
-    ComplexityComponent,
-    ExtensionsComponent,
-    FieldMiddlewareComponent,
-    InterfacesComponent,
-  ],
-})
-export class GraphqlModule {}

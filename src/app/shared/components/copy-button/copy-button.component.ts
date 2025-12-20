@@ -5,11 +5,14 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-copy-button',
-  templateUrl: './copy-button.component.html',
-  styleUrls: ['./copy-button.component.scss'],
+    selector: 'app-copy-button',
+    templateUrl: './copy-button.component.html',
+    styleUrls: ['./copy-button.component.scss'],
+    standalone: true,
+    imports: [MatIcon],
 })
 export class CopyButtonComponent implements OnDestroy {
   public elRef = inject<ElementRef<HTMLElement>>(ElementRef<HTMLElement>);
@@ -17,7 +20,7 @@ export class CopyButtonComponent implements OnDestroy {
   public cdr = inject<ChangeDetectorRef>(ChangeDetectorRef);
   private revertIconTimeout: ReturnType<typeof setTimeout | null> = null;
 
-  onCopy() {
+  public onCopy(): void {
     const preRef = this.elRef.nativeElement.querySelector('pre:not(.hide)');
     if (!preRef) {
       return;
@@ -32,8 +35,8 @@ export class CopyButtonComponent implements OnDestroy {
       this.revertIconTimeout = null;
     }, 2000);
   }
-  
-  ngOnDestroy(): void {
+
+  public ngOnDestroy(): void {
     if (this.revertIconTimeout) {
       clearTimeout(this.revertIconTimeout);
     }

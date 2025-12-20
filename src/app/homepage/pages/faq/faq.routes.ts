@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { ErrorsComponent } from './errors/errors.component';
 import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
@@ -12,7 +9,7 @@ import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
 import { ServerlessComponent } from './serverless/serverless.component';
 
-const routes: Routes = [
+export const FAQ_ROUTES: Routes = [
   {
     path: 'global-prefix',
     component: GlobalPrefixComponent,
@@ -59,19 +56,3 @@ const routes: Routes = [
     data: { title: 'Serverless - FAQ' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    GlobalPrefixComponent,
-    HybridApplicationComponent,
-    MultipleServersComponent,
-    HttpAdapterComponent,
-    KeepAliveConnectionsComponent,
-    RequestLifecycleComponent,
-    ErrorsComponent,
-    ServerlessComponent,
-    RawBodyComponent,
-  ],
-})
-export class FaqModule {}

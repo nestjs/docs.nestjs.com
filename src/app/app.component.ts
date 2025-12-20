@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
 
@@ -8,6 +8,8 @@ import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
   selector: 'app-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
   private robotsElement: HTMLMetaElement;
@@ -19,7 +21,7 @@ export class AppComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
   ) {}
 
-  async ngOnInit() {
+  public async ngOnInit(): Promise<void> {
     this.router.events
       .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe((ev: NavigationEnd) => {
@@ -28,7 +30,7 @@ export class AppComponent implements OnInit {
       });
   }
 
-  updateTitle() {
+  public updateTitle(): void {
     const route = this.activatedRoute.snapshot.firstChild;
     if (!route) {
       return undefined;
@@ -43,7 +45,7 @@ export class AppComponent implements OnInit {
     this.titleService.setTitle(pageTitle + TITLE_SUFFIX);
   }
 
-  updateMeta(event: NavigationEnd) {
+  public updateMeta(event: NavigationEnd): void {
     if (!(event && event.url)) {
       return;
     }

@@ -8,7 +8,8 @@ import {
 import { Router } from '@angular/router';
 
 @Directive({
-  selector: '[appAnchor]',
+    selector: '[appAnchor]',
+    standalone: true,
 })
 export class HeaderAnchorDirective implements AfterViewInit {
   @Input() public id: string | undefined;

@@ -1,12 +1,15 @@
 <button class="theme-mode-toggle">
-  <span class="material-icons" *ngIf="theme === 'dark'" (click)="toggleTheme()">
-    light_mode
-  </span>
-  <span
-    class="material-icons"
-    *ngIf="theme === 'light'"
-    (click)="toggleTheme()"
-  >
-    dark_mode
-  </span>
+  @if (theme === 'dark') {
+    <span class="material-icons" (click)="toggleTheme()">
+      light_mode
+    </span>
+  }
+  @if (theme === 'light') {
+    <span
+      class="material-icons"
+      (click)="toggleTheme()"
+      >
+      dark_mode
+    </span>
+  }
 </button>

@@ -14,16 +14,19 @@ import { fromEvent, Subscription, timer } from 'rxjs';
 import { debounceTime, take } from 'rxjs/operators';
 
 interface HeadingElement {
+  id: number;
   elementRef: HTMLElement;
   textContent: string;
   offsetTop: number;
 }
 
 @Component({
-  selector: 'app-toc',
-  templateUrl: './toc.component.html',
-  styleUrls: ['./toc.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-toc',
+    templateUrl: './toc.component.html',
+    styleUrls: ['./toc.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [],
 })
 export class TocComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
@@ -87,7 +90,8 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
       const anchorId = text && text.indexOf('#');
       return anchorId >= 0 ? text.slice(0, anchorId) : text;
     };
-    this.headings = Array.from(headings).map((item: any) => ({
+    this.headings = Array.from(headings).map((item: any, index: number) => ({
+      id: index,
       offsetTop: item.offsetTop,
       textContent: removeAnchor(item.textContent),
       elementRef: item as HTMLElement,

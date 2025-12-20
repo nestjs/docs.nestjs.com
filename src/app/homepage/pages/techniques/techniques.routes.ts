@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
@@ -23,7 +20,7 @@ import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.compo
 import { ValidationComponent } from './validation/validation.component';
 import { VersioningComponent } from './versioning/versioning.component';
 
-const routes: Routes = [
+export const TECHNIQUES_ROUTES: Routes = [
   {
     path: 'authentication',
     redirectTo: '/security/authentication',
@@ -141,30 +138,3 @@ const routes: Routes = [
     data: { title: 'Session' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    SqlComponent,
-    MvcComponent,
-    MongoComponent,
-    QueuesComponent,
-    LoggerComponent,
-    TaskSchedulingComponent,
-    PerformanceComponent,
-    EventsComponent,
-    FileUploadComponent,
-    HttpModuleComponent,
-    ConfigurationComponent,
-    CompressionComponent,
-    VersioningComponent,
-    ValidationComponent,
-    CachingComponent,
-    SerializationComponent,
-    ServerSentEventsComponent,
-    SessionComponent,
-    CookiesComponent,
-    StreamingFilesComponent,
-  ],
-})
-export class TechniquesModule {}

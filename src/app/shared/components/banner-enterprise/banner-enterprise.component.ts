@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-banner-enterprise',
-  templateUrl: './banner-enterprise.component.html',
-  styles: [
-    `
+    selector: 'app-banner-enterprise',
+    templateUrl: './banner-enterprise.component.html',
+    styles: [
+        `
       .banner {
         background-color: #111;
         background-image: url('/assets/banners/enterprise.jpg');
@@ -13,7 +13,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         max-width: 820px;
       }
     `,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
 })
 export class BannerEnterpriseComponent {}

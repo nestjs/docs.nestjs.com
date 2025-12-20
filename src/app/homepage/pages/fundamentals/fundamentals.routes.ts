@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../../../shared/shared.module';
+import { Routes } from '@angular/router';
 import { AsyncComponentsComponent } from './async-components/async-components.component';
 import { CircularDependencyComponent } from './circular-dependency/circular-dependency.component';
 import { DiscoveryServiceComponent } from './discovery-service/discovery-service.component';
@@ -15,7 +12,7 @@ import { ProviderScopesComponent } from './provider-scopes/provider-scopes.compo
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
 import { LazyLoadingModulesComponent } from './lazy-loading-modules/lazy-loading-modules.component';
 
-const routes: Routes = [
+export const FUNDAMENTALS_ROUTES: Routes = [
   {
     path: 'dynamic-modules',
     component: DynamicModulesComponent,
@@ -93,22 +90,3 @@ const routes: Routes = [
     data: { title: 'Discovery service' },
   },
 ];
-
-@NgModule({
-  imports: [CommonModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [
-    AsyncComponentsComponent,
-    PlatformAgnosticismComponent,
-    DependencyInjectionComponent,
-    DynamicModulesComponent,
-    UnitTestingComponent,
-    CircularDependencyComponent,
-    ExecutionContextComponent,
-    ProviderScopesComponent,
-    LifecycleEventsComponent,
-    ModuleRefComponent,
-    LazyLoadingModulesComponent,
-    DiscoveryServiceComponent,
-  ],
-})
-export class FundamentalsModule {}

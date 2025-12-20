@@ -13,8 +13,9 @@ import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-bash';
 
 @Component({
-  selector: 'app-base-page',
-  template: ``,
+    selector: 'app-base-page',
+    template: ``,
+    standalone: true,
 })
 export class BasePageComponent implements AfterViewChecked {
   private isHljsInitialized = false;

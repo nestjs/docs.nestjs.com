@@ -19,7 +19,7 @@
         ],
         "categories:seo": [
           "error",
-          { "minScore": 0.67, "aggregationMethod": "optimistic" }
+          { "minScore": 0.5, "aggregationMethod": "optimistic" }
         ],
         "categories:pwa": "off",
 

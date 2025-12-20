@@ -1,16 +1,17 @@
 <div class="toc-wrapper" #tocWrapper perfectScrollbar>
   <ul>
-    <li
-      *ngFor="let item of headings; trackBy: trackById; let index = index"
-      [attr.id]="item.id"
-      [class.current]="index === activeId"
-    >
-      <a
-        href="{{ currentURL() }}#{{ item.elementRef.id }}"
-        (click)="navigateToAnchor($event, item.elementRef)"
-      >
-        {{ item.textContent }}
-      </a>
-    </li>
+    @for (item of headings; track trackById(index, item); let index = $index) {
+      <li
+        [attr.id]="item.id"
+        [class.current]="index === activeId"
+        >
+        <a
+          href="{{ currentURL() }}#{{ item.elementRef.id }}"
+          (click)="navigateToAnchor($event, item.elementRef)"
+          >
+          {{ item.textContent }}
+        </a>
+      </li>
+    }
   </ul>
 </div>
