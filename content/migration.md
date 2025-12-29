@@ -178,7 +178,7 @@ While the `OnModuleDestroy` hooks are executed in the reverse order:
 A -> B -> C
 ```
 
-> info **Hint** Global modules are treated as if they depend on all other modules. This means that global modules are initialized first and destroyed last.
+> info **Hint** Global modules are treated as a dependency of all other modules. This means that global modules are initialized first and destroyed last.
 
 #### Middleware registration order
 

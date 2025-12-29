@@ -1,10 +1,10 @@
 ### Prisma
 
-[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. It is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](https://knexjs.org/)) or ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL, SQL Server, SQLite, MongoDB and CockroachDB ([Preview](https://www.prisma.io/docs/reference/database-reference/supported-databases)).
+[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. It is used as an **alternative** to writing plain SQL, or using another database access tool such as SQL query builders (like [knex.js](https://knexjs.org/)) or ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma currently supports PostgreSQL, MySQL, SQL Server, SQLite, MongoDB and CockroachDB ([Preview](https://www.prisma.io/docs/orm/reference/supported-databases)).
 
-While Prisma can be used with plain JavaScript, it embraces TypeScript and provides a level to type-safety that goes beyond the guarantees other ORMs in the TypeScript ecosystem. You can find an in-depth comparison of the type-safety guarantees of Prisma and TypeORM [here](https://www.prisma.io/docs/concepts/more/comparisons/prisma-and-typeorm#type-safety).
+While Prisma can be used with plain JavaScript, it embraces TypeScript and provides a level to type-safety that goes beyond the guarantees other ORMs in the TypeScript ecosystem. You can find an in-depth comparison of the type-safety guarantees of Prisma and TypeORM [here](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-typeorm#type-safety).
 
-> info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/quickstart) or read the [Introduction](https://www.prisma.io/docs/understand-prisma/introduction) in the [documentation](https://www.prisma.io/docs/). There also are ready-to-run examples for [REST](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest) and [GraphQL](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest-graphql) in the [`prisma-examples`](https://github.com/prisma/prisma-examples/) repo.
+> info **Note** If you want to get a quick overview of how Prisma works, you can follow the [Quickstart](https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres) or read the [Introduction](https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma) in the [documentation](https://www.prisma.io/docs). There also are ready-to-run examples for [REST](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest) and [GraphQL](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest-graphql) in the [`prisma-examples`](https://github.com/prisma/prisma-examples/) repo.
 
 #### Getting started
 
@@ -12,7 +12,7 @@ In this recipe, you'll learn how to get started with NestJS and Prisma from scra
 
 For the purpose of this guide, you'll use a [SQLite](https://sqlite.org/) database to save the overhead of setting up a database server. Note that you can still follow this guide, even if you're using PostgreSQL or MySQL – you'll get extra instructions for using these databases at the right places.
 
-> info **Note** If you already have an existing project and consider migrating to Prisma, you can follow the guide for [adding Prisma to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project-typescript-postgres). If you are migrating from TypeORM, you can read the guide [Migrating from TypeORM to Prisma](https://www.prisma.io/docs/guides/migrate-to-prisma/migrate-from-typeorm).
+> info **Note** If you already have an existing project and consider migrating to Prisma, you can follow the guide for [adding Prisma to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project-typescript-postgres). If you are migrating from TypeORM, you can read the guide [Migrating from TypeORM to Prisma](https://www.prisma.io/docs/guides/migrate-from-typeorm).
 
 #### Create your NestJS project
 
@@ -34,7 +34,7 @@ $ cd hello-prisma
 $ npm install prisma --save-dev
 ```
 
-In the following steps, we'll be utilizing the [Prisma CLI](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-cli). As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
+In the following steps, we'll be utilizing the [Prisma CLI](https://www.prisma.io/docs/orm/tools/prisma-cli). As a best practice, it's recommended to invoke the CLI locally by prefixing it with `npx`:
 
 ```bash
 $ npx prisma
@@ -65,7 +65,33 @@ $ npx prisma init
 This command creates a new `prisma` directory with the following contents:
 
 - `schema.prisma`: Specifies your database connection and contains the database schema
+- `prisma.config.ts`: A configuration file for your projects
 - `.env`: A [dotenv](https://github.com/motdotla/dotenv) file, typically used to store your database credentials in a group of environment variables
+
+#### Set the generator output path
+
+Specify your output `path` for the generated Prisma client either by passing `--output ../src/generated/prisma` during prisma init, or directly in your Prisma schema:
+
+```groovy
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+}
+```
+
+#### Configure the module format
+
+Set `moduleFormat` in the generator to `cjs`:
+
+```groovy
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat    = "cjs"
+}
+```
+
+> info **Note** The `moduleFormat` configuration is required because Prisma v7 ships as an ES module by default, which does not work with NestJS's CommonJS setup. Setting `moduleFormat` to `cjs` forces Prisma to generate a CommonJS module instead of ESM.
 
 #### Set the database connection
 
@@ -74,11 +100,12 @@ Your database connection is configured in the `datasource` block in your `schema
 ```groovy
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -105,11 +132,12 @@ If you're using PostgreSQL, you have to adjust the `schema.prisma` and `.env` fi
 ```groovy
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -136,11 +164,12 @@ If you're using MySQL, you have to adjust the `schema.prisma` and `.env` files a
 ```groovy
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -161,11 +190,12 @@ If you're using Microsoft SQL Server or Azure SQL Server, you have to adjust the
 ```groovy
 datasource db {
   provider = "sqlserver"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat  = "cjs"
 }
 ```
 
@@ -181,7 +211,7 @@ DATABASE_URL="sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWOR
 
 #### Create two database tables with Prisma Migrate
 
-In this section, you'll create two new tables in your database using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate). Prisma Migrate generates SQL migration files for your declarative data model definition in the Prisma schema. These migration files are fully customizable so that you can configure any additional features of the underlying database or include additional commands, e.g. for seeding.
+In this section, you'll create two new tables in your database using [Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate/getting-started). Prisma Migrate generates SQL migration files for your declarative data model definition in the Prisma schema. These migration files are fully customizable so that you can configure any additional features of the underlying database or include additional commands, e.g. for seeding.
 
 Add the following two models to your `schema.prisma` file:
 
@@ -252,7 +282,7 @@ CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 #### Install and generate Prisma Client
 
-Prisma Client is a type-safe database client that's _generated_ from your Prisma model definition. Because of this approach, Prisma Client can expose [CRUD](https://www.prisma.io/docs/concepts/components/prisma-client/crud) operations that are _tailored_ specifically to your models.
+Prisma Client is a type-safe database client that's _generated_ from your Prisma model definition. Because of this approach, Prisma Client can expose [CRUD](https://www.prisma.io/docs/orm/prisma-client/queries/crud) operations that are _tailored_ specifically to your models.
 
 To install Prisma Client in your project, run the following command in your terminal:
 
@@ -260,31 +290,55 @@ To install Prisma Client in your project, run the following command in your term
 $ npm install @prisma/client
 ```
 
-Note that during installation, Prisma automatically invokes the `prisma generate` command for you. In the future, you need to run this command after _every_ change to your Prisma models to update your generated Prisma Client.
+Once installed, you can run the generate command to generate the types and Client needed for your project. If any changes are made to your schema, you will need to rerun the `generate` command to keep those types in sync.
 
-> info **Note** The `prisma generate` command reads your Prisma schema and updates the generated Prisma Client library inside `node_modules/@prisma/client`.
+```bash
+$ npx prisma generate
+```
+
+In addition to Prisma Client, you also need to a driver adapter for the type of database you are working with. For SQLite, you can install the `@prisma/adapter-better-sqlite3` driver.
+
+```bash
+npm install @prisma/adapter-better-sqlite3
+```
+
+<details> <summary>Expand if you're using PostgreSQL, MySQL, MsSQL, or AzureSQL</summary>
+
+- For PostgreSQL
+
+```bash
+npm install @prisma/adapter-pg
+```
+
+- For MySQL, MsSQL, AzureSQL:
+
+```bash
+npm install @prisma/adapter-mariadb
+```
+
+</details>
 
 #### Use Prisma Client in your NestJS services
 
-You're now able to send database queries with Prisma Client. If you want to learn more about building queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/crud).
+You're now able to send database queries with Prisma Client. If you want to learn more about building queries with Prisma Client, check out the [API documentation](https://www.prisma.io/docs/orm/reference/prisma-client-reference).
 
 When setting up your NestJS application, you'll want to abstract away the Prisma Client API for database queries within a service. To get started, you can create a new `PrismaService` that takes care of instantiating `PrismaClient` and connecting to your database.
 
 Inside the `src` directory, create a new file called `prisma.service.ts` and add the following code to it:
 
 ```typescript
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import { PrismaClient } from './generated/prisma/client';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
-  async onModuleInit() {
-    await this.$connect();
+export class PrismaService extends PrismaClient {
+  constructor() {
+    const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL });
+    super({ adapter });
   }
 }
 ```
-
-> info **Note** The `onModuleInit` is optional — if you leave it out, Prisma will connect lazily on its first call to the database.
 
 Next, you can write services that you can use to make database calls for the `User` and `Post` models from your Prisma schema.
 
@@ -293,7 +347,7 @@ Still inside the `src` directory, create a new file called `user.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class UsersService {
@@ -358,7 +412,7 @@ Still inside the `src` directory, create a new file called `post.service.ts` and
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { Post, Prisma } from '@prisma/client';
+import { Post, Prisma } from 'generated/prisma';
 
 @Injectable()
 export class PostsService {
@@ -436,7 +490,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './user.service';
 import { PostsService } from './post.service';
-import { User as UserModel, Post as PostModel } from '@prisma/client';
+import { User as UserModel, Post as PostModel } from 'generated/prisma';
 
 @Controller()
 export class AppController {

@@ -33,16 +33,22 @@ $ npm i --save @fastify/compress
 
 Once the installation is complete, apply the `@fastify/compress` middleware as global middleware.
 
+> warning **Warning** Please ensure, that you use the type `NestFastifyApplication` when creating the application. Otherwise, you cannot use `register` to apply the compression-middleware.
+
 ```typescript
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+
 import compression from '@fastify/compress';
-// somewhere in your initialization file
+
+// inside bootstrap()
+const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 await app.register(compression);
 ```
 
 By default, `@fastify/compress` will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli can be quite efficient in terms of compression ratio, it can also be quite slow. By default, Brotli sets a maximum compression quality of 11, although it can be adjusted to reduce compression time in lieu of compression quality by adjusting the `BROTLI_PARAM_QUALITY` between 0 min and 11 max. This will require fine tuning to optimize space/time performance. An example with quality 4: 
 
 ```typescript
-import { constants } from 'zlib';
+import { constants } from 'node:zlib';
 // somewhere in your initialization file
 await app.register(compression, { brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } } });
 ```

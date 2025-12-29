@@ -94,7 +94,7 @@ export class UsersController {
 }
 ```
 
-There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. With version 5 and onwards, the decorator takes in an object with the string relating to the name of the throttler set, and an object with the limit and ttl keys and integer values, similar to the options passed to the root module. If you do not have a name set in your original options, use the string `default` You have to configure it like this:
+There is also the `@Throttle()` decorator which can be used to override the `limit` and `ttl` set in the global module, to give tighter or looser security options. This decorator can be used on a class or a function as well. With version 5 and onwards, the decorator takes in an object with the string relating to the name of the throttler set, and an object with the limit and ttl keys and integer values, similar to the options passed to the root module. If you do not have a name set in your original options, use the string `default`. You have to configure it like this:
 
 ```typescript
 // Override default configuration for Rate limiting and duration.
@@ -112,7 +112,7 @@ If your application is running behind a proxy server, it’s essential to config
 Here's an example that demonstrates how to enable `trust proxy` for the Express adapter:
 
 ```typescript
-@@filename(main.ts)
+@@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -238,7 +238,7 @@ The following options are valid for the object passed to the array of the `Throt
 <table>
   <tr>
     <td><code>name</code></td>
-    <td>the name for internal tracking of which throttler set is being used. Defaults to `default` if not passed</td>
+    <td>the name for internal tracking of which throttler set is being used. Defaults to <code>default</code> if not passed</td>
   </tr>
   <tr>
     <td><code>ttl</code></td>
@@ -354,9 +354,7 @@ For most people, wrapping your options in an array will be enough.
 If you are using a custom storage, you should wrap your `ttl` and `limit` in an
 array and assign it to the `throttlers` property of the options object.
 
-Any `@ThrottleSkip()` should now take in an object with `string: boolean` props.
-The strings are the names of the throttlers. If you do not have a name, pass the
-string `'default'`, as this is what will be used under the hood otherwise.
+Any `@SkipThrottle()` decorator can be used to bypass throttling for specific routes or methods. It accepts an optional boolean parameter, which defaults to `true`. This is useful when you want to skip rate limiting on particular endpoints.
 
 Any `@Throttle()` decorators should also now take in an object with string keys,
 relating to the names of the throttler contexts (again, `'default'` if no name)

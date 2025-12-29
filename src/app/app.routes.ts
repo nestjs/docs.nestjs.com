@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { HomepageComponent } from './homepage/homepage.component';
 import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
 import { ComponentsComponent } from './homepage/pages/components/components.component';
@@ -20,15 +19,12 @@ import { SupportComponent } from './homepage/pages/support/support.component';
 import { RedirectGuard } from './shared/guards/redirect.guard';
 import { DeploymentComponent } from './homepage/pages/deployment/deployment.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     component: HomepageComponent,
     children: [
-      {
-        path: '',
-        component: IntroductionComponent,
-      },
+      { path: '', component: IntroductionComponent },
       {
         path: 'first-steps',
         component: FirstStepsComponent,
@@ -39,10 +35,7 @@ const routes: Routes = [
         component: ControllersComponent,
         data: { title: 'Controllers' },
       },
-      {
-        path: 'components',
-        redirectTo: 'providers',
-      },
+      { path: 'components', redirectTo: 'providers' },
       {
         path: 'providers',
         component: ComponentsComponent,
@@ -58,16 +51,8 @@ const routes: Routes = [
         component: MiddlewaresComponent,
         data: { title: 'Middleware' },
       },
-      {
-        path: 'pipes',
-        component: PipesComponent,
-        data: { title: 'Pipes' },
-      },
-      {
-        path: 'guards',
-        component: GuardsComponent,
-        data: { title: 'Guards' },
-      },
+      { path: 'pipes', component: PipesComponent, data: { title: 'Pipes' } },
+      { path: 'guards', component: GuardsComponent, data: { title: 'Guards' } },
       {
         path: 'exception-filters',
         component: ExceptionFiltersComponent,
@@ -88,10 +73,7 @@ const routes: Routes = [
         component: ApplicationContextComponent,
         data: { title: 'Standalone applications' },
       },
-      {
-        path: 'application-context',
-        redirectTo: 'standalone-applications',
-      },
+      { path: 'application-context', redirectTo: 'standalone-applications' },
       {
         path: 'discover/companies',
         component: WhoUsesComponent,
@@ -115,18 +97,11 @@ const routes: Routes = [
       {
         path: 'consulting',
         component: EnterpriseComponent,
-        resolve: {
-          url: 'externalUrlRedirectResolver',
-        },
+        resolve: { url: 'externalUrlRedirectResolver' },
         canActivate: [RedirectGuard],
-        data: {
-          externalUrl: 'https://enterprise.nestjs.com',
-        },
+        data: { externalUrl: 'https://enterprise.nestjs.com' },
       },
-      {
-        path: 'enterprise',
-        redirectTo: 'consulting',
-      },
+      { path: 'enterprise', redirectTo: 'consulting' },
       {
         path: 'enterprise',
         component: EnterpriseComponent,
@@ -135,96 +110,88 @@ const routes: Routes = [
       {
         path: 'fundamentals',
         loadChildren: () =>
-          import('./homepage/pages/fundamentals/fundamentals.module').then(
-            (m) => m.FundamentalsModule,
+          import('./homepage/pages/fundamentals/fundamentals.routes').then(
+            (r) => r.FUNDAMENTALS_ROUTES,
           ),
       },
       {
         path: 'techniques',
         loadChildren: () =>
-          import('./homepage/pages/techniques/techniques.module').then(
-            (m) => m.TechniquesModule,
+          import('./homepage/pages/techniques/techniques.routes').then(
+            (r) => r.TECHNIQUES_ROUTES,
           ),
       },
       {
         path: 'security',
         loadChildren: () =>
-          import('./homepage/pages/security/security.module').then(
-            (m) => m.SecurityModule,
+          import('./homepage/pages/security/security.routes').then(
+            (r) => r.SECURITY_ROUTES,
           ),
       },
       {
         path: 'graphql',
         loadChildren: () =>
-          import('./homepage/pages/graphql/graphql.module').then(
-            (m) => m.GraphqlModule,
+          import('./homepage/pages/graphql/graphql.routes').then(
+            (r) => r.GRAPHQL_ROUTES,
           ),
       },
       {
         path: 'websockets',
         loadChildren: () =>
-          import('./homepage/pages/websockets/websockets.module').then(
-            (m) => m.WebsocketsModule,
+          import('./homepage/pages/websockets/websockets.routes').then(
+            (r) => r.WEBSOCKETS_ROUTES,
           ),
       },
       {
         path: 'microservices',
         loadChildren: () =>
-          import('./homepage/pages/microservices/microservices.module').then(
-            (m) => m.MicroservicesModule,
+          import('./homepage/pages/microservices/microservices.routes').then(
+            (r) => r.MICROSERVICES_ROUTES,
           ),
       },
       {
         path: 'recipes',
         loadChildren: () =>
-          import('./homepage/pages/recipes/recipes.module').then(
-            (m) => m.RecipesModule,
+          import('./homepage/pages/recipes/recipes.routes').then(
+            (r) => r.RECIPES_ROUTES,
           ),
       },
       {
         path: 'faq',
         loadChildren: () =>
-          import('./homepage/pages/faq/faq.module').then((m) => m.FaqModule),
+          import('./homepage/pages/faq/faq.routes').then(
+            (r) => r.FAQ_ROUTES,
+          ),
       },
       {
         path: 'cli',
         loadChildren: () =>
-          import('./homepage/pages/cli/cli.module').then((m) => m.CliModule),
+          import('./homepage/pages/cli/cli-routing.routes').then(
+            (r) => r.CLI_ROUTES,
+          ),
       },
       {
         path: 'openapi',
         loadChildren: () =>
-          import('./homepage/pages/openapi/openapi.module').then(
-            (m) => m.OpenApiModule,
+          import('./homepage/pages/openapi/openapi.routes').then(
+            (r) => r.OPENAPI_ROUTES,
           ),
       },
       {
         path: 'devtools',
         loadChildren: () =>
-          import('./homepage/pages/devtools/devtools.module').then(
-            (m) => m.DevtoolsModule,
+          import('./homepage/pages/devtools/devtools.routes').then(
+            (r) => r.DEVTOOLS_ROUTES,
           ),
       },
     ],
   },
-  {
-    path: '**',
-    redirectTo: '',
-    pathMatch: 'full',
-  },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      // enableTracing: !environment.production,
-      scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      preloadingStrategy: PreloadAllModules,
-      onSameUrlNavigation: 'reload',
-    }),
-  ],
-  providers: [],
-  exports: [RouterModule],
-})
-export class AppRoutingModule {}
+export const RoutingModule = RouterModule.forRoot(routes, {
+  scrollPositionRestoration: 'enabled',
+  anchorScrolling: 'enabled',
+  preloadingStrategy: PreloadAllModules,
+  onSameUrlNavigation: 'reload',
+});

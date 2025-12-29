@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { openCloseAnimation } from '../../../common';
+import { RouterLinkActive, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-menu-item',
@@ -7,6 +8,11 @@ import { openCloseAnimation } from '../../../common';
   styleUrls: ['./menu-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [openCloseAnimation],
+  standalone: true,
+  imports: [
+    RouterLinkActive,
+    RouterLink
+  ],
 })
 export class MenuItemComponent {
   @Input() isOpen = false;
@@ -17,7 +23,7 @@ export class MenuItemComponent {
   @Input() externalUrl: string;
   @Input() isNew?: boolean;
 
-  toggle() {
+  public toggle(): void {
     this.isOpen = !this.isOpen;
   }
 }

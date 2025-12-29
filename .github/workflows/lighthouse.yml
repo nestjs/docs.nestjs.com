@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
       # Build needs around 400 seconds on Netlify.
       # We can not rely on "Waiting for 200", since the user
       # might push another commit to an existing PR, meaning
@@ -28,7 +28,7 @@ jobs:
           site_name: 'docs-nestjs'
           max_timeout: 600
       - name: Run Lighthouse on urls and validate with lighthouserc
-        uses: treosh/lighthouse-ci-action@v8
+        uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             ${{ steps.wait-for-netflify-preview.outputs.url }}

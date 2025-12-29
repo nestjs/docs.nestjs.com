@@ -38,7 +38,7 @@ To interact with the cache manager instance, inject it to your class using the `
 constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 ```
 
-> info **Hint** The `Cache` class is imported from the `cache-manager`, while `CACHE_MANAGER` token from the `@nestjs/cache-manager` package.
+> info **Hint** The `Cache` class and the `CACHE_MANAGER` token are both imported from the `@nestjs/cache-manager` package.
 
 The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `null` will be returned.
 
@@ -54,7 +54,7 @@ await this.cacheManager.set('key', 'value');
 
 > warning **Note** The in-memory cache storage can only store values of types that are supported by [the structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types).
 
-You can manually specify a TTL (expiration time in miliseconds) for this specific key, as follows:
+You can manually specify a TTL (expiration time in milliseconds) for this specific key, as follows:
 
 ```typescript
 await this.cacheManager.set('key', 'value', 1000);
@@ -236,7 +236,7 @@ With this in place, you can register the `CacheModule` with multiple stores as s
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
-import { createKeyv } from '@keyv/redis';
+import KeyvRedis from '@keyv/redis';
 import { Keyv } from 'keyv';
 import { CacheableMemory } from 'cacheable';
 
@@ -249,7 +249,7 @@ import { CacheableMemory } from 'cacheable';
             new Keyv({
               store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
             }),
-            createKeyv('redis://localhost:6379'),
+            new KeyvRedis('redis://localhost:6379'),
           ],
         };
       },
@@ -322,7 +322,7 @@ CacheModule.registerAsync({
 
 This works the same as `useClass` with one critical difference - `CacheModule` will lookup imported modules to reuse any already-created `ConfigService`, instead of instantiating its own.
 
-> info **Hint** `CacheModule#register` and `CacheModule#registerAsync` and `CacheOptionsFactory` has an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
+> info **Hint** `CacheModule#register`, `CacheModule#registerAsync` and `CacheOptionsFactory` have an optional generic (type argument) to narrow down store-specific configuration options, making it type safe.
 
 You can also pass so-called `extraProviders` to the `registerAsync()` method. These providers will be merged with the module providers.
 

@@ -10,17 +10,18 @@ import { NewsletterService } from './services/newsletter.service';
   templateUrl: './newsletter.component.html',
   styleUrls: ['./newsletter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class NewsletterComponent {
-  isDisabled: boolean;
-  isEmailAdded: boolean;
+  public isDisabled: boolean;
+  public isEmailAdded: boolean;
 
   constructor(
     private readonly newsletterService: NewsletterService,
     private readonly cd: ChangeDetectorRef,
   ) {}
 
-  async addToNewsletter(event: Event, value: string) {
+  public async addToNewsletter(event: Event, value: string): Promise<void> {
     event.preventDefault();
     this.isDisabled = true;
     this.cd.markForCheck();

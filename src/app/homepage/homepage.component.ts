@@ -10,11 +10,16 @@ import {
   Renderer2,
   ViewEncapsulation,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet, RouterLink } from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { BasePageComponent } from './pages/page/page.component';
+import { HeaderComponent } from './header/header.component';
+import { MenuComponent } from './menu/menu.component';
+import { TocComponent } from '../shared/components/toc/toc.component';
+import { NewsletterComponent } from './newsletter/newsletter.component';
+import { FooterComponent } from './footer/footer.component';
 
 const CARBON_WIDTH_BREAKPOINT = 1200;
 
@@ -22,15 +27,24 @@ const CARBON_WIDTH_BREAKPOINT = 1200;
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss'],
+  standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    HeaderComponent,
+    MenuComponent,
+    TocComponent,
+    RouterOutlet,
+    RouterLink,
+    NewsletterComponent,
+    FooterComponent,
+  ],
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
-  isSidebarOpened = true;
-  previousWidth: number;
-  contentRef: HTMLElement;
-  isMarkupReady: boolean;
-
+  public isSidebarOpened = true;
+  public previousWidth: number;
+  public contentRef: HTMLElement;
+  public isMarkupReady: boolean;
   private scrollSubscription: Subscription;
   private readonly scrollDebounceTime = 100;
 
@@ -41,7 +55,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly renderer: Renderer2,
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.router.events
       .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe(() => {
@@ -59,14 +73,14 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  ngAfterViewInit() {
+  public ngAfterViewInit(): void {
     this.checkWindowWidth(window.innerWidth);
     if (this.contentRef) {
       this.contentRef.appendChild(this.createDocSearchScriptTag());
     }
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy(): void {
     if (!this.scrollSubscription) {
       return;
     }
@@ -74,15 +88,15 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
+  public onResize(event): void {
     this.checkWindowWidth(event.target.innerWidth);
   }
 
-  toggleSidebar() {
+  public toggleSidebar(): void {
     this.isSidebarOpened = !this.isSidebarOpened;
   }
 
-  checkWindowWidth(innerWidth?: number) {
+  public checkWindowWidth(innerWidth?: number): void {
     innerWidth = innerWidth ? innerWidth : window.innerWidth;
     if (this.previousWidth !== innerWidth && innerWidth <= 768) {
       this.previousWidth = innerWidth;
@@ -91,7 +105,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  checkViewportBoundaries() {
+  public checkViewportBoundaries(): void {
     const nativeElement: HTMLElement = this.elementRef.nativeElement;
     const footerRef: HTMLElement = nativeElement.querySelector('app-footer');
     const newsletterRef: HTMLElement = nativeElement.querySelector(
@@ -127,7 +141,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onRouteActivate(component: BasePageComponent) {
+  public onRouteActivate(component: BasePageComponent): void {
     if (!component) {
       return;
     }
@@ -157,7 +171,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => this.hideAdIfTocOverflow(), adOverlapCheckDelay);
   }
 
-  createCarbonScriptTag(): HTMLScriptElement {
+  public createCarbonScriptTag(): HTMLScriptElement {
     const scriptTag = document.createElement('script');
     scriptTag.type = 'text/javascript';
     scriptTag.src =
@@ -166,7 +180,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     return scriptTag;
   }
 
-  createDocSearchScriptTag(): HTMLScriptElement {
+  public createDocSearchScriptTag(): HTMLScriptElement {
     const scriptTag = document.createElement('script');
     scriptTag.type = 'text/javascript';
     scriptTag.src = 'https://cdn.jsdelivr.net/npm/@docsearch/js@3';
@@ -183,7 +197,7 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     return scriptTag;
   }
 
-  hideAdIfTocOverflow() {
+  public hideAdIfTocOverflow(): void {
     const carbonHeight = 160;
     const offset = 200;
     const viewportHeight = window.innerHeight;

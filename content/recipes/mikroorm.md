@@ -32,8 +32,7 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}
 ```
 
 The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package. Check [this page](https://mikro-orm.io/docs/configuration) for the complete configuration documentation.
@@ -67,7 +66,7 @@ export class AppModule {}
 Afterward, the `EntityManager` will be available to inject across the entire project (without importing any module elsewhere).
 
 ```ts
-// Import everytyhing from your driver package or `@mikro-orm/knex`
+// Import everything from your driver package or `@mikro-orm/knex`
 import { EntityManager, MikroORM } from '@mikro-orm/sqlite';
 
 @Injectable()
@@ -246,7 +245,7 @@ The `@mikro-orm/nestjs` package exposes `getRepositoryToken()` function that ret
     PhotoService,
     {
       // or when you have a custom repository: `provide: PhotoRepository`
-      provide: getRepositoryToken(Photo), 
+      provide: getRepositoryToken(Photo),
       useValue: mockedRepository,
     },
   ],

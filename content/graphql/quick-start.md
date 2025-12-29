@@ -12,7 +12,7 @@ Start by installing the required packages:
 
 ```bash
 # For Express and Apollo (default)
-$ npm i @nestjs/graphql @nestjs/apollo @apollo/server graphql
+$ npm i @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/express5 graphql
 
 # For Fastify and Apollo
 # npm i @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/fastify graphql
@@ -177,7 +177,7 @@ The above approach dynamically generates TypeScript definitions each time the ap
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const definitionsFactory = new GraphQLDefinitionsFactory();
 definitionsFactory.generate({

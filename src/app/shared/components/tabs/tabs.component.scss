@@ -1,4 +1,4 @@
-@import './../../../../scss/utils.scss';
+@use './../../../../scss/utils';
 
 .tabs-wrapper {
   position: absolute;
@@ -9,7 +9,7 @@
   /*@include media(medium) {
     position: static;
     margin: 15px -20px -15px;
-    
+
     .tab {
       float: none;
       display: inline-block;

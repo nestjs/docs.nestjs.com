@@ -49,6 +49,20 @@ To customize builder's behavior, you can pass an object containing two attribute
 }
 ```
 
+For example, to make the swc compile `.jsx` and `.tsx` files, do:
+
+```json
+{
+  "compilerOptions": {
+    "builder": {
+      "type": "swc",
+      "options": { "extensions": [".ts", ".tsx", ".js", ".jsx"] }
+    },
+  }
+}
+
+```
+
 To run the application in watch mode, use the following command:
 
 ```bash

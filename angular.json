@@ -9,12 +9,14 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "aot": true,
             "allowedCommonJsDependencies": ["prismjs"],
-            "outputPath": "dist",
-            "main": "src/main.ts",
+            "outputPath": {
+              "base": "dist",
+              "browser": ""
+            },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": ["zone.js"],
@@ -27,7 +29,8 @@
               "src/mstile-150x150.png",
               "src/_redirects"
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["src/styles.scss"],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -78,22 +81,7 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "karmaConfig": "./karma.conf.js",
-            "polyfills": ["zone.js"],
-            "tsConfig": "src/tsconfig.spec.json",
-            "styles": ["src/styles.scss"],
-            "assets": ["src/assets"]
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
-          }
+          "builder": "@angular/build:unit-test"
         }
       }
     }
@@ -101,10 +89,30 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "style": "scss"
+      "style": "scss",
+      "type": "component"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "app",
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   },
   "cli": {

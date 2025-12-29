@@ -148,13 +148,13 @@ $ npm i js-yaml
 $ npm i -D @types/js-yaml
 ```
 
-Once the package is installed, we use `yaml#load` function to load YAML file we just created above.
+Once the package is installed, we use the `yaml#load` function to load the YAML file we just created above.
 
 ```typescript
 @@filename(config/configuration)
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import * as yaml from 'js-yaml';
-import { join } from 'path';
 
 const YAML_CONFIG_FILENAME = 'config.yaml';
 

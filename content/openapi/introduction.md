@@ -37,7 +37,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> info **Hint** The factory method `SwaggerModule#createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
+> info **Hint** The factory method `SwaggerModule.createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
 
 The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
@@ -286,19 +286,20 @@ export interface SwaggerCustomOptions {
   urls?: Record<'url' | 'name', string>[];
 }
 ```
-> info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML).  Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.  
+
+> info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML). Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.
 >
 > For example, the following configuration will disable the Swagger UI but still allow access to API definitions:
+>
 > ```typescript
->const options: SwaggerCustomOptions = {
->    ui: false, // Swagger UI is disabled
->    raw: ['json'], // JSON API definition is still accessible (YAML is disabled)
->};
->SwaggerModule.setup('api', app, options);
+> const options: SwaggerCustomOptions = {
+>   ui: false, // Swagger UI is disabled
+>   raw: ['json'], // JSON API definition is still accessible (YAML is disabled)
+> };
+> SwaggerModule.setup('api', app, options);
 > ```
 >
 > In this case, http://localhost:3000/api-json will still be accessible, but http://localhost:3000/api (Swagger UI) will not.
-
 
 #### Example
 

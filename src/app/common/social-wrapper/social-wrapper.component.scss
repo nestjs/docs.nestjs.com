@@ -1,7 +1,7 @@
-@import '../../../scss/utils.scss';
+@use '../../../scss/utils';
 
 :host {
-  @include media(small) {
+  @include utils.media(small) {
     position: absolute;
     top: 50%;
     right: 20px;
@@ -41,7 +41,7 @@
     }
   }
 
-  @include media(small) {
+  @include utils.media(small) {
     top: 0;
     transform: none;
 
@@ -49,7 +49,7 @@
       display: none;
     }
   }
-  
+
   @media print {
     display: none;
   }

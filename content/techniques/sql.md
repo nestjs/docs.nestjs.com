@@ -113,7 +113,7 @@ export class User {
 }
 ```
 
-> info **Hint** Learn more about entities in the [TypeORM documentation](https://typeorm.io/#/entities).
+> info **Hint** Learn more about entities in the [TypeORM documentation](https://typeorm.io/docs/entity/entities/).
 
 The `User` entity file sits in the `users` directory. This directory contains all files related to the `UsersModule`. You can decide where to keep your model files, however, we recommend creating them near their **domain**, in the corresponding module directory.
 
@@ -296,7 +296,7 @@ export class User {
 }
 ```
 
-> info **Hint** To learn more about relations in TypeORM, visit the [TypeORM documentation](https://typeorm.io/#/relations).
+> info **Hint** To learn more about relations in TypeORM, visit the [TypeORM documentation](https://typeorm.io/docs/relations/relations).
 
 #### Auto-load entities
 
@@ -324,7 +324,7 @@ With that option specified, every entity registered through the `forFeature()` m
 
 #### Separating entity definition
 
-You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/#/separating-entity-definition).
+You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/docs/entity/separating-entity-definition).
 
 ```typescript
 import { EntitySchema } from 'typeorm';
@@ -383,7 +383,7 @@ export class UsersModule {}
 
 A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
 
-There are many different strategies to handle [TypeORM transactions](https://typeorm.io/#/transactions). We recommend using the `QueryRunner` class because it gives full control over the transaction.
+There are many different strategies to handle [TypeORM transactions](https://typeorm.io/docs/advanced-topics/transactions/). We recommend using the `QueryRunner` class because it gives full control over the transaction.
 
 First, we need to inject the `DataSource` object into a class in the normal way:
 
@@ -423,7 +423,7 @@ async createMany(users: User[]) {
 
 <app-banner-devtools></app-banner-devtools>
 
-Alternatively, you can use the callback-style approach with the `transaction` method of the `DataSource` object ([read more](https://typeorm.io/#/transactions/creating-and-using-transactions)).
+Alternatively, you can use the callback-style approach with the `transaction` method of the `DataSource` object ([read more](https://typeorm.io/docs/advanced-topics/transactions/#creating-and-using-transactions)).
 
 ```typescript
 async createMany(users: User[]) {
@@ -436,7 +436,7 @@ async createMany(users: User[]) {
 
 #### Subscribers
 
-With TypeORM [subscribers](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber), you can listen to specific entity events.
+With TypeORM [subscribers](https://typeorm.io/docs/advanced-topics/listeners-and-subscribers#what-is-a-subscriber), you can listen to specific entity events.
 
 ```typescript
 import {
@@ -483,13 +483,11 @@ import { UserSubscriber } from './user.subscriber';
 export class UsersModule {}
 ```
 
-> info **Hint** Learn more about entity subscribers [here](https://typeorm.io/#/listeners-and-subscribers/what-is-a-subscriber).
-
 #### Migrations
 
-[Migrations](https://typeorm.io/#/migrations) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/#/migrations/creating-a-new-migration).
+[Migrations](https://typeorm.io/docs/advanced-topics/migrations/) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/docs/advanced-topics/migrations/#creating-a-new-migration).
 
-Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the TypeORM CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [TypeORM documentation](https://typeorm.io/#/migrations/creating-a-new-migration).
+Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the TypeORM CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [TypeORM documentation](https://typeorm.io/docs/advanced-topics/migrations/).
 
 #### Multiple databases
 
@@ -938,7 +936,7 @@ export class UsersService {
 
 > warning **Notice** Don't forget to import the `UsersModule` into the root `AppModule`.
 
-If you want to use the repository outside of the module which imports `SequelizeModule.forFeature`, you'll need to re-export the providers generated by it.
+If you want to use the model outside of the module which imports `SequelizeModule.forFeature`, you'll need to re-export the providers generated by it.
 You can do this by exporting the whole module, like this:
 
 ```typescript

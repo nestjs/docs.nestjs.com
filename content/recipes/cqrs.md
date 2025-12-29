@@ -89,7 +89,9 @@ export class KillDragonCommand extends Command<{
   constructor(
     public readonly heroId: string,
     public readonly dragonId: string,
-  ) {}
+  ) {
+    super();
+  }
 }
 @@switch
 export class KillDragonCommand extends Command {
@@ -183,7 +185,7 @@ export class GetHeroHandler implements IQueryHandler<GetHeroQuery> {
   constructor(private repository: HeroesRepository) {}
 
   async execute(query: GetHeroQuery) {
-    return this.repository.findOneById(query.hero);
+    return this.repository.findOneById(query.heroId);
   }
 }
 @@switch

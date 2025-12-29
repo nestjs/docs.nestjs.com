@@ -78,7 +78,7 @@ Handlers often need access to the client’s **request** details. Nest provides 
 ```typescript
 @@filename(cats.controller)
 import { Controller, Get, Req } from '@nestjs/common';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 @Controller('cats')
 export class CatsController {
@@ -319,7 +319,7 @@ export class AdminController {
 
 > warning **Warning** Since **Fastify** does not support nested routers, if you are using sub-domain routing, it is recommended to use the default Express adapter instead.
 
-Similar to a route `path`, the `hosts` option can use tokens to capture the dynamic value at that position in the host name. The host parameter token in the `@Controller()` decorator example below demonstrates this usage. Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
+Similar to a route `path`, the `host` option can use tokens to capture the dynamic value at that position in the host name. The host parameter token in the `@Controller()` decorator example below demonstrates this usage. Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
 
 ```typescript
 @Controller({ host: ':account.example.com' })

@@ -2,7 +2,7 @@
 
 Terminus integration provides you with **readiness/liveness** health checks. Healthchecks are crucial when it comes to complex
 backend setups. In a nutshell, a health check in the realm of web development usually consists of a special address, for example, `https://my-website.com/health/readiness`.
-A service or a component of your infrastructure (e.g., [Kubernetes](https://kubernetes.io/) checks this address continuously. Depending on the HTTP status code returned from a `GET` request to this address the service will take action when it receives an "unhealthy" response.
+A service or a component of your infrastructure (e.g., [Kubernetes](https://kubernetes.io/) checks this address continuously). Depending on the HTTP status code returned from a `GET` request to this address the service will take action when it receives an "unhealthy" response.
 Since the definition of "healthy" or "unhealthy" varies with the type of service you provide, the **Terminus** integration supports you with a
 set of **health indicators**.
 
