@@ -242,6 +242,8 @@ export class AuthService {
     }
     const payload = { sub: user.userId, username: user.username };
     return {
+      // 💡 Here the JWT secret key that's used for signing the payload 
+      // is the key that was passsed in the JwtModule
       access_token: await this.jwtService.signAsync(payload),
     };
   }
@@ -266,6 +268,8 @@ export class AuthService {
     }
     const payload = { username: user.username, sub: user.userId };
     return {
+      // 💡 Here the JWT secret key that's used for signing the payload 
+      // is the key that was passsed in the JwtModule
       access_token: await this.jwtService.signAsync(payload),
     };
   }
@@ -368,7 +372,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { Request } from 'express';
 
 @Injectable()
@@ -382,12 +385,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: jwtConstants.secret
-        }
-      );
+      // 💡 Here the JWT secret key that's used for verifying the payload 
+      // is the key that was passsed in the JwtModule
+      const payload = await this.jwtService.verifyAsync(token);
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       request['user'] = payload;
@@ -524,9 +524,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
-      });
+      // 💡 Here the JWT secret key that's used for verifying the payload 
+      // is the key that was passsed in the JwtModule
+      const payload = await this.jwtService.verifyAsync(token);
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       request['user'] = payload;
