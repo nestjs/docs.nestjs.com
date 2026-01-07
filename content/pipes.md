@@ -333,7 +333,7 @@ async create(createCatDto) {
 The `ZodValidationPipe` can be applied to specific parameters and alongside built-in pipes. For example, where we want to validate the route path `id` parameter with the `ParseIntPipe` seperately from the request body:
 
 ```typescript
-@Post('/:id')
+@Put('/:id')
 async update(
   @Param('id', ParseIntPipe) id: number,
   @Body(new ZodValidationPipe(createCatSchema)) body: CreateCatDto
