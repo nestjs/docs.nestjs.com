@@ -330,6 +330,18 @@ async create(createCatDto) {
 
 > info **Hint** The `@UsePipes()` decorator is imported from the `@nestjs/common` package.
 
+The `ZodValidationPipe` can be applied to specific parameters and alongside built-in pipes. For example, where we want to validate the route path `id` parameter with the `ParseIntPipe` seperately from the request body:
+
+```typescript
+@Post('/:id')
+async update(
+  @Param('id', ParseIntPipe) id: number,
+  @Body(new ZodValidationPipe(createCatSchema)) body: CreateCatDto
+): void {
+  this.catsService.update(id, body);
+}
+```
+
 > warning **Warning** `zod` library requires the `strictNullChecks` configuration to be enabled in your `tsconfig.json` file.
 
 #### Class validator
