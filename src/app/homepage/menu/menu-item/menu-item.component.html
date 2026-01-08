@@ -1,90 +1,72 @@
 @if (children) {
-  <div
-    class="nav-item"
-    [class.opened]="isOpen"
-    >
-    <div class="heading" (click)="toggle()">
-      <h3>@if (isNew) {
-        <span class="new">NEW</span>
-      }{{ title }}</h3>
-      <svg
-        class="arrow-icon"
-        width="20"
-        height="20"
-        viewBox="0 0 1792 1792"
-        xmlns="http://www.w3.org/2000/svg"
-        >
-        <path
-          d="M1171 960q0 13-10 23l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23z"
-          />
-      </svg>
-    </div>
-    <ul [@openCloseAnimation]="isOpen" class="sub-nav">
+<div class="nav-item" [class.opened]="isOpen">
+  <div class="heading" (click)="toggle()">
+    <h3>@if (isNew) {
+      <span class="new">NEW</span>
+      }{{ title }}
+    </h3>
+    <svg class="arrow-icon" width="20" height="20" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M1171 960q0 13-10 23l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23z" />
+    </svg>
+  </div>
+  <div class="sub-nav-wrapper" [class.opened]="isOpen">
+    <ul class="sub-nav">
       @for (item of children; track item) {
-        <li>
-          @if (!item.externalUrl) {
-            <a
-              [class.pending]="item.isPending"
-              [routerLink]="item.path"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              >@if (item.icon) {
-              <i class="material-icons">
-                {{ item.icon }}
-              </i>
-            }
-            {{ item.title }}
-          </a>
-        }
-        @if (!!item.externalUrl) {
-          <a
-            href="{{ item.externalUrl }}"
-            target="_blank"
-            >@if (item.icon) {
-            <i class="material-icons">
-              {{ item.icon }}
-            </i>
+      <li>
+        @if (!item.externalUrl) {
+        <a [class.pending]="item.isPending" [routerLink]="item.path" routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">@if (item.icon) {
+          <i class="material-icons">
+            {{ item.icon }}
+          </i>
           }
           {{ item.title }}
         </a>
+        }
+        @if (!!item.externalUrl) {
+        <a href="{{ item.externalUrl }}" target="_blank">@if (item.icon) {
+          <i class="material-icons">
+            {{ item.icon }}
+          </i>
+          }
+          {{ item.title }}
+        </a>
+        }
+      </li>
       }
-    </li>
-  }
-</ul>
+    </ul>
+  </div>
 </div>
 } @else {
-  <div class="heading">
-    @if (!externalUrl) {
-      <a
-        [routerLink]="path"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        [class.has-icon]="icon"
-        ><h3>
-        @if (icon) {
-          <i class="material-icons">
-            {{ icon }}
-          </i>
-        }
-        @if (isNew) {
-          <span class="new">NEW</span>
-          }{{ title }}
-        </h3></a
-        >
+<div class="heading">
+  @if (!externalUrl) {
+  <a [routerLink]="path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [class.has-icon]="icon">
+    <h3>
+      @if (icon) {
+      <i class="material-icons">
+        {{ icon }}
+      </i>
       }
-      @if (!!externalUrl) {
-        <a href="{{ externalUrl }}" target="_blank"
-          ><h3>
-          @if (icon) {
-            <i class="material-icons">
-              {{ icon }}
-            </i>
-          }
-          @if (isNew) {
-            <span class="new">NEW</span>
-            }{{ title }}
-          </h3>
-        </a>
-      }
-    </div>
+      @if (isNew) {
+      <span class="new">NEW</span>
+      }{{ title }}
+    </h3>
+  </a>
   }
+  @if (!!externalUrl) {
+  <a href="{{ externalUrl }}" target="_blank">
+    <h3>
+      @if (icon) {
+      <i class="material-icons">
+        {{ icon }}
+      </i>
+      }
+      @if (isNew) {
+      <span class="new">NEW</span>
+      }{{ title }}
+    </h3>
+  </a>
+  }
+</div>
+}
