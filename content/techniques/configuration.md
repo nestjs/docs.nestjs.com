@@ -196,6 +196,8 @@ To access configuration values from our `ConfigService`, we first need to inject
 
 ```typescript
 @@filename(feature.module)
+import { ConfigModule } from '@nestjs/config';
+
 @Module({
   imports: [ConfigModule],
   // ...
