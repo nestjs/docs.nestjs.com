@@ -12,7 +12,7 @@ h3 {
   font-weight: bold;
   color: var(--color-1dp);
   font-size: 15px;
-  margin: 10px 0;
+  margin: 4px 0;
   &:hover {
     color: variables.$red-color;
     @include utils.text-gradient();
@@ -87,12 +87,14 @@ li {
 
   .arrow-icon {
     fill: var(--color);
+    position: absolute;
+    top: 4px;
   }
   &.opened {
     .arrow-icon {
       @include utils.transform(rotate(-90deg));
       fill: var(--primary);
-      
+      margin: 1px;
     }
   }
 }
@@ -120,4 +122,24 @@ ul {
 .has-icon h3 {
   color: variables.$red-color;
   @include utils.text-gradient();
+}
+
+.sub-nav-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms ease-out, visibility 250ms;
+  overflow: hidden;
+  visibility: hidden;
+
+  &.opened {
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+
+  .sub-nav {
+    min-height: 0;
+    margin: 0;
+    padding: 1px 14px;
+    list-style: none;
+  }
 }

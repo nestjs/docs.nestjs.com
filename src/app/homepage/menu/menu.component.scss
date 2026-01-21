@@ -5,7 +5,7 @@
   @extend .transition;
   @extend .box-sizing;
   @include utils.transform(translateX(-100%));
-  
+
   padding: 90px 17px 40px 24px;
   width: 250px;
   background: var(--menu-background);
@@ -18,18 +18,22 @@
   &.opened {
     @include utils.transform(translateX(0));
   }
-  @include  utils.media(large) {
+
+  @include utils.media(large) {
     width: 250px;
   }
+
   @include utils.media(normal) {
     &.opened {
       z-index: 1000;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
   }
+
   @include utils.media(medium) {
     padding: 85px 25px 20px 25px;
   }
+
   @include utils.media(small) {
     width: 100%;
   }
@@ -41,8 +45,8 @@
 
 .nav-item {
   margin: 0 -10px;
-  padding: 0 10px;
-  // border-bottom: 1px solid #efefef;
+  padding: 1px 10px;
+
   &:last-of-type {
     border: 0;
   }
