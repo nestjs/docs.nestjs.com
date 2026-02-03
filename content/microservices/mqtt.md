@@ -143,7 +143,36 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-If a topic specific QoS is required, consider creating a [Custom transporter](https://docs.nestjs.com/microservices/custom-transport).
+##### Per-pattern QoS
+
+You can override the MQTT subscription QoS on a per-pattern basis by providing `qos` in the `extras` field of the pattern decorator. When not specified, the global `subscribeOptions.qos` is used as the default.
+
+```typescript
+@@filename()
+@EventPattern('critical-events', { extras: { qos: 2 } })
+handleCriticalEvent(@Payload() data: any) {
+  // This subscription uses QoS 2
+}
+
+@EventPattern('metrics', { extras: { qos: 0 } })
+handleMetrics(@Payload() data: any) {
+  // This subscription uses QoS 0
+}
+@@switch
+@Bind(Payload())
+@EventPattern('critical-events', { extras: { qos: 2 } })
+handleCriticalEvent(data) {
+  // This subscription uses QoS 2
+}
+
+@Bind(Payload())
+@EventPattern('metrics', { extras: { qos: 0 } })
+handleMetrics(data) {
+  // This subscription uses QoS 0
+}
+```
+
+> info **Hint** Per-pattern QoS configuration does not affect existing behavior. When `extras.qos` is not specified, the subscription uses the global `subscribeOptions.qos` value.
 
 #### Record builders
 
