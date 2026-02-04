@@ -143,7 +143,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
-##### Per-pattern QoS
+#### Per-pattern QoS
 
 You can override the MQTT subscription QoS on a per-pattern basis by providing `qos` in the `extras` field of the pattern decorator. When not specified, the global `subscribeOptions.qos` is used as the default.
 
