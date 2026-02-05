@@ -53,7 +53,7 @@
     "@eslint/js": "9.25.1",
     "@types/lodash": "4.17.16",
     "@types/marked": "6.0.0",
-    "@types/node": "22.15.3",
+    "@types/node": "24.10.11",
     "@types/prismjs": "1.26.5",
     "@types/rimraf": "4.0.5",
     "angular-eslint": "^21.1.0",
