@@ -36,6 +36,8 @@ await app.listen(process.env.PORT ?? 3000);
 
 Values in the array can be any combination of `'log'`, `'fatal'`, `'error'`, `'warn'`, `'debug'`, and `'verbose'`.
 
+> info **Hint** Log levels in Nest are cascading (inherited). This means that providing a specific log level (like `'log'`) will automatically include all higher-severity levels (e.g., `'warn'`, `'error'`, and `'fatal'`).
+
 To disable colorized output, pass the `ConsoleLogger` object with the `colors` property set to `false` as the value of the `logger` property.
 
 ```typescript
