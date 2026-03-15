@@ -579,11 +579,11 @@ Example folder structure:
 ```
 cats/
 ├── cats.controller.ts
-├── dto/
-│   ├── create-cat.dto.ts
-│   ├── update-cat.dto.ts
-│   ├── list-all-entities.dto.ts
-│   └── index.ts
+└── dto/
+    ├── create-cat.dto.ts
+    ├── update-cat.dto.ts
+    ├── list-all-entities.dto.ts
+    └── index.ts
 ```
 
 This structure allows importing all DTOs from a single location:
