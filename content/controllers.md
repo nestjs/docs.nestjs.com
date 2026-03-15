@@ -543,38 +543,28 @@ import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 
 Below is an example implementation of these DTO classes.
 
-**create-cat.dto.ts**
-
 ```typescript
+// create-cat.dto.ts
 export class CreateCatDto {
   name: string;
   age: number;
   breed: string;
 }
-```
 
-**update-cat.dto.ts**
-
-```typescript
+// update-cat.dto.ts
 export class UpdateCatDto {
   name?: string;
   age?: number;
   breed?: string;
 }
-```
 
-**list-all-entities.dto.ts**
-
-```typescript
+// list-all-entities.dto.ts
 export class ListAllEntities {
   limit?: number;
   offset?: number;
 }
-```
 
-Optionally, you can create an `index.ts` file inside the `dto` directory to simplify imports.
-
-```typescript
+// dto/index.ts
 export * from './create-cat.dto';
 export * from './update-cat.dto';
 export * from './list-all-entities.dto';
