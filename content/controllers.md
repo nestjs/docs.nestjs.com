@@ -544,27 +544,31 @@ import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 Below is an example implementation of these DTO classes.
 
 ```typescript
-// create-cat.dto.ts
+@@filename(create-cat.dto)
 export class CreateCatDto {
   name: string;
   age: number;
   breed: string;
 }
 
-// update-cat.dto.ts
+@@filename(update-cat.dto)
 export class UpdateCatDto {
   name?: string;
   age?: number;
   breed?: string;
 }
 
-// list-all-entities.dto.ts
+@@filename(list-all-entities.dto)
 export class ListAllEntities {
   limit?: number;
   offset?: number;
 }
+```
 
-// dto/index.ts
+To simplify imports, you can create an `index.ts` file within the `dto` folder to export all DTOs:
+
+```typescript
+@@filename(index)
 export * from './create-cat.dto';
 export * from './update-cat.dto';
 export * from './list-all-entities.dto';
@@ -585,10 +589,11 @@ cats/
 This structure allows importing all DTOs from a single location:
 
 ```typescript
+@@filename(cats.controller)
 import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 ```
 
-> **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](https://docs.nestjs.com/recipes/crud-generator#crud-generator).
+> **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](/recipes/crud).
 
 #### Getting up and running
 
