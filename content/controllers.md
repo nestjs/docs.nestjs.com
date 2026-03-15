@@ -543,7 +543,7 @@ import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 
 Below is an example implementation of these DTO classes.
 
-##### create-cat.dto.ts
+**create-cat.dto.ts**
 
 ```typescript
 export class CreateCatDto {
@@ -553,7 +553,7 @@ export class CreateCatDto {
 }
 ```
 
-##### update-cat.dto.ts
+**update-cat.dto.ts**
 
 ```typescript
 export class UpdateCatDto {
@@ -563,7 +563,7 @@ export class UpdateCatDto {
 }
 ```
 
-##### list-all-entities.dto.ts
+**list-all-entities.dto.ts**
 
 ```typescript
 export class ListAllEntities {
