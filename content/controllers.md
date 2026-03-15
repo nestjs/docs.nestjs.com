@@ -598,7 +598,7 @@ This structure allows importing all DTOs from a single location:
 import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 ```
 
-> info **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](/recipes/crud-generator).
+> **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](/recipes/crud).
 
 #### Getting up and running
 
