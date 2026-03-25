@@ -53,6 +53,8 @@ $ npm install --save-dev @suites/unit @suites/di.nestjs @suites/doubles.sinon
 
 </details>
 
+> info **Hint** Make sure to have `"emitDecoratorMetadata": true` in your tsconfig `compilerOptions` (nestJS standard) 
+
 #### Set up type definitions
 
 Create `global.d.ts` at your project root:
