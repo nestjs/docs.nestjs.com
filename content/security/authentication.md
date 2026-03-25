@@ -243,7 +243,7 @@ export class AuthService {
     const payload = { sub: user.userId, username: user.username };
     return {
       // 💡 Here the JWT secret key that's used for signing the payload 
-      // is the key that was passsed in the JwtModule
+      // is the key that was passed in the JwtModule
       access_token: await this.jwtService.signAsync(payload),
     };
   }
@@ -269,7 +269,7 @@ export class AuthService {
     const payload = { username: user.username, sub: user.userId };
     return {
       // 💡 Here the JWT secret key that's used for signing the payload 
-      // is the key that was passsed in the JwtModule
+      // is the key that was passed in the JwtModule
       access_token: await this.jwtService.signAsync(payload),
     };
   }
@@ -386,7 +386,7 @@ export class AuthGuard implements CanActivate {
     }
     try {
       // 💡 Here the JWT secret key that's used for verifying the payload 
-      // is the key that was passsed in the JwtModule
+      // is the key that was passed in the JwtModule
       const payload = await this.jwtService.verifyAsync(token);
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
@@ -525,7 +525,7 @@ export class AuthGuard implements CanActivate {
     }
     try {
       // 💡 Here the JWT secret key that's used for verifying the payload 
-      // is the key that was passsed in the JwtModule
+      // is the key that was passed in the JwtModule
       const payload = await this.jwtService.verifyAsync(token);
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
