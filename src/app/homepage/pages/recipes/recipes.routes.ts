@@ -19,6 +19,7 @@ import { SuitesComponent } from './suites/suites.component';
 import { SwcComponent } from './swc/swc.component';
 import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
+import { FileStorageComponent } from './file-storage/file-storage.component';
 
 export const RECIPES_ROUTES: Routes = [
   {
@@ -136,5 +137,10 @@ export const RECIPES_ROUTES: Routes = [
     path: 'passport',
     component: PassportComponent,
     data: { title: 'passport' },
+  },
+  {
+    path: 'file-storage',
+    component: FileStorageComponent,
+    data: { title: 'File Storage' },
   },
 ];
