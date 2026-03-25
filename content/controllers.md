@@ -533,7 +533,67 @@ export class CatsController {
 }
 ```
 
-> info **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](/recipes/crud-generator).
+#### DTO definitions used in the full example
+
+In the **Full resource sample** below, the controller imports several DTO classes:
+
+```typescript
+import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
+```
+
+Below is an example implementation of these DTO classes.
+
+```typescript
+@@filename(create-cat.dto)
+export class CreateCatDto {
+  name: string;
+  age: number;
+  breed: string;
+}
+
+@@filename(update-cat.dto)
+export class UpdateCatDto {
+  name?: string;
+  age?: number;
+  breed?: string;
+}
+
+@@filename(list-all-entities.dto)
+export class ListAllEntities {
+  limit?: number;
+  offset?: number;
+}
+```
+
+To simplify imports, you can create an `index.ts` file within the `dto` folder to export all DTOs:
+
+```typescript
+@@filename(index)
+export * from './create-cat.dto';
+export * from './update-cat.dto';
+export * from './list-all-entities.dto';
+```
+
+Example folder structure:
+
+```
+cats/
+├── cats.controller.ts
+└── dto/
+    ├── create-cat.dto.ts
+    ├── update-cat.dto.ts
+    ├── list-all-entities.dto.ts
+    └── index.ts
+```
+
+This structure allows importing all DTOs from a single location:
+
+```typescript
+@@filename(cats.controller)
+import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
+```
+
+> **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](/recipes/crud).
 
 #### Getting up and running
 
