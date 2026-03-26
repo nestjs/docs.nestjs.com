@@ -85,14 +85,14 @@ owner: Owner;
 In case there are multiple owners, your property configuration should look as follows:
 
 ```typescript
-@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' }] })
+@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId }], ref: 'Owner' })
 owners: Owner[];
 ```
 
 If you don’t intend to always populate a reference to another collection, consider using `mongoose.Types.ObjectId` as the type instead:
 
 ```typescript
-@Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Owner' } })
+@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
 // This ensures the field is not confused with a populated reference
 owner: mongoose.Types.ObjectId;
 ```
