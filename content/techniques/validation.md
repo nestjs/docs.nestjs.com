@@ -31,6 +31,7 @@ export interface ValidationPipeOptions extends ValidatorOptions {
   transform?: boolean;
   disableErrorMessages?: boolean;
   exceptionFactory?: (errors: ValidationError[]) => any;
+  errorFormat?: 'list' | 'grouped';
 }
 ```
 
@@ -128,6 +129,11 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>stopAtFirstError</code></td>
     <td><code>boolean</code></td>
     <td>When set to true, validation of the given property will stop after encountering the first error. Defaults to false.</td>
+  </tr>
+  <tr>
+    <td><code>errorFormat</code></td>
+    <td><code>'list' | 'grouped'</code></td>
+    <td>Specifies the format of validation error messages. <code>'list'</code> (default) returns an array of error message strings. <code>'grouped'</code> returns an object with property paths as keys and arrays of unmodified error messages as values, preserving custom validation messages without prepending parent path prefixes.</td>
   </tr>
 </table>
 
