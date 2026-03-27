@@ -131,7 +131,7 @@ export abstract class FileValidator<TValidationOptions = Record<string, any>> {
 `FileValidator` is a regular class that has access to the file object and validates it according to the options provided by the client. Nest has two built-in `FileValidator` implementations you can use in your project:
 
 - `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
-- `FileTypeValidator` - Checks if a given file's mime-type matches a given string or RegExp.  By default, validates the mime-type using file content [magic number](https://www.ibm.com/support/pages/what-magic-number)
+- `FileTypeValidator` - Checks if a given file's mime-type matches a given string or RegExp. By default, validates the mime-type using file content [magic number](https://www.ibm.com/support/pages/what-magic-number)
 
 To understand how these can be used in conjunction with the aforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
 
@@ -341,6 +341,52 @@ MulterModule.registerAsync({
 ```
 
 This is useful when you want to provide additional dependencies to the factory function or the class constructor.
+
+#### Memory management
+
+By default, Multer uses **MemoryStorage**, which loads the entire uploaded file into a `Buffer` in RAM before your handler receives it. This is convenient for small files but introduces a significant risk for larger uploads: a single 1GB file consumes 1GB of RAM, and under concurrent load this multiplies per request.
+
+> warning **Warning** With the default `MemoryStorage` engine, every uploaded file is fully buffered in RAM. If your application accepts large files or handles concurrent uploads, switch to `DiskStorage` to avoid out-of-memory errors.
+
+To stream files directly to disk rather than buffering them in memory, configure `MulterModule` with `diskStorage`:
+
+```typescript
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+
+MulterModule.register({
+  storage: diskStorage({
+    destination: './uploads',
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(
+        null,
+        `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+      );
+    },
+  }),
+});
+```
+
+With `DiskStorage`, files are written to disk as they are received. The resulting `Express.Multer.File` object exposes `path` and `destination` properties instead of a `buffer`.
+
+When deciding which storage engine to use, consider the following trade-offs:
+
+- **MemoryStorage** - suited for small files that require immediate in-process handling (e.g., generating a hash, resizing an image before forwarding to a cloud provider). Always pair it with a `fileSize` limit to prevent memory exhaustion.
+- **DiskStorage** - suited for large files or high-concurrency workloads where loading the full file into RAM is not acceptable.
+
+To restrict upload size when using `MemoryStorage`, pass a `limits` option:
+
+```typescript
+import { memoryStorage } from 'multer';
+
+MulterModule.register({
+  storage: memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+});
+```
+
+> info **Hint** The `limits.fileSize` value is measured in bytes. Multer will reject files exceeding this limit with a `LIMIT_FILE_SIZE` error, which Nest surfaces as a `PayloadTooLargeException`.
 
 #### Example
 
