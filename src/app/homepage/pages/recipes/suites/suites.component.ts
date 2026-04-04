@@ -4,6 +4,7 @@ import { HeaderAnchorDirective } from '../../../../shared/directives/header-anch
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-suites',
@@ -15,6 +16,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         CopyButtonComponent,
         TabsComponent,
         ExtensionPipe,
+        RouterLink
     ],
 })
 export class SuitesComponent extends BasePageComponent {}
