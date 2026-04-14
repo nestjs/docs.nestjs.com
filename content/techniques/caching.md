@@ -238,7 +238,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import KeyvRedis from '@keyv/redis';
 import { Keyv } from 'keyv';
-import { CacheableMemory } from 'cacheable';
+import { KeyvCacheableMemory } from 'cacheable';
 
 @Module({
   imports: [
@@ -247,7 +247,7 @@ import { CacheableMemory } from 'cacheable';
         return {
           stores: [
             new Keyv({
-              store: new CacheableMemory({ ttl: 60000, lruSize: 5000 }),
+              store: new KeyvCacheableMemory({ ttl: 60000, lruSize: 5000 }),
             }),
             new KeyvRedis('redis://localhost:6379'),
           ],
@@ -260,7 +260,7 @@ import { CacheableMemory } from 'cacheable';
 export class AppModule {}
 ```
 
-In this example, we've registered two stores: `CacheableMemory` and `KeyvRedis`. The `CacheableMemory` store is a simple in-memory store, while `KeyvRedis` is a Redis store. The `stores` array is used to specify the stores you want to use. The first store in the array is the default store, and the rest are fallback stores.
+In this example, we've registered two stores: `CacheableMemory` and `KeyvRedis`. The `CacheableMemory` store is a simple in-memory store, which is created via the `KeyvCacheableMemory` storage adapter, while `KeyvRedis` is a Redis store. The `stores` array is used to specify the stores you want to use. The first store in the array is the default store, and the rest are fallback stores.
 
 Check out the [Keyv documentation](https://keyv.org/docs/) for more information on available stores.
 
