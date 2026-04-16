@@ -191,6 +191,7 @@ These properties specify the compiler to use as well as various options that aff
 | `deleteOutDir`      | boolean             | If `true`, whenever the compiler is invoked, it will first remove the compilation output directory (as configured in `tsconfig.json`, where the default is `./dist`).                                                                                                     |
 | `assets`            | array               | Enables automatically distributing non-TypeScript assets whenever a compilation step begins (asset distribution does **not** happen on incremental compiles in `--watch` mode). See below for details.                                                                    |
 | `watchAssets`       | boolean             | If `true`, run in watch-mode, watching **all** non-TypeScript assets. (For more fine-grained control of the assets to watch, see [Assets](cli/monorepo#assets) section below).                                                                                            |
+| `includeLibraryAssets` | array            | (**monorepo only**) An array of library project names whose assets should also be copied into the application's output during build. See [Including library assets](cli/monorepo#including-library-assets) below for details.                                              |
 | `manualRestart`     | boolean             | If `true`, enables the shortcut `rs` to manually restart the server. Default value is `false`.                                                                                                                                                                            |
 | `builder`           | string/object       | Instructs CLI on what `builder` to use to compile the project (`tsc`, `swc`, or `webpack`). To customize builder's behavior, you can pass an object containing two attributes: `type` (`tsc`, `swc`, or `webpack`) and `options`.                                         |
 | `typeCheck`         | boolean             | If `true`, enables type checking for SWC-driven projects (when `builder` is `swc`). Default value is `false`.                                                                                                                                                             |
@@ -330,6 +331,23 @@ For example:
 ```
 
 > warning **Warning** Setting `watchAssets` in a top-level `compilerOptions` property overrides any `watchAssets` settings within the `assets` property.
+
+#### Including library assets
+
+In a monorepo, libraries can declare their own `compilerOptions.assets` to ship non-TypeScript files (such as `.graphql`, `.proto`, or `.hbs` templates) alongside their compiled output. By default, however, those assets are **not** copied when an application that consumes the library is built — only the application's own `assets` entries are processed.
+
+The `includeLibraryAssets` option closes that gap. It accepts an array of library project names; during the application's build, the assets declared under each listed library's `compilerOptions.assets` are resolved relative to that library's `sourceRoot` and copied into the application's output directory.
+
+```typescript
+"compilerOptions": {
+  "assets": ["**/*.graphql"],
+  "includeLibraryAssets": ["common", "shared-schemas"]
+}
+```
+
+In the example above, building the application will distribute its own `.graphql` files **and** every asset declared by the `common` and `shared-schemas` libraries.
+
+> info **Hint** Library names that are not present in `projects` and libraries that do not declare any `compilerOptions.assets` are silently skipped, so it is safe to list optional libraries.
 
 #### Project properties
 
