@@ -35,6 +35,7 @@ Creates and initializes a new Nest project. Prompts for package manager.
 | `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                                                                                                        |
 | `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`                                                                                      |
 | `--strict`                            | Start the project with the following TypeScript compiler flags enabled: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
+| `--format`                            | Format generated files using Prettier before writing them to disk. Off by default; Prettier must be available in the project.                                                                        |
 
 #### nest generate
 
@@ -84,6 +85,7 @@ $ nest g <schematic> <name> [options]
 | `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c` |
 | `--spec`                        | Enforce spec files generation (default)                                                                         |
 | `--no-spec`                     | Disable spec files generation                                                                                   |
+| `--format`                      | Format generated files using Prettier before writing them to disk. Off by default; Prettier must be available in the project. |
 
 #### nest build
 
