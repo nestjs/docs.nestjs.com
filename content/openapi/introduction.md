@@ -80,7 +80,7 @@ As you can see, the `SwaggerModule` automatically reflects all of your endpoints
 >       defaultSrc: [`'self'`],
 >       styleSrc: [`'self'`, `'unsafe-inline'`],
 >       imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
->       scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+>       scriptSrc: [`'self'`, `https:`, `'unsafe-inline'`],
 >     },
 >   },
 > });
