@@ -15,6 +15,7 @@ Once the installation is complete, the `ThrottlerModule` can be configured as an
      ThrottlerModule.forRoot({
       throttlers: [
         {
+          name: 'default',
           ttl: 60000,
           limit: 10,
         },
