@@ -365,6 +365,41 @@ GraphQLModule.forRoot({
 }),
 ```
 
+In the **code first** approach, the `include` option only filters which modules are scanned for resolvers — types decorated with `@ObjectType()`, `@InputType()`, `@InterfaceType()`, `@ArgsType()`, or registered through `registerEnumType()` / `createUnionType()` are still included in every generated schema. To restrict a type to a specific module, set the `registerIn` option on the type:
+
+```typescript
+@ObjectType({ registerIn: () => CatsModule })
+export class Cat {
+  @Field()
+  name: string;
+}
+```
+
+When the schema is built with `include: [CatsModule]`, types tagged with `registerIn: () => CatsModule` are included; types tagged with another module are excluded. Types **without** `registerIn` keep the existing default behavior and are available in every schema that references them.
+
+The same option is supported on `@InputType()`, `@InterfaceType()`, `@ArgsType()`, `registerEnumType()`, and `createUnionType()`:
+
+```typescript
+@InputType({ registerIn: () => CatsModule })
+export class CreateCatInput {
+  @Field()
+  name: string;
+}
+
+registerEnumType(CatBreed, {
+  name: 'CatBreed',
+  registerIn: () => CatsModule,
+});
+
+export const CatsUnion = createUnionType({
+  name: 'CatsUnion',
+  types: () => [Lion, Tiger] as const,
+  registerIn: () => CatsModule,
+});
+```
+
+> info **Hint** `registerIn` accepts either a module class directly or a factory function returning the class. The factory form (`() => CatsModule`) is recommended when the type and module reference each other, since it defers module resolution and avoids temporal dead zone errors from circular imports.
+
 > warning **Warning** If you use the `@apollo/server` with `@as-integrations/fastify` package with multiple GraphQL endpoints in a single application, make sure to enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
 
 #### Third-party integrations
