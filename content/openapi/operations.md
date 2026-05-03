@@ -12,6 +12,38 @@ To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 export class CatsController {}
 ```
 
+Starting with OpenAPI 3.2, tags support a hierarchy via the `parent` and `kind` fields. You can define
+the hierarchy at the document level using `DocumentBuilder.addTag()`:
+
+```typescript
+const config = new DocumentBuilder()
+  .addTag('Animals', 'All animal operations')
+  .addTag('Cats', 'Cat operations', undefined, { parent: 'Animals' })
+  .addTag('Dogs', 'Dog operations', undefined, { parent: 'Animals', kind: 'navigation' })
+  .build();
+```
+
+`@ApiTags` also accepts an object form so controllers can reference a hierarchical tag:
+
+```typescript
+@ApiTags({ name: 'Cats', parent: 'Animals' })
+@Controller('cats')
+export class CatsController {}
+```
+
+String and object forms can be mixed:
+
+```typescript
+@ApiTags('Dogs', { name: 'Puppies', parent: 'Dogs' })
+@Controller('puppies')
+export class PuppiesController {}
+```
+
+> info **Hint** The `parent` and `kind` fields are part of the OpenAPI 3.2 specification. Tools that only
+support OpenAPI 3.0/3.1 will ignore them, so this is fully backward compatible. Hierarchy info is only
+meaningful at the document level. At the operation level, only tag names are emitted per the OpenAPI
+spec.
+
 #### Headers
 
 To define custom headers that are expected as part of the request, use `@ApiHeader()`.
