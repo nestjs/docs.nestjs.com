@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build:prod"
+  publish = "dist"
+
+[functions]
+  included_files = ["content/**/*.md"]
+
+[[redirects]]
+  from = "/mcp"
+  to = "/.netlify/functions/mcp"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

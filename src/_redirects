@@ -1,3 +1,4 @@
 # src/_redirects
 
-/*  /index.html 200
+/mcp  /.netlify/functions/mcp  200
+/*    /index.html              200
