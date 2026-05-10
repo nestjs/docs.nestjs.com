@@ -1,4 +1,5 @@
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
+import { versionedUrlRedirect } from './shared/utils/versioned-redirect';
 import { HomepageComponent } from './homepage/homepage.component';
 import { ApplicationContextComponent } from './homepage/pages/application-context/application-context.component';
 import { ComponentsComponent } from './homepage/pages/components/components.component';
@@ -186,7 +187,7 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
+  { path: '**', redirectTo: versionedUrlRedirect },
 ];
 
 export const RoutingModule = RouterModule.forRoot(routes, {
