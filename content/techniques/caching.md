@@ -40,7 +40,7 @@ constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
 > info **Hint** The `Cache` class and the `CACHE_MANAGER` token are both imported from the `@nestjs/cache-manager` package.
 
-The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `null` will be returned.
+The `get` method on the `Cache` instance (from the `cache-manager` package) is used to retrieve items from the cache. If the item does not exist in the cache, `undefined` will be returned (in `cache-manager` v6 and earlier, `null` was returned instead). Treat both as falsy when migrating.
 
 ```typescript
 const value = await this.cacheManager.get('key');
