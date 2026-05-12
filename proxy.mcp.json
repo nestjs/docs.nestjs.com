@@ -1,8 +1,0 @@
-{
-  "/mcp": {
-    "target": "http://127.0.0.1:3000",
-    "secure": true,
-    "changeOrigin": true,
-    "logLevel": "info"
-  }
-}

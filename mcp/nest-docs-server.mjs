@@ -7,6 +7,7 @@ import {
   readDocFile,
   searchDocs,
 } from './docs-index.mjs';
+import { executeVfsCommand } from './vfs-executor.mjs';
 
 const index = createDocsIndex();
 
@@ -99,7 +100,39 @@ async function createNestDocsMcpServer() {
         path: z.string().min(1).describe('A content/**/*.md path returned by list_docs or search_docs.'),
       },
     },
-    async ({ path }) => text(await readDocFile(idx, path)),
+    async ({ path }) => {
+      try {
+        const content = await readDocFile(idx, path);
+        return text(content);
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: `Error reading doc: ${error.message}` }],
+          isError: true,
+        };
+      }
+    },
+  );
+
+  server.registerTool(
+    'query_docs_filesystem',
+    {
+      title: 'Query NestJS Docs Filesystem',
+      description: 'Run read-only shell commands against the documentation filesystem (root is content/). Supported: ls, tree, find, stat, cat, head, tail, grep, rg, sed, awk, jq, cut, sort, uniq, wc.',
+      inputSchema: {
+        command: z.string().min(1).describe('The command to run (e.g., "ls -R", "grep -r NestJS .").'),
+      },
+    },
+    async ({ command }) => {
+      try {
+        const output = await executeVfsCommand(command, idx.contentDir);
+        return jsonText(output);
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: `Error: ${error.message}` }],
+          isError: true,
+        };
+      }
+    },
   );
 
   return server;
