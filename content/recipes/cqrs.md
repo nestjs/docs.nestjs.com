@@ -307,7 +307,7 @@ export class KillDragonHandler {
 }
 ```
 
-The `EventPublisher#mergeObjectContext` method merges the event publisher into the provided object, which means that the object will now be able to publish events to the events stream.
+The `EventPublisher#mergeObjectContext` method merges the event publisher into the provided object. This object must implement the `IAggregateRoot` interface (or extend the `AggregateRoot` class). Once merged, the object will be able to publish events to the events stream.
 
 Notice that in this example we also call the `commit()` method on the model. This method is used to dispatch any outstanding events. To automatically dispatch events, we can set the `autoCommit` property to `true`:
 
@@ -329,7 +329,104 @@ const hero = new HeroModel('id'); // <-- HeroModel is a class
 
 Now every instance of the `HeroModel` class will be able to publish events without using `mergeObjectContext()` method.
 
-Additionally, we can emit events manually using `EventBus`:
+#### Flexible Aggregate Roots
+
+The `AggregateRoot` class is a concrete implementation that you can extend to add event-driven capabilities to your domain models. However, this approach requires domain entities to directly extend `AggregateRoot`, which can be a limitation if your applications already have an established entity inheritance hierarchy (e.g., a base `Entity` class or domain-specific base classes like `Monster`, `Vehicle`, etc.).
+
+To provide more flexibility, the `@nestjs/cqrs` package offers three different approaches to implementing aggregate roots:
+
+**Approach 1: Traditional (Class Inheritance)**
+
+This is the standard approach shown in the previous examples. It works perfectly for simple scenarios or greenfield projects.
+
+```typescript
+export class Hero extends AggregateRoot {
+  constructor(private id: string) {
+    super();
+  }
+
+  killEnemy(enemyId: string) {
+    this.apply(new HeroKilledDragonEvent(this.id, enemyId));
+  }
+}
+```
+
+**Approach 2: Mixin (For existing hierarchies)**
+
+If you already have a base class and cannot extend `AggregateRoot` directly, you can use the `WithAggregateRoot<EventBase, TBase>()` mixin function. This allows you to apply aggregate root behavior to any existing base class.
+
+```typescript
+@@filename(dragon.model)
+abstract class Monster {
+  constructor(protected readonly id: string) {}
+  abstract roar(): void;
+}
+
+export class Dragon extends WithAggregateRoot(Monster) {
+  roar(): void {
+    console.log('Roarrrr!');
+  }
+
+  die(): void {
+    this.roar();
+    this.apply(new DragonDiedEvent(this.id)); // Now available via mixin!
+  }
+}
+@@switch
+abstract class Monster {
+  constructor(id) {
+    this.id = id;
+  }
+}
+
+export class Dragon extends WithAggregateRoot(Monster) {
+  roar() {
+    console.log('Roarrrr!');
+  }
+
+  die() {
+    this.roar();
+    this.apply(new DragonDiedEvent(this.id));
+  }
+}
+```
+
+**Approach 3: Custom Implementation**
+
+For maximum control, or if you want to keep your domain layer completely framework-agnostic, you can implement the `IAggregateRoot` interface directly. The `EventPublisher` accepts any object that implements this interface.
+
+```typescript
+export class CustomEntity implements IAggregateRoot {
+  private events: IEvent[] = [];
+
+  getUncommittedEvents() {
+    return this.events;
+  }
+
+  publish(event: IEvent) {
+    // custom logic
+  }
+
+  commit() {
+    // custom logic
+  }
+
+  uncommit() {
+    // custom logic
+  }
+
+  apply(event: IEvent) {
+    this.events.push(event);
+  }
+
+  loadFromHistory(history: IEvent[]) {
+    // custom logic
+  }
+}
+```
+
+All three approaches work seamlessly with `EventPublisher`, which accepts any object implementing the `IAggregateRoot` interface.
+#### Manual event publishing
 
 ```typescript
 this.eventBus.publish(new HeroKilledDragonEvent());
