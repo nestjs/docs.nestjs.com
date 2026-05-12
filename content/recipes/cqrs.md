@@ -426,9 +426,6 @@ export class CustomEntity implements IAggregateRoot {
 ```
 
 All three approaches work seamlessly with `EventPublisher`, which accepts any object implementing the `IAggregateRoot` interface.
-
----
-
 #### Manual event publishing
 
 ```typescript
