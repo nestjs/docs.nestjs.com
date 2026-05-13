@@ -1,8 +1,16 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import { resolve, normalize, relative, sep } from 'node:path';
+import { resolve, normalize, relative, sep, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const execAsync = promisify(exec);
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PROJECT_ROOT = resolve(__dirname, '..');
+
+// Prepend local bin dir to PATH so rg is found on Netlify Lambda
+const LOCAL_BIN = join(PROJECT_ROOT, 'bin');
+process.env.PATH = `${LOCAL_BIN}:${process.env.PATH}`;
 
 const ALLOWED_COMMANDS = [
   'ls', 'tree', 'find', 'stat', 'cat', 'head', 'tail', 

@@ -1,9 +1,9 @@
 [build]
-  command = "npm run build:prod"
+  command = "bash scripts/setup-mcp.sh && npm run build:prod"
   publish = "dist"
 
 [functions]
-  included_files = ["content/**/*.md"]
+  included_files = ["content/**/*.md", "bin/**"]
 
 [[redirects]]
   from = "/mcp"
