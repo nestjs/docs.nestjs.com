@@ -3,6 +3,7 @@ import { promisify } from 'node:util';
 import { resolve, dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readdir, stat, writeFile, unlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 
 const execAsync = promisify(exec);
 
@@ -101,9 +102,14 @@ function parseType(args) {
 }
 
 async function builtinFind(rootDir, args) {
-  const pattern = parseNamePattern(args);
-  const maxDepth = parseMaxDepth(args);
-  const typeFilter = parseType(args);
+  const pathArgs = args.split(/\s+/).filter(Boolean);
+  const searchDir = pathArgs.length > 0 && !pathArgs[0].startsWith('-') ? pathArgs[0] : '.';
+  // Remove the path arg from further parsing
+  const restArgs = searchDir !== '.' ? args.slice(args.indexOf(searchDir) + searchDir.length).trim() : args;
+
+  const pattern = parseNamePattern(restArgs);
+  const maxDepth = parseMaxDepth(restArgs);
+  const typeFilter = parseType(restArgs);
   const results = [];
 
   async function walk(dir, depth) {
@@ -131,7 +137,7 @@ async function builtinFind(rootDir, args) {
     }
   }
 
-  await walk(rootDir, 0);
+  await walk(join(rootDir, searchDir), 0);
   return results.sort((a, b) => a.localeCompare(b)).join('\n');
 }
 
@@ -219,8 +225,8 @@ export async function executeVfsCommand(command, rootDir) {
           );
         }
       }
-      // Write built-in output to tmp file, pipe via stdin redirect
-      const tmpFile = join(rootDir, '.mcp-pipe.tmp');
+      // Write built-in output to tmp file for piping to shell commands
+      const tmpFile = join(tmpdir(), `mcp-pipe-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
       await writeFile(tmpFile, stdout, 'utf8');
       try {
         const { stdout: piped, stderr } = await execAsync(`< "${tmpFile}" ${rest}`, {
