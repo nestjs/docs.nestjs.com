@@ -2,6 +2,7 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { resolve, normalize, relative, sep, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readdir, stat } from 'node:fs/promises';
 
 const execAsync = promisify(exec);
 
@@ -13,9 +14,12 @@ const LOCAL_BIN = join(PROJECT_ROOT, 'bin');
 process.env.PATH = `${LOCAL_BIN}:${process.env.PATH}`;
 
 const ALLOWED_COMMANDS = [
-  'ls', 'tree', 'find', 'stat', 'cat', 'head', 'tail', 
-  'grep', 'rg', 'sed', 'awk', 'jq', 'cut', 'sort', 'uniq', 'wc'
+  'ls', 'find', 'stat', 'cat', 'head', 'tail',
+  'grep', 'rg', 'sed', 'awk', 'cut', 'sort', 'uniq', 'wc'
 ];
+
+// built-in commands: tree, ls (fallback) — run directly via Node.js
+const BUILTIN_COMMANDS = ['tree'];
 
 /**
  * Splits a shell command by pipes, but only when | is outside of quotes.
@@ -60,23 +64,53 @@ function splitByPipeRespectingQuotes(command) {
 }
 
 /**
+ * Built-in tree command. Mimics `tree` output by walking the directory recursively.
+ */
+async function builtinTree(rootDir, args) {
+  const ignoreDirs = new Set(['node_modules', '.git', 'dist', '.angular', 'tmp']);
+
+  async function* walk(dir, depth) {
+    const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+    const dirs = entries.filter(e => e.isDirectory() && !ignoreDirs.has(e.name));
+    const files = entries.filter(e => e.isFile());
+
+    for (const entry of [...dirs, ...files]) {
+      const prefix = depth === 0 ? '' : '│   '.repeat(depth - 1) + '├── ';
+      yield prefix + entry.name;
+
+      if (entry.isDirectory()) {
+        yield* walk(join(dir, entry.name), depth + 1);
+      }
+    }
+  }
+
+  const lines = [];
+  const basename = rootDir.split('/').pop() || 'content';
+  lines.push(basename);
+
+  for await (const line of walk(rootDir, 0)) {
+    lines.push(line);
+  }
+
+  const stats = await stat(rootDir).catch(() => null);
+  if (stats) {
+    const dirCount = lines.filter(l => l.endsWith('/') || l.includes('│')).length;
+    const fileCount = lines.length - 1 - dirCount;
+    lines.push('');
+    lines.push(`${dirCount} directories, ${fileCount} files`);
+  }
+
+  return lines.join('\n');
+}
+
+/**
  * Executes a command in a virtualized filesystem environment.
  * The "root" is restricted to the provided directory.
  */
 export async function executeVfsCommand(command, rootDir) {
   const normalizedRoot = resolve(rootDir);
-  
-  // Split by pipes (respecting quotes) and validate each segment
-  const segments = splitByPipeRespectingQuotes(command);
-  
-  for (const segment of segments) {
-    const baseCommand = segment.split(/\s+/)[0];
-    if (!ALLOWED_COMMANDS.includes(baseCommand)) {
-      throw new Error(`Command "${baseCommand}" is not allowed. Allowed: ${ALLOWED_COMMANDS.join(', ')}`);
-    }
-  }
 
-  // Prevent dangerous characters outside of pipes
+  // Check for blocked characters
   if (/[;&><]/.test(command)) {
     throw new Error('Characters like ; & > < are not allowed for security reasons.');
   }
@@ -84,6 +118,28 @@ export async function executeVfsCommand(command, rootDir) {
   // Prevent escaping the sandbox
   if (command.includes('..')) {
     throw new Error('Access to parent directories via ".." is not allowed.');
+  }
+
+  // Handle built-in commands
+  const firstWord = command.split(/\s+/)[0];
+  if (BUILTIN_COMMANDS.includes(firstWord)) {
+    const args = command.slice(firstWord.length).trim();
+    try {
+      const stdout = await builtinTree(normalizedRoot, args);
+      return { exit: 0, stdout, stderr: '' };
+    } catch (error) {
+      return { exit: 1, stdout: '', stderr: error.message };
+    }
+  }
+
+  // Split by pipes (respecting quotes) and validate each segment
+  const segments = splitByPipeRespectingQuotes(command);
+
+  for (const segment of segments) {
+    const baseCommand = segment.split(/\s+/)[0];
+    if (!ALLOWED_COMMANDS.includes(baseCommand)) {
+      throw new Error(`Command "${baseCommand}" is not allowed. Allowed: ${ALLOWED_COMMANDS.join(', ')}`);
+    }
   }
 
   // Handle absolute paths if they are passed (map them to rootDir if possible, or reject if outside)

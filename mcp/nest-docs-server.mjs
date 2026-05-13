@@ -117,7 +117,7 @@ async function createNestDocsMcpServer() {
     'query_docs_filesystem',
     {
       title: 'Query NestJS Docs Filesystem',
-      description: 'Run read-only shell commands against the documentation filesystem (root is content/). Supported: ls, tree, find, stat, cat, head, tail, grep, rg, sed, awk, jq, cut, sort, uniq, wc.',
+      description: 'Run read-only shell commands against the documentation filesystem (root is content/). Supported: ls, find, stat, cat, head, tail, grep, rg, sed, awk, cut, sort, uniq, wc, tree (built-in). Pipes (|) are allowed.',
       inputSchema: {
         command: z.string().min(1).describe('The command to run (e.g., "ls -R", "grep -r NestJS .").'),
       },
