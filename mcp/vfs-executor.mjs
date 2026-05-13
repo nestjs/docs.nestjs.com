@@ -86,30 +86,25 @@ function truncate(text, max) {
 
 // ---- built-in find ----
 
-function parseNamePattern(args) {
-  const m = args.match(/-name\s+['\"]?([^'\"]+)['\"]?/);
-  return m ? new RegExp('^' + m[1].replace(/\*/g, '.*').replace(/\?/g, '.') + '$') : null;
-}
-
-function parseMaxDepth(args) {
-  const m = args.match(/-maxdepth\s+(\d+)/);
-  return m ? parseInt(m[1]) : Infinity;
-}
-
-function parseType(args) {
-  const m = args.match(/-type\s+([fdb])/);
-  return m ? m[1] : null;
+function parseFlag(args, flag) {
+  const re = new RegExp(flag + '\\s+([^-]\\S*)');
+  const m = args.match(re);
+  if (!m) return null;
+  const val = m[1].replace(/^['\"](.+?)['\"]$/, '$1');
+  return val || null;
 }
 
 async function builtinFind(rootDir, args) {
   const pathArgs = args.split(/\s+/).filter(Boolean);
   const searchDir = pathArgs.length > 0 && !pathArgs[0].startsWith('-') ? pathArgs[0] : '.';
-  // Remove the path arg from further parsing
-  const restArgs = searchDir !== '.' ? args.slice(args.indexOf(searchDir) + searchDir.length).trim() : args;
+  const restArgs = searchDir === '.' ? args.replace(/^\s*\.\s*/, '') : args.slice(args.indexOf(searchDir) + searchDir.length).trim();
 
-  const pattern = parseNamePattern(restArgs);
-  const maxDepth = parseMaxDepth(restArgs);
-  const typeFilter = parseType(restArgs);
+  const namePat = parseFlag(restArgs, '-name');
+  const pattern = namePat ? new RegExp('^' + namePat.replace(/\*/g, '.*').replace(/\?/g, '.') + '$') : null;
+  const maxDepthStr = parseFlag(restArgs, '-maxdepth');
+  const maxDepth = maxDepthStr ? parseInt(maxDepthStr) : Infinity;
+  const typeFilter = parseFlag(restArgs, '-type');
+
   const results = [];
 
   async function walk(dir, depth) {
@@ -117,41 +112,46 @@ async function builtinFind(rootDir, args) {
     const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
     for (const entry of entries) {
       if (entry.name.startsWith('.') && entry.name !== '.') continue;
-      const relPath = relative(rootDir, join(dir, entry.name)) || '.';
-      if (relPath === '.') continue;
+      const fullPath = join(dir, entry.name);
+      const relPath = relative(rootDir, fullPath);
+      if (!relPath) continue;
 
       const isDir = entry.isDirectory();
-      const excludeDirs = ['node_modules', '.git', 'dist', '.angular', 'tmp', '.netlify'];
-      if (isDir && excludeDirs.includes(entry.name)) continue;
+      if (isDir && ['node_modules', '.git', 'dist', '.angular', 'tmp', '.netlify'].includes(entry.name)) continue;
 
-      const matchType = typeFilter ? (typeFilter === 'd' ? isDir : typeFilter === 'f' ? !isDir : true) : true;
-      const matchName = pattern ? pattern.test(entry.name) : true;
+      const matchType = !typeFilter || (typeFilter === 'd' ? isDir : typeFilter === 'f' ? !isDir : true);
+      const matchName = !pattern || pattern.test(entry.name);
 
       if (matchType && matchName) {
         results.push('./' + relPath.split(sep).join('/'));
       }
 
       if (isDir) {
-        await walk(join(dir, entry.name), depth + 1);
+        await walk(fullPath, depth + 1);
       }
     }
   }
 
   await walk(join(rootDir, searchDir), 0);
-  return results.sort((a, b) => a.localeCompare(b)).join('\n');
+  return results.sort((a, b) => a.localeCompare(b)).join('\n') + '\n';
 }
 
 // ---- built-in tree ----
 
 async function builtinTree(rootDir, args) {
   const ignoreDirs = new Set(['node_modules', '.git', 'dist', '.angular', 'tmp', '.netlify']);
+  const maxDepthStr = parseFlag(args, '-L');
+  const maxDepth = maxDepthStr ? parseInt(maxDepthStr) : Infinity;
+  const dirsOnly = /\s-d\s/.test(' ' + args + ' ');
 
   async function* walk(dir, depth) {
+    if (depth >= maxDepth) return;
     const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
     const dirs = entries.filter(e => e.isDirectory() && !ignoreDirs.has(e.name));
     const files = entries.filter(e => e.isFile());
 
     for (const entry of [...dirs, ...files]) {
+      if (dirsOnly && !entry.isDirectory()) continue;
       const prefix = depth === 0 ? '' : '│   '.repeat(depth - 1) + '├── ';
       yield prefix + entry.name;
 
