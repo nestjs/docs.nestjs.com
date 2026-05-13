@@ -2,7 +2,7 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { resolve, dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readdir, stat } from 'node:fs/promises';
+import { readdir, stat, writeFile, unlink } from 'node:fs/promises';
 
 const execAsync = promisify(exec);
 
@@ -55,6 +55,27 @@ function splitByCommandSeparators(command) {
   }
   if (current.trim()) segments.push(current.trim());
   return segments;
+}
+
+function splitByCharRespectingQuotes(command, char) {
+  const parts = [];
+  let current = '';
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+
+  for (let i = 0; i < command.length; i++) {
+    const c = command[i];
+    if (c === "'" && !inDoubleQuote) { inSingleQuote = !inSingleQuote; current += c; }
+    else if (c === '"' && !inSingleQuote) { inDoubleQuote = !inDoubleQuote; current += c; }
+    else if (c === char && !inSingleQuote && !inDoubleQuote) {
+      parts.push(current.trim());
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  parts.push(current.trim());
+  return parts;
 }
 
 function truncate(text, max) {
@@ -171,16 +192,60 @@ export async function executeVfsCommand(command, rootDir) {
     throw new Error(`Access to parent directories via ".." is not allowed. ${hint}`);
   }
 
-  const firstWord = command.split(/\s+/)[0];
+  // Split by | (quote-aware) to check if we pipe OUT of a built-in command
+  const pipeParts = splitByCharRespectingQuotes(command, '|');
+  const firstWord = pipeParts[0].split(/\s+/)[0];
+
   if (BUILTIN_COMMANDS.includes(firstWord)) {
+    // Run built-in, then optionally pipe output through subsequent commands
     const fn = firstWord === 'find' ? builtinFind : builtinTree;
-    const args = command.slice(firstWord.length).trim();
+    const args = pipeParts[0].slice(firstWord.length).trim();
+
+    let stdout;
     try {
-      const stdout = await fn(normalizedRoot, args);
-      return { exit: 0, stdout: truncate(stdout, MAX_OUTPUT), stderr: '' };
+      stdout = await fn(normalizedRoot, args);
     } catch (error) {
       return { exit: 1, stdout: '', stderr: truncate(error.message, MAX_OUTPUT) };
     }
+
+    if (pipeParts.length > 1) {
+      // Pipe built-in output through remaining shell commands
+      const rest = pipeParts.slice(1).join(' | ');
+      for (const seg of pipeParts.slice(1)) {
+        const base = seg.split(/\s+/)[0];
+        if (!ALLOWED_COMMANDS.includes(base)) {
+          throw new Error(
+            `Command "${base}" is not allowed.\nAllowed: ${ALL_COMMANDS_STR}`
+          );
+        }
+      }
+      // Write built-in output to tmp file, pipe via stdin redirect
+      const tmpFile = join(rootDir, '.mcp-pipe.tmp');
+      await writeFile(tmpFile, stdout, 'utf8');
+      try {
+        const { stdout: piped, stderr } = await execAsync(`< "${tmpFile}" ${rest}`, {
+          cwd: normalizedRoot,
+          timeout: 10000,
+          maxBuffer: 1024 * 1024 * 5,
+          env: { ...process.env, LANG: 'C.UTF-8' }
+        });
+        await unlink(tmpFile);
+        return {
+          exit: 0,
+          stdout: truncate(piped.trim(), MAX_OUTPUT),
+          stderr: truncate(stderr.trim(), MAX_OUTPUT),
+        };
+      } catch (error) {
+        await unlink(tmpFile).catch(() => {});
+        return {
+          exit: error.code ?? 1,
+          stdout: truncate(error.stdout?.trim() || '', MAX_OUTPUT),
+          stderr: truncate(error.stderr?.trim() || error.message.trim(), MAX_OUTPUT),
+        };
+      }
+    }
+
+    return { exit: 0, stdout: truncate(stdout, MAX_OUTPUT), stderr: '' };
   }
 
   const segments = splitByCommandSeparators(command);
