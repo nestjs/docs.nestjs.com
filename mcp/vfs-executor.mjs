@@ -139,10 +139,15 @@ async function builtinFind(rootDir, args) {
 // ---- built-in tree ----
 
 async function builtinTree(rootDir, args) {
+  const pathArgs = args.split(/\s+/).filter(Boolean);
+  const searchDir = pathArgs.length > 0 && !pathArgs[0].startsWith('-') ? pathArgs[0] : '.';
+  const restArgs = searchDir === '.' ? args.replace(/^\s*\.\s*/, '') : args.slice(args.indexOf(searchDir) + searchDir.length).trim();
+
   const ignoreDirs = new Set(['node_modules', '.git', 'dist', '.angular', 'tmp', '.netlify']);
-  const maxDepthStr = parseFlag(args, '-L');
+  const maxDepthStr = parseFlag(restArgs, '-L');
   const maxDepth = maxDepthStr ? parseInt(maxDepthStr) : Infinity;
   const dirsOnly = /\s-d\s/.test(' ' + args + ' ');
+  const startDir = join(rootDir, searchDir);
 
   async function* walk(dir, depth) {
     if (depth >= maxDepth) return;
@@ -162,14 +167,14 @@ async function builtinTree(rootDir, args) {
   }
 
   const lines = [];
-  const basename = rootDir.split('/').pop() || 'content';
+  const basename = startDir.split('/').pop() || 'content';
   lines.push(basename);
 
-  for await (const line of walk(rootDir, 0)) {
+  for await (const line of walk(startDir, 0)) {
     lines.push(line);
   }
 
-  const stats = await stat(rootDir).catch(() => null);
+  const stats = await stat(startDir).catch(() => null);
   if (stats) {
     const dirCount = lines.filter(l => l.endsWith('/') || l.includes('│')).length;
     const fileCount = lines.length - 1 - dirCount;
