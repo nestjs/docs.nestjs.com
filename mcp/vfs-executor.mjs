@@ -6,8 +6,18 @@ import { readdir, stat } from 'node:fs/promises';
 
 const execAsync = promisify(exec);
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const PROJECT_ROOT = resolve(__dirname, '..');
+let PROJECT_ROOT;
+try {
+  const metaUrl = typeof import.meta !== 'undefined' ? import.meta.url : undefined;
+  if (metaUrl) {
+    PROJECT_ROOT = resolve(dirname(fileURLToPath(metaUrl)), '..');
+  } else {
+    // Netlify Lambda bundles to CJS — import.meta unavailable
+    PROJECT_ROOT = process.cwd();
+  }
+} catch {
+  PROJECT_ROOT = process.cwd();
+}
 
 // Prepend local bin dir to PATH so rg is found on Netlify Lambda
 const LOCAL_BIN = join(PROJECT_ROOT, 'bin');
