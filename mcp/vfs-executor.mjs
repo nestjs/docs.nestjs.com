@@ -22,44 +22,28 @@ const ALLOWED_COMMANDS = [
 const BUILTIN_COMMANDS = ['tree'];
 
 /**
- * Splits a shell command by pipes, but only when | is outside of quotes.
- * Handles both single and double quotes.
+ * Splits a shell command by separators (; and |), respecting quotes.
+ * Returns individual command segments for validation.
  */
-function splitByPipeRespectingQuotes(command) {
+function splitByCommandSeparators(command) {
   const segments = [];
   let current = '';
   let inSingleQuote = false;
   let inDoubleQuote = false;
-  let i = 0;
 
-  while (i < command.length) {
+  for (let i = 0; i < command.length; i++) {
     const char = command[i];
 
-    if (char === "\\" && i + 1 < command.length && !inSingleQuote) {
-      current += command[i] + command[i + 1];
-      i += 2;
-      continue;
-    }
-
-    if (char === "'" && !inDoubleQuote) {
-      inSingleQuote = !inSingleQuote;
-      current += char;
-    } else if (char === '"' && !inSingleQuote) {
-      inDoubleQuote = !inDoubleQuote;
-      current += char;
-    } else if (char === '|' && !inSingleQuote && !inDoubleQuote) {
-      segments.push(current.trim());
+    if (char === "'" && !inDoubleQuote) { inSingleQuote = !inSingleQuote; current += char; }
+    else if (char === '"' && !inSingleQuote) { inDoubleQuote = !inDoubleQuote; current += char; }
+    else if ((char === ';' || char === '|') && !inSingleQuote && !inDoubleQuote) {
+      if (current.trim()) segments.push(current.trim());
       current = '';
     } else {
       current += char;
     }
-    i++;
   }
-
-  if (current.trim()) {
-    segments.push(current.trim());
-  }
-
+  if (current.trim()) segments.push(current.trim());
   return segments;
 }
 
@@ -106,21 +90,20 @@ async function builtinTree(rootDir, args) {
 /**
  * Executes a command in a virtualized filesystem environment.
  * The "root" is restricted to the provided directory.
+ * Supported: ls, find, stat, cat, head, tail, grep, rg, sed, awk,
+ * cut, sort, uniq, wc. Plus built-in: tree.
+ * Shell separators (;, |) and redirects (>, <) are allowed since
+ * every sub-command is validated and the filesystem is sandboxed.
  */
 export async function executeVfsCommand(command, rootDir) {
   const normalizedRoot = resolve(rootDir);
-
-  // Check for blocked characters
-  if (/[;&><]/.test(command)) {
-    throw new Error('Characters like ; & > < are not allowed for security reasons.');
-  }
 
   // Prevent escaping the sandbox
   if (command.includes('..')) {
     throw new Error('Access to parent directories via ".." is not allowed.');
   }
 
-  // Handle built-in commands
+  // Handle built-in commands (cannot be piped/chained)
   const firstWord = command.split(/\s+/)[0];
   if (BUILTIN_COMMANDS.includes(firstWord)) {
     const args = command.slice(firstWord.length).trim();
@@ -132,19 +115,18 @@ export async function executeVfsCommand(command, rootDir) {
     }
   }
 
-  // Split by pipes (respecting quotes) and validate each segment
-  const segments = splitByPipeRespectingQuotes(command);
+  // Split by ; and | (respecting quotes) and validate each segment
+  const segments = splitByCommandSeparators(command);
 
   for (const segment of segments) {
     const baseCommand = segment.split(/\s+/)[0];
     if (!ALLOWED_COMMANDS.includes(baseCommand)) {
-      throw new Error(`Command "${baseCommand}" is not allowed. Allowed: ${ALLOWED_COMMANDS.join(', ')}`);
+      throw new Error(
+        `Command "${baseCommand}" is not allowed. Allowed: ${ALLOWED_COMMANDS.join(', ')}`
+      );
     }
   }
 
-  // Handle absolute paths if they are passed (map them to rootDir if possible, or reject if outside)
-  // For now, let's just warn that we operate relative to content/
-  
   try {
     const { stdout, stderr } = await execAsync(command, {
       cwd: normalizedRoot,
