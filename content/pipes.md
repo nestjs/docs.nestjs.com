@@ -330,7 +330,7 @@ async create(createCatDto) {
 
 > info **Hint** The `@UsePipes()` decorator is imported from the `@nestjs/common` package.
 
-The `ZodValidationPipe` can be applied to specific parameters and alongside built-in pipes. For example, where we want to validate the route path `id` parameter with the `ParseIntPipe` seperately from the request body:
+The `ZodValidationPipe` can be applied to specific parameters and alongside built-in pipes. For example, where we want to validate the route path `id` parameter with the `ParseIntPipe` separately from the request body:
 
 ```typescript
 @Put('/:id')
