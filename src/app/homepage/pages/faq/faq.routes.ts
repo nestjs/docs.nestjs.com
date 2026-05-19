@@ -7,6 +7,7 @@ import { KeepAliveConnectionsComponent } from './keep-alive-connections/keep-ali
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
 import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
+import { RouteConflictComponent } from './route-conflict/route-conflict.component';
 import { ServerlessComponent } from './serverless/serverless.component';
 
 export const FAQ_ROUTES: Routes = [
@@ -49,6 +50,11 @@ export const FAQ_ROUTES: Routes = [
     path: 'common-errors',
     component: ErrorsComponent,
     data: { title: 'Common errors - FAQ' },
+  },
+  {
+    path: 'route-conflict',
+    component: RouteConflictComponent,
+    data: { title: 'Route conflict detection - FAQ' },
   },
   {
     path: 'serverless',

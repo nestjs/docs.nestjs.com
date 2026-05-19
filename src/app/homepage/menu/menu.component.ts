@@ -271,6 +271,7 @@ export class MenuComponent implements OnInit {
           path: '/faq/keep-alive-connections',
         },
         { title: 'Global path prefix', path: '/faq/global-prefix' },
+        { title: 'Route conflict detection', path: '/faq/route-conflict' },
         { title: 'Raw body', path: '/faq/raw-body' },
         { title: 'Hybrid application', path: '/faq/hybrid-application' },
         { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
