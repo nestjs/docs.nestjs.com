@@ -43,6 +43,24 @@ eventSource.onmessage = ({ data }) => {
 };
 ```
 
+#### Client disconnection
+
+When a client closes the SSE connection (e.g., `eventSource.close()`), NestJS automatically unsubscribes from the returned Observable, which stops the event stream and cleans up any associated resources — including the interval timer in the example above.
+
+To run custom teardown logic when a client disconnects, use the `finalize` operator:
+
+```typescript
+@Sse('sse')
+sse(): Observable<MessageEvent> {
+  return interval(1000).pipe(
+    map((_) => ({ data: { hello: 'world' } })),
+    finalize(() => console.log('Client disconnected')),
+  );
+}
+```
+
+> info **Hint** The `finalize` operator (imported from `rxjs`) executes its callback whenever the Observable terminates — by completion, error, or unsubscription (which includes client disconnect). This makes it the right place to release external resources such as database cursors or file handles tied to the stream.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/28-sse).
