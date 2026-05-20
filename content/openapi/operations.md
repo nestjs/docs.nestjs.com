@@ -12,7 +12,6 @@ To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
 export class CatsController {}
 ```
 
-##### Hierarchical tags
 
 OpenAPI 3.2 extends the Tag Object so that tags can be organized into a hierarchy and annotated with a hint about how they should be presented. To declare these relationships, define the tags up front with `DocumentBuilder` and pass the `parent` and `kind` options to `addTag()`:
 
