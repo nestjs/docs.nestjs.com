@@ -213,6 +213,7 @@ There's a few things to keep in mind when working with WebSockets:
 
 - Guard cannot be registered with the `APP_GUARD` or `app.useGlobalGuards()`
 - When a limit is reached, Nest will emit an `exception` event, so make sure there is a listener ready for this
+- When multiple named throttlers are configured (for example a `short` and a `long` limit), `handleRequest` is invoked once per throttler for the same message. The example above is safe for that case because the storage key is namespaced by `throttler.name`, but any extra logic you add inside `handleRequest` (logging, custom side effects) will also run per throttler
 
 > info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
 
