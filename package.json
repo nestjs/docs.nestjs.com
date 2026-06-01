@@ -70,7 +70,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "^8.50.0",
     "uuid": "14.0.0",
-    "vitest": "^4.0.16",
+    "vitest": "^4.1.8",
     "yargs": "17.7.2"
   }
 }
