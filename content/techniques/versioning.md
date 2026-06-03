@@ -300,9 +300,9 @@ app.enableVersioning({
 ```typescript
 @@filename(app.module)
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
+import { CatsController } from './cats/cats.controller.js';
 
 @Module({
   imports: [CatsModule],

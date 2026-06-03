@@ -24,7 +24,7 @@ To instantiate a microservice, use the `createMicroservice()` method of the `Nes
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -39,7 +39,7 @@ bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -481,7 +481,7 @@ To enable TLS for a TCP server, you'll need both a private key and a certificate
 ```typescript
 import * as fs from 'fs';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -543,7 +543,7 @@ When a microservice needs to be configured using the `ConfigService` (from the `
 ```typescript
 import { ConfigService } from '@nestjs/config';
 import { AsyncMicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<AsyncMicroserviceOptions>(

@@ -21,8 +21,6 @@ Next up, let's install the required dependency:
 $ npm i @nestjs/devtools-integration
 ```
 
-> warning **Warning** If you're using `@nestjs/graphql` package in your application, make sure to install the latest version (`npm i @nestjs/graphql@11`).
-
 With this dependency in place, let's open up the `app.module.ts` file and import the `DevtoolsModule` that we just installed:
 
 ```typescript

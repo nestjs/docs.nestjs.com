@@ -33,7 +33,7 @@ bootstrap();
 
 // #2 Nest (with @nestjs/platform-express)
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: ['error'] });
@@ -43,8 +43,8 @@ bootstrap();
 
 // #3 Nest as a Standalone application (no HTTP server)
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { AppService } from './app.service';
+import { AppModule } from './app.module.js';
+import { AppService } from './app.service.js';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule, {
@@ -215,7 +215,7 @@ With this in place, we can now navigate to the `main.ts` file and update our boo
 import { NestFactory } from '@nestjs/core';
 import serverlessExpress from '@codegenie/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 let server: Handler;
 
@@ -314,8 +314,8 @@ you can just use `NestFactory.createApplicationContext` (as mentioned earlier) i
 import { HttpStatus } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Callback, Context, Handler } from 'aws-lambda';
-import { AppModule } from './app.module';
-import { AppService } from './app.service';
+import { AppModule } from './app.module.js';
+import { AppService } from './app.service.js';
 
 export const handler: Handler = async (
   event: any,

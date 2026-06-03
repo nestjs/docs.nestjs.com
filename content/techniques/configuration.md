@@ -110,7 +110,7 @@ export default () => ({
 We load this file using the `load` property of the options object we pass to the `ConfigModule.forRoot()` method:
 
 ```typescript
-import configuration from './config/configuration';
+import configuration from './config/configuration.js';
 
 @Module({
   imports: [
@@ -304,7 +304,7 @@ As with custom configuration files, inside your `registerAs()` factory function,
 Load a namespaced configuration with the `load` property of the `forRoot()` method's options object, in the same way you load a custom configuration file:
 
 ```typescript
-import databaseConfig from './config/database.config';
+import databaseConfig from './config/database.config.js';
 
 @Module({
   imports: [
@@ -340,7 +340,7 @@ To use a namespaced configuration as a configuration object for another module i
 Here's an example:
 
 ```typescript
-import databaseConfig from './config/database.config';
+import databaseConfig from './config/database.config.js';
 
 @Module({
   imports: [
@@ -377,7 +377,7 @@ ConfigModule.forRoot({
 Thus far, we've processed configuration files in our root module (e.g., `AppModule`), with the `forRoot()` method. Perhaps you have a more complex project structure, with feature-specific configuration files located in multiple different directories. Rather than load all these files in the root module, the `@nestjs/config` package provides a feature called **partial registration**, which references only the configuration files associated with each feature module. Use the `forFeature()` static method within a feature module to perform this partial registration, as follows:
 
 ```typescript
-import databaseConfig from './config/database.config';
+import databaseConfig from './config/database.config.js';
 
 @Module({
   imports: [ConfigModule.forFeature(databaseConfig)],
@@ -507,7 +507,7 @@ With this in place, use the `validate` function as a configuration option of the
 
 ```typescript
 @@filename(app.module)
-import { validate } from './env.validation';
+import { validate } from './env.validation.js';
 
 @Module({
   imports: [

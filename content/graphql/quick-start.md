@@ -78,19 +78,19 @@ export class AppModule {}
 
 In this case, these options will be forwarded to the `ApolloServer` constructor.
 
-#### GraphQL playground
+#### GraphQL IDE
 
-The playground is a graphical, interactive, in-browser GraphQL IDE, available by default on the same URL as the GraphQL server itself. To access the playground, you need a basic GraphQL server configured and running. To see it now, you can install and build the [working example here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first). Alternatively, if you're following along with these code samples, once you've completed the steps in the [Resolvers chapter](/graphql/resolvers-map), you can access the playground.
+[GraphiQL](https://github.com/graphql/graphiql) is the default graphical, interactive, in-browser GraphQL IDE served on the same URL as the GraphQL server itself. To access it, you need a basic GraphQL server configured and running. To see it now, you can install and build the [working example here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first). Alternatively, if you're following along with these code samples, once you've completed the steps in the [Resolvers chapter](/graphql/resolvers-map), you can access GraphiQL.
 
-With that in place, and with your application running in the background, you can then open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You will then see the GraphQL playground, as shown below.
+With that in place, and with your application running in the background, you can then open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You will then see GraphiQL, as shown below.
 
 <figure>
   <img src="/assets/playground.png" alt="" />
 </figure>
 
-> info **Note** `@nestjs/mercurius` integration does not ship with the built-in GraphQL Playground integration. Instead, you can use [GraphiQL](https://github.com/graphql/graphiql) (set `graphiql: true`).
+> info **Note** `@nestjs/mercurius` integration uses [GraphiQL](https://github.com/graphql/graphiql) as well.
 
-> warning **Warning** Update (04/14/2025): The default Apollo playground has been deprecated and will be removed in the next major release. Instead, you can use [GraphiQL](https://github.com/graphql/graphiql), just set `graphiql: true` in the `GraphQLModule` configuration, as shown below:
+If you want to configure the IDE explicitly, set `graphiql: true` in the `GraphQLModule` configuration, as shown below:
 >
 > ```typescript
 > GraphQLModule.forRoot<ApolloDriverConfig>({

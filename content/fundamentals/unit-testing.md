@@ -6,10 +6,12 @@ Such tests often span a variety of types, including unit tests, end-to-end (e2e)
 
 - automatically scaffolds default unit tests for components and e2e tests for applications
 - provides default tooling (such as a test runner that builds an isolated module/application loader)
-- provides integration with [Jest](https://github.com/facebook/jest) and [Supertest](https://github.com/visionmedia/supertest) out-of-the-box, while remaining agnostic to testing tools
+- provides integration with [Vitest](https://vitest.dev/) and [Supertest](https://github.com/visionmedia/supertest) while remaining agnostic to testing tools
 - makes the Nest dependency injection system available in the testing environment for easily mocking components
 
 As mentioned, you can use any **testing framework** that you like, as Nest doesn't force any specific tooling. Simply replace the elements needed (such as the test runner), and you will still enjoy the benefits of Nest's ready-made testing facilities.
+
+> info **Hint** Newly generated projects use Vitest by default. The testing APIs exposed by Nest do not depend on a specific runner, so the same patterns work with other tools as well.
 
 #### Installation
 
@@ -21,12 +23,13 @@ $ npm i --save-dev @nestjs/testing
 
 #### Unit testing
 
-In the following example, we test two classes: `CatsController` and `CatsService`. As mentioned, [Jest](https://github.com/facebook/jest) is provided as the default testing framework. It serves as a test-runner and also provides assert functions and test-double utilities that help with mocking, spying, etc. In the following basic test, we manually instantiate these classes, and ensure that the controller and service fulfill their API contract.
+In the following example, we test two classes: `CatsController` and `CatsService` with [Vitest](https://vitest.dev/). It serves as a test runner and also provides assert functions and test-double utilities that help with mocking, spying, and stubbing. In the following basic test, we manually instantiate these classes, and ensure that the controller and service fulfill their API contract.
 
 ```typescript
 @@filename(cats.controller.spec)
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { vi } from 'vitest';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
 
 describe('CatsController', () => {
   let catsController: CatsController;
@@ -40,15 +43,16 @@ describe('CatsController', () => {
   describe('findAll', () => {
     it('should return an array of cats', async () => {
       const result = ['test'];
-      jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
+      vi.spyOn(catsService, 'findAll').mockImplementation(() => result);
 
       expect(await catsController.findAll()).toBe(result);
     });
   });
 });
 @@switch
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { vi } from 'vitest';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
 
 describe('CatsController', () => {
   let catsController;
@@ -62,7 +66,7 @@ describe('CatsController', () => {
   describe('findAll', () => {
     it('should return an array of cats', async () => {
       const result = ['test'];
-      jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
+      vi.spyOn(catsService, 'findAll').mockImplementation(() => result);
 
       expect(await catsController.findAll()).toBe(result);
     });
@@ -80,9 +84,10 @@ The `@nestjs/testing` package provides a set of utilities that enable a more rob
 
 ```typescript
 @@filename(cats.controller.spec)
+import { vi } from 'vitest';
 import { Test } from '@nestjs/testing';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
 
 describe('CatsController', () => {
   let catsController: CatsController;
@@ -101,16 +106,17 @@ describe('CatsController', () => {
   describe('findAll', () => {
     it('should return an array of cats', async () => {
       const result = ['test'];
-      jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
+      vi.spyOn(catsService, 'findAll').mockImplementation(() => result);
 
       expect(await catsController.findAll()).toBe(result);
     });
   });
 });
 @@switch
+import { vi } from 'vitest';
 import { Test } from '@nestjs/testing';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
 
 describe('CatsController', () => {
   let catsController;
@@ -129,7 +135,7 @@ describe('CatsController', () => {
   describe('findAll', () => {
     it('should return an array of cats', async () => {
       const result = ['test'];
-      jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
+      vi.spyOn(catsService, 'findAll').mockImplementation(() => result);
 
       expect(await catsController.findAll()).toBe(result);
     });
@@ -162,13 +168,10 @@ Instead of using the production version of any provider, you can override it wit
 
 #### Auto mocking
 
-Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The below is an example of creating a generic mocker using [`jest-mock`](https://www.npmjs.com/package/jest-mock) and a specific mock for `CatsService` using `jest.fn()`.
+Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The example below creates a specific mock for `CatsService` using `vi.fn()`.
 
 ```typescript
-// ...
-import { ModuleMocker, MockMetadata } from 'jest-mock';
-
-const moduleMocker = new ModuleMocker(global);
+import { vi } from 'vitest';
 
 describe('CatsController', () => {
   let controller: CatsController;
@@ -180,16 +183,7 @@ describe('CatsController', () => {
       .useMocker((token) => {
         const results = ['test1', 'test2'];
         if (token === CatsService) {
-          return { findAll: jest.fn().mockResolvedValue(results) };
-        }
-        if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token,
-          ) as MockMetadata<any, any>;
-          const Mock = moduleMocker.generateFromMetadata(
-            mockMetadata,
-          ) as ObjectConstructor;
-          return new Mock();
+          return { findAll: vi.fn().mockResolvedValue(results) };
         }
       })
       .compile();
@@ -201,7 +195,7 @@ describe('CatsController', () => {
 
 You can also retrieve these mocks out of the testing container as you normally would custom providers, `moduleRef.get(CatsService)`.
 
-> info **Hint** A general mock factory, like `createMock` from [`@golevelup/ts-jest`](https://github.com/golevelup/nestjs/tree/master/packages/testing) can also be passed directly.
+> info **Hint** A reusable mock factory helper can also be passed directly when you want shared test doubles across suites.
 
 > info **Hint** `REQUEST` and `INQUIRER` providers cannot be auto-mocked because they're already pre-defined in the context. However, they can be _overwritten_ using the custom provider syntax or by utilizing the `.overrideProvider` method.
 
@@ -213,8 +207,8 @@ Unlike unit testing, which focuses on individual modules and classes, end-to-end
 @@filename(cats.e2e-spec)
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { CatsModule } from '../../src/cats/cats.module';
-import { CatsService } from '../../src/cats/cats.service';
+import { CatsModule } from '../../src/cats/cats.module.js';
+import { CatsService } from '../../src/cats/cats.service.js';
 import { INestApplication } from '@nestjs/common';
 
 describe('Cats', () => {
@@ -249,8 +243,8 @@ describe('Cats', () => {
 @@switch
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { CatsModule } from '../../src/cats/cats.module';
-import { CatsService } from '../../src/cats/cats.service';
+import { CatsModule } from '../../src/cats/cats.module.js';
+import { CatsService } from '../../src/cats/cats.service.js';
 import { INestApplication } from '@nestjs/common';
 
 describe('Cats', () => {
@@ -445,11 +439,11 @@ We know (based on the sections above) that the `resolve()` method can be used to
 
 The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. In this way we'll be able to retrieve instances created for a tested request.
 
-To accomplish this, use `jest.spyOn()` on the `ContextIdFactory`:
+To accomplish this, use `vi.spyOn()` on the `ContextIdFactory`:
 
 ```typescript
 const contextId = ContextIdFactory.create();
-jest
+vi
   .spyOn(ContextIdFactory, 'getByRequest')
   .mockImplementation(() => contextId);
 ```

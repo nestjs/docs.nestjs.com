@@ -19,7 +19,7 @@ To enable caching in your application, import the `CacheModule` and configure it
 ```typescript
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
-import { AppController } from './app.controller';
+import { AppController } from './app.controller.js';
 
 @Module({
   imports: [CacheModule.register()],
@@ -105,7 +105,7 @@ To reduce the amount of required boilerplate, you can bind `CacheInterceptor` to
 ```typescript
 import { Module } from '@nestjs/common';
 import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
-import { AppController } from './app.controller';
+import { AppController } from './app.controller.js';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
@@ -235,7 +235,7 @@ With this in place, you can register the `CacheModule` with multiple stores as s
 ```typescript
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
-import { AppController } from './app.controller';
+import { AppController } from './app.controller.js';
 import KeyvRedis from '@keyv/redis';
 import { Keyv } from 'keyv';
 import { KeyvCacheableMemory } from 'cacheable';

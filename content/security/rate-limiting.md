@@ -114,7 +114,7 @@ Here's an example that demonstrates how to enable `trust proxy` for the Express 
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
@@ -126,7 +126,7 @@ async function bootstrap() {
 bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {

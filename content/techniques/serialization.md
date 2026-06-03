@@ -6,6 +6,8 @@ Serialization is a process that happens before objects are returned in a network
 
 Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `instanceToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer). In doing so, it can apply rules expressed by `class-transformer` decorators on an entity/DTO class, as described below.
 
+Nest also includes a built-in `StandardSchemaSerializerInterceptor` for schema-first response shaping. Use it when you want outgoing responses to be validated or transformed by a [Standard Schema](https://standardschema.dev/) compatible schema instead of `class-transformer` decorators.
+
 > info **Hint** The serialization does not apply to [StreamableFile](https://docs.nestjs.com/techniques/streaming-files#streamable-file-class) responses.
 
 #### Exclude properties
@@ -98,6 +100,19 @@ findOne(): UserEntity {
 
 Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `instanceToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
 
+`@SerializeOptions()` can also be used with `StandardSchemaSerializerInterceptor`:
+
+```typescript
+@UseInterceptors(StandardSchemaSerializerInterceptor)
+@SerializeOptions({ schema: userResponseSchema })
+@Get(':id')
+findOne(@Param('id') id: string) {
+  return this.usersService.findOne(id);
+}
+```
+
+You can also pass `validateOptions` if your schema library supports extra validation options through the Standard Schema interface.
+
 #### Transform plain objects
 
 You can enforce transformations at the controller level by using the `@SerializeOptions` decorator. This ensures that all responses are transformed into instances of the specified class, applying any decorators from class-validator or class-transformer, even when plain objects are returned. This approach leads to cleaner code without the need to repeatedly instantiate the class or call `plainToInstance`.
@@ -140,3 +155,5 @@ While this chapter shows examples using HTTP style applications (e.g., Express o
 #### Learn more
 
 Read more about available decorators and options as provided by the `class-transformer` package [here](https://github.com/typestack/class-transformer).
+
+If you prefer schema-driven serialization, use `StandardSchemaSerializerInterceptor` together with `@SerializeOptions({ schema })`.

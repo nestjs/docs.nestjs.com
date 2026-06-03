@@ -52,7 +52,7 @@ export class AppModule {}
 But this won't work when you use a build tools that use tree shaking, for that it is better to provide the config explicitly:
 
 ```typescript
-import config from './mikro-orm.config'; // your ORM config
+import config from './mikro-orm.config.js'; // your ORM config
 
 @Module({
   imports: [

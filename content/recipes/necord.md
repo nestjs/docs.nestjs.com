@@ -21,7 +21,7 @@ To utilize Necord in your project, import the `NecordModule` and configure it wi
 import { Module } from '@nestjs/common';
 import { NecordModule } from 'necord';
 import { IntentsBitField } from 'discord.js';
-import { AppService } from './app.service';
+import { AppService } from './app.service.js';
 
 @Module({
   imports: [
@@ -147,7 +147,7 @@ You can then use this DTO in the `AppCommands` class:
 @@filename(app.commands)
 import { Injectable } from '@nestjs/common';
 import { Context, SlashCommand, Options, SlashCommandContext } from 'necord';
-import { TextDto } from './length.dto';
+import { TextDto } from './length.dto.js';
 
 @Injectable()
 export class AppCommands {
@@ -221,7 +221,7 @@ Finally, apply the interceptor to your slash command:
 import { Injectable, UseInterceptors } from '@nestjs/common';
 import { Context, SlashCommand, Options, SlashCommandContext } from 'necord';
 import { CatDto } from '/cat.dto';
-import { CatsAutocompleteInterceptor } from './cats-autocomplete.interceptor';
+import { CatsAutocompleteInterceptor } from './cats-autocomplete.interceptor.js';
 
 @Injectable()
 export class CatsCommands {

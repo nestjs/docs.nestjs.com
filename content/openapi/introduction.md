@@ -2,6 +2,8 @@
 
 The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows generating such a specification by leveraging decorators.
 
+The Swagger package is also compatible with the `schema` metadata used by route parameter decorators such as `@Body()`, `@Query()`, and `@Param()`, so Standard Schema based request definitions can still participate in OpenAPI generation alongside the existing Swagger decorators.
+
 #### Installation
 
 To begin using it, we first install the required dependency.
@@ -18,7 +20,7 @@ Once the installation process is complete, open the `main.ts` file and initializ
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

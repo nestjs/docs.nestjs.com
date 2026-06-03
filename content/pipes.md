@@ -22,6 +22,7 @@ Nest comes with a number of built-in pipes that you can use out-of-the-box. You 
 Nest comes with several pipes available out-of-the-box:
 
 - `ValidationPipe`
+- `StandardSchemaValidationPipe`
 - `ParseIntPipe`
 - `ParseFloatPipe`
 - `ParseBoolPipe`
@@ -153,6 +154,7 @@ export interface ArgumentMetadata {
   type: 'body' | 'query' | 'param' | 'custom';
   metatype?: Type<unknown>;
   data?: string;
+  schema?: StandardSchemaV1;
 }
 ```
 
@@ -187,9 +189,19 @@ These properties describe the currently processed argument.
       <code>@Body('string')</code>. It's
       <code>undefined</code> if you leave the decorator parenthesis empty.</td>
   </tr>
+  <tr>
+    <td>
+      <code>schema</code>
+    </td>
+    <td>
+      A Standard Schema compatible schema attached through parameter decorator options such as <code>@Body({{ '{' }} schema {{ '}' }})</code> or <code>@Param('id', {{ '{' }} schema {{ '}' }})</code>.
+    </td>
+  </tr>
 </table>
 
 > warning **Warning** TypeScript interfaces disappear during transpilation. Thus, if a method parameter's type is declared as an interface instead of a class, the `metatype` value will be `Object`.
+
+> info **Hint** The built-in `StandardSchemaValidationPipe` reads the `schema` metadata field so you can validate route parameters with any Standard Schema compatible library.
 
 #### Schema based validation
 

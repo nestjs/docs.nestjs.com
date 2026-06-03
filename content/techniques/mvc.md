@@ -22,7 +22,7 @@ We've used the `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)) engi
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'node:path';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
@@ -39,7 +39,7 @@ bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
 import { join } from 'node:path';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(
@@ -104,7 +104,7 @@ If the application logic must dynamically decide which template to render, then 
 @@filename(app.controller)
 import { Get, Controller, Res, Render } from '@nestjs/common';
 import { Response } from 'express';
-import { AppService } from './app.service';
+import { AppService } from './app.service.js';
 
 @Controller()
 export class AppController {
@@ -138,7 +138,7 @@ The next steps cover almost the same process used with Express, with minor diffe
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { join } from 'node:path';
 
 async function bootstrap() {
@@ -162,7 +162,7 @@ bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { join } from 'node:path';
 
 async function bootstrap() {

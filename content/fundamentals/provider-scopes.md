@@ -129,7 +129,7 @@ And then use it as follows:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { HelloService } from './hello.service';
+import { HelloService } from './hello.service.js';
 
 @Injectable()
 export class AppService {

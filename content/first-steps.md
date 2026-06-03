@@ -21,6 +21,8 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
+The CLI asks whether you want to generate a CommonJS or ESM project. ESM starters use Vitest and oxlint by default.
+
 > info **Hint** To create a new project with TypeScript's [stricter](https://www.typescriptlang.org/tsconfig#strict) feature set, pass the `--strict` flag to the `nest new` command.
 
 The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
@@ -52,7 +54,7 @@ The `main.ts` includes an async function, which will **bootstrap** our applicati
 @@filename(main)
 
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -61,7 +63,7 @@ async function bootstrap() {
 bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -117,16 +119,16 @@ This command will watch your files, automatically recompiling and reloading the 
 
 #### Linting and formatting
 
-[CLI](/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [eslint](https://eslint.org/) and [prettier](https://prettier.io/)).
+[CLI](/cli/overview) provides best effort to scaffold a reliable development workflow at scale. Thus, a generated Nest project comes with both a code **linter** and **formatter** preinstalled (respectively [oxlint](https://oxc.rs/docs/guide/usage/linter.html) and [prettier](https://prettier.io/)).
 
 > info **Hint** Not sure about the role of formatters vs linters? Learn the difference [here](https://prettier.io/docs/en/comparison.html).
 
-To ensure maximum stability and extensibility, we use the base [`eslint`](https://www.npmjs.com/package/eslint) and [`prettier`](https://www.npmjs.com/package/prettier) cli packages. This setup allows neat IDE integration with official extensions by design.
+To ensure a fast default developer workflow, newly generated projects use [`oxlint`](https://www.npmjs.com/package/oxlint) together with [`prettier`](https://www.npmjs.com/package/prettier).
 
 For headless environments where an IDE is not relevant (Continuous Integration, Git hooks, etc.) a Nest project comes with ready-to-use `npm` scripts.
 
 ```bash
-# Lint and autofix with eslint
+# Lint with oxlint
 $ npm run lint
 
 # Format with prettier

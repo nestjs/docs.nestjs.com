@@ -26,7 +26,7 @@ In this case, using the code first approach, we define schemas using TypeScript 
 ```typescript
 @@filename(authors/models/author.model)
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Post } from './post';
+import { Post } from './post.js';
 
 @ObjectType()
 export class Author {
@@ -618,7 +618,7 @@ However, if you add decorators directly to the automatically generated file, the
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
-import { Post } from '../../graphql.ts';
+import { Post } from '../../graphql.ts.js';
 
 export class CreatePostInput extends Post {
   @MinLength(3)

@@ -52,7 +52,7 @@ Then, we need to export these providers to make them **accessible** for the rest
 ```typescript
 @@filename(database.module)
 import { Module } from '@nestjs/common';
-import { databaseProviders } from './database.providers';
+import { databaseProviders } from './database.providers.js';
 
 @Module({
   providers: [...databaseProviders],
@@ -100,7 +100,7 @@ The `Photo` entity belongs to the `photo` directory. This directory represents t
 ```typescript
 @@filename(photo.providers)
 import { DataSource } from 'typeorm';
-import { Photo } from './photo.entity';
+import { Photo } from './photo.entity.js';
 
 export const photoProviders = [
   {
@@ -119,7 +119,7 @@ Now we can inject the `Repository<Photo>` to the `PhotoService` using the `@Inje
 @@filename(photo.service)
 import { Injectable, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Photo } from './photo.entity';
+import { Photo } from './photo.entity.js';
 
 @Injectable()
 export class PhotoService {
@@ -141,9 +141,9 @@ Here is a final `PhotoModule`:
 ```typescript
 @@filename(photo.module)
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../database/database.module';
-import { photoProviders } from './photo.providers';
-import { PhotoService } from './photo.service';
+import { DatabaseModule } from '../database/database.module.js';
+import { photoProviders } from './photo.providers.js';
+import { PhotoService } from './photo.service.js';
 
 @Module({
   imports: [DatabaseModule],

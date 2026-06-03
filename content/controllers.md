@@ -150,6 +150,22 @@ The request object represents the HTTP request and contains properties for the q
 
 <sup>\* </sup>For compatibility with typings across underlying HTTP platforms (e.g., Express and Fastify), Nest provides `@Res()` and `@Response()` decorators. `@Res()` is simply an alias for `@Response()`. Both directly expose the underlying native platform `response` object interface. When using them, you should also import the typings for the underlying library (e.g., `@types/express`) to take full advantage. Note that when you inject either `@Res()` or `@Response()` in a method handler, you put Nest into **Library-specific mode** for that handler, and you become responsible for managing the response. When doing so, you must issue some kind of response by making a call on the `response` object (e.g., `res.json(...)` or `res.send(...)`), or the HTTP server will hang.
 
+`@Body()`, `@Query()`, `@Param()`, and `@RawBody()` can also accept an options object with `schema` and `pipes`. This makes it possible to attach [Standard Schema](https://standardschema.dev/) compatible schemas directly to route parameters, including schemas created with packages such as Zod, Valibot, and ArkType.
+
+```typescript
+@Post()
+create(@Body({ schema: createCatSchema }) createCatDto: CreateCatDto) {
+  return this.catsService.create(createCatDto);
+}
+
+@Get(':id')
+findOne(@Param('id', { schema: z.coerce.number().int().positive() }) id: number) {
+  return this.catsService.findOne(id);
+}
+```
+
+To actually validate those schemas, register the built-in `StandardSchemaValidationPipe` or use your own pipe that reads `metadata.schema`.
+
 > info **Hint** To learn how to create your own custom decorators, visit [this](/custom-decorators) chapter.
 
 #### Resources
@@ -466,7 +482,7 @@ Below is an example that demonstrates the use of several available decorators to
 ```typescript
 @@filename(cats.controller)
 import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
-import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
+import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto.js';
 
 @Controller('cats')
 export class CatsController {
@@ -544,7 +560,7 @@ Controllers must always be part of a module, which is why we include the `contro
 ```typescript
 @@filename(app.module)
 import { Module } from '@nestjs/common';
-import { CatsController } from './cats/cats.controller';
+import { CatsController } from './cats/cats.controller.js';
 
 @Module({
   controllers: [CatsController],

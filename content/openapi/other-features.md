@@ -51,9 +51,9 @@ You can setup multiple specifications support as shown below:
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { CatsModule } from './cats/cats.module';
-import { DogsModule } from './dogs/dogs.module';
+import { AppModule } from './app.module.js';
+import { CatsModule } from './cats/cats.module.js';
+import { DogsModule } from './dogs/dogs.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -124,9 +124,9 @@ Here’s how to set up multiple specifications from a dropdown in the explorer b
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { CatsModule } from './cats/cats.module';
-import { DogsModule } from './dogs/dogs.module';
+import { AppModule } from './app.module.js';
+import { CatsModule } from './cats/cats.module.js';
+import { DogsModule } from './dogs/dogs.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
