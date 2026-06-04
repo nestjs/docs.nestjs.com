@@ -292,7 +292,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
 
 > warning **Warning** The `useGlobalFilters()` method does not set up filters for gateways or hybrid applications.

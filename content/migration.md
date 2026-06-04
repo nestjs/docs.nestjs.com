@@ -69,7 +69,7 @@ create(@Body({ schema: createUserSchema }) body: CreateUserDto) {
 }
 
 @Get(':id')
-findOne(@Param('id', { schema: userIdSchema }) id: string) {
+findOne(@Param('id', { schema: z.coerce.number().int().positive() }) id: number) {
   return this.usersService.findOne(id);
 }
 ```
@@ -96,6 +96,66 @@ findOne(@Param('id') id: string) {
 ```
 
 Use this when you want response shaping to be driven by a schema instead of `class-transformer` decorators.
+
+#### GraphQL IDE configuration
+
+GraphiQL is now the default GraphQL IDE. If you need to customize it, pass a `graphiql` options object instead of setting `graphiql: true`.
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  graphiql: {
+    url: '/graphql',
+    headers: {
+      authorization: 'Bearer <token>',
+    },
+    shouldPersistHeaders: true,
+    isHeadersEditorEnabled: true,
+  },
+});
+```
+
+This lets you customize the IDE endpoint and editor behavior while keeping GraphiQL enabled.
+
+#### GraphQL subscriptions transport
+
+The latest `@nestjs/graphql` release removes support for `subscriptions-transport-ws`. Use `graphql-ws` for GraphQL subscriptions moving forward.
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  subscriptions: {
+    'graphql-ws': true,
+  },
+});
+```
+
+If your application still depends on `subscriptions-transport-ws`, plan that migration as part of your GraphQL package upgrade.
+
+#### NATS v3
+
+The microservices package now targets NATS v3. Most transport configuration stays the same, but if your application depends on NATS-specific APIs, review that integration during the upgrade.
+
+In particular, if you send custom NATS headers, build them with the NATS v3 headers helper and pass them through `NatsRecordBuilder`:
+
+```typescript
+import * as nats from 'nats';
+import { NatsRecordBuilder } from '@nestjs/microservices';
+
+const headers = nats.headers();
+headers.set('x-version', '1.0.0');
+
+const record = new NatsRecordBuilder(payload).setHeaders(headers).build();
+return this.client.send('record-builder-duplex', record);
+```
+
+If you use custom serializers, deserializers, or direct interop with the underlying `nats` client, verify those integrations against the v3 package as part of your migration.
+
+#### Lifecycle hook ordering
+
+Lifecycle hooks are now called by component hierarchy level. This can change the execution order of hooks such as `onModuleInit`, `onApplicationBootstrap`, and shutdown hooks when multiple providers or modules depend on one another.
+
+If your application relies on a specific hook ordering between related providers, review that flow during the upgrade and update any assumptions in initialization logic, teardown logic, or tests.
 
 #### class-validator and class-transformer
 

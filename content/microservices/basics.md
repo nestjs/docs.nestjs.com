@@ -35,7 +35,7 @@ async function bootstrap() {
   );
   await app.listen();
 }
-bootstrap();
+await bootstrap();
 @@switch
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
@@ -47,7 +47,7 @@ async function bootstrap() {
   });
   await app.listen();
 }
-bootstrap();
+await bootstrap();
 ```
 
 > info **Hint** Microservices use the **TCP** transport layer by default.

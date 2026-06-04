@@ -55,7 +55,7 @@ async function bootstrap() {
   await app.listen(3000);
 }
 
-bootstrap();
+await bootstrap();
 ```
 
 Afterwards, add the `SentryModule` as a root module to your main module:

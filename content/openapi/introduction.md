@@ -2,7 +2,7 @@
 
 The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows generating such a specification by leveraging decorators.
 
-The Swagger package is also compatible with the `schema` metadata used by route parameter decorators such as `@Body()`, `@Query()`, and `@Param()`, so Standard Schema based request definitions can still participate in OpenAPI generation alongside the existing Swagger decorators.
+The Swagger package can also work with the `schema` metadata used by route parameter decorators such as `@Body()`, `@Query()`, and `@Param()`. To make Standard Schema based request definitions participate in OpenAPI generation, pass a `standardSchemaConverter` function through `SwaggerDocumentOptions` when creating the document.
 
 #### Installation
 
@@ -19,7 +19,12 @@ Once the installation process is complete, open the `main.ts` file and initializ
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
+import { createSchema } from 'zod-openapi';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
@@ -31,13 +36,23 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('cats')
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const documentOptions: SwaggerDocumentOptions = {
+    standardSchemaConverter: (schema, { schemaType }) =>
+      createSchema(schema, {
+        io: schemaType,
+        openapiVersion: '3.0.0',
+      }),
+  };
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app, config, documentOptions);
   SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
+
+The exact converter implementation depends on the Standard Schema library you use. For example, the snippet above uses `zod-openapi` to translate Zod schemas into OpenAPI documents.
 
 > info **Hint** The factory method `SwaggerModule.createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
 

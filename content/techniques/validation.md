@@ -32,6 +32,7 @@ $ npm i --save class-validator class-transformer
 If your project already defines request schemas with a Standard Schema compatible library, you can attach them directly to route decorators and validate them with `StandardSchemaValidationPipe`.
 
 ```typescript
+import { z } from 'zod';
 import { Body, Controller, Param, Post, Get, StandardSchemaValidationPipe } from '@nestjs/common';
 
 @Controller('users')
@@ -42,7 +43,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id', { schema: userIdSchema }) id: string) {
+  findOne(@Param('id', { schema: z.coerce.number().int().positive() }) id: number) {
     return { id };
   }
 }

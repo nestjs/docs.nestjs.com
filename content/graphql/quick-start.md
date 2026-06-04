@@ -90,16 +90,23 @@ With that in place, and with your application running in the background, you can
 
 > info **Note** `@nestjs/mercurius` integration uses [GraphiQL](https://github.com/graphql/graphiql) as well.
 
-If you want to configure the IDE explicitly, set `graphiql: true` in the `GraphQLModule` configuration, as shown below:
+GraphiQL is enabled by default. If you want to customize the IDE, pass a `graphiql` configuration object to `GraphQLModule.forRoot()`. For example, you can point the IDE to a custom URL, preconfigure headers, or control whether the headers editor is available:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
-  graphiql: true,
+  graphiql: {
+    url: '/graphql',
+    headers: {
+      authorization: 'Bearer <token>',
+    },
+    shouldPersistHeaders: true,
+    isHeadersEditorEnabled: true,
+  },
 }),
 ```
 
-If your application uses [subscriptions](/graphql/subscriptions), be sure to use `graphql-ws`, as `subscriptions-transport-ws` isn't supported by GraphiQL.
+If your application uses [subscriptions](/graphql/subscriptions), use `graphql-ws`. `subscriptions-transport-ws` is no longer supported.
 
 #### Code first
 
