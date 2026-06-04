@@ -156,4 +156,4 @@ While this chapter shows examples using HTTP style applications (e.g., Express o
 
 Read more about available decorators and options as provided by the `class-transformer` package [here](https://github.com/typestack/class-transformer).
 
-If you prefer schema-driven serialization, use `StandardSchemaSerializerInterceptor` together with `@SerializeOptions({ schema })`.
+If you prefer schema-driven serialization, use `StandardSchemaSerializerInterceptor` together with `@SerializeOptions()` and its `schema` option.
