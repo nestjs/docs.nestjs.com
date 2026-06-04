@@ -133,7 +133,7 @@ export abstract class FileValidator<TValidationOptions = Record<string, any>> {
 - `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
 - `FileTypeValidator` - Checks if a given file's mime-type matches a given string or RegExp.  By default, validates the mime-type using file content [magic number](https://www.ibm.com/support/pages/what-magic-number)
 
-To understand how these can be used in conjunction with the aforementioned `FileParsePipe`, we'll use an altered snippet of the last presented example:
+To understand how these can be used in conjunction with the aforementioned `ParseFilePipe`, we'll use an altered snippet of the last presented example:
 
 ```typescript
 @UploadedFile(
