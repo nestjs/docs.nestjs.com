@@ -80,7 +80,9 @@ On its own, the decorator only attaches schema metadata. To validate against it,
 app.useGlobalPipes(new StandardSchemaValidationPipe());
 ```
 
-This is the main schema-first alternative to the traditional `ValidationPipe` plus `class-validator` flow.
+This is a schema-first alternative to the traditional `ValidationPipe` plus `class-validator` flow.
+
+The existing decorator-based approach remains fully supported, and there is no plan to remove it. The `schema` attribute is an additional option for teams that prefer schema-first libraries such as Zod.
 
 #### Standard Schema serialization
 
@@ -134,12 +136,17 @@ If your application still depends on `subscriptions-transport-ws`, plan that mig
 
 #### NATS v3
 
-The microservices package now targets NATS v3. Most transport configuration stays the same, but if your application depends on NATS-specific APIs, review that integration during the upgrade.
+The microservices package now targets NATS v3, and this upgrade includes a breaking dependency change. If you use the NATS transport, replace the old `nats` package with `@nats-io/transport-node`.
 
-In particular, if you send custom NATS headers, build them with the NATS v3 headers helper and pass them through `NatsRecordBuilder`:
+```bash
+$ npm uninstall nats
+$ npm install @nats-io/transport-node
+```
+
+If your application imports NATS helpers directly, update those imports as well. For example, header helpers now come from the new NATS packages:
 
 ```typescript
-import * as nats from 'nats';
+import * as nats from '@nats-io/nats-core';
 import { NatsRecordBuilder } from '@nestjs/microservices';
 
 const headers = nats.headers();
@@ -149,7 +156,7 @@ const record = new NatsRecordBuilder(payload).setHeaders(headers).build();
 return this.client.send('record-builder-duplex', record);
 ```
 
-If you use custom serializers, deserializers, or direct interop with the underlying `nats` client, verify those integrations against the v3 package as part of your migration.
+Also review any custom serializers or deserializers. Nest now serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object rather than a raw `Uint8Array`. In practice, that means custom deserializers should read the payload from `msg.json()` instead of decoding bytes manually.
 
 #### Lifecycle hook ordering
 
