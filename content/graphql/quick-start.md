@@ -91,15 +91,15 @@ With that in place, and with your application running in the background, you can
 > info **Note** `@nestjs/mercurius` integration uses [GraphiQL](https://github.com/graphql/graphiql) as well.
 
 If you want to configure the IDE explicitly, set `graphiql: true` in the `GraphQLModule` configuration, as shown below:
->
-> ```typescript
-> GraphQLModule.forRoot<ApolloDriverConfig>({
->   driver: ApolloDriver,
->   graphiql: true,
-> }),
-> ```
->
-> If your application uses [subscriptions](/graphql/subscriptions), be sure to use `graphql-ws`, as `subscriptions-transport-ws` isn't supported by GraphiQL.
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  graphiql: true,
+}),
+```
+
+If your application uses [subscriptions](/graphql/subscriptions), be sure to use `graphql-ws`, as `subscriptions-transport-ws` isn't supported by GraphiQL.
 
 #### Code first
 
