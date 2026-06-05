@@ -40,7 +40,7 @@ export class AppModule {}
 
 > warning **Warning** The reason we are checking the `NODE_ENV` environment variable here is that you should never use this module in production!
 
-Once the `DevtoolsModule` is imported and your application is up and running (`npm run start:dev`), you should be able to navigate to [Devtools](https://devtools.nestjs.com) URL and see the instrospected graph.
+Once the `DevtoolsModule` is imported and your application is up and running (`npm run start:dev`), you should be able to navigate to [Devtools](https://devtools.nestjs.com) URL and see the introspected graph.
 
 <figure><img src="/assets/devtools/modules-graph.png" /></figure>
 

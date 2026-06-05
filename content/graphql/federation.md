@@ -214,7 +214,7 @@ import { PostsResolver } from './posts.resolver';
       typePaths: ['**/*.graphql'],
     }),
   ],
-  providers: [PostsResolvers],
+  providers: [PostsResolver],
 })
 export class AppModule {}
 ```
@@ -320,8 +320,8 @@ import {
 } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { User } from './user.entity';
-import { PostsResolvers } from './posts.resolvers';
-import { UsersResolvers } from './users.resolvers';
+import { PostsResolver } from './posts.resolvers';
+import { UsersResolver } from './users.resolvers';
 import { PostsService } from './posts.service'; // Not included in example
 
 @Module({
@@ -585,7 +585,7 @@ import { PostsResolver } from './posts.resolver';
       typePaths: ['**/*.graphql'],
     }),
   ],
-  providers: [PostsResolvers],
+  providers: [PostsResolver],
 })
 export class AppModule {}
 ```
@@ -691,8 +691,8 @@ import {
 } from '@nestjs/mercurius';
 import { Module } from '@nestjs/common';
 import { User } from './user.entity';
-import { PostsResolvers } from './posts.resolvers';
-import { UsersResolvers } from './users.resolvers';
+import { PostsResolver } from './posts.resolvers';
+import { UsersResolver } from './users.resolvers';
 import { PostsService } from './posts.service'; // Not included in example
 
 @Module({
@@ -847,8 +847,8 @@ import {
 } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { User } from './user.entity';
-import { PostsResolvers } from './posts.resolvers';
-import { UsersResolvers } from './users.resolvers';
+import { PostsResolver } from './posts.resolvers';
+import { UsersResolver } from './users.resolvers';
 import { PostsService } from './posts.service'; // Not included in example
 
 @Module({

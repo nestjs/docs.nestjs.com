@@ -38,7 +38,7 @@ By default, Nest's logger is disabled when using the `CommandFactory`. It's poss
 ```ts
 import { CommandFactory } from 'nest-commander';
 import { AppModule } from './app.module';
-import { LogService } './log.service';
+import { LogService } from './log.service';
 
 async function bootstrap() {
   await CommandFactory.run(AppModule, new LogService());
