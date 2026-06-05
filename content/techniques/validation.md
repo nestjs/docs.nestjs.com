@@ -3,12 +3,15 @@
 It is best practice to validate the correctness of any data sent into a web application. To automatically validate incoming requests, Nest provides several pipes available right out-of-the-box:
 
 - `ValidationPipe`
+- `StandardSchemaValidationPipe`
 - `ParseIntPipe`
 - `ParseBoolPipe`
 - `ParseArrayPipe`
 - `ParseUUIDPipe`
 
 The `ValidationPipe` makes use of the powerful [class-validator](https://github.com/typestack/class-validator) package and its declarative validation decorators. The `ValidationPipe` provides a convenient approach to enforce validation rules for all incoming client payloads, where the specific rules are declared with simple annotations in local class/DTO declarations in each module.
+
+Nest also includes a built-in `StandardSchemaValidationPipe` for projects that prefer schema-first validation libraries such as Zod, Valibot, ArkType, and other [Standard Schema](https://standardschema.dev/) compatible tools.
 
 #### Overview
 
@@ -23,6 +26,56 @@ $ npm i --save class-validator class-transformer
 ```
 
 > info **Hint** The `ValidationPipe` is exported from the `@nestjs/common` package.
+
+#### Using the built-in StandardSchemaValidationPipe
+
+If your project already defines request schemas with a Standard Schema compatible library, you can attach them directly to route decorators and validate them with `StandardSchemaValidationPipe`.
+
+```typescript
+import { z } from 'zod';
+import { Body, Controller, Param, Post, Get, StandardSchemaValidationPipe } from '@nestjs/common';
+
+@Controller('users')
+export class UsersController {
+  @Post()
+  create(@Body({ schema: createUserSchema }) body: CreateUserDto) {
+    return body;
+  }
+
+  @Get(':id')
+  findOne(@Param('id', { schema: z.coerce.number().int().positive() }) id: number) {
+    return { id };
+  }
+}
+```
+
+Register the pipe globally:
+
+```typescript
+app.useGlobalPipes(new StandardSchemaValidationPipe());
+```
+
+By default, the pipe returns the value produced by the schema. This is useful when your schema performs coercion or transformation.
+
+```typescript
+app.useGlobalPipes(
+  new StandardSchemaValidationPipe({
+    transform: true,
+  }),
+);
+```
+
+If you also want it to validate values produced by custom parameter decorators created with `createParamDecorator()`, enable `validateCustomDecorators`.
+
+```typescript
+app.useGlobalPipes(
+  new StandardSchemaValidationPipe({
+    validateCustomDecorators: true,
+  }),
+);
+```
+
+Use this approach when your schemas already live outside of class-based DTOs. If your project relies on `class-validator` decorators, `ValidationPipe` remains the right choice.
 
 Because this pipe uses the [`class-validator`](https://github.com/typestack/class-validator) and [`class-transformer`](https://github.com/typestack/class-transformer) libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
 

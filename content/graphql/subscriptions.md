@@ -6,29 +6,18 @@ A common use case for subscriptions is notifying the client side about particula
 
 #### Enable subscriptions with Apollo driver
 
-To enable subscriptions, set the `installSubscriptionHandlers` property to `true`.
-
-```typescript
-GraphQLModule.forRoot<ApolloDriverConfig>({
-  driver: ApolloDriver,
-  installSubscriptionHandlers: true,
-}),
-```
-
-> warning **Warning** The `installSubscriptionHandlers` configuration option has been removed from the latest version of Apollo server and will be soon deprecated in this package as well. By default, `installSubscriptionHandlers` will fallback to use the `subscriptions-transport-ws` ([read more](https://github.com/apollographql/subscriptions-transport-ws)) but we strongly recommend using the `graphql-ws`([read more](https://github.com/enisdenjo/graphql-ws)) library instead.
-
-To switch to use the `graphql-ws` package instead, use the following configuration:
+To enable subscriptions, configure the `graphql-ws` transport explicitly:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
   subscriptions: {
-    'graphql-ws': true
+    'graphql-ws': true,
   },
 }),
 ```
 
-> info **Hint** You can also use both packages (`subscriptions-transport-ws` and `graphql-ws`) at the same time, for example, for backward compatibility.
+> info **Hint** `subscriptions-transport-ws` is no longer supported. Use `graphql-ws` for all new and existing subscription setups.
 
 #### Code first
 
@@ -271,67 +260,24 @@ We instantiated a local `PubSub` instance above. The preferred approach is to de
 
 #### Customize subscriptions server
 
-To customize the subscriptions server (e.g., change the path), use the `subscriptions` options property.
-
-```typescript
-GraphQLModule.forRoot<ApolloDriverConfig>({
-  driver: ApolloDriver,
-  subscriptions: {
-    'subscriptions-transport-ws': {
-      path: '/graphql'
-    },
-  }
-}),
-```
-
-If you're using the `graphql-ws` package for subscriptions, replace the `subscriptions-transport-ws` key with `graphql-ws`, as follows:
+To customize the subscriptions server (for example, change the path), use the `subscriptions` options property with `graphql-ws`:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
   subscriptions: {
     'graphql-ws': {
-      path: '/graphql'
+      path: '/graphql',
     },
-  }
-}),
+  },
+});
 ```
 
 #### Authentication over WebSockets
 
 Checking whether the user is authenticated can be done inside the `onConnect` callback function that you can specify in the `subscriptions` options.
 
-The `onConnect` will receive as a first argument the `connectionParams` passed to the `SubscriptionClient` (read [more](https://www.apollographql.com/docs/react/data/subscriptions/#5-authenticate-over-websocket-optional)).
-
-```typescript
-GraphQLModule.forRoot<ApolloDriverConfig>({
-  driver: ApolloDriver,
-  subscriptions: {
-    'subscriptions-transport-ws': {
-      onConnect: (connectionParams) => {
-        const authToken = connectionParams.authToken;
-        if (!isValid(authToken)) {
-          throw new Error('Token is not valid');
-        }
-        // extract user information from token
-        const user = parseToken(authToken);
-        // return user info to add them to the context later
-        return { user };
-      },
-    }
-  },
-  context: ({ connection }) => {
-    // connection.context will be equal to what was returned by the "onConnect" callback
-  },
-}),
-```
-
-The `authToken` in this example is only sent once by the client, when the connection is first established.
-All subscriptions made with this connection will have the same `authToken`, and thus the same user info.
-
-> warning **Note** There is a bug in `subscriptions-transport-ws` that allows connections to skip the `onConnect` phase (read [more](https://github.com/apollographql/subscriptions-transport-ws/issues/349)). You should not assume that `onConnect` was called when the user starts a subscription, and always check that the `context` is populated.
-
-If you're using the `graphql-ws` package, the signature of the `onConnect` callback will be slightly different:
+With `graphql-ws`, the `onConnect` callback receives the connection context, including `connectionParams`.
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -340,8 +286,11 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
     'graphql-ws': {
       onConnect: (context: Context<any>) => {
         const { connectionParams, extra } = context;
-        // user validation will remain the same as in the example above
-        // when using with graphql-ws, additional context value should be stored in the extra field
+        const authToken = connectionParams.authToken;
+        if (!isValid(authToken)) {
+          throw new Error('Token is not valid');
+        }
+        // when using graphql-ws, additional context values should be stored in the extra field
         extra.user = { user: {} };
       },
     },

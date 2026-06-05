@@ -44,18 +44,18 @@ Update your `main.ts` file to import `instrument.ts` before other imports:
 ```typescript
 @@filename(main)
 // Import this first!
-import "./instrument";
+import "./instrument.js";
 
 // Now import other modules
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
+import { AppModule } from "./app.module.js";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
 }
 
-bootstrap();
+await bootstrap();
 ```
 
 Afterwards, add the `SentryModule` as a root module to your main module:
@@ -64,8 +64,8 @@ Afterwards, add the `SentryModule` as a root module to your main module:
 @@filename(app.module)
 import { Module } from "@nestjs/common";
 import { SentryModule } from "@sentry/nestjs/setup";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
 
 @Module({
   imports: [

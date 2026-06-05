@@ -75,7 +75,7 @@ In case you want to specify relation to another model, later for populating, you
 
 ```typescript
 import * as mongoose from 'mongoose';
-import { Owner } from '../owners/schemas/owner.schema';
+import { Owner } from '../owners/schemas/owner.schema.js';
 
 // inside the class definition
 @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
@@ -100,7 +100,7 @@ owner: mongoose.Types.ObjectId;
 Then, when you need to selectively populate it later, you can use a repository function that specifies the correct type:
 
 ```typescript
-import { Owner } from './schemas/owner.schema';
+import { Owner } from './schemas/owner.schema.js';
 
 // e.g. inside a service or repository
 async findAllPopulated() {
@@ -138,9 +138,9 @@ Let's look at the `CatsModule`:
 @@filename(cats.module)
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
-import { Cat, CatSchema } from './schemas/cat.schema';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
+import { Cat, CatSchema } from './schemas/cat.schema.js';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }])],
@@ -159,8 +159,8 @@ Once you've registered the schema, you can inject a `Cat` model into the `CatsSe
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cat } from './schemas/cat.schema';
-import { CreateCatDto } from './dto/create-cat.dto';
+import { Cat } from './schemas/cat.schema.js';
+import { CreateCatDto } from './dto/create-cat.dto.js';
 
 @Injectable()
 export class CatsService {
@@ -179,7 +179,7 @@ export class CatsService {
 import { Model } from 'mongoose';
 import { Injectable, Dependencies } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
-import { Cat } from './schemas/cat.schema';
+import { Cat } from './schemas/cat.schema.js';
 
 @Injectable()
 @Dependencies(getModelToken(Cat.name))

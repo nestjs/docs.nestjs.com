@@ -26,7 +26,7 @@ In this case, using the code first approach, we define schemas using TypeScript 
 ```typescript
 @@filename(authors/models/author.model)
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Post } from './post';
+import { Post } from './post.js';
 
 @ObjectType()
 export class Author {
@@ -297,7 +297,7 @@ class GetAuthorArgs {
 }
 ```
 
-> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate type and optionality, or use a [CLI plugin](/graphql/cli-plugin). Also, in the case of `firstName`, which is a GraphQL nullable field, it isn't necessary to add the non-value types of `null` or `undefined` to the type of this field. Just be aware, you'll need to type guard for these possible non-value types in your resolvers, because a GraphQL nullable field will allow those types to pass through to your resolver. 
+> info **Hint** Again, due to TypeScript's metadata reflection system limitations, it's required to either use the `@Field` decorator to manually indicate type and optionality, or use a [CLI plugin](/graphql/cli-plugin). Also, in the case of `firstName`, which is a GraphQL nullable field, it isn't necessary to add the non-value types of `null` or `undefined` to the type of this field. Just be aware, you'll need to type guard for these possible non-value types in your resolvers, because a GraphQL nullable field will allow those types to pass through to your resolver.
 
 This will result in generating the following part of the GraphQL schema in SDL:
 
@@ -618,7 +618,7 @@ However, if you add decorators directly to the automatically generated file, the
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
-import { Post } from '../../graphql.ts';
+import { Post } from '../../graphql.js';
 
 export class CreatePostInput extends Post {
   @MinLength(3)

@@ -112,9 +112,9 @@ $ nest build <name> [options]
 | `--path [path]`         | Path to `tsconfig` file. <br/>Alias `-p`                                                                                                                                                   |
 | `--config [path]`       | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                                                                                                     |
 | `--watch`               | Run in watch mode (live-reload).<br /> If you're using `tsc` for compilation, you can type `rs` to restart the application (when `manualRestart` option is set to `true`). <br/>Alias `-w` |
-| `--builder [name]`      | Specify the builder to use for compilation (`tsc`, `swc`, or `webpack`). <br/>Alias `-b`                                                                                                   |
-| `--webpack`             | Use webpack for compilation (deprecated: use `--builder webpack` instead).                                                                                                                 |
-| `--webpackPath`         | Path to webpack configuration.                                                                                                                                                             |
+| `--builder [name]`      | Specify the builder to use for compilation (`tsc`, `swc`, or `rspack`). <br/>Alias `-b`                                                                                                    |
+| `--webpack`             | Deprecated legacy flag for webpack-based compilation. Prefer `--builder rspack` or another explicit builder.                                                                              |
+| `--webpackPath`         | Deprecated legacy path to a webpack configuration file. Prefer the configuration supported by your selected builder.                                                                      |
 | `--tsc`                 | Force use `tsc` for compilation.                                                                                                                                                           |
 | `--watchAssets`         | Watch non-TS files (assets like `.graphql` etc.). See [Assets](cli/monorepo#assets) for more details.                                                                                      |
 | `--type-check`          | Enable type checking (when SWC is used).                                                                                                                                                   |
@@ -142,12 +142,12 @@ $ nest start <name> [options]
 | `--path [path]`         | Path to `tsconfig` file. <br/>Alias `-p`                                                                                           |
 | `--config [path]`       | Path to `nest-cli` configuration file. <br/>Alias `-c`                                                                             |
 | `--watch`               | Run in watch mode (live-reload) <br/>Alias `-w`                                                                                    |
-| `--builder [name]`      | Specify the builder to use for compilation (`tsc`, `swc`, or `webpack`). <br/>Alias `-b`                                           |
+| `--builder [name]`      | Specify the builder to use for compilation (`tsc`, `swc`, or `rspack`). <br/>Alias `-b`                                          |
 | `--preserveWatchOutput` | Keep outdated console output in watch mode instead of clearing the screen. (`tsc` watch mode only)                                 |
 | `--watchAssets`         | Run in watch mode (live-reload), watching non-TS files (assets). See [Assets](cli/monorepo#assets) for more details.               |
 | `--debug [hostport]`    | Run in debug mode (with --inspect flag) <br/>Alias `-d`                                                                            |
-| `--webpack`             | Use webpack for compilation. (deprecated: use `--builder webpack` instead)                                                         |
-| `--webpackPath`         | Path to webpack configuration.                                                                                                     |
+| `--webpack`             | Deprecated legacy flag for webpack-based compilation. Prefer `--builder rspack` or another explicit builder.                     |
+| `--webpackPath`         | Deprecated legacy path to a webpack configuration file. Prefer the configuration supported by your selected builder.               |
 | `--tsc`                 | Force use `tsc` for compilation.                                                                                                   |
 | `--exec [binary]`       | Binary to run (default: `node`). <br/>Alias `-e`                                                                                   |
 | `--no-shell`            | Do not spawn child processes within a shell (see node's `child_process.spawn()` method docs).                                      |

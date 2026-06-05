@@ -258,7 +258,7 @@ For more advanced logging functionality, you'll want to take advantage of depend
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { MyLogger } from './my-logger.service';
+import { MyLogger } from './my-logger.service.js';
 
 @Module({
   providers: [MyLogger],
@@ -306,7 +306,7 @@ Next, create a `LoggerModule` with a construction like this:
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { MyLogger } from './my-logger.service';
+import { MyLogger } from './my-logger.service.js';
 
 @Module({
   providers: [MyLogger],
@@ -319,7 +319,7 @@ Next, import the `LoggerModule` into your feature module. Since we extended defa
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { MyLogger } from './my-logger.service';
+import { MyLogger } from './my-logger.service.js';
 
 @Injectable()
 export class CatsService {

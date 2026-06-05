@@ -43,7 +43,7 @@ Then, we need to export these providers to make them **accessible** for the rest
 ```typescript
 @@filename(database.module)
 import { Module } from '@nestjs/common';
-import { databaseProviders } from './database.providers';
+import { databaseProviders } from './database.providers.js';
 
 @Module({
   providers: [...databaseProviders],
@@ -76,7 +76,7 @@ Now it's time to create a **Model** provider:
 ```typescript
 @@filename(cats.providers)
 import { Connection } from 'mongoose';
-import { CatSchema } from './schemas/cat.schema';
+import { CatSchema } from './schemas/cat.schema.js';
 
 export const catsProviders = [
   {
@@ -86,7 +86,7 @@ export const catsProviders = [
   },
 ];
 @@switch
-import { CatSchema } from './schemas/cat.schema';
+import { CatSchema } from './schemas/cat.schema.js';
 
 export const catsProviders = [
   {
@@ -105,8 +105,8 @@ Now we can inject the `CAT_MODEL` to the `CatsService` using the `@Inject()` dec
 @@filename(cats.service)
 import { Model } from 'mongoose';
 import { Injectable, Inject } from '@nestjs/common';
-import { Cat } from './interfaces/cat.interface';
-import { CreateCatDto } from './dto/create-cat.dto';
+import type { Cat } from './interfaces/cat.interface.js';
+import { CreateCatDto } from './dto/create-cat.dto.js';
 
 @Injectable()
 export class CatsService {
@@ -164,10 +164,10 @@ Here is a final `CatsModule`:
 ```typescript
 @@filename(cats.module)
 import { Module } from '@nestjs/common';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
-import { catsProviders } from './cats.providers';
-import { DatabaseModule } from '../database/database.module';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
+import { catsProviders } from './cats.providers.js';
+import { DatabaseModule } from '../database/database.module.js';
 
 @Module({
   imports: [DatabaseModule],

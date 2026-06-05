@@ -27,7 +27,7 @@ With this in place, we can create a `@Roles()` decorator. This decorator allows 
 ```typescript
 @@filename(roles.decorator)
 import { SetMetadata } from '@nestjs/common';
-import { Role } from '../enums/role.enum';
+import { Role } from '../enums/role.enum.js';
 
 export const ROLES_KEY = 'roles';
 export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
@@ -273,7 +273,7 @@ Lastly, make sure to add the `CaslAbilityFactory` to the `providers` and `export
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CaslAbilityFactory } from './casl-ability.factory';
+import { CaslAbilityFactory } from './casl-ability.factory.js';
 
 @Module({
   providers: [CaslAbilityFactory],
@@ -340,7 +340,7 @@ First, let's flesh out the requirements. The goal is to provide a mechanism that
 Let's start off by defining interfaces for policy handlers:
 
 ```typescript
-import { AppAbility } from '../casl/casl-ability.factory';
+import { AppAbility } from '../casl/casl-ability.factory.js';
 
 interface IPolicyHandler {
   handle(ability: AppAbility): boolean;

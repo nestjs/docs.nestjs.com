@@ -9,7 +9,7 @@ Before using `DiscoveryService`, you need to import the `DiscoveryModule` in the
 ```typescript
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { ExampleService } from './example.service';
+import { ExampleService } from './example.service.js';
 
 @Module({
   imports: [DiscoveryModule],
@@ -70,7 +70,7 @@ Applying this decorator to a service allows it to store metadata that can later 
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { FeatureFlag } from './custom-metadata.decorator';
+import { FeatureFlag } from './custom-metadata.decorator.js';
 
 @Injectable()
 @FeatureFlag('experimental')

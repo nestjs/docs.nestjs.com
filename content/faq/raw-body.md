@@ -11,7 +11,7 @@ First enable the option when creating your Nest Express application:
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 // in the "bootstrap" function
 const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -67,7 +67,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 // in the "bootstrap" function
 const app = await NestFactory.create<NestFastifyApplication>(

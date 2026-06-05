@@ -24,7 +24,7 @@ Similar to how in a NestJS application we can use the `NestFactory` to create a 
 
 ```ts
 import { CommandFactory } from 'nest-commander';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   await CommandFactory.run(AppModule);
@@ -37,7 +37,7 @@ By default, Nest's logger is disabled when using the `CommandFactory`. It's poss
 
 ```ts
 import { CommandFactory } from 'nest-commander';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { LogService } './log.service';
 
 async function bootstrap() {
@@ -62,7 +62,7 @@ The following class would equate to having a CLI command that can take in the su
 
 ```ts
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { LogService } from './log.service';
+import { LogService } from './log.service.js';
 
 interface BasicCommandOptions {
   string?: string;

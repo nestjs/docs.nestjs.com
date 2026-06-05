@@ -57,7 +57,7 @@ Once the gateway is created, we can register it in our module.
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { EventsGateway } from './events.gateway';
+import { EventsGateway } from './events.gateway.js';
 
 @@filename(events.module)
 @Module({
