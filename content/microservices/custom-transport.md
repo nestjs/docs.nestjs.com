@@ -269,7 +269,7 @@ If you need to add some custom logic around the serialization of responses on th
 
 ```typescript
 @@filename(error-handling.proxy)
-import { ClientTcp, RpcException } from '@nestjs/microservices';
+import { ClientTCP, RpcException } from '@nestjs/microservices';
 
 class ErrorHandlingProxy extends ClientTCP {
   serializeError(err: Error) {
