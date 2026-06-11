@@ -269,6 +269,8 @@ Routes with static paths won’t work when you need to accept **dynamic data** a
 
 > info **Hint** Routes with parameters should be declared after any static paths. This prevents the parameterized paths from intercepting traffic destined for the static paths.
 
+> info **Hint** As of v12, Nest provides built-in guardrails for this problem. You can enable `routeConflictPolicy` to detect silent route shadowing at bootstrap time, and `routeResolutionStrategy: 'specificity'` to have Nest automatically register more-specific routes first — regardless of declaration order. See the [Route conflict detection](/faq/route-conflict) page for details.
+
 ```typescript
 @@filename()
 @Get(':id')
