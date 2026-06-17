@@ -191,6 +191,10 @@ export class MenuComponent implements OnInit {
           path: '/microservices/exception-filters',
         },
         { title: 'Pipes', path: '/microservices/pipes' },
+        {
+          title: 'Pre-request hooks',
+          path: '/microservices/pre-request-hooks',
+        },
         { title: 'Guards', path: '/microservices/guards' },
         { title: 'Interceptors', path: '/microservices/interceptors' },
       ],
