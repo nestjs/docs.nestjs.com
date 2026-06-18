@@ -27,7 +27,7 @@ Creates and initializes a new Nest project. Prompts for package manager.
 ##### Options
 
 | Option                                | Description                                                                                                                                                                                          |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                                                                                                             |
 | `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                                                                                                                 |
 | `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                                                                                                          |
@@ -35,6 +35,7 @@ Creates and initializes a new Nest project. Prompts for package manager.
 | `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                                                                                                        |
 | `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`                                                                                      |
 | `--strict`                            | Start the project with the following TypeScript compiler flags enabled: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
+| `--caseNaming [caseType]`             | Set a preferred case convention, options are: `camel`, `kebab`, `snake`, `pascal`, `kebab-or-snake`                                                                                                  |
 
 #### nest generate
 
