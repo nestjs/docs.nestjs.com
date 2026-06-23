@@ -95,6 +95,21 @@ async findOne(user) {
 }
 ```
 
+> info **Hint** For TypeScript users, note that `ctx.switchToHttp().getRequest<T>()` depends on the framework used, for example if you are using express you can specify the appropriate type
+> 
+> ```typescript
+> @@filename(user.decorator)
+> import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+> import type { Request } from 'express';
+> export const Page = createParamDecorator(
+>  (data: never, ctx: ExecutionContext) => {
+>    const request = ctx.switchToHttp().getRequest<Request>();
+>    return request.query['page'] ?? 0;
+>  },
+> );
+> ```
+
+
 #### Passing data
 
 When the behavior of your decorator depends on some conditions, you can use the `data` parameter to pass an argument to the decorator's factory function. One use case for this is a custom decorator that extracts properties from the request object by key. Let's assume, for example, that our <a href="techniques/authentication#implementing-passport-strategies">authentication layer</a> validates requests and attaches a user entity to the request object. The user entity for an authenticated request might look like:
