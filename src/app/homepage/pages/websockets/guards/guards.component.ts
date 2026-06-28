@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
+import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
     selector: 'app-guards',
@@ -15,6 +16,7 @@ import { TabsComponent } from '../../../../shared/components/tabs/tabs.component
         HeaderAnchorDirective,
         CopyButtonComponent,
         TabsComponent,
+        ExtensionPipe,
     ],
 })
 export class WsGuardsComponent extends BasePageComponent {}
