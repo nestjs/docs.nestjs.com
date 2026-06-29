@@ -276,7 +276,7 @@ const connectionProvider = {
 @Module({
   providers: [
     connectionProvider,
-    MyOptionsProvider, // class-base provider
+    MyOptionsProvider, // class-based provider
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
 })
