@@ -22,7 +22,7 @@ jobs:
       - name: Sleep 400 seconds
         run: sleep 400
       - name: Waiting for 200 from the Netlify Preview
-        uses: jakepartusch/wait-for-netlify-action@v1
+        uses: jakepartusch/wait-for-netlify-action@v1.4
         id: wait-for-netflify-preview
         with:
           site_name: 'docs-nestjs'
