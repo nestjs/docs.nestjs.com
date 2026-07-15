@@ -1,4 +1,4 @@
-### Controllers
+### Controllers <Tahmid>
 
 Controllers are responsible for handling incoming **requests** and sending **responses** back to the client.
 
