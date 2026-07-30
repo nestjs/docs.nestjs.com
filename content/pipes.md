@@ -85,7 +85,7 @@ For example with a query string parameter:
 
 ```typescript
 @Get()
-async findOne(@Query('id', ParseIntPipe) id: number) {
+async findOne(@QueryString('id', ParseIntPipe) id: number) {
   return this.catsService.findOne(id);
 }
 ```
@@ -165,7 +165,7 @@ These properties describe the currently processed argument.
     </td>
     <td>Indicates whether the argument is a body
       <code>@Body()</code>, query
-      <code>@Query()</code>, param
+      <code>@QueryString()</code>, param
       <code>@Param()</code>, or a custom parameter (read more
       <a routerLink="/custom-decorators">here</a>).</td>
   </tr>
@@ -549,14 +549,14 @@ We leave the implementation of this pipe to the reader, but note that like all o
 
 #### Providing defaults
 
-`Parse*` pipes expect a parameter's value to be defined. They throw an exception upon receiving `null` or `undefined` values. To allow an endpoint to handle missing querystring parameter values, we have to provide a default value to be injected before the `Parse*` pipes operate on these values. The `DefaultValuePipe` serves that purpose. Simply instantiate a `DefaultValuePipe` in the `@Query()` decorator before the relevant `Parse*` pipe, as shown below:
+`Parse*` pipes expect a parameter's value to be defined. They throw an exception upon receiving `null` or `undefined` values. To allow an endpoint to handle missing querystring parameter values, we have to provide a default value to be injected before the `Parse*` pipes operate on these values. The `DefaultValuePipe` serves that purpose. Simply instantiate a `DefaultValuePipe` in the `@QueryString()` decorator before the relevant `Parse*` pipe, as shown below:
 
 ```typescript
 @@filename()
 @Get()
 async findAll(
-  @Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
-  @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+  @QueryString('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
+  @QueryString('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
 ) {
   return this.catsService.findAll({ activeOnly, page });
 }

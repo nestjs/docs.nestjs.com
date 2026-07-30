@@ -108,7 +108,7 @@ In the example below, despite returning plain JavaScript objects in both conditi
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
 @Get()
-findOne(@Query() { id }: { id: number }): UserEntity {
+findOne(@QueryString() { id }: { id: number }): UserEntity {
   if (id === 1) {
     return {
       id: 1,

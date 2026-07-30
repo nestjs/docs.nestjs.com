@@ -286,7 +286,7 @@ Alternatively (with auto-transformation disabled), you can explicitly cast value
 @Get(':id')
 findOne(
   @Param('id', ParseIntPipe) id: number,
-  @Query('sort', ParseBoolPipe) sort: boolean,
+  @QueryString('sort', ParseBoolPipe) sort: boolean,
 ) {
   console.log(typeof id === 'number'); // true
   console.log(typeof sort === 'boolean'); // true
@@ -420,7 +420,7 @@ In addition, the `ParseArrayPipe` may come in handy when parsing query parameter
 ```typescript
 @Get()
 findByIds(
-  @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
+  @QueryString('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
   ids: number[],
 ) {
   return 'This action returns users by ids';

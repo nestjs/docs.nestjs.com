@@ -102,7 +102,7 @@ export class CatsController {
 
 > info **Hint** To take advantage of `express` typings (like in the `request: Request` parameter example above), make sure to install the `@types/express` package.
 
-The request object represents the HTTP request and contains properties for the query string, parameters, HTTP headers, and body (read more [here](https://expressjs.com/en/api.html#req)). In most cases, you don't need to manually access these properties. Instead, you can use dedicated decorators like `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the corresponding platform-specific objects they represent.
+The request object represents the HTTP request and contains properties for the query string, parameters, HTTP headers, and body (read more [here](https://expressjs.com/en/api.html#req)). In most cases, you don't need to manually access these properties. Instead, you can use dedicated decorators like `@Body()` or `@QueryString()`, which are available out of the box. Below is a list of the provided **parameter** decorators and the corresponding platform-specific objects they represent.
 
 <table>
   <tbody>
@@ -130,7 +130,7 @@ The request object represents the HTTP request and contains properties for the q
       <td><code>req.body</code> / <code>req.body[key]</code></td>
     </tr>
     <tr>
-      <td><code>@Query(key?: string)</code></td>
+      <td><code>@QueryString(key?: string)</code></td>
       <td><code>req.query</code> / <code>req.query[key]</code></td>
     </tr>
     <tr>
@@ -189,7 +189,18 @@ export class CatsController {
 }
 ```
 
-It's that simple. Nest provides decorators for all of the standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, and `@Head()`. In addition, `@All()` defines an endpoint that handles all of them.
+It's that simple. Nest provides decorators for all of the standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, and `@Head()`. Nest also provides `@Query()` and `@Search()` for the corresponding HTTP methods. In addition, `@All()` defines an endpoint that handles all of them.
+
+```typescript
+@Query('search')
+find(@Body() filters: SearchDto) {
+  return this.service.search(filters);
+}
+```
+
+> info **Hint** The HTTP `QUERY` method is safe and idempotent and carries a request body; use `@Body()` for the payload (not `@QueryString()`). Runtime support depends on Node.js including `QUERY` in `http.METHODS` (typically `>=20.19.3 <21` or `>=22.2.0`). Express 5 (the default via `@nestjs/platform-express`) exposes `app.query` when Node includes `QUERY`; the Fastify adapter registers the verb via `query(...)`. Client and proxy support may vary.
+
+> warning **Warning** Do not confuse the `@Query()` **method** decorator (HTTP `QUERY` routes) with `@QueryString()`, the **parameter** decorator that extracts URL query string values from `req.query`.
 
 #### Route wildcards
 
@@ -256,7 +267,7 @@ Returned values will override any arguments passed to the `@Redirect()` decorato
 ```typescript
 @Get('docs')
 @Redirect('https://docs.nestjs.com', 302)
-getDocs(@Query('version') version) {
+getDocs(@QueryString('version') version) {
   if (version && version === '5') {
     return { url: 'https://docs.nestjs.com/v5/' };
   }
@@ -408,19 +419,21 @@ async create(createCatDto) {
 
 #### Query parameters
 
-When handling query parameters in your routes, you can use the `@Query()` decorator to extract them from incoming requests. Let's see how this works in practice.
+When handling query parameters in your routes, you can use the `@QueryString()` decorator to extract them from incoming requests. Let's see how this works in practice.
+
+> warning **Warning** Previously this was `@Query()`. That name is now reserved for the HTTP `QUERY` **method** decorator. Use `@QueryString()` to read `req.query`.
 
 Consider a route where we want to filter a list of cats based on query parameters like `age` and `breed`. First, define the query parameters in the `CatsController`:
 
 ```typescript
 @@filename(cats.controller)
 @Get()
-async findAll(@Query('age') age: number, @Query('breed') breed: string) {
+async findAll(@QueryString('age') age: number, @QueryString('breed') breed: string) {
   return `This action returns all cats filtered by age: ${age} and breed: ${breed}`;
 }
 ```
 
-In this example, the `@Query()` decorator is used to extract the values of `age` and `breed` from the query string. For example, a request to:
+In this example, the `@QueryString()` decorator is used to extract the values of `age` and `breed` from the query string. For example, a request to:
 
 ```plaintext
 GET /cats?age=2&breed=Persian
@@ -465,7 +478,7 @@ Below is an example that demonstrates the use of several available decorators to
 
 ```typescript
 @@filename(cats.controller)
-import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, QueryString, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { CreateCatDto, UpdateCatDto, ListAllEntities } from './dto';
 
 @Controller('cats')
@@ -476,7 +489,7 @@ export class CatsController {
   }
 
   @Get()
-  findAll(@Query() query: ListAllEntities) {
+  findAll(@QueryString() query: ListAllEntities) {
     return `This action returns all cats (limit: ${query.limit} items)`;
   }
 
@@ -496,7 +509,7 @@ export class CatsController {
   }
 }
 @@switch
-import { Controller, Get, Query, Post, Body, Put, Param, Delete, Bind } from '@nestjs/common';
+import { Controller, Get, QueryString, Post, Body, Put, Param, Delete, Bind } from '@nestjs/common';
 
 @Controller('cats')
 export class CatsController {
@@ -507,7 +520,7 @@ export class CatsController {
   }
 
   @Get()
-  @Bind(Query())
+  @Bind(QueryString())
   findAll(query) {
     console.log(query);
     return `This action returns all cats (limit: ${query.limit} items)`;

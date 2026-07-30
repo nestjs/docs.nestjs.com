@@ -352,3 +352,28 @@ $ mau deploy
 ```
 
 You can learn more about Mau [in this chapter](/deployment#easy-deployment-with-mau).
+
+#### `@Query()` and `@QueryString()`
+
+> warning **BREAKING CHANGE** (NestJS release that introduces HTTP `QUERY` support; see [nestjs/nest#17397](https://github.com/nestjs/nest/pull/17397))
+>
+> - Rename: `@Query()` parameter decorator → `@QueryString()`
+> - New: `@Query()` method decorator routes HTTP `QUERY` requests
+
+The former `@Query()` **parameter** decorator (which extracted URL query string values from `req.query`) has been renamed to `@QueryString()`. The `@Query()` name is now the **method** decorator for the HTTP `QUERY` verb (same pattern as `@Get()`, `@Post()`, `@Search()`, and so on). Handlers for HTTP `QUERY` should read the payload with `@Body()`.
+
+```typescript
+// before
+@Get()
+find(@Query('page') page: string) {}
+
+// after
+@Get()
+find(@QueryString('page') page: string) {}
+
+// new HTTP QUERY route
+@Query('items')
+search(@Body() body: FiltersDto) {}
+```
+
+> info **Hint** Runtime support for the HTTP `QUERY` method depends on Node.js including `QUERY` in `http.METHODS` (typically `>=20.19.3 <21` or `>=22.2.0`). See [Controllers](/controllers#resources) for more details.

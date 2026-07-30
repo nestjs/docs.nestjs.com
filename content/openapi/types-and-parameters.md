@@ -1,6 +1,6 @@
 ### Types and parameters
 
-The `SwaggerModule` searches for all `@Body()`, `@Query()`, and `@Param()` decorators in route handlers to generate the API document. It also creates corresponding model definitions by taking advantage of reflection. Consider the following code:
+The `SwaggerModule` searches for all `@Body()`, `@QueryString()`, and `@Param()` decorators in route handlers to generate the API document. It also creates corresponding model definitions by taking advantage of reflection. Consider the following code:
 
 ```typescript
 @Post()
@@ -120,11 +120,11 @@ export enum UserRole {
 }
 ```
 
-You can then use the enum directly with the `@Query()` parameter decorator in combination with the `@ApiQuery()` decorator.
+You can then use the enum directly with the `@QueryString()` parameter decorator in combination with the `@ApiQuery()` decorator.
 
 ```typescript
 @ApiQuery({ name: 'role', enum: UserRole })
-async filterByRole(@Query('role') role: UserRole = UserRole.User) {}
+async filterByRole(@QueryString('role') role: UserRole = UserRole.User) {}
 ```
 
 <figure><img src="/assets/enum_query.gif" /></figure>

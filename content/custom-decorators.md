@@ -39,7 +39,7 @@ Nest provides a set of useful **param decorators** that you can use together wit
       <td><code>req.body</code> / <code>req.body[param]</code></td>
     </tr>
     <tr>
-      <td><code>@Query(param?: string)</code></td>
+      <td><code>@QueryString(param?: string)</code></td>
       <td><code>req.query</code> / <code>req.query[param]</code></td>
     </tr>
     <tr>
@@ -156,7 +156,7 @@ You can use this same decorator with different keys to access different properti
 
 #### Working with pipes
 
-Nest treats custom param decorators in the same fashion as the built-in ones (`@Body()`, `@Param()` and `@Query()`). This means that pipes are executed for the custom annotated parameters as well (in our examples, the `user` argument). Moreover, you can apply the pipe directly to the custom decorator:
+Nest treats custom param decorators in the same fashion as the built-in ones (`@Body()`, `@Param()` and `@QueryString()`). This means that pipes are executed for the custom annotated parameters as well (in our examples, the `user` argument). Moreover, you can apply the pipe directly to the custom decorator:
 
 ```typescript
 @@filename()
