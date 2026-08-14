@@ -135,7 +135,6 @@ Because the signal also aborts on normal completion, `signal.aborted` is only me
 Inside a producer, the signal is also a convenient way to end the stream when the client leaves:
 
 ```typescript
-@@filename(app.controller)
 return new Observable<MessageEvent>(subscriber => {
   const timer = setInterval(() => subscriber.next({ data: 'tick' }), 1000);
   const onAbort = () => subscriber.complete();
