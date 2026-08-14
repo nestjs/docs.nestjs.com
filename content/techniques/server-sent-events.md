@@ -64,7 +64,6 @@ sse(): Observable<MessageEvent> {
 An `@Sse()` handler may be asynchronous — returning a `Promise<Observable>` rather than an `Observable` directly. This is common when the stream needs expensive setup before the first event can be produced: opening a database cursor, acquiring a model session, or authorizing against a downstream service.
 
 ```typescript
-@@filename(app.controller)
 @Sse('stream')
 async stream(): Promise<Observable<MessageEvent>> {
   const session = await createSession();
@@ -80,7 +79,6 @@ There is a gap here. If the client disconnects **while the promise is still reso
 To close that gap, inject the request's `AbortSignal` with the `@SseSignal()` decorator:
 
 ```typescript
-@@filename(app.controller)
 import { MessageEvent, Sse, SseSignal } from '@nestjs/common';
 import { EMPTY, Observable } from 'rxjs';
 
@@ -118,7 +116,6 @@ The signal represents the lifetime of the **SSE response**, not just the connect
 This makes the signal a single cleanup hook for the whole request. Rather than duplicating teardown across an `abort` listener and the `Observable`'s own teardown function, you can wire resources to the signal once and have them released on every exit path:
 
 ```typescript
-@@filename(app.controller)
 @Sse('stream')
 async stream(@SseSignal() signal: AbortSignal): Promise<Observable<MessageEvent>> {
   // The signal aborts when the response ends, so the fetch is cancelled whether
