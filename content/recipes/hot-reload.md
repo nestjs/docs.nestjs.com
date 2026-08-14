@@ -4,6 +4,8 @@ The highest impact on your application's bootstrapping process is **TypeScript c
 
 > warning **Warning** Note that `webpack` won't automatically copy your assets (e.g. `graphql` files) to the `dist` folder. Similarly, `webpack` is not compatible with glob static paths (e.g., the `entities` property in `TypeOrmModule`).
 
+> info **Hint** If you prefer a faster bundler, [Rspack](https://rspack.rs/guide/tech/nestjs) also supports NestJS applications with Hot Module Replacement.
+
 ### With CLI
 
 If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use of the `HotModuleReplacementPlugin`.
@@ -173,3 +175,7 @@ $ npm run start:dev
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
+
+#### Third-party bundlers
+
+The Nest CLI wraps `webpack`, but you can also use [Rspack](https://rspack.rs/) for a similar Hot Module Replacement workflow. Rspack compiles TypeScript with SWC and preserves Nest decorator metadata. See the official [NestJS + Rspack guide](https://rspack.rs/guide/tech/nestjs) (includes a [working example](https://github.com/rstackjs/rstack-examples/tree/main/rspack/nestjs)).
