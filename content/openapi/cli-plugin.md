@@ -63,6 +63,25 @@ The plugin adds appropriate decorators on the fly based on the **Abstract Syntax
 
 > info **Hint** The plugin will automatically generate any missing swagger properties, but if you need to override them, you simply set them explicitly via `@ApiProperty()`.
 
+#### Sharing DTOs with a client application
+
+If you share decorated DTO classes with a browser or another client-side bundle, importing `@nestjs/swagger` can pull server-side Nest packages into that bundle. The Swagger package ships a lightweight shim at `@nestjs/swagger/dist/extra/swagger-shim` that exports no-op versions of decorators and helpers such as `ApiProperty`, `PartialType`, and `PickType`.
+
+Configure your bundler to alias `@nestjs/swagger` to this shim for client builds only. For example, with webpack:
+
+```typescript
+resolve: {
+  alias: {
+    '@nestjs/swagger': path.resolve(
+      __dirname,
+      '../node_modules/@nestjs/swagger/dist/extra/swagger-shim',
+    ),
+  },
+},
+```
+
+Keep the normal `@nestjs/swagger` package in your server build so Nest can still generate the OpenAPI document at runtime.
+
 #### Comments introspection
 
 With the comments introspection feature enabled, CLI plugin will generate descriptions and example values for properties based on comments.
