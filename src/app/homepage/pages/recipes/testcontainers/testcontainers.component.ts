@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BasePageComponent } from '../../page/page.component';
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
@@ -7,15 +6,15 @@ import { TabsComponent } from '../../../../shared/components/tabs/tabs.component
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
-    selector: 'app-async-local-storage',
-    templateUrl: './async-local-storage.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        HeaderAnchorDirective,
-        CopyButtonComponent,
-        TabsComponent,
-        ExtensionPipe,
-    ],
+  selector: 'app-testcontainers',
+  templateUrl: './testcontainers.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    HeaderAnchorDirective,
+    CopyButtonComponent,
+    TabsComponent,
+    ExtensionPipe,
+  ],
 })
-export class AsyncLocalStorageComponent extends BasePageComponent {}
+export class TestContainersComponent extends BasePageComponent {}
