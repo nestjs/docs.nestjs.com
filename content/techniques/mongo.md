@@ -92,7 +92,7 @@ owners: Owner[];
 If you don’t intend to always populate a reference to another collection, consider using `mongoose.Types.ObjectId` as the type instead:
 
 ```typescript
-@Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Owner' } })
+@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
 // This ensures the field is not confused with a populated reference
 owner: mongoose.Types.ObjectId;
 ```
@@ -354,7 +354,7 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
           schema.pre('save', function() {
             console.log(
               `${configService.get('APP_NAME')}: Hello from pre save`,
-            ),
+            );
           });
           return schema;
         },
