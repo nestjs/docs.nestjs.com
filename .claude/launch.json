@@ -3,7 +3,8 @@
   "configurations": [
     {
       "name": "docs-dev",
-      "url": "http://localhost:4200",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve"],
       "port": 4200
     }
   ]

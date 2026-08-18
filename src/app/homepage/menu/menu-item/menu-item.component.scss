@@ -13,7 +13,7 @@ h3 {
   -webkit-text-fill-color: var(--color-1dp);
   font-size: 13px;
   letter-spacing: 0.08em;
-  margin: 12px 0;
+  margin: 10px 0;
   // Solid colour rather than text-gradient(): a background-clip gradient
   // requires a transparent text-fill, and transitioning that fill in or out
   // makes the text flash. Only `color` is animated here.

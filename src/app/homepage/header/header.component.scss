@@ -2,7 +2,8 @@
 @use '../../../scss/utils';
 
 :host {
-  background: var(--header-background);
+  // Glass bar with the same soft baked glow lights as the sidebar panel.
+  background: var(--header-glow), var(--header-background);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   backdrop-filter: blur(14px) saturate(160%);
   border: 1px solid var(--panel-border-color);
@@ -65,7 +66,10 @@ header {
   position: relative;
   background: transparent;
   width: 100%;
-  height: 70px;
+  // 100% of the host's inner box (68px after the 1px borders), not a
+  // hardcoded 70px — otherwise children centre on a box that extends past
+  // the visible bottom edge and everything sits slightly low.
+  height: 100%;
   z-index: 10000;
 }
 
@@ -137,7 +141,8 @@ header {
 
   a {
     display: inline-block;
-    padding-top: 10px;
+    // (68px inner height - 50px logo) / 2 — vertically centres the logo.
+    padding-top: 9px;
   }
   @media print {
     left: 50%;
@@ -380,7 +385,11 @@ header {
 .search-wrapper {
   margin-right: 2em;
   height: 100%;
-  display: inline-block;
+  // Flex-centred so the pill aligns with the menu links' vertical middle
+  // instead of baseline-aligning against the taller kbd chips.
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
   position: relative;
 }
 
@@ -399,42 +408,37 @@ header {
   }
 }
 
+// Pill-style search trigger with a ⌘K hint, replacing the old underline input.
 .search-input,
 ::ng-deep .DocSearch-Button {
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--search-border);
-  padding: 5px 20px 5px 28px;
+  background: color-mix(in srgb, var(--header-color) 4%, transparent);
+  border: 1px solid var(--search-border);
+  border-radius: 999px;
+  padding: 6px 10px 6px 14px;
   color: var(--header-color);
   font-family: 'Manrope', 'Helvetica Neue', sans-serif;
   font-display: swap;
-  font-size: 14px;
-  outline: 0 !important;
-  transition: all 90ms ease-in-out;
+  font-size: 13.5px;
+  outline: 0;
+  transition: border-color 120ms ease, background-color 120ms ease;
   width: 215px;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--header-color) 28%, transparent);
+  }
 
   &:active,
   &:focus {
-    border-bottom-color: var(--primary);
-    width: 190px;
+    border-color: var(--primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
   }
 
   @media (max-width: 1300px) {
-    width: 190px;
-  }
-}
-
-::ng-deep .DocSearch-Button:hover,
-::ng-deep .DocSearch-Button:active
-::ng-deep .DocSearch-Button:focus {
-  border-bottom-color: variables.$red-color;
-  width: 240px;
-  
-  @media (min-width: 1200px) and (max-width: 1300px) {
-    width: 190px;
-  }
-
-  @media (max-width: 680px) {
     width: 190px;
   }
 }
@@ -445,28 +449,66 @@ header {
 }
 
 ::ng-deep .DocSearch-Button {
-  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: #a5a5a5;
-  padding: 5px;
+  cursor: pointer;
+}
+
+:host ::ng-deep .DocSearch-Search-Icon {
+  position: static;
+  margin-top: 0;
+}
+
+// DocSearch nests the icon + placeholder inside this container, so the
+// icon-to-text spacing has to be set here (the button's own gap only
+// separates the container from the kbd chips).
+::ng-deep .DocSearch-Button-Container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 ::ng-deep .DocSearch-Button-Placeholder {
-  padding-left: 30px;
-  font-size: 14px;
-  margin-top: 7px;
+  padding-left: 0;
+  font-size: 13.5px;
+  margin-top: 0;
   display: block !important;
-
-  @media (max-width: 1150px) {
-    margin-top: 0;
-  }
+  flex: 1;
+  text-align: left;
 }
 
+// The keyboard-shortcut chips DocSearch ships; restyled as quiet kbd badges.
 ::ng-deep .DocSearch-Button-Keys {
-  display: none;
+  display: inline-flex !important;
+  gap: 3px;
+  margin-left: auto;
+  min-width: 0;
 }
 
-::ng-deep .DocSearch-Button:active, 
-::ng-deep .DocSearch-Button:focus, 
+::ng-deep .DocSearch-Button-Key {
+  background: color-mix(in srgb, var(--header-color) 10%, transparent);
+  box-shadow: none;
+  border-radius: 5px;
+  color: #a5a5a5;
+  font-family: inherit;
+  font-size: 11px;
+  width: auto;
+  min-width: 18px;
+  height: 20px;
+  padding: 0 4px;
+  margin-right: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .DocSearch-Button:active,
+::ng-deep .DocSearch-Button:focus,
 ::ng-deep.DocSearch-Button:hover {
   color: #a5a5a5;
 }

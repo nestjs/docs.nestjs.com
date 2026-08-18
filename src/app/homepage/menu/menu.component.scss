@@ -8,10 +8,16 @@
 
   padding: 28px 22px 40px 28px;
   width: 280px;
+  // Glass panel: translucent dark base + frosted blur, with soft red corner
+  // glows as the "lights". Deliberately no white sheen layer — that made the
+  // panel read lighter than the page in an earlier iteration.
   // !important retained from origin/master (330e5c6a): overrides inherited styles.
-  background: var(--menu-background) !important;
+  background: var(--menu-glow), var(--menu-background) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
   border: 1px solid var(--panel-border-color);
   border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   position: fixed !important;
   bottom: 12px;
   top: 94px;

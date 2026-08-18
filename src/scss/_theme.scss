@@ -20,6 +20,16 @@
 
   --header-background: rgba(253, 253, 253, 0.75);
   --header-color: #151515;
+  --header-glow: radial-gradient(
+      480px 90px at 88% 0%,
+      rgba(234, 40, 69, 0.05),
+      transparent 70%
+    ),
+    radial-gradient(
+      360px 80px at 12% 100%,
+      rgba(209, 58, 143, 0.03),
+      transparent 70%
+    );
   --search-border: rgba(21, 21, 21, 0.14);
 
   // Hover/active surfaces. Declared as explicit rgba (never color-mix with
@@ -35,7 +45,17 @@
   --btn-shadow-hover: 0 6px 18px rgba(234, 40, 69, 0.28);
 
   --menu-color: #151515;
-  --menu-background: #f5f5f5;
+  --menu-background: rgba(247, 247, 247, 0.72);
+  --menu-glow: radial-gradient(
+      420px 260px at 85% -60px,
+      rgba(234, 40, 69, 0.05),
+      transparent 65%
+    ),
+    radial-gradient(
+      320px 320px at -20% 110%,
+      rgba(158, 36, 54, 0.035),
+      transparent 60%
+    );
 
   --inline-code-color: #2876d2;
 
@@ -107,6 +127,16 @@
 
   --header-background: rgba(19, 17, 17, 0.72);
   --header-color: #ffffff;
+  --header-glow: radial-gradient(
+      480px 90px at 88% 0%,
+      rgba(234, 40, 69, 0.1),
+      transparent 70%
+    ),
+    radial-gradient(
+      360px 80px at 12% 100%,
+      rgba(209, 58, 143, 0.05),
+      transparent 70%
+    );
   --search-border: #242424;
 
   --hover-surface: rgba(255, 255, 255, 0.07);
@@ -119,7 +149,17 @@
   --btn-shadow-hover: 0 6px 22px rgba(242, 53, 81, 0.38);
 
   --menu-color: #c6bfc0;
-  --menu-background: #121010;
+  --menu-background: rgba(16, 13, 14, 0.66);
+  --menu-glow: radial-gradient(
+      420px 260px at 85% -60px,
+      rgba(234, 40, 69, 0.09),
+      transparent 65%
+    ),
+    radial-gradient(
+      320px 320px at -20% 110%,
+      rgba(209, 58, 143, 0.05),
+      transparent 60%
+    );
 
   --inline-code-color: #8ec2ff;
 

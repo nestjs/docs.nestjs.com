@@ -243,9 +243,11 @@
   .logo-sponsor {
     width: 160px;
     filter: var(--company-logo-filter);
+    transition: filter 150ms ease, transform 150ms ease;
 
     &:hover {
       filter: grayscale(0);
+      transform: translateY(-2px);
     }
   }
 
@@ -502,11 +504,13 @@
   -webkit-filter: var(--company-filter);
   filter: var(--company-filter);
   opacity: var(--company-logo-opacity);
+  transition: filter 150ms ease, opacity 150ms ease, transform 150ms ease;
 
   &:hover {
     -webkit-filter: var(--company-filter-hover);
     filter: var(--company-filter-hover);
     opacity: 1;
+    transform: translateY(-2px);
   }
 }
 
