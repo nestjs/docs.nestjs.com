@@ -123,12 +123,6 @@ protoPath: join(import.meta.dirname, 'hero/hero.proto'),
 
 Similarly, `require()` is unavailable. If you need it for interop, construct it explicitly with `createRequire(import.meta.url)` from `node:module`.
 
-Top-level `await` is available in ESM, so the conventional bootstrap call becomes:
-
-```typescript
-await bootstrap();
-```
-
 > info **Hint** Many code samples throughout these docs use the ESM conventions above. If your project is still CommonJS, drop the `.js` extensions, keep `__dirname`, and call `bootstrap()` without `await`.
 
 #### New project defaults

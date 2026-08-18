@@ -98,9 +98,19 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public checkWindowWidth(innerWidth?: number): void {
     innerWidth = innerWidth ? innerWidth : window.innerWidth;
-    if (this.previousWidth !== innerWidth && innerWidth <= 768) {
-      this.previousWidth = innerWidth;
+    if (this.previousWidth === innerWidth) {
+      return;
+    }
+    const wasMobile = this.previousWidth !== undefined && this.previousWidth <= 768;
+    this.previousWidth = innerWidth;
+    if (innerWidth <= 768) {
       this.isSidebarOpened = false;
+      this.cd.detectChanges();
+    } else if (wasMobile || (innerWidth > 1200 && !this.isSidebarOpened)) {
+      // Re-open the sidebar when growing back past the mobile breakpoint, and
+      // force it open above 1200px where the hamburger is hidden and the
+      // sidebar is not toggleable.
+      this.isSidebarOpened = true;
       this.cd.detectChanges();
     }
   }

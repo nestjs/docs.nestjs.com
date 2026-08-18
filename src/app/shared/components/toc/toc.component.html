@@ -1,4 +1,7 @@
 <div class="toc-wrapper" #tocWrapper perfectScrollbar>
+  @if (headings && headings.length) {
+    <div class="toc-label">On this page</div>
+  }
   <ul>
     @for (item of headings; track trackById(index, item); let index = $index) {
       <li

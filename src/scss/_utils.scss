@@ -217,6 +217,141 @@ $screen-xlarge: 'only screen and (max-width: 1349px)';
   transform-origin: $origin;
 }
 
+// Animated "NEW" pill: periodic light sweep plus a matching glow pulse.
+// Keyframes live in styles.scss (global). Pair with the badge's own colours.
+@mixin badge-new($duration: 4.5s) {
+  position: relative;
+  // inline-block is required to clip the sweep; vertical-align keeps the pill
+  // centred against the surrounding cap-height text rather than sitting on
+  // the baseline.
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.35;
+  overflow: hidden;
+  animation: badge-glow $duration ease-out infinite;
+
+  // Rotating highlight around the edge, drawn as a masked 1px ring.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: conic-gradient(
+      from var(--badge-angle),
+      rgba(255, 255, 255, 0) 0deg,
+      rgba(255, 255, 255, 0.95) 45deg,
+      rgba(255, 255, 255, 0) 130deg,
+      rgba(255, 255, 255, 0) 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: badge-border-spin $duration linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 40%;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+    animation: badge-shimmer $duration ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+
+    &::before {
+      animation: none;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// Shared button shape. Pair with btn-primary()/btn-secondary() for colour.
+@mixin btn-base() {
+  display: inline-block;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--radius-btn);
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+// Filled brand button: red gradient with a soft coloured glow. The gradient
+// lives in background-image so background-color stays free for states.
+@mixin btn-primary() {
+  @include btn-base();
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  background-image: var(--primary-gradient);
+  box-shadow: var(--btn-shadow);
+
+  &:hover {
+    color: #fff;
+    box-shadow: var(--btn-shadow-hover);
+  }
+}
+
+// Quiet button: hairline border over a tintable surface.
+@mixin btn-secondary() {
+  @include btn-base();
+  color: var(--color-1dp);
+  background-color: var(--hover-surface-0);
+  box-shadow: inset 0 0 0 1px var(--border-color-strong);
+
+  &:hover {
+    color: var(--color-1dp);
+    background-color: var(--hover-surface);
+  }
+}
+
+// Tactile press feedback for buttons/CTAs: lifts slightly on hover and
+// depresses on click. Only transform/filter/box-shadow animate, so it can be
+// combined with gradient backgrounds without flashing.
+@mixin press-effect($lift: -1px) {
+  transition: transform 130ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    filter 130ms ease, box-shadow 130ms ease;
+  will-change: transform;
+
+  &:hover {
+    transform: translateY($lift);
+    filter: brightness(1.08);
+  }
+
+  &:active {
+    transform: scale(0.97);
+    filter: brightness(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+
 @mixin text-gradient() {
   background: var(--primary-gradient);
   -webkit-background-clip: text !important;

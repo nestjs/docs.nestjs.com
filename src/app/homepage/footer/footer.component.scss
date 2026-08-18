@@ -4,23 +4,18 @@
 :host {
   @extend .transition;
   @extend .box-sizing;
-  background: var(--header-background);
+  background: transparent;
+  border-top: 1px solid var(--border-color);
   display: block;
   padding: 40px 0;
-  margin: 0 -85px;
+  margin: 0;
   width: auto;
   font-size: 14px;
   position: relative;
   z-index: 12;
 
-  @include utils.media(large) {
-    margin: 0 -50px;
-  }
-
   @include utils.media(medium) {
-    padding: 15px;
-    margin: 0 -20px;
-    width: calc(100% + 40px);
+    padding: 30px 15px;
     position: static;
     height: auto;
     text-align: center;
@@ -30,17 +25,21 @@
 footer {
   display: block;
   position: relative;
-  color: #929292;
+  color: color-mix(in srgb, var(--color) 75%, transparent);
   text-align: center;
+  font-size: 13px;
 
+  // Solid colour instead of text-gradient(): a clipped gradient needs a
+  // transparent text-fill, and animating that fill flashes on mouseout.
   a {
     color: var(--primary-5dp);
+    -webkit-text-fill-color: var(--primary-5dp);
     font-weight: 600;
-
-    @include utils.text-gradient();
+    transition: color 150ms ease, -webkit-text-fill-color 150ms ease;
 
     &:hover {
-      background: #fff;
+      color: var(--color-1dp);
+      -webkit-text-fill-color: var(--color-1dp);
     }
   }
 
@@ -50,7 +49,7 @@ footer {
     height: 12px;
     margin: 0 3px 0 5px;
     vertical-align: middle;
-    background: #313131;
+    background: var(--border-color-strong);
   }
 
   p {
@@ -67,11 +66,10 @@ footer {
     @extend .transition;
     display: inline-block;
     vertical-align: middle;
-    color: variables.$silver-color;
+    color: var(--color-1dp);
     font-size: 20px;
     margin-left: 15px;
     cursor: pointer;
-    color: #fff;
 
     &:first-of-type {
       font-size: 20px;

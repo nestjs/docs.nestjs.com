@@ -4,14 +4,17 @@
 :host {
   @extend .transition;
   @extend .box-sizing;
-  @include utils.transform(translateX(-100%));
-  
-  padding: 90px 17px 40px 24px;
-  width: 250px;
+  @include utils.transform(translateX(calc(-100% - var(--shell-offset-vw, 12px))));
+
+  padding: 28px 22px 40px 28px;
+  width: 280px;
   background: var(--menu-background);
+  border: 1px solid var(--panel-border-color);
+  border-radius: var(--radius-lg);
   position: fixed !important;
-  bottom: 0;
-  top: 0;
+  bottom: 12px;
+  top: 94px;
+  left: var(--shell-offset, 12px);
   z-index: 1000;
   overflow: overlay;
 
@@ -19,7 +22,7 @@
     @include utils.transform(translateX(0));
   }
   @include  utils.media(large) {
-    width: 250px;
+    width: 280px;
   }
   @include utils.media(normal) {
     &.opened {
@@ -28,10 +31,10 @@
     }
   }
   @include utils.media(medium) {
-    padding: 85px 25px 20px 25px;
+    padding: 20px 25px 20px 25px;
   }
   @include utils.media(small) {
-    width: 100%;
+    width: calc(100% - 24px);
   }
 
   @media print {
@@ -54,36 +57,23 @@
 
 .btn-version,
 .btn-support {
-  @extend .transition;
-  @include utils.radius(2px);
+  @include utils.press-effect();
 
-  padding: 10px;
-  box-sizing: border-box;
-  font-weight: bold;
-  font-size: 13px;
+  padding: 11px 14px;
+  font-size: 12.5px;
   text-transform: uppercase;
-  text-align: left;
+  letter-spacing: 0.05em;
+  text-align: center;
   width: calc(100% - 10px);
   display: block;
 }
 
 .btn-version {
-  background: var(--background-3dp);
+  @include utils.btn-secondary();
   margin-top: 5px;
-  color: var(--color-1dp);
-
-  &:hover {
-    background: var(--background-5dp);
-  }
 }
 
 .btn-support {
+  @include utils.btn-primary();
   margin-top: 20px;
-  background: variables.$red-gradient;
-  transition: none;
-  color: #fff;
-
-  &:hover {
-    background: #151515;
-  }
 }

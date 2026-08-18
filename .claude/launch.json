@@ -1,0 +1,10 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "docs-dev",
+      "url": "http://localhost:4200",
+      "port": 4200
+    }
+  ]
+}

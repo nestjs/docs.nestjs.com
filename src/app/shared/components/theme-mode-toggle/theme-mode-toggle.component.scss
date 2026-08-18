@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: center;
   margin-left: 15px;
-  color: #fff;
+  color: var(--header-color);
   padding-left: 15px;
   position: relative;
 
@@ -53,13 +53,13 @@
     @include utils.text-gradient();
 
     @include utils.media(small) {
-      background: #fff;
+      background: var(--header-color);
     }
 
     &::before {
       content: '';
       position: absolute;
-      background: #fff;
+      background: var(--header-color);
       opacity: 0.2;
       left: 0px;
       top: 2px;
@@ -68,12 +68,12 @@
     }
 
     &:hover {
-      background: #fff;
+      background: var(--header-color);
 
       @include utils.media(small) {
         @include utils.text-gradient();
       }
-    }  
+    }
 
     @include utils.media(small) {
       font-size: 24px;

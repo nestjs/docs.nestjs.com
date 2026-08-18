@@ -247,7 +247,7 @@ Once the deployment completes, your application is live on AWS - typically withi
 
 With Mau, provisioning and maintaining your infrastructure is as simple as clicking a few buttons. Under the hood we use **Amazon Web Services** to give you a powerful and reliable platform, while abstracting away the complexity of AWS. You get the advantages of AWS without having to learn and manage its details, which makes Mau a good fit for startups, small-to-medium businesses, large enterprises, and any developer who would rather ship than configure infrastructure.
 
-<figure><img src="/assets/mau-metrics.png" /></figure>
+<figure><img src="https://www.mau.nestjs.com/docs/applications/dashboard.png" /></figure>
 
 With [Mau](https://mau.nestjs.com/ 'Deploy Nest'), you can:
 

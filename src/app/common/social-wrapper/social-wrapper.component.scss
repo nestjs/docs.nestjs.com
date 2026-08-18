@@ -19,13 +19,13 @@
     @extend .transition-fast;
     display: inline-flex;
     vertical-align: middle;
-    color: #fff;
+    color: var(--header-color);
     font-size: 18px;
     margin-left: 15px;
     cursor: pointer;
 
     .discord-icon {
-      fill: #fff;
+      fill: var(--header-color);
       position: relative;
 
       &:hover {

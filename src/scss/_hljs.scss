@@ -1,15 +1,18 @@
 .filename {
-  background: #151515;
+  background: #1c1819;
   color: #fff;
   padding: 12px 30px;
   margin: 35px 0 -35px;
   display: block;
   min-height: 25px;
   position: relative;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 0;
+  box-sizing: border-box;
+  border-top-left-radius: var(--radius, 12px);
+  border-top-right-radius: var(--radius, 12px);
   overflow: hidden;
-  font-size: 15px;
+  font-size: 13px;
   letter-spacing: 0.3px;
 }
 
@@ -27,7 +30,7 @@ code {
   padding: 2px 6px;
   color: var(--inline-code-color);
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 14px;
   white-space: pre-wrap;
   background: var(--background-2dp);
 }
@@ -44,7 +47,7 @@ pre[class*='language-'] {
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
-  line-height: 25px;
+  line-height: 24px;
   font-size: 16px;
   -moz-tab-size: 4;
   -o-tab-size: 4;
@@ -66,8 +69,7 @@ pre[class*='language-'] {
 pre[class*='language-'],
 :not(pre) > code[class*='language-'] {
   background: var(--code-background);
-  // box-shadow: 0 5px 20px rgba(6, 6, 6, 0.35);
-  border-radius: 6px;
+  border-radius: var(--radius, 12px);
 }
 
 /* Code blocks */
@@ -75,7 +77,7 @@ pre[class*='language-'] {
   padding: 0 30px 26px;
   margin: 35px 0;
   overflow: auto;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Inline code */
