@@ -208,6 +208,85 @@ export class CatsRepository {
 
 While we directly use the string `'CONNECTION'` in the above examples for illustration purposes, for clean code organization, it's best practice to define tokens in a separate file, such as `constants.ts`. Treat them much as you would symbols or enums that are defined in their own file and imported where needed.
 
+#### Interfaces and abstract classes
+
+TypeScript types/interfaces are erased during compilation, so Nest can't reference them at runtime. This means an interface can describe the shape of a dependency, but it can't be used as a DI token by itself.
+
+Since Nest resolves providers by runtime tokens, use a string or `Symbol` token when registering a provider for an interface:
+
+```typescript
+export interface LoggerService {
+  log(message: string): void;
+}
+
+export const LOGGER_SERVICE = Symbol('LOGGER_SERVICE');
+
+@Injectable()
+export class PinoLoggerService implements LoggerService {
+  log(message: string) {
+    // implementation details
+  }
+}
+
+@Module({
+  providers: [
+    {
+      provide: LOGGER_SERVICE,
+      useClass: PinoLoggerService,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+To inject this provider, pass that token to the `@Inject()` decorator:
+
+```typescript
+@Injectable()
+export class CatsService {
+  constructor(
+    @Inject(LOGGER_SERVICE)
+    private readonly logger: LoggerService,
+  ) {}
+}
+```
+
+Abstract classes, unlike interfaces, exist at runtime. You can use an abstract class as both the TypeScript contract and the DI token:
+
+```typescript
+export abstract class LoggerService {
+  abstract log(message: string): void;
+}
+
+@Injectable()
+export class PinoLoggerService implements LoggerService {
+  log(message: string) {
+    // implementation details
+  }
+}
+
+@Module({
+  providers: [
+    {
+      provide: LoggerService,
+      useClass: PinoLoggerService,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+With an abstract class token, constructor-based injection can use the abstract class type directly and doesn't require `@Inject()`:
+
+```typescript
+@Injectable()
+export class CatsService {
+  constructor(private readonly logger: LoggerService) {}
+}
+```
+
+Use string or `Symbol` tokens when the runtime DI token should be decoupled from a class artifact. `Symbol` tokens are especially useful for libraries and larger applications because each symbol has a unique runtime identity, which helps avoid accidental collisions that can occur when unrelated providers use the same string token. When using a symbol token, export it from a shared file and reuse the same symbol instance wherever the provider is registered and injected. Use abstract classes when one artifact should act as both the contract and the runtime token, and you prefer simpler constructor injection. A plain interface is still a good choice when the type is only used for compile-time checking and no DI token is needed.
+
 #### Class providers: `useClass`
 
 The `useClass` syntax allows you to dynamically determine a class that a token should resolve to. For example, suppose we have an abstract (or default) `ConfigService` class. Depending on the current environment, we want Nest to provide a different implementation of the configuration service. The following code implements such a strategy.
@@ -276,7 +355,7 @@ const connectionProvider = {
 @Module({
   providers: [
     connectionProvider,
-    MyOptionsProvider, // class-base provider
+    MyOptionsProvider, // class-based provider
     // { provide: 'SomeOptionalProvider', useValue: 'anything' },
   ],
 })

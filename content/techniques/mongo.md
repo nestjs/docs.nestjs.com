@@ -92,7 +92,7 @@ owners: Owner[];
 If you don’t intend to always populate a reference to another collection, consider using `mongoose.Types.ObjectId` as the type instead:
 
 ```typescript
-@Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Owner' } })
+@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
 // This ensures the field is not confused with a populated reference
 owner: mongoose.Types.ObjectId;
 ```
@@ -327,7 +327,7 @@ Middleware (also called pre and post hooks) are functions which are passed contr
       {
         name: Cat.name,
         useFactory: () => {
-          const schema = CatsSchema;
+          const schema = CatSchema;
           schema.pre('save', function () {
             console.log('Hello from pre save');
           });
@@ -350,11 +350,11 @@ Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-provi
         name: Cat.name,
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => {
-          const schema = CatsSchema;
+          const schema = CatSchema;
           schema.pre('save', function() {
             console.log(
               `${configService.get('APP_NAME')}: Hello from pre save`,
-            ),
+            );
           });
           return schema;
         },
@@ -377,7 +377,7 @@ To register a [plugin](https://mongoosejs.com/docs/plugins.html) for a given sch
       {
         name: Cat.name,
         useFactory: () => {
-          const schema = CatsSchema;
+          const schema = CatSchema;
           schema.plugin(require('mongoose-autopopulate'));
           return schema;
         },
@@ -435,7 +435,7 @@ export const EventSchema = SchemaFactory.createForClass(Event);
 > info **Hint** The way mongoose tells the difference between the different discriminator models is by the "discriminator key", which is `__t` by default. Mongoose adds a String path called `__t` to your schemas that it uses to track which discriminator this document is an instance of.
 > You may also use the `discriminatorKey` option to define the path for discrimination.
 
-`SignedUpEvent` and `ClickedLinkEvent` instances will be stored in the same collection as generic events.
+`SignUpEvent` and `ClickedLinkEvent` instances will be stored in the same collection as generic events.
 
 Now, let's define the `ClickedLinkEvent` class, as follows:
 

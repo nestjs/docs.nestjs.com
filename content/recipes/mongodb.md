@@ -69,7 +69,7 @@ export const CatSchema = new mongoose.Schema({
 });
 ```
 
-The `CatsSchema` belongs to the `cats` directory. This directory represents the `CatsModule`.
+The `CatSchema` belongs to the `cats` directory. This directory represents the `CatsModule`.
 
 Now it's time to create a **Model** provider:
 

@@ -216,6 +216,8 @@ There's a few things to keep in mind when working with WebSockets:
 
 > info **Hint** If you are using the `@nestjs/platform-ws` package you can use `client._socket.remoteAddress` instead.
 
+> info **Hint** When you configure [multiple throttler definitions](/security/rate-limiting#multiple-throttler-definitions), `handleRequest()` runs once for each throttler set. Use the `throttler.name` from `ThrottlerRequest` when generating the storage key and when reporting the `ThrottlerLimitDetail`, as shown above, so each named throttler tracks its own limit.
+
 #### GraphQL
 
 The `ThrottlerGuard` can also be used to work with GraphQL requests. Again, the guard can be extended, but this time the `getRequestResponse` method will be overridden
@@ -258,7 +260,7 @@ The following options are valid for the object passed to the array of the `Throt
   </tr>
   <tr>
     <td><code>skipIf</code></td>
-    <td>a function that takes in the <code>ExecutionContext</code> and returns a <code>boolean</code> to short circuit the throttler logic. Like <code>@SkipThrottler()</code>, but based on the request</td>
+    <td>a function that takes in the <code>ExecutionContext</code> and returns a <code>boolean</code> to short circuit the throttler logic. Like <code>@SkipThrottle()</code>, but based on the request</td>
   </tr>
 </table>
 
@@ -275,7 +277,7 @@ If you need to set up storage instead, or want to use some of the above options 
   </tr>
   <tr>
     <td><code>skipIf</code></td>
-    <td>a function that takes in the <code>ExecutionContext</code> and returns a <code>boolean</code> to short circuit the throttler logic. Like <code>@SkipThrottler()</code>, but based on the request</td>
+    <td>a function that takes in the <code>ExecutionContext</code> and returns a <code>boolean</code> to short circuit the throttler logic. Like <code>@SkipThrottle()</code>, but based on the request</td>
   </tr>
   <tr>
     <td><code>throttlers</code></td>

@@ -25,7 +25,7 @@ The `gqlSchemaFactory.create()` method takes an array of resolver class referenc
 const schema = await gqlSchemaFactory.create([
   RecipesResolver,
   AuthorsResolver,
-  PostsResolvers,
+  PostsResolver,
 ]);
 ```
 
@@ -33,7 +33,7 @@ It also takes a second optional argument with an array of scalar classes:
 
 ```typescript
 const schema = await gqlSchemaFactory.create(
-  [RecipesResolver, AuthorsResolver, PostsResolvers],
+  [RecipesResolver, AuthorsResolver, PostsResolver],
   [DurationScalar, DateScalar],
 );
 ```

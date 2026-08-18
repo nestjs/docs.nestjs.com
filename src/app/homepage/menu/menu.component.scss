@@ -8,7 +8,8 @@
 
   padding: 28px 22px 40px 28px;
   width: 280px;
-  background: var(--menu-background);
+  // !important retained from origin/master (330e5c6a): overrides inherited styles.
+  background: var(--menu-background) !important;
   border: 1px solid var(--panel-border-color);
   border-radius: var(--radius-lg);
   position: fixed !important;
