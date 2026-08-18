@@ -19,24 +19,124 @@ If you rely on a globally installed CLI binary, update that as well:
 $ npm i -g @nestjs/cli@latest
 ```
 
+#### Node.js requirements
+
+NestJS 12 requires **Node.js v20 or higher**, unchanged from v11. That said, the ESM migration relies on `require(esm)`, which is only available in recent Node.js releases, so we strongly recommend running the latest active LTS version rather than the bare minimum.
+
 #### ESM packages
 
 All core Nest packages now ship as ESM. For most existing applications this is much less disruptive than it would have been a few years ago, because modern Node.js releases support `require(esm)`.
 
 In practice, this means:
 
-- many existing CommonJS applications will continue to work without a full rewrite
-- custom bootstrapping scripts, build tooling, and test runners should be reviewed if they make assumptions about CommonJS-only packages
-- if you maintain custom bundler or runtime configuration, make sure it matches the module format your project actually uses
+- Many existing CommonJS applications will continue to work without a full rewrite
+- Custom bootstrapping scripts, build tooling, and test runners should be reviewed if they make assumptions about CommonJS-only packages
+- If you maintain custom bundler or runtime configuration, make sure it matches the module format your project actually uses
 
 If you are starting a new project, the CLI now lets you choose between a CommonJS and an ESM project layout.
+
+##### Switching your project to ESM
+
+The switch itself happens in `package.json`, not in `tsconfig.json`. Add a `type` field set to `module`:
+
+```json
+{
+  "name": "my-app",
+  "type": "module"
+}
+```
+
+That single field is what tells Node.js - and, through `"module": "nodenext"`, TypeScript - to treat your `.js` output as ESM.
+
+Whether you also need to touch `tsconfig.json` depends on how old your project is:
+
+- **Projects generated with the v11 CLI** already use `"module": "nodenext"` and `"moduleResolution": "nodenext"`. Nothing in `tsconfig.json` needs to change - adding `"type": "module"` is enough.
+- **Projects generated with v10 or earlier** typically still have `"module": "commonjs"` and no `moduleResolution` entry. Update both before adding `"type": "module"`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "target": "ES2023"
+  }
+}
+```
+
+For reference, this is the complete `compilerOptions` set used by the ESM project that `nest new` generates:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "types": ["vitest/globals", "node"]
+  }
+}
+```
+
+> info **Hint** `nest-cli.json` and `tsconfig.build.json` are identical between the CommonJS and ESM project variants, so neither needs changes. The `types` entry above differs only because ESM projects default to Vitest; a CommonJS project on Jest uses `["node", "jest"]` instead.
+
+> warning **Warning** `"module": "nodenext"` derives the module format of each file from the nearest `package.json`. This means adding `"type": "module"` changes how **every** `.ts` file in the project is emitted, and TypeScript will start reporting the missing import extensions described below. Expect to fix those in the same pass rather than incrementally.
+
+##### Moving your own code to ESM
+
+With the configuration in place, the two things in your own code that most often need attention are relative imports and CommonJS-only globals.
+
+Relative imports must carry a file extension:
+
+```typescript
+// Before
+import { AppModule } from './app.module';
+
+// After
+import { AppModule } from './app.module.js';
+```
+
+Note that the extension is `.js` even though the source file is `.ts` - the specifier refers to the emitted file.
+
+`__dirname` and `__filename` do not exist in ESM. Use `import.meta.dirname` instead (or `import.meta.url` with `fileURLToPath` on older Node.js versions):
+
+```typescript
+// Before
+protoPath: join(__dirname, 'hero/hero.proto'),
+
+// After
+protoPath: join(import.meta.dirname, 'hero/hero.proto'),
+```
+
+Similarly, `require()` is unavailable. If you need it for interop, construct it explicitly with `createRequire(import.meta.url)` from `node:module`.
+
+Top-level `await` is available in ESM, so the conventional bootstrap call becomes:
+
+```typescript
+await bootstrap();
+```
+
+> info **Hint** Many code samples throughout these docs use the ESM conventions above. If your project is still CommonJS, drop the `.js` extensions, keep `__dirname`, and call `bootstrap()` without `await`.
 
 #### New project defaults
 
 `nest new` now prompts you to choose whether to generate a CommonJS or ESM project.
 
 - ESM projects use Vitest by default
-- generated projects use oxlint by default
+- Generated projects use oxlint by default
 
 This only changes what the CLI scaffolds for you. Existing projects can keep their current tooling while you migrate on your own schedule.
 
@@ -48,9 +148,9 @@ If your application already uses a different test runner, you do not need to mig
 
 When you do decide to migrate:
 
-- update your `test`, `test:watch`, `test:cov`, and `test:e2e` scripts
-- review any runner-specific globals and replace them with Vitest equivalents where needed
-- check your `supertest` imports in E2E tests if your Vitest setup expects default imports
+- Update your `test`, `test:watch`, `test:cov`, and `test:e2e` scripts
+- Review any runner-specific globals and replace them with Vitest equivalents where needed
+- Check your `supertest` imports in E2E tests if your Vitest setup expects default imports
 
 #### Linting defaults
 
@@ -80,7 +180,7 @@ On its own, the decorator only attaches schema metadata. To validate against it,
 app.useGlobalPipes(new StandardSchemaValidationPipe());
 ```
 
-This is a schema-first alternative to the traditional `ValidationPipe` plus `class-validator` flow.
+This is a schema-first alternative to the traditional `ValidationPipe` plus `class-validator` flow. The same schemas can also feed OpenAPI generation - see [Standard Schema (Zod, Valibot)](/openapi/introduction#standard-schema-zod-valibot).
 
 The existing decorator-based approach remains fully supported, and there is no plan to remove it. The `schema` attribute is an additional option for teams that prefer schema-first libraries such as Zod.
 
@@ -170,26 +270,123 @@ The existing decorator-based workflow still works in v12. `ValidationPipe` and `
 
 Version 12 broadens the built-in options rather than replacing the existing ones:
 
-- use `ValidationPipe` when your DTOs are class-based and rely on decorators
-- use `StandardSchemaValidationPipe` when your validation library already exposes a Standard Schema compatible schema
-- use `ClassSerializerInterceptor` when your response shaping is based on `class-transformer`
-- use `StandardSchemaSerializerInterceptor` when your response shape should be derived from a schema
+- Use `ValidationPipe` when your DTOs are class-based and rely on decorators
+- Use `StandardSchemaValidationPipe` when your validation library already exposes a Standard Schema compatible schema
+- Use `ClassSerializerInterceptor` when your response shaping is based on `class-transformer`
+- Use `StandardSchemaSerializerInterceptor` when your response shape should be derived from a schema
+
+#### Config module
+
+`@nestjs/config` moves from Joi-specific validation to [Standard Schema](https://standardschema.dev/). The `validationSchema` option now accepts any Standard Schema compatible schema - Zod, Valibot, ArkType, and others.
+
+```typescript
+import { z } from 'zod';
+
+ConfigModule.forRoot({
+  validationSchema: z.object({
+    NODE_ENV: z
+      .enum(['development', 'production', 'test', 'provision'])
+      .default('development'),
+    PORT: z.coerce.number().default(3000),
+  }),
+});
+```
+
+Since validation is no longer tied to a single library, we now recommend a modern Standard Schema library such as Zod for new projects, and the [Configuration chapter](/techniques/configuration#schema-validation) has been rewritten around it.
+
+If you want to keep your existing Joi schemas, they still work, but with two caveats:
+
+- You must upgrade to **Joi v18 or later**, which implements the Standard Schema specification
+- Library-specific settings previously passed directly under `validationOptions` now go under `validationOptions.libraryOptions`
+
+```typescript
+// Before
+validationOptions: {
+  allowUnknown: false,
+  abortEarly: true,
+},
+
+// After
+validationOptions: {
+  libraryOptions: {
+    allowUnknown: false,
+    abortEarly: true,
+  },
+},
+```
+
+For Joi schemas, `@nestjs/config` keeps its historical defaults of `allowUnknown: true` and `abortEarly: false`, and merges anything you pass on top of them.
 
 #### Webpack deprecation in CLI workflows
 
-The v12 release also marks the shift away from webpack-centric CLI workflows. If you have custom webpack-based project generation or build assumptions, plan to migrate those over time. Review any custom builder configuration before upgrading your CLI-driven build pipeline.
+The v12 release also marks the shift away from webpack-centric CLI workflows. Rspack is now the default bundler for monorepos, and the `--webpack` / `--webpackPath` CLI flags (and their `webpack` / `webpackConfigPath` counterparts in `nest-cli.json`) are deprecated in favor of `--builder rspack`. If you have custom webpack-based project generation or build assumptions, plan to migrate those over time.
+
+The CLI also adds `bun` as a supported package manager, and the `decorator` schematic now generates decorators using the preferred `Reflector.createDecorator()` form. The `angular` schematic has been removed.
+
+#### New CLI commands and flags
+
+The CLI gains a `deploy` command that forwards to [Mau](https://mau.nestjs.com/), installing `@nestjs/mau` as a dev dependency on first use:
+
+```bash
+$ nest deploy
+```
+
+`nest build` and `nest start` also pick up several new options:
+
+- `--rspackPath [path]` - path to a Rspack configuration file, the counterpart to the deprecated `--webpackPath`
+- `--emit-declarations` - emit `.d.ts` files when using the SWC builder (also available as `emitDeclarations` in `nest-cli.json`)
+- `--no-type-check` - explicitly disable SWC type checking
+- `--silent` - suppress informational compiler logs
+
+`nest build` additionally supports `--parallel [concurrency]`, which builds monorepo projects in parallel when combined with `--all`. `nest-cli.json` also gains an `includeLibraryAssets` property for copying library assets into an application build.
+
+#### Route conflict diagnostics
+
+Nest registers routes in declaration order, which on order-sensitive adapters such as Express means `@Get(':id')` can silently shadow a `@Get('me')` declared after it. v12 adds two **opt-in** options on `NestApplicationOptions` to surface this:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  routeConflictPolicy: { duplicate: 'error', shadow: 'warn' },
+  routeResolutionStrategy: 'specificity',
+});
+```
+
+Both default to the previous behavior, so no existing application changes unless you set them. See the [Controllers chapter](/controllers#route-conflicts-and-resolution-order) for the full description.
+
+#### Machine-readable error codes
+
+`HttpExceptionOptions` accepts a new `errorCode` property, which is serialized into the response body so clients can branch on a stable identifier instead of parsing the message string:
+
+```typescript
+throw new BadRequestException('Password is too weak', {
+  errorCode: 'WEAK_PASSWORD',
+});
+```
+
+See the [Exception filters chapter](/exception-filters#machine-readable-error-codes).
+
+#### Structured logging params
+
+`ConsoleLogger` now treats plain objects passed after the message as structured params attached to the same log entry, rather than emitting them as separate records:
+
+```typescript
+logger.log('User created', { userId: 1, email: 'foo@bar.com' });
+```
+
+In JSON mode they are nested under a `params` key, or spread into the root if you enable `flattenParams`. This behavior is on by default in v12; set `structuredParams: false` to restore the previous behavior. See the [Logger chapter](/techniques/logger#structured-logging-params).
 
 #### Other notable release changes
 
-Depending on which Nest packages you use, you may also need to review the following v12 changes called out in the release PR:
+Depending on which Nest packages you use, you may also want to review the following:
 
-- improved pipe transform signatures for stronger type safety
-- support for structured logging parameters
-- new `errorCode` support in `HttpExceptionOptions`
-- NATS v3 support in the microservices package
-- gRPC exception filter support in microservices
-- regex Kafka pattern support
-- request-scoped WebSocket gateways
-- route conflict diagnostics and specificity ordering improvements
+- **Pipe transform signatures** have been refined for stronger type safety, and `ArgumentMetadata` now takes a generic parameter. Custom pipes with hand-written signatures may need their types adjusted.
+- **`ValidationPipe` error format** - a new option lets you control the shape of validation error responses.
+- **gRPC exception filter** - `GrpcExceptionFilter` plus a family of status-specific exceptions map errors to proper gRPC status codes instead of `UNKNOWN`. See the [gRPC chapter](/microservices/grpc#exception-handling).
+- **Regex Kafka patterns** - `@MessagePattern()` and `@EventPattern()` now accept a `RegExp` on the Kafka transport. See the [Kafka chapter](/microservices/kafka#regular-expression-patterns).
+- **Request-scoped WebSocket gateways** - gateways now support request-scoped providers, with the socket injectable via the `REQUEST` token. See the [Gateways chapter](/websockets/gateways#request-scoped-gateways).
+- **WebSocket disconnect reason** - `handleDisconnect` can now receive the reason for the disconnection.
+- **Microservices pre-request hook** - a new hook runs before a message handler is invoked.
+- **Express graceful shutdown** - the Express adapter now drains in-flight requests on shutdown.
+- **HTTP adapter error mapping** has been reworked across core, Express, and Fastify adapters.
 
 If you depend on one of these areas, review the corresponding package behavior in your test suite after upgrading.

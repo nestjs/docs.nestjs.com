@@ -96,7 +96,7 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
 
 Now you can start your server with the following command:
@@ -202,7 +202,7 @@ async function bootstrap() {
   await app.listen(3000);
 }
 
-bootstrap();
+await bootstrap();
 ```
 
 In this example, we set up a main API along with separate specifications for Cats and Dogs, each accessible from the dropdown in the explorer bar.

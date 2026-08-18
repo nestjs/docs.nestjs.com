@@ -74,7 +74,7 @@ name: string;
 In case you want to specify relation to another model, later for populating, you can use `@Prop()` decorator as well. For example, if `Cat` has `Owner` which is stored in a different collection called `owners`, the property should have type and ref. For example:
 
 ```typescript
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { Owner } from '../owners/schemas/owner.schema.js';
 
 // inside the class definition

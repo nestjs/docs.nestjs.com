@@ -62,7 +62,7 @@ This method will return a 200 status code along with the associated response, wh
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library-specific (e.g., Express) <a href="https://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>).  With this approach, you have the ability to use the native response handling methods exposed by that object.  For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>.
+      We can use the library-specific (e.g., Express) <a href="https://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>). With this approach, you have the ability to use the native response handling methods exposed by that object. For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>.
     </td>
   </tr>
 </table>
@@ -223,6 +223,58 @@ The `'abcd/*'` route path will match `abcd/`, `abcd/123`, `abcd/abc`, and so on.
 This approach works on both Express and Fastify. However, with the latest release of Express (v5), the routing system has become more strict. In pure Express, you must use a named wildcard to make the route work—for example, `abcd/*splat`, where `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like. That said, since Nest provides a compatibility layer for Express, you can still use the asterisk (`*`) as a wildcard.
 
 When it comes to asterisks used in the **middle of a route**, Express requires named wildcards (e.g., `ab{{ '{' }}*splat&#125;cd`), while Fastify does not support them at all.
+
+#### Route conflicts and resolution order
+
+Nest registers routes in declaration order. On order-sensitive adapters - the default Express adapter is one - this means a parametric route can silently shadow a more specific one:
+
+```typescript
+@Controller('users')
+export class UsersController {
+  @Get(':id')
+  findOne() {}
+
+  @Get('me') // never reached: `:id` matches "me" first
+  findMe() {}
+}
+```
+
+This is easy to miss, because the application boots without a warning and the problem only shows up at runtime, when a request is dispatched to the wrong handler. Pipes such as `ParseIntPipe` do not help here - routing picks the handler *before* any pipe runs.
+
+NestJS v12 adds two opt-in options on `NestApplicationOptions` to guard against this. Both default to the previous behavior, so existing applications are unaffected unless you set them.
+
+**`routeConflictPolicy`** enables bootstrap-time diagnostics. It takes a per-kind severity of `'off'`, `'warn'`, or `'error'`:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  routeConflictPolicy: { duplicate: 'error', shadow: 'warn' },
+});
+```
+
+<table>
+  <tr>
+    <td><code>duplicate</code></td>
+    <td>Two routes share an identical method, path, host, and version.</td>
+  </tr>
+  <tr>
+    <td><code>shadow</code></td>
+    <td>Two route patterns can match the same request, e.g. <code>/users/me</code> and <code>/users/:id</code>.</td>
+  </tr>
+</table>
+
+With `'error'`, every offending pair is aggregated into a single `RouteConflictException` thrown during `app.listen()`, so you see all of them at once rather than one per restart.
+
+**`routeResolutionStrategy`** controls registration order. Setting it to `'specificity'` registers the most specific routes first - literal segments beat parametric segments, which beat wildcards - so the example above works regardless of declaration order:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  routeResolutionStrategy: 'specificity',
+});
+```
+
+The default is `'declaration'`, which preserves the previous behavior.
+
+> info **Hint** These options only matter on adapters where registration order affects matching. `ExpressAdapter` is order-sensitive; `FastifyAdapter` is not, because `find-my-way` already ranks routes by specificity. On Fastify the `shadow` policy is a no-op and `'specificity'` sorting has no effect, while the `duplicate` policy is honored on both. The `RouteConflictPolicy`, `RouteConflictPolicyLevel`, and `RouteResolutionStrategy` types are exported from `@nestjs/common`.
 
 #### Status code
 

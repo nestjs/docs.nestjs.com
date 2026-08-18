@@ -239,7 +239,7 @@ With your Prisma models in place, you can generate your SQL migration files and 
 $ npx prisma migrate dev --name init
 ```
 
-This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files was created in the existing `prisma` directory:
+This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files were created in the existing `prisma` directory:
 
 ```bash
 $ tree prisma

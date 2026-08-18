@@ -47,7 +47,7 @@ For hashing, we recommend using either the [bcrypt](https://www.npmjs.com/packag
 
 As an example, let's use `bcrypt` to hash a random password.
 
-First install required packages:
+First, install the required packages:
 
 ```shell
 $ npm i bcrypt
@@ -57,7 +57,7 @@ $ npm i -D @types/bcrypt
 Once the installation is complete, you can use the `hash` function, as follows:
 
 ```typescript
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 const saltOrRounds = 10;
 const password = 'random_password';

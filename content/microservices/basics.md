@@ -66,7 +66,7 @@ The second argument of the `createMicroservice()` method is an `options` object.
 </table>
 <p>
   The <code>options</code> object is specific to the chosen transporter. The <strong>TCP</strong> transporter exposes
-  the properties described below.  For other transporters (e.g, Redis, MQTT, etc.), see the relevant chapter for a description of the available options.
+  the properties described below. For other transporters (e.g., Redis, MQTT, etc.), see the relevant chapter for a description of the available options.
 </p>
 <table>
   <tr>
@@ -479,7 +479,7 @@ When communicating outside of a private network, it’s important to encrypt tra
 To enable TLS for a TCP server, you'll need both a private key and a certificate in PEM format. These are added to the server's options by setting the `tlsOptions` and specifying the key and cert files, as shown below:
 
 ```typescript
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
@@ -503,7 +503,7 @@ async function bootstrap() {
 
   await app.listen();
 }
-bootstrap();
+await bootstrap();
 ```
 
 For a client to communicate securely over TLS, we also define the `tlsOptions` object but this time with the CA certificate. This is the certificate of the authority that signed the server's certificate. This ensures that the client trusts the server's certificate and can establish a secure connection.
@@ -562,5 +562,5 @@ async function bootstrap() {
 
   await app.listen();
 }
-bootstrap();
+await bootstrap();
 ```

@@ -205,7 +205,7 @@ Unlike unit testing, which focuses on individual modules and classes, end-to-end
 
 ```typescript
 @@filename(cats.e2e-spec)
-import * as request from 'supertest';
+import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { CatsModule } from '../../src/cats/cats.module.js';
 import { CatsService } from '../../src/cats/cats.service.js';
@@ -241,7 +241,7 @@ describe('Cats', () => {
   });
 });
 @@switch
-import * as request from 'supertest';
+import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { CatsModule } from '../../src/cats/cats.module.js';
 import { CatsService } from '../../src/cats/cats.service.js';

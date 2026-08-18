@@ -204,7 +204,7 @@ export class CatsRepository {
 }
 ```
 
-> info **Hint** The `@Inject()` decorator is imported from `@nestjs/common` package.
+> info **Hint** The `@Inject()` decorator is imported from the `@nestjs/common` package.
 
 While we directly use the string `'CONNECTION'` in the above examples for illustration purposes, for clean code organization, it's best practice to define tokens in a separate file, such as `constants.ts`. Treat them much as you would symbols or enums that are defined in their own file and imported where needed.
 
@@ -233,7 +233,7 @@ Also, we have used the `ConfigService` class name as our token. For any class th
 
 #### Factory providers: `useFactory`
 
-The `useFactory` syntax allows for creating providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
+The `useFactory` syntax allows you to create providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
 
 1. The factory function can accept (optional) arguments.
 2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. Also, these providers can be marked as optional. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order. The example below demonstrates this.

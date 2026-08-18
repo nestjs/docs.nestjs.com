@@ -183,7 +183,7 @@ That nicely handles passing an `options` object to our dynamic module. How do we
 import { Injectable } from '@nestjs/common';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import type { EnvConfig } from './interfaces.js';
 
 @Injectable()
@@ -194,7 +194,7 @@ export class ConfigService {
     const options = { folder: './config' };
 
     const filePath = `${process.env.NODE_ENV || 'development'}.env`;
-    const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
+    const envFile = path.resolve(import.meta.dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
   }
 
@@ -237,7 +237,7 @@ Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider int
 ```typescript
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import { Injectable, Inject } from '@nestjs/common';
 import type { EnvConfig } from './interfaces.js';
 
@@ -247,7 +247,7 @@ export class ConfigService {
 
   constructor(@Inject('CONFIG_OPTIONS') private options: Record<string, any>) {
     const filePath = `${process.env.NODE_ENV || 'development'}.env`;
-    const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
+    const envFile = path.resolve(import.meta.dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
   }
 

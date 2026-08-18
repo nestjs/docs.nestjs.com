@@ -16,7 +16,7 @@ The first step we need to do is to establish the connection with our database us
 
 ```typescript
 @@filename(database.providers)
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 export const databaseProviders = [
   {
@@ -26,7 +26,7 @@ export const databaseProviders = [
   },
 ];
 @@switch
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 export const databaseProviders = [
   {
@@ -60,7 +60,7 @@ With Mongoose, everything is derived from a [Schema](https://mongoosejs.com/docs
 
 ```typescript
 @@filename(schemas/cat.schema)
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 export const CatSchema = new mongoose.Schema({
   name: String,

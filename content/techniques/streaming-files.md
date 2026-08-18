@@ -21,7 +21,7 @@ But in doing so you end up losing access to your post-controller interceptor log
 
 A `StreamableFile` is a class that holds onto the stream that is to be returned. To create a new `StreamableFile`, you can pass either a `Buffer` or a `Stream` to the `StreamableFile` constructor.
 
-> info **hint** The `StreamableFile` class can be imported from `@nestjs/common`.
+> info **Hint** The `StreamableFile` class can be imported from `@nestjs/common`.
 
 #### Cross-platform support
 

@@ -7,8 +7,10 @@
 To start building NATS-based microservices, first install the required package:
 
 ```bash
-$ npm i --save nats
+$ npm i --save @nats-io/transport-node
 ```
+
+> warning **Warning** As of NestJS v12, the NATS transporter targets **NATS v3** and uses the `@nats-io/transport-node` driver. If you are upgrading from an earlier version, uninstall the legacy `nats` package (`npm uninstall nats`) and install `@nats-io/transport-node` instead. See the [migration guide](/migration-guide) for details.
 
 #### Overview
 
@@ -35,7 +37,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 #### Options
 
-The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/node-nats#connection-options) as well as the following properties:
+The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/nats.js/blob/main/core/README.md#connecting-to-a-nats-server) as well as the following properties:
 
 <table>
   <tr>
@@ -146,7 +148,7 @@ getDate(data, context) {
 To configure message options, you can use the `NatsRecordBuilder` class (note: this is doable for event-based flows as well). For example, to add `x-version` header, use the `setHeaders` method, as follows:
 
 ```typescript
-import * as nats from 'nats';
+import * as nats from '@nats-io/nats-core';
 
 // somewhere in your code
 const headers = nats.headers();
@@ -157,6 +159,21 @@ this.client.send('replace-emoji', record).subscribe(...);
 ```
 
 > info **Hint** `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.
+
+#### Custom serializers and deserializers
+
+Starting with NestJS v12, Nest serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object instead of a raw `Uint8Array`. If you have written a custom deserializer, read the payload through `msg.json()` rather than decoding bytes manually:
+
+```typescript
+import { Deserializer, IncomingRequest } from '@nestjs/microservices';
+
+export class CustomNatsDeserializer implements Deserializer {
+  deserialize(msg: any): IncomingRequest {
+    // Previously: JSON.parse(new TextDecoder().decode(msg));
+    return msg.json();
+  }
+}
+```
 
 And you can read these headers on the server-side as well, by accessing the `NatsContext`, as follows:
 
@@ -248,11 +265,13 @@ For more advanced use cases, you may need to access the underlying driver instan
 To do so, you can use the `unwrap()` method, which returns the underlying driver instance. The generic type parameter should specify the type of driver instance you expect.
 
 ```typescript
-const natsConnection = this.client.unwrap<import('nats').NatsConnection>();
+const natsConnection =
+  this.client.unwrap<import('@nats-io/transport-node').NatsConnection>();
 ```
 
 Similarly, you can access the server's underlying driver instance:
 
 ```typescript
-const natsConnection = server.unwrap<import('nats').NatsConnection>();
+const natsConnection =
+  server.unwrap<import('@nats-io/transport-node').NatsConnection>();
 ```

@@ -6,7 +6,13 @@ A common use case for subscriptions is notifying the client side about particula
 
 #### Enable subscriptions with Apollo driver
 
-To enable subscriptions, configure the `graphql-ws` transport explicitly:
+Subscriptions are transported over WebSockets by the [graphql-ws](https://github.com/enisdenjo/graphql-ws) package, which is not bundled with `@nestjs/apollo`. Install it first:
+
+```bash
+$ npm i --save graphql-ws
+```
+
+Then enable the transport explicitly:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -17,7 +23,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-> info **Hint** `subscriptions-transport-ws` is no longer supported. Use `graphql-ws` for all new and existing subscription setups.
+> warning **Warning** Support for `subscriptions-transport-ws` was **removed** in `@nestjs/graphql` v14. The package is no longer a dependency and the `'subscriptions-transport-ws'` key is no longer accepted in the `subscriptions` options object. If you are upgrading, install `graphql-ws`, replace that key with `'graphql-ws'`, and update your clients to speak the newer protocol - the two are wire-incompatible, so clients still using `subscriptions-transport-ws` will fail to connect. Note also that the `onConnect` callback signature differs between the two: with `graphql-ws` it receives the connection context, and extra context values belong in its `extra` field (see [Authentication over WebSockets](/graphql/subscriptions#authentication-over-websockets) below).
 
 #### Code first
 

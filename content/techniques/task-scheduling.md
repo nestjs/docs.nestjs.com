@@ -227,7 +227,7 @@ The <a href="techniques/task-scheduling#dynamic-timeouts">Dynamic API</a> also e
 
 #### Dynamic schedule module API
 
-The `@nestjs/schedule` module provides a dynamic API that enables managing declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a> and <a href="techniques/task-scheduling#declarative-intervals">intervals</a>. The API also enables creating and managing **dynamic** cron jobs, timeouts and intervals, where the properties are defined at runtime.
+The `@nestjs/schedule` module provides a dynamic API that allows you to manage declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a> and <a href="techniques/task-scheduling#declarative-intervals">intervals</a>. The API also allows you to create and manage **dynamic** cron jobs, timeouts and intervals, where the properties are defined at runtime.
 
 #### Dynamic cron jobs
 

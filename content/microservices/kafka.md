@@ -181,6 +181,28 @@ Normally, topic partitions are assigned using the round robin partitioner, which
 
 To prevent the `ClientKafkaProxy` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
 
+#### Regular expression patterns
+
+KafkaJS supports subscribing to topics by regular expression, and starting with NestJS v12 you can pass a `RegExp` directly to `@MessagePattern()` or `@EventPattern()`. Nest preserves the pattern, forwards it to the KafkaJS `subscribe()` call, and falls back to regular expression matching when resolving a handler for an incoming topic.
+
+```typescript
+@@filename()
+@EventPattern(/^hero\..+$/)
+handleHeroEvents(@Payload() data: any, @Ctx() context: KafkaContext) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+@@switch
+@Bind(Payload(), Ctx())
+@EventPattern(/^hero\..+$/)
+handleHeroEvents(data, context) {
+  console.log(`Topic: ${context.getTopic()}`);
+}
+```
+
+This subscribes the handler to every topic matching the expression - `hero.kill.dragon`, `hero.rescue.villager`, and so on - without registering each one explicitly. Use `context.getTopic()` to find out which topic actually delivered the message.
+
+> info **Hint** Regular expression patterns are a Kafka-specific capability; other transporters continue to match patterns by exact value. Nest resets `lastIndex` before matching, so global (`/g`) and sticky (`/y`) expressions do not produce stateful misses.
+
 #### Message response subscription
 
 > warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafkaProxy.send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafkaProxy.emit` method).
@@ -489,7 +511,10 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
       await this.republishWithRetry(kafkaContext, currentRetryCount + 1);
       await this.commitOffset(kafkaContext);
     } catch (republishError) {
-      this.logger.error('Failed to republish message for retry:', republishError);
+      this.logger.error(
+        'Failed to republish message for retry:',
+        republishError,
+      );
       // Fall back to default exception handling
       super.catch(exception, host);
     }

@@ -258,7 +258,7 @@ There are three types of relations:
 <table>
   <tr>
     <td><code>One-to-one</code></td>
-    <td>Every row in the primary table has one and only one associated row in the foreign table.  Use the <code>@OneToOne()</code> decorator to define this type of relation.</td>
+    <td>Every row in the primary table has one and only one associated row in the foreign table. Use the <code>@OneToOne()</code> decorator to define this type of relation.</td>
   </tr>
   <tr>
     <td><code>One-to-many / Many-to-one</code></td>

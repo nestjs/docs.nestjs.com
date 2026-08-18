@@ -15,7 +15,7 @@ In order to create an MVC app, we also need a [template engine](https://expressj
 $ npm install --save hbs
 ```
 
-We've used the `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)) engine, though you can use whatever fits your requirements. Once the installation process is complete, we need to configure the express instance using the following code:
+We've used the `hbs` ([Handlebars](https://github.com/pillarjs/hbs#readme)) engine, though you can use whatever fits your requirements. Once the installation process is complete, we need to configure the Express instance using the following code:
 
 ```typescript
 @@filename(main)
@@ -29,8 +29,8 @@ async function bootstrap() {
     AppModule,
   );
 
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.useStaticAssets(join(import.meta.dirname, '..', 'public'));
+  app.setBaseViewsDir(join(import.meta.dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
   await app.listen(process.env.PORT ?? 3000);
@@ -46,8 +46,8 @@ async function bootstrap() {
     AppModule,
   );
 
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.useStaticAssets(join(import.meta.dirname, '..', 'public'));
+  app.setBaseViewsDir(join(import.meta.dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
   await app.listen(process.env.PORT ?? 3000);
@@ -90,7 +90,7 @@ export class AppController {
 }
 ```
 
-In this code, we are specifying the template to use in the `@Render()` decorator, and the return value of the route handler method is passed to the template for rendering. Notice that the return value is an object with a property `message`, matching the `message` placeholder we created in the template.
+In this code, we specify the template to use in the `@Render()` decorator, and the return value of the route handler method is passed to the template for rendering. Notice that the return value is an object with a `message` property, matching the `message` placeholder we created in the template.
 
 While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
@@ -126,7 +126,7 @@ A working example is available [here](https://github.com/nestjs/nest/tree/master
 
 #### Fastify
 
-As mentioned in this [chapter](/techniques/performance), we are able to use any compatible HTTP provider together with Nest. One such library is [Fastify](https://github.com/fastify/fastify). In order to create an MVC application with Fastify, we have to install the following packages:
+As mentioned in this [chapter](/techniques/performance), we can use any compatible HTTP provider together with Nest. One such library is [Fastify](https://github.com/fastify/fastify). To create an MVC application with Fastify, install the following packages:
 
 ```bash
 $ npm i --save @fastify/static @fastify/view handlebars
@@ -140,6 +140,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module.js';
 import { join } from 'node:path';
+import Handlebars from 'handlebars';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -147,14 +148,14 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
   app.useStaticAssets({
-    root: join(__dirname, '..', 'public'),
+    root: join(import.meta.dirname, '..', 'public'),
     prefix: '/public/',
   });
   app.setViewEngine({
     engine: {
-      handlebars: require('handlebars'),
+      handlebars: Handlebars,
     },
-    templates: join(__dirname, '..', 'views'),
+    templates: join(import.meta.dirname, '..', 'views'),
   });
   await app.listen(process.env.PORT ?? 3000);
 }
@@ -164,18 +165,19 @@ import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module.js';
 import { join } from 'node:path';
+import Handlebars from 'handlebars';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new FastifyAdapter());
   app.useStaticAssets({
-    root: join(__dirname, '..', 'public'),
+    root: join(import.meta.dirname, '..', 'public'),
     prefix: '/public/',
   });
   app.setViewEngine({
     engine: {
-      handlebars: require('handlebars'),
+      handlebars: Handlebars,
     },
-    templates: join(__dirname, '..', 'views'),
+    templates: join(import.meta.dirname, '..', 'views'),
   });
   await app.listen(process.env.PORT ?? 3000);
 }

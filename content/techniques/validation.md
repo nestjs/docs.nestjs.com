@@ -77,6 +77,8 @@ app.useGlobalPipes(
 
 Use this approach when your schemas already live outside of class-based DTOs. If your project relies on `class-validator` decorators, `ValidationPipe` remains the right choice.
 
+> info **Hint** The same schemas can drive your OpenAPI document. See [Standard Schema (Zod, Valibot)](/openapi/introduction#standard-schema-zod-valibot) in the OpenAPI chapter.
+
 Because this pipe uses the [`class-validator`](https://github.com/typestack/class-validator) and [`class-transformer`](https://github.com/typestack/class-transformer) libraries, there are many options available. You configure these settings via a configuration object passed to the pipe. Following are the built-in options:
 
 ```typescript
@@ -202,7 +204,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
 
 To test our pipe, let's create a basic endpoint.

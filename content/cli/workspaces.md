@@ -194,6 +194,8 @@ These properties specify the compiler to use as well as various options that aff
 | `manualRestart`     | boolean             | If `true`, enables the shortcut `rs` to manually restart the server. Default value is `false`.                                                                                                                                                                            |
 | `builder`           | string/object       | Instructs CLI on what `builder` to use to compile the project (`tsc`, `swc`, or `rspack`). To customize builder's behavior, you can pass an object containing two attributes: `type` (`tsc`, `swc`, or `rspack`) and `options`.                                         |
 | `typeCheck`         | boolean             | If `true`, enables type checking for SWC-driven projects (when `builder` is `swc`). Default value is `false`.                                                                                                                                                             |
+| `emitDeclarations`  | boolean             | If `true`, emits declaration files (`.d.ts`) when using the SWC builder. Default value is `false`.                                                                                                                                                                        |
+| `includeLibraryAssets` | array            | (**monorepo only**) List of library project names whose assets should also be copied when building this application.                                                                                                                                                      |
 
 #### Global generate options
 

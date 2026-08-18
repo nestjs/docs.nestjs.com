@@ -24,7 +24,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
   transport: Transport.GRPC,
   options: {
     package: 'hero',
-    protoPath: join(__dirname, 'hero/hero.proto'),
+    protoPath: join(import.meta.dirname, 'hero/hero.proto'),
   },
 });
 @@switch
@@ -32,7 +32,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.GRPC,
   options: {
     package: 'hero',
-    protoPath: join(__dirname, 'hero/hero.proto'),
+    protoPath: join(import.meta.dirname, 'hero/hero.proto'),
   },
 });
 ```
@@ -57,7 +57,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
 <table>
   <tr>
     <td><code>package</code></td>
-    <td>Protobuf package name (matches <code>package</code> setting from <code>.proto</code> file).  Required</td>
+    <td>Protobuf package name (matches <code>package</code> setting from <code>.proto</code> file). Required</td>
   </tr>
   <tr>
     <td><code>protoPath</code></td>
@@ -68,11 +68,11 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
   </tr>
   <tr>
     <td><code>url</code></td>
-    <td>Connection url.  String in the format <code>ip address/dns name:port</code> (for example, <code>'0.0.0.0:50051'</code> for a Docker server) defining the address/port on which the transporter establishes a connection.  Optional.  Defaults to <code>'localhost:5000'</code></td>
+    <td>Connection url. String in the format <code>ip address/dns name:port</code> (for example, <code>'0.0.0.0:50051'</code> for a Docker server) defining the address/port on which the transporter establishes a connection. Optional. Defaults to <code>'localhost:5000'</code></td>
   </tr>
   <tr>
     <td><code>protoLoader</code></td>
-    <td>NPM package name for the utility to load <code>.proto</code> files.  Optional.  Defaults to <code>'@grpc/proto-loader'</code></td>
+    <td>NPM package name for the utility to load <code>.proto</code> files. Optional. Defaults to <code>'@grpc/proto-loader'</code></td>
   </tr>
   <tr>
     <td><code>loader</code></td>
@@ -89,7 +89,7 @@ The <strong>gRPC</strong> transporter options object exposes the properties desc
   <tr>
     <td><code>credentials</code></td>
     <td>
-      Server credentials.  Optional. <a
+      Server credentials. Optional. <a
         href="https://grpc.io/grpc/node/grpc.ServerCredentials.html"
         rel="nofollow"
         target="_blank"
@@ -235,7 +235,7 @@ imports: [
       transport: Transport.GRPC,
       options: {
         package: 'hero',
-        protoPath: join(__dirname, 'hero/hero.proto'),
+        protoPath: join(import.meta.dirname, 'hero/hero.proto'),
       },
     },
   ]),
@@ -276,7 +276,7 @@ export class AppService implements OnModuleInit {
     transport: Transport.GRPC,
     options: {
       package: 'hero',
-      protoPath: join(__dirname, 'hero/hero.proto'),
+      protoPath: join(import.meta.dirname, 'hero/hero.proto'),
     },
   })
   client: ClientGrpc;
@@ -334,6 +334,82 @@ call(): Observable<any> {
 > info **Hint** The `Metadata` class is imported from the `grpc` package.
 
 Please note that this would require updating the `HeroesService` interface that we've defined a few steps earlier.
+
+#### Exception handling
+
+gRPC handlers can throw `RpcException`, but a plain `RpcException` does not carry a gRPC status code, so clients receive `UNKNOWN` for every failure. Starting with NestJS v12, the microservices package ships dedicated gRPC exceptions and a `GrpcExceptionFilter` that maps them to proper gRPC error objects.
+
+Throw one of the status-specific exceptions from your handler:
+
+```typescript
+@@filename(heroes.controller)
+import { GrpcAlreadyExistsException } from '@nestjs/microservices';
+
+@GrpcMethod('HeroesService')
+create(data: Hero): Hero {
+  if (this.heroes.has(data.id)) {
+    throw new GrpcAlreadyExistsException('Hero already exists');
+  }
+  return this.heroes.add(data);
+}
+```
+
+Then register the filter so those exceptions are serialized into gRPC errors:
+
+```typescript
+@@filename(main)
+import { GrpcExceptionFilter } from '@nestjs/microservices';
+
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.GRPC,
+  options: {
+    package: 'hero',
+    protoPath: join(import.meta.dirname, 'hero/hero.proto'),
+  },
+});
+app.useGlobalFilters(new GrpcExceptionFilter());
+```
+
+With the filter in place, the client receives `ALREADY_EXISTS` instead of `UNKNOWN`.
+
+You can also use the generic `GrpcException` and pass a status explicitly:
+
+```typescript
+import { GrpcException, GrpcStatus } from '@nestjs/microservices';
+
+throw new GrpcException('Rate limit exceeded', GrpcStatus.RESOURCE_EXHAUSTED);
+```
+
+The following status-specific exception classes are available, each corresponding to a member of the `GrpcStatus` enum:
+
+<table>
+  <tr>
+    <td><code>GrpcCancelledException</code></td>
+    <td><code>GrpcUnknownException</code></td>
+    <td><code>GrpcInvalidArgumentException</code></td>
+    <td><code>GrpcDeadlineExceededException</code></td>
+  </tr>
+  <tr>
+    <td><code>GrpcNotFoundException</code></td>
+    <td><code>GrpcAlreadyExistsException</code></td>
+    <td><code>GrpcPermissionDeniedException</code></td>
+    <td><code>GrpcResourceExhaustedException</code></td>
+  </tr>
+  <tr>
+    <td><code>GrpcFailedPreconditionException</code></td>
+    <td><code>GrpcAbortedException</code></td>
+    <td><code>GrpcOutOfRangeException</code></td>
+    <td><code>GrpcUnimplementedException</code></td>
+  </tr>
+  <tr>
+    <td><code>GrpcInternalException</code></td>
+    <td><code>GrpcUnavailableException</code></td>
+    <td><code>GrpcDataLossException</code></td>
+    <td><code>GrpcUnauthenticatedException</code></td>
+  </tr>
+</table>
+
+> info **Hint** `GrpcExceptionFilter` also handles `RpcException`. If the error object you pass to it carries a numeric `code` or `status` property, that value is used as the gRPC status; otherwise the error is reported as `UNKNOWN`.
 
 #### Example
 
@@ -527,7 +603,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
   options: {
     protoPath: [
       healthCheckProtoPath,
-      protoPath: join(__dirname, 'hero/hero.proto'),
+      protoPath: join(import.meta.dirname, 'hero/hero.proto'),
     ],
     onLoadPackageDefinition: (pkg, server) => {
       const healthImpl = new HealthImplementation({

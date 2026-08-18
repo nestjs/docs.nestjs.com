@@ -15,7 +15,7 @@ import { AppModule } from './app.module.js';
 async function bootstrap() {
   await repl(AppModule);
 }
-bootstrap();
+await bootstrap();
 @@switch
 import { repl } from '@nestjs/core';
 import { AppModule } from './app.module.js';
@@ -23,7 +23,7 @@ import { AppModule } from './app.module.js';
 async function bootstrap() {
   await repl(AppModule);
 }
-bootstrap();
+await bootstrap();
 ```
 
 Now in your terminal, start the REPL with the following command:

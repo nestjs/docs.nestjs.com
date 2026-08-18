@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "baseUrl": "./",
+    "typeRoots": ["../node_modules/@types", "../node_modules"],
     "types": ["vitest/globals", "node"]
   },
-  "files": ["test.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]
 }

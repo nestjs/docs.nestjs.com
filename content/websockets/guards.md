@@ -2,7 +2,7 @@
 
 There is no fundamental difference between web sockets guards and [regular HTTP application guards](/guards). The only difference is that instead of throwing `HttpException`, you should use `WsException`.
 
-> info **Hint** The `WsException` class is exposed from `@nestjs/websockets` package.
+> info **Hint** The `WsException` class is exposed from the `@nestjs/websockets` package.
 
 #### Binding guards
 

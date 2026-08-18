@@ -8,7 +8,7 @@ For **high-traffic** websites in production, it is strongly recommended to offlo
 
 Use the [compression](https://github.com/expressjs/compression) middleware package to enable gzip compression.
 
-First install the required package:
+First, install the required package:
 
 ```bash
 $ npm i --save compression
@@ -18,7 +18,7 @@ $ npm i --save-dev @types/compression
 Once the installation is complete, apply the compression middleware as global middleware.
 
 ```typescript
-import * as compression from 'compression';
+import compression from 'compression';
 // somewhere in your initialization file
 app.use(compression());
 ```
@@ -33,7 +33,7 @@ $ npm i --save @fastify/compress
 
 Once the installation is complete, apply the `@fastify/compress` middleware as global middleware.
 
-> warning **Warning** Please ensure, that you use the type `NestFastifyApplication` when creating the application. Otherwise, you cannot use `register` to apply the compression-middleware.
+> warning **Warning** Please ensure that you use the type `NestFastifyApplication` when creating the application. Otherwise, you cannot use `register` to apply the compression middleware.
 
 ```typescript
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -45,7 +45,7 @@ const app = await NestFactory.create<NestFastifyApplication>(AppModule, new Fast
 await app.register(compression);
 ```
 
-By default, `@fastify/compress` will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli can be quite efficient in terms of compression ratio, it can also be quite slow. By default, Brotli sets a maximum compression quality of 11, although it can be adjusted to reduce compression time in lieu of compression quality by adjusting the `BROTLI_PARAM_QUALITY` between 0 min and 11 max. This will require fine tuning to optimize space/time performance. An example with quality 4: 
+By default, `@fastify/compress` will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli can be quite efficient in terms of compression ratio, it can also be quite slow. By default, Brotli sets a maximum compression quality of 11, although it can be adjusted to reduce compression time in lieu of compression quality by adjusting the `BROTLI_PARAM_QUALITY` between a minimum of 0 and a maximum of 11. This will require fine-tuning to optimize space/time performance. An example with quality 4:
 
 ```typescript
 import { constants } from 'node:zlib';
