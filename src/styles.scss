@@ -316,13 +316,21 @@ blockquote {
     }
   }
 
+  // !important: `.content a` (homepage.component.scss) is two classes deep
+  // and would otherwise out-specificity these single-class selectors,
+  // painting every hint link in the generic content-link red regardless of
+  // hint type.
+  a {
+    color: variables.$red-color !important;
+  }
+
   &.warning {
     background: var(--warning-background);
     border-color: rgba(255, 138, 61, 0.24);
     border-left-color: var(--warning-color);
     strong,
     a {
-      color: var(--warning-color);
+      color: var(--warning-color) !important;
     }
   }
 
@@ -332,7 +340,7 @@ blockquote {
     border-left-color: var(--info);
     strong,
     a {
-      color: var(--info-color);
+      color: var(--info-color) !important;
     }
   }
 }

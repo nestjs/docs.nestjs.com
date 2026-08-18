@@ -264,7 +264,7 @@ $screen-xlarge: 'only screen and (max-width: 1349px)';
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.25),
       transparent
     );
     animation: badge-shimmer $duration ease-in-out infinite;
