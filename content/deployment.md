@@ -95,6 +95,18 @@ Best practices for logging:
 
 For distributed applications, using a centralized logging service like ElasticSearch, Loggly, or Datadog can be incredibly useful. These tools offer powerful features like log aggregation, search, and visualization, making it easier to monitor and analyze your application's performance and behavior.
 
+#### Observability
+
+Health checks and logs tell you whether the application is up; they don't tell you which route got slower after the last deploy, which class is burning the time, or which line threw. For that, instrument the application with [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe'), our official observability platform: install the `@nestjs/observe` SDK, pass an API key, and requests, jobs, errors, logs, and traces start streaming to a dashboard with no manual span wiring or collector to run.
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  instrument: ObserveInstrument,
+});
+```
+
+See the [Observability](/observability/overview) chapter for the full setup, including versioning deployments with `serviceVersion` so each release is compared against the one before it.
+
 #### Scaling up or out
 
 Scaling your NestJS application effectively is crucial for handling increased traffic and ensuring optimal performance. There are two primary strategies for scaling: **vertical scaling** and **horizontal scaling**. Understanding these approaches will help you design your application to manage load efficiently.
