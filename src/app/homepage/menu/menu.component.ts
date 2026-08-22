@@ -197,8 +197,26 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Deployment',
-      isNew: true,
       path: '/deployment',
+    },
+    {
+      title: 'Observability',
+      isNew: true,
+      isOpened: false,
+      children: [
+        { title: 'Overview', path: '/observability/overview' },
+        { title: 'SDK', path: '/observability/sdk' },
+        {
+          title: 'Manual instrumentation',
+          path: '/observability/manual-instrumentation',
+        },
+        {
+          title: 'Distributed tracing',
+          path: '/observability/distributed-tracing',
+        },
+        { title: 'Dashboard', path: '/observability/dashboard' },
+        { title: 'MCP server', path: '/observability/mcp-server' },
+      ],
     },
     {
       title: 'Standalone apps',

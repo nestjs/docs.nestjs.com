@@ -185,6 +185,13 @@ export const routes: Routes = [
             (r) => r.DEVTOOLS_ROUTES,
           ),
       },
+      {
+        path: 'observability',
+        loadChildren: () =>
+          import('./homepage/pages/observability/observability.routes').then(
+            (r) => r.OBSERVABILITY_ROUTES,
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: versionedUrlRedirect },
