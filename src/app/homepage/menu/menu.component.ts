@@ -261,6 +261,7 @@ export class MenuComponent implements OnInit {
         { title: 'Passport (auth)', path: '/recipes/passport' },
         { title: 'Hot reload', path: '/recipes/hot-reload' },
         { title: 'MikroORM', path: '/recipes/mikroorm' },
+        { title: 'Drizzle ORM', path: '/recipes/drizzle' },
         { title: 'TypeORM', path: '/recipes/sql-typeorm' },
         { title: 'Mongoose', path: '/recipes/mongodb' },
         { title: 'Sequelize', path: '/recipes/sql-sequelize' },
