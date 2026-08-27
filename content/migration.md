@@ -7,13 +7,13 @@ This article walks through migrating from NestJS version 11 to version 12. Versi
 Start by upgrading the Nest CLI itself, since the upgrade command used below ships with it:
 
 ```bash
-$ npm i -g @nestjs/cli@latest
+$ npm i -g @nestjs/cli@latest @nestjs/schematics@latest
 ```
 
 If your project keeps the CLI as a local dev dependency, update it there as well:
 
 ```bash
-$ npm i -D @nestjs/cli@latest
+$ npm i -D @nestjs/cli@latest @nestjs/schematics@latest
 ```
 
 With the latest CLI in place, run `nest upgrade` from the root of your project:
