@@ -2,28 +2,28 @@
 
 > info **Hint** This chapter covers the Nest Devtools integration with the Nest framework. If you are looking for the Devtools application, please visit the [Devtools](https://devtools.nestjs.com) website.
 
-To start debugging your local application, open up the `main.ts` file and make sure to set the `snapshot` attribute to `true` in the application options object, as follows:
+Nest Devtools gives you an interactive, always up-to-date view of your application's internals — modules, providers, controllers, and the routes and events that tie them together. Instead of piecing that picture together from imports and constructor signatures, you get a live graph you can search, filter, and click through. This chapter walks you through connecting your local application to Devtools for the first time.
+
+Getting started takes less than five minutes. Open your `main.ts` file and set the `snapshot` attribute to `true` in your application's options object:
 
 ```typescript
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(3000);
 }
 ```
 
-This will instruct the framework to collect necessary metadata that will let Nest Devtools visualize your application's graph.
+This tells Nest to start collecting the metadata Devtools needs to reconstruct and visualize your application's dependency graph.
 
-Next up, let's install the required dependency:
+Next, install the Devtools integration package:
 
 ```bash
 $ npm i @nestjs/devtools-integration
 ```
 
-> warning **Warning** If you're using `@nestjs/graphql` package in your application, make sure to install the latest version (`npm i @nestjs/graphql@11`).
-
-With this dependency in place, let's open up the `app.module.ts` file and import the `DevtoolsModule` that we just installed:
+With the package installed, open `app.module.ts` and import the `DevtoolsModule`:
 
 ```typescript
 @Module({
@@ -38,35 +38,39 @@ With this dependency in place, let's open up the `app.module.ts` file and import
 export class AppModule {}
 ```
 
-> warning **Warning** The reason we are checking the `NODE_ENV` environment variable here is that you should never use this module in production!
+> info **Note** We check `NODE_ENV` here because `DevtoolsModule` should never run in production.
 
-Once the `DevtoolsModule` is imported and your application is up and running (`npm run start:dev`), you should be able to navigate to [Devtools](https://devtools.nestjs.com) URL and see the introspected graph.
+The `http` flag controls whether `DevtoolsModule` exposes its introspection server at all — leave it disabled and the module effectively does nothing, which is exactly the safety net you want if this configuration accidentally makes it past a review. There's no meaningful runtime overhead to worry about either: metadata collection only kicks in while the introspection server is actually being queried, so your application's regular request handling is unaffected.
+
+Once `DevtoolsModule` is imported and your application is up and running (`npm run start:dev`), head over to [Devtools](https://devtools.nestjs.com) and watch your introspected graph come to life.
 
 <figure><img src="/assets/devtools/modules-graph.png" /></figure>
 
-> info **Hint** As you can see on the screenshot above, every module connects to the `InternalCoreModule`. `InternalCoreModule` is a global module that is always imported into the root module. Since it's registered as a global node, Nest automatically creates edges between all of the modules and the `InternalCoreModule` node. Now, if you want to hide global modules from the graph, you can use the "**Hide global modules**" checkbox (in the sidebar).
+> info **Hint** Notice that every module connects to `InternalCoreModule` — a global module Nest always imports into the root module. Because it's registered globally, Nest automatically draws an edge between it and every other module in your app. To declutter the view, toggle the **Hide global modules** checkbox in the sidebar.
 
-So as we can see, `DevtoolsModule` makes your application expose an additional HTTP server (on port 8000) that the Devtools application will use to introspect your app.
+Under the hood, `DevtoolsModule` spins up a lightweight HTTP server (on port 8000) that this dashboard uses to introspect your application in real time — no extra configuration required.
 
-Just to double-check that everything works as expected, change the graph view to "Classes". You should see the following screen:
+Let's confirm everything's wired up correctly. Switch the graph view to "Classes" and you should see something like this:
 
 <figure><img src="/assets/devtools/classes-graph.png" /></figure>
 
-To focus on a specific node, click on the rectangle and the graph will show a popup window with the **"Focus"** button. You can also use the search bar (located in the sidebar) to find a specific node.
+Click any node to open a popup with a **"Focus"** button that isolates it on the graph, or use the search bar in the sidebar to jump straight to a specific node.
 
-> info **Hint** If you click on the **Inspect** button, application will take you to the `/debug` page with that specific node selected.
+> info **Hint** Clicking **Inspect** takes you straight to the `/debug` page with that node preselected — perfect for digging into a specific provider or controller.
 
 <figure><img src="/assets/devtools/node-popup.png" /></figure>
 
-> info **Hint** To export a graph as an image, click on the **Export as PNG** button in the right corner of the graph.
+> info **Hint** Need a snapshot for docs or a pull request? Click **Export as PNG** in the bottom-right corner of the graph.
 
-Using the form controls located in the sidebar (on the left), you can control edges proximity to, for example, visualize a specific application sub-tree:
+The controls in the sidebar let you narrow down edge proximity — handy for zooming in on a specific branch of your application:
 
 <figure><img src="/assets/devtools/subtree-view.png" /></figure>
 
-This can be particularly useful when you have **new developers** on your team and you want to show them how your application is structured. You can also use this feature to visualize a specific module (e.g. `TasksModule`) and all of its dependencies, which can come in handy when you're breaking down a large application into smaller modules (for example, individual micro-services).
+This is a great way to onboard **new team members** — show them exactly how the application fits together. It's equally useful when you're extracting a module (say, `TasksModule`) along with all of its dependencies ahead of splitting a large application into smaller services.
 
-You can watch this video to see the **Graph Explorer** feature in action:
+Everything in Graph Explorer stays in sync with your running application — refresh, and any change you've made to your modules or providers is reflected instantly. There's no build step or separate documentation to keep up to date; the graph **is** the documentation.
+
+See **Graph Explorer** in action:
 
 <figure>
   <iframe
@@ -80,22 +84,24 @@ You can watch this video to see the **Graph Explorer** feature in action:
   ></iframe>
 </figure>
 
-#### Investigating the "Cannot resolve dependency" error
+#### Debugging "Cannot resolve dependency" errors
 
-> info **Note** This feature is supported for `@nestjs/core` >= `v9.3.10`.
+> info **Note** Available for `@nestjs/core` 9.3.10 and above.
 
-Probably the most common error message you might have seen is about Nest not being able to resolve dependencies of a provider. Using Nest Devtools, you can effortlessly identify the issue and learn how to resolve it.
+If you've worked with Nest for any length of time, you've probably run into the dreaded **"Cannot resolve dependency"** error. It's usually the very first error message any new team member sees, and on a large application it can be genuinely hard to track down — the stack trace tells you what's missing, but not why, or where in a deeply nested provider chain the wiring actually broke. Devtools turns this from a guessing game into a quick, visual diagnosis.
 
-First, open up the `main.ts` file and update the `bootstrap()` call, as follows:
+Start by updating your `bootstrap()` call in `main.ts`:
 
 ```typescript
 bootstrap().catch((err) => {
-  fs.writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
+  writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
   process.exit(1);
 });
 ```
 
-Also, make sure to set the `abortOnError` to `false`:
+> info **Hint** `PartialGraphHost` is exported from `@nestjs/core`.
+
+You'll also need to set `abortOnError` to `false`:
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -104,51 +110,55 @@ const app = await NestFactory.create(AppModule, {
 });
 ```
 
-Now every time your application fails to bootstrap due to the **"Cannot resolve dependency"** error, you'll find the `graph.json` (that represents a partial graph) file in the root directory. You can then drag & drop this file into Devtools (make sure to switch the current mode from "Interactive" to "Preview"):
+From now on, whenever your application fails to bootstrap with a **"Cannot resolve dependency"** error, Nest writes a `graph.json` file — a partial graph — to your project root. Drag and drop it into Devtools (switch from "Interactive" to "Preview" mode first) to see exactly where things went wrong:
 
 <figure><img src="/assets/devtools/drag-and-drop.png" /></figure>
 
-Upon successful upload, you should see the following graph & dialog window:
+Once uploaded, you'll see the graph along with a dialog summarizing what happened:
 
 <figure><img src="/assets/devtools/partial-graph-modules-view.png" /></figure>
 
-As you can see, the highlighted `TasksModule` is the one we should look into. Also, in the dialog window you can already see some instructions on how to fix this issue.
+The highlighted `TasksModule` is the one to look into — and the dialog already gives you pointers on how to fix it.
 
-If we switch to the "Classes" view instead, that's what we'll see:
+Switching to the "Classes" view tells the full story:
 
 <figure><img src="/assets/devtools/partial-graph-classes-view.png" /></figure>
 
-This graph illustrates that the `DiagnosticsService` which we want to inject into the `TasksService` was not found in the context of the `TasksModule` module, and we should likely just import the `DiagnosticsModule` into the `TasksModule` module to fix this up!
+This graph makes it clear: `DiagnosticsService` — which `TasksService` depends on — isn't available in `TasksModule`'s context. The fix is simple: import `DiagnosticsModule` into `TasksModule` and you're back in business.
+
+What would otherwise be a slow process of manually tracing imports across a handful of files — and hoping you didn't miss one — turns into a couple of clicks. It's a small workflow change, but it adds up fast on a codebase with dozens of modules.
 
 #### Routes explorer
 
-When you navigate to the **Routes explorer** page, you should see all of the registered entrypoints:
+Head over to the **Routes explorer** page to see every entrypoint your application registers:
 
 <figure><img src="/assets/devtools/routes.png" /></figure>
 
-> info **Hint** This page shows not only HTTP routes, but also all of the other entrypoints (e.g. WebSockets, gRPC, GraphQL resolvers etc.).
+> info **Hint** This page isn't limited to HTTP routes — it also covers WebSockets, gRPC, GraphQL resolvers, and more.
 
-Entrypoints are grouped by their host controllers. You can also use the search bar to find a specific entrypoint.
+Entrypoints are grouped by their host controllers, and you can use the search bar to jump straight to the one you're after.
 
-If you click on a specific entrypoint, **a flow graph** will be displayed. This graph shows the execution flow of the entrypoint (e.g. guards, interceptors, pipes, etc. bound to this route). This is particularly useful when you want to understand how the request/response cycle looks for a specific route, or when troubleshooting why a specific guard/interceptor/pipe is not being executed.
+Click any entrypoint to reveal **a flow graph** showing its full execution path — every guard, interceptor, and pipe bound to that route. It's the fastest way to understand how a request travels through your application, or to figure out why a specific guard, interceptor, or pipe isn't firing when you expect it to.
 
-#### Sandbox
+This view tends to pay off the most on applications that have grown organically over time, where the same guard might be applied at the controller level in one place and per-route in another. Rather than reading through decorators scattered across the codebase, you get the actual, resolved execution order for that specific route.
 
-To execute JavaScript code on the fly & interact with your application in real-time, navigate to the **Sandbox** page:
+#### Playground
+
+Want to run code against your application without redeploying? Head to the **Playground** page:
 
 <figure><img src="/assets/devtools/sandbox.png" /></figure>
 
-The playground can be used to test and debug API endpoints in **real-time**, allowing developers to quickly identify and fix issues without using, for example, an HTTP client. We can also bypass the authentication layer, and so we no longer need that extra step of logging in, or even a special user account for testing purposes. For event-driven applications, we can also trigger events directly from the playground, and see how the application reacts to them.
+The Playground lets you test and debug endpoints **in real time**, so you can track down issues without reaching for a separate HTTP client. You can bypass the authentication layer entirely, skipping the extra login step or a dedicated test account — and for event-driven applications, trigger events directly from the Playground to see exactly how your app responds.
 
-Anything that gets logged down is streamlined to the playground's console, so we can easily see what's going on.
+Anything your code logs is streamed straight to the Playground's console, so you always know what's happening under the hood.
 
-Just execute the code **on the fly** and see the results instantly, without having to rebuild the application and restart the server.
+Just run the code **on the fly** and see the results instantly — no rebuilds, no server restarts.
 
 <figure><img src="/assets/devtools/sandbox-table.png" /></figure>
 
-> info **Hint** To pretty display an array of objects, use the `console.table()` (or just `table()`) function.
+> info **Hint** Use `console.table()` (or just `table()`) to pretty-print an array of objects.
 
-You can watch this video to see the **Interactive Playground** feature in action:
+See the **Playground** in action:
 
 <figure>
   <iframe
@@ -164,35 +174,37 @@ You can watch this video to see the **Interactive Playground** feature in action
 
 #### Bootstrap performance analyzer
 
-To see a list of all class nodes (controllers, providers, enhancers, etc.) and their corresponding instantiation times, navigate to the **Bootstrap performance** page:
+Curious what's slowing down your application's startup? The **Bootstrap performance** page lists every class node — controllers, providers, enhancers, and more — alongside its instantiation time:
 
 <figure><img src="/assets/devtools/bootstrap-performance.png" /></figure>
 
-This page is particularly useful when you want to identify the slowest parts of your application's bootstrap process (e.g. when you want to optimize the application's startup time which is crucial for, for example, serverless environments).
+It's the quickest way to spot the slowest parts of your bootstrap process, which matters most when startup time is on the critical path — think serverless environments where every millisecond counts.
+
+Slow bootstraps are usually caused by a handful of usual suspects: heavy synchronous work inside a constructor, a provider awaiting a slow external call in `onModuleInit`, or simply a module instantiating far more dependencies than it needs. Sorted by instantiation time, this page makes those outliers obvious at a glance instead of requiring you to sprinkle `console.time()` calls throughout your codebase.
 
 #### Audit
 
-To see the auto-generated audit - errors/warnings/hints that the application came up with while analyzing your serialized graph, navigate to the **Audit** page:
+Devtools automatically analyzes your serialized graph and surfaces errors, warnings, and hints worth your attention. Find them all on the **Audit** page:
 
 <figure><img src="/assets/devtools/audit.png" /></figure>
 
-> info **Hint** The screenshot above doesn't show all of the available audit rules.
+> info **Hint** The screenshot above shows just a sample of the available audit rules.
 
-This page comes in handy when you want to identify potential issues in your application.
+Think of it as a linter for your application's architecture — a fast way to catch issues before they catch you. Some of the built-in rules flag things you'd otherwise only discover the hard way: a controller carrying far more routes than its neighbors, a module pulling in an unusually large number of dependencies, a provider named `SomethingGuard` that was never actually registered as a guard, or a request-scoped provider that's a strong candidate for [Durable Providers](/fundamentals/injection-scopes#durable-providers) instead. None of these are bugs your test suite will catch, but they're exactly the kind of thing that slows a codebase down over time.
 
 #### Preview static files
 
 To save a serialized graph to a file, use the following code:
 
 ```typescript
-await app.listen(process.env.PORT ?? 3000); // OR await app.init()
-fs.writeFileSync('./graph.json', app.get(SerializedGraph).toString());
+await app.listen(3000); // OR await app.init()
+writeFileSync('./graph.json', app.get(SerializedGraph).toString());
 ```
 
-> info **Hint** `SerializedGraph` is exported from the `@nestjs/core` package.
+> info **Hint** `SerializedGraph` is exported from `@nestjs/core`.
 
-Then you can drag and drop/upload this file:
+Then simply drag and drop (or upload) the file:
 
 <figure><img src="/assets/devtools/drag-and-drop.png" /></figure>
 
-This is helpful when you want to share your graph with someone else (e.g., co-worker), or when you want to analyze it offline.
+This comes in handy when you want to share a graph with a co-worker, attach it to a bug report, or analyze it offline — without needing your application up and running.

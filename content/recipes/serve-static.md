@@ -16,15 +16,15 @@ Once the installation process is done, we can import the `ServeStaticModule` int
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+import { join } from 'node:path';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
+      rootPath: join(import.meta.dirname, '..', 'client'),
     }),
   ],
   controllers: [AppController],

@@ -239,7 +239,7 @@ But, you can configure how Nest generates typings for your custom scalars when y
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const definitionsFactory = new GraphQLDefinitionsFactory();
 

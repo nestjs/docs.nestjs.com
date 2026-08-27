@@ -11,7 +11,7 @@ First, we define a provider. The `@Injectable()` decorator marks the `CatsServic
 ```typescript
 @@filename(cats.service)
 import { Injectable } from '@nestjs/common';
-import { Cat } from './interfaces/cat.interface';
+import type { Cat } from './interfaces/cat.interface.js';
 
 @Injectable()
 export class CatsService {
@@ -41,8 +41,8 @@ Then we request that Nest inject the provider into our controller class:
 ```typescript
 @@filename(cats.controller)
 import { Controller, Get } from '@nestjs/common';
-import { CatsService } from './cats.service';
-import { Cat } from './interfaces/cat.interface';
+import { CatsService } from './cats.service.js';
+import type { Cat } from './interfaces/cat.interface.js';
 
 @Controller('cats')
 export class CatsController {
@@ -55,7 +55,7 @@ export class CatsController {
 }
 @@switch
 import { Controller, Get, Bind, Dependencies } from '@nestjs/common';
-import { CatsService } from './cats.service';
+import { CatsService } from './cats.service.js';
 
 @Controller('cats')
 @Dependencies(CatsService)
@@ -76,8 +76,8 @@ Finally, we register the provider with the Nest IoC container:
 ```typescript
 @@filename(app.module)
 import { Module } from '@nestjs/common';
-import { CatsController } from './cats/cats.controller';
-import { CatsService } from './cats/cats.service';
+import { CatsController } from './cats/cats.controller.js';
+import { CatsService } from './cats/cats.service.js';
 
 @Module({
   controllers: [CatsController],
@@ -144,7 +144,7 @@ Nest allows you to define Custom providers to handle these cases. It provides se
 The `useValue` syntax is useful for injecting a constant value, putting an external library into the Nest container, or replacing a real implementation with a mock object. Let's say you'd like to force Nest to use a mock `CatsService` for testing purposes.
 
 ```typescript
-import { CatsService } from './cats.service';
+import { CatsService } from './cats.service.js';
 
 const mockCatsService = {
   /* mock implementation
@@ -171,7 +171,7 @@ In this example, the `CatsService` token will resolve to the `mockCatsService` m
 So far, we've used class names as our provider tokens (the value of the `provide` property in a provider listed in the `providers` array). This is matched by the standard pattern used with [constructor based injection](https://docs.nestjs.com/providers#dependency-injection), where the token is also a class name. (Refer back to <a href="/fundamentals/custom-providers#di-fundamentals">DI Fundamentals</a> for a refresher on tokens if this concept isn't entirely clear). Sometimes, we may want the flexibility to use strings or symbols as the DI token. For example:
 
 ```typescript
-import { connection } from './connection';
+import { connection } from './connection.js';
 
 @Module({
   providers: [
@@ -204,7 +204,7 @@ export class CatsRepository {
 }
 ```
 
-> info **Hint** The `@Inject()` decorator is imported from `@nestjs/common` package.
+> info **Hint** The `@Inject()` decorator is imported from the `@nestjs/common` package.
 
 While we directly use the string `'CONNECTION'` in the above examples for illustration purposes, for clean code organization, it's best practice to define tokens in a separate file, such as `constants.ts`. Treat them much as you would symbols or enums that are defined in their own file and imported where needed.
 
@@ -312,7 +312,7 @@ Also, we have used the `ConfigService` class name as our token. For any class th
 
 #### Factory providers: `useFactory`
 
-The `useFactory` syntax allows for creating providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
+The `useFactory` syntax allows you to create providers **dynamically**. The actual provider will be supplied by the value returned from a factory function. The factory function can be as simple or complex as needed. A simple factory may not depend on any other providers. A more complex factory can itself inject other providers it needs to compute its result. For the latter case, the factory provider syntax has a pair of related mechanisms:
 
 1. The factory function can accept (optional) arguments.
 2. The (optional) `inject` property accepts an array of providers that Nest will resolve and pass as arguments to the factory function during the instantiation process. Also, these providers can be marked as optional. The two lists should be correlated: Nest will pass instances from the `inject` list as arguments to the factory function in the same order. The example below demonstrates this.

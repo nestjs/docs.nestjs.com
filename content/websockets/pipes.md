@@ -2,7 +2,7 @@
 
 There is no fundamental difference between [regular pipes](/pipes) and web sockets pipes. The only difference is that instead of throwing `HttpException`, you should use `WsException`. In addition, all pipes will be only applied to the `data` parameter (because validating or transforming `client` instance is useless).
 
-> info **Hint** The `WsException` class is exposed from `@nestjs/websockets` package.
+> info **Hint** The `WsException` class is exposed from the `@nestjs/websockets` package.
 
 #### Binding pipes
 

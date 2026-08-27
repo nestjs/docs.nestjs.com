@@ -12,7 +12,7 @@ First, we'll define a `UsersModule` to provide and export a `UsersService`. `Use
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './users.service.js';
 
 @Module({
   providers: [UsersService],
@@ -25,8 +25,8 @@ Next, we'll define an `AuthModule`, which imports `UsersModule`, making `UsersMo
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 
 @Module({
   imports: [UsersModule],
@@ -40,7 +40,7 @@ These constructs allow us to inject `UsersService` in, for example, the `AuthSer
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class AuthService {
@@ -79,9 +79,9 @@ Dynamic modules give us the ability to pass parameters into the module being imp
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from './config/config.module';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { ConfigModule } from './config/config.module.js';
 
 @Module({
   imports: [ConfigModule],
@@ -95,9 +95,9 @@ Let's consider what a _dynamic module_ import, where we're passing in a configur
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from './config/config.module';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { ConfigModule } from './config/config.module.js';
 
 @Module({
   imports: [ConfigModule.register({ folder: './config' })],
@@ -139,7 +139,7 @@ Armed with this understanding, we can now look at what our dynamic `ConfigModule
 
 ```typescript
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 
 @Module({})
 export class ConfigModule {
@@ -165,9 +165,9 @@ The obvious solution for customizing the behavior of the `ConfigModule` is to pa
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from './config/config.module';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { ConfigModule } from './config/config.module.js';
 
 @Module({
   imports: [ConfigModule.register({ folder: './config' })],
@@ -183,8 +183,8 @@ That nicely handles passing an `options` object to our dynamic module. How do we
 import { Injectable } from '@nestjs/common';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as dotenv from 'dotenv';
-import { EnvConfig } from './interfaces';
+import dotenv from 'dotenv';
+import type { EnvConfig } from './interfaces.js';
 
 @Injectable()
 export class ConfigService {
@@ -194,7 +194,7 @@ export class ConfigService {
     const options = { folder: './config' };
 
     const filePath = `${process.env.NODE_ENV || 'development'}.env`;
-    const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
+    const envFile = path.resolve(import.meta.dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
   }
 
@@ -212,7 +212,7 @@ Let's tackle binding the options object to the IoC container first. We do this i
 
 ```typescript
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 
 @Module({})
 export class ConfigModule {
@@ -237,9 +237,9 @@ Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider int
 ```typescript
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import { Injectable, Inject } from '@nestjs/common';
-import { EnvConfig } from './interfaces';
+import type { EnvConfig } from './interfaces.js';
 
 @Injectable()
 export class ConfigService {
@@ -247,7 +247,7 @@ export class ConfigService {
 
   constructor(@Inject('CONFIG_OPTIONS') private options: Record<string, any>) {
     const filePath = `${process.env.NODE_ENV || 'development'}.env`;
-    const envFile = path.resolve(__dirname, '../../', options.folder, filePath);
+    const envFile = path.resolve(import.meta.dirname, '../../', options.folder, filePath);
     this.envConfig = dotenv.parse(fs.readFileSync(envFile));
   }
 
@@ -298,7 +298,7 @@ With this in place, create a new dedicated file (alongside the existing `config.
 ```typescript
 @@filename(config.module-definition)
 import { ConfigurableModuleBuilder } from '@nestjs/common';
-import { ConfigModuleOptions } from './interfaces/config-module-options.interface';
+import type { ConfigModuleOptions } from './interfaces/config-module-options.interface.js';
 
 export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } =
   new ConfigurableModuleBuilder<ConfigModuleOptions>().build();
@@ -313,8 +313,8 @@ Now let's open up the `config.module.ts` file and modify its implementation to l
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { ConfigService } from './config.service';
-import { ConfigurableModuleClass } from './config.module-definition';
+import { ConfigService } from './config.service.js';
+import { ConfigurableModuleClass } from './config.module-definition.js';
 
 @Module({
   providers: [ConfigService],
@@ -520,12 +520,12 @@ The auto-generated static methods (`register`, `registerAsync`, etc.) can be ext
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { ConfigService } from './config.service';
+import { ConfigService } from './config.service.js';
 import {
   ConfigurableModuleClass,
   ASYNC_OPTIONS_TYPE,
   OPTIONS_TYPE,
-} from './config.module-definition';
+} from './config.module-definition.js';
 
 @Module({
   providers: [ConfigService],

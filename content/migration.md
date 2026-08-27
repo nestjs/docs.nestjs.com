@@ -1,354 +1,411 @@
 ### Migration guide
 
-This article offers a comprehensive guide for migrating from NestJS version 10 to version 11. To explore the new features introduced in v11, take a look at [this article](https://trilon.io/blog/announcing-nestjs-11-whats-new). While the update includes a few minor breaking changes, they are unlikely to impact most users. You can review the complete list of changes [here](https://github.com/nestjs/nest/releases/tag/v11.0.0).
+This article walks through migrating from NestJS version 11 to version 12. Version 12 is centered around ESM-ready packages, updated CLI defaults, first-class support for [Standard Schema](https://standardschema.dev/) based validation and serialization, and native [observability](/observability/overview) support. The full release work is tracked in [release: v12.0.0 major release](https://github.com/nestjs/nest/pull/16391).
 
 #### Upgrading packages
 
-Although you can manually upgrade your packages, we recommend using [npm-check-updates (ncu)](https://npmjs.com/package/npm-check-updates) for a more streamlined process.
+Start by upgrading the Nest CLI itself, since the upgrade command used below ships with it:
 
-#### Express v5
+```bash
+$ npm i -g @nestjs/cli@latest
+```
 
-After years of development, Express v5 was officially released in 2024 and became a stable version in 2025. With NestJS 11, Express v5 is now the default version integrated into the framework. While this update is seamless for most users, it’s important to be aware that Express v5 introduces some breaking changes. For detailed guidance, refer to the [Express v5 migration guide](https://expressjs.com/en/guide/migrating-5.html).
+If your project keeps the CLI as a local dev dependency, update it there as well:
 
-One of the most notable updates in Express v5 is the revised path route matching algorithm. The following changes have been introduced to how path strings are matched with incoming requests:
+```bash
+$ npm i -D @nestjs/cli@latest
+```
 
-- The wildcard `*` must have a name, matching the behavior of parameters: use `/*splat` or `/{{ '{' }}*splat&#125;` instead of `/*`. `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like, for example, `*wildcard`
-- The optional character `?` is no longer supported, use braces instead: `/:file{{ '{' }}.:ext&#125;`.
-- Regexp characters are not supported.
-- Some characters have been reserved to avoid confusion during upgrade `(()[]?+!)`, use `\` to escape them.
-- Parameter names now support valid JavaScript identifiers, or quoted like `:"this"`.
+With the latest CLI in place, run `nest upgrade` from the root of your project:
 
-That said, routes that previously worked in Express v4 may not work in Express v5. For example:
+```bash
+$ nest upgrade
+```
+
+The command moves every `@nestjs/*` package to its v12-compatible major at once, so the framework, platform adapters, and companion packages stay in sync, and then installs them. On top of that it applies the mechanical parts of the migration described in this guide - `nest-cli.json` webpack options, the GraphQL `playground` / subscriptions transport rename, the NATS package swap, `@nestjs/config` validation options - and prints a report of everything it changed, plus notes on the behavioral changes it cannot migrate for you. Pass `--dry-run` first if you want to see that report without touching your files. See [nest upgrade](/cli/usages#nest-upgrade) for the full list of steps and options.
+
+> info **Hint** `nest upgrade` replaces the manual [npm-check-updates (ncu)](https://npmjs.com/package/npm-check-updates) flow previously recommended here. You can still upgrade packages manually if you prefer - the important part is that every Nest package moves to the same major at once. Note that the command only bumps the CLI dependency inside your project, which is why the global binary is upgraded first.
+
+#### Node.js requirements
+
+NestJS 12 requires **Node.js v20 or higher**, unchanged from v11. That said, consuming Nest's ESM packages from a CommonJS application relies on `require(esm)`, which is only available in recent Node.js releases, so we strongly recommend running the latest active LTS version rather than the bare minimum.
+
+#### ESM packages
+
+All core Nest packages now ship as ESM. For most existing applications this is much less disruptive than it would have been a few years ago, because modern Node.js releases support `require(esm)`.
+
+> info **Hint** Migrating **your own** application to ESM is entirely optional and **not** part of upgrading to v12. Because Nest's ESM packages can be consumed from CommonJS through `require(esm)`, a CommonJS application can upgrade to v12 and stay CommonJS for as long as you like - `nest upgrade` deliberately leaves your module format alone. Whether you switch is a matter of preference. If and when you decide to, the last two sections of this guide - [Switching your project to ESM](#switching-your-project-to-esm) and [Moving your own code to ESM](#moving-your-own-code-to-esm) - walk you through it.
+
+In practice, this means:
+
+- Many existing CommonJS applications will continue to work without a full rewrite
+- Custom bootstrapping scripts, build tooling, and test runners should be reviewed if they make assumptions about CommonJS-only packages
+- If you maintain custom bundler or runtime configuration, make sure it matches the module format your project actually uses
+
+If you are starting a new project, the CLI now lets you choose between a CommonJS and an ESM project layout.
+
+#### New project defaults
+
+`nest new` now prompts you to choose whether to generate a CommonJS or ESM project.
+
+- ESM projects use Vitest by default
+- Generated projects use oxlint by default
+
+This only changes what the CLI scaffolds for you. Existing projects can keep their current tooling while you migrate on your own schedule.
+
+#### Testing stack
+
+Nest's testing utilities remain the same. The main change is the default stack used by generated ESM projects and by the framework's own repositories and samples: Vitest is now the primary default for ESM workflows.
+
+If your application already uses a different test runner, you do not need to migrate immediately. `@nestjs/testing` remains test-runner agnostic.
+
+When you do decide to migrate:
+
+- Update your `test`, `test:watch`, `test:cov`, and `test:e2e` scripts
+- Review any runner-specific globals and replace them with Vitest equivalents where needed
+- Check your `supertest` imports in E2E tests if your Vitest setup expects default imports
+
+#### Linting defaults
+
+Newly generated projects use oxlint by default. The migration is only required if you want your repository to match the new CLI scaffolding.
+
+#### Route decorator schemas
+
+Nest adds a new `schema` option to route parameter decorators such as `@Body()`, `@Query()`, `@Param()`, and `@RawBody()`. The schema metadata is designed for [Standard Schema](https://standardschema.dev/) compatible libraries such as Zod, Valibot, ArkType, and others.
+
+For example:
 
 ```typescript
-@Get('users/*')
-findAll() {
-  // In NestJS 11, this will be automatically converted to a valid Express v5 route.
-  // While it may still work, it's no longer advisable to use this wildcard syntax in Express v5.
-  return 'This route should not work in Express v5';
+@Post()
+create(@Body({ schema: createUserSchema }) body: CreateUserDto) {
+  return this.usersService.create(body);
+}
+
+@Get(':id')
+findOne(@Param('id', { schema: z.coerce.number().int().positive() }) id: number) {
+  return this.usersService.findOne(id);
 }
 ```
 
-To fix this issue, you can update the route to use a named wildcard:
+On its own, the decorator only attaches schema metadata. To validate against it, register the built-in `StandardSchemaValidationPipe`.
 
 ```typescript
-@Get('users/*splat')
-findAll() {
-  return 'This route will work in Express v5';
+app.useGlobalPipes(new StandardSchemaValidationPipe());
+```
+
+This is a schema-first alternative to the traditional `ValidationPipe` plus `class-validator` flow. The same schemas can also feed OpenAPI generation - see [Standard Schema (Zod, Valibot)](/openapi/introduction#standard-schema-zod-valibot).
+
+The existing decorator-based approach remains fully supported, and there is no plan to remove it. The `schema` attribute is an additional option for teams that prefer schema-first libraries such as Zod.
+
+#### Standard Schema serialization
+
+Nest also introduces `StandardSchemaSerializerInterceptor`, which lets you validate and transform outgoing responses with the same Standard Schema ecosystem.
+
+```typescript
+@UseInterceptors(StandardSchemaSerializerInterceptor)
+@SerializeOptions({ schema: userResponseSchema })
+@Get(':id')
+findOne(@Param('id') id: string) {
+  return this.usersService.findOne(id);
 }
 ```
 
-> warning **Warning** Note that `*splat` is a named wildcard that matches any path without the root path. If you need to match the root path as well (`/users`), you can use `/users/{{ '{' }}*splat&#125;`, wrapping the wildcard in braces (optional group). Note that `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like, for example, `*wildcard`.
+Use this when you want response shaping to be driven by a schema instead of `class-transformer` decorators.
 
-Similarly, if you have a middleware that runs on all routes, you may need to update the path to use a named wildcard:
+#### GraphQL IDE configuration
 
-```typescript
-// In NestJS 11, this will be automatically converted to a valid Express v5 route.
-// While it may still work, it's no longer advisable to use this wildcard syntax in Express v5.
-forRoutes('*'); // <-- This should not work in Express v5
-```
-
-Instead, you can update the path to use a named wildcard:
+GraphiQL is now the default GraphQL IDE. If you need to customize it, pass a `graphiql` options object instead of setting `graphiql: true`.
 
 ```typescript
-forRoutes('{*splat}'); // <-- This will work in Express v5
-```
-
-Note that `{{ '{' }}*splat&#125;` is a named wildcard that matches any path including the root path. Outer braces make path optional.
-
-#### Query parameters parsing
-
-> info **Note** This change only applies to Express v5.
-
-In Express v5, query parameters are no longer parsed using the `qs` library by default. Instead, the `simple` parser is used, which does not support nested objects or arrays.
-
-As a result, query strings like these:
-
-```plaintext
-?filter[where][name]=John&filter[where][age]=30
-?item[]=1&item[]=2
-```
-
-will no longer be parsed as expected. To revert to the previous behavior, you can configure Express to use the `extended` parser (the default in Express v4) by setting the `query parser` option to `extended`:
-
-```typescript
-import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { AppModule } from './app.module';
-
-async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule); // <-- Make sure to use <NestExpressApplication>
-  app.set('query parser', 'extended'); // <-- Add this line
-  await app.listen(3000);
-}
-bootstrap();
-```
-
-#### Fastify v5
-
-`@nestjs/platform-fastify` v11 now finally supports Fastify v5. This update should be seamless for most users; however, Fastify v5 introduces a few breaking changes, though these are unlikely to affect the majority of NestJS users. For more detailed information, refer to the [Fastify v5 migration guide](https://fastify.dev/docs/v5.1.x/Guides/Migration-Guide-V5/).
-
-> info **Hint** There have been no changes to path matching in Fastify v5 (except for middleware, see the section below), so you can continue using the wildcard syntax as you did before. The behavior remains the same, and routes defined with wildcards (like `*`) will still work as expected.
-
-#### Fastify CORS
-
-By default, only [CORS-safelisted methods](https://fetch.spec.whatwg.org/#methods) are allowed. If you need to enable additional methods (such as `PUT`, `PATCH`, or `DELETE`), you must explicitly define them in the `methods` option.
-
-```typescript
-const methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']; // OR comma-delimited string 'GET,POST,PUT,PATCH,DELETE'
-
-const app = await NestFactory.create<NestFastifyApplication>(
-  AppModule,
-  new FastifyAdapter(),
-  { cors: { methods } },
-);
-
-// OR alternatively, you can use the `enableCors` method
-const app = await NestFactory.create<NestFastifyApplication>(
-  AppModule,
-  new FastifyAdapter(),
-);
-app.enableCors({ methods });
-```
-
-#### Fastify middleware registration
-
-NestJS 11 now uses the latest version of the [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package to match **middleware paths** in `@nestjs/platform-fastify`. As a result, the `(.*)` syntax for matching all paths is no longer supported. Instead, you should use named wildcards.
-
-For example, if you have a middleware that applies to all routes:
-
-```typescript
-// In NestJS 11, this will automatically be converted to a valid route, even if you don't update it.
-.forRoutes('(.*)');
-```
-
-You'll need to update it to use a named wildcard instead:
-
-```typescript
-.forRoutes('*splat');
-```
-
-Where `splat` is just an arbitrary name for the wildcard parameter. You can name it anything you like.
-
-#### Module resolution algorithm
-
-Starting with NestJS 11, the module resolution algorithm has been improved to enhance performance and reduce memory usage for most applications. This change does not require any manual intervention, but there are some edge cases where the behavior may differ from previous versions.
-
-In NestJS v10 and earlier, dynamic modules were assigned a unique opaque key generated from the module's dynamic metadata. This key was used to identify the module in the module registry. For example, if you included `TypeOrmModule.forFeature([User])` in multiple modules, NestJS would deduplicate the modules and treat them as a single module node in the registry. This process is known as node deduplication.
-
-With the release of NestJS v11, we no longer generate predictable hashes for dynamic modules. Instead, object references are now used to determine if one module is equivalent to another. To share the same dynamic module across multiple modules, simply assign it to a variable and import it wherever needed. This new approach provides more flexibility and ensures that dynamic modules are handled more efficiently.
-
-This new algorithm might impact your integration tests if you use a lot of dynamic modules, because without the manually deduplication mentioned above, your TestingModule could have multiple instances of a dependency. This makes it a bit trickier to stub a method, because you'll need to target the correct instance. Your options are to either:
-
-- Deduplicate the dynamic module you'd like to stub
-- Use `module.select(ParentModule).get(Target)` to find the correct instance
-- Stub all instances using `module.get(Target, {{ '{' }} each: true &#125;)`
-- Or switch your test back to the old algorithm using `Test.createTestingModule({{ '{' }}&#125;, {{ '{' }} moduleIdGeneratorAlgorithm: 'deep-hash' &#125;)`
-
-#### Reflector type inference
-
-NestJS 11 introduces several improvements to the `Reflector` class, enhancing its functionality and type inference for metadata values. These updates provide a more intuitive and robust experience when working with metadata.
-
-1. `getAllAndMerge` now returns an object rather than an array containing a single element when there is only one metadata entry, and the `value` is of type `object`. This change improves consistency when dealing with object-based metadata.
-2. The `getAllAndOverride` return type has been updated to `T | undefined` instead of `T`. This update better reflects the possibility of no metadata being found and ensures proper handling of undefined cases.
-3. The `ReflectableDecorator`'s transformed type argument is now properly inferred across all methods.
-
-These enhancements improve the overall developer experience by providing better type safety and handling of metadata in NestJS 11.
-
-#### Lifecycle hooks execution order
-
-Termination lifecycle hooks are now executed in the reverse order to their initialization counterparts. That said, hooks like `OnModuleDestroy`, `BeforeApplicationShutdown`, and `OnApplicationShutdown` are now executed in the reverse order.
-
-Imagine the following scenario:
-
-```plaintext
-// Where A, B, and C are modules and "->" represents the module dependency.
-A -> B -> C
-```
-
-In this case, the `OnModuleInit` hooks are executed in the following order:
-
-```plaintext
-C -> B -> A
-```
-
-While the `OnModuleDestroy` hooks are executed in the reverse order:
-
-```plaintext
-A -> B -> C
-```
-
-> info **Hint** Global modules are treated as a dependency of all other modules. This means that global modules are initialized first and destroyed last.
-
-#### Middleware registration order
-
-In NestJS v11, the behavior of middleware registration has been updated. Previously, the order of middleware registration was determined by the topological sort of the module dependency graph, where the distance from the root module defined the order of middleware registration, regardless of whether the middleware was registered in a global module or a regular module. Global modules were treated like regular modules in this respect, which led to inconsistent behavior, especially when compared to other framework features.
-
-From v11 onwards, middleware registered in global modules is now **executed first**, regardless of its position in the module dependency graph. This change ensures that global middleware always runs before any middleware from imported modules, maintaining a consistent and predictable order.
-
-#### Cache module
-
-The `CacheModule` (from the `@nestjs/cache-manager` package) has been updated to support the latest version of the `cache-manager` package. This update brings a few breaking changes, including a migration to [Keyv](https://keyv.org/), which offers a unified interface for key-value storage across multiple backend stores through storage adapters.
-
-The key difference between the previous version and the new version lies in the configuration of external stores. In the previous version, to register a Redis store, you would have likely configured it like this:
-
-```ts
-// Old version - no longer supported
-CacheModule.registerAsync({
-  useFactory: async () => {
-    const store = await redisStore({
-      socket: {
-        host: 'localhost',
-        port: 6379,
-      },
-    });
-
-    return {
-      store,
-    };
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  graphiql: {
+    url: '/graphql',
+    headers: {
+      authorization: 'Bearer <token>',
+    },
+    shouldPersistHeaders: true,
+    isHeadersEditorEnabled: true,
   },
-}),
+});
 ```
 
-In the new version, you should use the `Keyv` adapter to configure the store:
+This lets you customize the IDE endpoint and editor behavior while keeping GraphiQL enabled.
 
-```ts
-// New version - supported
-CacheModule.registerAsync({
-  useFactory: async () => {
-    return {
-      stores: [
-        new KeyvRedis('redis://localhost:6379'),
-      ],
-    };
+#### GraphQL subscriptions transport
+
+The latest `@nestjs/graphql` release removes support for `subscriptions-transport-ws`. Use `graphql-ws` for GraphQL subscriptions moving forward.
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  subscriptions: {
+    'graphql-ws': true,
   },
-}),
+});
 ```
 
-Where `KeyvRedis` is imported from the `@keyv/redis` package. See the [Caching documentation](/techniques/caching) to learn more.
+If your application still depends on `subscriptions-transport-ws`, plan that migration as part of your GraphQL package upgrade.
 
-> warning **Warning** In this update, cached data handled by the Keyv library is now structured as an object containing `value` and `expires` fields, for example: `{{ '{' }}"value": "yourData", "expires": 1678901234567{{ '}' }}`. While Keyv automatically retrieves the `value` field when accessing data through its API, it’s important to note this change if you interact with the cache data directly (e.g., outside of the cache-manager API) or need to support data written using the previous version of `@nestjs/cache-manager`.
+#### NATS v3
+
+The microservices package now targets NATS v3, and this upgrade includes a breaking dependency change. If you use the NATS transport, replace the old `nats` package with `@nats-io/transport-node`.
+
+```bash
+$ npm uninstall nats
+$ npm install @nats-io/transport-node
+```
+
+If your application imports NATS helpers directly, update those imports as well. For example, header helpers now come from the new NATS packages:
+
+```typescript
+import * as nats from '@nats-io/nats-core';
+import { NatsRecordBuilder } from '@nestjs/microservices';
+
+const headers = nats.headers();
+headers.set('x-version', '1.0.0');
+
+const record = new NatsRecordBuilder(payload).setHeaders(headers).build();
+return this.client.send('record-builder-duplex', record);
+```
+
+Also review any custom serializers or deserializers. Nest now serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object rather than a raw `Uint8Array`. In practice, that means custom deserializers should read the payload from `msg.json()` instead of decoding bytes manually.
+
+#### Lifecycle hook ordering
+
+Lifecycle hooks are now called by component hierarchy level. This can change the execution order of hooks such as `onModuleInit`, `onApplicationBootstrap`, and shutdown hooks when multiple providers or modules depend on one another.
+
+If your application relies on a specific hook ordering between related providers, review that flow during the upgrade and update any assumptions in initialization logic, teardown logic, or tests.
+
+#### class-validator and class-transformer
+
+The existing decorator-based workflow still works in v12. `ValidationPipe` and `ClassSerializerInterceptor` remain supported and are still a good fit for class-based DTO projects.
+
+Version 12 broadens the built-in options rather than replacing the existing ones:
+
+- Use `ValidationPipe` when your DTOs are class-based and rely on decorators
+- Use `StandardSchemaValidationPipe` when your validation library already exposes a Standard Schema compatible schema
+- Use `ClassSerializerInterceptor` when your response shaping is based on `class-transformer`
+- Use `StandardSchemaSerializerInterceptor` when your response shape should be derived from a schema
 
 #### Config module
 
-If you're using the `ConfigModule` from the `@nestjs/config` package, be aware of several breaking changes introduced in `@nestjs/config@4.0.0`. Most notably, the order in which configuration variables are read by the `ConfigService#get` method has been updated. The new order is:
-
-- Internal configuration (config namespaces and custom config files)
-- Validated environment variables (if validation is enabled and a schema is provided)
-- The `process.env` object
-
-Previously, validated environment variables and the `process.env` object were read first, preventing them from being overridden by internal configuration. With this update, internal configuration will now always take precedence over environment variables.
-
-Additionally, the `ignoreEnvVars` configuration option, which previously allowed disabling validation of the `process.env` object, has been deprecated. Instead, use the `validatePredefined` option (set to `false` to disable validation of predefined environment variables). Predefined environment variables refer to `process.env` variables that were set before the module was imported. For example, if you start your application with `PORT=3000 node main.js`, the `PORT` variable is considered predefined. However, variables loaded by the `ConfigModule` from a `.env` file are not classified as predefined.
-
-A new `skipProcessEnv` option has also been introduced. This option allows you to prevent the `ConfigService#get` method from accessing the `process.env` object entirely, which can be helpful when you want to restrict the service from reading environment variables directly.
-
-#### Terminus module
-
-If you are using the `TerminusModule` and have built your own custom health indicator, a new API has been introduced in version 11. The new `HealthIndicatorService` is designed to enhance the readability and testability of custom health indicators.
-
-Before version 11, a health indicator might have looked like this:
+`@nestjs/config` moves from Joi-specific validation to [Standard Schema](https://standardschema.dev/). The `validationSchema` option now accepts any Standard Schema compatible schema - Zod, Valibot, ArkType, and others.
 
 ```typescript
-@Injectable()
-export class DogHealthIndicator extends HealthIndicator {
-  constructor(private readonly httpService: HttpService) {
-    super();
-  }
+import { z } from 'zod';
 
-  async isHealthy(key: string) {
-    try {
-      const badboys = await this.getBadboys();
-      const isHealthy = badboys.length === 0;
-
-      const result = this.getStatus(key, isHealthy, {
-        badboys: badboys.length,
-      });
-
-      if (!isHealthy) {
-        throw new HealthCheckError('Dog check failed', result);
-      }
-
-      return result;
-    } catch (error) {
-      const result = this.getStatus(key, isHealthy);
-      throw new HealthCheckError('Dog check failed', result);
-    }
-  }
-
-  private getBadboys() {
-    return firstValueFrom(
-      this.httpService.get<Dog[]>('https://example.com/dog').pipe(
-        map((response) => response.data),
-        map((dogs) => dogs.filter((dog) => dog.state === DogState.BAD_BOY)),
-      ),
-    );
-  }
-}
+ConfigModule.forRoot({
+  validationSchema: z.object({
+    NODE_ENV: z
+      .enum(['development', 'production', 'test', 'provision'])
+      .default('development'),
+    PORT: z.coerce.number().default(3000),
+  }),
+});
 ```
 
-Starting with version 11, it is recommended to use the new `HealthIndicatorService` API, which streamlines the implementation process. Here's how the same health indicator can now be implemented:
+Since validation is no longer tied to a single library, we now recommend a modern Standard Schema library such as Zod for new projects, and the [Configuration chapter](/techniques/configuration#schema-validation) has been rewritten around it.
+
+If you want to keep your existing Joi schemas, they still work, but with two caveats:
+
+- You must upgrade to **Joi v18 or later**, which implements the Standard Schema specification
+- Library-specific settings previously passed directly under `validationOptions` now go under `validationOptions.libraryOptions`
 
 ```typescript
-@Injectable()
-export class DogHealthIndicator {
-  constructor(
-    private readonly httpService: HttpService,
-    //  Inject the `HealthIndicatorService` provided by the `TerminusModule`
-    private readonly healthIndicatorService: HealthIndicatorService,
-  ) {}
+// Before
+validationOptions: {
+  allowUnknown: false,
+  abortEarly: true,
+},
 
-  async isHealthy(key: string) {
-    // Start the health indicator check for the given key
-    const indicator = this.healthIndicatorService.check(key);
-
-    try {
-      const badboys = await this.getBadboys();
-      const isHealthy = badboys.length === 0;
-
-      if (!isHealthy) {
-        // Mark the indicator as "down" and add additional info to the response
-        return indicator.down({ badboys: badboys.length });
-      }
-
-      // Mark the health indicator as up
-      return indicator.up();
-    } catch (error) {
-      return indicator.down('Unable to retrieve dogs');
-    }
-  }
-
-  private getBadboys() {
-    // ...
-  }
-}
+// After
+validationOptions: {
+  libraryOptions: {
+    allowUnknown: false,
+    abortEarly: true,
+  },
+},
 ```
 
-Key changes:
+For Joi schemas, `@nestjs/config` keeps its historical defaults of `allowUnknown: true` and `abortEarly: false`, and merges anything you pass on top of them.
 
-- The `HealthIndicatorService` replaces the legacy `HealthIndicator` and `HealthCheckError` classes, providing a cleaner API for health checks.
-- The `check` method allows for easy state tracking (`up` or `down`) while supporting the inclusion of additional metadata in health check responses.
+#### Webpack deprecation in CLI workflows
 
-> info **Info** Please note that the `HealthIndicator` and `HealthCheckError` classes have been marked as deprecated and are scheduled for removal in the next major release.
+The v12 release also marks the shift away from webpack-centric CLI workflows. Rspack is now the default bundler for monorepos, and the `--webpack` / `--webpackPath` CLI flags (and their `webpack` / `webpackConfigPath` counterparts in `nest-cli.json`) are deprecated in favor of `--builder rspack`. If you have custom webpack-based project generation or build assumptions, plan to migrate those over time.
 
-#### Node.js v16 and v18 no longer supported
+The CLI also adds `bun` as a supported package manager, and the `decorator` schematic now generates decorators using the preferred `Reflector.createDecorator()` form. The `angular` schematic has been removed.
 
-Starting with NestJS 11, Node.js v16 is no longer supported, as it reached its end-of-life (EOL) on September 11, 2023. Likewise, the security support is scheduled to end on April 30, 2025 for Node.js v18, so we went ahead and dropped support for it as well.
+#### New CLI commands and flags
 
-NestJS 11 now requires **Node.js v20 or higher**.
-
-To ensure the best experience, we strongly recommend using the latest LTS version of Node.js.
-
-#### Mau official deployment platform
-
-In case you missed the announcement, we launched our official deployment platform, [Mau](https://www.mau.nestjs.com/), in 2024.
-Mau is a fully managed platform that simplifies the deployment process for NestJS applications. With Mau, you can deploy your applications to the cloud (**AWS**; Amazon Web Services) with a single command, manage your environment variables, and monitor your application's performance in real-time.
-
-Mau makes provisioning and maintaining your infrastructure as simple as clicking just a few buttons. Mau is designed to be simple and intuitive, so you can focus on building your applications and not worry about the underlying infrastructure. Under the hood, we use Amazon Web Services to provide you with a powerful and reliable platform, while abstracting away all the complexity of AWS. We take care of all the heavy lifting for you, so you can focus on building your applications and growing your business.
+The CLI gains a `deploy` command that forwards to [Mau](https://mau.nestjs.com/), installing `@nestjs/mau` as a dev dependency on first use:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+$ nest deploy
 ```
 
-You can learn more about Mau [in this chapter](/deployment#easy-deployment-with-mau).
+`nest build` and `nest start` also pick up several new options:
+
+- `--rspackPath [path]` - path to a Rspack configuration file, the counterpart to the deprecated `--webpackPath`
+- `--emit-declarations` - emit `.d.ts` files when using the SWC builder (also available as `emitDeclarations` in `nest-cli.json`)
+- `--no-type-check` - explicitly disable SWC type checking
+- `--silent` - suppress informational compiler logs
+
+`nest build` additionally supports `--parallel [concurrency]`, which builds monorepo projects in parallel when combined with `--all`. `nest-cli.json` also gains an `includeLibraryAssets` property for copying library assets into an application build.
+
+#### Route conflict diagnostics
+
+Nest registers routes in declaration order, which on order-sensitive adapters such as Express means `@Get(':id')` can silently shadow a `@Get('me')` declared after it. v12 adds two **opt-in** options on `NestApplicationOptions` to surface this:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  routeConflictPolicy: { duplicate: 'error', shadow: 'warn' },
+  routeResolutionStrategy: 'specificity',
+});
+```
+
+Both default to the previous behavior, so no existing application changes unless you set them. See the [Controllers chapter](/controllers#route-conflicts-and-resolution-order) for the full description.
+
+#### Machine-readable error codes
+
+`HttpExceptionOptions` accepts a new `errorCode` property, which is serialized into the response body so clients can branch on a stable identifier instead of parsing the message string:
+
+```typescript
+throw new BadRequestException('Password is too weak', {
+  errorCode: 'WEAK_PASSWORD',
+});
+```
+
+See the [Exception filters chapter](/exception-filters#machine-readable-error-codes).
+
+#### Structured logging params
+
+`ConsoleLogger` now treats plain objects passed after the message as structured params attached to the same log entry, rather than emitting them as separate records:
+
+```typescript
+logger.log('User created', { userId: 1, email: 'foo@bar.com' });
+```
+
+In JSON mode they are nested under a `params` key, or spread into the root if you enable `flattenParams`. This behavior is on by default in v12; set `structuredParams: false` to restore the previous behavior. See the [Logger chapter](/techniques/logger#structured-logging-params).
+
+#### Native observability support
+
+Version 12 adds first-class observability support through the official [`@nestjs/observe`](/observability/overview) SDK. Instead of attaching a generic Node.js APM agent to the HTTP server, the SDK plugs into Nest's own request lifecycle through the `instrument` application option, so requests, jobs, errors, and traces are reported in terms of your controllers, providers, resolvers, and queue consumers.
+
+```typescript
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
+const app = await NestFactory.create(AppModule, {
+  instrument: ObserveInstrument,
+});
+```
+
+There is nothing to migrate here - it is a new, opt-in capability. See the [Observability chapter](/observability/overview) for what auto-instrumentation covers, and the [SDK reference](/observability/sdk) for configuration options.
+
+#### Other notable release changes
+
+Depending on which Nest packages you use, you may also want to review the following:
+
+- **Pipe transform signatures** have been refined for stronger type safety, and `ArgumentMetadata` now takes a generic parameter. Custom pipes with hand-written signatures may need their types adjusted.
+- **`ValidationPipe` error format** - a new option lets you control the shape of validation error responses.
+- **gRPC exception filter** - `GrpcExceptionFilter` plus a family of status-specific exceptions map errors to proper gRPC status codes instead of `UNKNOWN`. See the [gRPC chapter](/microservices/grpc#exception-handling).
+- **Regex Kafka patterns** - `@MessagePattern()` and `@EventPattern()` now accept a `RegExp` on the Kafka transport. See the [Kafka chapter](/microservices/kafka#regular-expression-patterns).
+- **Request-scoped WebSocket gateways** - gateways now support request-scoped providers, with the socket injectable via the `REQUEST` token. See the [Gateways chapter](/websockets/gateways#request-scoped-gateways).
+- **WebSocket disconnect reason** - `handleDisconnect` can now receive the reason for the disconnection.
+- **Microservices pre-request hook** - a new hook runs before a message handler is invoked.
+- **Express graceful shutdown** - the Express adapter now drains in-flight requests on shutdown.
+- **HTTP adapter error mapping** has been reworked across core, Express, and Fastify adapters.
+
+If you depend on one of these areas, review the corresponding package behavior in your test suite after upgrading.
+
+#### Switching your project to ESM
+
+> warning **Optional** This section and the next one are **not** part of upgrading to v12, which is why they come last. A CommonJS application runs on v12 unchanged - `nest upgrade` will not touch your module format, and nothing in the framework requires you to switch. Read on only if you *want* to move your project to ESM, on whatever schedule suits you.
+
+The switch itself happens in `package.json`, not in `tsconfig.json`. Add a `type` field set to `module`:
+
+```json
+{
+  "name": "my-app",
+  "type": "module"
+}
+```
+
+That single field is what tells Node.js - and, through `"module": "nodenext"`, TypeScript - to treat your `.js` output as ESM.
+
+Whether you also need to touch `tsconfig.json` depends on how old your project is:
+
+- **Projects generated with the v11 CLI** already use `"module": "nodenext"` and `"moduleResolution": "nodenext"`. Nothing in `tsconfig.json` needs to change - adding `"type": "module"` is enough.
+- **Projects generated with v10 or earlier** typically still have `"module": "commonjs"` and no `moduleResolution` entry. Update both before adding `"type": "module"`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "target": "ES2023"
+  }
+}
+```
+
+For reference, this is the complete `compilerOptions` set used by the ESM project that `nest new` generates:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "types": ["vitest/globals", "node"]
+  }
+}
+```
+
+> info **Hint** `nest-cli.json` and `tsconfig.build.json` are identical between the CommonJS and ESM project variants, so neither needs changes. The `types` entry above differs only because ESM projects default to Vitest; a CommonJS project on Jest uses `["node", "jest"]` instead.
+
+> warning **Warning** `"module": "nodenext"` derives the module format of each file from the nearest `package.json`. This means adding `"type": "module"` changes how **every** `.ts` file in the project is emitted, and TypeScript will start reporting the missing import extensions described below. Expect to fix those in the same pass rather than incrementally.
+
+#### Moving your own code to ESM
+
+With the configuration in place, the two things in your own code that most often need attention are relative imports and CommonJS-only globals.
+
+Relative imports must carry a file extension:
+
+```typescript
+// Before
+import { AppModule } from './app.module';
+
+// After
+import { AppModule } from './app.module.js';
+```
+
+Note that the extension is `.js` even though the source file is `.ts` - the specifier refers to the emitted file.
+
+`__dirname` and `__filename` do not exist in ESM. Use `import.meta.dirname` instead (or `import.meta.url` with `fileURLToPath` on older Node.js versions):
+
+```typescript
+// Before
+protoPath: join(__dirname, 'hero/hero.proto'),
+
+// After
+protoPath: join(import.meta.dirname, 'hero/hero.proto'),
+```
+
+Similarly, `require()` is unavailable. If you need it for interop, construct it explicitly with `createRequire(import.meta.url)` from `node:module`.
+
+> info **Hint** Many code samples throughout these docs use the ESM conventions above. If your project is still CommonJS, drop the `.js` extensions, keep `__dirname`, and call `bootstrap()` without `await`.

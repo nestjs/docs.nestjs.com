@@ -4,6 +4,23 @@
 @use './scss/theme.scss';
 
 :root {
+  // Centered page shell: the floating header, sidebar, and content column are
+  // all laid out inside a centered, capped shell on large screens. The offset
+  // resolves against the viewport for fixed elements and against the parent
+  // for in-flow ones.
+  --shell-max: 1600px;
+  --shell-offset: max(12px, calc((100% - var(--shell-max)) / 2));
+  // Viewport-based variant for transform contexts, where % would resolve
+  // against the element's own box instead of the viewport.
+  --shell-offset-vw: max(12px, calc((100vw - var(--shell-max)) / 2));
+
+  // Right-hand rail geometry, shared by the TOC and the carbon ad so their
+  // text columns line up on the x axis.
+  --rail-right: calc(var(--shell-offset, 12px) + 8px);
+  --rail-outer-width: 250px;
+  --rail-indent: 45px;
+  --rail-column: calc(var(--rail-outer-width) - var(--rail-indent));
+
   --docsearch-primary-color: #ed2945;
   --docsearch-highlight-color: #ed2945;
   --docsearch-logo-color: #ed2945;
@@ -14,8 +31,25 @@
   --primary-accent-color: #ea2868;
 }
 
-html[mode='dark'] {
+html:not([mode='light']) {
   @extend .dark-mode;
+
+  // DocSearch modal, themed to match dark mode (the :root values below are
+  // the light-mode defaults).
+  --docsearch-modal-background: #141112;
+  --docsearch-container-background: rgba(0, 0, 0, 0.7);
+  --docsearch-footer-background: #181415;
+  --docsearch-footer-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.07);
+  --docsearch-hit-background: #1e1a1b;
+  --docsearch-hit-color: #c6bfc0;
+  --docsearch-hit-shadow: none;
+  --docsearch-text-color: #f2eff0;
+  --docsearch-muted-color: #8a8485;
+  --docsearch-searchbox-background: #1e1a1b;
+  --docsearch-searchbox-focus-background: #1e1a1b;
+  --docsearch-key-gradient: linear-gradient(#2a2526, #1e1a1b);
+  --docsearch-key-shadow: inset 0 -2px 0 0 #151112,
+    inset 0 0 1px 1px #363032, 0 1px 2px 1px rgba(0, 0, 0, 0.4);
 
   ::-webkit-scrollbar {
     width: 10px;
@@ -42,24 +76,22 @@ html[mode='dark'] {
     &::-webkit-scrollbar {
       width: 6px;
     }
+
+    // Transparent track/corner so the square scrollbar gutter doesn't paint
+    // over the panel's rounded corners.
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
   }
 
   .app-menu:not(:hover) {
     &::-webkit-scrollbar-thumb {
-      background: var(--menu-background) !important;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: var(--menu-background);
-    }
-
-    &::-webkit-scrollbar-corner {
-      background: var(--menu-background);
+      background: transparent !important;
     }
   }
 }
 
-html:not([mode='dark']):not([mode='light']),
 html[mode='light'] {
   @extend .light-mode;
 
@@ -88,30 +120,30 @@ html[mode='light'] {
     &::-webkit-scrollbar {
       width: 6px;
     }
+
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
   }
 
   .app-menu:not(:hover) {
     &::-webkit-scrollbar-thumb {
-      background: var(--menu-background) !important;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: var(--menu-background);
-    }
-
-    &::-webkit-scrollbar-corner {
-      background: var(--menu-background);
+      background: transparent !important;
     }
   }
 }
 
 body {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
   // letter-spacing: 0.2px;
-  font-family: 'Source Sans Pro', 'Helvetica Neue', sans-serif;
+  font-family: 'Manrope', 'Helvetica Neue', sans-serif;
   font-display: swap;
   background-color: var(--background);
+  background-image: var(--glow);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--color);
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -120,6 +152,124 @@ body {
   -ms-transition: background 200ms cubic-bezier(0.7, 0, 0.3, 1);
   -o-transition: background 200ms cubic-bezier(0.7, 0, 0.3, 1);
   transition: background 200ms cubic-bezier(0.7, 0, 0.3, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+// Opaque strip masking the 12px gutter above the floating header, so page
+// content doesn't show through the gap while scrolling. The background layers
+// are all viewport-fixed, so they line up seamlessly with the body's.
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  z-index: 10001;
+  pointer-events: none;
+  background-color: var(--background);
+  background-image: var(--glow);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+// Film-grain overlay: a tiny tiled SVG noise texture over the whole viewport.
+// Sits above the UI at very low opacity; modals (z >= 20000) stay above it.
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  pointer-events: none;
+  opacity: var(--grain-opacity, 0.04);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+::selection {
+  background: rgba(234, 40, 69, 0.35);
+}
+
+// Visible keyboard-focus ring; mouse clicks don't trigger :focus-visible.
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+// Registered so the conic gradient's angle can be interpolated; without
+// @property support the ring simply renders static.
+@property --badge-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes badge-border-spin {
+  to {
+    --badge-angle: 360deg;
+  }
+}
+
+// "NEW" badge: a light sweep crosses the pill, then rests for the remainder of
+// the cycle so it reads as an occasional glint rather than a constant loop.
+// Defined globally because @keyframes names are not scoped per component.
+@keyframes badge-shimmer {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  32%,
+  100% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+@keyframes badge-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(234, 40, 69, 0);
+  }
+  16% {
+    box-shadow: 0 0 9px 1px rgba(234, 40, 69, 0.55);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Fade/slide the routed page component in on navigation. Scoped to
+// .page-wrapper so the root outlet (which contains fixed elements) is not
+// transformed.
+//
+// No `both` fill mode: a filling animation keeps an identity transform on the
+// element, and *any* transform makes it the containing block for its
+// `position: fixed` descendants (the carbon ad), pinning them to the page
+// instead of the viewport. Without a fill mode the transform is dropped as
+// soon as the animation ends.
+.page-wrapper router-outlet + * {
+  display: block;
+  animation: page-enter 350ms cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .page-wrapper router-outlet + * {
+    animation: none;
+  }
 }
 
 a {
@@ -140,7 +290,7 @@ hr {
 }
 
 h4 {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 blockquote {
@@ -149,21 +299,9 @@ blockquote {
   margin: 35px 0;
   background: var(--error-background);
   padding: 20px;
-  border-radius: 3px;
-
-  &::before {
-    height: 100%;
-    width: 4px;
-    content: '';
-    background: variables.$red-gradient;
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-  }
+  border: 1px solid rgba(237, 41, 69, 0.18);
+  border-left: 4px solid variables.$red-color;
+  border-radius: var(--radius);
 
   strong {
     color: variables.$red-color;
@@ -172,30 +310,37 @@ blockquote {
     &:first-of-type {
       display: block;
       text-transform: uppercase;
-      font-size: 15px;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
     }
+  }
+
+  // !important: `.content a` (homepage.component.scss) is two classes deep
+  // and would otherwise out-specificity these single-class selectors,
+  // painting every hint link in the generic content-link red regardless of
+  // hint type.
+  a {
+    color: variables.$red-color !important;
   }
 
   &.warning {
     background: var(--warning-background);
-    &::before {
-      background: var(--warning);
-    }
+    border-color: rgba(255, 138, 61, 0.24);
+    border-left-color: var(--warning-color);
     strong,
     a {
-      color: var(--warning-color);
+      color: var(--warning-color) !important;
     }
   }
 
   &.info {
     background: var(--info-background);
-    &::before {
-      background: var(--info);
-    }
+    border-color: rgba(8, 148, 226, 0.22);
+    border-left-color: var(--info);
     strong,
     a {
-      color: var(--info-color);
+      color: var(--info-color) !important;
     }
   }
 }
@@ -234,17 +379,34 @@ figure {
 
 figcaption {
   color: rgba(variables.$silver-color, 0.9);
-  font-size: 16px;
+  font-size: 14px;
   margin: 20px 0;
 
   p {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
 table {
   width: 100%;
   margin: 40px 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+
+  th:first-of-type {
+    border-top-left-radius: var(--radius);
+  }
+  th:last-of-type {
+    border-top-right-radius: var(--radius);
+  }
+  tr:last-of-type td:first-of-type {
+    border-bottom-left-radius: var(--radius);
+  }
+  tr:last-of-type td:last-of-type {
+    border-bottom-right-radius: var(--radius);
+  }
 }
 
 tr {
@@ -259,8 +421,14 @@ tr {
 }
 
 th {
-  padding: 20px;
+  padding: 16px 20px;
   background: var(--background-1dp);
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--color) 80%, transparent);
 }
 
 tr:nth-of-type(even) td {
@@ -301,7 +469,8 @@ tr td span.table-code-asterisk {
 
 .file-tree {
   background: var(--background-1dp);
-  border: 4px solid color-mix(in srgb,var(--background-3dp),#0000 50%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
   margin: 40px 0;
   padding: 16px 32px;
 
@@ -358,7 +527,7 @@ tr td span.table-code-asterisk {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  border-radius: 5px;
+  border-radius: var(--radius-lg);
   text-align: left;
 
   h2 {
@@ -397,8 +566,8 @@ tr td span.table-code-asterisk {
   }
 
   ul span {
-    background: rgba(7, 239, 143, 0.21);
-    color: #07ef8f;
+    background: rgba(7, 239, 165, 0.21);
+    color: #07efa5;
     border-radius: 50%;
     width: 25px;
     height: 25px;
@@ -420,24 +589,31 @@ tr td span.table-code-asterisk {
     color: #fff;
     display: inline-block;
     text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 2px;
-    padding: 4px 13px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border-radius: var(--radius-btn);
+    padding: 8px 16px;
     background: #e31d61;
-    transition: none;
+    transition: color 130ms ease, background-color 130ms ease,
+      transform 130ms cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative;
 
     &:hover {
       color: #e31d61;
       background: transparent !important;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.97);
     }
 
     &::before {
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: 2px;
+      border-radius: var(--radius-btn);
       padding: 2px;
       background: var(--primary-gradient);
       -webkit-mask:
@@ -453,7 +629,7 @@ tr td span.table-code-asterisk {
 
 .DocSearch-Modal {
   margin-top: 120px;
-  border-radius: 3px;
+  border-radius: var(--radius-lg);
 }
 
 .DocSearch-Container {

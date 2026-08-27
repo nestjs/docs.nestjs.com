@@ -115,7 +115,7 @@ export class HealthController {
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
-import { HealthController } from './health.controller';
+import { HealthController } from './health.controller.js';
 
 @Module({
   imports: [TerminusModule, HttpModule],
@@ -126,7 +126,7 @@ export class HealthModule {}
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
-import { HealthController } from './health.controller';
+import { HealthController } from './health.controller.js';
 
 @Module({
   imports: [TerminusModule, HttpModule],
@@ -479,7 +479,7 @@ The next thing we need to do is register the health indicator as a provider.
 @@filename(health.module)
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { DogHealthIndicator } from './dog.health';
+import { DogHealthIndicator } from './dog.health.js';
 
 @Module({
   controllers: [HealthController],
@@ -497,7 +497,7 @@ The last required step is to add the now available health indicator in the requi
 @@filename(health.controller)
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
 import { Injectable, Dependencies, Get } from '@nestjs/common';
-import { DogHealthIndicator } from './dog.health';
+import { DogHealthIndicator } from './dog.health.js';
 
 @Injectable()
 export class HealthController {
@@ -517,7 +517,7 @@ export class HealthController {
 @@switch
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
 import { Injectable, Get } from '@nestjs/common';
-import { DogHealthIndicator } from './dog.health';
+import { DogHealthIndicator } from './dog.health.js';
 
 @Injectable()
 @Dependencies(HealthCheckService, DogHealthIndicator)

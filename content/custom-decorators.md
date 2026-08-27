@@ -177,6 +177,8 @@ async findOne(user) {
 
 > info **Hint** Note that `validateCustomDecorators` option must be set to true. `ValidationPipe` does not validate arguments annotated with the custom decorators by default.
 
+The same rule applies to `StandardSchemaValidationPipe`. If your custom decorator attaches data that should be validated through a Standard Schema compatible schema, enable `validateCustomDecorators` when configuring the pipe.
+
 #### Decorator composition
 
 Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:

@@ -10,20 +10,20 @@ To run your NestJS application in REPL mode, create a new `repl.ts` file (alongs
 ```typescript
 @@filename(repl)
 import { repl } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   await repl(AppModule);
 }
-bootstrap();
+await bootstrap();
 @@switch
 import { repl } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   await repl(AppModule);
 }
-bootstrap();
+await bootstrap();
 ```
 
 Now in your terminal, start the REPL with the following command:

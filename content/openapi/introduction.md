@@ -1,6 +1,6 @@
 ### Introduction
 
-The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows generating such a specification by leveraging decorators.
+The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows you to generate such a specification by leveraging decorators.
 
 #### Installation
 
@@ -18,7 +18,7 @@ Once the installation process is complete, open the `main.ts` file and initializ
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,12 +34,12 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
 
 > info **Hint** The factory method `SwaggerModule.createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
 
-The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
+The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow you to set properties such as title, description, and version. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
 Once we create a document, we can call the `setup()` method. It accepts:
 
@@ -159,6 +159,143 @@ const options: SwaggerDocumentOptions =  {
 };
 const documentFactory = () => SwaggerModule.createDocument(app, config, options);
 ```
+
+#### Standard Schema (Zod, Valibot)
+
+Nest route parameter decorators accept a [Standard Schema](https://standardschema.dev/) compatible schema through their `schema` option (see the [Controllers chapter](/controllers#request-object)):
+
+```typescript
+@@filename(cats.controller)
+import { z } from 'zod';
+
+const createCatSchema = z.object({
+  name: z.string(),
+  age: z.number().int().positive(),
+  breed: z.string(),
+});
+
+@Controller('cats')
+export class CatsController {
+  @Post()
+  create(@Body({ schema: createCatSchema }) createCatDto: CreateCatDto) {
+    return this.catsService.create(createCatDto);
+  }
+}
+```
+
+The Swagger module picks these schemas up and turns them into request bodies and parameters in the generated document.
+
+##### Libraries that need no configuration
+
+If your validation library implements the **Standard JSON Schema** extension - meaning its schemas expose `~standard.jsonSchema` - Nest converts them on its own, and there is nothing to configure. It requests the `openapi-3.0` target and uses the `input` or `output` variant depending on whether the schema describes a request or a response.
+
+##### Supplying a converter
+
+For libraries that do not expose that extension, provide a `standardSchemaConverter` in `SwaggerDocumentOptions`. It receives the raw schema plus the `schemaType` being generated, and returns the converted OpenAPI schema:
+
+```typescript
+standardSchemaConverter?: (
+  schema: unknown,
+  options: { schemaType: 'input' | 'output' },
+) => { schema: unknown; components?: Record<string, any> } | undefined;
+```
+
+Returning `undefined` tells Nest that the converter does not handle this schema, so it falls back to the native conversion described above. That is what makes it safe to support several libraries from one converter.
+
+For **Zod**, use [zod-openapi](https://github.com/samchungy/zod-openapi):
+
+```bash
+$ npm i --save-dev zod-openapi
+```
+
+```typescript
+@@filename(main)
+import { SwaggerDocumentOptions } from '@nestjs/swagger';
+import { createSchema } from 'zod-openapi';
+
+const documentOptions: SwaggerDocumentOptions = {
+  standardSchemaConverter: (schema, { schemaType }) => {
+    const converted = createSchema(schema as never, {
+      io: schemaType,
+      openapiVersion: '3.0.0',
+    });
+    return { schema: converted.schema, components: converted.components };
+  },
+};
+
+const documentFactory = () =>
+  SwaggerModule.createDocument(app, config, documentOptions);
+```
+
+For **Valibot**, use [@valibot/to-json-schema](https://github.com/fabian-hiller/valibot/tree/main/packages/to-json-schema):
+
+```bash
+$ npm i --save-dev @valibot/to-json-schema
+```
+
+```typescript
+@@filename(main)
+import { toJsonSchema } from '@valibot/to-json-schema';
+
+const documentOptions: SwaggerDocumentOptions = {
+  standardSchemaConverter: (schema, { schemaType }) => ({
+    schema: toJsonSchema(schema as never, {
+      target: 'openapi-3.0',
+      typeMode: schemaType,
+    }),
+  }),
+};
+```
+
+Note the difference between the two: `createSchema()` can hoist reusable definitions, so its result carries a `components` map that you pass through and Nest merges into the document's shared components. `toJsonSchema()` returns a single self-contained schema, so `components` is simply omitted.
+
+##### Supporting several libraries at once
+
+Because the converter receives the schema as `unknown`, you can branch on the schema's vendor and support more than one library in the same application. Every Standard Schema exposes it at `~standard.vendor`:
+
+```typescript
+@@filename(main)
+import { toJsonSchema } from '@valibot/to-json-schema';
+import { createSchema } from 'zod-openapi';
+
+function hasVendor(schema: unknown, vendor: string) {
+  return (
+    !!schema &&
+    typeof schema === 'object' &&
+    (schema as { '~standard'?: { vendor?: string } })['~standard']?.vendor ===
+      vendor
+  );
+}
+
+const documentOptions: SwaggerDocumentOptions = {
+  standardSchemaConverter: (schema, { schemaType }) => {
+    if (hasVendor(schema, 'zod')) {
+      const converted = createSchema(schema as never, {
+        io: schemaType,
+        openapiVersion: '3.0.0',
+      });
+      return { schema: converted.schema, components: converted.components };
+    }
+
+    if (hasVendor(schema, 'valibot')) {
+      return {
+        schema: toJsonSchema(schema as never, {
+          target: 'openapi-3.0',
+          typeMode: schemaType,
+        }),
+      };
+    }
+
+    // Not handled here - let Nest fall back to native conversion
+    return undefined;
+  },
+};
+```
+
+> warning **Warning** Always narrow by vendor before calling a library-specific converter. Passing a Valibot schema to `createSchema()` (or the reverse) throws at document generation time rather than failing gracefully.
+
+> info **Hint** `schemaType` matters when your schema performs transformations: the `input` shape is what clients send, and the `output` shape is what your handler receives after parsing. Nest asks for whichever is appropriate for the position being documented, so pass the value straight through to your converter rather than hardcoding one.
+
 
 #### Setup options
 

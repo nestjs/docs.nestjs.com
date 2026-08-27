@@ -15,7 +15,7 @@ Let's begin by creating a simple `CatsService`. This service will handle data st
 ```typescript
 @@filename(cats.service)
 import { Injectable } from '@nestjs/common';
-import { Cat } from './interfaces/cat.interface';
+import type { Cat } from './interfaces/cat.interface.js';
 
 @Injectable()
 export class CatsService {
@@ -68,9 +68,9 @@ Now that we have a service class to retrieve cats, let's use it inside the `Cats
 ```typescript
 @@filename(cats.controller)
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
-import { CatsService } from './cats.service';
-import { Cat } from './interfaces/cat.interface';
+import { CreateCatDto } from './dto/create-cat.dto.js';
+import { CatsService } from './cats.service.js';
+import type { Cat } from './interfaces/cat.interface.js';
 
 @Controller('cats')
 export class CatsController {
@@ -88,7 +88,7 @@ export class CatsController {
 }
 @@switch
 import { Controller, Get, Post, Body, Bind, Dependencies } from '@nestjs/common';
-import { CatsService } from './cats.service';
+import { CatsService } from './cats.service.js';
 
 @Controller('cats')
 @Dependencies(CatsService)
@@ -172,8 +172,8 @@ Now that we've defined a provider (`CatsService`) and a consumer (`CatsControlle
 ```typescript
 @@filename(app.module)
 import { Module } from '@nestjs/common';
-import { CatsController } from './cats/cats.controller';
-import { CatsService } from './cats/cats.service';
+import { CatsController } from './cats/cats.controller.js';
+import { CatsService } from './cats/cats.service.js';
 
 @Module({
   controllers: [CatsController],

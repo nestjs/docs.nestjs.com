@@ -2,7 +2,7 @@
 
 One of the most common use-case for having access to the raw request body is performing webhook signature verifications. Usually to perform webhook signature validations the unserialized request body is required to calculate an HMAC hash.
 
-> warning **Warning** This feature can be used only if the built-in global body parser middleware is enabled, ie., you must not pass `bodyParser: false` when creating the app.
+> warning **Warning** This feature can be used only if the built-in global body parser middleware is enabled, i.e., you must not pass `bodyParser: false` when creating the app.
 
 #### Use with Express
 
@@ -11,7 +11,7 @@ First enable the option when creating your Nest Express application:
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 // in the "bootstrap" function
 const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -67,7 +67,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 // in the "bootstrap" function
 const app = await NestFactory.create<NestFastifyApplication>(

@@ -19,24 +19,25 @@
 .container {
   @extend .transition;
   @extend .box-sizing;
-  margin-left: 250px;
-  width: calc(100% - 250px);
-  padding: 85px 85px 0;
+  margin-left: calc(var(--shell-offset, 12px) + 280px);
+  width: calc(100% - var(--shell-offset, 12px) * 2 - 280px);
+  padding: 106px 85px 0;
   display: inline-block;
   vertical-align: top;
   position: relative;
 
   &.wide {
-    margin-left: 0;
-    width: 100%;
+    margin-left: var(--shell-offset, 12px);
+    width: calc(100% - var(--shell-offset, 12px) * 2);
     display: block;
   }
 
   @include utils.media(large) {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 85px 50px 0;
+    margin-left: 292px;
+    width: calc(100% - 292px);
+    padding: 106px 50px 0;
     &.wide {
+      margin-left: 0;
       width: 100%;
     }
   }
@@ -44,7 +45,7 @@
     //@include transform(translateX(0));
     margin-left: 0;
     width: 100%;
-    padding: 85px 20px 0;
+    padding: 106px 20px 0;
   }
 
   @media print {
@@ -56,7 +57,7 @@
 
 .page-wrapper {
   color: var(--color);
-  line-height: 26px;
+  line-height: 25px;
 
   a {
     font-weight: 600;
@@ -66,14 +67,16 @@
     }
   }
 
+  // Solid colours rather than a clipped gradient: the gradient requires a
+  // transparent text-fill, which flashes whenever it is transitioned.
   .content a {
-    transition: none;
-    @include utils.text-gradient();
+    color: var(--primary-3dp);
+    -webkit-text-fill-color: var(--primary-3dp);
+    transition: color 150ms ease, -webkit-text-fill-color 150ms ease;
 
     &:hover {
-      background: #0894e2;
-      -webkit-background-clip: text !important;
-      -webkit-text-fill-color: transparent;
+      color: #0894e2;
+      -webkit-text-fill-color: #0894e2;
     }
   }
 
@@ -100,8 +103,18 @@
   }
 
   .content .banner a {
-    -webkit-text-fill-color: unset !important;
-    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    -webkit-background-clip: #000 !important;
+    background: #fff;
+
+    &::before {
+      background: #fff;
+    }
+
+    &:hover {
+      -webkit-text-fill-color: #fff !important;
+      -webkit-background-clip: #fff !important;
+    }
   }
 
   h1,
@@ -111,9 +124,10 @@
   h5,
   h6 {
     color: var(--color-1dp);
+    letter-spacing: -0.01em;
   }
   h3 {
-    font-size: 24px;
+    font-size: 21px;
     font-weight: 700;
     margin: 45px 0 20px;
   }
@@ -147,10 +161,13 @@
     color: var(--color);
     margin-top: 5px;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
   }
   h3:first-of-type {
     margin: 20px 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
   h3 + h5 {
     margin-top: -10px !important;
@@ -180,7 +197,7 @@
   }
 
   h3 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
   }
 
@@ -198,8 +215,8 @@
 
   p {
     margin: 0;
-    line-height: 26px;
-    font-size: 16px;
+    line-height: 24px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--color);
   }
@@ -226,9 +243,11 @@
   .logo-sponsor {
     width: 160px;
     filter: var(--company-logo-filter);
+    transition: filter 150ms ease, transform 150ms ease;
 
     &:hover {
       filter: grayscale(0);
+      transform: translateY(-2px);
     }
   }
 
@@ -248,39 +267,47 @@
     width: 200px;
   }
 
+  // Ghost button with a gradient hairline border that fills in on hover.
   .btn-primary {
+    @include utils.press-effect();
     color: var(--primary-4dp);
-    padding: 12px 20px;
+    padding: 11px 20px;
     display: inline-block;
-    border-radius: 2px;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: var(--radius-btn);
     position: relative;
+    background-image: var(--primary-gradient);
+    background-size: 100% 100%;
+    box-shadow: none;
 
     span {
+      position: relative;
+      z-index: 3;
       @include utils.text-gradient();
     }
 
-    &::before {
+    // Opaque inner fill, hidden on hover to reveal the gradient beneath.
+    &::after {
       content: '';
       position: absolute;
-      inset: 0;
-      border-radius: 2px;
-      padding: 2px;
-      background: var(--primary-gradient);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      z-index: 2;
+      inset: 1.5px;
+      border-radius: calc(var(--radius-btn) - 1.5px);
+      background: var(--background);
+      transition: opacity 150ms ease;
+      z-index: 1;
     }
 
     &:hover {
-      color: #0894e2;
-      &::before {
-        background: #0894e2;
+      box-shadow: var(--btn-shadow-hover);
+
+      &::after {
+        opacity: 0;
       }
+
       span {
-        background: #0894e2;
+        background: none;
+        -webkit-text-fill-color: #fff;
       }
     }
   }
@@ -323,6 +350,7 @@
 .content,
 .companies-wrapper {
   width: calc(100% - 220px);
+  max-width: 860px;
   @media print {
     width: 100%;
   }
@@ -375,10 +403,10 @@
   }
 
   .contact-us {
-    background: var(--primary);
+    background: var(--primary-gradient);
     color: #fff;
     padding: 20px 30px;
-    border-radius: 3px;
+    border-radius: var(--radius);
     margin: 35px 0;
     display: flex;
     align-items: center;
@@ -401,18 +429,26 @@
       margin: 0;
     }
     a {
+      @include utils.press-effect();
       background: #fff;
       border: 2px solid #fff;
       box-sizing: border-box;
-      padding: 8px 16px;
-      border-radius: 4px;
+      padding: 9px 18px;
+      border-radius: var(--radius-btn);
       float: right;
       display: block;
       text-align: center;
+      font-weight: 700;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.14);
+      transition: transform 130ms cubic-bezier(0.25, 0.8, 0.25, 1),
+        background-color 130ms ease, color 130ms ease,
+        box-shadow 130ms ease;
 
       &:hover {
         background: transparent;
         color: #fff;
+        filter: none;
+        box-shadow: none;
       }
 
       @include utils.media(medium) {
@@ -437,12 +473,14 @@
   float: right;
   margin-top: 24px;
 
-  svg {
-    font-size: 17px;
+  svg,
+  i {
+    font-size: 18px;
     color: var(--color-1dp);
   }
 
-  a:hover svg {
+  a:hover svg,
+  a:hover i {
     color: var(--primary);
   }
 }
@@ -466,11 +504,13 @@
   -webkit-filter: var(--company-filter);
   filter: var(--company-filter);
   opacity: var(--company-logo-opacity);
+  transition: filter 150ms ease, opacity 150ms ease, transform 150ms ease;
 
   &:hover {
     -webkit-filter: var(--company-filter-hover);
     filter: var(--company-filter-hover);
     opacity: 1;
+    transform: translateY(-2px);
   }
 }
 
@@ -520,19 +560,24 @@
 }
 
 .carbon-wrapper {
+  // Occupies exactly the TOC's text column, so both share the same left and
+  // right edges on the x axis.
   #carbonads {
     position: fixed;
     z-index: 11;
     display: block;
-    right: 65px;
+    right: var(--rail-right);
     bottom: 20px;
+    width: var(--rail-column);
+    box-sizing: border-box;
     overflow: hidden;
     padding: 1em;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
     background: var(--background-2dp) !important;
     text-align: center;
     line-height: 1.5;
     font-size: 13px;
-    max-width: 130px;
   }
 
   @include utils.media(large) {
@@ -541,6 +586,8 @@
       padding: 12px;
       float: right;
       position: static;
+      width: auto;
+      max-width: 130px;
     }
   }
 

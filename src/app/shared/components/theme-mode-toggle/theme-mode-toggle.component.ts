@@ -1,5 +1,3 @@
-import { MediaMatcher } from '@angular/cdk/layout';
-
 import { ChangeDetectorRef, Component, Inject, OnInit, DOCUMENT } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 
@@ -18,24 +16,13 @@ export class ThemeModeToggleComponent implements OnInit {
   constructor(
     @Inject(DOCUMENT)
     private readonly document: Document,
-    private readonly mediaMatcher: MediaMatcher,
     private readonly storageService: StorageService,
     private readonly changeDetector: ChangeDetectorRef,
   ) {}
 
   public ngOnInit(): void {
-    const darkSchemeMatcher = this.mediaMatcher.matchMedia(
-      '(prefers-color-scheme: dark)',
-    );
-
-    darkSchemeMatcher.onchange = ({ matches }) => {
-      if (!this.getStoredTheme()) this.setTheme(matches ? 'dark' : 'light');
-    };
-
-    const preferredScheme = darkSchemeMatcher.matches ? 'dark' : 'light';
-    const storedTheme = this.getStoredTheme();
-
-    this.setTheme(storedTheme ?? preferredScheme);
+    // Dark is the default theme unless the user explicitly picked light.
+    this.setTheme(this.getStoredTheme() ?? 'dark');
   }
 
   public toggleTheme(skipStorage = false): void {

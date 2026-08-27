@@ -18,8 +18,8 @@ The integration is three steps. First, call `createObserveModule()` once, typica
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -42,7 +42,7 @@ Second, import `ObserveModule.forRoot()` into your root module with at least a `
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
-import { AppModule, ObserveInstrument } from './app.module';
+import { AppModule, ObserveInstrument } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -50,7 +50,7 @@ async function bootstrap() {
   });
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
 
 That's the whole integration. Once the application receives traffic, requests, errors, and traces start appearing in your project's dashboard within moments - no exporter to configure, no schema to design. The same `instrument` option is accepted by `NestFactory.createMicroservice()` and `NestFactory.createApplicationContext()`, so workers and standalone applications are instrumented the same way.

@@ -93,10 +93,10 @@ We can see below, that not only were all boilerplate mutations and queries creat
 
 ```typescript
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+import { UsersService } from './users.service.js';
+import { User } from './entities/user.entity.js';
+import { CreateUserInput } from './dto/create-user.input.js';
+import { UpdateUserInput } from './dto/update-user.input.js';
 
 @Resolver(() => User)
 export class UsersResolver {

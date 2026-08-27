@@ -2,7 +2,7 @@
 
 > info **Hint** This chapter is only relevant to HTTP-based applications.
 
-Versioning allows you to have **different versions** of your controllers or individual routes running within the same application. Applications change very often and it is not unusual that there are breaking changes that you need to make while still needing to support the previous version of the application.
+Versioning allows you to have **different versions** of your controllers or individual routes running within the same application. Applications change frequently, and it's not unusual to introduce breaking changes while still needing to support the previous version of the application.
 
 There are 4 types of versioning that are supported:
 
@@ -49,7 +49,7 @@ await app.listen(process.env.PORT ?? 3000);
 
 #### Header Versioning Type
 
-Header Versioning uses a custom, user specified, request header to specify the version where the value of the header will be the version to use for the request.
+Header Versioning uses a custom, user-specified request header whose value specifies the version to use for the request.
 
 Example HTTP Requests for Header Versioning:
 
@@ -73,7 +73,7 @@ The `header` property should be the name of the header that will contain the ver
 
 Media Type Versioning uses the `Accept` header of the request to specify the version.
 
-Within the `Accept` header, the version will be separated from the media type with a semi-colon, `;`. It should then contain a key-value pair that represents the version to use for the request, such as `Accept: application/json;v=2`. They key is treated more as a prefix when determining the version will to be configured to include the key and separator.
+Within the `Accept` header, the version will be separated from the media type with a semi-colon, `;`. It should then contain a key-value pair that represents the version to use for the request, such as `Accept: application/json;v=2`. The key is treated as a prefix for the version, so the `key` property must be configured to include both the key and the separator.
 
 To enable **Media Type Versioning** for your application, do the following:
 
@@ -137,7 +137,7 @@ await app.listen(process.env.PORT ?? 3000);
 
 Versioning allows you to version controllers, individual routes, and also provides a way for certain resources to opt-out of versioning. The usage of versioning is the same regardless of the Versioning Type your application uses.
 
-> warning **Notice** If versioning is enabled for the application but the controller or route does not specify the version, any requests to that controller/route will be returned a `404` response status. Similarly, if a request is received containing a version that does not have a corresponding controller or route, it will also be returned a `404` response status.
+> warning **Notice** If versioning is enabled for the application but the controller or route does not specify the version, any requests to that controller/route will receive a `404` response status. Similarly, if a request is received containing a version that does not have a corresponding controller or route, it will also receive a `404` response status.
 
 #### Controller versions
 
@@ -170,7 +170,7 @@ export class CatsControllerV1 {
 
 #### Route versions
 
-A version can be applied to an individual route. This version will override any other version that would effect the route, such as the Controller Version.
+A version can be applied to an individual route. This version will override any other version that would affect the route, such as the Controller Version.
 
 To add a version to an individual route do the following:
 
@@ -213,7 +213,7 @@ export class CatsController {
 
 #### Multiple versions
 
-Multiple versions can be applied to a controller or route. To use multiple versions, you would set the version to be an Array.
+Multiple versions can be applied to a controller or route. To use multiple versions, set the version to an array.
 
 To add multiple versions do the following:
 
@@ -242,9 +242,9 @@ export class CatsController {
 
 #### Version "Neutral"
 
-Some controllers or routes may not care about the version and would have the same functionality regardless of the version. To accommodate this, the version can be set to `VERSION_NEUTRAL` symbol.
+Some controllers or routes may not care about the version and would have the same functionality regardless of the version. To accommodate this, the version can be set to the `VERSION_NEUTRAL` symbol.
 
-An incoming request will be mapped to a `VERSION_NEUTRAL` controller or route regardless of the version sent in the request in addition to if the request does not contain a version at all.
+An incoming request will be mapped to a `VERSION_NEUTRAL` controller or route regardless of the version specified, including when the request contains no version at all.
 
 > warning **Notice** For URI Versioning, a `VERSION_NEUTRAL` resource would not have the version present in the URI.
 
@@ -279,7 +279,7 @@ export class CatsController {
 
 #### Global default version
 
-If you do not want to provide a version for each controller/or individual routes, or if you want to have a specific version set as the default version for every controller/route that don't have the version specified, you could set the `defaultVersion` as follows:
+If you don't want to provide a version for each controller or individual route, or if you want a specific version to act as the default for every controller/route that doesn't specify one, you can set the `defaultVersion` as follows:
 
 ```typescript
 @@filename(main)
@@ -295,14 +295,14 @@ app.enableVersioning({
 
 #### Middleware versioning
 
-[Middlewares](https://docs.nestjs.com/middleware) can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the `MiddlewareConsumer.forRoutes()` method:
+[Middleware](https://docs.nestjs.com/middleware) can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the `MiddlewareConsumer.forRoutes()` method:
 
 ```typescript
 @@filename(app.module)
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
+import { CatsController } from './cats/cats.controller.js';
 
 @Module({
   imports: [CatsModule],
@@ -316,6 +316,6 @@ export class AppModule implements NestModule {
 }
 ```
 
-With the code above, the `LoggerMiddleware` will only be applied to the version '2' of `/cats` endpoint.
+With the code above, the `LoggerMiddleware` will only be applied to version `'2'` of the `/cats` endpoint.
 
-> info **Notice** Middlewares work with any versioning type described in the this section: `URI`, `Header`, `Media Type` or `Custom`.
+> info **Notice** Middleware works with any versioning type described in this section: `URI`, `Header`, `Media Type` or `Custom`.

@@ -12,7 +12,7 @@ In your `main.ts` file, enable the option when creating your NestJS application:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -21,5 +21,5 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 
-bootstrap();
+await bootstrap();
 ```

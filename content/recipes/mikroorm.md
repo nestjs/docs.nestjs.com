@@ -2,7 +2,7 @@
 
 This recipe is here to help users get started with MikroORM in Nest. MikroORM is the TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. It is a great alternative to TypeORM and migration from TypeORM should be fairly easy. The complete documentation on MikroORM can be found [here](https://mikro-orm.io/docs).
 
-> info **info** `@mikro-orm/nestjs` is a third party package and is not managed by the NestJS core team. Please report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
+> info **Info** `@mikro-orm/nestjs` is a third party package and is not managed by the NestJS core team. Please report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
 
 #### Installation
 
@@ -52,7 +52,7 @@ export class AppModule {}
 But this won't work when you use a build tools that use tree shaking, for that it is better to provide the config explicitly:
 
 ```typescript
-import config from './mikro-orm.config'; // your ORM config
+import config from './mikro-orm.config.js'; // your ORM config
 
 @Module({
   imports: [
@@ -78,13 +78,13 @@ export class MyService {
 }
 ```
 
-> info **info** Notice that the `EntityManager` is imported from the `@mikro-orm/driver` package, where driver is `mysql`, `sqlite`, `postgres` or what driver you are using. In case you have `@mikro-orm/knex` installed as a dependency, you can also import the `EntityManager` from there.
+> info **Info** Notice that the `EntityManager` is imported from the `@mikro-orm/driver` package, where driver is `mysql`, `sqlite`, `postgres` or what driver you are using. In case you have `@mikro-orm/knex` installed as a dependency, you can also import the `EntityManager` from there.
 
 #### Repositories
 
 MikroORM supports the repository design pattern. For every entity, we can create a repository. Read the complete documentation on repositories [here](https://mikro-orm.io/docs/repositories). To define which repositories should be registered in the current scope you can use the `forFeature()` method. For example, in this way:
 
-> info **info** You should **not** register your base entities via `forFeature()`, as there are no
+> info **Info** You should **not** register your base entities via `forFeature()`, as there are no
 > repositories for those. On the other hand, base entities need to be part of the list in `forRoot()` (or in the ORM config in general).
 
 ```typescript
@@ -177,11 +177,11 @@ With that option specified, every entity registered through the `forFeature()`
 method will be automatically added to the entities array of the configuration
 object.
 
-> info **info** Note that entities that aren't registered through the `forFeature()` method, but
+> info **Info** Note that entities that aren't registered through the `forFeature()` method, but
 > are only referenced from the entity (via a relationship), won't be included by
 > way of the `autoLoadEntities` setting.
 
-> info **info** Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we
+> info **Info** Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we
 > still need CLI config with the full list of entities. On the other hand, we can
 > use globs there, as the CLI won't go thru webpack.
 
@@ -237,7 +237,7 @@ export class MyService {
 
 #### Testing
 
-The `@mikro-orm/nestjs` package exposes `getRepositoryToken()` function that returns prepared token based on a given entity to allow mocking the repository.
+The `@mikro-orm/nestjs` package exposes a `getRepositoryToken()` function that returns a prepared token based on a given entity, allowing you to mock the repository.
 
 ```typescript
 @Module({

@@ -36,6 +36,8 @@ $ cd my-nest-project
 $ npm run start:dev
 ```
 
+The `new` command prompts you to choose a module format. ESM projects are generated with Vitest and oxlint by default.
+
 In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. The app will automatically recompile and reload when you change any of the source files.
 
 > info **Hint** We recommend using the [SWC builder](/recipes/swc) for faster builds (10x more performant than the default TypeScript compiler).
@@ -52,9 +54,9 @@ You can use either mode to manage multiple projects. Here's a quick summary of t
 | ---------------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
 | Multiple projects                                          | Separate file system structure                                     | Single file system structure                               |
 | `node_modules` & `package.json`                            | Separate instances                                                 | Shared across monorepo                                     |
-| Default compiler                                           | `tsc`                                                              | webpack                                                    |
+| Default compiler                                           | `tsc`                                                              | rspack                                                     |
 | Compiler settings                                          | Specified separately                                               | Monorepo defaults that can be overridden per project       |
-| Config files like `eslint.config.mjs`, `.prettierrc`, etc. | Specified separately                                               | Shared across monorepo                                     |
+| Lint and formatter config files                           | Specified separately                                               | Shared across monorepo                                     |
 | `nest build` and `nest start` commands                     | Target defaults automatically to the (only) project in the context | Target defaults to the **default project** in the monorepo |
 | Libraries                                                  | Managed manually, usually via npm packaging                        | Built-in support, including path management and bundling   |
 
@@ -97,6 +99,8 @@ See [usage](/cli/usages) for detailed descriptions for each command.
 | `build`    |       | Compiles an application or workspace into an output folder.                                    |
 | `start`    |       | Compiles and runs an application (or default project in a workspace).                          |
 | `add`      |       | Imports a library that has been packaged as a **nest library**, running its install schematic. |
+| `upgrade`  | `update` | Upgrades an existing project to the latest NestJS major version.                               |
+| `deploy`   |       | Deploys your application to the cloud, powered by [Mau](https://mau.nestjs.com/).              |
 | `info`     | `i`   | Displays information about installed nest packages and other helpful system info.              |
 
 #### Requirements

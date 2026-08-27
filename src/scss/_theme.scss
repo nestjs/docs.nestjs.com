@@ -18,18 +18,52 @@
   --background-4dp: #efefef;
   --background-5dp: #cccccc;
 
-  --header-background: #151515;
+  --header-background: rgba(253, 253, 253, 0.75);
+  --header-color: #151515;
+  --header-glow: radial-gradient(
+      480px 90px at 88% 0%,
+      rgba(234, 40, 69, 0.05),
+      transparent 70%
+    ),
+    radial-gradient(
+      360px 80px at 12% 100%,
+      rgba(209, 58, 143, 0.03),
+      transparent 70%
+    );
+  --search-border: rgba(21, 21, 21, 0.14);
+
+  // Hover/active surfaces. Declared as explicit rgba (never color-mix with
+  // `transparent`) so transitions only animate alpha — mixing toward
+  // `transparent` interpolates through black and causes a visible flash.
+  --hover-surface: rgba(21, 21, 21, 0.06);
+  --hover-surface-0: rgba(21, 21, 21, 0);
+  --active-surface: rgba(234, 40, 69, 0.1);
+  --active-surface-0: rgba(234, 40, 69, 0);
+
+  --radius-btn: 10px;
+  --btn-shadow: 0 3px 10px rgba(234, 40, 69, 0.18);
+  --btn-shadow-hover: 0 6px 18px rgba(234, 40, 69, 0.28);
 
   --menu-color: #151515;
-  --menu-background: #f5f5f5;
+  --menu-background: rgba(247, 247, 247, 0.72);
+  --menu-glow: radial-gradient(
+      420px 260px at 85% -60px,
+      rgba(234, 40, 69, 0.05),
+      transparent 65%
+    ),
+    radial-gradient(
+      320px 320px at -20% 110%,
+      rgba(158, 36, 54, 0.035),
+      transparent 60%
+    );
 
   --inline-code-color: #2876d2;
 
   --code-background: #1d1d1d;
 
-  --warning: #ffb36f;
-  --warning-color: #ed8529;
-  --warning-background: #fff5ec;
+  --warning: #ff8c3a;
+  --warning-color: #e2661a;
+  --warning-background: #fff4ea;
 
   --info: #0894e2;
   --info-color: #0894e2;
@@ -46,6 +80,29 @@
 
   --images-filter: unset;
   --images-box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
+
+  --border-color: rgba(21, 21, 21, 0.08);
+  --border-color-strong: rgba(21, 21, 21, 0.14);
+  --panel-border-color: rgba(21, 21, 21, 0.08);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --grain-opacity: 0.03;
+  --glow: radial-gradient(
+      640px 220px at 50% -120px,
+      rgba(234, 40, 69, 0.04),
+      transparent 70%
+    ),
+    radial-gradient(
+      1100px 700px at 85% -10%,
+      rgba(234, 40, 69, 0.05),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 650px at -10% 110%,
+      rgba(158, 36, 54, 0.035),
+      transparent 60%
+    );
 }
 
 .dark-mode {
@@ -58,42 +115,96 @@
   --primary-5dp: #f23551;
   --primary-gradient: linear-gradient(90deg, var(--primary) 0%, var(--primary-accent) 100%);
 
-  --color: #dfdfe3;
-  --color-1dp: #d0d0d4;
+  --color: #aca8a9;
+  --color-1dp: #f2eff0;
 
-  --background: #1f1f22;
-  --background-1dp: #232327;
-  --background-2dp: #252528;
-  --background-3dp: #29292d;
-  --background-4dp: #3d3d41;
-  --background-5dp: #39393e;
+  --background: #080606;
+  --background-1dp: #141112;
+  --background-2dp: #181415;
+  --background-3dp: #1e1a1b;
+  --background-4dp: #363032;
+  --background-5dp: #322c2e;
 
-  --header-background: #1b1b1d;
+  --header-background: rgba(19, 17, 17, 0.72);
+  --header-color: #ffffff;
+  --header-glow: radial-gradient(
+      480px 90px at 88% 0%,
+      rgba(234, 40, 69, 0.1),
+      transparent 70%
+    ),
+    radial-gradient(
+      360px 80px at 12% 100%,
+      rgba(209, 58, 143, 0.05),
+      transparent 70%
+    );
+  --search-border: #242424;
 
-  --menu-color: #dfdfe3;
-  --menu-background: #242427;
+  --hover-surface: rgba(255, 255, 255, 0.07);
+  --hover-surface-0: rgba(255, 255, 255, 0);
+  --active-surface: rgba(242, 53, 81, 0.12);
+  --active-surface-0: rgba(242, 53, 81, 0);
+
+  --radius-btn: 10px;
+  --btn-shadow: 0 3px 12px rgba(242, 53, 81, 0.25);
+  --btn-shadow-hover: 0 6px 22px rgba(242, 53, 81, 0.38);
+
+  --menu-color: #c6bfc0;
+  --menu-background: rgba(16, 13, 14, 0.66);
+  --menu-glow: radial-gradient(
+      420px 260px at 85% -60px,
+      rgba(234, 40, 69, 0.09),
+      transparent 65%
+    ),
+    radial-gradient(
+      320px 320px at -20% 110%,
+      rgba(209, 58, 143, 0.05),
+      transparent 60%
+    );
 
   --inline-code-color: #8ec2ff;
 
-  --code-background: #18181a;
+  --code-background: #151112;
 
-  --warning: #ffb36f;
-  --warning-color: #ed8529;
-  --warning-background: #504337;
+  --warning: #ff8c3a;
+  --warning-color: #ff8a3d;
+  --warning-background: #24140a;
 
-  --info: #0894e2;
-  --info-color: #0894e2;
-  --info-background: rgba(8, 148, 226, 0.038);
+  --info: #2ba4e8;
+  --info-color: #2ba4e8;
+  --info-background: rgba(8, 148, 226, 0.09);
 
   --error: #ff677c;
-  --error-background: #3a2f30;
+  --error-background: #221114;
 
   --company-filter: contrast(0.5);
   --company-filter-hover: opacity(1);
-  --company-logo-filter: contrast(0.5) grayscale(100%);
+  --company-logo-filter: contrast(0.85) grayscale(100%);
 
   --company-logo-opacity: unset;
 
   --images-filter: invert(1) contrast(0.85);
   --images-box-shadow: 0 0 0px 0 rgba(0, 0, 0, 0.08);
+
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-strong: rgba(255, 255, 255, 0.15);
+  --panel-border-color: rgba(255, 255, 255, 0.07);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --grain-opacity: 0.05;
+  --glow: radial-gradient(
+      640px 220px at 50% -120px,
+      rgba(255, 255, 255, 0.07),
+      transparent 70%
+    ),
+    radial-gradient(
+      1100px 700px at 85% -10%,
+      rgba(234, 40, 69, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 650px at -10% 110%,
+      rgba(209, 58, 143, 0.06),
+      transparent 60%
+    );
 }

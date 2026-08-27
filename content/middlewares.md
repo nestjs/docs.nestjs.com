@@ -57,8 +57,8 @@ There is no place for middleware in the `@Module()` decorator. Instead, we set t
 ```typescript
 @@filename(app.module)
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
 
 @Module({
   imports: [CatsModule],
@@ -72,8 +72,8 @@ export class AppModule implements NestModule {
 }
 @@switch
 import { Module } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
 
 @Module({
   imports: [CatsModule],
@@ -92,8 +92,8 @@ In the above example we have set up the `LoggerMiddleware` for the `/cats` route
 ```typescript
 @@filename(app.module)
 import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
 
 @Module({
   imports: [CatsModule],
@@ -107,8 +107,8 @@ export class AppModule implements NestModule {
 }
 @@switch
 import { Module, RequestMethod } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
 
 @Module({
   imports: [CatsModule],
@@ -155,9 +155,9 @@ The `MiddlewareConsumer` is a helper class. It provides several built-in methods
 ```typescript
 @@filename(app.module)
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
+import { CatsController } from './cats/cats.controller.js';
 
 @Module({
   imports: [CatsModule],
@@ -171,9 +171,9 @@ export class AppModule implements NestModule {
 }
 @@switch
 import { Module } from '@nestjs/common';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
-import { CatsController } from './cats/cats.controller';
+import { LoggerMiddleware } from './common/middleware/logger.middleware.js';
+import { CatsModule } from './cats/cats.module.js';
+import { CatsController } from './cats/cats.controller.js';
 
 @Module({
   imports: [CatsModule],

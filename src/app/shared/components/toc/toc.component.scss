@@ -2,95 +2,68 @@
 @use '../../../../scss/variables.scss';
 
 .toc-wrapper {
-  width: 250px;
-  padding-left: 45px;
+  // The carbon ad is fixed to the bottom of this same right-hand rail, so the
+  // TOC is capped short of it and scrolls internally instead of growing into
+  // it. Reserve = tallest ad (~330px) + its 20px bottom offset + a gap.
+  --toc-top: 106px;
+  --ad-reserve: 370px;
+
+  width: var(--rail-outer-width, 250px);
+  padding-left: var(--rail-indent, 45px);
   box-sizing: border-box;
   position: fixed;
-  top: 90px;
-  right: 20px;
-  max-height: 350px;
-  max-height: calc(100vh - 350px);
+  top: var(--toc-top);
+  right: var(--rail-right);
+  z-index: 50;
+  max-height: max(180px, calc(100vh - var(--toc-top) - var(--ad-reserve)));
+  overflow-y: auto;
 
   @media print {
     display: none;
   }
 
+  .toc-label {
+    text-transform: uppercase;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: color-mix(in srgb, var(--color) 70%, transparent);
+    margin-bottom: 10px;
+  }
+
   ul {
     position: relative;
     padding: 0;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 10px;
-      bottom: 10px;
-      width: 2px;
-      background: var(--background-4dp);
-    }
+    margin: 0;
+    border-left: 1px solid var(--border-color);
   }
 
   li {
     display: block;
     position: relative;
-    padding-left: 30px;
-    font-size: 14px;
-    line-height: 24px;
-    margin-bottom: 6px;
-
-    &:hover {
-      color: variables.$red-color;
-      @include utils.text-gradient();
-    }
-  }
-
-  .current {
-    color: variables.$red-color;
-    @include utils.text-gradient();
-    font-weight: 600;
-
-    &::before {
-      background: variables.$red-gradient;
-      border-color: variables.$red-gradient;
-      border-width: 1px;
-      left: -3px;
-    }
-  }
-
-  li {
-    &::before {
-      @include utils.radius(50%);
-      @include utils.transform(translateY(-50%));
-
-      content: '';
-      background: var(--background);
-      border: 2px solid var(--background-4dp);
-      left: -4px;
-      width: 6px;
-      height: 6px;
-      top: 50%;
-      display: inline-block;
-      position: absolute;
-    }
-
-    &:last-of-type::before {
-      top: auto;
-      bottom: 0;
-    }
+    margin: 0;
+    font-size: 13px;
   }
 
   a {
-    color: var(--color);
+    @extend .transition-fast;
+    display: block;
+    color: color-mix(in srgb, var(--color) 85%, transparent);
     font-weight: normal;
+    line-height: 1.45;
+    padding: 5px 0 5px 16px;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+
     &:hover {
-      color: variables.$red-color; 
-      @include utils.text-gradient();
+      color: var(--color-1dp);
+      border-left-color: var(--border-color-strong);
     }
   }
 
   .current a {
+    color: var(--primary);
+    border-left-color: var(--primary);
     font-weight: 600;
-    color: variables.$red-color;
-    @include utils.text-gradient();
   }
 }

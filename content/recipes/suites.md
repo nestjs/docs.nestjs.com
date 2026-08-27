@@ -120,8 +120,8 @@ Use `TestBed.solitary()` to create isolated tests with all dependencies mocked:
 ```typescript
 @@filename(user.service.spec)
 import { TestBed, type Mocked } from '@suites/unit';
-import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
+import { UserService } from './user.service.js';
+import { UserRepository } from './user.repository.js';
 import { Logger } from '@nestjs/common';
 
 describe('User Service Unit Spec', () => {
@@ -159,8 +159,8 @@ Configure mock behavior before compilation using `.mock().impl()`:
 ```typescript
 @@filename(user.service.spec)
 import { TestBed } from '@suites/unit';
-import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
+import { UserService } from './user.service.js';
+import { UserRepository } from './user.repository.js';
 
 describe('User Service Unit Spec - pre-configured', () => {
   let unit: UserService;
@@ -196,8 +196,8 @@ Use `TestBed.sociable()` with `.expose()` to use real implementations for specif
 ```typescript
 @@filename(user.service.spec)
 import { TestBed, Mocked } from '@suites/unit';
-import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
+import { UserService } from './user.service.js';
+import { UserRepository } from './user.repository.js';
 import { Logger } from '@nestjs/common';
 
 describe('UserService - with real logger', () => {
@@ -253,7 +253,7 @@ Access token-based dependencies with `unitRef.get()`:
 ```typescript
 @@filename(config.service.spec)
 import { TestBed } from '@suites/unit';
-import { ConfigService, CONFIG_OPTIONS, ConfigOptions } from './config.service';
+import { ConfigService, CONFIG_OPTIONS, ConfigOptions } from './config.service.js';
 
 describe('Config Service Unit Spec', () => {
   let configService: ConfigService;
@@ -277,7 +277,7 @@ For those who prefer direct control without `TestBed`, the doubles adapter packa
 ```typescript
 @@filename(user.service.spec)
 import { mock } from '@suites/unit';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './user.repository.js';
 
 describe('User Service Unit Spec', () => {
   it('should work with direct mocks', async () => {

@@ -20,7 +20,7 @@ The first step we need to do is create a **Sequelize** instance with an options 
 ```typescript
 @@filename(database.providers)
 import { Sequelize } from 'sequelize-typescript';
-import { Cat } from '../cats/cat.entity';
+import { Cat } from '../cats/cat.entity.js';
 
 export const databaseProviders = [
   {
@@ -48,7 +48,7 @@ Then, we need to export these providers to make them **accessible** for the rest
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { databaseProviders } from './database.providers';
+import { databaseProviders } from './database.providers.js';
 
 @Module({
   providers: [...databaseProviders],
@@ -84,7 +84,7 @@ The `Cat` entity belongs to the `cats` directory. This directory represents the 
 
 ```typescript
 @@filename(cats.providers)
-import { Cat } from './cat.entity';
+import { Cat } from './cat.entity.js';
 
 export const catsProviders = [
   {
@@ -103,8 +103,8 @@ Now we can inject the `CATS_REPOSITORY` to the `CatsService` using the `@Inject(
 ```typescript
 @@filename(cats.service)
 import { Injectable, Inject } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
-import { Cat } from './cat.entity';
+import { CreateCatDto } from './dto/create-cat.dto.js';
+import { Cat } from './cat.entity.js';
 
 @Injectable()
 export class CatsService {
@@ -126,10 +126,10 @@ Here is a final `CatsModule`:
 ```typescript
 @@filename(cats.module)
 import { Module } from '@nestjs/common';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
-import { catsProviders } from './cats.providers';
-import { DatabaseModule } from '../database/database.module';
+import { CatsController } from './cats.controller.js';
+import { CatsService } from './cats.service.js';
+import { catsProviders } from './cats.providers.js';
+import { DatabaseModule } from '../database/database.module.js';
 
 @Module({
   imports: [DatabaseModule],

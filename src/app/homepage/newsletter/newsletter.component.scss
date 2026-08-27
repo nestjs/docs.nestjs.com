@@ -2,22 +2,27 @@
 @use '../../../scss/utils';
 
 .newsletter-wrapper {
-  background: var(--background-3dp);
-  padding: 40px 85px;
+  background: radial-gradient(
+      700px 260px at 92% -30%,
+      rgba(234, 40, 69, 0.16),
+      transparent 60%
+    ),
+    var(--background-1dp);
+  border: 1px solid var(--panel-border-color);
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+  padding: 36px 40px;
   overflow: hidden;
   position: relative;
-  margin: 0 -85px;
+  margin: 50px 0 30px;
   width: auto;
 
   @include utils.media(large) {
-    margin: 0 -50px;
-    padding: 40px 50px;
+    padding: 36px 40px;
   }
 
   @include utils.media(medium) {
-    margin: 0 -20px;
-    padding: 40px 20px;
-    width: 100%;
+    padding: 30px 20px;
     text-align: center;
   }
 }
@@ -30,7 +35,7 @@
 }
 
 .newsletter-wrapper p {
-  font-size: 15px;
+  font-size: 14px;
   margin: 0;
   color: var(--color);
   font-weight: 500;
@@ -56,43 +61,70 @@
   position: relative;
 }
 
+// The submit button is absolutely positioned inside the field, so its inset is
+// identical on all four sides regardless of inline layout quirks.
+.newsletter-form .form-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .newsletter-form .form-control {
-  border: 0;
+  border: 1px solid var(--border-color);
   font-size: 14px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Manrope', sans-serif;
   height: 40px;
   padding: 10px 20px;
+  // Room for the inset button so typed text never runs underneath it.
+  padding-right: 66px;
   background: var(--background);
   color: var(--color);
-  width: calc(100% - 70px);
-  // box-shadow: -2px 2px 3px var(--background);
-  border-radius: 3px;
-  max-width: 100%;
+  width: 100%;
+  border-radius: var(--radius-btn);
   vertical-align: middle;
   box-sizing: border-box;
   outline: 0;
+
+  &:focus {
+    border-color: var(--primary);
+  }
 }
 
 .newsletter-form button {
-  background: var(--primary-gradient);
-  height: 40px;
-  padding: 10px 18px;
-  border: 0;
-  color: #fff;
-  margin-left: -45px;
+  @include utils.btn-primary();
+  position: absolute;
+  // 4px inset on every side; the inner radius is the field's radius minus
+  // that inset, so the two curves stay concentric.
+  top: 4px;
+  right: 4px;
+  bottom: 4px;
+  height: auto;
+  padding: 0 16px;
+  margin: 0;
+  border-radius: calc(var(--radius-btn) - 4px);
   font-size: 14px;
-  vertical-align: middle;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-  transition: none;
-  box-sizing: border-box;
+  line-height: 1;
+  transition: transform 130ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    filter 130ms ease, box-shadow 130ms ease;
   cursor: pointer;
   outline: 0;
 }
 
-.newsletter-form button:hover,
+.newsletter-form button:hover:not([disabled]) {
+  filter: brightness(1.08);
+}
+
 .newsletter-form button[disabled] {
-  background: #111111;
+  background-image: none;
+  background-color: var(--background-3dp);
+  box-shadow: none;
+}
+
+.newsletter-form button:active:not([disabled]) {
+  transform: scale(0.95);
+  filter: brightness(0.96);
 }
 
 .newsletter-form button .icon-success {
@@ -104,8 +136,10 @@
 }
 
 .newsletter-form .btn-success[disabled] {
-  background: var(--background);
+  background-image: none;
+  background-color: var(--background);
   color: #1dd81c;
+  -webkit-text-fill-color: #1dd81c;
   pointer-events: none;
 }
 .newsletter-form .btn-success .icon-success {
@@ -148,8 +182,9 @@
   .newsletter-wrapper .envelope-bg {
     font-size: 280px;
   }
-  .newsletter-form .form-control {
+  // Constrain the wrapper, not the input — the button is anchored to the
+  // wrapper, so they must share the same box.
+  .newsletter-form .form-wrapper {
     max-width: 400px;
-    width: calc(100% - 10px);
   }
 }

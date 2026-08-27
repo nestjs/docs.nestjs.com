@@ -109,7 +109,7 @@ In the `UsersModule`, the only change needed is to add the `UsersService` to the
 ```typescript
 @@filename(users/users.module)
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './users.service.js';
 
 @Module({
   providers: [UsersService],
@@ -118,7 +118,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './users.service.js';
 
 @Module({
   providers: [UsersService],
@@ -132,7 +132,7 @@ Our `AuthService` has the job of retrieving a user and verifying the password. W
 ```typescript
 @@filename(auth/auth.service)
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class AuthService {
@@ -149,7 +149,7 @@ export class AuthService {
 }
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 @Dependencies(UsersService)
@@ -176,8 +176,8 @@ Now, we update our `AuthModule` to import the `UsersModule`.
 ```typescript
 @@filename(auth/auth.module)
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 
 @Module({
   imports: [UsersModule],
@@ -186,8 +186,8 @@ import { UsersModule } from '../users/users.module';
 export class AuthModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 
 @Module({
   imports: [UsersModule],
@@ -205,7 +205,7 @@ Now we can implement our Passport **local authentication strategy**. Create a fi
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -225,7 +225,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException, Dependencies } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 
 @Injectable()
 @Dependencies(AuthService)
@@ -260,10 +260,10 @@ We need to configure our `AuthModule` to use the Passport features we just defin
 ```typescript
 @@filename(auth/auth.module)
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategy } from './local.strategy.js';
 
 @Module({
   imports: [UsersModule, PassportModule],
@@ -272,10 +272,10 @@ import { LocalStrategy } from './local.strategy';
 export class AuthModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategy } from './local.strategy.js';
 
 @Module({
   imports: [UsersModule, PassportModule],
@@ -408,7 +408,7 @@ With this in mind, we can now finally generate a real JWT, and return it in this
 ```typescript
 @@filename(auth/auth.service)
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -437,7 +437,7 @@ export class AuthService {
 
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 import { JwtService } from '@nestjs/jwt';
 
 @Dependencies(UsersService, JwtService)
@@ -492,12 +492,12 @@ Now, open `auth.module.ts` in the `auth` folder and update it to look like this:
 ```typescript
 @@filename(auth/auth.module)
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { LocalStrategy } from './local.strategy.js';
+import { UsersModule } from '../users/users.module.js';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from './constants.js';
 
 @Module({
   imports: [
@@ -514,12 +514,12 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { LocalStrategy } from './local.strategy.js';
+import { UsersModule } from '../users/users.module.js';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from './constants.js';
 
 @Module({
   imports: [
@@ -543,8 +543,8 @@ Now we can update the `/auth/login` route to return a JWT.
 ```typescript
 @@filename(app.controller)
 import { Controller, Request, Post, UseGuards } from '@nestjs/common';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { AuthService } from './auth/auth.service';
+import { LocalAuthGuard } from './auth/local-auth.guard.js';
+import { AuthService } from './auth/auth.service.js';
 
 @Controller()
 export class AppController {
@@ -558,8 +558,8 @@ export class AppController {
 }
 @@switch
 import { Controller, Bind, Request, Post, UseGuards } from '@nestjs/common';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { AuthService } from './auth/auth.service';
+import { LocalAuthGuard } from './auth/local-auth.guard.js';
+import { AuthService } from './auth/auth.service.js';
 
 @Controller()
 export class AppController {
@@ -592,7 +592,7 @@ We can now address our final requirement: protecting endpoints by requiring a va
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
+import { jwtConstants } from './constants.js';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -612,7 +612,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
+import { jwtConstants } from './constants.js';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -649,13 +649,13 @@ Add the new `JwtStrategy` as a provider in the `AuthModule`:
 ```typescript
 @@filename(auth/auth.module)
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { LocalStrategy } from './local.strategy.js';
+import { JwtStrategy } from './jwt.strategy.js';
+import { UsersModule } from '../users/users.module.js';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from './constants.js';
 
 @Module({
   imports: [
@@ -672,13 +672,13 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { LocalStrategy } from './local.strategy.js';
+import { JwtStrategy } from './jwt.strategy.js';
+import { UsersModule } from '../users/users.module.js';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from './constants.js';
 
 @Module({
   imports: [
@@ -717,9 +717,9 @@ Open the `app.controller.ts` file and update it as shown below:
 ```typescript
 @@filename(app.controller)
 import { Controller, Get, Request, Post, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { AuthService } from './auth/auth.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard.js';
+import { LocalAuthGuard } from './auth/local-auth.guard.js';
+import { AuthService } from './auth/auth.service.js';
 
 @Controller()
 export class AppController {
@@ -739,9 +739,9 @@ export class AppController {
 }
 @@switch
 import { Controller, Dependencies, Bind, Get, Request, Post, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { AuthService } from './auth/auth.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard.js';
+import { LocalAuthGuard } from './auth/local-auth.guard.js';
+import { AuthService } from './auth/auth.service.js';
 
 @Dependencies(AuthService)
 @Controller()

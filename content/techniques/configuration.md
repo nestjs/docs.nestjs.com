@@ -110,7 +110,7 @@ export default () => ({
 We load this file using the `load` property of the options object we pass to the `ConfigModule.forRoot()` method:
 
 ```typescript
-import configuration from './config/configuration';
+import configuration from './config/configuration.js';
 
 @Module({
   imports: [
@@ -154,13 +154,13 @@ Once the package is installed, we use the `yaml#load` function to load the YAML 
 @@filename(config/configuration)
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import * as yaml from 'js-yaml';
+import yaml from 'js-yaml';
 
 const YAML_CONFIG_FILENAME = 'config.yaml';
 
 export default () => {
   return yaml.load(
-    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+    readFileSync(join(import.meta.dirname, YAML_CONFIG_FILENAME), 'utf8'),
   ) as Record<string, any>;
 };
 ```
@@ -175,7 +175,7 @@ For example, if you want to ensure that port is within a certain range, you can 
 @@filename(config/configuration)
 export default () => {
   const config = yaml.load(
-    readFileSync(join(__dirname, YAML_CONFIG_FILENAME), 'utf8'),
+    readFileSync(join(import.meta.dirname, YAML_CONFIG_FILENAME), 'utf8'),
   ) as Record<string, any>;
 
   if (config.http.port < 1024 || config.http.port > 49151) {
@@ -304,7 +304,7 @@ As with custom configuration files, inside your `registerAs()` factory function,
 Load a namespaced configuration with the `load` property of the `forRoot()` method's options object, in the same way you load a custom configuration file:
 
 ```typescript
-import databaseConfig from './config/database.config';
+import databaseConfig from './config/database.config.js';
 
 @Module({
   imports: [
@@ -340,7 +340,7 @@ To use a namespaced configuration as a configuration object for another module i
 Here's an example:
 
 ```typescript
-import databaseConfig from './config/database.config';
+import databaseConfig from './config/database.config.js';
 
 @Module({
   imports: [
@@ -377,7 +377,7 @@ ConfigModule.forRoot({
 Thus far, we've processed configuration files in our root module (e.g., `AppModule`), with the `forRoot()` method. Perhaps you have a more complex project structure, with feature-specific configuration files located in multiple different directories. Rather than load all these files in the root module, the `@nestjs/config` package provides a feature called **partial registration**, which references only the configuration files associated with each feature module. Use the `forFeature()` static method within a feature module to perform this partial registration, as follows:
 
 ```typescript
-import databaseConfig from './config/database.config';
+import databaseConfig from './config/database.config.js';
 
 @Module({
   imports: [ConfigModule.forFeature(databaseConfig)],
@@ -385,35 +385,35 @@ import databaseConfig from './config/database.config';
 export class DatabaseModule {}
 ```
 
-> info **Warning** In some circumstances, you may need to access properties loaded via partial registration using the `onModuleInit()` hook, rather than in a constructor. This is because the `forFeature()` method is run during module initialization, and the order of module initialization is indeterminate. If you access values loaded this way by another module, in a constructor, the module that the configuration depends upon may not yet have initialized. The `onModuleInit()` method runs only after all modules it depends upon have been initialized, so this technique is safe.
+> warning **Warning** In some circumstances, you may need to access properties loaded via partial registration using the `onModuleInit()` hook, rather than in a constructor. This is because the `forFeature()` method is run during module initialization, and the order of module initialization is indeterminate. If you access values loaded this way by another module, in a constructor, the module that the configuration depends upon may not yet have initialized. The `onModuleInit()` method runs only after all modules it depends upon have been initialized, so this technique is safe.
 
 #### Schema validation
 
 It is standard practice to throw an exception during application startup if required environment variables haven't been provided or if they don't meet certain validation rules. The `@nestjs/config` package enables two different ways to do this:
 
-- [Joi](https://github.com/sideway/joi) built-in validator. With Joi, you define an object schema and validate JavaScript objects against it.
+- A [Standard Schema](https://standardschema.dev/) compatible schema passed through the `validationSchema` option. Any library implementing the specification works - [Zod](https://zod.dev/), [Valibot](https://valibot.dev/), [ArkType](https://arktype.io/), and others.
 - A custom `validate()` function which takes environment variables as an input.
 
-To use Joi, we must install Joi package:
+Install the validation library of your choice. We'll use Zod here:
 
 ```bash
-$ npm install --save joi
+$ npm install --save zod
 ```
 
-Now we can define a Joi validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
+Now we can define a validation schema and pass it via the `validationSchema` property of the `forRoot()` method's options object, as shown below:
 
 ```typescript
 @@filename(app.module)
-import * as Joi from 'joi';
+import { z } from 'zod';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test', 'provision')
+      validationSchema: z.object({
+        NODE_ENV: z
+          .enum(['development', 'production', 'test', 'provision'])
           .default('development'),
-        PORT: Joi.number().port().default(3000),
+        PORT: z.coerce.number().default(3000),
       }),
     }),
   ],
@@ -421,26 +421,31 @@ import * as Joi from 'joi';
 export class AppModule {}
 ```
 
-By default, all schema keys are considered optional. Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). Alternatively, we can use the `required()` validation method to require that a value must be defined in the environment (`.env` file or process environment). In this case, the validation step will throw an exception if we don't provide the variable in the environment. See [Joi validation methods](https://joi.dev/api/?v=17.3.0#example) for more on how to construct validation schemas.
+Here, we set default values for `NODE_ENV` and `PORT` which will be used if we don't provide these variables in the environment (`.env` file or process environment). To require a variable instead, leave it without a default - the validation step will then throw an exception during bootstrap if it is missing.
 
-By default, unknown environment variables (environment variables whose keys are not present in the schema) are allowed and do not trigger a validation exception. By default, all validation errors are reported. You can alter these behaviors by passing an options object via the `validationOptions` key of the `forRoot()` options object. This options object can contain any of the standard validation options properties provided by [Joi validation options](https://joi.dev/api/?v=17.3.0#anyvalidatevalue-options). For example, to reverse the two settings above, pass options like this:
+Note that environment variables always arrive as strings, which is why `PORT` above uses `z.coerce.number()`. The value returned by the schema is what `ConfigService` ends up serving, so coercions and transformations declared in the schema are applied to the configuration your application reads.
+
+By default, unknown environment variables - the many unrelated entries that `process.env` always carries, such as `PATH` and `HOME` - do not trigger a validation exception, and every failing variable is reported rather than just the first. Validation errors are formatted as `PATH: message` and joined by newlines.
+
+You can forward library-specific options through the `validationOptions` key. Because the option is typed against the Standard Schema specification, library-specific settings go under `libraryOptions`:
 
 ```typescript
 @@filename(app.module)
-import * as Joi from 'joi';
+import { z } from 'zod';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test', 'provision')
+      validationSchema: z.object({
+        NODE_ENV: z
+          .enum(['development', 'production', 'test', 'provision'])
           .default('development'),
-        PORT: Joi.number().port().default(3000),
+        PORT: z.coerce.number().default(3000),
       }),
       validationOptions: {
-        allowUnknown: false,
-        abortEarly: true,
+        libraryOptions: {
+          // options specific to your validation library
+        },
       },
     }),
   ],
@@ -448,12 +453,7 @@ import * as Joi from 'joi';
 export class AppModule {}
 ```
 
-The `@nestjs/config` package uses default settings of:
-
-- `allowUnknown`: controls whether or not to allow unknown keys in the environment variables. Default is `true`
-- `abortEarly`: if true, stops validation on the first error; if false, returns all errors. Defaults to `false`.
-
-Note that once you decide to pass a `validationOptions` object, any settings you do not explicitly pass will default to `Joi` standard defaults (not the `@nestjs/config` defaults). For example, if you leave `allowUnknowns` unspecified in your custom `validationOptions` object, it will have the `Joi` default value of `false`. Hence, it is probably safest to specify **both** of these settings in your custom object.
+> info **Hint** Using Joi? It is still supported, but you must be on **Joi v18 or later**, which implements the Standard Schema specification. Pass `Joi.object({{ '{' }} ... &#125;)` to `validationSchema` as before, and put Joi settings such as `allowUnknown` and `abortEarly` under `validationOptions.libraryOptions`. For Joi schemas specifically, `@nestjs/config` keeps its historical defaults of `allowUnknown: true` and `abortEarly: false`, and merges whatever you pass on top of them. For new projects we recommend a modern Standard Schema library such as Zod instead.
 
 > info **Hint** To disable validation of predefined environment variables, set the `validatePredefined` attribute to `false` in the `forRoot()` method's options object. Predefined environment variables are process variables (`process.env` variables) that were set before the module was imported. For example, if you start your application with `PORT=3000 node main.js`, then `PORT` is a predefined environment variable.
 
@@ -507,7 +507,7 @@ With this in place, use the `validate` function as a configuration option of the
 
 ```typescript
 @@filename(app.module)
-import { validate } from './env.validation';
+import { validate } from './env.validation.js';
 
 @Module({
   imports: [

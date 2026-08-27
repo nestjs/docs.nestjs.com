@@ -82,7 +82,7 @@ In the `UsersModule`, the only change needed is to add the `UsersService` to the
 ```typescript
 @@filename(users/users.module)
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './users.service.js';
 
 @Module({
   providers: [UsersService],
@@ -91,7 +91,7 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './users.service.js';
 
 @Module({
   providers: [UsersService],
@@ -107,7 +107,7 @@ Our `AuthService` has the job of retrieving a user and verifying the password. W
 ```typescript
 @@filename(auth/auth.service)
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class AuthService {
@@ -126,7 +126,7 @@ export class AuthService {
 }
 @@switch
 import { Injectable, Dependencies, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 @Dependencies(UsersService)
@@ -155,9 +155,9 @@ Now, we update our `AuthModule` to import the `UsersModule`.
 ```typescript
 @@filename(auth/auth.module)
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { AuthController } from './auth.controller.js';
+import { UsersModule } from '../users/users.module.js';
 
 @Module({
   imports: [UsersModule],
@@ -167,9 +167,9 @@ import { UsersModule } from '../users/users.module';
 export class AuthModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { AuthController } from './auth.controller.js';
+import { UsersModule } from '../users/users.module.js';
 
 @Module({
   imports: [UsersModule],
@@ -184,7 +184,7 @@ With this in place, let's open up the `AuthController` and add a `signIn()` meth
 ```typescript
 @@filename(auth/auth.controller)
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth.service.js';
 
 @Controller('auth')
 export class AuthController {
@@ -222,7 +222,7 @@ To keep our services cleanly modularized, we'll handle generating the JWT in the
 ```typescript
 @@filename(auth/auth.service)
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -250,7 +250,7 @@ export class AuthService {
 }
 @@switch
 import { Injectable, Dependencies, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/users.service.js';
 import { JwtService } from '@nestjs/jwt';
 
 @Dependencies(UsersService, JwtService)
@@ -302,11 +302,11 @@ Now, open `auth.module.ts` in the `auth` folder and update it to look like this:
 ```typescript
 @@filename(auth/auth.module)
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
-import { jwtConstants } from './constants';
+import { AuthController } from './auth.controller.js';
+import { jwtConstants } from './constants.js';
 
 @Module({
   imports: [
@@ -324,11 +324,11 @@ import { jwtConstants } from './constants';
 export class AuthModule {}
 @@switch
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service.js';
+import { UsersModule } from '../users/users.module.js';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
-import { jwtConstants } from './constants';
+import { AuthController } from './auth.controller.js';
+import { jwtConstants } from './constants.js';
 
 @Module({
   imports: [
@@ -420,8 +420,8 @@ import {
   Request,
   UseGuards
 } from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard.js';
+import { AuthService } from './auth.service.js';
 
 @Controller('auth')
 export class AuthController {

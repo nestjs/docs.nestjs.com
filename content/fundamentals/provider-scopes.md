@@ -15,7 +15,7 @@ A provider can have any of the following scopes:
   </tr>
   <tr>
     <td><code>REQUEST</code></td>
-    <td>A new instance of the provider is created exclusively for each incoming <strong>request</strong>.  The instance is garbage-collected after the request has completed processing.</td>
+    <td>A new instance of the provider is created exclusively for each incoming <strong>request</strong>. The instance is garbage-collected after the request has completed processing.</td>
   </tr>
   <tr>
     <td><code>TRANSIENT</code></td>
@@ -48,9 +48,9 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `scop
 
 > info **Hint** Import the `Scope` enum from `@nestjs/common`
 
-Singleton scope is used by default and does not need be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
+Singleton scope is used by default and does not need to be declared. If you do want to declare a provider as singleton scoped, use the `Scope.DEFAULT` value for the `scope` property.
 
-> warning **Notice** Websocket Gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times. The limitation also applies to some other providers, like [_Passport strategies_](../security/authentication#request-scoped-strategies) or _Cron controllers_.
+> warning **Notice** WebSocket gateways should not use request-scoped providers because they must act as singletons. Each gateway encapsulates a real socket and cannot be instantiated multiple times. The limitation also applies to some other providers, like [_Passport strategies_](../security/authentication#request-scoped-strategies) or _Cron controllers_.
 
 #### Controller scope
 
@@ -129,7 +129,7 @@ And then use it as follows:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { HelloService } from './hello.service';
+import { HelloService } from './hello.service.js';
 
 @Injectable()
 export class AppService {
@@ -153,7 +153,7 @@ Using request-scoped providers will have an impact on application performance. W
 
 #### Durable providers
 
-Request-scoped providers, as mentioned in the section above, may lead to increased latency since having at least 1 request-scoped provider (injected into the controller instance, or deeper - injected into one of its providers) makes the controller request-scoped as well. That means it must be recreated (instantiated) per each individual request (and garbage collected afterward). Now, that also means, that for let's say 30k requests in parallel, there will be 30k ephemeral instances of the controller (and its request-scoped providers).
+Request-scoped providers, as mentioned in the section above, may lead to increased latency since having at least 1 request-scoped provider (injected into the controller instance, or deeper - injected into one of its providers) makes the controller request-scoped as well. That means it must be recreated (instantiated) for each individual request (and garbage collected afterward). That also means that for, say, 30k requests in parallel, there will be 30k ephemeral instances of the controller (and its request-scoped providers).
 
 Having a common provider that most providers depend on (think of a database connection, or a logger service), automatically converts all those providers to request-scoped providers as well. This can pose a challenge in **multi-tenant applications**, especially for those that have a central request-scoped "data source" provider that grabs headers/token from the request object and based on its values, retrieves the corresponding database connection/schema (specific to that tenant).
 

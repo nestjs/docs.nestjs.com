@@ -3,7 +3,7 @@
 There is no fundamental difference between microservices guards and [regular HTTP application guards](/guards).
 The only difference is that instead of throwing `HttpException`, you should use `RpcException`.
 
-> info **Hint** The `RpcException` class is exposed from `@nestjs/microservices` package.
+> info **Hint** The `RpcException` class is exposed from the `@nestjs/microservices` package.
 
 #### Binding guards
 

@@ -16,7 +16,7 @@ The `nest` command is an OS level binary (i.e., runs from the OS command line). 
 
 #### Build
 
-`nest build` is a wrapper on top of the standard `tsc` compiler or `swc` compiler (for [standard projects](https://docs.nestjs.com/cli/overview#project-structure)) or the webpack bundler using the `ts-loader` (for [monorepos](https://docs.nestjs.com/cli/overview#project-structure)). It does not add any other compilation features or steps except for handling `tsconfig-paths` out of the box. The reason it exists is that most developers, especially when starting out with Nest, do not need to adjust compiler options (e.g., `tsconfig.json` file) which can sometimes be tricky.
+`nest build` is a wrapper on top of the standard `tsc` compiler or `swc` compiler (for [standard projects](https://docs.nestjs.com/cli/overview#project-structure)) or the Rspack bundler (for [monorepos](https://docs.nestjs.com/cli/overview#project-structure)). It does not add any other compilation features or steps except for handling `tsconfig-paths` out of the box. The reason it exists is that most developers, especially when starting out with Nest, do not need to adjust compiler options (e.g., `tsconfig.json` file) which can sometimes be tricky.
 
 See the [nest build](https://docs.nestjs.com/cli/usages#nest-build) documentation for more details.
 
@@ -52,7 +52,7 @@ These commands use npm's script running capabilities to execute `nest build` or 
 
 \*This applies to the `build` and `start` commands. The `nest new` and `nest generate` commands aren't part of the build/execute pipeline, so they operate in a different context, and do not come with built-in `package.json` scripts.
 
-For most developers/teams, it is recommended to utilize the package scripts for building and executing their Nest projects. You can fully customize the behavior of these scripts via their options (`--path`, `--webpack`, `--webpackPath`) and/or customize the `tsc` or webpack compiler options files (e.g., `tsconfig.json`) as needed. You are also free to run a completely custom build process to compile the TypeScript (or even to execute TypeScript directly with `ts-node`).
+For most developers/teams, it is recommended to utilize the package scripts for building and executing their Nest projects. You can fully customize the behavior of these scripts via their options and/or customize the `tsc`, `swc`, or Rspack compiler options files (e.g., `tsconfig.json`) as needed. You are also free to run a completely custom build process to compile the TypeScript (or even to execute TypeScript directly with `ts-node`).
 
 #### Backward compatibility
 

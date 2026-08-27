@@ -38,7 +38,7 @@ Let's open the browser and verify the generated `CreateCatDto` model:
 
 <figure><img src="/assets/swagger-dto2.png" /></figure>
 
-In addition, the `@ApiProperty()` decorator allows setting various [Schema Object](https://swagger.io/specification/#schemaObject) properties:
+In addition, the `@ApiProperty()` decorator allows you to set various [Schema Object](https://swagger.io/specification/#schemaObject) properties:
 
 ```typescript
 @ApiProperty({

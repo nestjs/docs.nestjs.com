@@ -239,7 +239,7 @@ With your Prisma models in place, you can generate your SQL migration files and 
 $ npx prisma migrate dev --name init
 ```
 
-This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files was created in the existing `prisma` directory:
+This `prisma migrate dev` command generates SQL files and directly runs them against the database. In this case, the following migration files were created in the existing `prisma` directory:
 
 ```bash
 $ tree prisma
@@ -328,7 +328,7 @@ Inside the `src` directory, create a new file called `prisma.service.ts` and add
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from './generated/prisma/client';
+import { PrismaClient } from './generated/prisma/client.js';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 
 @Injectable()
@@ -346,7 +346,7 @@ Still inside the `src` directory, create a new file called `user.service.ts` and
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma.service.js';
 import { User, Prisma } from 'generated/prisma';
 
 @Injectable()
@@ -411,7 +411,7 @@ Still inside the `src` directory, create a new file called `post.service.ts` and
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma.service.js';
 import { Post, Prisma } from 'generated/prisma';
 
 @Injectable()
@@ -488,8 +488,8 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { UsersService } from './user.service';
-import { PostsService } from './post.service';
+import { UsersService } from './user.service.js';
+import { PostsService } from './post.service.js';
 import { User as UserModel, Post as PostModel } from 'generated/prisma';
 
 @Controller()

@@ -364,7 +364,7 @@ Job handlers can also be run in a separate (forked) process ([source](https://do
 - The process is sandboxed so if it crashes it does not affect the worker.
 - You can run blocking code without affecting the queue (jobs will not stall).
 - Much better utilization of multi-core CPUs.
-- Less connections to redis.
+- Fewer connections to Redis.
 
 ```typescript
 @@filename(app.module)
@@ -376,7 +376,7 @@ import { join } from 'node:path';
   imports: [
     BullModule.registerQueue({
       name: 'audio',
-      processors: [join(__dirname, 'processor.js')],
+      processors: [join(import.meta.dirname, 'processor.js')],
     }),
   ],
 })
@@ -753,7 +753,7 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 
 #### Event listeners
 
-Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow subscribing to a core set of standard events. These are exported from the `@nestjs/bull` package.
+Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow you to subscribe to a core set of standard events. These are exported from the `@nestjs/bull` package.
 
 Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
@@ -860,19 +860,19 @@ Job handlers can also be run in a separate (forked) process ([source](https://gi
 - The process is sandboxed so if it crashes it does not affect the worker.
 - You can run blocking code without affecting the queue (jobs will not stall).
 - Much better utilization of multi-core CPUs.
-- Less connections to redis.
+- Fewer connections to Redis.
 
 ```ts
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
-import { join } from 'path';
+import { join } from 'node:path';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'audio',
-      processors: [join(__dirname, 'processor.js')],
+      processors: [join(import.meta.dirname, 'processor.js')],
     }),
   ],
 })

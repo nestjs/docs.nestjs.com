@@ -22,12 +22,12 @@ export enum Role {
 
 > info **Hint** In more sophisticated systems, you may store roles within a database, or pull them from the external authentication provider.
 
-With this in place, we can create a `@Roles()` decorator. This decorator allows specifying what roles are required to access specific resources.
+With this in place, we can create a `@Roles()` decorator. This decorator allows you to specify what roles are required to access specific resources.
 
 ```typescript
 @@filename(roles.decorator)
 import { SetMetadata } from '@nestjs/common';
-import { Role } from '../enums/role.enum';
+import { Role } from '../enums/role.enum.js';
 
 export const ROLES_KEY = 'roles';
 export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
@@ -273,7 +273,7 @@ Lastly, make sure to add the `CaslAbilityFactory` to the `providers` and `export
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { CaslAbilityFactory } from './casl-ability.factory';
+import { CaslAbilityFactory } from './casl-ability.factory.js';
 
 @Module({
   providers: [CaslAbilityFactory],
@@ -335,12 +335,12 @@ As you can see, `MongoAbility` instance allows us to check permissions in pretty
 
 In this section, we'll demonstrate how to build a somewhat more sophisticated guard, which checks if a user meets specific **authorization policies** that can be configured on the method-level (you can extend it to respect policies configured on the class-level too). In this example, we are going to use the CASL package just for illustration purposes, but using this library is not required. Also, we will use the `CaslAbilityFactory` provider that we've created in the previous section.
 
-First, let's flesh out the requirements. The goal is to provide a mechanism that allows specifying policy checks per route handler. We will support both objects and functions (for simpler checks and for those who prefer more functional-style code).
+First, let's flesh out the requirements. The goal is to provide a mechanism that allows you to specify policy checks per route handler. We will support both objects and functions (for simpler checks and for those who prefer more functional-style code).
 
 Let's start off by defining interfaces for policy handlers:
 
 ```typescript
-import { AppAbility } from '../casl/casl-ability.factory';
+import { AppAbility } from '../casl/casl-ability.factory.js';
 
 interface IPolicyHandler {
   handle(ability: AppAbility): boolean;
@@ -353,7 +353,7 @@ export type PolicyHandler = IPolicyHandler | PolicyHandlerCallback;
 
 As mentioned above, we provided two possible ways of defining a policy handler, an object (instance of a class that implements the `IPolicyHandler` interface) and a function (which meets the `PolicyHandlerCallback` type).
 
-With this in place, we can create a `@CheckPolicies()` decorator. This decorator allows specifying what policies have to be met to access specific resources.
+With this in place, we can create a `@CheckPolicies()` decorator. This decorator allows you to specify what policies have to be met to access specific resources.
 
 ```typescript
 export const CHECK_POLICIES_KEY = 'check_policy';
@@ -431,4 +431,4 @@ findAll() {
 }
 ```
 
-> warning **Notice** Since we must instantiate the policy handler in-place using the `new` keyword, `ReadArticlePolicyHandler` class cannot use the Dependency Injection. This can be addressed with the `ModuleRef#get` method (read more [here](/fundamentals/module-ref)). Basically, instead of registering functions and instances through the `@CheckPolicies()` decorator, you must allow passing a `Type<IPolicyHandler>`. Then, inside your guard, you could retrieve an instance using a type reference: `moduleRef.get(YOUR_HANDLER_TYPE)` or even dynamically instantiate it using the `ModuleRef#create` method.
+> warning **Notice** Since we must instantiate the policy handler in-place using the `new` keyword, `ReadArticlePolicyHandler` class cannot use the Dependency Injection. This can be addressed with the `ModuleRef#get` method (read more [here](/fundamentals/module-ref)). Basically, instead of registering functions and instances through the `@CheckPolicies()` decorator, you must support passing a `Type<IPolicyHandler>`. Then, inside your guard, you could retrieve an instance using a type reference: `moduleRef.get(YOUR_HANDLER_TYPE)` or even dynamically instantiate it using the `ModuleRef#create` method.
