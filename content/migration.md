@@ -1,6 +1,6 @@
 ### Migration guide
 
-This article walks through migrating from NestJS version 11 to version 12. Version 12 is centered around ESM-ready packages, updated CLI defaults, first-class support for [Standard Schema](https://standardschema.dev/) based validation and serialization, and native [observability](/observability/overview) support. The full release work is tracked in [release: v12.0.0 major release](https://github.com/nestjs/nest/pull/16391).
+This article walks through migrating from NestJS version 11 to version 12. Version 12 is centered around ESM-ready packages, updated CLI defaults, first-class support for [Standard Schema](https://standardschema.dev/) based validation and serialization, and native [observability](/observability/overview) support. 
 
 #### Upgrading packages
 
