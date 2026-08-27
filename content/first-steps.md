@@ -10,7 +10,7 @@ We'll mostly use TypeScript in the examples we provide, but you can always **swi
 
 #### Prerequisites
 
-Please make sure that [Node.js](https://nodejs.org) (version >= 20) is installed on your operating system.
+Please make sure that [Node.js](https://nodejs.org) is installed on your operating system. Running a Nest application requires **v20.19 or later** (or **v22.12+** on the 22.x line); the Nest CLI's generators require **v22.22.3+, v24.15+, or v26+**. The latest active LTS satisfies both and is what we recommend.
 
 #### Setup
 
