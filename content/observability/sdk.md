@@ -53,6 +53,18 @@ async function bootstrap() {
 await bootstrap();
 ```
 
+> warning **Fastify** With `FastifyAdapter` (or any explicit adapter), the adapter takes the second argument, so the application options - and therefore `instrument` - move to the **third**:
+>
+> ```typescript
+> const app = await NestFactory.create<NestFastifyApplication>(
+>   AppModule,
+>   new FastifyAdapter(),
+>   { instrument: ObserveInstrument },
+> );
+> ```
+>
+> Passing the options object as the second argument alongside an adapter silently drops them, and the SDK never attaches.
+
 That's the whole integration. Once the application receives traffic, requests, errors, and traces start appearing in your project's dashboard within moments - no exporter to configure, no schema to design. The same `instrument` option is accepted by `NestFactory.createMicroservice()` and `NestFactory.createApplicationContext()`, so workers and standalone applications are instrumented the same way.
 
 > info **Hint** `createObserveModule()` itself takes an options object that controls how trace ids are generated and how error source context is captured - see [Trace correlation](#trace-correlation) and [Error source context](#error-source-context) below. Everything else is configured through `ObserveModule.forRoot()`.
