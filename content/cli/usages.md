@@ -196,6 +196,44 @@ $ nest add <name> [options]
 | `--skip-install`      | Skip package installation.<br/> Alias: `-s`                                              |
 | `--project [project]` | Project that the library should be added to.<br/> Alias: `-p`                            |
 
+#### nest upgrade
+
+Upgrades an existing project to the latest NestJS major version.
+
+```bash
+$ nest upgrade [options]
+$ nest update [options]
+```
+
+##### Description
+
+Run from the root of a NestJS v11 project, `nest upgrade` updates your dependencies to v12 and applies the mechanical parts of the migration for you:
+
+- Bumps every recognized `@nestjs/*` package to its v12-compatible major (`@nestjs/graphql`, `@nestjs/apollo`, and `@nestjs/mercurius` go to v14), and reports any other `@nestjs/*` package it does not know about so you can review it yourself
+- Migrates `nest-cli.json` off the deprecated `webpack` / `webpackConfigPath` options and onto `--builder rspack`, updating matching `package.json` scripts
+- Renames the GraphQL `playground` option to `graphiql`, switches subscriptions from `subscriptions-transport-ws` to `graphql-ws`, and swaps the packages accordingly
+- Replaces the legacy `nats` package with `@nats-io/transport-node` / `@nats-io/nats-core` and rewrites `nats` imports
+- Moves library-specific `@nestjs/config` settings under `validationOptions.libraryOptions` and bumps Joi to v18 (the first release implementing Standard Schema)
+- Bumps Jest (and `@types/jest` / `ts-jest`) where present, and warns when your Node.js version is too old to `require()` the ESM-only v12 packages
+- Optionally installs and wires up [`@nestjs/observe`](/observability/overview) - it prompts, unless you pass `--observe` or `--no-observe`
+- Scans your sources and prints notes about behavior that changed but cannot be migrated automatically, such as lifecycle hook ordering, refined pipe signatures, and structured logging params
+
+The command finishes by installing the updated dependencies (unless `--skip-install` is passed) and printing a report of everything it changed, warned about, and left for you.
+
+> warning **Warning** `nest upgrade` only bumps the **local** `@nestjs/cli` dependency. Update a globally installed CLI yourself with `npm i -g @nestjs/cli@latest` - and do it **before** running the upgrade, since the command itself ships with the CLI.
+
+> info **Hint** The schematic deliberately does not migrate your project to ESM, Vitest, or oxlint. Those are the defaults for newly generated v12 projects, but existing projects can adopt them on their own schedule. See the [Migration guide](/migration-guide) for the full picture.
+
+##### Options
+
+| Option                          | Description                                                                                                       |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                     | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                          |
+| `--skip-install`                | Skip package installation.<br/> Alias: `-s`                                                                       |
+| `--observe` / `--no-observe`    | Set up `@nestjs/observe`, or skip the setup entirely. Omit both to be prompted.                                   |
+| `--tag [tag]`                   | Use an npm dist-tag (for example `next`) instead of the default version ranges.<br/> Alias: `-t`                  |
+| `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`   |
+
 #### nest deploy
 
 Deploys your application to the cloud, powered by [Mau](https://mau.nestjs.com/).

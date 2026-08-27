@@ -9,4 +9,10 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 
+# Archived documentation versions are static builds under /vN. Existing files
+# are already served by the rule above; anything else inside an archive is a
+# client side route and must resolve to that archive's index.html rather than
+# the current docs.
+RewriteRule ^(v4|v5|v6|v7|v8|v9|v10|v11)/ /$1/index.html [NC,L]
+
 RewriteRule ^(.*) /index.html [NC,L]

@@ -1,3 +1,16 @@
 # src/_redirects
 
+# Archived documentation versions are static builds committed under dist/vN.
+# Netlify serves existing files first, so these rules only kick in for client
+# side routes (e.g. /v11/techniques/caching) and keep them inside the archive
+# instead of falling through to the current docs.
+/v4/*   /v4/index.html   200
+/v5/*   /v5/index.html   200
+/v6/*   /v6/index.html   200
+/v7/*   /v7/index.html   200
+/v8/*   /v8/index.html   200
+/v9/*   /v9/index.html   200
+/v10/*  /v10/index.html  200
+/v11/*  /v11/index.html  200
+
 /*  /index.html 200

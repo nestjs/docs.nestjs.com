@@ -99,6 +99,8 @@ See [usage](/cli/usages) for detailed descriptions for each command.
 | `build`    |       | Compiles an application or workspace into an output folder.                                    |
 | `start`    |       | Compiles and runs an application (or default project in a workspace).                          |
 | `add`      |       | Imports a library that has been packaged as a **nest library**, running its install schematic. |
+| `upgrade`  | `update` | Upgrades an existing project to the latest NestJS major version.                               |
+| `deploy`   |       | Deploys your application to the cloud, powered by [Mau](https://mau.nestjs.com/).              |
 | `info`     | `i`   | Displays information about installed nest packages and other helpful system info.              |
 
 #### Requirements

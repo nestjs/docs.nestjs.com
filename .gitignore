@@ -9,6 +9,7 @@ dist/*
 !/dist/v8
 !/dist/v9
 !/dist/v10
+!/dist/v11
 
 /tmp
 /out-tsc

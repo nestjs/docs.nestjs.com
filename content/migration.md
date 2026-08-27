@@ -1,31 +1,40 @@
 ### Migration guide
 
-This article walks through migrating from NestJS version 11 to version 12. Version 12 is centered around ESM-ready packages, updated CLI defaults, and first-class support for [Standard Schema](https://standardschema.dev/) based validation and serialization. The full release work is tracked in [release: v12.0.0 major release](https://github.com/nestjs/nest/pull/16391).
+This article walks through migrating from NestJS version 11 to version 12. Version 12 is centered around ESM-ready packages, updated CLI defaults, first-class support for [Standard Schema](https://standardschema.dev/) based validation and serialization, and native [observability](/observability/overview) support. The full release work is tracked in [release: v12.0.0 major release](https://github.com/nestjs/nest/pull/16391).
 
 #### Upgrading packages
 
-Although you can upgrade packages manually, we recommend using [npm-check-updates (ncu)](https://npmjs.com/package/npm-check-updates) for a more streamlined process.
-
-At minimum, update all Nest packages together so that the framework, platform adapters, CLI, and companion packages stay on compatible majors.
-
-```bash
-$ npx npm-check-updates '/^@nestjs\//i' -u
-$ npm install
-```
-
-If you rely on a globally installed CLI binary, update that as well:
+Start by upgrading the Nest CLI itself, since the upgrade command used below ships with it:
 
 ```bash
 $ npm i -g @nestjs/cli@latest
 ```
 
+If your project keeps the CLI as a local dev dependency, update it there as well:
+
+```bash
+$ npm i -D @nestjs/cli@latest
+```
+
+With the latest CLI in place, run `nest upgrade` from the root of your project:
+
+```bash
+$ nest upgrade
+```
+
+The command moves every `@nestjs/*` package to its v12-compatible major at once, so the framework, platform adapters, and companion packages stay in sync, and then installs them. On top of that it applies the mechanical parts of the migration described in this guide - `nest-cli.json` webpack options, the GraphQL `playground` / subscriptions transport rename, the NATS package swap, `@nestjs/config` validation options - and prints a report of everything it changed, plus notes on the behavioral changes it cannot migrate for you. Pass `--dry-run` first if you want to see that report without touching your files. See [nest upgrade](/cli/usages#nest-upgrade) for the full list of steps and options.
+
+> info **Hint** `nest upgrade` replaces the manual [npm-check-updates (ncu)](https://npmjs.com/package/npm-check-updates) flow previously recommended here. You can still upgrade packages manually if you prefer - the important part is that every Nest package moves to the same major at once. Note that the command only bumps the CLI dependency inside your project, which is why the global binary is upgraded first.
+
 #### Node.js requirements
 
-NestJS 12 requires **Node.js v20 or higher**, unchanged from v11. That said, the ESM migration relies on `require(esm)`, which is only available in recent Node.js releases, so we strongly recommend running the latest active LTS version rather than the bare minimum.
+NestJS 12 requires **Node.js v20 or higher**, unchanged from v11. That said, consuming Nest's ESM packages from a CommonJS application relies on `require(esm)`, which is only available in recent Node.js releases, so we strongly recommend running the latest active LTS version rather than the bare minimum.
 
 #### ESM packages
 
 All core Nest packages now ship as ESM. For most existing applications this is much less disruptive than it would have been a few years ago, because modern Node.js releases support `require(esm)`.
+
+> info **Hint** Migrating **your own** application to ESM is entirely optional and **not** part of upgrading to v12. Because Nest's ESM packages can be consumed from CommonJS through `require(esm)`, a CommonJS application can upgrade to v12 and stay CommonJS for as long as you like - `nest upgrade` deliberately leaves your module format alone. Whether you switch is a matter of preference. If and when you decide to, the last two sections of this guide - [Switching your project to ESM](#switching-your-project-to-esm) and [Moving your own code to ESM](#moving-your-own-code-to-esm) - walk you through it.
 
 In practice, this means:
 
@@ -34,96 +43,6 @@ In practice, this means:
 - If you maintain custom bundler or runtime configuration, make sure it matches the module format your project actually uses
 
 If you are starting a new project, the CLI now lets you choose between a CommonJS and an ESM project layout.
-
-##### Switching your project to ESM
-
-The switch itself happens in `package.json`, not in `tsconfig.json`. Add a `type` field set to `module`:
-
-```json
-{
-  "name": "my-app",
-  "type": "module"
-}
-```
-
-That single field is what tells Node.js - and, through `"module": "nodenext"`, TypeScript - to treat your `.js` output as ESM.
-
-Whether you also need to touch `tsconfig.json` depends on how old your project is:
-
-- **Projects generated with the v11 CLI** already use `"module": "nodenext"` and `"moduleResolution": "nodenext"`. Nothing in `tsconfig.json` needs to change - adding `"type": "module"` is enough.
-- **Projects generated with v10 or earlier** typically still have `"module": "commonjs"` and no `moduleResolution` entry. Update both before adding `"type": "module"`:
-
-```json
-{
-  "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "resolvePackageJsonExports": true,
-    "target": "ES2023"
-  }
-}
-```
-
-For reference, this is the complete `compilerOptions` set used by the ESM project that `nest new` generates:
-
-```json
-{
-  "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "resolvePackageJsonExports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "types": ["vitest/globals", "node"]
-  }
-}
-```
-
-> info **Hint** `nest-cli.json` and `tsconfig.build.json` are identical between the CommonJS and ESM project variants, so neither needs changes. The `types` entry above differs only because ESM projects default to Vitest; a CommonJS project on Jest uses `["node", "jest"]` instead.
-
-> warning **Warning** `"module": "nodenext"` derives the module format of each file from the nearest `package.json`. This means adding `"type": "module"` changes how **every** `.ts` file in the project is emitted, and TypeScript will start reporting the missing import extensions described below. Expect to fix those in the same pass rather than incrementally.
-
-##### Moving your own code to ESM
-
-With the configuration in place, the two things in your own code that most often need attention are relative imports and CommonJS-only globals.
-
-Relative imports must carry a file extension:
-
-```typescript
-// Before
-import { AppModule } from './app.module';
-
-// After
-import { AppModule } from './app.module.js';
-```
-
-Note that the extension is `.js` even though the source file is `.ts` - the specifier refers to the emitted file.
-
-`__dirname` and `__filename` do not exist in ESM. Use `import.meta.dirname` instead (or `import.meta.url` with `fileURLToPath` on older Node.js versions):
-
-```typescript
-// Before
-protoPath: join(__dirname, 'hero/hero.proto'),
-
-// After
-protoPath: join(import.meta.dirname, 'hero/hero.proto'),
-```
-
-Similarly, `require()` is unavailable. If you need it for interop, construct it explicitly with `createRequire(import.meta.url)` from `node:module`.
-
-> info **Hint** Many code samples throughout these docs use the ESM conventions above. If your project is still CommonJS, drop the `.js` extensions, keep `__dirname`, and call `bootstrap()` without `await`.
 
 #### New project defaults
 
@@ -369,6 +288,20 @@ logger.log('User created', { userId: 1, email: 'foo@bar.com' });
 
 In JSON mode they are nested under a `params` key, or spread into the root if you enable `flattenParams`. This behavior is on by default in v12; set `structuredParams: false` to restore the previous behavior. See the [Logger chapter](/techniques/logger#structured-logging-params).
 
+#### Native observability support
+
+Version 12 adds first-class observability support through the official [`@nestjs/observe`](/observability/overview) SDK. Instead of attaching a generic Node.js APM agent to the HTTP server, the SDK plugs into Nest's own request lifecycle through the `instrument` application option, so requests, jobs, errors, and traces are reported in terms of your controllers, providers, resolvers, and queue consumers.
+
+```typescript
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
+const app = await NestFactory.create(AppModule, {
+  instrument: ObserveInstrument,
+});
+```
+
+There is nothing to migrate here - it is a new, opt-in capability. See the [Observability chapter](/observability/overview) for what auto-instrumentation covers, and the [SDK reference](/observability/sdk) for configuration options.
+
 #### Other notable release changes
 
 Depending on which Nest packages you use, you may also want to review the following:
@@ -384,3 +317,95 @@ Depending on which Nest packages you use, you may also want to review the follow
 - **HTTP adapter error mapping** has been reworked across core, Express, and Fastify adapters.
 
 If you depend on one of these areas, review the corresponding package behavior in your test suite after upgrading.
+
+#### Switching your project to ESM
+
+> warning **Optional** This section and the next one are **not** part of upgrading to v12, which is why they come last. A CommonJS application runs on v12 unchanged - `nest upgrade` will not touch your module format, and nothing in the framework requires you to switch. Read on only if you *want* to move your project to ESM, on whatever schedule suits you.
+
+The switch itself happens in `package.json`, not in `tsconfig.json`. Add a `type` field set to `module`:
+
+```json
+{
+  "name": "my-app",
+  "type": "module"
+}
+```
+
+That single field is what tells Node.js - and, through `"module": "nodenext"`, TypeScript - to treat your `.js` output as ESM.
+
+Whether you also need to touch `tsconfig.json` depends on how old your project is:
+
+- **Projects generated with the v11 CLI** already use `"module": "nodenext"` and `"moduleResolution": "nodenext"`. Nothing in `tsconfig.json` needs to change - adding `"type": "module"` is enough.
+- **Projects generated with v10 or earlier** typically still have `"module": "commonjs"` and no `moduleResolution` entry. Update both before adding `"type": "module"`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "target": "ES2023"
+  }
+}
+```
+
+For reference, this is the complete `compilerOptions` set used by the ESM project that `nest new` generates:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "types": ["vitest/globals", "node"]
+  }
+}
+```
+
+> info **Hint** `nest-cli.json` and `tsconfig.build.json` are identical between the CommonJS and ESM project variants, so neither needs changes. The `types` entry above differs only because ESM projects default to Vitest; a CommonJS project on Jest uses `["node", "jest"]` instead.
+
+> warning **Warning** `"module": "nodenext"` derives the module format of each file from the nearest `package.json`. This means adding `"type": "module"` changes how **every** `.ts` file in the project is emitted, and TypeScript will start reporting the missing import extensions described below. Expect to fix those in the same pass rather than incrementally.
+
+#### Moving your own code to ESM
+
+With the configuration in place, the two things in your own code that most often need attention are relative imports and CommonJS-only globals.
+
+Relative imports must carry a file extension:
+
+```typescript
+// Before
+import { AppModule } from './app.module';
+
+// After
+import { AppModule } from './app.module.js';
+```
+
+Note that the extension is `.js` even though the source file is `.ts` - the specifier refers to the emitted file.
+
+`__dirname` and `__filename` do not exist in ESM. Use `import.meta.dirname` instead (or `import.meta.url` with `fileURLToPath` on older Node.js versions):
+
+```typescript
+// Before
+protoPath: join(__dirname, 'hero/hero.proto'),
+
+// After
+protoPath: join(import.meta.dirname, 'hero/hero.proto'),
+```
+
+Similarly, `require()` is unavailable. If you need it for interop, construct it explicitly with `createRequire(import.meta.url)` from `node:module`.
+
+> info **Hint** Many code samples throughout these docs use the ESM conventions above. If your project is still CommonJS, drop the `.js` extensions, keep `__dirname`, and call `bootstrap()` without `await`.
