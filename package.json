@@ -61,7 +61,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.67.0",
     "vitest": "4.1.10",
-    "yargs": "17.7.2",
+    "yargs": "18.1.0",
     "zone.js": "0.16.2"
   }
 }
