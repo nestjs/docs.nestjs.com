@@ -28,7 +28,18 @@ The command moves every `@nestjs/*` package to its v12-compatible major at once,
 
 #### Node.js requirements
 
-NestJS 12 requires **Node.js v20 or higher**, unchanged from v11. That said, consuming Nest's ESM packages from a CommonJS application relies on `require(esm)`, which is only available in recent Node.js releases, so we strongly recommend running the latest active LTS version rather than the bare minimum.
+The Node.js requirement differs depending on whether you are **running** an application or **generating** code with the CLI:
+
+| What you are doing | Minimum Node.js |
+| --- | --- |
+| Running a Nest 12 application | **v20.19+**, or **v22.12+** on the 22.x line |
+| `nest new`, `nest generate`, `nest upgrade` (`@nestjs/schematics`) | **v22.22.3+**, **v24.15+**, or **v26+** |
+
+`@nestjs/core` itself still declares `>= 20`, but the v12 packages are ESM-only, and consuming them from a CommonJS application relies on `require(esm)` - which is unflagged only in Node.js 20.19 and 22.12 onwards. The 21.x line never received it and is not supported. `nest upgrade` enforces exactly this and refuses to run on an older release.
+
+The CLI's schematics have a higher floor of their own: `@nestjs/schematics` requires **Node.js v22.22.3+, v24.15+, or v26+**, inherited from the Angular devkit it builds on. Scaffolding and upgrading therefore need a newer runtime than merely running the framework does - and note that the 23.x and 25.x lines, plus early 24.x releases, are excluded.
+
+> info **Hint** The simplest way to satisfy everything is to run the latest active LTS. Pick the bare minimum only if you have a specific reason to stay there - and if you do, note that Node 20.19 is enough to run your application but not to use the CLI's generators.
 
 #### ESM packages
 

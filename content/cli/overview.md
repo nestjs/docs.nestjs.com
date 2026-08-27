@@ -105,7 +105,9 @@ See [usage](/cli/usages) for detailed descriptions for each command.
 
 #### Requirements
 
-Nest CLI requires a Node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [Node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
+The CLI binary itself runs on **Node.js v20.11 or later**, but the schematics behind `nest new`, `nest generate`, and `nest upgrade` (`@nestjs/schematics`) require **Node.js v22.22.3+, v24.15+, or v26+**. Running a Nest application needs less than that - see the [migration guide](/migration-guide#nodejs-requirements) for the full breakdown - so if you generate code on the same machine you develop on, use the latest active LTS.
+
+Nest CLI also requires a Node.js binary built with [internationalization support](https://nodejs.org/api/intl.html) (ICU), such as the official binaries from the [Node.js project page](https://nodejs.org/en/download). If you encounter errors related to ICU, check that your binary meets this requirement.
 
 ```bash
 node -p process.versions.icu
