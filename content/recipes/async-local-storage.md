@@ -225,7 +225,7 @@ export interface MyClsStore extends ClsStore {
 }
 ```
 
-> info **hint** It it also possible to let the package automatically generate a Request ID and access it later with `cls.getId()`, or to get the whole Request object using `cls.get(CLS_REQ)`.
+> info **hint** It is also possible to let the package automatically generate a Request ID and access it later with `cls.getId()`, or to get the whole Request object using `cls.get(CLS_REQ)`.
 #### Testing
 
 Since the `ClsService` is just another injectable provider, it can be entirely mocked out in unit tests.
