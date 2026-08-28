@@ -94,9 +94,9 @@ In this code, we specify the template to use in the `@Render()` decorator, and t
 
 While the application is running, open your browser and navigate to `http://localhost:3000`. You should see the `Hello world!` message.
 
-#### Adding Layout
+#### Adding a layout
 
-When using `hbs` with `Express`, you can configure layouts and templates by setting local variables using [app.setLocal](https://expressjs.com/en/4x/api.html#app.locals). You can modify the previous code as follows:
+The `hbs` engine supports layouts — shared wrapper templates that individual views are rendered into. To use one, set the `layout` local variable with the `setLocal()` method (Nest's wrapper around Express's [app.locals](https://expressjs.com/en/5x/api.html#app.locals)). Let's modify the previous code as follows:
 
 ```typescript
 @@filename(main)
@@ -159,7 +159,7 @@ Then, update the `index.hbs` file to:
 {{ message }}
 ```
 
-You will have a file structure as follows:
+The resulting file structure looks as follows:
 
 <div class="file-tree">
   <div class="item">views</div>
