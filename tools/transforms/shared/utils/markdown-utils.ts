@@ -13,6 +13,13 @@ export function escapeAts(text: string) {
 export function appendEmptyLine(text: string) {
   const codeEscape = '">';
   const codeEscId = text.indexOf(codeEscape);
+  if (codeEscId < 0) {
+    // language-less code block: no class attribute to anchor on
+    const openingTag = '<pre><code>';
+    return text.startsWith(openingTag)
+      ? openingTag + '\n' + text.slice(openingTag.length)
+      : text;
+  }
   return (
     text.slice(0, codeEscId + codeEscape.length) +
     '\n' +
