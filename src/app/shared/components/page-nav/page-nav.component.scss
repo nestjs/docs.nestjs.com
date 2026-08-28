@@ -1,0 +1,107 @@
+// Everything stays nested under .page-nav: the host page renders with
+// ViewEncapsulation.None and styles `.page-wrapper a` globally, so these rules
+// have to be both specific enough to win and narrow enough not to leak.
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 16px;
+  margin: 56px 0 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--search-border);
+
+  &__spacer {
+    // Keeps a lone "next" link pinned to the right on the first page, and a
+    // lone "previous" link to the left on the last one.
+    flex: 1 1 0;
+  }
+
+  &__link {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 18px;
+    box-sizing: border-box;
+    border: 1px solid var(--search-border);
+    border-radius: var(--radius-btn);
+    background: var(--background-1dp);
+    text-decoration: none;
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+
+    &:hover {
+      border-color: var(--primary-3dp);
+      background: var(--hover-surface);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-3dp);
+      outline-offset: 2px;
+    }
+
+    &--prev {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    &--next {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color);
+    opacity: 0.65;
+  }
+
+  &__title {
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 600;
+    // Wins over the `.page-wrapper a` / `.content a` colour rules set globally
+    // by the homepage component.
+    color: var(--color-1dp);
+    -webkit-text-fill-color: var(--color-1dp);
+    transition:
+      color 150ms ease,
+      -webkit-text-fill-color 150ms ease;
+  }
+
+  &__link:hover &__title {
+    color: var(--primary-3dp);
+    -webkit-text-fill-color: var(--primary-3dp);
+  }
+
+  &__link--prev &__title::before {
+    content: '←';
+    margin-right: 8px;
+  }
+
+  &__link--next &__title::after {
+    content: '→';
+    margin-left: 8px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin-top: 40px;
+
+    &__spacer {
+      display: none;
+    }
+
+    &__link {
+      width: 100%;
+    }
+  }
+}

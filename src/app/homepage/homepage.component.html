@@ -14,6 +14,7 @@
     <div class="page-wrapper">
       <app-toc [contentReference]="contentRef"></app-toc>
       <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
+      <app-page-nav></app-page-nav>
     </div>
     <div class="sponsors-wrapper">
       <div class="sponsors-container">

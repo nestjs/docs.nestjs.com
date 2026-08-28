@@ -20,6 +20,7 @@ import { MenuComponent } from './menu/menu.component';
 import { TocComponent } from '../shared/components/toc/toc.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
 import { FooterComponent } from './footer/footer.component';
+import { PageNavComponent } from '../shared/components/page-nav/page-nav.component';
 
 const CARBON_WIDTH_BREAKPOINT = 1200;
 
@@ -38,6 +39,7 @@ const CARBON_WIDTH_BREAKPOINT = 1200;
     RouterLink,
     NewsletterComponent,
     FooterComponent,
+    PageNavComponent,
   ],
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
