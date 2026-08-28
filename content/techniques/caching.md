@@ -149,10 +149,10 @@ You can apply the `@CacheTTL()` decorator on a per-controller basis to set a cac
 
 ```typescript
 @Controller()
-@CacheTTL(50)
+@CacheTTL(5000)
 export class AppController {
   @CacheKey('custom_key')
-  @CacheTTL(20)
+  @CacheTTL(2000)
   findAll(): string[] {
     return [];
   }
@@ -190,14 +190,14 @@ Additionally, you may specify a cache expiration time (TTL) by using the `@Cache
 
 ```typescript
 @@filename()
-@CacheTTL(10)
+@CacheTTL(1000)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage('events')
 handleEvent(client: Client, data: string[]): Observable<string[]> {
   return [];
 }
 @@switch
-@CacheTTL(10)
+@CacheTTL(1000)
 @UseInterceptors(CacheInterceptor)
 @SubscribeMessage('events')
 handleEvent(client, data) {
