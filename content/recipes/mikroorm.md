@@ -15,7 +15,7 @@ $ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/sqlite
 
 MikroORM also supports `postgres`, `sqlite`, and `mongo`. See the [official docs](https://mikro-orm.io/docs/usage-with-sql/) for all drivers.
 
-> info **info** In MikroORM v7, decorators and types must be imported explicitly from `@mikro-orm/core`, and `EntityManager`/`EntityRepository` must be imported from the driver package (e.g. `@mikro-orm/sqlite`). The `MikroOrmModule` is imported from `@mikro-orm/nestjs`.
+> info **Hint** Since MikroORM v6, `EntityManager` and `EntityRepository` should be imported from your driver package (e.g. `@mikro-orm/sqlite`), while decorators and other types come from `@mikro-orm/core`. The `MikroOrmModule` itself is exported by `@mikro-orm/nestjs`. The snippets below include the relevant import statements.
 
 Once the installation process is completed, we can import the `MikroOrmModule` into the root `AppModule`.
 
