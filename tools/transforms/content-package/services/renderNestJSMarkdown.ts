@@ -1,4 +1,4 @@
-import * as marked from 'marked';
+import { Marked, Renderer } from 'marked';
 import {
   applyTableRenderer,
   applyCodeRenderer,
@@ -11,7 +11,8 @@ import { wrapRendererWithEscapeAts } from './renderer/wrap-renderer-with-escape-
 export type RenderNestJSMarkdown = (content: string) => string;
 
 export function renderNestJSMarkdown() {
-  const renderer = new marked.Renderer();
+  const markedInstance = new Marked();
+  const renderer = new Renderer();
 
   wrapRendererWithEscapeAts(renderer, 'paragraph');
   wrapRendererWithEscapeAts(renderer, 'strong');
@@ -22,8 +23,11 @@ export function renderNestJSMarkdown() {
   applyTableRenderer(renderer);
   applyCodeRenderer(renderer);
   applyLinkRenderer(renderer);
-  applyHeadingRenderer(renderer);
+  const resetHeadingSlugger = applyHeadingRenderer(renderer);
   applyBlockQuoteRenderer(renderer);
 
-  return (content: string) => marked(content, { renderer });
+  return (content: string) => {
+    resetHeadingSlugger();
+    return markedInstance.parse(content, { renderer }) as string;
+  };
 }

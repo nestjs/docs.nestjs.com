@@ -1,11 +1,11 @@
-import { Renderer } from 'marked';
+import { Renderer, Tokens } from 'marked';
 import { insertText } from '../../../shared';
 
 export function applyBlockQuoteRenderer(renderer: Renderer) {
   const originalBlockquoteRenderer = renderer.blockquote.bind(renderer);
 
-  const blockquote = (quote: string) => {
-    let text: string = originalBlockquoteRenderer(quote);
+  const blockquote = (token: Tokens.Blockquote) => {
+    let text: string = originalBlockquoteRenderer(token);
     text = text.replace('<p>', '');
     text = text.replace('</p>', '');
 
