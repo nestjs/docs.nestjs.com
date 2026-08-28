@@ -194,10 +194,11 @@ body::after {
 }
 
 // Visible keyboard-focus ring; mouse clicks don't trigger :focus-visible.
+// No border-radius here: the outline already follows the element's own
+// corners, and setting it would reshape the focused element itself.
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
 // Registered so the conic gradient's angle can be interpolated; without
@@ -635,6 +636,26 @@ tr td span.table-code-asterisk {
 .DocSearch-Container {
   z-index: 20000;
   background: rgba(0, 0, 0, 0.6);
+}
+
+// DocSearch autofocuses its input on open, and browsers always match
+// :focus-visible on text inputs, so the global ring landed on the bare input:
+// a squared-off box floating 2px outside the text field, splitting the form in
+// two and leaving the magnifier icon stranded outside it. Keep the accent ring
+// but move it to the form, so it wraps icon and input alike and follows the
+// form's own corners. The negative offset tucks it flush inside the edge,
+// where the modal can't clip it.
+.DocSearch-Form {
+  border-radius: var(--radius-sm);
+}
+
+.DocSearch-Input:focus-visible {
+  outline: none;
+}
+
+.DocSearch-Form:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 
 // Scrollbar sidebar
