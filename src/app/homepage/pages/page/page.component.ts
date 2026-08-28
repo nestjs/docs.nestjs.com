@@ -3,6 +3,7 @@ import {
   ApplicationRef,
   Component,
   ElementRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import * as Prism from 'prismjs';
 import 'prismjs/prism';
@@ -15,6 +16,7 @@ import 'prismjs/components/prism-bash';
 @Component({
     selector: 'app-base-page',
     template: ``,
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: true,
 })
 export class BasePageComponent implements AfterViewChecked {

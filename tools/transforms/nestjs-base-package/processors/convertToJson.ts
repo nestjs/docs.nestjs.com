@@ -10,7 +10,7 @@ export class ConvertToJsonProcessor implements Processor {
   constructor(private log: DgeniLogger, private createDocMessage: CreateDocMessage) {}
   $runAfter = ['postProcessHtml'];
   $runBefore = ['writeFilesProcessor'];
-  docTypes = [];
+  docTypes: string[] = [];
   $process(docs: DocCollection) {
     const docTypes = this.docTypes;
     docs.forEach((doc: any) => {

@@ -4,6 +4,7 @@ import {
   inject,
   ChangeDetectorRef,
   OnDestroy,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
@@ -12,6 +13,7 @@ import { MatIcon } from '@angular/material/icon';
     templateUrl: './copy-button.component.html',
     styleUrls: ['./copy-button.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [MatIcon],
 })
 export class CopyButtonComponent implements OnDestroy {

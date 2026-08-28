@@ -1,8 +1,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
+    "strict": false,
     "sourceMap": true,
     "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,
