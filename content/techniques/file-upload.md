@@ -197,9 +197,9 @@ uploadFile(files) {
 
 > info **Hint** The `FilesInterceptor()` decorator is exported from the `@nestjs/platform-express` package. The `@UploadedFiles()` decorator is exported from `@nestjs/common`.
 
-#### Validate uploaded files array
+#### Validating an array of files
 
-To validate every file in an array, apply `ParseFilePipeBuilder` to `@UploadedFiles()`.
+To validate an array of uploaded files, pass a pipe built with `ParseFilePipeBuilder` to the `@UploadedFiles()` decorator. The registered validators run against each file in the array.
 
 ```typescript
 @@filename()
@@ -221,8 +221,6 @@ uploadFiles(
   console.log(files);
 }
 ```
-
-> info **Hint** The `ParseFilePipeBuilder` API is the same as in single-file validation, and the validators are executed for every file in the uploaded array.
 
 #### Multiple files
 
