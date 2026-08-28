@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { DocumentationComponent } from './documentation/documentation.component';
+import { DrizzleComponent } from './drizzle/drizzle.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MikroOrmComponent } from './mikroorm/mikroorm.component';
 import { MongodbComponent } from './mongodb/mongodb.component';
@@ -25,6 +26,11 @@ export const RECIPES_ROUTES: Routes = [
     path: 'mikroorm',
     component: MikroOrmComponent,
     data: { title: 'MikroORM' },
+  },
+  {
+    path: 'drizzle',
+    component: DrizzleComponent,
+    data: { title: 'Drizzle ORM' },
   },
   {
     path: 'sql-typeorm',
