@@ -197,6 +197,31 @@ uploadFile(files) {
 
 > info **Hint** The `FilesInterceptor()` decorator is exported from the `@nestjs/platform-express` package. The `@UploadedFiles()` decorator is exported from `@nestjs/common`.
 
+#### Validating an array of files
+
+To validate an array of uploaded files, pass a pipe built with `ParseFilePipeBuilder` to the `@UploadedFiles()` decorator. The registered validators run against each file in the array.
+
+```typescript
+@@filename()
+@Post('upload')
+@UseInterceptors(FilesInterceptor('files', 5))
+uploadFiles(
+  @UploadedFiles(
+    new ParseFilePipeBuilder()
+      .addFileTypeValidator({
+        fileType: /^image\/(jpeg|png|gif)$/,
+      })
+      .addMaxSizeValidator({ maxSize: 5242880 })
+      .build({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+  )
+  files: Array<Express.Multer.File>,
+) {
+  console.log(files);
+}
+```
+
 #### Multiple files
 
 To upload multiple files (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
