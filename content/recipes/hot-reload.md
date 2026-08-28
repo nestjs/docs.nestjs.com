@@ -61,16 +61,27 @@ To enable **HMR**, open the application entry file (`main.ts`) and add the follo
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  if (module.hot?.data?.closePromise) {
+    // wait for the previous application instance to fully shut down
+    await module.hot.data.closePromise;
+  }
+
+  const app = await NestFactory.create(AppModule, {
+    forceCloseConnections: !!module.hot,
+  });
   await app.listen(process.env.PORT ?? 3000);
 
   if (module.hot) {
     module.hot.accept();
-    module.hot.dispose(() => app.close());
+    module.hot.dispose((data: any) => {
+      data.closePromise = app.close();
+    });
   }
 }
 bootstrap();
 ```
+
+> info **Hint** `app.close()` is asynchronous, but webpack does not await the `dispose()` callback. Stashing the returned promise on `module.hot.data` lets the next application instance await it before binding to the port again, which (together with `forceCloseConnections`) prevents `EADDRINUSE` errors on reload.
 
 To simplify the execution process, add a script to your `package.json` file.
 
@@ -149,16 +160,27 @@ To enable **HMR**, open the application entry file (`main.ts`) and add the follo
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  if (module.hot?.data?.closePromise) {
+    // wait for the previous application instance to fully shut down
+    await module.hot.data.closePromise;
+  }
+
+  const app = await NestFactory.create(AppModule, {
+    forceCloseConnections: !!module.hot,
+  });
   await app.listen(process.env.PORT ?? 3000);
 
   if (module.hot) {
     module.hot.accept();
-    module.hot.dispose(() => app.close());
+    module.hot.dispose((data: any) => {
+      data.closePromise = app.close();
+    });
   }
 }
 bootstrap();
 ```
+
+> info **Hint** `app.close()` is asynchronous, but webpack does not await the `dispose()` callback. Stashing the returned promise on `module.hot.data` lets the next application instance await it before binding to the port again, which (together with `forceCloseConnections`) prevents `EADDRINUSE` errors on reload.
 
 To simplify the execution process, add a script to your `package.json` file.
 

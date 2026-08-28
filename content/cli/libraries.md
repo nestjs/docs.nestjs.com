@@ -114,6 +114,8 @@ Notice above that we've used a path alias of `@app` in the ES module `import` li
 }
 ```
 
+> warning **Warning** The `paths` mapping is only understood by the TypeScript compiler. Test runners resolve modules on their own — if you run end-to-end tests with Jest, mirror each alias in the e2e Jest config's `moduleNameMapper` option, for example: `"moduleNameMapper": {{ '{' }} "^@app/my-library(|/.*)$": "<rootDir>/../../libs/my-library/src/$1" {{ '}' }}`. Otherwise imports through the alias fail at test runtime even though the project compiles.
+
 So, in a nutshell, the combination of the monorepo and library features has made it easy and intuitive to include library modules into applications.
 
 This same mechanism allows you to build and deploy applications that compose libraries. Once you've imported the `MyLibraryModule`, running `nest build` handles all the module resolution automatically and bundles the app along with any library dependencies, for deployment. The default compiler for a monorepo is **Rspack**, so the resulting distribution file is a single file that bundles all of the transpiled JavaScript files into a single file. You can also switch to `tsc` as described <a href="https://docs.nestjs.com/cli/monorepo#global-compiler-options">here</a>.

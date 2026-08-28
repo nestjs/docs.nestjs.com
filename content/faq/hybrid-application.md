@@ -14,6 +14,8 @@ await app.listen(3001);
 
 > info **Hint** the `app.listen(port)` method starts an HTTP server on the specified address. If your application does not handle HTTP requests then you should use the `app.init()` method instead.
 
+> warning **Notice** The order of these calls matters. With `await app.startAllMicroservices()` first (as above), the microservices begin consuming messages **before** the application's lifecycle hooks (such as `onModuleInit` and `onApplicationBootstrap`) have completed. Call `app.listen()` (or `app.init()`) before `startAllMicroservices()` if your handlers must not receive messages until every module has fully initialized.
+
 To connect multiple microservice instances, issue the call to `connectMicroservice()` for each microservice:
 
 ```typescript

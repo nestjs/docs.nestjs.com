@@ -80,6 +80,28 @@ export class AppModule {}
 
 In this case, these options will be forwarded to the `ApolloServer` constructor.
 
+#### Accessing the request and response objects
+
+One driver option worth calling out is `context`, a factory that builds the GraphQL execution context for each request. Use it to expose the underlying request and response objects to your resolvers:
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  context: ({ req, res }) => ({ req, res }),
+}),
+```
+
+With this in place, you can read them in a resolver through the `@Context()` decorator:
+
+```typescript
+@Query(() => String)
+userAgent(@Context('req') req: Request): string {
+  return req.headers['user-agent'] ?? '';
+}
+```
+
+> info **Hint** Guards, interceptors, and other enhancers running in the GraphQL context can reach the same object via `GqlExecutionContext.create(context).getContext()` (see [Other features](/graphql/guards-interceptors)).
+
 #### GraphQL IDE
 
 [GraphiQL](https://github.com/graphql/graphiql) is the default graphical, interactive, in-browser GraphQL IDE served on the same URL as the GraphQL server itself. To access it, you need a basic GraphQL server configured and running. To see it now, you can install and build the [working example here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first). Alternatively, if you're following along with these code samples, once you've completed the steps in the [Resolvers chapter](/graphql/resolvers-map), you can access GraphiQL.

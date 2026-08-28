@@ -239,7 +239,16 @@ export const handler: Handler = async (
 
 > info **Hint** For creating multiple serverless functions and sharing common modules between them, we recommend using the [CLI Monorepo mode](/cli/monorepo#monorepo-mode).
 
-> warning **Warning** If you use `@nestjs/swagger` package, there are a few additional steps required to make it work properly in the context of serverless function. Check out this [thread](https://github.com/nestjs/swagger/issues/199) for more information.
+> warning **Warning** If you use the `@nestjs/swagger` package, serving the Swagger UI from a serverless function requires one extra step. Behind API Gateway, the request's `originalUrl` may lack the trailing slash Swagger UI expects, which causes an endless redirect loop. Register a middleware that restores it **before** calling `SwaggerModule.setup()`:
+>
+> ```typescript
+> app.use((req, res, next) => {
+>   if (req.originalUrl === '/swagger') {
+>     req.originalUrl = '/swagger/';
+>   }
+>   next();
+> });
+> ```
 
 Next, open up the `tsconfig.json` file and make sure to enable the `esModuleInterop` option to make the `@codegenie/serverless-express` package load properly.
 
