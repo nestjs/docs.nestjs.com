@@ -322,9 +322,19 @@ To redirect a response to a specific URL, you can either use a `@Redirect()` dec
 Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
 
 ```typescript
+@@filename()
 @Get('docs')
 @Redirect('https://docs.nestjs.com', 302)
 getDocs(@Query('version') version) {
+  if (version && version === '5') {
+    return { url: 'https://docs.nestjs.com/v5/' };
+  }
+}
+@@switch
+@Get('docs')
+@Redirect('https://docs.nestjs.com', 302)
+@Bind(Query('version'))
+getDocs(version) {
   if (version && version === '5') {
     return { url: 'https://docs.nestjs.com/v5/' };
   }
@@ -376,10 +386,19 @@ findOne(id) {
 The `@Controller` decorator can take a `host` option to require that the HTTP host of the incoming requests matches some specific value.
 
 ```typescript
+@@filename(admin.controller)
 @Controller({ host: 'admin.example.com' })
 export class AdminController {
   @Get()
   index(): string {
+    return 'Admin page';
+  }
+}
+@@switch
+@Controller({ host: 'admin.example.com' })
+export class AdminController {
+  @Get()
+  index() {
     return 'Admin page';
   }
 }
@@ -390,10 +409,20 @@ export class AdminController {
 Similar to a route `path`, the `host` option can use tokens to capture the dynamic value at that position in the host name. The host parameter token in the `@Controller()` decorator example below demonstrates this usage. Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
 
 ```typescript
+@@filename(account.controller)
 @Controller({ host: ':account.example.com' })
 export class AccountController {
   @Get()
   getInfo(@HostParam('account') account: string) {
+    return account;
+  }
+}
+@@switch
+@Controller({ host: ':account.example.com' })
+export class AccountController {
+  @Get()
+  @Bind(HostParam('account'))
+  getInfo(account) {
     return account;
   }
 }
@@ -486,6 +515,12 @@ Consider a route where we want to filter a list of cats based on query parameter
 async findAll(@Query('age') age: number, @Query('breed') breed: string) {
   return `This action returns all cats filtered by age: ${age} and breed: ${breed}`;
 }
+@@switch
+@Get()
+@Bind(Query('age'), Query('breed'))
+async findAll(age, breed) {
+  return `This action returns all cats filtered by age: ${age} and breed: ${breed}`;
+}
 ```
 
 In this example, the `@Query()` decorator is used to extract the values of `age` and `breed` from the query string. For example, a request to:
@@ -506,14 +541,26 @@ If your application requires handling more complex query parameters, such as nes
 you'll need to configure your HTTP adapter (Express or Fastify) to use an appropriate query parser. In Express, you can use the `extended` parser, which allows for rich query objects:
 
 ```typescript
+@@filename(main)
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
+app.set('query parser', 'extended');
+@@switch
+const app = await NestFactory.create(AppModule);
 app.set('query parser', 'extended');
 ```
 
 In Fastify, you can use the `querystringParser` option:
 
 ```typescript
+@@filename(main)
 const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter({
+    querystringParser: (str) => qs.parse(str),
+  }),
+);
+@@switch
+const app = await NestFactory.create(
   AppModule,
   new FastifyAdapter({
     querystringParser: (str) => qs.parse(str),
