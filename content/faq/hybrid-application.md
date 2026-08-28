@@ -38,7 +38,7 @@ await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
-To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass the second argument of type `Transport` which is an enum with all the built-in transport strategies defined.
+To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass a second argument identifying the transport. For the built-in strategies, this is a value of the `Transport` enum; for a [custom transporter](/microservices/custom-transport), it is the `transportId` symbol of its server class.
 
 ```typescript
 @@filename()
@@ -49,6 +49,10 @@ getDate(@Payload() data: number[], @Ctx() context: NatsContext) {
 }
 @MessagePattern({ cmd: 'time.us' }, Transport.TCP)
 getTCPDate(@Payload() data: number[]) {
+  return new Date().toLocaleTimeString(...);
+}
+@MessagePattern('topic.time.us', XYZServer.Transport) // XYZServer is a custom transporter
+getXYZDate(@Payload() data: number[]) {
   return new Date().toLocaleTimeString(...);
 }
 @@switch
@@ -63,9 +67,15 @@ getDate(data, context) {
 getTCPDate(data, context) {
   return new Date().toLocaleTimeString(...);
 }
+
+@Bind(Payload())
+@MessagePattern('topic.time.us', XYZServer.Transport)
+getXYZDate(data) {
+  return new Date().toLocaleTimeString(...);
+}
 ```
 
-> info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`.
+> info **Hint** `@Payload()`, `@Ctx()`, `Transport` and `NatsContext` are imported from `@nestjs/microservices`. `XYZServer.Transport` here stands for the `transportId` symbol exposed by the custom transporter.
 
 #### Sharing configuration
 
