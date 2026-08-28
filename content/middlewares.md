@@ -262,3 +262,73 @@ await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Hint** Accessing the DI container in a global middleware is not possible. You can use a [functional middleware](middleware#functional-middleware) instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')` within the `AppModule` (or any other module).
+
+#### Error handling
+
+When middleware throws an exception, Nest's [exceptions layer](/exception-filters) catches it and sends an appropriate response, the same way it does for exceptions thrown from a route handler. The recommended approach is to throw an `HttpException` (or a built-in subclass such as `UnauthorizedException`):
+
+```typescript
+@@filename(auth.middleware)
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+
+@Injectable()
+export class AuthMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: NextFunction) {
+    if (!req.headers.authorization) {
+      throw new UnauthorizedException();
+    }
+    next();
+  }
+}
+@@switch
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+
+@Injectable()
+export class AuthMiddleware {
+  use(req, res, next) {
+    if (!req.headers.authorization) {
+      throw new UnauthorizedException();
+    }
+    next();
+  }
+}
+```
+
+If the middleware is asynchronous, declare `use()` as `async` (or return a `Promise`) so a rejected promise is forwarded to the exceptions layer:
+
+```typescript
+@@filename(auth.middleware)
+@Injectable()
+export class AuthMiddleware implements NestMiddleware {
+  constructor(private readonly authService: AuthService) {}
+
+  async use(req: Request, res: Response, next: NextFunction) {
+    const user = await this.authService.verify(req.headers.authorization);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    req['user'] = user;
+    next();
+  }
+}
+```
+
+You can also pass the error to `next()`. This is useful when wrapping existing Express-style middleware that reports failures through the callback:
+
+```typescript
+use(req: Request, res: Response, next: NextFunction) {
+  if (!req.headers.authorization) {
+    return next(new UnauthorizedException());
+  }
+  next();
+}
+```
+
+> warning **Warning** Since middleware runs before a route handler is selected, only **global** exception filters (registered with `app.useGlobalFilters()` or the `APP_FILTER` token) catch exceptions thrown from middleware. Method-scoped and controller-scoped filters are not invoked, and applying `@UseFilters()` to a middleware class has no effect.
+
+> info **Hint** Middleware registered with `app.use()` is handled by the underlying HTTP platform (Express or Fastify), not by Nest's `MiddlewareModule`. Prefer throwing (or calling `next(err)`) from middleware bound with `MiddlewareConsumer` so the exceptions layer can process the error.

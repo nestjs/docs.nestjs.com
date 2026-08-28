@@ -351,6 +351,8 @@ export class AppModule {}
 
 > info **Hint** When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done? Choose the module where the filter (`HttpExceptionFilter` in the example above) is defined. Also, `useClass` is not the only way of dealing with custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
+> info **Hint** Exceptions thrown from [middleware](/middleware#error-handling) are also processed by the exceptions layer. Because middleware runs before a route handler is selected, only **global** exception filters apply (`app.useGlobalFilters()` or `APP_FILTER`). Method-scoped and controller-scoped `@UseFilters()` bindings are not invoked.
+
 You can add as many filters with this technique as needed; simply add each to the providers array.
 
 #### Catch everything
