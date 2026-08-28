@@ -23,13 +23,16 @@ import { findAdjacentPages, NavPage } from '../../nav/nav-sequence';
 export class PageNavComponent implements OnInit, OnDestroy {
   public prev: NavPage | null = null;
   public next: NavPage | null = null;
+  public prevLabel = '';
+  public nextLabel = '';
   private routerSubscription: Subscription;
   private readonly router = inject(Router);
   private readonly cd = inject(ChangeDetectorRef);
 
   public ngOnInit(): void {
-    // Seeded from the current URL so a page opened directly gets its links too,
-    // not only pages reached through an in-app navigation.
+    // Load-bearing: NavigationEnd for the initial route has already fired by the
+    // time this component is created, so the subscription below never sees it.
+    // Seeding from the current URL is what gives a directly opened page its links.
     this.updateLinks(this.router.url);
 
     this.routerSubscription = this.router.events
@@ -51,5 +54,22 @@ export class PageNavComponent implements OnInit, OnDestroy {
     const { prev, next } = findAdjacentPages(NAV_ITEMS, url);
     this.prev = prev;
     this.next = next;
+    this.prevLabel = this.buildLabel('Previous', prev);
+    this.nextLabel = this.buildLabel('Next', next);
+  }
+
+  /**
+   * Built here rather than in the template so the visible text and the
+   * accessible name cannot drift apart. Several pages share a title
+   * ("Overview", "Pipes"), so the chapter is what makes the link unambiguous
+   * when it is read out of context.
+   */
+  private buildLabel(direction: string, page: NavPage | null): string {
+    if (!page) {
+      return '';
+    }
+    return page.section
+      ? `${direction} page: ${page.title}, in ${page.section}`
+      : `${direction} page: ${page.title}`;
   }
 }

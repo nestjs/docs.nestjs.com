@@ -3,6 +3,12 @@ import { NavItem } from './nav-items';
 export interface NavPage {
   title: string;
   path: string;
+  /**
+   * The chapter the page belongs to, so the pager can say which section it is
+   * sending the reader into. Top-level pages such as `/` or `/migration-guide`
+   * are their own chapter and carry no section.
+   */
+  section?: string;
 }
 
 export interface AdjacentPages {
@@ -19,13 +25,19 @@ export interface AdjacentPages {
 export function flattenNavItems(items: NavItem[]): NavPage[] {
   const pages: NavPage[] = [];
 
-  const walk = (nodes: NavItem[]): void => {
+  const walk = (nodes: NavItem[], section?: string): void => {
     for (const node of nodes) {
       if (node.path) {
-        pages.push({ title: node.title, path: node.path });
+        pages.push(
+          section
+            ? { title: node.title, path: node.path, section }
+            : { title: node.title, path: node.path },
+        );
       }
       if (node.children) {
-        walk(node.children);
+        // A node with children is the chapter its children belong to; a node
+        // that also has a path stays the chapter name for them too.
+        walk(node.children, node.title);
       }
     }
   };
@@ -35,11 +47,12 @@ export function flattenNavItems(items: NavItem[]): NavPage[] {
 }
 
 /**
- * Strips the query string, the fragment and any trailing slash, so that the URL
- * the router hands us lines up with the plain paths listed in the sidebar.
+ * Strips the query string, the fragment, any matrix parameters and any trailing
+ * slash, so that the URL the router hands us lines up with the plain paths
+ * listed in the sidebar.
  */
 function normalizeUrl(url: string): string {
-  const path = url.split(/[?#]/)[0];
+  const path = url.split(/[?#]/)[0].replace(/;[^/]*/g, '');
   return path.length > 1 ? path.replace(/\/+$/, '') : path;
 }
 

@@ -21,7 +21,9 @@ export class MenuComponent implements OnInit {
   @Input()
   isSidebarOpened = true;
 
-  public readonly items: NavItem[] = NAV_ITEMS;
+  // A copy: `toggleCategory` writes `isOpened` back onto these items, and
+  // NAV_ITEMS is a module-level singleton shared with the article pager.
+  public readonly items: NavItem[] = structuredClone(NAV_ITEMS);
 
   constructor(
     private readonly route: ActivatedRoute,

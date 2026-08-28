@@ -1,4 +1,8 @@
-<nav class="nav-container" (click)="$event.stopPropagation()">
+<nav
+  class="nav-container"
+  aria-label="Documentation"
+  (click)="$event.stopPropagation()"
+>
   @for (item of items; track item) {
     <app-menu-item
       [isOpen]="item.isOpened"

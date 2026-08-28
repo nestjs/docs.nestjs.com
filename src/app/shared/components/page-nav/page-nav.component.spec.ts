@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { Component } from '@angular/core';
@@ -51,6 +52,7 @@ describe('PageNavComponent', () => {
     expect(fixture.componentInstance.next).toEqual({
       title: 'Workspaces',
       path: '/cli/monorepo',
+      section: 'CLI',
     });
     expect(links().length).toBe(2);
     expect(links()[1].textContent).toContain('Workspaces');
@@ -63,7 +65,27 @@ describe('PageNavComponent', () => {
     expect(links()[0].getAttribute('aria-label')).toBe(
       'Previous page: Standalone apps',
     );
-    expect(links()[1].getAttribute('aria-label')).toBe('Next page: Workspaces');
+    expect(links()[1].getAttribute('aria-label')).toBe(
+      'Next page: Workspaces, in CLI',
+    );
+  });
+
+  it('shows the chapter a link leads into', async () => {
+    await renderAt('/cli/overview');
+
+    // '/standalone-applications' is a top-level page, so it has no chapter to
+    // name; '/cli/monorepo' sits inside CLI.
+    expect(links()[0].querySelector('.page-nav__section')).toBeNull();
+    expect(
+      links()[1].querySelector('.page-nav__section').textContent.trim(),
+    ).toBe('CLI');
+  });
+
+  it('does not hide the direction label from screen readers twice', async () => {
+    await renderAt('/cli/overview');
+
+    // The aria-label on the anchor already replaces the whole subtree.
+    expect(links()[1].querySelector('[aria-hidden]')).toBeNull();
   });
 
   it('renders only a next link on the first page', async () => {
@@ -98,6 +120,20 @@ describe('PageNavComponent', () => {
     expect(fixture.componentInstance.next).toEqual({
       title: 'Workspaces',
       path: '/cli/monorepo',
+      section: 'CLI',
+    });
+  });
+
+  it('stops listening once destroyed', async () => {
+    await renderAt('/cli/overview');
+    fixture.destroy();
+
+    await router.navigateByUrl('/');
+
+    expect(fixture.componentInstance.next).toEqual({
+      title: 'Workspaces',
+      path: '/cli/monorepo',
+      section: 'CLI',
     });
   });
 });

@@ -59,6 +59,13 @@
   color: var(--color);
   line-height: 25px;
 
+  // The landmark is purely semantic: `.toc-wrapper` and `.content` are
+  // inline-block siblings in this block's inline flow, so a block-level <main>
+  // would drop the article below the TOC rail.
+  > main {
+    display: contents;
+  }
+
   a {
     font-weight: 600;
     color: var(--primary-3dp);

@@ -5,6 +5,7 @@ export interface NavItem {
   icon?: string;
   isNew?: boolean;
   isOpened?: boolean;
+  isPending?: boolean;
   children?: NavItem[];
 }
 
@@ -262,7 +263,6 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Mongoose', path: '/recipes/mongodb' },
       { title: 'Sequelize', path: '/recipes/sql-sequelize' },
       { title: 'Router module', path: '/recipes/router-module' },
-      { title: 'Swagger', path: '/recipes/swagger' },
       { title: 'Health checks', path: '/recipes/terminus' },
       { title: 'CQRS', path: '/recipes/cqrs' },
       { title: 'Compodoc', path: '/recipes/documentation' },
