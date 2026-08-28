@@ -273,7 +273,7 @@ One approach is to use a factory function:
 ```typescript
 CacheModule.registerAsync({
   useFactory: () => ({
-    ttl: 5,
+    ttl: 5000,
   }),
 });
 ```
@@ -305,7 +305,7 @@ The above construction will instantiate `CacheConfigService` inside `CacheModule
 class CacheConfigService implements CacheOptionsFactory {
   createCacheOptions(): CacheModuleOptions {
     return {
-      ttl: 5,
+      ttl: 5000,
     };
   }
 }
