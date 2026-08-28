@@ -5,7 +5,7 @@ import { resolve } from 'path';
 const argv = require('yargs').argv;
 const packagePaths = argv._;
 
-const packages = packagePaths.map((packagePath) => {
+const packages = packagePaths.map((packagePath: string) => {
   if (packagePath.indexOf('.') === 0) {
     packagePath = resolve(packagePath);
   }

@@ -11,6 +11,10 @@
     "sourceMap": true,
     "target": "es5",
     "lib": ["esnext"],
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "typeRoots": ["../node_modules/@types"],
+    "types": ["node"],
+    "strict": false,
+    "esModuleInterop": false
   }
 }

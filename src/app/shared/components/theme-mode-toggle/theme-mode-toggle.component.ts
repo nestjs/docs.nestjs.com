@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnInit, DOCUMENT } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 
 type Theme = 'light' | 'dark';
@@ -8,6 +8,7 @@ type Theme = 'light' | 'dark';
     templateUrl: './theme-mode-toggle.component.html',
     styleUrls: ['./theme-mode-toggle.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [],
 })
 export class ThemeModeToggleComponent implements OnInit {
