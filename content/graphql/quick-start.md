@@ -439,7 +439,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-In the **code first** approach, the `include` option only filters which modules are scanned for resolvers — types decorated with `@ObjectType()`, `@InputType()`, `@InterfaceType()`, `@ArgsType()`, or registered through `registerEnumType()` / `createUnionType()` are still included in every generated schema. To restrict a type to a specific module, set the `registerIn` option on the type:
+In the **code first** approach, the `include` option only determines which modules are scanned for resolvers. Types decorated with `@ObjectType()`, `@InputType()`, `@InterfaceType()`, `@ArgsType()`, or registered through `registerEnumType()` / `createUnionType()` still end up in every generated schema. To scope a type to a specific module, use the `registerIn` option:
 
 ```typescript
 @ObjectType({ registerIn: () => CatsModule })
@@ -449,9 +449,9 @@ export class Cat {
 }
 ```
 
-When the schema is built with `include: [CatsModule]`, types tagged with `registerIn: () => CatsModule` are included; types tagged with another module are excluded. Types **without** `registerIn` keep the existing default behavior and are available in every schema that references them.
+Now, when a schema is built with `include: [CatsModule]`, only types assigned to `CatsModule` become part of it, while types assigned to other modules are left out. Types without `registerIn` keep the default behavior and are available in every schema that references them.
 
-The same option is supported on `@InputType()`, `@InterfaceType()`, `@ArgsType()`, `registerEnumType()`, and `createUnionType()`:
+The `registerIn` option is available on `@InputType()`, `@InterfaceType()`, and `@ArgsType()`, as well as `registerEnumType()` and `createUnionType()`:
 
 ```typescript
 @InputType({ registerIn: () => CatsModule })
@@ -472,7 +472,7 @@ export const CatsUnion = createUnionType({
 });
 ```
 
-> info **Hint** `registerIn` accepts either a module class directly or a factory function returning the class. The factory form (`() => CatsModule`) is recommended when the type and module reference each other, since it defers module resolution and avoids temporal dead zone errors from circular imports.
+> info **Hint** You can pass either the module class itself or a factory function returning it. Prefer the factory form (`() => CatsModule`) whenever the type and the module reference each other, as it defers the module resolution and so avoids errors caused by circular imports.
 
 > warning **Warning** If you use the `@apollo/server` with `@as-integrations/fastify` package with multiple GraphQL endpoints in a single application, make sure to enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
 
