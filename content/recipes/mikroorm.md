@@ -15,9 +15,12 @@ $ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/sqlite
 
 MikroORM also supports `postgres`, `sqlite`, and `mongo`. See the [official docs](https://mikro-orm.io/docs/usage-with-sql/) for all drivers.
 
+> info **Hint** Since MikroORM v6, `EntityManager` and `EntityRepository` should be imported from your driver package (e.g. `@mikro-orm/sqlite`), while decorators and other types come from `@mikro-orm/core`. The `MikroOrmModule` itself is exported by `@mikro-orm/nestjs`. The snippets below include the relevant import statements.
+
 Once the installation process is completed, we can import the `MikroOrmModule` into the root `AppModule`.
 
 ```typescript
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { SqliteDriver } from '@mikro-orm/sqlite';
 
 @Module({
@@ -40,6 +43,8 @@ The `forRoot()` method accepts the same configuration object as `init()` from th
 Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) by creating a configuration file `mikro-orm.config.ts` and then call the `forRoot()` without any arguments.
 
 ```typescript
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+
 @Module({
   imports: [
     MikroOrmModule.forRoot(),
@@ -52,6 +57,7 @@ export class AppModule {}
 But this won't work when you use a build tools that use tree shaking, for that it is better to provide the config explicitly:
 
 ```typescript
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import config from './mikro-orm.config.js'; // your ORM config
 
 @Module({
@@ -89,6 +95,8 @@ MikroORM supports the repository design pattern. For every entity, we can create
 
 ```typescript
 // photo.module.ts
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+
 @Module({
   imports: [MikroOrmModule.forFeature([Photo])],
   providers: [PhotoService],
@@ -101,6 +109,8 @@ and import it into the root `AppModule`:
 
 ```typescript
 // app.module.ts
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+
 @Module({
   imports: [MikroOrmModule.forRoot(...), PhotoModule],
 })
@@ -110,6 +120,8 @@ export class AppModule {}
 In this way we can inject the `PhotoRepository` to the `PhotoService` using the `@InjectRepository()` decorator:
 
 ```typescript
+import { EntityRepository } from '@mikro-orm/sqlite'; // import from your driver package
+
 @Injectable()
 export class PhotoService {
   constructor(
@@ -126,6 +138,8 @@ decorator, as Nest DI resolved based on the class references.
 
 ```ts
 // `**./author.entity.ts**`
+import { Entity, EntityRepositoryType } from '@mikro-orm/core';
+
 @Entity({ repository: () => AuthorRepository })
 export class Author {
   // to allow inference in `em.getRepository()`
@@ -133,6 +147,8 @@ export class Author {
 }
 
 // `**./author.repository.ts**`
+import { EntityRepository } from '@mikro-orm/sqlite'; // import from your driver package
+
 export class AuthorRepository extends EntityRepository<Author> {
   // your custom methods...
 }
@@ -162,6 +178,8 @@ issue, an alternative solution is provided. To automatically load entities, set 
 method) to `true`, as shown below:
 
 ```ts
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+
 @Module({
   imports: [
     MikroOrmModule.forRoot({
@@ -192,6 +210,8 @@ object.
 Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/serializing) which can be used in lieu of `ClassSerializerInterceptor`.
 
 ```typescript
+import { Entity, Property, ManyToOne } from '@mikro-orm/core';
+
 @Entity()
 export class Book {
   @Property({ hidden: true }) // Equivalent of class-transformer's `@Exclude`
@@ -222,6 +242,8 @@ for you. Under the hood, the decorator will register new request context for you
 method and execute it inside the context.
 
 ```ts
+import { MikroORM, CreateRequestContext } from '@mikro-orm/core';
+
 @Injectable()
 export class MyService {
   constructor(private readonly orm: MikroORM) {}
@@ -240,6 +262,8 @@ export class MyService {
 The `@mikro-orm/nestjs` package exposes a `getRepositoryToken()` function that returns a prepared token based on a given entity, allowing you to mock the repository.
 
 ```typescript
+import { MikroOrmModule, getRepositoryToken } from '@mikro-orm/nestjs';
+
 @Module({
   providers: [
     PhotoService,
