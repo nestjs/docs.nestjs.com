@@ -205,7 +205,7 @@ export class CatsController {
 }
 ```
 
-It's that simple. Nest provides decorators for all of the standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head() and @QueryMethod()`. In addition, `@All()` defines an endpoint that handles all of them.
+It's that simple. Nest provides decorators for all of the standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head()`, and `@QueryMethod()` (which maps to the `QUERY` method and is named this way to avoid a clash with the `@Query()` parameter decorator). In addition, `@All()` defines an endpoint that handles all of them.
 
 #### Route wildcards
 
