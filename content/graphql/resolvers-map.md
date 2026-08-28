@@ -78,7 +78,7 @@ For example:
 title: string;
 ```
 
-> info **Hint** You can also add a description to, or deprecate, the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`.
+> info **Hint** You can also add a description to, or deprecate, the whole object type: `@ObjectType({{ '{' }} description: 'Author model' {{ '}' }})`. Likewise, if your application serves [multiple GraphQL endpoints](/graphql/quick-start#multiple-endpoints), you can scope a type to a specific module: `@ObjectType({{ '{' }} registerIn: () => AuthorsModule {{ '}' }})`.
 
 When the field is an array, we must manually indicate the array type in the `Field()` decorator's type function, as shown below:
 
