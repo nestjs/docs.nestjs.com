@@ -318,8 +318,6 @@ export class AuthMiddleware implements NestMiddleware {
 }
 ```
 
-> warning **Warning** If you throw inside a nested `.then()` / `.catch()` callback and **do not return** that Promise from `use()`, the rejection is unhandled and Nest will not generate a response. Prefer `async`/`await`.
-
 You can also pass the error to `next()`. This is useful when wrapping existing Express-style middleware that reports failures through the callback:
 
 ```typescript
@@ -331,8 +329,6 @@ use(req: Request, res: Response, next: NextFunction) {
 }
 ```
 
-> warning **Warning** Method-scoped and controller-scoped exception filters (applied with `@UseFilters()` on a controller or route handler) **do not** catch exceptions thrown from middleware. Middleware runs before the route handler is selected. To customize the response, register a **global** exception filter with `app.useGlobalFilters()` or the `APP_FILTER` token (see [Exception filters](/exception-filters#binding-filters)).
-
-> warning **Warning** Applying `@UseFilters()` to a middleware class has no effect. Bind custom filters globally instead.
+> warning **Warning** Since middleware runs before a route handler is selected, only **global** exception filters (registered with `app.useGlobalFilters()` or the `APP_FILTER` token) catch exceptions thrown from middleware. Method-scoped and controller-scoped filters are not invoked, and applying `@UseFilters()` to a middleware class has no effect.
 
 > info **Hint** Middleware registered with `app.use()` is handled by the underlying HTTP platform (Express or Fastify), not by Nest's `MiddlewareModule`. Prefer throwing (or calling `next(err)`) from middleware bound with `MiddlewareConsumer` so the exceptions layer can process the error.
