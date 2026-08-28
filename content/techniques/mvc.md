@@ -148,7 +148,7 @@ Next, create a `layouts` folder and add an `app.hbs` file with the following con
     <title>App</title>
   </head>
   <body>
-    {{{body}}}
+    {{ '{' }}{{ '{' }}{{ '{' }}body{{ '}' }}{{ '}' }}{{ '}' }}
   </body>
 </html>
 ```
@@ -156,7 +156,7 @@ Next, create a `layouts` folder and add an `app.hbs` file with the following con
 Then, update the `index.hbs` file to:
 
 ```html
-{{ message }}
+{{ "{{ message }\}" }}
 ```
 
 The resulting file structure looks as follows:
