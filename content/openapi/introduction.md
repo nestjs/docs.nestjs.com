@@ -45,6 +45,8 @@ await bootstrap();
 
 > info **Hint** The factory method `SwaggerModule.createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
 
+> warning **Warning** If you call `createDocument()` eagerly (rather than in a factory function, as shown above), make sure `app.enableVersioning()` runs first — otherwise the generated `paths` will be missing the version prefix. The factory pattern is unaffected, since the document is not built until it is first requested.
+
 The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow you to set properties such as title, description, and version. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
 
 Once we create a document, we can call the `setup()` method. It accepts:
