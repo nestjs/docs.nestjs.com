@@ -11,6 +11,7 @@ import { MicroservicesPipesComponent } from './pipes/pipes.component';
 import { RabbitMQComponent } from './rabbitmq/rabbitmq.component';
 import { KafkaComponent } from './kafka/kafka.component';
 import { RedisComponent } from './redis/redis.component';
+import { PreRequestHooksComponent } from './pre-request-hooks/pre-request-hooks.component';
 
 export const MICROSERVICES_ROUTES: Routes = [
   {
@@ -67,6 +68,11 @@ export const MICROSERVICES_ROUTES: Routes = [
     path: 'interceptors',
     component: MicroservicesInterceptorsComponent,
     data: { title: 'Interceptors - Microservices' },
+  },
+  {
+    path: 'pre-request-hooks',
+    component: PreRequestHooksComponent,
+    data: { title: 'Pre-request hooks - Microservices' },
   },
   {
     path: 'custom-transport',
