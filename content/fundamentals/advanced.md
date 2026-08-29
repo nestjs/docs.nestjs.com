@@ -98,4 +98,4 @@ This chapter is adapted from the [NestJS Metadata Deep Dive](https://trilon.io/b
 
 - All of this metadata is read back through the Reflect API, in the form `Reflect.getMetadata(metadataKey, classInstance, methodName)`, where `methodName` applies only to decorated methods such as controller route handlers or GraphQL resolvers.
 - `design:paramtypes` is only emitted when the `emitDecoratorMetadata` compiler option is enabled. This is why build tools such as `esbuild` need extra plugins to compile a Nest application correctly.
-- The decorators discussed above are the legacy `experimentalDecorators` ones, not the [ECMAScript decorators](https://github.com/tc39/proposal-decorators) supported from TypeScript 5 onwards. As of now, NestJS apps can't rely ECMAScript decorators due to few limitations they have.
+- The decorators discussed above are the legacy `experimentalDecorators` ones, not the [ECMAScript decorators](https://github.com/tc39/proposal-decorators) supported from TypeScript 5 onwards. As of now, NestJS apps can't rely on ECMAScript decorators due to a few limitations they have.
