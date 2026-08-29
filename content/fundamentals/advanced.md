@@ -92,4 +92,10 @@ There's a lot going on in the above snippet, so let's ignore the `__decorate` an
 
 What Nest will do when reading this metadata is match it up with the class or injection token that exists in the current module's provider list and use that provider in the proper location for the constructor. This is why it is very important to either use a class, or `@Inject()` on the right parameter, and why all decorators cannot be used wherever you want.
 
-> info **Hint** For a deeper walkthrough of how this metadata is emitted, stored, and read back by Nest, see the [NestJS Metadata Deep Dive](https://trilon.io/blog/nestjs-metadata-deep-dive) article.
+#### Learn more
+
+This chapter is adapted from the [NestJS Metadata Deep Dive](https://trilon.io/blog/nestjs-metadata-deep-dive) article, which covers a few points we glossed over here:
+
+- All of this metadata is read back through the Reflect API, in the form `Reflect.getMetadata(metadataKey, classInstance, methodName)`, where `methodName` applies only to decorated methods such as controller route handlers or GraphQL resolvers.
+- `design:paramtypes` is only emitted when the `emitDecoratorMetadata` compiler option is enabled. This is why build tools such as `esbuild` need extra plugins to compile a Nest application correctly.
+- The decorators discussed above are the legacy `experimentalDecorators` ones, not the [ECMAScript decorators](https://github.com/tc39/proposal-decorators) supported from TypeScript 5 onwards. As of now, NestJS apps can't rely ECMAScript decorators due to few limitations they have.
