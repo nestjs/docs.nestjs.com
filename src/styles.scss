@@ -658,6 +658,17 @@ tr td span.table-code-asterisk {
   outline-offset: -2px;
 }
 
+// DocSearch sets only `overflow-x: hidden` on the hit's content wrapper, which
+// makes the other axis compute to `auto` — so every result row is a scroll
+// container. Any sliver of vertical overflow then gives the row a scrollbar,
+// and since `scrollbar-color` is inherited from .DocSearch-Dropdown, its track
+// paints in --docsearch-modal-background: a small black square just left of the
+// ↵ icon, on the selected row too. Invisible under overlay scrollbars (macOS by
+// default), visible on Firefox wherever scrollbars take up layout space.
+.DocSearch-Hit-content-wrapper {
+  overflow: hidden;
+}
+
 // Scrollbar sidebar
 
 app-menu::-webkit-scrollbar {
