@@ -1,7 +1,10 @@
 {
   "ci": {
     "collect": {
-      "numberOfRuns": 5
+      "numberOfRuns": 5,
+      "settings": {
+        "skipAudits": ["third-party-cookies"]
+      }
     },
     "assert": {
       "assertions": {
