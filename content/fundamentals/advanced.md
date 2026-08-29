@@ -91,3 +91,5 @@ There's a lot going on in the above snippet, so let's ignore the `__decorate` an
 > info **Hint** When you use `@Inject('SomeString')` Nest will set `design:paramtypes` to `SomeString` for the position that you are decorating.
 
 What Nest will do when reading this metadata is match it up with the class or injection token that exists in the current module's provider list and use that provider in the proper location for the constructor. This is why it is very important to either use a class, or `@Inject()` on the right parameter, and why all decorators cannot be used wherever you want.
+
+> info **Hint** For a deeper walkthrough of how this metadata is emitted, stored, and read back by Nest, see the [NestJS Metadata Deep Dive](https://trilon.io/blog/nestjs-metadata-deep-dive) article.
