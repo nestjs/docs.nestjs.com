@@ -48,8 +48,9 @@ html:not([mode='light']) {
   --docsearch-searchbox-background: #1e1a1b;
   --docsearch-searchbox-focus-background: #1e1a1b;
   --docsearch-key-gradient: linear-gradient(#2a2526, #1e1a1b);
-  --docsearch-key-shadow: inset 0 -2px 0 0 #151112,
-    inset 0 0 1px 1px #363032, 0 1px 2px 1px rgba(0, 0, 0, 0.4);
+  --docsearch-key-shadow:
+    inset 0 -2px 0 0 #151112, inset 0 0 1px 1px #363032,
+    0 1px 2px 1px rgba(0, 0, 0, 0.4);
 
   ::-webkit-scrollbar {
     width: 10px;
@@ -347,7 +348,8 @@ blockquote {
 }
 
 blockquote {
-  code[class*=language-], pre[class*=language-] {
+  code[class*='language-'],
+  pre[class*='language-'] {
     margin: 20px 0;
   }
 
@@ -363,7 +365,8 @@ figure {
     margin: 60px 0;
   }
 
-  img, iframe {
+  img,
+  iframe {
     max-width: 100%;
     box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
   }
@@ -596,7 +599,9 @@ tr td span.table-code-asterisk {
     border-radius: var(--radius-btn);
     padding: 8px 16px;
     background: #e31d61;
-    transition: color 130ms ease, background-color 130ms ease,
+    transition:
+      color 130ms ease,
+      background-color 130ms ease,
       transform 130ms cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative;
 
@@ -611,7 +616,7 @@ tr td span.table-code-asterisk {
     }
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       border-radius: var(--radius-btn);
@@ -621,7 +626,7 @@ tr td span.table-code-asterisk {
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
-              mask-composite: exclude;
+      mask-composite: exclude;
       pointer-events: none;
       z-index: 2;
     }
@@ -682,4 +687,41 @@ app-menu:hover::-webkit-scrollbar-thumb {
 
 app-menu::-webkit-scrollbar-thumb:hover {
   -webkit-transition: #dedede 1s linear;
+}
+
+// Accessibility utilities.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Off-screen until focused, then pinned over the header.
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  padding: 10px 18px;
+  border-radius: var(--radius-btn);
+  background: var(--background-1dp);
+  color: var(--color-1dp);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  transform: translateY(calc(-100% - 16px));
+  transition: transform 150ms ease;
+
+  &:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid var(--primary-3dp);
+    outline-offset: 2px;
+  }
 }

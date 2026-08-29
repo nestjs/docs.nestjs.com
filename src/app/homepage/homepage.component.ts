@@ -10,7 +10,12 @@ import {
   Renderer2,
   ViewEncapsulation,
 } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet, RouterLink } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterOutlet,
+  RouterLink,
+} from '@angular/router';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -20,6 +25,7 @@ import { MenuComponent } from './menu/menu.component';
 import { TocComponent } from '../shared/components/toc/toc.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
 import { FooterComponent } from './footer/footer.component';
+import { PageNavComponent } from '../shared/components/page-nav/page-nav.component';
 
 const CARBON_WIDTH_BREAKPOINT = 1200;
 
@@ -38,6 +44,7 @@ const CARBON_WIDTH_BREAKPOINT = 1200;
     RouterLink,
     NewsletterComponent,
     FooterComponent,
+    PageNavComponent,
   ],
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -45,7 +52,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   public previousWidth: number;
   public contentRef: HTMLElement;
   public isMarkupReady: boolean;
+  public routeAnnouncement = '';
   private scrollSubscription: Subscription;
+  private isInitialRoute = true;
   private readonly scrollDebounceTime = 100;
 
   constructor(
@@ -101,7 +110,8 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.previousWidth === innerWidth) {
       return;
     }
-    const wasMobile = this.previousWidth !== undefined && this.previousWidth <= 768;
+    const wasMobile =
+      this.previousWidth !== undefined && this.previousWidth <= 768;
     this.previousWidth = innerWidth;
     if (innerWidth <= 768) {
       this.isSidebarOpened = false;
@@ -174,11 +184,45 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contentRef.prepend(carbonWrapper);
     }
 
+    // The pager lives outside the router outlet, so the link the reader just
+    // activated survives the navigation and keeps focus at the bottom of the new
+    // page. Move focus into the article instead, and say where we landed.
+    if (this.isInitialRoute) {
+      this.isInitialRoute = false;
+    } else {
+      this.focusContent();
+      this.routeAnnouncement = this.readPageTitle();
+    }
+
     this.cd.markForCheck();
 
     // Schedule check as TOC might not be rendered yet
     const adOverlapCheckDelay = 300;
     setTimeout(() => this.hideAdIfTocOverflow(), adOverlapCheckDelay);
+  }
+
+  public skipToContent(event: Event): void {
+    event.preventDefault();
+    this.focusContent({ preventScroll: false });
+  }
+
+  /**
+   * Focus lands on `.content` rather than the <main> wrapper: <main> is
+   * `display: contents` so it has no box of its own to scroll to.
+   * `scrollPositionRestoration` has already put us at the top of the page, so
+   * focusing must not scroll again.
+   */
+  private focusContent(options: FocusOptions = { preventScroll: true }): void {
+    if (!this.contentRef) {
+      return;
+    }
+    this.renderer.setAttribute(this.contentRef, 'tabindex', '-1');
+    this.contentRef.focus(options);
+  }
+
+  private readPageTitle(): string {
+    const heading = this.contentRef?.querySelector('h3');
+    return heading?.textContent?.trim() || document.title;
   }
 
   public createCarbonScriptTag(): HTMLScriptElement {
