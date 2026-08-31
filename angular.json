@@ -31,7 +31,10 @@
               "src/apple-touch-icon-precomposed.png",
               "src/browserconfig.xml",
               "src/mstile-150x150.png",
-              "src/_redirects"
+              "src/_redirects",
+              "src/llms.txt",
+              "src/llms-full.txt",
+              "src/robots.txt"
             ],
             "styles": [
               "src/styles.scss"

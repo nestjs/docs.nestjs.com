@@ -1,0 +1,9 @@
+# https://docs.nestjs.com
+
+User-agent: *
+Allow: /
+
+# Machine-readable index of the documentation (https://llmstxt.org).
+# The docs are a client-rendered single-page application, so this file is the
+# reliable entry point for crawlers that do not execute JavaScript.
+Sitemap: https://docs.nestjs.com/llms.txt
