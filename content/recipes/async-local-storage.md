@@ -8,11 +8,13 @@ In the context of NestJS, that means if we can find a place within the request's
 
 Alternatively, we can use ALS to propagate context for only a part of the system (for example the _transaction_ object) without passing it around explicitly across services, which can increase isolation and encapsulation.
 
+If your application is instrumented with [NestJS Observe](/observability/overview), you already have a request-scoped store and don't need to build one - see [below](/recipes/async-local-storage#nestjs-observe).
+
 #### Custom implementation
 
 NestJS itself does not provide any built-in abstraction for `AsyncLocalStorage`, so let's walk through how we could implement it ourselves for the simplest HTTP case to get a better understanding of the whole concept:
 
-> info **Info** For a ready-made [dedicated package](recipes/async-local-storage#nestjs-cls), continue reading below.
+> info **Info** For ready-made solutions - [`@nestjs/observe`](/recipes/async-local-storage#nestjs-observe) and the [`nestjs-cls`](/recipes/async-local-storage#nestjs-cls) package - continue reading below.
 
 1. First, create a new instance of the `AsyncLocalStorage` in some shared source file. Since we're using NestJS, let's also turn it into a module with a custom provider.
 
@@ -135,6 +137,96 @@ export class CatsService {
 
 > warning **Warning** Please be aware that while the technique is useful for many use-cases, it inherently obfuscates the code flow (creating implicit context), so use it responsibly and especially avoid creating contextual "[God objects](https://en.wikipedia.org/wiki/God_object)".
 
+### NestJS Observe
+
+If you run [NestJS Observe](/observability/overview), the `@nestjs/observe` SDK already maintains an `AsyncLocalStorage` store for every request, job, and message it instruments - it is what carries the trace context through your call stack. `TracerService` exposes that store, so request-scoped state is something you read and write rather than something you have to set up: no module to write, no middleware to mount, and nothing to re-wire per transport.
+
+> info **Hint** This is the same `TracerService` documented in [Manual instrumentation](/observability/manual-instrumentation). This section covers only the async-local-storage side of it - spans, handled errors, and custom metrics are described there.
+
+#### Setup
+
+There is nothing to add beyond the standard SDK integration described in [Observability → SDK](/observability/sdk): install the package, import `ObserveModule.forRoot()`, and pass `ObserveInstrument` to `NestFactory.create()`.
+
+```bash
+$ npm i @nestjs/observe
+```
+
+`ObserveModule` exports `TracerService`, so it is injectable anywhere in your application:
+
+```ts
+@@filename(cats.service)
+import { Injectable } from '@nestjs/common';
+import { TracerService } from '@nestjs/observe';
+
+@Injectable()
+export class CatsService {
+  constructor(private readonly tracerService: TracerService) {}
+}
+```
+
+#### Reading and writing the store
+
+`setAttribute(key, value)` writes into the current context store, and `getAttribute(key)` reads it back from anywhere downstream on the same request - a different service, a guard, an interceptor - without threading the value through every function signature:
+
+```ts
+@@filename(cats.controller)
+@Get()
+findAll(@Req() req: Request) {
+  this.tracerService.setAttribute('userId', req.headers['x-user-id']);
+  return this.catsService.getCatForUser();
+}
+```
+
+```ts
+@@filename(cats.service)
+@Injectable()
+export class CatsService {
+  constructor(
+    private readonly tracerService: TracerService,
+    private readonly catsRepository: CatsRepository,
+  ) {}
+
+  getCatForUser() {
+    const userId = this.tracerService.getAttribute('userId');
+    return this.catsRepository.getForUser(userId);
+  }
+}
+```
+
+`getAttribute()` returns `undefined` for a key that was never set. Both methods throw when called outside a traced context, since there is no store to read from or write to - if you need a value that may legitimately be read before any request exists, guard the call accordingly.
+
+#### Typing the store
+
+Pass the shape of your store as `TracerService`'s first type argument to have keys and values checked, including nested paths:
+
+```ts
+interface RequestStore {
+  userId: number;
+  flags: { betaCheckout: boolean };
+}
+
+@Injectable()
+export class CatsService {
+  constructor(private readonly tracerService: TracerService<RequestStore>) {}
+
+  enableBeta() {
+    this.tracerService.setAttribute('flags.betaCheckout', true);
+  }
+}
+```
+
+#### Beyond HTTP
+
+Because the store is created by the instrumentation rather than by a middleware, it exists wherever the SDK traces an operation - HTTP and GraphQL requests, gRPC and `@nestjs/microservices` messages, and background work such as BullMQ consumers and cron runs. The pattern above is identical in all of them, which is the practical difference from a hand-rolled middleware-based implementation that only covers HTTP.
+
+The store also holds the current trace id, so it doubles as the correlation key for logs and downstream services. `currentTraceId()` returns it, and unlike `getAttribute()` it returns `null` outside a traced context instead of throwing:
+
+```ts
+const traceId = this.tracerService.currentTraceId();
+```
+
+> info **Hint** `ObserveModule` also exports the underlying `AsyncLocalStorage` instance. `setAttribute()`/`getAttribute()` are the supported way to reach the store; inject it directly only if you need something they don't expose.
+
 ### NestJS CLS
 
 The [nestjs-cls](https://github.com/Papooch/nestjs-cls) package provides several DX improvements over using plain `AsyncLocalStorage` (`CLS` is an abbreviation of the term _continuation-local storage_). It abstracts the implementation into a `ClsModule` that offers various ways of initializing the `store` for different transports (not only HTTP), as well as a strong-typing support.
@@ -153,7 +245,7 @@ npm i nestjs-cls
 
 #### Usage
 
-A similar functionality as described [above](recipes/async-local-storage#custom-implementation) can be implemented using `nestjs-cls` as follows:
+A similar functionality as described [above](/recipes/async-local-storage#custom-implementation) can be implemented using `nestjs-cls` as follows:
 
 1. Import the `ClsModule` in the root module.
 

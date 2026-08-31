@@ -1,23 +1,16 @@
 import { Routes } from '@angular/router';
 import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
-import { DocumentationComponent } from './documentation/documentation.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { MikroOrmComponent } from './mikroorm/mikroorm.component';
-import { MongodbComponent } from './mongodb/mongodb.component';
 import { PrismaComponent } from './prisma/prisma.component';
 import { ReplComponent } from './repl/repl.component';
-import { SentryComponent } from './sentry/sentry.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
-import { SqlSequelizeComponent } from './sql-sequelize/sql-sequelize.component';
-import { SqlTypeormComponent } from './sql-typeorm/sql-typeorm.component';
 import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
-import { SuitesComponent } from './suites/suites.component';
 import { SwcComponent } from './swc/swc.component';
-import { NecordComponent } from './necord/necord.component';
 import { PassportComponent } from './passport/passport.component';
 
 export const RECIPES_ROUTES: Routes = [
@@ -27,29 +20,9 @@ export const RECIPES_ROUTES: Routes = [
     data: { title: 'MikroORM' },
   },
   {
-    path: 'sql-typeorm',
-    component: SqlTypeormComponent,
-    data: { title: 'SQL (TypeORM)' },
-  },
-  {
-    path: 'mongodb',
-    component: MongodbComponent,
-    data: { title: 'MongoDB (Mongoose)' },
-  },
-  {
-    path: 'sql-sequelize',
-    component: SqlSequelizeComponent,
-    data: { title: 'SQL (Sequelize)' },
-  },
-  {
     path: 'cqrs',
     component: CqrsComponent,
     data: { title: 'CQRS' },
-  },
-  {
-    path: 'sentry',
-    component: SentryComponent,
-    data: { title: 'Sentry' },
   },
   {
     path: 'swagger',
@@ -64,11 +37,6 @@ export const RECIPES_ROUTES: Routes = [
     path: 'terminus',
     component: TerminusComponent,
     data: { title: 'Health checks (Terminus)' },
-  },
-  {
-    path: 'documentation',
-    component: DocumentationComponent,
-    data: { title: 'Documentation (Compodoc)' },
   },
   {
     path: 'crud-utilities',
@@ -117,20 +85,6 @@ export const RECIPES_ROUTES: Routes = [
     path: 'swc',
     component: SwcComponent,
     data: { title: 'SWC (fast compiler)' },
-  },
-  {
-    path: 'automock',
-    redirectTo: '/recipes/suites',
-  },
-  {
-    path: 'suites',
-    component: SuitesComponent,
-    data: { title: 'Suites (Automock)' },
-  },
-  {
-    path: 'necord',
-    component: NecordComponent,
-    data: { title: 'Necord' },
   },
   {
     path: 'passport',
