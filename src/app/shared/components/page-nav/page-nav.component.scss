@@ -1,0 +1,145 @@
+@use '../../../../scss/utils.scss';
+
+:host {
+  display: block;
+}
+
+// Everything stays nested under .page-nav: the host page renders with
+// ViewEncapsulation.None and styles `.page-wrapper a` globally, so these rules
+// have to be both specific enough to win and narrow enough not to leak.
+.page-nav {
+  // Mirrors `.content` in homepage.component.scss so the pager lines up with the
+  // prose above it instead of running under the fixed TOC rail.
+  width: calc(100% - 220px);
+  max-width: 860px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 16px;
+  // No bottom margin: the sponsors block below draws its own rule.
+  margin: 56px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+
+  @include utils.media(large) {
+    width: 100%;
+  }
+
+  @media print {
+    display: none;
+  }
+
+  &__spacer {
+    // Keeps a lone "next" link pinned to the right on the first page, and a
+    // lone "previous" link to the left on the last one.
+    flex: 1 1 0;
+  }
+
+  &__link {
+    flex: 1 1 0;
+    // Flex items default to min-width:auto, which lets a long title push the
+    // card past its share of the row.
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 18px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: var(--background-1dp);
+    text-decoration: none;
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      transform 150ms ease;
+
+    &:hover {
+      border-color: var(--primary-3dp);
+      background: var(--hover-surface);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-3dp);
+      outline-offset: 2px;
+    }
+
+    &--prev {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    &--next {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  &__label {
+    font-size: 11.5px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    // Matches `.toc-label`. Kept above 0.75 opacity-equivalent so the 11.5px
+    // uppercase text clears WCAG AA against --background-1dp in both themes.
+    color: color-mix(in srgb, var(--color) 80%, transparent);
+  }
+
+  &__section {
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--color) 80%, transparent);
+    overflow-wrap: anywhere;
+  }
+
+  &__title {
+    font-size: 15px;
+    line-height: 1.35;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    // Wins over the `.page-wrapper a` / `.content a` colour rules set globally
+    // by the homepage component.
+    color: var(--color-1dp);
+    -webkit-text-fill-color: var(--color-1dp);
+    transition:
+      color 150ms ease,
+      -webkit-text-fill-color 150ms ease;
+  }
+
+  &__link:hover &__title {
+    color: var(--primary-3dp);
+    -webkit-text-fill-color: var(--primary-3dp);
+  }
+
+  // The arrows sit on the label, which is always a single line, so a wrapping
+  // title cannot leave them stranded beside a ragged first line.
+  &__link--prev &__label::before {
+    content: '←';
+    margin-right: 6px;
+  }
+
+  &__link--next &__label::after {
+    content: '→';
+    margin-left: 6px;
+  }
+
+  @include utils.media(medium) {
+    flex-direction: column;
+    margin-top: 40px;
+
+    &__spacer {
+      display: none;
+    }
+
+    &__link {
+      width: 100%;
+    }
+  }
+}

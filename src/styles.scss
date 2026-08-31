@@ -48,8 +48,9 @@ html:not([mode='light']) {
   --docsearch-searchbox-background: #1e1a1b;
   --docsearch-searchbox-focus-background: #1e1a1b;
   --docsearch-key-gradient: linear-gradient(#2a2526, #1e1a1b);
-  --docsearch-key-shadow: inset 0 -2px 0 0 #151112,
-    inset 0 0 1px 1px #363032, 0 1px 2px 1px rgba(0, 0, 0, 0.4);
+  --docsearch-key-shadow:
+    inset 0 -2px 0 0 #151112, inset 0 0 1px 1px #363032,
+    0 1px 2px 1px rgba(0, 0, 0, 0.4);
 
   ::-webkit-scrollbar {
     width: 10px;
@@ -194,10 +195,11 @@ body::after {
 }
 
 // Visible keyboard-focus ring; mouse clicks don't trigger :focus-visible.
+// No border-radius here: the outline already follows the element's own
+// corners, and setting it would reshape the focused element itself.
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
 // Registered so the conic gradient's angle can be interpolated; without
@@ -346,7 +348,8 @@ blockquote {
 }
 
 blockquote {
-  code[class*=language-], pre[class*=language-] {
+  code[class*='language-'],
+  pre[class*='language-'] {
     margin: 20px 0;
   }
 
@@ -362,7 +365,8 @@ figure {
     margin: 60px 0;
   }
 
-  img, iframe {
+  img,
+  iframe {
     max-width: 100%;
     box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.08);
   }
@@ -595,7 +599,9 @@ tr td span.table-code-asterisk {
     border-radius: var(--radius-btn);
     padding: 8px 16px;
     background: #e31d61;
-    transition: color 130ms ease, background-color 130ms ease,
+    transition:
+      color 130ms ease,
+      background-color 130ms ease,
       transform 130ms cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative;
 
@@ -610,7 +616,7 @@ tr td span.table-code-asterisk {
     }
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       border-radius: var(--radius-btn);
@@ -620,7 +626,7 @@ tr td span.table-code-asterisk {
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
-              mask-composite: exclude;
+      mask-composite: exclude;
       pointer-events: none;
       z-index: 2;
     }
@@ -637,6 +643,37 @@ tr td span.table-code-asterisk {
   background: rgba(0, 0, 0, 0.6);
 }
 
+// DocSearch autofocuses its input on open, and browsers always match
+// :focus-visible on text inputs, so the global ring landed on the bare input:
+// a squared-off box floating 2px outside the text field, splitting the form in
+// two and leaving the magnifier icon stranded outside it. Keep the accent ring
+// but move it to the form, so it wraps icon and input alike and follows the
+// form's own corners. The negative offset tucks it flush inside the edge,
+// where the modal can't clip it.
+.DocSearch-Form {
+  border-radius: var(--radius-sm);
+}
+
+.DocSearch-Input:focus-visible {
+  outline: none;
+}
+
+.DocSearch-Form:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+// DocSearch sets only `overflow-x: hidden` on the hit's content wrapper, which
+// makes the other axis compute to `auto` — so every result row is a scroll
+// container. Any sliver of vertical overflow then gives the row a scrollbar,
+// and since `scrollbar-color` is inherited from .DocSearch-Dropdown, its track
+// paints in --docsearch-modal-background: a small black square just left of the
+// ↵ icon, on the selected row too. Invisible under overlay scrollbars (macOS by
+// default), visible on Firefox wherever scrollbars take up layout space.
+.DocSearch-Hit-content-wrapper {
+  overflow: hidden;
+}
+
 // Scrollbar sidebar
 
 app-menu::-webkit-scrollbar {
@@ -650,4 +687,41 @@ app-menu:hover::-webkit-scrollbar-thumb {
 
 app-menu::-webkit-scrollbar-thumb:hover {
   -webkit-transition: #dedede 1s linear;
+}
+
+// Accessibility utilities.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Off-screen until focused, then pinned over the header.
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  padding: 10px 18px;
+  border-radius: var(--radius-btn);
+  background: var(--background-1dp);
+  color: var(--color-1dp);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  transform: translateY(calc(-100% - 16px));
+  transition: transform 150ms ease;
+
+  &:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid var(--primary-3dp);
+    outline-offset: 2px;
+  }
 }

@@ -1,0 +1,34 @@
+@if (prev || next) {
+  <nav class="page-nav" aria-label="Article navigation">
+    @if (prev) {
+      <a
+        class="page-nav__link page-nav__link--prev"
+        [routerLink]="prev.path"
+        [attr.aria-label]="prevLabel"
+      >
+        <span class="page-nav__label">Previous</span>
+        @if (prev.section) {
+          <span class="page-nav__section">{{ prev.section }}</span>
+        }
+        <span class="page-nav__title">{{ prev.title }}</span>
+      </a>
+    } @else {
+      <span class="page-nav__spacer"></span>
+    }
+    @if (next) {
+      <a
+        class="page-nav__link page-nav__link--next"
+        [routerLink]="next.path"
+        [attr.aria-label]="nextLabel"
+      >
+        <span class="page-nav__label">Next</span>
+        @if (next.section) {
+          <span class="page-nav__section">{{ next.section }}</span>
+        }
+        <span class="page-nav__title">{{ next.title }}</span>
+      </a>
+    } @else {
+      <span class="page-nav__spacer"></span>
+    }
+  </nav>
+}
