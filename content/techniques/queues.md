@@ -315,7 +315,7 @@ export class AudioConsumer {
 }
 ```
 
-You can see the complete list of events and their arguments as properties of WorkerListener [here](https://api.docs.bullmq.io/interfaces/v4.WorkerListener.html).
+You can see the complete list of events and their arguments as properties of WorkerListener [here](https://docs.bullmq.io/api/interfaces/v6.WorkerListener.html).
 
 QueueEvent listeners must use the `@QueueEventsListener(queue)` decorator and extend the `QueueEventsHost` class provided by `@nestjs/bullmq`. To listen for an event, use the `@OnQueueEvent(event)` decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
