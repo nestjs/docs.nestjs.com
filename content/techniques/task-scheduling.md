@@ -415,6 +415,16 @@ getTimeouts() {
 }
 ```
 
+#### Knowing a cron job actually ran
+
+A scheduled job that throws is a problem you will hear about. A scheduled job that silently *stops being scheduled* - the process crashed, the container was descheduled, a deploy shipped a `@Cron()` expression with a typo - is a problem nobody hears about until the report it generates is missing.
+
+This is the failure mode cron monitoring exists for, and [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') covers it without a third-party ping service or a heartbeat URL for the job to curl on its way out. Scheduled runs are reported as **jobs**, alongside queue consumers - each with its duration, outcome, and failure reason - and a **job silence** alert rule fires when a named job hasn't reported within a tolerance you set, anywhere from 2 minutes to 7 days - *"alert me if `daily-invoices` has not reported in the last 26 hours"*.
+
+Two details make this practical rather than noisy. A scope that has never reported anything doesn't fire, so you can add the rule before the job ships without being paged for something that isn't integrated yet. And rules carry a recurring mute schedule, so a job that legitimately doesn't run at weekends doesn't wake anyone on Saturday.
+
+A handler that needs to report its own progress can inject `TracerService` and record spans or custom metrics from inside the run - metrics in particular aren't tied to a trace, so they can be reported from cron jobs and lifecycle hooks alike. See [Manual instrumentation](/observability/manual-instrumentation) for that, and the [Observability](/observability/overview) chapter for setup.
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/27-scheduling).

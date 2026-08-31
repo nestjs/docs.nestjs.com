@@ -74,7 +74,7 @@ async stream(): Promise<Observable<MessageEvent>> {
 }
 ```
 
-There is a gap here. If the client disconnects **while the promise is still resolving**, the returned `Observable` is never subscribed — Nest will not start a producer whose consumer has already gone away. That is the right behaviour for the stream, but it means the `Observable`'s teardown logic never runs, and anything allocated during setup (the `session` above) is leaked.
+There is a gap here. If the client disconnects **while the promise is still resolving**, the returned `Observable` is never subscribed — Nest will not start a producer whose consumer has already gone away. That is the right behavior for the stream, but it means the `Observable`'s teardown logic never runs, and anything allocated during setup (the `session` above) is leaked.
 
 To close that gap, inject the request's `AbortSignal` with the `@SseSignal()` decorator:
 
@@ -118,7 +118,7 @@ This makes the signal a single cleanup hook for the whole request. Rather than d
 ```typescript
 @Sse('stream')
 async stream(@SseSignal() signal: AbortSignal): Promise<Observable<MessageEvent>> {
-  // The signal aborts when the response ends, so the fetch is cancelled whether
+  // The signal aborts when the response ends, so the fetch is canceled whether
   // the client disconnected or the stream simply finished.
   const upstream = await fetch(UPSTREAM_URL, { signal });
 

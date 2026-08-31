@@ -10,7 +10,7 @@ In the previous chapter, we created a simple `CatsController`. Controllers shoul
 
 #### Services
 
-Let's begin by creating a simple `CatsService`. This service will handle data storage and retrieval, and it will be used by the `CatsController`. Because of its role in managing the application's logic, it’s an ideal candidate to be defined as a provider.
+Let's begin by creating a simple `CatsService`. This service will handle data storage and retrieval, and it will be used by the `CatsController`. Because of its role in managing the application's logic, it's an ideal candidate to be defined as a provider.
 
 ```typescript
 @@filename(cats.service)
@@ -52,7 +52,7 @@ export class CatsService {
 
 Our `CatsService` is a basic class with one property and two methods. The key addition here is the `@Injectable()` decorator. This decorator attaches metadata to the class, signaling that `CatsService` is a class that can be managed by the Nest [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) container.
 
-Additionally, this example makes use of a `Cat` interface, which likely looks something like this:
+Additionally, this example makes use of a `Cat` interface, which looks like this:
 
 ```typescript
 @@filename(interfaces/cat.interface)
@@ -110,7 +110,7 @@ export class CatsController {
 }
 ```
 
-The `CatsService` is **injected** through the class constructor. Notice the use of the `private` keyword. This shorthand allows us to both declare and initialize the `catsService` member in the same line, streamlining the process.
+The `CatsService` is **injected** through the class constructor. Note the `private` keyword: it is TypeScript shorthand that declares and initializes the `catsService` member in the same line. The next section looks at what Nest does with that declaration.
 
 #### Dependency injection
 
@@ -122,15 +122,19 @@ In Nest, thanks to TypeScript's capabilities, managing dependencies is straightf
 constructor(private catsService: CatsService) {}
 ```
 
+Two things are happening in that single line. The `private` keyword is a TypeScript **parameter property**: it declares a `catsService` member on the class and assigns the constructor argument to it, so you don't have to write `this.catsService = catsService` yourself. The type annotation `CatsService` is what Nest actually resolves against - at compile time, TypeScript emits the constructor's parameter types as metadata, and the container reads that metadata to work out which provider to supply.
+
+> warning **Warning** Because resolution is driven by the emitted type, the annotation has to be something that still exists at runtime - that is, a **class**. An interface or a type alias is erased during compilation, so `constructor(private config: AppConfig)` where `AppConfig` is an interface leaves Nest with nothing to look up, and you'll see a *"Nest can't resolve dependencies"* error at startup. When you need to inject something that isn't a class, give it a token and inject it explicitly with `@Inject()` - see [Custom providers](/fundamentals/custom-providers).
+
 #### Scopes
 
-Providers typically have a lifetime ("scope") that aligns with the application lifecycle. When the application is bootstrapped, each dependency must be resolved, meaning every provider gets instantiated. Similarly, when the application shuts down, all providers are destroyed. However, it’s also possible to make a provider **request-scoped**, meaning its lifetime is tied to a specific request rather than the application's lifecycle. You can learn more about these techniques in the [Injection Scopes](/fundamentals/injection-scopes) chapter.
+Providers typically have a lifetime ("scope") that aligns with the application lifecycle. When the application is bootstrapped, each dependency must be resolved, meaning every provider gets instantiated. Similarly, when the application shuts down, all providers are destroyed. However, it's also possible to make a provider **request-scoped**, meaning its lifetime is tied to a specific request rather than the application's lifecycle. You can learn more about these techniques in the [Injection Scopes](/fundamentals/injection-scopes) chapter.
 
 <app-banner-courses></app-banner-courses>
 
 #### Custom providers
 
-Nest comes with a built-in inversion of control ("IoC") container that manages the relationships between providers. This feature is the foundation of dependency injection, but it’s actually much more powerful than we've covered so far. There are several ways to define a provider: you can use plain values, classes, and both asynchronous or synchronous factories. For more examples of defining providers, check out the [Dependency Injection](/fundamentals/dependency-injection) chapter.
+Nest comes with a built-in inversion of control ("IoC") container that manages the relationships between providers. This feature is the foundation of dependency injection, but it's actually much more powerful than we've covered so far. There are several ways to define a provider: you can use plain values, classes, and both asynchronous or synchronous factories. For more examples of defining providers, check out the [Dependency Injection](/fundamentals/dependency-injection) chapter.
 
 #### Optional providers
 
@@ -148,6 +152,8 @@ export class HttpService<T> {
 ```
 
 In the example above, we're using a custom provider, which is why we include the `HTTP_OPTIONS` custom **token**. Previous examples demonstrated constructor-based injection, where a dependency is indicated through a class in the constructor. For more details on custom providers and how their associated tokens work, check out the [Custom Providers](/fundamentals/custom-providers) chapter.
+
+Note that `@Optional()` changes what happens when the provider is *missing*, not what you receive when it is present: if nothing is registered under `HTTP_OPTIONS`, Nest injects `undefined` instead of failing to start. That means the class is responsible for the fallback - typically by merging what it was given over a set of defaults, rather than assuming the value is there.
 
 #### Property-based injection
 

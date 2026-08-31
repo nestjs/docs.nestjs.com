@@ -113,7 +113,7 @@ Microservices recognize both messages and events by **patterns**. A pattern is a
 
 The request-response message style is useful when you need to **exchange** messages between various external services. This paradigm ensures that the service has actually received the message (without requiring you to manually implement an acknowledgment protocol). However, the request-response approach may not always be the best fit. For example, streaming transporters, such as [Kafka](https://docs.confluent.io/3.0.0/streams/) or [NATS streaming](https://github.com/nats-io/node-nats-streaming), which use log-based persistence, are optimized for addressing a different set of challenges, more aligned with the event messaging paradigm (see [event-based messaging](https://docs.nestjs.com/microservices/basics#event-based) for more details).
 
-To enable the request-response message type, Nest creates two logical channels: one for transferring data and another for waiting for incoming responses. For some underlying transports, like [NATS](https://nats.io/), this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels. While this is effective, it can introduce some overhead. Therefore, if you don’t require a request-response message style, you may want to consider using the event-based method.
+To enable the request-response message type, Nest creates two logical channels: one for transferring data and another for waiting for incoming responses. For some underlying transports, like [NATS](https://nats.io/), this dual-channel support is provided out-of-the-box. For others, Nest compensates by manually creating separate channels. While this is effective, it can introduce some overhead. Therefore, if you don't require a request-response message style, you may want to consider using the event-based method.
 
 To create a message handler based on the request-response paradigm, use the `@MessagePattern()` decorator, which is imported from the `@nestjs/microservices` package. This decorator should only be used within [controller](https://docs.nestjs.com/controllers) classes, as they serve as the entry points for your application. Using it in providers will have no effect, as they will be ignored by the Nest runtime.
 
@@ -394,7 +394,7 @@ The `data` property is the message payload sent by the message producer. The `pa
 
 #### Instance status updates
 
-To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For instance, if you’re using the TCP transporter (the default), the `status` stream emits `connected` and `disconnected` events.
+To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For instance, if you're using the TCP transporter (the default), the `status` stream emits `connected` and `disconnected` events.
 
 ```typescript
 this.client.status.subscribe((status: TcpStatus) => {
@@ -472,9 +472,21 @@ this.client
 
 After 5 seconds, if the microservice isn't responding, it will throw an error.
 
+#### Tracing a request across services
+
+Timeouts tell you that a call failed to come back in time. They don't tell you *where* the time went - and in a system of five services talking over TCP, NATS, and Kafka, that is the only question worth asking. A gateway request that takes 3 seconds might be spending 2.9 of them in a downstream service that nobody suspected, and each service's own logs will insist, individually, that everything looked fine.
+
+The usual fix is to propagate a correlation id by hand through every transport, then stitch the timelines back together after the fact. [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') does that stitching for you: instrument each service with the `@nestjs/observe` SDK and forward the trace id on whatever channel the transport already has - a Kafka header, a NATS header, a field on the TCP payload - and the dashboard reassembles one waterfall spanning every service that participated:
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.webp" alt="Trace correlation across services" /></figure>
+
+From there the timeout stops being a mystery. You can see the gateway's `send()` waiting, the consumer picking the message up (and how long it sat before it did), the query inside it that ran long, and the error it eventually threw, with its source lines - all on one clock. Message and event handlers are instrumented automatically, so `@MessagePattern()` and `@EventPattern()` handlers show up as operations without any manual span wiring.
+
+Forwarding the trace id is the one piece that is application code, because only you know which channel your transport leaves free. See [Distributed tracing](/observability/distributed-tracing) for the pattern per transport, and the [Observability](/observability/overview) chapter to get set up.
+
 #### TLS support
 
-When communicating outside of a private network, it’s important to encrypt traffic to ensure security. In NestJS, this can be achieved with TLS over TCP using Node's built-in [TLS](https://nodejs.org/api/tls.html) module. Nest provides built-in support for TLS in its TCP transport, allowing us to encrypt communication between microservices or clients.
+When communicating outside of a private network, it's important to encrypt traffic to ensure security. In NestJS, this can be achieved with TLS over TCP using Node's built-in [TLS](https://nodejs.org/api/tls.html) module. Nest provides built-in support for TLS in its TCP transport, allowing us to encrypt communication between microservices or clients.
 
 To enable TLS for a TCP server, you'll need both a private key and a certificate in PEM format. These are added to the server's options by setting the `tlsOptions` and specifying the key and cert files, as shown below:
 
@@ -534,7 +546,7 @@ You can also pass an array of CAs if your setup involves multiple trusted author
 
 Once everything is set up, you can inject the `ClientProxy` as usual using the `@Inject()` decorator to use the client in your services. This ensures encrypted communication across your NestJS microservices, with Node's `TLS` module handling the encryption details.
 
-For more information, refer to Node’s [TLS documentation](https://nodejs.org/api/tls.html).
+For more information, refer to Node's [TLS documentation](https://nodejs.org/api/tls.html).
 
 #### Dynamic configuration
 

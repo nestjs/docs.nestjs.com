@@ -63,9 +63,9 @@ To run your NestJS application in production, just use the following command:
 $ node dist/main.js # Adjust this based on your entry point location
 ```
 
-This command starts your application, which will listen on the specified port (usually `3000` by default). Ensure that this matches the port you’ve configured in your application.
+This command starts your application, which will listen on the specified port (usually `3000` by default). Ensure that this matches the port you've configured in your application.
 
-Alternatively, you can use the `nest start` command. This command is a wrapper around `node dist/main.js`, but it has one key difference: it automatically runs `nest build` before starting the application, so you don’t need to manually execute `npm run build`.
+Alternatively, you can use the `nest start` command. This command is a wrapper around `node dist/main.js`, but it has one key difference: it automatically runs `nest build` before starting the application, so you don't need to manually execute `npm run build`.
 
 #### Health checks
 
@@ -112,7 +112,7 @@ Scaling your NestJS application effectively is crucial for handling increased tr
 - Limitations: There are physical limits to how much you can scale a single machine. Once you reach the maximum capacity, you may need to consider other options.
 - Cost-Effectiveness: For applications with moderate traffic, vertical scaling can be cost-effective, as it reduces the need for additional infrastructure.
 
-Example: If your NestJS app is hosted on a virtual machine and you notice that it’s running slowly during peak hours, you can upgrade your VM to a larger instance with more resources. To upgrade your VM, just navigate to your current provider's dashboard and select a larger instance type.
+Example: If your NestJS app is hosted on a virtual machine and you notice that it's running slowly during peak hours, you can upgrade your VM to a larger instance with more resources. To upgrade your VM, just navigate to your current provider's dashboard and select a larger instance type.
 
 **Horizontal scaling**, or "scaling out" involves adding more servers or instances to distribute the load. This strategy is widely used in cloud environments and is essential for applications expecting high traffic. Here are the benefits and considerations:
 

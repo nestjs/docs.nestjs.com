@@ -153,7 +153,7 @@ Once services agree on a trace id, the trace detail page renders every execution
 - **Self time** is the number that matters. A span's duration minus everything its children accounted for is the time the span spent in its own code. Ranking by total duration always puts the controller at the top (it contains everything); ranking by self time surfaces the repository call that actually burned the time. Every execution page carries a spans table sorted this way.
 - **Overlapping children are flagged.** When a span's children sum to more than the span's own duration, they ran concurrently (`Promise.all`, a parallel fan-out) and the row says so.
 - **Failing spans are marked**, and the execution page leads with an error card for the first span that threw - class, message, the trimmed stack trace with the throwing frame marked, and the source lines around it when [`sourceContext`](/observability/sdk#error-source-context) is on.
-- **Logs sit on the trace's clock.** With `forwardLogs` enabled, each line is placed at its offset from the start of the trace and labelled with the span that was in flight when it was written; hovering a line marks that instant on the waterfall.
+- **Logs sit on the trace's clock.** With `forwardLogs` enabled, each line is placed at its offset from the start of the trace and labeled with the span that was in flight when it was written; hovering a line marks that instant on the waterfall.
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/traces.webp" alt="Trace waterfall" /></figure>
 

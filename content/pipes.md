@@ -68,7 +68,7 @@ Nest will throw an exception like this:
 
 The exception will prevent the body of the `findOne()` method from executing.
 
-In the example above, we pass a class (`ParseIntPipe`), not an instance, leaving responsibility for instantiation to the framework and enabling dependency injection. As with pipes and guards, we can instead pass an in-place instance. Passing an in-place instance is useful if we want to customize the built-in pipe's behavior by passing options:
+In the example above, we pass a class (`ParseIntPipe`), not an instance, leaving responsibility for instantiation to the framework and enabling dependency injection. As with guards and exception filters, we can instead pass an in-place instance. Passing an in-place instance is useful if we want to customize the built-in pipe's behavior by passing options:
 
 ```typescript
 @Get(':id')
@@ -117,7 +117,7 @@ Above we've seen examples of binding the various `Parse*` family of built-in pip
 
 As mentioned, you can build your own custom pipes. While Nest provides a robust built-in `ParseIntPipe` and `ValidationPipe`, let's build simple custom versions of each from scratch to see how custom pipes are constructed.
 
-We start with a simple `ValidationPipe`. Initially, we'll have it simply take an input value and immediately return the same value, behaving like an identity function.
+We start with a simple `ValidationPipe`. Initially, we'll have it take an input value and return it unchanged, behaving like an identity function.
 
 ```typescript
 @@filename(validation.pipe)

@@ -264,7 +264,7 @@ await bootstrap();
 
 The Fastify API has a few differences, but the end result of these method calls is the same. One notable difference is that when using Fastify, the template name you pass into the `@Render()` decorator must include the file extension.
 
-Here’s how you can set it up:
+Here's how you can set it up:
 
 ```typescript
 @@filename(app.controller)

@@ -345,7 +345,7 @@ app.useLogger(app.get(MyLogger));
 await app.listen(process.env.PORT ?? 3000);
 ```
 
-> info **Note** In the example above, we set the `bufferLogs` to `true` to make sure all logs will be buffered until a custom logger is attached (`MyLogger` in this case) and the application initialisation process either completes or fails. If the initialisation process fails, Nest will fallback to the original `ConsoleLogger` to print out any reported error messages. Also, you can set the `autoFlushLogs` to `false` (default `true`) to manually flush logs (using the `Logger.flush()` method).
+> info **Note** In the example above, we set the `bufferLogs` to `true` to make sure all logs will be buffered until a custom logger is attached (`MyLogger` in this case) and the application initialization process either completes or fails. If the initialization process fails, Nest will fallback to the original `ConsoleLogger` to print out any reported error messages. Also, you can set the `autoFlushLogs` to `false` (default `true`) to manually flush logs (using the `Logger.flush()` method).
 
 Here we use the `get()` method on the `NestApplication` instance to retrieve the singleton instance of the `MyLogger` object. This technique is essentially a way to "inject" an instance of a logger for use by Nest. The `app.get()` call retrieves the singleton instance of `MyLogger`, and depends on that instance being first injected in another module, as described above.
 
@@ -416,6 +416,25 @@ await app.listen(process.env.PORT ?? 3000);
 ```
 
 > info **Hint** Alternatively, instead of setting `bufferLogs` to `true`, you could temporarily disable the logger with `logger: false` instruction. Be mindful that if you supply `logger: false` to `NestFactory.create`, nothing will be logged until you call `useLogger`, so you may miss some important initialization errors. If you don't mind that some of your initial messages will be logged with the default logger, you can just omit the `logger: false` option.
+
+#### Correlating logs with requests
+
+Centralizing logs solves storage, not investigation. Once every instance ships to the same place, the hard part becomes reconstructing a *single* request out of thousands of interleaved lines - which is why so much production debugging is really the work of inventing a correlation id, threading it through every log call, and hoping nothing on the path forgot to pass it along.
+
+[NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') removes that bookkeeping. Turn on `forwardLogs` and every line written through Nest's `Logger` is captured with the trace it was written in already attached:
+
+```typescript
+ObserveModule.forRoot({
+  serviceId: 'orders-api',
+  forwardLogs: true,
+});
+```
+
+You keep calling `this.logger.log()` with an `orderId` param exactly as before - no correlation id to generate, no context object to thread through your service layer. On an execution page the logs for that one request are then placed on the trace's own clock, each line sitting next to the span that was in flight when it was written, so "the retry warning fired *before* the timeout, not after" is something you can see instead of infer from timestamps across three log streams.
+
+Structured logging params carry through as well, so `orderId` stays a queryable field rather than being flattened into the message text. Log lines are also alertable in their own right - "tell me when `payment declined` appears more than 10 times in 15 minutes".
+
+If you would rather keep log content in your own aggregator, you do not have to forward anything: with `forwardLogs` off, the SDK still augments `ConsoleLogger` so every line carries its trace id, which is enough to jump from a line in your existing stack to the full trace in the dashboard. See the [SDK reference](/observability/sdk) for both options and their redaction settings.
 
 #### Use external logger
 

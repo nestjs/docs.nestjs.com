@@ -17,7 +17,7 @@ With official support, get expert help directly from the NestJS core team. We ta
   <div class="content">
     <h4>Team Augmentation & Development</h4>
     <p>
-      With team augmentation, NestJS core team members can work directly with your team on a daily basis to help take your project to the next-level. Consider us “part of your team”, tackling the most ambitious projects - right by your side.
+      With team augmentation, NestJS core team members can work directly with your team on a daily basis to help take your project to the next-level. Consider us "part of your team", tackling the most ambitious projects - right by your side.
     </p>
   </div>
   <div class="thumbnail p-l-30">
@@ -57,4 +57,4 @@ We provide solid kick-off training as well as more advanced ones that give teams
    </div>
 </div>
 
-Reach out to us at [support@nestjs.com](mailto:support@nestjs.com), and let’s talk about your project & teams needs!
+Reach out to us at [support@nestjs.com](mailto:support@nestjs.com), and let's talk about your project & teams needs!

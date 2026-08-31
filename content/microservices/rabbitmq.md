@@ -68,7 +68,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>consumerTag</code></td>
-    <td>A name which the server will use to distinguish message deliveries for the consumer; mustn’t be already in use on the channel. It’s usually easier to omit this, in which case the server will create a random name and supply it in the reply. Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">here</a>)</td>
+    <td>A name which the server will use to distinguish message deliveries for the consumer; mustn't be already in use on the channel. It's usually easier to omit this, in which case the server will create a random name and supply it in the reply. Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">here</a>)</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
@@ -88,7 +88,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>persistent</code></td>
-    <td>If truthy, the message will survive broker restarts provided it’s in a queue that also survives restarts</td>
+    <td>If truthy, the message will survive broker restarts provided it's in a queue that also survives restarts</td>
   </tr>
   <tr>
     <td><code>noAssert</code></td>

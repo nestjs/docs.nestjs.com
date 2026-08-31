@@ -96,7 +96,25 @@ By default, the exception filter does not log built-in exceptions like `HttpExce
 
 These exceptions all inherit from the base `IntrinsicException` class, which is exported from the `@nestjs/common` package. This class helps differentiate between exceptions that are part of normal application operation and those that are not.
 
-If you want to log these exceptions, you can create a custom exception filter. We'll explain how to do this in the next section.
+If you want to log these exceptions, you can create a custom exception filter. We'll explain how to do this in the [Exception filters](#exception-filters) section below.
+
+#### Tracking errors in production
+
+A filter decides what the *client* sees. It does not, on its own, tell you that a `TypeError` started firing in `OrdersService` twelve minutes ago, on 4% of checkouts, only for customers whose cart contains a discounted item - and it certainly doesn't tell you which line threw.
+
+The usual answer is to log the stack trace and hope someone greps for it later. That falls apart quickly: a stack trace in a log file points at compiled output (`/var/app/current/dist/orders/orders.service.js:35`), carries no source context, and gives you no idea whether this is the first occurrence or the ten-thousandth.
+
+[NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') treats an unhandled error as a first-class object instead of a log line. Every error that reaches the exceptions layer is captured with the request that caused it, and:
+
+- **The stack trace comes with source code.** The frame is resolved through your source maps back to `src/orders/orders.service.ts:35`, and the surrounding lines are shown inline - you read the failing code in the error card, without cloning anything.
+- **Occurrences are grouped into defects.** Errors with the same class and stack shape collapse into one fingerprinted group with a count, a first- and last-seen timestamp, and the release that introduced it. "New since v2.4.1" is a fact you can read off the page rather than infer.
+- **The failure keeps its context.** The trace it belonged to, the user who hit it, the logs written during that request, and the spans that ran before the throw are all attached, so you see what the request was doing when it broke.
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/error-with-source.webp" alt="Error card with source context" /></figure>
+
+Because the error already carries its own code, one click hands the whole thing to a coding agent: **Copy agent prompt** packages the error, the trimmed stack trace with source lines, the slow spans, and the surrounding logs into a self-contained prompt for Claude Code, Cursor, or whatever has your repository open.
+
+Note that this is complementary to the filters described in this chapter, not a replacement for them - filters still shape the response, and instrumentation observes what happened on the way there. See the [Observability](/observability/overview) chapter for setup, and [Dashboard](/observability/dashboard#issues) for turning a recurring error into a tracked issue that verifies its own fix.
 
 #### Custom exceptions
 
@@ -257,9 +275,9 @@ The `@Catch(HttpException)` decorator binds the required metadata to the excepti
 
 #### Arguments host
 
-Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object. `ArgumentsHost` is a powerful utility object that we'll examine further in the [execution context chapter](/fundamentals/execution-context)\*. In this code sample, we use it to obtain a reference to the `Request` and `Response` objects that are being passed to the original request handler (in the controller where the exception originates). In this code sample, we've used some helper methods on `ArgumentsHost` to get the desired `Request` and `Response` objects. Learn more about `ArgumentsHost` [here](/fundamentals/execution-context).
+Let's look at the parameters of the `catch()` method. The `exception` parameter is the exception object currently being processed. The `host` parameter is an `ArgumentsHost` object - a utility that gives you access to the arguments passed to the original handler, whatever context it was invoked in. In the code sample above, we use its helper methods to obtain the `Request` and `Response` objects belonging to the request in which the exception originated. `ArgumentsHost` is covered in full in the [execution context chapter](/fundamentals/execution-context).
 
-\*The reason for this level of abstraction is that `ArgumentsHost` functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and WebSockets). In the execution context chapter we'll see how we can access the appropriate <a href="https://docs.nestjs.com/fundamentals/execution-context#host-methods">underlying arguments</a> for **any** execution context with the power of `ArgumentsHost` and its helper functions. This will allow us to write generic exception filters that operate across all contexts.
+The reason for this level of abstraction is that `ArgumentsHost` works in every context - the HTTP server context we're using here, but also Microservices and WebSockets. The execution context chapter shows how to reach the <a href="/fundamentals/execution-context#host-handler-arguments">underlying arguments</a> for **any** context through the same object, which is what lets you write a single exception filter that operates across all of them.
 
 <app-banner-courses></app-banner-courses>
 
@@ -359,7 +377,7 @@ You can add as many filters with this technique as needed; simply add each to th
 
 In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
 
-In the example below we have a code that is platform-agnostic because it uses the [HTTP adapter](./faq/http-adapter) to deliver the response, and doesn't use any of the platform-specific objects (`Request` and `Response`) directly:
+The example below is platform-agnostic: it delivers the response through the [HTTP adapter](./faq/http-adapter) rather than touching the platform-specific `Request` and `Response` objects directly, so the same filter works on both Express and Fastify.
 
 ```typescript
 import {
@@ -398,11 +416,11 @@ export class CatchEverythingFilter implements ExceptionFilter {
 }
 ```
 
-> warning **Warning** When combining an exception filter that catches everything with a filter that is bound to a specific type, the "Catch anything" filter should be declared first to allow the specific filter to correctly handle the bound type.
+> warning **Warning** When combining a catch-everything filter with one bound to a specific exception type, declare the catch-everything filter **first**, so the more specific filter can still handle the type it is bound to.
 
 #### Inheritance
 
-Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the built-in default **global exception filter**, and override the behavior based on certain factors.
+Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there are cases where you would rather extend the built-in **global exception filter** and override its behavior only for certain conditions.
 
 In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call the inherited `catch()` method.
 

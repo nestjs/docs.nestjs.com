@@ -357,6 +357,18 @@ To resume a paused queue, use the `resume()` method, as follows:
 await audioQueue.resume();
 ```
 
+#### Observing queues in production
+
+Queues fail in ways that HTTP endpoints do not. A job doesn't return a status code to an impatient user - it retries quietly, three times, with backoff, and the only symptom is that something downstream never happened. The two questions that matter are therefore *"is this queue keeping up?"* and *"did that job run at all?"*, and neither is answerable from the consumer's own logs.
+
+[NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') instruments queue consumers automatically, the same way it instruments controllers - `@Processor` classes and their handlers are recognized as jobs, so no manual span wiring is needed:
+
+- **Queue wait time is measured separately from execution time.** A job that takes 200 ms to run but sat in the queue for four minutes is a capacity problem, not a slow handler, and the two numbers are reported side by side so you can tell which one you have.
+- **Attempts and failure reasons are recorded per run.** You see that a job succeeded on attempt 3 rather than seeing only the success, which is usually the difference between "fine" and "quietly degrading".
+- **Silence is alertable.** A *job silence* rule fires when a named job hasn't reported for longer than a tolerance you choose - which is how you find out that the nightly billing consumer stopped running, on the night it stops, rather than at the end of the month.
+
+Failed jobs carry the same error card as failed requests: the resolved stack trace with source lines, the logs written during the run, and the waterfall of what the job did before it threw. See the [Observability](/observability/overview) chapter for setup.
+
 #### Separate processes
 
 Job handlers can also be run in a separate (forked) process ([source](https://docs.bullmq.io/guide/workers/sandboxed-processors)). This has several advantages:

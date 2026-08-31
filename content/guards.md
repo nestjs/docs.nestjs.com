@@ -6,7 +6,7 @@ A guard is a class annotated with the `@Injectable()` decorator, which implement
 
 Guards have a **single responsibility**. They determine whether a given request will be handled by the route handler or not, depending on certain conditions (like permissions, roles, ACLs, etc.) present at run-time. This is often referred to as **authorization**. Authorization (and its cousin, **authentication**, with which it usually collaborates) has typically been handled by [middleware](/middleware) in traditional Express applications. Middleware is a fine choice for authentication, since things like token validation and attaching properties to the `request` object are not strongly connected with a particular route context (and its metadata).
 
-But middleware, by its nature, is dumb. It doesn't know which handler will be executed after calling the `next()` function. On the other hand, **Guards** have access to the `ExecutionContext` instance, and thus know exactly what's going to be executed next. They're designed, much like exception filters, pipes, and interceptors, to let you interpose processing logic at exactly the right point in the request/response cycle, and to do so declaratively. This helps keep your code DRY and declarative.
+But middleware, by its nature, is context-blind. It doesn't know which handler will be executed after calling the `next()` function. On the other hand, **Guards** have access to the `ExecutionContext` instance, and thus know exactly what's going to be executed next. They're designed, much like exception filters, pipes, and interceptors, to let you interpose processing logic at exactly the right point in the request/response cycle, and to do so declaratively. This helps keep your code DRY and declarative.
 
 > info **Hint** Guards are executed **after** all middleware, but **before** any interceptor or pipe.
 
@@ -53,7 +53,7 @@ Every guard must implement a `canActivate()` function. This function should retu
 
 #### Execution context
 
-The `canActivate()` function takes a single argument, the `ExecutionContext` instance. The `ExecutionContext` inherits from `ArgumentsHost`. We saw `ArgumentsHost` previously in the exception filters chapter. In the sample above, we are just using the same helper methods defined on `ArgumentsHost` that we used earlier, to get a reference to the `Request` object. You can refer back to the **Arguments host** section of the [exception filters](https://docs.nestjs.com/exception-filters#arguments-host) chapter for more on this topic.
+The `canActivate()` function takes a single argument, the `ExecutionContext` instance. The `ExecutionContext` inherits from `ArgumentsHost`. We saw `ArgumentsHost` previously in the exception filters chapter. In the sample above, we use the same helper methods defined on `ArgumentsHost` that we used earlier, to get a reference to the `Request` object. You can refer back to the **Arguments host** section of the [exception filters](https://docs.nestjs.com/exception-filters#arguments-host) chapter for more on this topic.
 
 By extending `ArgumentsHost`, `ExecutionContext` also adds several new helper methods that provide additional details about the current execution process. These details can be helpful in building more generic guards that can work across a broad set of controllers, methods, and execution contexts. Learn more about `ExecutionContext` [here](/fundamentals/execution-context).
 
@@ -142,7 +142,7 @@ export class AppModule {}
 > where the guard (`RolesGuard` in the example above) is defined. Also, `useClass` is not the only way of dealing with
 > custom provider registration. Learn more [here](/fundamentals/custom-providers).
 
-> info **Hint** You can register the `APP_GUARD` token multiple times (in the same or different modules) — every registered guard runs for each request, in registration order. Also note that `APP_GUARD` (like the other `APP_*` tokens) is a pseudo-provider consumed by the framework during bootstrap: it cannot be retrieved later with `app.get()` or injected elsewhere.
+> info **Hint** You can register the `APP_GUARD` token multiple times (in the same or different modules) - every registered guard runs for each request, in registration order. Also note that `APP_GUARD` (like the other `APP_*` tokens) is a pseudo-provider consumed by the framework during bootstrap: it cannot be retrieved later with `app.get()` or injected elsewhere.
 
 #### Setting roles per handler
 

@@ -349,7 +349,7 @@ Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels(
 
 As you may have noticed, the name of the generated schema is based on the name of the original model class (for example, the `CreateCatDto` model generates a `CreateCatDto` schema). If you'd like to change the schema name, you can use the `@ApiSchema()` decorator.
 
-Here’s an example:
+Here's an example:
 
 ```typescript
 @ApiSchema({ name: 'CreateCatRequest' })
