@@ -304,7 +304,22 @@ In JSON mode they are nested under a `params` key, or spread into the root if yo
 Version 12 adds first-class observability support through the official [`@nestjs/observe`](/observability/overview) SDK. Instead of attaching a generic Node.js APM agent to the HTTP server, the SDK plugs into Nest's own request lifecycle through the `instrument` application option, so requests, jobs, errors, and traces are reported in terms of your controllers, providers, resolvers, and queue consumers.
 
 ```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { createObserveModule } from '@nestjs/observe';
+
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
+@Module({
+  imports: [ObserveModule.forRoot({ serviceId: 'cats-app' })],
+})
+export class AppModule {}
+```
+
+```typescript
+@@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { AppModule, ObserveInstrument } from './app.module';
 
 const app = await NestFactory.create(AppModule, {
   instrument: ObserveInstrument,

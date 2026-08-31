@@ -4,7 +4,7 @@ A **trace** is everything your applications recorded under a single trace id: th
 
 Across services it isn't automatic by default. A single user action that touches more than one service - an API call that fans out to a gRPC service, a job that calls back into another application - only shows up as **one trace** in your dashboard if every service involved ends up using the same trace id. Left unconfigured, each service mints its own via `traceIdGenerator` and the action shows up as several disconnected traces instead, one per service.
 
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.png" alt="Trace correlation across services" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.webp" alt="Trace correlation across services" /></figure>
 
 Forwarding the trace id is application code, not a dashboard setting. The pattern is always the same: the caller puts its current trace id on whatever channel the protocol has, and the callee's `traceIdGenerator` reads it back out. This page shows that for each transport.
 
@@ -155,6 +155,6 @@ Once services agree on a trace id, the trace detail page renders every execution
 - **Failing spans are marked**, and the execution page leads with an error card for the first span that threw - class, message, the trimmed stack trace with the throwing frame marked, and the source lines around it when [`sourceContext`](/observability/sdk#error-source-context) is on.
 - **Logs sit on the trace's clock.** With `forwardLogs` enabled, each line is placed at its offset from the start of the trace and labelled with the span that was in flight when it was written; hovering a line marks that instant on the waterfall.
 
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/traces.png" alt="Trace waterfall" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/traces.webp" alt="Trace waterfall" /></figure>
 
 From any failed or unusually slow execution, the **Copy agent prompt** button packages the whole page - context, error, stack trace with source, top spans by self time, and the logs - as a self-contained markdown prompt for a coding agent. See [Dashboard](/observability/dashboard#handing-a-failure-to-a-coding-agent).

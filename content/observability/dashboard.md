@@ -2,7 +2,7 @@
 
 Once an application is instrumented and sending data, its project dashboard fills in automatically - no queries to write, no dashboards to build. This chapter covers what each view shows, how they relate to each other, and how the features built on top of the telemetry - alerts, SLOs, issues, and the agent handoff - fit together. For the full reference, see the [NestJS Observe documentation](https://www.observe.nestjs.com/dashboard/documentation 'NestJS Observe documentation').
 
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/dashboard.png" alt="Project dashboard" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/dashboard.webp" alt="Project dashboard" /></figure>
 
 #### How the views nest
 
@@ -30,7 +30,7 @@ Aggregates tell you _that_ something is wrong and how much it matters; a single 
 | **Logs**     | Everything your services logged (with `forwardLogs` on), correlated to the traces they ran in. On an execution page, each line is placed on the trace's clock next to the span that was in flight.                                                                                                               |
 | **Profiler** | CPU, memory, event loop delay and utilization, and garbage collection per application, with per-instance comparison when an application runs on more than one node. Click a spike on the Memory or Event loop delay chart to see which operations ran at that moment, ranked by deviation from their baseline.   |
 
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/services.png" alt="Services view" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/services.webp" alt="Services view" /></figure>
 
 #### Handing a failure to a coding agent
 
@@ -38,7 +38,7 @@ Reading a trace tells you what happened. The next step is always the same: go fi
 
 The button appears only where there is something to investigate: a request or job that failed or ran slower than 95% of its peers, or a trace containing an error. The prompt carries the task framing, the operation context, the error with its trimmed stack trace and source lines (paths rewritten relative to your project root, so `src/orders/orders.service.ts:35` rather than `/var/app/current/dist/orders/orders.service.js:35`), how the call compares to the operation's average and p95, the top spans by self time, up to 40 log lines chosen errors-first, and closing instructions asking the agent to explain the root cause from the code and propose a fix as a diff with tests.
 
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/copy-agent-prompt.png" alt="Copy agent prompt" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/copy-agent-prompt.webp" alt="Copy agent prompt" /></figure>
 
 For an agent that needs to keep asking - follow a trace into its logs, check whether an error is still firing - connect it to the [MCP server](/observability/mcp-server) instead.
 
@@ -65,7 +65,7 @@ Two families deserve a closer look from the instrumentation side:
 
 A rule can notify through **email**, **Slack** (incoming webhook), a generic **webhook**, an **in-app** notification, or by **creating an issue** pre-filled with the rule's severity and scope. Rules can carry a recurring mute schedule for quiet hours, and every state transition (OK → Firing → Resolved) is recorded with per-channel delivery status.
 
-<figure><img src="https://www.observe.nestjs.com/docs/alerts/create-alert.png" alt="Create alert" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/alerts/create-alert.webp" alt="Create alert" /></figure>
 
 #### SLOs
 

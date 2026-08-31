@@ -42,7 +42,7 @@ span.addTags({ cacheHit: 'false' });
 
 It throws if no span is active for the current trace.
 
-<figure><img src="https://www.observe.nestjs.com/docs/sdk/spans.png" alt="Spans" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/sdk/spans.webp" alt="Spans" /></figure>
 
 > info **Hint** Span names are what the **Spans** analytics view aggregates on, across every route that calls them. Pick names that describe the work (`orders.recalculate`, `cache.lookup`) rather than the caller, so "is this slow everywhere, or only from this one endpoint?" is a question the dashboard can answer.
 
@@ -146,7 +146,7 @@ Calling `counter('orders.placed')` twice returns the same instance, so there's n
 | `kind`         | gauge                   | `'ratio'` (default) for values that stand alone per report, or `'additive'` for values that sum across reporting instances.           |
 | `sampleSize`   | summary                 | How many observations per label are retained to compute quantiles from, which bounds the summary's memory under load.                 |
 
-<figure><img src="https://www.observe.nestjs.com/docs/sdk/custom-metrics.png" alt="Custom metrics" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/sdk/custom-metrics.webp" alt="Custom metrics" /></figure>
 
 A metric that has been declared but never reported reads as "unknown" rather than `0` in the dashboard. That's a real state, not missing data: "we have never heard from this metric" and "this metric is currently zero" are different facts, and showing the second when you mean the first hides a broken deploy.
 

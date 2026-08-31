@@ -89,7 +89,7 @@ ObserveModule.forRoot({
 
 Passing a `serviceVersion` is optional but strongly recommended: it is what lets the dashboard compare each version of an application against the one before it (error rate, latency, throughput side by side), so a regression introduced by a deploy is visible immediately rather than buried in a week-long chart.
 
-<figure><img src="https://www.observe.nestjs.com/docs/sdk/deployments.png" alt="Releases" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/sdk/deployments.webp" alt="Releases" /></figure>
 
 #### Asynchronous configuration
 
@@ -189,7 +189,7 @@ Note that this is an option of `createObserveModule()`, not `forRoot()`. Set `so
 
 > warning **Warning** Enabling this ships fragments of your application's source code (usually just a few lines surrounding the error) to your dashboard, stored alongside the error. Frames inside `node_modules` and Node internals are never read - only application source - but turn it off if shipping any source is not acceptable for your codebase.
 
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/error-with-source.png" alt="Error card with source context" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/error-with-source.webp" alt="Error card with source context" /></figure>
 
 #### Trace correlation
 

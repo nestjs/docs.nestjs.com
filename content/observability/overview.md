@@ -35,7 +35,7 @@ NestJS Observe organizes your telemetry in three layers:
 - A **project** is a collection of applications that ship together, typically one per product or environment (e.g. `storefront-production`, `storefront-staging`). Projects are what alerts, issues, SLOs, and API keys are scoped to.
 - An **application** is a single NestJS service - a REST API, a worker, a microservice - instrumented with the SDK and reporting into a project. A project usually has more than one application (a web API and the queue workers behind it, for example), so you can see them as one system while still filtering down to either.
 
-<figure><img src="https://www.observe.nestjs.com/docs/overview/projects.png" alt="Projects overview" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/overview/projects.webp" alt="Projects overview" /></figure>
 
 Every project member has one of three access levels - **Read**, **Write**, or **Admin** - controlling whether they can view telemetry, create alert rules, applications, and API keys, or manage members and spend controls.
 
@@ -65,7 +65,7 @@ To upgrade, open **Billing → Manage subscription** for the team that owns your
 3. **Generate an API key** from the project's **API Keys** page. Each key has a name (one for local development, one for CI, one for production) and an optional expiration date. The key pair (`appKey` and `appSecret`) is shown once, at creation, so copy it into your secrets store right away. Keys are scoped to a project: every application whose telemetry should land in that project uses the same key.
 4. **Instrument your application** by following the [SDK](/observability/sdk) chapter. Telemetry starts appearing within moments of your application receiving traffic.
 
-<figure><img src="https://www.observe.nestjs.com/docs/applications/api-keys.png" alt="API keys" /></figure>
+<figure><img src="https://www.observe.nestjs.com/docs/applications/api-keys.webp" alt="API keys" /></figure>
 
 > warning **Warning** Treat `appKey` and `appSecret` like any other credential: read them from environment variables or a secrets manager, never commit them to source control. Revoke a key from the same page at any time - any application still using it will stop being able to send telemetry.
 
