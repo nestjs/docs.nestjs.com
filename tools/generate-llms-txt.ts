@@ -9,14 +9,19 @@
  * the index cannot drift from the docs it indexes. A nav entry that resolves
  * to no markdown file is a hard error rather than a silently missing line.
  */
-import { readFileSync, writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { dirname, resolve } from 'path';
 import { NAV_ITEMS, NavItem } from '../src/app/shared/nav/nav-items';
 
 const PROJECT_ROOT = resolve(__dirname, '..');
 const CONTENT_PATH = resolve(PROJECT_ROOT, 'content');
 const OUTPUT_FILE = resolve(PROJECT_ROOT, 'src', 'llms.txt');
 const FULL_OUTPUT_FILE = resolve(PROJECT_ROOT, 'src', 'llms-full.txt');
+/**
+ * One cleaned markdown file per chapter, served next to the page it belongs to
+ * (`/controllers` -> `/controllers.md`) and read by the "Copy markdown" button.
+ */
+const MARKDOWN_DIR = resolve(PROJECT_ROOT, 'src', 'md');
 const SITE = 'https://docs.nestjs.com';
 
 /**
@@ -153,17 +158,27 @@ function chapterBody(item: NavItem): string | null {
 
 const chapters = NAV_ITEMS.flatMap((item) =>
   item.children?.length ? item.children : [item],
-)
-  .map(chapterBody)
-  .filter((chapter): chapter is string => chapter !== null);
+).flatMap((item) => {
+  const body = chapterBody(item);
+  return body ? [{ item, body }] : [];
+});
 
 writeFileSync(
   FULL_OUTPUT_FILE,
-  `${header}\n---\n\n${chapters.join('\n---\n\n')}`,
+  `${header}\n---\n\n${chapters.map(({ body }) => body).join('\n---\n\n')}`,
   'utf-8',
 );
 
+// Wiped first so a renamed route cannot leave its old .md behind.
+rmSync(MARKDOWN_DIR, { recursive: true, force: true });
+for (const { item, body } of chapters) {
+  const name = item.path === '/' ? 'index' : item.path.replace(/^\//, '');
+  const file = resolve(MARKDOWN_DIR, `${name}.md`);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, body, 'utf-8');
+}
+
 const entryCount = (sections.match(/^- \[/gm) ?? []).length;
 console.log(
-  `Generated src/llms.txt (${entryCount} chapters) and src/llms-full.txt.`,
+  `Generated src/llms.txt (${entryCount} chapters), src/llms-full.txt and ${chapters.length} files in src/md/.`,
 );
