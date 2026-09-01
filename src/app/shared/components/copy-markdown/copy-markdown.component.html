@@ -1,0 +1,12 @@
+@if (markdownUrl) {
+  <button
+    type="button"
+    class="copy-markdown"
+    [class.copied]="copied"
+    (click)="onCopy()"
+    [attr.aria-label]="copied ? 'Markdown copied' : 'Copy page as markdown'"
+  >
+    <mat-icon aria-hidden="true">{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+    <span>{{ copied ? 'Copied' : 'Copy markdown' }}</span>
+  </button>
+}

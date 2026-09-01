@@ -1,0 +1,45 @@
+@use '../../../../scss/utils.scss';
+
+:host {
+  display: block;
+  position: relative;
+  height: 0;
+  width: calc(100% - 220px);
+  max-width: 860px;
+
+  @include utils.media(large) {
+    width: 100%;
+  }
+
+  @media print {
+    display: none;
+  }
+}
+
+.copy-markdown {
+  @include utils.btn-secondary();
+  position: absolute;
+  top: 26px;
+  right: 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-3dp);
+    outline-offset: 2px;
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+
+  &.copied {
+    color: var(--primary-3dp);
+  }
+}
