@@ -241,6 +241,76 @@ validationOptions: {
 
 For Joi schemas, `@nestjs/config` keeps its historical defaults of `allowUnknown: true` and `abortEarly: false`, and merges anything you pass on top of them.
 
+#### Terminus module
+
+The legacy health indicator API, which was deprecated in version 11, has been removed. If your custom health indicators still extend `HealthIndicator` or throw a `HealthCheckError`, they must be migrated to the `HealthIndicatorService`.
+
+**Previous Approach**
+
+Before version 12, a custom health indicator could report an unhealthy state by throwing a `HealthCheckError`:
+
+```typescript
+@Injectable()
+export class DogHealthIndicator extends HealthIndicator {
+  constructor(private readonly dogService: DogService) {
+    super();
+  }
+
+  async isHealthy(key: string) {
+    const badboys = await this.dogService.getBadboys();
+    const isHealthy = badboys.length === 0;
+    const result = this.getStatus(key, isHealthy, { badboys: badboys.length });
+
+    if (!isHealthy) {
+      throw new HealthCheckError('Dog check failed', result);
+    }
+
+    return result;
+  }
+}
+```
+
+**Updated Approach (NestJS Terminus v12)**
+
+In version 12, the health indicator returns its result in both cases. Throwing is no longer a way to report an unhealthy state - the indicator either returns `up()` / `down()` explicitly, or hands the operation to `attempt()`, which marks the indicator as `'down'` when the operation throws:
+
+```typescript
+@Injectable()
+export class DogHealthIndicator {
+  constructor(
+    private readonly dogService: DogService,
+    // Inject the `HealthIndicatorService` provided by the `TerminusModule`
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {}
+
+  async isHealthy(key: string) {
+    const indicator = this.healthIndicatorService.check(key);
+    const badboys = await this.dogService.getBadboys();
+
+    if (badboys.length > 0) {
+      // Mark the indicator as "down" and add additional info to the response
+      return indicator.down({ badboys: badboys.length });
+    }
+
+    // Mark the health indicator as "up"
+    return indicator.up();
+  }
+}
+```
+
+If the indicator only needs to know whether an operation succeeded (for example, that the dog service is reachable), `attempt()` is the shorter form:
+
+```typescript
+isHealthy(key: string) {
+  return this.healthIndicatorService
+    .check(key)
+    .attempt(() => {this.dogService.ping()})
+    .withTimeout(1000);
+}
+```
+
+The `timeout` option of the built-in database, microservice and gRPC indicators (e.g. `db.pingCheck('database', {{ '{' }} timeout: 1500 {{ '}' }})`) is deprecated. Chain `.withTimeout(1500)` on the returned attempt instead. See the [Terminus chapter](/recipes/terminus#timeouts-and-caching) for details.
+
 #### Webpack deprecation in CLI workflows
 
 The v12 release also marks the shift away from webpack-centric CLI workflows. Rspack is now the default bundler for monorepos, and the `--webpack` / `--webpackPath` CLI flags (and their `webpack` / `webpackConfigPath` counterparts in `nest-cli.json`) are deprecated in favor of `--builder rspack`. If you have custom webpack-based project generation or build assumptions, plan to migrate those over time.
