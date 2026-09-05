@@ -2,11 +2,8 @@
 @use '../../../../scss/variables.scss';
 
 .toc-wrapper {
-  // The carbon ad is fixed to the bottom of this same right-hand rail, so the
-  // TOC is capped short of it and scrolls internally instead of growing into
-  // it. Reserve = tallest ad (~330px) + its 20px bottom offset + a gap.
   --toc-top: 106px;
-  --ad-reserve: 370px;
+  --ad-reserve: 0px;
 
   width: var(--rail-outer-width, 250px);
   padding-left: var(--rail-indent, 45px);
@@ -66,4 +63,14 @@
     border-left-color: var(--primary);
     font-weight: 600;
   }
+}
+
+// The carbon ad is fixed to the bottom of this same right-hand rail, so when an
+// ad is actually rendered the TOC is capped short of it and scrolls internally
+// instead of growing into it. Reserve = tallest ad (~330px) + its 20px bottom
+// offset + a gap. With no ad on screen (blocked, not yet loaded, or hidden by
+// hideAdIfTocOverflow) there is nothing to avoid, so the TOC gets the full rail.
+:host-context(.page-wrapper:has(.carbon-wrapper:not(.hide) #carbonads))
+  .toc-wrapper {
+  --ad-reserve: 370px;
 }
