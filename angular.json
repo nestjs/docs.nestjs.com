@@ -34,7 +34,8 @@
               "src/_redirects",
               "src/llms.txt",
               "src/llms-full.txt",
-              "src/robots.txt"
+              "src/robots.txt",
+              { "glob": "**/*.md", "input": "src/md", "output": "/" }
             ],
             "styles": [
               "src/styles.scss"

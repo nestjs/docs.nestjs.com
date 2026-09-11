@@ -1,14 +1,14 @@
 {% block content %}
 <div class="content" #contentReference>
-  <div class="github-links">
-    <a
-      href="https://github.com/nestjs/docs.nestjs.com/edit/master/{$ doc.fileInfo.projectRelativePath $}"
-      aria-label="Suggest Edits"
-      title="Suggest Edits"
-    >
-      <i class="ph ph-pencil-simple-line"></i>
-    </a>
-  </div>
-  {$ doc.description | nestjsmarked $}
+  <div class="content-inner">{$ doc.description | nestjsmarked $}</div>
+  <a
+    class="github-links"
+    href="https://github.com/nestjs/docs.nestjs.com/edit/master/{$ doc.fileInfo.projectRelativePath $}"
+    target="_blank"
+    rel="noopener"
+  >
+    <i class="ph ph-pencil-simple-line" aria-hidden="true"></i>
+    <span>Edit on GitHub</span>
+  </a>
 </div>
 {% endblock %}

@@ -51,7 +51,7 @@ export function flattenNavItems(items: NavItem[]): NavPage[] {
  * slash, so that the URL the router hands us lines up with the plain paths
  * listed in the sidebar.
  */
-function normalizeUrl(url: string): string {
+export function normalizeUrl(url: string): string {
   const path = url.split(/[?#]/)[0].replace(/;[^/]*/g, '');
   return path.length > 1 ? path.replace(/\/+$/, '') : path;
 }

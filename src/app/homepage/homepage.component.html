@@ -20,6 +20,7 @@
     <div class="page-wrapper">
       <app-toc [contentReference]="contentRef"></app-toc>
       <main id="content" tabindex="-1" #mainContent>
+        <app-copy-markdown></app-copy-markdown>
         <router-outlet (activate)="onRouteActivate($event)"></router-outlet>
         <app-page-nav></app-page-nav>
       </main>

@@ -74,6 +74,11 @@
     }
   }
 
+  .content-inner {
+    padding-bottom: 2em;
+    border-bottom: 1px solid var(--background-2dp);
+  }
+
   // Solid colours rather than a clipped gradient: the gradient requires a
   // transparent text-fill, which flashes whenever it is transitioned.
   .content a {
@@ -477,18 +482,15 @@
 }
 
 .github-links {
-  float: right;
-  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1.2em;
+  font-size: 13px;
+  text-decoration: none;
 
-  svg,
   i {
-    font-size: 18px;
-    color: var(--color-1dp);
-  }
-
-  a:hover svg,
-  a:hover i {
-    color: var(--primary);
+    font-size: 16px;
   }
 }
 

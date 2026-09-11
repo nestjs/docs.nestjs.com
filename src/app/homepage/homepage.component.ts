@@ -26,6 +26,7 @@ import { TocComponent } from '../shared/components/toc/toc.component';
 import { NewsletterComponent } from './newsletter/newsletter.component';
 import { FooterComponent } from './footer/footer.component';
 import { PageNavComponent } from '../shared/components/page-nav/page-nav.component';
+import { CopyMarkdownComponent } from '../shared/components/copy-markdown/copy-markdown.component';
 
 const CARBON_WIDTH_BREAKPOINT = 1200;
 
@@ -45,6 +46,7 @@ const CARBON_WIDTH_BREAKPOINT = 1200;
     NewsletterComponent,
     FooterComponent,
     PageNavComponent,
+    CopyMarkdownComponent,
   ],
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
