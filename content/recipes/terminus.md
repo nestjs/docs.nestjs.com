@@ -160,8 +160,8 @@ The interface of this response object can be accessed from the `@nestjs/terminus
 
 |           |                                                                                                                                                                                             |                                      |
 |-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| `status`  | If any health indicator failed the status will be `'error'`. If the NestJS app is shutting down but still accepting HTTP requests, the health check will have the `'shutting_down'` status. | `'error' \| 'ok' \| 'shutting_down'` |
-| `info`    | Object containing information of each health indicator which is of status `'up'`, or in other words "healthy".                                                                              | `object`                             |
+| `status`  | If any health indicator failed the status will be `'error'`. If no indicator failed but at least one is `'degraded'`, the status will be `'degraded'`. If the NestJS app is shutting down but still accepting HTTP requests, the health check will have the `'shutting_down'` status. | `'error' \| 'ok' \| 'degraded' \| 'shutting_down'` |
+| `info`    | Object containing information of each health indicator which is of status `'up'` or `'degraded'`, or in other words "still serving".                                                                              | `object`                             |
 | `error`   | Object containing information of each health indicator which is of status `'down'`, or in other words "unhealthy".                                                                          | `object`                             |
 | `details` | Object containing all information of each health indicator                                                                                                                                  | `object`                             |
 
@@ -215,7 +215,7 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.db.pingCheck('database'),
+      () => this.db.pingCheck('database').withTimeout(1000),
     ]);
   }
 }
@@ -232,7 +232,7 @@ export class HealthController {
   @HealthCheck()
   healthCheck() {
     return this.health.check([
-      () => this.db.pingCheck('database'),
+      () => this.db.pingCheck('database').withTimeout(1000),
     ])
   }
 }
@@ -245,13 +245,15 @@ If your database is reachable, you should now see the following JSON-result when
   "status": "ok",
   "info": {
     "database": {
-      "status": "up"
+      "status": "up",
+      "responseTime": 12
     }
   },
   "error": {},
   "details": {
     "database": {
-      "status": "up"
+      "status": "up",
+      "responseTime": 12
     }
   }
 }
@@ -277,8 +279,8 @@ export class HealthController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.db.pingCheck('albums-database', { connection: this.albumsConnection }),
-      () => this.db.pingCheck('database', { connection: this.defaultConnection }),
+      () => this.db.pingCheck('albums-database', { connection: this.albumsConnection }).withTimeout(1000),
+      () => this.db.pingCheck('database', { connection: this.defaultConnection }).withTimeout(1000),
     ]);
   }
 }
@@ -408,17 +410,12 @@ check() {
 
 In some cases, the predefined health indicators provided by `@nestjs/terminus` do not cover all of your health check requirements. In that case, you can set up a custom health indicator according to your needs.
 
-Let's get started by creating a service that will represent our custom indicator. To get a basic understanding of how an indicator is structured, we will create an example `DogHealthIndicator`. This service should have the state `'up'` if every `Dog` object has the type `'goodboy'`. If that condition is not satisfied then it should throw an error.
+Most health indicators boil down to the same pattern: run an operation, mark the indicator as `'up'` if it succeeds and as `'down'` if it fails. The `HealthIndicatorService` covers exactly this pattern with `attempt()`. To get a basic understanding of how an indicator is structured, we will create an example `DogHealthIndicator`. This service should have the state `'up'` as long as an external dog API responds within one second.
 
 ```typescript
 @@filename(dog.health)
 import { Injectable } from '@nestjs/common';
 import { HealthIndicatorService } from '@nestjs/terminus';
-
-export interface Dog {
-  name: string;
-  type: string;
-}
 
 @Injectable()
 export class DogHealthIndicator {
@@ -426,25 +423,20 @@ export class DogHealthIndicator {
     private readonly healthIndicatorService: HealthIndicatorService
   ) {}
 
-  private dogs: Dog[] = [
-    { name: 'Fido', type: 'goodboy' },
-    { name: 'Rex', type: 'badboy' },
-  ];
+  isHealthy(key: string) {
+    return this.healthIndicatorService
+      .check(key)
+      .attempt(async ({ signal }) => {
+        const response = await fetch('https://dog.ceo/api/breeds/list', { signal });
+        const { message: breeds } = await response.json();
 
-  async isHealthy(key: string){
-    const indicator = this.healthIndicatorService.check(key);
-    const badboys = this.dogs.filter(dog => dog.type === 'badboy');
-    const isHealthy = badboys.length === 0;
-
-    if (!isHealthy) {
-      return indicator.down({ badboys: badboys.length });
-    }
-
-    return indicator.up();
+        return { breeds: breeds.length };
+      })
+      .withTimeout(1000);
   }
 }
 @@switch
-import { Injectable } from '@nestjs/common';
+import { Injectable, Dependencies } from '@nestjs/common';
 import { HealthIndicatorService } from '@nestjs/terminus';
 
 @Injectable()
@@ -454,24 +446,21 @@ export class DogHealthIndicator {
     this.healthIndicatorService = healthIndicatorService;
   }
 
-  private dogs = [
-    { name: 'Fido', type: 'goodboy' },
-    { name: 'Rex', type: 'badboy' },
-  ];
+  isHealthy(key) {
+    return this.healthIndicatorService
+      .check(key)
+      .attempt(async ({ signal }) => {
+        const response = await fetch('https://dog.ceo/api/breeds/list', { signal });
+        const { message: breeds } = await response.json();
 
-  async isHealthy(key){
-    const indicator = this.healthIndicatorService.check(key);
-    const badboys = this.dogs.filter(dog => dog.type === 'badboy');
-    const isHealthy = badboys.length === 0;
-
-    if (!isHealthy) {
-      return indicator.down({ badboys: badboys.length });
-    }
-
-    return indicator.up();
+        return { breeds: breeds.length };
+      })
+      .withTimeout(1000);
   }
 }
 ```
+
+`attempt()` accepts a sync or async function and marks the indicator as `'up'` once it resolves. Anything the function returns is appended to the result. If the function throws, the indicator is marked as `'down'` and the error message is added to the result. In both cases, the time the function took is reported as `responseTime`. With `withTimeout()` the attempt is limited to the given number of milliseconds - more on that in the [Timeouts and caching](#timeouts-and-caching) section.
 
 The next thing we need to do is register the health indicator as a provider.
 
@@ -496,10 +485,10 @@ The last required step is to add the now available health indicator in the requi
 ```typescript
 @@filename(health.controller)
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
-import { Injectable, Dependencies, Get } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health.js';
 
-@Injectable()
+@Controller('health')
 export class HealthController {
   constructor(
     private health: HealthCheckService,
@@ -516,10 +505,10 @@ export class HealthController {
 }
 @@switch
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
-import { Injectable, Get } from '@nestjs/common';
+import { Controller, Dependencies, Get } from '@nestjs/common';
 import { DogHealthIndicator } from './dog.health.js';
 
-@Injectable()
+@Controller('health')
 @Dependencies(HealthCheckService, DogHealthIndicator)
 export class HealthController {
   constructor(
@@ -536,6 +525,241 @@ export class HealthController {
     return this.health.check([
       () => this.dogHealthIndicator.isHealthy('dog'),
     ])
+  }
+}
+```
+
+If the API responds in time, our health check will return the following result:
+
+```json
+{
+  "status": "ok",
+  "info": {
+    "dog": {
+      "status": "up",
+      "breeds": 98,
+      "responseTime": 143
+    }
+  },
+  "error": {},
+  "details": {
+    "dog": {
+      "status": "up",
+      "breeds": 98,
+      "responseTime": 143
+    }
+  }
+}
+```
+
+> info **Hint** An attempt is executed by Terminus itself, so it can be passed straight into `health.check([...])` - either directly (`this.dogHealthIndicator.isHealthy('dog')`) or wrapped in a function as in the example above. Both forms work.
+
+##### Explicit control with up() and down()
+
+Sometimes "healthy" does not simply mean "the operation did not throw". If you need to decide the state yourself, you can return `up()` or `down()` directly instead of using `attempt()`. Let's assume our dogs are now stored locally and the indicator should only be healthy if every `Dog` has the type `'goodboy'`.
+
+```typescript
+@@filename(dog.health)
+import { Injectable } from '@nestjs/common';
+import { HealthIndicatorService } from '@nestjs/terminus';
+
+export interface Dog {
+  name: string;
+  type: string;
+}
+
+@Injectable()
+export class DogHealthIndicator {
+  constructor(
+    private readonly healthIndicatorService: HealthIndicatorService
+  ) {}
+
+  private dogs: Dog[] = [
+    { name: 'Fido', type: 'goodboy' },
+    { name: 'Rex', type: 'badboy' },
+  ];
+
+  async isHealthy(key: string) {
+    const indicator = this.healthIndicatorService.check(key);
+    const badboys = this.dogs.filter(dog => dog.type === 'badboy');
+
+    if (badboys.length > 0) {
+      return indicator.down({ badboys: badboys.length });
+    }
+
+    return indicator.up();
+  }
+}
+@@switch
+import { Injectable, Dependencies } from '@nestjs/common';
+import { HealthIndicatorService } from '@nestjs/terminus';
+
+@Injectable()
+@Dependencies(HealthIndicatorService)
+export class DogHealthIndicator {
+  constructor(healthIndicatorService) {
+    this.healthIndicatorService = healthIndicatorService;
+  }
+
+  private dogs = [
+    { name: 'Fido', type: 'goodboy' },
+    { name: 'Rex', type: 'badboy' },
+  ];
+
+  async isHealthy(key) {
+    const indicator = this.healthIndicatorService.check(key);
+    const badboys = this.dogs.filter(dog => dog.type === 'badboy');
+
+    if (badboys.length > 0) {
+      return indicator.down({ badboys: badboys.length });
+    }
+
+    return indicator.up();
+  }
+}
+```
+
+Both `up()` and `down()` accept either an object with additional data, which is appended to the result, or a string, which is added as `message`.
+
+##### Degraded state
+
+Not every problem is worth taking the application out of rotation. A cache that is unreachable, for example, slows the application down but does not break it. For such cases an indicator can return `degraded()`. A degraded indicator does not fail the health check: it is listed under `info`, the overall status becomes `'degraded'` and the HTTP status code stays `200`, so orchestrators keep routing traffic while the state remains visible in monitoring.
+
+```typescript
+@@filename(cache.health)
+@Injectable()
+export class CacheHealthIndicator {
+  constructor(
+    private readonly healthIndicatorService: HealthIndicatorService,
+    private readonly cache: CacheService,
+  ) {}
+
+  async isHealthy(key: string) {
+    const indicator = this.healthIndicatorService.check(key);
+    const hasCache = await this.cache.isConnected();
+
+    if (!hasCache) {
+      return indicator.degraded('cache unreachable, serving without cache');
+    }
+
+    return indicator.up();
+  }
+}
+```
+
+```json
+{
+  "status": "degraded",
+  "info": {
+    "cache": {
+      "status": "degraded",
+      "message": "cache unreachable, serving without cache"
+    }
+  },
+  "error": {},
+  "details": {
+    "cache": {
+      "status": "degraded",
+      "message": "cache unreachable, serving without cache"
+    }
+  }
+}
+```
+
+Like `up()` and `down()`, `degraded()` accepts either an object with additional data or a message string. As soon as any indicator is `'down'`, the overall status is `'error'` regardless of degraded indicators.
+
+> warning **Warning** A health indicator built with `up()`, `down()` and `degraded()` reports its state by returning one of them. An error thrown by such an indicator is considered a bug, not an unhealthy state: it aborts the whole health check and results in a `500` response instead of a `503`. If your indicator wraps an operation that may throw, prefer `attempt()`, which translates a thrown error into a `'down'` state for you.
+
+#### Timeouts and caching
+
+Every check built with `attempt()` - your custom indicators as well as the built-in database, microservice and gRPC indicators - returns a `HealthCheckAttempt`. Before it is executed, the attempt can be configured by chaining `withTimeout()` and `cacheFor()`.
+
+##### Timeouts
+
+With `withTimeout()` the attempt is limited to the given number of milliseconds. Once the time is up, the indicator is marked as `'down'` and the `AbortSignal` passed to your function is aborted. Make sure to hand that `signal` to the underlying operation so that it gets cancelled as well, rather than lingering in the background.
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () => this.db.pingCheck('database').withTimeout(1500),
+    () => this.dogHealthIndicator.isHealthy('dog'),
+  ]);
+}
+```
+
+In case the dog API from our custom indicator does not respond within one second, the health check will respond with the following result:
+
+```json
+{
+  "status": "error",
+  "info": {
+    "database": {
+      "status": "up",
+      "responseTime": 12
+    }
+  },
+  "error": {
+    "dog": {
+      "status": "down",
+      "message": "timeout of 1000ms exceeded",
+      "responseTime": 1001
+    }
+  },
+  "details": {
+    "database": {
+      "status": "up",
+      "responseTime": 12
+    },
+    "dog": {
+      "status": "down",
+      "message": "timeout of 1000ms exceeded",
+      "responseTime": 1001
+    }
+  }
+}
+```
+
+> warning **Warning** The `timeout` option of the built-in indicators (e.g. `this.db.pingCheck('database', {{ '{' }} timeout: 1500 {{ '}' }})`) is deprecated. Chain `.withTimeout()` on the returned attempt instead.
+
+##### Caching
+
+Health checks are typically polled by orchestrators every few seconds, and some checks are too expensive to run on every request. With `cacheFor()` the result of an attempt is cached for the given number of milliseconds. While a fresh result exists, the function is not executed again and concurrent health checks share a single in-flight execution. The cache is keyed by the indicator key.
+
+```typescript
+@@filename(health.controller)
+// Within the `HealthController`-class
+@Get()
+@HealthCheck()
+check() {
+  return this.health.check([
+    () => this.db.pingCheck('database').withTimeout(1500).cacheFor(5000),
+  ]);
+}
+```
+
+Results served from the cache are marked with `cachedResponse: true`:
+
+```json
+{
+  "status": "ok",
+  "info": {
+    "database": {
+      "status": "up",
+      "responseTime": 12,
+      "cachedResponse": true
+    }
+  },
+  "error": {},
+  "details": {
+    "database": {
+      "status": "up",
+      "responseTime": 12,
+      "cachedResponse": true
+    }
   }
 }
 ```
@@ -626,7 +850,7 @@ export class HealthModule {}
 
 If your application requires postponing its shutdown process, Terminus can handle it for you.
 This setting can prove particularly beneficial when working with an orchestrator such as Kubernetes.
-By setting a delay slightly longer than the readiness check interval, you can achieve zero downtime when shutting down containers.
+By setting a delay slightly longer than the readiness check interval, you can achieve zero downtime when shutting down containers: as soon as a termination signal is received, the health check reports `'shutting_down'` with a `503` status code, so the orchestrator stops routing new traffic while the application finishes in-flight requests during the delay.
 
 ```typescript
 @@filename(health.module)
@@ -639,6 +863,8 @@ By setting a delay slightly longer than the readiness check interval, you can ac
 })
 export class HealthModule {}
 ```
+
+> warning **Warning** The delay is only applied on `SIGTERM`, which is the signal orchestrators such as Kubernetes send when stopping a container. Other signals (e.g. `SIGINT` from `Ctrl+C`) still switch the health check to `'shutting_down'` but shut the application down immediately. Make sure [shutdown hooks](fundamentals/lifecycle-events#application-shutdown) are enabled, otherwise Terminus never receives the signal.
 
 #### More examples
 
