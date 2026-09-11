@@ -48,7 +48,7 @@ The `forRoot()` method is used to register a `bullmq` package configuration obje
 - `settings: AdvancedSettings` - Advanced Queue configuration settings. These should usually not be changed. See [AdvancedSettings](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queue) for more information. Optional.
 - `extraOptions` - Extra options for module init. See [Manual Registration](https://docs.nestjs.com/techniques/queues#manual-registration)
 
-All the options are optional, providing detailed control over queue behavior. These are passed directly to the BullMQ `Queue` constructor. Read more about these options and other options [here](https://api.docs.bullmq.io/interfaces/v4.QueueOptions.html).
+All the options are optional, providing detailed control over queue behavior. These are passed directly to the BullMQ `Queue` constructor. Read more about these options and other options [here](https://docs.bullmq.io/api/interfaces/v6.QueueOptions.html).
 
 To register a queue, import the `BullModule.registerQueue()` dynamic module, as follows:
 
@@ -193,7 +193,7 @@ const job = await this.audioQueue.add(
 );
 ```
 
-For a full list of options, check the API documentation [here](https://api.docs.bullmq.io/types/v4.JobsOptions.html) and [here](https://api.docs.bullmq.io/interfaces/v4.BaseJobOptions.html).
+For a full list of options, check the API documentation [here](https://docs.bullmq.io/api/types/v6.JobsOptions.html) and [here](https://docs.bullmq.io/api/interfaces/v6.BaseJobOptions.html).
 
 #### Consumers
 
@@ -230,7 +230,7 @@ export class AudioConsumer extends WorkerHost {
 
 The process method is called whenever the worker is idle and there are jobs to process in the queue. This handler method receives the `job` object as its only argument. The value returned by the handler method is stored in the job object and can be accessed later on, for example in a listener for the completed event.
 
-`Job` objects have multiple methods that allow you to interact with their state. For example, the above code uses the `updateProgress()` method to update the job's progress. See [here](https://api.docs.bullmq.io/classes/v4.Job.html) for the complete `Job` object API reference.
+`Job` objects have multiple methods that allow you to interact with their state. For example, the above code uses the `updateProgress()` method to update the job's progress. See [here](https://docs.bullmq.io/api/classes/v6.Job.html) for the complete `Job` object API reference.
 
 In the older version, Bull, you could designate that a job handler method will handle **only** jobs of a certain type (jobs with a specific `name`) by passing that `name` to the `@Process()` decorator as shown below.
 
@@ -315,7 +315,7 @@ export class AudioConsumer {
 }
 ```
 
-You can see the complete list of events and their arguments as properties of WorkerListener [here](https://api.docs.bullmq.io/interfaces/v4.WorkerListener.html).
+You can see the complete list of events and their arguments as properties of WorkerListener [here](https://docs.bullmq.io/api/interfaces/v6.WorkerListener.html).
 
 QueueEvent listeners must use the `@QueueEventsListener(queue)` decorator and extend the `QueueEventsHost` class provided by `@nestjs/bullmq`. To listen for an event, use the `@OnQueueEvent(event)` decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
@@ -339,11 +339,11 @@ export class AudioEventsListener extends QueueEventsHost {
 
 > info **Hint** QueueEvent Listeners must be registered as `providers` so the `@nestjs/bullmq` package can pick them up.
 
-You can see the complete list of events and their arguments as properties of QueueEventsListener [here](https://api.docs.bullmq.io/interfaces/v4.QueueEventsListener.html).
+You can see the complete list of events and their arguments as properties of QueueEventsListener [here](https://docs.bullmq.io/api/interfaces/v6.QueueEventsListener.html).
 
 #### Queue management
 
-Queues have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API [here](https://api.docs.bullmq.io/classes/v4.Queue.html). Invoke any of these methods directly on the `Queue` object, as shown below with the pause/resume examples.
+Queues have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API [here](https://docs.bullmq.io/api/classes/v6.Queue.html). Invoke any of these methods directly on the `Queue` object, as shown below with the pause/resume examples.
 
 Pause a queue with the `pause()` method call. A paused queue will not process new jobs until resumed, but current jobs being processed will continue until they are finalized.
 
