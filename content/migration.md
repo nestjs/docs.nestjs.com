@@ -37,6 +37,18 @@ The Node.js requirement differs depending on whether you are **running** an appl
 
 `@nestjs/core` itself still declares `>= 20`, but the v12 packages are ESM-only, and consuming them from a CommonJS application relies on `require(esm)` - which is unflagged only in Node.js 20.19 and 22.12 onwards. The 21.x line never received it and is not supported. `nest upgrade` enforces exactly this and refuses to run on an older release.
 
+AWS Lambda disables `require(esm)` by default on its Node.js 20, 22, and 24 runtimes, even when
+the corresponding upstream Node.js release enables it. When running a CommonJS Nest 12 application
+on these Lambda runtimes, enable it through the function's `NODE_OPTIONS` environment variable:
+
+```text
+NODE_OPTIONS=--experimental-require-module
+```
+
+If `NODE_OPTIONS` already contains other flags, append this flag to the existing value. See the
+[AWS Lambda documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html#nodejs-experimental)
+for details and the support limitations of experimental features.
+
 The CLI's schematics have a higher floor of their own: `@nestjs/schematics` requires **Node.js v22.22.3+, v24.15+, or v26+**, inherited from the Angular devkit it builds on. Scaffolding and upgrading therefore need a newer runtime than merely running the framework does - and note that the 23.x and 25.x lines, plus early 24.x releases, are excluded.
 
 > info **Hint** The simplest way to satisfy everything is to run the latest active LTS. Pick the bare minimum only if you have a specific reason to stay there - and if you do, note that Node 20.19 is enough to run your application but not to use the CLI's generators.
