@@ -137,6 +137,27 @@ async listen(callback: () => void) {
 }
 ```
 
+#### Reporting event handler errors
+
+An event handler has no response stream, so an error thrown inside one has nowhere to go. Nest logs it instead, but only after your exception filters run. If one of your filters matches the exception, that filter is the only report.
+
+Some transporters await the event stream themselves and hand the failure to their client library, which reports it. `ServerKafka` does this: `kafkajs` logs the rejection, so a second report from Nest would duplicate it. Set `propagatesEventHandlerErrors` to `true` in that case:
+
+```typescript
+class GoogleCloudPubSubServer
+  extends Server
+  implements CustomTransportStrategy
+{
+  /**
+   * The client library reports an event handler failure, so Nest must not
+   * log it a second time.
+   */
+  public override readonly propagatesEventHandlerErrors = true;
+}
+```
+
+The default is `false`, which suits a transporter that uses the inherited `handleEvent`. Nothing subscribes to the event stream there, so Nest is the only thing that can report the failure.
+
 #### Client proxy
 
 As we mentioned in the first section, you don't necessarily need to use the `@nestjs/microservices` package to create microservices, but if you decide to do so and you need to integrate a custom strategy, you will need to provide a "client" class too.
