@@ -180,6 +180,7 @@
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.02em;
+    padding-right: 140px;
   }
   h3 + h5 {
     margin-top: -10px !important;
@@ -591,7 +592,7 @@
 
   @include utils.media(large) {
     #carbonads {
-      margin: 16px 0 16px 16px;
+      margin: 64px 0 16px 16px;
       padding: 12px;
       float: right;
       position: static;
@@ -602,7 +603,6 @@
 
   @include utils.media(normal) {
     #carbonads {
-      margin: 16px 0 16px 16px;
       padding: 12px;
       text-align: left;
     }
