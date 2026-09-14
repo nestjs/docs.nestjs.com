@@ -298,6 +298,7 @@ h4 {
 blockquote {
   line-height: 1.6;
   position: relative;
+  display: flow-root;
   margin: 35px 0;
   background: var(--error-background);
   padding: 20px;
