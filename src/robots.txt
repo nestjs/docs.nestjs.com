@@ -3,6 +3,19 @@
 User-agent: *
 Allow: /
 
+# Archived documentation for previous major versions. It is kept online so that
+# existing links keep working, but it should not be crawled: those pages used to
+# flood the Algolia index (and search results) with records that no longer apply
+# to the current version. See https://github.com/nestjs/docs.nestjs.com/issues/3516
+Disallow: /v4
+Disallow: /v5
+Disallow: /v6
+Disallow: /v7
+Disallow: /v8
+Disallow: /v9
+Disallow: /v10
+Disallow: /v11
+
 # Machine-readable index of the documentation (https://llmstxt.org).
 # The docs are a client-rendered single-page application, so this file is the
 # reliable entry point for crawlers that do not execute JavaScript.

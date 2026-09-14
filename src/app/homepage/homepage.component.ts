@@ -30,6 +30,22 @@ import { CopyMarkdownComponent } from '../shared/components/copy-markdown/copy-m
 
 const CARBON_WIDTH_BREAKPOINT = 1200;
 
+// Matches the archived documentation kept under /v4, /v5, ... /v11.
+const ARCHIVED_VERSION_PATH = /^\/v\d+(?:\/|$)/;
+
+function isArchivedVersionUrl(url: string | undefined): boolean {
+  if (!url) {
+    return false;
+  }
+  try {
+    return ARCHIVED_VERSION_PATH.test(
+      new URL(url, window.location.origin).pathname,
+    );
+  } catch {
+    return false;
+  }
+}
+
 @Component({
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
@@ -248,6 +264,34 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
         container: '#search',
         appId: 'SDCBYAN96J',
         debug: false,
+        // The Algolia index also covers the archived documentation (/v4 ... /v11),
+        // and those records tend to crowd out the current ones. They are dropped
+        // straight from the response - `transformItems` runs only after DocSearch
+        // has grouped and truncated the hits, which would be too late. A larger
+        // page of hits is requested to compensate for the ones removed - roughly
+        // one record in six belongs to the current version, so 20 (the DocSearch
+        // default) would leave barely a handful of results.
+        searchParameters: {
+          hitsPerPage: 150,
+        },
+        transformSearchClient: (searchClient: any) => ({
+          ...searchClient,
+          search: (queries: unknown, ...rest: unknown[]) =>
+            searchClient
+              .search(queries, ...rest)
+              .then((response: { results?: any[] }) => ({
+                ...response,
+                results: (response.results ?? []).map((result) => {
+                  if (!Array.isArray(result?.hits)) {
+                    return result;
+                  }
+                  const hits = result.hits.filter(
+                    (hit: { url?: string }) => !isArchivedVersionUrl(hit.url),
+                  );
+                  return { ...result, hits, nbHits: hits.length };
+                }),
+              })),
+        }),
       });
     };
     return scriptTag;
