@@ -1,7 +1,7 @@
 ### Who is using Nest?
 
 We are proudly helping various companies building their products at scale.
-If you are using Nest and would you like to be listed here, see this [thread](https://github.com/nestjs/nest/issues/1006).
+If you are using Nest and would like to be listed here, see this [thread](https://github.com/nestjs/nest/issues/1006).
 We are willing to put your logo here!
 
 #### Companies
