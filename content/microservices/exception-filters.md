@@ -8,6 +8,8 @@ throw new RpcException('Invalid credentials.');
 
 > info **Hint** The `RpcException` class is imported from the `@nestjs/microservices` package.
 
+> warning **Warning** An event handler has no response stream. A filter that rethrows for an `@EventPattern` handler sends the error nowhere, so handle it inside the filter.
+
 With the sample above, Nest will handle the thrown exception and return the `error` object with the following structure:
 
 ```json
