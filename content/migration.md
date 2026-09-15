@@ -200,6 +200,21 @@ Lifecycle hooks are now called by component hierarchy level. This can change the
 
 If your application relies on a specific hook ordering between related providers, review that flow during the upgrade and update any assumptions in initialization logic, teardown logic, or tests.
 
+#### `@Optional()` is no longer inherited
+
+Nest reads optional constructor parameters with `Reflect.getOwnMetadata`, so a subclass no longer inherits the markers its parent declared. Parameter types are still inherited, so a subclass with no constructor of its own keeps its parent's parameters but loses their optional status, and Nest throws `UnknownDependenciesException` where v11 resolved the parameter as `undefined`.
+
+This is deliberate: a dependency that was genuinely missing used to resolve to `undefined` without a word. Give the subclass its own constructor and declare the marker again:
+
+```typescript
+@Injectable()
+class Child extends Base {
+  constructor(@Optional() options?: Options) {
+    super(options);
+  }
+}
+```
+
 #### class-validator and class-transformer
 
 The existing decorator-based workflow still works in v12. `ValidationPipe` and `ClassSerializerInterceptor` remain supported and are still a good fit for class-based DTO projects.
