@@ -4,6 +4,8 @@ Once an application is instrumented and sending data, its project dashboard fill
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/dashboard.webp" alt="Project dashboard" /></figure>
 
+> info **Hint** Every view described below can be clicked through in the [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo'), which runs the dashboard over a generated dataset from a busy service - real request volumes, traces with waterfalls, errors, jobs and alerts. It needs no account and runs entirely in your browser.
+
 #### How the views nest
 
 Almost every telemetry view is one of three levels, and you move between them by clicking through:

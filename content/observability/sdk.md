@@ -2,6 +2,8 @@
 
 The `@nestjs/observe` SDK is what gets your application's requests, jobs, errors, logs, and traces into your [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') dashboard. It hooks into Nest's own request lifecycle - controllers, interceptors, resolvers, queue consumers - rather than bolting a generic Node.js agent onto the process, so most of what shows up in the dashboard needs no manual span wiring.
 
+> info **Hint** Not sure it is worth the setup yet? The [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo') shows what this instrumentation produces - traces, waterfalls, errors and jobs from a busy service - without installing anything.
+
 #### Installation
 
 ```bash

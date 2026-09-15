@@ -2,7 +2,7 @@
 
 [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') is the official, auto-instrumented observability platform for NestJS applications. Install the SDK, add an API key, and your application starts streaming requests, background jobs, errors, logs, and traces to your dashboard - no manual span wiring, no collector to run, no schema to design, no dashboards to build by hand.
 
-> info **Hint** This chapter covers how to instrument a NestJS application with the `@nestjs/observe` SDK and what that instrumentation gives you. If you are looking for the dashboard itself, head over to [observe.nestjs.com](https://www.observe.nestjs.com/ 'NestJS Observe').
+> info **Hint** This chapter covers how to instrument a NestJS application with the `@nestjs/observe` SDK and what that instrumentation gives you. If you are looking for the dashboard itself, head over to [observe.nestjs.com](https://www.observe.nestjs.com/ 'NestJS Observe'), or open the [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo') - the whole dashboard over a busy service's data, with no signup and nothing to install.
 
 #### What makes it different
 
