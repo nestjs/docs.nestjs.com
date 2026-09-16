@@ -266,6 +266,53 @@ posts(@Parent() authors: Author[]): Promise<Map<Author, Post[]>> {
 
 Enhancers, on the other hand, sit inside the batch. When guards, interceptors or filters are enabled at the field resolver level ([read more](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)), they run **once per batch**, and the root of the execution context is the array of parents rather than a single parent. Keep that in mind when writing a guard that inspects the parent object.
 
+#### Mapping the output with an interceptor
+
+Because interceptors sit inside the batch, `next.handle()` emits **the value the batch method returned** — the whole `Map` — rather than one parent's value. That turns an entity-to-DTO mapping pass into something that runs once per layer instead of once per parent:
+
+```typescript
+@@filename(authors/posts-connection.interceptor)
+@Injectable()
+export class PostsConnectionInterceptor implements NestInterceptor {
+  constructor(private mapper: Mapper) {}
+
+  intercept(
+    _context: ExecutionContext,
+    next: CallHandler<Map<Author, PostEntity[]>>,
+  ): Observable<Map<Author, PostConnection>> {
+    return next.handle().pipe(
+      concatMap(async (postsByAuthor) => {
+        const connections = new Map<Author, PostConnection>();
+
+        for (const [author, entities] of postsByAuthor) {
+          const nodes = await this.mapper.map(entities, PostEntity, PostDto);
+          const byEntity = new Map(
+            entities.map((entity, index) => [entity, nodes[index]]),
+          );
+          connections.set(
+            author,
+            this.connectionOf(entities, (entity) => byEntity.get(entity)),
+          );
+        }
+        return connections;
+      }),
+    );
+  }
+}
+```
+
+The resolver then declares the **mapped** type while returning the raw entities. Whatever the interceptor emits is what gets distributed back to the parents, so the two ends never have to agree on a shape:
+
+```typescript
+@UseInterceptors(PostsConnectionInterceptor)
+@BatchResolveField(() => PostConnection, { name: 'posts' })
+postsConnection(@Parent() authors: Author[]): Map<Author, PostEntity[]> {
+  // ...
+}
+```
+
+> info **Hint** Field middleware sees the other side of this. It runs after the batch has been split up, so its `next()` resolves to the value of a single parent — use middleware to touch one field's value, and an interceptor to rewrite the batch as a whole.
+
 #### Schema first
 
 The return type function is only used by the code first schema builder, so in the schema first approach it can be dropped entirely — the field types come from your SDL:
