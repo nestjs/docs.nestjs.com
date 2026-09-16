@@ -23,6 +23,8 @@ $ nest new project-name
 
 The CLI asks whether you want to generate a CommonJS or ESM project. ESM starters use Vitest and oxlint by default.
 
+It also asks whether to set up [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe'), the official observability platform for Nest. Answering yes adds the `@nestjs/observe` SDK to the generated project already wired into `AppModule` and `NestFactory.create()`, so requests, background jobs, errors, and distributed traces start reporting as soon as you supply an app key - the free plan needs no payment details. The prompt defaults to no and can be skipped either way with `--observe` or `--no-observe`; see the [Observability](/observability/overview) chapter for what it covers.
+
 > info **Hint** To create a new project with TypeScript's [stricter](https://www.typescriptlang.org/tsconfig#strict) feature set, pass the `--strict` flag to the `nest new` command.
 
 The `project-name` directory will be created, node modules and a few other boilerplate files will be installed, and a `src/` directory will be created and populated with several core files.
