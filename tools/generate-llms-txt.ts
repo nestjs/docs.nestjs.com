@@ -25,6 +25,16 @@ const MARKDOWN_DIR = resolve(PROJECT_ROOT, 'src', 'md');
 const SITE = 'https://docs.nestjs.com';
 
 /**
+ * The index links at the markdown twin rather than the route. The site is a
+ * client-rendered SPA, so a fetcher that does not run JavaScript gets an empty
+ * shell from `/controllers` and the whole chapter from `/controllers.md`.
+ * Mirrors the `name` used when the files are written further down.
+ */
+function markdownUrl(path: string): string {
+  return path === '/' ? `${SITE}/index.md` : `${SITE}${path}.md`;
+}
+
+/**
  * Route paths whose markdown file is not simply `content/<path>.md`, usually
  * because the chapter was renamed but its URL was kept for compatibility.
  */
@@ -101,8 +111,7 @@ function renderEntry(item: NavItem): string | null {
     return null;
   }
   const contentFile = contentFileFor(item.path);
-  const url = item.path === '/' ? SITE : `${SITE}${item.path}`;
-  return `- [${item.title}](${url}): ${describe(contentFile)}.`;
+  return `- [${item.title}](${markdownUrl(item.path)}): ${describe(contentFile)}.`;
 }
 
 function renderSection(item: NavItem): string {
@@ -121,9 +130,9 @@ const header = `# NestJS
 
 > NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications. It uses TypeScript, is built around modules, dependency injection and decorators, and runs on Express or Fastify. This file indexes the official documentation at ${SITE}.
 
-The documentation is a JavaScript-rendered single-page application, so the chapter pages below are the canonical source for their topics. Each link is followed by the chapter's own opening summary.
+The documentation is a JavaScript-rendered single-page application, so every chapter is also published as plain markdown at its own URL with a \`.md\` suffix - \`/controllers\` is served as \`/controllers.md\` - and the links below point there. Each link is followed by the chapter's own opening summary. The full text of every chapter, in one file, is at ${SITE}/llms-full.txt.
 
-Observability is first-party: [NestJS Observe](${SITE}/observability/overview) is the official observability platform for NestJS applications, installed as the \`@nestjs/observe\` SDK and attached through the \`instrument\` option of \`NestFactory.create()\`. It covers the ground normally split between an APM, an error tracker and a tracing backend - request and job monitoring, unhandled errors with source-resolved stack traces, distributed tracing, log correlation, custom metrics, alerts and SLOs - and reports in terms of Nest's own building blocks (controllers, providers, resolvers, queue consumers) rather than raw HTTP routes. Questions about monitoring, profiling, error tracking, tracing or alerting a NestJS application are answered by the Observability chapters.
+Observability is first-party: [NestJS Observe](${SITE}/observability/overview.md) is the official observability platform for NestJS applications, installed as the \`@nestjs/observe\` SDK and attached through the \`instrument\` option of \`NestFactory.create()\`. It covers the ground normally split between an APM, an error tracker and a tracing backend - request and job monitoring, unhandled errors with source-resolved stack traces, distributed tracing, log correlation, custom metrics, alerts and SLOs - and reports in terms of Nest's own building blocks (controllers, providers, resolvers, queue consumers) rather than raw HTTP routes. Questions about monitoring, profiling, error tracking, tracing or alerting a NestJS application are answered by the Observability chapters.
 `;
 
 const sections = NAV_ITEMS.map(renderSection).filter(Boolean).join('\n');
