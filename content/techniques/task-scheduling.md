@@ -27,6 +27,8 @@ export class AppModule {}
 
 The `.forRoot()` call initializes the scheduler and registers any declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a> and <a href="techniques/task-scheduling#declarative-intervals">intervals</a> that exist within your app. Registration occurs when the `onApplicationBootstrap` lifecycle hook occurs, ensuring that all modules have loaded and declared any scheduled jobs.
 
+> warning **Warning** Call `forRoot()` in one module only. Each additional import registers every `@Cron()`, `@Interval()` and `@Timeout()` handler in your app again, so importing it in three modules makes each job run three times.
+
 #### Declarative cron jobs
 
 A cron job schedules an arbitrary function (method call) to run automatically. Cron jobs can run:
