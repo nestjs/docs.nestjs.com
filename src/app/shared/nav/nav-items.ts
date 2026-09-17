@@ -139,6 +139,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Interfaces', path: '/graphql/interfaces' },
       { title: 'Unions and Enums', path: '/graphql/unions-and-enums' },
       { title: 'Field middleware', path: '/graphql/field-middleware' },
+      { title: 'Batch loading', path: '/graphql/batch-loading' },
       { title: 'Mapped types', path: '/graphql/mapped-types' },
       { title: 'Plugins', path: '/graphql/plugins' },
       { title: 'Complexity', path: '/graphql/complexity' },
