@@ -1,6 +1,6 @@
 ### Exception filters
 
-Nest comes with a built-in **exceptions layer** which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
+Nest comes with a built-in **exceptions layer** which is responsible for processing all unhandled exceptions raised while an incoming request or message is being handled. When such an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
 
 <figure>
   <img class="illustrative-image" src="/assets/Filter_1.png" />
@@ -376,6 +376,8 @@ You can add as many filters with this technique as needed; simply add each to th
 #### Catch everything
 
 In order to catch **every** unhandled exception (regardless of the exception type), leave the `@Catch()` decorator's parameter list empty, e.g., `@Catch()`.
+
+> warning **Warning** "Every unhandled exception" here means every exception that propagates out of the handler chain of a request: middleware, guards, interceptors, pipes, and the route handler itself. The exceptions layer wraps that invocation, so it only sees errors that travel back through it. A catch-all filter is **not** a replacement for `process.on('uncaughtException')` and `process.on('unhandledRejection')`. An error thrown from a `setTimeout` callback, from an event emitter listener, or from a promise that is never awaited leaves the request that started it, so no filter is invoked (there is no `ArgumentsHost` to hand it, since the request has already been answered or was never involved). Those errors still crash or destabilize the process and must be handled at the process level, as described in the [Node.js documentation](https://nodejs.org/api/process.html#event-uncaughtexception).
 
 The example below is platform-agnostic: it delivers the response through the [HTTP adapter](./faq/http-adapter) rather than touching the platform-specific `Request` and `Response` objects directly, so the same filter works on both Express and Fastify.
 

@@ -14,7 +14,7 @@ Lifecycle events happen during application bootstrapping and shutdown. Nest call
 
 In the following table, `onModuleInit` and `onApplicationBootstrap` are only triggered if you explicitly call `app.init()` or `app.listen()`.
 
-In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onApplicationShutdown` are only triggered if you explicitly call `app.close()` or if the process receives a special system signal (such as SIGTERM) and you have correctly called `enableShutdownHooks` at application bootstrap (see below **Application shutdown** part).
+In the following table, `onModuleDestroy`, `beforeApplicationShutdown` and `onApplicationShutdown` are only triggered if you explicitly call `app.close()`, if the process receives a special system signal (such as SIGTERM) and you have correctly called `enableShutdownHooks` at application bootstrap (see below **Application shutdown** part), or if a process error handler calls `shutdown()` (see below **Handling fatal process errors** part).
 
 | Lifecycle hook method           | Lifecycle event triggering the hook method call                                                                                                                                                                   |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -115,3 +115,53 @@ class UsersService implements OnApplicationShutdown {
 ```
 
 > info **Info** Calling `app.close()` doesn't terminate the Node process but only triggers the `onModuleDestroy()` and `onApplicationShutdown()` hooks, so if there are some intervals, long-running background tasks, etc. the process won't be automatically terminated.
+
+#### Handling fatal process errors
+
+Besides system signals, a process can also die from an `uncaughtException` or an `unhandledRejection`. By default Node.js terminates the process for both, and the exceptions layer described in the [Exception filters](/exception-filters) chapter never sees these errors, since it only wraps the request or message handling pipeline. `enableProcessErrorHandlers()` lets you react to them the same way `enableShutdownHooks()` lets you react to a termination signal, running the same `onModuleDestroy()`, `beforeApplicationShutdown()` and `onApplicationShutdown()` sequence if you choose to.
+
+```typescript
+@@filename()
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module.js';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.enableProcessErrorHandlers({
+    unhandledRejection: (error) => {
+      // A rejected promise was dropped somewhere; nothing was interrupted
+      // mid-flight. Logging and letting the process continue is reasonable.
+      console.error(error);
+    },
+    uncaughtException: async (error, { shutdown }) => {
+      console.error(error);
+      // Unlike `unhandledRejection`, Node.js documents resuming after an
+      // uncaught exception as unsafe. Call `shutdown()` to run the regular
+      // shutdown sequence and exit instead of returning.
+      await shutdown();
+    },
+  });
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+await bootstrap();
+```
+
+A handler receives the error and a context object with two properties:
+
+- `origin`: which event actually reported the error. Node.js promotes an unhandled rejection to an uncaught exception when no `unhandledRejection` listener is registered for it, so a handler subscribed only to `uncaughtException` can still receive `origin: 'unhandledRejection'`.
+- `shutdown(options?)`: runs the shutdown sequence and exits the process. Never resolves. A handler that returns without calling it leaves the process running, which is only a reasonable choice for `unhandledRejection`.
+
+> info **Info** Node.js passes the rejected promise itself as a second argument to its own `unhandledRejection` event, alongside the rejection reason. This API only exposes the reason (as `error`), not the promise.
+
+> warning **Warning** `shutdown()` passes `origin` as the `signal` argument to `onModuleDestroy()`, `beforeApplicationShutdown()` and `onApplicationShutdown()`, so those hooks can now receive `'uncaughtException'` or `'unhandledRejection'` in addition to a real system signal such as `'SIGTERM'`.
+
+`shutdown()` accepts two options:
+
+| Option | Description | Default |
+| --- | --- | --- |
+| `exitCode` | Exit code passed to `process.exit()` once the shutdown sequence completes. | `1` |
+| `timeout` | Maximum time (in milliseconds) to wait for the shutdown sequence before exiting anyway. The process state is not trustworthy after a fatal error, so this keeps a stuck hook from hanging the process forever. Pass `Infinity` for no deadline. | `5000` |
+
+> info **Info** An event without a handler is left untouched, since subscribing to it changes what Node.js does by default. Both handlers are optional, but `options` itself is required, there is no implicit "handle nothing" call.
