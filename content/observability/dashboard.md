@@ -20,9 +20,9 @@ Aggregates tell you _that_ something is wrong and how much it matters; a single 
 
 | View        | What it shows                                                                                                                                                                                                                                                                                                    |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Requests** | Every HTTP, GraphQL, and gRPC request, broken down by operation. A request detail page compares the call against the route's own baseline ("slower than 95% of calls") and, when the process was struggling, states by how much host pressure slowed this operation.                                          |
+| **Requests** | Every HTTP, GraphQL, gRPC, microservice and WebSocket gateway request, broken down by operation. A request detail page compares the call against the route's own baseline ("slower than 95% of calls") and, when the process was struggling, states by how much host pressure slowed this operation.                                          |
 | **Services** | Time spent per NestJS **class and method**, split into own time (with everything awaited subtracted out) and total time. Only instrumented classes appear, so a short list means low coverage, not low traffic.                                                                                               |
-| **Errors**   | Every unhandled error, grouped by operation, with the failure leading the page: class, message, stack trace, and source code. The **Group into defects** switch collapses occurrences with the same class and stack shape into one fingerprinted group with first/last seen and the release that introduced it. |
+| **Errors**   | Every unhandled error, grouped by operation, with the failure leading the page: class, message, stack trace, and source code. The **Group into defects** switch collapses occurrences with the same class and stack shape into one fingerprinted group with first/last seen and the release that introduced it. See [Error monitoring](/observability/error-monitoring). |
 | **Jobs**     | Background work - queue consumers, cron runs - with queue wait time, attempt number, and failure reason alongside duration and failure rate.                                                                                                                                                                    |
 | **Spans**    | Analytics over span names across every route that calls them - "how slow is `OrdersService.recalculate` everywhere", rather than "how slow is this one endpoint".                                                                                                                                             |
 | **Traces**   | The waterfall for a trace id, across every service that shares it - see [Distributed tracing](/observability/distributed-tracing).                                                                                                                                                                              |
@@ -33,6 +33,26 @@ Aggregates tell you _that_ something is wrong and how much it matters; a single 
 | **Profiler** | CPU, memory, event loop delay and utilization, and garbage collection per application, with per-instance comparison when an application runs on more than one node. Click a spike on the Memory or Event loop delay chart to see which operations ran at that moment, ranked by deviation from their baseline.   |
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/services.webp" alt="Services view" /></figure>
+
+#### Queries, outbound calls, and captured requests
+
+In a trace's waterfall, a database query or an outbound HTTP request is a row of its own under the method that made it: an icon, the operation (`SELECT orders`, `POST api.stripe.com`), and the statement or URL running on beside it, visible without a hover. The row's caret opens the full statement laid out by clause, with its placeholders highlighted and a copy button. Values are never there to show - the agent removes them before anything is sent. The spans table beneath lists your application's methods only; the agent's query spans are left out and their time is read as the calling method's own, so the table still answers "which of my methods burned the time". The **Services** page follows the same rule: drivers (`pg`, `mysql2`, `mongodb`, `http`) are not listed as classes, and a query's wait counts as the own time of the method that ran it.
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/sql.webp" alt="A query opened in the waterfall" /></figure>
+
+When the agent kept a request's own inputs - it failed, or it ran past the [`slowerThanMs`](/observability/sdk#capturing-failed-and-slow-requests) you configured - the request's **Details** card carries two extra folded rows, *Request headers* and *Request body*. A request with nothing captured simply has no such rows.
+
+#### The service map
+
+A project's **Activity → Map** page draws how its applications, queues and databases talk to each other. Applications and queues run left to right in call order, and the databases and external services each one depends on hang beneath it. A line's thickness and the speed of the traffic along it show volume; a soft red and then the full red show an error rate past 1% and 5%, and teal means healthy. Hover anything to isolate what it touches, and click it for its numbers - for a database, the statements the time went to; for an application, what it calls and what calls it, with a link to its requests.
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/map.webp" alt="Service map" /></figure>
+
+The map needs no configuration and collects nothing new. Databases and external hosts come from the agent's [query and outbound-HTTP spans](/observability/sdk#database-queries-and-outbound-http), queues from the jobs an application works, and the dashed lines between applications from executions that share a [trace id](/observability/distributed-tracing). Each application gets one database node per driver - two services on Postgres usually show as two databases, since nothing on the wire says they share one - while an external host is a single node shared by everyone who calls it, up to the busiest eight per application.
+
+An application with no lines at all is almost always running an SDK older than `0.3.0`, which does not report queries or outbound calls.
+
+> info **Hint** Links between applications are inferred from the most recent requests rather than counted over the whole window. Read a dashed line as "this calls that", not as an exact total.
 
 #### Handing a failure to a coding agent
 
@@ -54,6 +74,7 @@ Alerts get you told when your telemetry crosses a threshold you care about, inst
 | Job     | Job failure rate, job throughput, p95 queue wait | An application, and optionally one job name + queue |
 | Absence | Telemetry silence, job silence                  | An application, or one job name + queue             |
 | Logs    | Matching log lines                              | A pattern, and optionally levels + logger context   |
+| Errors  | New error groups                                | An application, or the whole project                |
 | Runtime | Event loop delay, CPU usage, memory usage       | An application (sampled per process)                |
 | Custom  | Any custom metric your application reports      | A metric name, and optionally one label             |
 | SLO     | SLO burn rate                                   | The SLO itself                                      |
@@ -68,6 +89,8 @@ Two families deserve a closer look from the instrumentation side:
 A rule can notify through **email**, **Slack** (incoming webhook), a generic **webhook**, an **in-app** notification, or by **creating an issue** pre-filled with the rule's severity and scope. Rules can carry a recurring mute schedule for quiet hours, and every state transition (OK → Firing → Resolved) is recorded with per-channel delivery status.
 
 <figure><img src="https://www.observe.nestjs.com/docs/alerts/create-alert.webp" alt="Create alert" /></figure>
+
+**New errors.** A *new error groups* rule fires when an error Observe has never seen before appears. It counts unhandled failures only - a group whose first occurrence answered 5xx, or failed on an entry point with no HTTP status (an RPC handler, a gateway message). An error your code threw on purpose, such as a `NotFoundException` or a failed validation, still appears in the Errors view but is not a new bug. Every plan, Free included, also gets a built-in **new-error email** without creating a rule: one email per project listing the new errors, at most six a day, switched off per person under **Settings → New error emails**.
 
 #### SLOs
 

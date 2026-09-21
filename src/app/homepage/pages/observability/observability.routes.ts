@@ -3,6 +3,7 @@ import { ObservabilityOverviewComponent } from './overview/overview.component';
 import { ObservabilitySdkComponent } from './sdk/sdk.component';
 import { ObservabilityManualInstrumentationComponent } from './manual-instrumentation/manual-instrumentation.component';
 import { ObservabilityDistributedTracingComponent } from './distributed-tracing/distributed-tracing.component';
+import { ObservabilityErrorMonitoringComponent } from './error-monitoring/error-monitoring.component';
 import { ObservabilityDashboardComponent } from './dashboard/dashboard.component';
 import { ObservabilityMcpServerComponent } from './mcp-server/mcp-server.component';
 
@@ -31,6 +32,11 @@ export const OBSERVABILITY_ROUTES: Routes = [
     path: 'distributed-tracing',
     component: ObservabilityDistributedTracingComponent,
     data: { title: 'Observability - Distributed tracing' },
+  },
+  {
+    path: 'error-monitoring',
+    component: ObservabilityErrorMonitoringComponent,
+    data: { title: 'Observability - Error monitoring' },
   },
   {
     path: 'dashboard',

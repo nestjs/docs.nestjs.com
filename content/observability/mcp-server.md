@@ -1,6 +1,6 @@
 ### MCP server
 
-NestJS Observe exposes a read-only [MCP](https://modelcontextprotocol.io/) server, so an MCP-compatible client - Claude Code, Claude Desktop, Cursor, VS Code, or an agent you wrote yourself - can ask questions about your projects directly instead of you copying dashboard data into a prompt. Regressions, slow operations, error groups, traces, jobs, alerts: the same data the dashboard shows, scoped to exactly what you can see.
+NestJS Observe exposes an [MCP](https://modelcontextprotocol.io/) server, so an MCP-compatible client - Claude Code, Claude Desktop, Cursor, VS Code, or an agent you wrote yourself - can ask questions about your projects directly instead of you copying dashboard data into a prompt. Regressions, slow operations, error groups, traces, jobs, alerts: the same data the dashboard shows, scoped to exactly what you can see.
 
 > info **Hint** MCP is one of two ways to get telemetry to an agent. The **Copy agent prompt** button (see [Dashboard](/observability/dashboard#handing-a-failure-to-a-coding-agent)) packages one page as text for a single paste; MCP is for an agent that needs to keep asking - follow a trace, check whether the error is still firing - without you relaying each answer.
 
@@ -115,7 +115,7 @@ Errors and background jobs follow the same shape: `list_error_groups` → `get_e
 
 #### Available tools
 
-Every tool is read-only. Most diagnostic tools share a scope: a required `projectId`, an optional `applicationId` to narrow to one service, and an optional `timeInterval` look-back window (`1h`, `3h`, `12h`, `1d`, `3d`, `7d`, `30d`), defaulting to `1d`.
+Almost every tool is read-only; the ones that write are listed under [Setting up a service](/observability/mcp-server#setting-up-a-service). Most diagnostic tools share a scope: a required `projectId`, an optional `applicationId` to narrow to one service, and an optional `timeInterval` look-back window (`1h`, `3h`, `12h`, `1d`, `3d`, `7d`, `30d`), defaulting to `1d`.
 
 | Tool                     | What it answers                                                                                                                                   |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -137,4 +137,18 @@ Every tool is read-only. Most diagnostic tools share a scope: a required `projec
 | `list_slos`              | A project's SLOs with current status and error-budget burn.                                                                                       |
 | `list_alert_rules`, `list_alert_events` | Alert rules across every project you can see, and their firing history.                                                            |
 
-There is currently no way to create, resolve, or modify anything through MCP - not issues, not alert rules, not error-group status. Those stay in the dashboard. Tool results also drop the time-bucketed chart series the dashboard endpoints return, because hundreds of bucket values cost context and say less than the summary derived from them.
+Beyond setting up a service and resolving an issue, nothing can be created or changed through MCP - not alert rules, not error-group status. Those stay in the dashboard. Tool results also drop the time-bucketed chart series the dashboard endpoints return, because hundreds of bucket values cost context and say less than the summary derived from them.
+
+#### Setting up a service
+
+The tools that write. Each goes through the same service as the matching dashboard button, so your role on the project and your plan's limits apply exactly as they do there, and a refusal comes back as the tool's answer. Nothing can be deleted, renamed or revoked over MCP.
+
+| Tool                 | What it does |
+| -------------------- | ------------ |
+| `list_applications`  | The applications of one project. Check it before creating a duplicate. |
+| `create_project`     | Creates a project, in an existing team (pass its id) or a new one named after the project. |
+| `create_application` | Registers one NestJS service in a project. The name sticks, and should match the `serviceId` you give the SDK. |
+| `create_api_key`     | Issues the key pair the SDK authenticates with. The secret is returned once; a well-behaved client writes it to your git-ignored environment file and does not repeat it. |
+| `resolve_issue`      | Marks an issue resolved after a fix ships, which starts verification against the pre-incident baseline. |
+
+With these an agent can take a repository from "not instrumented" to "reporting" in one request: *"Set up NestJS Observe for this service"* becomes `list_projects` -> `create_application` -> `create_api_key`, then the install and the three code edits from the [SDK guide](/observability/sdk).

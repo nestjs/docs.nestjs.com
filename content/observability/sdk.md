@@ -71,7 +71,11 @@ That's the whole integration. Once the application receives traffic, requests, e
 
 > info **Hint** `createObserveModule()` itself takes an options object that controls how trace ids are generated and how error source context is captured - see [Trace correlation](#trace-correlation) and [Error source context](#error-source-context) below. Everything else is configured through `ObserveModule.forRoot()`.
 
-#### Authenticating and identifying the application
+#### Configuring the module
+
+Beyond the credentials in the quick start, these options decide how the SDK identifies your application, where it sends what it records, and how much it tells you about itself.
+
+##### Authenticating and identifying the application
 
 ```typescript
 ObserveModule.forRoot({
@@ -93,7 +97,7 @@ Passing a `serviceVersion` is optional but strongly recommended: it is what lets
 
 <figure><img src="https://www.observe.nestjs.com/docs/sdk/deployments.webp" alt="Releases" /></figure>
 
-#### Asynchronous configuration
+##### Asynchronous configuration
 
 When the credentials come from a configuration provider rather than `process.env` directly, use `forRootAsync()` - it accepts the same `useFactory`/`inject`, `useClass`, and `useExisting` shapes as every other Nest dynamic module (a class implements `ObserveOptionsFactory` with a `createObserveOptions()` method), plus `extraProviders` and `global`:
 
@@ -111,22 +115,63 @@ ObserveModule.forRootAsync({
 });
 ```
 
-#### Associating users with telemetry
+##### Collector endpoint
 
-`getUserId` reads the incoming request and returns whatever identifier your system uses for a person - a user id, an account id, a tenant-scoped id. Set it once and the **Users** view populates automatically:
+```typescript
+ObserveModule.forRoot({ endpoint: 'https://observe-api.nestjs.com' });
+```
+
+`endpoint` (default `'https://observe-api.nestjs.com'`) is the base URL of the collector, used for telemetry and profiles both so the two can never point at different places. Set the `OBSERVE_ENDPOINT` environment variable to override it without touching the config - which is how a local or self-hosted collector is usually pointed at.
+
+##### Debugging the SDK itself
+
+```typescript
+ObserveModule.forRoot({ debug: true });
+```
+
+`debug` (default `false`) logs additional diagnostic information from the SDK to the console - useful while getting instrumentation working, not something to leave on in production.
+
+#### Automatic instrumentation
+
+Everything in this section is recorded with no code of your own - installing the SDK is enough. The options only narrow or switch it off.
+
+##### Database queries and outbound HTTP
+
+Since `@nestjs/observe` 0.3.0, queries and outbound requests appear as spans with no configuration, nested under the method that made them - the repository call that was slow now shows _which_ statement it was waiting on.
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/sql.webp" alt="A query opened in the waterfall" /></figure>
+
+Databases are instrumented at the driver rather than the ORM: `pg`, `mysql2` and `mongodb` are detected if your application already depends on them, which covers TypeORM, MikroORM, Drizzle, Mongoose, Knex, Sequelize and Prisma's driver adapters without any of them being named. ORMs that ship their own nested copy of a driver - MikroORM and Mongoose do, whenever versions disagree - are handled too, and the driver's own housekeeping (connection handshakes, authentication, pings) is not recorded. A query span is labeled with its verb and table (`SELECT users`) and carries the statement with **every literal removed** - strings, numbers, `IN (...)` lists and comments are replaced before the span leaves the process, and bound parameters are never read at all. Repeated queries under one parent fold into a single node with a count, so an N+1 reads as `SELECT order_items ×47` rather than 47 rows.
+
+Outbound HTTP is read from Node's own diagnostics channels, so `fetch`, `undici`, and everything built on `node:http` (axios, got, most SDKs) are covered with nothing patched. The span is labeled `GET api.example.com` and carries the URL with sensitive query parameters masked. The current trace id is also sent as `x-request-id`, which is what makes [HTTP-to-HTTP tracing](/observability/distributed-tracing#http-to-http) automatic.
 
 ```typescript
 ObserveModule.forRoot({
   // ...
-  http: {
-    getUserId: (req) => req.user?.id ?? 'anonymous',
+  outgoing: {
+    database: true,
+    http: {
+      ignore: (url) => url.startsWith('https://internal-metrics.'),
+      // Only forward the trace id to your own services
+      propagateTraceId: (url) => url.includes('.svc.cluster.local'),
+    },
   },
 });
 ```
 
-The same option exists on `rpc` (receiving the transport id and the `BaseRpcContext`), `grpc` (receiving the call object), and `graphql` (receiving the GraphQL context, for operations with no enclosing HTTP request), reading the transport's own context instead of an HTTP request. Reporting a user identifier is entirely optional - traffic without one still shows up everywhere except the per-user views. The dashboard treats the identifier as an opaque string and never tries to resolve it into a name or an email, so prefer an opaque internal id over anything personally identifying.
+Set `outgoing: false` to switch all of it off, or `database: false` / `http: false` individually.
 
-#### Runtime metrics and profiling
+> info **Hint** These spans are **not billed**. They are detail about a method span you already sent, so they do not count toward your Observability Events or your rate cap - a request that runs ten queries costs what it cost before.
+
+##### WebSocket gateways
+
+Messages handled by `@SubscribeMessage()` are reported as requests with the `ws` protocol and an operation id of `GatewayClass:pattern`, on any platform adapter. The `ws` option block takes the same `ignore`, `tags`, `setAttributes` and `getUserId` hooks as the other transports; each receives `{{ '{' }} gateway, pattern, client, data {{ '}' }}`. Connections and disconnections are not operations and are not reported.
+
+##### Queues
+
+`@nestjs/bullmq` and the original `@nestjs/bull` are both instrumented: every processor run is reported as a job, with its queue wait, attempt number and outcome. A job added from inside a traced operation inherits that operation's trace id - see [Distributed tracing](/observability/distributed-tracing#queue-jobs-bullmq-and-bull).
+
+##### Runtime metrics and profiling
 
 ```typescript
 ObserveModule.forRoot({
@@ -138,7 +183,61 @@ ObserveModule.forRoot({
 
 `runtimeMetrics` (default `true`) samples memory, CPU, garbage collection, and event loop latency on an interval (`runtimeMetricsInterval`, default `60000` ms) and feeds the **Profiler**. The same samples double as the application's heartbeat: a **Telemetry silence** alert fires when they stop arriving, which gives you lightweight uptime monitoring with no external probe.
 
-#### Logs
+#### Errors and failed requests
+
+An error that escapes a controller, resolver, or job is captured on its own. These options decide how much comes with it - the source code around the failing frame, and the headers and body of the request that failed.
+
+##### Error source context
+
+Errors that propagate out of a controller, resolver, job, or span are captured automatically. When `sourceContext` is enabled (the default), the SDK additionally reads the source lines around each in-app stack frame of a captured error and attaches them, which is what lets the dashboard show the failing code alongside the stack trace - for a failure that happened in production, on a build you may not have checked out.
+
+```typescript
+@@filename(app.module)
+export const { ObserveModule, ObserveInstrument } = createObserveModule({
+  sourceContext: {
+    linesOfContext: 5,
+    maxFrames: 5,
+    sourceMaps: false,
+  },
+});
+```
+
+Note that this is an option of `createObserveModule()`, not `forRoot()`. Set `sourceContext: false` to disable it outright, or pass an object to tune the defaults:
+
+| Option           | Type      | Default | Description                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `linesOfContext` | `number`  | `5`     | Lines read on either side of the frame's line.                                                                                                                                                                                                                                                                                                                                  |
+| `maxFrames`      | `number`  | `5`     | How many in-app frames, counted from the top of the stack, get source attached - bounds the payload on deep stacks.                                                                                                                                                                                                                                                             |
+| `sourceMaps`     | `boolean` | `false` | Resolves compiled frames back through source maps before reading source. Only needed if the process runs compiled output _without_ Node's own source map support (`--enable-source-maps` or `process.setSourceMapsEnabled(true)`); with that on, frames already carry original positions and this is redundant. Costs a map parse per compiled file on first touch, cached after. |
+
+> warning **Warning** Enabling this ships fragments of your application's source code (usually just a few lines surrounding the error) to your dashboard, stored alongside the error. Frames inside `node_modules` and Node internals are never read - only application source - but turn it off if shipping any source is not acceptable for your codebase.
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/error-with-source.webp" alt="Error card with source context" /></figure>
+
+##### Capturing failed and slow requests
+
+When an HTTP request **fails**, the SDK records a small, fixed allow-list of its headers alongside it - `user-agent`, `content-type`, `content-length`, `accept`, `host`, `origin` and `referer` - none of which authenticate or identify the caller. Set `slowerThanMs` and requests that ran at least that long are captured the same way, failed or not. An ordinary request records nothing. Request bodies are **off** by default; turn them on explicitly if you want them:
+
+```typescript
+ObserveModule.forRoot({
+  // ...
+  http: {
+    capture: {
+      headers: ['user-agent', 'x-tenant-id'],
+      body: { maxBytes: 4096 }, // default 2048, at most 16384
+      slowerThanMs: 2000,
+    },
+  },
+});
+```
+
+Everything captured passes through [`redaction`](/observability/sdk#logs) before it leaves the process - sensitive keys (`password`, `token`, `authorization`, ...) are masked by name inside the body, and naming a sensitive header records `[REDACTED]`, not its value. `capture: false` records nothing. The capture is shown on the request's detail page as a **Request** card.
+
+#### Logs and trace correlation
+
+Every execution gets a trace id. These options decide how your log lines relate to it - forwarded to the dashboard, or only stamped with the id so your own log stack can link to the trace.
+
+##### Logs
 
 ```typescript
 ObserveModule.forRoot({
@@ -166,34 +265,7 @@ Turning `forwardLogs` on moves your log lines onto infrastructure you don't cont
 
 > info **Hint** Even with `forwardLogs` off, the SDK augments `ConsoleLogger` so that every line carries the current trace id (`attachTraceIdToLogs`, see [Trace correlation](#trace-correlation)). That lets you correlate your own log aggregator with traces in the dashboard without shipping the log content anywhere.
 
-#### Error source context
-
-Errors that propagate out of a controller, resolver, job, or span are captured automatically. When `sourceContext` is enabled (the default), the SDK additionally reads the source lines around each in-app stack frame of a captured error and attaches them, which is what lets the dashboard show the failing code alongside the stack trace - for a failure that happened in production, on a build you may not have checked out.
-
-```typescript
-@@filename(app.module)
-export const { ObserveModule, ObserveInstrument } = createObserveModule({
-  sourceContext: {
-    linesOfContext: 5,
-    maxFrames: 5,
-    sourceMaps: false,
-  },
-});
-```
-
-Note that this is an option of `createObserveModule()`, not `forRoot()`. Set `sourceContext: false` to disable it outright, or pass an object to tune the defaults:
-
-| Option           | Type      | Default | Description                                                                                                                                                                                                                                                                                                                                                                     |
-| ---------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `linesOfContext` | `number`  | `5`     | Lines read on either side of the frame's line.                                                                                                                                                                                                                                                                                                                                  |
-| `maxFrames`      | `number`  | `5`     | How many in-app frames, counted from the top of the stack, get source attached - bounds the payload on deep stacks.                                                                                                                                                                                                                                                             |
-| `sourceMaps`     | `boolean` | `false` | Resolves compiled frames back through source maps before reading source. Only needed if the process runs compiled output _without_ Node's own source map support (`--enable-source-maps` or `process.setSourceMapsEnabled(true)`); with that on, frames already carry original positions and this is redundant. Costs a map parse per compiled file on first touch, cached after. |
-
-> warning **Warning** Enabling this ships fragments of your application's source code (usually just a few lines surrounding the error) to your dashboard, stored alongside the error. Frames inside `node_modules` and Node internals are never read - only application source - but turn it off if shipping any source is not acceptable for your codebase.
-
-<figure><img src="https://www.observe.nestjs.com/docs/telemetry/error-with-source.webp" alt="Error card with source context" /></figure>
-
-#### Trace correlation
+##### Trace correlation
 
 These are also options of `createObserveModule()` - they shape how requests get a trace id and how that id shows up in your own logs:
 
@@ -211,12 +283,31 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule({
 | Option                | Type                       | Default                                                       | Description                                                                                                                         |
 | --------------------- | -------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `traceIdKey`          | `string`                   | `'traceId'`                                                   | The key used to store the trace id in the request context, for later retrieval through `TracerService`.                            |
-| `traceIdGenerator`    | `(req: unknown) => string` | Uses the `x-request-id` header if present, else a random UUID | Generates the trace id per request. Called with the request object for HTTP; for other protocols it receives the transport context. |
+| `traceIdGenerator`    | `(req: unknown) => string` | Uses the `x-request-id` header if present, else a UUID v7     | Generates the trace id per request. Called with the request object for HTTP; for other protocols it receives the transport context. |
 | `attachTraceIdToLogs` | `boolean`                  | `true`                                                        | Augments `ConsoleLogger` to include the trace id in log messages, so logs can be correlated with traces even without `forwardLogs`. |
 
 Because the default generator adopts an incoming `x-request-id`, a chain of HTTP services already shares one trace with no extra configuration. Propagating across gRPC, `@nestjs/microservices` transports, and GraphQL takes a few lines - see [Distributed tracing](/observability/distributed-tracing).
 
-#### Tags and custom attributes
+#### Shaping what is recorded
+
+Options for enriching what the SDK records - who a request was for, what it concerned - and for keeping out what you don't need.
+
+##### Associating users with telemetry
+
+`getUserId` reads the incoming request and returns whatever identifier your system uses for a person - a user id, an account id, a tenant-scoped id. Set it once and the **Users** view populates automatically:
+
+```typescript
+ObserveModule.forRoot({
+  // ...
+  http: {
+    getUserId: (req) => req.user?.id ?? 'anonymous',
+  },
+});
+```
+
+The same option exists on `rpc` (receiving the transport id and the `BaseRpcContext`), `grpc` (receiving the call object), and `graphql` (receiving the GraphQL context, for operations with no enclosing HTTP request), reading the transport's own context instead of an HTTP request. Reporting a user identifier is entirely optional - traffic without one still shows up everywhere except the per-user views. The dashboard treats the identifier as an opaque string and never tries to resolve it into a name or an email, so prefer an opaque internal id over anything personally identifying.
+
+##### Tags and custom attributes
 
 `http`, `rpc`, `grpc`, `graphql`, and `jobs` each accept the same two options for attaching your own data to every request they cover:
 
@@ -245,7 +336,7 @@ Both show up as tags on the resulting request, job, or span, and are searchable 
 
 > info **Hint** A GraphQL server is usually an HTTP endpoint, so its requests are already subject to the `http` options - `http.ignore` drops a request before the GraphQL layer sees it, and `http.getUserId` supplies the user for queries over HTTP. The `graphql` block tunes what happens _inside_ a request that was let through, per operation rather than per resolver, and `graphql.getUserId` is only consulted for operations that aren't already inside an HTTP trace - subscriptions over a WebSocket in particular.
 
-#### Ignoring noisy operations
+##### Ignoring noisy operations
 
 Every transport block has an `ignore` option that skips instrumentation entirely for calls that match - a health check endpoint, an internal probe, anything not worth a trace:
 
@@ -274,7 +365,7 @@ This stops telemetry from being generated at all, which is a different tool from
 
 `http` additionally takes `queryParamsObfuscateRegex`, a `RegExp` for masking sensitive query string values before they're sent. It is applied on top of the built-in redaction, which always masks well-known sensitive parameters (`token`, `password`, `code`, `signature`, and so on) whether or not this is set.
 
-#### Trace sampling and batching
+##### Trace sampling and batching
 
 ```typescript
 ObserveModule.forRoot({
@@ -293,22 +384,6 @@ ObserveModule.forRoot({
 
 Telemetry is buffered in the process and shipped on the flush interval rather than inline with each request. Sampling here decides what the SDK _produces_; the dashboard's per-project spend controls (span sampling, rate caps, drop filters) act on what it already sent, and can be changed without a redeploy.
 
-#### Collector endpoint
-
-```typescript
-ObserveModule.forRoot({ endpoint: 'https://observe-api.nestjs.com' });
-```
-
-`endpoint` (default `'https://observe-api.nestjs.com'`) is the base URL of the collector, used for telemetry and profiles both so the two can never point at different places. Set the `OBSERVE_ENDPOINT` environment variable to override it without touching the config - which is how a local or self-hosted collector is usually pointed at.
-
-#### Debugging the SDK itself
-
-```typescript
-ObserveModule.forRoot({ debug: true });
-```
-
-`debug` (default `false`) logs additional diagnostic information from the SDK to the console - useful while getting instrumentation working, not something to leave on in production.
-
 #### Full configuration reference
 
 Everything at a glance. Options under `createObserveModule()` must be set there; everything else goes to `forRoot()`/`forRootAsync()`.
@@ -324,6 +399,9 @@ Everything at a glance. Options under `createObserveModule()` must be set there;
 | `forRoot()`             | `serviceId`, `serviceVersion`         | Application and release identity                                          |
 | `forRoot()`             | `http`, `rpc`, `grpc`, `graphql`, `jobs` | Per-transport `tags`, `setAttributes`, `getUserId`, `ignore`           |
 | `forRoot()`             | `http.queryParamsObfuscateRegex`      | Mask sensitive query string values                                        |
+| `forRoot()`             | `http.capture`                        | Headers (and optionally body) recorded for failed and slow requests       |
+| `forRoot()`             | `outgoing`                            | Database query and outbound HTTP spans                                    |
+| `forRoot()`             | `ws`                                  | WebSocket gateway `tags`, `setAttributes`, `getUserId`, `ignore`          |
 | `forRoot()`             | `runtimeMetrics`, `runtimeMetricsInterval` | Profiler samples and heartbeat                                       |
 | `forRoot()`             | `forwardLogs`, `redaction`            | Logs streaming and scrubbing                                              |
 | `forRoot()`             | `tracesSampleRate`                    | Fraction (or predicate) of traces to send                                 |

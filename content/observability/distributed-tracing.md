@@ -2,11 +2,11 @@
 
 A **trace** is everything your applications recorded under a single trace id: the request or job that started it, and every span underneath. Within a single service this is automatic - the SDK generates a trace id when work starts, and every span underneath, including ones you add manually with [`TracerService`](/observability/manual-instrumentation), inherits it.
 
-Across services it isn't automatic by default. A single user action that touches more than one service - an API call that fans out to a gRPC service, a job that calls back into another application - only shows up as **one trace** in your dashboard if every service involved ends up using the same trace id. Left unconfigured, each service mints its own via `traceIdGenerator` and the action shows up as several disconnected traces instead, one per service.
+Across services it depends on the channel. HTTP calls and queue jobs carry the trace id on their own; gRPC and the microservice transports need it forwarded. A single user action that touches more than one service - an API call that fans out to a gRPC service, a message sent to another application over a microservice transport - only shows up as **one trace** in your dashboard if every service involved ends up using the same trace id. Left unconfigured, each service mints its own via `traceIdGenerator` and the action shows up as several disconnected traces instead, one per service.
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.webp" alt="Trace correlation across services" /></figure>
 
-Forwarding the trace id is application code, not a dashboard setting. The pattern is always the same: the caller puts its current trace id on whatever channel the protocol has, and the callee's `traceIdGenerator` reads it back out. This page shows that for each transport.
+Where forwarding is needed it is application code, not a dashboard setting, and the pattern is always the same: the caller puts its current trace id on whatever channel the protocol has, and the callee's `traceIdGenerator` reads it back out. This page shows that for each transport.
 
 #### Reading the current trace id
 
@@ -32,15 +32,11 @@ It reads from the same context store as `getAttribute()`/`setAttribute()`, but u
 
 #### HTTP to HTTP
 
-Works with no extra configuration. The default `traceIdGenerator` is `(req) => req.headers['x-request-id'] ?? randomUUID()`, so a service adopts whatever `x-request-id` an incoming request carries instead of minting a new one. Forward the trace id as `x-request-id` on the outgoing request and the receiving service picks it up:
+Automatic in both directions. On the way in, the default `traceIdGenerator` adopts a well-formed `x-request-id` header and otherwise mints a time-ordered UUID (v7). On the way out, the SDK adds the current trace id as `x-request-id` to outbound requests that don't already carry one - so a call from one instrumented service to another lands in the same trace with no application code.
 
-```typescript
-fetch(url, {
-  headers: { 'x-request-id': this.tracerService.currentTraceId() },
-});
-```
+Outbound propagation covers `fetch` and `undici` on every supported Node version, and clients built on `node:http` - axios, got, the [HTTP module](/techniques/http-module) - on Node 22.12 and later, which is the first release that lets a header be added after the request object is created. To limit which hosts receive the header, or switch it off, see [`outgoing.http.propagateTraceId`](/observability/sdk#database-queries-and-outbound-http).
 
-If you use the [HTTP module](/techniques/http-module), the same header can be added in an Axios request interceptor once, rather than at every call site:
+On an older Node version with an axios-based client, forward the id yourself in a request interceptor, once:
 
 ```typescript
 @@filename(orders.module)
@@ -124,27 +120,31 @@ The generator receives the transport's context object, so the same shape works f
 
 No extra configuration is needed when the GraphQL server sits behind the same service's HTTP layer - it automatically joins whatever trace the HTTP agent already opened for that request, which may itself have been propagated via `x-request-id` as above. Only a GraphQL server with no enclosing HTTP trace - a subscription over a raw WebSocket with no HTTP agent involved, for example - needs to think about this separately, and there's no built-in propagation hook for that case today.
 
-#### Queue jobs (BullMQ)
+#### Queue jobs (BullMQ and Bull)
 
-Not currently propagatable. A job processor always starts its own new trace with a fresh random id, regardless of what trace was active when the job was enqueued - there's no `traceIdGenerator` hook for jobs the way there is for HTTP and RPC. Treat this as a current limitation rather than something to configure around. If you need to tie a job run back to the request that enqueued it, put the request's trace id in the job data and attach it as a tag from the processor:
+Automatic. When a job is added from inside a traced operation - a request handler, an RPC handler, another job - the SDK stamps the current trace id onto the job's options, and the processor that picks the job up runs under that id instead of minting its own. The request and every job it enqueued render as one trace, with no application code involved:
 
 ```typescript
-@@filename(orders.processor)
-@Processor('orders')
-export class OrdersProcessor extends WorkerHost {
-  constructor(private readonly tracerService: TracerService) {
-    super();
-  }
-
-  async process(job: Job<{ orderId: string; originTraceId: string }>) {
-    const span = await this.tracerService.activeSpan();
-    span.addTags({ originTraceId: job.data.originTraceId });
-    // ...
-  }
+@@filename(orders.controller)
+@Post()
+async create(@Body() dto: CreateOrderDto) {
+  const order = await this.ordersService.create(dto);
+  // The job inherits this request's trace id
+  await this.ordersQueue.add('send-confirmation', { orderId: order.id });
+  return order;
 }
 ```
 
-The job still gets its own trace, but the tag is searchable, so the path from a slow request to the job it kicked off is one search away.
+This works the same way for `@nestjs/bullmq` and `@nestjs/bull`, for `add()` and `addBulk()`, and whether the worker runs in the same process as the producer or in a separate service - the id travels through Redis with the job. A retried job keeps the id it was enqueued with, so every attempt lands in the same trace.
+
+Two cases deliberately start a trace of their own:
+
+- **Repeatable jobs and `@nestjs/schedule` handlers.** A schedule outlives the operation that registered it, so each firing is its own trace rather than an ever-growing one attached to whichever request happened to set the schedule up.
+- **Jobs added outside any traced operation** - from a bootstrap hook or a plain script. There is no trace to inherit.
+
+> info **Hint** The trace id is stored under the `observeTraceId` job option. To attach a job to a trace the SDK did not see - one enqueued by a non-Nest producer, for example - set that option yourself when adding the job.
+
+> warning **Warning** Trace inheritance for jobs requires `@nestjs/observe` 0.3.0 or later on **both** the service that adds the job and the service that processes it. With an older producer, jobs carry no id and each run opens its own trace, as before.
 
 #### What a trace looks like in the dashboard
 

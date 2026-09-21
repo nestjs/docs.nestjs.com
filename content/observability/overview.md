@@ -1,10 +1,10 @@
 ### Overview
 
-[NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') is the official, auto-instrumented observability platform for NestJS applications. Install the SDK, add an API key, and your application starts streaming requests, background jobs, errors, logs, and traces to your dashboard - no manual span wiring, no collector to run, no schema to design, no dashboards to build by hand.
+[NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') is the official, auto-instrumented application performance monitoring (APM) and observability platform for NestJS applications. Install the SDK, add an API key, and your application starts streaming requests, background jobs, errors, logs, and traces to your dashboard - no manual span wiring, no collector to run, no schema to design, no dashboards to build by hand.
 
 > info **Hint** This chapter covers how to instrument a NestJS application with the `@nestjs/observe` SDK and what that instrumentation gives you. If you are looking for the dashboard itself, head over to [observe.nestjs.com](https://www.observe.nestjs.com/ 'NestJS Observe'), or open the [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo') - the whole dashboard over a busy service's data, with no signup and nothing to install.
 
-#### What makes it different
+#### How it differs from a generic Node.js APM
 
 Generic Node.js APM agents attach to the HTTP server and the database driver and leave everything in between as a black box. NestJS Observe is built around Nest's own request lifecycle - controllers, guards, interceptors, pipes, resolvers, queue consumers - so the telemetry is expressed in the vocabulary you wrote the code in: `OrdersService.recalculate`, not `POST /orders`. That is also why it can show time spent per NestJS **class and method**, not only per route, and why a trace waterfall from an unmodified application already reads like a call graph.
 
@@ -25,7 +25,7 @@ Once the SDK is running, every plan - including the free tier - gives you:
 - **Users** - per-user activity, grouped into the actions they actually performed, when your application reports a user identifier.
 - **Copy agent prompt** - one click turns a failed request, slow job, or failing trace into a self-contained prompt for a coding agent.
 
-Paid plans add **logs streaming** (correlated to traces, with redaction on by default), **alerting** (thresholds, anomaly detection, absence detection, Slack/webhook/email channels), **issues**, team management, and - on the higher tiers - **SSO**, **SLOs** with error budgets and burn-rate alerts, and a read-only **MCP server** so an MCP-compatible agent can query your telemetry directly (see [MCP server](/observability/mcp-server)).
+Paid plans add **logs streaming** (correlated to traces, with redaction on by default), **alerting** (thresholds, anomaly detection, absence detection, Slack/webhook/email channels), **issues**, team management, and - on the higher tiers - **SSO**, **SLOs** with error budgets and burn-rate alerts, and an **MCP server** so an MCP-compatible agent can query your telemetry directly, and even set up a new service (see [MCP server](/observability/mcp-server)).
 
 #### How it is organized
 
@@ -43,7 +43,7 @@ Every project member has one of three access levels - **Read**, **Write**, or **
 
 Sign up at [observe.nestjs.com](https://www.observe.nestjs.com/ 'NestJS Observe'). The **Free** plan needs no payment details and already includes error monitoring, distributed tracing, and auto-instrumentation, so you can instrument an application and see real traces before deciding whether you need more.
 
-Usage is metered in **Observability Events (OEs)** - one per request, background job run, error, log entry, or trace span your applications report. These compound rather than collapse: a request that ran three database spans, wrote two log lines, and raised one error is seven events. Your plan sets a monthly allowance of included events, a retention window, and which features are unlocked:
+Usage is metered in **Observability Events (OEs)** - one per request, background job run, error, log entry, or trace span your applications report. These compound rather than collapse: a request that ran through three of your own methods, wrote two log lines, and raised one error is seven events. The one kind of span that does not count is the agent's own database-query and outbound-HTTP spans, which are detail about a method span already counted. Your plan sets a monthly allowance of included events, a retention window, and which features are unlocked:
 
 | Plan       | Included events / month | Retention  | Logs & alerts | SSO & SLOs |
 | ---------- | ----------------------: | ---------- | ------------- | ---------- |
@@ -60,10 +60,14 @@ To upgrade, open **Billing → Manage subscription** for the team that owns your
 
 #### First project
 
+A new account is offered a short **setup guide** that walks through the real pages - it highlights *Create Project*, then takes you into the new project to add an application and an API key, and finishes on the banner that waits for your first event. The same steps by hand:
+
 1. **Create a project** and give it a name.
 2. **Add an application** to it. An application needs nothing beyond a name - the routes it serves, the jobs it processes, and the metrics it reports are all discovered from the telemetry the SDK sends.
 3. **Generate an API key** from the project's **API Keys** page. Each key has a name (one for local development, one for CI, one for production) and an optional expiration date. The key pair (`appKey` and `appSecret`) is shown once, at creation, so copy it into your secrets store right away. Keys are scoped to a project: every application whose telemetry should land in that project uses the same key.
 4. **Instrument your application** by following the [SDK](/observability/sdk) chapter. Telemetry starts appearing within moments of your application receiving traffic.
+
+> info **Hint** Setting up with a coding agent? The dialog that shows a new key's secret has a **Copy setup prompt** button - the install command, the three code edits and the credentials as one prompt. An agent connected to the [MCP server](/observability/mcp-server#setting-up-a-service) can create the application and the key itself.
 
 <figure><img src="https://www.observe.nestjs.com/docs/applications/api-keys.webp" alt="API keys" /></figure>
 
@@ -74,5 +78,6 @@ To upgrade, open **Billing → Manage subscription** for the team that owns your
 - [SDK](/observability/sdk) - installation, the three-line quick start, and every configuration option.
 - [Manual instrumentation](/observability/manual-instrumentation) - custom spans, handled errors, request-scoped attributes, and custom metrics.
 - [Distributed tracing](/observability/distributed-tracing) - propagating a trace id across HTTP, gRPC, microservice transports, and GraphQL.
+- [Error monitoring](/observability/error-monitoring) - what gets captured, source context, grouping errors into defects, and getting from an error to a verified fix.
 - [Dashboard](/observability/dashboard) - what each view shows once telemetry is flowing, and how alerts, SLOs, and issues build on it.
 - [MCP server](/observability/mcp-server) - querying your telemetry from Claude Code, Cursor, VS Code, or your own agent.

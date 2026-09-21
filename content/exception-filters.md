@@ -114,7 +114,7 @@ The usual answer is to log the stack trace and hope someone greps for it later. 
 
 Because the error already carries its own code, one click hands the whole thing to a coding agent: **Copy agent prompt** packages the error, the trimmed stack trace with source lines, the slow spans, and the surrounding logs into a self-contained prompt for Claude Code, Cursor, or whatever has your repository open.
 
-Note that this is complementary to the filters described in this chapter, not a replacement for them - filters still shape the response, and instrumentation observes what happened on the way there. See the [Observability](/observability/overview) chapter for setup, and [Dashboard](/observability/dashboard#issues) for turning a recurring error into a tracked issue that verifies its own fix.
+Note that this is complementary to the filters described in this chapter, not a replacement for them - filters still shape the response, and instrumentation observes what happened on the way there. See [Error monitoring](/observability/error-monitoring) for everything the SDK captures about a failure, the [Observability](/observability/overview) chapter for setup, and [Dashboard](/observability/dashboard#issues) for turning a recurring error into a tracked issue that verifies its own fix.
 
 #### Custom exceptions
 

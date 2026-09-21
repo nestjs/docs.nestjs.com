@@ -79,6 +79,8 @@ export class LoggingInterceptor {
 
 Since `handle()` returns an RxJS `Observable`, we have a wide choice of operators we can use to manipulate the stream. In the example above, we used the `tap()` operator, which invokes our anonymous logging function upon graceful or exceptional termination of the observable stream, but doesn't otherwise interfere with the response cycle.
 
+> info **Hint** Timing a handler by hand, as above, is the smallest version of what an APM does. [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') records the same measurement for every controller, provider, and queue consumer without an interceptor to write or bind - including the time each one spent on its own, with everything it awaited subtracted out. See the [Observability](/observability/overview) chapter.
+
 #### Binding interceptors
 
 In order to set up the interceptor, we use the `@UseInterceptors()` decorator imported from the `@nestjs/common` package. Like [pipes](/pipes) and [guards](/guards), interceptors can be controller-scoped, method-scoped, or global-scoped.

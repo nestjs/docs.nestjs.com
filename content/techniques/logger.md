@@ -434,7 +434,15 @@ You keep calling `this.logger.log()` with an `orderId` param exactly as before -
 
 Structured logging params carry through as well, so `orderId` stays a queryable field rather than being flattened into the message text. Log lines are also alertable in their own right - "tell me when `payment declined` appears more than 10 times in 15 minutes".
 
-If you would rather keep log content in your own aggregator, you do not have to forward anything: with `forwardLogs` off, the SDK still augments `ConsoleLogger` so every line carries its trace id, which is enough to jump from a line in your existing stack to the full trace in the dashboard. See the [SDK reference](/observability/sdk) for both options and their redaction settings.
+If you would rather keep log content in your own aggregator, you do not have to forward anything. Even with `forwardLogs` off, the SDK augments `ConsoleLogger` so every line written during a request carries that request's trace id - on a line of its own beneath the message in the default format, and as a `traceId` field with [JSON logging](#json-logging) enabled:
+
+```json
+{"level":"log","pid":66803,"timestamp":1789978166281,"message":"Payment captured","context":"OrdersService","traceId":"0199a3f2-7c1e-7b40-9d2a-5e8f1c3b7a64"}
+```
+
+That id is enough to jump from a line in your existing stack to the full trace in the dashboard. It is on by default and controlled by the `attachTraceIdToLogs` option (see [Trace correlation](/observability/sdk#trace-correlation)); lines written outside a request - during bootstrap, for example - are left as they are. The augmentation applies to Nest's built-in `ConsoleLogger` only, so if you replace it with an [external logger](#use-external-logger), read the id yourself with `TracerService.currentTraceId()`. See the [SDK reference](/observability/sdk#logs) for forwarding and its redaction settings.
+
+The trace id is not the only thing that lives for the length of a request. The SDK keeps an `AsyncLocalStorage` store for every request, job, and message it instruments, and `TracerService` exposes it through `setAttribute()` and `getAttribute()` - the natural place for the user or tenant a request is acting for, readable from anywhere downstream without threading it through every call. See [Request-scoped attributes](/observability/manual-instrumentation#request-scoped-attributes), and the [Async local storage](/recipes/async-local-storage) recipe for how it compares to a store you set up yourself.
 
 #### Use external logger
 

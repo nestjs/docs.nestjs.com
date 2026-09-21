@@ -212,6 +212,10 @@ export const NAV_ITEMS: NavItem[] = [
         title: 'Distributed tracing',
         path: '/observability/distributed-tracing',
       },
+      {
+        title: 'Error monitoring',
+        path: '/observability/error-monitoring',
+      },
       { title: 'Dashboard', path: '/observability/dashboard' },
       { title: 'MCP server', path: '/observability/mcp-server' },
     ],
