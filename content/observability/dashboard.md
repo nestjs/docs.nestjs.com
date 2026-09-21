@@ -1,6 +1,6 @@
 ### Dashboard
 
-Once an application is instrumented and sending data, its project dashboard fills in automatically - no queries to write, no dashboards to build. This chapter covers what each view shows, how they relate to each other, and how the features built on top of the telemetry - alerts, SLOs, issues, and the agent handoff - fit together. For the full reference, see the [NestJS Observe documentation](https://www.observe.nestjs.com/dashboard/documentation 'NestJS Observe documentation').
+Once an application is instrumented and sending data, its project dashboard fills in automatically - no queries to write, no dashboards to build. This chapter covers what each view shows, how they relate to each other, and how the features built on top of the telemetry - alerts, SLOs, issues, and the agent handoff - fit together. For the full reference, see the [NestJS Observe documentation](https://www.observe.nestjs.com/documentation 'NestJS Observe documentation').
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/dashboard.webp" alt="Project dashboard" /></figure>
 
