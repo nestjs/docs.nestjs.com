@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { HOMEPAGE_TITLE, TITLE_SUFFIX } from './constants';
+import { HOMEPAGE_TITLE, SITE_URL, TITLE_SUFFIX } from './constants';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
     private readonly metaService: Meta,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
+    @Inject(DOCUMENT) private readonly document: Document,
   ) {}
 
   public async ngOnInit(): Promise<void> {
@@ -27,6 +29,7 @@ export class AppComponent implements OnInit {
       .subscribe((ev: NavigationEnd) => {
         this.updateTitle();
         this.updateMeta(ev);
+        this.updateCanonical(ev);
       });
   }
 
@@ -42,7 +45,26 @@ export class AppComponent implements OnInit {
     } = childRoute;
     const pageTitle = title ? title : HOMEPAGE_TITLE;
 
-    this.titleService.setTitle(pageTitle + TITLE_SUFFIX);
+    const fullTitle = pageTitle + TITLE_SUFFIX;
+    this.titleService.setTitle(fullTitle);
+    this.metaService.updateTag({ property: 'og:title', content: fullTitle });
+    this.metaService.updateTag({ name: 'twitter:title', content: fullTitle });
+  }
+
+  /**
+   * index.html ships one canonical URL - the site root - for every route, and
+   * a page whose canonical points elsewhere is telling search engines it is a
+   * duplicate of that page. Netlify's prerenderer runs this code, so crawlers
+   * receive the per-page value.
+   */
+  public updateCanonical(event: NavigationEnd): void {
+    const path = event.urlAfterRedirects.split(/[?#]/)[0];
+    const url = path === '/' ? SITE_URL : `${SITE_URL}${path}`;
+    const link = this.document.head.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]',
+    );
+    link?.setAttribute('href', url);
+    this.metaService.updateTag({ property: 'og:url', content: url });
   }
 
   public updateMeta(event: NavigationEnd): void {
