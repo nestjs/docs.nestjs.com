@@ -102,7 +102,9 @@ export const NAV_ITEMS: NavItem[] = [
     title: 'Data',
     isOpened: false,
     children: [
-      { title: 'Database', path: '/data/database' },
+      { title: 'Overview', path: '/data/overview' },
+      { title: 'TypeORM', path: '/data/typeorm' },
+      { title: 'Sequelize', path: '/data/sequelize' },
       { title: 'MongoDB', path: '/data/mongodb' },
       { title: 'Prisma', path: '/data/prisma' },
       { title: 'MikroORM', path: '/data/mikroorm' },

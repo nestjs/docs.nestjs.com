@@ -20,3 +20,24 @@ export function movedTo(
       fragment: fragment ?? defaultFragment,
     });
 }
+
+/**
+ * Redirects a page that was split into several pages, picking the new page by
+ * the fragment of the old URL.
+ *
+ * @param defaultPath the new URL for the old page without a known fragment
+ * @param sections maps an old fragment to its new URL (with a fragment, if any)
+ */
+export function splitInto(
+  defaultPath: string,
+  sections: Record<string, string>,
+): RedirectFunction {
+  return ({ queryParams, fragment }) => {
+    const target = (fragment && sections[fragment]) || defaultPath;
+    const [path, targetFragment] = target.split('#');
+    return inject(Router).createUrlTree([path], {
+      queryParams,
+      fragment: targetFragment,
+    });
+  };
+}

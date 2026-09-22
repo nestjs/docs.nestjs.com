@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { movedTo } from '../../../shared/utils/moved-page-redirect';
+import { movedTo, splitInto } from '../../../shared/utils/moved-page-redirect';
+import { DATABASE_SECTIONS } from '../data/database-sections';
 
 // The Techniques category was split into Application, Data, and HTTP. These
 // redirects keep the old URLs (and links to their sections) working.
@@ -11,7 +12,10 @@ export const TECHNIQUES_ROUTES: Routes = [
   { path: 'compression', redirectTo: movedTo('/http/compression') },
   { path: 'configuration', redirectTo: movedTo('/application/configuration') },
   { path: 'cookies', redirectTo: movedTo('/http/cookies') },
-  { path: 'database', redirectTo: movedTo('/data/database') },
+  {
+    path: 'database',
+    redirectTo: splitInto('/data/overview', DATABASE_SECTIONS),
+  },
   { path: 'events', redirectTo: movedTo('/application/events') },
   { path: 'file-upload', redirectTo: movedTo('/http/file-upload') },
   { path: 'http-module', redirectTo: movedTo('/application/http-module') },
@@ -26,7 +30,10 @@ export const TECHNIQUES_ROUTES: Routes = [
     redirectTo: movedTo('/http/server-sent-events'),
   },
   { path: 'session', redirectTo: movedTo('/http/session') },
-  { path: 'sql', redirectTo: movedTo('/data/database') },
+  {
+    path: 'sql',
+    redirectTo: splitInto('/data/overview', DATABASE_SECTIONS),
+  },
   {
     path: 'streaming-files',
     redirectTo: movedTo('/http/file-upload', 'streaming-files'),

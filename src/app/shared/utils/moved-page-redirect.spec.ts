@@ -5,7 +5,7 @@ import {
   UrlTree,
 } from '@angular/router';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { movedTo } from './moved-page-redirect';
+import { movedTo, splitInto } from './moved-page-redirect';
 
 function redirect(
   redirectFn: ReturnType<typeof movedTo>,
@@ -43,5 +43,43 @@ describe('movedTo', () => {
     expect(redirect(merged, { fragment: 'setting-headers' })).toBe(
       '/http/file-upload#setting-headers',
     );
+  });
+});
+
+describe('splitInto', () => {
+  const sections = {
+    'repository-pattern': '/data/typeorm#repository-pattern',
+    'relations-1': '/data/sequelize#relations',
+    'sequelize-integration': '/data/sequelize',
+  };
+  const database = splitInto('/data/overview', sections);
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+  });
+
+  it('sends a known section to its new page', () => {
+    expect(redirect(database, { fragment: 'repository-pattern' })).toBe(
+      '/data/typeorm#repository-pattern',
+    );
+    expect(redirect(database, { fragment: 'relations-1' })).toBe(
+      '/data/sequelize#relations',
+    );
+    expect(redirect(database, { fragment: 'sequelize-integration' })).toBe(
+      '/data/sequelize',
+    );
+  });
+
+  it('sends the page itself and unknown sections to the default page', () => {
+    expect(redirect(database, {})).toBe('/data/overview');
+    expect(redirect(database, { fragment: 'no-such-section' })).toBe(
+      '/data/overview',
+    );
+  });
+
+  it('keeps the query parameters', () => {
+    expect(
+      redirect(database, { fragment: 'relations-1', queryParams: { a: '1' } }),
+    ).toBe('/data/sequelize?a=1#relations');
   });
 });

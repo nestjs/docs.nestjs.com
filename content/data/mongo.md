@@ -1,6 +1,6 @@
 ### Mongo
 
-Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the [TypeORM](https://github.com/typeorm/typeorm) module described in the [SQL (TypeORM) chapter](/data/database), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. This chapter describes the latter, using the dedicated `@nestjs/mongoose` package.
+Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the [TypeORM](https://github.com/typeorm/typeorm) module described in the [TypeORM chapter](/data/typeorm), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. This chapter describes the latter, using the dedicated `@nestjs/mongoose` package.
 
 Start by installing the required dependencies:
 

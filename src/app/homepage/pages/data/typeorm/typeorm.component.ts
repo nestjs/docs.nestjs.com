@@ -6,12 +6,11 @@ import { TabsComponent } from '../../../../shared/components/tabs/tabs.component
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
 import { BannerDevtoolsComponent } from '../../../../shared/components/banner-devtools/banner-devtools.component';
 import { BannerEnterpriseComponent } from '../../../../shared/components/banner-enterprise/banner-enterprise.component';
-import { BannerCoursesComponent } from '../../../../shared/components/banner-courses/banner-courses.component';
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
-    selector: 'app-sql',
-    templateUrl: './sql.component.html',
+    selector: 'app-typeorm',
+    templateUrl: './typeorm.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
@@ -21,8 +20,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         HeaderAnchorDirective,
         BannerDevtoolsComponent,
         BannerEnterpriseComponent,
-        BannerCoursesComponent,
         ExtensionPipe,
     ],
 })
-export class SqlComponent extends BasePageComponent {}
+export class TypeOrmComponent extends BasePageComponent {}

@@ -195,7 +195,7 @@ check() {
 #### TypeOrm health indicator
 
 Terminus lets you add database checks to your health check. Before using this health indicator, read the
-[database](/data/database) chapter and make sure your application's database connection is established.
+[database](/data/typeorm) chapter and make sure your application's database connection is established.
 
 > info **Hint** Behind the scenes, the `TypeOrmHealthIndicator` executes a `SELECT 1` SQL command, which is commonly used to verify whether the database is still alive. For Oracle databases, it uses `SELECT 1 FROM DUAL`, and for SAP HANA, `SELECT now() FROM dummy`.
 
@@ -256,7 +256,7 @@ If your database is reachable, a `GET` request to `http://localhost:3000/health`
 }
 ```
 
-If your application uses [multiple databases](/data/database#multiple-databases), inject each
+If your application uses [multiple databases](/data/typeorm#multiple-databases), inject each
 data source into your `HealthController`. Then, pass the data source reference to the `TypeOrmHealthIndicator` using the `connection` option.
 
 ```typescript

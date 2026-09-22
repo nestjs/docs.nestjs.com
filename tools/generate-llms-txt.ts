@@ -49,7 +49,6 @@ const CONTENT_ALIASES: Record<string, string> = {
   '/fundamentals/injection-scopes': 'fundamentals/provider-scopes',
   '/fundamentals/module-ref': 'fundamentals/module-reference',
   '/fundamentals/testing': 'fundamentals/unit-testing',
-  '/data/database': 'data/sql',
   '/data/mongodb': 'data/mongo',
   '/http/session': 'http/sessions',
   '/security/encryption-and-hashing': 'security/encryption-hashing',
