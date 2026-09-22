@@ -159,6 +159,14 @@ html {
   scroll-behavior: smooth;
 }
 
+// Fragment targets rest just below the floating header (12px offset + 70px
+// bar) instead of behind it. Native jumps (TOC and heading links) and
+// DocsViewportScroller both read this value; the TOC's `scrollTopOffset`
+// assumes the same 100px.
+:where(h1, h2, h3, h4, h5, h6)[id] {
+  scroll-margin-top: 100px;
+}
+
 // Opaque strip masking the 12px gutter above the floating header, so page
 // content doesn't show through the gap while scrolling. The background layers
 // are all viewport-fixed, so they line up seamlessly with the body's.
