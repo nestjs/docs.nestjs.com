@@ -1,10 +1,10 @@
 ### Other features
 
-This page lists all the other available features that you may find useful.
+This page covers other features of the Swagger module that you may find useful.
 
 #### Global prefix
 
-To ignore a global prefix for routes set through `setGlobalPrefix()`, use `ignoreGlobalPrefix`:
+To ignore the global prefix set through `setGlobalPrefix()`, use the `ignoreGlobalPrefix` option:
 
 ```typescript
 const document = SwaggerModule.createDocument(app, options, {
@@ -14,7 +14,7 @@ const document = SwaggerModule.createDocument(app, options, {
 
 #### Global parameters
 
-You can define parameters for all routes using `DocumentBuilder`, as shown below:
+To define parameters for all routes, use `DocumentBuilder`:
 
 ```typescript
 const config = new DocumentBuilder()
@@ -28,7 +28,7 @@ const config = new DocumentBuilder()
 
 #### Global responses
 
-You can define global responses for all routes using `DocumentBuilder`. This is useful for setting up consistent responses across all endpoints in your application, such as error codes like `401 Unauthorized` or `500 Internal Server Error`.
+To define global responses for all routes, use `DocumentBuilder`. This is useful for setting up consistent responses across all endpoints in your application, such as error codes like `401 Unauthorized` or `500 Internal Server Error`.
 
 ```typescript
 const config = new DocumentBuilder()
@@ -42,11 +42,11 @@ const config = new DocumentBuilder()
 
 #### Multiple specifications
 
-The `SwaggerModule` provides a way to support multiple specifications. In other words, you can serve different documentation, with different UIs, on different endpoints.
+The `SwaggerModule` supports multiple specifications. In other words, you can serve different documentation, with different UIs, on different endpoints.
 
-To support multiple specifications, your application must be written with a modular approach. The `createDocument()` method takes a 3rd argument, `extraOptions`, which is an object with a property named `include`. The `include` property takes a value which is an array of modules.
+To support multiple specifications, your application must be written with a modular approach. The `createDocument()` method takes a third argument, `extraOptions`, which is an object with an `include` property. The `include` property takes an array of modules.
 
-You can setup multiple specifications support as shown below:
+Set up support for multiple specifications as shown below:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -99,7 +99,7 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-Now you can start your server with the following command:
+Now start your server with the following command:
 
 ```bash
 $ npm run start
@@ -115,11 +115,11 @@ In turn, `http://localhost:3000/api/dogs` will expose the Swagger UI for dogs:
 
 #### Dropdown in the explorer bar
 
-To enable support for multiple specifications in the dropdown menu of the explorer bar, you'll need to set `explorer: true` and configure `swaggerOptions.urls` in your `SwaggerCustomOptions`.
+To list multiple specifications in the dropdown menu of the explorer bar, set `explorer: true` and configure `swaggerOptions.urls` in your `SwaggerCustomOptions`.
 
-> info **Hint** Ensure that `swaggerOptions.urls` points to the JSON format of your Swagger documents! To specify the JSON document, use `jsonDocumentUrl` within `SwaggerCustomOptions`. For more setup options, check [here](/openapi/introduction#setup-options).
+> info **Hint** Make sure that `swaggerOptions.urls` points to the JSON format of your Swagger documents. To specify the JSON document's path, use the `jsonDocumentUrl` option of `SwaggerCustomOptions`. For more options, see [setup options](/openapi/introduction#setup-options).
 
-Here's how to set up multiple specifications from a dropdown in the explorer bar:
+Here's how to select multiple specifications from a dropdown in the explorer bar:
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -199,10 +199,10 @@ async function bootstrap() {
     jsonDocumentUrl: '/api/dogs/swagger.json',
   });
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 
 await bootstrap();
 ```
 
-In this example, we set up a main API along with separate specifications for Cats and Dogs, each accessible from the dropdown in the explorer bar.
+This example sets up a main API along with separate specifications for cats and dogs, each accessible from the dropdown in the explorer bar.

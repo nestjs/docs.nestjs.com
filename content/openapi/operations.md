@@ -1,17 +1,16 @@
 ### Operations
 
-In OpenAPI terms, paths are endpoints (resources), such as `/users` or `/reports/summary`, that your API exposes, and operations are the HTTP methods used to manipulate these paths, such as `GET`, `POST` or `DELETE`.
+In OpenAPI terms, paths are the endpoints (resources) that your API exposes, such as `/users` or `/reports/summary`. Operations are the HTTP methods used to manipulate these paths, such as `GET`, `POST`, or `DELETE`.
 
 #### Tags
 
-To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator.
+To attach a controller to a specific tag, use the `@ApiTags(...tags)` decorator:
 
 ```typescript
 @ApiTags('cats')
 @Controller('cats')
 export class CatsController {}
 ```
-
 
 OpenAPI 3.2 extends the Tag Object so that tags can be organized into a hierarchy and annotated with a hint about how they should be presented. To declare these relationships, define the tags up front with `DocumentBuilder` and pass the `parent` and `kind` options to `addTag()`:
 
@@ -24,13 +23,13 @@ const config = new DocumentBuilder()
   .build();
 ```
 
-The `parent` option references another tag by name, and `kind` is a free-form, machine-readable string that hints how the tag should be used — commonly `nav`, `badge`, or `audience`.
+The `parent` option references another tag by name. The `kind` option is a free-form, machine-readable string that hints at how the tag should be used, commonly `nav`, `badge`, or `audience`. The same options object also accepts a `summary`, another OpenAPI 3.2 Tag Object field.
 
-> warning **Warning** The `parent` and `kind` fields belong to the OpenAPI 3.2 Tag Object. You must call `setOpenAPIVersion('3.2.0')`, otherwise the generated document still declares `openapi: 3.0.0` and strict validators will reject these fields. Hierarchy fields can only be defined through `DocumentBuilder.addTag()`; setting them on the `@ApiTags()` decorator has no effect.
+> warning **Warning** The `parent` and `kind` fields belong to the OpenAPI 3.2 Tag Object. You must call `setOpenAPIVersion('3.2.0')`. Otherwise, the generated document still declares `openapi: 3.0.0`, and strict validators reject these fields. Hierarchy fields can only be defined through `DocumentBuilder.addTag()`. The `@ApiTags()` decorator ignores them and logs a warning.
 
 #### Headers
 
-To define custom headers that are expected as part of the request, use `@ApiHeader()`.
+To define custom headers that are expected as part of the request, use `@ApiHeader()`:
 
 ```typescript
 @ApiHeader({
@@ -43,7 +42,7 @@ export class CatsController {}
 
 #### Responses
 
-To define a custom HTTP response, use the `@ApiResponse()` decorator.
+To define a custom HTTP response, use the `@ApiResponse()` decorator:
 
 ```typescript
 @Post()
@@ -54,7 +53,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-Nest provides a set of short-hand **API response** decorators that inherit from the `@ApiResponse` decorator:
+Nest provides a set of shorthand **API response** decorators built on top of `@ApiResponse()`, one for each common status code. They include:
 
 - `@ApiOkResponse()`
 - `@ApiCreatedResponse()`
@@ -92,7 +91,7 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-To specify a return model for a request, we must create a class and annotate all properties with the `@ApiProperty()` decorator.
+To specify a return model for a request, create a class and annotate all of its properties with the `@ApiProperty()` decorator:
 
 ```typescript
 export class Cat {
@@ -110,7 +109,7 @@ export class Cat {
 }
 ```
 
-Then the `Cat` model can be used in combination with the `type` property of the response decorator.
+You can then use the `Cat` model with the `type` property of the response decorator:
 
 ```typescript
 @ApiTags('cats')
@@ -127,11 +126,11 @@ export class CatsController {
 }
 ```
 
-Let's open the browser and verify the generated `Cat` model:
+Open the browser and verify the generated `Cat` model:
 
 <figure><img src="/assets/swagger-response-type.png" /></figure>
 
-Instead of defining responses for each endpoint or controller individually, you can define a global response for all endpoints using the `DocumentBuilder` class. This approach is useful when you want to define a global response for all endpoints in your application (e.g., for errors like `401 Unauthorized` or `500 Internal Server Error`).
+Instead of defining responses for each endpoint or controller individually, you can define a global response for all endpoints using the `DocumentBuilder` class. This is useful for responses that every endpoint in your application can return (e.g., errors like `401 Unauthorized` or `500 Internal Server Error`).
 
 ```typescript
 const config = new DocumentBuilder()
@@ -145,7 +144,7 @@ const config = new DocumentBuilder()
 
 #### File upload
 
-You can enable file upload for a specific method with the `@ApiBody` decorator together with `@ApiConsumes()`. Here's a full example using the [File Upload](/techniques/file-upload) technique:
+To document file upload for a specific method, use the `@ApiBody()` decorator together with `@ApiConsumes()`. Here's a full example using the [file upload](/techniques/file-upload) technique:
 
 ```typescript
 @UseInterceptors(FileInterceptor('file'))
@@ -166,7 +165,7 @@ class FileUploadDto {
 }
 ```
 
-To handle multiple files uploading, you can define `FilesUploadDto` as follows:
+To handle multiple file uploads, define `FilesUploadDto` as follows:
 
 ```typescript
 class FilesUploadDto {
@@ -177,7 +176,7 @@ class FilesUploadDto {
 
 #### Extensions
 
-To add an Extension to a request use the `@ApiExtension()` decorator. The extension name must be prefixed with `x-`.
+To add an extension to an operation, use the `@ApiExtension()` decorator. The extension name must be prefixed with `x-` (otherwise, the decorator throws an error).
 
 ```typescript
 @ApiExtension('x-foo', { hello: 'world' })
@@ -185,7 +184,7 @@ To add an Extension to a request use the `@ApiExtension()` decorator. The extens
 
 #### Advanced: Generic `ApiResponse`
 
-With the ability to provide [Raw Definitions](/openapi/types-and-parameters#raw-definitions), we can define Generic schema for Swagger UI. Assume we have the following DTO:
+With [raw definitions](/openapi/types-and-parameters#raw-definitions), you can define a generic schema for Swagger UI. Assume you have the following DTO:
 
 ```ts
 export class PaginatedDto<TData> {
@@ -202,7 +201,7 @@ export class PaginatedDto<TData> {
 }
 ```
 
-We skip decorating `results` as we will be providing a raw definition for it later. Now, let's define another DTO and name it, for example, `CatDto`, as follows:
+We skip decorating `results`, because we'll provide a raw definition for it later. Now, define another DTO, for example `CatDto`, as follows:
 
 ```ts
 export class CatDto {
@@ -217,7 +216,7 @@ export class CatDto {
 }
 ```
 
-With this in place, we can define a `PaginatedDto<CatDto>` response, as follows:
+With this in place, you can define a `PaginatedDto<CatDto>` response:
 
 ```ts
 @ApiOkResponse({
@@ -238,12 +237,12 @@ With this in place, we can define a `PaginatedDto<CatDto>` response, as follows:
 async findAll(): Promise<PaginatedDto<CatDto>> {}
 ```
 
-In this example, we specify that the response will have allOf `PaginatedDto` and the `results` property will be of type `Array<CatDto>`.
+In this example, the response combines `PaginatedDto` (through `allOf`) with a `results` property of type `Array<CatDto>`.
 
-- `getSchemaPath()` function that returns the OpenAPI Schema path from within the OpenAPI Spec File for a given model.
-- `allOf` is a concept that OAS 3 provides to cover various Inheritance related use-cases.
+- `getSchemaPath()` returns the OpenAPI schema path of a given model within the OpenAPI document.
+- `allOf` is an OAS 3 keyword that covers various inheritance-related use cases.
 
-Lastly, since `PaginatedDto` is not directly referenced by any controller, the `SwaggerModule` will not be able to generate a corresponding model definition just yet. In this case, we must add it as an [Extra Model](/openapi/types-and-parameters#extra-models). For example, we can use the `@ApiExtraModels()` decorator on the controller level, as follows:
+Lastly, because no controller references `PaginatedDto` directly, the `SwaggerModule` can't generate a corresponding model definition yet. In this case, you must add it as an [extra model](/openapi/types-and-parameters#extra-models). For example, use the `@ApiExtraModels()` decorator at the controller level:
 
 ```ts
 @Controller('cats')
@@ -251,7 +250,7 @@ Lastly, since `PaginatedDto` is not directly referenced by any controller, the `
 export class CatsController {}
 ```
 
-If you run Swagger now, the generated `swagger.json` for this specific endpoint should have the following response defined:
+If you run Swagger now, the generated `swagger.json` for this endpoint defines the following response:
 
 ```json
 "responses": {
@@ -267,7 +266,10 @@ If you run Swagger now, the generated `swagger.json` for this specific endpoint 
             {
               "properties": {
                 "results": {
-                  "$ref": "#/components/schemas/CatDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CatDto"
+                  }
                 }
               }
             }
@@ -279,7 +281,7 @@ If you run Swagger now, the generated `swagger.json` for this specific endpoint 
 }
 ```
 
-To make it reusable, we can create a custom decorator for `PaginatedDto`, as follows:
+To make it reusable, create a custom decorator for `PaginatedDto`:
 
 ```ts
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
@@ -306,25 +308,25 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
 };
 ```
 
-> info **Hint** `Type<any>` interface and `applyDecorators` function are imported from the `@nestjs/common` package.
+> info **Hint** The `Type<any>` interface and the `applyDecorators()` function are imported from the `@nestjs/common` package.
 
-To ensure that `SwaggerModule` will generate a definition for our model, we must add it as an extra model, like we did earlier with the `PaginatedDto` in the controller.
+To ensure that the `SwaggerModule` generates a definition for the model, the decorator registers it as an extra model with `ApiExtraModels()`, just as we did earlier for `PaginatedDto` in the controller.
 
-With this in place, we can use the custom `@ApiPaginatedResponse()` decorator on our endpoint:
+With this in place, you can use the custom `@ApiPaginatedResponse()` decorator on your endpoint:
 
 ```ts
 @ApiPaginatedResponse(CatDto)
 async findAll(): Promise<PaginatedDto<CatDto>> {}
 ```
 
-For client generation tools, this approach poses an ambiguity in how the `PaginatedResponse<TModel>` is being generated for the client. The following snippet is an example of a client generator result for the above `GET /` endpoint.
+For client generation tools, this approach makes it ambiguous how `PaginatedDto<TModel>` should be generated for the client. The following snippet is an example of a client generator result for the `GET /` endpoint above:
 
 ```typescript
 // Angular
 findAll(): Observable<{ total: number, limit: number, offset: number, results: CatDto[] }>
 ```
 
-As you can see, the **Return Type** here is ambiguous. To workaround this issue, you can add a `title` property to the `schema` for `ApiPaginatedResponse`:
+The **return type** here is ambiguous. To work around this issue, add a `title` property to the `schema` in `ApiPaginatedResponse`:
 
 ```typescript
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
@@ -343,7 +345,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
 };
 ```
 
-Now the result of the client generator tool will become:
+The client generator's result now becomes:
 
 ```ts
 // Angular

@@ -1,6 +1,6 @@
 ### Types and parameters
 
-The `SwaggerModule` searches for all `@Body()`, `@Query()`, and `@Param()` decorators in route handlers to generate the API document. It also creates corresponding model definitions by taking advantage of reflection. Consider the following code:
+The `SwaggerModule` searches for all `@Body()`, `@Query()`, `@Param()`, and `@Headers()` decorators in route handlers to generate the API document. It also uses reflection to create the corresponding model definitions. Consider the following code:
 
 ```typescript
 @Post()
@@ -9,13 +9,13 @@ async create(@Body() createCatDto: CreateCatDto) {
 }
 ```
 
-> info **Hint** To explicitly set the body definition use the `@ApiBody()` decorator (imported from the `@nestjs/swagger` package).
+> info **Hint** To set the body definition explicitly, use the `@ApiBody()` decorator (imported from the `@nestjs/swagger` package).
 
-Based on the `CreateCatDto`, the following model definition Swagger UI will be created:
+Based on the `CreateCatDto`, Swagger UI shows the following model definition:
 
 <figure><img src="/assets/swagger-dto.png" /></figure>
 
-As you can see, the definition is empty although the class has a few declared properties. In order to make the class properties visible to the `SwaggerModule`, we have to either annotate them with the `@ApiProperty()` decorator or use the CLI plugin (read more in the **Plugin** section) which will do it automatically:
+The definition is empty, even though the class declares a few properties. To make the class properties visible to the `SwaggerModule`, either annotate them with the `@ApiProperty()` decorator or use the [CLI plugin](/openapi/cli-plugin), which does this automatically:
 
 ```typescript
 import { ApiProperty } from '@nestjs/swagger';
@@ -32,13 +32,13 @@ export class CreateCatDto {
 }
 ```
 
-> info **Hint** Instead of manually annotating each property, consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically provide this for you.
+> info **Hint** Instead of manually annotating each property, consider using the [Swagger plugin](/openapi/cli-plugin), which adds these annotations for you.
 
-Let's open the browser and verify the generated `CreateCatDto` model:
+Open the browser and verify the generated `CreateCatDto` model:
 
 <figure><img src="/assets/swagger-dto2.png" /></figure>
 
-In addition, the `@ApiProperty()` decorator allows you to set various [Schema Object](https://swagger.io/specification/#schemaObject) properties:
+The `@ApiProperty()` decorator also lets you set various [Schema Object](https://swagger.io/specification/#schemaObject) properties:
 
 ```typescript
 @ApiProperty({
@@ -49,9 +49,9 @@ In addition, the `@ApiProperty()` decorator allows you to set various [Schema Ob
 age: number;
 ```
 
-> info **Hint** Instead of explicitly typing the `{{"@ApiProperty({ required: false })"}}` you can use the `@ApiPropertyOptional()` short-hand decorator.
+> info **Hint** Instead of explicitly typing `{{"@ApiProperty({ required: false })"}}`, you can use the `@ApiPropertyOptional()` shorthand decorator.
 
-In order to explicitly set the type of the property, use the `type` key:
+To set the type of the property explicitly, use the `type` key:
 
 ```typescript
 @ApiProperty({
@@ -62,16 +62,16 @@ age: number;
 
 #### Arrays
 
-When the property is an array, we must manually indicate the array type as shown below:
+When the property is an array, you must indicate the array type manually, as shown below:
 
 ```typescript
 @ApiProperty({ type: [String] })
 names: string[];
 ```
 
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically detect arrays.
+> info **Hint** Consider using the [Swagger plugin](/openapi/cli-plugin), which detects arrays automatically.
 
-Either include the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
+Either pass the type as the first element of an array (as shown above) or set the `isArray` property to `true`.
 
 <app-banner-enterprise></app-banner-enterprise>
 
@@ -84,17 +84,17 @@ When you have circular dependencies between classes, use a lazy function to prov
 node: Node;
 ```
 
-> info **Hint** Consider using the Swagger plugin (see [Plugin](/openapi/cli-plugin) section) which will automatically detect circular dependencies.
+> info **Hint** Consider using the [Swagger plugin](/openapi/cli-plugin), which detects circular dependencies automatically.
 
 #### Generics and interfaces
 
-Since TypeScript does not store metadata about generics or interfaces, when you use them in your DTOs, `SwaggerModule` may not be able to properly generate model definitions at runtime. For instance, the following code won't be correctly inspected by the Swagger module:
+TypeScript doesn't store metadata about generics or interfaces, so when you use them in your DTOs, the `SwaggerModule` may not be able to generate model definitions correctly at runtime. For instance, the Swagger module can't correctly inspect the following code:
 
 ```typescript
 createBulk(@Body() usersDto: CreateUserDto[])
 ```
 
-In order to overcome this limitation, you can set the type explicitly:
+To overcome this limitation, set the type explicitly:
 
 ```typescript
 @ApiBody({ type: [CreateUserDto] })
@@ -103,7 +103,7 @@ createBulk(@Body() usersDto: CreateUserDto[])
 
 #### Enums
 
-To identify an `enum`, we must manually set the `enum` property on the `@ApiProperty` with an array of values.
+To identify an `enum`, set the `enum` property of `@ApiProperty()` to an array of values:
 
 ```typescript
 @ApiProperty({ enum: ['Admin', 'Moderator', 'User']})
@@ -120,7 +120,7 @@ export enum UserRole {
 }
 ```
 
-You can then use the enum directly with the `@Query()` parameter decorator in combination with the `@ApiQuery()` decorator.
+You can then use the enum directly with the `@Query()` parameter decorator, in combination with the `@ApiQuery()` decorator:
 
 ```typescript
 @ApiQuery({ name: 'role', enum: UserRole })
@@ -129,13 +129,13 @@ async filterByRole(@Query('role') role: UserRole = UserRole.User) {}
 
 <figure><img src="/assets/enum_query.gif" /></figure>
 
-With `isArray` set to **true**, the `enum` can be selected as a **multi-select**:
+With `isArray` set to `true`, the `enum` values can be selected in a **multi-select**:
 
 <figure><img src="/assets/enum_query_array.gif" /></figure>
 
 #### Enums schema
 
-By default, the `enum` property will add a raw definition of [Enum](https://swagger.io/docs/specification/data-models/enums/) on the `parameter`.
+By default, the `enum` property adds a raw [enum](https://swagger.io/docs/specification/data-models/enums/) definition to the `parameter`:
 
 ```yaml
 - breed:
@@ -146,7 +146,7 @@ By default, the `enum` property will add a raw definition of [Enum](https://swag
       - Siamese
 ```
 
-The above specification works fine for most cases. However, if you are utilizing a tool that takes the specification as **input** and generates **client-side** code, you might run into a problem with the generated code containing duplicated `enums`. Consider the following code snippet:
+This specification works for most cases. However, if you use a tool that takes the specification as **input** and generates **client-side** code, the generated code may contain duplicated `enums`. Consider the following code snippet:
 
 ```typescript
 // generated client-side code
@@ -173,8 +173,7 @@ export enum CatInformationEnum {
 
 > info **Hint** The above snippet is generated using a tool called [NSwag](https://github.com/RicoSuter/NSwag).
 
-You can see that now you have two `enums` that are exactly the same.
-To address this issue, you can pass an `enumName` along with the `enum` property in your decorator.
+The result contains two identical `enums`. To address this issue, pass an `enumName` along with the `enum` property in your decorator:
 
 ```typescript
 export class CatDetail {
@@ -183,7 +182,7 @@ export class CatDetail {
 }
 ```
 
-The `enumName` property enables `@nestjs/swagger` to turn `CatBreed` into its own `schema` which in turns makes `CatBreed` enum reusable. The specification will look like the following:
+The `enumName` property makes `@nestjs/swagger` turn `CatBreed` into its own `schema`, which makes the `CatBreed` enum reusable. The specification looks like the following:
 
 ```yaml
 CatDetail:
@@ -201,11 +200,11 @@ CatBreed:
     - Siamese
 ```
 
-> info **Hint** Any **decorator** that takes `enum` as a property will also take `enumName`.
+> info **Hint** The `@ApiQuery()` and `@ApiParam()` decorators also accept `enumName` alongside `enum`.
 
 #### Property value examples
 
-You can set a single example for a property by using the `example` key, like this:
+To set a single example for a property, use the `example` key:
 
 ```typescript
 @ApiProperty({
@@ -214,7 +213,7 @@ You can set a single example for a property by using the `example` key, like thi
 breed: string;
 ```
 
-If you want to provide multiple examples, you can use the `examples` key by passing in an object structured like this:
+To provide multiple examples, use the `examples` key and pass an object structured like this:
 
 ```typescript
 @ApiProperty({
@@ -230,7 +229,7 @@ breed: string;
 
 #### Raw definitions
 
-In certain cases, such as deeply nested arrays or matrices, you may need to manually define your type:
+In certain cases, such as deeply nested arrays or matrices, you may need to define your type manually:
 
 ```typescript
 @ApiProperty({
@@ -245,7 +244,7 @@ In certain cases, such as deeply nested arrays or matrices, you may need to manu
 coords: number[][];
 ```
 
-You can also specify raw object schemas, like this:
+You can also specify raw object schemas:
 
 ```typescript
 @ApiProperty({
@@ -284,7 +283,7 @@ async create(@Body() coords: number[][]) {}
 
 #### Extra models
 
-To define additional models that are not directly referenced in your controllers but should be inspected by the Swagger module, use the `@ApiExtraModels()` decorator:
+To define additional models that your controllers don't reference directly but the Swagger module should inspect, use the `@ApiExtraModels()` decorator:
 
 ```typescript
 @ApiExtraModels(ExtraModel)
@@ -293,7 +292,7 @@ export class CreateCatDto {}
 
 > info **Hint** You only need to use `@ApiExtraModels()` once for a specific model class.
 
-Alternatively, you can pass an options object with the `extraModels` property specified to the `SwaggerModule.createDocument()` method, as follows:
+Alternatively, pass an options object with the `extraModels` property to the `SwaggerModule.createDocument()` method:
 
 ```typescript
 const documentFactory = () =>
@@ -312,7 +311,7 @@ To get a reference (`$ref`) to your model, use the `getSchemaPath(ExtraModel)` f
 
 #### oneOf, anyOf, allOf
 
-To combine schemas, you can use the `oneOf`, `anyOf` or `allOf` keywords ([read more](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/)).
+To combine schemas, use the `oneOf`, `anyOf`, or `allOf` keywords (see [oneOf, anyOf, allOf, not](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/) in the Swagger documentation):
 
 ```typescript
 @ApiProperty({
@@ -324,7 +323,7 @@ To combine schemas, you can use the `oneOf`, `anyOf` or `allOf` keywords ([read 
 pet: Cat | Dog;
 ```
 
-If you want to define a polymorphic array (i.e., an array whose members span multiple schemas), you should use a raw definition (see above) to define your type by hand.
+To define a polymorphic array (i.e., an array whose members span multiple schemas), use a raw definition (see above) to define your type by hand:
 
 ```typescript
 type Pet = Cat | Dog;
@@ -343,29 +342,27 @@ pets: Pet[];
 
 > info **Hint** The `getSchemaPath()` function is imported from `@nestjs/swagger`.
 
-Both `Cat` and `Dog` must be defined as extra models using the `@ApiExtraModels()` decorator (at the class-level).
+Both `Cat` and `Dog` must be defined as extra models with the `@ApiExtraModels()` decorator (at the class level).
 
 #### Schema name and description
 
-As you may have noticed, the name of the generated schema is based on the name of the original model class (for example, the `CreateCatDto` model generates a `CreateCatDto` schema). If you'd like to change the schema name, you can use the `@ApiSchema()` decorator.
-
-Here's an example:
+The name of the generated schema is based on the name of the original model class (for example, the `CreateCatDto` model generates a `CreateCatDto` schema). To change the schema name, use the `@ApiSchema()` decorator:
 
 ```typescript
 @ApiSchema({ name: 'CreateCatRequest' })
 class CreateCatDto {}
 ```
 
-The model above will be translated into the `CreateCatRequest` schema.
+The model above is translated into the `CreateCatRequest` schema.
 
-By default, no description is added to the generated schema. You can add one using the `description` attribute:
+By default, the generated schema has no description. To add one, use the `description` attribute:
 
 ```typescript
 @ApiSchema({ description: 'Description of the CreateCatDto schema' })
 class CreateCatDto {}
 ```
 
-That way, the description will be included in the schema, as follows:
+The description is then included in the schema:
 
 ```yaml
 schemas:

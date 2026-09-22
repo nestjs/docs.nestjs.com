@@ -1,6 +1,6 @@
 ### Decorators
 
-All of the available OpenAPI decorators have an `Api` prefix to distinguish them from the core decorators. Below is a full list of the exported decorators along with a designation of the level at which the decorator may be applied.
+All OpenAPI decorators have an `Api` prefix to distinguish them from the core decorators. The table below lists the exported decorators, along with the level at which each one can be applied.
 
 |                           |                     |
 | ------------------------- | ------------------- |
@@ -11,10 +11,14 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiCookieAuth()`        | Method / Controller |
 | `@ApiExcludeController()` | Controller          |
 | `@ApiExcludeEndpoint()`   | Method              |
-| `@ApiExtension()`         | Method              |
-| `@ApiExtraModels()`       | Method / Controller |
+| `@ApiDefaultGetter()`     | Method              |
+| `@ApiExtension()`         | Method / Controller |
+| `@ApiExtraModels()`       | Method / Controller / Model |
 | `@ApiHeader()`            | Method / Controller |
+| `@ApiHeaders()`           | Method / Controller |
 | `@ApiHideProperty()`      | Model               |
+| `@ApiIncludeEndpoint()`   | Method              |
+| `@ApiLink()`              | Method              |
 | `@ApiOAuth2()`            | Method / Controller |
 | `@ApiOperation()`         | Method              |
 | `@ApiParam()`             | Method / Controller |
@@ -24,6 +28,10 @@ All of the available OpenAPI decorators have an `Api` prefix to distinguish them
 | `@ApiPropertyOptional()`  | Model               |
 | `@ApiQuery()`             | Method / Controller |
 | `@ApiResponse()`          | Method / Controller |
+| `@ApiResponseProperty()`  | Model               |
 | `@ApiSecurity()`          | Method / Controller |
 | `@ApiTags()`              | Method / Controller |
 | `@ApiCallbacks()`         | Method / Controller |
+| `@ApiWebhook()`           | Method              |
+
+The shorthand response decorators (e.g., `@ApiOkResponse()` and `@ApiNotFoundResponse()`, listed in the [operations](/openapi/operations#responses) chapter) can be applied at the same levels as `@ApiResponse()`.

@@ -1,16 +1,16 @@
 ### Introduction
 
-The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) which allows you to generate such a specification by leveraging decorators.
+The [OpenAPI](https://swagger.io/specification/) specification is a language-agnostic definition format for describing RESTful APIs. Nest provides a dedicated [module](https://github.com/nestjs/swagger) that generates such a specification from decorators in your code.
 
 #### Installation
 
-To begin using it, we first install the required dependency.
+To begin, install the required dependency:
 
 ```bash
 $ npm install --save @nestjs/swagger
 ```
 
-> warning **Warning** When using `fastify` you also need to install `@fastify/static`:
+> warning **Warning** If you use Fastify, also install `@fastify/static`:
 >
 > ```bash
 > $ npm install --save @fastify/static
@@ -18,7 +18,7 @@ $ npm install --save @nestjs/swagger
 
 #### Bootstrap
 
-Once the installation process is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
+Once the installation is complete, open the `main.ts` file and initialize Swagger using the `SwaggerModule` class:
 
 ```typescript
 @@filename(main)
@@ -43,20 +43,20 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-> info **Hint** The factory method `SwaggerModule.createDocument()` is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
+> info **Hint** Wrapping `SwaggerModule.createDocument()` in a factory function defers document generation until the document is first requested, which saves initialization time. The resulting document is a serializable object that conforms to the [OpenAPI Document](https://swagger.io/specification/#openapi-document) specification. Instead of serving it over HTTP, you can also save it as a JSON or YAML file and use it elsewhere.
 
-> warning **Warning** If you call `createDocument()` eagerly (rather than in a factory function, as shown above), make sure `app.enableVersioning()` runs first — otherwise the generated `paths` will be missing the version prefix. The factory pattern is unaffected, since the document is not built until it is first requested.
+> warning **Warning** If you call `createDocument()` eagerly (rather than in a factory function, as shown above), make sure `app.enableVersioning()` runs first. Otherwise, the generated `paths` are missing the version prefix. The factory pattern is unaffected, because the document isn't built until it is first requested.
 
-The `DocumentBuilder` helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow you to set properties such as title, description, and version. In order to create a full document (with all HTTP routes defined) we use the `createDocument()` method of the `SwaggerModule` class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type `SwaggerDocumentOptions`. More on this in the [Document options section](/openapi/introduction#document-options).
+`DocumentBuilder` structures a base document that conforms to the OpenAPI Specification. Its methods let you set properties such as the title, description, and version. To create a full document (with all HTTP routes defined), use the `createDocument()` method of the `SwaggerModule` class. It takes two arguments: an application instance and the base document configuration returned by `DocumentBuilder#build()`. An optional third argument, of type `SwaggerDocumentOptions`, is covered in the [document options](/openapi/introduction#document-options) section.
 
-Once we create a document, we can call the `setup()` method. It accepts:
+Next, call the `setup()` method. It accepts:
 
-1. The path to mount the Swagger UI
+1. The path to mount the Swagger UI on
 2. An application instance
-3. The document object instantiated above
-4. Optional configuration parameter (read more [here](/openapi/introduction#setup-options))
+3. The document object, or a factory function that returns it (as above)
+4. An optional configuration object (see [setup options](/openapi/introduction#setup-options))
 
-Now you can run the following command to start the HTTP server:
+Now run the following command to start the HTTP server:
 
 ```bash
 $ npm run start
@@ -66,10 +66,10 @@ While the application is running, open your browser and navigate to `http://loca
 
 <figure><img src="/assets/swagger1.png" /></figure>
 
-As you can see, the `SwaggerModule` automatically reflects all of your endpoints.
+The `SwaggerModule` automatically reflects all of your endpoints.
 
 > info **Hint** To generate and download a Swagger JSON file, navigate to `http://localhost:3000/api-json` (assuming that your Swagger documentation is available under `http://localhost:3000/api`).
-> It is also possible to expose it on a route of your choice using only the setup method from `@nestjs/swagger`, like this:
+> You can also expose it on a route of your choice with the `jsonDocumentUrl` option of the `setup()` method:
 >
 > ```typescript
 > SwaggerModule.setup('swagger', app, documentFactory, {
@@ -77,9 +77,9 @@ As you can see, the `SwaggerModule` automatically reflects all of your endpoints
 > });
 > ```
 >
-> Which would expose it at `http://localhost:3000/swagger/json`
+> This exposes it at `http://localhost:3000/swagger/json`.
 
-> warning **Warning** When using `fastify` and `helmet`, there may be a problem with [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), to solve this collision, configure the CSP as shown below:
+> warning **Warning** When you use Fastify with `helmet`, its [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) can block the Swagger UI. To resolve this conflict, configure the CSP as shown below:
 >
 > ```typescript
 > app.register(helmet, {
@@ -101,7 +101,7 @@ As you can see, the `SwaggerModule` automatically reflects all of your endpoints
 
 #### Document options
 
-When creating a document, it is possible to provide some extra options to fine tune the library's behavior. These options should be of type `SwaggerDocumentOptions`, which can be the following:
+When creating a document, you can pass extra options to fine-tune the library's behavior. These options are of type `SwaggerDocumentOptions`:
 
 ```TypeScript
 export interface SwaggerDocumentOptions {
@@ -153,10 +153,38 @@ export interface SwaggerDocumentOptions {
    * @default true
    */
   autoTagControllers?: boolean;
+
+  /**
+   * If `true`, swagger will only include routes that are decorated with the `@ApiIncludeEndpoint()` decorator
+   * @default false
+   */
+  onlyIncludeDecoratedEndpoints?: boolean;
+
+  /**
+   * If `true`, `default` values that are non-plain objects at runtime
+   * (e.g., `new Date()` or class instances) are omitted from the document,
+   * so the document doesn't change on every restart.
+   * @default false
+   */
+  excludeDynamicDefaults?: boolean;
+
+  /**
+   * If set, `example` and `examples` values on component schemas are
+   * truncated once their nested object/array depth exceeds this number.
+   * Per-property `@ApiProperty({ exampleMaxDepth })` overrides it.
+   * @default undefined
+   */
+  exampleMaxDepth?: number;
+
+  /**
+   * Converts Standard Schema instances passed to route parameter decorators
+   * into OpenAPI schemas (see "Standard Schema (Zod, Valibot)" below).
+   */
+  standardSchemaConverter?: StandardSchemaConverter;
 }
 ```
 
-For example, if you want to make sure that the library generates operation names like `createUser` instead of `UsersController_createUser`, you can set the following:
+For example, to generate operation names like `createUser` instead of `UsersController_createUser`, set the following:
 
 ```TypeScript
 const options: SwaggerDocumentOptions =  {
@@ -170,10 +198,11 @@ const documentFactory = () => SwaggerModule.createDocument(app, config, options)
 
 #### Standard Schema (Zod, Valibot)
 
-Nest route parameter decorators accept a [Standard Schema](https://standardschema.dev/) compatible schema through their `schema` option (see the [Controllers chapter](/controllers#request-object)):
+Nest route parameter decorators accept a [Standard Schema](https://standardschema.dev/) compatible schema through their `schema` option (see the [controllers](/controllers#request-object) chapter):
 
 ```typescript
 @@filename(cats.controller)
+import { Body, Controller, Post } from '@nestjs/common';
 import { z } from 'zod';
 
 const createCatSchema = z.object({
@@ -181,6 +210,7 @@ const createCatSchema = z.object({
   age: z.number().int().positive(),
   breed: z.string(),
 });
+type CreateCatDto = z.infer<typeof createCatSchema>;
 
 @Controller('cats')
 export class CatsController {
@@ -191,15 +221,15 @@ export class CatsController {
 }
 ```
 
-The Swagger module picks these schemas up and turns them into request bodies and parameters in the generated document.
+The Swagger module picks up these schemas and turns them into request bodies and parameters in the generated document.
 
 ##### Libraries that need no configuration
 
-If your validation library implements the **Standard JSON Schema** extension - meaning its schemas expose `~standard.jsonSchema` - Nest converts them on its own, and there is nothing to configure. It requests the `openapi-3.0` target and uses the `input` or `output` variant depending on whether the schema describes a request or a response.
+If your validation library implements the **Standard JSON Schema** extension (that is, its schemas expose `~standard.jsonSchema`), Nest converts the schemas itself, and there is nothing to configure. Zod 4.2 and later implements this extension, for example. Nest requests the `openapi-3.0` target and uses the `input` or `output` variant, depending on whether the schema describes a request or a response.
 
 ##### Supplying a converter
 
-For libraries that do not expose that extension, provide a `standardSchemaConverter` in `SwaggerDocumentOptions`. It receives the raw schema plus the `schemaType` being generated, and returns the converted OpenAPI schema:
+For libraries that don't expose that extension (or when you want to control the conversion yourself), provide a `standardSchemaConverter` in `SwaggerDocumentOptions`. It receives the raw schema and the `schemaType` being generated, and returns the converted OpenAPI schema:
 
 ```typescript
 standardSchemaConverter?: (
@@ -208,9 +238,9 @@ standardSchemaConverter?: (
 ) => { schema: unknown; components?: Record<string, any> } | undefined;
 ```
 
-Returning `undefined` tells Nest that the converter does not handle this schema, so it falls back to the native conversion described above. That is what makes it safe to support several libraries from one converter.
+Nest calls the converter before trying the native conversion. Returning `undefined` tells Nest that the converter doesn't handle this schema, so Nest falls back to the native conversion described above. This makes it safe to support several libraries from one converter.
 
-For **Zod**, use [zod-openapi](https://github.com/samchungy/zod-openapi):
+For **Zod**, you can use [zod-openapi](https://github.com/samchungy/zod-openapi):
 
 ```bash
 $ npm i --save-dev zod-openapi
@@ -218,7 +248,7 @@ $ npm i --save-dev zod-openapi
 
 ```typescript
 @@filename(main)
-import { SwaggerDocumentOptions } from '@nestjs/swagger';
+import { SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { createSchema } from 'zod-openapi';
 
 const documentOptions: SwaggerDocumentOptions = {
@@ -243,6 +273,7 @@ $ npm i --save-dev @valibot/to-json-schema
 
 ```typescript
 @@filename(main)
+import { SwaggerDocumentOptions } from '@nestjs/swagger';
 import { toJsonSchema } from '@valibot/to-json-schema';
 
 const documentOptions: SwaggerDocumentOptions = {
@@ -255,14 +286,15 @@ const documentOptions: SwaggerDocumentOptions = {
 };
 ```
 
-Note the difference between the two: `createSchema()` can hoist reusable definitions, so its result carries a `components` map that you pass through and Nest merges into the document's shared components. `toJsonSchema()` returns a single self-contained schema, so `components` is simply omitted.
+The two converters differ in one respect. `createSchema()` can hoist reusable definitions, so its result carries a `components` map, which you pass through and Nest merges into the document's shared components. `toJsonSchema()` returns a single self-contained schema, so the Valibot converter omits `components`.
 
 ##### Supporting several libraries at once
 
-Because the converter receives the schema as `unknown`, you can branch on the schema's vendor and support more than one library in the same application. Every Standard Schema exposes it at `~standard.vendor`:
+Because the converter receives the schema as `unknown`, you can branch on the schema's vendor and support more than one library in the same application. Every Standard Schema exposes its vendor at `~standard.vendor`:
 
 ```typescript
 @@filename(main)
+import { SwaggerDocumentOptions } from '@nestjs/swagger';
 import { toJsonSchema } from '@valibot/to-json-schema';
 import { createSchema } from 'zod-openapi';
 
@@ -300,14 +332,13 @@ const documentOptions: SwaggerDocumentOptions = {
 };
 ```
 
-> warning **Warning** Always narrow by vendor before calling a library-specific converter. Passing a Valibot schema to `createSchema()` (or the reverse) throws at document generation time rather than failing gracefully.
+> warning **Warning** Always narrow by vendor before calling a library-specific converter. Passing a Valibot schema to `createSchema()` (or the reverse) throws at document generation time instead of failing gracefully.
 
-> info **Hint** `schemaType` matters when your schema performs transformations: the `input` shape is what clients send, and the `output` shape is what your handler receives after parsing. Nest asks for whichever is appropriate for the position being documented, so pass the value straight through to your converter rather than hardcoding one.
-
+> info **Hint** `schemaType` matters when your schema performs transformations: the `input` shape is what clients send, and the `output` shape is what your handler receives after parsing. Nest requests the variant that fits the position being documented, so pass the value straight through to your converter instead of hardcoding one.
 
 #### Setup options
 
-You can configure Swagger UI by passing the options object which fulfills the `SwaggerCustomOptions` interface as a fourth argument of the `SwaggerModule#setup` method.
+You can configure Swagger UI by passing an options object that implements the `SwaggerCustomOptions` interface as the fourth argument of the `SwaggerModule#setup()` method.
 
 ```TypeScript
 export interface SwaggerCustomOptions {
@@ -336,7 +367,7 @@ export interface SwaggerCustomOptions {
   /**
    * If `true`, raw definitions for all formats will be served.
    * Alternatively, you can pass an array to specify the formats to be served, e.g., `raw: ['json']` to serve only JSON definitions.
-   * If omitted or set to an empty array, no definitions (JSON or YAML) will be served.
+   * If set to `false` or an empty array, no definitions (JSON or YAML) will be served.
    * Use this option to control the availability of Swagger-related endpoints.
    * Default: `true`.
    */
@@ -362,12 +393,13 @@ export interface SwaggerCustomOptions {
   /**
    * Hook allowing to alter the OpenAPI document before being served.
    * It's called after the document is generated and before it is served as JSON & YAML.
+   * The hook can return either a plain `OpenAPIObject` or a `Promise<OpenAPIObject>`.
    */
   patchDocumentOnRequest?: <TRequest = any, TResponse = any>(
     req: TRequest,
     res: TResponse,
     document: OpenAPIObject
-  ) => OpenAPIObject;
+  ) => OpenAPIObject | Promise<OpenAPIObject>;
 
   /**
    * If `true`, the selector of OpenAPI definitions is displayed in the Swagger UI interface.
@@ -432,20 +464,20 @@ export interface SwaggerCustomOptions {
 }
 ```
 
-> info **Hint** `ui` and `raw` are independent options. Disabling Swagger UI (`ui: false`) does not disable API definitions (JSON/YAML). Conversely, disabling API definitions (`raw: []`) does not disable the Swagger UI.
+> info **Hint** `ui` and `raw` are independent options. Disabling the Swagger UI (`ui: false`) doesn't disable the API definitions (JSON/YAML). Conversely, disabling the API definitions (`raw: []`) doesn't disable the Swagger UI.
 >
-> For example, the following configuration will disable the Swagger UI but still allow access to API definitions:
+> For example, the following configuration disables the Swagger UI but keeps the JSON API definition available:
 >
 > ```typescript
 > const options: SwaggerCustomOptions = {
 >   ui: false, // Swagger UI is disabled
 >   raw: ['json'], // JSON API definition is still accessible (YAML is disabled)
 > };
-> SwaggerModule.setup('api', app, options);
+> SwaggerModule.setup('api', app, documentFactory, options);
 > ```
 >
-> In this case, http://localhost:3000/api-json will still be accessible, but http://localhost:3000/api (Swagger UI) will not.
+> In this case, `http://localhost:3000/api-json` is still accessible, but `http://localhost:3000/api` (the Swagger UI) is not.
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
+A working example is available in the [Nest repository](https://github.com/nestjs/nest/tree/master/sample/11-swagger).
