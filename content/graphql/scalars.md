@@ -1,18 +1,18 @@
 ### Scalars
 
-A GraphQL object type has a name and fields, but at some point those fields have to resolve to some concrete data. That's where the scalar types come in: they represent the leaves of the query (read more [here](https://graphql.org/learn/schema/#scalar-types)). GraphQL includes the following default types: `Int`, `Float`, `String`, `Boolean` and `ID`. In addition to these built-in types, you may need to support custom atomic data types (e.g., `Date`).
+A GraphQL object type has a name and fields, but at some point those fields have to resolve to some concrete data. Scalar types provide that data: they represent the leaves of the query (see [scalar types](https://graphql.org/learn/schema/#scalar-types) in the GraphQL documentation). GraphQL includes the following built-in scalar types: `Int`, `Float`, `String`, `Boolean`, and `ID`. In addition to these, you may need to support custom atomic data types (e.g., `Date`).
 
 #### Code first
 
-The code-first approach ships with five scalars in which three of them are simple aliases for the existing GraphQL types.
+The code first approach ships with five scalars, three of which are aliases for the existing GraphQL types:
 
-- `ID` (alias for `GraphQLID`) - represents a unique identifier, often used to refetch an object or as the key for a cache
-- `Int` (alias for `GraphQLInt`) - a signed 32‐bit integer
-- `Float` (alias for `GraphQLFloat`) - a signed double-precision floating-point value
-- `GraphQLISODateTime` - a date-time string at UTC (used by default to represent `Date` type)
-- `GraphQLTimestamp` - a signed integer which represents date and time as number of milliseconds from start of UNIX epoch
+- `ID` (alias for `GraphQLID`): a unique identifier, often used to refetch an object or as the key for a cache
+- `Int` (alias for `GraphQLInt`): a signed 32-bit integer
+- `Float` (alias for `GraphQLFloat`): a signed double-precision floating-point value
+- `GraphQLISODateTime`: a date-time string in UTC (used by default to represent the `Date` type)
+- `GraphQLTimestamp`: a signed integer that represents a date and time as the number of milliseconds since the start of the Unix epoch
 
-The `GraphQLISODateTime` (e.g. `2019-12-03T09:54:33Z`) is used by default to represent the `Date` type. To use the `GraphQLTimestamp` instead, set the `dateScalarMode` of the `buildSchemaOptions` object to `'timestamp'` as follows:
+By default, `GraphQLISODateTime` (e.g., `2019-12-03T09:54:33Z`) represents the `Date` type. To use `GraphQLTimestamp` instead, set the `dateScalarMode` property of the `buildSchemaOptions` object to `'timestamp'`:
 
 ```typescript
 GraphQLModule.forRoot({
@@ -22,7 +22,7 @@ GraphQLModule.forRoot({
 }),
 ```
 
-Likewise, the `GraphQLFloat` is used by default to represent the `number` type. To use the `GraphQLInt` instead, set the `numberScalarMode` of the `buildSchemaOptions` object to `'integer'` as follows:
+Likewise, `GraphQLFloat` represents the `number` type by default. To use `GraphQLInt` instead, set the `numberScalarMode` property of the `buildSchemaOptions` object to `'integer'`:
 
 ```typescript
 GraphQLModule.forRoot({
@@ -32,11 +32,11 @@ GraphQLModule.forRoot({
 }),
 ```
 
-In addition, you can create custom scalars.
+You can also create custom scalars.
 
 #### Override a default scalar
 
-To create a custom implementation for the `Date` scalar, simply create a new class.
+To create a custom implementation of the `Date` scalar, create a new class:
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
@@ -46,24 +46,24 @@ import { Kind, ValueNode } from 'graphql';
 export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
-  parseValue(value: number): Date {
-    return new Date(value); // value from the client
+  parseValue(value: unknown): Date {
+    return new Date(value as number); // value from the client
   }
 
-  serialize(value: Date): number {
-    return value.getTime(); // value sent to the client
+  serialize(value: unknown): number {
+    return (value as Date).getTime(); // value sent to the client
   }
 
-  parseLiteral(ast: ValueNode): Date {
+  parseLiteral(ast: ValueNode): Date | null {
     if (ast.kind === Kind.INT) {
-      return new Date(ast.value);
+      return new Date(parseInt(ast.value, 10));
     }
     return null;
   }
 }
 ```
 
-With this in place, register `DateScalar` as a provider.
+With this in place, register `DateScalar` as a provider:
 
 ```typescript
 @Module({
@@ -72,7 +72,7 @@ With this in place, register `DateScalar` as a provider.
 export class CommonModule {}
 ```
 
-Now we can use the `Date` type in our classes.
+Now you can use the `Date` type in your classes:
 
 ```typescript
 @Field()
@@ -81,7 +81,7 @@ creationDate: Date;
 
 #### Import a custom scalar
 
-To use a custom scalar, import and register it as a resolver. We'll use the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type.
+To use a custom scalar, import it and register it as a resolver. For demonstration purposes, we'll use the `graphql-type-json` package, which defines a `JSON` GraphQL scalar type.
 
 Start by installing the package:
 
@@ -89,7 +89,7 @@ Start by installing the package:
 $ npm i --save graphql-type-json
 ```
 
-Once the package is installed, we pass a custom resolver to the `forRoot()` method:
+Once the package is installed, pass a custom resolver to the `forRoot()` method:
 
 ```typescript
 import GraphQLJSON from 'graphql-type-json';
@@ -104,20 +104,22 @@ import GraphQLJSON from 'graphql-type-json';
 export class AppModule {}
 ```
 
-Now we can use the `JSON` type in our classes.
+Now you can use the `JSON` type in your classes:
 
 ```typescript
 @Field(() => GraphQLJSON)
 info: JSON;
 ```
 
-For a suite of useful scalars, take a look at the [graphql-scalars](https://www.npmjs.com/package/graphql-scalars) package.
+For a suite of ready-made scalars, see the [graphql-scalars](https://www.npmjs.com/package/graphql-scalars) package.
 
 #### Create a custom scalar
 
-To define a custom scalar, create a new `GraphQLScalarType` instance. We'll create a custom `UUID` scalar.
+To define a custom scalar, create a new `GraphQLScalarType` instance. The following example creates a custom `UUID` scalar:
 
 ```typescript
+import { GraphQLScalarType, Kind } from 'graphql';
+
 const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function validate(uuid: unknown): string | never {
@@ -132,11 +134,12 @@ export const CustomUuidScalar = new GraphQLScalarType({
   description: 'A simple UUID parser',
   serialize: (value) => validate(value),
   parseValue: (value) => validate(value),
-  parseLiteral: (ast) => validate(ast.value),
+  parseLiteral: (ast) =>
+    validate(ast.kind === Kind.STRING ? ast.value : undefined),
 });
 ```
 
-We pass a custom resolver to the `forRoot()` method:
+Then pass a custom resolver to the `forRoot()` method:
 
 ```typescript
 @Module({
@@ -149,7 +152,7 @@ We pass a custom resolver to the `forRoot()` method:
 export class AppModule {}
 ```
 
-Now we can use the `UUID` type in our classes.
+Now you can use the `UUID` type in your classes:
 
 ```typescript
 @Field(() => CustomUuidScalar)
@@ -158,7 +161,7 @@ uuid: string;
 
 #### Schema first
 
-To define a custom scalar (read more about scalars [here](https://www.apollographql.com/docs/graphql-tools/scalars.html)), create a type definition and a dedicated resolver. Here (as in the official documentation), we'll use the `graphql-type-json` package for demonstration purposes. This npm package defines a `JSON` GraphQL scalar type.
+To define a custom scalar (see [custom scalars](https://www.apollographql.com/docs/graphql-tools/scalars.html) in the GraphQL Tools documentation), create a type definition and a dedicated resolver. As in the official documentation, we'll use the `graphql-type-json` package, which defines a `JSON` GraphQL scalar type.
 
 Start by installing the package:
 
@@ -166,7 +169,7 @@ Start by installing the package:
 $ npm i --save graphql-type-json
 ```
 
-Once the package is installed, we pass a custom resolver to the `forRoot()` method:
+Once the package is installed, pass a custom resolver to the `forRoot()` method:
 
 ```typescript
 import GraphQLJSON from 'graphql-type-json';
@@ -192,7 +195,7 @@ type Foo {
 }
 ```
 
-Another method to define a scalar type is to create a simple class. Assume we want to enhance our schema with the `Date` type.
+Another way to define a scalar type is to create a class. Suppose you want to add a `Date` type to your schema:
 
 ```typescript
 import { Scalar, CustomScalar } from '@nestjs/graphql';
@@ -202,24 +205,24 @@ import { Kind, ValueNode } from 'graphql';
 export class DateScalar implements CustomScalar<number, Date> {
   description = 'Date custom scalar type';
 
-  parseValue(value: number): Date {
-    return new Date(value); // value from the client
+  parseValue(value: unknown): Date {
+    return new Date(value as number); // value from the client
   }
 
-  serialize(value: Date): number {
-    return value.getTime(); // value sent to the client
+  serialize(value: unknown): number {
+    return (value as Date).getTime(); // value sent to the client
   }
 
-  parseLiteral(ast: ValueNode): Date {
+  parseLiteral(ast: ValueNode): Date | null {
     if (ast.kind === Kind.INT) {
-      return new Date(ast.value);
+      return new Date(parseInt(ast.value, 10));
     }
     return null;
   }
 }
 ```
 
-With this in place, register `DateScalar` as a provider.
+With this in place, register `DateScalar` as a provider:
 
 ```typescript
 @Module({
@@ -228,14 +231,13 @@ With this in place, register `DateScalar` as a provider.
 export class CommonModule {}
 ```
 
-Now we can use the `Date` scalar in type definitions.
+Now you can use the `Date` scalar in your type definitions:
 
 ```graphql
 scalar Date
 ```
 
-By default, the generated TypeScript definition for all scalars is `any` - which isn't particularly typesafe.
-But, you can configure how Nest generates typings for your custom scalars when you specify how to generate types:
+By default, the generated TypeScript definition for every custom scalar is `any`, which isn't type-safe. You can configure how Nest generates typings for your custom scalars when you specify how to generate types:
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
@@ -256,7 +258,7 @@ definitionsFactory.generate({
 });
 ```
 
-> info **Hint** Alternatively, you can use a type reference instead, for example: `DateTime: Date`. In this case, `GraphQLDefinitionsFactory` will extract the name property of the specified type (`Date.name`) to generate TS definitions. Note: adding an import statement for non-built-in types (custom types) is required.
+> info **Hint** Alternatively, you can use a type reference, for example, `DateTime: Date`. In this case, `GraphQLDefinitionsFactory` uses the `name` property of the specified type (`Date.name`) to generate the TypeScript definitions. For custom (non-built-in) types, you must also add an import statement.
 
 Now, given the following GraphQL custom scalar types:
 
@@ -266,7 +268,7 @@ scalar BigNumber
 scalar Payload
 ```
 
-We will now see the following generated TypeScript definitions in `src/graphql.ts`:
+Nest generates the following TypeScript definitions in `src/graphql.ts`:
 
 ```typescript
 import _BigNumber from 'bignumber.js';
@@ -276,9 +278,6 @@ export type BigNumber = _BigNumber;
 export type Payload = unknown;
 ```
 
-Here, we've used the `customScalarTypeMapping` property to supply a map of the types we wish to declare for our custom scalars. We've
-also provided an `additionalHeader` property so that we can add any imports required for these type definitions. Lastly, we've added
-a `defaultScalarType` of `'unknown'`, so that any custom scalars not specified in `customScalarTypeMapping` will be aliased to
-`unknown` instead of `any` (which [TypeScript recommends](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type) using since 3.0 for added type safety).
+Here, the `customScalarTypeMapping` property maps each custom scalar to the TypeScript type to declare for it. The `additionalHeader` property adds any imports these type definitions require. Lastly, setting `defaultScalarType` to `'unknown'` aliases any custom scalar not listed in `customScalarTypeMapping` to `unknown` instead of `any`, which [TypeScript recommends](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type) since version 3.0 for added type safety.
 
-> info **Hint** Note that we've imported `_BigNumber` from `bignumber.js`; this is to avoid [circular type references](https://github.com/Microsoft/TypeScript/issues/12525#issuecomment-263166239).
+> info **Hint** The example imports `_BigNumber` from `bignumber.js` under an alias to avoid [circular type references](https://github.com/Microsoft/TypeScript/issues/12525#issuecomment-263166239).

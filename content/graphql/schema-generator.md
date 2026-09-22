@@ -2,7 +2,7 @@
 
 > warning **Warning** This chapter applies only to the code first approach.
 
-To manually generate a GraphQL SDL schema (i.e., without running an application, connecting to the database, hooking up resolvers, etc.), use the `GraphQLSchemaBuilderModule`.
+To generate a GraphQL SDL schema manually (i.e., without running an application, connecting to the database, hooking up resolvers, etc.), use the `GraphQLSchemaBuilderModule`:
 
 ```typescript
 async function generateSchema() {
@@ -29,7 +29,7 @@ const schema = await gqlSchemaFactory.create([
 ]);
 ```
 
-It also takes a second optional argument with an array of scalar classes:
+It also takes an optional second argument with an array of scalar classes:
 
 ```typescript
 const schema = await gqlSchemaFactory.create(
@@ -38,7 +38,7 @@ const schema = await gqlSchemaFactory.create(
 );
 ```
 
-Lastly, you can pass an options object:
+Lastly, you can pass an options object (the same `BuildSchemaOptions` accepted by the `buildSchemaOptions` property of the `GraphQLModule` configuration):
 
 ```typescript
 const schema = await gqlSchemaFactory.create([RecipesResolver], {
@@ -47,5 +47,5 @@ const schema = await gqlSchemaFactory.create([RecipesResolver], {
 });
 ```
 
-- `skipCheck`: ignore schema validation; boolean, defaults to `false`
-- `orphanedTypes`: list of classes that are not explicitly referenced (not part of the object graph) to be generated. Normally, if a class is declared but isn't otherwise referenced in the graph, it's omitted. The property value is an array of class references.
+- `skipCheck`: skip schema validation; boolean, defaults to `false`
+- `orphanedTypes`: an array of classes to generate even though they aren't explicitly referenced (i.e., aren't part of the object graph). Normally, a class that is declared but not referenced anywhere in the graph is omitted.

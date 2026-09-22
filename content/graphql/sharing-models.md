@@ -2,16 +2,15 @@
 
 > warning **Warning** This chapter applies only to the code first approach.
 
-One of the biggest advantages of using TypeScript for the backend of your project is the ability to reuse the same models in a TypeScript-based frontend application, by using a common TypeScript package.    
+One of the biggest advantages of using TypeScript for the backend of your project is the ability to reuse the same models in a TypeScript-based frontend application through a common TypeScript package.
 
-But there's a problem: the models created using the code first approach are heavily decorated with GraphQL related decorators. Those decorators are irrelevant in the frontend, negatively impacting performance.
+However, models created with the code first approach are heavily annotated with GraphQL-related decorators. Those decorators are irrelevant in the frontend and hurt its performance.
 
 #### Using the model shim
 
-To solve this issue, NestJS provides a "shim" which allows you to replace the original decorators with inert code by using a `webpack` (or similar) configuration.
-To use this shim, configure an alias between the `@nestjs/graphql` package and the shim.
+To solve this issue, Nest provides a "shim" that replaces the original decorators with inert code. The `@nestjs/graphql` package exposes the shim through the `browser` export condition, so bundlers that resolve that condition for browser builds (e.g., webpack with a `web` target) pick it up automatically.
 
-For example, for webpack this is resolved this way:
+If your bundler doesn't resolve the `browser` condition, configure an alias between the `@nestjs/graphql` package and the shim. For example, with webpack:
 
 ```typescript
 resolve: { // see: https://webpack.js.org/configuration/resolve/
@@ -21,4 +20,4 @@ resolve: { // see: https://webpack.js.org/configuration/resolve/
 }
 ```
 
-> info **Hint** The [TypeORM](/techniques/database) package has a similar shim that can be found [here](https://github.com/typeorm/typeorm/blob/master/extra/typeorm-model-shim.js).
+> info **Hint** The [TypeORM](/techniques/database) package provides a similar [model shim](https://github.com/typeorm/typeorm/blob/master/extra/typeorm-model-shim.js).

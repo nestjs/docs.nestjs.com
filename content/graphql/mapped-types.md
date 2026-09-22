@@ -2,7 +2,7 @@
 
 > warning **Warning** This chapter applies only to the code first approach.
 
-As you build out features like CRUD (Create/Read/Update/Delete) it's often useful to construct variants on a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
+As you build out features like CRUD (Create/Read/Update/Delete), it's often useful to construct variants of a base entity type. Nest provides several utility functions that perform type transformations to make this task more convenient.
 
 #### Partial
 
@@ -35,12 +35,14 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {}
 
 > info **Hint** The `PartialType()` function is imported from the `@nestjs/graphql` package.
 
-The `PartialType()` function takes an optional second argument that is a reference to a decorator factory. This argument can be used to change the decorator function applied to the resulting (child) class. If not specified, the child class effectively uses the same decorator as the **parent** class (the class referenced in the first argument). In the example above, we are extending `CreateUserInput` which is annotated with the `@InputType()` decorator. Since we want `UpdateUserInput` to also be treated as if it were decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types are different, (e.g., the parent is decorated with `@ObjectType`), we would pass `InputType` as the second argument. For example:
+The `PartialType()` function takes an optional second argument: a reference to a decorator factory. Use it to change the decorator applied to the resulting (child) class. If you don't specify it, the child class effectively uses the same decorator as the **parent** class (the class referenced in the first argument). In the example above, we extend `CreateUserInput`, which is annotated with the `@InputType()` decorator. Since we want `UpdateUserInput` to be treated as if it were also decorated with `@InputType()`, we didn't need to pass `InputType` as the second argument. If the parent and child types differ (e.g., the parent is decorated with `@ObjectType()`), pass `InputType` as the second argument:
 
 ```typescript
 @InputType()
 export class UpdateUserInput extends PartialType(User, InputType) {}
 ```
+
+Instead of a decorator factory, you can pass an options object as the second argument. It accepts the `decorator` property, `omitDefaultValues` (set to `true` to drop the default values inherited from the parent fields), and `skipNullProperties` (defaults to `true`; set it to `false` to skip validation only for `undefined` values, and still validate `null`).
 
 #### Pick
 
@@ -60,7 +62,7 @@ class CreateUserInput {
 }
 ```
 
-We can pick a set of properties from this class using the `PickType()` utility function:
+You can pick a set of properties from this class using the `PickType()` utility function:
 
 ```typescript
 @InputType()
@@ -89,7 +91,7 @@ class CreateUserInput {
 }
 ```
 
-We can generate a derived type that has every property **except** `email` as shown below. In this construct, the second argument to `OmitType` is an array of property names.
+You can generate a derived type that has every property **except** `email`, as shown below. Here, the second argument to `OmitType()` is an array of property names.
 
 ```typescript
 @InputType()
@@ -124,7 +126,7 @@ export class AdditionalUserInfo {
 }
 ```
 
-We can generate a new type that combines all properties in both types.
+You can generate a new type that combines all the properties of both types:
 
 ```typescript
 @InputType()
@@ -138,7 +140,7 @@ export class UpdateUserInput extends IntersectionType(
 
 #### Composition
 
-The type mapping utility functions are composable. For example, the following will produce a type (class) that has all of the properties of the `CreateUserInput` type except for `email`, and those properties will be set to optional:
+The type mapping utility functions are composable. For example, the following produces a type (class) that has all the properties of the `CreateUserInput` type except `email`, with each of them set to optional:
 
 ```typescript
 @InputType()

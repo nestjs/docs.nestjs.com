@@ -1,12 +1,12 @@
 ### Guards
 
-There is no fundamental difference between web sockets guards and [regular HTTP application guards](/guards). The only difference is that instead of throwing `HttpException`, you should use `WsException`.
+There is no fundamental difference between WebSocket guards and [regular HTTP application guards](/guards). The only difference is that instead of throwing `HttpException`, you should throw `WsException`. If a guard returns `false`, Nest throws a `WsException` with the message `'Forbidden resource'`.
 
 > info **Hint** The `WsException` class is exposed from the `@nestjs/websockets` package.
 
 #### Binding guards
 
-The following example uses a method-scoped guard. Just as with HTTP based applications, you can also use gateway-scoped guards (i.e., prefix the gateway class with a `@UseGuards()` decorator).
+The following example uses a method-scoped guard. As with HTTP-based applications, you can also use gateway-scoped guards (i.e., decorate the gateway class with `@UseGuards()`). Global guards registered with `app.useGlobalGuards()` or the `APP_GUARD` token apply to gateways as well.
 
 ```typescript
 @@filename()

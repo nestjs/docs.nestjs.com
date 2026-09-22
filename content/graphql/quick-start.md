@@ -1,10 +1,10 @@
 ## Harnessing the power of TypeScript & GraphQL
 
-[GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://www.apollographql.com/blog/graphql-vs-rest) between GraphQL and REST. GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you end-to-end typing.
+[GraphQL](https://graphql.org/) is a query language for APIs and a runtime for fulfilling those queries with your existing data. It solves many problems typically found with REST APIs. For background, see this [comparison of GraphQL and REST](https://www.apollographql.com/blog/graphql-vs-rest). Combined with [TypeScript](https://www.typescriptlang.org/), GraphQL gives you better type safety for your queries and end-to-end typing.
 
-In this chapter, we assume a basic understanding of GraphQL, and focus on how to work with the built-in `@nestjs/graphql` module. The `GraphQLModule` can be configured to use [Apollo](https://www.apollographql.com/) server (with the `@nestjs/apollo` driver) and [Mercurius](https://github.com/mercurius-js/mercurius) (with the `@nestjs/mercurius`). We provide official integrations for these proven GraphQL packages to provide a simple way to use GraphQL with Nest (see more integrations [here](https://docs.nestjs.com/graphql/quick-start#third-party-integrations)).
+This chapter assumes a basic understanding of GraphQL and focuses on working with the built-in `@nestjs/graphql` module. The `GraphQLModule` can be configured to use [Apollo](https://www.apollographql.com/) Server (with the `@nestjs/apollo` driver) or [Mercurius](https://github.com/mercurius-js/mercurius) (with the `@nestjs/mercurius` driver). Nest provides official integrations for both packages (see also the [third-party integrations](/graphql/quick-start#third-party-integrations) below).
 
-You can also build your own dedicated driver (read more on that [here](/graphql/other-features#creating-a-custom-driver)).
+You can also build your own driver (see [Creating a custom driver](/graphql/other-features#creating-a-custom-driver)).
 
 #### Installation
 
@@ -21,23 +21,23 @@ $ npm i @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/express5 
 # npm i @nestjs/graphql @nestjs/mercurius graphql mercurius
 ```
 
-> warning **Warning** `@nestjs/graphql@>=9` and `@nestjs/apollo^10` packages are compatible with **Apollo v3** (check out Apollo Server 3 [migration guide](https://www.apollographql.com/docs/apollo-server/migration/) for more details), while `@nestjs/graphql@^8` only supports **Apollo v2** (e.g., `apollo-server-express@2.x.x` package).
+> warning **Warning** `@nestjs/apollo` v14 requires **Apollo Server v5** (the `@apollo/server` package). If you are upgrading from an older Apollo Server version, see the [Apollo Server migration guide](https://www.apollographql.com/docs/apollo-server/migration/).
 
 #### Overview
 
-Nest offers two ways of building GraphQL applications, the **code first** and the **schema first** methods. You should choose the one that works best for you. Most of the chapters in this GraphQL section are divided into two main parts: one you should follow if you adopt **code first**, and the other to be used if you adopt **schema first**.
+Nest offers two ways of building GraphQL applications: **code first** and **schema first**. Choose the one that suits you best. Most chapters in this GraphQL section are divided into two parts: one for the **code first** approach and one for the **schema first** approach.
 
-In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach is useful if you prefer to work exclusively with TypeScript and avoid context switching between language syntaxes.
+In the **code first** approach, you use decorators and TypeScript classes to generate the corresponding GraphQL schema. This approach suits you if you prefer to work exclusively in TypeScript and avoid switching between language syntaxes.
 
-In the **schema first** approach, the source of truth is GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between different platforms. Nest automatically generates your TypeScript definitions (using either classes or interfaces) based on the GraphQL schemas to reduce the need to write redundant boilerplate code.
+In the **schema first** approach, the source of truth is a set of GraphQL SDL (Schema Definition Language) files. SDL is a language-agnostic way to share schema files between platforms. Nest generates your TypeScript definitions (as classes or interfaces) from the GraphQL schemas, so you don't have to write redundant boilerplate code.
 
 <app-banner-courses-graphql-cf></app-banner-courses-graphql-cf>
 
 #### Getting started with GraphQL & TypeScript
 
-> info **Hint** In the following chapters, we'll be integrating the `@nestjs/apollo` package. If you want to use `mercurius` package instead, navigate to [this section](/graphql/quick-start#mercurius-integration).
+> info **Hint** The following chapters use the `@nestjs/apollo` package. To use Mercurius instead, see [Mercurius integration](/graphql/quick-start#mercurius-integration).
 
-Once the packages are installed, we can import the `GraphQLModule` and configure it with the `forRoot()` static method.
+Once the packages are installed, import the `GraphQLModule` and configure it with the `forRoot()` static method.
 
 ```typescript
 @@filename()
@@ -55,9 +55,9 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 export class AppModule {}
 ```
 
-> info **Hint** For `mercurius` integration, you should be using the `MercuriusDriver` and `MercuriusDriverConfig` instead. Both are exported from the `@nestjs/mercurius` package.
+> info **Hint** For the Mercurius integration, use `MercuriusDriver` and `MercuriusDriverConfig` instead. Both are exported from the `@nestjs/mercurius` package.
 
-The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance (read more about available settings here: [Apollo](https://www.apollographql.com/docs/apollo-server/api/apollo-server) and [Mercurius](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options)). For example, if you want to disable the GraphQL IDE, pass the following options:
+The `forRoot()` method takes an options object, which is passed through to the underlying driver instance (see the available settings for [Apollo](https://www.apollographql.com/docs/apollo-server/api/apollo-server) and [Mercurius](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options)). For example, to disable the GraphQL IDE, pass the following options:
 
 ```typescript
 @@filename()
@@ -76,13 +76,13 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 export class AppModule {}
 ```
 
-> warning **Warning** The `graphql-playground` IDE has been removed in `@nestjs/graphql` v14. The `playground` option still exists as a **deprecated boolean alias for GraphiQL** - `playground: false` disables the landing page and `playground: true` enables GraphiQL - but new code should use `graphiql` instead.
+> warning **Warning** The `graphql-playground` IDE was removed in `@nestjs/graphql` v14. The `playground` option remains only as a **deprecated boolean alias for GraphiQL**: `playground: false` disables the landing page and `playground: true` enables GraphiQL. Use `graphiql` in new code.
 
-In this case, these options will be forwarded to the `ApolloServer` constructor.
+With the Apollo driver, these options are forwarded to the `ApolloServer` constructor.
 
 #### Accessing the request and response objects
 
-One driver option worth calling out is `context`, a factory that builds the GraphQL execution context for each request. Use it to expose the underlying request and response objects to your resolvers:
+The `context` option is a factory that builds the GraphQL execution context for each request. Use it to expose the underlying request and response objects to your resolvers:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -91,7 +91,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-With this in place, you can read them in a resolver through the `@Context()` decorator:
+You can then read them in a resolver with the `@Context()` decorator:
 
 ```typescript
 @Query(() => String)
@@ -100,23 +100,23 @@ userAgent(@Context('req') req: Request): string {
 }
 ```
 
-> info **Hint** Guards, interceptors, and other enhancers running in the GraphQL context can reach the same object via `GqlExecutionContext.create(context).getContext()` (see [Other features](/graphql/guards-interceptors)).
+> info **Hint** Guards, interceptors, and other enhancers running in the GraphQL context can reach the same object via `GqlExecutionContext.create(context).getContext()` (see [Other features](/graphql/other-features)).
 
 #### GraphQL IDE
 
-[GraphiQL](https://github.com/graphql/graphiql) is the default graphical, interactive, in-browser GraphQL IDE served on the same URL as the GraphQL server itself. To access it, you need a basic GraphQL server configured and running. To see it now, you can install and build the [working example here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first). Alternatively, if you're following along with these code samples, once you've completed the steps in the [Resolvers chapter](/graphql/resolvers-map), you can access GraphiQL.
+[GraphiQL](https://github.com/graphql/graphiql) is the default graphical, interactive, in-browser GraphQL IDE. It is served on the same URL as the GraphQL server itself, so you need a basic GraphQL server configured and running to access it. To try it now, install and build the [code first sample application](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first). If you're following along with these code samples, GraphiQL becomes available once you've completed the steps in the [Resolvers chapter](/graphql/resolvers).
 
-With that in place, and with your application running in the background, you can then open your web browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You will then see GraphiQL, as shown below.
+With your application running, open your browser and navigate to `http://localhost:3000/graphql` (host and port may vary depending on your configuration). You will see GraphiQL, as shown below.
 
 <figure>
   <img src="/assets/playground.png" alt="" />
 </figure>
 
-> info **Note** `@nestjs/mercurius` integration uses [GraphiQL](https://github.com/graphql/graphiql) as well.
+> info **Note** The `@nestjs/mercurius` integration uses [GraphiQL](https://github.com/graphql/graphiql) as well.
 
 ##### Enabling and disabling GraphiQL
 
-As of `@nestjs/graphql` v14, GraphiQL is **the** GraphQL IDE - the older `graphql-playground` has been removed entirely. GraphiQL is enabled automatically whenever `NODE_ENV` is not `production`, so in development you get it without configuring anything, and in production the landing page is off by default.
+As of `@nestjs/graphql` v14, GraphiQL is the only built-in GraphQL IDE; the older `graphql-playground` has been removed. With the Apollo driver, GraphiQL is enabled automatically whenever `NODE_ENV` is not `production`. In development, it works without any configuration; in production, the landing page is disabled by default.
 
 To control it explicitly, use the `graphiql` option:
 
@@ -134,11 +134,11 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-> warning **Warning** The `playground` option still exists, but only as a **deprecated boolean alias** for `graphiql`. If both are set, `graphiql` wins. Migrate `playground: false` to `graphiql: false` and `playground: true` to `graphiql: true`.
+> warning **Warning** The `playground` option still exists, but only as a **deprecated boolean alias** for `graphiql`. If both are set, `graphiql` takes precedence. Migrate `playground: false` to `graphiql: false` and `playground: true` to `graphiql: true`.
 
 ##### Configuring GraphiQL
 
-Pass an object instead of a boolean to enable GraphiQL and configure it at the same time:
+To enable GraphiQL and configure it at the same time, pass an object instead of a boolean:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -160,11 +160,11 @@ The available options are:
 <table>
   <tr>
     <td><code>url</code></td>
-    <td>Endpoint the IDE sends operations to. Defaults to the driver's <code>path</code> option, so you only need to set this when the IDE should target a different URL than the one it is served from.</td>
+    <td>Endpoint the IDE sends operations to. Defaults to the driver's <code>path</code> option, so set it only when the IDE should target a different URL than the one it is served from.</td>
   </tr>
   <tr>
     <td><code>headers</code></td>
-    <td>Headers applied to every request. Useful for preconfiguring an <code>authorization</code> header during development. If the headers editor is enabled and the user sets the same header, their value takes precedence.</td>
+    <td>Headers applied to every request, e.g., a preconfigured <code>authorization</code> header during development. If the headers editor is enabled and the user sets the same header, the user's value takes precedence.</td>
   </tr>
   <tr>
     <td><code>shouldPersistHeaders</code></td>
@@ -180,11 +180,11 @@ The available options are:
   </tr>
 </table>
 
-> info **Hint** Since GraphiQL is on by default outside production, a common setup is to leave it alone in development and set `graphiql: false` only if you need to hide the schema in a non-production environment that is publicly reachable.
+> info **Hint** Because GraphiQL is enabled by default outside production, a common setup is to leave the default in place and set `graphiql: false` only for publicly reachable non-production environments where the IDE should not be exposed.
 
 ##### Subscriptions in the IDE
 
-If your application uses [subscriptions](/graphql/subscriptions), use `graphql-ws`. Support for `subscriptions-transport-ws` has been **removed** - it is no longer accepted as a `subscriptions` key and the package is no longer a dependency:
+If your application uses [subscriptions](/graphql/subscriptions), use `graphql-ws`. Support for `subscriptions-transport-ws` has been **removed**: it is no longer accepted as a `subscriptions` key, and the package is no longer a dependency.
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -195,7 +195,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-With that in place, GraphiQL can execute subscription operations against your server directly.
+GraphiQL can then execute subscription operations against your server directly.
 
 #### Code first
 
@@ -210,7 +210,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-The `autoSchemaFile` property value is the path where your automatically generated schema will be created. Alternatively, the schema can be generated on-the-fly in memory. To enable this, set the `autoSchemaFile` property to `true`:
+The `autoSchemaFile` property value is the path where the automatically generated schema is written. Alternatively, the schema can be generated on the fly in memory. To do so, set the `autoSchemaFile` property to `true`:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -219,7 +219,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-By default, the types in the generated schema will be in the order they are defined in the included modules. To sort the schema lexicographically, set the `sortSchema` property to `true`:
+By default, the types in the generated schema appear in the order they are defined in the included modules. To sort the schema lexicographically, set the `sortSchema` property to `true`:
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -231,11 +231,11 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 
 #### Example
 
-A fully working code first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first).
+A fully working [code first sample](https://github.com/nestjs/nest/tree/master/sample/23-graphql-code-first) is available in the NestJS repository.
 
 #### Schema first
 
-To use the schema first approach, start by adding a `typePaths` property to the options object. The `typePaths` property indicates where the `GraphQLModule` should look for GraphQL SDL schema definition files you'll be writing. These files will be combined in memory; this allows you to split your schemas into several files and locate them near their resolvers.
+To use the schema first approach, start by adding a `typePaths` property to the options object. The `typePaths` property tells the `GraphQLModule` where to look for the GraphQL SDL schema definition files you'll write. These files are combined in memory, so you can split your schema into several files and keep them next to their resolvers.
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -244,7 +244,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-You will typically also need to have TypeScript definitions (classes and interfaces) that correspond to the GraphQL SDL types. Creating the corresponding TypeScript definitions by hand is redundant and tedious. It leaves us without a single source of truth -- each change made within SDL forces us to adjust TypeScript definitions as well. To address this, the `@nestjs/graphql` package can **automatically generate** TypeScript definitions from the abstract syntax tree ([AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)). To enable this feature, add the `definitions` options property when configuring the `GraphQLModule`.
+You will typically also need TypeScript definitions (classes and interfaces) that correspond to the GraphQL SDL types. Writing them by hand is redundant and tedious, and it leaves you without a single source of truth: every change to the SDL forces you to update the TypeScript definitions as well. To address this, the `@nestjs/graphql` package can **automatically generate** TypeScript definitions from the abstract syntax tree ([AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)). To enable this feature, add the `definitions` property when configuring the `GraphQLModule`.
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -256,7 +256,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-The path property of the `definitions` object indicates where to save generated TypeScript output. By default, all generated TypeScript types are created as interfaces. To generate classes instead, specify the `outputAs` property with a value of `'class'`.
+The `path` property of the `definitions` object specifies where to save the generated TypeScript output. By default, all generated TypeScript types are interfaces. To generate classes instead, set the `outputAs` property to `'class'`.
 
 ```typescript
 GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -269,7 +269,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 }),
 ```
 
-The above approach dynamically generates TypeScript definitions each time the application starts. Alternatively, it may be preferable to build a simple script to generate these on demand. For example, assume we create the following script as `generate-typings.ts`:
+This approach generates the TypeScript definitions each time the application starts. Alternatively, you can write a script that generates them on demand. For example, create the following `generate-typings.ts` script:
 
 ```typescript
 import { GraphQLDefinitionsFactory } from '@nestjs/graphql';
@@ -291,7 +291,7 @@ $ ts-node generate-typings
 
 > info **Hint** You can compile the script beforehand (e.g., with `tsc`) and use `node` to execute it.
 
-To enable watch mode for the script (to automatically generate typings whenever any `.graphql` file changes), pass the `watch` option to the `generate()` method.
+To enable watch mode for the script (regenerating the typings whenever a `.graphql` file changes), pass the `watch` option to the `generate()` method.
 
 ```typescript
 definitionsFactory.generate({
@@ -302,7 +302,7 @@ definitionsFactory.generate({
 });
 ```
 
-To automatically generate the additional `__typename` field for every object type, enable the `emitTypenameField` option:
+To generate an additional `__typename` field for every object type, enable the `emitTypenameField` option:
 
 ```typescript
 definitionsFactory.generate({
@@ -353,13 +353,13 @@ export class AppModule {}
 
 #### Example
 
-A fully working schema first sample is available [here](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first).
+A fully working [schema first sample](https://github.com/nestjs/nest/tree/master/sample/12-graphql-schema-first) is available in the NestJS repository.
 
 #### Accessing generated schema
 
-In some circumstances (for example end-to-end tests), you may want to get a reference to the generated schema object. In end-to-end tests, you can then run queries using the `graphql` object without using any HTTP listeners.
+In some circumstances, you may want a reference to the generated schema object. For example, in end-to-end tests you can then run queries with the `graphql` package directly, without any HTTP listeners.
 
-You can access the generated schema (in either the code first or schema first approach), using the `GraphQLSchemaHost` class:
+You can access the generated schema (in either the code first or schema first approach) using the `GraphQLSchemaHost` class:
 
 ```typescript
 const { schema } = app.get(GraphQLSchemaHost);
@@ -369,12 +369,12 @@ const { schema } = app.get(GraphQLSchemaHost);
 
 #### Async configuration
 
-When you need to pass module options asynchronously instead of statically, use the `forRootAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+When you need to pass module options asynchronously instead of statically, use the `forRootAsync()` method. As with most dynamic modules, Nest provides several techniques for async configuration.
 
 One technique is to use a factory function:
 
 ```typescript
- GraphQLModule.forRootAsync<ApolloDriverConfig>({
+GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   useFactory: () => ({
     typePaths: ['./**/*.graphql'],
@@ -382,14 +382,14 @@ One technique is to use a factory function:
 }),
 ```
 
-Like other factory providers, our factory function can be <a href="https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory">async</a> and can inject dependencies through `inject`.
+Like other [factory providers](/fundamentals/custom-providers#factory-providers-usefactory), the factory function can be async and can inject dependencies through `inject`.
 
 ```typescript
 GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    typePaths: configService.get<string>('GRAPHQL_TYPE_PATHS'),
+    typePaths: configService.get<string[]>('GRAPHQL_TYPE_PATHS'),
   }),
   inject: [ConfigService],
 }),
@@ -404,7 +404,7 @@ GraphQLModule.forRootAsync<ApolloDriverConfig>({
 }),
 ```
 
-The construction above instantiates `GqlConfigService` inside `GraphQLModule`, using it to create options object. Note that in this example, the `GqlConfigService` has to implement the `GqlOptionsFactory` interface, as shown below. The `GraphQLModule` will call the `createGqlOptions()` method on the instantiated object of the supplied class.
+The construction above instantiates `GqlConfigService` inside `GraphQLModule` and uses it to create the options object. `GqlConfigService` must implement the `GqlOptionsFactory` interface, as shown below. The `GraphQLModule` calls the `createGqlOptions()` method on the instantiated object of the supplied class.
 
 ```typescript
 @Injectable()
@@ -417,10 +417,11 @@ class GqlConfigService implements GqlOptionsFactory {
 }
 ```
 
-If you want to reuse an existing options provider instead of creating a private copy inside the `GraphQLModule`, use the `useExisting` syntax.
+To reuse an existing options provider instead of creating a private copy inside the `GraphQLModule`, use the `useExisting` syntax.
 
 ```typescript
 GraphQLModule.forRootAsync<ApolloDriverConfig>({
+  driver: ApolloDriver,
   imports: [ConfigModule],
   useExisting: ConfigService,
 }),
@@ -428,7 +429,7 @@ GraphQLModule.forRootAsync<ApolloDriverConfig>({
 
 #### Mercurius integration
 
-Instead of using Apollo, Fastify users (read more [here](/techniques/performance)) can alternatively use the `@nestjs/mercurius` driver.
+Instead of Apollo, [Fastify](/techniques/performance) users can use the `@nestjs/mercurius` driver.
 
 ```typescript
 @@filename()
@@ -447,16 +448,17 @@ import { MercuriusDriver, MercuriusDriverConfig } from '@nestjs/mercurius';
 export class AppModule {}
 ```
 
-> info **Hint** Once the application is running, open your browser and navigate to `http://localhost:3000/graphiql`. You should see the [GraphQL IDE](https://github.com/graphql/graphiql).
+> info **Hint** Once the application is running, open your browser and navigate to `http://localhost:3000/graphiql` to see the [GraphiQL IDE](https://github.com/graphql/graphiql).
 
-The `forRoot()` method takes an options object as an argument. These options are passed through to the underlying driver instance. Read more about available settings [here](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options).
+The `forRoot()` method takes an options object, which is passed through to the underlying driver instance. See the [Mercurius plugin options](https://github.com/mercurius-js/mercurius/blob/master/docs/api/options.md#plugin-options) for the available settings.
 
 #### Multiple endpoints
 
-Another useful feature of the `@nestjs/graphql` module is the ability to serve multiple endpoints at once. This lets you decide which modules should be included in which endpoint. By default, `GraphQL` searches for resolvers throughout the whole app. To limit this scan to only a subset of modules, use the `include` property.
+The `@nestjs/graphql` module can also serve multiple endpoints at once, and you decide which modules are included in which endpoint. By default, `GraphQLModule` searches for resolvers throughout the whole application. To limit this scan to a subset of modules, use the `include` property.
 
 ```typescript
-GraphQLModule.forRoot({
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
   include: [CatsModule],
 }),
 ```
@@ -471,7 +473,7 @@ export class Cat {
 }
 ```
 
-Now, when a schema is built with `include: [CatsModule]`, only types assigned to `CatsModule` become part of it, while types assigned to other modules are left out. Types without `registerIn` keep the default behavior and are available in every schema that references them.
+When a schema is built with `include: [CatsModule]`, only types assigned to `CatsModule` become part of it, and types assigned to other modules are left out. Types without `registerIn` keep the default behavior and are available in every schema that references them.
 
 The `registerIn` option is available on `@InputType()`, `@InterfaceType()`, and `@ArgsType()`, as well as `registerEnumType()` and `createUnionType()`:
 
@@ -494,9 +496,9 @@ export const CatsUnion = createUnionType({
 });
 ```
 
-> info **Hint** You can pass either the module class itself or a factory function returning it. Prefer the factory form (`() => CatsModule`) whenever the type and the module reference each other, as it defers the module resolution and so avoids errors caused by circular imports.
+> info **Hint** You can pass either the module class itself or a factory function returning it. Prefer the factory form (`() => CatsModule`) whenever the type and the module reference each other: it defers module resolution and avoids errors caused by circular imports.
 
-> warning **Warning** If you use the `@apollo/server` with `@as-integrations/fastify` package with multiple GraphQL endpoints in a single application, make sure to enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
+> warning **Warning** If you use `@apollo/server` with the `@as-integrations/fastify` package and serve multiple GraphQL endpoints in a single application, enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
 
 #### Third-party integrations
 
@@ -504,4 +506,4 @@ export const CatsUnion = createUnionType({
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/33-graphql-mercurius).
+A working [Mercurius sample](https://github.com/nestjs/nest/tree/master/sample/33-graphql-mercurius) is available in the NestJS repository.

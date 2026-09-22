@@ -2,13 +2,13 @@
 
 > warning **Warning** This chapter applies only to the code first approach.
 
-Field Middleware lets you run arbitrary code **before or after** a field is resolved. A field middleware can be used to convert the result of a field, validate the arguments of a field, or even check field-level roles (for example, required to access a target field for which a middleware function is executed).
+Field middleware lets you run arbitrary code **before or after** a field is resolved. You can use field middleware to convert the result of a field, validate the arguments of a field, or check field-level roles (for example, the roles required to access the field the middleware function runs for).
 
-You can connect multiple middleware functions to a field. In this case, they will be called sequentially along the chain where the previous middleware decides to call the next one. The order of the middleware functions in the `middleware` array is important. The first resolver is the "most-outer" layer, so it gets executed first and last (similarly to the `graphql-middleware` package). The second resolver is the "second-outer" layer, so it gets executed second and second to last.
+You can connect multiple middleware functions to a field. In this case, they are called sequentially along a chain, where each middleware decides whether to call the next one. The order of the functions in the `middleware` array matters. The first one is the outermost layer, so it runs first and finishes last (similar to the `graphql-middleware` package). The second one is the next layer in, so it runs second and finishes second to last.
 
 #### Getting started
 
-Let's start off by creating a simple middleware that will log a field value before it's sent back to the client:
+Let's start by creating a simple middleware that logs a field value before it's sent back to the client:
 
 ```typescript
 import { FieldMiddleware, MiddlewareContext, NextFn } from '@nestjs/graphql';
@@ -23,13 +23,13 @@ const loggerMiddleware: FieldMiddleware = async (
 };
 ```
 
-> info **Hint** The `MiddlewareContext` is an object that consist of the same arguments that are normally received by the GraphQL resolver function (`{{ '{' }} source, args, context, info {{ '}' }}`), while `NextFn` is a function that let you execute the next middleware in the stack (bound to this field) or the actual field resolver.
+> info **Hint** `MiddlewareContext` is an object that consists of the same arguments that the GraphQL resolver function normally receives (`{{ '{' }} source, args, context, info {{ '}' }}`), while `NextFn` is a function that executes the next middleware in the stack (bound to this field) or the actual field resolver.
 
-> warning **Warning** Field middleware functions cannot inject dependencies nor access Nest's DI container as they are designed to be very lightweight and shouldn't perform any potentially time-consuming operations (like retrieving data from the database). If you need to call external services/query data from the data source, you should do it in a guard/interceptor bounded to a root query/mutation handler and assign it to `context` object which you can access from within the field middleware (specifically, from the `MiddlewareContext` object).
+> warning **Warning** Field middleware functions can't inject dependencies or access Nest's DI container. They are designed to be lightweight and shouldn't perform potentially time-consuming operations (like retrieving data from the database). If you need to call external services or query a data source, do it in a guard or interceptor bound to a root query or mutation handler, and assign the result to the `context` object. You can then access it from within the field middleware (through the `MiddlewareContext` object).
 
-Note that field middleware must match the `FieldMiddleware` interface. In the example above, we first run the `next()` function (which executes the actual field resolver and returns a field value) and then, we log this value to our terminal. Also, the value returned from the middleware function completely overrides the previous value and since we don't want to perform any changes, we simply return the original value.
+Field middleware must match the `FieldMiddleware` interface. In the example above, we first call the `next()` function (which executes the actual field resolver and returns the field value), and then log this value to the terminal. The value returned from the middleware function replaces the field value (if the middleware returns `undefined`, the value from `next()` is used). Since we don't want to change anything, we return the original value.
 
-With this in place, we can register our middleware directly in the `@Field()` decorator, as follows:
+With this in place, register the middleware directly in the `@Field()` decorator:
 
 ```typescript
 @ObjectType()
@@ -39,22 +39,22 @@ export class Recipe {
 }
 ```
 
-Now whenever we request the `title` field of `Recipe` object type, the original field's value will be logged to the console.
+Now, whenever you request the `title` field of the `Recipe` object type, the field's original value is logged to the console.
 
-> info **Hint** To learn how you can implement a field-level permissions system with the use of [extensions](/graphql/extensions) feature, check out this [section](/graphql/extensions#using-custom-metadata).
+> info **Hint** To learn how to implement a field-level permissions system with the [extensions](/graphql/extensions) feature, see [using custom metadata](/graphql/extensions#using-custom-metadata).
 
-> warning **Warning** Field middleware can be applied only to `ObjectType` classes. For more details, check out this [issue](https://github.com/nestjs/graphql/issues/2446).
+> warning **Warning** Field middleware can be applied only to `ObjectType` classes. For more details, see [this GitHub issue](https://github.com/nestjs/graphql/issues/2446).
 
-Also, as mentioned above, we can control the field's value from within the middleware function. For demonstration purposes, let's capitalise a recipe's title (if present):
+As mentioned above, you can control the field's value from within the middleware function. For demonstration purposes, let's uppercase a recipe's title (if present):
 
 ```typescript
 const value = await next();
 return value?.toUpperCase();
 ```
 
-In this case, every title will be automatically uppercased, when requested.
+In this case, every title is automatically uppercased when requested.
 
-Likewise, you can bind a field middleware to a custom field resolver (a method annotated with the `@ResolveField()` decorator), as follows:
+Likewise, you can bind field middleware to a custom field resolver (a method annotated with the `@ResolveField()` decorator):
 
 ```typescript
 @ResolveField(() => String, { middleware: [loggerMiddleware] })
@@ -63,11 +63,11 @@ title() {
 }
 ```
 
-> warning **Warning** In case enhancers are enabled at the field resolver level ([read more](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions will run before any interceptors, guards, etc., **bounded to the method** (but after the root-level enhancers registered for query or mutation handlers).
+> warning **Warning** If enhancers are enabled at the field resolver level (see [executing enhancers at the field resolver level](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions run before any interceptors, guards, etc., **bound to the method** (but after the root-level enhancers registered for query or mutation handlers).
 
 #### Global field middleware
 
-In addition to binding a middleware directly to a specific field, you can also register one or multiple middleware functions globally. In this case, they will be automatically connected to all fields of your object types.
+In addition to binding middleware directly to a specific field, you can register one or more middleware functions globally. Global middleware is automatically connected to all fields of your object types.
 
 ```typescript
 GraphQLModule.forRoot({
@@ -78,4 +78,4 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> info **Hint** Globally registered field middleware functions will be executed **before** locally registered ones (those bound directly to specific fields).
+> info **Hint** Globally registered field middleware functions run **before** locally registered ones (those bound directly to specific fields).

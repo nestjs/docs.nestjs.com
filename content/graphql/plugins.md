@@ -1,10 +1,10 @@
 ### Plugins with Apollo
 
-Plugins enable you to extend Apollo Server's core functionality by performing custom operations in response to certain events. Currently, these events correspond to individual phases of the GraphQL request lifecycle, and to the startup of Apollo Server itself (read more [here](https://www.apollographql.com/docs/apollo-server/integrations/plugins/)). For example, a basic logging plugin might log the GraphQL query string associated with each request that's sent to Apollo Server.
+Plugins let you extend Apollo Server's core functionality by performing custom operations in response to certain events. These events correspond to individual phases of the GraphQL request lifecycle, and to the startup of Apollo Server itself (see [plugins](https://www.apollographql.com/docs/apollo-server/integrations/plugins/) in the Apollo documentation). For example, a basic logging plugin might log the GraphQL query string of each request sent to Apollo Server.
 
 #### Custom plugins
 
-To create a plugin, declare a class annotated with the `@Plugin` decorator exported from the `@nestjs/apollo` package. Also, for better code autocompletion, implement the `ApolloServerPlugin` interface from the `@apollo/server` package.
+To create a plugin, declare a class annotated with the `@Plugin()` decorator, exported from the `@nestjs/apollo` package. For better code autocompletion, also implement the `ApolloServerPlugin` interface from the `@apollo/server` package.
 
 ```typescript
 import { ApolloServerPlugin, GraphQLRequestListener } from '@apollo/server';
@@ -23,7 +23,7 @@ export class LoggingPlugin implements ApolloServerPlugin {
 }
 ```
 
-With this in place, we can register the `LoggingPlugin` as a provider.
+With this in place, register `LoggingPlugin` as a provider:
 
 ```typescript
 @Module({
@@ -32,28 +32,30 @@ With this in place, we can register the `LoggingPlugin` as a provider.
 export class CommonModule {}
 ```
 
-Nest will automatically instantiate a plugin and apply it to the Apollo Server.
+Nest automatically instantiates the plugin and applies it to Apollo Server.
 
 #### Using external plugins
 
-There are several plugins provided out-of-the-box. To use an existing plugin, simply import it and add it to the `plugins` array:
+Apollo Server provides several plugins out of the box. To use an existing plugin, import it and add it to the `plugins` array:
 
 ```typescript
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
+
 GraphQLModule.forRoot({
   // ...
-  plugins: [ApolloServerOperationRegistry({ /* options */})]
+  plugins: [ApolloServerPluginCacheControl({ defaultMaxAge: 5 })],
 }),
 ```
 
-> info **Hint** The `ApolloServerOperationRegistry` plugin is exported from the `@apollo/server-plugin-operation-registry` package.
+> info **Hint** The `ApolloServerPluginCacheControl` plugin is exported from the `@apollo/server/plugin/cacheControl` entry point of the `@apollo/server` package.
 
 #### Plugins with Mercurius
 
-Some of the existing mercurius-specific Fastify plugins must be loaded after the mercurius plugin (read more [here](https://mercurius.dev/#/docs/plugins)) on the plugin tree.
+Some of the existing Mercurius-specific Fastify plugins must be loaded after the Mercurius plugin in the plugin tree (see [plugins](https://mercurius.dev/#/docs/plugins) in the Mercurius documentation).
 
-> warning **Warning** [mercurius-upload](https://github.com/mercurius-js/mercurius-upload) is an exception and should be registered in the main file.
+> warning **Warning** [mercurius-upload](https://github.com/mercurius-js/mercurius-upload) is an exception: register it in the main file.
 
-For this, `MercuriusDriver` exposes an optional `plugins` configuration option. It represents an array of objects that consist of two attributes: `plugin` and its `options`. Therefore, registering the [cache plugin](https://github.com/mercurius-js/cache) would look like this:
+For this, `MercuriusDriver` exposes an optional `plugins` configuration option. It takes an array of objects with two properties: `plugin` and its `options`. For example, registering the [cache plugin](https://github.com/mercurius-js/cache) looks like this:
 
 ```typescript
 GraphQLModule.forRoot({

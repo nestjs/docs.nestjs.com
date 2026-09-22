@@ -1,16 +1,16 @@
 ### Directives
 
-A directive can be attached to a field or fragment inclusion, and can affect execution of the query in any way the server desires (read more [here](https://graphql.org/learn/queries/#directives)). The GraphQL specification provides several default directives:
+A directive can be attached to a field or fragment inclusion, and can affect execution of the query in any way the server desires (see [directives](https://graphql.org/learn/queries/#directives) in the GraphQL documentation). The GraphQL specification provides several default directives:
 
-- `@include(if: Boolean)` - only include this field in the result if the argument is true
-- `@skip(if: Boolean)` - skip this field if the argument is true
-- `@deprecated(reason: String)` - marks field as deprecated with message
+- `@include(if: Boolean)`: include this field in the result only if the argument is `true`
+- `@skip(if: Boolean)`: skip this field if the argument is `true`
+- `@deprecated(reason: String)`: mark the field as deprecated, with a message
 
-A directive is an identifier preceded by a `@` character, optionally followed by a list of named arguments, which can appear after almost any element in the GraphQL query and schema languages.
+A directive is an identifier preceded by an `@` character, optionally followed by a list of named arguments. Directives can appear after almost any element in the GraphQL query and schema languages.
 
 #### Custom directives
 
-To instruct what should happen when Apollo/Mercurius encounters your directive, you can create a transformer function. This function uses the `mapSchema` function to iterate through locations in your schema (field definitions, type definitions, etc.) and perform corresponding transformations.
+To define what happens when Apollo or Mercurius encounters your directive, create a transformer function. This function uses the `mapSchema` function to iterate through locations in your schema (field definitions, type definitions, etc.) and apply the corresponding transformations.
 
 ```typescript
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
@@ -47,7 +47,7 @@ export function upperDirectiveTransformer(
 }
 ```
 
-Now, apply the `upperDirectiveTransformer` transformation function in the `GraphQLModule#forRoot` method using the `transformSchema` function:
+Next, apply the `upperDirectiveTransformer` function in the `GraphQLModule#forRoot()` method using the `transformSchema` option:
 
 ```typescript
 GraphQLModule.forRoot({
@@ -56,11 +56,11 @@ GraphQLModule.forRoot({
 });
 ```
 
-Once registered, the `@upper` directive can be used in our schema. However, the way you apply the directive will vary depending on the approach you use (code first or schema first).
+Once registered, the `@upper` directive can be used in your schema. How you apply the directive depends on the approach you use (code first or schema first).
 
 #### Code first
 
-In the code first approach, use the `@Directive()` decorator to apply the directive.
+In the code first approach, use the `@Directive()` decorator to apply the directive:
 
 ```typescript
 @Directive('@upper')
@@ -70,7 +70,7 @@ title: string;
 
 > info **Hint** The `@Directive()` decorator is exported from the `@nestjs/graphql` package.
 
-Directives can be applied on fields, field resolvers, input and object types, as well as queries, mutations, and subscriptions. Here's an example of the directive applied on the query handler level:
+Directives can be applied to fields, field resolvers, input and object types, as well as queries, mutations, and subscriptions. The following example applies a directive at the query handler level:
 
 ```typescript
 @Directive('@deprecated(reason: "This query will be removed in the next version")')
@@ -80,9 +80,9 @@ async getAuthor(@Args({ name: 'id', type: () => Int }) id: number) {
 }
 ```
 
-> warn **Warning** Directives applied through the `@Directive()` decorator will not be reflected in the generated schema definition file.
+> warning **Warning** Directives applied through the `@Directive()` decorator are not reflected in the generated schema definition file.
 
-Lastly, make sure to declare directives in the `GraphQLModule`, as follows:
+Lastly, declare the directives in the `GraphQLModule` configuration:
 
 ```typescript
 GraphQLModule.forRoot({
@@ -103,7 +103,7 @@ GraphQLModule.forRoot({
 
 #### Schema first
 
-In the schema first approach, apply directives directly in SDL.
+In the schema first approach, apply directives directly in SDL:
 
 ```graphql
 directive @upper on FIELD_DEFINITION
