@@ -1,6 +1,6 @@
 ### Module reference
 
-Nest provides the `ModuleRef` class to navigate the internal list of providers and obtain a reference to any provider using its injection token as a lookup key. The `ModuleRef` class also provides a way to dynamically instantiate both static and scoped providers. `ModuleRef` can be injected into a class in the normal way:
+Nest provides the `ModuleRef` class to navigate the internal list of providers and obtain a reference to any provider, using its injection token as a lookup key. `ModuleRef` also lets you dynamically instantiate both static and scoped providers. Inject `ModuleRef` into a class like any other dependency:
 
 ```typescript
 @@filename(cats.service)
@@ -22,7 +22,7 @@ export class CatsService {
 
 #### Retrieving instances
 
-The `ModuleRef` instance (hereafter we'll refer to it as the **module reference**) has a `get()` method. By default, this method returns a provider, controller, or injectable (e.g., guard, interceptor, etc.) that was registered and has been instantiated in the *current module* using its injection token/class name. If the instance is not found, an exception will be raised.
+The `ModuleRef` instance (hereafter referred to as the **module reference**) has a `get()` method. By default, this method uses an injection token or class name to return a provider, controller, or injectable (e.g., a guard or interceptor) that was registered and instantiated in the *current module*. If the instance is not found, an exception is thrown.
 
 ```typescript
 @@filename(cats.service)
@@ -49,9 +49,9 @@ export class CatsService {
 }
 ```
 
-> warning **Warning** You can't retrieve scoped providers (transient or request-scoped) with the `get()` method. Instead, use the technique described <a href="https://docs.nestjs.com/fundamentals/module-ref#resolving-scoped-providers">below</a>. Learn how to control scopes [here](/fundamentals/injection-scopes).
+> warning **Warning** You can't retrieve scoped providers (transient or request-scoped, including providers that are implicitly request-scoped through their dependencies) with the `get()` method. Instead, use the technique described in <a href="/fundamentals/module-ref#resolving-scoped-providers">Resolving scoped providers</a> below. Learn how to control scopes in the [injection scopes](/fundamentals/injection-scopes) chapter.
 
-To retrieve a provider from the global context (for example, if the provider has been injected in a different module), pass the `{{ '{' }} strict: false {{ '}' }}` option as a second argument to `get()`.
+To retrieve a provider from the global context (for example, if the provider was registered in a different module), pass the `{{ '{' }} strict: false {{ '}' }}` option as the second argument to `get()`.
 
 ```typescript
 this.moduleRef.get(Service, { strict: false });
@@ -86,7 +86,7 @@ export class CatsService {
 }
 ```
 
-The `resolve()` method returns a unique instance of the provider, from its own **DI container sub-tree**. Each sub-tree has a unique **context identifier**. Thus, if you call this method more than once and compare instance references, you will see that they are not equal.
+The `resolve()` method returns a unique instance of the provider from its own **DI container sub-tree**. Each sub-tree has a unique **context identifier**, so if you call this method more than once and compare the instance references, you'll see that they are not equal.
 
 ```typescript
 @@filename(cats.service)
@@ -120,7 +120,7 @@ export class CatsService {
 }
 ```
 
-To generate a single instance across multiple `resolve()` calls, and ensure they share the same generated DI container sub-tree, you can pass a context identifier to the `resolve()` method. Use the `ContextIdFactory` class to generate a context identifier. This class provides a `create()` method that returns an appropriate unique identifier.
+To get a single instance across multiple `resolve()` calls, and ensure they share the same generated DI container sub-tree, pass a context identifier to the `resolve()` method. Use the `ContextIdFactory` class to generate a context identifier: its `create()` method returns a new unique identifier.
 
 ```typescript
 @@filename(cats.service)
@@ -160,9 +160,9 @@ export class CatsService {
 
 #### Registering `REQUEST` provider
 
-Manually generated context identifiers (with `ContextIdFactory.create()`) represent DI sub-trees in which `REQUEST` provider is `undefined` as they are not instantiated and managed by the Nest dependency injection system.
+Manually generated context identifiers (created with `ContextIdFactory.create()`) represent DI sub-trees in which the `REQUEST` provider is `undefined`, because these sub-trees are not instantiated and managed by the Nest dependency injection system.
 
-To register a custom `REQUEST` object for a manually created DI sub-tree, use the `ModuleRef#registerRequestByContextId()` method, as follows:
+To register a custom `REQUEST` object for a manually created DI sub-tree, use the `ModuleRef#registerRequestByContextId()` method:
 
 ```typescript
 const contextId = ContextIdFactory.create();
@@ -171,7 +171,7 @@ this.moduleRef.registerRequestByContextId(/* YOUR_REQUEST_OBJECT */, contextId);
 
 #### Getting current sub-tree
 
-Occasionally, you may want to resolve an instance of a request-scoped provider within a **request context**. Let's say that `CatsService` is request-scoped and you want to resolve the `CatsRepository` instance which is also marked as a request-scoped provider. In order to share the same DI container sub-tree, you must obtain the current context identifier instead of generating a new one (e.g., with the `ContextIdFactory.create()` function, as shown above). To obtain the current context identifier, start by injecting the request object using `@Inject()` decorator.
+Occasionally, you may want to resolve an instance of a request-scoped provider within a **request context**. Suppose `CatsService` is request-scoped, and you want to resolve the `CatsRepository` instance, which is also a request-scoped provider. To share the same DI container sub-tree, you must obtain the current context identifier instead of generating a new one (e.g., with the `ContextIdFactory.create()` function, as shown above). To obtain the current context identifier, start by injecting the request object with the `@Inject()` decorator:
 
 ```typescript
 @@filename(cats.service)
@@ -191,9 +191,9 @@ export class CatsService {
 }
 ```
 
-> info **Hint** Learn more about the request provider [here](https://docs.nestjs.com/fundamentals/injection-scopes#request-provider).
+> info **Hint** Learn more about the request provider in the [Request provider](/fundamentals/injection-scopes#request-provider) section of the injection scopes chapter.
 
-Now, use the `getByRequest()` method of the `ContextIdFactory` class to create a context id based on the request object, and pass this to the `resolve()` call:
+Now use the `getByRequest()` method of the `ContextIdFactory` class to get the context identifier associated with the request object, and pass it to the `resolve()` call:
 
 ```typescript
 const contextId = ContextIdFactory.getByRequest(this.request);
@@ -202,7 +202,7 @@ const catsRepository = await this.moduleRef.resolve(CatsRepository, contextId);
 
 #### Instantiating custom classes dynamically
 
-To dynamically instantiate a class that **wasn't previously registered** as a **provider**, use the module reference's `create()` method.
+To dynamically instantiate a class that **wasn't previously registered** as a **provider**, use the module reference's `create()` method:
 
 ```typescript
 @@filename(cats.service)
@@ -229,6 +229,6 @@ export class CatsService {
 }
 ```
 
-This technique enables you to conditionally instantiate different classes outside of the framework container.
+This technique lets you conditionally instantiate different classes outside of the framework container.
 
 <app-banner-devtools></app-banner-devtools>

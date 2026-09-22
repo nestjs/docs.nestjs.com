@@ -1,21 +1,21 @@
 ### Testing
 
-Automated testing is considered an essential part of any serious software development effort. Automation makes it easy to repeat individual tests or test suites quickly and easily during development. This helps ensure that releases meet quality and performance goals. Automation helps increase coverage and provides a faster feedback loop to developers. Automation both increases the productivity of individual developers and ensures that tests are run at critical development lifecycle junctures, such as source code control check-in, feature integration, and version release.
+Automated testing is an essential part of any serious software development effort. Automation makes it easy to repeat individual tests or test suites quickly during development, which helps ensure that releases meet quality and performance goals. It increases coverage, gives developers a faster feedback loop, and ensures that tests run at critical points in the development lifecycle, such as source control check-in, feature integration, and version release.
 
-Such tests often span a variety of types, including unit tests, end-to-end (e2e) tests, integration tests, and so on. While the benefits are unquestionable, it can be tedious to set them up. Nest strives to promote development best practices, including effective testing, so it includes features such as the following to help developers and teams build and automate tests. Nest:
+These tests span a variety of types, including unit tests, end-to-end (e2e) tests, and integration tests. While the benefits are clear, setting them up can be tedious. Nest promotes development best practices, including effective testing, and includes the following features to help developers and teams build and automate tests. Nest:
 
 - automatically scaffolds default unit tests for components and e2e tests for applications
 - provides default tooling (such as a test runner that builds an isolated module/application loader)
 - provides integration with [Vitest](https://vitest.dev/) and [Supertest](https://github.com/visionmedia/supertest) while remaining agnostic to testing tools
-- makes the Nest dependency injection system available in the testing environment for easily mocking components
+- makes the Nest dependency injection system available in the testing environment, so you can mock components without extra setup
 
-As mentioned, you can use any **testing framework** that you like, as Nest doesn't force any specific tooling. Simply replace the elements needed (such as the test runner), and you will still enjoy the benefits of Nest's ready-made testing facilities.
+You can use any **testing framework** you like, because Nest doesn't force any specific tooling. Replace the elements you need (such as the test runner), and you still benefit from Nest's ready-made testing facilities.
 
-> info **Hint** Newly generated projects use Vitest by default. The testing APIs exposed by Nest do not depend on a specific runner, so the same patterns work with other tools as well.
+> info **Hint** Newly generated projects use Vitest by default. The testing APIs exposed by Nest don't depend on a specific runner, so the same patterns work with other tools as well.
 
 #### Installation
 
-To get started, first install the required package:
+To get started, install the required package:
 
 ```bash
 $ npm i --save-dev @nestjs/testing
@@ -23,7 +23,7 @@ $ npm i --save-dev @nestjs/testing
 
 #### Unit testing
 
-In the following example, we test two classes: `CatsController` and `CatsService` with [Vitest](https://vitest.dev/). It serves as a test runner and also provides assert functions and test-double utilities that help with mocking, spying, and stubbing. In the following basic test, we manually instantiate these classes, and ensure that the controller and service fulfill their API contract.
+The following example tests two classes, `CatsController` and `CatsService`, with [Vitest](https://vitest.dev/). Vitest serves as the test runner and also provides assertion functions and test-double utilities for mocking, spying, and stubbing. This basic test instantiates the classes manually and checks that the controller and service fulfill their API contract.
 
 ```typescript
 @@filename(cats.controller.spec)
@@ -74,13 +74,13 @@ describe('CatsController', () => {
 });
 ```
 
-> info **Hint** Keep your test files located near the classes they test. Testing files should have a `.spec` or `.test` suffix.
+> info **Hint** Keep your test files near the classes they test. Test files should have a `.spec` or `.test` suffix.
 
-Because the above sample is trivial, we aren't really testing anything Nest-specific. Indeed, we aren't even using dependency injection (notice that we pass an instance of `CatsService` to our `catsController`). This form of testing - where we manually instantiate the classes being tested - is often called **isolated testing** as it is independent from the framework. Let's introduce some more advanced capabilities that help you test applications that make more extensive use of Nest features.
+Because the sample above is trivial, it doesn't test anything Nest-specific. It doesn't even use dependency injection (it passes an instance of `CatsService` to `catsController` directly). This form of testing, where you manually instantiate the classes being tested, is often called **isolated testing**, because it is independent of the framework. The following sections introduce more advanced capabilities that help you test applications that make more extensive use of Nest features.
 
 #### Testing utilities
 
-The `@nestjs/testing` package provides a set of utilities that enable a more robust testing process. Let's rewrite the previous example using the built-in `Test` class:
+The `@nestjs/testing` package provides a set of utilities for a more robust testing process. Let's rewrite the previous example using the built-in `Test` class:
 
 ```typescript
 @@filename(cats.controller.spec)
@@ -143,11 +143,11 @@ describe('CatsController', () => {
 });
 ```
 
-The `Test` class is useful for providing an application execution context that essentially mocks the full Nest runtime, but gives you hooks that make it easy to manage class instances, including mocking and overriding. The `Test` class has a `createTestingModule()` method that takes a module metadata object as its argument (the same object you pass to the `@Module()` decorator). This method returns a `TestingModule` instance which in turn provides a few methods. For unit tests, the important one is the `compile()` method. This method bootstraps a module with its dependencies (similar to the way an application is bootstrapped in the conventional `main.ts` file using `NestFactory.create()`), and returns a module that is ready for testing.
+The `Test` class provides an application execution context that essentially mocks the full Nest runtime, but gives you hooks for managing class instances, including mocking and overriding. Its `createTestingModule()` method takes a module metadata object as its argument (the same object you pass to the `@Module()` decorator) and returns a `TestingModuleBuilder` instance, which in turn provides a few methods. For unit tests, the important one is `compile()`. It bootstraps a module with its dependencies (similar to the way an application is bootstrapped in the conventional `main.ts` file using `NestFactory.create()`), and returns a `TestingModule` that is ready for testing.
 
-> info **Hint** The `compile()` method is **asynchronous** and therefore has to be awaited. Once the module is compiled you can retrieve any **static** instance it declares (controllers and providers) using the `get()` method.
+> info **Hint** The `compile()` method is **asynchronous**, so you have to await it. Once the module is compiled, you can retrieve any **static** instance it declares (controllers and providers) using the `get()` method.
 
-`TestingModule` inherits from the [module reference](/fundamentals/module-ref) class, and therefore its ability to dynamically resolve scoped providers (transient or request-scoped). Do this with the `resolve()` method (the `get()` method can only retrieve static instances).
+`TestingModule` exposes the same instance-resolution API as the [module reference](/fundamentals/module-ref) class, including the ability to dynamically resolve scoped providers (transient or request-scoped). Use the `resolve()` method for this (the `get()` method can only retrieve static instances).
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
@@ -158,17 +158,17 @@ const moduleRef = await Test.createTestingModule({
 catsService = await moduleRef.resolve(CatsService);
 ```
 
-> warning **Warning** The `resolve()` method returns a unique instance of the provider, from its own **DI container sub-tree**. Each sub-tree has a unique context identifier. Thus, if you call this method more than once and compare instance references, you will see that they are not equal.
+> warning **Warning** The `resolve()` method returns a unique instance of the provider from its own **DI container sub-tree**. Each sub-tree has a unique context identifier. If you call this method more than once and compare the instance references, you'll see that they are not equal.
 
-> info **Hint** Learn more about the module reference features [here](/fundamentals/module-ref).
+> info **Hint** Learn more about its features in the [module reference](/fundamentals/module-ref) chapter.
 
-Instead of using the production version of any provider, you can override it with a [custom provider](/fundamentals/custom-providers) for testing purposes. For example, you can mock a database service instead of connecting to a live database. We'll cover overrides in the next section, but they're available for unit tests as well.
+Instead of using the production version of a provider, you can override it with a [custom provider](/fundamentals/custom-providers) for testing purposes. For example, you can mock a database service instead of connecting to a live database. Overrides are covered in the [end-to-end testing](/fundamentals/testing#end-to-end-testing) section, but they're available for unit tests as well.
 
 <app-banner-courses></app-banner-courses>
 
 #### Auto mocking
 
-Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the `createTestingModule()` will need to be chained up with the `useMocker()` method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The example below creates a specific mock for `CatsService` using `vi.fn()`.
+Nest also lets you define a mock factory to apply to all of your missing dependencies. This is useful when a class has a large number of dependencies and mocking all of them would take a lot of time and setup. To use this feature, chain the `useMocker()` method onto `createTestingModule()`, passing a factory for your dependency mocks. The factory receives an optional token (any token that is valid for a Nest provider) and returns a mock implementation. The example below creates a specific mock for `CatsService` using `vi.fn()`.
 
 ```typescript
 import { vi } from 'vitest';
@@ -193,15 +193,15 @@ describe('CatsController', () => {
 });
 ```
 
-You can also retrieve these mocks out of the testing container as you normally would custom providers, `moduleRef.get(CatsService)`.
+You can retrieve these mocks from the testing container as you would custom providers, e.g., `moduleRef.get(CatsService)`.
 
-> info **Hint** A reusable mock factory helper can also be passed directly when you want shared test doubles across suites.
+> info **Hint** You can also pass a reusable mock factory helper directly to `useMocker()` when you want to share test doubles across suites.
 
-> info **Hint** `REQUEST` and `INQUIRER` providers cannot be auto-mocked because they're already pre-defined in the context. However, they can be _overwritten_ using the custom provider syntax or by utilizing the `.overrideProvider` method.
+> info **Hint** `REQUEST` and `INQUIRER` providers cannot be auto-mocked, because they're already predefined in the context. However, you can _overwrite_ them using the custom provider syntax or the `overrideProvider()` method.
 
 #### End-to-end testing
 
-Unlike unit testing, which focuses on individual modules and classes, end-to-end (e2e) testing covers the interaction of classes and modules at a more aggregate level -- closer to the kind of interaction that end-users will have with the production system. As an application grows, it becomes hard to manually test the end-to-end behavior of each API endpoint. Automated end-to-end tests help us ensure that the overall behavior of the system is correct and meets project requirements. To perform e2e tests we use a similar configuration to the one we just covered in **unit testing**. In addition, Nest makes it easy to use the [Supertest](https://github.com/visionmedia/supertest) library to simulate HTTP requests.
+Unlike unit testing, which focuses on individual modules and classes, end-to-end (e2e) testing covers the interaction of classes and modules at a more aggregate level, closer to the kind of interaction that end users have with the production system. As an application grows, it becomes hard to manually test the end-to-end behavior of each API endpoint. Automated end-to-end tests help ensure that the overall behavior of the system is correct and meets project requirements. E2e tests use a configuration similar to the one covered in **unit testing**. In addition, Nest makes it easy to use the [Supertest](https://github.com/visionmedia/supertest) library to simulate HTTP requests.
 
 ```typescript
 @@filename(cats.e2e-spec)
@@ -245,10 +245,9 @@ import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { CatsModule } from '../../src/cats/cats.module.js';
 import { CatsService } from '../../src/cats/cats.service.js';
-import { INestApplication } from '@nestjs/common';
 
 describe('Cats', () => {
-  let app: INestApplication;
+  let app;
   let catsService = { findAll: () => ['test'] };
 
   beforeAll(async () => {
@@ -278,7 +277,7 @@ describe('Cats', () => {
 });
 ```
 
-> info **Hint** If you're using [Fastify](/techniques/performance) as your HTTP adapter, it requires a slightly different configuration, and has built-in testing capabilities:
+> info **Hint** If you use [Fastify](/techniques/performance) as your HTTP adapter, it requires a slightly different configuration and has built-in testing capabilities:
 >
 > ```ts
 > let app: NestFastifyApplication;
@@ -309,25 +308,25 @@ describe('Cats', () => {
 > });
 > ```
 
-In this example, we build on some of the concepts described earlier. In addition to the `compile()` method we used earlier, we now use the `createNestApplication()` method to instantiate a full Nest runtime environment.
+This example builds on the concepts described earlier. In addition to the `compile()` method, it uses the `createNestApplication()` method to instantiate a full Nest runtime environment.
 
-One caveat to consider is that when your application is compiled using the `compile()` method, the `HttpAdapterHost#httpAdapter` will be undefined at that time. This is because there isn't an HTTP adapter or server created yet during this compilation phase. If your test requires the `httpAdapter`, you should use the `createNestApplication()` method to create the application instance, or refactor your project to avoid this dependency when initializing the dependencies graph.
+One caveat: when your application is compiled with the `compile()` method, `HttpAdapterHost#httpAdapter` is still undefined, because no HTTP adapter or server has been created during the compilation phase. If your test requires the `httpAdapter`, use the `createNestApplication()` method to create the application instance, or refactor your project to avoid this dependency while the dependency graph is initialized.
 
-Alright, let's break down the example:
+Let's break down the example.
 
-We save a reference to the running app in our `app` variable so we can use it to simulate HTTP requests.
+The test saves a reference to the running app in the `app` variable, so it can use it to simulate HTTP requests.
 
-We simulate HTTP tests using the `request()` function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the `request()` function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using `request(...).get('/cats')` will initiate a request to the Nest app that is identical to an **actual** HTTP request like `get '/cats'` coming in over the network.
+HTTP requests are simulated with the `request()` function from Supertest. To route these requests to the running Nest app, the test passes `request()` a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction `request(app.getHttpServer())`. The call to `request()` returns a wrapped HTTP server, connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, `request(...).get('/cats')` initiates a request to the Nest app that is identical to an **actual** `GET /cats` HTTP request coming in over the network.
 
-In this example, we also provide an alternate (test-double) implementation of the `CatsService` which simply returns a hard-coded value that we can test for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides methods to override modules, guards, interceptors, filters and pipes with the `overrideModule()`, `overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods respectively.
+The example also provides an alternate (test-double) implementation of `CatsService` that returns a hard-coded value the test can check for. Use `overrideProvider()` to provide such an alternate implementation. Similarly, Nest provides the `overrideModule()`, `overrideGuard()`, `overrideInterceptor()`, `overrideFilter()`, and `overridePipe()` methods to override modules, guards, interceptors, filters, and pipes, respectively.
 
-Each of the override methods (except for `overrideModule()`) returns an object with 3 different methods that mirror those described for [custom providers](https://docs.nestjs.com/fundamentals/custom-providers):
+Each of the override methods (except `overrideModule()`) returns an object with three methods that mirror those described for [custom providers](/fundamentals/custom-providers):
 
-- `useClass`: you supply a class that will be instantiated to provide the instance to override the object (provider, guard, etc.).
-- `useValue`: you supply an instance that will override the object.
-- `useFactory`: you supply a function that returns an instance that will override the object.
+- `useClass`: you supply a class that is instantiated to provide the instance that overrides the object (provider, guard, etc.).
+- `useValue`: you supply an instance that overrides the object.
+- `useFactory`: you supply a function that returns an instance that overrides the object.
 
-On the other hand, `overrideModule()` returns an object with the `useModule()` method, which you can use to supply a module that will override the original module, as follows:
+`overrideModule()`, on the other hand, returns an object with the `useModule()` method, which you use to supply a module that overrides the original module:
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
@@ -338,9 +337,9 @@ const moduleRef = await Test.createTestingModule({
   .compile();
 ```
 
-Each of the override method types, in turn, returns the `TestingModule` instance, and can thus be chained with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). You should use `compile()` at the end of such a chain to cause Nest to instantiate and initialize the module.
+Each of these methods, in turn, returns the `TestingModuleBuilder` instance, so you can chain them with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). Call `compile()` at the end of the chain to make Nest instantiate and initialize the module.
 
-Also, sometimes you may want to provide a custom logger e.g. when the tests are run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to instruct the `TestModuleBuilder` how to log during tests (by default, only "error" logs will be logged to the console).
+You may also want to provide a custom logger when the tests run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to tell the `TestingModuleBuilder` how to log during tests (by default, only "error" logs are written to the console).
 
 The compiled module has several useful methods, as described in the following table:
 
@@ -367,7 +366,7 @@ The compiled module has several useful methods, as described in the following ta
       <code>get()</code>
     </td>
     <td>
-      Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
+      Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Works like the same method of the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
   </tr>
   <tr>
@@ -375,7 +374,7 @@ The compiled module has several useful methods, as described in the following ta
       <code>resolve()</code>
     </td>
     <td>
-      Retrieves a dynamically created scoped instance (request or transient) of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the <a href="/fundamentals/module-ref">module reference</a> class.
+      Retrieves a dynamically created scoped instance (request or transient) of a controller or provider (including guards, filters, etc.) available in the application context. Works like the same method of the <a href="/fundamentals/module-ref">module reference</a> class.
     </td>
   </tr>
   <tr>
@@ -383,16 +382,16 @@ The compiled module has several useful methods, as described in the following ta
       <code>select()</code>
     </td>
     <td>
-      Navigates through the module's dependency graph; can be used to retrieve a specific instance from the selected module (used along with strict mode (<code>strict: true</code>) in <code>get()</code> method).
+      Navigates through the module's dependency graph; can be used to retrieve a specific instance from the selected module (used along with strict mode (<code>strict: true</code>) in the <code>get()</code> method).
     </td>
   </tr>
 </table>
 
-> info **Hint** Keep your e2e test files inside the `test` directory. The testing files should have a `.e2e-spec` suffix.
+> info **Hint** Keep your e2e test files inside the `test` directory. Test files should have an `.e2e-spec` suffix.
 
 #### Overriding globally registered enhancers
 
-If you have a globally registered guard (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap the original registration looks like this:
+If you have a globally registered guard (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap, the original registration looks like this:
 
 ```typescript
 providers: [
@@ -403,7 +402,7 @@ providers: [
 ],
 ```
 
-This is registering the guard as a "multi"-provider through the `APP_*` token. To be able to replace the `JwtAuthGuard` here, the registration needs to use an existing provider in this slot:
+This registers the guard as a "multi" provider through the `APP_*` token. To be able to replace `JwtAuthGuard` here, the registration needs to use an existing provider in this slot:
 
 ```typescript
 providers: [
@@ -416,9 +415,9 @@ providers: [
 ],
 ```
 
-> info **Hint** Change the `useClass` to `useExisting` to reference a registered provider instead of having Nest instantiate it behind the token.
+> info **Hint** Change `useClass` to `useExisting` to reference a registered provider instead of having Nest instantiate it behind the token.
 
-Now the `JwtAuthGuard` is visible to Nest as a regular provider that can be overridden when creating the `TestingModule`:
+`JwtAuthGuard` is now visible to Nest as a regular provider that can be overridden when creating the `TestingModule`:
 
 ```typescript
 const moduleRef = await Test.createTestingModule({
@@ -429,15 +428,15 @@ const moduleRef = await Test.createTestingModule({
   .compile();
 ```
 
-Now all your tests will use the `MockAuthGuard` on every request.
+All your tests now use `MockAuthGuard` on every request.
 
 #### Testing request-scoped instances
 
-[Request-scoped](/fundamentals/injection-scopes) providers are created uniquely for each incoming **request**. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
+[Request-scoped](/fundamentals/injection-scopes) providers are created uniquely for each incoming **request**, and the instance is garbage-collected after the request has been processed. This poses a problem, because you can't access a dependency injection sub-tree generated specifically for a tested request.
 
-We know (based on the sections above) that the `resolve()` method can be used to retrieve a dynamically instantiated class. Also, as described <a href="https://docs.nestjs.com/fundamentals/module-ref#resolving-scoped-providers">here</a>, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
+As shown in the sections above, the `resolve()` method retrieves a dynamically instantiated class. Also, as described in [resolving scoped providers](/fundamentals/module-ref#resolving-scoped-providers), you can pass a unique context identifier to control the lifecycle of a DI container sub-tree. You can combine the two in a testing context.
 
-The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. In this way we'll be able to retrieve instances created for a tested request.
+The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. This way, you can retrieve the instances created for a tested request.
 
 To accomplish this, use `vi.spyOn()` on the `ContextIdFactory`:
 
@@ -448,7 +447,7 @@ vi
   .mockImplementation(() => contextId);
 ```
 
-Now we can use the `contextId` to access a single generated DI container sub-tree for any subsequent request.
+You can now use the `contextId` to access a single generated DI container sub-tree for any subsequent request.
 
 ```typescript
 catsService = await moduleRef.resolve(CatsService, contextId);

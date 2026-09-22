@@ -1,23 +1,23 @@
 ### Official NestJS Consulting
 
-Our goal is to ensure that your developers are successful and productive with NestJS as well as other modern technologies in today's ever-changing tech world.
+Our goal is to make your developers successful and productive with NestJS, as well as with other modern technologies in today's ever-changing tech landscape.
 
 ### Official Support
 
-With official support, get expert help directly from the NestJS core team. We tackle your toughest challenges, and collaborate with your team on many levels such as:
+With official support, you get expert help directly from the NestJS core team. We tackle your toughest challenges and collaborate with your team on many levels, such as:
 
-- Providing technical guidance & architectural reviews
+- Providing technical guidance and architectural reviews
 - **Mentoring** team members
-- Advising best practices
-- Solving design decisions
-- Addressing security & performance concerns
+- Advising on best practices
+- Resolving design decisions
+- Addressing security and performance concerns
 - Performing **in-depth** code reviews
 
 <div class="row">
   <div class="content">
     <h4>Team Augmentation & Development</h4>
     <p>
-      With team augmentation, NestJS core team members can work directly with your team on a daily basis to help take your project to the next-level. Consider us "part of your team", tackling the most ambitious projects - right by your side.
+      With team augmentation, NestJS core team members work directly with your team on a daily basis to help take your project to the next level. Consider us part of your team, tackling the most ambitious projects right by your side.
     </p>
   </div>
   <div class="thumbnail p-l-30">
@@ -32,29 +32,29 @@ With official support, get expert help directly from the NestJS core team. We ta
   <div class="content">
     <h4>NestJS Best Practices</h4>
     <p>
-      Frequent code reviews can eliminate potentially hazardous bugs & issues at an early stage and help enforce best practices. Let us perform PR reviews & audits to ensure your code quality, performance, and security.
+      Frequent code reviews catch potentially hazardous bugs and issues at an early stage and help enforce best practices. We perform PR reviews and audits to ensure the quality, performance, and security of your code.
     </p>
   </div>
 </div>
 
 #### First-hand access
 
-Direct communication channel will boost team velocity, giving a quick access to discuss and solve problems.
+A direct communication channel boosts team velocity by giving you quick access to the core team to discuss and solve problems.
 
 #### NestJS Workshops and Trainings
 
-We provide solid kick-off training as well as more advanced ones that give teams an in-depth understanding of NestJS. We offer on-site workshops and remote intensive sessions which help get you up and running _quickly_ within the NestJS ecosystem.
+We provide solid kick-off training as well as advanced sessions that give teams an in-depth understanding of NestJS. We offer on-site workshops and intensive remote sessions that get you up and running _quickly_ in the NestJS ecosystem.
 
 <div class="contact-us">
   <div class="column column-text">
-    <h5>Contact us!</h5>
+    <h5>Contact us</h5>
     <p>
-    Let's talk how we can help you become successful with NestJS.
-    </p> 
+    Let's talk about how we can help you succeed with NestJS.
+    </p>
   </div>
    <div class="column column-action">
      <a href="mailto:support@nestjs.com">CONTACT US</a>
    </div>
 </div>
 
-Reach out to us at [support@nestjs.com](mailto:support@nestjs.com), and let's talk about your project & teams needs!
+Reach out to us at [support@nestjs.com](mailto:support@nestjs.com) to talk about your project and your team's needs.

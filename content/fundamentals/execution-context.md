@@ -1,36 +1,36 @@
 ### Execution context
 
-Nest provides several utility classes that help make it easy to write applications that function across multiple application contexts (e.g., Nest HTTP server-based, microservices and WebSockets application contexts). These utilities provide information about the current execution context which can be used to build generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) that can work across a broad set of controllers, methods, and execution contexts.
+Nest provides several utility classes that help you write applications that function across multiple application contexts (e.g., HTTP server-based, microservices, and WebSockets application contexts). These utilities provide information about the current execution context, which you can use to build generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) that work across a broad set of controllers, methods, and execution contexts.
 
-We cover two such classes in this chapter: `ArgumentsHost` and `ExecutionContext`.
+This chapter covers two such classes: `ArgumentsHost` and `ExecutionContext`.
 
 #### ArgumentsHost class
 
-The `ArgumentsHost` class provides methods for retrieving the arguments being passed to a handler. It allows you to choose the appropriate context (e.g., HTTP, RPC (microservice), or WebSockets) to retrieve the arguments from. The framework provides an instance of `ArgumentsHost`, typically referenced as a `host` parameter, in places where you may want to access it. For example, the `catch()` method of an [exception filter](https://docs.nestjs.com/exception-filters#arguments-host) is called with an `ArgumentsHost`instance.
+The `ArgumentsHost` class provides methods for retrieving the arguments being passed to a handler. It lets you choose the appropriate context (e.g., HTTP, RPC (microservice), or WebSockets) to retrieve the arguments from. The framework provides an instance of `ArgumentsHost`, typically referenced as a `host` parameter, in places where you may want to access it. For example, the `catch()` method of an [exception filter](/exception-filters#arguments-host) is called with an `ArgumentsHost` instance.
 
-`ArgumentsHost` simply acts as an abstraction over a handler's arguments. For example, for HTTP server applications (when `@nestjs/platform-express` is being used), the `host` object encapsulates Express's `[request, response, next]` array, where `request` is the request object, `response` is the response object, and `next` is a function that controls the application's request-response cycle. On the other hand, for [GraphQL](/graphql/quick-start) applications, the `host` object contains the `[root, args, context, info]` array.
+`ArgumentsHost` acts as an abstraction over a handler's arguments. For example, in HTTP server applications (when `@nestjs/platform-express` is used), the `host` object encapsulates Express's `[request, response, next]` array, where `request` is the request object, `response` is the response object, and `next` is a function that controls the application's request-response cycle. For [GraphQL](/graphql/quick-start) applications, on the other hand, the `host` object contains the `[root, args, context, info]` array.
 
 #### Current application context
 
-When building generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) which are meant to run across multiple application contexts, we need a way to determine the type of application that our method is currently running in. Do this with the `getType()` method of `ArgumentsHost`:
+When you build generic [guards](/guards), [filters](/exception-filters), and [interceptors](/interceptors) that are meant to run across multiple application contexts, you need a way to determine the type of application your method is currently running in. Use the `getType()` method of `ArgumentsHost` for this. It returns `'http'`, `'rpc'`, or `'ws'` out of the box, and packages such as `@nestjs/graphql` add their own types:
 
 ```typescript
 if (host.getType() === 'http') {
   // do something that is only important in the context of regular HTTP requests (REST)
 } else if (host.getType() === 'rpc') {
-  // do something that is only important in the context of Microservice requests
+  // do something that is only important in the context of microservice requests
 } else if (host.getType<GqlContextType>() === 'graphql') {
   // do something that is only important in the context of GraphQL requests
 }
 ```
 
-> info **Hint** The `GqlContextType` is imported from the `@nestjs/graphql` package.
+> info **Hint** The `GqlContextType` type is imported from the `@nestjs/graphql` package.
 
-With the application type available, we can write more generic components, as shown below.
+With the application type available, you can write more generic components, as shown below.
 
 #### Host handler arguments
 
-To retrieve the array of arguments being passed to the handler, one approach is to use the host object's `getArgs()` method.
+One way to retrieve the array of arguments being passed to the handler is the host object's `getArgs()` method:
 
 ```typescript
 const [req, res, next] = host.getArgs();
@@ -43,7 +43,7 @@ const request = host.getArgByIndex(0);
 const response = host.getArgByIndex(1);
 ```
 
-In these examples we retrieved the request and response objects by index, which is not typically recommended as it couples the application to a particular execution context. Instead, you can make your code more robust and reusable by using one of the `host` object's utility methods to switch to the appropriate application context for your application. The context switch utility methods are shown below.
+These examples retrieve the request and response objects by index, which is not typically recommended, because it couples the application to a particular execution context. Instead, you can make your code more robust and reusable by using one of the `host` object's utility methods to switch to the appropriate application context. The context switch utility methods are shown below.
 
 ```typescript
 /**
@@ -60,7 +60,7 @@ switchToHttp(): HttpArgumentsHost;
 switchToWs(): WsArgumentsHost;
 ```
 
-Let's rewrite the previous example using the `switchToHttp()` method. The `host.switchToHttp()` helper call returns an `HttpArgumentsHost` object that is appropriate for the HTTP application context. The `HttpArgumentsHost` object has two useful methods we can use to extract the desired objects. We also use the Express type assertions in this case to return native Express typed objects:
+Let's rewrite the previous example using the `switchToHttp()` method. The `host.switchToHttp()` helper call returns an `HttpArgumentsHost` object that is appropriate for the HTTP application context. The `HttpArgumentsHost` object has two useful methods for extracting the desired objects. The example also passes Express types as type arguments, so the methods return natively typed Express objects:
 
 ```typescript
 const ctx = host.switchToHttp();
@@ -68,7 +68,7 @@ const request = ctx.getRequest<Request>();
 const response = ctx.getResponse<Response>();
 ```
 
-Similarly `WsArgumentsHost` and `RpcArgumentsHost` have methods to return appropriate objects in the microservices and WebSockets contexts. Here are the methods for `WsArgumentsHost`:
+Similarly, `WsArgumentsHost` and `RpcArgumentsHost` have methods that return the appropriate objects in the WebSockets and microservices contexts. Here are the methods of `WsArgumentsHost`:
 
 ```typescript
 export interface WsArgumentsHost {
@@ -83,7 +83,7 @@ export interface WsArgumentsHost {
 }
 ```
 
-Following are the methods for `RpcArgumentsHost`:
+And here are the methods of `RpcArgumentsHost`:
 
 ```typescript
 export interface RpcArgumentsHost {
@@ -101,7 +101,7 @@ export interface RpcArgumentsHost {
 
 #### ExecutionContext class
 
-`ExecutionContext` extends `ArgumentsHost`, providing additional details about the current execution process. Like `ArgumentsHost`, Nest provides an instance of `ExecutionContext` in places you may need it, such as in the `canActivate()` method of a [guard](https://docs.nestjs.com/guards#execution-context) and the `intercept()` method of an [interceptor](https://docs.nestjs.com/interceptors#execution-context). It provides the following methods:
+`ExecutionContext` extends `ArgumentsHost`, providing additional details about the current execution process. Like `ArgumentsHost`, Nest provides an instance of `ExecutionContext` in places where you may need it, such as the `canActivate()` method of a [guard](/guards#execution-context) and the `intercept()` method of an [interceptor](/interceptors#execution-context). It provides the following methods:
 
 ```typescript
 export interface ExecutionContext extends ArgumentsHost {
@@ -117,22 +117,22 @@ export interface ExecutionContext extends ArgumentsHost {
 }
 ```
 
-The `getHandler()` method returns a reference to the handler about to be invoked. The `getClass()` method returns the type of the `Controller` class which this particular handler belongs to. For example, in an HTTP context, if the currently processed request is a `POST` request, bound to the `create()` method on the `CatsController`, `getHandler()` returns a reference to the `create()` method and `getClass()` returns the `CatsController` **class** (not instance).
+The `getHandler()` method returns a reference to the handler about to be invoked. The `getClass()` method returns the type of the controller class that this handler belongs to. For example, in an HTTP context, if the currently processed request is a `POST` request bound to the `create()` method on `CatsController`, `getHandler()` returns a reference to the `create()` method, and `getClass()` returns the `CatsController` **class** (not an instance).
 
 ```typescript
 const methodKey = ctx.getHandler().name; // "create"
 const className = ctx.getClass().name; // "CatsController"
 ```
 
-The ability to access references to both the current class and handler method provides great flexibility. Most importantly, it gives us the opportunity to access the metadata set through either decorators created via `Reflector#createDecorator` or the built-in `@SetMetadata()` decorator from within guards or interceptors. We cover this use case below.
+Access to both the current class and the handler method provides great flexibility. Most importantly, it lets you read, from within guards or interceptors, the metadata set by decorators created with `Reflector#createDecorator` or by the built-in `@SetMetadata()` decorator. The following sections cover this use case.
 
 <app-banner-enterprise></app-banner-enterprise>
 
 #### Reflection and metadata
 
-Nest provides the ability to attach **custom metadata** to route handlers through decorators created via `Reflector#createDecorator` method, and the built-in `@SetMetadata()` decorator. In this section, let's compare the two approaches and see how to access the metadata from within a guard or interceptor.
+Nest lets you attach **custom metadata** to route handlers through decorators created with the `Reflector#createDecorator` method, or with the built-in `@SetMetadata()` decorator. This section compares the two approaches and shows how to access the metadata from within a guard or interceptor.
 
-To create strongly-typed decorators using `Reflector#createDecorator`, we need to specify the type argument. For example, let's create a `Roles` decorator that takes an array of strings as an argument.
+To create strongly typed decorators with `Reflector#createDecorator`, specify the type argument. For example, let's create a `Roles` decorator that takes an array of strings as an argument.
 
 ```ts
 @@filename(roles.decorator)
@@ -143,7 +143,7 @@ export const Roles = Reflector.createDecorator<string[]>();
 
 The `Roles` decorator here is a function that takes a single argument of type `string[]`.
 
-Now, to use this decorator, we simply annotate the handler with it:
+To use this decorator, annotate the handler with it:
 
 ```typescript
 @@filename(cats.controller)
@@ -161,9 +161,9 @@ async create(createCatDto) {
 }
 ```
 
-Here we've attached the `Roles` decorator metadata to the `create()` method, indicating that only users with the `admin` role should be allowed to access this route.
+This attaches the `Roles` decorator metadata to the `create()` method, indicating that only users with the `admin` role should be allowed to access this route.
 
-To access the route's role(s) (custom metadata), we'll use the `Reflector` helper class again. `Reflector` can be injected into a class in the normal way:
+To access the route's role(s) (custom metadata), use the `Reflector` helper class again. `Reflector` can be injected into a class in the normal way:
 
 ```typescript
 @@filename(roles.guard)
@@ -174,7 +174,7 @@ export class RolesGuard {
 @@switch
 @Injectable()
 @Dependencies(Reflector)
-export class CatsService {
+export class RolesGuard {
   constructor(reflector) {
     this.reflector = reflector;
   }
@@ -189,9 +189,9 @@ Now, to read the handler metadata, use the `get()` method:
 const roles = this.reflector.get(Roles, context.getHandler());
 ```
 
-The `Reflector#get` method allows us to easily access the metadata by passing in two arguments: a decorator reference and a **context** (decorator target) to retrieve the metadata from. In this example, the specified **decorator** is `Roles` (refer back to the `roles.decorator.ts` file above). The context is provided by the call to `context.getHandler()`, which results in extracting the metadata for the currently processed route handler. Remember, `getHandler()` gives us a **reference** to the route handler function.
+The `Reflector#get` method takes two arguments: a decorator reference and a **context** (decorator target) to retrieve the metadata from. In this example, the specified **decorator** is `Roles` (see the `roles.decorator.ts` file above). The context is provided by the call to `context.getHandler()`, which extracts the metadata for the currently processed route handler. Remember, `getHandler()` gives you a **reference** to the route handler function.
 
-Alternatively, we may organize our controller by applying metadata at the controller level, applying to all routes in the controller class.
+Alternatively, you can apply metadata at the controller level, so that it applies to all routes in the controller class.
 
 ```typescript
 @@filename(cats.controller)
@@ -204,14 +204,14 @@ export class CatsController {}
 export class CatsController {}
 ```
 
-In this case, to extract controller metadata, we pass `context.getClass()` as the second argument (to provide the controller class as the context for metadata extraction) instead of `context.getHandler()`:
+In this case, to extract controller metadata, pass `context.getClass()` as the second argument (to provide the controller class as the context for metadata extraction) instead of `context.getHandler()`:
 
 ```typescript
 @@filename(roles.guard)
 const roles = this.reflector.get(Roles, context.getClass());
 ```
 
-Given the ability to provide metadata at multiple levels, you may need to extract and merge metadata from several contexts. The `Reflector` class provides two utility methods used to help with this. These methods extract **both** controller and method metadata at once, and combine them in different ways.
+Because metadata can be provided at multiple levels, you may need to extract and merge metadata from several contexts. The `Reflector` class provides two utility methods for this. They extract **both** controller and method metadata at once, and combine them in different ways.
 
 Consider the following scenario, where you've supplied `Roles` metadata at both levels.
 
@@ -229,7 +229,7 @@ export class CatsController {
 @@switch
 @Roles(['user'])
 @Controller('cats')
-export class CatsController {}
+export class CatsController {
   @Post()
   @Roles(['admin'])
   @Bind(Body())
@@ -239,27 +239,27 @@ export class CatsController {}
 }
 ```
 
-If your intent is to specify `'user'` as the default role, and override it selectively for certain methods, you would probably use the `getAllAndOverride()` method.
+If your intent is to specify `'user'` as the default role and override it selectively for certain methods, use the `getAllAndOverride()` method. It returns the first defined value, checking the targets in the order you pass them:
 
 ```typescript
 const roles = this.reflector.getAllAndOverride(Roles, [context.getHandler(), context.getClass()]);
 ```
 
-A guard with this code, running in the context of the `create()` method, with the above metadata, would result in `roles` containing `['admin']`.
+A guard with this code, running in the context of the `create()` method with the metadata above, results in `roles` containing `['admin']`.
 
-To get metadata for both and merge it (this method merges both arrays and objects), use the `getAllAndMerge()` method:
+To get the metadata from both levels and merge it (this method merges both arrays and objects), use the `getAllAndMerge()` method:
 
 ```typescript
 const roles = this.reflector.getAllAndMerge(Roles, [context.getHandler(), context.getClass()]);
 ```
 
-This would result in `roles` containing `['user', 'admin']`.
+This results in `roles` containing `['admin', 'user']` (values are concatenated in the order of the targets).
 
-For both of these merge methods, you pass the metadata key as the first argument, and an array of metadata target contexts (i.e., calls to the `getHandler()` and/or `getClass()` methods) as the second argument.
+For both of these methods, you pass the decorator reference (or metadata key) as the first argument, and an array of metadata target contexts (i.e., calls to the `getHandler()` and/or `getClass()` methods) as the second argument.
 
 #### Low-level approach
 
-As mentioned earlier, instead of using `Reflector#createDecorator`, you can also use the built-in `@SetMetadata()` decorator to attach metadata to a handler.
+As mentioned earlier, instead of using `Reflector#createDecorator`, you can use the built-in `@SetMetadata()` decorator to attach metadata to a handler.
 
 ```typescript
 @@filename(cats.controller)
@@ -279,7 +279,7 @@ async create(createCatDto) {
 
 > info **Hint** The `@SetMetadata()` decorator is imported from the `@nestjs/common` package.
 
-With the construction above, we attached the `roles` metadata (`roles` is a metadata key and `['admin']` is the associated value) to the `create()` method. While this works, it's not good practice to use `@SetMetadata()` directly in your routes. Instead, you can create your own decorators, as shown below:
+The construction above attaches the `roles` metadata (`roles` is the metadata key and `['admin']` is the associated value) to the `create()` method. While this works, it's not good practice to use `@SetMetadata()` directly in your routes. Instead, create your own decorators, as shown below:
 
 ```typescript
 @@filename(roles.decorator)
@@ -292,9 +292,9 @@ import { SetMetadata } from '@nestjs/common';
 export const Roles = (...roles) => SetMetadata('roles', roles);
 ```
 
-This approach is much cleaner and more readable, and somewhat resembles the `Reflector#createDecorator` approach. The difference is that with `@SetMetadata` you have more control over the metadata key and value, and also can create decorators that take more than one argument.
+This approach is cleaner and more readable, and resembles the `Reflector#createDecorator` approach. The difference is that with `@SetMetadata()` you have more control over the metadata key and value, and you can create decorators that take more than one argument.
 
-Now that we have a custom `@Roles()` decorator, we can use it to decorate the `create()` method.
+With the custom `@Roles()` decorator in place, you can use it to decorate the `create()` method.
 
 ```typescript
 @@filename(cats.controller)
@@ -312,7 +312,7 @@ async create(createCatDto) {
 }
 ```
 
-To access the route's role(s) (custom metadata), we'll use the `Reflector` helper class again:
+To access the route's role(s) (custom metadata), use the `Reflector` helper class again:
 
 ```typescript
 @@filename(roles.guard)
@@ -323,7 +323,7 @@ export class RolesGuard {
 @@switch
 @Injectable()
 @Dependencies(Reflector)
-export class CatsService {
+export class RolesGuard {
   constructor(reflector) {
     this.reflector = reflector;
   }
@@ -338,4 +338,4 @@ Now, to read the handler metadata, use the `get()` method.
 const roles = this.reflector.get<string[]>('roles', context.getHandler());
 ```
 
-Here instead of passing a decorator reference, we pass the metadata **key** as the first argument (which in our case is `'roles'`). Everything else remains the same as in the `Reflector#createDecorator` example.
+Here, instead of a decorator reference, you pass the metadata **key** (in this case, `'roles'`) as the first argument. Everything else remains the same as in the `Reflector#createDecorator` example.
