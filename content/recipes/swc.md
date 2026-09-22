@@ -112,16 +112,7 @@ The SWC builder is preconfigured to match the requirements of NestJS application
 }
 ```
 
-> warning **Warning** The SWC builder emits CommonJS modules by default. If your project uses ES modules (i.e., its `package.json` file sets `"type": "module"`, which is the default for new projects), set the module type to `es6` in your `.swcrc` file. Otherwise, Node.js fails to load the compiled output.
-
-```json
-{
-  "$schema": "https://swc.rs/schema.json",
-  "module": {
-    "type": "es6"
-  }
-}
-```
+> info **Hint** The SWC builder emits the same module format as the TypeScript compiler would: ES modules when your `package.json` file sets `"type": "module"` (the default for new projects), and CommonJS otherwise. A `module` setting in `.swcrc` overrides this.
 
 #### Monorepo
 

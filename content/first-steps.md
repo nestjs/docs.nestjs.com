@@ -107,7 +107,7 @@ Once the installation is complete, run the following command to start the applic
 $ npm run start
 ```
 
-> info **Hint** To speed up development builds, use the [SWC builder](/recipes/swc) by passing the `-b swc` flag to the `start` script: `npm run start -- -b swc`. In ESM projects (the default), first set the SWC module type to `es6`, as described in [SWC configuration](/recipes/swc#swc-configuration).
+> info **Hint** To speed up development builds, use the [SWC builder](/recipes/swc) by passing the `-b swc` flag to the `start` script: `npm run start -- -b swc`.
 
 This command starts the HTTP server on the port defined in the `src/main.ts` file (`3000`, unless the `PORT` environment variable is set). Once the application is running, open your browser and navigate to `http://localhost:3000/`. You should see the `Hello World!` message.
 
