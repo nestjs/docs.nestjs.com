@@ -1,16 +1,16 @@
 ### Authorization
 
-**Authorization** refers to the process that determines what a user is able to do. For example, an administrative user is allowed to create, edit, and delete posts. A non-administrative user is only authorized to read the posts.
+**Authorization** is the process that determines what a user is allowed to do. For example, an administrative user may create, edit, and delete posts, while a non-administrative user may only read them.
 
-Authorization is orthogonal and independent from authentication. However, authorization requires an authentication mechanism.
+Authorization is orthogonal to, and independent of, authentication. However, authorization requires an authentication mechanism.
 
-There are many different approaches and strategies to handle authorization. The approach taken for any project depends on its particular application requirements. This chapter presents a few approaches to authorization that can be adapted to a variety of different requirements.
+There are many approaches to handling authorization, and the right one for a project depends on its requirements. This chapter presents a few approaches that you can adapt to a variety of requirements.
 
 #### Basic RBAC implementation
 
-Role-based access control (**RBAC**) is a policy-neutral access-control mechanism defined around roles and privileges. In this section, we'll demonstrate how to implement a very basic RBAC mechanism using Nest [guards](/guards).
+Role-based access control (**RBAC**) is a policy-neutral access control mechanism defined around roles and privileges. This section shows how to implement a basic RBAC mechanism using Nest [guards](/guards).
 
-First, let's create a `Role` enum representing roles in the system:
+First, create a `Role` enum representing the roles in the system:
 
 ```typescript
 @@filename(role.enum)
@@ -20,14 +20,14 @@ export enum Role {
 }
 ```
 
-> info **Hint** In more sophisticated systems, you may store roles within a database, or pull them from the external authentication provider.
+> info **Hint** In more sophisticated systems, you may store roles in a database or pull them from an external authentication provider.
 
-With this in place, we can create a `@Roles()` decorator. This decorator allows you to specify what roles are required to access specific resources.
+With this in place, create a `@Roles()` decorator. It lets you specify which roles are required to access specific resources.
 
 ```typescript
 @@filename(roles.decorator)
 import { SetMetadata } from '@nestjs/common';
-import { Role } from '../enums/role.enum.js';
+import { Role } from './role.enum.js';
 
 export const ROLES_KEY = 'roles';
 export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
@@ -38,7 +38,7 @@ export const ROLES_KEY = 'roles';
 export const Roles = (...roles) => SetMetadata(ROLES_KEY, roles);
 ```
 
-Now that we have a custom `@Roles()` decorator, we can use it to decorate any route handler.
+You can now use the `@Roles()` decorator on any route handler:
 
 ```typescript
 @@filename(cats.controller)
@@ -56,12 +56,14 @@ create(createCatDto) {
 }
 ```
 
-Finally, we create a `RolesGuard` class which will compare the roles assigned to the current user to the actual roles required by the current route being processed. In order to access the route's role(s) (custom metadata), we'll use the `Reflector` helper class, which is provided out of the box by the framework and exposed from the `@nestjs/core` package.
+Finally, create a `RolesGuard` class that compares the roles assigned to the current user with the roles required by the route being processed. To read the route's roles (custom metadata), use the `Reflector` helper class, which the framework provides out of the box and exports from the `@nestjs/core` package.
 
 ```typescript
 @@filename(roles.guard)
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Role } from './role.enum.js';
+import { ROLES_KEY } from './roles.decorator.js';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -82,6 +84,7 @@ export class RolesGuard implements CanActivate {
 @@switch
 import { Injectable, Dependencies } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from './roles.decorator.js';
 
 @Injectable()
 @Dependencies(Reflector)
@@ -99,18 +102,18 @@ export class RolesGuard {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user.roles.includes(role));
+    return requiredRoles.some((role) => user.roles?.includes(role));
   }
 }
 ```
 
-> info **Hint** Refer to the [Reflection and metadata](/fundamentals/execution-context#reflection-and-metadata) section of the Execution context chapter for more details on utilizing `Reflector` in a context-sensitive way.
+> info **Hint** See the [Reflection and metadata](/fundamentals/execution-context#reflection-and-metadata) section of the execution context chapter for more details on using `Reflector` in a context-sensitive way.
 
-> warning **Notice** This example is named "**basic**" as we only check for the presence of roles on the route handler level. In real-world applications, you may have endpoints/handlers that involve several operations, in which each of them requires a specific set of permissions. In this case, you'll have to provide a mechanism to check roles somewhere within your business-logic, making it somewhat harder to maintain as there will be no centralized place that associates permissions with specific actions.
+> warning **Notice** This example is called "**basic**" because it checks roles only at the route handler level. In real-world applications, a single endpoint may involve several operations, each requiring a specific set of permissions. In that case, you have to check roles somewhere within your business logic, which is harder to maintain because no single place associates permissions with specific actions.
 
-In this example, we assumed that `request.user` contains the user instance and allowed roles (under the `roles` property). In your app, you will probably make that association in your custom **authentication guard** - see [authentication](/security/authentication) chapter for more details.
+This example assumes that `request.user` contains the user instance and its roles (under the `roles` property). In your app, you will probably make that association in your custom **authentication guard**. See the [authentication](/security/authentication) chapter for more details.
 
-To make sure this example works, your `User` class must look as follows:
+For this example to work, your `User` class must look as follows:
 
 ```typescript
 class User {
@@ -119,7 +122,7 @@ class User {
 }
 ```
 
-Lastly, make sure to register the `RolesGuard`, for example, at the controller level, or globally:
+Lastly, register the `RolesGuard`, either at the controller level or globally:
 
 ```typescript
 providers: [
@@ -140,15 +143,15 @@ When a user with insufficient privileges requests an endpoint, Nest automaticall
 }
 ```
 
-> info **Hint** If you want to return a different error response, you should throw your own specific exception instead of returning a boolean value.
+> info **Hint** To return a different error response, throw your own exception instead of returning a boolean value.
 
 <app-banner-courses-auth></app-banner-courses-auth>
 
 #### Claims-based authorization
 
-When an identity is created it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject can do, not what the subject is.
+When an identity is created, it may be assigned one or more claims issued by a trusted party. A claim is a name-value pair that represents what the subject can do, not what the subject is.
 
-To implement a Claims-based authorization in Nest, you can follow the same steps we have shown above in the [RBAC](/security/authorization#basic-rbac-implementation) section with one significant difference: instead of checking for specific roles, you should compare **permissions**. Every user would have a set of permissions assigned. Likewise, each resource/endpoint would define what permissions are required (for example, through a dedicated `@RequirePermissions()` decorator) to access them.
+To implement claims-based authorization in Nest, follow the same steps as in the [RBAC](/security/authorization#basic-rbac-implementation) section, with one significant difference: instead of checking for specific roles, compare **permissions**. Each user has a set of assigned permissions, and each resource or endpoint defines which permissions are required to access it (for example, through a dedicated `@RequirePermissions()` decorator).
 
 ```typescript
 @@filename(cats.controller)
@@ -166,21 +169,21 @@ create(createCatDto) {
 }
 ```
 
-> info **Hint** In the example above, `Permission` (similar to `Role` we have shown in RBAC section) is a TypeScript enum that contains all the permissions available in your system.
+> info **Hint** In the example above, `Permission` (similar to the `Role` enum in the RBAC section) is a TypeScript enum that contains all the permissions available in your system.
 
 #### Integrating CASL
 
-[CASL](https://casl.js.org/) is an isomorphic authorization library which restricts what resources a given client is allowed to access. It's designed to be incrementally adoptable and can easily scale between a simple claim based and fully featured subject and attribute based authorization.
+[CASL](https://casl.js.org/) is an isomorphic authorization library that restricts which resources a given client is allowed to access. It's designed to be incrementally adoptable and scales from simple claim-based authorization to fully featured subject- and attribute-based authorization.
 
-To start, first install the `@casl/ability` package:
+To start, install the `@casl/ability` package:
 
 ```bash
 $ npm i @casl/ability
 ```
 
-> info **Hint** In this example, we chose CASL, but you can use any other library like `accesscontrol` or `acl`, depending on your preferences and project needs.
+> info **Hint** This example uses CASL, but you can use any other library, such as `accesscontrol` or `acl`, depending on your preferences and project needs.
 
-Once the installation is complete, for the sake of illustrating the mechanics of CASL, we'll define two entity classes: `User` and `Article`.
+To illustrate the mechanics of CASL, we'll define two entity classes: `User` and `Article`.
 
 ```typescript
 class User {
@@ -189,7 +192,7 @@ class User {
 }
 ```
 
-`User` class consists of two properties, `id`, which is a unique user identifier, and `isAdmin`, indicating whether a user has administrator privileges.
+The `User` class has two properties: `id`, a unique user identifier, and `isAdmin`, which indicates whether the user has administrator privileges.
 
 ```typescript
 class Article {
@@ -199,16 +202,16 @@ class Article {
 }
 ```
 
-`Article` class has three properties, respectively `id`, `isPublished`, and `authorId`. `id` is a unique article identifier, `isPublished` indicates whether an article was already published or not, and `authorId`, which is an ID of a user who wrote the article.
+The `Article` class has three properties: `id`, a unique article identifier; `isPublished`, which indicates whether the article has been published; and `authorId`, the ID of the user who wrote the article.
 
-Now let's review and refine our requirements for this example:
+Now let's review and refine the requirements for this example:
 
-- Admins can manage (create/read/update/delete) all entities
-- Users have read-only access to everything
-- Users can update their articles (`article.authorId === userId`)
-- Articles that are published already cannot be removed (`article.isPublished === true`)
+- Admins can manage (create/read/update/delete) all entities.
+- Users have read-only access to everything.
+- Users can update their own articles (`article.authorId === userId`).
+- Published articles cannot be removed (`article.isPublished === true`).
 
-With this in mind, we can start off by creating an `Action` enum representing all possible actions that the users can perform with entities:
+With this in mind, start by creating an `Action` enum representing all the actions users can perform on entities:
 
 ```typescript
 export enum Action {
@@ -222,14 +225,14 @@ export enum Action {
 
 > warning **Notice** `manage` is a special keyword in CASL which represents "any action".
 
-To encapsulate CASL library, let's generate the `CaslModule` and `CaslAbilityFactory` now.
+To encapsulate the CASL library, generate the `CaslModule` and `CaslAbilityFactory`:
 
 ```bash
 $ nest g module casl
 $ nest g class casl/casl-ability.factory
 ```
 
-With this in place, we can define the `createForUser()` method on the `CaslAbilityFactory`. This method will create the `Ability` object for a given user:
+With this in place, define the `createForUser()` method on the `CaslAbilityFactory`. This method creates the ability object for a given user:
 
 ```typescript
 type Subjects = InferSubjects<typeof Article | typeof User> | 'all';
@@ -261,15 +264,15 @@ export class CaslAbilityFactory {
 
 > warning **Notice** `all` is a special keyword in CASL that represents "any subject".
 
-> info **Hint** Since CASL v6, `MongoAbility` serves as the default ability class, replacing the legacy `Ability` to better support condition-based permissions using MongoDB-like syntax. Despite the name, it is not tied to MongoDB — it works with any kind of data by simply comparing objects against conditions written in Mongo-like syntax.
+> info **Hint** Since CASL v6, `MongoAbility` (created with `createMongoAbility()`) is the default ability type, replacing the legacy `Ability` class, to better support condition-based permissions. Despite the name, it is not tied to MongoDB: it works with any kind of data by comparing objects against conditions written in MongoDB query syntax.
 
-> info **Hint** `MongoAbility`, `AbilityBuilder`, `AbilityClass`, and `ExtractSubjectType` classes are exported from the `@casl/ability` package.
+> info **Hint** `AbilityBuilder`, `createMongoAbility`, `MongoAbility`, `InferSubjects`, and `ExtractSubjectType` are exported from the `@casl/ability` package.
 
-> info **Hint** The `detectSubjectType` option lets CASL understand how to get the subject type out of an object. For more information, read the [CASL documentation](https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types).
+> info **Hint** The `detectSubjectType` option tells CASL how to get the subject type from an object. For more information, see the [CASL documentation on subject type detection](https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types).
 
-In the example above, we created the `MongoAbility` instance using the `AbilityBuilder` class. As you probably guessed, `can` and `cannot` accept the same arguments but have different meanings, `can` allows you to perform an action on the specified subject and `cannot` forbids it. Both may accept up to 4 arguments. To learn more about these functions, visit the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
+In the example above, the `MongoAbility` instance is created with the `AbilityBuilder` class. The `can` and `cannot` functions accept the same arguments but have opposite meanings: `can` allows an action on the specified subject, and `cannot` forbids it. Both accept up to four arguments (action, subject, fields, and conditions). To learn more about these functions, see the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
 
-Lastly, make sure to add the `CaslAbilityFactory` to the `providers` and `exports` arrays in the `CaslModule` module definition:
+Lastly, add the `CaslAbilityFactory` to the `providers` and `exports` arrays in the `CaslModule` definition:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -282,7 +285,7 @@ import { CaslAbilityFactory } from './casl-ability.factory.js';
 export class CaslModule {}
 ```
 
-With this in place, we can inject the `CaslAbilityFactory` to any class using standard constructor injection as long as the `CaslModule` is imported in the host context:
+With this in place, you can inject the `CaslAbilityFactory` into any class using standard constructor injection, as long as the `CaslModule` is imported in the host module:
 
 ```typescript
 constructor(private caslAbilityFactory: CaslAbilityFactory) {}
@@ -299,7 +302,7 @@ if (ability.can(Action.Read, 'all')) {
 
 > info **Hint** Learn more about the `MongoAbility` class in the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
 
-For example, let's say we have a user who is not an admin. In this case, the user should be able to read articles, but creating new ones or removing the existing articles should be prohibited.
+For example, consider a user who is not an admin. This user should be able to read articles, but not create new ones or remove existing ones.
 
 ```typescript
 const user = new User();
@@ -313,7 +316,7 @@ ability.can(Action.Create, Article); // false
 
 > info **Hint** Although both `MongoAbility` and `AbilityBuilder` classes provide `can` and `cannot` methods, they have different purposes and accept slightly different arguments.
 
-Also, as we have specified in our requirements, the user should be able to update its articles:
+As specified in the requirements, the user should also be able to update their own articles:
 
 ```typescript
 const user = new User();
@@ -329,15 +332,15 @@ article.authorId = 2;
 ability.can(Action.Update, article); // false
 ```
 
-As you can see, `MongoAbility` instance allows us to check permissions in pretty readable way. Likewise, `AbilityBuilder` allows us to define permissions (and specify various conditions) in a similar fashion. To find more examples, visit the official documentation.
+The `MongoAbility` instance lets you check permissions in a readable way. Likewise, `AbilityBuilder` lets you define permissions (and specify conditions) in a similar fashion. For more examples, see the official [CASL documentation](https://casl.js.org/v6/en/guide/intro).
 
 #### Advanced: Implementing a `PoliciesGuard`
 
-In this section, we'll demonstrate how to build a somewhat more sophisticated guard, which checks if a user meets specific **authorization policies** that can be configured on the method-level (you can extend it to respect policies configured on the class-level too). In this example, we are going to use the CASL package just for illustration purposes, but using this library is not required. Also, we will use the `CaslAbilityFactory` provider that we've created in the previous section.
+This section shows how to build a more sophisticated guard, which checks whether a user meets specific **authorization policies** configured at the method level (you can extend it to respect policies configured at the class level too). The example uses the CASL package for illustration only; using this library is not required. It also uses the `CaslAbilityFactory` provider created in the previous section.
 
-First, let's flesh out the requirements. The goal is to provide a mechanism that allows you to specify policy checks per route handler. We will support both objects and functions (for simpler checks and for those who prefer more functional-style code).
+First, the requirements. The goal is a mechanism that lets you specify policy checks per route handler. It supports both objects and functions (for simpler checks, and for those who prefer a more functional style).
 
-Let's start off by defining interfaces for policy handlers:
+Start by defining interfaces for policy handlers:
 
 ```typescript
 import { AppAbility } from '../casl/casl-ability.factory.js';
@@ -351,9 +354,9 @@ type PolicyHandlerCallback = (ability: AppAbility) => boolean;
 export type PolicyHandler = IPolicyHandler | PolicyHandlerCallback;
 ```
 
-As mentioned above, we provided two possible ways of defining a policy handler, an object (instance of a class that implements the `IPolicyHandler` interface) and a function (which meets the `PolicyHandlerCallback` type).
+There are two ways to define a policy handler: an object (an instance of a class that implements the `IPolicyHandler` interface) or a function (matching the `PolicyHandlerCallback` type).
 
-With this in place, we can create a `@CheckPolicies()` decorator. This decorator allows you to specify what policies have to be met to access specific resources.
+With this in place, create a `@CheckPolicies()` decorator. It lets you specify which policies must be met to access specific resources.
 
 ```typescript
 export const CHECK_POLICIES_KEY = 'check_policy';
@@ -361,7 +364,7 @@ export const CheckPolicies = (...handlers: PolicyHandler[]) =>
   SetMetadata(CHECK_POLICIES_KEY, handlers);
 ```
 
-Now let's create a `PoliciesGuard` that will extract and execute all the policy handlers bound to a route handler.
+Now create a `PoliciesGuard` that extracts and executes all the policy handlers bound to a route handler.
 
 ```typescript
 @Injectable()
@@ -395,11 +398,11 @@ export class PoliciesGuard implements CanActivate {
 }
 ```
 
-> info **Hint** In this example, we assumed that `request.user` contains the user instance. In your app, you will probably make that association in your custom **authentication guard** - see [authentication](/security/authentication) chapter for more details.
+> info **Hint** This example assumes that `request.user` contains the user instance. In your app, you will probably make that association in your custom **authentication guard**. See the [authentication](/security/authentication) chapter for more details.
 
-Let's break this example down. The `policyHandlers` is an array of handlers assigned to the method through the `@CheckPolicies()` decorator. Next, we use the `CaslAbilityFactory#create` method which constructs the `Ability` object, allowing us to verify whether a user has sufficient permissions to perform specific actions. We are passing this object to the policy handler which is either a function or an instance of a class that implements the `IPolicyHandler`, exposing the `handle()` method that returns a boolean. Lastly, we use the `Array#every` method to make sure that every handler returned `true` value.
+Let's break this example down. `policyHandlers` is the array of handlers assigned to the method through the `@CheckPolicies()` decorator. Next, the `CaslAbilityFactory#createForUser` method constructs the ability object, which verifies whether the user has sufficient permissions to perform specific actions. The guard passes this object to each policy handler, which is either a function or an instance of a class that implements `IPolicyHandler` (exposing a `handle()` method that returns a boolean). Lastly, `Array#every` ensures that every handler returned `true`.
 
-Finally, to test this guard, bind it to any route handler, and register an inline policy handler (functional approach), as follows:
+To test this guard, bind it to any route handler and register an inline policy handler (the functional approach), as follows:
 
 ```typescript
 @Get()
@@ -410,7 +413,7 @@ findAll() {
 }
 ```
 
-Alternatively, we can define a class which implements the `IPolicyHandler` interface:
+Alternatively, define a class that implements the `IPolicyHandler` interface:
 
 ```typescript
 export class ReadArticlePolicyHandler implements IPolicyHandler {
@@ -420,7 +423,7 @@ export class ReadArticlePolicyHandler implements IPolicyHandler {
 }
 ```
 
-And use it as follows:
+Then use it as follows:
 
 ```typescript
 @Get()
@@ -431,4 +434,4 @@ findAll() {
 }
 ```
 
-> warning **Notice** Since we must instantiate the policy handler in-place using the `new` keyword, `ReadArticlePolicyHandler` class cannot use the Dependency Injection. This can be addressed with the `ModuleRef#get` method (read more [here](/fundamentals/module-ref)). Basically, instead of registering functions and instances through the `@CheckPolicies()` decorator, you must support passing a `Type<IPolicyHandler>`. Then, inside your guard, you could retrieve an instance using a type reference: `moduleRef.get(YOUR_HANDLER_TYPE)` or even dynamically instantiate it using the `ModuleRef#create` method.
+> warning **Notice** Because the policy handler is instantiated in place with the `new` keyword, the `ReadArticlePolicyHandler` class cannot use dependency injection. You can address this with the `ModuleRef#get` method (see the [module reference](/fundamentals/module-ref) chapter). Instead of registering functions and instances through the `@CheckPolicies()` decorator, support passing a `Type<IPolicyHandler>`. Then, inside your guard, retrieve an instance by its type reference with `moduleRef.get(YOUR_HANDLER_TYPE)`, or instantiate it dynamically with the `ModuleRef#create` method.
