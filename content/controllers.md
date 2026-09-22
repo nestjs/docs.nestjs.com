@@ -138,6 +138,14 @@ The request object represents the HTTP request and has properties for the query 
       <td><code>req.headers</code> / <code>req.headers[name]</code></td>
     </tr>
     <tr>
+      <td><code>@Cookies(name?: string)</code></td>
+      <td>request cookies / the cookie named <code>name</code> (see <a routerLink="/techniques/cookies">Cookies</a>)</td>
+    </tr>
+    <tr>
+      <td><code>@SignedCookies(name?: string)</code></td>
+      <td>verified signed cookies / the signed cookie named <code>name</code></td>
+    </tr>
+    <tr>
       <td><code>@Ip()</code></td>
       <td><code>req.ip</code></td>
     </tr>

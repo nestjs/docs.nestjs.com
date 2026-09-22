@@ -184,7 +184,7 @@ export class AuthController {
 
 Signing fails loudly when no secret is configured: `setCookie()` with the `signed` option throws an error, and so does resolving a `@SignedCookies()` parameter (unless `cookie-parser` provides signed cookies, see [below](#using-cookie-parser-or-fastifycookie)), which results in a `500 Internal Server Error` response instead of every signed cookie silently reading as `undefined`. An empty secret (an empty string, an empty array, or an array with an empty entry) throws when the application is created.
 
-> warning **Warning** A `secret` that is `undefined`, for example because an environment variable is not set, counts as no secret at all. The application starts, and the error only surfaces when a request sets or reads a signed cookie. Validate your configuration at startup, for example as described in the [Configuration](/techniques/configuration#schema-validation) chapter.
+> warning **Warning** A `secret` that is `undefined`, for example because an environment variable is not set, counts as no secret at all. The application starts, and the error only surfaces when a request sets or reads a signed cookie. Validate your configuration at startup, for example as described in the [Configuration](/application/configuration#schema-validation) chapter.
 
 > warning **Warning** Signing protects the integrity of a cookie, not its confidentiality: the value is stored in plain text, and the client can read it. Do not store sensitive data in a signed cookie. Also note that, as with the `cookie-signature` package, the cookie name is not part of the signed data, so a value signed for one cookie also verifies when the client sends it under another name.
 
