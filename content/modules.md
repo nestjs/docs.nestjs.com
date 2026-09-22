@@ -179,93 +179,136 @@ The `@Global()` decorator makes the module global-scoped. Register global module
 
 #### Dynamic modules
 
-Dynamic modules let you create modules that are configured at runtime. They are useful when you need flexible, customizable modules whose providers are created based on options or configuration. Here's a brief overview of how **dynamic modules** work:
+Dynamic modules let you create modules that are configured at runtime. They are useful when a module's providers depend on options supplied by the module that imports it. For example, the following `FeatureFlagsModule` receives the application's feature flags through its static `forRoot()` method:
 
 ```typescript
-@@filename()
-import { Module, DynamicModule } from '@nestjs/common';
-import { createDatabaseProviders } from './database.providers.js';
-import { Connection } from './connection.provider.js';
+@@filename(feature-flags.module)
+import { DynamicModule, Module } from '@nestjs/common';
+import { FEATURE_FLAGS } from './feature-flags.constants.js';
+import { FeatureFlagsService } from './feature-flags.service.js';
 
 @Module({
-  providers: [Connection],
-  exports: [Connection],
+  providers: [FeatureFlagsService],
+  exports: [FeatureFlagsService],
 })
-export class DatabaseModule {
-  static forRoot(entities = [], options?): DynamicModule {
-    const providers = createDatabaseProviders(options, entities);
+export class FeatureFlagsModule {
+  static forRoot(flags: Record<string, boolean>): DynamicModule {
     return {
-      module: DatabaseModule,
-      providers: providers,
-      exports: providers,
+      module: FeatureFlagsModule,
+      providers: [{ provide: FEATURE_FLAGS, useValue: flags }],
     };
   }
 }
 @@switch
 import { Module } from '@nestjs/common';
-import { createDatabaseProviders } from './database.providers.js';
-import { Connection } from './connection.provider.js';
+import { FEATURE_FLAGS } from './feature-flags.constants.js';
+import { FeatureFlagsService } from './feature-flags.service.js';
 
 @Module({
-  providers: [Connection],
-  exports: [Connection],
+  providers: [FeatureFlagsService],
+  exports: [FeatureFlagsService],
 })
-export class DatabaseModule {
-  static forRoot(entities = [], options) {
-    const providers = createDatabaseProviders(options, entities);
+export class FeatureFlagsModule {
+  static forRoot(flags) {
     return {
-      module: DatabaseModule,
-      providers: providers,
-      exports: providers,
+      module: FeatureFlagsModule,
+      providers: [{ provide: FEATURE_FLAGS, useValue: flags }],
     };
   }
 }
 ```
 
+The `FEATURE_FLAGS` injection token is a plain constant (`export const FEATURE_FLAGS = 'FEATURE_FLAGS';`), as described in [Non-class-based provider tokens](/fundamentals/custom-providers#non-class-based-provider-tokens).
+
 > info **Hint** The `forRoot()` method may return a dynamic module either synchronously or asynchronously (i.e., via a `Promise`).
 
-This module always defines the `Connection` provider (in the `@Module()` decorator metadata). In addition, depending on the `entities` and `options` passed to the `forRoot()` method, it exposes a collection of providers, such as repositories. The properties returned by the dynamic module **extend** (rather than override) the base module metadata defined in the `@Module()` decorator. That's how both the statically declared `Connection` provider **and** the dynamically generated repository providers are exported from the module.
-
-To register a dynamic module in the global scope, set the `global` property to `true`:
+The properties returned by `forRoot()` **extend** (rather than override) the metadata defined in the `@Module()` decorator. The resulting module therefore has both the statically declared `FeatureFlagsService` and the dynamically registered `FEATURE_FLAGS` provider. Because they belong to the same module, the service can inject the flags:
 
 ```typescript
-{
-  global: true,
-  module: DatabaseModule,
-  providers: providers,
-  exports: providers,
+@@filename(feature-flags.service)
+import { Inject, Injectable } from '@nestjs/common';
+import { FEATURE_FLAGS } from './feature-flags.constants.js';
+
+@Injectable()
+export class FeatureFlagsService {
+  constructor(
+    @Inject(FEATURE_FLAGS) private readonly flags: Record<string, boolean>,
+  ) {}
+
+  isEnabled(flag: string): boolean {
+    return this.flags[flag] ?? false;
+  }
 }
+@@switch
+import { Dependencies, Injectable } from '@nestjs/common';
+import { FEATURE_FLAGS } from './feature-flags.constants.js';
+
+@Injectable()
+@Dependencies(FEATURE_FLAGS)
+export class FeatureFlagsService {
+  constructor(flags) {
+    this.flags = flags;
+  }
+
+  isEnabled(flag) {
+    return this.flags[flag] ?? false;
+  }
+}
+```
+
+The module exports only `FeatureFlagsService`, so the flags themselves stay an implementation detail of the module.
+
+Import and configure the `FeatureFlagsModule` as follows:
+
+```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { FeatureFlagsModule } from './feature-flags/feature-flags.module.js';
+
+@Module({
+  imports: [
+    FeatureFlagsModule.forRoot({
+      newCheckout: true,
+      betaDashboard: false,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Only the module that imports `FeatureFlagsModule.forRoot()` can inject `FeatureFlagsService`. Calling `forRoot()` again in another module would create a second, separately configured instance. To share a single instance, configure the module once and re-export it. To re-export a dynamic module, list the module class in the `exports` array, without calling `forRoot()` again:
+
+```typescript
+@@filename(core.module)
+import { Module } from '@nestjs/common';
+import { FeatureFlagsModule } from '../feature-flags/feature-flags.module.js';
+
+@Module({
+  imports: [
+    FeatureFlagsModule.forRoot({
+      newCheckout: true,
+      betaDashboard: false,
+    }),
+  ],
+  exports: [FeatureFlagsModule],
+})
+export class CoreModule {}
+```
+
+Every module that imports `CoreModule` can now inject `FeatureFlagsService`, and all of them share the same flags.
+
+Alternatively, to register a dynamic module in the global scope, set the `global` property to `true` in the object returned by `forRoot()`. `FeatureFlagsService` then becomes injectable everywhere, without importing any module:
+
+```typescript
+return {
+  global: true,
+  module: FeatureFlagsModule,
+  providers: [{ provide: FEATURE_FLAGS, useValue: flags }],
+};
 ```
 
 > warning **Warning** As mentioned above, making everything global **is not a good design decision**.
 
-Import and configure the `DatabaseModule` as follows:
-
-```typescript
-import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module.js';
-import { User } from './users/entities/user.entity.js';
-
-@Module({
-  imports: [DatabaseModule.forRoot([User])],
-})
-export class AppModule {}
-```
-
-To re-export a dynamic module, omit the `forRoot()` method call in the `exports` array:
-
-```typescript
-import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module.js';
-import { User } from './users/entities/user.entity.js';
-
-@Module({
-  imports: [DatabaseModule.forRoot([User])],
-  exports: [DatabaseModule],
-})
-export class AppModule {}
-```
-
-The [Dynamic modules](/fundamentals/dynamic-modules) chapter covers this topic in greater detail and includes a [working example](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules).
+Options known only at runtime, such as values read by `ConfigService`, call for an asynchronous variant of `forRoot()`. The [Dynamic modules](/fundamentals/dynamic-modules) chapter covers this and more.
 
 > info **Hint** To learn how to build highly customizable dynamic modules with `ConfigurableModuleBuilder`, see the [Configurable module builder](/fundamentals/dynamic-modules#configurable-module-builder) section.
