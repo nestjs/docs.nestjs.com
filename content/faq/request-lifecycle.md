@@ -1,14 +1,14 @@
 ### Request lifecycle
 
-Nest applications handle requests and produce responses in a sequence we refer to as the **request lifecycle**. With the use of middleware, pipes, guards, and interceptors, it can be challenging to track down where a particular piece of code executes during the request lifecycle, especially as global, controller level, and route level components come into play. In general, a request flows through middleware to guards, then to interceptors, then to pipes and finally back to interceptors on the return path (as the response is generated).
+Nest applications handle requests and produce responses in a sequence called the **request lifecycle**. With middleware, pipes, guards, and interceptors in play, it can be challenging to track down where a particular piece of code runs during the request lifecycle, especially when global, controller-level, and route-level components are combined. In general, a request flows through middleware, then guards, then interceptors, then pipes, and finally back through interceptors on the return path (as the response is generated).
 
 #### Middleware
 
-Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use`) and then it runs [module bound middleware](/middleware), which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works. In the case of middleware bound across different modules, the middleware bound to the root module will run first, and then middleware will run in the order that the modules are added to the imports array.
+Middleware runs in a specific sequence. First, Nest runs globally bound middleware (such as middleware bound with `app.use()`), and then it runs [module-bound middleware](/middleware), which is matched by path. Middleware runs sequentially in the order it is bound, just like middleware in Express. For middleware bound in different modules, middleware from global modules (decorated with `@Global()`) runs first, then middleware bound in the root module, followed by middleware from the other modules, ordered by their distance from the root module in the import graph.
 
 #### Guards
 
-Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound. For example:
+Guard execution starts with global guards, proceeds to controller guards, and ends with route guards. As with middleware, guards run in the order in which they are bound. For example:
 
 ```typescript
 @UseGuards(Guard1, Guard2)
@@ -26,15 +26,15 @@ export class CatsController {
 
 `Guard1` will execute before `Guard2` and both will execute before `Guard3`.
 
-> info **Hint** When speaking about globally bound vs controller or locally bound, the difference is where the guard (or other component is bound). If you are using `app.useGlobalGuards()` or providing the component via a module, it is globally bound. Otherwise, it is bound to a controller if the decorator precedes a controller class, or to a route if the decorator precedes a route declaration.
+> info **Hint** "Global", "controller", and "route" refer to where the guard (or other component) is bound. A component registered with `app.useGlobalGuards()` (or a similar method), or provided through a module with the `APP_GUARD` token (or a similar token), is globally bound. Otherwise, it is bound to a controller if the decorator precedes a controller class, or to a route if the decorator precedes a route handler.
 
 #### Interceptors
 
-Interceptors, for the most part, follow the same pattern as guards, with one catch: as interceptors return [RxJS Observables](https://github.com/ReactiveX/rxjs), the observables will be resolved in a first in last out manner. So inbound requests will go through the standard global, controller, route level resolution, but the response side of the request (i.e., after returning from the controller method handler) will be resolved from route to controller to global. Also, any errors thrown by pipes, controllers, or services can be read in the `catchError` operator of an interceptor.
+Interceptors mostly follow the same pattern as guards, with one difference: because interceptors return [RxJS Observables](https://github.com/ReactiveX/rxjs), the observables are resolved in a first-in, last-out manner. Inbound requests go through the standard global, controller, route order, but the response side (i.e., after the route handler returns) is resolved from route to controller to global. Also, any errors thrown by pipes, controllers, or services can be read in an interceptor's `catchError` operator.
 
 #### Pipes
 
-Pipes follow the standard global to controller to route bound sequence, with the same first in first out in regards to the `@UsePipes()` parameters. However, at a route parameter level, if you have multiple pipes running, they will run in the order of the last parameter with a pipe to the first. This also applies to the route level and controller level pipes. For example, if we have the following controller:
+Pipes follow the standard global, controller, route sequence, and pipes passed to `@UsePipes()` run first in, first out. However, at the route parameter level, when several parameters have pipes, the pipes process the last parameter first and the first parameter last. This also applies to route-level and controller-level pipes. For example, consider the following controller:
 
 ```typescript
 @UsePipes(GeneralValidationPipe)
@@ -54,17 +54,17 @@ export class CatsController {
 }
 ```
 
-then the `GeneralValidationPipe` will run for the `query`, then the `params`, and then the `body` objects before moving on to the `RouteSpecificPipe`, which follows the same order. If any parameter-specific pipes were in place, they would run (again, from the last to first parameter) after the controller and route level pipes.
+Here, the `GeneralValidationPipe` runs for the `query`, then the `params`, and then the `body` objects before moving on to the `RouteSpecificPipe`, which follows the same order. Any parameter-specific pipes would run (again, from the last parameter to the first) after the controller-level and route-level pipes.
 
 #### Filters
 
-Filters are the only component that do not resolve global first. Instead, filters resolve from the lowest level possible, meaning execution starts with any route bound filters and proceeding next to controller level, and finally to global filters. Note that exceptions cannot be passed from filter to filter; if a route level filter catches the exception, a controller or global level filter cannot catch the same exception. The only way to achieve an effect like this is to use inheritance between the filters.
+Filters are the only component that don't resolve global first. Instead, filters resolve from the lowest level possible: Nest checks route-bound filters first, then controller-level filters, and finally global filters. Exceptions can't be passed from filter to filter; if a route-level filter catches the exception, a controller-level or global filter can't catch the same exception. To achieve a similar effect, use inheritance between the filters.
 
-> info **Hint** Filters are only executed if any uncaught exception occurs during the request process. Caught exceptions, such as those caught with a `try/catch` will not trigger Exception Filters to fire. As soon as an uncaught exception is encountered, the rest of the lifecycle is ignored and the request skips straight to the filter. Exceptions thrown from [middleware](/middleware#error-handling) are handled by the exceptions layer as well, but only **global** exception filters apply, because middleware runs before a route handler is selected.
+> info **Hint** Filters run only when an uncaught exception occurs during request processing. Exceptions you catch yourself (e.g., with `try/catch`) don't trigger exception filters. As soon as an uncaught exception is encountered, the rest of the lifecycle is skipped and the request goes straight to the filter. Exceptions thrown from [middleware](/middleware#error-handling) are handled by the exceptions layer as well, but only **global** exception filters apply, because middleware runs before a route handler is selected.
 
 #### Summary
 
-In general, the request lifecycle looks like the following:
+In general, the request lifecycle looks like this:
 
 1. Incoming request
 2. Middleware
@@ -86,11 +86,11 @@ In general, the request lifecycle looks like the following:
 6. Controller (method handler)
 7. Service (if exists)
 8. Interceptors (post-request)
-   - 8.1 Route interceptor
-   - 8.2 Controller interceptor
-   - 8.3 Global interceptor
+   - 8.1 Route interceptors
+   - 8.2 Controller interceptors
+   - 8.3 Global interceptors
 9. Exception filters
-   - 9.1 route
-   - 9.2 controller
-   - 9.3 global
+   - 9.1 Route filters
+   - 9.2 Controller filters
+   - 9.3 Global filters
 10. Server response

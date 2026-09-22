@@ -1,6 +1,6 @@
 ### Hybrid application
 
-A hybrid application is one that listens for requests from two or more different sources. This can combine an HTTP server with a microservice listener or even just multiple different microservice listeners. The default `createMicroservice` method does not allow for multiple servers so in this case each microservice must be created and started manually. In order to do this, the `INestApplication` instance can be connected with `INestMicroservice` instances through the `connectMicroservice()` method.
+A hybrid application listens for requests from two or more different sources. It can combine an HTTP server with a microservice listener, or combine several different microservice listeners. The `createMicroservice()` method doesn't support multiple servers, so in this case you create and start each microservice manually. To do this, connect `INestMicroservice` instances to the `INestApplication` instance with the `connectMicroservice()` method.
 
 ```typescript
 const app = await NestFactory.create(AppModule);
@@ -12,11 +12,11 @@ await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
-> info **Hint** the `app.listen(port)` method starts an HTTP server on the specified address. If your application does not handle HTTP requests then you should use the `app.init()` method instead.
+> info **Hint** The `app.listen(port)` method starts an HTTP server on the specified port. If your application doesn't handle HTTP requests, use the `app.init()` method instead.
 
 > warning **Notice** The order of these calls matters. With `await app.startAllMicroservices()` first (as above), the microservices begin consuming messages **before** the application's lifecycle hooks (such as `onModuleInit` and `onApplicationBootstrap`) have completed. Call `app.listen()` (or `app.init()`) before `startAllMicroservices()` if your handlers must not receive messages until every module has fully initialized.
 
-To connect multiple microservice instances, issue the call to `connectMicroservice()` for each microservice:
+To connect multiple microservice instances, call `connectMicroservice()` once for each microservice:
 
 ```typescript
 const app = await NestFactory.create(AppModule);
@@ -24,7 +24,7 @@ const app = await NestFactory.create(AppModule);
 const microserviceTcp = app.connectMicroservice<MicroserviceOptions>({
   transport: Transport.TCP,
   options: {
-    port: 3001,
+    port: 3002,
   },
 });
 // microservice #2
@@ -40,7 +40,7 @@ await app.startAllMicroservices();
 await app.listen(3001);
 ```
 
-To bind `@MessagePattern()` to only one transport strategy (for example, MQTT) in a hybrid application with multiple microservices, we can pass a second argument identifying the transport. For the built-in strategies, this is a value of the `Transport` enum; for a [custom transporter](/microservices/custom-transport), it is the `transportId` symbol of its server class.
+In a hybrid application with multiple microservices, you can bind `@MessagePattern()` to a single transport strategy (for example, NATS) by passing a second argument that identifies the transport. For the built-in strategies, this is a value of the `Transport` enum; for a [custom transporter](/microservices/custom-transport), it is the `transportId` symbol of its server class.
 
 ```typescript
 @@filename()
@@ -81,8 +81,8 @@ getXYZDate(data) {
 
 #### Sharing configuration
 
-By default a hybrid application will not inherit global pipes, interceptors, guards and filters configured for the main (HTTP-based) application.
-To inherit these configuration properties from the main application, set the `inheritAppConfig` property in the second argument (an optional options object) of the `connectMicroservice()` call, as follow:
+By default, connected microservices don't inherit the global pipes, interceptors, guards, and filters configured for the main (HTTP-based) application. This applies both to enhancers registered with the `useGlobal*()` methods and to those registered as providers with the `APP_PIPE`, `APP_INTERCEPTOR`, `APP_GUARD`, and `APP_FILTER` tokens.
+To inherit this configuration, set the `inheritAppConfig` property in the options object passed as the second argument of `connectMicroservice()`:
 
 ```typescript
 const microservice = app.connectMicroservice<MicroserviceOptions>(
@@ -92,3 +92,5 @@ const microservice = app.connectMicroservice<MicroserviceOptions>(
   { inheritAppConfig: true },
 );
 ```
+
+> info **Hint** A connected microservice registers its message handlers as soon as `connectMicroservice()` is called. When you use `inheritAppConfig`, call `app.useGlobalPipes()`, `app.useGlobalGuards()`, and the other `useGlobal*()` methods **before** `connectMicroservice()`, otherwise the enhancers they register won't apply to the microservice's handlers.

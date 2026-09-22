@@ -1,12 +1,12 @@
 ### Kafka
 
-[Kafka](https://kafka.apache.org/) is an open source, distributed streaming platform which has three key capabilities:
+[Kafka](https://kafka.apache.org/) is an open source, distributed streaming platform with three key capabilities:
 
 - Publish and subscribe to streams of records, similar to a message queue or enterprise messaging system.
 - Store streams of records in a fault-tolerant durable way.
 - Process streams of records as they occur.
 
-The Kafka project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. It integrates very well with Apache Storm and Spark for real-time streaming data analysis.
+The Kafka project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds. It integrates with Apache Storm and Spark for real-time streaming data analysis.
 
 #### Installation
 
@@ -18,7 +18,7 @@ $ npm i --save kafkajs
 
 #### Overview
 
-Like other Nest microservice transport layer implementations, you select the Kafka transporter mechanism using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
+As with other Nest microservice transport layer implementations, you select the Kafka transporter using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
 
 ```typescript
 @@filename(main)
@@ -45,86 +45,86 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 #### Options
 
-The `options` property is specific to the chosen transporter. The <strong>Kafka</strong> transporter exposes the properties described below.
+The `options` property is specific to the chosen transporter. The <strong>Kafka</strong> transporter exposes the following properties.
 
 <table>
   <tr>
     <td><code>client</code></td>
-    <td>Client configuration options (read more
+    <td>Client configuration options (see the
       <a
         href="https://kafka.js.org/docs/configuration"
         rel="nofollow"
-        target="blank"
-        >here</a
+        target="_blank"
+        >KafkaJS client configuration</a
       >)</td>
   </tr>
   <tr>
     <td><code>consumer</code></td>
-    <td>Consumer configuration options (read more
+    <td>Consumer configuration options (see the
       <a
         href="https://kafka.js.org/docs/consuming#a-name-options-a-options"
         rel="nofollow"
-        target="blank"
-        >here</a
+        target="_blank"
+        >KafkaJS consumer options</a
       >)</td>
   </tr>
   <tr>
     <td><code>run</code></td>
-    <td>Run configuration options (read more
+    <td>Options passed to the consumer's <code>run()</code> method (see
       <a
         href="https://kafka.js.org/docs/consuming"
         rel="nofollow"
-        target="blank"
-        >here</a
+        target="_blank"
+        >KafkaJS consuming messages</a
       >)</td>
   </tr>
   <tr>
     <td><code>subscribe</code></td>
-    <td>Subscribe configuration options (read more
+    <td>Options passed to the consumer's <code>subscribe()</code> method, except <code>topics</code>, which Nest derives from the registered patterns (see
       <a
         href="https://kafka.js.org/docs/consuming#frombeginning"
         rel="nofollow"
-        target="blank"
-        >here</a
+        target="_blank"
+        >KafkaJS fromBeginning</a
       >)</td>
   </tr>
   <tr>
     <td><code>producer</code></td>
-    <td>Producer configuration options (read more
+    <td>Producer configuration options (see the
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
-        target="blank"
-        >here</a
+        target="_blank"
+        >KafkaJS producer options</a
       >)</td>
   </tr>
   <tr>
     <td><code>send</code></td>
-    <td>Send configuration options (read more
+    <td>Options passed to the producer's <code>send()</code> method, except <code>topic</code> and <code>messages</code> (see the
       <a
         href="https://kafka.js.org/docs/producing#options"
         rel="nofollow"
-        target="blank"
-        >here</a
+        target="_blank"
+        >KafkaJS producing messages</a
       >)</td>
   </tr>
   <tr>
     <td><code>producerOnlyMode</code></td>
-    <td>Feature flag to skip consumer group registration and only act as a producer (<code>boolean</code>)</td>
+    <td>Client only. Skips consumer group registration so the client acts only as a producer (<code>boolean</code>)</td>
   </tr>
   <tr>
     <td><code>postfixId</code></td>
-    <td>Change suffix of clientId value (<code>string</code>)</td>
+    <td>Suffix appended to the <code>clientId</code> and <code>groupId</code> values. Defaults to <code>'-server'</code> on the server and <code>'-client'</code> on the client (<code>string</code>)</td>
   </tr>
 </table>
 
 #### Client
 
-There is a small difference in Kafka compared to other microservice transporters. Instead of the `ClientProxy` class, we use the `ClientKafkaProxy` class.
+Kafka differs slightly from other microservice transporters: instead of the `ClientProxy` type, you use `ClientKafkaProxy`.
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a `ClientKafkaProxy` instance.
+As with other microservice transporters, you have [several options](/microservices/basics#client) for creating a `ClientKafkaProxy` instance.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+One option is the `ClientsModule`. Import it and use its `register()` method to pass an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property used as the injection token. See the [client section of the microservices overview](/microservices/basics#client) to learn more about `ClientsModule`.
 
 ```typescript
 @Module({
@@ -149,7 +149,7 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+You can also create a client with `ClientProxyFactory` or the `@Client()` decorator, both described in the [microservices overview](/microservices/basics#client).
 
 Use the `@Client()` decorator as follows:
 
@@ -171,19 +171,19 @@ client: ClientKafkaProxy;
 
 #### Message pattern
 
-The Kafka microservice message pattern utilizes two topics for the request and reply channels. The `ClientKafkaProxy.send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafkaProxy` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
+The Kafka microservice message pattern uses two topics for the request and reply channels. The `ClientKafkaProxy.send()` method sends messages with a [return address](https://www.enterpriseintegrationpatterns.com/patterns/messaging/ReturnAddress.html) by associating a [correlation id](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html), reply topic, and reply partition with the request message. This requires the `ClientKafkaProxy` instance to be subscribed to the reply topic and assigned to at least one partition before sending a message.
 
-Subsequently, you need to have at least one reply topic partition for every Nest application running. For example, if you are running 4 Nest applications but the reply topic only has 3 partitions, then 1 of the Nest applications will error out when trying to send a message.
+As a result, you need at least one reply topic partition for every running Nest application. For example, if you run 4 Nest applications but the reply topic has only 3 partitions, 1 of the Nest applications will fail when it tries to send a message.
 
-When new `ClientKafkaProxy` instances are launched they join the consumer group and subscribe to their respective topics. This process triggers a rebalance of topic partitions assigned to consumers of the consumer group.
+When new `ClientKafkaProxy` instances launch, they join the consumer group and subscribe to their respective topics. This triggers a rebalance of the topic partitions assigned to the consumers in the group.
 
-Normally, topic partitions are assigned using the round robin partitioner, which assigns topic partitions to a collection of consumers sorted by consumer names which are randomly set on application launch. However, when a new consumer joins the consumer group, the new consumer can be positioned anywhere within the collection of consumers. This creates a condition where pre-existing consumers can be assigned different partitions when the pre-existing consumer is positioned after the new consumer. As a result, the consumers that are assigned different partitions will lose response messages of requests sent before the rebalance.
+Normally, topic partitions are assigned using the round-robin assigner, which assigns topic partitions to a collection of consumers sorted by consumer names that are randomly set on application launch. However, when a new consumer joins the consumer group, it can be positioned anywhere within that collection. Pre-existing consumers positioned after the new consumer can then be assigned different partitions, and those consumers lose the response messages of requests sent before the rebalance.
 
-To prevent the `ClientKafkaProxy` consumers from losing response messages, a Nest-specific built-in custom partitioner is utilized. This custom partitioner assigns partitions to a collection of consumers sorted by high-resolution timestamps (`process.hrtime()`) that are set on application launch.
+To prevent `ClientKafkaProxy` consumers from losing response messages, Nest uses a built-in custom partition assigner. During a rebalance, it lets each existing consumer keep the reply partition it was previously assigned, and distributes the remaining partitions among the other consumers.
 
 #### Regular expression patterns
 
-KafkaJS supports subscribing to topics by regular expression, and starting with NestJS v12 you can pass a `RegExp` directly to `@MessagePattern()` or `@EventPattern()`. Nest preserves the pattern, forwards it to the KafkaJS `subscribe()` call, and falls back to regular expression matching when resolving a handler for an incoming topic.
+KafkaJS supports subscribing to topics by regular expression. Starting with NestJS v12, you can pass a `RegExp` directly to `@MessagePattern()` or `@EventPattern()`. Nest preserves the pattern, forwards it to the KafkaJS `subscribe()` call, and falls back to regular expression matching when resolving a handler for an incoming topic.
 
 ```typescript
 @@filename()
@@ -199,15 +199,15 @@ handleHeroEvents(data, context) {
 }
 ```
 
-This subscribes the handler to every topic matching the expression - `hero.kill.dragon`, `hero.rescue.villager`, and so on - without registering each one explicitly. Use `context.getTopic()` to find out which topic actually delivered the message.
+This subscribes the handler to every topic matching the expression (`hero.kill.dragon`, `hero.rescue.villager`, and so on) without registering each one explicitly. Use `context.getTopic()` to find out which topic delivered the message.
 
 > info **Hint** Regular expression patterns are a Kafka-specific capability; other transporters continue to match patterns by exact value. Nest resets `lastIndex` before matching, so global (`/g`) and sticky (`/y`) expressions do not produce stateful misses.
 
 #### Message response subscription
 
-> warning **Note** This section is only relevant if you use [request-response](/microservices/basics#request-response) message style (with the `@MessagePattern` decorator and the `ClientKafkaProxy.send` method). Subscribing to the response topic is not necessary for the [event-based](/microservices/basics#event-based) communication (`@EventPattern` decorator and `ClientKafkaProxy.emit` method).
+> warning **Note** This section is relevant only if you use the [request-response](/microservices/basics#request-response) message style (the `@MessagePattern()` decorator and the `ClientKafkaProxy.send()` method). Subscribing to the response topic is not necessary for [event-based](/microservices/basics#event-based) communication (the `@EventPattern()` decorator and the `ClientKafkaProxy.emit()` method).
 
-The `ClientKafkaProxy` class provides the `subscribeToResponseOf()` method. The `subscribeToResponseOf()` method takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
+`ClientKafkaProxy` provides the `subscribeToResponseOf()` method, which takes a request's topic name as an argument and adds the derived reply topic name to a collection of reply topics. This method is required when implementing the message pattern.
 
 ```typescript
 @@filename(heroes.controller)
@@ -216,7 +216,7 @@ onModuleInit() {
 }
 ```
 
-If the `ClientKafkaProxy` instance is created asynchronously, the `subscribeToResponseOf()` method must be called before calling the `connect()` method.
+If the `ClientKafkaProxy` instance is created asynchronously, call the `subscribeToResponseOf()` method before calling the `connect()` method.
 
 ```typescript
 @@filename(heroes.controller)
@@ -228,11 +228,11 @@ async onModuleInit() {
 
 #### Incoming
 
-Nest receives incoming Kafka messages as an object with `key`, `value`, and `headers` properties that have values of type `Buffer`. Nest then parses these values by transforming the buffers into strings. If the string is "object like", Nest attempts to parse the string as `JSON`. The `value` is then passed to its associated handler.
+Nest receives incoming Kafka messages as objects with `key`, `value`, and `headers` properties whose values are of type `Buffer`. Nest parses these values by converting the buffers into strings. If a string is "object-like" (i.e., it starts with a curly brace or a square bracket), Nest attempts to parse it as JSON. The `value` is then passed to the associated handler.
 
 #### Outgoing
 
-Nest sends outgoing Kafka messages after a serialization process when publishing events or sending messages. This occurs on arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods or on values returned from a `@MessagePattern` method. This serialization "stringifies" objects that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
 
 ```typescript
 @@filename(heroes.controller)
@@ -252,7 +252,7 @@ export class HeroesController {
 
 > info **Hint** `@Payload()` is imported from the `@nestjs/microservices` package.
 
-Outgoing messages can also be keyed by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
+You can also key outgoing messages by passing an object with the `key` and `value` properties. Keying messages is important for meeting the [co-partitioning requirement](https://docs.confluent.io/current/ksql/docs/developer-guide/partition-data.html#co-partitioning-requirements).
 
 ```typescript
 @@filename(heroes.controller)
@@ -280,7 +280,7 @@ export class HeroesController {
 }
 ```
 
-Additionally, messages passed in this format can also contain custom headers set in the `headers` hash property. Header hash property values must be either of type `string` or type `Buffer`.
+Messages passed in this format can also contain custom headers set in the `headers` property. Header values must be of type `string` or `Buffer`.
 
 ```typescript
 @@filename(heroes.controller)
@@ -310,13 +310,13 @@ export class HeroesController {
 
 #### Event-based
 
-While the request-response method is ideal for exchanging messages between services, it is less suitable when your message style is event-based (which in turn is ideal for Kafka) - when you just want to publish events **without waiting for a response**. In that case, you do not want the overhead required by request-response for maintaining two topics.
+While the request-response method is ideal for exchanging messages between services, it is less suitable when your message style is event-based (which is ideal for Kafka), that is, when you want to publish events **without waiting for a response**. In that case, you don't want the overhead of maintaining two topics that request-response requires.
 
-Check out these two sections to learn more about this: [Overview: Event-based](/microservices/basics#event-based) and [Overview: Publishing events](/microservices/basics#publishing-events).
+See [Overview: Event-based](/microservices/basics#event-based) and [Overview: Publishing events](/microservices/basics#publishing-events) to learn more.
 
 #### Context
 
-In more complex scenarios, you may need to access additional information about the incoming request. When using the Kafka transporter, you can access the `KafkaContext` object.
+In more complex scenarios, you may need additional information about the incoming request. When using the Kafka transporter, you can access the `KafkaContext` object.
 
 ```typescript
 @@filename()
@@ -354,7 +354,7 @@ killDragon(message, context) {
 }
 ```
 
-Where the `IncomingMessage` fulfills the following interface:
+The `IncomingMessage` object fulfills the following interface:
 
 ```typescript
 interface IncomingMessage {
@@ -370,7 +370,7 @@ interface IncomingMessage {
 }
 ```
 
-If your handler involves a slow processing time for each received message you should consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
+If your handler takes a long time to process each message, consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
 
 ```typescript
 @@filename()
@@ -391,7 +391,7 @@ async killDragon(@Payload() message: KillDragonMessage, @Ctx() context: KafkaCon
 
 #### Naming conventions
 
-The Kafka microservice components append a description of their respective role onto the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default the `ClientKafkaProxy` components append `-client` and the `ServerKafka` components append `-server` to both of these options. Note how the provided values below are transformed in that way (as shown in the comments).
+The Kafka microservice components append a description of their role to the `client.clientId` and `consumer.groupId` options to prevent collisions between Nest microservice client and server components. By default, the `ClientKafkaProxy` components append `-client` and the `ServerKafka` components append `-server` to both options. The comments below show how the provided values are transformed.
 
 ```typescript
 @@filename(main)
@@ -428,9 +428,9 @@ And for the client:
 client: ClientKafkaProxy;
 ```
 
-> info **Hint** Kafka client and consumer naming conventions can be customized by extending `ClientKafkaProxy` and `KafkaServer` in your own custom provider and overriding the constructor.
+> info **Hint** To change the appended suffix, set the `postfixId` option. For further customization of the client and consumer naming conventions, extend the `ClientKafka` and `ServerKafka` classes in your own custom provider and override the constructor.
 
-Since the Kafka microservice message pattern utilizes two topics for the request and reply channels, a reply pattern should be derived from the request topic. By default, the name of the reply topic is the composite of the request topic name with `.reply` appended.
+Because the Kafka microservice message pattern uses two topics for the request and reply channels, the reply pattern is derived from the request topic. By default, the name of the reply topic is the request topic name with `.reply` appended.
 
 ```typescript
 @@filename(heroes.controller)
@@ -439,34 +439,33 @@ onModuleInit() {
 }
 ```
 
-> info **Hint** Kafka reply topic naming conventions can be customized by extending `ClientKafkaProxy` in your own custom provider and overriding the `getResponsePatternName` method.
+> info **Hint** To customize the reply topic naming convention, extend the `ClientKafka` class in your own custom provider and override the `getResponsePatternName()` method.
 
 #### Retriable exceptions
 
-Similar to other transporters, all unhandled exceptions are automatically wrapped into an `RpcException` and converted to a "user-friendly" format. However, there are edge-cases when you might want to bypass this mechanism and let exceptions be consumed by the `kafkajs` driver instead. Throwing an exception when processing a message instructs `kafkajs` to **retry** it (redeliver it) which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+As with other transporters, unhandled exceptions are automatically converted to a "user-friendly" format. However, in some edge cases you might want to bypass this mechanism and let the `kafkajs` driver consume exceptions instead. Throwing an exception while processing a message instructs `kafkajs` to **retry** it (redeliver it), which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
 
 > warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
 
-For this, you can use a dedicated class called `KafkaRetriableException`, as follows:
+For message handlers, use the dedicated `KafkaRetriableException` class, as follows:
 
 ```typescript
 throw new KafkaRetriableException('...');
 ```
 
-> info **Hint** `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
+> info **Hint** The `KafkaRetriableException` class is exported from the `@nestjs/microservices` package.
 
-### Custom exception handling
+#### Custom exception handling
 
-Along with the default error handling mechanisms, you can create a custom Exception Filter for Kafka events to manage retry logic. For instance, the example below demonstrates how to skip a problematic event after a configurable number of retries:
+Along with the default error handling mechanisms, you can create a custom exception filter for Kafka events to manage retry logic. For example, the filter below skips a problematic event after a configurable number of retries:
 
 ```typescript
-import { Catch, ArgumentsHost, Logger } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
+import { Catch, ArgumentsHost, ExceptionFilter, Logger } from '@nestjs/common';
 import { KafkaContext } from '@nestjs/microservices';
 import { Producer } from 'kafkajs';
 
 @Catch()
-export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
+export class KafkaMaxRetryExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(KafkaMaxRetryExceptionFilter.name);
 
   constructor(
@@ -474,9 +473,7 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
     private readonly maxRetries: number,
     // Optional custom function executed when max retries are exceeded
     private readonly skipHandler?: (message: any) => Promise<void>,
-  ) {
-    super();
-  }
+  ) {}
 
   async catch(exception: unknown, host: ArgumentsHost) {
     const kafkaContext = host.switchToRpc().getContext<KafkaContext>();
@@ -515,8 +512,8 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
         'Failed to republish message for retry:',
         republishError,
       );
-      // Fall back to default exception handling
-      super.catch(exception, host);
+      // Rethrow so that KafkaJS retries the message
+      throw exception;
     }
   }
 
@@ -584,9 +581,9 @@ export class KafkaMaxRetryExceptionFilter extends BaseExceptionFilter {
 }
 ```
 
-This filter offers a way to retry processing a Kafka event up to a configurable number of times. When an exception occurs, it republishes the message to the same topic with an incremented `retry-count` header, then commits the current offset. Once the maximum retries are reached, it triggers a custom `skipHandler` (if provided) and commits the offset, effectively skipping the problematic event. This allows subsequent events to be processed without interruption.
+This filter retries processing a Kafka event up to a configurable number of times. When an exception occurs, it republishes the message to the same topic with an incremented `retry-count` header, then commits the current offset. Once the maximum number of retries is reached, it calls the custom `skipHandler` (if provided) and commits the offset, skipping the problematic event. This allows subsequent events to be processed without interruption.
 
-You can integrate this filter by registering it globally or at the controller level. Note that you need to provide a Kafka producer instance:
+You can register this filter globally or at the controller level. It requires a Kafka producer instance:
 
 ```typescript
 @@filename(kafka-retry.filter)
@@ -657,7 +654,7 @@ export class AppModule {}
 
 #### Commit offsets
 
-Committing offsets is essential when working with Kafka. Per default, messages will be automatically committed after a specific time. For more information visit [KafkaJS docs](https://kafka.js.org/docs/consuming#autocommit). `KafkaContext` offers a way to access the active consumer for manually committing offsets. The consumer is the KafkaJS consumer and works as the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+Committing offsets is essential when working with Kafka. By default, messages are committed automatically after a specific time (see the [KafkaJS autocommit documentation](https://kafka.js.org/docs/consuming#autocommit)). `KafkaContext` gives you access to the active consumer for committing offsets manually. The consumer is the KafkaJS consumer and works like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
 
 ```typescript
 @@filename()
@@ -669,7 +666,10 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
   const partition = context.getPartition();
   const topic = context.getTopic();
   const consumer = context.getConsumer();
-  await consumer.commitOffsets([{ topic, partition, offset }])
+  // Commit the next offset to consume (i.e., current offset + 1)
+  await consumer.commitOffsets([
+    { topic, partition, offset: (Number(offset) + 1).toString() },
+  ]);
 }
 @@switch
 @Bind(Payload(), Ctx())
@@ -681,11 +681,14 @@ async handleUserCreated(data, context) {
   const partition = context.getPartition();
   const topic = context.getTopic();
   const consumer = context.getConsumer();
-  await consumer.commitOffsets([{ topic, partition, offset }])
+  // Commit the next offset to consume (i.e., current offset + 1)
+  await consumer.commitOffsets([
+    { topic, partition, offset: (Number(offset) + 1).toString() },
+  ]);
 }
 ```
 
-To disable auto-committing of messages set `autoCommit: false` in the `run` configuration, as follows:
+To disable auto-committing, set `autoCommit: false` in the `run` configuration, as follows:
 
 ```typescript
 @@filename(main)
@@ -716,7 +719,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 #### Instance status updates
 
-To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the Kafka driver, the `status` stream emits `connected`, `disconnected`, `rebalancing`, `crashed`, and `stopped` events.
+To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the Kafka driver, the `status` stream emits `connected`, `disconnected`, `rebalancing`, `crashed`, and `stopped` events.
 
 ```typescript
 this.client.status.subscribe((status: KafkaStatus) => {
@@ -726,7 +729,7 @@ this.client.status.subscribe((status: KafkaStatus) => {
 
 > info **Hint** The `KafkaStatus` type is imported from the `@nestjs/microservices` package.
 
-Similarly, you can subscribe to the server's `status` stream to receive notifications about the server's status.
+Similarly, you can subscribe to the server's `status` stream to receive notifications about the server's status:
 
 ```typescript
 const server = app.connectMicroservice<MicroserviceOptions>(...);
@@ -737,9 +740,9 @@ server.status.subscribe((status: KafkaStatus) => {
 
 #### Underlying producer and consumer
 
-For more advanced use cases, you may need to access the underlying producer and consumer instances. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
+For more advanced use cases, you may need to access the underlying producer and consumer instances, for example, to close the connection manually or to use driver-specific methods. In most cases, however, you **shouldn't need** to access the driver directly.
 
-To do so, you can use `producer` and `consumer` getters exposed by the `ClientKafkaProxy` instance.
+To do so, use the `producer` and `consumer` properties exposed by the `ClientKafkaProxy` instance.
 
 ```typescript
 const producer = this.client.producer;

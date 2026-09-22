@@ -1,6 +1,6 @@
 ### RabbitMQ
 
-[RabbitMQ](https://www.rabbitmq.com/) is an open-source and lightweight message broker which supports multiple messaging protocols. It can be deployed in distributed and federated configurations to meet high-scale, high-availability requirements. In addition, it's the most widely deployed message broker, used worldwide at small startups and large enterprises.
+[RabbitMQ](https://www.rabbitmq.com/) is an open-source, lightweight message broker that supports multiple messaging protocols. It can be deployed in distributed and federated configurations to meet high-scale, high-availability requirements, and it is one of the most widely deployed message brokers, used by small startups and large enterprises alike.
 
 #### Installation
 
@@ -43,7 +43,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 #### Options
 
-The `options` property is specific to the chosen transporter. The <strong>RabbitMQ</strong> transporter exposes the properties described below.
+The `options` property is specific to the chosen transporter. The <strong>RabbitMQ</strong> transporter exposes the following properties.
 
 <table>
   <tr>
@@ -52,7 +52,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>queue</code></td>
-    <td>Queue name which your server will listen to</td>
+    <td>Name of the queue your server listens to</td>
   </tr>
   <tr>
     <td><code>prefetchCount</code></td>
@@ -60,51 +60,55 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>isGlobalPrefetchCount</code></td>
-    <td>Enables per channel prefetching</td>
+    <td>If <code>true</code>, applies the prefetch count per channel instead of per consumer</td>
   </tr>
   <tr>
     <td><code>noAck</code></td>
-    <td>If <code>false</code>, manual acknowledgment mode enabled</td>
+    <td>If <code>false</code>, enables manual acknowledgment mode. Defaults to <code>true</code></td>
   </tr>
   <tr>
     <td><code>consumerTag</code></td>
-    <td>A name which the server will use to distinguish message deliveries for the consumer; mustn't be already in use on the channel. It's usually easier to omit this, in which case the server will create a random name and supply it in the reply. Consumer Tag Identifier (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank">here</a>)</td>
+    <td>A name the server uses to distinguish message deliveries for the consumer; it must not already be in use on the channel. It's usually easier to omit it, in which case the server creates a random name and supplies it in the reply (see <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank"><code>channel.consume()</code> in the amqplib documentation</a>)</td>
   </tr>
   <tr>
     <td><code>queueOptions</code></td>
-    <td>Additional queue options (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank">here</a>)</td>
+    <td>Additional queue options (see <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_assertQueue" rel="nofollow" target="_blank"><code>channel.assertQueue()</code> in the amqplib documentation</a>)</td>
   </tr>
   <tr>
     <td><code>socketOptions</code></td>
-    <td>Additional socket options (read more <a href="https://amqp-node.github.io/amqplib/channel_api.html#connect" rel="nofollow" target="_blank">here</a>)</td>
+    <td>Additional socket options (see <a href="https://amqp-node.github.io/amqplib/channel_api.html#connect" rel="nofollow" target="_blank"><code>connect()</code> in the amqplib documentation</a>)</td>
   </tr>
   <tr>
     <td><code>headers</code></td>
-    <td>Headers to be sent along with every message</td>
+    <td>Headers to send with every message. Applies only to the producer (client) configuration</td>
   </tr>
   <tr>
     <td><code>replyQueue</code></td>
-    <td>Reply queue for the producer. Default is <code>amq.rabbitmq.reply-to</code></td>
+    <td>Reply queue for the producer. Defaults to <code>amq.rabbitmq.reply-to</code></td>
   </tr>
   <tr>
     <td><code>persistent</code></td>
-    <td>If truthy, the message will survive broker restarts provided it's in a queue that also survives restarts</td>
+    <td>If truthy, messages survive broker restarts, provided they are in a queue that also survives restarts</td>
   </tr>
   <tr>
     <td><code>noAssert</code></td>
-    <td>When false, a queue will not be asserted before consuming</td>
+    <td>If <code>true</code>, the queue is not asserted before consuming. Defaults to <code>false</code></td>
   </tr>
   <tr>
     <td><code>wildcards</code></td>
-    <td>Set to true only if you want to use Topic Exchange for routing messages to queues. Enabling this will allow you to use wildcards (*, #) as message and event patterns</td>
+    <td>Set to <code>true</code> only if you want to use a topic exchange to route messages to queues. Enabling it lets you use wildcards (<code>*</code>, <code>#</code>) in message and event patterns</td>
   </tr>
   <tr>
     <td><code>exchange</code></td>
-    <td>Name for the exchange. Defaults to the queue name when "wildcards" is set to true</td>
+    <td>Name of the exchange. Defaults to the queue name when <code>wildcards</code> is set to <code>true</code></td>
   </tr>
   <tr>
     <td><code>exchangeType</code></td>
-    <td>Type of the exchange. Default is <code>topic</code>. Valid values are <code>direct</code>, <code>fanout</code>, <code>topic</code>, and <code>headers</code></td>
+    <td>Type of the exchange. Defaults to <code>topic</code>. Accepts the standard AMQP types <code>direct</code>, <code>fanout</code>, <code>topic</code>, and <code>headers</code>, or the name of a custom exchange type</td>
+  </tr>
+  <tr>
+    <td><code>exchangeArguments</code></td>
+    <td>Additional arguments passed when asserting the exchange</td>
   </tr>
   <tr>
     <td><code>routingKey</code></td>
@@ -112,15 +116,15 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>maxConnectionAttempts</code></td>
-    <td>Maximum number of connection attempts. Applies only to the consumer configuration. -1 === infinite</td>
+    <td>Maximum number of connection attempts. Applies only to the consumer configuration. Defaults to <code>-1</code> (infinite)</td>
   </tr>
 </table>
 
 #### Client
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a RabbitMQ `ClientProxy` instance.
+As with other microservice transporters, you have [several options](/microservices/basics#client) for creating a RabbitMQ `ClientProxy` instance.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+One way to create an instance is to use the `ClientsModule`. Import it and call its `register()` method, passing an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property to use as the injection token. Read more about `ClientsModule` in the [microservices overview](/microservices/basics#client).
 
 ```typescript
 @Module({
@@ -143,11 +147,11 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+You can also create a client with `ClientProxyFactory` or `@Client()`, as described in the [microservices overview](/microservices/basics#client).
 
 #### Context
 
-In more complex scenarios, you may need to access additional information about the incoming request. When using the RabbitMQ transporter, you can access the `RmqContext` object.
+In more complex scenarios, you may need additional information about the incoming request. When using the RabbitMQ transporter, you can access the `RmqContext` object.
 
 ```typescript
 @@filename()
@@ -165,7 +169,7 @@ getNotifications(data, context) {
 
 > info **Hint** `@Payload()`, `@Ctx()` and `RmqContext` are imported from the `@nestjs/microservices` package.
 
-To access the original RabbitMQ message (with the `properties`, `fields`, and `content`), use the `getMessage()` method of the `RmqContext` object, as follows:
+To access the original RabbitMQ message (with its `properties`, `fields`, and `content`), use the `getMessage()` method of the `RmqContext` object:
 
 ```typescript
 @@filename()
@@ -181,7 +185,7 @@ getNotifications(data, context) {
 }
 ```
 
-To retrieve a reference to the RabbitMQ [channel](https://www.rabbitmq.com/channels.html), use the `getChannelRef` method of the `RmqContext` object, as follows:
+To retrieve a reference to the RabbitMQ [channel](https://www.rabbitmq.com/channels.html), use the `getChannelRef()` method of the `RmqContext` object:
 
 ```typescript
 @@filename()
@@ -199,9 +203,9 @@ getNotifications(data, context) {
 
 #### Message acknowledgement
 
-To make sure a message is never lost, RabbitMQ supports [message acknowledgements](https://www.rabbitmq.com/confirms.html). An acknowledgement is sent back by the consumer to tell RabbitMQ that a particular message has been received, processed and that RabbitMQ is free to delete it. If a consumer dies (its channel is closed, connection is closed, or TCP connection is lost) without sending an ack, RabbitMQ will understand that a message wasn't processed fully and will re-queue it.
+To make sure a message is never lost, RabbitMQ supports [message acknowledgements](https://www.rabbitmq.com/confirms.html). The consumer sends an acknowledgement back to tell RabbitMQ that a particular message has been received and processed, and that RabbitMQ is free to delete it. If a consumer dies (its channel is closed, its connection is closed, or the TCP connection is lost) without sending an ack, RabbitMQ assumes the message wasn't fully processed and re-queues it.
 
-To enable manual acknowledgment mode, set the `noAck` property to `false`:
+By default, the RabbitMQ transporter doesn't expect acknowledgements (`noAck` is `true`). To enable manual acknowledgment mode, set the `noAck` property to `false`:
 
 ```typescript
 options: {
@@ -214,7 +218,7 @@ options: {
 },
 ```
 
-When manual consumer acknowledgements are turned on, we must send a proper acknowledgement from the worker to signal that we are done with a task.
+When manual consumer acknowledgements are turned on, you must send an acknowledgement from the worker to signal that it has finished the task:
 
 ```typescript
 @@filename()
@@ -238,7 +242,7 @@ getNotifications(data, context) {
 
 #### Record builders
 
-To configure message options, you can use the `RmqRecordBuilder` class (note: this is doable for event-based flows as well). For example, to set `headers` and `priority` properties, use the `setOptions` method, as follows:
+To configure message options, use the `RmqRecordBuilder` class (this works for event-based flows as well). For example, to set the `headers` and `priority` properties, use the `setOptions()` method:
 
 ```typescript
 const message = ':cat:';
@@ -254,9 +258,9 @@ const record = new RmqRecordBuilder(message)
 this.client.send('replace-emoji', record).subscribe(...);
 ```
 
-> info **Hint** `RmqRecordBuilder` class is exported from the `@nestjs/microservices` package.
+> info **Hint** The `RmqRecordBuilder` class is exported from the `@nestjs/microservices` package.
 
-And you can read these values on the server-side as well, by accessing the `RmqContext`, as follows:
+You can read these values on the server side as well, by accessing the `RmqContext`:
 
 ```typescript
 @@filename()
@@ -276,7 +280,7 @@ replaceEmoji(data, context) {
 
 #### Instance status updates
 
-To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the RMQ driver, the `status` stream emits `connected` and `disconnected` events.
+To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the RMQ driver, the `status` stream emits `connected`, `disconnected`, `blocked`, and `unblocked` events.
 
 ```typescript
 this.client.status.subscribe((status: RmqStatus) => {
@@ -286,7 +290,7 @@ this.client.status.subscribe((status: RmqStatus) => {
 
 > info **Hint** The `RmqStatus` type is imported from the `@nestjs/microservices` package.
 
-Similarly, you can subscribe to the server's `status` stream to receive notifications about the server's status.
+Similarly, you can subscribe to the server's `status` stream to receive notifications about the server's status:
 
 ```typescript
 const server = app.connectMicroservice<MicroserviceOptions>(...);
@@ -297,7 +301,7 @@ server.status.subscribe((status: RmqStatus) => {
 
 #### Listening to RabbitMQ events
 
-In some cases, you might want to listen to internal events emitted by the microservice. For example, you could listen for the `error` event to trigger additional operations when an error occurs. To do this, use the `on()` method, as shown below:
+In some cases, you might want to listen to internal events emitted by the microservice. For example, you could listen for the `error` event to trigger additional operations when an error occurs. To do this, use the `on()` method:
 
 ```typescript
 this.client.on('error', (err) => {
@@ -317,9 +321,9 @@ server.on<RmqEvents>('error', (err) => {
 
 #### Underlying driver access
 
-For more advanced use cases, you may need to access the underlying driver instance. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
+For more advanced use cases, you may need to access the underlying driver instance, for example, to close the connection manually or to use driver-specific methods. However, in most cases you **shouldn't need** to access the driver directly.
 
-To do so, you can use the `unwrap()` method, which returns the underlying driver instance. The generic type parameter should specify the type of driver instance you expect.
+To do so, use the `unwrap()` method, which returns the underlying driver instance. Use the generic type parameter to specify the type of driver instance you expect.
 
 ```typescript
 const managerRef =
@@ -355,7 +359,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(
 );
 ```
 
-With this configuration, you can use wildcards in your routing keys when subscribing to events/messages. For example, to listen for messages with the routing key `cats.#`, you can use the following code:
+With this configuration, you can use wildcards in your routing keys when subscribing to events and messages. For example, to listen for messages with the routing key `cats.#`:
 
 ```typescript
 @MessagePattern('cats.#')
@@ -368,7 +372,7 @@ getCats(@Payload() data: { message: string }, @Ctx() context: RmqContext) {
 }
 ```
 
-To send a message with a specific routing key, you can use the `send()` method of the `ClientProxy` instance:
+To send a message with a specific routing key, use the `send()` method of the `ClientProxy` instance:
 
 ```typescript
 this.client.send('cats.meow', { message: 'Meow!' }).subscribe((response) => {

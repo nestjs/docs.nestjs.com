@@ -1,6 +1,6 @@
 ### NATS
 
-[NATS](https://nats.io) is a simple, secure and high performance open source messaging system for cloud native applications, IoT messaging, and microservices architectures. The NATS server is written in the Go programming language, but client libraries to interact with the server are available for dozens of major programming languages. NATS supports both **At Most Once** and **At Least Once** delivery. It can run anywhere, from large servers and cloud instances, through edge gateways and even Internet of Things devices.
+[NATS](https://nats.io) is a simple, secure, and high-performance open source messaging system for cloud native applications, IoT messaging, and microservices architectures. The NATS server is written in Go, and client libraries are available for dozens of major programming languages. NATS supports both **At Most Once** and **At Least Once** delivery. It runs anywhere, from large servers and cloud instances to edge gateways and Internet of Things devices.
 
 #### Installation
 
@@ -10,7 +10,7 @@ To start building NATS-based microservices, first install the required package:
 $ npm i --save @nats-io/transport-node
 ```
 
-> warning **Warning** As of NestJS v12, the NATS transporter targets **NATS v3** and uses the `@nats-io/transport-node` driver. If you are upgrading from an earlier version, uninstall the legacy `nats` package (`npm uninstall nats`) and install `@nats-io/transport-node` instead. See the [migration guide](/migration-guide) for details.
+> warning **Warning** As of NestJS v12, the NATS transporter targets **NATS v3** and uses the `@nats-io/transport-node` driver. If you are upgrading from an earlier version, uninstall the legacy `nats` package (`npm uninstall nats`) and install `@nats-io/transport-node` instead. See the [migration guide](/migration-guide#nats-v3) for details.
 
 #### Overview
 
@@ -37,29 +37,32 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 #### Options
 
-The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the properties described [here](https://github.com/nats-io/nats.js/blob/main/core/README.md#connecting-to-a-nats-server) as well as the following properties:
+The `options` object is specific to the chosen transporter. The <strong>NATS</strong> transporter exposes the [NATS connection options](https://github.com/nats-io/nats.js/blob/main/core/README.md#connecting-to-a-nats-server), as well as the following properties:
 
 <table>
   <tr>
     <td><code>queue</code></td>
-    <td>Queue that your server should subscribe to (leave <code>undefined</code> to ignore this setting). Read more about NATS queue groups <a href="https://docs.nestjs.com/microservices/nats#queue-groups">below</a>.
-    </td> 
+    <td>Queue group that your server subscribes with (leave <code>undefined</code> to ignore this setting). Read more about NATS queue groups <a href="/microservices/nats#queue-groups">below</a>.</td>
   </tr>
   <tr>
     <td><code>gracefulShutdown</code></td>
-    <td>Enables graceful shutdown. When enabled, the server first unsubscribes from all channels before closing the connection. Default is <code>false</code>.
+    <td>Enables graceful shutdown. When enabled, the server first unsubscribes from all subjects, then waits for <code>gracePeriod</code> before closing the connection. Default is <code>false</code>.</td>
   </tr>
   <tr>
     <td><code>gracePeriod</code></td>
-    <td>Time in milliseconds to wait for the server after unsubscribing from all channels. Default is <code>10000</code> ms.
+    <td>Time in milliseconds to wait after unsubscribing from all subjects when <code>gracefulShutdown</code> is enabled. Default is <code>10000</code> ms.</td>
+  </tr>
+  <tr>
+    <td><code>headers</code></td>
+    <td>Headers added to every message a client sends (see <a href="/microservices/nats#record-builders">record builders</a>).</td>
   </tr>
 </table>
 
 #### Client
 
-Like other microservice transporters, you have <a href="https://docs.nestjs.com/microservices/basics#client">several options</a> for creating a NATS `ClientProxy` instance.
+As with other microservice transporters, you have <a href="/microservices/basics#client">several options</a> for creating a NATS `ClientProxy` instance.
 
-One method for creating an instance is to use the `ClientsModule`. To create a client instance with the `ClientsModule`, import it and use the `register()` method to pass an options object with the same properties shown above in the `createMicroservice()` method, as well as a `name` property to be used as the injection token. Read more about `ClientsModule` <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+One way to create an instance is to use the `ClientsModule`. Import it and use its `register()` method to pass an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property to use as the injection token. Read more about the `ClientsModule` in the <a href="/microservices/basics#client">client section of the overview</a>.
 
 ```typescript
 @Module({
@@ -78,15 +81,15 @@ One method for creating an instance is to use the `ClientsModule`. To create a c
 })
 ```
 
-Other options to create a client (either `ClientProxyFactory` or `@Client()`) can be used as well. You can read about them <a href="https://docs.nestjs.com/microservices/basics#client">here</a>.
+You can also create a client with `ClientProxyFactory` or the `@Client()` decorator. Both are described in the <a href="/microservices/basics#client">client section of the overview</a>.
 
 #### Request-response
 
-For the **request-response** message style ([read more](https://docs.nestjs.com/microservices/basics#request-response)), the NATS transporter does not use the NATS built-in [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) mechanism. Instead, a "request" is published on a given subject using the `publish()` method with a unique reply subject name, and responders listen on that subject and send responses to the reply subject. Reply subjects are directed back to the requestor dynamically, regardless of location of either party.
+For the [request-response](/microservices/basics#request-response) message style, the NATS transporter doesn't use the built-in NATS [Request-Reply](https://docs.nats.io/nats-concepts/reqreply) API. Instead, the client publishes a "request" on a given subject with the `publish()` method and a unique reply subject name. Responders listen on that subject and send responses to the reply subject. Reply subjects are routed back to the requester dynamically, regardless of the location of either party.
 
 #### Event-based
 
-For the **event-based** message style ([read more](https://docs.nestjs.com/microservices/basics#event-based)), the NATS transporter uses NATS built-in [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism. A publisher sends a message on a subject and any active subscriber listening on that subject receives the message. Subscribers can also register interest in wildcard subjects that work a bit like a regular expression. This one-to-many pattern is sometimes called fan-out.
+For the [event-based](/microservices/basics#event-based) message style, the NATS transporter uses the built-in NATS [Publish-Subscribe](https://docs.nats.io/nats-concepts/pubsub) mechanism. A publisher sends a message on a subject, and every active subscriber listening on that subject receives the message. Subscribers can also register interest in [wildcard](#wildcards) subjects. This one-to-many pattern is sometimes called fan-out.
 
 #### Queue groups
 
@@ -105,7 +108,7 @@ const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule,
 
 #### Context
 
-In more complex scenarios, you may need to access additional information about the incoming request. When using the NATS transporter, you can access the `NatsContext` object.
+In more complex scenarios, you may need additional information about the incoming request. With the NATS transporter, you can access the `NatsContext` object.
 
 ```typescript
 @@filename()
@@ -125,7 +128,7 @@ getNotifications(data, context) {
 
 #### Wildcards
 
-A subscription may be to an explicit subject, or it may include wildcards.
+A subscription can target an explicit subject, or it can include wildcards.
 
 ```typescript
 @@filename()
@@ -145,7 +148,7 @@ getDate(data, context) {
 
 #### Record builders
 
-To configure message options, you can use the `NatsRecordBuilder` class (note: this is doable for event-based flows as well). For example, to add `x-version` header, use the `setHeaders` method, as follows:
+To configure message options, use the `NatsRecordBuilder` class. It works for both request-response and event-based flows. For example, to add an `x-version` header, use the `setHeaders()` method:
 
 ```typescript
 import * as nats from '@nats-io/nats-core';
@@ -158,42 +161,27 @@ const record = new NatsRecordBuilder(':cat:').setHeaders(headers).build();
 this.client.send('replace-emoji', record).subscribe(...);
 ```
 
-> info **Hint** `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.
+> info **Hint** The `NatsRecordBuilder` class is exported from the `@nestjs/microservices` package.
 
-#### Custom serializers and deserializers
-
-Starting with NestJS v12, Nest serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object instead of a raw `Uint8Array`. If you have written a custom deserializer, read the payload through `msg.json()` rather than decoding bytes manually:
-
-```typescript
-import { Deserializer, IncomingRequest } from '@nestjs/microservices';
-
-export class CustomNatsDeserializer implements Deserializer {
-  deserialize(msg: any): IncomingRequest {
-    // Previously: JSON.parse(new TextDecoder().decode(msg));
-    return msg.json();
-  }
-}
-```
-
-And you can read these headers on the server-side as well, by accessing the `NatsContext`, as follows:
+On the server side, you can read these headers through the `NatsContext`:
 
 ```typescript
 @@filename()
 @MessagePattern('replace-emoji')
 replaceEmoji(@Payload() data: string, @Ctx() context: NatsContext): string {
   const headers = context.getHeaders();
-  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+  return headers?.get('x-version') === '1.0.0' ? '🐱' : '🐈';
 }
 @@switch
 @Bind(Payload(), Ctx())
 @MessagePattern('replace-emoji')
 replaceEmoji(data, context) {
   const headers = context.getHeaders();
-  return headers['x-version'] === '1.0.0' ? '🐱' : '🐈';
+  return headers?.get('x-version') === '1.0.0' ? '🐱' : '🐈';
 }
 ```
 
-In some cases you might want to configure headers for multiple requests, you can pass these as options to the `ClientProxyFactory`:
+To configure headers for all requests sent by a client, pass them as options to the `ClientProxyFactory`:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -217,9 +205,26 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 export class ApiModule {}
 ```
 
+Headers set on a record take precedence over the client-level `headers` option.
+
+#### Custom serializers and deserializers
+
+Starting with NestJS v12, Nest serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object instead of a raw `Uint8Array`. If you have written a custom deserializer, read the payload through `msg.json()` rather than decoding bytes manually:
+
+```typescript
+import { Deserializer, IncomingRequest } from '@nestjs/microservices';
+
+export class CustomNatsDeserializer implements Deserializer {
+  deserialize(msg: any): IncomingRequest {
+    // Previously: JSON.parse(new TextDecoder().decode(msg));
+    return msg.json();
+  }
+}
+```
+
 #### Instance status updates
 
-To get real-time updates on the connection and the state of the underlying driver instance, you can subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the NATS driver, the `status` stream emits `connected`, `disconnected`, and `reconnecting` events.
+To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the NATS driver, the `status` stream emits `connected`, `disconnected`, and `reconnecting` events.
 
 ```typescript
 this.client.status.subscribe((status: NatsStatus) => {
@@ -238,21 +243,21 @@ server.status.subscribe((status: NatsStatus) => {
 });
 ```
 
-#### Listening to Nats events
+#### Listening to NATS events
 
-In some cases, you might want to listen to internal events emitted by the microservice. For example, you could listen for the `error` event to trigger additional operations when an error occurs. To do this, use the `on()` method, as shown below:
+In some cases, you might want to listen to internal events emitted by the microservice. The NATS transporter emits the `disconnect`, `reconnect`, and `update` (cluster servers added or removed) events. For example, you could listen for the `disconnect` event to trigger additional operations when the connection is lost. To do this, use the `on()` method, as shown below:
 
 ```typescript
-this.client.on('error', (err) => {
-  console.error(err);
+this.client.on('disconnect', (serverUrl) => {
+  console.error(`Disconnected from ${serverUrl}`);
 });
 ```
 
 Similarly, you can listen to the server's internal events:
 
 ```typescript
-server.on<NatsEvents>('error', (err) => {
-  console.error(err);
+server.on<NatsEvents>('disconnect', (serverUrl) => {
+  console.error(`Disconnected from ${serverUrl}`);
 });
 ```
 
@@ -260,9 +265,9 @@ server.on<NatsEvents>('error', (err) => {
 
 #### Underlying driver access
 
-For more advanced use cases, you may need to access the underlying driver instance. This can be useful for scenarios like manually closing the connection or using driver-specific methods. However, keep in mind that for most cases, you **shouldn't need** to access the driver directly.
+For more advanced use cases, you may need to access the underlying driver instance, for example, to close the connection manually or to use driver-specific methods. In most cases, however, you **shouldn't need** to access the driver directly.
 
-To do so, you can use the `unwrap()` method, which returns the underlying driver instance. The generic type parameter should specify the type of driver instance you expect.
+To do so, use the `unwrap()` method, which returns the underlying driver instance. The generic type parameter specifies the type of driver instance you expect.
 
 ```typescript
 const natsConnection =

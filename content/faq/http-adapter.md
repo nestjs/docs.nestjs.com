@@ -1,12 +1,12 @@
 ### HTTP adapter
 
-Occasionally, you may want to access the underlying HTTP server, either within the Nest application context or from the outside.
+Occasionally, you may need to access the underlying HTTP server, either from within the Nest application context or from outside of it.
 
-Every native (platform-specific) HTTP server/library (e.g., Express and Fastify) instance is wrapped in an **adapter**. The adapter is registered as a globally available provider that can be retrieved from the application context, as well as injected into other providers.
+Every native (platform-specific) HTTP server or library instance (e.g., Express or Fastify) is wrapped in an **adapter**. The adapter is registered as a globally available provider, so you can retrieve it from the application context or inject it into other providers.
 
 #### Outside application context strategy
 
-To get a reference to the `HttpAdapter` from outside of the application context, call the `getHttpAdapter()` method.
+To get a reference to the `HttpAdapter` from outside of the application context, call the `getHttpAdapter()` method:
 
 ```typescript
 @@filename()
@@ -16,7 +16,7 @@ const httpAdapter = app.getHttpAdapter();
 
 #### As injectable
 
-To get a reference to the `HttpAdapterHost` from within the application context, inject it using the same technique as any other existing provider (e.g., using constructor injection).
+To get a reference to the `HttpAdapterHost` from within the application context, inject it like any other provider (e.g., using constructor injection):
 
 ```typescript
 @@filename()
@@ -34,16 +34,16 @@ export class CatsService {
 
 > info **Hint** The `HttpAdapterHost` is imported from the `@nestjs/core` package.
 
-The `HttpAdapterHost` is **not** an actual `HttpAdapter`. To get the actual `HttpAdapter` instance, simply access the `httpAdapter` property.
+The `HttpAdapterHost` is **not** an actual `HttpAdapter`. To get the actual `HttpAdapter` instance, read its `httpAdapter` property:
 
 ```typescript
 const adapterHost = app.get(HttpAdapterHost);
 const httpAdapter = adapterHost.httpAdapter;
 ```
 
-The `httpAdapter` is the actual instance of the HTTP adapter used by the underlying framework. It is an instance of either `ExpressAdapter` or `FastifyAdapter` (both classes extend `AbstractHttpAdapter`).
+The `httpAdapter` is the HTTP adapter instance that wraps the underlying framework. It is an instance of either `ExpressAdapter` or `FastifyAdapter` (both classes extend `AbstractHttpAdapter`).
 
-The adapter object exposes several useful methods to interact with the HTTP server. However, if you want to access the library instance (e.g., the Express instance) directly, call the `getInstance()` method.
+The adapter object exposes several methods for interacting with the HTTP server. To access the library instance (e.g., the Express instance) directly, call the `getInstance()` method:
 
 ```typescript
 const instance = httpAdapter.getInstance();
@@ -51,7 +51,7 @@ const instance = httpAdapter.getInstance();
 
 #### Listening event
 
-To execute an action when the server begins listening for incoming requests, you can subscribe to the `listen$` stream, as demonstrated below:
+To run code when the server starts listening for incoming requests, subscribe to the `listen$` stream:
 
 ```typescript
 this.httpAdapterHost.listen$.subscribe(() =>
@@ -59,7 +59,7 @@ this.httpAdapterHost.listen$.subscribe(() =>
 );
 ```
 
-Additionally, the `HttpAdapterHost` provides a `listening` boolean property that indicates whether the server is currently active and listening:
+The `HttpAdapterHost` also exposes a `listening` boolean property that indicates whether the server is currently listening:
 
 ```typescript
 if (this.httpAdapterHost.listening) {

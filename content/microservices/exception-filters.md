@@ -1,6 +1,6 @@
 ### Exception filters
 
-The only difference between the HTTP [exception filter](/exception-filters) layer and the corresponding microservices layer is that instead of throwing `HttpException`, you should use `RpcException`.
+The only difference between the HTTP [exception filter](/exception-filters) layer and the corresponding microservices layer is that microservices should throw `RpcException` instead of `HttpException`.
 
 ```typescript
 throw new RpcException('Invalid credentials.');
@@ -8,9 +8,7 @@ throw new RpcException('Invalid credentials.');
 
 > info **Hint** The `RpcException` class is imported from the `@nestjs/microservices` package.
 
-> warning **Warning** An event handler has no response stream. A filter that rethrows for an `@EventPattern` handler sends the error nowhere, so handle it inside the filter.
-
-With the sample above, Nest will handle the thrown exception and return the `error` object with the following structure:
+Nest handles the thrown exception and returns an `error` object with the following structure:
 
 ```json
 {
@@ -19,9 +17,13 @@ With the sample above, Nest will handle the thrown exception and return the `err
 }
 ```
 
+If you pass an object to the `RpcException` constructor instead of a string, Nest returns that object as is.
+
+> warning **Warning** An event handler has no response stream. An error that a filter rethrows for an `@EventPattern()` handler never reaches the producer, so handle the error inside the filter.
+
 #### Filters
 
-Microservice exception filters behave similarly to HTTP exception filters, with one small difference. The `catch()` method must return an `Observable`.
+Microservice exception filters behave like HTTP exception filters, with one difference: the `catch()` method must return an `Observable`.
 
 ```typescript
 @@filename(rpc-exception.filter)
@@ -38,6 +40,7 @@ export class ExceptionFilter implements RpcExceptionFilter<RpcException> {
 @@switch
 import { Catch } from '@nestjs/common';
 import { throwError } from 'rxjs';
+import { RpcException } from '@nestjs/microservices';
 
 @Catch(RpcException)
 export class ExceptionFilter {
@@ -47,9 +50,9 @@ export class ExceptionFilter {
 }
 ```
 
-> warning **Warning** Global microservice exception filters aren't enabled by default when using a [hybrid application](/faq/hybrid-application).
+> warning **Warning** Global exception filters registered on the main HTTP application don't apply to microservices connected to a [hybrid application](/faq/hybrid-application) unless you set the `inheritAppConfig` option. See [sharing configuration](/faq/hybrid-application#sharing-configuration).
 
-The following example uses a manually instantiated method-scoped filter. Just as with HTTP based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
+The following example uses a manually instantiated method-scoped filter. As with HTTP-based applications, you can also use controller-scoped filters (i.e., prefix the controller class with a `@UseFilters()` decorator).
 
 ```typescript
 @@filename()
@@ -68,9 +71,9 @@ accumulate(data) {
 
 #### Inheritance
 
-Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the **core exception filter**, and override the behavior based on certain factors.
+Typically, you'll create fully customized exception filters tailored to your application's requirements. In some cases, however, you may want to extend the **core exception filter** and override its behavior based on certain factors.
 
-In order to delegate exception processing to the base filter, you need to extend `BaseExceptionFilter` and call the inherited `catch()` method.
+To delegate exception processing to the base filter, extend `BaseRpcExceptionFilter` and call the inherited `catch()` method.
 
 ```typescript
 @@filename()
@@ -95,4 +98,4 @@ export class AllExceptionsFilter extends BaseRpcExceptionFilter {
 }
 ```
 
-The above implementation is just a shell demonstrating the approach. Your implementation of the extended exception filter would include your tailored **business logic** (e.g., handling various conditions).
+The above implementation is only a shell that demonstrates the approach. Your implementation of the extended exception filter would include your own **business logic** (e.g., handling various conditions).
