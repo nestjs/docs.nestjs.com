@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BasePageComponent } from '../../page/page.component';
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
 
@@ -7,6 +8,6 @@ import { HeaderAnchorDirective } from '../../../../shared/directives/header-anch
   templateUrl: './overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [HeaderAnchorDirective],
+  imports: [RouterLink, HeaderAnchorDirective],
 })
 export class ObservabilityOverviewComponent extends BasePageComponent {}

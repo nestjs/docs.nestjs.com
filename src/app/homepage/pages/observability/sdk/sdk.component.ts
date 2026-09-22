@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BasePageComponent } from '../../page/page.component';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
@@ -11,6 +12,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    RouterLink,
     CopyButtonComponent,
     HeaderAnchorDirective,
     TabsComponent,
