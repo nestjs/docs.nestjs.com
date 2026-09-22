@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { BatchLoadingComponent } from './batch-loading/batch-loading.component';
 import { CliPluginComponent } from './cli-plugin/cli-plugin.component';
 import { ComplexityComponent } from './complexity/complexity.component';
 import { DirectivesComponent } from './directives/directives.component';
@@ -76,11 +75,6 @@ export const GRAPHQL_ROUTES: Routes = [
     path: 'field-middleware',
     component: FieldMiddlewareComponent,
     data: { title: 'GraphQL + TypeScript - Field middleware' },
-  },
-  {
-    path: 'batch-loading',
-    component: BatchLoadingComponent,
-    data: { title: 'GraphQL + TypeScript - Batch loading' },
   },
   {
     path: 'complexity',
