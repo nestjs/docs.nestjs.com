@@ -2,8 +2,6 @@ import { Routes } from '@angular/router';
 import { CqrsComponent } from './cqrs/cqrs.component';
 import { CrudGeneratorComponent } from './crud-generator/crud-generator.component';
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
-import { MikroOrmComponent } from './mikroorm/mikroorm.component';
-import { PrismaComponent } from './prisma/prisma.component';
 import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { TerminusComponent } from './terminus/terminus.component';
@@ -12,13 +10,10 @@ import { NestCommanderComponent } from './nest-commander/nest-commander.componen
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
+import { movedTo } from '../../../shared/utils/moved-page-redirect';
 
 export const RECIPES_ROUTES: Routes = [
-  {
-    path: 'mikroorm',
-    component: MikroOrmComponent,
-    data: { title: 'MikroORM' },
-  },
+  { path: 'mikroorm', redirectTo: movedTo('/data/mikroorm') },
   {
     path: 'cqrs',
     component: CqrsComponent,
@@ -28,11 +23,7 @@ export const RECIPES_ROUTES: Routes = [
     path: 'swagger',
     redirectTo: '/openapi/introduction',
   },
-  {
-    path: 'prisma',
-    component: PrismaComponent,
-    data: { title: 'Prisma' },
-  },
+  { path: 'prisma', redirectTo: movedTo('/data/prisma') },
   {
     path: 'terminus',
     component: TerminusComponent,

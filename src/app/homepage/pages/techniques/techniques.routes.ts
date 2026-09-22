@@ -1,142 +1,40 @@
-import { inject } from '@angular/core';
-import { Router, Routes } from '@angular/router';
-import { CachingComponent } from './caching/caching.component';
-import { CompressionComponent } from './compression/compression.component';
-import { ConfigurationComponent } from './configuration/configuration.component';
-import { CookiesComponent } from './cookies/cookies.component';
-import { EventsComponent } from './events/events.component';
-import { FileUploadComponent } from './file-upload/file-upload.component';
-import { HttpModuleComponent } from './http-module/http-module.component';
-import { LoggerComponent } from './logger/logger.component';
-import { MongoComponent } from './mongo/mongo.component';
-import { MvcComponent } from './mvc/mvc.component';
-import { PerformanceComponent } from './performance/performance.component';
-import { QueuesComponent } from './queues/queues.component';
-import { SerializationComponent } from './serialization/serialization.component';
-import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
-import { SessionComponent } from './sessions/sessions.component';
-import { SqlComponent } from './sql/sql.component';
-import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
-import { ValidationComponent } from './validation/validation.component';
-import { VersioningComponent } from './versioning/versioning.component';
+import { Routes } from '@angular/router';
+import { movedTo } from '../../../shared/utils/moved-page-redirect';
 
+// The Techniques category was split into Application, Data, and HTTP. These
+// redirects keep the old URLs (and links to their sections) working.
 export const TECHNIQUES_ROUTES: Routes = [
+  { path: 'authentication', redirectTo: movedTo('/security/authentication') },
+  { path: 'security', redirectTo: movedTo('/security/helmet') },
+  { path: 'hot-reload', redirectTo: movedTo('/recipes/hot-reload') },
+  { path: 'caching', redirectTo: movedTo('/data/caching') },
+  { path: 'compression', redirectTo: movedTo('/http/compression') },
+  { path: 'configuration', redirectTo: movedTo('/application/configuration') },
+  { path: 'cookies', redirectTo: movedTo('/http/cookies') },
+  { path: 'database', redirectTo: movedTo('/data/database') },
+  { path: 'events', redirectTo: movedTo('/application/events') },
+  { path: 'file-upload', redirectTo: movedTo('/http/file-upload') },
+  { path: 'http-module', redirectTo: movedTo('/application/http-module') },
+  { path: 'logger', redirectTo: movedTo('/application/logger') },
+  { path: 'mongodb', redirectTo: movedTo('/data/mongodb') },
+  { path: 'mvc', redirectTo: movedTo('/http/mvc') },
+  { path: 'performance', redirectTo: movedTo('/http/performance') },
+  { path: 'queues', redirectTo: movedTo('/application/queues') },
+  { path: 'serialization', redirectTo: movedTo('/application/serialization') },
   {
-    path: 'authentication',
-    redirectTo: '/security/authentication',
+    path: 'server-sent-events',
+    redirectTo: movedTo('/http/server-sent-events'),
   },
-  {
-    path: 'mvc',
-    component: MvcComponent,
-    data: { title: 'MVC' },
-  },
-  {
-    path: 'serialization',
-    component: SerializationComponent,
-    data: { title: 'Serialization' },
-  },
-  {
-    path: 'caching',
-    component: CachingComponent,
-    data: { title: 'Caching' },
-  },
-  {
-    path: 'validation',
-    component: ValidationComponent,
-    data: { title: 'Validation' },
-  },
-  {
-    path: 'sql',
-    redirectTo: 'database',
-  },
-  {
-    path: 'database',
-    component: SqlComponent,
-    data: { title: 'Database' },
-  },
-  {
-    path: 'mongodb',
-    component: MongoComponent,
-    data: { title: 'MongoDB' },
-  },
-  {
-    path: 'file-upload',
-    component: FileUploadComponent,
-    data: { title: 'File upload and streaming' },
-  },
+  { path: 'session', redirectTo: movedTo('/http/session') },
+  { path: 'sql', redirectTo: movedTo('/data/database') },
   {
     path: 'streaming-files',
-    redirectTo: () =>
-      inject(Router).createUrlTree(['/techniques/file-upload'], {
-        fragment: 'streaming-files',
-      }),
-  },
-  {
-    path: 'logger',
-    component: LoggerComponent,
-    data: { title: 'Logger' },
-  },
-  {
-    path: 'performance',
-    component: PerformanceComponent,
-    data: { title: 'Performance (Fastify)' },
-  },
-  {
-    path: 'http-module',
-    component: HttpModuleComponent,
-    data: { title: 'HTTP module' },
-  },
-  {
-    path: 'configuration',
-    component: ConfigurationComponent,
-    data: { title: 'Configuration' },
-  },
-  {
-    path: 'security',
-    redirectTo: '/security/helmet',
-  },
-  {
-    path: 'cookies',
-    component: CookiesComponent,
-    data: { title: 'Cookies' },
+    redirectTo: movedTo('/http/file-upload', 'streaming-files'),
   },
   {
     path: 'task-scheduling',
-    component: TaskSchedulingComponent,
-    data: { title: 'Task Scheduling' },
+    redirectTo: movedTo('/application/task-scheduling'),
   },
-  {
-    path: 'compression',
-    component: CompressionComponent,
-    data: { title: 'Compression' },
-  },
-  {
-    path: 'queues',
-    component: QueuesComponent,
-    data: { title: 'Queues' },
-  },
-  {
-    path: 'hot-reload',
-    redirectTo: '/recipes/hot-reload',
-  },
-  {
-    path: 'server-sent-events',
-    component: ServerSentEventsComponent,
-    data: { title: 'Server-Sent Events' },
-  },
-  {
-    path: 'versioning',
-    component: VersioningComponent,
-    data: { title: 'Versioning' },
-  },
-  {
-    path: 'events',
-    component: EventsComponent,
-    data: { title: 'Events' },
-  },
-  {
-    path: 'session',
-    component: SessionComponent,
-    data: { title: 'Session' },
-  },
+  { path: 'validation', redirectTo: movedTo('/application/validation') },
+  { path: 'versioning', redirectTo: movedTo('/http/versioning') },
 ];

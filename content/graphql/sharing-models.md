@@ -20,4 +20,4 @@ resolve: { // see: https://webpack.js.org/configuration/resolve/
 }
 ```
 
-> info **Hint** The [TypeORM](/techniques/database) package provides a similar [model shim](https://github.com/typeorm/typeorm/blob/master/extra/typeorm-model-shim.js).
+> info **Hint** The [TypeORM](/data/database) package provides a similar [model shim](https://github.com/typeorm/typeorm/blob/master/extra/typeorm-model-shim.js).

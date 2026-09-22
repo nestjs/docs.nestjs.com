@@ -23,7 +23,7 @@ accumulate(data) {
 }
 ```
 
-The `@Payload()` decorator also accepts a `schema` option, which lets `StandardSchemaValidationPipe` (exported from `@nestjs/common`) validate the payload against a [Standard Schema](/techniques/validation#schema-based-validation) (e.g., a Zod schema). Configure its `exceptionFactory` option in the same way, so that validation errors are thrown as `RpcException`:
+The `@Payload()` decorator also accepts a `schema` option, which lets `StandardSchemaValidationPipe` (exported from `@nestjs/common`) validate the payload against a [Standard Schema](/application/validation#schema-based-validation) (e.g., a Zod schema). Configure its `exceptionFactory` option in the same way, so that validation errors are thrown as `RpcException`:
 
 ```typescript
 @@filename()

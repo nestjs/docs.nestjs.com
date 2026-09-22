@@ -277,7 +277,7 @@ describe('Cats', () => {
 });
 ```
 
-> info **Hint** If you use [Fastify](/techniques/performance) as your HTTP adapter, it requires a slightly different configuration and has built-in testing capabilities:
+> info **Hint** If you use [Fastify](/http/performance) as your HTTP adapter, it requires a slightly different configuration and has built-in testing capabilities:
 >
 > ```ts
 > let app: NestFastifyApplication;

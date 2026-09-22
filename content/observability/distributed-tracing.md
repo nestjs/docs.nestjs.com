@@ -34,7 +34,7 @@ It reads from the same context store as `getAttribute()`/`setAttribute()`, but u
 
 HTTP propagation is automatic in both directions. On the way in, the default `traceIdGenerator` adopts a well-formed `x-request-id` header and otherwise mints a time-ordered UUID (v7). On the way out, the SDK adds the current trace id as `x-request-id` to outbound requests that don't already carry one, so a call from one instrumented service to another lands in the same trace with no application code.
 
-Outbound propagation covers `fetch` and `undici` on every supported Node version, and clients built on `node:http` (axios, got, the [HTTP module](/techniques/http-module)) on Node 22.12 and later, the first release that lets a header be added after the request object is created. To limit which hosts receive the header, or switch it off, see [`outgoing.http.propagateTraceId`](/observability/sdk#database-queries-and-outbound-http).
+Outbound propagation covers `fetch` and `undici` on every supported Node version, and clients built on `node:http` (axios, got, the [HTTP module](/application/http-module)) on Node 22.12 and later, the first release that lets a header be added after the request object is created. To limit which hosts receive the header, or switch it off, see [`outgoing.http.propagateTraceId`](/observability/sdk#database-queries-and-outbound-http).
 
 On an older Node version with an axios-based client, register a request interceptor once to forward the id yourself:
 

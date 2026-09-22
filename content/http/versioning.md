@@ -8,19 +8,19 @@ Nest supports four types of versioning:
 
 <table>
   <tr>
-    <td><a href='techniques/versioning#uri-versioning-type'><code>URI Versioning</code></a></td>
+    <td><a href='http/versioning#uri-versioning-type'><code>URI Versioning</code></a></td>
     <td>The version is passed within the URI of the request (default)</td>
   </tr>
   <tr>
-    <td><a href='techniques/versioning#header-versioning-type'><code>Header Versioning</code></a></td>
+    <td><a href='http/versioning#header-versioning-type'><code>Header Versioning</code></a></td>
     <td>A custom request header specifies the version</td>
   </tr>
   <tr>
-    <td><a href='techniques/versioning#media-type-versioning-type'><code>Media Type Versioning</code></a></td>
+    <td><a href='http/versioning#media-type-versioning-type'><code>Media Type Versioning</code></a></td>
     <td>The <code>Accept</code> header of the request specifies the version</td>
   </tr>
   <tr>
-    <td><a href='techniques/versioning#custom-versioning-type'><code>Custom Versioning</code></a></td>
+    <td><a href='http/versioning#custom-versioning-type'><code>Custom Versioning</code></a></td>
     <td>Any aspect of the request may specify the version(s). You provide a custom function that extracts the version(s).</td>
   </tr>
 </table>
@@ -128,7 +128,7 @@ await app.listen(process.env.PORT ?? 3000);
 
 Versioning lets you version controllers and individual routes, and also lets certain resources opt out of versioning. Usage is the same regardless of the versioning type your application uses.
 
-> warning **Notice** If versioning is enabled for the application but a controller or route does not specify a version (and no [global default version](/techniques/versioning#global-default-version) is set), any request to that controller or route receives a `404` response status. Similarly, a request containing a version that has no corresponding controller or route also receives a `404` response status.
+> warning **Notice** If versioning is enabled for the application but a controller or route does not specify a version (and no [global default version](/http/versioning#global-default-version) is set), any request to that controller or route receives a `404` response status. Similarly, a request containing a version that has no corresponding controller or route also receives a `404` response status.
 
 #### Controller versions
 

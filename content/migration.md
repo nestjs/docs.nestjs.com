@@ -241,7 +241,7 @@ ConfigModule.forRoot({
 });
 ```
 
-Because validation is no longer tied to a single library, we now recommend a modern Standard Schema library such as Zod for new projects, and the [Configuration chapter](/techniques/configuration#schema-validation) has been rewritten around it.
+Because validation is no longer tied to a single library, we now recommend a modern Standard Schema library such as Zod for new projects, and the [Configuration chapter](/application/configuration#schema-validation) has been rewritten around it.
 
 Your existing Joi schemas still work, with two caveats:
 
@@ -392,7 +392,7 @@ See [Machine-readable error codes](/exception-filters#machine-readable-error-cod
 logger.log('User created', { userId: 1, email: 'foo@bar.com' });
 ```
 
-In JSON mode, they are nested under a `params` key, or spread into the root object if you enable `flattenParams`. This behavior is on by default in v12; set `structuredParams: false` to restore the previous behavior. See [Structured logging params](/techniques/logger#structured-logging-params) in the Logger chapter.
+In JSON mode, they are nested under a `params` key, or spread into the root object if you enable `flattenParams`. This behavior is on by default in v12; set `structuredParams: false` to restore the previous behavior. See [Structured logging params](/application/logger#structured-logging-params) in the Logger chapter.
 
 #### Native observability support
 

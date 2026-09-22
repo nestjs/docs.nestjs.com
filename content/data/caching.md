@@ -10,7 +10,7 @@ To get started with caching in Nest, install the `@nestjs/cache-manager` package
 $ npm install @nestjs/cache-manager cache-manager
 ```
 
-By default, everything is stored in memory. Because `cache-manager` uses [Keyv](https://keyv.org/docs/) under the hood, you can switch to a different storage solution, such as Redis, by installing the appropriate package. See [Using alternative Cache stores](/techniques/caching#using-alternative-cache-stores) below.
+By default, everything is stored in memory. Because `cache-manager` uses [Keyv](https://keyv.org/docs/) under the hood, you can switch to a different storage solution, such as Redis, by installing the appropriate package. See [Using alternative Cache stores](/data/caching#using-alternative-cache-stores) below.
 
 #### In-memory cache
 
@@ -142,7 +142,7 @@ CacheModule.register({
 
 #### Global cache overrides
 
-When the `CacheInterceptor` is bound globally, cache entries are stored under a key that is generated automatically from the request URL. You can override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis to customize the caching strategy for individual controller methods. This is most relevant when using [different cache stores](/techniques/caching#using-alternative-cache-stores).
+When the `CacheInterceptor` is bound globally, cache entries are stored under a key that is generated automatically from the request URL. You can override certain cache settings (`@CacheKey()` and `@CacheTTL()`) on a per-method basis to customize the caching strategy for individual controller methods. This is most relevant when using [different cache stores](/data/caching#using-alternative-cache-stores).
 
 You can also apply the `@CacheTTL()` decorator to a controller to set the TTL for all of its routes. When both controller-level and method-level TTL settings are defined, the method-level setting takes priority.
 
@@ -160,7 +160,7 @@ export class AppController {
 
 > info **Hint** The `@CacheKey()` and `@CacheTTL()` decorators are imported from the `@nestjs/cache-manager` package.
 
-You can use the `@CacheKey()` decorator with or without a corresponding `@CacheTTL()` decorator, and vice versa, to override only the key or only the TTL. Settings that aren't overridden with a decorator use the defaults registered with the module (see [Time-to-live (TTL)](/techniques/caching#time-to-live-ttl)).
+You can use the `@CacheKey()` decorator with or without a corresponding `@CacheTTL()` decorator, and vice versa, to override only the key or only the TTL. Settings that aren't overridden with a decorator use the defaults registered with the module (see [Time-to-live (TTL)](/data/caching#time-to-live-ttl)).
 
 #### WebSockets and Microservices
 

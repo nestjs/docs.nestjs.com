@@ -20,7 +20,7 @@ By default, Nest middleware is equivalent to [Express](https://expressjs.com/en/
 
 You implement custom Nest middleware either as a function or as a class with the `@Injectable()` decorator. A class should implement the `NestMiddleware` interface, while a function has no special requirements. Let's start by implementing a simple middleware class.
 
-> warning **Warning** Express and Fastify handle middleware differently and provide different method signatures. See the [Performance (Fastify)](/techniques/performance#middleware) chapter for details.
+> warning **Warning** Express and Fastify handle middleware differently and provide different method signatures. See the [Performance (Fastify)](/http/performance#middleware) chapter for details.
 
 ```typescript
 @@filename(logger.middleware)

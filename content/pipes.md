@@ -109,7 +109,7 @@ async findOne(uuid) {
 
 Binding validation pipes works slightly differently; we cover it later in this chapter.
 
-> info **Hint** See [Validation techniques](/techniques/validation) for extensive examples of validation pipes.
+> info **Hint** See [Validation techniques](/application/validation) for extensive examples of validation pipes.
 
 #### Custom pipes
 
@@ -203,7 +203,7 @@ These properties describe the argument being processed:
 
 #### Schema based validation
 
-> info **Hint** The following sections build validation pipes from scratch to show how pipes work. For schema-based validation in production, use the built-in `StandardSchemaValidationPipe` instead. It works with Zod, Valibot, ArkType, and any other [Standard Schema](https://standardschema.dev/) compatible library, and reads the schema you attach through the `schema` option of parameter decorators such as `@Body()` and `@Param()`. See [Schema-based validation](/techniques/validation#schema-based-validation) for details.
+> info **Hint** The following sections build validation pipes from scratch to show how pipes work. For schema-based validation in production, use the built-in `StandardSchemaValidationPipe` instead. It works with Zod, Valibot, ArkType, and any other [Standard Schema](https://standardschema.dev/) compatible library, and reads the schema you attach through the `schema` option of parameter decorators such as `@Body()` and `@Param()`. See [Schema-based validation](/application/validation#schema-based-validation) for details.
 
 Let's make our validation pipe more useful. Consider the `create()` method of the `CatsController`: we want to ensure that the POST body object is valid before running the service method.
 
@@ -480,7 +480,7 @@ export class AppModule {}
 
 #### The built-in ValidationPipe
 
-You don't have to build a generic validation pipe yourself: Nest provides `ValidationPipe` out of the box. The built-in `ValidationPipe` offers more options than the sample built in this chapter, which is kept basic to illustrate the mechanics of a custom pipe. For schema-based validation, Nest also provides the built-in `StandardSchemaValidationPipe`. See [Validation techniques](/techniques/validation) for full details and many examples.
+You don't have to build a generic validation pipe yourself: Nest provides `ValidationPipe` out of the box. The built-in `ValidationPipe` offers more options than the sample built in this chapter, which is kept basic to illustrate the mechanics of a custom pipe. For schema-based validation, Nest also provides the built-in `StandardSchemaValidationPipe`. See [Validation techniques](/application/validation) for full details and many examples.
 
 #### Transformation use case
 

@@ -8,7 +8,7 @@ A controller's purpose is to handle specific requests for the application. The *
 
 To create a basic controller, you use classes and **decorators**. Decorators associate classes with the required metadata, which Nest uses to build a routing map that connects requests to their corresponding controllers.
 
-> info **Hint** To create a CRUD controller with built-in [validation](https://docs.nestjs.com/techniques/validation), use the CLI's [CRUD generator](https://docs.nestjs.com/recipes/crud-generator#crud-generator): `nest g resource [name]`.
+> info **Hint** To create a CRUD controller with built-in [validation](https://docs.nestjs.com/application/validation), use the CLI's [CRUD generator](https://docs.nestjs.com/recipes/crud-generator#crud-generator): `nest g resource [name]`.
 
 #### Routing
 
@@ -501,7 +501,7 @@ async create(createCatDto) {
 }
 ```
 
-> info **Hint** The `ValidationPipe` can filter out properties that the route handler should not receive. You whitelist the acceptable properties, and any property not in the whitelist is automatically stripped from the resulting object. In the `CreateCatDto` example, the whitelist consists of the `name`, `age`, and `breed` properties. Learn more in [Stripping properties](https://docs.nestjs.com/techniques/validation#stripping-properties).
+> info **Hint** The `ValidationPipe` can filter out properties that the route handler should not receive. You whitelist the acceptable properties, and any property not in the whitelist is automatically stripped from the resulting object. In the `CreateCatDto` example, the whitelist consists of the `name`, `age`, and `breed` properties. Learn more in [Stripping properties](https://docs.nestjs.com/application/validation#stripping-properties).
 
 #### Query parameters
 

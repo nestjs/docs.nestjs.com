@@ -198,7 +198,7 @@ export class AuthController {
 }
 ```
 
-> info **Hint** In a real application, use a DTO class instead of the `Record<string, any>` type to define the shape of the request body. See the [validation](/techniques/validation) chapter for more information.
+> info **Hint** In a real application, use a DTO class instead of the `Record<string, any>` type to define the shape of the request body. See the [validation](/application/validation) chapter for more information.
 
 <app-banner-courses-auth></app-banner-courses-auth>
 

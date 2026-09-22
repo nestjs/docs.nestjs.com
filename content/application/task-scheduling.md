@@ -25,7 +25,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 export class AppModule {}
 ```
 
-The `forRoot()` call initializes the scheduler and registers any declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a>, and <a href="techniques/task-scheduling#declarative-intervals">intervals</a> that exist within your app. The scheduled jobs start in the `onApplicationBootstrap` lifecycle hook, which ensures that all modules have loaded and declared their scheduled jobs.
+The `forRoot()` call initializes the scheduler and registers any declarative <a href="application/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="application/task-scheduling#declarative-timeouts">timeouts</a>, and <a href="application/task-scheduling#declarative-intervals">intervals</a> that exist within your app. The scheduled jobs start in the `onApplicationBootstrap` lifecycle hook, which ensures that all modules have loaded and declared their scheduled jobs.
 
 > warning **Warning** Call `forRoot()` in one module only. Each additional import registers every `@Cron()`, `@Interval()` and `@Timeout()` handler in your app again, so importing it in three modules makes each job run three times.
 
@@ -175,7 +175,7 @@ export class NotificationService {
 }
 ```
 
-With the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">dynamic API</a>, you can access and control a cron job after it's been declared, or create a cron job dynamically (with its cron pattern defined at runtime). To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in the options object (the decorator's optional second argument).
+With the <a href="/application/task-scheduling#dynamic-schedule-module-api">dynamic API</a>, you can access and control a cron job after it's been declared, or create a cron job dynamically (with its cron pattern defined at runtime). To access a declarative cron job via the API, you must associate the job with a name by passing the `name` property in the options object (the decorator's optional second argument).
 
 #### Declarative intervals
 
@@ -190,7 +190,7 @@ handleInterval() {
 
 > info **Hint** This mechanism uses the JavaScript `setInterval()` function under the hood. You can also use a cron job to schedule recurring jobs.
 
-To control your declarative interval from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">dynamic API</a>, associate the interval with a name using the following construction:
+To control your declarative interval from outside the declaring class via the <a href="/application/task-scheduling#dynamic-schedule-module-api">dynamic API</a>, associate the interval with a name using the following construction:
 
 ```typescript
 @Interval('notifications', 2500)
@@ -199,7 +199,7 @@ handleInterval() {}
 
 Every method annotated with `@Interval()` is automatically wrapped in a `try-catch` block, so if an exception occurs, it's logged to the console.
 
-The <a href="techniques/task-scheduling#dynamic-intervals">dynamic API</a> also enables **creating** dynamic intervals, where the interval's properties are defined at runtime, and **listing and deleting** them.
+The <a href="application/task-scheduling#dynamic-intervals">dynamic API</a> also enables **creating** dynamic intervals, where the interval's properties are defined at runtime, and **listing and deleting** them.
 
 <app-banner-enterprise></app-banner-enterprise>
 
@@ -218,18 +218,18 @@ handleTimeout() {
 
 Every method annotated with `@Timeout()` is automatically wrapped in a `try-catch` block, so if an exception occurs, it's logged to the console.
 
-To control your declarative timeout from outside the declaring class via the <a href="/techniques/task-scheduling#dynamic-schedule-module-api">dynamic API</a>, associate the timeout with a name using the following construction:
+To control your declarative timeout from outside the declaring class via the <a href="/application/task-scheduling#dynamic-schedule-module-api">dynamic API</a>, associate the timeout with a name using the following construction:
 
 ```typescript
 @Timeout('notifications', 2500)
 handleTimeout() {}
 ```
 
-The <a href="techniques/task-scheduling#dynamic-timeouts">dynamic API</a> also enables **creating** dynamic timeouts, where the timeout's properties are defined at runtime, and **listing and deleting** them.
+The <a href="application/task-scheduling#dynamic-timeouts">dynamic API</a> also enables **creating** dynamic timeouts, where the timeout's properties are defined at runtime, and **listing and deleting** them.
 
 #### Dynamic schedule module API
 
-The `@nestjs/schedule` module provides a dynamic API for managing declarative <a href="techniques/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="techniques/task-scheduling#declarative-timeouts">timeouts</a>, and <a href="techniques/task-scheduling#declarative-intervals">intervals</a>. The API also lets you create and manage **dynamic** cron jobs, timeouts, and intervals, whose properties are defined at runtime.
+The `@nestjs/schedule` module provides a dynamic API for managing declarative <a href="application/task-scheduling#declarative-cron-jobs">cron jobs</a>, <a href="application/task-scheduling#declarative-timeouts">timeouts</a>, and <a href="application/task-scheduling#declarative-intervals">intervals</a>. The API also lets you create and manage **dynamic** cron jobs, timeouts, and intervals, whose properties are defined at runtime.
 
 #### Dynamic cron jobs
 
@@ -287,7 +287,7 @@ addCronJob(name: string, seconds: string) {
 }
 ```
 
-This code uses the `CronJob` class from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (like the `@Cron()` <a href="techniques/task-scheduling#declarative-cron-jobs">decorator</a>) as its first argument, and a callback to execute when the cron timer fires as its second argument. The `SchedulerRegistry#addCronJob` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
+This code uses the `CronJob` class from the `cron` package to create the cron job. The `CronJob` constructor takes a cron pattern (like the `@Cron()` <a href="application/task-scheduling#declarative-cron-jobs">decorator</a>) as its first argument, and a callback to execute when the cron timer fires as its second argument. The `SchedulerRegistry#addCronJob` method takes two arguments: a name for the `CronJob`, and the `CronJob` object itself.
 
 > warning **Warning** Remember to inject the `SchedulerRegistry` before accessing it. Import `CronJob` from the `cron` package.
 

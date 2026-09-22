@@ -195,7 +195,7 @@ check() {
 #### TypeOrm health indicator
 
 Terminus lets you add database checks to your health check. Before using this health indicator, read the
-[database](/techniques/database) chapter and make sure your application's database connection is established.
+[database](/data/database) chapter and make sure your application's database connection is established.
 
 > info **Hint** Behind the scenes, the `TypeOrmHealthIndicator` executes a `SELECT 1` SQL command, which is commonly used to verify whether the database is still alive. For Oracle databases, it uses `SELECT 1 FROM DUAL`, and for SAP HANA, `SELECT now() FROM dummy`.
 
@@ -256,7 +256,7 @@ If your database is reachable, a `GET` request to `http://localhost:3000/health`
 }
 ```
 
-If your application uses [multiple databases](/techniques/database#multiple-databases), inject each
+If your application uses [multiple databases](/data/database#multiple-databases), inject each
 data source into your `HealthController`. Then, pass the data source reference to the `TypeOrmHealthIndicator` using the `connection` option.
 
 ```typescript
@@ -773,7 +773,7 @@ By default, Terminus logs an error when a health check fails. When a graceful sh
 This section walks you through creating a custom logger, `TerminusLogger`. This logger extends the built-in `ConsoleLogger`,
 so you can choose which parts of the logger to override.
 
-> info **Hint** To learn more about custom loggers in Nest, see [injecting a custom logger](/techniques/logger#injecting-a-custom-logger).
+> info **Hint** To learn more about custom loggers in Nest, see [injecting a custom logger](/application/logger#injecting-a-custom-logger).
 
 
 ```typescript

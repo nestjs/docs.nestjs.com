@@ -144,7 +144,7 @@ const config = new DocumentBuilder()
 
 #### File upload
 
-To document file upload for a specific method, use the `@ApiBody()` decorator together with `@ApiConsumes()`. Here's a full example using the [file upload](/techniques/file-upload) technique:
+To document file upload for a specific method, use the `@ApiBody()` decorator together with `@ApiConsumes()`. Here's a full example using the [file upload](/http/file-upload) technique:
 
 ```typescript
 @UseInterceptors(FileInterceptor('file'))

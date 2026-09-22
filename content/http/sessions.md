@@ -1,6 +1,6 @@
 ### Session
 
-**HTTP sessions** store information about the user across multiple requests, which is particularly useful for [MVC](/techniques/mvc) applications.
+**HTTP sessions** store information about the user across multiple requests, which is particularly useful for [MVC](/http/mvc) applications.
 
 #### Use with Express (default)
 

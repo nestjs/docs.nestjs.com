@@ -307,7 +307,7 @@ type Query {
 }
 ```
 
-> info **Hint** Argument classes like `GetAuthorArgs` work well with the `ValidationPipe` (see [Validation](/techniques/validation)).
+> info **Hint** Argument classes like `GetAuthorArgs` work well with the `ValidationPipe` (see [Validation](/application/validation)).
 
 #### Class inheritance
 
@@ -600,7 +600,7 @@ export abstract class IQuery {
 }
 ```
 
-Generating classes (instead of the default interfaces) lets you combine declarative validation **decorators** with the schema first approach (see [Validation](/techniques/validation)). For example, you could add `class-validator` decorators to a generated `CreatePostInput` class, as shown below, to enforce minimum and maximum string lengths on the `title` field:
+Generating classes (instead of the default interfaces) lets you combine declarative validation **decorators** with the schema first approach (see [Validation](/application/validation)). For example, you could add `class-validator` decorators to a generated `CreatePostInput` class, as shown below, to enforce minimum and maximum string lengths on the `title` field:
 
 ```typescript
 import { MinLength, MaxLength } from 'class-validator';
@@ -612,7 +612,7 @@ export class CreatePostInput {
 }
 ```
 
-> warning **Notice** To enable automatic validation of your inputs (and parameters), use `ValidationPipe`. Learn more in the [Validation](/techniques/validation) and [Pipes](/pipes) chapters.
+> warning **Notice** To enable automatic validation of your inputs (and parameters), use `ValidationPipe`. Learn more in the [Validation](/application/validation) and [Pipes](/pipes) chapters.
 
 However, decorators added directly to the generated file are **overwritten** each time the file is regenerated. Instead, create a separate file and extend the generated class.
 

@@ -10,7 +10,7 @@ Nest provides two built-in interceptors that apply these rules declaratively:
 
 - `StandardSchemaSerializerInterceptor` validates and transforms responses with a schema written in [Zod](https://zod.dev/), [Valibot](https://valibot.dev/), [ArkType](https://arktype.io/), or any other [Standard Schema](https://standardschema.dev/) compatible library. See [Schema-based serialization](#schema-based-serialization).
 
-> info **Hint** Neither interceptor serializes [StreamableFile](/techniques/file-upload#streaming-files) responses.
+> info **Hint** Neither interceptor serializes [StreamableFile](/http/file-upload#streaming-files) responses.
 
 #### Exclude properties
 

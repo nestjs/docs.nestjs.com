@@ -204,7 +204,7 @@ A working example is available in the [15-mvc sample](https://github.com/nestjs/
 
 #### Fastify
 
-As mentioned in the [Performance (Fastify)](/techniques/performance) chapter, you can use any compatible HTTP provider with Nest. One such library is [Fastify](https://github.com/fastify/fastify). To create an MVC application with Fastify, install the following packages:
+As mentioned in the [Performance (Fastify)](/http/performance) chapter, you can use any compatible HTTP provider with Nest. One such library is [Fastify](https://github.com/fastify/fastify). To create an MVC application with Fastify, install the following packages:
 
 ```bash
 $ npm i --save @fastify/static @fastify/view handlebars

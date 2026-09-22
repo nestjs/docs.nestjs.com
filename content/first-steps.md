@@ -89,7 +89,7 @@ Nest is designed to be platform-agnostic. Platform independence lets you create 
 |                    |                                                                                                                                                                                                                                                                    |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `platform-express` | [Express](https://expressjs.com/) is a well-known, minimalist web framework for Node.js. It is a battle-tested, production-ready library with extensive community resources. Nest uses the `@nestjs/platform-express` package by default, so no setup is required. |
-| `platform-fastify` | [Fastify](https://www.fastify.io/) is a high-performance, low-overhead framework focused on efficiency and speed. To learn how to use it, see [Performance (Fastify)](/techniques/performance).                                                                    |
+| `platform-fastify` | [Fastify](https://www.fastify.io/) is a high-performance, low-overhead framework focused on efficiency and speed. To learn how to use it, see [Performance (Fastify)](/http/performance).                                                                    |
 
 Each platform exposes its own application interface: `NestExpressApplication` and `NestFastifyApplication`, respectively.
 

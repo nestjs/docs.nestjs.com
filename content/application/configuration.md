@@ -94,7 +94,7 @@ ConfigModule.forRoot({
 
 For more complex projects, you can use custom configuration files that return nested configuration objects. This lets you group related configuration settings by function (e.g., database-related settings) and store them in individual files, so you can manage them independently.
 
-A custom configuration file exports a factory function that returns a configuration object. The configuration object can be any arbitrarily nested plain JavaScript object. Inside the factory, the `process.env` object contains the fully resolved environment variable key/value pairs (with the `.env` file and externally defined variables resolved and merged as described in [Getting started](/techniques/configuration#getting-started)). Since you control the returned configuration object, you can add any logic you need to cast values to the appropriate type, set default values, and so on. For example:
+A custom configuration file exports a factory function that returns a configuration object. The configuration object can be any arbitrarily nested plain JavaScript object. Inside the factory, the `process.env` object contains the fully resolved environment variable key/value pairs (with the `.env` file and externally defined variables resolved and merged as described in [Getting started](/application/configuration#getting-started)). Since you control the returned configuration object, you can add any logic you need to cast values to the appropriate type, set default values, and so on. For example:
 
 ```typescript
 @@filename(config/configuration)
@@ -220,7 +220,7 @@ const dbUser = this.configService.get<string>('DATABASE_USER');
 const dbHost = this.configService.get<string>('database.host');
 ```
 
-As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can pass a type argument as a TypeScript type hint (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created with a [custom configuration file](/techniques/configuration#custom-configuration-files)), as shown in the second example.
+As shown above, use the `configService.get()` method to get a simple environment variable by passing the variable name. You can pass a type argument as a TypeScript type hint (e.g., `get<string>(...)`). The `get()` method can also traverse a nested custom configuration object (created with a [custom configuration file](/application/configuration#custom-configuration-files)), as shown in the second example.
 
 You can also get the whole nested custom configuration object using an interface as the type hint:
 
@@ -294,7 +294,7 @@ constructor(private configService: ConfigService<{ PORT: number }, true>) {
 
 #### Configuration namespaces
 
-The `ConfigModule` lets you define and load multiple custom configuration files, as shown in [Custom configuration files](/techniques/configuration#custom-configuration-files) above. You can manage complex configuration hierarchies with nested configuration objects, as shown in that section. Alternatively, you can return a "namespaced" configuration object with the `registerAs()` function, as follows:
+The `ConfigModule` lets you define and load multiple custom configuration files, as shown in [Custom configuration files](/application/configuration#custom-configuration-files) above. You can manage complex configuration hierarchies with nested configuration objects, as shown in that section. Alternatively, you can return a "namespaced" configuration object with the `registerAs()` function, as follows:
 
 ```typescript
 @@filename(config/database.config)
@@ -304,7 +304,7 @@ export default registerAs('database', () => ({
 }));
 ```
 
-As with custom configuration files, inside your `registerAs()` factory function, the `process.env` object contains the fully resolved environment variable key/value pairs (with the `.env` file and externally defined variables resolved and merged as described in [Getting started](/techniques/configuration#getting-started)).
+As with custom configuration files, inside your `registerAs()` factory function, the `process.env` object contains the fully resolved environment variable key/value pairs (with the `.env` file and externally defined variables resolved and merged as described in [Getting started](/application/configuration#getting-started)).
 
 > info **Hint** The `registerAs()` function is exported from the `@nestjs/config` package.
 

@@ -123,6 +123,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'application',
+        loadChildren: () =>
+          import('./homepage/pages/application/application.routes').then(
+            (r) => r.APPLICATION_ROUTES,
+          ),
+      },
+      {
+        path: 'data',
+        loadChildren: () =>
+          import('./homepage/pages/data/data.routes').then(
+            (r) => r.DATA_ROUTES,
+          ),
+      },
+      {
+        path: 'http',
+        loadChildren: () =>
+          import('./homepage/pages/http/http.routes').then(
+            (r) => r.HTTP_ROUTES,
+          ),
+      },
+      {
         path: 'security',
         loadChildren: () =>
           import('./homepage/pages/security/security.routes').then(

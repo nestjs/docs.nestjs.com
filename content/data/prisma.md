@@ -1,6 +1,6 @@
 ### Prisma
 
-[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. You can use it as an **alternative** to writing plain SQL or to other database access tools, such as SQL query builders (like [knex.js](https://knexjs.org/)) or other ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma supports PostgreSQL, MySQL, SQL Server, SQLite, CockroachDB, and MongoDB (see [supported databases](https://www.prisma.io/docs/orm/reference/supported-databases)). This recipe uses Prisma ORM 7, which works with the SQL databases; MongoDB projects stay on Prisma ORM 6 for now.
+[Prisma](https://www.prisma.io) is an [open-source](https://github.com/prisma/prisma) ORM for Node.js and TypeScript. You can use it as an **alternative** to writing plain SQL or to other database access tools, such as SQL query builders (like [knex.js](https://knexjs.org/)) or other ORMs (like [TypeORM](https://typeorm.io/) and [Sequelize](https://sequelize.org/)). Prisma supports PostgreSQL, MySQL, SQL Server, SQLite, CockroachDB, and MongoDB (see [supported databases](https://www.prisma.io/docs/orm/reference/supported-databases)). This chapter uses Prisma ORM 7, which works with the SQL databases; MongoDB projects stay on Prisma ORM 6 for now.
 
 While you can use Prisma with plain JavaScript, it embraces TypeScript and provides a level of type safety that goes beyond the guarantees of other ORMs in the TypeScript ecosystem. See the [comparison of the type safety guarantees of Prisma and TypeORM](https://www.prisma.io/docs/orm/more/comparisons/prisma-and-typeorm#type-safety) for details.
 
@@ -8,7 +8,7 @@ While you can use Prisma with plain JavaScript, it embraces TypeScript and provi
 
 #### Getting started
 
-In this recipe, you'll learn how to get started with NestJS and Prisma from scratch. You'll build a sample NestJS application with a REST API that reads and writes data in a database.
+In this chapter, you'll learn how to get started with NestJS and Prisma from scratch. You'll build a sample NestJS application with a REST API that reads and writes data in a database.
 
 This guide uses a [SQLite](https://sqlite.org/) database to save you the overhead of setting up a database server. You can still follow along if you're using PostgreSQL, MySQL, or SQL Server: the relevant steps include extra instructions for those databases.
 
@@ -122,7 +122,7 @@ DATABASE_URL="file:./dev.db"
 
 A SQLite database is a plain file, and no server is required to use it. So instead of configuring a connection URL with a _host_ and _port_, you point it to a local file, in this case `dev.db`. The file is created in the project root in the next step.
 
-The Prisma CLI loads `.env` through the `dotenv/config` import at the top of the Prisma configuration file. Your NestJS application doesn't load `.env` automatically, though. To make `DATABASE_URL` available at runtime, register the [`ConfigModule`](/techniques/configuration) in your `AppModule` (or start Node.js with the `--env-file=.env` flag).
+The Prisma CLI loads `.env` through the `dotenv/config` import at the top of the Prisma configuration file. Your NestJS application doesn't load `.env` automatically, though. To make `DATABASE_URL` available at runtime, register the [`ConfigModule`](/application/configuration) in your `AppModule` (or start Node.js with the `--env-file=.env` flag).
 
 <details><summary>Expand if you're using PostgreSQL, MySQL, SQL Server, or Azure SQL</summary>
 
@@ -604,7 +604,7 @@ This controller implements the following routes:
 
 #### Summary
 
-In this recipe, you learned how to use Prisma with NestJS to implement a REST API. The controller that implements the API routes calls the `UsersService` and `PostsService`, which use the `PrismaService` (and, through it, Prisma Client) to send queries to the database and fulfill the data needs of incoming requests.
+In this chapter, you learned how to use Prisma with NestJS to implement a REST API. The controller that implements the API routes calls the `UsersService` and `PostsService`, which use the `PrismaService` (and, through it, Prisma Client) to send queries to the database and fulfill the data needs of incoming requests.
 
 To learn more about using NestJS with Prisma, check out the following resources:
 

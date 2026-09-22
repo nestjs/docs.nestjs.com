@@ -315,7 +315,7 @@ export class IdGenerator {
 }
 ```
 
-Extending `ConfigurableModuleClass` gives `IdGeneratorModule` not only the `register()` method (as the manual implementation did), but also `registerAsync()`, which lets consumers configure the module asynchronously. For example, the following factory reads the prefix with the `ConfigService` from [`@nestjs/config`](/techniques/configuration):
+Extending `ConfigurableModuleClass` gives `IdGeneratorModule` not only the `register()` method (as the manual implementation did), but also `registerAsync()`, which lets consumers configure the module asynchronously. For example, the following factory reads the prefix with the `ConfigService` from [`@nestjs/config`](/application/configuration):
 
 ```typescript
 import { Module } from '@nestjs/common';

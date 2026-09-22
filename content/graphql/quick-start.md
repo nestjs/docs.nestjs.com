@@ -429,7 +429,7 @@ GraphQLModule.forRootAsync<ApolloDriverConfig>({
 
 #### Mercurius integration
 
-Instead of Apollo, [Fastify](/techniques/performance) users can use the `@nestjs/mercurius` driver.
+Instead of Apollo, [Fastify](/http/performance) users can use the `@nestjs/mercurius` driver.
 
 ```typescript
 @@filename()

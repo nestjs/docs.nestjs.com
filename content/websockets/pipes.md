@@ -29,7 +29,7 @@ Method-, gateway-, and global-scoped pipes run for every parameter of the messag
 
 #### Schema-based validation
 
-Like the HTTP parameter decorators, `@MessageBody()` accepts an options object with a `schema` property. The schema can come from any [Standard Schema](https://standardschema.dev/) compatible library, such as Zod, Valibot, or ArkType. The built-in `StandardSchemaValidationPipe` validates the payload against that schema, and passes parameters without a schema through unchanged. See [Schema-based validation](/techniques/validation#schema-based-validation) for details.
+Like the HTTP parameter decorators, `@MessageBody()` accepts an options object with a `schema` property. The schema can come from any [Standard Schema](https://standardschema.dev/) compatible library, such as Zod, Valibot, or ArkType. The built-in `StandardSchemaValidationPipe` validates the payload against that schema, and passes parameters without a schema through unchanged. See [Schema-based validation](/application/validation#schema-based-validation) for details.
 
 ```typescript
 @@filename()

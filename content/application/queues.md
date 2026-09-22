@@ -8,7 +8,7 @@ Queues are a design pattern that helps you deal with common application scaling 
 
 Nest provides the `@nestjs/bullmq` package for BullMQ integration and the `@nestjs/bull` package for Bull integration. Both packages wrap their respective libraries, which are developed by the same team. Bull is in maintenance mode (the team only fixes bugs), while BullMQ is actively developed and offers a modern TypeScript implementation with a different set of features. If Bull meets your requirements, it remains a reliable, battle-tested choice.
 
-Both BullMQ and Bull use [Redis](https://redis.io/) to persist job data, so you need a running Redis instance. Because they are Redis-backed, your queue architecture can be fully distributed and platform-independent. For example, you can run some queue <a href="techniques/queues#producers">producers</a>, <a href="techniques/queues#consumers">consumers</a>, and <a href="techniques/queues#event-listeners">listeners</a> in Nest on one or more nodes, and other producers, consumers, and listeners on other Node.js platforms on other network nodes.
+Both BullMQ and Bull use [Redis](https://redis.io/) to persist job data, so you need a running Redis instance. Because they are Redis-backed, your queue architecture can be fully distributed and platform-independent. For example, you can run some queue <a href="application/queues#producers">producers</a>, <a href="application/queues#consumers">consumers</a>, and <a href="application/queues#event-listeners">listeners</a> in Nest on one or more nodes, and other producers, consumers, and listeners on other Node.js platforms on other network nodes.
 
 This chapter covers the `@nestjs/bullmq` and `@nestjs/bull` packages. For more background and implementation details, see the [BullMQ documentation](https://docs.bullmq.io/) and the [Bull reference](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md).
 
@@ -46,7 +46,7 @@ The `forRoot()` method registers a `bullmq` configuration object that all queues
 - `prefix: string` - Prefix for all queue keys (defaults to `bull`).
 - `defaultJobOptions: DefaultJobOptions` - Default settings for new jobs. See [DefaultJobOptions](https://docs.bullmq.io/api/interfaces/v6.DefaultJobOptions.html) for more information. These don't take effect for jobs added through a `FlowProducer`; see [bullmq#1034](https://github.com/taskforcesh/bullmq/issues/1034) for an explanation.
 - `settings: AdvancedRepeatOptions` - Advanced settings for repeatable jobs. These should usually not be changed. See [AdvancedRepeatOptions](https://docs.bullmq.io/api/interfaces/v6.AdvancedRepeatOptions.html) for more information.
-- `extraOptions` - Extra options for module initialization. See [Manual registration](/techniques/queues#manual-registration).
+- `extraOptions` - Extra options for module initialization. See [Manual registration](/application/queues#manual-registration).
 
 All options are optional. Apart from `extraOptions`, they are passed directly to the BullMQ `Queue` constructor. See the [QueueOptions API reference](https://docs.bullmq.io/api/interfaces/v6.QueueOptions.html) for the complete list.
 
@@ -85,7 +85,7 @@ BullModule.registerFlowProducer({
 
 Because jobs are persisted in Redis, each time a named queue is instantiated (e.g., when an app starts or restarts), it attempts to process any old jobs left over from a previous unfinished session.
 
-Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. The <a href="techniques/queues#job-options">job options</a> section explains how to control the processing order.
+Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. The <a href="application/queues#job-options">job options</a> section explains how to control the processing order.
 
 <app-banner-enterprise></app-banner-enterprise>
 
@@ -131,7 +131,7 @@ export class AudioService {
 
 > info **Hint** The `@InjectQueue()` decorator identifies the queue by its name, as provided in the `registerQueue()` method call (e.g., `'audio'`).
 
-Now, add a job by calling the queue's `add()` method, passing a job name and a user-defined data object. Job data must be serializable, because jobs are stored in Redis. The shape of the data is arbitrary; use it to represent the semantics of your job. The name lets a <a href="techniques/queues#consumers">consumer</a> tell different kinds of jobs apart.
+Now, add a job by calling the queue's `add()` method, passing a job name and a user-defined data object. Job data must be serializable, because jobs are stored in Redis. The shape of the data is arbitrary; use it to represent the semantics of your job. The name lets a <a href="application/queues#consumers">consumer</a> tell different kinds of jobs apart.
 
 ```typescript
 const job = await this.audioQueue.add('transcode', {
@@ -296,7 +296,7 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 
 BullMQ emits a set of events when queue and/or job state changes occur. You can subscribe to these events at the worker level using the `@OnWorkerEvent(event)` decorator, or at the queue level with a dedicated listener class and the `@OnQueueEvent(event)` decorator.
 
-Worker events must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use the `@OnWorkerEvent(event)` decorator with the event you want to handle. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
+Worker events must be declared within a <a href="application/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use the `@OnWorkerEvent(event)` decorator with the event you want to handle. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
 import { Processor, WorkerHost, OnWorkerEvent } from '@nestjs/bullmq';
@@ -575,7 +575,7 @@ BullModule.registerQueue({
 
 Because jobs are persisted in Redis, each time a named queue is instantiated (e.g., when an app starts or restarts), it attempts to process any old jobs left over from a previous unfinished session.
 
-Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. The <a href="techniques/queues#job-options">job options</a> section explains how to control the processing order.
+Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. The <a href="application/queues#job-options">job options</a> section explains how to control the processing order.
 
 <app-banner-enterprise></app-banner-enterprise>
 
@@ -631,7 +631,7 @@ const job = await this.audioQueue.add({
 
 #### Named jobs
 
-Jobs can have names. This lets you create specialized <a href="techniques/queues#consumers">consumers</a> that only process jobs with a given name.
+Jobs can have names. This lets you create specialized <a href="application/queues#consumers">consumers</a> that only process jobs with a given name.
 
 ```typescript
 const job = await this.audioQueue.add('transcode', {
@@ -639,7 +639,7 @@ const job = await this.audioQueue.add('transcode', {
 });
 ```
 
-> warning **Warning** When using named jobs, you must create a processor for each unique name added to a queue, or the queue reports that a processor for the given job is missing. See <a href="techniques/queues#consumers">consumers</a> for more information on consuming named jobs.
+> warning **Warning** When using named jobs, you must create a processor for each unique name added to a queue, or the queue reports that a processor for the given job is missing. See <a href="application/queues#consumers">consumers</a> for more information on consuming named jobs.
 
 #### Job options
 
@@ -766,7 +766,7 @@ constructor(@Inject(JOB_REF) jobRef: Job) {
 
 Bull emits a set of events when queue and/or job state changes occur. The `@nestjs/bull` package exports a set of decorators that let you subscribe to a core set of standard events.
 
-Event listeners must be declared within a <a href="techniques/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
+Event listeners must be declared within a <a href="application/queues#consumers">consumer</a> class (i.e., within a class decorated with the `@Processor()` decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the `audio` queue, use the following construct:
 
 ```typescript
 import { Processor, Process, OnQueueActive } from '@nestjs/bull';

@@ -243,9 +243,9 @@ In the default logger implementation, `context` is printed in square brackets, l
 
 If you supply a custom logger via `app.useLogger()`, Nest uses it internally, and calls made through `Logger` instances are delegated to it. Your code remains implementation agnostic, and you can substitute the default logger with your own by calling `app.useLogger()`.
 
-For example, if you follow the steps in the <a href="techniques/logger#dependency-injection">Dependency injection</a> section below and call `app.useLogger(app.get(MyLogger))`, subsequent calls to `this.logger.log()` from `MyService` result in calls to the `log()` method of the `MyLogger` instance.
+For example, if you follow the steps in the <a href="application/logger#dependency-injection">Dependency injection</a> section below and call `app.useLogger(app.get(MyLogger))`, subsequent calls to `this.logger.log()` from `MyService` result in calls to the `log()` method of the `MyLogger` instance.
 
-This is suitable for most cases. If you need more customization (like adding and calling custom methods), see the <a href="techniques/logger#injecting-a-custom-logger">Injecting a custom logger</a> section.
+This is suitable for most cases. If you need more customization (like adding and calling custom methods), see the <a href="application/logger#injecting-a-custom-logger">Injecting a custom logger</a> section.
 
 #### Logs with timestamps
 
@@ -331,7 +331,7 @@ const app = await NestFactory.create(AppModule, {
 await app.listen(process.env.PORT ?? 3000);
 ```
 
-This technique, while simple, doesn't use dependency injection for the `MyLogger` class. This can pose challenges, particularly for testing, and limits the reusability of `MyLogger`. For a better solution, see the <a href="techniques/logger#dependency-injection">Dependency injection</a> section below.
+This technique, while simple, doesn't use dependency injection for the `MyLogger` class. This can pose challenges, particularly for testing, and limits the reusability of `MyLogger`. For a better solution, see the <a href="application/logger#dependency-injection">Dependency injection</a> section below.
 
 #### Extend built-in logger
 
@@ -348,9 +348,9 @@ export class MyLogger extends ConsoleLogger {
 }
 ```
 
-You can use such an extended logger in your feature modules as described in the <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> section above.
+You can use such an extended logger in your feature modules as described in the <a href="application/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> section above.
 
-You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the <a href="techniques/logger#custom-implementation">Custom implementation</a> section above), or by using the technique shown in the <a href="techniques/logger#dependency-injection">Dependency injection</a> section below. If you do so, call `super`, as shown in the sample code above, to delegate the log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
+You can tell Nest to use your extended logger for system logging by passing an instance of it via the `logger` property of the application options object (as shown in the <a href="application/logger#custom-implementation">Custom implementation</a> section above), or by using the technique shown in the <a href="application/logger#dependency-injection">Dependency injection</a> section below. If you do so, call `super`, as shown in the sample code above, to delegate the log method call to the parent (built-in) class so that Nest can rely on the built-in features it expects.
 
 <app-banner-courses></app-banner-courses>
 
@@ -390,7 +390,7 @@ await app.listen(process.env.PORT ?? 3000);
 
 Here, the `get()` method of the `NestApplication` instance retrieves the singleton instance of `MyLogger`. This technique is essentially a way to "inject" a logger instance for use by Nest. The `app.get()` call depends on that instance first being instantiated through a module import, as described above.
 
-You can also inject this `MyLogger` provider into your feature classes, ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="techniques/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> and <a href="techniques/logger#injecting-a-custom-logger">Injecting a custom logger</a> below for more information.
+You can also inject this `MyLogger` provider into your feature classes, ensuring consistent logging behavior across both Nest system logging and application logging. See <a href="application/logger#using-the-logger-for-application-logging">Using the logger for application logging</a> and <a href="application/logger#injecting-a-custom-logger">Injecting a custom logger</a> below for more information.
 
 #### Injecting a custom logger
 

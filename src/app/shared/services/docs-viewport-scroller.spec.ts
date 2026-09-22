@@ -44,7 +44,7 @@ describe('DocsViewportScroller', () => {
     frames = [];
     offsets = new Map();
     document.body.innerHTML = '';
-    setPath('/techniques/validation');
+    setPath('/application/validation');
 
     Object.defineProperty(window, 'scrollY', { configurable: true, get: () => scrollY });
     scrollTo = vi.fn((options: ScrollToOptions) => {

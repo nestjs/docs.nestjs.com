@@ -472,7 +472,7 @@ export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEv
 > - Errors thrown in command handlers can still be caught by the built-in [exception filters](/exception-filters).
 > - Errors thrown in event handlers can't be caught by exception filters, so you have to handle them yourself: with a `try/catch` block, with a [saga](/recipes/cqrs#sagas) that triggers a compensating event, or with another approach of your choice.
 > - The value returned by a command handler can still be sent back to the client in the HTTP response.
-> - Event handlers can't send HTTP responses. To send information to the client, use [WebSockets](/websockets/gateways), [server-sent events](/techniques/server-sent-events), or another mechanism.
+> - Event handlers can't send HTTP responses. To send information to the client, use [WebSockets](/websockets/gateways), [server-sent events](/http/server-sent-events), or another mechanism.
 
 As with commands and queries, register the `HeroKilledDragonHandler` as a provider in a module:
 

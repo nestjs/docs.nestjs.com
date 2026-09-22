@@ -4,9 +4,6 @@ RewriteBase /
 RewriteCond %{HTTPS} off
 RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
 
-# Chapters merged into other pages (NE keeps the fragment unescaped)
-RewriteRule ^techniques/streaming-files/?$ /techniques/file-upload#streaming-files [R=301,NE,L]
-
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d

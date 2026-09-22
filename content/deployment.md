@@ -77,7 +77,7 @@ See the [health checks (Terminus)](/recipes/terminus) recipe to learn how to imp
 
 #### Logging
 
-Logging is essential for any production-ready application. It helps you track errors, monitor behavior, and troubleshoot issues. In NestJS, you can manage logging with the [built-in logger](/techniques/logger), or opt for external libraries if you need more advanced features.
+Logging is essential for any production-ready application. It helps you track errors, monitor behavior, and troubleshoot issues. In NestJS, you can manage logging with the [built-in logger](/application/logger), or opt for external libraries if you need more advanced features.
 
 Best practices for logging:
 
@@ -288,7 +288,7 @@ Each topic covered earlier in this chapter has a managed equivalent in Mau:
   </tr>
   <tr>
     <td><a href="/deployment#logging">Logging</a></td>
-    <td>Logs are collected and viewable in the dashboard. JSON logging is especially useful here; see the <a href="/techniques/logger">Logger chapter</a>.</td>
+    <td>Logs are collected and viewable in the dashboard. JSON logging is especially useful here; see the <a href="/application/logger">Logger chapter</a>.</td>
   </tr>
   <tr>
     <td><a href="/deployment#scaling-up-or-out">Scaling</a></td>

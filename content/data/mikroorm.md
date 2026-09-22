@@ -1,6 +1,6 @@
 ### MikroORM
 
-This recipe helps you get started with MikroORM in Nest. MikroORM is a TypeScript ORM for Node.js based on the Data Mapper, Unit of Work, and Identity Map patterns. It's a good alternative to TypeORM, and migrating from TypeORM is relatively straightforward. See the [MikroORM documentation](https://mikro-orm.io/docs) for complete coverage of the ORM.
+This chapter helps you get started with MikroORM in Nest. MikroORM is a TypeScript ORM for Node.js based on the Data Mapper, Unit of Work, and Identity Map patterns. It's a good alternative to TypeORM, and migrating from TypeORM is relatively straightforward. See the [MikroORM documentation](https://mikro-orm.io/docs) for complete coverage of the ORM.
 
 > info **Note** `@mikro-orm/nestjs` is a third-party package and is not managed by the NestJS core team. Please report any issues with the library in the [@mikro-orm/nestjs repository](https://github.com/mikro-orm/nestjs).
 
@@ -180,7 +180,7 @@ With this option enabled, every entity registered through the `forFeature()` met
 
 #### Serialization
 
-> warning **Warning** MikroORM wraps every entity relation in a `Reference<T>` or a `Collection<T>` object to provide better type safety. This makes [Nest's built-in serializer](/techniques/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, none of their relations are serialized.
+> warning **Warning** MikroORM wraps every entity relation in a `Reference<T>` or a `Collection<T>` object to provide better type safety. This makes [Nest's built-in serializer](/application/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, none of their relations are serialized.
 
 Instead, use the MikroORM [serialization API](https://mikro-orm.io/docs/serializing) in place of the `ClassSerializerInterceptor`.
 

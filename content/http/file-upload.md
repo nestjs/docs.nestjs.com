@@ -413,7 +413,7 @@ export class FileController {
 
 > info **Hint** The `StreamableFile` class is exported from the `@nestjs/common` package.
 
-Neither the `ClassSerializerInterceptor` nor the `StandardSchemaSerializerInterceptor` [serializes](/techniques/serialization) `StreamableFile` responses.
+Neither the `ClassSerializerInterceptor` nor the `StandardSchemaSerializerInterceptor` [serializes](/application/serialization) `StreamableFile` responses.
 
 ##### Response headers
 
