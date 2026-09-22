@@ -1,21 +1,21 @@
 ### Compression
 
-Compression can greatly decrease the size of the response body, thereby increasing the speed of a web app.
+Compression can significantly reduce the size of the response body, which makes a web app faster to load.
 
-For **high-traffic** websites in production, it is strongly recommended to offload compression from the application server - typically in a reverse proxy (e.g., Nginx). In that case, you should not use compression middleware.
+For **high-traffic** websites in production, we strongly recommend offloading compression from the application server, typically to a reverse proxy (e.g., Nginx). In that case, don't use compression middleware.
 
 #### Use with Express (default)
 
-Use the [compression](https://github.com/expressjs/compression) middleware package to enable gzip compression.
+Use the [compression](https://github.com/expressjs/compression) middleware package to enable response compression. It supports the gzip, deflate, and Brotli encodings, and picks one based on the request's `Accept-Encoding` header.
 
-First, install the required package:
+First, install the required packages:
 
 ```bash
 $ npm i --save compression
 $ npm i --save-dev @types/compression
 ```
 
-Once the installation is complete, apply the compression middleware as global middleware.
+Once the installation is complete, apply the compression middleware globally:
 
 ```typescript
 import compression from 'compression';
@@ -25,15 +25,15 @@ app.use(compression());
 
 #### Use with Fastify
 
-If using the `FastifyAdapter`, you'll want to use [fastify-compress](https://github.com/fastify/fastify-compress):
+If you use the `FastifyAdapter`, use the [@fastify/compress](https://github.com/fastify/fastify-compress) plugin instead:
 
 ```bash
 $ npm i --save @fastify/compress
 ```
 
-Once the installation is complete, apply the `@fastify/compress` middleware as global middleware.
+Once the installation is complete, register the `@fastify/compress` plugin. It compresses all eligible responses by default.
 
-> warning **Warning** Please ensure that you use the type `NestFastifyApplication` when creating the application. Otherwise, you cannot use `register` to apply the compression middleware.
+> warning **Warning** Make sure you pass the `NestFastifyApplication` type when creating the application. Otherwise, the `register()` method isn't available to apply the plugin.
 
 ```typescript
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -45,7 +45,7 @@ const app = await NestFactory.create<NestFastifyApplication>(AppModule, new Fast
 await app.register(compression);
 ```
 
-By default, `@fastify/compress` will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli can be quite efficient in terms of compression ratio, it can also be quite slow. By default, Brotli sets a maximum compression quality of 11, although it can be adjusted to reduce compression time in lieu of compression quality by adjusting the `BROTLI_PARAM_QUALITY` between a minimum of 0 and a maximum of 11. This will require fine-tuning to optimize space/time performance. An example with quality 4:
+By default, `@fastify/compress` uses the first encoding the client accepts, in this order of preference: `zstd` (on Node.js versions that support it), `br` (Brotli), `gzip`, and `deflate`. Brotli achieves a high compression ratio, but higher quality levels are slow. The plugin sets the Brotli quality (`BROTLI_PARAM_QUALITY`) to 4 by default instead of zlib's default of 11. You can set it anywhere from 0 (fastest) to 11 (smallest output), trading compression time against response size. Tune this value for your workload. The following example sets the quality explicitly:
 
 ```typescript
 import { constants } from 'node:zlib';
@@ -53,12 +53,12 @@ import { constants } from 'node:zlib';
 await app.register(compression, { brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } } });
 ```
 
-To simplify, you may want to tell `fastify-compress` to only use deflate and gzip to compress responses; you'll end up with potentially larger responses but they'll be delivered much more quickly.
+Alternatively, you can restrict `@fastify/compress` to gzip and deflate. Responses may be larger, but they are compressed faster.
 
-To specify encodings, provide a second argument to `app.register`:
+To specify the encodings, pass the `encodings` option in the second argument to `app.register()`:
 
 ```typescript
 await app.register(compression, { encodings: ['gzip', 'deflate'] });
 ```
 
-The above tells `fastify-compress` to only use gzip and deflate encodings, preferring gzip if the client supports both.
+This configuration tells `@fastify/compress` to use only the gzip and deflate encodings, preferring gzip when the client supports both.

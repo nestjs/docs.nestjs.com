@@ -1,12 +1,12 @@
 ### HTTP module
 
-[Axios](https://github.com/axios/axios) is a richly featured HTTP client package that is widely used. Nest wraps Axios and exposes it via the built-in `HttpModule`. The `HttpModule` exports the `HttpService` class, which exposes Axios-based methods to perform HTTP requests. The library also transforms the resulting HTTP responses into `Observables`.
+[Axios](https://github.com/axios/axios) is a widely used, feature-rich HTTP client package. Nest wraps Axios and exposes it through the `HttpModule` from the `@nestjs/axios` package. The `HttpModule` exports the `HttpService` class, which exposes Axios-based methods for performing HTTP requests. `HttpService` also wraps the resulting HTTP responses in RxJS `Observable`s.
 
-> info **Hint** You can also use any general purpose Node.js HTTP client library directly, including [got](https://github.com/sindresorhus/got) or [undici](https://github.com/nodejs/undici).
+> info **Hint** You can also use any general-purpose Node.js HTTP client library directly, such as [got](https://github.com/sindresorhus/got) or [undici](https://github.com/nodejs/undici).
 
 #### Installation
 
-To begin using it, we first install the required dependencies.
+To get started, install the required dependencies:
 
 ```bash
 $ npm i --save @nestjs/axios axios
@@ -14,7 +14,7 @@ $ npm i --save @nestjs/axios axios
 
 #### Getting started
 
-Once the installation process is complete, to use the `HttpService`, first import `HttpModule`.
+Once the installation is complete, import `HttpModule` into the module that needs `HttpService`:
 
 ```typescript
 @Module({
@@ -24,7 +24,7 @@ Once the installation process is complete, to use the `HttpService`, first impor
 export class CatsModule {}
 ```
 
-Next, inject `HttpService` using normal constructor injection.
+Next, inject `HttpService` through the constructor.
 
 > info **Hint** `HttpModule` and `HttpService` are imported from the `@nestjs/axios` package.
 
@@ -54,11 +54,11 @@ export class CatsService {
 
 > info **Hint** `AxiosResponse` is an interface exported from the `axios` package (`$ npm i axios`).
 
-All `HttpService` methods return an `AxiosResponse` wrapped in an `Observable` object.
+All `HttpService` request methods return an `AxiosResponse` wrapped in an `Observable`.
 
 #### Configuration
 
-[Axios](https://github.com/axios/axios) can be configured with a variety of options to customize the behavior of the `HttpService`. Read more about them [here](https://github.com/axios/axios#request-config). To configure the underlying Axios instance, pass an optional options object to the `register()` method of `HttpModule` when importing it. This options object will be passed directly to the underlying Axios constructor.
+[Axios](https://github.com/axios/axios) accepts a variety of options that customize the behavior of the `HttpService`. See the [Axios request config documentation](https://github.com/axios/axios#request-config) for the full list. To configure the underlying Axios instance, pass an options object to the `register()` method of `HttpModule` when importing it. Nest passes this object directly to `axios.create()`.
 
 ```typescript
 @Module({
@@ -75,7 +75,7 @@ export class CatsModule {}
 
 #### Async configuration
 
-When you need to pass module options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+When you need to pass module options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, Nest provides several techniques for async configuration.
 
 One technique is to use a factory function:
 
@@ -88,7 +88,7 @@ HttpModule.registerAsync({
 });
 ```
 
-Like other factory providers, our factory function can be [async](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory) and can inject dependencies through `inject`.
+Like other factory providers, the factory function can be [async](/fundamentals/custom-providers#factory-providers-usefactory) and can inject dependencies through `inject`.
 
 ```typescript
 HttpModule.registerAsync({
@@ -101,7 +101,7 @@ HttpModule.registerAsync({
 });
 ```
 
-Alternatively, you can configure the `HttpModule` using a class instead of a factory, as shown below.
+Alternatively, you can configure the `HttpModule` using a class instead of a factory:
 
 ```typescript
 HttpModule.registerAsync({
@@ -109,7 +109,7 @@ HttpModule.registerAsync({
 });
 ```
 
-The construction above instantiates `HttpConfigService` inside `HttpModule`, using it to create an options object. Note that in this example, the `HttpConfigService` has to implement the `HttpModuleOptionsFactory` interface, as shown below. The `HttpModule` will call the `createHttpOptions()` method on the instantiated object of the supplied class.
+This construction instantiates `HttpConfigService` inside `HttpModule` and uses it to create an options object. For this to work, `HttpConfigService` has to implement the `HttpModuleOptionsFactory` interface, as shown below. The `HttpModule` calls the `createHttpOptions()` method on the instance of the supplied class.
 
 ```typescript
 @Injectable()
@@ -123,7 +123,7 @@ class HttpConfigService implements HttpModuleOptionsFactory {
 }
 ```
 
-If you want to reuse an existing options provider instead of creating a private copy inside the `HttpModule`, use the `useExisting` syntax.
+To reuse an existing options provider instead of creating a private copy inside the `HttpModule`, use the `useExisting` syntax:
 
 ```typescript
 HttpModule.registerAsync({
@@ -132,7 +132,7 @@ HttpModule.registerAsync({
 });
 ```
 
-You can also pass so-called `extraProviders` to the `registerAsync()` method. These providers will be merged with the module providers.
+You can also pass `extraProviders` to the `registerAsync()` method. These providers are merged with the module's providers:
 
 ```typescript
 HttpModule.registerAsync({
@@ -146,7 +146,7 @@ This is useful when you want to provide additional dependencies to the factory f
 
 #### Using Axios directly
 
-If you think that `HttpModule.register`'s options are not enough for you, or if you just want to access the underlying Axios instance created by `@nestjs/axios`, you can access it via `HttpService#axiosRef` as follows:
+If the `HttpModule.register()` options aren't enough, or you want to work with the underlying Axios instance created by `@nestjs/axios`, access it through `HttpService#axiosRef`:
 
 ```typescript
 @Injectable()
@@ -162,7 +162,7 @@ export class CatsService {
 
 #### Full example
 
-Since the return value of the `HttpService` methods is an Observable, we can use `rxjs` - `firstValueFrom` or `lastValueFrom` to retrieve the data of the request in the form of a promise.
+Since the `HttpService` methods return an `Observable`, you can use the RxJS `firstValueFrom()` or `lastValueFrom()` functions to retrieve the response data as a promise.
 
 ```typescript
 import { catchError, firstValueFrom } from 'rxjs';
@@ -176,7 +176,7 @@ export class CatsService {
     const { data } = await firstValueFrom(
       this.httpService.get<Cat[]>('http://localhost:3000/cats').pipe(
         catchError((error: AxiosError) => {
-          this.logger.error(error.response.data);
+          this.logger.error(error.response?.data);
           throw 'An error happened!';
         }),
       ),
@@ -186,4 +186,4 @@ export class CatsService {
 }
 ```
 
-> info **Hint** Visit RxJS's documentation on [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) and [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) for differences between them.
+> info **Hint** See the RxJS documentation for [`firstValueFrom`](https://rxjs.dev/api/index/function/firstValueFrom) and [`lastValueFrom`](https://rxjs.dev/api/index/function/lastValueFrom) to learn how they differ.

@@ -1,16 +1,16 @@
 ### Performance (Fastify)
 
-By default, Nest makes use of the [Express](https://expressjs.com/) framework. As mentioned earlier, Nest also provides compatibility with other libraries, such as [Fastify](https://github.com/fastify/fastify). Nest achieves this framework independence by implementing a framework adapter whose primary function is to proxy middleware and handlers to appropriate library-specific implementations.
+By default, Nest uses the [Express](https://expressjs.com/) framework. Nest is also compatible with other libraries, such as [Fastify](https://github.com/fastify/fastify). It achieves this framework independence through a framework adapter, whose primary job is to proxy middleware and handlers to the appropriate library-specific implementations.
 
-> info **Hint** Note that for a framework adapter to be implemented, the target library must provide request/response pipeline processing similar to what's found in Express.
+> info **Hint** A framework adapter can only be implemented for a library that provides request/response pipeline processing similar to Express.
 
-[Fastify](https://github.com/fastify/fastify) provides a good alternative framework for Nest because it solves design issues in a similar manner to Express. However, Fastify is much **faster** than Express, achieving nearly twice the benchmark results. A fair question, then, is why Nest uses Express as the default HTTP provider. The reason is that Express is widely used, well known, and has an enormous set of compatible middleware, which is available to Nest users out of the box.
+[Fastify](https://github.com/fastify/fastify) is a good alternative framework for Nest because it solves design issues in a similar way to Express. However, Fastify is significantly **faster** than Express, achieving nearly twice the benchmark results. Nest still uses Express as the default HTTP provider because Express is widely used, well known, and has an enormous set of compatible middleware, which is available to Nest users out of the box.
 
-But since Nest provides framework independence, you can easily migrate between the two. Fastify can be a better choice when raw speed is a priority. To utilize Fastify, simply choose the built-in `FastifyAdapter` as shown in this chapter.
+Because Nest is framework independent, you can migrate between the two. Fastify can be a better choice when raw speed is a priority. To use Fastify, choose the built-in `FastifyAdapter`, as shown in this chapter.
 
 #### Installation
 
-First, we need to install the required package:
+First, install the required package:
 
 ```bash
 $ npm i --save @nestjs/platform-fastify
@@ -18,7 +18,7 @@ $ npm i --save @nestjs/platform-fastify
 
 #### Adapter
 
-Once the Fastify platform is installed, we can use the `FastifyAdapter`.
+Once the Fastify platform is installed, you can use the `FastifyAdapter`.
 
 ```typescript
 @@filename(main)
@@ -39,7 +39,7 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-By default, Fastify listens only on the `localhost 127.0.0.1` interface ([read more](https://fastify.dev/docs/latest/Guides/Getting-Started/#your-first-server)). If you want to accept connections on other hosts, you should specify `'0.0.0.0'` in the `listen()` call:
+By default, Fastify listens only on the `localhost` interface (see the [Fastify getting started guide](https://fastify.dev/docs/latest/Guides/Getting-Started/#your-first-server)). To accept connections on other hosts, specify `'0.0.0.0'` in the `listen()` call:
 
 ```typescript
 async function bootstrap() {
@@ -53,11 +53,11 @@ async function bootstrap() {
 
 #### Platform specific packages
 
-Keep in mind that when you use the `FastifyAdapter`, Nest uses Fastify as the **HTTP provider**. This means that each recipe that relies on Express may no longer work. You should use Fastify-equivalent packages instead.
+When you use the `FastifyAdapter`, Nest uses Fastify as the **HTTP provider**. This means that recipes that rely on Express may not work. Use Fastify-equivalent packages instead.
 
 #### Redirect response
 
-Fastify handles redirect responses slightly differently than Express. To do a proper redirect with Fastify, return both the status code and the URL, as follows:
+Fastify handles redirect responses slightly differently than Express. To redirect with Fastify, set the status code with `status()`, then call `redirect()` with the URL:
 
 ```typescript
 @Get()
@@ -68,7 +68,7 @@ index(@Res() res) {
 
 #### Fastify options
 
-You can pass options into the Fastify constructor through the `FastifyAdapter` constructor. For example:
+You can pass options to the Fastify instance through the `FastifyAdapter` constructor. For example:
 
 ```typescript
 new FastifyAdapter({ logger: true });
@@ -76,7 +76,7 @@ new FastifyAdapter({ logger: true });
 
 #### Middleware
 
-Middleware functions retrieve the raw `req` and `res` objects instead of Fastify's wrappers. This is how the `middie` package, which Fastify uses under the hood, works - check out this [page](https://fastify.dev/docs/latest/Reference/Middleware/) for more information.
+Middleware functions receive the raw `req` and `res` objects instead of Fastify's wrappers. This is how the `@fastify/middie` package, which Nest uses under the hood, works. See the [Fastify middleware documentation](https://fastify.dev/docs/latest/Reference/Middleware/) for more information.
 
 ```typescript
 @@filename(logger.middleware)
@@ -104,7 +104,7 @@ export class LoggerMiddleware {
 
 #### Route Config
 
-You can use the [route config](https://fastify.dev/docs/latest/Reference/Routes/#config) feature of Fastify with the `@RouteConfig()` decorator.
+Use the `@RouteConfig()` decorator to apply Fastify's [route config](https://fastify.dev/docs/latest/Reference/Routes/#config) feature.
 
 ```typescript
 @RouteConfig({ output: 'hello world' })
@@ -116,7 +116,7 @@ index(@Req() req) {
 
 #### Route Constraints
 
-As of v10.3.0, `@nestjs/platform-fastify` supports the [route constraints](https://fastify.dev/docs/latest/Reference/Routes/#constraints) feature of Fastify with the `@RouteConstraints` decorator.
+Use the `@RouteConstraints()` decorator to apply Fastify's [route constraints](https://fastify.dev/docs/latest/Reference/Routes/#constraints) feature.
 
 ```typescript
 @RouteConstraints({ version: '1.2.x' })
@@ -125,8 +125,8 @@ newFeature() {
 }
 ```
 
-> info **Hint** `@RouteConfig()` and `@RouteConstraints` are imported from `@nestjs/platform-fastify`.
+> info **Hint** `@RouteConfig()` and `@RouteConstraints()` are imported from `@nestjs/platform-fastify`.
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
+A working example is available in the [nestjs/nest repository](https://github.com/nestjs/nest/tree/master/sample/10-fastify).
