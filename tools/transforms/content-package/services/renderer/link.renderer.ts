@@ -11,7 +11,11 @@ export function applyLinkRenderer(renderer: Renderer) {
       href: rawToken.href.replace(/&(?!(?:[a-zA-Z]+|#\d+|#x[\da-fA-F]+);)/g, '&amp;'),
     };
     const { href } = token;
-    if (!href.includes('http') && !href.includes('mailto')) {
+    // Match the scheme, not a substring: internal paths such as `/http/cookies`
+    // or `/application/http-module` contain "http" too.
+    const isExternal = /^(https?:)?\/\//i.test(href);
+    const isMailto = href.startsWith('mailto:');
+    if (!isExternal && !isMailto) {
       const link = originalLinkRenderer.call(renderer, token) as string;
 
       if (link.includes('#')) {
@@ -20,7 +24,7 @@ export function applyLinkRenderer(renderer: Renderer) {
       return link.replace('href', 'routerLink');
     }
 
-    if (href.includes('http') && !href.includes('mailto')) {
+    if (isExternal) {
       let baseLink = originalLinkRenderer.call(renderer, token) as string;
 
       baseLink = `${baseLink.substr(0, 2)} rel='nofollow' target='_blank'${baseLink.substr(
