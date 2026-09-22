@@ -10,7 +10,8 @@ import { NestCommanderComponent } from './nest-commander/nest-commander.componen
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
-import { movedTo } from '../../../shared/utils/moved-page-redirect';
+import { movedTo, splitInto } from '../../../shared/utils/moved-page-redirect';
+import { PRISMA_SECTIONS } from '../data/prisma-sections';
 
 export const RECIPES_ROUTES: Routes = [
   { path: 'mikroorm', redirectTo: movedTo('/data/mikroorm') },
@@ -23,7 +24,7 @@ export const RECIPES_ROUTES: Routes = [
     path: 'swagger',
     redirectTo: '/openapi/introduction',
   },
-  { path: 'prisma', redirectTo: movedTo('/data/prisma') },
+  { path: 'prisma', redirectTo: splitInto('/data/prisma', PRISMA_SECTIONS) },
   {
     path: 'terminus',
     component: TerminusComponent,
