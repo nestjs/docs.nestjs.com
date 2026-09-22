@@ -1,6 +1,6 @@
 ### Custom route decorators
 
-Nest is built around a language feature called **decorators**. Decorators are a well-known concept in a lot of commonly used programming languages, but in the JavaScript world, they're still relatively new. In order to better understand how decorators work, we recommend reading [this article](https://medium.com/google-developers/exploring-es7-decorators-76ecb65fb841). Here's a simple definition:
+Nest is built around a language feature called **decorators**. Decorators are well established in many programming languages but are still relatively new to JavaScript. For a deeper look at how decorators work, see [this article](https://medium.com/google-developers/exploring-es7-decorators-76ecb65fb841). Here's a simple definition:
 
 <blockquote class="external">
   An ES2016 decorator is an expression which returns a function and can take a target, name and property descriptor as arguments.
@@ -10,7 +10,7 @@ Nest is built around a language feature called **decorators**. Decorators are a 
 
 #### Param decorators
 
-Nest provides a set of useful **param decorators** that you can use together with the HTTP route handlers. Below is a list of the provided decorators and the plain Express (or Fastify) objects they represent
+Nest provides a set of **param decorators** that you can use in HTTP route handlers. The following table lists them along with the plain Express (or Fastify) objects they represent:
 
 <table>
   <tbody>
@@ -51,21 +51,19 @@ Nest provides a set of useful **param decorators** that you can use together wit
       <td><code>req.ip</code></td>
     </tr>
     <tr>
-      <td><code>@HostParam()</code></td>
-      <td><code>req.hosts</code></td>
+      <td><code>@HostParam(param?: string)</code></td>
+      <td><code>req.hosts</code> / <code>req.hosts[param]</code></td>
     </tr>
   </tbody>
 </table>
 
-Additionally, you can create your own **custom decorators**. Why is this useful?
-
-In the node.js world, it's common practice to attach properties to the **request** object. Then you manually extract them in each route handler, using code like the following:
+You can also create your own **custom decorators**. To see why this is useful, consider a common pattern in Node.js applications: properties are attached to the **request** object and then extracted manually in each route handler, with code like the following:
 
 ```typescript
 const user = req.user;
 ```
 
-In order to make your code more readable and transparent, you can create a `@User()` decorator and reuse it across all of your controllers.
+To make your code more readable and transparent, you can create a `@User()` decorator and reuse it across all of your controllers:
 
 ```typescript
 @@filename(user.decorator)
@@ -79,7 +77,7 @@ export const User = createParamDecorator(
 );
 ```
 
-Then, you can simply use it wherever it fits your requirements.
+You can then use it wherever you need it:
 
 ```typescript
 @@filename()
@@ -97,7 +95,7 @@ async findOne(user) {
 
 #### Passing data
 
-When the behavior of your decorator depends on some conditions, you can use the `data` parameter to pass an argument to the decorator's factory function. One use case for this is a custom decorator that extracts properties from the request object by key. Let's assume, for example, that our <a href="techniques/authentication#implementing-passport-strategies">authentication layer</a> validates requests and attaches a user entity to the request object. The user entity for an authenticated request might look like:
+When the behavior of your decorator depends on some condition, use the `data` parameter to pass an argument to the decorator's factory function. One use case is a custom decorator that extracts a property from the request object by key. Suppose, for example, that your [authentication layer](/security/authentication#implementing-the-authentication-guard) validates requests and attaches a user entity to the request object. The user entity for an authenticated request might look like this:
 
 ```json
 {
@@ -109,7 +107,7 @@ When the behavior of your decorator depends on some conditions, you can use the 
 }
 ```
 
-Let's define a decorator that takes a property name as key, and returns the associated value if it exists (or undefined if it doesn't exist, or if the `user` object has not been created).
+Let's define a decorator that takes a property name as a key and returns the associated value if it exists (or `undefined` if it doesn't, or if the `user` object has not been created):
 
 ```typescript
 @@filename(user.decorator)
@@ -134,7 +132,7 @@ export const User = createParamDecorator((data, ctx) => {
 });
 ```
 
-Here's how you could then access a particular property via the `@User()` decorator in the controller:
+You can then access a particular property through the `@User()` decorator in the controller:
 
 ```typescript
 @@filename()
@@ -150,13 +148,13 @@ async findOne(firstName) {
 }
 ```
 
-You can use this same decorator with different keys to access different properties. If the `user` object is deep or complex, this can make for easier and more readable request handler implementations.
+You can use the same decorator with different keys to access different properties. If the `user` object is deep or complex, this keeps route handler implementations simpler and more readable.
 
-> info **Hint** For TypeScript users, note that `createParamDecorator<T>()` is a generic. This means you can explicitly enforce type safety, for example `createParamDecorator<string>((data, ctx) => ...)`. Alternatively, specify a parameter type in the factory function, for example `createParamDecorator((data: string, ctx) => ...)`. If you omit both, the type for `data` will be `any`.
+> info **Hint** `createParamDecorator<T>()` is generic, so you can enforce type safety explicitly, e.g., `createParamDecorator<string>((data, ctx) => ...)`. Alternatively, specify a parameter type in the factory function, e.g., `createParamDecorator((data: string, ctx) => ...)`. If you omit both, `data` is typed as `any`.
 
 #### Working with pipes
 
-Nest treats custom param decorators in the same fashion as the built-in ones (`@Body()`, `@Param()` and `@Query()`). This means that pipes are executed for the custom annotated parameters as well (in our examples, the `user` argument). Moreover, you can apply the pipe directly to the custom decorator:
+Nest treats custom param decorators the same way as the built-in ones (`@Body()`, `@Param()`, and `@Query()`). This means pipes also run for parameters annotated with custom decorators (in our examples, the `user` argument). You can also apply a pipe directly to the custom decorator:
 
 ```typescript
 @@filename()
@@ -175,17 +173,27 @@ async findOne(user) {
 }
 ```
 
-> info **Hint** Note that `validateCustomDecorators` option must be set to true. `ValidationPipe` does not validate arguments annotated with the custom decorators by default.
+> info **Hint** By default, `ValidationPipe` does not validate arguments annotated with custom decorators. That's why the example above sets the `validateCustomDecorators` option to `true`.
 
-The same rule applies to `StandardSchemaValidationPipe`. If your custom decorator attaches data that should be validated through a Standard Schema compatible schema, enable `validateCustomDecorators` when configuring the pipe.
+Custom decorators also accept the `schema` option of the built-in parameter decorators. Pass a [Standard Schema](https://standardschema.dev/) compatible schema, such as a Zod schema, and a `StandardSchemaValidationPipe` with the `validateCustomDecorators` option enabled validates the decorator's value against it:
+
+```typescript
+@Get()
+async findOne(@User('email', { schema: z.email() }) email: string) {
+  console.log(email);
+}
+```
+
+See [Validating custom decorators](/techniques/validation#validating-custom-decorators) for details.
 
 #### Decorator composition
 
-Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
+Nest provides the `applyDecorators()` helper to compose multiple decorators. For example, suppose you want to combine all authentication-related decorators into a single decorator:
 
 ```typescript
 @@filename(auth.decorator)
-import { applyDecorators } from '@nestjs/common';
+import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 export function Auth(...roles: Role[]) {
   return applyDecorators(
@@ -196,7 +204,8 @@ export function Auth(...roles: Role[]) {
   );
 }
 @@switch
-import { applyDecorators } from '@nestjs/common';
+import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 export function Auth(...roles) {
   return applyDecorators(
@@ -216,6 +225,6 @@ You can then use this custom `@Auth()` decorator as follows:
 findAllUsers() {}
 ```
 
-This has the effect of applying all four decorators with a single declaration.
+This applies all four decorators with a single declaration.
 
-> warning **Warning** The `@ApiHideProperty()` decorator from the `@nestjs/swagger` package is not composable and won't work properly with the `applyDecorators` function.
+> warning **Warning** The `@ApiHideProperty()` decorator from the `@nestjs/swagger` package is not composable and does not work correctly with the `applyDecorators()` function.

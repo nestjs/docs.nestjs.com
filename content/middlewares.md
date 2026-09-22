@@ -1,10 +1,10 @@
 ### Middleware
 
-Middleware is a function which is called **before** the route handler. Middleware functions have access to the [request](https://expressjs.com/en/4x/api.html#req) and [response](https://expressjs.com/en/4x/api.html#res) objects, and the `next()` middleware function in the application's request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
+Middleware is a function that is called **before** the route handler. Middleware functions have access to the [request](https://expressjs.com/en/4x/api.html#req) and [response](https://expressjs.com/en/4x/api.html#res) objects, and to the `next()` middleware function in the application's request-response cycle. The **next** middleware function is commonly denoted by a variable named `next`.
 
 <figure><img class="illustrative-image" src="/assets/Middlewares_1.png" /></figure>
 
-Nest middleware are, by default, equivalent to [express](https://expressjs.com/en/guide/using-middleware.html) middleware. The following description from the official express documentation describes the capabilities of middleware:
+By default, Nest middleware is equivalent to [Express](https://expressjs.com/en/guide/using-middleware.html) middleware. The official Express documentation describes the capabilities of middleware as follows:
 
 <blockquote class="external">
   Middleware functions can perform the following tasks:
@@ -18,9 +18,9 @@ Nest middleware are, by default, equivalent to [express](https://expressjs.com/e
   </ul>
 </blockquote>
 
-You implement custom Nest middleware in either a function, or in a class with an `@Injectable()` decorator. The class should implement the `NestMiddleware` interface, while the function does not have any special requirements. Let's start by implementing a simple middleware feature using the class method.
+You implement custom Nest middleware either as a function or as a class with the `@Injectable()` decorator. A class should implement the `NestMiddleware` interface, while a function has no special requirements. Let's start by implementing a simple middleware class.
 
-> warning **Warning** `Express` and `fastify` handle middleware differently and provide different method signatures, read more [here](/techniques/performance#middleware).
+> warning **Warning** Express and Fastify handle middleware differently and provide different method signatures. See the [Performance (Fastify)](/techniques/performance#middleware) chapter for details.
 
 ```typescript
 @@filename(logger.middleware)
@@ -48,11 +48,11 @@ export class LoggerMiddleware {
 
 #### Dependency injection
 
-Nest middleware fully supports Dependency Injection. Just as with providers and controllers, they are able to **inject dependencies** that are available within the same module. As usual, this is done through the `constructor`.
+Nest middleware fully supports dependency injection. Like providers and controllers, middleware classes can **inject dependencies** that are available within the same module. As usual, dependencies are injected through the `constructor`.
 
 #### Applying middleware
 
-There is no place for middleware in the `@Module()` decorator. Instead, we set them up using the `configure()` method of the module class. Modules that include middleware have to implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `AppModule` level.
+Middleware is not registered in the `@Module()` decorator. Instead, you set it up in the `configure()` method of the module class. Modules that include middleware must implement the `NestModule` interface. Let's set up the `LoggerMiddleware` at the `AppModule` level.
 
 ```typescript
 @@filename(app.module)
@@ -87,7 +87,7 @@ export class AppModule {
 }
 ```
 
-In the above example we have set up the `LoggerMiddleware` for the `/cats` route handlers that were previously defined inside the `CatsController`. We may also further restrict a middleware to a particular request method by passing an object containing the route `path` and request `method` to the `forRoutes()` method when configuring the middleware. In the example below, notice that we import the `RequestMethod` enum to reference the desired request method type.
+In the example above, the `LoggerMiddleware` is applied to the `/cats` route handlers defined in the `CatsController`. To restrict middleware to a particular request method, pass an object containing the route `path` and the request `method` to the `forRoutes()` method. The example below imports the `RequestMethod` enum to reference the desired request method.
 
 ```typescript
 @@filename(app.module)
@@ -122,13 +122,13 @@ export class AppModule {
 }
 ```
 
-> info **Hint** The `configure()` method can be made asynchronous using `async/await` (e.g., you can `await` completion of an asynchronous operation inside the `configure()` method body).
+> info **Hint** The `configure()` method can be asynchronous. Declare it with `async` to `await` the completion of an asynchronous operation inside the method body.
 
-> warning **Warning** When using the `express` adapter, the NestJS app will register `json` and `urlencoded` from the package `body-parser` by default. This means if you want to customize that middleware via the `MiddlewareConsumer`, you need to turn off the global middleware by setting the `bodyParser` flag to `false` when creating the application with `NestFactory.create()`.
+> warning **Warning** With the Express adapter, Nest registers the `json` and `urlencoded` body parsers (`express.json()` and `express.urlencoded()`) by default. To customize these parsers through the `MiddlewareConsumer`, disable the defaults by setting the `bodyParser` option to `false` when creating the application with `NestFactory.create()`.
 
 #### Route wildcards
 
-Pattern-based routes are also supported in NestJS middleware. For example, the named wildcard (`*splat`) can be used as a wildcard to match any combination of characters in a route. In the following example, the middleware will be executed for any route that starts with `abcd/`, regardless of the number of characters that follow.
+Middleware also supports pattern-based routes. For example, the named wildcard (`*splat`) matches any combination of characters in a route. In the following example, the middleware runs for any route that starts with `abcd/`, regardless of how many characters follow.
 
 ```typescript
 forRoutes({
@@ -137,9 +137,9 @@ forRoutes({
 });
 ```
 
-> info **Hint** `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like, for example, `*wildcard`.
+> info **Hint** `splat` is only the name of the wildcard parameter and has no special meaning. You can use any name, e.g., `*wildcard`.
 
-The `'abcd/*splat'` route path will match `abcd/1`, `abcd/123`, `abcd/abc`, and so on. The hyphen (`-`) and the dot (`.`) are interpreted literally by string-based paths. However, `abcd/` with no additional characters will not match the route. For this, you need to wrap the wildcard in braces to make it optional:
+The `'abcd/*splat'` route path matches `abcd/1`, `abcd/123`, `abcd/abc`, and so on. String-based paths interpret the hyphen (`-`) and the dot (`.`) literally. However, `abcd/` with no additional characters does not match. To match it as well, wrap the wildcard in braces to make it optional:
 
 ```typescript
 forRoutes({
@@ -150,7 +150,7 @@ forRoutes({
 
 #### Middleware consumer
 
-The `MiddlewareConsumer` is a helper class. It provides several built-in methods to manage middleware. All of them can be **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method can take a single string, multiple strings, a `RouteInfo` object, a controller class and even multiple controller classes. In most cases you'll probably just pass a list of **controllers** separated by commas. Below is an example with a single controller:
+The `MiddlewareConsumer` is a helper class that provides several built-in methods to manage middleware. All of them can be **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method accepts a single string, multiple strings, a `RouteInfo` object, a controller class, or multiple controller classes. In most cases, you'll pass a comma-separated list of **controllers**. Below is an example with a single controller:
 
 ```typescript
 @@filename(app.module)
@@ -187,13 +187,11 @@ export class AppModule {
 }
 ```
 
-> info **Hint** The `apply()` method may either take a single middleware, or multiple arguments to specify <a href="/middleware#multiple-middleware">multiple middlewares</a>.
+> info **Hint** The `apply()` method accepts either a single middleware or multiple arguments to specify <a href="/middleware#multiple-middleware">multiple middleware</a>.
 
 #### Excluding routes
 
-At times, we may want to **exclude** certain routes from having middleware applied. Use the `exclude()` method for this. The `exclude()` method accepts a single string, multiple strings, or a `RouteInfo` object to identify the routes to be excluded.
-
-Here's an example of how to use it:
+To **exclude** certain routes from having middleware applied, use the `exclude()` method. It accepts a single string, multiple strings, or a `RouteInfo` object that identifies the routes to exclude:
 
 ```typescript
 consumer
@@ -206,32 +204,30 @@ consumer
   .forRoutes(CatsController);
 ```
 
+With the example above, `LoggerMiddleware` is bound to all routes defined inside `CatsController` **except** those matching the three entries passed to the `exclude()` method.
+
 > info **Hint** The `exclude()` method supports wildcard parameters using the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package.
-
-With the example above, `LoggerMiddleware` will be bound to all routes defined inside `CatsController` **except** the three passed to the `exclude()` method.
-
-This approach provides flexibility in applying or excluding middleware based on specific routes or route patterns.
 
 #### Functional middleware
 
-The `LoggerMiddleware` class we've been using is quite simple. It has no members, no additional methods, and no dependencies. Why can't we just define it in a simple function instead of a class? In fact, we can. This type of middleware is called **functional middleware**. Let's transform the logger middleware from class-based into functional middleware to illustrate the difference:
+The `LoggerMiddleware` class we've been using is minimal: it has no members, no additional methods, and no dependencies. Middleware like this can be defined as a plain function instead of a class. This type of middleware is called **functional middleware**. Let's convert the logger middleware from a class into a function to illustrate the difference:
 
 ```typescript
 @@filename(logger.middleware)
 import { Request, Response, NextFunction } from 'express';
 
 export function logger(req: Request, res: Response, next: NextFunction) {
-  console.log(`Request...`);
+  console.log('Request...');
   next();
-};
+}
 @@switch
 export function logger(req, res, next) {
-  console.log(`Request...`);
+  console.log('Request...');
   next();
-};
+}
 ```
 
-And use it within the `AppModule`:
+Then use it within the `AppModule`:
 
 ```typescript
 @@filename(app.module)
@@ -240,11 +236,11 @@ consumer
   .forRoutes(CatsController);
 ```
 
-> info **Hint** Consider using the simpler **functional middleware** alternative any time your middleware doesn't need any dependencies.
+> info **Hint** Consider using **functional middleware** whenever your middleware doesn't need any dependencies.
 
 #### Multiple middleware
 
-As mentioned above, in order to bind multiple middleware that are executed sequentially, simply provide a comma separated list inside the `apply()` method:
+To bind multiple middleware that execute sequentially, pass a comma-separated list to the `apply()` method:
 
 ```typescript
 consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
@@ -252,7 +248,7 @@ consumer.apply(cors(), helmet(), logger).forRoutes(CatsController);
 
 #### Global middleware
 
-If we want to bind middleware to every registered route at once, we can use the `use()` method that is supplied by the `INestApplication` instance:
+To bind middleware to every registered route at once, use the `use()` method of the `INestApplication` instance:
 
 ```typescript
 @@filename(main)
@@ -261,11 +257,11 @@ app.use(logger);
 await app.listen(process.env.PORT ?? 3000);
 ```
 
-> info **Hint** Accessing the DI container in a global middleware is not possible. You can use a [functional middleware](middleware#functional-middleware) instead when using `app.use()`. Alternatively, you can use a class middleware and consume it with `.forRoutes('*')` within the `AppModule` (or any other module).
+> info **Hint** Global middleware registered with `app.use()` cannot access the DI container, so use [functional middleware](middleware#functional-middleware) there. Alternatively, use a class middleware and bind it with `.forRoutes('*')` within the `AppModule` (or any other module).
 
 #### Error handling
 
-When middleware throws an exception, Nest's [exceptions layer](/exception-filters) catches it and sends an appropriate response, the same way it does for exceptions thrown from a route handler. The recommended approach is to throw an `HttpException` (or a built-in subclass such as `UnauthorizedException`):
+When middleware throws an exception, Nest's [exceptions layer](/exception-filters) catches it and sends an appropriate response, just as it does for exceptions thrown from a route handler. The recommended approach is to throw an `HttpException` (or a built-in subclass such as `UnauthorizedException`):
 
 ```typescript
 @@filename(auth.middleware)
@@ -299,7 +295,7 @@ export class AuthMiddleware {
 }
 ```
 
-If the middleware is asynchronous, declare `use()` as `async` (or return a `Promise`) so a rejected promise is forwarded to the exceptions layer:
+If the middleware is asynchronous, declare `use()` as `async` (or return a `Promise`) so that a rejected promise is forwarded to the exceptions layer:
 
 ```typescript
 @@filename(auth.middleware)
@@ -329,6 +325,6 @@ use(req: Request, res: Response, next: NextFunction) {
 }
 ```
 
-> warning **Warning** Since middleware runs before a route handler is selected, only **global** exception filters (registered with `app.useGlobalFilters()` or the `APP_FILTER` token) catch exceptions thrown from middleware. Method-scoped and controller-scoped filters are not invoked, and applying `@UseFilters()` to a middleware class has no effect.
+> warning **Warning** Because middleware runs before a route handler is selected, only **global** exception filters (registered with `app.useGlobalFilters()` or the `APP_FILTER` token) catch exceptions thrown from middleware. Method-scoped and controller-scoped filters are not invoked, and binding filters to a middleware class with `@UseFilters()` is not supported.
 
-> info **Hint** Middleware registered with `app.use()` is handled by the underlying HTTP platform (Express or Fastify), not by Nest's `MiddlewareModule`. Prefer throwing (or calling `next(err)`) from middleware bound with `MiddlewareConsumer` so the exceptions layer can process the error.
+> info **Hint** Middleware registered with `app.use()` is handled by the underlying HTTP platform (Express or Fastify), not by Nest's `MiddlewareModule`. Prefer throwing errors (or calling `next(err)`) from middleware bound with the `MiddlewareConsumer`, so that the exceptions layer can process them.

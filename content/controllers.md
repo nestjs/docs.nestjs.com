@@ -4,15 +4,15 @@ Controllers are responsible for handling incoming **requests** and sending **res
 
 <figure><img class="illustrative-image" src="/assets/Controllers_1.png" /></figure>
 
-A controller's purpose is to handle specific requests for the application. The **routing** mechanism determines which controller will handle each request. Often, a controller has multiple routes, and each route can perform a different action.
+A controller's purpose is to handle specific requests for the application. The **routing** mechanism determines which controller handles each request. A controller often has multiple routes, and each route can perform a different action.
 
-To create a basic controller, we use classes and **decorators**. Decorators link classes with the necessary metadata, allowing Nest to create a routing map that connects requests to their corresponding controllers.
+To create a basic controller, you use classes and **decorators**. Decorators associate classes with the required metadata, which Nest uses to build a routing map that connects requests to their corresponding controllers.
 
-> info **Hint** To quickly create a CRUD controller with built-in [validation](https://docs.nestjs.com/techniques/validation), you can use the CLI's [CRUD generator](https://docs.nestjs.com/recipes/crud-generator#crud-generator): `nest g resource [name]`.
+> info **Hint** To create a CRUD controller with built-in [validation](https://docs.nestjs.com/techniques/validation), use the CLI's [CRUD generator](https://docs.nestjs.com/recipes/crud-generator#crud-generator): `nest g resource [name]`.
 
 #### Routing
 
-In the following example, we'll use the `@Controller()` decorator, which is **required** to define a basic controller. We'll specify an optional route path prefix of `cats`. Using a path prefix in the `@Controller()` decorator helps us group related routes together and reduces repetitive code. For example, if we want to group routes that manage interactions with a cat entity under the `/cats` path, we can specify the `cats` path prefix in the `@Controller()` decorator. This way, we don't need to repeat that portion of the path for each route in the file.
+The following example uses the `@Controller()` decorator, which is **required** to define a basic controller, with an optional route path prefix of `cats`. A path prefix in the `@Controller()` decorator groups related routes and reduces repetitive code. For example, to group the routes that manage cat entities under the `/cats` path, specify the `cats` prefix in the `@Controller()` decorator. You then don't need to repeat that portion of the path for each route in the file.
 
 ```typescript
 @@filename(cats.controller)
@@ -37,43 +37,43 @@ export class CatsController {
 }
 ```
 
-> info **Hint** To create a controller using the CLI, simply execute the `$ nest g controller [name]` command.
+> info **Hint** To create a controller using the CLI, run the `$ nest g controller [name]` command.
 
-The `@Get()` HTTP request method decorator placed before the `findAll()` method tells Nest to create a handler for a specific endpoint for HTTP requests. This endpoint is defined by the HTTP request method (GET in this case) and the route path. So, what is the route path? The route path for a handler is determined by combining the (optional) prefix declared for the controller with any path specified in the method's decorator. Since we've set a prefix (`cats`) for every route and haven't added any specific path in the method decorator, Nest will map `GET /cats` requests to this handler.
+The `@Get()` HTTP request method decorator placed before the `findAll()` method tells Nest to create a handler for a specific endpoint. An endpoint is defined by the HTTP request method (GET in this case) and the route path. The route path of a handler combines the (optional) prefix declared for the controller **and** any path specified in the method's decorator. Since the example sets a prefix (`cats`) and no path in the method decorator, Nest maps `GET /cats` requests to this handler.
 
-As mentioned, the route path includes both the optional controller path prefix **and** any path string specified in the method's decorator. For example, if the controller prefix is `cats` and the method decorator is `@Get('breed')`, the resulting route will be `GET /cats/breed`.
+If the method decorator also specified a path, such as `@Get('breed')`, the resulting route would be `GET /cats/breed`.
 
-In our example above, when a GET request is made to this endpoint, Nest routes the request to the user-defined `findAll()` method. Note that the method name we choose here is entirely arbitrary. While we must declare a method to bind the route to, Nest doesn't attach any specific significance to the method name.
+When a `GET /cats` request arrives, Nest routes it to the user-defined `findAll()` method. The method name is arbitrary: you must declare a method to bind the route to, but Nest attaches no significance to its name.
 
-This method will return a 200 status code along with the associated response, which in this case is just a string. Why does this happen? To explain, we first need to introduce the concept that Nest uses two **different** options for manipulating responses:
+This method returns a 200 status code along with the associated response, which in this case is a string. To explain why, we need to introduce the two **different** options Nest provides for manipulating responses:
 
 <table>
   <tr>
     <td>Standard (recommended)</td>
     <td>
-      Using this built-in method, when a request handler returns a JavaScript object or array, it will <strong>automatically</strong>
-      be serialized to JSON. When it returns a JavaScript primitive type (e.g., <code>string</code>, <code>number</code>, <code>boolean</code>), however, Nest will send just the value without attempting to serialize it. This makes response handling simple: just return the value, and Nest takes care of the rest.
+      With this built-in method, when a route handler returns a JavaScript object or array, it is <strong>automatically</strong>
+      serialized to JSON. When it returns a JavaScript primitive type (e.g., <code>string</code>, <code>number</code>, <code>boolean</code>), Nest sends the value without attempting to serialize it. Response handling is therefore straightforward: return the value, and Nest takes care of the rest.
       <br />
-      <br /> Furthermore, the response's <strong>status code</strong> is always 200 by default, except for POST
-      requests which use 201. We can easily change this behavior by adding the <code>@HttpCode(...)</code>
-      decorator at a handler-level (see <a href='controllers#status-code'>Status codes</a>).
+      <br /> The response's <strong>status code</strong> is 200 by default, except for POST
+      requests, which use 201. You can change this behavior by adding the <code>@HttpCode(...)</code>
+      decorator at the handler level (see <a href='controllers#status-code'>Status code</a>).
     </td>
   </tr>
   <tr>
     <td>Library-specific</td>
     <td>
-      We can use the library-specific (e.g., Express) <a href="https://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, which can be injected using the <code>@Res()</code> decorator in the method handler signature (e.g., <code>findAll(@Res() response)</code>). With this approach, you have the ability to use the native response handling methods exposed by that object. For example, with Express, you can construct responses using code like <code>response.status(200).send()</code>.
+      You can use the library-specific (e.g., Express) <a href="https://expressjs.com/en/api.html#res" rel="nofollow" target="_blank">response object</a>, injected with the <code>@Res()</code> decorator in the route handler signature (e.g., <code>findAll(@Res() response)</code>). This approach lets you use the native response handling methods exposed by that object. For example, with Express, you can construct responses with code like <code>response.status(200).send()</code>.
     </td>
   </tr>
 </table>
 
-> warning **Warning** Nest detects when the handler is using either `@Res()` or `@Next()`, indicating you have chosen the library-specific option. If both approaches are used at the same time, the Standard approach is **automatically disabled** for this single route and will no longer work as expected. To use both approaches at the same time (for example, by injecting the response object to only set cookies/headers but still leave the rest to the framework), you must set the `passthrough` option to `true` in the `@Res({{ '{' }} passthrough: true {{ '}' }})` decorator.
+> warning **Warning** Nest detects when a handler uses either `@Res()` or `@Next()`, which indicates that you have chosen the library-specific option. If both approaches are used at the same time, the standard approach is **automatically disabled** for that route and no longer works as expected. To combine them (for example, to inject the response object only to set cookies or headers while leaving the rest to the framework), set the `passthrough` option to `true` in the `@Res({{ '{' }} passthrough: true {{ '}' }})` decorator.
 
 <app-banner-devtools></app-banner-devtools>
 
 #### Request object
 
-Handlers often need access to the client's **request** details. Nest provides access to the [request object](https://expressjs.com/en/api.html#req) from the underlying platform (Express by default). You can access the request object by instructing Nest to inject it using the `@Req()` decorator in the handler's signature.
+Handlers often need access to the client's **request** details. Nest provides access to the [request object](https://expressjs.com/en/api.html#req) of the underlying platform (Express by default). To access it, add the `@Req()` decorator to the handler's signature, which instructs Nest to inject it.
 
 ```typescript
 @@filename(cats.controller)
@@ -100,9 +100,9 @@ export class CatsController {
 }
 ```
 
-> info **Hint** To take advantage of `express` typings (like in the `request: Request` parameter example above), make sure to install the `@types/express` package.
+> info **Hint** To take advantage of `express` typings (as in the `request: Request` parameter above), install the `@types/express` package.
 
-The request object represents the HTTP request and contains properties for the query string, parameters, HTTP headers, and body (read more [here](https://expressjs.com/en/api.html#req)). In most cases, you don't need to manually access these properties. Instead, you can use dedicated decorators like `@Body()` or `@Query()`, which are available out of the box. Below is a list of the provided decorators and the corresponding platform-specific objects they represent.
+The request object represents the HTTP request and has properties for the query string, route parameters, HTTP headers, and body (see the [Express documentation](https://expressjs.com/en/api.html#req)). In most cases, you don't need to access these properties manually. Instead, use dedicated decorators such as `@Body()` or `@Query()`, which are available out of the box. The following table lists the provided decorators and the platform-specific objects they represent.
 
 <table>
   <tbody>
@@ -148,9 +148,9 @@ The request object represents the HTTP request and contains properties for the q
   </tbody>
 </table>
 
-<sup>\* </sup>For compatibility with typings across underlying HTTP platforms (e.g., Express and Fastify), Nest provides `@Res()` and `@Response()` decorators. `@Res()` is simply an alias for `@Response()`. Both directly expose the underlying native platform `response` object interface. When using them, you should also import the typings for the underlying library (e.g., `@types/express`) to take full advantage. Note that when you inject either `@Res()` or `@Response()` in a method handler, you put Nest into **Library-specific mode** for that handler, and you become responsible for managing the response. When doing so, you must issue some kind of response by making a call on the `response` object (e.g., `res.json(...)` or `res.send(...)`), or the HTTP server will hang.
+<sup>\* </sup>For compatibility with typings across underlying HTTP platforms (e.g., Express and Fastify), Nest provides the `@Res()` and `@Response()` decorators. `@Res()` is an alias for `@Response()`. Both directly expose the native `response` object of the underlying platform. When using them, also install the typings for the underlying library (e.g., `@types/express`) to take full advantage of them. When you inject either `@Res()` or `@Response()` in a route handler, you put Nest into **library-specific mode** for that handler, and you become responsible for managing the response. You must then send a response by calling a method on the `response` object (e.g., `res.json(...)` or `res.send(...)`); otherwise, the request will hang.
 
-`@Body()`, `@Query()`, `@Param()`, and `@RawBody()` can also accept an options object with `schema` and `pipes`. This makes it possible to attach [Standard Schema](https://standardschema.dev/) compatible schemas directly to route parameters, including schemas created with packages such as Zod, Valibot, and ArkType.
+`@Body()`, `@Query()`, `@Param()`, and `@RawBody()` also accept an options object with `schema` and `pipes` properties. This lets you attach [Standard Schema](https://standardschema.dev/) compatible schemas, such as those created with Zod, Valibot, or ArkType, directly to route parameters.
 
 ```typescript
 @Post()
@@ -164,13 +164,13 @@ findOne(@Param('id', { schema: z.coerce.number().int().positive() }) id: number)
 }
 ```
 
-To actually validate those schemas, register the built-in `StandardSchemaValidationPipe` or use your own pipe that reads `metadata.schema`.
+On their own, these decorators only attach the schema as metadata. To validate against it, register the built-in `StandardSchemaValidationPipe` or a custom pipe that reads `metadata.schema`.
 
-> info **Hint** To learn how to create your own custom decorators, visit [this](/custom-decorators) chapter.
+> info **Hint** To learn how to create your own decorators, see the [Custom route decorators](/custom-decorators) chapter.
 
 #### Resources
 
-Earlier, we defined an endpoint to fetch the cats resource (**GET** route). We'll typically also want to provide an endpoint that creates new records. For this, let's create the **POST** handler:
+Earlier, we defined an endpoint to fetch the cats resource (**GET** route). Typically, we also want an endpoint that creates new records. Let's add a **POST** handler:
 
 ```typescript
 @@filename(cats.controller)
@@ -205,11 +205,11 @@ export class CatsController {
 }
 ```
 
-Nest provides decorators for all of the standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head()`, and `@QueryMethod()` (which maps to the `QUERY` method and is named this way to avoid a clash with the `@Query()` parameter decorator). In addition, `@All()` defines an endpoint that handles all of them.
+Nest provides decorators for all standard HTTP methods: `@Get()`, `@Post()`, `@Put()`, `@Delete()`, `@Patch()`, `@Options()`, `@Head()`, and `@QueryMethod()`. The last one maps to the `QUERY` method; it is named `QueryMethod` to avoid a clash with the `@Query()` parameter decorator. In addition, `@All()` defines an endpoint that handles all of them.
 
 #### Route wildcards
 
-Pattern-based routes are also supported in NestJS. For example, the asterisk (`*`) can be used as a wildcard to match any combination of characters in a route at the end of a path. In the following example, the `findAll()` method will be executed for any route that starts with `abcd/`, regardless of the number of characters that follow.
+Nest also supports pattern-based routes. For example, an asterisk (`*`) at the end of a path acts as a wildcard that matches any combination of characters. In the following example, the `findAll()` method is executed for any route that starts with `abcd/`, regardless of the number of characters that follow.
 
 ```typescript
 @Get('abcd/*')
@@ -218,15 +218,15 @@ findAll() {
 }
 ```
 
-The `'abcd/*'` route path will match `abcd/`, `abcd/123`, `abcd/abc`, and so on. The hyphen (`-`) and the dot (`.`) are interpreted literally by string-based paths.
+The `'abcd/*'` route path matches `abcd/`, `abcd/123`, `abcd/abc`, and so on. In string-based paths, the hyphen (`-`) and the dot (`.`) are interpreted literally.
 
-This approach works on both Express and Fastify. However, Express v5 made the routing system stricter. In pure Express, you must use a named wildcard to make the route work - for example, `abcd/*splat`, where `splat` is simply the name of the wildcard parameter and has no special meaning. You can name it anything you like. That said, since Nest provides a compatibility layer for Express, you can still use the asterisk (`*`) as a wildcard.
+This approach works with both Express and Fastify. Express v5, however, made its routing stricter: in plain Express, a wildcard must be named for the route to work (e.g., `abcd/*splat`, where `splat` is an arbitrary name for the wildcard parameter with no special meaning). Because Nest provides a compatibility layer for Express, you can still use an unnamed asterisk (`*`) as a wildcard.
 
-When it comes to asterisks used in the **middle of a route**, Express requires named wildcards (e.g., `ab{{ '{' }}*splat&#125;cd`), while Fastify does not support them at all.
+For asterisks in the **middle of a route**, Express requires named wildcards (e.g., `ab{{ '{' }}*splat&#125;cd`), while Fastify does not support them at all.
 
 #### Route conflicts and resolution order
 
-Nest registers routes in declaration order. On order-sensitive adapters - the default Express adapter is one - this means a parametric route can silently shadow a more specific one:
+Nest registers routes in declaration order. On order-sensitive adapters, such as the default Express adapter, a parametric route can therefore silently shadow a more specific one:
 
 ```typescript
 @Controller('users')
@@ -239,11 +239,11 @@ export class UsersController {
 }
 ```
 
-This is easy to miss, because the application boots without a warning and the problem only shows up at runtime, when a request is dispatched to the wrong handler. Pipes such as `ParseIntPipe` do not help here - routing picks the handler *before* any pipe runs.
+This is easy to miss: the application boots without a warning, and the problem only surfaces at runtime, when a request is dispatched to the wrong handler. Pipes such as `ParseIntPipe` do not help here, because routing selects the handler *before* any pipe runs.
 
-NestJS v12 adds two opt-in options on `NestApplicationOptions` to guard against this. Both default to the previous behavior, so existing applications are unaffected unless you set them.
+NestJS v12 adds two opt-in `NestApplicationOptions` properties that guard against this. Both default to the previous behavior, so existing applications are unaffected unless you set them.
 
-**`routeConflictPolicy`** enables bootstrap-time diagnostics. It takes a per-kind severity of `'off'`, `'warn'`, or `'error'`:
+**`routeConflictPolicy`** enables bootstrap-time diagnostics. For each kind of conflict, it takes a severity of `'off'` (the default), `'warn'`, or `'error'`:
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -258,13 +258,13 @@ const app = await NestFactory.create(AppModule, {
   </tr>
   <tr>
     <td><code>shadow</code></td>
-    <td>Two route patterns can match the same request, e.g. <code>/users/me</code> and <code>/users/:id</code>.</td>
+    <td>Two route patterns can match the same request (e.g., <code>/users/me</code> and <code>/users/:id</code>).</td>
   </tr>
 </table>
 
-With `'error'`, every offending pair is aggregated into a single `RouteConflictException` thrown during `app.listen()`, so you see all of them at once rather than one per restart.
+With `'error'`, all offending pairs are aggregated into a single `RouteConflictException`, thrown when the application initializes (in `app.init()`, or in `app.listen()` if you don't call `init()` explicitly). This way, you see every conflict at once rather than one per restart.
 
-**`routeResolutionStrategy`** controls registration order. Setting it to `'specificity'` registers the most specific routes first - literal segments beat parametric segments, which beat wildcards - so the example above works regardless of declaration order:
+**`routeResolutionStrategy`** controls registration order. Setting it to `'specificity'` registers the most specific routes first (literal segments take precedence over parametric segments, which take precedence over wildcards), so the example above works regardless of declaration order:
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -274,11 +274,11 @@ const app = await NestFactory.create(AppModule, {
 
 The default is `'declaration'`, which preserves the previous behavior.
 
-> info **Hint** These options only matter on adapters where registration order affects matching. `ExpressAdapter` is order-sensitive; `FastifyAdapter` is not, because `find-my-way` already ranks routes by specificity. On Fastify the `shadow` policy is a no-op and `'specificity'` sorting has no effect, while the `duplicate` policy is honored on both. The `RouteConflictPolicy`, `RouteConflictPolicyLevel`, and `RouteResolutionStrategy` types are exported from `@nestjs/common`.
+> info **Hint** Apart from the `duplicate` policy, these options only matter on adapters where registration order affects matching. `ExpressAdapter` is order-sensitive; `FastifyAdapter` is not, because its router (`find-my-way`) already ranks routes by specificity. On Fastify, the `shadow` policy is a no-op and `'specificity'` sorting has no effect, while the `duplicate` policy is honored on both adapters. The `RouteConflictPolicy`, `RouteConflictPolicyLevel`, and `RouteResolutionStrategy` types are exported from `@nestjs/common`.
 
 #### Status code
 
-As mentioned, the default **status code** for responses is always **200**, except for POST requests, which default to **201**. You can easily change this behavior by using the `@HttpCode(...)` decorator at the handler level.
+As mentioned, the default response **status code** is **200**, except for POST requests, which default to **201**. You can change this behavior with the `@HttpCode(...)` decorator at the handler level.
 
 ```typescript
 @Post()
@@ -290,11 +290,11 @@ create() {
 
 > info **Hint** Import `HttpCode` from the `@nestjs/common` package.
 
-Often, your status code isn't static but depends on various factors. In that case, you can use a library-specific **response** (inject using `@Res()`) object (or, in case of an error, throw an exception).
+Often, the status code isn't static but depends on various factors. In that case, use a library-specific **response** object (injected with `@Res()`) or, in case of an error, throw an exception.
 
 #### Response headers
 
-To specify a custom response header, you can either use a `@Header()` decorator or a library-specific response object (and call `res.header()` directly).
+To set a custom response header, use either the `@Header()` decorator or a library-specific response object (and call `res.header()` directly).
 
 ```typescript
 @Post()
@@ -308,18 +308,18 @@ create() {
 
 #### Redirection
 
-To redirect a response to a specific URL, you can either use a `@Redirect()` decorator or a library-specific response object (and call `res.redirect()` directly).
+To redirect a response to a specific URL, use either the `@Redirect()` decorator or a library-specific response object (and call `res.redirect()` directly).
 
-`@Redirect()` takes two arguments, `url` and `statusCode`, both are optional. The default value of `statusCode` is `302` (`Found`) if omitted.
+`@Redirect()` takes two optional arguments, `url` and `statusCode`. If omitted, `statusCode` defaults to `302` (`Found`).
 
 ```typescript
 @Get()
 @Redirect('https://nestjs.com', 301)
 ```
 
-> info **Hint** Sometimes you may want to determine the HTTP status code or the redirect URL dynamically. Do this by returning an object following the `HttpRedirectResponse` interface (from `@nestjs/common`).
+> info **Hint** To determine the HTTP status code or the redirect URL dynamically, return an object that follows the `HttpRedirectResponse` interface (exported from `@nestjs/common`).
 
-Returned values will override any arguments passed to the `@Redirect()` decorator. For example:
+Returned values override any arguments passed to the `@Redirect()` decorator. For example:
 
 ```typescript
 @@filename()
@@ -343,9 +343,9 @@ getDocs(version) {
 
 #### Route parameters
 
-Routes with static paths won't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1` to get the cat with id `1`). To define routes with parameters, you can add route parameter **tokens** in the route path to capture the dynamic values from the URL. The route parameter token in the `@Get()` decorator example below illustrates this approach. These route parameters can then be accessed using the `@Param()` decorator, which should be added to the method signature.
+Routes with static paths don't work when you need to accept **dynamic data** as part of the request (e.g., `GET /cats/1` to get the cat with id `1`). To define a route with parameters, add route parameter **tokens** to the route path to capture the dynamic values from the URL, as the `@Get()` decorator in the example below shows. You can then access these route parameters with the `@Param()` decorator, added to the method signature.
 
-> info **Hint** Routes with parameters should be declared after any static paths, so the parameterized path doesn't intercept traffic destined for the static one. See [Route conflicts and resolution order](/controllers#route-conflicts-and-resolution-order) for the options that detect this at bootstrap, or sort it out for you.
+> info **Hint** Declare routes with parameters after any static paths, so that the parameterized path doesn't intercept traffic destined for the static one. See [Route conflicts and resolution order](/controllers#route-conflicts-and-resolution-order) for the options that detect this at bootstrap or resolve it for you.
 
 ```typescript
 @@filename()
@@ -363,7 +363,7 @@ findOne(params) {
 }
 ```
 
-The `@Param()` decorator is used to decorate a method parameter (in the example above, `params`), making the **route** parameters accessible as properties of that decorated method parameter inside the method. As shown in the code, you can access the `id` parameter by referencing `params.id`. Alternatively, you can pass a specific parameter token to the decorator and directly reference the route parameter by name within the method body.
+The `@Param()` decorator decorates a method parameter (`params` in the example above), making the **route** parameters available as properties of that parameter inside the method. As the code shows, you access the `id` parameter as `params.id`. Alternatively, pass a specific parameter token to the decorator and reference the route parameter directly by name in the method body.
 
 > info **Hint** Import `Param` from the `@nestjs/common` package.
 
@@ -383,7 +383,7 @@ findOne(id) {
 
 #### Sub-domain routing
 
-The `@Controller` decorator can take a `host` option to require that the HTTP host of the incoming requests matches some specific value.
+The `@Controller()` decorator can take a `host` option to require that the HTTP host of incoming requests matches a specific value.
 
 ```typescript
 @@filename(admin.controller)
@@ -404,9 +404,9 @@ export class AdminController {
 }
 ```
 
-> warning **Warning** Since **Fastify** does not support nested routers, if you are using sub-domain routing, it is recommended to use the default Express adapter instead.
+> warning **Warning** Since **Fastify** does not support nested routers, use the default Express adapter if you rely on sub-domain routing.
 
-Similar to a route `path`, the `host` option can use tokens to capture the dynamic value at that position in the host name. The host parameter token in the `@Controller()` decorator example below demonstrates this usage. Host parameters declared in this way can be accessed using the `@HostParam()` decorator, which should be added to the method signature.
+Like a route `path`, the `host` option can use tokens to capture the dynamic value at that position in the host name, as the host parameter token in the `@Controller()` decorator below shows. You can access host parameters declared this way with the `@HostParam()` decorator, added to the method signature.
 
 ```typescript
 @@filename(account.controller)
@@ -430,13 +430,13 @@ export class AccountController {
 
 #### State sharing
 
-For developers coming from other programming languages, it might be surprising to learn that in Nest, nearly everything is shared across incoming requests. This includes resources like the database connection pool, singleton services with global state, and more. It's important to understand that Node.js doesn't use the request/response Multi-Threaded Stateless Model, where each request is handled by a separate thread. As a result, using singleton instances in Nest is completely **safe** for our applications.
+Developers coming from other programming languages may be surprised to learn that in Nest, nearly everything is shared across incoming requests. This includes resources such as the database connection pool, singleton services with global state, and more. Node.js doesn't follow the request/response multi-threaded stateless model, in which each request is handled by a separate thread. As a result, using singleton instances in Nest is fully **safe**.
 
-That said, there are specific edge cases where having request-based lifetimes for controllers may be necessary. Examples include per-request caching in GraphQL applications, request tracking, or implementing multi-tenancy. You can learn more about controlling injection scopes [here](/fundamentals/injection-scopes).
+That said, some edge cases may require request-based lifetimes for controllers, such as per-request caching in GraphQL applications, request tracking, or multi-tenancy. To learn how to control this, see [Injection scopes](/fundamentals/injection-scopes).
 
 #### Asynchronicity
 
-We love modern JavaScript, especially its emphasis on **asynchronous** data handling. That's why Nest fully supports `async` functions. Every `async` function must return a `Promise`, which allows you to return a deferred value that Nest can resolve automatically. Here's an example:
+Modern JavaScript relies heavily on **asynchronous** data handling, and Nest fully supports `async` functions. An `async` function always returns a `Promise`, so a route handler can return a deferred value that Nest resolves automatically:
 
 ```typescript
 @@filename(cats.controller)
@@ -451,7 +451,7 @@ async findAll() {
 }
 ```
 
-This code is perfectly valid. But Nest takes it a step further by allowing route handlers to return RxJS [observable streams](https://rxjs-dev.firebaseapp.com/guide/observable) as well. Nest will handle the subscription internally and resolve the final emitted value once the stream completes.
+Route handlers can also return RxJS [observable streams](https://rxjs.dev/guide/observable). Nest subscribes to the stream internally and resolves the last emitted value once the stream completes.
 
 ```typescript
 @@filename(cats.controller)
@@ -466,15 +466,15 @@ findAll() {
 }
 ```
 
-Both approaches are valid, and you can choose the one that best suits your needs.
+Both approaches are valid; choose the one that best suits your needs.
 
 #### Request payloads
 
-In our previous example, the POST route handler didn't accept any client parameters. Let's fix that by adding the `@Body()` decorator.
+The POST route handler in the previous example didn't accept any client parameters. Let's fix that by adding the `@Body()` decorator.
 
-Before we proceed (if you're using TypeScript), we need to define the **DTO** (Data Transfer Object) schema. A DTO is an object that specifies how data should be sent over the network. We could define the DTO schema using **TypeScript** interfaces or simple classes. However, we recommend using **classes** here. Why? Classes are part of the JavaScript ES6 standard, so they remain intact as real entities in the compiled JavaScript. In contrast, TypeScript interfaces are removed during transpilation, meaning Nest can't reference them at runtime. This is important because features like **Pipes** rely on having access to the metatype of variables at runtime, which is only possible with classes.
+Before we proceed (if you're using TypeScript), we need to define the **DTO** (Data Transfer Object) schema. A DTO is an object that defines the shape of data sent over the network. You could define the DTO schema using **TypeScript** interfaces or plain classes, but **classes** are the recommended choice. Classes are part of the JavaScript ES6 standard, so they are preserved as real entities in the compiled JavaScript. TypeScript interfaces, by contrast, are removed during transpilation, so Nest can't reference them at runtime. This matters because features such as **pipes** rely on access to the metatype of variables at runtime, which is only possible with classes.
 
-Let's create the `CreateCatDto` class:
+Create the `CreateCatDto` class:
 
 ```typescript
 @@filename(create-cat.dto)
@@ -485,7 +485,7 @@ export class CreateCatDto {
 }
 ```
 
-It has only three basic properties. We can now use the newly created DTO inside the `CatsController`:
+It has three basic properties. We can now use the new DTO inside the `CatsController`:
 
 ```typescript
 @@filename(cats.controller)
@@ -501,13 +501,13 @@ async create(createCatDto) {
 }
 ```
 
-> info **Hint** Our `ValidationPipe` can filter out properties that should not be received by the method handler. In this case, we can whitelist the acceptable properties, and any property not included in the whitelist is automatically stripped from the resulting object. In the `CreateCatDto` example, our whitelist is the `name`, `age`, and `breed` properties. Learn more [here](https://docs.nestjs.com/techniques/validation#stripping-properties).
+> info **Hint** The `ValidationPipe` can filter out properties that the route handler should not receive. You whitelist the acceptable properties, and any property not in the whitelist is automatically stripped from the resulting object. In the `CreateCatDto` example, the whitelist consists of the `name`, `age`, and `breed` properties. Learn more in [Stripping properties](https://docs.nestjs.com/techniques/validation#stripping-properties).
 
 #### Query parameters
 
-When handling query parameters in your routes, you can use the `@Query()` decorator to extract them from incoming requests. Let's see how this works in practice.
+To extract query parameters from incoming requests, use the `@Query()` decorator.
 
-Consider a route where we want to filter a list of cats based on query parameters like `age` and `breed`. First, define the query parameters in the `CatsController`:
+Consider a route that filters a list of cats by query parameters such as `age` and `breed`. First, define the query parameters in the `CatsController`:
 
 ```typescript
 @@filename(cats.controller)
@@ -523,22 +523,22 @@ async findAll(age, breed) {
 }
 ```
 
-In this example, the `@Query()` decorator is used to extract the values of `age` and `breed` from the query string. For example, a request to:
+In this example, the `@Query()` decorator extracts the values of `age` and `breed` from the query string. For example, a request to:
 
 ```plaintext
 GET /cats?age=2&breed=Persian
 ```
 
-would result in `age` being `2` and `breed` being `Persian`.
+results in `age` being `'2'` and `breed` being `'Persian'`. Query parameter values arrive as strings, and the `number` type annotation alone doesn't convert them. To receive a number, apply a pipe such as `ParseIntPipe` (see [Pipes](/pipes)).
 
-If your application requires handling more complex query parameters, such as nested objects or arrays:
+If your application needs to handle more complex query parameters, such as nested objects or arrays:
 
 ```plaintext
 ?filter[where][name]=John&filter[where][age]=30
 ?item[]=1&item[]=2
 ```
 
-you'll need to configure your HTTP adapter (Express or Fastify) to use an appropriate query parser. In Express, you can use the `extended` parser, which allows for rich query objects:
+configure your HTTP adapter (Express or Fastify) to use an appropriate query parser. In Express, use the `extended` parser, which supports rich query objects:
 
 ```typescript
 @@filename(main)
@@ -549,7 +549,7 @@ const app = await NestFactory.create(AppModule);
 app.set('query parser', 'extended');
 ```
 
-In Fastify, you can use the `querystringParser` option:
+In Fastify, use the `querystringParser` option:
 
 ```typescript
 @@filename(main)
@@ -568,17 +568,17 @@ const app = await NestFactory.create(
 );
 ```
 
-> info **Hint** `qs` is a querystring parser that supports nesting and arrays. You can install it using `npm install qs`.
+> info **Hint** `qs` is a query string parser that supports nesting and arrays. Install it with `npm install qs`.
 
 #### Handling errors
 
-There's a separate chapter about handling errors (i.e., working with exceptions) [here](/exception-filters).
+Handling errors (i.e., working with exceptions) is covered in the [Exception filters](/exception-filters) chapter.
 
 #### Observing routes in production
 
-A controller that behaves perfectly on your machine can behave very differently under real traffic. The question that comes up in production is never "does this route work?" but "why did `GET /cats/:id` go from 40 ms to 900 ms after Tuesday's deploy, and is it every request or one unlucky tenant?"
+A controller that behaves perfectly on your machine can behave very differently under real traffic. In production, the question is never "does this route work?" but "why did `GET /cats/:id` go from 40 ms to 900 ms after Tuesday's deploy, and is it every request or one unlucky tenant?"
 
-Route handlers are the natural unit for that question, and [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') reports on exactly that unit. Because the `@nestjs/observe` SDK hooks into Nest's own request lifecycle rather than wrapping the HTTP server, every measurement is labeled with the route pattern you declared - `GET /cats/:id`, not 10,000 distinct URLs - so a route is a single line you can sort, chart, and alert on:
+Route handlers are the natural unit for answering that question, and [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe') reports on exactly that unit. Because the `@nestjs/observe` SDK hooks into Nest's own request lifecycle rather than wrapping the HTTP server, every measurement is labeled with the route pattern you declared (`GET /cats/:id`, not 10,000 distinct URLs). Each route is therefore a single line you can sort, chart, and alert on:
 
 ```typescript
 const app = await NestFactory.create(AppModule, {
@@ -586,13 +586,13 @@ const app = await NestFactory.create(AppModule, {
 });
 ```
 
-That is the whole integration. From there, a slow route is three clicks: sort the route list by p95, open the operation to see whether the regression is constant or spiky and whether it started at a release, then open one slow execution and read its waterfall - which controller, which service method, which query held the time. Time is attributed per **class and method**, with everything awaited subtracted out, so `CatsService.findOne()` taking 800 ms of its own is immediately distinguishable from `CatsService.findOne()` waiting 800 ms on the database.
+Together with importing `ObserveModule.forRoot()` into your root module, that is the whole integration. From there, a slow route is three clicks away: sort the route list by p95; open the operation to see whether the regression is constant or spiky and whether it started with a release; then open one slow execution and read its waterfall to see which controller, service method, or query held the time. Time is attributed per **class and method**, with awaited time subtracted, so `CatsService.findOne()` spending 800 ms in its own code is immediately distinguishable from `CatsService.findOne()` waiting 800 ms on the database.
 
 See the [Observability](/observability/overview) chapter to get set up, and [Dashboard](/observability/dashboard) for the full walk from an alert down to a single request.
 
 #### Full resource sample
 
-Below is an example that demonstrates the use of several available decorators to create a basic controller. This controller provides a few methods to access and manipulate internal data.
+The following example uses several of the available decorators to create a basic controller. The controller exposes a few methods to access and manipulate internal data.
 
 ```typescript
 @@filename(cats.controller)
@@ -640,7 +640,6 @@ export class CatsController {
   @Get()
   @Bind(Query())
   findAll(query) {
-    console.log(query);
     return `This action returns all cats (limit: ${query.limit} items)`;
   }
 
@@ -664,13 +663,13 @@ export class CatsController {
 }
 ```
 
-> info **Hint** Nest CLI offers a generator (schematic) that automatically creates **all the boilerplate code**, saving you from doing this manually and improving the overall developer experience. Learn more about this feature [here](/recipes/crud-generator).
+> info **Hint** The Nest CLI provides a generator (schematic) that automatically creates **all the boilerplate code**, so you don't have to write it manually. Learn more in the [CRUD generator](/recipes/crud-generator) recipe.
 
 #### Getting up and running
 
-Even with the `CatsController` fully defined, Nest doesn't yet know about it and won't automatically create an instance of the class.
+Even with `CatsController` fully defined, Nest doesn't know about it yet and won't create an instance of the class.
 
-Controllers must always be part of a module, which is why we include the `controllers` array within the `@Module()` decorator. Since we haven't defined any other modules apart from the root `AppModule`, we'll use it to register the `CatsController`:
+Controllers must always belong to a module, which is why we include the `controllers` array in the `@Module()` decorator. Since we haven't defined any modules other than the root `AppModule`, we'll use it to register `CatsController`:
 
 ```typescript
 @@filename(app.module)
@@ -683,16 +682,16 @@ import { CatsController } from './cats/cats.controller.js';
 export class AppModule {}
 ```
 
-We attached the metadata to the module class using the `@Module()` decorator, and now Nest can easily determine which controllers need to be mounted.
+With this metadata attached to the module class through the `@Module()` decorator, Nest can determine which controllers to mount.
 
 #### Library-specific approach
 
-So far, we've covered the standard Nest way of manipulating responses. Another approach is to use a library-specific [response object](https://expressjs.com/en/api.html#res). To inject a specific response object, we can use the `@Res()` decorator. To highlight the differences, let's rewrite the `CatsController` like this:
+So far, we've covered the standard Nest way of manipulating responses. The alternative is to use a library-specific [response object](https://expressjs.com/en/api.html#res), injected with the `@Res()` decorator. To highlight the differences, let's rewrite `CatsController` as follows:
 
 ```typescript
 @@filename()
 import { Controller, Get, Post, Res, HttpStatus } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 @Controller('cats')
 export class CatsController {
@@ -703,31 +702,31 @@ export class CatsController {
 
   @Get()
   findAll(@Res() res: Response) {
-     res.status(HttpStatus.OK).json([]);
+    res.status(HttpStatus.OK).json([]);
   }
 }
 @@switch
-import { Controller, Get, Post, Bind, Res, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Bind, Res, HttpStatus } from '@nestjs/common';
 
 @Controller('cats')
 export class CatsController {
   @Post()
-  @Bind(Res(), Body())
-  create(res, createCatDto) {
+  @Bind(Res())
+  create(res) {
     res.status(HttpStatus.CREATED).send();
   }
 
   @Get()
   @Bind(Res())
   findAll(res) {
-     res.status(HttpStatus.OK).json([]);
+    res.status(HttpStatus.OK).json([]);
   }
 }
 ```
 
-While this approach works and offers more flexibility by giving full control over the response object (such as header manipulation and access to library-specific features), it should be used with caution. Generally, this method is less clear and comes with some downsides. The main disadvantage is that your code becomes platform-dependent, as different underlying libraries may have different APIs for the response object. Additionally, it can make testing more challenging, as you'll need to mock the response object, among other things.
+This approach offers more flexibility by giving full control over the response object (e.g., header manipulation and access to library-specific features), but it should be used with caution. It is generally less clear and has some downsides. The main disadvantage is that your code becomes platform-dependent, since different underlying libraries may expose different APIs on the response object. It also makes testing harder, as you need to mock the response object, among other things.
 
-Furthermore, by using this approach, you lose compatibility with Nest features that rely on standard response handling, such as Interceptors and the `@HttpCode()` / `@Header()` decorators. To address this, you can enable the `passthrough` option like this:
+In addition, this approach loses compatibility with Nest features that rely on standard response handling, such as interceptors and the `@HttpCode()` / `@Header()` decorators. To address this, enable the `passthrough` option:
 
 ```typescript
 @@filename()
@@ -745,4 +744,4 @@ findAll(res) {
 }
 ```
 
-With this approach, you can interact with the native response object (for example, setting cookies or headers based on specific conditions), while still allowing the framework to handle the rest.
+This way, you can interact with the native response object (for example, to set cookies or headers based on specific conditions) while leaving the rest to the framework.
