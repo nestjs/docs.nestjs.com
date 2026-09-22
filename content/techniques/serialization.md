@@ -1,18 +1,20 @@
 ### Serialization
 
-Serialization is a process that happens before objects are returned in a network response. This is an appropriate place to provide rules for transforming and sanitizing the data to be returned to the client. For example, sensitive data like passwords should always be excluded from the response. Or, certain properties might require additional transformation, such as sending only a subset of properties of an entity. Performing these transformations manually can be tedious and error prone, and can leave you uncertain that all cases have been covered.
+Serialization happens before objects are returned in a network response. It is the right place to define rules for transforming and sanitizing the data sent to the client. For example, sensitive data such as passwords must always be excluded from the response, and some properties may need further transformation, such as returning only a subset of an entity's properties. Performing these transformations manually in every handler is tedious and error-prone, and makes it hard to be sure that every case is covered.
 
 #### Overview
 
-Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The `ClassSerializerInterceptor` interceptor uses the powerful [class-transformer](https://github.com/typestack/class-transformer) package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the `instanceToPlain()` function from [class-transformer](https://github.com/typestack/class-transformer). In doing so, it can apply rules expressed by `class-transformer` decorators on an entity/DTO class, as described below.
+Nest provides two built-in interceptors that apply these rules declaratively:
 
-Nest also includes a built-in `StandardSchemaSerializerInterceptor` for schema-first response shaping. Use it when you want outgoing responses to be validated or transformed by a [Standard Schema](https://standardschema.dev/) compatible schema instead of `class-transformer` decorators.
+- `ClassSerializerInterceptor` uses the [class-transformer](https://github.com/typestack/class-transformer) package. It takes the value returned by a route handler and applies the `instanceToPlain()` function to it, which honors the `class-transformer` decorators declared on the entity or DTO class. The first part of this chapter covers this approach.
 
-> info **Hint** The serialization does not apply to [StreamableFile](https://docs.nestjs.com/techniques/streaming-files#streamable-file-class) responses.
+- `StandardSchemaSerializerInterceptor` validates and transforms responses with a schema written in [Zod](https://zod.dev/), [Valibot](https://valibot.dev/), [ArkType](https://arktype.io/), or any other [Standard Schema](https://standardschema.dev/) compatible library. See [Schema-based serialization](#schema-based-serialization).
+
+> info **Hint** Neither interceptor serializes [StreamableFile](/techniques/file-upload#streaming-files) responses.
 
 #### Exclude properties
 
-Let's assume that we want to automatically exclude a `password` property from a user entity. We annotate the entity as follows:
+Suppose you want to exclude the `password` property of a user entity from every response. Annotate the entity as follows:
 
 ```typescript
 import { Exclude } from 'class-transformer';
@@ -31,7 +33,7 @@ export class UserEntity {
 }
 ```
 
-Now consider a controller with a method handler that returns an instance of this class.
+Now consider a controller with a route handler that returns an instance of this class:
 
 ```typescript
 @UseInterceptors(ClassSerializerInterceptor)
@@ -46,7 +48,7 @@ findOne(): UserEntity {
 }
 ```
 
-> warning **Warning** Note that we must return an instance of the class. If you return a plain JavaScript object, for example, `{{ '{' }} user: new UserEntity() {{ '}' }}`, the object won't be properly serialized.
+> warning **Warning** The handler must return an instance of the class. A plain JavaScript object, such as `{{ '{' }} user: new UserEntity() {{ '}' }}`, is not serialized correctly. To serialize plain objects, see [Transform plain objects](#transform-plain-objects).
 
 > info **Hint** The `ClassSerializerInterceptor` is imported from `@nestjs/common`.
 
@@ -60,11 +62,11 @@ When this endpoint is requested, the client receives the following response:
 }
 ```
 
-Note that the interceptor can be applied application-wide (as covered [here](https://docs.nestjs.com/interceptors#binding-interceptors)). The combination of the interceptor and the entity class declaration ensures that **any** method that returns a `UserEntity` will be sure to remove the `password` property. This gives you a measure of centralized enforcement of this business rule.
+The interceptor can also be bound application-wide (see [Binding interceptors](/interceptors#binding-interceptors)). Together, the interceptor and the entity class declaration ensure that **every** route handler that returns a `UserEntity` omits the `password` property, which enforces this rule in one place.
 
 #### Expose properties
 
-You can use the `@Expose()` decorator to provide alias names for properties, or to execute a function to calculate a property value (analogous to **getter** functions), as shown below.
+Use the `@Expose()` decorator to provide alias names for properties, or to compute a property value with a function (similar to a **getter**), as shown below.
 
 ```typescript
 @Expose()
@@ -75,7 +77,7 @@ get fullName(): string {
 
 #### Transform
 
-You can perform additional data transformation using the `@Transform()` decorator. For example, the following construct returns the name property of the `RoleEntity` instead of returning the whole object.
+Use the `@Transform()` decorator for additional data transformation. For example, the following construct returns the `name` property of the `RoleEntity` instead of the whole object.
 
 ```typescript
 @Transform(({ value }) => value.name)
@@ -84,7 +86,7 @@ role: RoleEntity;
 
 #### Pass options
 
-You may want to modify the default behavior of the transformation functions. To override default settings, pass them in an `options` object with the `@SerializeOptions()` decorator.
+To override the default behavior of the transformation functions, pass options to the `@SerializeOptions()` decorator.
 
 ```typescript
 @SerializeOptions({
@@ -98,26 +100,13 @@ findOne(): UserEntity {
 
 > info **Hint** The `@SerializeOptions()` decorator is imported from `@nestjs/common`.
 
-Options passed via `@SerializeOptions()` are passed as the second argument of the underlying `instanceToPlain()` function. In this example, we are automatically excluding all properties that begin with the `_` prefix.
-
-`@SerializeOptions()` can also be used with `StandardSchemaSerializerInterceptor`:
-
-```typescript
-@UseInterceptors(StandardSchemaSerializerInterceptor)
-@SerializeOptions({ schema: userResponseSchema })
-@Get(':id')
-findOne(@Param('id') id: string) {
-  return this.usersService.findOne(id);
-}
-```
-
-You can also pass `validateOptions` if your schema library supports extra validation options through the Standard Schema interface.
+Options passed to `@SerializeOptions()` are forwarded as the second argument of the underlying `instanceToPlain()` function. In this example, all properties that begin with the `_` prefix are excluded.
 
 #### Transform plain objects
 
-You can enforce transformations at the controller level by using the `@SerializeOptions` decorator. This ensures that all responses are transformed into instances of the specified class, applying any decorators from class-validator or class-transformer, even when plain objects are returned. This approach leads to cleaner code without the need to repeatedly instantiate the class or call `plainToInstance`.
+The `type` option of `@SerializeOptions()` converts responses into instances of the specified class before they are serialized, so the class's `class-transformer` decorators apply even when the handler returns a plain object. This removes the need to instantiate the class or call `plainToInstance()` in every handler.
 
-In the example below, despite returning plain JavaScript objects in both conditional branches, they will be automatically converted into `UserEntity` instances, with the relevant decorators applied:
+In the example below, both conditional branches return plain JavaScript objects, which are converted into `UserEntity` instances with the relevant decorators applied:
 
 ```typescript
 @UseInterceptors(ClassSerializerInterceptor)
@@ -142,18 +131,179 @@ findOne(@Query() { id }: { id: number }): UserEntity {
 }
 ```
 
-> info **Hint** By specifying the expected return type for the controller, you can leverage TypeScript's type-checking capabilities to ensure that the returned plain object adheres to the shape of the DTO or entity. The `plainToInstance` function doesn't provide this level of type hinting, which can lead to potential bugs if the plain object doesn't match the expected DTO or entity structure.
+> info **Hint** Declaring the handler's return type lets TypeScript check that the returned plain object matches the shape of the DTO or entity. The `plainToInstance()` function doesn't provide this type checking, so a mismatched object can go unnoticed.
+
+
+#### Schema-based serialization
+
+The `StandardSchemaSerializerInterceptor` shapes responses with a schema instead of class decorators. The schema describes exactly what leaves the API: the interceptor runs the value returned by the route handler through the schema and sends the schema's output to the client. It accepts any schema that implements the [Standard Schema](https://standardschema.dev/) specification. The examples in this section use Zod.
+
+Because `z.object()` strips properties the schema doesn't declare, a response schema is also an allowlist. The following schema guarantees that a user's `password` is never sent, even when the service returns the full database row:
+
+```typescript
+@@filename(user-response.schema)
+import { z } from 'zod';
+
+export const userResponseSchema = z.object({
+  id: z.number(),
+  firstName: z.string(),
+  lastName: z.string(),
+});
+
+export type UserResponse = z.infer<typeof userResponseSchema>;
+```
+
+Bind the interceptor and select the schema with the `schema` option of the `@SerializeOptions()` decorator:
+
+```typescript
+@@filename(users.controller)
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  SerializeOptions,
+  StandardSchemaSerializerInterceptor,
+  UseInterceptors,
+} from '@nestjs/common';
+import { userResponseSchema } from './user-response.schema.js';
+import { UsersService } from './users.service.js';
+
+@Controller('users')
+@UseInterceptors(StandardSchemaSerializerInterceptor)
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get(':id')
+  @SerializeOptions({ schema: userResponseSchema })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
+  }
+
+  @Get()
+  @SerializeOptions({ schema: userResponseSchema })
+  findAll() {
+    return this.usersService.findAll();
+  }
+}
+```
+
+The service returns user records that include a `password` property, but the client receives only the declared properties:
+
+```json
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+When a handler returns an array, as `findAll()` does, the interceptor applies the schema to **each element**. Pass the schema of a single item, not an array schema.
+
+`null`, `undefined`, primitive values, and `StreamableFile` responses are sent unchanged, as are responses of handlers without a schema.
+
+#### Transforming responses with schemas
+
+Schema transformations cover what `@Expose()` and `@Transform()` do for classes. The following schema adds a computed `fullName` property and replaces the nested `role` object with its name:
+
+```typescript
+@@filename(user-response.schema)
+import { z } from 'zod';
+
+export const userResponseSchema = z
+  .object({
+    id: z.number(),
+    firstName: z.string(),
+    lastName: z.string(),
+    role: z.object({ id: z.number(), name: z.string() }),
+  })
+  .transform((user) => ({
+    id: user.id,
+    fullName: `${user.firstName} ${user.lastName}`,
+    role: user.role.name,
+  }));
+```
+
+For a user with the `admin` role, the client receives:
+
+```json
+{
+  "id": 1,
+  "fullName": "John Doe",
+  "role": "admin"
+}
+```
+
+The same schema written with Valibot uses `v.pipe()` and `v.transform()`:
+
+```typescript
+import * as v from 'valibot';
+
+export const userResponseSchema = v.pipe(
+  v.object({
+    id: v.number(),
+    firstName: v.string(),
+    lastName: v.string(),
+    role: v.object({ id: v.number(), name: v.string() }),
+  }),
+  v.transform((user) => ({
+    id: user.id,
+    fullName: `${user.firstName} ${user.lastName}`,
+    role: user.role.name,
+  })),
+);
+```
+
+#### Binding the schema serializer
+
+`@SerializeOptions()` can decorate a controller class as well as a route handler. A schema set on the class applies to all of its handlers, and a schema set on a handler takes precedence:
+
+```typescript
+@Controller('users')
+@UseInterceptors(StandardSchemaSerializerInterceptor)
+@SerializeOptions({ schema: userResponseSchema })
+export class UsersController {}
+```
+
+To bind the interceptor application-wide, pass it the `Reflector` instance, which the interceptor uses to read the `@SerializeOptions()` metadata:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.create(AppModule);
+app.useGlobalInterceptors(
+  new StandardSchemaSerializerInterceptor(app.get(Reflector)),
+);
+```
+
+Alternatively, register it with the `APP_INTERCEPTOR` token, as described in [Binding interceptors](/interceptors#binding-interceptors), and Nest injects the `Reflector` for you. Handlers without a schema are not affected by the global interceptor.
+
+The interceptor constructor also accepts default options, which apply when neither the handler nor its controller sets a schema:
+
+<table>
+  <tr>
+    <td><code>schema</code></td>
+    <td>The default schema used when <code>@SerializeOptions()</code> doesn't provide one.</td>
+  </tr>
+  <tr>
+    <td><code>validateOptions</code></td>
+    <td>Options forwarded to the schema's <code>~standard.validate()</code> method, for libraries that support them. A handler can override them with the <code>validateOptions</code> option of <code>@SerializeOptions()</code>.</td>
+  </tr>
+</table>
+
+#### Serialization errors
+
+A response that doesn't match its schema, such as a record with a missing or mistyped property, indicates a bug on the server, not a problem with the request. In that case, the interceptor throws an error that lists the schema's issues, and the client receives a `500 Internal Server Error` response instead of partially serialized data. The error message, including the issues, is logged by the default exception filter.
+
+A working example that uses Valibot is available [here](https://github.com/nestjs/nest/tree/master/sample/36-valibot-serializer).
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
+A working example of the `ClassSerializerInterceptor` is available [here](https://github.com/nestjs/nest/tree/master/sample/21-serializer).
 
 #### WebSockets and Microservices
 
-While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the `ClassSerializerInterceptor` works the same for WebSockets and Microservices, regardless of the transport method that is used.
+While this chapter shows examples using HTTP applications (e.g., Express or Fastify), both `ClassSerializerInterceptor` and `StandardSchemaSerializerInterceptor` work the same for WebSockets and microservices, regardless of the transport.
 
 #### Learn more
 
-Read more about available decorators and options as provided by the `class-transformer` package [here](https://github.com/typestack/class-transformer).
-
-If you prefer schema-driven serialization, use `StandardSchemaSerializerInterceptor` together with `@SerializeOptions()` and its `schema` option.
+Read more about available decorators and options in the [class-transformer](https://github.com/typestack/class-transformer) repository. For schema libraries, see the [Zod](https://zod.dev/), [Valibot](https://valibot.dev/), and [ArkType](https://arktype.io/) documentation.
