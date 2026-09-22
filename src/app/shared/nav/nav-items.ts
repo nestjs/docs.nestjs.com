@@ -101,8 +101,10 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Cookies', path: '/techniques/cookies' },
       { title: 'Events', path: '/techniques/events' },
       { title: 'Compression', path: '/techniques/compression' },
-      { title: 'File upload', path: '/techniques/file-upload' },
-      { title: 'Streaming files', path: '/techniques/streaming-files' },
+      {
+        title: 'File upload and streaming',
+        path: '/techniques/file-upload',
+      },
       { title: 'HTTP module', path: '/techniques/http-module' },
       { title: 'Session', path: '/techniques/session' },
       { title: 'Model-View-Controller', path: '/techniques/mvc' },

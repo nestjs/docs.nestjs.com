@@ -1,20 +1,22 @@
-### File upload
+### File upload and streaming
 
-To handle file uploading, Nest provides a built-in module based on the [multer](https://github.com/expressjs/multer) middleware package for Express. Multer handles data posted in the `multipart/form-data` format, which is primarily used for uploading files via an HTTP `POST` request. This module is fully configurable and you can adjust its behavior to your application requirements.
+This chapter covers files in both directions: receiving files that clients upload, and [streaming files](#streaming-files) back to clients.
 
-> warning **Warning** Multer cannot process data which is not in the supported multipart format (`multipart/form-data`). Also, note that this package is not compatible with the `FastifyAdapter`.
+To handle file uploads, Nest provides a built-in module based on the [multer](https://github.com/expressjs/multer) middleware package for Express. Multer handles data posted in the `multipart/form-data` format, which is primarily used to upload files with an HTTP `POST` request. The module is fully configurable, so you can adjust its behavior to your application's requirements.
 
-For better type safety, let's install Multer typings package:
+> warning **Warning** Multer cannot process data that is not in the `multipart/form-data` format. The module is not compatible with the `FastifyAdapter`.
+
+For type safety, install the Multer type definitions:
 
 ```shell
 $ npm i -D @types/multer
 ```
 
-With this package installed, we can now use the `Express.Multer.File` type (you can import this type as follows: `import {{ '{' }} Express {{ '}' }} from 'express'`).
+With this package installed, you can use the `Express.Multer.File` type (import the `Express` namespace with `import {{ '{' }} Express {{ '}' }} from 'express'`).
 
 #### Basic example
 
-To upload a single file, simply tie the `FileInterceptor()` interceptor to the route handler and extract `file` from the `request` using the `@UploadedFile()` decorator.
+To upload a single file, bind the `FileInterceptor()` interceptor to the route handler and extract the file from the request with the `@UploadedFile()` decorator.
 
 ```typescript
 @@filename()
@@ -36,14 +38,14 @@ uploadFile(file) {
 
 The `FileInterceptor()` decorator takes two arguments:
 
-- `fieldName`: string that supplies the name of the field from the HTML form that holds a file
-- `options`: optional object of type `MulterOptions`. This is the same object used by the multer constructor (more details [here](https://github.com/expressjs/multer#multeropts)).
+- `fieldName`: the name of the HTML form field that holds the file
+- `options`: an optional object of type `MulterOptions`. This is the same object the Multer constructor accepts (see the [Multer options](https://github.com/expressjs/multer#multeropts)).
 
 > warning **Warning** `FileInterceptor()` may not be compatible with third party cloud providers like Google Firebase or others.
 
 #### File validation
 
-Often times it can be useful to validate incoming file metadata, like file size or file mime-type. For this, you can create your own [Pipe](https://docs.nestjs.com/pipes) and bind it to the parameter annotated with the `UploadedFile` decorator. The example below demonstrates how a basic file size validator pipe could be implemented:
+You will often want to validate incoming file metadata, such as the file size or MIME type. To do so, create a [pipe](/pipes) and bind it to the parameter decorated with `@UploadedFile()`. The following example implements a basic file size validation pipe:
 
 ```typescript
 import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
@@ -58,7 +60,7 @@ export class FileSizeValidationPipe implements PipeTransform {
 }
 ```
 
-This can be used in conjunction with the `FileInterceptor` as follows:
+Use it together with the `FileInterceptor` as follows:
 
 ```typescript
 @Post('file')
@@ -71,7 +73,7 @@ uploadFileAndValidate(@UploadedFile(
 }
 ```
 
-Nest provides a built-in pipe to handle common use cases and facilitate/standardize the addition of new ones. This pipe is called `ParseFilePipe`, and you can use it as follows:
+For common cases, Nest provides a built-in pipe, `ParseFilePipe`, which also standardizes how new file validations are added:
 
 ```typescript
 @Post('file')
@@ -93,7 +95,7 @@ uploadFileAndPassValidation(
 }
 ```
 
-As you can see, it's required to specify an array of file validators that will be executed by the `ParseFilePipe`. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional **optional** options:
+`ParseFilePipe` requires an array of file validators to execute. The validator interface is described below. The pipe also accepts two **optional** options:
 
 <table>
   <tr>
@@ -106,7 +108,7 @@ As you can see, it's required to specify an array of file validators that will b
   </tr>
 </table>
 
-Now, back to the `FileValidator` interface. To integrate validators with this pipe, you have to either use built-in implementations or provide your own custom `FileValidator`. See example below:
+Validators used by this pipe are either built-in implementations or your own subclasses of the abstract `FileValidator` class:
 
 ```typescript
 export abstract class FileValidator<TValidationOptions = Record<string, any>> {
@@ -126,14 +128,14 @@ export abstract class FileValidator<TValidationOptions = Record<string, any>> {
 }
 ```
 
-> info **Hint** The `FileValidator` interfaces supports async validation via its `isValid` function. To leverage type security, you can also type the `file` parameter as `Express.Multer.File` in case you are using express (default) as a driver.
+> info **Hint** The `isValid()` method can be asynchronous. For type safety, type the `file` parameter as `Express.Multer.File` when you use Express (the default HTTP adapter).
 
-`FileValidator` is a regular class that has access to the file object and validates it according to the options provided by the client. Nest has two built-in `FileValidator` implementations you can use in your project:
+A `FileValidator` receives the file object and validates it according to the options passed to its constructor. Nest provides two built-in implementations:
 
-- `MaxFileSizeValidator` - Checks if a given file's size is less than the provided value (measured in `bytes`)
-- `FileTypeValidator` - Checks if a given file's mime-type matches a given string or RegExp. By default, validates the mime-type using file content [magic number](https://www.ibm.com/support/pages/what-magic-number)
+- `MaxFileSizeValidator` checks that the file's size is less than the provided value, in bytes.
+- `FileTypeValidator` checks that the file's MIME type matches the given string or regular expression. By default, it determines the MIME type from the file content's [magic number](https://www.ibm.com/support/pages/what-magic-number).
 
-To understand how these can be used in conjunction with the aforementioned `ParseFilePipe`, we'll use an altered snippet of the last presented example:
+The following snippet uses both validators with `ParseFilePipe`:
 
 ```typescript
 @UploadedFile(
@@ -147,9 +149,9 @@ To understand how these can be used in conjunction with the aforementioned `Pars
 file: Express.Multer.File,
 ```
 
-> info **Hint** If the number of validators increase largely or their options are cluttering the file, you can define this array in a separate file and import it here as a named constant like `fileValidators`.
+> info **Hint** If the list of validators grows long, define the array in a separate file and import it as a named constant, such as `fileValidators`.
 
-Finally, you can use the special `ParseFilePipeBuilder` class that lets you compose & construct your validators. By using it as shown below you can avoid manual instantiation of each validator and just pass their options directly:
+Alternatively, compose the validators with the `ParseFilePipeBuilder` class. The builder instantiates each validator for you, so you pass only their options:
 
 ```typescript
 @UploadedFile(
@@ -167,15 +169,15 @@ Finally, you can use the special `ParseFilePipeBuilder` class that lets you comp
 file: Express.Multer.File,
 ```
 
-> info **Hint** File presence is required by default, but you can make it optional by adding `fileIsRequired: false` parameter inside `build` function options (at the same level as `errorHttpStatusCode`).
+> info **Hint** A file is required by default. To make it optional, pass `fileIsRequired: false` in the options of the `build()` method (next to `errorHttpStatusCode`).
 
 #### Array of files
 
-To upload an array of files (identified with a single field name), use the `FilesInterceptor()` decorator (note the plural **Files** in the decorator name). This decorator takes three arguments:
+To upload an array of files identified by a single field name, use the `FilesInterceptor()` decorator (note the plural **Files** in its name). It takes three arguments:
 
 - `fieldName`: as described above
-- `maxCount`: optional number defining the maximum number of files to accept
-- `options`: optional `MulterOptions` object, as described above
+- `maxCount`: an optional maximum number of files to accept
+- `options`: an optional `MulterOptions` object, as described above
 
 When using `FilesInterceptor()`, extract files from the `request` with the `@UploadedFiles()` decorator.
 
@@ -224,10 +226,10 @@ uploadFiles(
 
 #### Multiple files
 
-To upload multiple files (all with different field name keys), use the `FileFieldsInterceptor()` decorator. This decorator takes two arguments:
+To upload multiple files under different field names, use the `FileFieldsInterceptor()` decorator. It takes two arguments:
 
-- `uploadedFields`: an array of objects, where each object specifies a required `name` property with a string value specifying a field name, as described above, and an optional `maxCount` property, as described above
-- `options`: optional `MulterOptions` object, as described above
+- `uploadedFields`: an array of objects, each with a required `name` property (the field name) and an optional `maxCount` property
+- `options`: an optional `MulterOptions` object, as described above
 
 When using `FileFieldsInterceptor()`, extract files from the `request` with the `@UploadedFiles()` decorator.
 
@@ -255,7 +257,7 @@ uploadFile(files) {
 
 #### Any files
 
-To upload all fields with arbitrary field name keys, use the `AnyFilesInterceptor()` decorator. This decorator can accept an optional `options` object as described above.
+To accept files under any field names, use the `AnyFilesInterceptor()` decorator. It accepts an optional `options` object, as described above.
 
 When using `AnyFilesInterceptor()`, extract files from the `request` with the `@UploadedFiles()` decorator.
 
@@ -277,7 +279,7 @@ uploadFile(files) {
 
 #### No files
 
-To accept `multipart/form-data` but not allow any files to be uploaded, use the `NoFilesInterceptor`. This sets multipart data as attributes on the request body. Any files sent with the request will throw a `BadRequestException`.
+To accept `multipart/form-data` without allowing file uploads, use the `NoFilesInterceptor`. It sets the multipart fields as properties of the request body. A request that contains files is rejected with a `BadRequestException`.
 
 ```typescript
 @Post('upload')
@@ -289,7 +291,7 @@ handleMultiPartData(@Body() body) {
 
 #### Default options
 
-You can specify multer options in the file interceptors as described above. To set default options, you can call the static `register()` method when you import the `MulterModule`, passing in supported options. You can use all options listed [here](https://github.com/expressjs/multer#multeropts).
+You can pass Multer options to each file interceptor, as described above. To set default options instead, call the static `register()` method when you import the `MulterModule`. It accepts all [Multer options](https://github.com/expressjs/multer#multeropts).
 
 ```typescript
 MulterModule.register({
@@ -301,7 +303,7 @@ MulterModule.register({
 
 #### Async configuration
 
-When you need to set `MulterModule` options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+To set `MulterModule` options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, it supports several techniques for async configuration.
 
 One technique is to use a factory function:
 
@@ -313,7 +315,7 @@ MulterModule.registerAsync({
 });
 ```
 
-Like other [factory providers](https://docs.nestjs.com/fundamentals/custom-providers#factory-providers-usefactory), our factory function can be `async` and can inject dependencies through `inject`.
+Like other [factory providers](/fundamentals/custom-providers#factory-providers-usefactory), the factory function can be `async` and can inject dependencies through `inject`.
 
 ```typescript
 MulterModule.registerAsync({
@@ -333,7 +335,7 @@ MulterModule.registerAsync({
 });
 ```
 
-The construction above instantiates `MulterConfigService` inside `MulterModule`, using it to create the required options object. Note that in this example, the `MulterConfigService` has to implement the `MulterOptionsFactory` interface, as shown below. The `MulterModule` will call the `createMulterOptions()` method on the instantiated object of the supplied class.
+The construction above instantiates `MulterConfigService` inside `MulterModule` and calls its `createMulterOptions()` method to obtain the options object. For this to work, `MulterConfigService` must implement the `MulterOptionsFactory` interface:
 
 ```typescript
 @Injectable()
@@ -355,7 +357,7 @@ MulterModule.registerAsync({
 });
 ```
 
-You can also pass so-called `extraProviders` to the `registerAsync()` method. These providers will be merged with the module providers.
+You can also pass `extraProviders` to the `registerAsync()` method. These providers are merged with the module's providers.
 
 ```typescript
 MulterModule.registerAsync({
@@ -365,8 +367,122 @@ MulterModule.registerAsync({
 });
 ```
 
-This is useful when you want to provide additional dependencies to the factory function or the class constructor.
+This is useful when the factory function or the class constructor needs additional dependencies.
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/29-file-upload).
+A working example of file uploads is available [here](https://github.com/nestjs/nest/tree/master/sample/29-file-upload).
+
+#### Streaming files
+
+To send a file from a route handler, you could pipe a stream into the response object:
+
+```typescript
+@Controller('file')
+export class FileController {
+  @Get()
+  getFile(@Res() res: Response) {
+    const file = createReadStream(join(process.cwd(), 'package.json'));
+    file.pipe(res);
+  }
+}
+```
+
+With this approach, the handler takes over the response, so post-controller [interceptor](/interceptors) logic no longer runs. Instead, return a `StreamableFile` instance, and Nest pipes it into the response for you.
+
+> info **Note** Streaming files applies to **HTTP applications**. The examples below do not apply to GraphQL or microservice applications.
+
+##### Streamable file class
+
+A `StreamableFile` holds the content to be sent. Its constructor accepts either a `Readable` stream or a `Uint8Array` (including a `Buffer`). The following example returns the `package.json` file instead of a JSON response. The same approach works for images, documents, and any other file type:
+
+```typescript
+import { Controller, Get, StreamableFile } from '@nestjs/common';
+import { createReadStream } from 'node:fs';
+import { join } from 'node:path';
+
+@Controller('file')
+export class FileController {
+  @Get()
+  getFile(): StreamableFile {
+    const file = createReadStream(join(process.cwd(), 'package.json'));
+    return new StreamableFile(file);
+  }
+}
+```
+
+> info **Hint** The `StreamableFile` class is exported from the `@nestjs/common` package.
+
+Neither the `ClassSerializerInterceptor` nor the `StandardSchemaSerializerInterceptor` [serializes](/techniques/serialization) `StreamableFile` responses.
+
+##### Response headers
+
+By default, the `Content-Type` response header is `application/octet-stream`. To change it, and to set the `Content-Disposition` and `Content-Length` headers, pass the `type`, `disposition`, and `length` options to the `StreamableFile` constructor:
+
+```typescript
+@Get()
+getFile(): StreamableFile {
+  const file = createReadStream(join(process.cwd(), 'package.json'));
+  return new StreamableFile(file, {
+    type: 'application/json',
+    disposition: 'attachment; filename="package.json"',
+  });
+}
+```
+
+When the content is a `Uint8Array`, `length` defaults to its size. For streams, set `length` yourself if you know the size in advance.
+
+Headers with static values can also be set with the [`@Header()`](/controllers#response-headers) decorator:
+
+```typescript
+@Get()
+@Header('Content-Type', 'application/json')
+@Header('Content-Disposition', 'attachment; filename="package.json"')
+getFile(): StreamableFile {
+  const file = createReadStream(join(process.cwd(), 'package.json'));
+  return new StreamableFile(file);
+}
+```
+
+To compute headers at runtime, inject the response object with `passthrough` enabled, so that Nest still sends the returned `StreamableFile`:
+
+```typescript
+import type { Response } from 'express';
+
+@Get()
+getFile(@Res({ passthrough: true }) res: Response): StreamableFile {
+  const file = createReadStream(join(process.cwd(), 'package.json'));
+  res.set({
+    'Content-Type': 'application/json',
+    'Content-Disposition': 'attachment; filename="package.json"',
+  });
+  return new StreamableFile(file);
+}
+```
+
+##### Stream errors
+
+With the Express adapter, if the stream emits an error before any data has been sent, the client receives a `400 Bad Request` response with the error message as its body. If data has already been sent, the response is ended. To customize this behavior, pass a handler to the `setErrorHandler()` method:
+
+```typescript
+@Get()
+getReport(): StreamableFile {
+  const file = createReadStream(join(process.cwd(), 'report.pdf'));
+  return new StreamableFile(file).setErrorHandler((err, res) => {
+    if (res.headersSent) {
+      res.end();
+      return;
+    }
+    res.statusCode = 404;
+    res.send('Report not found');
+  });
+}
+```
+
+The `setErrorLogger()` method replaces the function that logs errors emitted by the response stream while the file is being written to it.
+
+> info **Note** The error handler and the error logger apply to the Express adapter. With the Fastify adapter, a stream error is handled by the [exceptions layer](/exception-filters), so by default the client receives a `500 Internal Server Error` response.
+
+##### Cross-platform support
+
+Fastify can send streams without `stream.pipe(res)`, so with Fastify the `StreamableFile` class is not strictly required. However, Nest supports `StreamableFile` on both platforms, so code that returns it works unchanged if you switch between Express and Fastify.

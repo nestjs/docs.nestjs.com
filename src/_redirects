@@ -13,4 +13,7 @@
 /v10/*  /v10/index.html  200
 /v11/*  /v11/index.html  200
 
+# Chapters merged into other pages
+/techniques/streaming-files  /techniques/file-upload#streaming-files  301
+
 /*  /index.html 200

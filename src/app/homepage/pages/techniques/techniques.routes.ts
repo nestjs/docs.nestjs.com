@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { CachingComponent } from './caching/caching.component';
 import { CompressionComponent } from './compression/compression.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
@@ -15,7 +16,6 @@ import { SerializationComponent } from './serialization/serialization.component'
 import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
 import { SessionComponent } from './sessions/sessions.component';
 import { SqlComponent } from './sql/sql.component';
-import { StreamingFilesComponent } from './streaming-files/streaming-files.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
 import { ValidationComponent } from './validation/validation.component';
 import { VersioningComponent } from './versioning/versioning.component';
@@ -62,12 +62,14 @@ export const TECHNIQUES_ROUTES: Routes = [
   {
     path: 'file-upload',
     component: FileUploadComponent,
-    data: { title: 'File upload' },
+    data: { title: 'File upload and streaming' },
   },
   {
     path: 'streaming-files',
-    component: StreamingFilesComponent,
-    data: { title: 'Streaming Files' },
+    redirectTo: () =>
+      inject(Router).createUrlTree(['/techniques/file-upload'], {
+        fragment: 'streaming-files',
+      }),
   },
   {
     path: 'logger',
