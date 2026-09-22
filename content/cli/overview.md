@@ -36,7 +36,7 @@ $ cd my-nest-project
 $ npm run start:dev
 ```
 
-The `new` command prompts you to choose a module format. ESM projects are generated with Vitest and oxlint by default.
+The `new` command prompts you to choose a module system: ESM (the default), which uses Vitest for testing, or CommonJS, which uses Jest. Both use oxlint for linting. See [`nest new`](/cli/usages#nest-new) for the other prompts and options.
 
 In your browser, open [http://localhost:3000](http://localhost:3000) to see the new application running. The app will automatically recompile and reload when you change any of the source files.
 

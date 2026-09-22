@@ -11,7 +11,9 @@ $ nest n <name> [options]
 
 ##### Description
 
-Creates and initializes a new Nest project. Prompts for the module system (ESM or CommonJS) and the package manager.
+Creates and initializes a new Nest project. Prompts for any information not passed as an option: the project name, the package manager, the module system (ESM or CommonJS), and whether to set up [NestJS Observe](/observability/overview).
+
+> info **Hint** In non-interactive environments, such as CI, pass the project name and `--package-manager`. The module system then defaults to ESM, and Observe is set up only if you pass `--observe`.
 
 > info **Hint** Choosing **ESM** scaffolds an ESM-first project using Vitest for testing; choosing **CommonJS** scaffolds the traditional layout using Jest. Both variants use oxlint for linting.
 
@@ -28,19 +30,19 @@ Creates and initializes a new Nest project. Prompts for the module system (ESM o
 
 ##### Options
 
-| Option                                | Description                                                                                                                                                                                          |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--directory [directory]`             | Specify the destination directory.                                                                                                                                                                   |
-| `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                                                                                                             |
-| `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                                                                                                                 |
-| `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                                                                                                          |
-| `--skip-tests`                        | Do not generate testing files for the new project.<br/> Alias: `-t`                                                                                                                                  |
-| `--package-manager [package-manager]` | Specify package manager. Use `npm`, `yarn`, `pnpm`, or `bun`. Package manager must be installed globally.<br/> Alias: `-p`                                                                           |
-| `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                                                                                                        |
-| `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`                                                                                      |
-| `--strict`                            | Start the project with the following TypeScript compiler flags enabled: `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch` |
-| `--format`                            | Format generated files using Prettier.                                                                                                                                                               |
-| `--observe` / `--no-observe`          | Auto-configure observability with `@nestjs/observe`, or skip the prompt entirely.                                                                                                                    |
+| Option                                | Description                                                                                                                                                                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--directory [directory]`             | Specify the destination directory.                                                                                                                                                                                                                            |
+| `--dry-run`                           | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                                                                                                                                                                      |
+| `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                                                                                                                                                                          |
+| `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                                                                                                                                                                   |
+| `--skip-tests`                        | Do not generate testing files for the new project.<br/> Alias: `-t`                                                                                                                                                                                           |
+| `--package-manager [package-manager]` | Specify package manager. Use `npm`, `yarn`, `pnpm`, or `bun`. Package manager must be installed globally.<br/> Alias: `-p`                                                                                                                                    |
+| `--language [language]`               | Specify programming language (`TS` or `JS`).<br/> Alias: `-l`                                                                                                                                                                                                 |
+| `--collection [collectionName]`       | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`                                                                                                                                               |
+| `--strict`                            | Enable TypeScript's `strict` mode (with `strictPropertyInitialization` disabled) in the generated `tsconfig.json`. Enabled by default, and there is no flag to disable it: to opt out, set `"strict": false` in `tsconfig.json` after generating the project. |
+| `--format`                            | Format generated files using Prettier.                                                                                                                                                                                                                        |
+| `--observe` / `--no-observe`          | Set up the `@nestjs/observe` SDK, or skip it, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to yes). Without a terminal, Observe is not set up.                                                            |
 
 #### nest generate
 
@@ -230,7 +232,7 @@ The command finishes by installing the updated dependencies (unless `--skip-inst
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `--dry-run`                     | Reports changes that would be made, but does not change the filesystem.<br/> Alias: `-d`                          |
 | `--skip-install`                | Skip package installation.<br/> Alias: `-s`                                                                       |
-| `--observe` / `--no-observe`    | Set up `@nestjs/observe`, or skip the setup entirely. Omit both to be prompted.                                   |
+| `--observe` / `--no-observe`    | Set up `@nestjs/observe`, or skip the setup, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to no). Without a terminal, Observe is not set up. |
 | `--tag [tag]`                   | Use an npm dist-tag (for example `next`) instead of the default version ranges.<br/> Alias: `-t`                  |
 | `--collection [collectionName]` | Specify schematics collection. Use package name of installed npm package containing schematic.<br/> Alias: `-c`   |
 
