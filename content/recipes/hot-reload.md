@@ -1,14 +1,14 @@
 ### Hot Reload
 
-The highest impact on your application's bootstrapping process is **TypeScript compilation**. Fortunately, with [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement), we don't need to recompile the entire project each time a change occurs. This significantly decreases the amount of time necessary to instantiate your application, and makes iterative development a lot easier.
+**TypeScript compilation** has the biggest impact on your application's bootstrapping time. With [webpack](https://github.com/webpack/webpack) HMR (Hot-Module Replacement), you don't need to recompile the entire project each time a change occurs. This significantly decreases the time it takes to instantiate your application and makes iterative development much faster.
 
-> warning **Warning** Note that `webpack` won't automatically copy your assets (e.g. `graphql` files) to the `dist` folder. Similarly, `webpack` is not compatible with glob static paths (e.g., the `entities` property in `TypeOrmModule`).
+> warning **Warning** `webpack` doesn't automatically copy your assets (e.g., `graphql` files) to the `dist` folder. Similarly, `webpack` isn't compatible with static glob paths (e.g., the `entities` property in `TypeOrmModule`).
 
 > warning **Warning** As of NestJS v12, the webpack builder is **deprecated** and Rspack is the default bundler for monorepos. This recipe targets webpack-based CommonJS projects, which is why the examples below use `module.hot` and a plain `bootstrap()` call rather than the ESM top-level `await` used elsewhere in these docs. For new projects, prefer `--builder rspack`.
 
 ### With CLI
 
-If you are using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration process is pretty straightforward. The CLI wraps `webpack`, which allows use of the `HotModuleReplacementPlugin`.
+If you use the [Nest CLI](/cli/overview), the configuration process is straightforward. The CLI wraps `webpack`, which lets you use the `HotModuleReplacementPlugin`.
 
 #### Installation
 
@@ -18,11 +18,11 @@ First, install the required packages:
 $ npm i --save-dev webpack-node-externals run-script-webpack-plugin webpack
 ```
 
-> info **Hint** If you use **Yarn Berry** (not classic Yarn), install the `webpack-pnp-externals` package instead of the `webpack-node-externals`.
+> info **Hint** If you use **Yarn Berry** (not classic Yarn), install the `webpack-pnp-externals` package instead of `webpack-node-externals`.
 
 #### Configuration
 
-Once the installation is complete, create a `webpack-hmr.config.js` file in the root directory of your application.
+Once the installation is complete, create a `webpack-hmr.config.js` file in the root directory of your application:
 
 ```typescript
 const nodeExternals = require('webpack-node-externals');
@@ -49,9 +49,9 @@ module.exports = function (options, webpack) {
 };
 ```
 
-> info **Hint** With **Yarn Berry** (not classic Yarn), instead of using the `nodeExternals` in the `externals` configuration property, use the `WebpackPnpExternals` from the `webpack-pnp-externals` package: `WebpackPnpExternals({{ '{' }} exclude: ['webpack/hot/poll?100'] {{ '}' }})`.
+> info **Hint** With **Yarn Berry** (not classic Yarn), instead of using `nodeExternals` in the `externals` configuration property, use `WebpackPnpExternals` from the `webpack-pnp-externals` package: `WebpackPnpExternals({{ '{' }} exclude: ['webpack/hot/poll?100'] {{ '}' }})`.
 
-This function takes the original object containing the default webpack configuration as a first argument, and the reference to the underlying `webpack` package used by the Nest CLI as the second one. Also, it returns a modified webpack configuration with the `HotModuleReplacementPlugin`, `WatchIgnorePlugin`, and `RunScriptWebpackPlugin` plugins.
+This function takes the original object containing the default webpack configuration as its first argument, and a reference to the underlying `webpack` package used by the Nest CLI as its second argument. It returns a modified webpack configuration with the `HotModuleReplacementPlugin`, `WatchIgnorePlugin`, and `RunScriptWebpackPlugin` plugins.
 
 #### Hot-Module Replacement
 
@@ -83,13 +83,13 @@ bootstrap();
 
 > info **Hint** `app.close()` is asynchronous, but webpack does not await the `dispose()` callback. Stashing the returned promise on `module.hot.data` lets the next application instance await it before binding to the port again, which (together with `forceCloseConnections`) prevents `EADDRINUSE` errors on reload.
 
-To simplify the execution process, add a script to your `package.json` file.
+To simplify the execution process, add a script to your `package.json` file:
 
 ```json
 "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch"
 ```
 
-Now simply open your command line and run the following command:
+Then run the following command:
 
 ```bash
 $ npm run start:dev
@@ -97,7 +97,7 @@ $ npm run start:dev
 
 ### Without CLI
 
-If you are not using the [Nest CLI](https://docs.nestjs.com/cli/overview), the configuration will be slightly more complex (will require more manual steps).
+If you don't use the [Nest CLI](/cli/overview), the configuration is slightly more complex and requires more manual steps.
 
 #### Installation
 
@@ -107,11 +107,11 @@ First, install the required packages:
 $ npm i --save-dev webpack webpack-cli webpack-node-externals ts-loader run-script-webpack-plugin
 ```
 
-> info **Hint** If you use **Yarn Berry** (not classic Yarn), install the `webpack-pnp-externals` package instead of the `webpack-node-externals`.
+> info **Hint** If you use **Yarn Berry** (not classic Yarn), install the `webpack-pnp-externals` package instead of `webpack-node-externals`.
 
 #### Configuration
 
-Once the installation is complete, create a `webpack.config.js` file in the root directory of your application.
+Once the installation is complete, create a `webpack.config.js` file in the root directory of your application:
 
 ```typescript
 const webpack = require('webpack');
@@ -148,9 +148,9 @@ module.exports = {
 };
 ```
 
-> info **Hint** With **Yarn Berry** (not classic Yarn), instead of using the `nodeExternals` in the `externals` configuration property, use the `WebpackPnpExternals` from the `webpack-pnp-externals` package: `WebpackPnpExternals({{ '{' }} exclude: ['webpack/hot/poll?100'] {{ '}' }})`.
+> info **Hint** With **Yarn Berry** (not classic Yarn), instead of using `nodeExternals` in the `externals` configuration property, use `WebpackPnpExternals` from the `webpack-pnp-externals` package: `WebpackPnpExternals({{ '{' }} exclude: ['webpack/hot/poll?100'] {{ '}' }})`.
 
-This configuration tells webpack a few essential things about your application: location of the entry file, which directory should be used to hold **compiled** files, and what kind of loader we want to use to compile source files. Generally, you should be able to use this file as-is, even if you don't fully understand all of the options.
+This configuration tells webpack a few essential things about your application: the location of the entry file, the directory that holds the **compiled** files, and the loader used to compile source files. You can generally use this file as-is, even if you don't fully understand all of the options.
 
 #### Hot-Module Replacement
 
@@ -182,13 +182,13 @@ bootstrap();
 
 > info **Hint** `app.close()` is asynchronous, but webpack does not await the `dispose()` callback. Stashing the returned promise on `module.hot.data` lets the next application instance await it before binding to the port again, which (together with `forceCloseConnections`) prevents `EADDRINUSE` errors on reload.
 
-To simplify the execution process, add a script to your `package.json` file.
+To simplify the execution process, add a script to your `package.json` file:
 
 ```json
 "start:dev": "webpack --config webpack.config.js --watch"
 ```
 
-Now simply open your command line and run the following command:
+Then run the following command:
 
 ```bash
 $ npm run start:dev
@@ -196,4 +196,4 @@ $ npm run start:dev
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/08-webpack).
+A working example is available in the [webpack sample](https://github.com/nestjs/nest/tree/master/sample/08-webpack) on GitHub.

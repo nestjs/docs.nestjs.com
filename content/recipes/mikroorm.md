@@ -1,26 +1,26 @@
 ### MikroORM
 
-This recipe is here to help users get started with MikroORM in Nest. MikroORM is the TypeScript ORM for Node.js based on Data Mapper, Unit of Work and Identity Map patterns. It is a great alternative to TypeORM and migration from TypeORM should be fairly easy. The complete documentation on MikroORM can be found [here](https://mikro-orm.io/docs).
+This recipe helps you get started with MikroORM in Nest. MikroORM is a TypeScript ORM for Node.js based on the Data Mapper, Unit of Work, and Identity Map patterns. It's a good alternative to TypeORM, and migrating from TypeORM is relatively straightforward. See the [MikroORM documentation](https://mikro-orm.io/docs) for complete coverage of the ORM.
 
-> info **Info** `@mikro-orm/nestjs` is a third party package and is not managed by the NestJS core team. Please report any issues found with the library in the [appropriate repository](https://github.com/mikro-orm/nestjs).
+> info **Note** `@mikro-orm/nestjs` is a third-party package and is not managed by the NestJS core team. Please report any issues with the library in the [@mikro-orm/nestjs repository](https://github.com/mikro-orm/nestjs).
 
 #### Installation
 
-Easiest way to integrate MikroORM to Nest is via [`@mikro-orm/nestjs` module](https://github.com/mikro-orm/nestjs).
-Simply install it next to Nest, MikroORM and underlying driver:
+The easiest way to integrate MikroORM with Nest is the [`@mikro-orm/nestjs` module](https://github.com/mikro-orm/nestjs). Install it alongside MikroORM, the MikroORM decorators package, and the underlying driver:
 
 ```bash
-$ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/sqlite
+$ npm i @mikro-orm/core @mikro-orm/nestjs @mikro-orm/decorators @mikro-orm/sqlite
 ```
 
-MikroORM also supports `postgres`, `sqlite`, and `mongo`. See the [official docs](https://mikro-orm.io/docs/usage-with-sql/) for all drivers.
+MikroORM also supports other drivers, such as `postgresql`, `mysql`, and `mongodb`. See the [official docs](https://mikro-orm.io/docs/usage-with-sql) for the full list of drivers.
 
-> info **Hint** Since MikroORM v6, `EntityManager` and `EntityRepository` should be imported from your driver package (e.g. `@mikro-orm/sqlite`), while decorators and other types come from `@mikro-orm/core`. The `MikroOrmModule` itself is exported by `@mikro-orm/nestjs`. The snippets below include the relevant import statements.
+> info **Hint** Since MikroORM v7, decorators are no longer exported from `@mikro-orm/core`. Nest projects use legacy (experimental) decorators, so import decorators such as `@Entity()` and `@Property()` from `@mikro-orm/decorators/legacy`. Import `EntityManager`, `EntityRepository`, and `MikroORM` from your driver package (e.g., `@mikro-orm/sqlite`), and other types (e.g., the `EntityRepositoryType` symbol) from `@mikro-orm/core`. The `MikroOrmModule` itself is exported by `@mikro-orm/nestjs`. The snippets below include the relevant import statements.
 
-Once the installation process is completed, we can import the `MikroOrmModule` into the root `AppModule`.
+Once the installation is complete, import the `MikroOrmModule` into the root `AppModule`:
 
 ```typescript
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import { SqliteDriver } from '@mikro-orm/sqlite';
 
 @Module({
@@ -30,6 +30,7 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
       entitiesTs: ['./src/entities'],
       dbName: 'my-db-name.sqlite3',
       driver: SqliteDriver,
+      metadataProvider: ReflectMetadataProvider,
     }),
   ],
   controllers: [AppController],
@@ -38,23 +39,11 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
 export class AppModule {}
 ```
 
-The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package. Check [this page](https://mikro-orm.io/docs/configuration) for the complete configuration documentation.
+The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package. See the [MikroORM configuration documentation](https://mikro-orm.io/docs/configuration) for the complete list of options.
 
-Alternatively we can [configure the CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) by creating a configuration file `mikro-orm.config.ts` and then call the `forRoot()` without any arguments.
+> info **Hint** Since MikroORM v7, the `ReflectMetadataProvider` is no longer the default metadata provider. Set it explicitly, as shown above, to let MikroORM infer property types from the metadata that TypeScript emits for legacy decorators.
 
-```typescript
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-
-@Module({
-  imports: [
-    MikroOrmModule.forRoot(),
-  ],
-  ...
-})
-export class AppModule {}
-```
-
-But this won't work when you use a build tools that use tree shaking, for that it is better to provide the config explicitly:
+Alternatively, you can keep your configuration in a separate `mikro-orm.config.ts` file (which the [MikroORM CLI](https://mikro-orm.io/docs/installation#setting-up-the-commandline-tool) uses as well), and pass it to `forRoot()`. Since MikroORM v7, `forRoot()` no longer accepts an empty argument list, so you must pass the configuration explicitly:
 
 ```typescript
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -69,10 +58,10 @@ import config from './mikro-orm.config.js'; // your ORM config
 export class AppModule {}
 ```
 
-Afterward, the `EntityManager` will be available to inject across the entire project (without importing any module elsewhere).
+Afterward, the `EntityManager` is available for injection across the entire project (without importing any module elsewhere):
 
 ```ts
-// Import everything from your driver package or `@mikro-orm/knex`
+// Import everything from your driver package or `@mikro-orm/sql`
 import { EntityManager, MikroORM } from '@mikro-orm/sqlite';
 
 @Injectable()
@@ -84,14 +73,13 @@ export class MyService {
 }
 ```
 
-> info **Info** Notice that the `EntityManager` is imported from the `@mikro-orm/driver` package, where driver is `mysql`, `sqlite`, `postgres` or what driver you are using. In case you have `@mikro-orm/knex` installed as a dependency, you can also import the `EntityManager` from there.
+> info **Note** The `EntityManager` is imported from the `@mikro-orm/<driver>` package, where `<driver>` is `mysql`, `sqlite`, `postgresql`, or whichever driver you use. If you have `@mikro-orm/sql` installed as a dependency, you can also import the `EntityManager` from there.
 
 #### Repositories
 
-MikroORM supports the repository design pattern. For every entity, we can create a repository. Read the complete documentation on repositories [here](https://mikro-orm.io/docs/repositories). To define which repositories should be registered in the current scope you can use the `forFeature()` method. For example, in this way:
+MikroORM supports the repository design pattern: you can create a repository for every entity. See the [MikroORM repositories documentation](https://mikro-orm.io/docs/repositories) for details. To define which repositories should be registered in the current scope, use the `forFeature()` method, as follows:
 
-> info **Info** You should **not** register your base entities via `forFeature()`, as there are no
-> repositories for those. On the other hand, base entities need to be part of the list in `forRoot()` (or in the ORM config in general).
+> info **Note** Don't register your base entities via `forFeature()`, as there are no repositories for them. Base entities do, however, need to be part of the list in `forRoot()` (or in the ORM config in general).
 
 ```typescript
 // photo.module.ts
@@ -105,7 +93,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 export class PhotoModule {}
 ```
 
-and import it into the root `AppModule`:
+Then import it into the root `AppModule`:
 
 ```typescript
 // app.module.ts
@@ -117,9 +105,10 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 export class AppModule {}
 ```
 
-In this way we can inject the `PhotoRepository` to the `PhotoService` using the `@InjectRepository()` decorator:
+You can now inject the `Photo` repository into the `PhotoService` using the `@InjectRepository()` decorator:
 
 ```typescript
+import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/sqlite'; // import from your driver package
 
 @Injectable()
@@ -133,12 +122,12 @@ export class PhotoService {
 
 #### Using custom repositories
 
-When using custom repositories, we no longer need the `@InjectRepository()`
-decorator, as Nest DI resolved based on the class references.
+When you use custom repositories, you no longer need the `@InjectRepository()` decorator, because Nest resolves the dependencies based on the class references.
 
 ```ts
 // `**./author.entity.ts**`
-import { Entity, EntityRepositoryType } from '@mikro-orm/core';
+import { EntityRepositoryType } from '@mikro-orm/core';
+import { Entity } from '@mikro-orm/decorators/legacy';
 
 @Entity({ repository: () => AuthorRepository })
 export class Author {
@@ -154,8 +143,7 @@ export class AuthorRepository extends EntityRepository<Author> {
 }
 ```
 
-As the custom repository name is the same as what `getRepositoryToken()` would
-return, we do not need the `@InjectRepository()` decorator anymore:
+Since the custom repository name is the same as what `getRepositoryToken()` returns, you don't need the `@InjectRepository()` decorator:
 
 ```ts
 @Injectable()
@@ -166,16 +154,9 @@ export class MyService {
 
 #### Load entities automatically
 
-Manually adding entities to the entities array of the connection options can be
-tedious. In addition, referencing entities from the root module breaks application
-domain boundaries and causes leaking implementation details to other parts of the
-application. To solve this issue, static glob paths can be used.
+Manually adding entities to the `entities` array of the connection options can be tedious. In addition, referencing entities from the root module breaks application domain boundaries and leaks implementation details to other parts of the application. Static glob paths solve this issue.
 
-Note, however, that glob paths are not supported by webpack, so if you are building
-your application within a monorepo, you won't be able to use them. To address this
-issue, an alternative solution is provided. To automatically load entities, set the
-`autoLoadEntities` property of the configuration object (passed into the `forRoot()`
-method) to `true`, as shown below:
+However, webpack doesn't support glob paths, so you can't use them if you build your application within a monorepo. As an alternative, you can load entities automatically by setting the `autoLoadEntities` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
 
 ```ts
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -191,31 +172,25 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 export class AppModule {}
 ```
 
-With that option specified, every entity registered through the `forFeature()`
-method will be automatically added to the entities array of the configuration
-object.
+With this option enabled, every entity registered through the `forFeature()` method is automatically added to the `entities` array of the configuration object.
 
-> info **Info** Note that entities that aren't registered through the `forFeature()` method, but
-> are only referenced from the entity (via a relationship), won't be included by
-> way of the `autoLoadEntities` setting.
+> info **Note** Entities that aren't registered through the `forFeature()` method, but are only referenced from an entity (via a relationship), won't be included by the `autoLoadEntities` setting.
 
-> info **Info** Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we
-> still need CLI config with the full list of entities. On the other hand, we can
-> use globs there, as the CLI won't go thru webpack.
+> info **Note** `autoLoadEntities` has no effect on the MikroORM CLI, which still needs a CLI config with the full list of entities. You can use globs there, however, as the CLI doesn't go through webpack.
 
 #### Serialization
 
-> warning **Note** MikroORM wraps every single entity relation in a `Reference<T>` or a `Collection<T>` object, in order to provide better type-safety. This will make [Nest's built-in serializer](/techniques/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, all of their relations will NOT be serialized.
+> warning **Warning** MikroORM wraps every entity relation in a `Reference<T>` or a `Collection<T>` object to provide better type safety. This makes [Nest's built-in serializer](/techniques/serialization) blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, none of their relations are serialized.
 
-Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/serializing) which can be used in lieu of `ClassSerializerInterceptor`.
+Instead, use the MikroORM [serialization API](https://mikro-orm.io/docs/serializing) in place of the `ClassSerializerInterceptor`.
 
 ```typescript
-import { Entity, Property, ManyToOne } from '@mikro-orm/core';
+import { Entity, Property, ManyToOne } from '@mikro-orm/decorators/legacy';
 
 @Entity()
 export class Book {
   @Property({ hidden: true }) // Equivalent of class-transformer's `@Exclude`
-  hiddenField = Date.now();
+  hiddenField: number = Date.now();
 
   @Property({ persist: false }) // Similar to class-transformer's `@Expose()`. Will only exist in memory, and will be serialized.
   count?: number;
@@ -230,19 +205,15 @@ export class Book {
 
 #### Request scoped handlers in queues
 
-As mentioned in the [docs](https://mikro-orm.io/docs/identity-map), we need a clean state for each request. That is handled automatically thanks to the `RequestContext` helper registered via middleware.
+As explained in the [MikroORM identity map documentation](https://mikro-orm.io/docs/identity-map), each request needs a clean state. This is handled automatically by the `RequestContext` helper, which is registered via middleware.
 
-But middlewares are executed only for regular HTTP request handles, what if we need
-a request scoped method outside of that? One example of that is queue handlers or
-scheduled tasks.
+However, middleware only runs for regular HTTP request handlers. Methods outside of that flow, such as queue handlers or scheduled tasks, need a different approach.
 
-We can use the `@CreateRequestContext()` decorator. It requires you to first inject the
-`MikroORM` instance to current context, it will be then used to create the context
-for you. Under the hood, the decorator will register new request context for your
-method and execute it inside the context.
+For these, use the `@CreateRequestContext()` decorator. It requires you to first inject the `MikroORM` instance into the current context, which the decorator then uses to create the context for you. Under the hood, the decorator registers a new request context for your method and executes the method inside it.
 
 ```ts
-import { MikroORM, CreateRequestContext } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/core';
+import { CreateRequestContext } from '@mikro-orm/decorators/legacy';
 
 @Injectable()
 export class MyService {
@@ -255,7 +226,7 @@ export class MyService {
 }
 ```
 
-> warning **Note** As the name suggests, this decorator always creates new context, as opposed to its alternative `@EnsureRequestContext` that only creates it if it's already not inside another one.
+> info **Note** As the name suggests, this decorator always creates a new context, as opposed to its alternative `@EnsureRequestContext()`, which creates one only if the method isn't already running inside another context.
 
 #### Testing
 
@@ -279,4 +250,4 @@ export class PhotoModule {}
 
 #### Example
 
-A real world example of NestJS with MikroORM can be found [here](https://github.com/mikro-orm/nestjs-realworld-example-app)
+A real-world example of NestJS with MikroORM is available in the [nestjs-realworld-example-app](https://github.com/mikro-orm/nestjs-realworld-example-app) repository.

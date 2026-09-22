@@ -1,35 +1,32 @@
 ### CRUD generator (TypeScript only)
 
-Throughout the life span of a project, when we build new features, we often need to add new resources to our application. These resources typically require multiple, repetitive operations that we have to repeat each time we define a new resource.
+Over the lifespan of a project, building new features often means adding new resources to the application. Each new resource typically requires the same set of repetitive operations.
 
 #### Introduction
 
-Let's imagine a real-world scenario, where we need to expose CRUD endpoints for 2 entities, let's say **User** and **Product** entities.
-Following the best practices, for each entity we would have to perform several operations, as follows:
+Consider a real-world scenario in which you need to expose CRUD endpoints for two entities, **User** and **Product**. Following best practices, you would have to perform several operations for each entity:
 
 - Generate a module (`nest g mo`) to keep code organized and establish clear boundaries (grouping related components)
 - Generate a controller (`nest g co`) to define CRUD routes (or queries/mutations for GraphQL applications)
-- Generate a service (`nest g s`) to implement & isolate business logic
+- Generate a service (`nest g s`) to implement and isolate business logic
 - Generate an entity class/interface to represent the resource data shape
 - Generate Data Transfer Objects (or inputs for GraphQL applications) to define how the data will be sent over the network
 
-That's a lot of steps!
-
-To help speed up this repetitive process, [Nest CLI](/cli/overview) provides a generator (schematic) that automatically generates all the boilerplate code to help us avoid doing all of this, and make the developer experience much simpler.
+To speed up this repetitive process, the [Nest CLI](/cli/overview) provides a generator (schematic) that generates all of this boilerplate code automatically.
 
 > info **Note** The schematic supports generating **HTTP** controllers, **Microservice** controllers, **GraphQL** resolvers (both code first and schema first), and **WebSocket** Gateways.
 
 #### Generating a new resource
 
-To create a new resource, simply run the following command in the root directory of your project:
+To create a new resource, run the following command in the root directory of your project:
 
 ```shell
 $ nest g resource
 ```
 
-`nest g resource` command not only generates all the NestJS building blocks (module, service, controller classes) but also an entity class, DTO classes as well as the testing (`.spec`) files.
+The `nest g resource` command generates not only the NestJS building blocks (module, service, and controller classes), but also an entity class, DTO classes, and the test (`.spec`) files.
 
-Below you can see the generated controller file (for REST API):
+Here's the generated controller file (for a REST API):
 
 ```typescript
 @Controller('users')
@@ -63,13 +60,13 @@ export class UsersController {
 }
 ```
 
-Also, it automatically creates placeholders for all the CRUD endpoints (routes for REST APIs, queries and mutations for GraphQL, message subscribes for both Microservices and WebSocket Gateways) - all without having to lift a finger.
+The command also creates placeholders for all the CRUD endpoints: routes for REST APIs, queries and mutations for GraphQL, and message handlers for both microservices and WebSocket gateways.
 
-> warning **Note** Generated service classes are **not** tied to any specific **ORM (or data source)**. This makes the generator generic enough to meet the needs of any project. By default, all methods will contain placeholders, allowing you to populate it with the data sources specific to your project.
+> info **Note** Generated service classes are **not** tied to any specific **ORM (or data source)**, which makes the generator generic enough to meet the needs of any project. By default, all methods contain placeholders that you can populate with the data sources specific to your project.
 
-Likewise, if you want to generate resolvers for a GraphQL application, simply select the `GraphQL (code first)` (or `GraphQL (schema first)`) as your transport layer.
+Likewise, to generate resolvers for a GraphQL application, select `GraphQL (code first)` (or `GraphQL (schema first)`) as your transport layer.
 
-In this case, NestJS will generate a resolver class instead of a REST API controller:
+In this case, Nest generates a resolver class instead of a REST API controller:
 
 ```shell
 $ nest g resource users
@@ -87,9 +84,9 @@ $ nest g resource users
 > UPDATE src/app.module.ts (312 bytes)
 ```
 
-> info **Hint** To avoid generating test files, you can pass the `--no-spec` flag, as follows: `nest g resource users --no-spec`
+> info **Hint** To skip generating test files, pass the `--no-spec` flag, as follows: `nest g resource users --no-spec`.
 
-We can see below, that not only were all boilerplate mutations and queries created, but everything is all tied together. We're utilizing the `UsersService`, `User` Entity, and our DTO's.
+As shown below, the command not only creates all the boilerplate mutations and queries, but also wires everything together, using the `UsersService`, the `User` entity, and the DTOs.
 
 ```typescript
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';

@@ -4,17 +4,17 @@ The flow of simple [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and
 
 1. The controllers layer handles HTTP requests and delegates tasks to the services layer.
 2. The services layer is where most of the business logic lives.
-3. Services use repositories / DAOs to change / persist entities.
-4. Entities act as containers for the values, with setters and getters.
+3. Services use repositories or DAOs to change and persist entities.
+4. Entities act as containers for values, with setters and getters.
 
-While this pattern is usually sufficient for small and medium-sized applications, it may not be the best choice for larger, more complex applications. In such cases, the **CQRS** (Command and Query Responsibility Segregation) model may be more appropriate and scalable (depending on the application's requirements). Benefits of this model include:
+While this pattern is usually sufficient for small and medium-sized applications, it may not be the best choice for larger, more complex ones. In such cases, the **CQRS** (Command and Query Responsibility Segregation) model may be more appropriate and scalable, depending on the application's requirements. Benefits of this model include:
 
-- **Separation of concerns**. The model separates the read and write operations into separate models.
-- **Scalability**. The read and write operations can be scaled independently.
-- **Flexibility**. The model allows for the use of different data stores for read and write operations.
-- **Performance**. The model allows for the use of different data stores optimized for read and write operations.
+- **Separation of concerns**. Read and write operations are handled by separate models.
+- **Scalability**. Read and write operations can be scaled independently.
+- **Flexibility**. Reads and writes can use different data stores.
+- **Performance**. Each data store can be optimized for its workload (reads or writes).
 
-To facilitate that model, Nest provides a lightweight [CQRS module](https://github.com/nestjs/cqrs). This chapter describes how to use it.
+To support this model, Nest provides a lightweight [CQRS module](https://github.com/nestjs/cqrs). This chapter describes how to use it.
 
 #### Installation
 
@@ -24,7 +24,7 @@ First, install the required package:
 $ npm install --save @nestjs/cqrs
 ```
 
-Once the installation is complete, navigate to the root module of your application (usually `AppModule`), and import the `CqrsModule.forRoot()`:
+Once the installation is complete, open the root module of your application (usually `AppModule`) and import `CqrsModule.forRoot()`:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -36,20 +36,20 @@ import { CqrsModule } from '@nestjs/cqrs';
 export class AppModule {}
 ```
 
-This module accepts an optional configuration object. The following options are available:
+`forRoot()` accepts an optional configuration object. To provide the options asynchronously (e.g., from a configuration service), use `CqrsModule.forRootAsync()` instead. The following options are available:
 
 | Attribute                     | Description                                                                                                                  | Default                           |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
 | `commandPublisher`            | The publisher responsible for dispatching commands to the system.                                                            | `DefaultCommandPubSub`            |
 | `eventPublisher`              | The publisher used to publish events, allowing them to be broadcasted or processed.                                          | `DefaultPubSub`                   |
 | `queryPublisher`              | The publisher used for publishing queries, which can trigger data retrieval operations.                                      | `DefaultQueryPubSub`              |
-| `unhandledExceptionPublisher` | Publisher responsible for handling unhandled exceptions, ensuring they are tracked and reported.                             | `DefaultUnhandledExceptionPubSub` |
-| `eventIdProvider`             | Service that provides unique event IDs by generating or retrieving them from event instances.                                | `DefaultEventIdProvider`          |
-| `rethrowUnhandled`            | Determines whether unhandled exceptions should be rethrown after being processed, useful for debugging and error management. | `false`                           |
+| `unhandledExceptionPublisher` | The publisher used to publish unhandled exceptions to the `UnhandledExceptionBus`.                                           | `DefaultUnhandledExceptionPubSub` |
+| `eventIdProvider`             | Service that retrieves unique event IDs from event instances.                                                                | `DefaultEventIdProvider`          |
+| `rethrowUnhandled`            | Whether exceptions thrown by event handlers and sagas are rethrown instead of being published to the `UnhandledExceptionBus`. | `false`                           |
 
 #### Commands
 
-Commands are used to change the application state. They should be task-based, rather than data centric. When a command is dispatched, it is handled by a corresponding **Command Handler**. The handler is responsible for updating the application state.
+Commands change the application state. They should be task-based rather than data-centric. When a command is dispatched, it is handled by a corresponding **command handler**, which is responsible for updating the application state.
 
 ```typescript
 @@filename(heroes-game.service)
@@ -79,7 +79,7 @@ export class HeroesGameService {
 }
 ```
 
-In the code snippet above, we instantiate the `KillDragonCommand` class and pass it to the `CommandBus`'s `execute()` method. This is the demonstrated command class:
+The code above instantiates the `KillDragonCommand` class and passes it to the `execute()` method of the `CommandBus`. Here is the command class:
 
 ```typescript
 @@filename(kill-dragon.command)
@@ -96,17 +96,18 @@ export class KillDragonCommand extends Command<{
 @@switch
 export class KillDragonCommand extends Command {
   constructor(heroId, dragonId) {
+    super();
     this.heroId = heroId;
     this.dragonId = dragonId;
   }
 }
 ```
 
-As you can see, the `KillDragonCommand` class extends the `Command` class. The `Command` class is a simple utility class exported from the `@nestjs/cqrs` package that lets you define the command's return type. In this case, the return type is an object with an `actionId` property. Now, whenever the `KillDragonCommand` command is dispatched, the `CommandBus#execute()` method return-type will be inferred as `Promise<{{ '{' }} actionId: string {{ '}' }}>`. This is useful when you want to return some data from the command handler.
+The `KillDragonCommand` class extends the `Command` class, a utility class exported from the `@nestjs/cqrs` package that lets you define the command's return type. In this case, the return type is an object with an `actionId` property. Whenever the `KillDragonCommand` command is dispatched, the return type of the `CommandBus#execute()` method is inferred as `Promise<{{ '{' }} actionId: string {{ '}' }}>`. This is useful when the command handler returns data to the caller.
 
-> info **Hint** Inheritance from the `Command` class is optional. It is only necessary if you want to define the return type of the command.
+> info **Hint** Extending the `Command` class is optional. You only need it to define the command's return type.
 
-The `CommandBus` represents a **stream** of commands. It is responsible for dispatching commands to the appropriate handlers. The `execute()` method returns a promise, which resolves to the value returned by the handler.
+The `CommandBus` represents a **stream** of commands. It dispatches commands to the appropriate handlers. The `execute()` method returns a promise that resolves to the value returned by the handler.
 
 Let's create a handler for the `KillDragonCommand` command.
 
@@ -152,11 +153,11 @@ export class KillDragonHandler {
 }
 ```
 
-This handler retrieves the `Hero` entity from the repository, calls the `killEnemy()` method, and then persists the changes. The `KillDragonHandler` class implements the `ICommandHandler` interface, which requires the implementation of the `execute()` method. The `execute()` method receives the command object as an argument.
+This handler retrieves the `Hero` entity from the repository, calls its `killEnemy()` method, and then persists the changes. The `KillDragonHandler` class implements the `ICommandHandler` interface, which requires an `execute()` method. The `execute()` method receives the command object as an argument.
 
-Note that `ICommandHandler<KillDragonCommand>` forces you to return a value that matches the command's return type. In this case, the return type is an object with an `actionId` property. This only applies to commands that inherit from the `Command` class. Otherwise, you can return whatever you want.
+`ICommandHandler<KillDragonCommand>` requires `execute()` to return a value that matches the command's return type (here, an object with an `actionId` property). This only applies to commands that extend the `Command` class. For other commands, the return type isn't constrained.
 
-Lastly, make sure to register the `KillDragonHandler` as a provider in a module:
+Finally, register the `KillDragonHandler` as a provider in a module:
 
 ```typescript
 providers: [KillDragonHandler];
@@ -164,19 +165,21 @@ providers: [KillDragonHandler];
 
 #### Queries
 
-Queries are used to retrieve data from the application state. They should be data centric, rather than task-based. When a query is dispatched, it is handled by a corresponding **Query Handler**. The handler is responsible for retrieving the data.
+Queries retrieve data from the application state. They should be data-centric rather than task-based. When a query is dispatched, it is handled by a corresponding **query handler**, which is responsible for retrieving the data.
 
-The `QueryBus` follows the same pattern as the `CommandBus`. Query handlers should implement the `IQueryHandler` interface and be annotated with the `@QueryHandler()` decorator. See the following example:
+The `QueryBus` follows the same pattern as the `CommandBus`. Query handlers implement the `IQueryHandler` interface and are annotated with the `@QueryHandler()` decorator. Start with the query class:
 
 ```typescript
 export class GetHeroQuery extends Query<Hero> {
-  constructor(public readonly heroId: string) {}
+  constructor(public readonly heroId: string) {
+    super();
+  }
 }
 ```
 
-Similar to the `Command` class, the `Query` class is a simple utility class exported from the `@nestjs/cqrs` package that lets you define the query's return type. In this case, the return type is a `Hero` object. Now, whenever the `GetHeroQuery` query is dispatched, the `QueryBus#execute()` method return-type will be inferred as `Promise<Hero>`.
+Like the `Command` class, the `Query` class is a utility class exported from the `@nestjs/cqrs` package that lets you define the query's return type. In this case, the return type is a `Hero` object. Whenever the `GetHeroQuery` query is dispatched, the return type of the `QueryBus#execute()` method is inferred as `Promise<Hero>`.
 
-To retrieve the hero, we need to create a query handler:
+To retrieve the hero, create a query handler:
 
 ```typescript
 @@filename(get-hero.handler)
@@ -197,20 +200,20 @@ export class GetHeroHandler {
   }
 
   async execute(query) {
-    return this.repository.findOneById(query.hero);
+    return this.repository.findOneById(query.heroId);
   }
 }
 ```
 
-The `GetHeroHandler` class implements the `IQueryHandler` interface, which requires the implementation of the `execute()` method. The `execute()` method receives the query object as an argument, and must return the data that matches the query's return type (in this case, a `Hero` object).
+The `GetHeroHandler` class implements the `IQueryHandler` interface, which requires an `execute()` method. The `execute()` method receives the query object as an argument and must return data that matches the query's return type (in this case, a `Hero` object).
 
-Lastly, make sure to register the `GetHeroHandler` as a provider in a module:
+Finally, register the `GetHeroHandler` as a provider in a module:
 
 ```typescript
 providers: [GetHeroHandler];
 ```
 
-Now, to dispatch the query, use the `QueryBus`:
+To dispatch the query, use the `QueryBus`:
 
 ```typescript
 const hero = await this.queryBus.execute(new GetHeroQuery(heroId)); // "hero" will be auto-inferred as "Hero" type
@@ -218,7 +221,7 @@ const hero = await this.queryBus.execute(new GetHeroQuery(heroId)); // "hero" wi
 
 #### Events
 
-Events are used to notify other parts of the application about changes in the application state. They are dispatched by **models** or directly using the `EventBus`. When an event is dispatched, it is handled by corresponding **Event Handlers**. Handlers can then, for example, update the read model.
+Events notify other parts of the application about changes in the application state. They are dispatched by **models** or directly through the `EventBus`. When an event is dispatched, it is handled by the corresponding **event handlers**, which can, for example, update the read model.
 
 For demonstration purposes, let's create an event class:
 
@@ -239,7 +242,7 @@ export class HeroKilledDragonEvent {
 }
 ```
 
-Now while events can be dispatched directly using the `EventBus.publish()` method, we can also dispatch them from the model. Let's update the `Hero` model to dispatch the `HeroKilledDragonEvent` event when the `killEnemy()` method is called.
+While you can dispatch events directly with the `EventBus.publish()` method, you can also dispatch them from the model. Let's update the `Hero` model to dispatch the `HeroKilledDragonEvent` event when the `killEnemy()` method is called.
 
 ```typescript
 @@filename(hero.model)
@@ -267,7 +270,7 @@ export class Hero extends AggregateRoot {
 }
 ```
 
-The `apply()` method is used to dispatch events. It accepts an event object as an argument. However, since our model is not aware of the `EventBus`, we need to associate it with the model. We can do that by using the `EventPublisher` class.
+The `apply()` method dispatches events. It accepts an event object as an argument. However, the model isn't aware of the `EventBus`, so you need to connect the two. The `EventPublisher` class does that:
 
 ```typescript
 @@filename(kill-dragon.handler)
@@ -285,6 +288,10 @@ export class KillDragonHandler implements ICommandHandler<KillDragonCommand> {
     );
     hero.killEnemy(dragonId);
     hero.commit();
+
+    return {
+      actionId: crypto.randomUUID(),
+    };
   }
 }
 @@switch
@@ -303,13 +310,17 @@ export class KillDragonHandler {
     );
     hero.killEnemy(dragonId);
     hero.commit();
+
+    return {
+      actionId: crypto.randomUUID(),
+    };
   }
 }
 ```
 
-The `EventPublisher#mergeObjectContext` method merges the event publisher into the provided object. This object must implement the `IAggregateRoot` interface (or extend the `AggregateRoot` class). Once merged, the object will be able to publish events to the events stream.
+The `EventPublisher#mergeObjectContext` method merges the event publisher into the provided object. This object must implement the `IAggregateRoot` interface (or extend the `AggregateRoot` class). Once merged, the object can publish events to the event stream.
 
-Notice that in this example we also call the `commit()` method on the model. This method is used to dispatch any outstanding events. To automatically dispatch events, we can set the `autoCommit` property to `true`:
+Events applied with `apply()` are queued until you call the model's `commit()` method, which dispatches all outstanding events. To dispatch events as soon as they are applied, set the `autoCommit` property to `true`:
 
 ```typescript
 export class Hero extends AggregateRoot {
@@ -320,24 +331,24 @@ export class Hero extends AggregateRoot {
 }
 ```
 
-In case we want to merge the event publisher into a non-existing object, but rather into a class, we can use the `EventPublisher#mergeClassContext` method:
+To merge the event publisher into a class rather than into an existing object, use the `EventPublisher#mergeClassContext` method:
 
 ```typescript
 const HeroModel = this.publisher.mergeClassContext(Hero);
 const hero = new HeroModel('id'); // <-- HeroModel is a class
 ```
 
-Now every instance of the `HeroModel` class will be able to publish events without using `mergeObjectContext()` method.
+Every instance of the `HeroModel` class can now publish events without calling the `mergeObjectContext()` method.
 
 #### Flexible Aggregate Roots
 
-The `AggregateRoot` class is a concrete implementation that you can extend to add event-driven capabilities to your domain models. However, this approach requires domain entities to directly extend `AggregateRoot`, which can be a limitation if your applications already have an established entity inheritance hierarchy (e.g., a base `Entity` class or domain-specific base classes like `Monster`, `Vehicle`, etc.).
+The `AggregateRoot` class is a base class that you can extend to add event-driven capabilities to your domain models. However, this approach requires domain entities to extend `AggregateRoot` directly, which can be a limitation if your application already has an established entity inheritance hierarchy (e.g., a base `Entity` class or domain-specific base classes such as `Monster` or `Vehicle`).
 
-To provide more flexibility, the `@nestjs/cqrs` package offers three different approaches to implementing aggregate roots:
+For more flexibility, the `@nestjs/cqrs` package supports three approaches to implementing aggregate roots:
 
 **Approach 1: Traditional (Class Inheritance)**
 
-This is the standard approach shown in the previous examples. It works perfectly for simple scenarios or greenfield projects.
+This is the standard approach shown in the previous examples. It works well for simple scenarios and greenfield projects.
 
 ```typescript
 export class Hero extends AggregateRoot {
@@ -353,7 +364,7 @@ export class Hero extends AggregateRoot {
 
 **Approach 2: Mixin (For existing hierarchies)**
 
-If you already have a base class and cannot extend `AggregateRoot` directly, you can use the `WithAggregateRoot<EventBase, TBase>()` mixin function. This allows you to apply aggregate root behavior to any existing base class.
+If you already have a base class and can't extend `AggregateRoot` directly, use the `WithAggregateRoot<EventBase, TBase>()` mixin function. It applies aggregate root behavior to any existing base class.
 
 ```typescript
 @@filename(dragon.model)
@@ -369,11 +380,11 @@ export class Dragon extends WithAggregateRoot(Monster) {
 
   die(): void {
     this.roar();
-    this.apply(new DragonDiedEvent(this.id)); // Now available via mixin!
+    this.apply(new DragonDiedEvent(this.id)); // Provided by the mixin
   }
 }
 @@switch
-abstract class Monster {
+class Monster {
   constructor(id) {
     this.id = id;
   }
@@ -393,10 +404,11 @@ export class Dragon extends WithAggregateRoot(Monster) {
 
 **Approach 3: Custom Implementation**
 
-For maximum control, or if you want to keep your domain layer completely framework-agnostic, you can implement the `IAggregateRoot` interface directly. The `EventPublisher` accepts any object that implements this interface.
+For maximum control, or to keep your domain layer completely framework-agnostic, implement the `IAggregateRoot` interface directly:
 
 ```typescript
 export class CustomEntity implements IAggregateRoot {
+  autoCommit = false;
   private events: IEvent[] = [];
 
   getUncommittedEvents() {
@@ -404,6 +416,10 @@ export class CustomEntity implements IAggregateRoot {
   }
 
   publish(event: IEvent) {
+    // custom logic
+  }
+
+  publishAll(events: IEvent[]) {
     // custom logic
   }
 
@@ -425,16 +441,19 @@ export class CustomEntity implements IAggregateRoot {
 }
 ```
 
-All three approaches work seamlessly with `EventPublisher`, which accepts any object implementing the `IAggregateRoot` interface.
+All three approaches work with `EventPublisher`, which accepts any object that implements the `IAggregateRoot` interface.
+
 #### Manual event publishing
 
+To publish an event without going through a model, call the `EventBus#publish()` method directly:
+
 ```typescript
-this.eventBus.publish(new HeroKilledDragonEvent());
+this.eventBus.publish(new HeroKilledDragonEvent(heroId, dragonId));
 ```
 
 > info **Hint** The `EventBus` is an injectable class.
 
-Each event can have multiple **Event Handlers**.
+Each event can have multiple **event handlers**.
 
 ```typescript
 @@filename(hero-killed-dragon.handler)
@@ -448,14 +467,14 @@ export class HeroKilledDragonHandler implements IEventHandler<HeroKilledDragonEv
 }
 ```
 
-> info **Hint** Be aware that when you start using event handlers you get out of the traditional HTTP web context.
+> info **Hint** Event handlers run outside the traditional HTTP request context:
 >
-> - Errors in `CommandHandlers` can still be caught by built-in [Exception filters](/exception-filters).
-> - Errors in `EventHandlers` can't be caught by Exception filters: you will have to handle them manually. Either by a simple `try/catch`, using [Sagas](/recipes/cqrs#sagas) by triggering a compensating event, or whatever other solution you choose.
-> - HTTP Responses in `CommandHandlers` can still be sent back to the client.
-> - HTTP Responses in `EventHandlers` cannot. If you want to send information to the client you could use [WebSocket](/websockets/gateways), [SSE](/techniques/server-sent-events), or whatever other solution you choose.
+> - Errors thrown in command handlers can still be caught by the built-in [exception filters](/exception-filters).
+> - Errors thrown in event handlers can't be caught by exception filters, so you have to handle them yourself: with a `try/catch` block, with a [saga](/recipes/cqrs#sagas) that triggers a compensating event, or with another approach of your choice.
+> - The value returned by a command handler can still be sent back to the client in the HTTP response.
+> - Event handlers can't send HTTP responses. To send information to the client, use [WebSockets](/websockets/gateways), [server-sent events](/techniques/server-sent-events), or another mechanism.
 
-As with commands and queries, make sure to register the `HeroKilledDragonHandler` as a provider in a module:
+As with commands and queries, register the `HeroKilledDragonHandler` as a provider in a module:
 
 ```typescript
 providers: [HeroKilledDragonHandler];
@@ -463,9 +482,9 @@ providers: [HeroKilledDragonHandler];
 
 #### Sagas
 
-Saga is a long-running process that listens to events and may trigger new commands. It is usually used to manage complex workflows in the application. For example, when a user signs up, a saga may listen to the `UserRegisteredEvent` and send a welcome email to the user.
+A saga is a long-running process that listens to events and may trigger new commands. Sagas are typically used to manage complex workflows. For example, when a user signs up, a saga may listen to the `UserRegisteredEvent` and send the user a welcome email.
 
-Sagas are an extremely powerful feature. A single saga may listen for 1..\* events. Using the [RxJS](https://github.com/ReactiveX/rxjs) library, we can filter, map, fork, and merge event streams to create sophisticated workflows. Each saga returns an Observable which produces a command instance. This command is then dispatched **asynchronously** by the `CommandBus`.
+A single saga may listen for 1..\* events. With the [RxJS](https://github.com/ReactiveX/rxjs) library, you can filter, map, fork, and merge event streams to build sophisticated workflows. Each saga returns an `Observable` that emits command instances. Each emitted command is then dispatched **asynchronously** by the `CommandBus`.
 
 Let's create a saga that listens to the `HeroKilledDragonEvent` and dispatches the `DropAncientItemCommand` command.
 
@@ -496,11 +515,11 @@ export class HeroesGameSagas {
 
 > info **Hint** The `ofType` operator and the `@Saga()` decorator are exported from the `@nestjs/cqrs` package.
 
-The `@Saga()` decorator marks the method as a saga. The `events$` argument is an Observable stream of all events. The `ofType` operator filters the stream by the specified event type. The `map` operator maps the event to a new command instance.
+The `@Saga()` decorator marks the property as a saga. The `events$` argument is an `Observable` stream of all events. The `ofType` operator filters the stream by the specified event type, and the `map` operator maps each event to a new command instance.
 
-In this example, we map the `HeroKilledDragonEvent` to the `DropAncientItemCommand` command. The `DropAncientItemCommand` command is then auto-dispatched by the `CommandBus`.
+In this example, each `HeroKilledDragonEvent` is mapped to a `DropAncientItemCommand` command, which the `CommandBus` then dispatches automatically.
 
-As with query, command, and event handlers, make sure to register the `HeroesGameSagas` as a provider in a module:
+As with query, command, and event handlers, register the `HeroesGameSagas` as a provider in a module:
 
 ```typescript
 providers: [HeroesGameSagas];
@@ -508,7 +527,7 @@ providers: [HeroesGameSagas];
 
 #### Unhandled exceptions
 
-Event handlers are executed asynchronously, so they must always handle exceptions properly to prevent the application from entering an inconsistent state. If an exception is not handled, the `EventBus` will create an `UnhandledExceptionInfo` object and push it to the `UnhandledExceptionBus` stream. This stream is an `Observable` that can be used to process unhandled exceptions.
+Event handlers are executed asynchronously, so they must always handle exceptions properly to prevent the application from entering an inconsistent state. If an exception isn't handled, the `EventBus` logs it, creates an `UnhandledExceptionInfo` object, and pushes it to the `UnhandledExceptionBus` stream. The same applies to exceptions thrown by sagas and by command handlers executing commands that sagas dispatched. The `UnhandledExceptionBus` is an `Observable` that you can subscribe to in order to process unhandled exceptions. If the `rethrowUnhandled` option is set to `true`, these exceptions are rethrown instead of being published to the `UnhandledExceptionBus`.
 
 ```typescript
 private destroy$ = new Subject<void>();
@@ -528,7 +547,7 @@ onModuleDestroy() {
 }
 ```
 
-To filter out exceptions, we can use the `ofType` operator, as follows:
+To handle only specific exception types, use the `UnhandledExceptionBus.ofType()` operator, which filters exceptions with `instanceof`:
 
 ```typescript
 this.unhandledExceptionsBus
@@ -541,7 +560,7 @@ this.unhandledExceptionsBus
   });
 ```
 
-Where `TransactionNotAllowedException` is the exception we want to filter out.
+Here, only exceptions that are instances of `TransactionNotAllowedException` reach the subscriber.
 
 The `UnhandledExceptionInfo` object contains the following properties:
 
@@ -563,7 +582,7 @@ export interface UnhandledExceptionInfo<
 
 #### Subscribing to all events
 
-`CommandBus`, `QueryBus` and `EventBus` are all **Observables**. This means that we can subscribe to the entire stream and, for example, process all events. For example, we can log all events to the console, or save them to the event store.
+`CommandBus`, `QueryBus`, and `EventBus` are all **Observables**. This means you can subscribe to the entire stream and, for example, process all events: log them to the console or save them to an event store.
 
 ```typescript
 private destroy$ = new Subject<void>();
@@ -584,16 +603,16 @@ onModuleDestroy() {
 
 #### Request-scoping
 
-For those coming from different programming language backgrounds, it may be surprising to learn that in Nest, most things are shared across incoming requests. This includes a connection pool to the database, singleton services with global state, and more. Keep in mind that Node.js does not follow the request/response multi-threaded stateless model, where each request is processed by a separate thread. As a result, using singleton instances is **safe** for our applications.
+If you're coming from other programming languages, you may be surprised that in Nest, most things are shared across incoming requests: a connection pool to the database, singleton services with global state, and more. Node.js doesn't follow the request/response multi-threaded stateless model, in which each request is processed by a separate thread. As a result, using singleton instances is **safe** for your applications.
 
-However, there are edge cases where a request-based lifetime for the handler might be desirable. This could include scenarios like per-request caching in GraphQL applications, request tracking, or multi-tenancy. You can learn more about how to control scopes [here](/fundamentals/injection-scopes).
+However, there are edge cases where a request-based lifetime for a handler is desirable, such as per-request caching in GraphQL applications, request tracking, or multi-tenancy. See the [injection scopes](/fundamentals/injection-scopes) chapter to learn how to control scopes.
 
-Using request-scoped providers alongside CQRS can be complex because the `CommandBus`, `QueryBus`, and `EventBus` are singletons. Thankfully, the `@nestjs/cqrs` package simplifies this by automatically creating a new instance of request-scoped handlers for each processed command, query, or event.
+Using request-scoped providers alongside CQRS can be complex because the `CommandBus`, `QueryBus`, and `EventBus` are singletons. The `@nestjs/cqrs` package handles this by automatically creating a new instance of a request-scoped handler for each processed command, query, or event.
 
-To make a handler request-scoped, you can either:
+To make a handler request-scoped, either:
 
 1. Depend on a request-scoped provider.
-2. Explicitly set its scope to `REQUEST` using the `@CommandHandler`, `@QueryHandler`, or `@EventsHandler` decorator, as shown:
+2. Explicitly set its scope to `REQUEST` in the `@CommandHandler()`, `@QueryHandler()`, or `@EventsHandler()` decorator, as shown:
 
 ```typescript
 @CommandHandler(KillDragonCommand, {
@@ -604,9 +623,9 @@ export class KillDragonHandler {
 }
 ```
 
-To inject the request payload into any request-scoped provider, you use the `@Inject(REQUEST)` decorator. However, the nature of the request payload in CQRS depends on the context—it could be an HTTP request, a scheduled job, or any other operation that triggers a command.
+To inject the request payload into a request-scoped provider, use the `@Inject(REQUEST)` decorator (`REQUEST` is exported from `@nestjs/core`). In CQRS, however, the request payload depends on the context: it could be an HTTP request, a scheduled job, or any other operation that triggers a command.
 
-The payload must be an instance of a class extending `AsyncContext` (provided by `@nestjs/cqrs`), which acts as the request context and holds data accessible throughout the request lifecycle.
+The payload must be an instance of `AsyncContext` (exported from `@nestjs/cqrs`) or of a class that extends it. It acts as the request context and holds data that is accessible throughout the request lifecycle.
 
 ```typescript
 import { AsyncContext } from '@nestjs/cqrs';
@@ -618,7 +637,7 @@ export class MyRequest extends AsyncContext {
 }
 ```
 
-When executing a command, pass the custom request context as the second argument to the `CommandBus#execute` method:
+When executing a command, pass the custom request context as the second argument to the `CommandBus#execute()` method:
 
 ```typescript
 const myRequest = new MyRequest(user);
@@ -643,7 +662,7 @@ export class KillDragonHandler {
 }
 ```
 
-You can follow the same approach for queries:
+Queries work the same way:
 
 ```typescript
 const myRequest = new MyRequest(user);
@@ -665,7 +684,7 @@ export class GetHeroHandler {
 }
 ```
 
-For events, while you can pass the request provider to `EventBus#publish`, this is less common. Instead, use `EventPublisher` to merge the request provider into a model:
+For events, you can pass the request context to `EventBus#publish()`, but this is less common. Instead, use `EventPublisher` to merge the request context into a model:
 
 ```typescript
 const hero = this.publisher.mergeObjectContext(
@@ -674,9 +693,9 @@ const hero = this.publisher.mergeObjectContext(
 );
 ```
 
-Request-scoped event handlers subscribing to these events will have access to the request provider.
+Request-scoped event handlers that handle these events have access to the request context.
 
-Sagas are always singleton instances because they manage long-running processes. However, you can retrieve the request provider from event objects:
+Sagas are always singletons because they manage long-running processes (registering a saga in a non-singleton provider throws an exception). However, you can retrieve the request context from event objects:
 
 ```typescript
 @Saga()
@@ -694,8 +713,8 @@ dragonKilled = (events$: Observable<any>): Observable<ICommand> => {
 }
 ```
 
-Alternatively, use the `request.attachTo(command)` method to tie the request context to the command.
+Alternatively, call the `request.attachTo(command)` method to attach the request context to the command.
 
 #### Example
 
-A working example is available [here](https://github.com/kamilmysliwiec/nest-cqrs-example).
+A working example is available in the [nest-cqrs-example repository](https://github.com/kamilmysliwiec/nest-cqrs-example).
