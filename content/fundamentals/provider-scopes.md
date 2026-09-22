@@ -151,6 +151,8 @@ Using request-scoped providers will have an impact on application performance. W
 
 > info **Hint** Although it all sounds quite intimidating, a properly designed application that leverages request-scoped providers should not slow down by more than ~5% latency-wise.
 
+Many providers are request-scoped only to read a value that belongs to the current request - the authenticated user, the tenant, a locale. For that, a per-request store based on `AsyncLocalStorage` keeps every provider a singleton and works the same way in HTTP handlers, microservice message handlers, and queue jobs. If your application uses [NestJS Observe](/observability/overview), it already keeps such a store for every request, message and job it instruments: write to it with `TracerService.setAttribute()` and read from anywhere downstream with `getAttribute()`, with no scope changes and no store of your own to maintain. See [Async local storage](/recipes/async-local-storage#nestjs-observe) for details and the alternatives.
+
 #### Durable providers
 
 Request-scoped providers, as mentioned in the section above, may lead to increased latency since having at least 1 request-scoped provider (injected into the controller instance, or deeper - injected into one of its providers) makes the controller request-scoped as well. That means it must be recreated (instantiated) for each individual request (and garbage collected afterward). That also means that for, say, 30k requests in parallel, there will be 30k ephemeral instances of the controller (and its request-scoped providers).
