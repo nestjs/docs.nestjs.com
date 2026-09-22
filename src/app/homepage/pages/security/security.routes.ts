@@ -21,7 +21,7 @@ export const SECURITY_ROUTES: Routes = [
   {
     path: 'helmet',
     component: HelmetComponent,
-    data: { title: 'Helmet' },
+    data: { title: 'Security headers' },
   },
   {
     path: 'encryption-and-hashing',
