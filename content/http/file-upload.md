@@ -4,7 +4,9 @@ This chapter covers files in both directions: receiving files that clients uploa
 
 To handle file uploads, Nest provides a built-in module based on the [multer](https://github.com/expressjs/multer) middleware package for Express. Multer handles data posted in the `multipart/form-data` format, which is primarily used to upload files with an HTTP `POST` request. The module is fully configurable, so you can adjust its behavior to your application's requirements.
 
-> warning **Warning** Multer cannot process data that is not in the `multipart/form-data` format. The module is not compatible with the `FastifyAdapter`.
+> warning **Warning** Multer cannot process data that is not in the `multipart/form-data` format.
+
+> info **Hint** If your application runs on the `FastifyAdapter`, the same interceptors are available from the `@nestjs/platform-fastify` package, backed by [@fastify/multipart](https://github.com/fastify/fastify-multipart) instead of Multer, and the decorators and pipes described in this chapter work unchanged. Only the import path changes - see the [Fastify](/http/file-upload#fastify) section below.
 
 For type safety, install the Multer type definitions:
 
@@ -368,6 +370,193 @@ MulterModule.registerAsync({
 ```
 
 This is useful when the factory function or the class constructor needs additional dependencies.
+
+#### Fastify
+
+Starting with NestJS v12.1, applications running on the `FastifyAdapter` (see [Performance (Fastify)](/http/performance)) can handle file uploads with the same API, backed by the [@fastify/multipart](https://github.com/fastify/fastify-multipart) plugin instead of Multer. The interceptors described in this chapter take the same arguments and options, populate the request in the same way, and fail with the same error responses, while `@UploadedFile()`, `@UploadedFiles()`, `ParseFilePipe`, `ParseFilePipeBuilder` and the built-in file validators work unchanged.
+
+First, install the plugin:
+
+```bash
+$ npm i @fastify/multipart
+```
+
+There is no need to register it: the `FastifyAdapter` registers the plugin automatically as soon as your application uses one of the upload interceptors (in applications that don't, it is not registered at all). If the package is not installed, the application fails to start with an error naming it.
+
+Next, import the interceptors from `@nestjs/platform-fastify/multipart` instead of `@nestjs/platform-express`. The rest of the controller stays the same, except that files are typed as `UploadedMultipartFile`:
+
+```typescript
+import {
+  Controller,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import {
+  FileInterceptor,
+  UploadedMultipartFile,
+} from '@nestjs/platform-fastify/multipart';
+
+@Controller('files')
+export class FilesController {
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1000 }),
+          new FileTypeValidator({ fileType: 'image/png' }),
+        ],
+      }),
+    )
+    file: UploadedMultipartFile,
+  ) {
+    console.log(file);
+  }
+}
+```
+
+> info **Hint** Everything exported from `@nestjs/platform-fastify/multipart` is also re-exported from the `@nestjs/platform-fastify` package root. The interceptors only work with the `FastifyAdapter`: with the `ExpressAdapter`, the application fails to start, so keep importing them from `@nestjs/platform-express` there.
+
+The table below maps the Express API to its Fastify counterpart:
+
+| `@nestjs/platform-express`                                                                                            | `@nestjs/platform-fastify/multipart`                                                           |
+| --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `FileInterceptor()`, `FilesInterceptor()`, `FileFieldsInterceptor()`, `AnyFilesInterceptor()`, `NoFilesInterceptor()` | Same names, arguments and options                                                              |
+| `MulterOptions`                                                                                                       | `MultipartOptions`                                                                             |
+| `MulterModule`, `MulterOptionsFactory`, `createMulterOptions()`                                                       | `MultipartModule`, `MultipartOptionsFactory`, `createMultipartOptions()`                       |
+| `Express.Multer.File`                                                                                                 | `UploadedMultipartFile`                                                                        |
+| `memoryStorage()` and `diskStorage()` from the `multer` package                                                       | `memoryStorage()` and `diskStorage()`                                                          |
+| -                                                                                                                     | `FileStreamInterceptor()` (see [Streaming uploads](/http/file-upload#streaming-uploads)) |
+
+The interceptor options are the ones Multer accepts: `dest`, `storage`, `limits` (an object, or a function that receives the request and returns one), `fileFilter`, `preservePath` and `defParamCharset`. Uploaded files are exposed as `req.file` or `req.files` and text fields as `req.body`, exactly as with Multer. `UploadedMultipartFile` has the same shape as `Express.Multer.File`, so you don't need the `@types/multer` package.
+
+`MultipartModule` sets default options for the upload interceptors of the module that imports it, just like `MulterModule`. Its `registerAsync()` method accepts `useFactory` (with `imports` and `inject`), `useClass` and `useExisting`.
+
+```typescript
+MultipartModule.register({
+  dest: './upload',
+});
+```
+
+##### Storage
+
+As with Multer, files are kept in memory (in `file.buffer`) unless you set the `dest` or `storage` option. `dest` writes each file to the given folder under a random name, and the `diskStorage()` function lets you choose the folder and the file name. Disk storage sets `destination`, `filename` and `path` on the file instead of `buffer`.
+
+```typescript
+import {
+  diskStorage,
+  FileInterceptor,
+  UploadedMultipartFile,
+} from '@nestjs/platform-fastify/multipart';
+
+@Post('upload')
+@UseInterceptors(
+  FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, callback) =>
+        callback(null, `${Date.now()}-${file.originalname}`),
+    }),
+  }),
+)
+uploadFile(@UploadedFile() file: UploadedMultipartFile) {
+  console.log(file.path);
+}
+```
+
+Storage engines follow Multer's storage engine contract (`_handleFile()` and `_removeFile()`), so Multer's own `multer.diskStorage()` and third-party Multer storage engines can be passed as `storage` unchanged.
+
+##### Limits
+
+`@fastify/multipart` applies stricter defaults than Multer. Unless configured otherwise, the maximum file size (`fileSize`) is the Fastify `bodyLimit` (1 MiB by default) and the maximum number of parts (`parts`) is 1000, whereas Multer limits neither. Larger files are rejected with a `413 File too large` response. You can raise these limits:
+
+- for a single route, with the `limits` option of the interceptor
+- for a module, with `MultipartModule.register()` or `registerAsync()`
+- for the whole application, with the `multipart` option of the `FastifyAdapter`, which passes options to the plugin itself:
+
+```typescript
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter({
+    multipart: { limits: { fileSize: 10 * 1024 * 1024 } },
+  }),
+);
+```
+
+Limits set on a route are merged over the ones set with `MultipartModule` key by key, and both are merged over the application-wide ones. The only exception is `fieldNameSize`, which the interceptors don't read from the plugin options - set it on the route or with `MultipartModule`.
+
+##### Plugin registration
+
+The `multipart` option of the `FastifyAdapter` controls how the `@fastify/multipart` plugin is registered:
+
+- not set (default): the adapter registers the plugin when an upload interceptor is used, unless it has been registered already
+- an options object (`FastifyMultipartOptions`, e.g., `limits`): the adapter registers the plugin with these options when the application initializes
+- `true`: same as above, with the plugin's default options
+- `false`: the adapter never registers the plugin, for applications that register it themselves or parse multipart requests with another library (the upload interceptors still require `@fastify/multipart`, and the application fails to start if it is not registered)
+
+Set the option to `true` (or pass an options object) when an upload interceptor is instantiated outside the dependency injection system, for example `new (FileInterceptor('file'))()` passed to `app.useGlobalInterceptors()`, as it doesn't trigger the automatic registration. The same applies when upload interceptors are only used in [lazy-loaded modules](/fundamentals/lazy-loading-modules) that are loaded after the application has started, since plugins can no longer be registered at that point.
+
+If you prefer to register the plugin yourself, pass it to `app.register()`, either before or after `app.init()`. The adapter takes this registration over, so the plugin is registered only once, and your options take precedence over the ones passed through the `multipart` option:
+
+```typescript
+import multipart from '@fastify/multipart';
+
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter(),
+);
+await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
+```
+
+> warning **Warning** Registering `@fastify/multipart` directly on the Fastify instance (`app.getHttpAdapter().getInstance().register(multipart)`), or passing a dynamic `import()` of it to `app.register()`, only works before `app.init()` (which `app.listen()` calls for you). After that, the adapter has already registered the plugin for your upload interceptors, and Fastify fails with an `FST_ERR_DEC_ALREADY_PRESENT` error. Use `app.register(multipart)` or the `multipart` option instead, or set the option to `false` to manage the plugin yourself.
+
+##### Streaming uploads
+
+The interceptors described so far store every file (in memory or on disk) before the route handler runs. To process a file as it arrives instead, for example to pipe a large upload to its final destination, use `FileStreamInterceptor()`, which is available on Fastify only. It takes the name of the field that holds the file and an optional options object (the same as for the other interceptors, except `dest` and `storage`), and hands the route handler a file with a `stream` property in place of `buffer`:
+
+```typescript
+import { randomUUID } from 'node:crypto';
+import { createWriteStream } from 'node:fs';
+import { join } from 'node:path';
+import { pipeline } from 'node:stream/promises';
+import {
+  FileStreamInterceptor,
+  MultipartFileStream,
+} from '@nestjs/platform-fastify/multipart';
+
+@Post('upload')
+@UseInterceptors(
+  FileStreamInterceptor('file', { limits: { fileSize: 1024 * 1024 * 1024 } }),
+)
+async uploadFile(@UploadedFile() file: MultipartFileStream, @Body() body) {
+  const path = join('uploads', randomUUID());
+  await pipeline(file.stream, createWriteStream(path));
+  return { originalname: file.originalname, path, body };
+}
+```
+
+Since the file is never buffered, a few rules apply:
+
+- Text fields must precede the file in the form. The ones sent before it are available in `req.body` (`@Body()`), while the parts that follow the file are not parsed.
+- Only one file is accepted, in the given field. A file in any other field fails the request with a `400 Unexpected file field` response.
+- The file size is not known up front, so `MaxFileSizeValidator` doesn't apply, and neither does the magic number check of `FileTypeValidator` (set its `skipMagicNumbersValidation` option to `true` to compare the client-provided mime type only). The `fileSize` limit is still enforced: once it is exceeded, the stream errors with a `PayloadTooLargeException`.
+- Whatever the route handler leaves unread is discarded before the response is sent, so that the client can finish uploading. When the handler returns a `StreamableFile` (which may be the upload itself), the rest of the upload is discarded once the response has been sent instead. For this reason, a handler that responds with a `StreamableFile` of something other than the upload should read the upload first - otherwise, a client that is still uploading over a connection that is not kept alive may fail with an `EPIPE` or `ECONNRESET` error.
+
+##### Differences from Multer
+
+Besides the [default limits](/http/file-upload#limits), the Fastify interceptors differ from Multer in the following ways:
+
+- A text field of exactly `fieldSize` bytes is accepted, while Multer rejects it.
+- Field names that could pollute a prototype (`constructor`, or names with a `__proto__`, `constructor` or `prototype` segment, such as `user[constructor]`) fail the request with a `400 Invalid field name` response. Multer accepts them.
+- Text fields sent with a `Content-Type: application/json` header arrive parsed, and invalid JSON fails the request with a `400` response (a `@fastify/multipart` feature). Malformed part header lines are ignored, whereas Multer fails the request with a `400` response.
+- `fileFilter` functions and storage engines receive the Fastify request instead of the Express one.
+- The `attachFieldsToBody` plugin option is not supported, as it consumes the request body before the interceptors run.
+- Multer's `fieldNestingDepth` and `fieldArrayIndexLimit` limits and its `highWaterMark`, `fileHwm`, `defCharset` and `streamHandler` options are not supported by the interceptors.
 
 #### Example
 
