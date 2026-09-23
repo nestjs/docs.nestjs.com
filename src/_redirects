@@ -13,4 +13,29 @@
 /v10/*  /v10/index.html  200
 /v11/*  /v11/index.html  200
 
+# Markdown copies of chapters that moved to other URLs (see llms.txt). The
+# chapters themselves redirect in the Angular routes, but these static files
+# never reach the app.
+/recipes/mikroorm.md               /data/mikroorm.md  301
+/recipes/prisma.md                 /data/prisma.md  301
+/techniques/caching.md             /data/caching.md  301
+/techniques/compression.md         /http/compression.md  301
+/techniques/configuration.md       /application/configuration.md  301
+/techniques/cookies.md             /http/cookies.md  301
+/techniques/database.md            /data/overview.md  301
+/techniques/events.md              /application/events.md  301
+/techniques/file-upload.md         /http/file-upload.md  301
+/techniques/http-module.md         /application/http-module.md  301
+/techniques/logger.md              /application/logger.md  301
+/techniques/mongodb.md             /data/mongodb.md  301
+/techniques/mvc.md                 /http/mvc.md  301
+/techniques/performance.md         /http/performance.md  301
+/techniques/queues.md              /application/queues.md  301
+/techniques/serialization.md       /application/serialization.md  301
+/techniques/server-sent-events.md  /http/server-sent-events.md  301
+/techniques/session.md             /http/session.md  301
+/techniques/task-scheduling.md     /application/task-scheduling.md  301
+/techniques/validation.md          /application/validation.md  301
+/techniques/versioning.md          /http/versioning.md  301
+
 /*  /index.html 200
