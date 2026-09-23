@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "22.1.8",
+    "@angular/build": "22.1.8",
     "@angular/cli": "22.1.8",
     "@angular/compiler-cli": "22.1.7",
     "@commitlint/cli": "21.2.3",
