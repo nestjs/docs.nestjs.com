@@ -21,4 +21,4 @@ Alternatively, you can specify a route as a string, which excludes it for every 
 app.setGlobalPrefix('v1', { exclude: ['cats'] });
 ```
 
-> info **Hint** The `path` property supports wildcard parameters through the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package. Bare wildcard asterisks (`*`) are not accepted; use parameters (`:param`) or named wildcards (`*splat`) instead.
+> info **Hint** The `path` property supports wildcard parameters through the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package. Bare wildcard asterisks (`*`) are deprecated; use parameters (`:param`) or named wildcards (`*splat`) instead. A named wildcard requires at least one extra segment, so `health/*splat` excludes `/health/status` but not `/health` itself. To exclude both, wrap the wildcard in braces: `health/{{ '{' }}*splat&#125;`.
