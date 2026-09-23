@@ -246,6 +246,8 @@ export class OrdersModule {}
 
 `UsersService` and `OrdersService` both inject `IdGenerator`, but each receives its own instance, configured by the module that imported it: user identifiers start with `usr_`, and order identifiers with `ord_`.
 
+A working example is available in the [dynamic modules sample](https://github.com/nestjs/nest/tree/master/sample/25-dynamic-modules) on GitHub.
+
 #### Community guidelines
 
 You may have seen methods like `forRoot()`, `register()`, and `forFeature()` in some of the `@nestjs/` packages, and wondered how they differ. There is no hard rule, but the `@nestjs/` packages follow these guidelines:
