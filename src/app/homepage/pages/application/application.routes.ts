@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
+import { movedTo } from '../../../shared/utils/moved-page-redirect';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { EventsComponent } from './events/events.component';
-import { HttpModuleComponent } from './http-module/http-module.component';
+import { HttpClientComponent } from './http-client/http-client.component';
 import { LoggerComponent } from './logger/logger.component';
 import { QueuesComponent } from './queues/queues.component';
 import { SerializationComponent } from './serialization/serialization.component';
@@ -45,8 +46,10 @@ export const APPLICATION_ROUTES: Routes = [
     data: { title: 'Queues' },
   },
   {
-    path: 'http-module',
-    component: HttpModuleComponent,
-    data: { title: 'HTTP module' },
+    path: 'http-client',
+    component: HttpClientComponent,
+    data: { title: 'HTTP client' },
   },
+  // The Axios-based HTTP module chapter, replaced by the HTTP client.
+  { path: 'http-module', redirectTo: movedTo('/application/http-client') },
 ];

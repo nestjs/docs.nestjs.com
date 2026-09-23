@@ -18,7 +18,7 @@ export const TECHNIQUES_ROUTES: Routes = [
   },
   { path: 'events', redirectTo: movedTo('/application/events') },
   { path: 'file-upload', redirectTo: movedTo('/http/file-upload') },
-  { path: 'http-module', redirectTo: movedTo('/application/http-module') },
+  { path: 'http-module', redirectTo: movedTo('/application/http-client') },
   { path: 'logger', redirectTo: movedTo('/application/logger') },
   { path: 'mongodb', redirectTo: movedTo('/data/mongodb') },
   { path: 'mvc', redirectTo: movedTo('/http/mvc') },

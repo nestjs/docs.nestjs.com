@@ -252,7 +252,7 @@ A working example is available in the [dynamic modules sample](https://github.co
 
 You may have seen methods like `forRoot()`, `register()`, and `forFeature()` in some of the `@nestjs/` packages, and wondered how they differ. There is no hard rule, but the `@nestjs/` packages follow these guidelines:
 
-- `register()` configures a dynamic module for use only by the calling module, as our `IdGeneratorModule` does. For example, with `@nestjs/axios`, `HttpModule.register({{ '{' }} baseURL: 'someUrl' {{ '}' }})` configures an HTTP client for the calling module. Another module can call `HttpModule.register({{ '{' }} baseURL: 'somewhere else' {{ '}' }})` to get a differently configured client. You can do this in as many modules as you want.
+- `register()` configures a dynamic module for use only by the calling module, as our `IdGeneratorModule` does. For example, with `@nestjs/http-client`, `HttpClientModule.register({{ '{' }} baseUrl: 'someUrl' {{ '}' }})` configures an HTTP client for the calling module. Another module can call `HttpClientModule.register({{ '{' }} baseUrl: 'somewhere else' {{ '}' }})` to get a differently configured client. You can do this in as many modules as you want.
 - `forRoot()` configures a dynamic module once and reuses that configuration in multiple places (possibly without the consumers being aware of it). This is why an application has one `GraphQLModule.forRoot()`, one `TypeOrmModule.forRoot()`, and so on.
 - `forFeature()` uses the configuration set up by `forRoot()`, but modifies some of it for the needs of the calling module (e.g., which repositories the module has access to, or the context a logger should use).
 
