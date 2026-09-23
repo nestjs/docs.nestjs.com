@@ -23,7 +23,7 @@ $ nest g module users
 $ nest g service users
 ```
 
-Replace the default contents of these generated files as shown below. For our sample app, the `UsersService` simply maintains a hard-coded in-memory list of users, and a find method to retrieve one by username. In a real app, this is where you'd build your user model and persistence layer, using your library of choice (e.g., TypeORM, Sequelize, Mongoose, etc.).
+Replace the default contents of these generated files as shown below. In this sample app, `UsersService` keeps a hard-coded, in-memory list of users and exposes a `findOne()` method that looks up a user by username. In a real application, this is where you build your user model and persistence layer with your library of choice (e.g., TypeORM, Sequelize, Mongoose).
 
 ```typescript
 @@filename(users/users.service)

@@ -1,14 +1,14 @@
 ### TypeORM
 
-For integrating with SQL and NoSQL databases, Nest provides the `@nestjs/typeorm` package. [TypeORM](https://github.com/typeorm/typeorm) is the most mature Object Relational Mapper (ORM) available for TypeScript. Since it's written in TypeScript, it integrates well with the Nest framework.
+The `@nestjs/typeorm` package integrates [TypeORM](https://github.com/typeorm/typeorm) with Nest. TypeORM is one of the most mature Object Relational Mappers (ORMs) available for TypeScript. Because it's written in TypeScript, it integrates well with Nest.
 
-To begin using it, we first install the required dependencies. In this chapter, we'll demonstrate using the popular [MySQL](https://www.mysql.com/) Relational DBMS, but TypeORM provides support for many relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, SQLite, and even NoSQL databases like MongoDB. The procedure we walk through in this chapter will be the same for any database supported by TypeORM. You'll simply need to install the associated client API libraries for your selected database.
+To get started, install the required dependencies. This chapter uses [MySQL](https://www.mysql.com/), but TypeORM supports many other relational databases, such as PostgreSQL, Oracle, Microsoft SQL Server, and SQLite, as well as NoSQL databases like MongoDB. The steps in this chapter are the same for every database TypeORM supports; you only need to install the client library for your database.
 
 ```bash
 $ npm install --save @nestjs/typeorm typeorm mysql2
 ```
 
-Once the installation process is complete, we can import the `TypeOrmModule` into the root `AppModule`.
+Once the installation is complete, import `TypeOrmModule` into the root `AppModule`:
 
 ```typescript
 @@filename(app.module)
@@ -32,9 +32,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-> warning **Warning** Setting `synchronize: true` shouldn't be used in production - otherwise you can lose production data.
+> warning **Warning** Don't use `synchronize: true` in production; otherwise, you can lose production data.
 
-The `forRoot()` method supports all the configuration properties exposed by the `DataSource` constructor from the [TypeORM](https://typeorm.io/data-source-options#common-data-source-options) package. In addition, there are several extra configuration properties described below.
+The `forRoot()` method accepts all the configuration properties supported by the TypeORM [`DataSource` constructor](https://typeorm.io/docs/data-source/data-source-options#common-data-source-options). It also accepts the following extra properties:
 
 <table>
   <tr>
@@ -43,17 +43,29 @@ The `forRoot()` method supports all the configuration properties exposed by the 
   </tr>
   <tr>
     <td><code>retryDelay</code></td>
-    <td>Delay between connection retry attempts (ms) (default: <code>3000</code>)</td>
+    <td>Delay between connection retry attempts, in milliseconds (default: <code>3000</code>)</td>
+  </tr>
+  <tr>
+    <td><code>toRetry</code></td>
+    <td>Function that receives the connection error and returns whether to retry. By default, every error is retried</td>
+  </tr>
+  <tr>
+    <td><code>verboseRetryLog</code></td>
+    <td>If <code>true</code>, the error message is included in the log entry for each connection retry (default: <code>false</code>)</td>
   </tr>
   <tr>
     <td><code>autoLoadEntities</code></td>
-    <td>If <code>true</code>, entities will be loaded automatically (default: <code>false</code>)</td>
+    <td>If <code>true</code>, entities are loaded automatically (default: <code>false</code>). See <a href="/data/typeorm#auto-load-entities">Auto-load entities</a></td>
+  </tr>
+  <tr>
+    <td><code>manualInitialization</code></td>
+    <td>If <code>true</code>, the data source isn't initialized during module initialization, so no connection is established and no migrations run. You must call <code>DataSource.initialize()</code> yourself and handle retries if needed (default: <code>false</code>)</td>
   </tr>
 </table>
 
-> info **Hint** Learn more about the data source options [here](https://typeorm.io/data-source-options).
+> info **Hint** Learn more about the available options in the [TypeORM data source options](https://typeorm.io/docs/data-source/data-source-options) documentation.
 
-Once this is done, the TypeORM `DataSource` and `EntityManager` objects will be available to inject across the entire project (without needing to import any modules), for example:
+Once this is done, you can inject the TypeORM `DataSource` and `EntityManager` objects anywhere in the project, without importing any modules. For example:
 
 ```typescript
 @@filename(app.module)
@@ -81,7 +93,7 @@ export class AppModule {
 
 #### Repository pattern
 
-[TypeORM](https://github.com/typeorm/typeorm) supports the **repository design pattern**, so each entity has its own repository. These repositories can be obtained from the database data source.
+[TypeORM](https://github.com/typeorm/typeorm) supports the **repository design pattern**, so each entity has its own repository. You obtain these repositories from the data source.
 
 To continue the example, we need at least one entity. Let's define the `User` entity.
 
@@ -107,9 +119,9 @@ export class User {
 
 > info **Hint** Learn more about entities in the [TypeORM documentation](https://typeorm.io/docs/entity/entities/).
 
-The `User` entity file sits in the `users` directory. This directory contains all files related to the `UsersModule`. You can decide where to keep your model files, however, we recommend creating them near their **domain**, in the corresponding module directory.
+The `User` entity file sits in the `users` directory, which contains all files related to the `UsersModule`. You can keep your model files wherever you like, but we recommend placing them near their **domain**, in the corresponding module directory.
 
-To begin using the `User` entity, we need to let TypeORM know about it by inserting it into the `entities` array in the module `forRoot()` method options (unless you use a static glob path):
+To start using the `User` entity, let TypeORM know about it by adding it to the `entities` array in the `forRoot()` options (unless you use a static glob path):
 
 ```typescript
 @@filename(app.module)
@@ -152,7 +164,7 @@ import { User } from './user.entity.js';
 export class UsersModule {}
 ```
 
-This module uses the `forFeature()` method to define which repositories are registered in the current scope. With that in place, we can inject the `UsersRepository` into the `UsersService` using the `@InjectRepository()` decorator:
+This module uses the `forFeature()` method to define which repositories are registered in the current scope. With that in place, you can inject the `User` repository into `UsersService` with the `@InjectRepository()` decorator:
 
 ```typescript
 @@filename(users.service)
@@ -208,8 +220,7 @@ export class UsersService {
 
 > warning **Notice** Don't forget to import the `UsersModule` into the root `AppModule`.
 
-If you want to use the repository outside of the module which imports `TypeOrmModule.forFeature`, you'll need to re-export the providers generated by it.
-You can do this by exporting the whole module, like this:
+To use the repository outside the module that imports `TypeOrmModule.forFeature()`, re-export the providers it generates. You can do this by exporting the whole module:
 
 ```typescript
 @@filename(users.module)
@@ -224,7 +235,7 @@ import { User } from './user.entity.js';
 export class UsersModule {}
 ```
 
-Now if we import `UsersModule` in `UserHttpModule`, we can use `@InjectRepository(User)` in the providers of the latter module.
+Now, if you import `UsersModule` into `UserHttpModule`, you can use `@InjectRepository(User)` in the latter module's providers:
 
 ```typescript
 @@filename(users-http.module)
@@ -243,7 +254,7 @@ export class UserHttpModule {}
 
 #### Relations
 
-Relations are associations established between two or more tables. Relations are based on common fields from each table, often involving primary and foreign keys.
+Relations are associations between two or more tables, based on common fields from each table, often involving primary and foreign keys.
 
 There are three types of relations:
 
@@ -258,7 +269,7 @@ There are three types of relations:
   </tr>
   <tr>
     <td><code>Many-to-many</code></td>
-    <td>Every row in the primary table has many related rows in the foreign table, and every record in the foreign table has many related rows in the primary table. Use the <code>@ManyToMany()</code> decorator to define this type of relation.</td>
+    <td>Every row in the primary table has many related rows in the foreign table, and every row in the foreign table has many related rows in the primary table. Use the <code>@ManyToMany()</code> decorator to define this type of relation.</td>
   </tr>
 </table>
 
@@ -292,7 +303,7 @@ export class User {
 
 #### Auto-load entities
 
-Manually adding entities to the `entities` array of the data source options can be tedious. In addition, referencing entities from the root module breaks application domain boundaries and causes leaking implementation details to other parts of the application. To address this issue, an alternative solution is provided. To automatically load entities, set the `autoLoadEntities` property of the configuration object (passed into the `forRoot()` method) to `true`, as shown below:
+Manually adding entities to the `entities` array of the data source options can be tedious. In addition, referencing entities from the root module breaks application domain boundaries and leaks implementation details to other parts of the application. To avoid this, set the `autoLoadEntities` property of the options object passed to `forRoot()` to `true`:
 
 ```typescript
 @@filename(app.module)
@@ -310,13 +321,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-With that option specified, every entity registered through the `forFeature()` method will be automatically added to the `entities` array of the configuration object.
+With this option enabled, every entity registered through the `forFeature()` method is automatically added to the `entities` array of the data source options.
 
-> warning **Warning** Note that entities that aren't registered through the `forFeature()` method, but are only referenced from the entity (via a relationship), won't be included by way of the `autoLoadEntities` setting.
+> warning **Warning** Entities that aren't registered through `forFeature()`, and are only referenced from another entity (via a relation), aren't included by the `autoLoadEntities` setting.
 
 #### Separating entity definition
 
-You can define an entity and its columns right in the model, using decorators. But some people prefer to define entities and their columns inside separate files using the ["entity schemas"](https://typeorm.io/docs/entity/separating-entity-definition).
+You can define an entity and its columns directly in the model class, using decorators. Alternatively, you can define entities and their columns in separate files using [entity schemas](https://typeorm.io/docs/entity/separating-entity-definition).
 
 ```typescript
 import { EntitySchema } from 'typeorm';
@@ -351,10 +362,9 @@ export const UserSchema = new EntitySchema<User>({
 });
 ```
 
-> warning error **Warning** If you provide the `target` option, the `name` option value has to be the same as the name of the target class.
-> If you do not provide the `target` you can use any name.
+> warning **Warning** If you provide the `target` option, the `name` option must match the name of the target class. If you don't provide `target`, you can use any name.
 
-Nest allows you to use an `EntitySchema` instance wherever an `Entity` is expected, for example:
+Nest lets you use an `EntitySchema` instance wherever an entity class is expected. For example:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -373,11 +383,11 @@ export class UsersModule {}
 
 #### TypeORM Transactions
 
-A database transaction symbolizes a unit of work performed within a database management system against a database, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database ([learn more](https://en.wikipedia.org/wiki/Database_transaction)).
+A [database transaction](https://en.wikipedia.org/wiki/Database_transaction) is a unit of work performed against a database and treated in a coherent and reliable way, independent of other transactions. A transaction generally represents any change in a database.
 
-There are many different strategies to handle [TypeORM transactions](https://typeorm.io/docs/advanced-topics/transactions/). We recommend using the `QueryRunner` class because it gives full control over the transaction.
+There are several strategies for handling [TypeORM transactions](https://typeorm.io/docs/advanced-topics/transactions/). We recommend the `QueryRunner` class, because it gives you full control over the transaction.
 
-First, we need to inject the `DataSource` object into a class in the normal way:
+First, inject the `DataSource` object into a class as usual:
 
 ```typescript
 @Injectable()
@@ -388,7 +398,7 @@ export class UsersService {
 
 > info **Hint** The `DataSource` class is imported from the `typeorm` package.
 
-Now, we can use this object to create a transaction.
+Then use it to create a transaction:
 
 ```typescript
 async createMany(users: User[]) {
@@ -402,20 +412,20 @@ async createMany(users: User[]) {
 
     await queryRunner.commitTransaction();
   } catch (err) {
-    // since we have errors lets rollback the changes we made
+    // since we have errors, roll back the changes we made
     await queryRunner.rollbackTransaction();
   } finally {
-    // you need to release a queryRunner which was manually instantiated
+    // you need to release a manually instantiated query runner
     await queryRunner.release();
   }
 }
 ```
 
-> info **Hint** Note that the `dataSource` is used only to create the `QueryRunner`. However, to test this class would require mocking the entire `DataSource` object (which exposes several methods). Thus, we recommend using a helper factory class (e.g., `QueryRunnerFactory`) and defining an interface with a limited set of methods required to maintain transactions. This technique makes mocking these methods pretty straightforward.
+> info **Hint** The `dataSource` is used only to create the `QueryRunner`. However, testing this class would require mocking the entire `DataSource` object, which exposes many methods. Instead, we recommend a helper factory class (e.g., `QueryRunnerFactory`) that implements an interface with only the methods needed to manage transactions. This makes those methods straightforward to mock.
 
 <app-banner-devtools></app-banner-devtools>
 
-Alternatively, you can use the callback-style approach with the `transaction` method of the `DataSource` object ([read more](https://typeorm.io/docs/advanced-topics/transactions/#creating-and-using-transactions)).
+Alternatively, you can use the callback-style `transaction()` method of the `DataSource` object (see [Creating and using transactions](https://typeorm.io/docs/advanced-topics/transactions/#creating-and-using-transactions) in the TypeORM documentation):
 
 ```typescript
 async createMany(users: User[]) {
@@ -455,7 +465,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
 }
 ```
 
-> error **Warning** Event subscribers can not be [request-scoped](/fundamentals/injection-scopes).
+> error **Warning** Event subscribers cannot be [request-scoped](/fundamentals/injection-scopes).
 
 Now, add the `UserSubscriber` class to the `providers` array:
 
@@ -479,17 +489,17 @@ export class UsersModule {}
 
 [Migrations](https://typeorm.io/docs/advanced-topics/migrations/) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/docs/advanced-topics/migrations/#creating-a-new-migration).
 
-Migration classes are separate from the Nest application source code. Their lifecycle is maintained by the TypeORM CLI. Therefore, you are not able to leverage dependency injection and other Nest specific features with migrations. To learn more about migrations, follow the guide in the [TypeORM documentation](https://typeorm.io/docs/advanced-topics/migrations/).
+Migration classes are separate from the Nest application source code, and TypeORM manages their lifecycle. Therefore, you can't use dependency injection or other Nest-specific features in migrations. To learn more, see the [migrations guide](https://typeorm.io/docs/advanced-topics/migrations/) in the TypeORM documentation.
 
 #### Multiple databases
 
-Some projects require multiple database connections. This can also be achieved with this module. To work with multiple connections, first create the connections. In this case, data source naming becomes **mandatory**.
+Some projects require multiple database connections, which this module also supports. To work with multiple connections, first create them. In this case, every data source other than the default one must have a unique **name**.
 
 Suppose you have an `Album` entity stored in its own database.
 
 ```typescript
 const defaultOptions = {
-  type: 'postgres',
+  type: 'postgres' as const,
   port: 5432,
   username: 'user',
   password: 'password',
@@ -515,9 +525,9 @@ const defaultOptions = {
 export class AppModule {}
 ```
 
-> warning **Notice** If you don't set the `name` for a data source, its name is set to `default`. Please note that you shouldn't have multiple connections without a name, or with the same name, otherwise they will get overridden.
+> warning **Notice** If you don't set a `name` for a data source, its name is `default`. Don't register multiple data sources without a name, or with the same name; otherwise, they override each other.
 
-> warning **Notice** If you are using `TypeOrmModule.forRootAsync`, you have to **also** set the data source name outside `useFactory`. For example:
+> warning **Notice** If you use `TypeOrmModule.forRootAsync()`, you must **also** set the data source name outside `useFactory`. For example:
 >
 > ```typescript
 > TypeOrmModule.forRootAsync({
@@ -527,9 +537,9 @@ export class AppModule {}
 > }),
 > ```
 >
-> See [this issue](https://github.com/nestjs/typeorm/issues/86) for more details.
+> For more details, see [nestjs/typeorm issue #86](https://github.com/nestjs/typeorm/issues/86).
 
-At this point, you have `User` and `Album` entities registered with their own data source. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which data source should be used. If you do not pass any data source name, the `default` data source is used.
+At this point, the `User` and `Album` entities are each registered with their own data source. With this setup, you have to tell the `TypeOrmModule.forFeature()` method and the `@InjectRepository()` decorator which data source to use. If you don't pass a data source name, the `default` data source is used.
 
 ```typescript
 @Module({
@@ -555,7 +565,7 @@ export class AlbumsService {
 }
 ```
 
-It's also possible to inject any `DataSource` to the providers:
+You can also inject any `DataSource` into a factory provider by using the `getDataSourceToken()` function:
 
 ```typescript
 @Module({
@@ -574,9 +584,9 @@ export class AlbumsModule {}
 
 #### Testing
 
-When it comes to unit testing an application, we usually want to avoid making a database connection, keeping our test suites independent and their execution process as fast as possible. But our classes might depend on repositories that are pulled from the data source (connection) instance. How do we handle that? The solution is to create mock repositories. In order to achieve that, we set up [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
+When unit testing an application, you usually want to avoid connecting to a database, to keep test suites independent and as fast as possible. However, your classes might depend on repositories obtained from the data source instance. The solution is to create mock repositories using [custom providers](/fundamentals/custom-providers). Each registered repository is automatically represented by an `<EntityName>Repository` token, where `EntityName` is the name of your entity class.
 
-The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which returns a prepared token based on a given entity.
+The `@nestjs/typeorm` package exports the `getRepositoryToken()` function, which returns this token for a given entity. For a named data source, pass the data source name as the second argument.
 
 ```typescript
 @Module({
@@ -591,11 +601,11 @@ The `@nestjs/typeorm` package exposes the `getRepositoryToken()` function which 
 export class UsersModule {}
 ```
 
-Now a substitute `mockRepository` will be used as the `UsersRepository`. Whenever any class asks for `UsersRepository` using an `@InjectRepository()` decorator, Nest will use the registered `mockRepository` object.
+Now `mockRepository` is used as the `User` repository. Whenever a class injects it with `@InjectRepository(User)`, Nest provides the registered `mockRepository` object.
 
 #### Async configuration
 
-You may want to pass your repository module options asynchronously instead of statically. In this case, use the `forRootAsync()` method, which provides several ways to deal with async configuration.
+You may want to pass the module options asynchronously instead of statically. In this case, use the `forRootAsync()` method, which supports several ways to provide async configuration.
 
 One approach is to use a factory function:
 
@@ -614,7 +624,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-Our factory behaves like any other [asynchronous provider](https://docs.nestjs.com/fundamentals/async-providers) (e.g., it can be `async` and it's able to inject dependencies through `inject`).
+The factory behaves like any other [asynchronous provider](/fundamentals/async-providers) (e.g., it can be `async`, and it can inject dependencies through `inject`).
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -641,7 +651,7 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-The construction above will instantiate `TypeOrmConfigService` inside `TypeOrmModule` and use it to provide an options object by calling `createTypeOrmOptions()`. Note that this means that the `TypeOrmConfigService` has to implement the `TypeOrmOptionsFactory` interface, as shown below:
+The construction above instantiates `TypeOrmConfigService` inside `TypeOrmModule` and uses it to create the options object by calling `createTypeOrmOptions()`. This means that `TypeOrmConfigService` has to implement the `TypeOrmOptionsFactory` interface:
 
 ```typescript
 @Injectable()
@@ -661,7 +671,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 }
 ```
 
-In order to prevent the creation of `TypeOrmConfigService` inside `TypeOrmModule` and use a provider imported from a different module, you can use the `useExisting` syntax.
+To reuse a provider imported from a different module instead of creating `TypeOrmConfigService` inside `TypeOrmModule`, use the `useExisting` syntax:
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -670,15 +680,15 @@ TypeOrmModule.forRootAsync({
 });
 ```
 
-This construction works the same as `useClass` with one critical difference - `TypeOrmModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
+This works the same as `useClass`, with one critical difference: `TypeOrmModule` looks up imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
-> info **Hint** Make sure that the `name` property is defined at the same level as the `useFactory`, `useClass`, or `useValue` property. This will allow Nest to properly register the data source under the appropriate injection token.
+> info **Hint** Define the `name` property at the same level as the `useFactory`, `useClass`, or `useExisting` property. This lets Nest register the data source under the appropriate injection token.
 
 #### Custom DataSource Factory
 
-In conjunction with async configuration using `useFactory`, `useClass`, or `useExisting`, you can optionally specify a `dataSourceFactory` function which will allow you to provide your own TypeORM data source rather than allowing `TypeOrmModule` to create the data source.
+Together with async configuration (`useFactory`, `useClass`, or `useExisting`), you can optionally specify a `dataSourceFactory` function to provide your own TypeORM data source instead of letting `TypeOrmModule` create it.
 
-`dataSourceFactory` receives the TypeORM `DataSourceOptions` configured during async configuration using `useFactory`, `useClass`, or `useExisting` and returns a `Promise` that resolves a TypeORM `DataSource`.
+`dataSourceFactory` receives the TypeORM `DataSourceOptions` resolved by the async configuration and returns a `Promise` that resolves to a TypeORM `DataSource`. If the returned data source isn't initialized yet, `TypeOrmModule` initializes it (unless `manualInitialization` is set).
 
 ```typescript
 TypeOrmModule.forRootAsync({
@@ -696,10 +706,10 @@ TypeOrmModule.forRootAsync({
     entities: [],
     synchronize: true,
   }),
-  // dataSource receives the configured DataSourceOptions
+  // dataSourceFactory receives the configured DataSourceOptions
   // and returns a Promise<DataSource>.
   dataSourceFactory: async (options) => {
-    const dataSource = await new DataSource(options).initialize();
+    const dataSource = await new DataSource(options!).initialize();
     return dataSource;
   },
 });
@@ -709,6 +719,6 @@ TypeOrmModule.forRootAsync({
 
 #### Example
 
-A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm).
+A working example is available in the [TypeORM sample application](https://github.com/nestjs/nest/tree/master/sample/05-sql-typeorm) in the NestJS repository.
 
 <app-banner-enterprise></app-banner-enterprise>
