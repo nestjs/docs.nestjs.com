@@ -122,7 +122,7 @@ export const NAV_ITEMS: NavItem[] = [
         title: 'Encryption and Hashing',
         path: '/security/encryption-and-hashing',
       },
-      { title: 'Helmet', path: '/security/helmet' },
+      { title: 'Security headers', path: '/security/helmet' },
       { title: 'CORS', path: '/security/cors' },
       { title: 'CSRF Protection', path: '/security/csrf' },
       { title: 'Rate limiting', path: '/security/rate-limiting' },

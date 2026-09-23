@@ -79,7 +79,9 @@ The `SwaggerModule` automatically reflects all of your endpoints.
 >
 > This exposes it at `http://localhost:3000/swagger/json`.
 
-> warning **Warning** When you use Fastify with `helmet`, its [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) can block the Swagger UI. To resolve this conflict, configure the CSP as shown below:
+> info **Hint** Swagger UI works with the default [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) of Nest's built-in [security headers](/security/helmet). If you add scripts through `customJs`/`customJsStr`, or serve Swagger UI over plain HTTP outside local development, see [Swagger UI and GraphQL IDEs](/security/helmet#swagger-ui-and-graphql-ides) for the directives to adjust.
+
+> warning **Warning** When you register `helmet` directly with Fastify instead, its [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) can block the Swagger UI. To resolve this conflict, configure the CSP as shown below:
 >
 > ```typescript
 > app.register(helmet, {
