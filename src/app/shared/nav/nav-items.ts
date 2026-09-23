@@ -129,6 +129,20 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'HTTP',
+    isOpened: false,
+    children: [
+      { title: 'Versioning', path: '/http/versioning' },
+      { title: 'Cookies', path: '/http/cookies' },
+      { title: 'Session', path: '/http/session' },
+      { title: 'File upload and streaming', path: '/http/file-upload' },
+      { title: 'Compression', path: '/http/compression' },
+      { title: 'Server-Sent Events', path: '/http/server-sent-events' },
+      { title: 'Model-View-Controller', path: '/http/mvc' },
+      { title: 'Performance (Fastify)', path: '/http/performance' },
+    ],
+  },
+  {
     title: 'Observability',
     isNew: true,
     isOpened: false,
@@ -149,20 +163,6 @@ export const NAV_ITEMS: NavItem[] = [
       },
       { title: 'Dashboard', path: '/observability/dashboard' },
       { title: 'MCP server', path: '/observability/mcp-server' },
-    ],
-  },
-  {
-    title: 'HTTP',
-    isOpened: false,
-    children: [
-      { title: 'Versioning', path: '/http/versioning' },
-      { title: 'Cookies', path: '/http/cookies' },
-      { title: 'Session', path: '/http/session' },
-      { title: 'File upload and streaming', path: '/http/file-upload' },
-      { title: 'Compression', path: '/http/compression' },
-      { title: 'Server-Sent Events', path: '/http/server-sent-events' },
-      { title: 'Model-View-Controller', path: '/http/mvc' },
-      { title: 'Performance (Fastify)', path: '/http/performance' },
     ],
   },
   {

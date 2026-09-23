@@ -5,6 +5,15 @@
       "name": "docs-dev",
       "url": "http://localhost:4200",
       "port": 4200
+    },
+    {
+      "name": "docs-proposals",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/Mysliwiec/Projects/docs-worktrees/proposals && npx ng serve --port 4212"
+      ],
+      "port": 4212
     }
   ]
 }
