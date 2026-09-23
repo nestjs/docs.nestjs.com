@@ -210,6 +210,14 @@ body::after {
   outline-offset: 2px;
 }
 
+// Elements focused only from code, such as the page content that receives
+// focus after navigation (so screen readers start there), aren't controls.
+// Browsers show them as :focus-visible after a keypress, or after a tap on
+// some mobile browsers, which drew the ring around the whole page.
+[tabindex='-1']:focus-visible {
+  outline: none;
+}
+
 // Registered so the conic gradient's angle can be interpolated; without
 // @property support the ring simply renders static.
 @property --badge-angle {
