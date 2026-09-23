@@ -129,6 +129,29 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'Observability',
+    isNew: true,
+    isOpened: false,
+    children: [
+      { title: 'Overview', path: '/observability/overview' },
+      { title: 'SDK', path: '/observability/sdk' },
+      {
+        title: 'Manual instrumentation',
+        path: '/observability/manual-instrumentation',
+      },
+      {
+        title: 'Distributed tracing',
+        path: '/observability/distributed-tracing',
+      },
+      {
+        title: 'Error monitoring',
+        path: '/observability/error-monitoring',
+      },
+      { title: 'Dashboard', path: '/observability/dashboard' },
+      { title: 'MCP server', path: '/observability/mcp-server' },
+    ],
+  },
+  {
     title: 'HTTP',
     isOpened: false,
     children: [
@@ -212,29 +235,6 @@ export const NAV_ITEMS: NavItem[] = [
   {
     title: 'Deployment',
     path: '/deployment',
-  },
-  {
-    title: 'Observability',
-    isNew: true,
-    isOpened: false,
-    children: [
-      { title: 'Overview', path: '/observability/overview' },
-      { title: 'SDK', path: '/observability/sdk' },
-      {
-        title: 'Manual instrumentation',
-        path: '/observability/manual-instrumentation',
-      },
-      {
-        title: 'Distributed tracing',
-        path: '/observability/distributed-tracing',
-      },
-      {
-        title: 'Error monitoring',
-        path: '/observability/error-monitoring',
-      },
-      { title: 'Dashboard', path: '/observability/dashboard' },
-      { title: 'MCP server', path: '/observability/mcp-server' },
-    ],
   },
   {
     title: 'Standalone apps',
