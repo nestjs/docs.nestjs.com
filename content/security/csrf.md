@@ -114,7 +114,7 @@ app.enableCsrfProtection({
 Exclusions are resolved when the application initializes:
 
 - The [global prefix](/faq/global-prefix) is added, unless the route is excluded from it.
-- With [URI versioning](/techniques/versioning), the version segment of the `version` property is added. The default version is not applied, so set `version` on the exclusion of a versioned route.
+- With [URI versioning](/http/versioning), the version segment of the `version` property is added. The default version is not applied, so set `version` on the exclusion of a versioned route.
 - Route parameters and wildcards work as in route paths, for example `webhooks/:provider` or `webhooks/*path`.
 
 Unlike `MiddlewareConsumer.exclude()`, the match is exact, because a lenient match could let a request reach a route that is not excluded:
