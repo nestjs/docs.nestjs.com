@@ -178,6 +178,9 @@
   h3:first-of-type {
     margin: 20px 0;
     font-size: 28px;
+    // The page inherits a fixed 25px line height, tighter than this font
+    // size, so a title that wraps (common on phones) had overlapping lines.
+    line-height: 1.25;
     font-weight: 800;
     letter-spacing: -0.02em;
     padding-right: 140px;
