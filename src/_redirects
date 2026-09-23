@@ -16,6 +16,7 @@
 # Markdown copies of chapters that moved to other URLs (see llms.txt). The
 # chapters themselves redirect in the Angular routes, but these static files
 # never reach the app.
+/application/http-module.md        /application/http-client.md  301
 /recipes/mikroorm.md               /data/mikroorm.md  301
 /recipes/prisma.md                 /data/prisma.md  301
 /techniques/caching.md             /data/caching.md  301
@@ -25,7 +26,7 @@
 /techniques/database.md            /data/overview.md  301
 /techniques/events.md              /application/events.md  301
 /techniques/file-upload.md         /http/file-upload.md  301
-/techniques/http-module.md         /application/http-module.md  301
+/techniques/http-module.md         /application/http-client.md  301
 /techniques/logger.md              /application/logger.md  301
 /techniques/mongodb.md             /data/mongodb.md  301
 /techniques/mvc.md                 /http/mvc.md  301

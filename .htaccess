@@ -6,6 +6,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
 
 # Markdown copies of chapters that moved to other URLs (see llms.txt). The
 # chapters themselves redirect in the Angular routes.
+RewriteRule ^application/http-module\.md$ /application/http-client.md [R=301,L]
 RewriteRule ^recipes/mikroorm\.md$ /data/mikroorm.md [R=301,L]
 RewriteRule ^recipes/prisma\.md$ /data/prisma.md [R=301,L]
 RewriteRule ^techniques/caching\.md$ /data/caching.md [R=301,L]
@@ -15,7 +16,7 @@ RewriteRule ^techniques/cookies\.md$ /http/cookies.md [R=301,L]
 RewriteRule ^techniques/database\.md$ /data/overview.md [R=301,L]
 RewriteRule ^techniques/events\.md$ /application/events.md [R=301,L]
 RewriteRule ^techniques/file-upload\.md$ /http/file-upload.md [R=301,L]
-RewriteRule ^techniques/http-module\.md$ /application/http-module.md [R=301,L]
+RewriteRule ^techniques/http-module\.md$ /application/http-client.md [R=301,L]
 RewriteRule ^techniques/logger\.md$ /application/logger.md [R=301,L]
 RewriteRule ^techniques/mongodb\.md$ /data/mongodb.md [R=301,L]
 RewriteRule ^techniques/mvc\.md$ /http/mvc.md [R=301,L]
