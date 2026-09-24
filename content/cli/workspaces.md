@@ -199,6 +199,8 @@ These properties specify the compiler to use, as well as options that affect **a
 | `emitDeclarations`  | boolean             | If `true`, emits declaration files (`.d.ts`) when using the SWC builder. Defaults to `false`.                                                                                                                                                                             |
 | `includeLibraryAssets` | array            | (**monorepo only**) List of library project names whose assets should also be copied when building this application.                                                                                                                                                      |
 
+> warning **Warning** In monorepo mode, a project's `compilerOptions` are not merged with the top-level `compilerOptions`. For example, a project-level `assets` array replaces the top-level `assets` array instead of adding to it. To also copy a library's assets when building an application, list the library in `includeLibraryAssets`.
+
 #### Global generate options
 
 These properties specify the default options for the `nest generate` command.
