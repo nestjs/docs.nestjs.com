@@ -217,6 +217,35 @@ onEvent(data) {
 
 In the example above, the message handler responds **3 times** (once for each item in the array).
 
+#### Path parameters
+
+`WsAdapter` captures parameters from the gateway path. Use `@WsParam()` in a message handler to read them. The decorator is imported from `@nestjs/websockets`.
+
+```typescript
+@@filename(chat.gateway)
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WsParam,
+} from '@nestjs/websockets';
+
+@WebSocketGateway({ path: '/chat/:roomId/socket' })
+export class ChatGateway {
+  @SubscribeMessage('events')
+  handleEvent(@WsParam('roomId') roomId: string): string {
+    return roomId;
+  }
+}
+```
+
+Omit the name to receive every captured parameter as an object. On a path that captured nothing, that object is empty, and a name that was not captured is `undefined`. Pipes work as they do for HTTP `@Param()`, for example `@WsParam('id', ParseIntPipe)`.
+
+`handleConnection()` can take the upgrade request as its second argument. `WsAdapter` sets the same map on `req.params` before calling the hook. `handleDisconnect()` only receives the client. Guards and interceptors reach the client through `switchToWs().getClient()`. In those places, read the `WS_PATH_PARAMS` symbol, also exported from `@nestjs/websockets`.
+
+Under `IoAdapter`, path parameters are not parsed. A named `@WsParam()` is `undefined`, and `@WsParam()` with no name is an empty object.
+
+Patterns, registration order, and what happens to an existing literal path that contains `:` are covered in [Dynamic paths](/websockets/adapter#dynamic-paths).
+
 #### Lifecycle hooks
 
 Gateways support three lifecycle hooks. Each has a corresponding interface, described in the following table:
@@ -235,8 +264,8 @@ Gateways support three lifecycle hooks. Each has a corresponding interface, desc
       <code>OnGatewayConnection</code>
     </td>
     <td>
-      Requires the <code>handleConnection()</code> method, which receives the library-specific client socket instance as
-      its first argument.
+      Requires the <code>handleConnection()</code> method. The first argument is the library-specific client socket.
+      <code>WsAdapter</code> also passes the upgrade request, with matched path parameters on <code>req.params</code>.
     </td>
   </tr>
   <tr>
