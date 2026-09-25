@@ -137,6 +137,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'reliability',
+        loadChildren: () =>
+          import('./homepage/pages/reliability/reliability.routes').then(
+            (r) => r.RELIABILITY_ROUTES,
+          ),
+      },
+      {
         path: 'http',
         loadChildren: () =>
           import('./homepage/pages/http/http.routes').then(

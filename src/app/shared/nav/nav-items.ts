@@ -166,6 +166,16 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'Reliability',
+    isOpened: false,
+    children: [
+      { title: 'Resilience', path: '/reliability/resilience' },
+      { title: 'Idempotency keys', path: '/reliability/idempotency' },
+      { title: 'Transactional outbox', path: '/reliability/outbox' },
+      { title: 'Distributed locks', path: '/reliability/locks' },
+    ],
+  },
+  {
     title: 'GraphQL',
     isOpened: false,
     children: [
