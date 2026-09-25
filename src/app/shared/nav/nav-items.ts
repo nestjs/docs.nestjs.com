@@ -96,6 +96,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Task scheduling', path: '/application/task-scheduling' },
       { title: 'Queues', path: '/application/queues' },
       { title: 'HTTP client', path: '/application/http-client' },
+      { title: 'File storage', path: '/application/file-storage' },
     ],
   },
   {
@@ -163,6 +164,16 @@ export const NAV_ITEMS: NavItem[] = [
       },
       { title: 'Dashboard', path: '/observability/dashboard' },
       { title: 'MCP server', path: '/observability/mcp-server' },
+    ],
+  },
+  {
+    title: 'Reliability',
+    isOpened: false,
+    children: [
+      { title: 'Resilience', path: '/reliability/resilience' },
+      { title: 'Idempotency keys', path: '/reliability/idempotency' },
+      { title: 'Transactional outbox', path: '/reliability/outbox' },
+      { title: 'Distributed locks', path: '/reliability/locks' },
     ],
   },
   {

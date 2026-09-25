@@ -417,6 +417,29 @@ getTimeouts() {
 }
 ```
 
+#### Running on several instances
+
+The scheduler runs every job in every process of your application. With three instances behind a load balancer, a job scheduled with `@Cron('0 2 * * *')` runs three times a night: three invoice exports, three batches of reminder emails.
+
+To run a job on one instance per tick, add `@OnOneInstance()` from [`@nestjs/locks`](/reliability/locks) next to its `@Cron()`, `@Interval()` or `@Timeout()` decorator:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { OnOneInstance } from '@nestjs/locks';
+import { Cron } from '@nestjs/schedule';
+
+@Injectable()
+export class InvoicesJob {
+  @Cron('0 2 * * *')
+  @OnOneInstance({ key: 'invoices:nightly-export' })
+  async exportInvoices() {
+    // ...
+  }
+}
+```
+
+The instances coordinate through a lock store they share, such as your PostgreSQL database or Redis. The first instance to fire the job takes a lease on it and keeps renewing it while it's up, and the other instances skip their ticks instead of queuing them. If the owner stops, another instance takes the job over at its next tick. A job that can take longer than its interval also gets `@WithoutOverlapping()`, which skips a tick while the previous run is still going. [Distributed locks](/reliability/locks) shows how to register the module and the store.
+
 #### Knowing a cron job actually ran
 
 A scheduled job that throws is a problem you will hear about. A scheduled job that silently *stops being scheduled* (the process crashed, the container was descheduled, a deploy shipped a `@Cron()` expression with a typo) is a problem nobody hears about until the report it generates is missing.

@@ -418,6 +418,12 @@ figcaption {
   }
 }
 
+// A table that directly follows a heading belongs to it: the heading's own gap is enough.
+h4 + table,
+h5 + table {
+  margin-top: 20px;
+}
+
 table {
   width: 100%;
   margin: 40px 0;
