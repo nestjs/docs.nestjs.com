@@ -77,7 +77,7 @@ app.useWebSocketAdapter(redisIoAdapter);
 
 Another available adapter is `WsAdapter`, which acts as a proxy between the framework and the fast, thoroughly tested [ws](https://github.com/websockets/ws) library. This adapter is fully compatible with native browser WebSockets and is faster than the socket.io package. However, it offers significantly fewer features out of the box, which many applications don't need.
 
-> info **Hint** The `ws` library doesn't support namespaces (communication channels popularized by `socket.io`), and `WsAdapter` throws an error if you set the `namespace` option. To mimic this feature, mount multiple `ws` servers on different paths (e.g., `@WebSocketGateway({{ '{' }} path: '/users' {{ '}' }})`).
+> info **Hint** The `ws` library doesn't support namespaces (communication channels popularized by `socket.io`), and `WsAdapter` throws an error if you set the `namespace` option. To mimic this feature, mount multiple `ws` servers on different paths (e.g., `@WebSocketGateway({{ '{' }} path: '/users' {{ '}' }})`). Those paths can include parameters. See [Dynamic paths](#dynamic-paths).
 
 To use `ws`, first install the required package:
 
@@ -107,6 +107,103 @@ const wsAdapter = new WsAdapter(app, {
 ```
 
 Alternatively, you can set the message parser after creating the adapter with the `setMessageParser()` method.
+
+#### Dynamic paths
+
+`WsAdapter` compiles a gateway `path` when it contains `:`, `*`, or `{{ '{' }}`. Anything else is an exact match on the URL pathname, so a path such as `/socket(v2)` keeps working as a literal. Matching is case-sensitive, a trailing slash does not match, and the query string is ignored. A path with a malformed percent-escape is rejected with HTTP 400.
+
+Overlapping gateways on the same port are tried in registration order, and the first match handles the connection. Register `/files/:id/meta` before `/files/*path` when `/files/1/meta` should reach the specific gateway.
+
+```typescript
+import { IncomingMessage } from 'http';
+import WebSocket from 'ws';
+import {
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WsParam,
+} from '@nestjs/websockets';
+
+@WebSocketGateway({ path: '/chat/:roomId/socket' })
+export class ChatGateway {
+  handleConnection(
+    client: WebSocket,
+    req: IncomingMessage & { params: Record<string, string> },
+  ) {
+    client.send(JSON.stringify({ event: 'connected', data: req.params }));
+  }
+
+  @SubscribeMessage('message')
+  handleMessage(
+    @MessageBody() data: unknown,
+    @WsParam('roomId') roomId: string,
+  ) {
+    return { event: 'message', data: { roomId, data } };
+  }
+}
+```
+
+`handleConnection()` receives the upgrade request as its second argument. `req.params` is the map captured during the handshake. The same object is stored on the socket under the `WS_PATH_PARAMS` symbol, exported from `@nestjs/websockets`. `handleDisconnect()`, guards, and interceptors read that symbol from the client.
+
+```typescript
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { WS_PATH_PARAMS } from '@nestjs/websockets';
+import WebSocket from 'ws';
+
+type WsClient = WebSocket & {
+  [WS_PATH_PARAMS]?: Record<string, string | string[]>;
+};
+
+@Injectable()
+export class RoomGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const client = context.switchToWs().getClient<WsClient>();
+    return client[WS_PATH_PARAMS]?.roomId === 'public';
+  }
+}
+```
+
+```typescript
+import { OnGatewayDisconnect, WS_PATH_PARAMS } from '@nestjs/websockets';
+import WebSocket from 'ws';
+
+type WsClient = WebSocket & {
+  [WS_PATH_PARAMS]?: Record<string, string | string[]>;
+};
+
+export class ChatGateway implements OnGatewayDisconnect {
+  handleDisconnect(client: WsClient) {
+    const roomId = client[WS_PATH_PARAMS]?.roomId;
+    console.log(`disconnected from ${roomId}`);
+  }
+}
+```
+
+`@WsParam()` reads that map from a message handler. Pass a name to take one value, or omit it to take the whole object. Pipes work the same way as on HTTP `@Param()`.
+
+```typescript
+import { ParseIntPipe } from '@nestjs/common';
+import { SubscribeMessage, WsParam } from '@nestjs/websockets';
+
+@SubscribeMessage('echo')
+echo(@WsParam('id', ParseIntPipe) id: number) {
+  return { event: 'echo', data: id };
+}
+```
+
+A static path still exposes a map, and that map is empty, so `@WsParam()` returns an empty object and `@WsParam('id')` returns `undefined`.
+
+`IoAdapter` (`@nestjs/platform-socket.io`) does not set `WS_PATH_PARAMS`. A guard or `handleDisconnect()` that reads the symbol gets `undefined`. `@WsParam()` with no name still returns an empty object, and a named `@WsParam()` returns `undefined`.
+
+The pattern language is [path-to-regexp](https://github.com/pillarjs/path-to-regexp) v8:
+
+- `:roomId` captures a single segment as a string.
+- `*path` captures one or more segments as an array. A connection to `/files/a/b/c` on `/files/*path` sets `path` to `['a', 'b', 'c']`.
+- A brace group is optional. `/chat{{ '{' }}/lobby&#125;` matches both `/chat` and `/chat/lobby`.
+
+> warning **Warning** A path that contains `:`, `*`, or `{{ '{' }}` and is not valid v8 syntax throws when the gateway is registered. `/legacy/*` is rejected because a wildcard must be named, as in `/files/*path`. The `?` and `+` suffixes are rejected too.
+
+> warning **Warning** A colon always starts a parameter. A path that used to match one literal URL, such as `/ws:v1`, now also matches other suffixes: `/wsfoo` sets `v1` to `foo`. Escape the colon to keep that URL literal: `/ws\\:v1`.
 
 #### Advanced (custom adapter)
 
