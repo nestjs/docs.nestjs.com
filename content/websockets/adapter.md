@@ -191,7 +191,9 @@ echo(@WsParam('id', ParseIntPipe) id: number) {
 }
 ```
 
-A static path still exposes a map, and that map is empty, so `@WsParam()` returns an empty object and `@WsParam('id')` returns `undefined`. `IoAdapter` (`@nestjs/platform-socket.io`) does not parse paths. The decorator behaves the same way there: a named parameter is `undefined`, and `@WsParam()` with no name returns an empty object.
+A static path still exposes a map, and that map is empty, so `@WsParam()` returns an empty object and `@WsParam('id')` returns `undefined`.
+
+`IoAdapter` (`@nestjs/platform-socket.io`) does not set `WS_PATH_PARAMS`. A guard or `handleDisconnect()` that reads the symbol gets `undefined`. `@WsParam()` with no name still returns an empty object, and a named `@WsParam()` returns `undefined`.
 
 The pattern language is [path-to-regexp](https://github.com/pillarjs/path-to-regexp) v8:
 

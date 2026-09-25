@@ -242,7 +242,7 @@ Omit the name to receive every captured parameter as an object. On a path that c
 
 `handleConnection()` can take the upgrade request as its second argument. `WsAdapter` sets the same map on `req.params` before calling the hook. `handleDisconnect()` only receives the client. Guards and interceptors reach the client through `switchToWs().getClient()`. In those places, read the `WS_PATH_PARAMS` symbol, also exported from `@nestjs/websockets`.
 
-Under `IoAdapter`, path parameters are not parsed. A named `@WsParam()` is `undefined`, and `@WsParam()` with no name is an empty object.
+Under `IoAdapter`, `WS_PATH_PARAMS` is not set. A named `@WsParam()` is `undefined`, and `@WsParam()` with no name is an empty object.
 
 Patterns, registration order, and what happens to an existing literal path that contains `:` are covered in [Dynamic paths](/websockets/adapter#dynamic-paths).
 
