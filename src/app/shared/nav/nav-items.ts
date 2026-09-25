@@ -96,6 +96,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Task scheduling', path: '/application/task-scheduling' },
       { title: 'Queues', path: '/application/queues' },
       { title: 'HTTP client', path: '/application/http-client' },
+      { title: 'File storage', path: '/application/file-storage' },
     ],
   },
   {
