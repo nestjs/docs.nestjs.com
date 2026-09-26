@@ -43,6 +43,7 @@ export class AppModule {}
 The `forRoot()` method registers a `bullmq` configuration object that all queues registered in the application use (unless specified otherwise). The following are a few of the configuration properties:
 
 - `connection: ConnectionOptions` - Options to configure the Redis connection. See [Connections](https://docs.bullmq.io/guide/connections) for more information.
+- `backendFactory: BullMQBackendFactory` - Factory function for pluggable backends (e.g., PostgreSQL). See [Pluggable backends](/application/queues#pluggable-backends) for more information.
 - `prefix: string` - Prefix for all queue keys (defaults to `bull`).
 - `defaultJobOptions: DefaultJobOptions` - Default settings for new jobs. See [DefaultJobOptions](https://docs.bullmq.io/api/interfaces/v6.DefaultJobOptions.html) for more information. These don't take effect for jobs added through a `FlowProducer`; see [bullmq#1034](https://github.com/taskforcesh/bullmq/issues/1034) for an explanation.
 - `settings: AdvancedRepeatOptions` - Advanced settings for repeatable jobs. These should usually not be changed. See [AdvancedRepeatOptions](https://docs.bullmq.io/api/interfaces/v6.AdvancedRepeatOptions.html) for more information.
@@ -113,6 +114,35 @@ BullModule.registerQueue({
   name: 'video',
 });
 ```
+
+#### Pluggable backends (PostgreSQL)
+
+BullMQ supports pluggable storage backends (such as PostgreSQL) through custom backend factories. You can configure a `backendFactory` globally in `BullModule.forRoot()` or per-queue in `BullModule.registerQueue()`.
+
+```typescript
+@@filename(app.module)
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
+import { createPostgresBackend } from 'bullmq';
+
+@Module({
+  imports: [
+    BullModule.forRoot({
+      backendFactory: createPostgresBackend,
+      connection: {
+        host: 'localhost',
+        port: 5432,
+        user: 'postgres',
+        password: 'password',
+        database: 'mydb',
+      },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+The configured `backendFactory` is automatically propagated across all underlying BullMQ components (`Queue`, `Worker`, `QueueEvents`, and `FlowProducer`), including `@Processor()` and `@QueueEventsListener()` worker hosts.
 
 #### Producers
 
