@@ -3112,6 +3112,10 @@ BullMQ 6 has a PostgreSQL backend, so it's fair to ask whether its job table cou
 
 What's needed is an upstream option to run `add()` on a caller-supplied client (so the job commits with the order), plus a backend option in `@nestjs/bullmq`. With both, the job table would be the outbox, and BullMQ's workers would provide the claims, retries and failed set with no relay in between. Until then, use this outbox and publish to BullMQ from an `OutboxTransport` that calls `queue.add(topic, payload)` with the outbox message `id` as the `jobId`, so a republished message is ignored while the job still exists.
 
+#### Example
+
+A working example is available in the [37-outbox sample](https://github.com/nestjs/nest/tree/master/sample/37-outbox). It is this chapter's application as one runnable project: the order API with its [Drizzle store](/reliability/outbox#write-the-outbox-store), the in-process handlers, the analytics microservice with a database of its own, the dead-letter admin API, and the tests. It carries the tutorial's ORM alone; for the other two, see [The store with TypeORM](/reliability/outbox#the-store-with-typeorm) and [The store with Prisma](/reliability/outbox#the-store-with-prisma).
+
 #### Reference
 
 ##### Module options
