@@ -537,7 +537,7 @@ You keep calling `this.logger.log()` with an `orderId` param exactly as before: 
 
 Structured logging params carry through as well, so `orderId` stays a queryable field rather than being flattened into the message text. Log lines are also alertable in their own right, for example: "tell me when `payment declined` appears more than 10 times in 15 minutes".
 
-If you would rather keep log content in your own aggregator, you do not have to forward anything. Even with `forwardLogs` off, the SDK augments `ConsoleLogger` so every line written during a request carries that request's trace id: on a line of its own beneath the message in the default format (`Trace ID: <id>`), and as a `traceId` field with [JSON logging](#json-logging) enabled:
+If you would rather keep log content in your own aggregator, you do not have to forward anything. Even with `forwardLogs` off, the SDK augments `ConsoleLogger` so every line written during a request carries that request's trace id: at the end of the line in the default format (`   Trace ID: <id>`, after the message), and as a `traceId` field with [JSON logging](#json-logging) enabled:
 
 ```json
 {"level":"log","pid":66803,"timestamp":1789978166281,"message":"Payment captured","context":"OrdersService","traceId":"0199a3f2-7c1e-7b40-9d2a-5e8f1c3b7a64"}
