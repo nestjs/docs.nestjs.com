@@ -269,7 +269,7 @@ Forwarding logs moves them onto infrastructure you don't control, so redaction i
 | `keys`               | `string[]` | -              | Extra keys whose values are masked outright (in log attributes, captured headers and bodies, and URL query strings), on top of the built-in list. Compared case-insensitively and ignoring `-`/`_`, so `apiKey`, `api_key`, and `API-KEY` are one entry.                                                                               |
 | `replacement`        | `string`   | `'[REDACTED]'` | Text substituted for anything matched.                                                                                                                                                                                                                                   |
 
-> info **Hint** Even with `forwardLogs` off, the SDK augments `ConsoleLogger` so every line carries the current trace id (`attachTraceIdToLogs`, see [Trace correlation](#trace-correlation)). That lets you correlate your own log aggregator with traces in the dashboard without shipping the log content anywhere.
+> info **Hint** Even with `forwardLogs` off, the SDK augments `ConsoleLogger` so every line written inside a traced execution carries its trace id (`attachTraceIdToLogs`, see [Trace correlation](#trace-correlation)). That lets you correlate your own log aggregator with traces in the dashboard without shipping the log content anywhere.
 
 ##### Trace correlation
 
@@ -290,7 +290,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule({
 | --------------------- | -------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `traceIdKey`          | `string`                   | `'traceId'`                                                   | The key used to store the trace id in the request context, for later retrieval through `TracerService`.                            |
 | `traceIdGenerator`    | `(req: unknown) => string` | Adopts a well-formed `x-request-id` (HTTP header, or TCP/Redis packet metadata) if present, else a UUID v7 | Generates the trace id per request. Called with the request object for HTTP; for other protocols it receives the transport context. |
-| `attachTraceIdToLogs` | `boolean`                  | `true`                                                        | Augments `ConsoleLogger` to include the trace id in log messages, so logs can be correlated with traces even without `forwardLogs`. |
+| `attachTraceIdToLogs` | `boolean`                  | `true`                                                        | Augments `ConsoleLogger` to include the trace id in log messages, so logs can be correlated with traces even without `forwardLogs`. In the default text format the id ends the line, after the message (`   Trace ID: <id>`); with [JSON logging](/application/logger#json-logging) it is a `traceId` field. Lines written outside a traced execution are unchanged. |
 
 Because the default generator adopts an incoming `x-request-id`, a chain of HTTP services already shares one trace with no extra configuration. The same applies to the TCP and Redis microservice transports on `@nestjs/microservices` 12.0.4 or later. Propagating across gRPC, the other microservice transports, and GraphQL takes a few lines - see [Distributed tracing](/observability/distributed-tracing).
 
@@ -399,7 +399,7 @@ All options at a glance. Options listed under `createObserveModule()` must be se
 | `createObserveModule()` | `sourceContext`                       | Attach source lines to error stack frames                                 |
 | `createObserveModule()` | `traceIdKey`                          | Context key the trace id is stored under                                  |
 | `createObserveModule()` | `traceIdGenerator`                    | How each request obtains its trace id                                     |
-| `createObserveModule()` | `attachTraceIdToLogs`                 | Prefix `ConsoleLogger` output with the trace id                           |
+| `createObserveModule()` | `attachTraceIdToLogs`                 | Add the trace id to `ConsoleLogger` output                                |
 | `createObserveModule()` | `skipInstrumentation`                 | Predicate that excludes provider instances from instrumentation           |
 | `forRoot()`             | `appKey`, `appSecret`                 | Project API key pair                                                      |
 | `forRoot()`             | `endpoint`                            | Collector base URL (or `OBSERVE_ENDPOINT`)                                |
