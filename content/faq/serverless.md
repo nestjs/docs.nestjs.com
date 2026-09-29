@@ -270,8 +270,8 @@ $ npx serverless offline
 Once the application is running, open your browser and navigate to `http://localhost:3000/dev/[ANY_ROUTE]`, where `[ANY_ROUTE]` is any endpoint registered in your application.
 
 The sections above show that bundling your app with `webpack` can have a significant impact on the overall bootstrap time.
-To make it work with this example, add a few more settings to your `webpack.config.js` file. In particular,
-to make sure the `handler` function is picked up, set the `output.libraryTarget` property to `commonjs2`.
+To make it work with this example, the bundle must expose the exported `handler` function. Starting with `@nestjs/cli` v12.0.8, the default `webpack` configuration does this by setting `output.library.type` to `commonjs2`, as long as your `webpack.config.js` keeps `...options.output` when it overrides `output`.
+With older versions of the CLI, or with a configuration that doesn't extend `options.output`, add a few more settings to your `webpack.config.js` file. In particular, set the `output.libraryTarget` property to `commonjs2`.
 
 ```javascript
 return {
