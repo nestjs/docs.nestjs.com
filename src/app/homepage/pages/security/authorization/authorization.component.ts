@@ -4,7 +4,6 @@ import { HeaderAnchorDirective } from '../../../../shared/directives/header-anch
 import { RouterLink } from '@angular/router';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
-import { BannerCoursesAuthComponent } from '../../../../shared/components/banner-courses-auth/banner-courses-auth.component';
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
@@ -17,7 +16,6 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         RouterLink,
         CopyButtonComponent,
         TabsComponent,
-        BannerCoursesAuthComponent,
         ExtensionPipe,
     ],
 })
