@@ -1,0 +1,140 @@
+@use '../../../../scss/variables';
+
+// Animated "NEW" pill: a highlight circles the edge, a light sweep crosses
+// the face and a glow pulses around it.
+//
+// Every effect animates only `transform` or `opacity`, so the compositor runs
+// it without restyling or repainting the page. The badges sit inside the
+// blurred glass header and sidebar, where each repaint also re-renders the
+// backdrop blur (nestjs/docs.nestjs.com#3557). The effects also stop after a
+// few cycles, so an idle page stops producing frames altogether.
+$duration: 4.5s;
+$cycles: 3;
+
+:host {
+  position: relative;
+  // Own stacking context, so the z-index: -1 layers below paint above the
+  // pill's background but under its text.
+  isolation: isolate;
+  display: inline-block;
+  // Centred against the surrounding cap-height text rather than sitting on
+  // the baseline.
+  vertical-align: middle;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: variables.$red-gradient;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+
+// Glow: a fixed shadow faded in and out, instead of an animated box-shadow.
+:host::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: 0 0 9px 1px rgba(234, 40, 69, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  animation: glow $duration ease-out $cycles;
+}
+
+.ring,
+.shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// Highlight around the edge. The mask cuts a static 1px ring; the gradient
+// underneath rotates as a whole, rather than animating its angle.
+.ring {
+  padding: 1px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    // Twice the pill's width, so the square covers the pill at every angle.
+    width: 200%;
+    aspect-ratio: 1;
+    background: conic-gradient(
+      rgba(255, 255, 255, 0) 0deg,
+      rgba(255, 255, 255, 0.95) 45deg,
+      rgba(255, 255, 255, 0) 130deg,
+      rgba(255, 255, 255, 0) 360deg
+    );
+    transform: translate(-50%, -50%);
+    animation: spin $duration linear $cycles;
+  }
+}
+
+// Light sweep: crosses the pill, then rests off to the right for the
+// remainder of the cycle, so it reads as an occasional glint.
+.shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: translateX(-160%) skewX(-20deg);
+  animation: shimmer $duration ease-in-out $cycles;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  32%,
+  100% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host::before,
+  .ring::before,
+  .shimmer::before {
+    animation: none;
+  }
+
+  .shimmer {
+    display: none;
+  }
+}

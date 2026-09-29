@@ -228,43 +228,6 @@ body::after {
   outline: none;
 }
 
-// Registered so the conic gradient's angle can be interpolated; without
-// @property support the ring simply renders static.
-@property --badge-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes badge-border-spin {
-  to {
-    --badge-angle: 360deg;
-  }
-}
-
-// "NEW" badge: a light sweep crosses the pill, then rests for the remainder of
-// the cycle so it reads as an occasional glint rather than a constant loop.
-// Defined globally because @keyframes names are not scoped per component.
-@keyframes badge-shimmer {
-  0% {
-    transform: translateX(-160%) skewX(-20deg);
-  }
-  32%,
-  100% {
-    transform: translateX(320%) skewX(-20deg);
-  }
-}
-
-@keyframes badge-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(234, 40, 69, 0);
-  }
-  16% {
-    box-shadow: 0 0 9px 1px rgba(234, 40, 69, 0.55);
-  }
-}
-
 @keyframes page-enter {
   from {
     opacity: 0;

@@ -5,7 +5,7 @@
     >
     <div class="heading" (click)="toggle()">
       <h3>@if (isNew) {
-        <span class="new">NEW</span>
+        <app-new-badge />
       }{{ title }}</h3>
       <i class="ph ph-caret-right arrow-icon" aria-hidden="true"></i>
     </div>
@@ -57,7 +57,7 @@
           </i>
         }
         @if (isNew) {
-          <span class="new">NEW</span>
+          <app-new-badge />
           }{{ title }}
         </h3></a
         >
@@ -71,7 +71,7 @@
             </i>
           }
           @if (isNew) {
-            <span class="new">NEW</span>
+            <app-new-badge />
             }{{ title }}
           </h3>
         </a>
