@@ -7,8 +7,8 @@ import { TabsComponent } from '../../../../shared/components/tabs/tabs.component
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
-    selector: 'app-authorization',
-    templateUrl: './authorization.component.html',
+    selector: 'app-i18n',
+    templateUrl: './i18n.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
@@ -19,4 +19,4 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         ExtensionPipe,
     ],
 })
-export class AuthorizationComponent extends BasePageComponent {}
+export class I18nComponent extends BasePageComponent {}

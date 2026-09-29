@@ -15,7 +15,7 @@ This tutorial starts from the store's order API, which already has:
 
 - An `OrdersModule` with an `OrdersService` and an `OrdersController`. An `Order` has an `id`, a `userId`, `items`, a `total` in cents, and a `status` of `'pending'`, `'paid'`, `'shipped'` or `'refunded'`.
 - A `PaymentProviderClient` that wraps the payment provider's SDK. It throws a 402 `HttpException` when a card is declined, and a `ServiceUnavailableException` (503) when the provider is down.
-- An `AuthGuard` that validates the bearer token and sets `req.user` (see [Authentication](/security/authentication#implementing-the-authentication-guard)), plus a `@CurrentUser()` parameter decorator that reads it.
+- An `AuthGuard` that validates the bearer token and sets `req.user` (see [Authentication](/security/authentication#issue-tokens-to-the-mobile-app)), plus a `@CurrentUser()` parameter decorator that reads it.
 - A global `ValidationPipe`, and a TCP client for the shipping service, registered as `SHIPPING_SERVICE`.
 - Its data in PostgreSQL, through Drizzle, with the database registered by `@nestjs/drizzle` (see [Drizzle](/data/drizzle)). Using TypeORM? [Store keys in PostgreSQL](/reliability/idempotency#store-keys-in-postgresql) ends with the store for TypeORM.
 
@@ -195,7 +195,9 @@ export async function payOrder(
       });
     } catch (err) {
       // No response: the card may or may not have been charged. Same key, try again.
-      if (attempt >= maxAttempts) throw err;
+      if (attempt >= maxAttempts) {
+        throw err;
+      }
       await sleep(backoff);
       continue;
     }
@@ -510,7 +512,9 @@ describe('DrizzleIdempotencyStore on PGlite', () => {
       advanceTime: (ms) => vi.setSystemTime(Date.now() + ms),
       concurrent: true,
     });
-    for (const c of cases) it(c.name, c.run);
+    for (const c of cases) {
+      it(c.name, c.run);
+    }
   });
   // ...
 });
@@ -791,7 +795,9 @@ describe.skipIf(!postgres)(`TypeOrmIdempotencyStore on PostgreSQL${postgres ? ''
       advanceTime: (ms) => vi.setSystemTime(Date.now() + ms),
       concurrent: { callers: 32 },
     });
-    for (const c of cases) it(c.name, c.run);
+    for (const c of cases) {
+      it(c.name, c.run);
+    }
   });
 
   it('has a migration that matches the entity (what `migration:generate --check` checks)', async () => {
@@ -967,7 +973,9 @@ describe('RedisIdempotencyStore, the IdempotencyStore contract (on FakeRedis)', 
     // Redis expires keys on its own clock: the fake's.
     { advanceTime: (ms) => redis.advance(ms), concurrent: true },
   );
-  for (const c of cases) it(c.name, c.run);
+  for (const c of cases) {
+    it(c.name, c.run);
+  }
 });
 ```
 

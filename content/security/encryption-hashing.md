@@ -43,37 +43,40 @@ const decryptedText = Buffer.concat([
 
 #### Hashing
 
-For hashing, we recommend either the [bcrypt](https://www.npmjs.com/package/bcrypt) or the [argon2](https://www.npmjs.com/package/argon2) package. Nest does not provide additional wrappers on top of these modules, to avoid introducing unnecessary abstractions and to keep the learning curve short.
+To hash passwords, use `PasswordHasher` from [`@nestjs/authentication`](/security/authentication). It hashes with scrypt from `node:crypto`, at the parameters OWASP recommends (N=2^17, r=8, p=1: about 128 MiB of memory per hash), on the libuv thread pool, so it doesn't block the event loop and needs no native dependency. scrypt is memory-hard, which makes guessing passwords on GPUs far more expensive than with bcrypt.
 
-As an example, let's use `bcrypt` to hash a password.
-
-First, install the required packages:
-
-```shell
-$ npm i bcrypt
-$ npm i -D @types/bcrypt
-```
-
-Once the installation is complete, use the `hash()` function, as follows:
+When your application imports `AuthenticationModule`, `PasswordHasher` is a provider, so inject it where you store and check passwords:
 
 ```typescript
-import bcrypt from 'bcrypt';
+import { Injectable } from '@nestjs/common';
+import { PasswordHasher } from '@nestjs/authentication';
 
-const saltOrRounds = 10;
-const password = 'random_password';
-const hash = await bcrypt.hash(password, saltOrRounds);
+@Injectable()
+export class CredentialsService {
+  constructor(private readonly passwordHasher: PasswordHasher) {}
+
+  async hashPassword(password: string) {
+    return this.passwordHasher.hash(password);
+  }
+
+  async checkPassword(password: string, storedHash: string | undefined) {
+    return this.passwordHasher.verify(password, storedHash);
+  }
+}
 ```
 
-To generate a salt, use the `genSalt()` function:
+- `hash()` returns a self-describing string, such as `$scrypt$ln=17,r=8,p=1$<salt>$<hash>`: the parameters and a random salt are stored with the hash, so there is nothing else to keep.
+- `verify()` compares in constant time. Pass `undefined` for an unknown user: it checks a dummy hash instead, so the response time doesn't reveal which accounts exist.
+- Passwords are Unicode-normalized (NFKC) before hashing, so the same password typed on different keyboards verifies.
+- `hash()` refuses an empty password and one over 4 KiB with a `RangeError`, and `verify()` answers `false` for them without hashing. Any other rule, such as a minimum length, is yours to check first.
+- `needsRehash()` tells you that a stored hash was made with weaker parameters than the current ones. Check it after a successful `verify()`, and store a new hash while you have the plaintext:
 
 ```typescript
-const salt = await bcrypt.genSalt();
+if (this.passwordHasher.needsRehash(storedHash)) {
+  await this.usersRepository.updatePasswordHash(user.id, await this.passwordHasher.hash(password));
+}
 ```
 
-To check a password against a hash, use the `compare()` function:
+The cost comes from the module's `password` option: set its `logN` to 18 to double it. It has a ceiling of 1 GiB of memory and 16 times the default work per hash, so with the default `r` of 8, `logN` stops at 20; parameters beyond it throw when the hasher is created, and a stored hash made with them never verifies. Outside the module, create one yourself with `new PasswordHasher()`. In tests, a cheaper instance keeps suites fast, with `logN` set to 10.
 
-```typescript
-const isMatch = await bcrypt.compare(password, hash);
-```
-
-See the [bcrypt package documentation](https://www.npmjs.com/package/bcrypt) for the full list of available functions.
+> info **Hint** If you'd rather use argon2 or bcrypt, the [argon2](https://www.npmjs.com/package/argon2) and [bcrypt](https://www.npmjs.com/package/bcrypt) packages work with Nest as they are: call their `hash()` and `verify()` (argon2) or `compare()` (bcrypt) functions from your own provider. Both are native modules, and bcrypt reads only the first 72 bytes of a password.

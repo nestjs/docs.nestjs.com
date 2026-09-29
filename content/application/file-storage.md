@@ -158,7 +158,9 @@ export class PhotosController {
     }),
   )
   upload(@Param('id') id: string, @UploadedFile() file: StoredUpload | undefined) {
-    if (!file) throw new BadRequestException('Attach the image as the "photo" field');
+    if (!file) {
+      throw new BadRequestException('Attach the image as the "photo" field');
+    }
     return this.photosService.replace(id, file.key);
   }
 
@@ -219,7 +221,9 @@ export class PhotosService {
       await this.photos.delete(key);
       throw error;
     }
-    if (previous) await this.photos.delete(previous);
+    if (previous) {
+      await this.photos.delete(previous);
+    }
     return { id: productId, photoUrl: this.photos.url(key) };
   }
 }
@@ -428,7 +432,9 @@ export class PhotosService {
       throw new BadRequestException('Unknown upload');
     }
     const file = await this.uploads.stat(key).catch((error: unknown) => {
-      if (error instanceof StorageFileNotFoundError) throw new BadRequestException('Upload the file first');
+      if (error instanceof StorageFileNotFoundError) {
+        throw new BadRequestException('Upload the file first');
+      }
       throw error;
     });
     if (file.size > MAX_PHOTO_SIZE) {
