@@ -175,6 +175,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Resilience', path: '/reliability/resilience' },
       { title: 'Idempotency keys', path: '/reliability/idempotency' },
       { title: 'Transactional outbox', path: '/reliability/outbox' },
+      { title: 'Durable workflows', path: '/reliability/workflows' },
       { title: 'Distributed locks', path: '/reliability/locks' },
     ],
   },
