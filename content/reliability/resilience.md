@@ -128,7 +128,9 @@ export class CarrierClient {
       body: JSON.stringify(body),
       signal,
     });
-    if (!response.ok) throw new CarrierError(response.status);
+    if (!response.ok) {
+      throw new CarrierError(response.status);
+    }
     return (await response.json()) as T;
   }
 }

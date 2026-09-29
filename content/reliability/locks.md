@@ -60,7 +60,9 @@ export class InvoiceExportJob {
       .from(orders)
       .where(and(eq(orders.status, 'placed'), isNull(orders.invoicedAt)))
       .orderBy(orders.placedAt);
-    if (pending.length === 0) return;
+    if (pending.length === 0) {
+      return;
+    }
 
     const batch = await this.accountingClient.uploadInvoices(
       pending.map((order) => ({
@@ -122,7 +124,9 @@ describe.each(targets)('three instances with plain @Cron() jobs, on %s', (_, tar
   let logger: CapturingLogger;
 
   beforeEach(async (context) => {
-    if (!target) return context.skip();
+    if (!target) {
+      return context.skip();
+    }
     database = await openDatabase(target, 'locks_step_1');
     accounting = new FakeAccounting();
     warehouse = new FakeWarehouse();
@@ -133,7 +137,9 @@ describe.each(targets)('three instances with plain @Cron() jobs, on %s', (_, tar
     }
   });
   afterEach(async () => {
-    for (const app of instances ?? []) await app.close();
+    for (const app of instances ?? []) {
+      await app.close();
+    }
     await database?.close();
   });
 
@@ -304,7 +310,9 @@ describe('DrizzleLockStore on PGlite, the LockStore contract', () => {
 
   // The concurrency cases run too; with one connection, PGlite runs them one statement at a time.
   const cases = lockStoreContract(() => new DrizzleLockStore(db, new LocksStorage()), { concurrent: true });
-  for (const c of cases) it(c.name, c.run);
+  for (const c of cases) {
+    it(c.name, c.run);
+  }
 });
 ```
 
@@ -565,7 +573,9 @@ describe.skipIf(!postgres)(`TypeOrmLockStore on PostgreSQL${postgres ? '' : ` (s
   describe('the LockStore contract', () => {
     // The expiry cases wait in real time: the store reads the database's clock.
     const cases = lockStoreContract(() => new TypeOrmLockStore(dataSource, new LocksStorage()), { concurrent: { callers: 32 } });
-    for (const c of cases) it(c.name, c.run);
+    for (const c of cases) {
+      it(c.name, c.run);
+    }
   });
 
   it("keeps a key's tokens growing after the sequence went back (a restore, a failover to a lagging replica)", async () => {
@@ -1051,7 +1061,9 @@ describe('the LockStore contract', () => {
   const pool = Array.from({ length: 8 }, () => new RedisLockStore(connect(), new LocksStorage()));
   let next = 0;
   const cases = lockStoreContract(() => pool[next++ % pool.length]!, { concurrent: true });
-  for (const c of cases) it(c.name, c.run);
+  for (const c of cases) {
+    it(c.name, c.run);
+  }
 });
 ```
 
@@ -1236,14 +1248,20 @@ To test what the package is for, run several instances in one process. An instan
 ```typescript
 @@filename(test/helpers)
 export async function startInstance(options: InstanceOptions): Promise<TestingModule> {
-  if (options.database.url) process.env.DATABASE_URL = options.database.url;
+  if (options.database.url) {
+    process.env.DATABASE_URL = options.database.url;
+  }
   let builder = Test.createTestingModule({ imports: [options.module] })
     .overrideProvider(AccountingClient)
     .useValue(options.accounting)
     .overrideProvider(WarehouseClient)
     .useValue(options.warehouse);
-  if (options.database.pglite) builder = builder.overrideProvider(getDrizzleToken()).useValue(options.database.pglite);
-  if (options.locks) builder = builder.overrideProvider(LOCKS_MODULE_OPTIONS).useValue(options.locks);
+  if (options.database.pglite) {
+    builder = builder.overrideProvider(getDrizzleToken()).useValue(options.database.pglite);
+  }
+  if (options.locks) {
+    builder = builder.overrideProvider(LOCKS_MODULE_OPTIONS).useValue(options.locks);
+  }
   const app = await builder.compile();
   app.useLogger(options.logger);
   options.onCompiled?.(app);

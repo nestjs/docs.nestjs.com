@@ -223,7 +223,9 @@ export class DrizzleOutboxStore implements OutboxStore<Transaction>, OutboxInbox
 
   async add(tx: Transaction, messages: readonly OutboxMessage[]): Promise<void> {
     assertTransaction(tx);
-    if (messages.length === 0) return;
+    if (messages.length === 0) {
+      return;
+    }
     // Commit order: a transaction adding a message with the same key waits here until this
     // one commits or rolls back, so rows are numbered in the order they become visible.
     for (const lock of keyLocks(messages)) {
@@ -256,7 +258,9 @@ export class DrizzleOutboxStore implements OutboxStore<Transaction>, OutboxInbox
           .orderBy(outboxMessages.seq)
           .limit(limit)
           .for('update', { skipLocked: true });
-        if (due.length === 0) return [];
+        if (due.length === 0) {
+          return [];
+        }
         const seqs = due.map((row) => row.seq);
         await tx
           .update(outboxMessages)
@@ -331,7 +335,9 @@ export class DrizzleOutboxStore implements OutboxStore<Transaction>, OutboxInbox
   deadLetter(id: string, owner: string, update: OutboxDeadLetterUpdate): Promise<boolean> {
     return this.db.transaction(async (tx) => {
       const [row] = await tx.delete(outboxMessages).where(leasedBy(id, owner)).returning();
-      if (!row) return false;
+      if (!row) {
+        return false;
+      }
       const deadLetter = {
         id: row.id,
         seq: row.seq,
@@ -410,7 +416,9 @@ export class DrizzleOutboxStore implements OutboxStore<Transaction>, OutboxInbox
     const where = deadLetterFilter(filter);
     return this.db.transaction(async (tx) => {
       const rows = await tx.delete(outboxDeadLetters).where(where).returning();
-      if (rows.length === 0) return 0;
+      if (rows.length === 0) {
+        return 0;
+      }
       // The original seq: back ahead of the messages added after it, with the same key.
       await tx.insert(outboxMessages).values(
         rows.map((row) => ({
@@ -439,7 +447,9 @@ export class DrizzleOutboxStore implements OutboxStore<Transaction>, OutboxInbox
   }
 
   async recordInbox(tx: Transaction | undefined, consumer: string, messageId: string, now: number): Promise<boolean> {
-    if (tx !== undefined) assertTransaction(tx);
+    if (tx !== undefined) {
+      assertTransaction(tx);
+    }
     // One statement on the unique key: a concurrent delivery waits for this transaction.
     const inserted = await (tx ?? this.db)
       .insert(outboxInbox)
@@ -516,10 +526,18 @@ function leasedBy(id: string, owner: string): SQL {
 /** The filter's fields combined with AND; an empty filter is refused unless it says `all`. */
 function deadLetterFilter({ ids, topic, key, failedBefore, all }: OutboxDeadLetterFilter): SQL | undefined {
   const conditions: SQL[] = [];
-  if (ids) conditions.push(inArray(outboxDeadLetters.id, ids));
-  if (topic !== undefined) conditions.push(eq(outboxDeadLetters.topic, topic));
-  if (key !== undefined) conditions.push(eq(outboxDeadLetters.key, key));
-  if (failedBefore !== undefined) conditions.push(lt(outboxDeadLetters.failedAt, new Date(+failedBefore)));
+  if (ids) {
+    conditions.push(inArray(outboxDeadLetters.id, ids));
+  }
+  if (topic !== undefined) {
+    conditions.push(eq(outboxDeadLetters.topic, topic));
+  }
+  if (key !== undefined) {
+    conditions.push(eq(outboxDeadLetters.key, key));
+  }
+  if (failedBefore !== undefined) {
+    conditions.push(lt(outboxDeadLetters.failedAt, new Date(+failedBefore)));
+  }
   if (conditions.length === 0 && !all) {
     throw new Error('Refusing an empty dead-letter filter; pass { all: true }');
   }
@@ -587,9 +605,13 @@ describe('DrizzleOutboxStore on PGlite: the store contract', () => {
   afterAll(() => client.close());
 
   // The concurrency cases run too; with one connection, PGlite runs them one transaction at a time.
-  for (const c of outboxStoreContract(() => freshStore(db), { concurrent: true })) it(c.name, c.run);
+  for (const c of outboxStoreContract(() => freshStore(db), { concurrent: true })) {
+    it(c.name, c.run);
+  }
   describe('the inbox contract', () => {
-    for (const c of outboxInboxStoreContract(() => freshStore(db), { concurrent: true })) it(c.name, c.run);
+    for (const c of outboxInboxStoreContract(() => freshStore(db), { concurrent: true })) {
+      it(c.name, c.run);
+    }
   });
 });
 ```
@@ -721,14 +743,18 @@ export class OrdersService {
   ) {}
 
   async placeOrder({ userId, items }: PlaceOrderDto): Promise<Order> {
-    if (!items?.length) throw new BadRequestException('An order needs at least one item');
+    if (!items?.length) {
+      throw new BadRequestException('An order needs at least one item');
+    }
 
     const order = await this.db.transaction(async (tx) => {
       const ids = items.map((item) => item.productId);
       const prices = await tx.select().from(products).where(inArray(products.id, ids));
       const lines = items.map(({ productId, quantity }) => {
         const product = prices.find((row) => row.id === productId);
-        if (!product) throw new BadRequestException(`Unknown product "${productId}"`);
+        if (!product) {
+          throw new BadRequestException(`Unknown product "${productId}"`);
+        }
         if (!Number.isInteger(quantity) || quantity < 1) {
           throw new BadRequestException(`Invalid quantity for "${productId}"`);
         }
@@ -903,8 +929,12 @@ Cancelling an order produces a second analytics event for the same order. Add a 
 async cancelOrder(id: string): Promise<Order> {
   const order = await this.db.transaction(async (tx) => {
     const [row] = await tx.select().from(orders).where(eq(orders.id, id)).for('update');
-    if (!row) throw new NotFoundException(`Order ${id} not found`);
-    if (row.status !== 'placed') throw new ConflictException(`Order ${id} is ${row.status}`);
+    if (!row) {
+      throw new NotFoundException(`Order ${id} not found`);
+    }
+    if (row.status !== 'placed') {
+      throw new ConflictException(`Order ${id} is ${row.status}`);
+    }
 
     await tx.update(orders).set({ status: 'cancelled' }).where(eq(orders.id, id));
     const order: Order = { ...row, status: 'cancelled' };
@@ -1084,7 +1114,9 @@ export class OrderStatsService {
         return this.revenue(tx);
       }),
     );
-    if (outcome.duplicate) return false;
+    if (outcome.duplicate) {
+      return false;
+    }
     this.logger.log(`Order ${order.id} ${event}, revenue is now ${outcome.result}`);
     return true;
   }
@@ -1140,7 +1172,9 @@ export class AnalyticsController {
     return this.inOrder(envelope.key ?? envelope.id, async () => {
       // The envelope id is the outbox message id: stable across redeliveries.
       const recorded = await this.orderStatsService.record(envelope.id, event, envelope.payload);
-      if (!recorded) this.logger.warn(`Skipped duplicate ${envelope.topic} ${envelope.id}`);
+      if (!recorded) {
+        this.logger.warn(`Skipped duplicate ${envelope.topic} ${envelope.id}`);
+      }
     });
   }
 
@@ -1148,7 +1182,9 @@ export class AnalyticsController {
     const next = (this.queues.get(key) ?? Promise.resolve()).then(work, work);
     this.queues.set(key, next);
     const forget = () => {
-      if (this.queues.get(key) === next) this.queues.delete(key);
+      if (this.queues.get(key) === next) {
+        this.queues.delete(key);
+      }
     };
     next.then(forget, forget);
     return next;
@@ -1996,7 +2032,9 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
 
   async add(tx: EntityManager, messages: readonly OutboxMessage[]): Promise<void> {
     assertTransaction(tx);
-    if (messages.length === 0) return;
+    if (messages.length === 0) {
+      return;
+    }
     // Commit order: a transaction adding a message with the same key waits here until this
     // one commits or rolls back, so rows are numbered in the order they become visible.
     for (const lock of keyLocks(messages)) {
@@ -2030,7 +2068,9 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
         .setLock('pessimistic_write')
         .setOnLocked('skip_locked')
         .getRawMany<{ seq: string }>();
-      if (due.length === 0) return [];
+      if (due.length === 0) {
+        return [];
+      }
       const seqs = due.map((row) => row.seq);
       await manager.update(OutboxMessageEntity, { seq: In(seqs) }, { leaseOwner: owner, leaseUntil: new Date(now + leaseMs) });
 
@@ -2105,7 +2145,9 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
         where: leasedBy(id, owner),
         lock: { mode: 'pessimistic_write' },
       });
-      if (!row) return false;
+      if (!row) {
+        return false;
+      }
       await manager.delete(OutboxMessageEntity, { seq: row.seq });
       // Replaces an earlier dead letter with this id (a producer that reused a custom id).
       await manager.upsert(
@@ -2131,7 +2173,9 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
   }
 
   async release(ids: readonly string[], owner: string): Promise<number> {
-    if (ids.length === 0) return 0;
+    if (ids.length === 0) {
+      return 0;
+    }
     const { affected } = await this.dataSource.manager.update(
       OutboxMessageEntity,
       { id: In([...ids]), leaseOwner: owner },
@@ -2176,11 +2220,15 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
 
   requeueDeadLetters(filter: OutboxDeadLetterFilter, now: number): Promise<number> {
     const where = deadLetterFilter(filter);
-    if (!where) return Promise.resolve(0);
+    if (!where) {
+      return Promise.resolve(0);
+    }
     return this.dataSource.transaction(async (manager) => {
       // Locked, so a concurrent requeue or purge waits and then finds them gone.
       const rows = await manager.find(OutboxDeadLetterEntity, { where, lock: { mode: 'pessimistic_write' } });
-      if (rows.length === 0) return 0;
+      if (rows.length === 0) {
+        return 0;
+      }
       await manager.delete(OutboxDeadLetterEntity, { id: In(rows.map((row) => row.id)) });
       // The original seq: back ahead of the messages added after it, with the same key.
       await manager.insert(
@@ -2204,7 +2252,9 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
 
   async purgeDeadLetters(filter: OutboxDeadLetterFilter): Promise<number> {
     const where = deadLetterFilter(filter);
-    if (!where) return 0;
+    if (!where) {
+      return 0;
+    }
     const purge = this.dataSource.createQueryBuilder().delete().from(OutboxDeadLetterEntity);
     // TypeORM refuses an empty where: `{ all: true }` deletes without one, on purpose.
     const { affected } = await (Object.keys(where).length === 0 ? purge : purge.where(where)).execute();
@@ -2212,7 +2262,9 @@ export class TypeOrmOutboxStore implements OutboxStore<EntityManager>, OutboxInb
   }
 
   async recordInbox(tx: EntityManager | undefined, consumer: string, messageId: string, now: number): Promise<boolean> {
-    if (tx !== undefined) assertTransaction(tx);
+    if (tx !== undefined) {
+      assertTransaction(tx);
+    }
     // One statement on the unique key: a concurrent delivery waits for this transaction.
     const { raw } = await (tx ?? this.dataSource.manager)
       .createQueryBuilder()
@@ -2287,12 +2339,20 @@ function leasedBy(id: string, owner: string): FindOptionsWhere<OutboxMessageEnti
 function deadLetterFilter({ ids, topic, key, failedBefore, all }: OutboxDeadLetterFilter) {
   const where: FindOptionsWhere<OutboxDeadLetterEntity> = {};
   if (ids) {
-    if (ids.length === 0) return undefined;
+    if (ids.length === 0) {
+      return undefined;
+    }
     where.id = In(ids);
   }
-  if (topic !== undefined) where.topic = topic;
-  if (key !== undefined) where.key = key;
-  if (failedBefore !== undefined) where.failedAt = LessThan(new Date(+failedBefore));
+  if (topic !== undefined) {
+    where.topic = topic;
+  }
+  if (key !== undefined) {
+    where.key = key;
+  }
+  if (failedBefore !== undefined) {
+    where.failedAt = LessThan(new Date(+failedBefore));
+  }
   if (Object.keys(where).length === 0 && !all) {
     throw new Error('Refusing an empty dead-letter filter; pass { all: true }');
   }
@@ -2379,7 +2439,9 @@ export class OrdersService {
   ) {}
 
   async placeOrder({ userId, items }: PlaceOrderDto): Promise<Order> {
-    if (!items?.length) throw new BadRequestException('An order needs at least one item');
+    if (!items?.length) {
+      throw new BadRequestException('An order needs at least one item');
+    }
 
     const order = await this.dataSource.transaction(async (manager) => {
       const products = await manager.findBy(ProductEntity, { id: In(items.map((item) => item.productId)) });
@@ -2441,11 +2503,15 @@ describe.skipIf(!postgres)(`TypeOrmOutboxStore on PostgreSQL${postgres ? '' : ` 
   }
 
   describe('the store contract', () => {
-    for (const c of outboxStoreContract(harness, { concurrent: true })) it(c.name, c.run);
+    for (const c of outboxStoreContract(harness, { concurrent: true })) {
+      it(c.name, c.run);
+    }
   });
 
   describe('the inbox contract', () => {
-    for (const c of outboxInboxStoreContract(harness, { concurrent: true })) it(c.name, c.run);
+    for (const c of outboxInboxStoreContract(harness, { concurrent: true })) {
+      it(c.name, c.run);
+    }
   });
 
   describe('beyond the contract', () => {
@@ -2675,7 +2741,9 @@ export class PrismaOutboxStore implements OutboxStore<Transaction>, OutboxInboxS
 
   async add(tx: Transaction, messages: readonly OutboxMessage[]): Promise<void> {
     assertTransaction(tx);
-    if (messages.length === 0) return;
+    if (messages.length === 0) {
+      return;
+    }
     // Commit order: a transaction adding a message with the same key waits here until this
     // one commits or rolls back, so rows are numbered in the order they become visible.
     for (const lock of keyLocks(messages)) {
@@ -2707,7 +2775,9 @@ export class PrismaOutboxStore implements OutboxStore<Transaction>, OutboxInboxS
           ORDER BY seq
           LIMIT ${limit}
           FOR UPDATE SKIP LOCKED`;
-        if (due.length === 0) return [];
+        if (due.length === 0) {
+          return [];
+        }
         const seqs = due.map((row) => row.seq);
         await tx.outboxMessage.updateMany({
           where: { seq: { in: seqs } },
@@ -2776,7 +2846,9 @@ export class PrismaOutboxStore implements OutboxStore<Transaction>, OutboxInboxS
     return this.prismaService.$transaction(async (tx) => {
       // delete() with the lease in its where: one DELETE ... WHERE id AND lease_owner RETURNING.
       const row = await tx.outboxMessage.delete({ where: leasedBy(id, owner) }).catch(ifNotFound(null));
-      if (!row) return false;
+      if (!row) {
+        return false;
+      }
       const deadLetter = {
         seq: row.seq,
         topic: row.topic,
@@ -2847,7 +2919,9 @@ export class PrismaOutboxStore implements OutboxStore<Transaction>, OutboxInboxS
       // dead letters in one statement, so a concurrent requeue or purge can't take them too.
       const rows = await tx.$queryRaw<DeadLetterRow[]>`
         DELETE FROM outbox_dead_letters WHERE ${where} RETURNING ${DEAD_LETTER_FIELDS}`;
-      if (rows.length === 0) return 0;
+      if (rows.length === 0) {
+        return 0;
+      }
       // The original seq: back ahead of the messages added after it, with the same key.
       await tx.outboxMessage.createMany({
         data: rows.map((row) => ({
@@ -2872,7 +2946,9 @@ export class PrismaOutboxStore implements OutboxStore<Transaction>, OutboxInboxS
   }
 
   async recordInbox(tx: Transaction | undefined, consumer: string, messageId: string, now: number): Promise<boolean> {
-    if (tx !== undefined) assertTransaction(tx);
+    if (tx !== undefined) {
+      assertTransaction(tx);
+    }
     // INSERT ... ON CONFLICT DO NOTHING on the unique key: a concurrent delivery waits for
     // this transaction. The count says whether this call inserted the record.
     const { count } = await (tx ?? this.prismaService).outboxInbox.createMany({
@@ -2935,10 +3011,18 @@ function leasedBy(id: string, owner: string) {
 /** The filter's fields combined with AND; an empty filter is refused unless it says `all`. */
 function deadLetterFilter({ ids, topic, key, failedBefore, all }: OutboxDeadLetterFilter): Prisma.Sql {
   const conditions: Prisma.Sql[] = [];
-  if (ids) conditions.push(ids.length === 0 ? Prisma.sql`FALSE` : Prisma.sql`id IN (${Prisma.join(ids)})`);
-  if (topic !== undefined) conditions.push(Prisma.sql`topic = ${topic}`);
-  if (key !== undefined) conditions.push(Prisma.sql`key = ${key}`);
-  if (failedBefore !== undefined) conditions.push(Prisma.sql`failed_at < ${new Date(+failedBefore)}`);
+  if (ids) {
+    conditions.push(ids.length === 0 ? Prisma.sql`FALSE` : Prisma.sql`id IN (${Prisma.join(ids)})`);
+  }
+  if (topic !== undefined) {
+    conditions.push(Prisma.sql`topic = ${topic}`);
+  }
+  if (key !== undefined) {
+    conditions.push(Prisma.sql`key = ${key}`);
+  }
+  if (failedBefore !== undefined) {
+    conditions.push(Prisma.sql`failed_at < ${new Date(+failedBefore)}`);
+  }
   if (conditions.length === 0 && !all) {
     throw new Error('Refusing an empty dead-letter filter; pass { all: true }');
   }
@@ -2953,7 +3037,9 @@ function toJson(value: unknown) {
 /** Turns Prisma's "record to delete does not exist" (P2025) into `fallback`. */
 function ifNotFound<T>(fallback: T) {
   return (error: unknown): T => {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') return fallback;
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return fallback;
+    }
     throw error;
   };
 }
@@ -3042,7 +3128,9 @@ export class OrdersService {
   ) {}
 
   async placeOrder({ userId, items }: PlaceOrderDto): Promise<Order> {
-    if (!items?.length) throw new BadRequestException('An order needs at least one item');
+    if (!items?.length) {
+      throw new BadRequestException('An order needs at least one item');
+    }
 
     const order = await this.prismaService.$transaction(async (tx) => {
       const products = await tx.product.findMany({ where: { id: { in: items.map((item) => item.productId) } } });
