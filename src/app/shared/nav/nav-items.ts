@@ -143,6 +143,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Server-Sent Events', path: '/http/server-sent-events' },
       { title: 'Model-View-Controller', path: '/http/mvc' },
       { title: 'Performance (Fastify)', path: '/http/performance' },
+      { title: 'Webhooks', path: '/http/webhooks' },
     ],
   },
   {
