@@ -4,7 +4,9 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { EventsComponent } from './events/events.component';
 import { FileStorageComponent } from './file-storage/file-storage.component';
 import { HttpClientComponent } from './http-client/http-client.component';
+import { I18nComponent } from './i18n/i18n.component';
 import { LoggerComponent } from './logger/logger.component';
+import { MailComponent } from './mail/mail.component';
 import { QueuesComponent } from './queues/queues.component';
 import { SerializationComponent } from './serialization/serialization.component';
 import { TaskSchedulingComponent } from './task-scheduling/task-scheduling.component';
@@ -55,6 +57,16 @@ export const APPLICATION_ROUTES: Routes = [
     path: 'file-storage',
     component: FileStorageComponent,
     data: { title: 'File storage' },
+  },
+  {
+    path: 'i18n',
+    component: I18nComponent,
+    data: { title: 'Internationalization' },
+  },
+  {
+    path: 'mail',
+    component: MailComponent,
+    data: { title: 'Mail' },
   },
   // The Axios-based HTTP module chapter, replaced by the HTTP client.
   { path: 'http-module', redirectTo: movedTo('/application/http-client') },
