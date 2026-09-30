@@ -105,7 +105,7 @@ async findOne(uuid) {
 }
 ```
 
-> info **Hint** By default, `ParseUUIDPipe` accepts a UUID of any version. To require a specific version, pass the `version` option (`'3'`, `'4'`, `'5'`, or `'7'`).
+> info **Hint** By default, `ParseUUIDPipe` accepts a UUID of any version (versions 1 through 8, Nil, and Max UUIDs). To require a specific version, pass the `version` option (`'1'`, `'2'`, `'3'`, `'4'`, `'5'`, `'6'`, `'7'`, or `'8'`).
 
 Binding validation pipes works slightly differently; we cover it later in this chapter.
 
