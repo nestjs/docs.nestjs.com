@@ -39,10 +39,10 @@ export function applyHeadingRenderer(renderer: Renderer): () => void {
   renderer.heading = function (token: Tokens.Heading) {
     const text = this.parser.parseInline(token.tokens);
     const id = slugger.slug(token.text);
-    if (token.depth !== 4) {
+    if (token.depth !== 4 && token.depth !== 5) {
       return `<h${token.depth} id="${id}">${text}</h${token.depth}>\n`;
     }
-    return `<h4 appAnchor id="${id}"><span>${text}</span></h4>\n`;
+    return `<h${token.depth} appAnchor id="${id}"><span>${text}</span></h${token.depth}>\n`;
   };
 
   // marked v2 created a fresh Slugger for every marked() call; the caller must

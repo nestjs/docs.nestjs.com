@@ -148,7 +148,8 @@
     margin: 40px 0 -5px;
   }
   h3,
-  h4 {
+  h4,
+  h5 {
     a {
       @include utils.opacity(0);
       margin-left: 0.1em;
@@ -170,10 +171,9 @@
     }
   }
   h5 {
-    color: var(--color);
     margin: 30px 0 -5px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 16px;
   }
   h3:first-of-type {
     margin: 20px 0;
