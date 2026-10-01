@@ -29,11 +29,35 @@ Outgoing webhooks are outbox messages, and incoming ones are deduplicated with t
 
 The example application, the online store's order API, keeps its catalog, the partners that call it, and their orders in three tables of its own, which the later sections read and write. They're the example's data, not something webhooks need: the webhooks' and the outbox's tables belong to their stores, which create them, as [Keep webhooks in your database](/http/webhooks#keep-webhooks-in-your-database) shows.
 
-| Table | Columns | What it's for |
+`products` is the catalog:
+
+| Column | Type | Notes |
 | --- | --- | --- |
-| `products` | `id`, `name`, `price` (in cents) | The catalog |
-| `partners` | `id`, `name`, `api_key_hash` (the SHA-256 of the partner's API key, in hex; unique) | The cat shelters and resellers that buy in bulk over the API, and receive its webhooks |
-| `orders` | `id`, `partner_id`, `items` (JSON: each line's product, quantity and unit price), `total` (in cents), `status`, `payment_id`, `tracking_number` | The partners' orders. `status` goes from `placed` to `paid` (with `payment_id`) and `shipped` (with `tracking_number`), or to `cancelled` |
+| `id` | `text` | Primary key, such as `salmon-kibble-2kg` |
+| `name` | `text` | The display name, such as `Salmon kibble, 2 kg` |
+| `price` | `integer` | In cents |
+
+`partners` holds the cat shelters and resellers that buy in bulk over the API, and receive its webhooks:
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | `text` | Primary key, such as `northside` |
+| `name` | `text` | The display name, such as `Northside Pet Supplies` |
+| `api_key_hash` | `text` | The SHA-256 of the partner's API key, in hex. Unique |
+
+`orders` holds the partners' orders, whose `status` goes from `placed` to `paid` and `shipped`, or to `cancelled`:
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | `text` | Primary key |
+| `partner_id` | `text` | References `partners.id` |
+| `items` | `jsonb` | The order's lines, as a JSON array: each line's `productId`, `quantity` and unit `price` (in cents) |
+| `total` | `integer` | In cents |
+| `status` | `text` | `placed`, `paid`, `shipped` or `cancelled` |
+| `payment_id` | `text` | Nullable: set when the order is paid |
+| `tracking_number` | `text` | Nullable: set when the order is shipped |
+
+The other columns aren't nullable.
 
 The catalog has two products, `salmon-kibble-2kg` at 2499 cents and `clumping-litter-10l` at 1599 cents, and the two partners have sample API keys (issue real ones from your partner onboarding):
 

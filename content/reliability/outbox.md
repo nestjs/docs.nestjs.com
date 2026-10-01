@@ -33,10 +33,27 @@ $ npm i --save @nestjs/outbox
 
 The example application, the online store's order API, keeps its products and orders in two tables of its own, which the later sections read and write. They're the example's data, not something the outbox needs: the outbox's tables belong to its store, which creates them, as [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) shows.
 
-| Table | Columns | What it's for |
+`products` is the catalog, and reserving stock for an order moves units from its `in_stock` to its `reserved`:
+
+| Column | Type | Notes |
 | --- | --- | --- |
-| `products` | `id`, `name`, `price` (in cents), `in_stock`, `reserved` | The catalog. Reserving stock for an order moves units from `in_stock` to `reserved` |
-| `orders` | `id`, `user_id`, `items` (JSON: each line's product, quantity and unit price), `total` (in cents), `status` (`placed` or `cancelled`) | The orders that `POST /orders` saves |
+| `id` | `text` | Primary key, such as `salmon-kibble-2kg` |
+| `name` | `text` | The display name, such as `Salmon kibble, 2 kg` |
+| `price` | `integer` | In cents |
+| `in_stock` | `integer` | The units available to order |
+| `reserved` | `integer` | The units held for placed orders. Defaults to `0` |
+
+`orders` holds the orders that `POST /orders` saves:
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | `text` | Primary key |
+| `user_id` | `text` | The customer who placed the order |
+| `items` | `jsonb` | The order's lines, as a JSON array: each line's `productId`, `quantity` and unit `price` (in cents) |
+| `total` | `integer` | In cents |
+| `status` | `text` | `placed` or `cancelled` |
+
+No column in either table is nullable.
 
 The catalog has two products: `salmon-kibble-2kg`, at 2499 cents with 10 in stock, and `clumping-litter-10l`, at 1599 cents with one in stock.
 
@@ -506,9 +523,15 @@ The `order.placed` message for the in-process handlers has no key, on purpose. A
 
 The analytics service is a separate Nest application, and like any service it owns its data: a PostgreSQL database of its own, with its own schema and migrations. It never reads the order API's tables. It records each order event in a table of its own, again the example's data:
 
-| Table | Columns | What it's for |
+`order_events` has one row per order event, and the revenue is the sum of its `amount` column:
+
+| Column | Type | Notes |
 | --- | --- | --- |
-| `order_events` | `seq` (generated, in arrival order), `order_id` (indexed), `event` (`placed` or `cancelled`), `amount` (in cents), `recorded_at` | One row per order event. `amount` is the change to revenue: the order's total when it's placed, minus it when it's cancelled, so the revenue is the sum of `amount` |
+| `seq` | `bigint`, generated identity | Primary key, in arrival order |
+| `order_id` | `text` | Indexed |
+| `event` | `text` | `placed` or `cancelled` |
+| `amount` | `integer` | The change to revenue, in cents: the order's total when it's placed, minus it when it's cancelled |
+| `recorded_at` | `timestamptz` | Defaults to `now()` |
 
 Being an application of its own, it has its own root module, `AppModule`, which registers `OutboxModule` and the store once, as the order API's does. The service only consumes, so the relay is turned off, and the store runs on the service's own database. `OutboxInbox` keeps the service's inbox there, next to `order_events`, so an event and the record that it was processed commit together. The store's tables for messages stay empty, and with the relay off, nothing polls them:
 
