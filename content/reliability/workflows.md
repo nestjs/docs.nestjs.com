@@ -70,7 +70,7 @@ export interface FulfilmentResult {
 }
 ```
 
-#### Register the module
+##### Register the module
 
 Import `WorkflowsModule` once, in the root module, next to [`DrizzleModule`](/data/drizzle), which registers the Drizzle database that `@InjectDrizzle()` injects. Workflow classes are ordinary providers, so they go in `providers` next to the services they inject. This is the finished module: the workflows and the controllers it lists are written in the following sections, and the first provider is the package's PostgreSQL store, which [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) explains.
 
@@ -153,28 +153,15 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-#### Keep workflows in your database
-
-There's nothing to create for workflows: no tables, entities or Prisma models. Register the package's store, and the store creates its own schema, `nest_workflows`, and migrates it: at startup in development and in tests, and in production with `npx nest-workflows migrate`, or with `migrationSql()` in your own migrations.
+##### Keep workflows in your database
 
 Workflow instances, their journals, the signals they wait for and the signals sent live in a **store**. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every running order, and two processes don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
-On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nestjs/workflows/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider, registered once, in the root module, next to `WorkflowsModule`: both are application-wide. `AppModule` creates it with a factory that injects the Drizzle database and the `WorkflowStorage` registry, which the store registers itself with:
-
-```typescript
-@@filename(app.module)
-{
-  // Instances and journals in your database, in a schema of their own (nest_workflows)
-  provide: PostgresWorkflowStore,
-  inject: [getDrizzleToken(), WorkflowStorage],
-  useFactory: (db: Database, workflowStorage: WorkflowStorage) =>
-    new PostgresWorkflowStore({ executor: fromDrizzle(db) }, workflowStorage),
-},
-```
+On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nestjs/workflows/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions. It's an ordinary provider, registered once, in the root module, next to `WorkflowsModule`: both are application-wide. In `AppModule` above, it's the first provider: a factory that injects the Drizzle database and the `WorkflowStorage` registry, which the store registers itself with.
 
 `fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `WorkflowStorage: PostgresWorkflowStore`.
 
-**The schema.** The store keeps its tables in a schema of its own, `nest_workflows` (the `schema` option names another). On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_workflows_instances` and so on.
+**The schema.** There's nothing to create for workflows: no tables, entities or Prisma models. The store keeps its tables in a schema of its own, `nest_workflows` (the `schema` option names another), and creates and migrates it itself. On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_workflows_instances` and so on.
 
 | Table | What it holds |
 | --- | --- |
@@ -203,7 +190,7 @@ Migrated schema "nest_workflows" to version 1 (applied 1).
 
 With `migrate` off, a store whose schema is behind fails the startup with a `WorkflowSchemaError` that names these three ways, and fails every call the same way until the schema catches up, which it notices without a restart. Migrations only ever add tables, columns and indexes, so during a rolling deploy, the previous version of your application keeps running on the migrated schema. There are no down migrations.
 
-**Transactions.** `start()` and `signal()` take your transaction as their `transaction` option: with Drizzle, the `tx` that `db.transaction()` hands its callback, as [Start it with the order, and report its status](/reliability/workflows#start-it-with-the-order-and-report-its-status) shows. The store runs its statements on that transaction, so they commit or roll back with your writes. It refuses the database itself, whose statements would commit on their own, with a `TypeError` that says what to pass. With the other executors, pass a node-postgres client after `BEGIN` (not the pool), TypeORM's `EntityManager` from `dataSource.transaction()`, Prisma's interactive transaction client, or a Kysely transaction.
+**Transactions.** `start()` and `signal()` take your transaction as their `transaction` option: with Drizzle, the `tx` that `db.transaction()` hands its callback, as [Start it with the order](/reliability/workflows#start-it-with-the-order) shows. The store runs its statements on that transaction, so they commit or roll back with your writes. It refuses the database itself, whose statements would commit on their own, with a `TypeError` that says what to pass. With the other executors, pass a node-postgres client after `BEGIN` (not the pool), TypeORM's `EntityManager` from `dataSource.transaction()`, Prisma's interactive transaction client, or a Kysely transaction.
 
 **Isolation.** The store relies on READ COMMITTED, PostgreSQL's default isolation level: its statements race each other, and under a stricter level they would fail with serialization errors. At startup, it checks the database's `default_transaction_isolation`, and fails if it's stricter. A `signal()` in your transaction needs a READ COMMITTED transaction too, or its wake-ups could miss waits committed after the transaction's snapshot: it's refused with a `TypeError` otherwise.
 
@@ -220,7 +207,7 @@ With `migrate` off, a store whose schema is behind fails the startup with a `Wor
 },
 ```
 
-Where the tutorial passes Drizzle's `tx` to `start()` and `signal()`, pass the `EntityManager` that `dataSource.transaction()` hands its callback. The store refuses `dataSource.manager`, whose writes would commit on their own. This is the order service's `place()`, from [Start it with the order, and report its status](/reliability/workflows#start-it-with-the-order-and-report-its-status), with TypeORM:
+Where the tutorial passes Drizzle's `tx` to `start()` and `signal()`, pass the `EntityManager` that `dataSource.transaction()` hands its callback. The store refuses `dataSource.manager`, whose writes would commit on their own. This is the order service's `place()`, from [Start it with the order](/reliability/workflows#start-it-with-the-order), with TypeORM:
 
 ```typescript
 @@filename(typeorm/orders.service)
@@ -387,7 +374,9 @@ If one item is out of stock, its step fails, the others finish, and the compensa
 
 The class is a singleton shared by every running order, and constructor injection works as usual. Keep per-order state in local variables, never on `this`.
 
-#### Start it with the order, and report its status
+#### Start the workflow
+
+##### Start it with the order
 
 An order and its fulfilment belong together: an order that nothing fulfils is as bad as a fulfilment charging for an order that was never saved. So `OrdersService` saves the order and starts the workflow in one Drizzle transaction. `WorkflowClient` starts instances; pass it the transaction's `tx`:
 
@@ -446,6 +435,10 @@ export class OrdersService {
 
 With `transaction`, the store creates the instance through the transaction your ORM handed the callback, so it commits with the order, or rolls back with it if anything later in the callback fails. The worker only ever sees committed instances: it picks this one up at its next poll after the commit. Pass the transaction, not the database, which the store refuses: `start()` without the option writes on its own, which is the dual write the option removes. With TypeORM, pass the transaction's `EntityManager`, and with Prisma, the transaction client, as [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) shows.
 
+The instance id comes from the order id, which makes `start()` idempotent. Starting the same id with the same input returns the existing instance with `created: false`, and a different input throws `WorkflowIdConflictError`. A reconciliation job can call it again for an order without charging twice.
+
+##### Report its status
+
 The controller places orders and reports where their fulfilment stands:
 
 ```typescript
@@ -488,9 +481,7 @@ export class OrdersController {
 }
 ```
 
-The instance id comes from the order id, which makes `start()` idempotent. Starting the same id with the same input returns the existing instance with `created: false`, and a different input throws `WorkflowIdConflictError`. A reconciliation job can call it again for an order without charging twice.
-
-`getStatus()` returns the instance: its `status`, `wakeAt`, the signals it `waits` for, its `error` or `output`, and, with the `journal` option, every step. The statuses are `pending`, `running`, `suspended`, `compensating`, `completed`, `failed`, `cancelled` and `compensation_failed`; [Operate workflows](/reliability/workflows#operate-workflows) says what each one means and what to do about it. The endpoint maps the instance to a small view. Don't return the raw instance to customers, because it includes the input and lease details.
+`getStatus()` returns the instance: its `status`, `wakeAt`, the signals it `waits` for, its `error` or `output`, and, with the `journal` option, every step. The statuses are `pending`, `running`, `suspended`, `compensating`, `completed`, `failed`, `cancelled` and `compensation_failed`; [What each status means](/reliability/workflows#what-each-status-means) says what each one means and what to do about it. The endpoint maps the instance to a small view. Don't return the raw instance to customers, because it includes the input and lease details.
 
 The `stage` comes from the workflow. `ctx.setStatus()` sets the instance's **custom status**, a JSON value of up to 16 KiB that `getStatus()` and `list()` return as `customStatus`: here, a word for where the order stands. Set it in `run()` as the order moves on, and to `delivered` once the carrier has delivered it (in [Sleep for a week, then ask for a review](/reliability/workflows#sleep-for-a-week-then-ask-for-a-review)):
 
@@ -511,7 +502,9 @@ ctx.setStatus('awaiting-delivery');
 
 The status isn't journaled. Every execution replays `run()`, and with it the `setStatus()` calls, so each execution sets the status again on its way through, and a status set in a loop doesn't grow the journal. The workflow never reads it back, so nothing it decides depends on it. It's written with the instance's next write: when the next step starts, when the instance parks, or when it ends. So the endpoint shows `paid` while `reserve-stock` waits for a retry, and `awaiting-delivery` once the instance parks for the carrier. A status the workflow no longer changes stays, such as `awaiting-delivery` on a cancelled order: `status` tells what happened. A value that isn't JSON, or takes more than 16 KiB as JSON, fails the instance with a `TypeError`, and `undefined` clears the status. Each written change is emitted as a `custom-status` event.
 
-#### Wait for the delivery webhook
+#### Wait for signals and timers
+
+##### Wait for the delivery webhook
 
 Next, the workflow waits for the carrier. The webhook and the workflow share a signal: a name and the type of its payload, defined once, so neither side can misspell the name or send the wrong shape:
 
@@ -597,7 +590,7 @@ export class CarrierWebhookController {
 
 The controller answers `200` only after the transaction has committed. A delivery for an order the store doesn't know rolls back with a `404`, leaving no signal behind, and if the database fails, the carrier gets an error and delivers the webhook again. Signals sent in a transaction queue behind each other until it ends, so keep such transactions short. On PostgreSQL, the transaction must use the default READ COMMITTED isolation; the store refuses a stricter one, which could miss a wait registered while it ran. On MySQL, the default REPEATABLE READ works as well.
 
-#### Wait for whichever comes first
+##### Wait for whichever comes first
 
 The carrier doesn't always deliver. When it can't, it brings the parcel back to the warehouse and reports `shipment.returned`. Declare a second signal, next to the first:
 
@@ -638,7 +631,7 @@ const delivery = outcome.value;
 
 The outcome is journaled as one entry under the wait's name, so every later execution gets the same winner. When several conditions are ready at once, the signal recorded first wins, whichever condition it matched. A signal sent after a timer's deadline doesn't count, as with `waitForSignal()`'s `timeout`, and timers count from when the wait is first reached. Only the winning signal is taken: a return reported after the delivery would stay for a later wait of the same instance. To wait for all of several signals instead, await several `waitForSignal()` calls with `Promise.all()`: each is journaled on its own, and the instance parks once for all of them. A child workflow can be a condition too, as [Start child workflows](/reliability/workflows#start-child-workflows) shows.
 
-#### Sleep for a week, then ask for a review
+##### Sleep for a week, then ask for a review
 
 Finish `run()` with the point of no return, a durable timer and the last step:
 
@@ -661,7 +654,19 @@ return { chargeId: charge.chargeId, trackingNumber: delivery.trackingNumber };
 
 `ctx.commit()` marks the point of no return. Once the parcel is delivered, refunding the charge would be wrong, whatever happens next. `commit()` discards the compensations registered so far. If the review email then fails for good, the instance ends as `failed` with the step's error, and nothing is refunded or released. A cancel past this point doesn't undo anything either. Only the steps after `commit()` register compensations that can still run. The commit point is journaled under its name, so it replays like a step, and the status endpoint lists it as `delivered`.
 
-#### Let customer support cancel an order
+##### Time out the whole workflow
+
+A wait's `timeout` bounds one wait, and a step's `timeout` one attempt. To bound a whole instance, give the workflow a run timeout:
+
+```typescript
+@Workflow('order-fulfilment', { timeout: '30d' })
+```
+
+The deadline is the instance's start plus the timeout, stored with the instance as its `deadline`, so it holds across restarts and deploys, and a parked instance wakes for it even when its sleep or wait would end later. Once it passes, the instance stops at its next `ctx` call (a step that is running finishes first), its compensations run, and it ends as `failed` with a `WorkflowTimeoutError`. Compensations aren't bound by the deadline. Here the wait gives up after 3 days and the sleep takes 7, so 30 days is a safety net. `start()` takes a `timeout` option too, which overrides the decorator's for that instance.
+
+#### Cancel and operate workflows
+
+##### Let customer support cancel an order
 
 Add a `cancel()` route to `OrdersController`, and `ConflictException` and `HttpCode` to its `@nestjs/common` import. `OrdersService.markCancelled()` sets the order's status:
 
@@ -688,17 +693,60 @@ async cancel(@Param('id') id: string, @Body('reason') reason: string) {
 
 Once the carrier has reported the delivery, the route answers `409`, because support should start a return instead. The workflow doesn't rely on that check. A cancel that reaches it after `ctx.commit('delivered')` stops the review request and refunds nothing. A cancel it sees before it has consumed the delivery event still refunds, because it hasn't reached its point of no return yet.
 
-#### Time out the whole workflow
+##### What each status means
 
-A wait's `timeout` bounds one wait, and a step's `timeout` one attempt. To bound a whole instance, give the workflow a run timeout:
+An instance's `status` says what it's doing, and whether it needs you:
+
+| Status | What it means | What to do |
+| --- | --- | --- |
+| `pending` | Started, and not yet claimed by a worker. One that stays `pending` waits for a concurrency slot or room in a rate-limit window, or is of a version no running worker registers | Nothing while a limit holds it. Otherwise, deploy a worker with that version, or delete the instance |
+| `running` | A worker holds its lease and executes it | Nothing. `cancel()` stops it at its next `ctx` call, and `terminate()` without compensating |
+| `suspended` | Parked on a sleep, a wait or a retry's backoff, until `wakeAt` or a signal | Nothing. A signal or `cancel()` wakes it |
+| `compensating` | Undoing its completed steps after a failure or a cancel | Nothing: it ends as `failed`, `cancelled` or `compensation_failed`. `terminate()` stops the undo |
+| `completed` | Done, with the result of `run()` as its `output` | Nothing, until retention purges it |
+| `cancelled` | Cancelled, after its compensations ran, or terminated without them (`error.name` is `WorkflowTerminatedError`). `error.message` is the reason | Nothing, until retention purges it |
+| `failed` | A step gave up, `ctx.fail()` was called, the run timeout passed or the journal hit its limit, and then its compensations ran. Or a definition error, such as a deploy that broke replay, failed it without compensating | If no compensation ran, fix the cause and retry it. Otherwise it's done: its completed steps were undone |
+| `compensation_failed` | An undo gave up halfway. `error` is the original failure, with the compensation's own error as `error.compensation` | Fix the cause, such as a warehouse API that was down, and retry it. Or finish the undo by hand and delete the instance |
+
+##### Retry, delete or terminate
+
+`WorkflowClient` has the actions for the table's last column. Call them from a staff-only route or a script:
 
 ```typescript
-@Workflow('order-fulfilment', { timeout: '30d' })
+await this.workflowClient.retry(fulfilmentId(orderId));
+await this.workflowClient.delete(fulfilmentId(orderId));
+await this.workflowClient.terminate(fulfilmentId(orderId), 'Refunded by hand after a chargeback.');
 ```
 
-The deadline is the instance's start plus the timeout, stored with the instance as its `deadline`, so it holds across restarts and deploys, and a parked instance wakes for it even when its sleep or wait would end later. Once it passes, the instance stops at its next `ctx` call (a step that is running finishes first), its compensations run, and it ends as `failed` with a `WorkflowTimeoutError`. Compensations aren't bound by the deadline. Here the wait gives up after 3 days and the sleep takes 7, so 30 days is a safety net. `start()` takes a `timeout` option too, which overrides the decorator's for that instance.
+- **`retry()`** runs a `failed` instance again from its journal: completed steps return their results, the step that gave up gets its attempts back, and sleeps and waits the instance left behind start over. A deploy that broke replay is retried once the fixed code runs. It refuses an instance whose compensations ran, since resuming would build on undone work: start a new instance instead. An instance past its run timeout needs a new one, as the `timeout` option (counted from now), or `false` for none. A `compensation_failed` instance runs the compensations that didn't complete again, each with its attempts back, and ends as it would have: `failed` or `cancelled`.
+- **`delete()`** removes a finished instance with its journal. An unfinished one needs the `force` option, and goes without running its compensations: use it for an instance no worker can run any more, such as one of a version you no longer deploy.
+- **`cancel()`**, as above, stops an instance that is still running, and runs its compensations.
+- **`terminate()`** stops an instance without running its compensations, for one whose undo mustn't or can't run, such as an order support has already refunded by hand. A parked instance stops at once, a running one at its next `ctx` call, and a compensating one after the compensation it's running. It ends as `cancelled`, with a `WorkflowTerminatedError` whose message is the reason (`Terminated.` without one). It's accepted after a `cancel()` too, which it replaces, and a `cancel()` after it is refused. Its children get their `parentClose`, as for any end.
 
-#### Limit how many run at once
+`retry()` and `delete()` throw a `WorkflowStateError`, whose `status` is `409`, for a status where they make no sense, and when another change to the instance races them. A retry is journaled as `$retry:1`, `$retry:2` and so on, with the status and error it retried, and both actions are emitted, as `workflow-retried` and `workflow-deleted`.
+
+##### Purge finished instances
+
+Finished instances stay, with their journals, until you purge them. `purge()` deletes the ones that finished longer ago than its `olderThan` option, a batch at a time, and the signals no instance can take any more. An instance only takes signals sent after it started, so once every unfinished instance started after a signal, and the signal is older than `olderThan`, it goes; the newest signal always stays. `compensation_failed` instances wait for a person, so they're purged only when you list them in the `status` option. Run it every night, on one instance of your application, with `@Cron()` from `@nestjs/schedule` and `@OnOneInstance()` from [`@nestjs/locks`](/reliability/locks):
+
+```typescript
+@Injectable()
+export class WorkflowRetentionJob {
+  constructor(private readonly workflowClient: WorkflowClient) {}
+
+  @Cron('30 3 * * *')
+  @OnOneInstance({ key: 'workflows:purge' })
+  async purge() {
+    return this.workflowClient.purge({ olderThan: '30d' });
+  }
+}
+```
+
+`purge()` resolves with the number of `instances` and `signals` it deleted, and of the rate-limit windows that ended (`rateLimits`). A signal's `id` deduplicates for as long as the signal is stored, so keep `olderThan` longer than any sender's redelivery window, such as your carrier's webhook retries.
+
+#### Limits, children and batch work
+
+##### Limit how many run at once
 
 A worker runs every due instance it has room for. Three options decide what runs, and in what order, across every worker: a concurrency limit, a rate limit and a priority. The fulfilment sets the first two in `@Workflow()`:
 
@@ -732,7 +780,7 @@ Since instances without a priority go first, once orders have one, other work ne
 
 Limits come from the highest registered version of the workflow and apply to all its versions, and each process applies the limits of the code it runs, so deploy a change to them everywhere. Claims never admit more than the limits allow, but can admit less for a moment: workers polling at the same time can take a few polls to fill a short window, and with both a concurrency key and a rate-limit key, a candidate that one kind of key passes over waits for the next claim. Claims also sort the due instances by priority, which the index on `wake_at` doesn't give them: cheap while few instances are due, noticeable with a large backlog. `drain()` stops when nothing left can start.
 
-#### Start child workflows
+##### Start child workflows
 
 Shipping grows: book the carrier's pickup, cancel it if the order is undone, then wait for the delivery or the return. It's a process of its own, with its own steps, retries and status, so give it a workflow of its own, and run it as a **child** of the fulfilment:
 
@@ -787,7 +835,7 @@ Register `ShipmentWorkflow` and `CarrierClient` as providers, next to the fulfil
 - **`parentClose`** decides what happens to a child that is still running when its parent ends or starts compensating: `'cancel'`, the default, cancels it, and its compensations run; `'terminate'` stops it without them; `'abandon'` leaves it running. When support cancels the order, the shipment is cancelled with it, and the pickup with the shipment.
 - A child inherits its parent's priority, unless `startChild()` gets one, and takes `concurrencyKey` and `rateLimitKey` options as `start()` does. `getStatus()` with the `children` option lists an instance's children, each with its `parentId`, and `list()` pages through them by `parentId`.
 
-#### Long-running steps
+##### Long-running steps
 
 A step can run for hours. While it runs, the worker keeps renewing the lease in the background. For long batch work, checkpoint progress so a crash doesn't restart the job from zero. Here, a monthly batch renders invoices one page at a time:
 
@@ -829,7 +877,7 @@ export class InvoiceBatchWorkflow implements WorkflowRunner<{ month: string }, {
 - `heartbeatTimeout` fails an attempt that stops calling `heartbeat()`, such as one stuck on a hung socket, while the process is still alive. A `timeout` option caps the attempt's total duration.
 - `signal` is aborted on shutdown, on a lost lease and on those timeouts. Pass it to your I/O.
 
-The next section starts the batch every month. When the work belongs on processes of its own, such as a pool of PDF renderers, hand it to a [BullMQ](/application/queues) queue from a step, and wait for the job to report back with a signal. The job id is the step's `idempotencyKey`, so a retried step doesn't enqueue it twice:
+A schedule, below, starts the batch every month. When the work belongs on processes of its own, such as a pool of PDF renderers, hand it to a [BullMQ](/application/queues) queue from a step, and wait for the job to report back with a signal. The job id is the step's `idempotencyKey`, so a retried step doesn't enqueue it twice:
 
 ```typescript
 await ctx.step('enqueue-render', async ({ idempotencyKey }) => {
@@ -846,7 +894,7 @@ await this.workflowClient.signal(invoicesRendered, result, { key: job.data.month
 
 The `id` stores the signal once when BullMQ runs the job again, and a job that finishes before the workflow reaches the wait still counts, because signals are durable.
 
-#### Run workflows on a schedule
+##### Run workflows on a schedule
 
 The invoices are due on the 1st of every month. Instead of a cron job that starts the batch, declare a schedule on the workflow:
 
@@ -901,7 +949,7 @@ await this.workflowClient.schedules.upsert(`reorder-reminder-${user.id}`, {
 
 `upsert()` and `remove()` refuse a declared schedule, which you change in the code.
 
-#### Wait for a result
+##### Wait for a result
 
 Most callers start a workflow and move on. Some need its result: an accountant who wants a month's invoices now, before the schedule renders them, calls a route that renders them and answers with the count. `startAndWait()` starts the instance and waits for it to end:
 
@@ -994,7 +1042,23 @@ export class OrderFulfilmentWorkflowV2 implements WorkflowRunner<Order, Fulfilme
 
 Register both classes. An instance keeps the version it started on, and a worker only claims versions it has registered, so old and new pods can run side by side during a rolling deploy. New instances start on the highest registered version, even when the controller still passes `OrderFulfilmentWorkflow`, because the class only identifies the workflow's name. To pin one, add `version: 1` to the `start()` options. Remove version 1 once `list()` with the workflow's name, `version: 1` and the unfinished statuses (`pending`, `running`, `suspended` and `compensating`) comes back empty.
 
-#### Try it
+##### Rules for workflow code
+
+`run()` executes again from the top every time an instance resumes. Code between steps runs on every execution, so it must make the same decisions each time:
+
+- Put anything that touches or reads the outside world in a step: HTTP calls, database reads and writes, feature flags.
+- Outside steps, use `ctx.now()`, `ctx.random()` and `ctx.uuid()` instead of `Date.now()`, `Math.random()` and `randomUUID()`. They're journaled.
+- In `run()`, only `await` `ctx` operations and pure computation. Never wait on a real timer.
+- Step, sleep and wait names must be unique within a run. In a loop, add the index to the name, such as `remind-1` and `remind-2`. Give children started from parallel branches an `id` of their own.
+- Don't call `ctx` methods inside a step's function. The function runs once and replays only see its result, so the engine fails the instance when a step calls `ctx`. Throw a `NonRetryableStepError` from a step instead of calling `ctx.fail()` there.
+- If you catch errors in `run()`, rethrow what you don't handle. `isWorkflowInterrupt()` identifies the engine's control flow. The engine doesn't depend on it: after a swallowed interrupt no step runs, `commit()` throws again, and a cancel still cancels. But `finally` blocks run at every suspension, so keep side effects out of them.
+- `Promise.all()` over steps is fine, and a step in the same `Promise.all()` as a sleep or wait starts after it. `Promise.race()` and `Promise.any()` are not replay-safe.
+- Inputs, step results and signal payloads must be JSON-serializable. A `Date` comes back as a string, on the first run and on every replay, and the `Journaled` types of results and payloads say so.
+- Keep no per-run state on `this`: one instance of the class serves every order.
+
+#### Try it and test it
+
+##### Try it
 
 Create the database, apply your migrations, and start the application with `DATABASE_URL` pointing at the database:
 
@@ -1065,9 +1129,9 @@ $ psql "$DATABASE_URL" -c "SELECT o.id, o.status, w.status AS fulfilment, w.runs
 (2 rows)
 ```
 
-Finally, restart the application and ask for the first order again. Its status hasn't changed, and the store found nothing to migrate. Start a second process on another port against the same database, and the two share the work: each instance runs on one of them at a time. To see the 3-day timeout without waiting 3 days, use a test clock, as described in the next section.
+Finally, restart the application and ask for the first order again. Its status hasn't changed, and the store found nothing to migrate. Start a second process on another port against the same database, and the two share the work: each instance runs on one of them at a time. To see the 3-day timeout without waiting 3 days, use a test clock, as the tests below do.
 
-#### Testing
+##### Test with a manual clock
 
 Two things make workflow tests fast and deterministic:
 
@@ -1205,6 +1269,8 @@ describe('order fulfilment', () => {
 });
 ```
 
+##### Test crash recovery
+
 `createWorld()` creates a fresh database per test. Crash safety needs two applications on the same database. Closing an application while a step hangs simulates a crash: the shutdown timeout expires, and the dead process's lease stays in the database until it expires. The second application takes over after that:
 
 ```typescript
@@ -1247,6 +1313,8 @@ To give a test its own store without overriding providers, call `registerSource(
 #### With CQRS
 
 If your application follows the [CQRS recipe](/recipes/cqrs), command handlers publish events, and event handlers and sagas react to them. They react in memory: an event published just before the process stops never reaches them, and a saga that waits for a second event forgets the first one on a restart. The `@nestjs/workflows/cqrs` entry point lets the events themselves start and signal workflows, durably, while your code keeps executing commands and publishing events. It works with `@nestjs/cqrs` 11 and later, registered with `CqrsModule.forRoot()` as in the recipe.
+
+##### Map events to workflows
 
 Here the fulfilment starts when the order is placed and wakes when the carrier reports the delivery, as before, but the workflow client calls are gone from the application code. Import `WorkflowsCqrsModule` next to `CqrsModule` and `WorkflowsModule`:
 
@@ -1351,6 +1419,8 @@ The module wraps whatever publisher the event bus has, so a publisher you set wi
 
 The mappings live on the workflow classes, so every process that publishes mapped events registers them, including one that runs no workflows, such as an API that only places orders. Register the classes and the store there as usual, and pass `worker: false` to `WorkflowsModule.forRoot()`: the process starts and signals the workflows, and the worker processes execute them. A process that imports `WorkflowsCqrsModule` but registers no workflow that maps an event starts and signals nothing, and logs a warning at startup saying so.
 
+##### Execute commands from steps
+
 A step can execute commands. Pass the step's idempotency key along with the command, and have the handler hand it to the system it calls:
 
 ```typescript
@@ -1367,7 +1437,9 @@ const charge = await ctx.step(
 
 `ChargePaymentHandler` calls `PaymentsService.charge()` with the key, so a retried step never charges twice, and the command's result is journaled like any step's. A step can publish events and send signals too. It runs at least once, so an event published from a step may be published again. A mapped start finds its instance, and so does a `start()` without an `id` in a step: it gets an id derived from the step's `idempotencyKey`, the workflow's name and its place among the step's starts of that workflow, and a repeat returns the instance as first started, input included. A signal sent from inside a step, directly or through a mapped event, is stored once: without an `id` of its own, it gets one derived from the step's `idempotencyKey` and its place among the step's signals with the same name and key. Send those in a fixed order. A step that sends several with one name and key concurrently should give each its own `id`.
 
-What each way of publishing guarantees:
+##### What each way of publishing guarantees
+
+The guarantee depends on how, and when, the event is published:
 
 | How the event is published | The workflow's start or signal | If the process dies or a write fails |
 | --- | --- | --- |
@@ -1397,54 +1469,9 @@ The module tells you when a mapped event arrives from a merged aggregate's `comm
 
 Your event handlers and sagas still receive every event, in memory, after the workflows. Inside a transaction they run before it commits, as they always did, so they can react to an event whose transaction then rolls back. A saga that turns one event into one command can stay a saga. A saga that remembers events, such as one that waits for the payment after the order and gives up after an hour, is a workflow in disguise: start the workflow from the first event, map the others to signals, and let `waitForSignal()` with a `timeout` do the waiting, durably.
 
-#### Operate workflows
+#### Prepare for production
 
-An instance's `status` says what it's doing, and whether it needs you:
-
-| Status | What it means | What to do |
-| --- | --- | --- |
-| `pending` | Started, and not yet claimed by a worker. One that stays `pending` waits for a concurrency slot or room in a rate-limit window, or is of a version no running worker registers | Nothing while a limit holds it. Otherwise, deploy a worker with that version, or delete the instance |
-| `running` | A worker holds its lease and executes it | Nothing. `cancel()` stops it at its next `ctx` call, and `terminate()` without compensating |
-| `suspended` | Parked on a sleep, a wait or a retry's backoff, until `wakeAt` or a signal | Nothing. A signal or `cancel()` wakes it |
-| `compensating` | Undoing its completed steps after a failure or a cancel | Nothing: it ends as `failed`, `cancelled` or `compensation_failed`. `terminate()` stops the undo |
-| `completed` | Done, with the result of `run()` as its `output` | Nothing, until retention purges it |
-| `cancelled` | Cancelled, after its compensations ran, or terminated without them (`error.name` is `WorkflowTerminatedError`). `error.message` is the reason | Nothing, until retention purges it |
-| `failed` | A step gave up, `ctx.fail()` was called, the run timeout passed or the journal hit its limit, and then its compensations ran. Or a definition error, such as a deploy that broke replay, failed it without compensating | If no compensation ran, fix the cause and retry it. Otherwise it's done: its completed steps were undone |
-| `compensation_failed` | An undo gave up halfway. `error` is the original failure, with the compensation's own error as `error.compensation` | Fix the cause, such as a warehouse API that was down, and retry it. Or finish the undo by hand and delete the instance |
-
-`WorkflowClient` has the actions for the last column. Call them from a staff-only route or a script:
-
-```typescript
-await this.workflowClient.retry(fulfilmentId(orderId));
-await this.workflowClient.delete(fulfilmentId(orderId));
-await this.workflowClient.terminate(fulfilmentId(orderId), 'Refunded by hand after a chargeback.');
-```
-
-- **`retry()`** runs a `failed` instance again from its journal: completed steps return their results, the step that gave up gets its attempts back, and sleeps and waits the instance left behind start over. A deploy that broke replay is retried once the fixed code runs. It refuses an instance whose compensations ran, since resuming would build on undone work: start a new instance instead. An instance past its run timeout needs a new one, as the `timeout` option (counted from now), or `false` for none. A `compensation_failed` instance runs the compensations that didn't complete again, each with its attempts back, and ends as it would have: `failed` or `cancelled`.
-- **`delete()`** removes a finished instance with its journal. An unfinished one needs the `force` option, and goes without running its compensations: use it for an instance no worker can run any more, such as one of a version you no longer deploy.
-- **`cancel()`**, from [Let customer support cancel an order](/reliability/workflows#let-customer-support-cancel-an-order), stops an instance that is still running.
-- **`terminate()`** stops an instance without running its compensations, for one whose undo mustn't or can't run, such as an order support has already refunded by hand. A parked instance stops at once, a running one at its next `ctx` call, and a compensating one after the compensation it's running. It ends as `cancelled`, with a `WorkflowTerminatedError` whose message is the reason (`Terminated.` without one). It's accepted after a `cancel()` too, which it replaces, and a `cancel()` after it is refused. Its children get their `parentClose`, as for any end.
-
-`retry()` and `delete()` throw a `WorkflowStateError`, whose `status` is `409`, for a status where they make no sense, and when another change to the instance races them. A retry is journaled as `$retry:1`, `$retry:2` and so on, with the status and error it retried, and both actions are emitted, as `workflow-retried` and `workflow-deleted`.
-
-**Retention.** Finished instances stay, with their journals, until you purge them. `purge()` deletes the ones that finished longer ago than its `olderThan` option, a batch at a time, and the signals no instance can take any more. An instance only takes signals sent after it started, so once every unfinished instance started after a signal, and the signal is older than `olderThan`, it goes; the newest signal always stays. `compensation_failed` instances wait for a person, so they're purged only when you list them in the `status` option. Run it every night, on one instance of your application, with `@Cron()` from `@nestjs/schedule` and `@OnOneInstance()` from [`@nestjs/locks`](/reliability/locks):
-
-```typescript
-@Injectable()
-export class WorkflowRetentionJob {
-  constructor(private readonly workflowClient: WorkflowClient) {}
-
-  @Cron('30 3 * * *')
-  @OnOneInstance({ key: 'workflows:purge' })
-  async purge() {
-    return this.workflowClient.purge({ olderThan: '30d' });
-  }
-}
-```
-
-`purge()` resolves with the number of `instances` and `signals` it deleted, and of the rate-limit windows that ended (`rateLimits`). A signal's `id` deduplicates for as long as the signal is stored, so keep `olderThan` longer than any sender's redelivery window, such as your carrier's webhook retries.
-
-#### Keep journals short
+##### Keep journals short
 
 Every execution loads the instance's whole journal and replays `run()` from the top. A process with a fixed number of steps keeps its journal small, but a loop with a step or a sleep per round adds entries for as long as it runs, and each execution gets slower. The module warns when a journal reaches 1,000 entries or 1 MB: once per instance, when it crosses the line, in the log and as a `journal-large` event. Once it holds 10,000 entries or 10 MB, the instance fails before it records another one: its compensations run, which may still record theirs, and it ends as `failed` with a `WorkflowJournalLimitError`. The module's `journal` option moves both lines. Size them to your longest regular workflow with room to spare, and set a limit to `Infinity` to turn it off:
 
@@ -1475,7 +1502,7 @@ async run(ctx: WorkflowContext, subscription: Subscription) {
 
 The step starts the next instance once: a retried step finds the instance it started. The new instance has a fresh journal and its own id, so the finished year stays readable until retention purges it. Continuing under the same id would need every store to replace a journal in place, under the worker's lease; a new id needs nothing new from the store. When each round stands on its own, a schedule is simpler still: it starts an instance per occurrence, each with a journal of its own, as [Run workflows on a schedule](/reliability/workflows#run-workflows-on-a-schedule) shows.
 
-#### Encrypt what workflows store
+##### Encrypt what workflows store
 
 The store keeps what your workflows handle: orders, charges, deliveries. To keep that unreadable to whoever reads the database or its backups, give the module a **payload codec**. `AesGcmPayloadCodec` encrypts with AES-256-GCM, under keys from your secret manager. Create it in the module's factory, which runs at startup:
 
@@ -1521,22 +1548,7 @@ Adding a codec breaks no running instance: payloads stored before it are read as
 
 A codec of your own implements `WorkflowPayloadCodec`: an `id`, stored with each payload, and `encode()` and `decode()`, which receive the value and where it's stored. Pass its class to `codec` to have Nest create it, with its dependencies from global modules, such as a KMS client. To replace a codec, list the new one first and the old one after it: the first one encodes, and each payload is decoded by the codec whose id it carries.
 
-#### Rules for workflow code
-
-`run()` executes again from the top every time an instance resumes. Code between steps runs on every execution, so it must make the same decisions each time:
-
-- Put anything that touches or reads the outside world in a step: HTTP calls, database reads and writes, feature flags.
-- Outside steps, use `ctx.now()`, `ctx.random()` and `ctx.uuid()` instead of `Date.now()`, `Math.random()` and `randomUUID()`. They're journaled.
-- In `run()`, only `await` `ctx` operations and pure computation. Never wait on a real timer.
-- Step, sleep and wait names must be unique within a run. In a loop, add the index to the name, such as `remind-1` and `remind-2`. Give children started from parallel branches an `id` of their own.
-- Don't call `ctx` methods inside a step's function. The function runs once and replays only see its result, so the engine fails the instance when a step calls `ctx`. Throw a `NonRetryableStepError` from a step instead of calling `ctx.fail()` there.
-- If you catch errors in `run()`, rethrow what you don't handle. `isWorkflowInterrupt()` identifies the engine's control flow. The engine doesn't depend on it: after a swallowed interrupt no step runs, `commit()` throws again, and a cancel still cancels. But `finally` blocks run at every suspension, so keep side effects out of them.
-- `Promise.all()` over steps is fine, and a step in the same `Promise.all()` as a sleep or wait starts after it. `Promise.race()` and `Promise.any()` are not replay-safe.
-- Inputs, step results and signal payloads must be JSON-serializable. A `Date` comes back as a string, on the first run and on every replay, and the `Journaled` types of results and payloads say so.
-- Keep no per-run state on `this`: one instance of the class serves every order.
-- Names are a contract with running instances. Renaming, removing, reordering or inserting steps requires a new version.
-
-#### Production checklist
+##### Production checklist
 
 - Pass the `idempotencyKey` to every side effect, including compensations. Steps run at least once.
 - Give signals an `id` when their sender can run twice, such as a webhook the sender retries or a message consumer. Signals sent from a step get one automatically.
@@ -1548,36 +1560,13 @@ A codec of your own implements `WorkflowPayloadCodec`: an `id`, stored with each
 - Start workflows in the transaction that writes their business rows (`transaction: tx`, or the `EntityManager` with TypeORM), so a crash between the two can't leave an order that nothing fulfils. Pass the transaction, never the root database. With CQRS, publish the events inside that transaction, with the transaction in the dispatcher context.
 - Keep transactions that send signals short: signals and the suspensions that register waits queue behind them. On PostgreSQL, keep them READ COMMITTED, and the database's default isolation too: the store refuses a stricter one. On MySQL, keep them REPEATABLE READ or READ COMMITTED, and run a transaction again when it fails with a deadlock (error 1213).
 - Verify webhook signatures, and return `2xx` only after the transaction with the signal has committed.
-- Alert on instances that need a person. `compensation_failed` means an undo gave up halfway, and a `failed` instance with `WorkflowNonDeterminismError` means a deploy broke replay. `WorkflowClient.list()` finds them, and [Operate workflows](/reliability/workflows#operate-workflows) says what to do with each: `retry()` once the cause is fixed, or `delete()`. For logs and metrics, subscribe to `WorkflowEvents.events$`, or to the `nestjs:workflows:*` diagnostics channels that tracing tools read without Nest; [Events](/reliability/workflows#events) maps them onto a trace.
+- Alert on instances that need a person. `compensation_failed` means an undo gave up halfway, and a `failed` instance with `WorkflowNonDeterminismError` means a deploy broke replay. `WorkflowClient.list()` finds them, and [What each status means](/reliability/workflows#what-each-status-means) says what to do with each: `retry()` once the cause is fixed, or `delete()`. For logs and metrics, subscribe to `WorkflowEvents.events$`, or to the `nestjs:workflows:*` diagnostics channels that tracing tools read without Nest; [Events](/reliability/workflows#events) maps them onto a trace.
 - Mark your point of no return with `ctx.commit()`. Before it, every failure and cancel undoes the completed steps.
-- Purge finished instances every night with `purge()`, on one instance of the application, as [Operate workflows](/reliability/workflows#operate-workflows) shows. Keep its `olderThan` longer than any sender's redelivery window: a signal's `id` deduplicates only as long as the signal is stored.
+- Purge finished instances every night with `purge()`, on one instance of the application, as [Purge finished instances](/reliability/workflows#purge-finished-instances) shows. Keep its `olderThan` longer than any sender's redelivery window: a signal's `id` deduplicates only as long as the signal is stored.
 - Keep journals short: bound loops, and continue one that never ends in a new instance ([Keep journals short](/reliability/workflows#keep-journals-short)). Give a process that must give up at some point a run timeout ([Time out the whole workflow](/reliability/workflows#time-out-the-whole-workflow)).
 - Size concurrency and rate limits to what the steps call, and deploy a change to them to every process: each applies the limits of the code it runs. Once some instances have a priority, give the rest one too, since instances without one go first.
 - Deploy a declared schedule to every process that registers its workflow: only workers whose code declares it start its occurrences. A schedule that a deploy drops, or whose workflow it removes, keeps starting on the processes of the old code, and goes about five minutes after the last of them stopped. Set `missed` for work that mustn't be skipped when no worker is up at its time. If processes of other code share the database, don't leave a schedule without a worker whose code declares it for five minutes: they delete it, and it starts over once one starts.
 - Encrypt what the store keeps with a codec, with keys from your secret manager ([Encrypt what workflows store](/reliability/workflows#encrypt-what-workflows-store)). Keep an old key listed while anything it encrypted may be read, and pick ids and keys that say nothing sensitive: they stay readable.
-
-#### The store contract
-
-`PostgresWorkflowStore` and `MySqlWorkflowStore` implement the `WorkflowStore` interface. For another database, implement it in a provider of your own. The JSDoc of each method on `WorkflowStore` says what the method must do, and which race each rule prevents.
-
-**Registration.** The store is an ordinary singleton provider that calls `registerSource(this)` on the injectable `WorkflowStorage` in its constructor. The registry checks the shape at once, refuses a second registration unless it passes `replace: true`, and locks when `WorkflowsModule` initializes, logging the store in use. A request-scoped provider, a provider in a lazy-loaded module, or a lifecycle hook registers too late, and throws. With nothing registered, the module uses `InMemoryWorkflowStore`: a restart loses every running instance, and two processes don't share them. It can't join your transaction either, so `start()` and `signal()` with `transaction` write at once, and it logs a warning the first time. With `NODE_ENV=production`, startup fails instead, with an error that names the package's stores and the interface to implement, unless you set `allowInMemoryStorage: true` in the module options.
-
-**Atomicity.** Workers, signals, cancels, retries, purges and schedules race each other through the store. `claim()` must never lease one instance to two workers, `write()` must write only while the worker's lease holds, and `signal()` must not slip past an instance that is suspending. So every method that changes state is one conditional statement, or one transaction with the right lock, never a read followed by a write. Two methods are optional: `createInTransaction()` and `signalInTransaction()`, which `start()` and `signal()` call with your transaction object, untouched. They must write through it, and refuse the root handle, whose writes commit on their own. On PostgreSQL, `signalInTransaction()` also refuses a transaction that isn't READ COMMITTED, whose wake-up could miss waits committed after its snapshot.
-
-**Test it** with the suite from `@nestjs/workflows/testing`. `workflowStoreContract()` returns the contract as test cases, races included, for any test runner. The tutorial's tests run it against `PostgresWorkflowStore` through Drizzle, and against `MySqlWorkflowStore` on MySQL, as you would against yours, with a function that returns a store on emptied tables:
-
-```typescript
-@@filename(test/drizzle-workflow.store.spec)
-// The concurrency cases run too; with one connection, PGlite runs them one statement at a time.
-const cases = workflowStoreContract(() => freshStore(db), { concurrent: true, transaction: (work) => db.transaction(work) });
-for (const c of cases) {
-  it(c.name, c.run);
-}
-```
-
-With `concurrent: true`, the suite races claims (under limits too), signals, suspensions, children's final writes, cancels and terminates, retries, purges and schedule claims against each other: 60 signals against 60 suspensions, for example. Run it on a database server with a connection pool too, where a store without the right locks fails it. With `transaction`, a function that opens one of your transactions, the cases of the two optional methods run as well. The package's own tests run the suite against a hand-written Drizzle store, as the proof that a store written against the interface passes it.
-
-Packages built on the engine, such as a job queue, take its storage-agnostic parts (clocks, retries, payload codecs, limits, the leased worker loop and schedules) from `@nestjs/workflows/core`; applications don't need it.
 
 #### Reference
 
@@ -1597,7 +1586,7 @@ Packages built on the engine, such as a job queue, take its storage-agnostic par
 | `retry` | 3 attempts, `'1s'` doubling up to `'5m'`, no jitter | The default for every step. See the retry fields below |
 | `journal.warnEntries`, `journal.warnBytes` | `1000`, `1000000` | At either, log a warning and emit `journal-large`, once per instance ([Keep journals short](/reliability/workflows#keep-journals-short)) |
 | `journal.maxEntries`, `journal.maxBytes` | `10000`, `10000000` | At either, fail the instance with a `WorkflowJournalLimitError` before it records another entry. `Infinity` turns a check off |
-| `clock` | The system clock | A `WorkflowClock`. Tests pass a `ManualWorkflowClock` ([Testing](/reliability/workflows#testing)) |
+| `clock` | The system clock | A `WorkflowClock`. Tests pass a `ManualWorkflowClock` ([Test with a manual clock](/reliability/workflows#test-with-a-manual-clock)) |
 | `allowInMemoryStorage` | `false` | With `NODE_ENV=production` and no registered store, startup fails; `true` runs on the in-memory store anyway |
 | `codec` | None | A `WorkflowPayloadCodec`, its class, or a list of them: the first encodes, and each decodes the payloads it encoded ([Encrypt what workflows store](/reliability/workflows#encrypt-what-workflows-store)) |
 | `isGlobal` | `true` | Registers the module globally. Top level of `forRoot()` and `forRootAsync()` |
@@ -1678,6 +1667,29 @@ A longer one fails with a `RangeError` that names it, before any SQL. `migrate()
 | `status` | Prints the schema's version and the one the package needs, and exits with 1 while the schema is behind |
 | `sql` | Prints the SQL of `migrationSql()`, from `--from` to `--to`, without a database: PostgreSQL's, or MySQL's with `--dialect mysql`. `--statement-breakpoints` separates the statements for drizzle-kit |
 
+##### The store contract
+
+`PostgresWorkflowStore` and `MySqlWorkflowStore` implement the `WorkflowStore` interface. For another database, implement it in a provider of your own. The JSDoc of each method on `WorkflowStore` says what the method must do, and which race each rule prevents.
+
+**Registration.** The store is an ordinary singleton provider that calls `registerSource(this)` on the injectable `WorkflowStorage` in its constructor. The registry checks the shape at once, refuses a second registration unless it passes `replace: true`, and locks when `WorkflowsModule` initializes, logging the store in use. A request-scoped provider, a provider in a lazy-loaded module, or a lifecycle hook registers too late, and throws. With nothing registered, the module uses `InMemoryWorkflowStore`: a restart loses every running instance, and two processes don't share them. It can't join your transaction either, so `start()` and `signal()` with `transaction` write at once, and it logs a warning the first time. With `NODE_ENV=production`, startup fails instead, with an error that names the package's stores and the interface to implement, unless you set `allowInMemoryStorage: true` in the module options.
+
+**Atomicity.** Workers, signals, cancels, retries, purges and schedules race each other through the store. `claim()` must never lease one instance to two workers, `write()` must write only while the worker's lease holds, and `signal()` must not slip past an instance that is suspending. So every method that changes state is one conditional statement, or one transaction with the right lock, never a read followed by a write. Two methods are optional: `createInTransaction()` and `signalInTransaction()`, which `start()` and `signal()` call with your transaction object, untouched. They must write through it, and refuse the root handle, whose writes commit on their own. On PostgreSQL, `signalInTransaction()` also refuses a transaction that isn't READ COMMITTED, whose wake-up could miss waits committed after its snapshot.
+
+**Test it** with the suite from `@nestjs/workflows/testing`. `workflowStoreContract()` returns the contract as test cases, races included, for any test runner. The tutorial's tests run it against `PostgresWorkflowStore` through Drizzle, and against `MySqlWorkflowStore` on MySQL, as you would against yours, with a function that returns a store on emptied tables:
+
+```typescript
+@@filename(test/drizzle-workflow.store.spec)
+// The concurrency cases run too; with one connection, PGlite runs them one statement at a time.
+const cases = workflowStoreContract(() => freshStore(db), { concurrent: true, transaction: (work) => db.transaction(work) });
+for (const c of cases) {
+  it(c.name, c.run);
+}
+```
+
+With `concurrent: true`, the suite races claims (under limits too), signals, suspensions, children's final writes, cancels and terminates, retries, purges and schedule claims against each other: 60 signals against 60 suspensions, for example. Run it on a database server with a connection pool too, where a store without the right locks fails it. With `transaction`, a function that opens one of your transactions, the cases of the two optional methods run as well. The package's own tests run the suite against a hand-written Drizzle store, as the proof that a store written against the interface passes it.
+
+Packages built on the engine, such as a job queue, take its storage-agnostic parts (clocks, retries, payload codecs, limits, the leased worker loop and schedules) from `@nestjs/workflows/core`; applications don't need it.
+
 ##### Call options
 
 | Call | Options | Explained in |
@@ -1688,18 +1700,18 @@ A longer one fails with a `RangeError` that names it, before any SQL. `migrate()
 | `ctx.sleep(name, duration)` | A duration, or an object with `until` (a `Date` or epoch milliseconds) | [Sleep for a week, then ask for a review](/reliability/workflows#sleep-for-a-week-then-ask-for-a-review) |
 | `ctx.waitForAny(name, conditions)` | An object of conditions: `ctx.signalWait(signal, options)` (`key`, `match`), `ctx.timer(duration)` (a duration, or an object with `until`), or a child's handle. Resolves with the winner's `key` and `value` | [Wait for whichever comes first](/reliability/workflows#wait-for-whichever-comes-first) |
 | `ctx.startChild(workflow, input, options)`, `ctx.executeChild(workflow, input, options)` | `id` (default the parent's id, the workflow's name and a count, such as `order-71e1973d/shipment#1`), `version`, `timeout`, `parentClose` (`'cancel'`, `'terminate'` or `'abandon'`; default `'cancel'`), `priority` (default the parent's), `concurrencyKey`, `rateLimitKey` | [Start child workflows](/reliability/workflows#start-child-workflows) |
-| `ctx.setStatus(status)` | A JSON value of up to 16 KiB, or `undefined` to clear it | [Start it with the order, and report its status](/reliability/workflows#start-it-with-the-order-and-report-its-status) |
+| `ctx.setStatus(status)` | A JSON value of up to 16 KiB, or `undefined` to clear it | [Report its status](/reliability/workflows#report-its-status) |
 | `ctx.schedule` | Not a call: the `id` of the schedule and the time `at` of the occurrence that started the instance, or `null` | [Run workflows on a schedule](/reliability/workflows#run-workflows-on-a-schedule) |
-| `WorkflowClient.start(workflow, input, options)` | `id` (default a random UUID, or inside a step one derived from the step), `version` (default the highest registered), `timeout` (default the decorator's), `transaction`, `priority` (1 to 2,097,151, lower first; default none, which goes before all), `concurrencyKey`, `rateLimitKey` (instead of the keys the limits compute) | [Start it with the order, and report its status](/reliability/workflows#start-it-with-the-order-and-report-its-status), [Limit how many run at once](/reliability/workflows#limit-how-many-run-at-once) |
+| `WorkflowClient.start(workflow, input, options)` | `id` (default a random UUID, or inside a step one derived from the step), `version` (default the highest registered), `timeout` (default the decorator's), `transaction`, `priority` (1 to 2,097,151, lower first; default none, which goes before all), `concurrencyKey`, `rateLimitKey` (instead of the keys the limits compute) | [Start it with the order](/reliability/workflows#start-it-with-the-order), [Limit how many run at once](/reliability/workflows#limit-how-many-run-at-once) |
 | `WorkflowClient.signal(signal, payload, options)` | `key`, `id` (stores a signal with the same name and id once; derived from the step inside a step), `transaction` | [Wait for the delivery webhook](/reliability/workflows#wait-for-the-delivery-webhook), [With CQRS](/reliability/workflows#with-cqrs) |
 | `WorkflowClient.startAndWait(workflow, input, options, wait)` | `start()`'s options, but not `transaction`, and `result()`'s as `wait` | [Wait for a result](/reliability/workflows#wait-for-a-result) |
 | `WorkflowClient.result(id, options)` | `timeout` (wall-clock; default none), `signal` (stops waiting when aborted) | [Wait for a result](/reliability/workflows#wait-for-a-result) |
-| `WorkflowClient.getStatus(id, options)` | `journal`, `children` | [Start it with the order, and report its status](/reliability/workflows#start-it-with-the-order-and-report-its-status), [Start child workflows](/reliability/workflows#start-child-workflows) |
-| `WorkflowClient.cancel(id, reason)`, `terminate(id, reason)` | None | [Let customer support cancel an order](/reliability/workflows#let-customer-support-cancel-an-order), [Operate workflows](/reliability/workflows#operate-workflows) |
+| `WorkflowClient.getStatus(id, options)` | `journal`, `children` | [Report its status](/reliability/workflows#report-its-status), [Start child workflows](/reliability/workflows#start-child-workflows) |
+| `WorkflowClient.cancel(id, reason)`, `terminate(id, reason)` | None | [Let customer support cancel an order](/reliability/workflows#let-customer-support-cancel-an-order), [Retry, delete or terminate](/reliability/workflows#retry-delete-or-terminate) |
 | `WorkflowClient.list(filter)` | `status` (one or a list), `workflow`, `version`, `parentId`, `scheduleId`, `limit` (default `100`), `offset` | [Deploy changes safely](/reliability/workflows#deploy-changes-safely) |
-| `WorkflowClient.retry(id, options)` | `timeout` (a new run timeout from now, or `false` for none; default the instance's) | [Operate workflows](/reliability/workflows#operate-workflows) |
-| `WorkflowClient.delete(id, options)` | `force` (delete an unfinished instance too; default `false`) | [Operate workflows](/reliability/workflows#operate-workflows) |
-| `WorkflowClient.purge(options)` | `olderThan` (required), `status` (default `completed`, `failed` and `cancelled`), `batchSize` (default `500`) | [Operate workflows](/reliability/workflows#operate-workflows) |
+| `WorkflowClient.retry(id, options)` | `timeout` (a new run timeout from now, or `false` for none; default the instance's) | [Retry, delete or terminate](/reliability/workflows#retry-delete-or-terminate) |
+| `WorkflowClient.delete(id, options)` | `force` (delete an unfinished instance too; default `false`) | [Retry, delete or terminate](/reliability/workflows#retry-delete-or-terminate) |
+| `WorkflowClient.purge(options)` | `olderThan` (required), `status` (default `completed`, `failed` and `cancelled`), `batchSize` (default `500`) | [Purge finished instances](/reliability/workflows#purge-finished-instances) |
 | `WorkflowClient.schedules`, or the injectable `WorkflowSchedules` | `upsert(id, options)` (the schedule options, with `workflow`, and optionally `version` and a JSON `input`), `get(id)`, `list(filter)` (`workflow`, `limit`, `offset`), `remove(id)`, `pause(id)` and `resume(id)` (neither re-encrypts the stored input), `trigger(id)` (in a process that registers the workflow, unless the schedule pins a `version`), and `preview(schedule, options)` (a schedule's id or timing; `from`, and `count`, default `10`) | [Run workflows on a schedule](/reliability/workflows#run-workflows-on-a-schedule) |
 | `@StartOn(event, options)` | `id` (required), `input` (default the event), `priority`, `concurrencyKey`, `rateLimitKey` (as `start()`'s: a value, or a function of the event, where `undefined` leaves the default) | [With CQRS](/reliability/workflows#with-cqrs) |
 | `@SignalOn(event, options)` | `signal`, `key`, `id`, `payload` (default the event) | [With CQRS](/reliability/workflows#with-cqrs) |
