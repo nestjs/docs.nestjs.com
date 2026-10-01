@@ -159,7 +159,7 @@ There's nothing to create for workflows: no tables, entities or Prisma models. R
 
 Workflow instances, their journals, the signals they wait for and the signals sent live in a **store**. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every running order, and two processes don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
-On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nestjs/workflows/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider: `AppModule` creates it with a factory that injects the Drizzle database and the `WorkflowStorage` registry, which the store registers itself with:
+On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nestjs/workflows/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider, registered once, in the root module, next to `WorkflowsModule`: both are application-wide. `AppModule` creates it with a factory that injects the Drizzle database and the `WorkflowStorage` registry, which the store registers itself with:
 
 ```typescript
 @@filename(app.module)

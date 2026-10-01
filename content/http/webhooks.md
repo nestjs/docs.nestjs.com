@@ -48,7 +48,7 @@ There's nothing to create for webhooks, or for the outbox they travel through: n
 
 The package keeps the endpoints, with their secrets, the messages it dispatched, their deliveries and the log of every attempt in a **store**, which it reads through two contracts, `WebhookEndpointStore` and `WebhookDeliveryStore`. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every pending delivery, and two instances don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
-On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestjs/webhooks/postgres`. The outbox needs one too, for the messages that carry dispatched webhooks out of your transaction and for the inbox that deduplicates incoming ones: `PostgresOutboxStore` from `@nestjs/outbox/postgres`, as in [the outbox tutorial](/reliability/outbox#keep-messages-in-your-database). Both run their SQL through the database client your application already has, and keep their tables in schemas of their own. They're ordinary providers: `AppModule` creates each with a factory that injects the Drizzle database and its package's storage registry, which the store registers itself with:
+On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestjs/webhooks/postgres`. The outbox needs one too, for the messages that carry dispatched webhooks out of your transaction and for the inbox that deduplicates incoming ones: `PostgresOutboxStore` from `@nestjs/outbox/postgres`, as in [the outbox tutorial](/reliability/outbox#keep-messages-in-your-database). Both run their SQL through the database client your application already has, and keep their tables in schemas of their own. They're ordinary providers, registered once, in the root module, next to `WebhooksModule` and `OutboxModule`: all four are application-wide. `AppModule` creates each with a factory that injects the Drizzle database and its package's storage registry, which the store registers itself with:
 
 ```typescript
 @@filename(app.module)
@@ -633,10 +633,10 @@ webhook-signature: v1,<base64 HMAC-SHA256 of "msg_01a0f33b898e7341950339801ec331
 {"type":"order.shipped","timestamp":"2026-09-30T16:52:40.462Z","data":{"orderId":"1067d04c-0617-44ac-9a29-67297867329e","trackingNumber":"TRK-4471-0001"}}
 ```
 
-The signature is keyed with the endpoint's secret, so the partner can verify it with any Standard Webhooks library. Or with this package: Northside's receiver is a Nest application that only receives, with `outgoing: false`, and `@VerifyWebhook('store')` on its route. `STORE_WEBHOOK_SECRET` takes a comma-separated list, because the store's [rotation](/http/webhooks#rotate-secrets) signs with two secrets for a day:
+The signature is keyed with the endpoint's secret, so the partner can verify it with any Standard Webhooks library. Or with this package: Northside's receiver is a Nest application of its own, with its own root module, that only receives, with `outgoing: false`, and `@VerifyWebhook('store')` on its route. `STORE_WEBHOOK_SECRET` takes a comma-separated list, because the store's [rotation](/http/webhooks#rotate-secrets) signs with two secrets for a day:
 
 ```typescript
-@@filename(partner-service/partner.module)
+@@filename(partner-service/app.module)
 import { Module } from '@nestjs/common';
 import { OutboxModule } from '@nestjs/outbox';
 import { WebhooksModule } from '@nestjs/webhooks';
@@ -669,7 +669,7 @@ import { StoreWebhooksController } from './store-webhooks.controller.js';
   ],
   controllers: [StoreWebhooksController],
 })
-export class PartnerModule {}
+export class AppModule {}
 ```
 
 ```typescript
@@ -703,11 +703,11 @@ export class StoreWebhooksController {
 ```typescript
 @@filename(partner-service/main)
 import { NestFactory } from '@nestjs/core';
-import { PartnerModule } from './partner.module.js';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   // rawBody: the signature is checked on the bytes the store signed, not on a re-serialized body.
-  const app = await NestFactory.create(PartnerModule, { rawBody: true });
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 4100);
 }

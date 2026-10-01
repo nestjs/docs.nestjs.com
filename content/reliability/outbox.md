@@ -46,7 +46,7 @@ There's nothing to create for the outbox: no tables, entities or Prisma models. 
 
 The outbox keeps its messages, its dead letters and the consumers' inboxes in the same database as your own tables, because they must commit with your rows. Until you register a store for them, the outbox keeps them in memory: fine for a first run, but a restart loses every message that wasn't published yet, two instances don't share them, and nothing joins your transactions. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
-On PostgreSQL, register the package's store, `PostgresOutboxStore` from `@nestjs/outbox/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider: the root module creates it with a factory that injects the Drizzle database and the `OutboxStorage` registry, which the store registers itself with:
+On PostgreSQL, register the package's store, `PostgresOutboxStore` from `@nestjs/outbox/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider, registered once, in the root module, next to `OutboxModule`: both are application-wide, and every `outbox.add()` in any module goes through it. The root module creates it with a factory that injects the Drizzle database and the `OutboxStorage` registry, which the store registers itself with:
 
 ```typescript
 @@filename(app.module)
@@ -510,10 +510,10 @@ The analytics service is a separate Nest application, and like any service it ow
 | --- | --- | --- |
 | `order_events` | `seq` (generated, in arrival order), `order_id` (indexed), `event` (`placed` or `cancelled`), `amount` (in cents), `recorded_at` | One row per order event. `amount` is the change to revenue: the order's total when it's placed, minus it when it's cancelled, so the revenue is the sum of `amount` |
 
-The service only consumes, so it registers `OutboxModule` with the relay turned off, and the same store as the order API, on its own database. `OutboxInbox` keeps the service's inbox there, next to `order_events`, so an event and the record that it was processed commit together. The store's tables for messages stay empty, and with the relay off, nothing polls them:
+Being an application of its own, it has its own root module, `AppModule`, which registers `OutboxModule` and the store once, as the order API's does. The service only consumes, so the relay is turned off, and the store runs on the service's own database. `OutboxInbox` keeps the service's inbox there, next to `order_events`, so an event and the record that it was processed commit together. The store's tables for messages stay empty, and with the relay off, nothing polls them:
 
 ```typescript
-@@filename(analytics-service/analytics.module)
+@@filename(analytics-service/app.module)
 import { Module } from '@nestjs/common';
 import { DrizzleModule, getDrizzleToken } from '@nestjs/drizzle';
 import { OutboxModule, OutboxStorage } from '@nestjs/outbox';
@@ -545,7 +545,7 @@ import { OrderStatsService } from './order-stats.service.js';
     OrderStatsService,
   ],
 })
-export class AnalyticsModule {}
+export class AppModule {}
 ```
 
 `OrderStatsService` records an event and returns the revenue so far. It opens a transaction and calls `inbox.processInTransaction(tx, 'analytics', messageId, work)`: the inbox record and the `order_events` row commit together, so a redelivered event changes nothing, even if the service crashes halfway:
@@ -661,10 +661,10 @@ The events for an order arrive in the order the relay published them, but the ha
 @@filename(analytics-service/main)
 import { NestFactory } from '@nestjs/core';
 import { Transport, type MicroserviceOptions } from '@nestjs/microservices';
-import { AnalyticsModule } from './analytics.module.js';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AnalyticsModule, {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
     transport: Transport.TCP,
     options: { host: '127.0.0.1', port: Number(process.env.PORT ?? 4001) },
   });
