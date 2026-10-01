@@ -155,7 +155,9 @@ await bootstrap();
 
 ##### Keep workflows in your database
 
-Workflow instances, their journals, the signals they wait for and the signals sent live in a **store**. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every running order, and two processes don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
+Workflow instances, their journals, the signals they wait for and the signals sent live in a **store**. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every running order, and two processes don't share them.
+
+> warning **Warning** With `NODE_ENV=production` and no store registered, startup fails, unless you set `allowInMemoryStorage: true`.
 
 On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nestjs/workflows/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions. It's an ordinary provider, registered once, in the root module, next to `WorkflowsModule`: both are application-wide. In `AppModule` above, it's the first provider: a factory that injects the Drizzle database and the `WorkflowStorage` registry, which the store registers itself with.
 
@@ -186,7 +188,39 @@ $ npx nest-workflows migrate
 Migrated schema "nest_workflows" to version 1 (applied 1).
 ```
 
-`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-workflows sql`, or from `PostgresWorkflowStore.migrationSql()` in code: the statements of every migration, one per paragraph, with the bookkeeping that records the version. Run them in one transaction, as TypeORM's and Drizzle's migrators do. In a TypeORM migration, that's `await queryRunner.query(PostgresWorkflowStore.migrationSql())`. For a drizzle-kit custom migration (`npx drizzle-kit generate --custom --name=workflows`), paste the output of `npx nest-workflows sql --statement-breakpoints` into the file it creates (in code, `migrationSql()` with `statementBreakpoints: true` returns the same): drizzle-kit's `--> statement-breakpoint` lines separate the statements, and Drizzle's migrator runs them one at a time, which PGlite requires.
+`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-workflows sql`, or from `PostgresWorkflowStore.migrationSql()` in code: the statements of every migration, one per paragraph, with the bookkeeping that records the version. Run them in one transaction, as TypeORM's and Drizzle's migrators do. With TypeORM, that's a migration of your own, next to the ones it generates for your entities:
+
+```typescript
+@@filename(typeorm/migrations/1790801342207-WorkflowStore)
+import { PostgresWorkflowStore } from '@nestjs/workflows/postgres';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+export class WorkflowStore1790801342207 implements MigrationInterface {
+  async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(PostgresWorkflowStore.migrationSql());
+  }
+
+  async down(): Promise<void> {
+    throw new Error('The workflow store has no down migrations.');
+  }
+}
+```
+
+With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+
+```bash
+$ npx drizzle-kit generate --custom --name=workflows
+$ npx nest-workflows sql --statement-breakpoints > drizzle/0001_workflows.sql
+```
+
+On MySQL, `MySqlWorkflowStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:
+
+```typescript
+@@filename(typeorm/mysql-migrations/1790801342207-WorkflowStore)
+for (const statement of MySqlWorkflowStore.migrationStatements()) {
+  await queryRunner.query(statement);
+}
+```
 
 With `migrate` off, a store whose schema is behind fails the startup with a `WorkflowSchemaError` that names these three ways, and fails every call the same way until the schema catches up, which it notices without a restart. Migrations only ever add tables, columns and indexes, so during a rolling deploy, the previous version of your application keeps running on the migrated schema. There are no down migrations.
 
@@ -259,7 +293,7 @@ export class AppModule {}
 - **Bounded keys.** Ids, names and keys are indexed columns of limited length. An instance id, a workflow or signal name, a signal's `key` and `id`, and a concurrency or rate-limit key hold 255 characters, a schedule id 230, and a step, sleep or wait name 512. `start()` and `signal()` reject a longer one with a `RangeError` before anything is written. Keys still compare exactly, as on PostgreSQL.
 - **Your transactions.** `start()` and `signal()` with the `transaction` option work at REPEATABLE READ, MySQL's default, and at READ COMMITTED: the wake-up reads the waits with a locking read, which also sees those committed after your transaction's snapshot. Avoid SERIALIZABLE, where MySQL turns plain reads into locking ones: a `start()` in such a transaction would hold every signal up until the transaction ends.
 - **Deadlocks.** MySQL breaks a deadlock by rolling back one of the transactions, with error 1213 (`ER_LOCK_DEADLOCK`). The store runs its own transactions again. In yours, the rollback also took your writes, so the error reaches your code: run the transaction again. A transaction that writes an order and then signals, while another one signals and then writes the same order, deadlocks that way.
-- **Migrations.** MySQL commits each DDL statement on its own, so the migrations can't run in one transaction. The store and `npx nest-workflows migrate` apply them one statement at a time, under a lock (`GET_LOCK()`), so processes that start together still migrate once, and a run that stopped halfway resumes where it stopped. The command line takes a `mysql://` URL and then needs `mysql2`, and `npx nest-workflows sql --dialect mysql` prints the SQL. With your own tool, apply the statements in order, each once: drizzle-kit's MySQL migrator runs one statement per call, so add `--statement-breakpoints`, and in a TypeORM migration, or with mysql2, run the strings of `MySqlWorkflowStore.migrationStatements()` one per `query()` call.
+- **Migrations.** MySQL commits each DDL statement on its own, so the migrations can't run in one transaction. The store and `npx nest-workflows migrate` apply them one statement at a time, under a lock (`GET_LOCK()`), so processes that start together still migrate once, and a run that stopped halfway resumes where it stopped. The command line takes a `mysql://` URL and then needs `mysql2`, and `npx nest-workflows sql --dialect mysql` prints the SQL. With your own tool, apply the statements in order, each once, one per call, as the TypeORM migration above does: for drizzle-kit, whose MySQL migrator sends one statement per breakpoint, add `--statement-breakpoints`.
 
 For another database, write a store of your own: [The store contract](/reliability/workflows#the-store-contract) says what it must do.
 

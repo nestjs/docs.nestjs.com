@@ -61,7 +61,9 @@ The catalog has two products: `salmon-kibble-2kg`, at 2499 cents with 10 in stoc
 
 There's nothing to create for the outbox: no tables, entities or Prisma models. Register its store, and the store creates its own schema, `nest_outbox`, and migrates it: at startup in development and in tests, and in production with `npx nest-outbox migrate`, or with `migrationSql()` in your own migrations.
 
-The outbox keeps its messages, its dead letters and the consumers' inboxes in the same database as your own tables, because they must commit with your rows. Until you register a store for them, the outbox keeps them in memory: fine for a first run, but a restart loses every message that wasn't published yet, two instances don't share them, and nothing joins your transactions. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
+The outbox keeps its messages, its dead letters and the consumers' inboxes in the same database as your own tables, because they must commit with your rows. Until you register a store for them, the outbox keeps them in memory: fine for a first run, but a restart loses every message that wasn't published yet, two instances don't share them, and nothing joins your transactions.
+
+> warning **Warning** With `NODE_ENV=production` and no store registered, startup fails, unless you set `allowInMemoryStorage: true`.
 
 On PostgreSQL, register the package's store, `PostgresOutboxStore` from `@nestjs/outbox/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider, registered once, in the root module, next to `OutboxModule`: both are application-wide, and every `outbox.add()` in any module goes through it. The root module creates it with a factory that injects the Drizzle database and the `OutboxStorage` registry, which the store registers itself with:
 
@@ -100,7 +102,38 @@ $ npx nest-outbox migrate
 Migrated schema "nest_outbox" to version 1 (applied 1).
 ```
 
-`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-outbox sql`, or from `PostgresOutboxStore.migrationSql()` in code: the statements of every migration, one per paragraph, with the bookkeeping that records the version. Run them in one transaction, as TypeORM's and Drizzle's migrators do. In a TypeORM migration, that's `await queryRunner.query(PostgresOutboxStore.migrationSql())`. In a drizzle-kit custom migration (`npx drizzle-kit generate --custom --name=outbox`), paste the output of `npx nest-outbox sql --statement-breakpoints`, or of `migrationSql()` with `statementBreakpoints: true`: a `--> statement-breakpoint` line between the statements makes Drizzle's migrator run them one at a time, which PGlite requires.
+`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-outbox sql`, or from `PostgresOutboxStore.migrationSql()` in code: the statements of every migration, one per paragraph, with the bookkeeping that records the version. Run them in one transaction, as TypeORM's and Drizzle's migrators do. With TypeORM, that's a migration of your own, next to the ones it generates for your entities:
+
+```typescript
+@@filename(typeorm/migrations/1790801276314-OutboxStore)
+import { PostgresOutboxStore } from '@nestjs/outbox/postgres';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+export class OutboxStore1790801276314 implements MigrationInterface {
+  async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(PostgresOutboxStore.migrationSql());
+  }
+
+  // The store's migrations only ever add tables, columns and indexes: it has no down migrations.
+  async down(): Promise<void> {}
+}
+```
+
+With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+
+```bash
+$ npx drizzle-kit generate --custom --name=outbox
+$ npx nest-outbox sql --statement-breakpoints > drizzle/0002_outbox.sql
+```
+
+On MySQL, `MySqlOutboxStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:
+
+```typescript
+@@filename(typeorm/mysql-migrations/1790801276314-OutboxStore)
+for (const statement of MySqlOutboxStore.migrationStatements()) {
+  await queryRunner.query(statement);
+}
+```
 
 With `migrate` off, a store whose schema is behind fails the startup with an `OutboxSchemaError` that names these three ways, and fails every call the same way until the schema catches up, which it notices without a restart. Migrations only ever add tables, columns and indexes, so during a rolling deploy, the previous version of your application keeps running on the migrated schema. There are no down migrations.
 
@@ -196,7 +229,7 @@ export class AppModule {}
 - **Bounded keys.** Ids, topics, keys and consumer names are indexed columns of at most 255 characters, compared byte for byte: `order-1` and `Order-1` are two keys. A longer one is refused with a `RangeError`, before any statement: by `add()`, and by the inbox before it runs a handler.
 - **Your isolation level.** Your transactions may run at REPEATABLE READ, MySQL's default, or at READ COMMITTED. A delivery that races another to `processInTransaction()` waits for it, then skips the handler as a duplicate, at either level.
 - **Deadlocks reach your transaction.** `add()` locks a row per key in your transaction, one of 16,384 that the keys share, which the store creates when it starts: producers of two keys that share a row take turns, as producers of one key do, which slows an unrelated producer only rarely. When MySQL breaks a deadlock in your transaction (error 1213), it rolls the whole transaction back, and the store can't run your work again: the error reaches your code as your client's error, so run the transaction again. With those rows in place, two things can still cause one: three deliveries of one message that race to `processInTransaction()` while the first rolls back, and transactions of yours that take the same locks in different orders. The store's own transactions retry on deadlock by themselves.
-- **Migrations that aren't transactional.** MySQL commits each DDL statement on its own, so `migrate` and `npx nest-outbox migrate --url mysql://...` apply the statements one at a time under a lock, and a run that stopped halfway resumes where it stopped. Your own tool must send one statement per call too: a TypeORM migration or `mysql2` loops over `MySqlOutboxStore.migrationStatements()`, and a drizzle-kit custom migration takes `MySqlOutboxStore.migrationSql()` with `statementBreakpoints: true`, since its MySQL migrator sends one statement per breakpoint.
+- **Migrations that aren't transactional.** MySQL commits each DDL statement on its own, so `migrate` and `npx nest-outbox migrate --url mysql://...` apply the statements one at a time under a lock, and a run that stopped halfway resumes where it stopped. Your own tool must send one statement per call too, as the TypeORM migration in **Migrations** above does, and a drizzle-kit custom migration takes `npx nest-outbox sql --dialect mysql --statement-breakpoints`, since its MySQL migrator sends one statement per breakpoint.
 
 #### Register the outbox
 

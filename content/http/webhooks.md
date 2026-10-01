@@ -70,7 +70,9 @@ The catalog has two products, `salmon-kibble-2kg` at 2499 cents and `clumping-li
 
 There's nothing to create for webhooks, or for the outbox they travel through: no tables, entities or Prisma models. Register their two stores, and each creates its own schema, `nest_webhooks` and `nest_outbox`, and migrates it: at startup in development and in tests, and in production with `npx nest-webhooks migrate` and `npx nest-outbox migrate`, or with their `migrationSql()` in your own migrations.
 
-The package keeps the endpoints, with their secrets, the messages it dispatched, their deliveries and the log of every attempt in a **store**, which it reads through two contracts, `WebhookEndpointStore` and `WebhookDeliveryStore`. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every pending delivery, and two instances don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
+The package keeps the endpoints, with their secrets, the messages it dispatched, their deliveries and the log of every attempt in a **store**, which it reads through two contracts, `WebhookEndpointStore` and `WebhookDeliveryStore`. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every pending delivery, and two instances don't share them.
+
+> warning **Warning** With `NODE_ENV=production` and no store registered, startup fails, unless you set `allowInMemoryStorage: true`.
 
 On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestjs/webhooks/postgres`. The outbox needs one too, for the messages that carry dispatched webhooks out of your transaction and for the inbox that deduplicates incoming ones: `PostgresOutboxStore` from `@nestjs/outbox/postgres`, as in [the outbox tutorial](/reliability/outbox#keep-messages-in-your-database). Both run their SQL through the database client your application already has, and keep their tables in schemas of their own. They're ordinary providers, registered once, in the root module, next to `WebhooksModule` and `OutboxModule`: all four are application-wide. `AppModule` creates each with a factory that injects the Drizzle database and its package's storage registry, which the store registers itself with:
 
@@ -125,7 +127,43 @@ $ npx nest-outbox migrate
 Migrated schema "nest_outbox" to version 1 (applied 1).
 ```
 
-`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-webhooks sql` and `npx nest-outbox sql`, or from `PostgresWebhookStore.migrationSql()` and `PostgresOutboxStore.migrationSql()` in code: the statements of every migration, with the bookkeeping that records the version. Run each in one transaction, as TypeORM's and Drizzle's migrators do. In a TypeORM migration, that's `await queryRunner.query(PostgresWebhookStore.migrationSql())`. In a drizzle-kit custom migration (`npx drizzle-kit generate --custom --name=webhooks`), paste the SQL of `npx nest-webhooks sql --statement-breakpoints`, or of `migrationSql()` with the `statementBreakpoints` option: drizzle-kit's `--> statement-breakpoint` then separates the statements, and Drizzle's migrator runs them one at a time, which PGlite requires.
+`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-webhooks sql` and `npx nest-outbox sql`, or from `PostgresWebhookStore.migrationSql()` and `PostgresOutboxStore.migrationSql()` in code: the statements of every migration, with the bookkeeping that records the version. Run each in one transaction, as TypeORM's and Drizzle's migrators do. With TypeORM, that's a migration of your own, next to the ones it generates for your entities:
+
+```typescript
+@@filename(typeorm/migrations/1790801311590-WebhookStores)
+import { PostgresOutboxStore } from '@nestjs/outbox/postgres';
+import { PostgresWebhookStore } from '@nestjs/webhooks/postgres';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+
+export class WebhookStores1790801311590 implements MigrationInterface {
+  async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(PostgresOutboxStore.migrationSql());
+    await queryRunner.query(PostgresWebhookStore.migrationSql());
+  }
+
+  async down(): Promise<void> {
+    throw new Error('The webhook and outbox stores have no down migrations.');
+  }
+}
+```
+
+With drizzle-kit, create a custom migration per store, and fill each with its SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+
+```bash
+$ npx drizzle-kit generate --custom --name=outbox
+$ npx nest-outbox sql --statement-breakpoints > drizzle/0002_outbox.sql
+$ npx drizzle-kit generate --custom --name=webhooks
+$ npx nest-webhooks sql --statement-breakpoints > drizzle/0003_webhooks.sql
+```
+
+On MySQL, the stores' `migrationStatements()` return the statements one per string, and a TypeORM migration runs them one per call:
+
+```typescript
+@@filename(typeorm/mysql-migrations/1790801311590-WebhookStores)
+for (const statement of [...MySqlOutboxStore.migrationStatements(), ...MySqlWebhookStore.migrationStatements()]) {
+  await queryRunner.query(statement);
+}
+```
 
 With `migrate` off, a store whose schema is behind fails the startup with a `WebhookSchemaError` (the outbox's store, with an `OutboxSchemaError`) that names these three ways, and fails every call the same way until the schema catches up, which it notices without a restart. During a rolling deploy, the previous version of your application keeps running on a schema that the new one migrated. There are no down migrations.
 
@@ -210,7 +248,7 @@ With the other clients, the executor is `fromMysql2(pool)` for a `mysql2/promise
 - **Tables, not a schema.** MySQL has no schemas inside a database, so the stores keep their tables in the connection's database, the one in the URL's path, next to yours, and `schema` becomes their prefix: `nest_webhooks_endpoints`, `nest_webhooks_deliveries` and so on, and `nest_outbox_messages` for the outbox. It takes lowercase letters, digits and underscores, at most 40 characters.
 - **Your transactions.** `dispatch()` and `processInTransaction()` work at REPEATABLE READ, MySQL's default, as at READ COMMITTED: there's nothing to configure, and the stores don't check the database's default. When MySQL breaks a deadlock in your transaction (error 1213), it rolls the whole transaction back, and the client's error reaches your code: run the transaction again. The stores run their own transactions again themselves. With `processInTransaction()`, that can happen when copies of one webhook arrive at once and the first one's transaction rolls back: the sender gets an error, and its retry goes through.
 - **Keys are bounded.** Ids and tenants are indexed columns: at most 255 characters, 256 for a tenant, which the package's own ids and its limit on `tenant` stay within. An incoming webhook's id goes into the inbox's key, of at most 255 characters too, and the verifier refuses a longer id on every database, with a 401, before the handler runs.
-- **Migrations aren't one transaction.** MySQL commits each DDL statement on its own, so `migrate` applies the statements one at a time, under a lock (`GET_LOCK()`), and a run that failed resumes at the statement it stopped at. With your own tool, run `MySqlWebhookStore.migrationStatements()` and `MySqlOutboxStore.migrationStatements()`, one statement per call, as TypeORM's `queryRunner.query()` and mysql2 take them, or paste `migrationSql()` into a drizzle-kit custom migration with `statementBreakpoints`, which drizzle-kit's MySQL migrator needs. The command lines take a `mysql://` URL, and `sql --dialect mysql` prints MySQL's SQL.
+- **Migrations aren't one transaction.** MySQL commits each DDL statement on its own, so `migrate` applies the statements one at a time, under a lock (`GET_LOCK()`), and a run that failed resumes at the statement it stopped at. Your own tool must send one statement per call too, as the TypeORM migration in **Migrations** above does. The command lines take a `mysql://` URL, and `sql --dialect mysql` prints MySQL's SQL: add `--statement-breakpoints` for a drizzle-kit custom migration, since its MySQL migrator sends one statement per breakpoint.
 - **The server.** The stores check it at startup, and refuse MariaDB, a connection without a database, and a `sql_mode` that isn't strict (MySQL's default is). Keep `NO_BACKSLASH_ESCAPES` out of it too.
 
 For another database, write a store of your own: [The store contract](/http/webhooks#the-store-contract) says what it must do.
