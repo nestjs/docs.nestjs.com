@@ -22,7 +22,7 @@ In this tutorial, you'll add the outbox to the store's order API, on PostgreSQL 
 
 #### Prerequisites
 
-- PostgreSQL, with [Drizzle ORM](https://orm.drizzle.team) on the `pg` driver, registered through [`@nestjs/drizzle`](/data/drizzle). The outbox's messages commit with your rows, so they live in the database your orders live in, on a database server that outlives any instance of the application. Using TypeORM, Prisma or MySQL? Follow the tutorial for what the application does: [Set up the database](/reliability/outbox#set-up-the-database) shows the store with each of them.
+- PostgreSQL, with [Drizzle ORM](https://orm.drizzle.team) on the `pg` driver, registered through [`@nestjs/drizzle`](/data/drizzle). The outbox's messages commit with your rows, so they live in the database your orders live in, on a database server that outlives any instance of the application. Using TypeORM, Prisma or MySQL? Follow the tutorial for what the application does: [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) shows the store with each of them.
 - `@nestjs/microservices`, for the TCP link to the analytics service in [Publish to the analytics microservice](/reliability/outbox#publish-to-the-analytics-microservice).
 
 Install the package:
@@ -31,9 +31,9 @@ Install the package:
 $ npm i --save @nestjs/outbox
 ```
 
-#### Set up the database
+#### The order API
 
-The order API keeps its products and orders in two tables of a Drizzle schema:
+The order API keeps its products and orders in the example application's own tables, which it would have without the outbox: the outbox's tables belong to its store, `PostgresOutboxStore`, which creates them, as [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) shows. They're two tables of a Drizzle schema:
 
 ```typescript
 @@filename(database/schema)
@@ -59,7 +59,7 @@ export const orders = pgTable('orders', {
 });
 ```
 
-[`DrizzleModule`](/data/drizzle) registers the database in the root module ([Register the outbox](/reliability/outbox#register-the-outbox) shows the whole module). Its `forRootAsync()` factory runs once per application: the module calls the driver's `drizzle()` with the connection string and the schema, which opens a `pg` pool on `DATABASE_URL`, and ends that pool when the application shuts down:
+[`DrizzleModule`](/data/drizzle) registers the database in the root module, which [Register the outbox](/reliability/outbox#register-the-outbox) shows whole:
 
 ```typescript
 @@filename(app.module)
@@ -74,8 +74,6 @@ DrizzleModule.forRootAsync({
 ```
 
 > info **Hint** The tutorial reads `process.env` directly, to stay short. In an application, load the environment through [`@nestjs/config`](/application/configuration) with a validation schema, so a missing `DATABASE_URL` stops the application at startup, and read it from `ConfigService` in the factory.
-
-The module ends the pool in `onApplicationShutdown()`. Nest runs that phase after `onModuleDestroy()`, which is when the relay finishes its in-flight work, so the relay never loses its connection mid-publish.
 
 The services inject the database with `@InjectDrizzle()`, and type it and their transactions with Drizzle's own types:
 
@@ -97,7 +95,11 @@ $ npx drizzle-kit generate --custom --name=seed_products
 $ npx drizzle-kit migrate
 ```
 
-The outbox keeps its messages, its dead letters and the consumers' inboxes in the same database, because they must commit with your rows. Until you register a store for them, the outbox keeps them in memory: fine for a first run, but a restart loses every message that wasn't published yet, two instances don't share them, and nothing joins your transactions. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
+#### Keep messages in your database
+
+There's nothing to create for the outbox: no tables, entities or Prisma models. Register its store, and the store creates its own schema, `nest_outbox`, and migrates it: at startup in development and in tests, and in production with `npx nest-outbox migrate`, or with `migrationSql()` in your own migrations.
+
+The outbox keeps its messages, its dead letters and the consumers' inboxes in the same database as your own tables, because they must commit with your rows. Until you register a store for them, the outbox keeps them in memory: fine for a first run, but a restart loses every message that wasn't published yet, two instances don't share them, and nothing joins your transactions. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
 On PostgreSQL, register the package's store, `PostgresOutboxStore` from `@nestjs/outbox/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions, and it keeps its tables in a schema of its own. It's an ordinary provider: the root module creates it with a factory that injects the Drizzle database and the `OutboxStorage` registry, which the store registers itself with:
 
@@ -228,7 +230,7 @@ export class AppModule {}
 
 #### Register the outbox
 
-Register `OutboxModule` in the root module, with the `DrizzleModule` and the store from [Set up the database](/reliability/outbox#set-up-the-database). The feature modules it imports are built in the next steps:
+Register `OutboxModule` in the root module, with the `DrizzleModule` from [The order API](/reliability/outbox#the-order-api) and the store from [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database). The feature modules it imports are built in the next steps:
 
 ```typescript
 @@filename(app.module)
@@ -588,7 +590,7 @@ export const orderEvents = pgTable(
 );
 ```
 
-It registers `DrizzleModule` as the order API does in [Set up the database](/reliability/outbox#set-up-the-database), on its own `DATABASE_URL` and schema, and its migrations have their own drizzle-kit config:
+It registers `DrizzleModule` as [the order API](/reliability/outbox#the-order-api) does, on its own `DATABASE_URL` and schema, and its migrations have their own drizzle-kit config:
 
 ```bash
 $ npx drizzle-kit generate --config analytics-service/drizzle.config.ts --name=analytics
@@ -1204,7 +1206,7 @@ The overall guarantee is **at least once**, with consumer inboxes absorbing the 
 | A message is dead-lettered | Its key is unblocked, so later messages with that key overtake it |
 | TCP, Redis or core NATS transport | "Published" means the write left the process. A consumer crash after that loses the message |
 
-Order within a key is the order in which the store numbered the messages, not their ids: an id comes from its instance's clock, and clocks differ. PostgreSQL runs transactions concurrently, so the store makes the transactions that add messages with the same key take turns, and the numbering follows commit order (see [Set up the database](/reliability/outbox#set-up-the-database)).
+Order within a key is the order in which the store numbered the messages, not their ids: an id comes from its instance's clock, and clocks differ. PostgreSQL runs transactions concurrently, so the store makes the transactions that add messages with the same key take turns, and the numbering follows commit order (see [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database)).
 
 #### Production checklist
 
@@ -1304,7 +1306,7 @@ A working example is available in the [37-outbox sample](https://github.com/nest
 
 ##### Module options
 
-`OutboxModule.forRoot()` takes these options. `forRootAsync()` takes `transports` classes, `imports` and `isGlobal` at its top level, and the rest from `useFactory`, `useClass` or `useExisting` (a class implementing `OutboxOptionsFactory`), as in [Register the outbox](/reliability/outbox#register-the-outbox). The options token is `OUTBOX_MODULE_OPTIONS`. The store isn't an option: register it as a provider, as in [Set up the database](/reliability/outbox#set-up-the-database). Durations are milliseconds, or strings such as `'30s'` and `'1m'`.
+`OutboxModule.forRoot()` takes these options. `forRootAsync()` takes `transports` classes, `imports` and `isGlobal` at its top level, and the rest from `useFactory`, `useClass` or `useExisting` (a class implementing `OutboxOptionsFactory`), as in [Register the outbox](/reliability/outbox#register-the-outbox). The options token is `OUTBOX_MODULE_OPTIONS`. The store isn't an option: register it as a provider, as in [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database). Durations are milliseconds, or strings such as `'30s'` and `'1m'`.
 
 | Option | Default | Meaning |
 | --- | --- | --- |

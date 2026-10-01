@@ -29,7 +29,7 @@ To get started, install the required dependency:
 $ npm i --save @nestjs/workflows
 ```
 
-The tutorial keeps its workflows in PostgreSQL, with the package's own store, and uses Drizzle, registered through [`@nestjs/drizzle`](/data/drizzle) as in [the outbox tutorial's database setup](/reliability/outbox#set-up-the-database). [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) shows the store with TypeORM too, and the package's MySQL store. The tests on this page use [PGlite](https://pglite.dev), so they need no server.
+The tutorial keeps its workflows in PostgreSQL, with the package's own store, and uses Drizzle, registered through [`@nestjs/drizzle`](/data/drizzle) as in [the outbox tutorial's order API](/reliability/outbox#the-order-api). [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) shows the store with TypeORM too, and the package's MySQL store. The tests on this page use [PGlite](https://pglite.dev), so they need no server.
 
 Orders live in the database, in a Drizzle table. The tutorial uses in-memory stand-ins for the payment provider's SDK (`PaymentProviderClient`), the stock table (`InventoryService`) and the mail provider (`MailService`). Like the real systems, they deduplicate requests by idempotency key. Orders have this shape:
 
@@ -72,7 +72,7 @@ export interface FulfilmentResult {
 
 #### Register the module
 
-Import `WorkflowsModule` once, in the root module, next to `DrizzleModule` from [the outbox tutorial's database setup](/reliability/outbox#set-up-the-database), which registers the Drizzle database that `@InjectDrizzle()` injects. Workflow classes are ordinary providers, so they go in `providers` next to the services they inject. This is the finished module: the workflows and the controllers it lists are written in the following sections, and the first provider is the package's PostgreSQL store, which [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) explains.
+Import `WorkflowsModule` once, in the root module, next to `DrizzleModule` from [the outbox tutorial's order API](/reliability/outbox#the-order-api), which registers the Drizzle database that `@InjectDrizzle()` injects. Workflow classes are ordinary providers, so they go in `providers` next to the services they inject. This is the finished module: the workflows and the controllers it lists are written in the following sections, and the first provider is the package's PostgreSQL store, which [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) explains.
 
 ```typescript
 @@filename(app.module)
@@ -154,6 +154,8 @@ await bootstrap();
 ```
 
 #### Keep workflows in your database
+
+There's nothing to create for workflows: no tables, entities or Prisma models. Register the package's store, and the store creates its own schema, `nest_workflows`, and migrates it: at startup in development and in tests, and in production with `npx nest-workflows migrate`, or with `migrationSql()` in your own migrations.
 
 Workflow instances, their journals, the signals they wait for and the signals sent live in a **store**. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every running order, and two processes don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 

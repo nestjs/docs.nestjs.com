@@ -23,16 +23,16 @@ To get started, install the required dependency:
 $ npm i --save @nestjs/webhooks
 ```
 
-#### Set up the database
-
 The tutorial runs on PostgreSQL, through [Drizzle ORM](https://orm.drizzle.team) and [`@nestjs/drizzle`](/data/drizzle) with the `pg` driver: the endpoints and the delivery log live in the database the orders live in, on a database server that outlives any instance of the application. Using TypeORM, or MySQL? Follow the tutorial, and see "With TypeORM" and "With MySQL" in [Keep webhooks in your database](/http/webhooks#keep-webhooks-in-your-database) for what changes.
 
-Outgoing webhooks are outbox messages, and incoming ones are deduplicated with the outbox's inbox, so the application runs the outbox too (`@nestjs/outbox`, installed and set up in [the outbox tutorial](/reliability/outbox)). Both packages keep their state in tables of your database that their stores create, as the next section shows, so the Drizzle schema holds only the order API's own tables: the catalog, the partners that call the API, and their orders:
+Outgoing webhooks are outbox messages, and incoming ones are deduplicated with the outbox's inbox, so the application runs the outbox too (`@nestjs/outbox`, installed and set up in [the outbox tutorial](/reliability/outbox)).
+
+#### The order API
+
+The order API keeps its catalog, the partners that call it, and their orders in the example application's own tables, which it would have without webhooks: the webhooks' and the outbox's tables belong to their stores, `PostgresWebhookStore` and `PostgresOutboxStore`, which create them, as [Keep webhooks in your database](/http/webhooks#keep-webhooks-in-your-database) shows. They're three tables of a Drizzle schema:
 
 ```typescript
 @@filename(database/schema)
-// The order API's tables on PostgreSQL, for Drizzle and drizzle-kit. The outbox's and the
-// webhooks' tables belong to their stores, which create them in schemas of their own.
 import { integer, jsonb, pgTable, text } from 'drizzle-orm/pg-core';
 import type { OrderItem, OrderStatus } from '../orders/order.js';
 
@@ -78,7 +78,7 @@ export type Database = NodePgDatabase<typeof schema>;
 export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
 ```
 
-`DrizzleModule` opens a `pg` pool on `DATABASE_URL`, in the root module ([Register the modules](/http/webhooks#register-the-modules) lists it whole). The pool is closed when the application shuts down, after the outbox relay and the webhook worker finished what they were doing: they drain in `onModuleDestroy`, and `@nestjs/drizzle` closes the pool in `onApplicationShutdown`, a later phase:
+`DrizzleModule` opens a `pg` pool on `DATABASE_URL`, in the root module ([Register the modules](/http/webhooks#register-the-modules) lists it whole), and closes it at shutdown, after the outbox relay and the webhook worker drained:
 
 ```typescript
 @@filename(app.module)
@@ -113,9 +113,11 @@ INSERT INTO "partners" ("id", "name", "api_key_hash") VALUES
 
 #### Keep webhooks in your database
 
+There's nothing to create for webhooks, or for the outbox they travel through: no tables, entities or Prisma models. Register their two stores, and each creates its own schema, `nest_webhooks` and `nest_outbox`, and migrates it: at startup in development and in tests, and in production with `npx nest-webhooks migrate` and `npx nest-outbox migrate`, or with their `migrationSql()` in your own migrations.
+
 The package keeps the endpoints, with their secrets, the messages it dispatched, their deliveries and the log of every attempt in a **store**, which it reads through two contracts, `WebhookEndpointStore` and `WebhookDeliveryStore`. Until you register one, the module keeps them in memory: fine for a first run, but a restart loses every pending delivery, and two instances don't share them. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
-On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestjs/webhooks/postgres`. The outbox needs one too, for the messages that carry dispatched webhooks out of your transaction and for the inbox that deduplicates incoming ones: `PostgresOutboxStore` from `@nestjs/outbox/postgres`, as in [the outbox tutorial](/reliability/outbox#set-up-the-database). Both run their SQL through the database client your application already has, and keep their tables in schemas of their own. They're ordinary providers: `AppModule` creates each with a factory that injects the Drizzle database and its package's storage registry, which the store registers itself with:
+On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestjs/webhooks/postgres`. The outbox needs one too, for the messages that carry dispatched webhooks out of your transaction and for the inbox that deduplicates incoming ones: `PostgresOutboxStore` from `@nestjs/outbox/postgres`, as in [the outbox tutorial](/reliability/outbox#keep-messages-in-your-database). Both run their SQL through the database client your application already has, and keep their tables in schemas of their own. They're ordinary providers: `AppModule` creates each with a factory that injects the Drizzle database and its package's storage registry, which the store registers itself with:
 
 ```typescript
 @@filename(app.module)
@@ -364,7 +366,7 @@ At startup, both modules log the store they use, and on the first start, the sto
 
 #### Let partners subscribe
 
-Shelters and resellers call the partner API with an API key. The seed migration in [Set up the database](/http/webhooks#set-up-the-database) gave the two partners, Northside Pet Supplies (a reseller) and Riverside Cat Shelter, sample keys. `PartnerGuard` looks the key's hash up and sets the partner on the request, and `@CurrentPartner()` reads it:
+Shelters and resellers call the partner API with an API key. The seed migration in [The order API](/http/webhooks#the-order-api) gave the two partners, Northside Pet Supplies (a reseller) and Riverside Cat Shelter, sample keys. `PartnerGuard` looks the key's hash up and sets the partner on the request, and `@CurrentPartner()` reads it:
 
 ```typescript
 @@filename(partners/partner.guard)
