@@ -29,9 +29,9 @@ To get started, install the required dependency:
 $ npm i --save @nestjs/workflows
 ```
 
-The tutorial keeps its workflows in PostgreSQL, with the package's own store, and uses Drizzle, registered through [`@nestjs/drizzle`](/data/drizzle) as in [the outbox tutorial's order API](/reliability/outbox#the-order-api). [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) shows the store with TypeORM too, and the package's MySQL store. The tests on this page use [PGlite](https://pglite.dev), so they need no server.
+The tutorial keeps its workflows in PostgreSQL, with the package's own store, and uses Drizzle, registered through [`@nestjs/drizzle`](/data/drizzle). [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) shows the store with TypeORM too, and the package's MySQL store. The tests on this page use [PGlite](https://pglite.dev), so they need no server.
 
-Orders live in the database, in a Drizzle table. The tutorial uses in-memory stand-ins for the payment provider's SDK (`PaymentProviderClient`), the stock table (`InventoryService`) and the mail provider (`MailService`). Like the real systems, they deduplicate requests by idempotency key. Orders have this shape:
+Orders live in the example application's own table, `orders`. The tutorial uses in-memory stand-ins for the payment provider's SDK (`PaymentProviderClient`), the stock table (`InventoryService`) and the mail provider (`MailService`). Like the real systems, they deduplicate requests by idempotency key. Orders have this shape:
 
 ```typescript
 @@filename(orders/order)
@@ -72,7 +72,7 @@ export interface FulfilmentResult {
 
 #### Register the module
 
-Import `WorkflowsModule` once, in the root module, next to `DrizzleModule` from [the outbox tutorial's order API](/reliability/outbox#the-order-api), which registers the Drizzle database that `@InjectDrizzle()` injects. Workflow classes are ordinary providers, so they go in `providers` next to the services they inject. This is the finished module: the workflows and the controllers it lists are written in the following sections, and the first provider is the package's PostgreSQL store, which [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) explains.
+Import `WorkflowsModule` once, in the root module, next to [`DrizzleModule`](/data/drizzle), which registers the Drizzle database that `@InjectDrizzle()` injects. Workflow classes are ordinary providers, so they go in `providers` next to the services they inject. This is the finished module: the workflows and the controllers it lists are written in the following sections, and the first provider is the package's PostgreSQL store, which [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) explains.
 
 ```typescript
 @@filename(app.module)
@@ -174,7 +174,19 @@ On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nest
 
 `fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `WorkflowStorage: PostgresWorkflowStore`.
 
-**The schema.** The store keeps its tables in the `nest_workflows` schema: `instances`, `journal`, `waits`, `signals`, `schedules`, `rate_limits`, and `migrations`, which records the versions applied. They belong to the store: your migrations don't create them, and your own tables can't collide with them. The `schema` option names another schema.
+**The schema.** The store keeps its tables in a schema of its own, `nest_workflows` (the `schema` option names another). On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_workflows_instances` and so on.
+
+| Table | What it holds |
+| --- | --- |
+| `nest_workflows.instances` | Each workflow instance: its input, status, output or error, when it's due, and its lease |
+| `nest_workflows.journal` | Each instance's recorded steps, sleeps, waits and compensations, with their results |
+| `nest_workflows.waits` | The signals a suspended instance waits for |
+| `nest_workflows.signals` | The signals sent, until `purge()` deletes the ones no instance can take any more |
+| `nest_workflows.schedules` | The schedules, with their spec, state and next run |
+| `nest_workflows.rate_limits` | The rate-limit windows, per workflow and key |
+| `nest_workflows.migrations` | The versions of the store's schema applied |
+
+They belong to the store: your migrations don't create them, and your own tables can't collide with them.
 
 **Migrations.** The package ships the schema as versioned migrations, and the store applies them itself. With the `migrate` option, it applies the ones the schema hasn't had yet at startup, before the worker runs, in one transaction that holds an advisory lock: of several processes that start together, one migrates, and the others find nothing left to do. `migrate` defaults to `true`, except with `NODE_ENV=production`. So in development and in tests, the store creates its schema on the first start, and your migrations only create your own tables, here `orders`.
 
@@ -987,11 +999,6 @@ Register both classes. An instance keeps the version it started on, and a worker
 Create the database, apply your migrations, and start the application with `DATABASE_URL` pointing at the database:
 
 ```bash
-$ npx drizzle-kit migrate
-No config path provided, using default 'drizzle.config.ts'
-Reading config file '/store/drizzle.config.ts'
-Using 'pg' driver for database querying
-[✓] migrations applied successfully!
 $ npm run start:dev
 ...
 [Nest] 33662  - 09/30/2026, 1:28:30 PM     LOG [WorkflowsModule] WorkflowStorage: PostgresWorkflowStore
@@ -999,7 +1006,7 @@ $ npm run start:dev
 [Nest] 33662  - 09/30/2026, 1:28:30 PM     LOG [NestApplication] Nest application successfully started +8ms
 ```
 
-The log names the store in use, not the in-memory default, and says that the store created its schema: `drizzle-kit migrate` created `orders`, and the store its own tables. Place an order, then ask where it is:
+The log names the store in use, not the in-memory default, and says that the store created its schema: your migrations created `orders`, and the store its own tables. Place an order, then ask where it is:
 
 ```bash
 $ curl -X POST http://localhost:3000/orders -H "Content-Type: application/json" \

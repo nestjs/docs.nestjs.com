@@ -31,69 +31,14 @@ Install the package:
 $ npm i --save @nestjs/outbox
 ```
 
-#### The order API
+The example application, the online store's order API, keeps its products and orders in two tables of its own, which the later sections read and write. They're the example's data, not something the outbox needs: the outbox's tables belong to its store, which creates them, as [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) shows.
 
-The order API keeps its products and orders in the example application's own tables, which it would have without the outbox: the outbox's tables belong to its store, `PostgresOutboxStore`, which creates them, as [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) shows. They're two tables of a Drizzle schema:
+| Table | Columns | What it's for |
+| --- | --- | --- |
+| `products` | `id`, `name`, `price` (in cents), `in_stock`, `reserved` | The catalog. Reserving stock for an order moves units from `in_stock` to `reserved` |
+| `orders` | `id`, `user_id`, `items` (JSON: each line's product, quantity and unit price), `total` (in cents), `status` (`placed` or `cancelled`) | The orders that `POST /orders` saves |
 
-```typescript
-@@filename(database/schema)
-import { integer, jsonb, pgTable, text } from 'drizzle-orm/pg-core';
-import type { OrderItem } from '../orders/order.js';
-
-export const products = pgTable('products', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  /** In cents. */
-  price: integer('price').notNull(),
-  inStock: integer('in_stock').notNull(),
-  reserved: integer('reserved').notNull().default(0),
-});
-
-export const orders = pgTable('orders', {
-  id: text('id').primaryKey(),
-  userId: text('user_id').notNull(),
-  items: jsonb('items').$type<OrderItem[]>().notNull(),
-  /** In cents. */
-  total: integer('total').notNull(),
-  status: text('status').$type<'placed' | 'cancelled'>().notNull(),
-});
-```
-
-[`DrizzleModule`](/data/drizzle) registers the database in the root module, which [Register the outbox](/reliability/outbox#register-the-outbox) shows whole:
-
-```typescript
-@@filename(app.module)
-import { DrizzleModule, getDrizzleToken } from '@nestjs/drizzle';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from './database/schema.js';
-// ...
-DrizzleModule.forRootAsync({
-  // A pg pool on DATABASE_URL, closed in onApplicationShutdown(), after the relay drained.
-  useFactory: () => ({ drizzle, connection: process.env.DATABASE_URL!, schema }),
-}),
-```
-
-> info **Hint** The tutorial reads `process.env` directly, to stay short. In an application, load the environment through [`@nestjs/config`](/application/configuration) with a validation schema, so a missing `DATABASE_URL` stops the application at startup, and read it from `ConfigService` in the factory.
-
-The services inject the database with `@InjectDrizzle()`, and type it and their transactions with Drizzle's own types:
-
-```typescript
-@@filename(database/drizzle)
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type * as schema from './schema.js';
-
-export type Database = NodePgDatabase<typeof schema>;
-/** The `tx` that `db.transaction()` passes its callback. */
-export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
-```
-
-drizzle-kit writes the migration of the two tables from the schema, and a custom migration adds the products:
-
-```bash
-$ npx drizzle-kit generate --name=orders
-$ npx drizzle-kit generate --custom --name=seed_products
-$ npx drizzle-kit migrate
-```
+The catalog has two products: `salmon-kibble-2kg`, at 2499 cents with 10 in stock, and `clumping-litter-10l`, at 1599 cents with one in stock.
 
 #### Keep messages in your database
 
@@ -116,7 +61,16 @@ On PostgreSQL, register the package's store, `PostgresOutboxStore` from `@nestjs
 
 `fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `OutboxStorage: PostgresOutboxStore`.
 
-**The schema.** The store keeps its tables in the `nest_outbox` schema: `messages`, `dead_letters`, `inbox`, and `migrations`, which records the versions applied. They belong to the store: your migrations don't create them, your ORM's schema doesn't declare them, and your own tables can't collide with them. drizzle-kit and Prisma Migrate work on the `public` schema unless told otherwise, and TypeORM on its entities' tables, so their tools leave `nest_outbox` alone. The `schema` option names another schema.
+**The schema.** The store keeps its tables in a schema of its own, `nest_outbox` (the `schema` option names another). On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_outbox_messages` and so on.
+
+| Table | What it holds |
+| --- | --- |
+| `nest_outbox.messages` | Each message from `add()` until it's published or dead-lettered, with its attempts and lease |
+| `nest_outbox.dead_letters` | The messages that failed, with the reason and the error of every attempt |
+| `nest_outbox.inbox` | The ids of the messages each consumer has processed |
+| `nest_outbox.migrations` | The versions of the store's schema applied |
+
+They belong to the store: your migrations don't create them, your ORM's schema doesn't declare them, and your own tables can't collide with them. drizzle-kit and Prisma Migrate work on the `public` schema unless told otherwise, and TypeORM on its entities' tables, so their tools leave `nest_outbox` alone.
 
 **Migrations.** The package ships the schema as versioned migrations, and the store applies them itself. With the `migrate` option, it applies the ones the schema hasn't had yet when the application starts, before the relay runs, in one transaction that holds an advisory lock: of several instances that start together, one migrates, and the others find nothing left to do. `migrate` defaults to `true`, except with `NODE_ENV=production`. So in development and in tests, the store creates its schema on the first start, and your migrations only create your own tables, here `products` and `orders`.
 
@@ -167,8 +121,7 @@ export class OrdersService {
     }
 
     const order = await this.dataSource.transaction(async (manager) => {
-      const products = await manager.findBy(ProductEntity, { id: In(items.map((item) => item.productId)) });
-      // ... price the lines and build the order, as in the Drizzle version
+      // ... price the items through manager (an unknown product throws) and build the order
       await manager.insert(OrderEntity, order);
 
       // The transaction's EntityManager: the message commits or rolls back with the order.
@@ -230,7 +183,7 @@ export class AppModule {}
 
 #### Register the outbox
 
-Register `OutboxModule` in the root module, with the `DrizzleModule` from [The order API](/reliability/outbox#the-order-api) and the store from [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database). The feature modules it imports are built in the next steps:
+Register `OutboxModule` in the root module, next to `DrizzleModule`, which registers the Drizzle database, and with the store from [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database). The feature modules it imports are built in the next steps:
 
 ```typescript
 @@filename(app.module)
@@ -310,6 +263,8 @@ export class AppModule {}
 - `relay`: the background publisher. It polls every `pollInterval`, leases what it claims for `lease`, and gives up on a single publish after `publishTimeout`. Setting `OUTBOX_RELAY=off` turns it off in API-only instances ([Run several instances](/reliability/outbox#run-several-instances)).
 - `retry`: 10 attempts, with exponential backoff that starts at 1 second and is capped at 1 minute ([Retries and the dead-letter queue](/reliability/outbox#retries-and-the-dead-letter-queue)).
 
+> info **Hint** The tutorial reads `process.env` directly, to stay short. In an application, load the environment through [`@nestjs/config`](/application/configuration) with a validation schema, so a missing `DATABASE_URL` stops the application at startup, and read the values from `ConfigService` in the factories.
+
 Durations are milliseconds or strings such as `'30s'` and `'1m'`. `OutboxModule` is global: `Outbox`, `OutboxStorage`, `OutboxRelay`, `OutboxEvents`, `OutboxDeadLetters` and `OutboxInbox` can be injected anywhere in the application.
 
 #### Save the order and its messages in one transaction
@@ -347,8 +302,6 @@ export class PlaceOrderDto {
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDrizzle } from '@nestjs/drizzle';
 import { Outbox } from '@nestjs/outbox';
-import { inArray } from 'drizzle-orm';
-import { randomUUID } from 'node:crypto';
 import type { Database, Transaction } from '../database/drizzle.js';
 import { orders, products } from '../database/schema.js';
 import type { Order, PlaceOrderDto } from './order.js';
@@ -366,25 +319,7 @@ export class OrdersService {
     }
 
     const order = await this.db.transaction(async (tx) => {
-      const ids = items.map((item) => item.productId);
-      const prices = await tx.select().from(products).where(inArray(products.id, ids));
-      const lines = items.map(({ productId, quantity }) => {
-        const product = prices.find((row) => row.id === productId);
-        if (!product) {
-          throw new BadRequestException(`Unknown product "${productId}"`);
-        }
-        if (!Number.isInteger(quantity) || quantity < 1) {
-          throw new BadRequestException(`Invalid quantity for "${productId}"`);
-        }
-        return { productId, quantity, price: product.price };
-      });
-      const order: Order = {
-        id: randomUUID(),
-        userId,
-        items: lines,
-        total: lines.reduce((sum, line) => sum + line.price * line.quantity, 0),
-        status: 'placed',
-      };
+      // ... price the items through tx (an unknown product throws) and build the order
       await tx.insert(orders).values(order);
 
       // Drizzle's tx: the messages commit or roll back with the order.
@@ -401,7 +336,7 @@ export class OrdersService {
 }
 ```
 
-`outbox.add()` takes the transaction handle first, then the message or an array of messages. With Drizzle, the handle is the `tx` that `db.transaction()` passes its callback. The store inserts them through that `tx`, so the messages commit with the order, or roll back with it. The store is asynchronous, so await `add()` like any other query. Every API in the package that joins your transaction takes the handle as its first argument.
+`outbox.add()` takes the transaction handle first, then the message or an array of messages. With Drizzle, the handle is the `tx` that `db.transaction()` passes its callback, whose type the service gives the outbox: `Outbox<Transaction>`. The store inserts them through that `tx`, so the messages commit with the order, or roll back with it. The store is asynchronous, so await `add()` like any other query. Every API in the package that joins your transaction takes the handle as its first argument.
 
 A few details:
 
@@ -569,33 +504,11 @@ The orders controller already routes `POST /orders/:id/cancel` to it. The `SELEC
 
 The `order.placed` message for the in-process handlers has no key, on purpose. A key is shared by every message that carries it, whatever the topic or transport. If the email message used the order id as well, a mail outage would hold back the analytics events for that order.
 
-The analytics service is a separate Nest application, and like any service it owns its data: a PostgreSQL database of its own, with its own schema and migrations. It never reads the order API's tables. It records each order event in an `order_events` table:
+The analytics service is a separate Nest application, and like any service it owns its data: a PostgreSQL database of its own, with its own schema and migrations. It never reads the order API's tables. It records each order event in a table of its own, again the example's data:
 
-```typescript
-@@filename(analytics-service/database/schema)
-import { bigint, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
-
-export const orderEvents = pgTable(
-  'order_events',
-  {
-    /** Arrival order. */
-    seq: bigint('seq', { mode: 'number' }).primaryKey().generatedAlwaysAsIdentity(),
-    orderId: text('order_id').notNull(),
-    event: text('event').$type<'placed' | 'cancelled'>().notNull(),
-    /** The change to revenue, in cents: the order's total when placed, minus it when cancelled. */
-    amount: integer('amount').notNull(),
-    recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull().defaultNow(),
-  },
-  (table) => [index('order_events_order_id').on(table.orderId)],
-);
-```
-
-It registers `DrizzleModule` as [the order API](/reliability/outbox#the-order-api) does, on its own `DATABASE_URL` and schema, and its migrations have their own drizzle-kit config:
-
-```bash
-$ npx drizzle-kit generate --config analytics-service/drizzle.config.ts --name=analytics
-$ npx drizzle-kit migrate --config analytics-service/drizzle.config.ts
-```
+| Table | Columns | What it's for |
+| --- | --- | --- |
+| `order_events` | `seq` (generated, in arrival order), `order_id` (indexed), `event` (`placed` or `cancelled`), `amount` (in cents), `recorded_at` | One row per order event. `amount` is the change to revenue: the order's total when it's placed, minus it when it's cancelled, so the revenue is the sum of `amount` |
 
 The service only consumes, so it registers `OutboxModule` with the relay turned off, and the same store as the order API, on its own database. `OutboxInbox` keeps the service's inbox there, next to `order_events`, so an event and the record that it was processed commit together. The store's tables for messages stay empty, and with the relay off, nothing polls them:
 
@@ -642,7 +555,6 @@ export class AnalyticsModule {}
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDrizzle } from '@nestjs/drizzle';
 import { OutboxInbox } from '@nestjs/outbox';
-import { asc, eq, sql } from 'drizzle-orm';
 import type { Database, Transaction } from './database/drizzle.js';
 import { orderEvents } from './database/schema.js';
 
@@ -685,21 +597,10 @@ export class OrderStatsService {
 
   /** Total revenue in cents. */
   async revenue(db: Database | Transaction = this.db): Promise<number> {
-    const [row] = await db
-      .select({ total: sql<number>`coalesce(sum(${orderEvents.amount}), 0)`.mapWith(Number) })
-      .from(orderEvents);
-    return row!.total;
+    // ... the sum of amount in order_events, read through db
   }
 
-  /** An order's events, in the order they were recorded. */
-  async timeline(orderId: string): Promise<OrderEvent[]> {
-    const rows = await this.db
-      .select({ event: orderEvents.event })
-      .from(orderEvents)
-      .where(eq(orderEvents.orderId, orderId))
-      .orderBy(asc(orderEvents.seq));
-    return rows.map((row) => row.event);
-  }
+  // ...
 }
 ```
 
@@ -955,12 +856,7 @@ The example application runs this section against a PostgreSQL server: two relay
 
 #### Try it
 
-Create the two databases, `store` for the order API and `analytics` for the analytics service, and apply each service's migrations:
-
-```bash
-$ DATABASE_URL=postgres://localhost:5432/store npx drizzle-kit migrate
-$ DATABASE_URL=postgres://localhost:5432/analytics npx drizzle-kit migrate --config analytics-service/drizzle.config.ts
-```
+Create the two databases, `store` for the order API and `analytics` for the analytics service, and apply each service's own migrations: the order API's create its tables and products from [Prerequisites](/reliability/outbox#prerequisites), and the analytics service's create `order_events`.
 
 Start the analytics service (TCP port 4001) on `analytics`, and the order API (port 3000) on `store`, with `ADMIN_TOKEN=s3cret` in the API's environment. Each logs the store it registered, and the store creates its schema on the first start:
 

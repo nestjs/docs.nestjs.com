@@ -27,89 +27,20 @@ The tutorial runs on PostgreSQL, through [Drizzle ORM](https://orm.drizzle.team)
 
 Outgoing webhooks are outbox messages, and incoming ones are deduplicated with the outbox's inbox, so the application runs the outbox too (`@nestjs/outbox`, installed and set up in [the outbox tutorial](/reliability/outbox)).
 
-#### The order API
+The example application, the online store's order API, keeps its catalog, the partners that call it, and their orders in three tables of its own, which the later sections read and write. They're the example's data, not something webhooks need: the webhooks' and the outbox's tables belong to their stores, which create them, as [Keep webhooks in your database](/http/webhooks#keep-webhooks-in-your-database) shows.
 
-The order API keeps its catalog, the partners that call it, and their orders in the example application's own tables, which it would have without webhooks: the webhooks' and the outbox's tables belong to their stores, `PostgresWebhookStore` and `PostgresOutboxStore`, which create them, as [Keep webhooks in your database](/http/webhooks#keep-webhooks-in-your-database) shows. They're three tables of a Drizzle schema:
+| Table | Columns | What it's for |
+| --- | --- | --- |
+| `products` | `id`, `name`, `price` (in cents) | The catalog |
+| `partners` | `id`, `name`, `api_key_hash` (the SHA-256 of the partner's API key, in hex; unique) | The cat shelters and resellers that buy in bulk over the API, and receive its webhooks |
+| `orders` | `id`, `partner_id`, `items` (JSON: each line's product, quantity and unit price), `total` (in cents), `status`, `payment_id`, `tracking_number` | The partners' orders. `status` goes from `placed` to `paid` (with `payment_id`) and `shipped` (with `tracking_number`), or to `cancelled` |
 
-```typescript
-@@filename(database/schema)
-import { integer, jsonb, pgTable, text } from 'drizzle-orm/pg-core';
-import type { OrderItem, OrderStatus } from '../orders/order.js';
+The catalog has two products, `salmon-kibble-2kg` at 2499 cents and `clumping-litter-10l` at 1599 cents, and the two partners have sample API keys (issue real ones from your partner onboarding):
 
-export const products = pgTable('products', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  /** In cents. */
-  price: integer('price').notNull(),
-});
-
-/** The cat shelters and resellers that buy in bulk over the store's API, and receive its webhooks. */
-export const partners = pgTable('partners', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  /** SHA-256 of the partner's API key, hex. */
-  apiKeyHash: text('api_key_hash').notNull().unique(),
-});
-
-export const orders = pgTable('orders', {
-  id: text('id').primaryKey(),
-  partnerId: text('partner_id')
-    .notNull()
-    .references(() => partners.id),
-  items: jsonb('items').$type<OrderItem[]>().notNull(),
-  /** In cents. */
-  total: integer('total').notNull(),
-  status: text('status').$type<OrderStatus>().notNull(),
-  paymentId: text('payment_id'),
-  trackingNumber: text('tracking_number'),
-});
-```
-
-The services inject the database that `DrizzleModule` registers, with `@InjectDrizzle()`, and type it and their transactions with Drizzle's own types:
-
-```typescript
-@@filename(database/drizzle)
-// The types of the Drizzle database that DrizzleModule registers (app.module.ts).
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type * as schema from './schema.js';
-
-export type Database = NodePgDatabase<typeof schema>;
-/** The `tx` that `db.transaction()` passes its callback. */
-export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
-```
-
-`DrizzleModule` opens a `pg` pool on `DATABASE_URL`, in the root module ([Register the modules](/http/webhooks#register-the-modules) lists it whole), and closes it at shutdown, after the outbox relay and the webhook worker drained:
-
-```typescript
-@@filename(app.module)
-DrizzleModule.forRootAsync({
-  useFactory: () => ({ drizzle, connection: process.env.DATABASE_URL!, schema }),
-}),
-```
-
-> info **Hint** The tutorial reads `process.env` directly, to stay short. In an application, load the environment through [`@nestjs/config`](/application/configuration) with a validation schema, so a missing variable stops the application at startup rather than at the first request, and read the values from `ConfigService` (`inject: [ConfigService]` in the factories).
-
-drizzle-kit writes the migrations from the schema, and a custom migration seeds the catalog and the two partners:
-
-```bash
-$ npx drizzle-kit generate --name=orders
-$ npx drizzle-kit generate --custom --name=seed
-$ npx drizzle-kit migrate
-```
-
-```sql
-@@filename(drizzle/0001_seed.sql)
--- Custom SQL migration file, put your code below! --
-INSERT INTO "products" ("id", "name", "price") VALUES
-  ('salmon-kibble-2kg', 'Salmon kibble, 2 kg', 2499),
-  ('clumping-litter-10l', 'Clumping litter, 10 l', 1599);
---> statement-breakpoint
--- A reseller and a cat shelter that buy in bulk. Their API keys are partner_northside_7c1d2e and
--- partner_riverside_91ab44 (sample keys for this tutorial; issue real ones from your partner onboarding).
-INSERT INTO "partners" ("id", "name", "api_key_hash") VALUES
-  ('northside', 'Northside Pet Supplies', '41fd917040556ae9aac504442c987944087290dcded77615c17adf0888fbac57'),
-  ('riverside', 'Riverside Cat Shelter', '3d614d781e563fe03522a0bf4d6a112a29cd4ee2ffcb252a625810cb5a2fdec7');
-```
+| Partner | `id` | API key |
+| --- | --- | --- |
+| Northside Pet Supplies, a reseller | `northside` | `partner_northside_7c1d2e` |
+| Riverside Cat Shelter | `riverside` | `partner_riverside_91ab44` |
 
 #### Keep webhooks in your database
 
@@ -139,7 +70,17 @@ On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestj
 
 `fromDrizzle(db)` is the stores' **executor**: it runs their statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. `@nestjs/webhooks/postgres` and `@nestjs/outbox/postgres` both export them, so `AppModule` imports `fromDrizzle` once, for both stores. At startup, each module logs the store it uses.
 
-**The schema.** The webhook store keeps its tables in the `nest_webhooks` schema: `endpoints`, `messages` (what was dispatched, byte for byte), `deliveries` (one per message and endpoint, with its status and lease), `delivery_attempts` (the log), and `migrations`, which records the versions applied. The outbox's store keeps its own in `nest_outbox`. They belong to the stores: your migrations don't create them, and your own tables can't collide with them. The `schema` option names another schema. A few choices in there matter to the package:
+**The schema.** The webhook store keeps its tables in a schema of its own, `nest_webhooks` (the `schema` option names another). On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_webhooks_endpoints` and so on.
+
+| Table | What it holds |
+| --- | --- |
+| `nest_webhooks.endpoints` | The partners' endpoints: URL, event types, tenant, and secrets |
+| `nest_webhooks.messages` | What was dispatched, byte for byte |
+| `nest_webhooks.deliveries` | One per message and endpoint, with its status, attempts and lease |
+| `nest_webhooks.delivery_attempts` | The log: every attempt, with the status code, the response and how long it took |
+| `nest_webhooks.migrations` | The versions of the store's schema applied |
+
+The outbox's store keeps its messages, dead letters and inbox in `nest_outbox` (`nest_outbox_messages` and so on, on MySQL), as in [the outbox tutorial](/reliability/outbox#keep-messages-in-your-database). They belong to the stores: your migrations don't create them, and your own tables can't collide with them. A few choices in there matter to the package:
 
 - An endpoint's secrets are a JSON array, newest first: during a rotation, the old secret stays for the overlap, with an expiry. With `encryption` configured (see [Register the modules](/http/webhooks#register-the-modules)), what is stored is sealed.
 - A message's `body` is `text`, not `jsonb`. It is the exact JSON that was signed and sent, and `jsonb` would reformat it: a partner storing the request and its signature could no longer verify a replay.
@@ -252,7 +193,7 @@ For another database, write a store of your own: [The store contract](/http/webh
 
 #### Register the modules
 
-Register `OutboxModule` and `WebhooksModule` in the root module, next to `DrizzleModule` from the previous sections, with both stores in its `providers`. The feature modules are built in the next sections:
+Register `OutboxModule` and `WebhooksModule` in the root module, next to `DrizzleModule`, which registers the Drizzle database, with both stores in its `providers`. The feature modules are built in the next sections:
 
 ```typescript
 @@filename(app.module)
@@ -336,6 +277,8 @@ export class AppModule {}
 - `worker`: the background deliverer, one per process. `WEBHOOKS_WORKER=off` turns it off in instances that only serve the API.
 - `encryption`: endpoint secrets sealed at rest, with the family's shape: the first key encrypts, every key decrypts. Optional, from `WEBHOOKS_ENCRYPTION_KEYS`.
 
+> info **Hint** The tutorial reads `process.env` directly, to stay short. In an application, load the environment through [`@nestjs/config`](/application/configuration) with a validation schema, so a missing variable stops the application at startup rather than at the first request, and read the values from `ConfigService` (`inject: [ConfigService]` in the factories).
+
 Durations are milliseconds or strings such as `'15s'` and `'5d'`. Both modules are global: `Webhooks`, `WebhookEndpoints`, `WebhookDeliveries`, `WebhooksEvents` and `WebhooksStorage` can be injected anywhere. `main.ts` binds the validation pipe for the partner API's DTOs (see the next section), and enables the shutdown hooks, so a deploy lets the relay and the worker finish their in-flight work:
 
 ```typescript
@@ -366,7 +309,7 @@ At startup, both modules log the store they use, and on the first start, the sto
 
 #### Let partners subscribe
 
-Shelters and resellers call the partner API with an API key. The seed migration in [The order API](/http/webhooks#the-order-api) gave the two partners, Northside Pet Supplies (a reseller) and Riverside Cat Shelter, sample keys. `PartnerGuard` looks the key's hash up and sets the partner on the request, and `@CurrentPartner()` reads it:
+Shelters and resellers call the partner API with an API key: the example's two partners, Northside Pet Supplies (a reseller) and Riverside Cat Shelter, have the sample keys in [Installation](/http/webhooks#installation). `PartnerGuard` looks the key's hash up and sets the partner on the request, and `@CurrentPartner()` reads it:
 
 ```typescript
 @@filename(partners/partner.guard)
@@ -617,7 +560,7 @@ The delivery log's controller, added to this module [later](/http/webhooks#retri
 
 #### Send order.shipped and order.cancelled after the commit
 
-`Webhooks.dispatch()` takes your transaction handle first, like `Outbox.add()`. Cancelling an order updates it and dispatches `order.cancelled` on the same `tx`; shipping it (which the carrier triggers, in [Receive the carrier's Stripe-like webhooks](/http/webhooks#receive-the-carriers-stripe-like-webhooks)) updates it and dispatches `order.shipped`. `tenant` is the partner that placed the order, so only that partner's endpoints receive it:
+`Webhooks.dispatch()` takes your transaction handle first, like `Outbox.add()`: with Drizzle, the `tx` that `db.transaction()` passes its callback, whose type the service gives `Webhooks<Transaction>`. Cancelling an order updates it and dispatches `order.cancelled` on the same `tx`; shipping it (which the carrier triggers, in [Receive the carrier's Stripe-like webhooks](/http/webhooks#receive-the-carriers-stripe-like-webhooks)) updates it and dispatches `order.shipped`. `tenant` is the partner that placed the order, so only that partner's endpoints receive it:
 
 ```typescript
 @@filename(orders/orders.service)
@@ -1222,12 +1165,10 @@ Set `WEBHOOKS_ENCRYPTION_KEYS` to seal the secrets at rest, `openssl rand -base6
 
 #### Try it
 
-Create the database and apply your migrations:
+Create the database, and apply your migrations to it, which create the order API's tables and rows from [Installation](/http/webhooks#installation):
 
 ```bash
 $ psql postgres://localhost:5432/postgres -c 'CREATE DATABASE store'
-$ DATABASE_URL=postgres://localhost:5432/store npx drizzle-kit migrate
-[✓] migrations applied successfully!
 ```
 
 Export the secrets the payment provider and the carrier share with the store (invented here), allow deliveries to this machine, and start the API on port 3000:
@@ -1246,7 +1187,7 @@ $ export WEBHOOKS_ALLOW_LOCAL=1
 [Nest] 55905  - 09/30/2026, 6:52:36 PM     LOG [NestApplication] Nest application successfully started +2ms
 ```
 
-`drizzle-kit migrate` created the order API's tables, and the stores their schemas, next to them. Northside subscribes, with its API key, to both events at a receiver it will run on port 4100. The response carries the secret, this once:
+Your migrations created the order API's tables, and the stores their schemas, next to them. Northside subscribes, with its API key, to both events at a receiver it will run on port 4100. The response carries the secret, this once:
 
 ```bash
 $ curl -s -X POST localhost:3000/partner/webhook-endpoints \
