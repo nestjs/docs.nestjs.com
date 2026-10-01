@@ -388,11 +388,11 @@ export class NotificationsModule {}
 - **A mail server outage fails a request that already succeeded.** The order is saved, but the customer sees a 500 and may order again.
 - **The customer waits for the mail server.** An SMTP exchange takes hundreds of milliseconds, and a slow server takes the request's time with it.
 
-This is the dual-write problem from the [outbox tutorial](/reliability/outbox), and the outbox (`@nestjs/outbox`, installed and set up in that tutorial) fixes it. The order and an `order.placed` message commit in one transaction, and a relay hands the message to a handler that sends the mail. If the send fails, the relay retries it with backoff, and it moves messages that never succeed to the dead-letter table. The outbox keeps its messages in the application's PostgreSQL database, next to the orders, through [the outbox tutorial's Drizzle store](/reliability/outbox#write-the-outbox-store): `DrizzleOutboxStore` in `database/drizzle-outbox.store.ts`, on the database that [`@nestjs/drizzle`](/data/drizzle) registers, with the outbox's three tables in your Drizzle schema and a drizzle-kit migration that creates them.
+This is the dual-write problem from the [outbox tutorial](/reliability/outbox), and the outbox (`@nestjs/outbox`, installed and set up in that tutorial) fixes it. The order and an `order.placed` message commit in one transaction, and a relay hands the message to a handler that sends the mail. If the send fails, the relay retries it with backoff, and it moves messages that never succeed to the dead-letter table. The outbox keeps its messages in the application's PostgreSQL database, next to the orders, through its store, `PostgresOutboxStore` from `@nestjs/outbox/postgres`, on the database that [`@nestjs/drizzle`](/data/drizzle) registers. The store creates its tables, in a schema of their own, when the application starts; [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) in the outbox tutorial covers them, and how to apply their migrations in production.
 
 This section shows the order transaction twice: first with Drizzle, which is the tutorial's path, and then, under "With TypeORM" at the end of the section, the same transaction for an application whose ORM is TypeORM. Take one of the two.
 
-Register `OutboxModule`, and the store as a provider of the root module. The store registers itself in its constructor; without it, the outbox would keep its messages in memory, and lose them on restart:
+Register `OutboxModule`, and the store as a provider of the root module: a factory that injects the Drizzle database and the `OutboxStorage` registry, which the store registers itself with. Without it, the outbox would keep its messages in memory, and lose them on restart:
 
 ```typescript
 @@filename(app.module)
@@ -408,8 +408,15 @@ Register `OutboxModule`, and the store as a provider of the root module. The sto
     }),
     // ...
   ],
-  // Registers itself as the outbox's store (the outbox tutorial's DrizzleOutboxStore)
-  providers: [DrizzleOutboxStore],
+  providers: [
+    {
+      // Messages and inbox records in your database, in a schema of their own (nest_outbox)
+      provide: PostgresOutboxStore,
+      inject: [getDrizzleToken(), OutboxStorage],
+      useFactory: (db: Database, outboxStorage: OutboxStorage) =>
+        new PostgresOutboxStore({ executor: fromDrizzle(db) }, outboxStorage),
+    },
+  ],
 })
 export class AppModule {}
 ```
@@ -509,9 +516,9 @@ Every error the package throws extends `MailError`, and its `permanent` flag say
 
 When SMTP refuses one of several recipients, the transaction is reset before the message is sent, so an error always means nobody received it, and the outbox's retry can't deliver twice. The one exception: the connection drops after the message was transmitted, before the server answers. The mailer can't know whether the server kept it, reports a transient error, and the retry sends it again, with the same `Message-ID`.
 
-**With TypeORM.** The same order transaction for an application whose ORM is TypeORM. Drizzle stays the tutorial's path: take this code instead of the Drizzle code above, not next to it. The outbox keeps its messages through [the outbox tutorial's TypeORM store](/reliability/outbox#the-store-with-typeorm): `TypeOrmOutboxStore`, with the outbox's three entities in your data source and the migration the TypeORM CLI generated from them. The example application keeps this version in `src/typeorm`, next to the tutorial's Drizzle code, with the customers, products and orders as entities.
+**With TypeORM.** The same order transaction for an application whose ORM is TypeORM. Drizzle stays the tutorial's path: take this code instead of the Drizzle code above, not next to it. The outbox keeps its messages through the same store, on TypeORM's data source, as the outbox tutorial's [Keep messages in your database](/reliability/outbox#keep-messages-in-your-database) shows. The example application keeps this version in `src/typeorm`, next to the tutorial's Drizzle code, with the customers, products and orders as entities.
 
-`TypeOrmModule` takes the place of `DrizzleModule` in the root module, with the options the TypeORM CLI shares, and `TypeOrmOutboxStore` takes the place of `DrizzleOutboxStore` in `providers`:
+`TypeOrmModule` takes the place of `DrizzleModule` in the root module, with the options the TypeORM CLI shares, and the store's factory injects its `DataSource`, through `fromTypeOrm()`:
 
 ```typescript
 @@filename(typeorm/app.module)
@@ -531,8 +538,15 @@ When SMTP refuses one of several recipients, the transaction is reset before the
     }),
     // ...
   ],
-  // Registers itself as the outbox's store (the outbox tutorial's TypeOrmOutboxStore)
-  providers: [TypeOrmOutboxStore],
+  providers: [
+    {
+      // Messages and inbox records in your database, in a schema of their own (nest_outbox)
+      provide: PostgresOutboxStore,
+      inject: [DataSource, OutboxStorage],
+      useFactory: (dataSource: DataSource, outboxStorage: OutboxStorage) =>
+        new PostgresOutboxStore({ executor: fromTypeOrm(dataSource) }, outboxStorage),
+    },
+  ],
 })
 export class AppModule {}
 ```
@@ -1106,12 +1120,13 @@ describe('Order confirmation mail', () => {
 
   beforeAll(async () => {
     const db = drizzle(client, { schema });
-    // The real migrations: the tables, the outbox's, and the seeded customers and products
+    // Your migrations: the tables, and the seeded customers and products. The outbox's store
+    // creates its own schema in init().
     await migrate(db, { migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)) });
     process.env.OUTBOX_RELAY = 'off'; // no poll loop: the test drives the relay
     moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(getDrizzleToken())
-      .useValue(db) // DrizzleOutboxStore injects it too
+      .useValue(db) // the outbox's store runs on it too
       .overrideProvider(MailTransport)
       .useValue(mailbox)
       .compile();
@@ -1169,7 +1184,7 @@ describe('Order confirmation mail', () => {
 - Turn permanent mail errors into dead letters, and alert on `dead-lettered` outbox events. A refused address usually means a typo at sign-up, or a mailbox that no longer exists.
 - Watch `MailEvents`, or the `nestjs:mail:sent` and `nestjs:mail:failed` diagnostics channels, for delivery failures and slow sends.
 - Send through `SmtpTransport` or an HTTP provider's transport in production. `FileMailTransport` writes to the local disk, which a container loses when it restarts or is replaced, and `LogMailTransport` only logs: both are for development, and `InMemoryMailTransport` is for tests. The module warns at startup when one of them runs with `NODE_ENV=production`.
-- Keep the outbox's messages in the application's database, through a registered store such as the outbox tutorial's `DrizzleOutboxStore`, so a queued mail commits with its order and survives a restart. Without a store, the outbox refuses to start with `NODE_ENV=production`.
+- Keep the outbox's messages in the application's database, through `PostgresOutboxStore` or another registered store, so a queued mail commits with its order and survives a restart. Without a store, the outbox refuses to start with `NODE_ENV=production`, and so does the store while its migrations aren't applied: apply them on deploy, as [the outbox tutorial](/reliability/outbox#keep-messages-in-your-database) shows.
 - Ship the templates to `dist` with the CLI's assets, and keep the template cache on in production, which is the default: `cache: false` rereads the files for every mail.
 - Don't register development-only routes, such as the preview, in production.
 - Use `app.enableShutdownHooks()`, so a deploy waits for the mails in flight and closes SMTP connections.

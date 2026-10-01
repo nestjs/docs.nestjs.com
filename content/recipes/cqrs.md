@@ -340,6 +340,16 @@ const hero = new HeroModel('id'); // <-- HeroModel is a class
 
 Every instance of the `HeroModel` class can now publish events without calling the `mergeObjectContext()` method.
 
+As of `@nestjs/cqrs` 12.1, a model's `commit()`, `publish()` and `publishAll()` return what the event bus returns, which is whatever the event publisher returns. The default in-memory publisher returns nothing, as it doesn't wait for the event handlers. With an asynchronous publisher, such as one that writes to a message broker, `await hero.commit()` waits for it and throws when it fails.
+
+All three also accept a dispatcher context, which the event publisher receives in place of the model. A command handler can pass its transaction this way, for a publisher that writes through it:
+
+```typescript
+await hero.commit({ transaction: tx });
+```
+
+`commit()` clears the model's events as soon as it hands them to the event bus, without waiting for the publisher, so calling it again never publishes the same events twice. If an awaited `commit()` fails, roll back and run the command again with a freshly loaded model.
+
 #### Flexible Aggregate Roots
 
 The `AggregateRoot` class is a base class that you can extend to add event-driven capabilities to your domain models. However, this approach requires domain entities to extend `AggregateRoot` directly, which can be a limitation if your application already has an established entity inheritance hierarchy (e.g., a base `Entity` class or domain-specific base classes such as `Monster` or `Vehicle`).
@@ -415,16 +425,17 @@ export class CustomEntity implements IAggregateRoot {
     return this.events;
   }
 
-  publish(event: IEvent) {
+  publish(event: IEvent, dispatcherContext?: unknown) {
     // custom logic
   }
 
-  publishAll(events: IEvent[]) {
+  publishAll(events: IEvent[], dispatcherContext?: unknown) {
     // custom logic
   }
 
-  commit() {
-    // custom logic
+  commit(dispatcherContext?: unknown) {
+    // custom logic, such as:
+    // return this.publishAll(this.events.splice(0), dispatcherContext);
   }
 
   uncommit() {
@@ -441,7 +452,7 @@ export class CustomEntity implements IAggregateRoot {
 }
 ```
 
-All three approaches work with `EventPublisher`, which accepts any object that implements the `IAggregateRoot` interface.
+All three approaches work with `EventPublisher`, which accepts any object that implements the `IAggregateRoot` interface. As of `@nestjs/cqrs` 12.1, `mergeObjectContext()` and `mergeClassContext()` give the model `publish()` and `publishAll()` methods that pass a dispatcher context on to the event bus and return its result. A custom `commit()` supports the dispatcher context by passing it on to `publishAll()`. The parameters are optional: an implementation without them, whose methods return nothing, still satisfies the interface.
 
 #### Manual event publishing
 
@@ -486,6 +497,8 @@ A saga is a long-running process that listens to events and may trigger new comm
 
 A single saga may listen for 1..\* events. With the [RxJS](https://github.com/ReactiveX/rxjs) library, you can filter, map, fork, and merge event streams to build sophisticated workflows. Each saga returns an `Observable` that emits command instances. Each emitted command is then dispatched **asynchronously** by the `CommandBus`.
 
+> info **Hint** Sagas run in memory. For processes that must survive restarts, see [Durable sagas](/recipes/cqrs#durable-sagas).
+
 Let's create a saga that listens to the `HeroKilledDragonEvent` and dispatches the `DropAncientItemCommand` command.
 
 ```typescript
@@ -524,6 +537,80 @@ As with query, command, and event handlers, register the `HeroesGameSagas` as a 
 ```typescript
 providers: [HeroesGameSagas];
 ```
+
+#### Durable sagas
+
+Sagas and event handlers run in memory. If the process stops between an event and the command a saga dispatches, the command is never dispatched. A saga that combines several events, such as one that waits for the payment after an order and gives up after an hour, loses the events it has seen on a restart. An event published just before the transaction behind it rolls back still reaches them.
+
+When a process must survive restarts and deploys, let the events start and signal a [durable workflow](/reliability/workflows) instead. The `@nestjs/workflows/cqrs` entry point maps events to workflows, so your code keeps executing commands and publishing events:
+
+```bash
+$ npm i --save @nestjs/workflows
+```
+
+```typescript
+@@filename(app.module)
+import { CqrsModule } from '@nestjs/cqrs';
+import { WorkflowsModule } from '@nestjs/workflows';
+import { WorkflowsCqrsModule } from '@nestjs/workflows/cqrs';
+
+@Module({
+  imports: [CqrsModule.forRoot(), WorkflowsModule.forRoot(), WorkflowsCqrsModule],
+  providers: [PlaceOrderHandler, OrderFulfilmentWorkflow],
+})
+export class AppModule {}
+```
+
+Until you register a store, `WorkflowsModule` keeps the workflows in memory. On PostgreSQL or MySQL, register the package's `PostgresWorkflowStore` or `MySqlWorkflowStore` as a provider, on the database client you already use, as [Keep workflows in your database](/reliability/workflows#keep-workflows-in-your-database) shows: the workflows then live in your database, and their starts and signals can join your transactions.
+
+`@StartOn()` starts the workflow when an event is published, and `@SignalOn()` wakes the instance that waits for another one:
+
+```typescript
+@@filename(order-fulfilment.workflow)
+@Workflow('order-fulfilment')
+@StartOn(OrderPlacedEvent, {
+  id: (event) => `order-${event.order.id}`,
+  input: (event) => event.order,
+})
+@SignalOn(OrderDeliveredEvent, {
+  signal: shipmentDelivered,
+  key: (event) => event.delivery.reference,
+})
+export class OrderFulfilmentWorkflow implements WorkflowRunner<Order, FulfilmentResult> {
+  constructor(private readonly commandBus: CommandBus) {}
+
+  async run(ctx: WorkflowContext, order: Order): Promise<FulfilmentResult> {
+    const charge = await ctx.step('charge-payment', ({ idempotencyKey }) =>
+      this.commandBus.execute(new ChargePaymentCommand(order, idempotencyKey)),
+    );
+
+    const delivery = await ctx.waitForSignal('await-delivery', shipmentDelivered, {
+      key: order.id,
+      timeout: '3d',
+    });
+    // ...
+  }
+}
+```
+
+The command handler passes its transaction as the second argument of `publish()`, CQRS's dispatcher context. The workflow is then created in that transaction, so it exists if and only if the order was saved:
+
+```typescript
+@@filename(place-order.handler)
+return this.db.transaction(async (tx) => {
+  await tx.insert(orders).values(order);
+  await this.eventBus.publish(new OrderPlacedEvent(order), { transaction: tx });
+  return order;
+});
+```
+
+An aggregate's events go the same way. As of `@nestjs/cqrs` 12.1, pass the transaction to the aggregate's `commit()` in the same callback, and await it: it resolves once the workflows are started and signalled.
+
+```typescript
+await order.commit({ transaction: tx });
+```
+
+The workflow's state lives in your database, so it outlives restarts and deploys. A completed step never runs again, and a step the process died in runs again with the same idempotency key, which the command hands to the payment provider. A repeated event finds the instance the first one started. Your event handlers and sagas still receive every event, after the workflows. See [Durable workflows with CQRS](/reliability/workflows#with-cqrs) for the guarantees of each way of publishing, and aggregates.
 
 #### Unhandled exceptions
 

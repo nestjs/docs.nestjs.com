@@ -7,6 +7,7 @@ import { PerformanceComponent } from './performance/performance.component';
 import { ServerSentEventsComponent } from './server-sent-events/server-sent-events.component';
 import { SessionComponent } from './sessions/sessions.component';
 import { VersioningComponent } from './versioning/versioning.component';
+import { WebhooksComponent } from './webhooks/webhooks.component';
 
 export const HTTP_ROUTES: Routes = [
   {
@@ -48,5 +49,10 @@ export const HTTP_ROUTES: Routes = [
     path: 'performance',
     component: PerformanceComponent,
     data: { title: 'Performance (Fastify)' },
+  },
+  {
+    path: 'webhooks',
+    component: WebhooksComponent,
+    data: { title: 'Webhooks' },
   },
 ];
