@@ -78,7 +78,7 @@ On PostgreSQL, register the package's store, `PostgresOutboxStore` from `@nestjs
 },
 ```
 
-`fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `OutboxStorage: PostgresOutboxStore`.
+`fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromSequelize(sequelize)`, `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for Sequelize, a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `OutboxStorage: PostgresOutboxStore`.
 
 **The schema.** The store keeps its tables in a schema of its own, `nest_outbox` (the `schema` option names another). On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_outbox_messages` and so on.
 
@@ -223,7 +223,7 @@ import { OrdersService } from './orders.service.js';
 export class AppModule {}
 ```
 
-`fromMysql2(pool)`, `fromTypeOrm(dataSource)` for a data source of type `mysql`, `fromPrisma(prisma)` with the `@prisma/adapter-mariadb` driver adapter (the one that serves MySQL), and `fromKysely(db)` serve the other clients. What differs from PostgreSQL:
+`fromMysql2(pool)`, `fromSequelize(sequelize)`, `fromTypeOrm(dataSource)` for a data source of type `mysql`, `fromPrisma(prisma)` with the `@prisma/adapter-mariadb` driver adapter (the one that serves MySQL), and `fromKysely(db)` serve the other clients. `fromSequelize()` needs mysql2's `FOUND_ROWS` client flag: Sequelize's MySQL connection manager sets `flags: "-FOUND_ROWS"` unless the instance passes `dialectOptions: { flags: '' }`. What differs from PostgreSQL:
 
 - **Tables, not a schema.** A MySQL database has no schemas, so the store keeps its tables in the connection's database, the one the URL's path names, and the `schema` option is their prefix: `nest_outbox_messages`, `nest_outbox_dead_letters` and `nest_outbox_inbox`, next to `nest_outbox_migrations` and `nest_outbox_locks`. It takes lowercase letters, digits and underscores, up to 40 characters. A connection without a database fails the startup.
 - **Bounded keys.** Ids, topics, keys and consumer names are indexed columns of at most 255 characters, compared byte for byte: `order-1` and `Order-1` are two keys. A longer one is refused with a `RangeError`, before any statement: by `add()`, and by the inbox before it runs a handler.
@@ -1292,6 +1292,7 @@ Each executor takes your database client, and its own kind of transaction object
 | Executor | Takes | Transaction object |
 | --- | --- | --- |
 | `fromDrizzle(db)` | A Drizzle database: on PostgreSQL, whichever its driver; on MySQL, `mysql2` | The `tx` that `db.transaction()` hands its callback |
+| `fromSequelize(sequelize)` | A Sequelize instance (`sequelize` 6 or `@sequelize/core` 7) with `dialect: 'postgres'` or `dialect: 'mysql'`. On MySQL, pass `dialectOptions: { flags: '' }` so mysql2 keeps `FOUND_ROWS`: Sequelize's connection manager sets `flags: "-FOUND_ROWS"` otherwise | The `transaction` that `sequelize.transaction()` hands its callback |
 | `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres` or `mysql` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
 | `fromPrisma(prisma, options)` | A Prisma client, through a driver adapter such as `@prisma/adapter-pg`, or `@prisma/adapter-mariadb` for MySQL. `maxWait` (default `'10s'`) and `timeout` (default `'1m'`) limit the store's own transactions | The transaction client that `prisma.$transaction()` hands its callback |
 | `fromKysely(db)` | A `Kysely` instance with a PostgreSQL or MySQL dialect | The transaction that `db.transaction().execute()` hands its callback |

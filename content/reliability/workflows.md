@@ -161,7 +161,7 @@ Workflow instances, their journals, the signals they wait for and the signals se
 
 On PostgreSQL, register the package's store, `PostgresWorkflowStore` from `@nestjs/workflows/postgres`. It runs its SQL through the database client your application already has, so it can join your transactions. It's an ordinary provider, registered once, in the root module, next to `WorkflowsModule`: both are application-wide. In `AppModule` above, it's the first provider: a factory that injects the Drizzle database and the `WorkflowStorage` registry, which the store registers itself with.
 
-`fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `WorkflowStorage: PostgresWorkflowStore`.
+`fromDrizzle(db)` is the store's **executor**: it runs the store's statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromSequelize(sequelize)`, `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for Sequelize, a node-postgres pool, TypeORM, Prisma and Kysely. At startup, the module logs `WorkflowStorage: PostgresWorkflowStore`.
 
 **The schema.** There's nothing to create for workflows: no tables, entities or Prisma models. The store keeps its tables in a schema of its own, `nest_workflows` (the `schema` option names another), and creates and migrates it itself. On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_workflows_instances` and so on.
 
@@ -287,7 +287,7 @@ import { drizzle } from 'drizzle-orm/mysql2';
 export class AppModule {}
 ```
 
-`fromMysql2(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a mysql2 pool, TypeORM, Prisma (through `@prisma/adapter-mariadb`) and Kysely. `start()` and `signal()` take the same transaction objects as on PostgreSQL, and with mysql2, a connection after `beginTransaction()`. What differs from PostgreSQL:
+`fromMysql2(pool)`, `fromSequelize(sequelize)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a mysql2 pool, Sequelize, TypeORM, Prisma (through `@prisma/adapter-mariadb`) and Kysely. `start()` and `signal()` take the same transaction objects as on PostgreSQL, and with mysql2, a connection after `beginTransaction()`. `fromSequelize()` needs mysql2's `FOUND_ROWS` client flag: Sequelize's MySQL connection manager sets `flags: "-FOUND_ROWS"` unless the instance passes `dialectOptions: { flags: '' }`. What differs from PostgreSQL:
 
 - **The tables.** MySQL has no schemas inside a database, so the store keeps its tables in the connection's database, the one the URL's path names, and the `schema` option is the prefix of their names: `nest_workflows_instances`, `nest_workflows_signals` and so on, next to `nest_workflows_migrations` and `nest_workflows_locks`, which hold its versions and its locks.
 - **Bounded keys.** Ids, names and keys are indexed columns of limited length. An instance id, a workflow or signal name, a signal's `key` and `id`, and a concurrency or rate-limit key hold 255 characters, a schedule id 230, and a step, sleep or wait name 512. `start()` and `signal()` reject a longer one with a `RangeError` before anything is written. Keys still compare exactly, as on PostgreSQL.
@@ -1644,7 +1644,7 @@ A `retry` option (the module's, a step's `retry` or its `compensateRetry`) is a 
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `executor` | Required | How the store reaches the database: `fromDrizzle(db)`, `fromTypeOrm(dataSource)`, `fromPg(pool)`, `fromPrisma(prisma, options)` or `fromKysely(db)` |
+| `executor` | Required | How the store reaches the database: `fromDrizzle(db)`, `fromSequelize(sequelize)`, `fromTypeOrm(dataSource)`, `fromPg(pool)`, `fromPrisma(prisma, options)` or `fromKysely(db)` |
 | `schema` | `'nest_workflows'` | The schema of its tables, which its first migration creates. Letters, digits and underscores, not starting with a digit, at most 63 characters |
 | `migrate` | `true`, except with `NODE_ENV=production` | Apply the pending migrations when the application starts. With `false`, startup fails with a `WorkflowSchemaError` while the schema is behind |
 
@@ -1653,6 +1653,7 @@ Each executor takes your database client, and its own kind of transaction object
 | Executor | Takes | Transaction object |
 | --- | --- | --- |
 | `fromDrizzle(db)` | A Drizzle PostgreSQL database, whichever its driver | The `tx` that `db.transaction()` hands its callback |
+| `fromSequelize(sequelize)` | A Sequelize instance (`sequelize` 6 or `@sequelize/core` 7) with `dialect: 'postgres'` | The `transaction` that `sequelize.transaction()` hands its callback |
 | `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres`, or its `manager` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
 | `fromPg(pool)` | A node-postgres `Pool`, or a connected `Client` | A client, such as one from `pool.connect()`, after `BEGIN` |
 | `fromPrisma(prisma, options)` | A Prisma client on PostgreSQL, through a driver adapter such as `@prisma/adapter-pg` or Prisma's engine. `maxWait` (default `'10s'`) and `timeout` (default `'1m'`) limit the store's own transactions | The transaction client that `prisma.$transaction()` hands its callback |
@@ -1666,19 +1667,20 @@ The store's `migrate()` method applies the pending migrations at once, whatever 
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `executor` | Required | How the store reaches the database: `fromDrizzle(db)`, `fromTypeOrm(dataSource)`, `fromMysql2(pool)`, `fromPrisma(prisma, options)` or `fromKysely(db)`, from `@nestjs/workflows/mysql` |
+| `executor` | Required | How the store reaches the database: `fromDrizzle(db)`, `fromSequelize(sequelize)`, `fromTypeOrm(dataSource)`, `fromMysql2(pool)`, `fromPrisma(prisma, options)` or `fromKysely(db)`, from `@nestjs/workflows/mysql` |
 | `schema` | `'nest_workflows'` | The start of its tables' names (`nest_workflows_instances`...), in the connection's database. Lowercase letters, digits and underscores, not starting with a digit, at most 40 characters |
 | `migrate` | `true`, except with `NODE_ENV=production` | Apply the pending migrations when the application starts, one statement at a time. With `false`, startup fails with a `WorkflowSchemaError` while the tables are behind |
 
 | Executor | Takes | Transaction object |
 | --- | --- | --- |
 | `fromDrizzle(db)` | A Drizzle MySQL database (`drizzle-orm/mysql2`) | The `tx` that `db.transaction()` hands its callback |
+| `fromSequelize(sequelize)` | A Sequelize instance (`sequelize` 6 or `@sequelize/core` 7) with `dialect: 'mysql'`. Pass `dialectOptions: { flags: '' }` so mysql2 keeps `FOUND_ROWS`: Sequelize's connection manager sets `flags: "-FOUND_ROWS"` otherwise | The `transaction` that `sequelize.transaction()` hands its callback |
 | `fromTypeOrm(dataSource)` | A `DataSource` of type `mysql`, or its `manager` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
 | `fromMysql2(pool)` | A mysql2 pool, or a connection | A connection, such as one from `pool.getConnection()`, after `beginTransaction()` |
 | `fromPrisma(prisma, options)` | A Prisma client on MySQL, through `@prisma/adapter-mariadb`. `maxWait` (default `'10s'`) and `timeout` (default `'1m'`) limit the store's own transactions, `migrate()` included: raise `timeout` for it, or migrate from the command line | The transaction client that `prisma.$transaction()` hands its callback |
 | `fromKysely(db)` | A `Kysely` instance with a `MysqlDialect`. The store's statements skip its plugins | The transaction that `db.transaction().execute()` hands its callback, or a controlled transaction |
 
-At startup, the store checks the server and the connection: MySQL, not MariaDB; a strict `sql_mode` (`STRICT_TRANS_TABLES`, MySQL's default), without which MySQL would cut a value too long for its column; and a database, where its tables go. It counts the rows an update matched, so keep mysql2's `FOUND_ROWS` flag, which is on by default (Prisma's adapter calls it `foundRows`), and leave the `NO_BACKSLASH_ESCAPES` SQL mode off.
+At startup, the store checks the server and the connection: MySQL, not MariaDB; a strict `sql_mode` (`STRICT_TRANS_TABLES`, MySQL's default), without which MySQL would cut a value too long for its column; and a database, where its tables go. It counts the rows an update matched, so keep mysql2's `FOUND_ROWS` flag, which is on by default (Prisma's adapter calls it `foundRows`). Sequelize's MySQL connection manager sets `flags: "-FOUND_ROWS"` unless the instance passes `dialectOptions: { flags: '' }`. Leave the `NO_BACKSLASH_ESCAPES` SQL mode off.
 
 Its ids, names and keys are indexed columns of bounded length, in characters:
 

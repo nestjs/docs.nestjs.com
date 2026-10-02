@@ -94,7 +94,7 @@ On PostgreSQL, register the package's store, `PostgresWebhookStore` from `@nestj
 },
 ```
 
-`fromDrizzle(db)` is the stores' **executor**: it runs their statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for a node-postgres pool, TypeORM, Prisma and Kysely. `@nestjs/webhooks/postgres` and `@nestjs/outbox/postgres` both export them, so `AppModule` imports `fromDrizzle` once, for both stores. At startup, each module logs the store it uses.
+`fromDrizzle(db)` is the stores' **executor**: it runs their statements through your Drizzle database, whichever driver it uses, such as `pg` or PGlite. `fromSequelize(sequelize)`, `fromPg(pool)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma)` and `fromKysely(db)` do the same for Sequelize, a node-postgres pool, TypeORM, Prisma and Kysely. `@nestjs/webhooks/postgres` and `@nestjs/outbox/postgres` both export them, so `AppModule` imports `fromDrizzle` once, for both stores. At startup, each module logs the store it uses.
 
 **The schema.** The webhook store keeps its tables in a schema of its own, `nest_webhooks` (the `schema` option names another). On MySQL, which has no schemas, they're tables of the connection's database, with the schema's name as their prefix: `nest_webhooks_endpoints` and so on.
 
@@ -243,7 +243,7 @@ DrizzleModule.forRootAsync({
 },
 ```
 
-With the other clients, the executor is `fromMysql2(pool)` for a `mysql2/promise` pool, `fromTypeOrm(dataSource)` for a `DataSource` of type `mysql`, `fromPrisma(prisma)` for Prisma through `@prisma/adapter-mariadb`, or `fromKysely(db)` for Kysely's `MysqlDialect`. What differs from PostgreSQL:
+With the other clients, the executor is `fromMysql2(pool)` for a `mysql2/promise` pool, `fromSequelize(sequelize)` for a Sequelize instance, `fromTypeOrm(dataSource)` for a `DataSource` of type `mysql`, `fromPrisma(prisma)` for Prisma through `@prisma/adapter-mariadb`, or `fromKysely(db)` for Kysely's `MysqlDialect`. `fromSequelize()` needs mysql2's `FOUND_ROWS` client flag: Sequelize's MySQL connection manager sets `flags: "-FOUND_ROWS"` unless the instance passes `dialectOptions: { flags: '' }`. What differs from PostgreSQL:
 
 - **Tables, not a schema.** MySQL has no schemas inside a database, so the stores keep their tables in the connection's database, the one in the URL's path, next to yours, and `schema` becomes their prefix: `nest_webhooks_endpoints`, `nest_webhooks_deliveries` and so on, and `nest_outbox_messages` for the outbox. It takes lowercase letters, digits and underscores, at most 40 characters.
 - **Your transactions.** `dispatch()` and `processInTransaction()` work at REPEATABLE READ, MySQL's default, as at READ COMMITTED: there's nothing to configure, and the stores don't check the database's default. When MySQL breaks a deadlock in your transaction (error 1213), it rolls the whole transaction back, and the client's error reaches your code: run the transaction again. The stores run their own transactions again themselves. With `processInTransaction()`, that can happen when copies of one webhook arrive at once and the first one's transaction rolls back: the sender gets an error, and its retry goes through.
@@ -1752,7 +1752,7 @@ Each entry of `receivers` takes these options (see [Receive the payment provider
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `executor` | Required | How the store reaches the database: `fromDrizzle(db)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma, options)`, `fromKysely(db)`, and `fromPg(pool)` on PostgreSQL or `fromMysql2(pool)` on MySQL, imported from the store's own subpath: the other dialect's executor doesn't compile |
+| `executor` | Required | How the store reaches the database: `fromDrizzle(db)`, `fromSequelize(sequelize)`, `fromTypeOrm(dataSource)`, `fromPrisma(prisma, options)`, `fromKysely(db)`, and `fromPg(pool)` on PostgreSQL or `fromMysql2(pool)` on MySQL, imported from the store's own subpath: the other dialect's executor doesn't compile |
 | `schema` | `'nest_webhooks'` | On PostgreSQL, the schema of its tables, which its first migration creates: letters, digits and underscores, not starting with a digit, at most 63 characters. On MySQL, the prefix of its tables in the connection's database (`nest_webhooks_endpoints`...): lowercase letters, digits and underscores, not starting with a digit, at most 40 characters |
 | `migrate` | `true`, except with `NODE_ENV=production` | Apply the pending migrations when the application starts. With `false`, startup fails with a `WebhookSchemaError` while the schema is behind |
 
@@ -1761,6 +1761,7 @@ Each executor takes your database client, and its own kind of transaction object
 | Executor | Takes | Transaction object |
 | --- | --- | --- |
 | `fromDrizzle(db)` | A Drizzle database: on PostgreSQL, whichever its driver; on MySQL, `drizzle-orm/mysql2`'s | The `tx` that `db.transaction()` hands its callback |
+| `fromSequelize(sequelize)` | A Sequelize instance (`sequelize` 6 or `@sequelize/core` 7) with `dialect: 'postgres'` or `dialect: 'mysql'`. On MySQL, pass `dialectOptions: { flags: '' }` so mysql2 keeps `FOUND_ROWS`: Sequelize's connection manager sets `flags: "-FOUND_ROWS"` otherwise | The `transaction` that `sequelize.transaction()` hands its callback |
 | `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres` or `mysql` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
 | `fromPg(pool)` | A node-postgres `Pool`, on PostgreSQL | A client from `pool.connect()`, after `BEGIN` |
 | `fromMysql2(pool)` | A `mysql2/promise` pool, on MySQL | A connection from `pool.getConnection()`, after `beginTransaction()` |
