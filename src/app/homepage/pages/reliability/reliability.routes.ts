@@ -3,6 +3,7 @@ import { IdempotencyComponent } from './idempotency/idempotency.component';
 import { LocksComponent } from './locks/locks.component';
 import { OutboxComponent } from './outbox/outbox.component';
 import { ResilienceComponent } from './resilience/resilience.component';
+import { TerminusComponent } from './terminus/terminus.component';
 import { WorkflowsComponent } from './workflows/workflows.component';
 
 export const RELIABILITY_ROUTES: Routes = [
@@ -30,5 +31,10 @@ export const RELIABILITY_ROUTES: Routes = [
     path: 'locks',
     component: LocksComponent,
     data: { title: 'Distributed locks' },
+  },
+  {
+    path: 'terminus',
+    component: TerminusComponent,
+    data: { title: 'Health checks' },
   },
 ];

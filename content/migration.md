@@ -334,7 +334,7 @@ isHealthy(key: string) {
 }
 ```
 
-The `timeout` option of the built-in database, microservice, and gRPC indicators (e.g., `db.pingCheck('database', {{ '{' }} timeout: 1500 {{ '}' }})`) is deprecated. Chain `.withTimeout(1500)` on the returned attempt instead. See the [Terminus chapter](/recipes/terminus#timeouts-and-caching) for details.
+The `timeout` option of the built-in database, microservice, and gRPC indicators (e.g., `db.pingCheck('database', {{ '{' }} timeout: 1500 {{ '}' }})`) is deprecated. Chain `.withTimeout(1500)` on the returned attempt instead. See the [Terminus chapter](/reliability/terminus#timeouts-and-caching) for details.
 
 #### Webpack deprecation in CLI workflows
 

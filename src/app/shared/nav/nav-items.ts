@@ -178,6 +178,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Transactional outbox', path: '/reliability/outbox' },
       { title: 'Durable workflows', path: '/reliability/workflows' },
       { title: 'Distributed locks', path: '/reliability/locks' },
+      { title: 'Health checks', path: '/reliability/terminus' },
     ],
   },
   {
@@ -294,7 +295,6 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Passport (auth)', path: '/recipes/passport' },
       { title: 'Hot reload', path: '/recipes/hot-reload' },
       { title: 'Router module', path: '/recipes/router-module' },
-      { title: 'Health checks', path: '/recipes/terminus' },
       { title: 'CQRS', path: '/recipes/cqrs' },
       { title: 'Serve static', path: '/recipes/serve-static' },
       { title: 'Commander', path: '/recipes/nest-commander' },
