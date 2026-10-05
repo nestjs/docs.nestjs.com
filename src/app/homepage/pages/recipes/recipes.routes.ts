@@ -4,7 +4,6 @@ import { CrudGeneratorComponent } from './crud-generator/crud-generator.componen
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
-import { TerminusComponent } from './terminus/terminus.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
@@ -25,11 +24,7 @@ export const RECIPES_ROUTES: Routes = [
     redirectTo: '/openapi/introduction',
   },
   { path: 'prisma', redirectTo: splitInto('/data/prisma', PRISMA_SECTIONS) },
-  {
-    path: 'terminus',
-    component: TerminusComponent,
-    data: { title: 'Health checks (Terminus)' },
-  },
+  { path: 'terminus', redirectTo: movedTo('/reliability/terminus') },
   {
     path: 'crud-utilities',
     redirectTo: '/recipes/crud-generator',

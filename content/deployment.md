@@ -73,7 +73,7 @@ Health checks are essential for monitoring the health and status of your NestJS 
 
 In NestJS, you can implement health checks with the **@nestjs/terminus** package, which supports checks for database connections, external services, and custom indicators.
 
-See the [health checks (Terminus)](/recipes/terminus) recipe to learn how to implement health checks in your NestJS application.
+See the [health checks (Terminus)](/reliability/terminus) chapter to learn how to implement health checks in your NestJS application.
 
 #### Logging
 
@@ -296,7 +296,7 @@ Each topic covered earlier in this chapter has a managed equivalent in Mau:
   </tr>
   <tr>
     <td><a href="/deployment#health-checks">Health checks</a></td>
-    <td>Point Mau at the endpoint you expose with <a href="/recipes/terminus">Terminus</a> and unhealthy instances are handled for you.</td>
+    <td>Point Mau at the endpoint you expose with <a href="/reliability/terminus">Terminus</a> and unhealthy instances are handled for you.</td>
   </tr>
   <tr>
     <td><a href="/deployment#some-other-tips">Monitoring and backups</a></td>
