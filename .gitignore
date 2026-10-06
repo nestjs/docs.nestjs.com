@@ -63,3 +63,8 @@ src/app/homepage/pages/**/*.html
 src/llms.txt
 src/llms-full.txt
 src/md/
+
+# API reference: package sources cloned by `npm run api:fetch`, and the pages
+# the compiler generates from them
+/sources
+/src/generated
