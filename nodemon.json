@@ -1,5 +1,5 @@
 {
   "watch": ["content"],
   "ext": "md",
-  "exec": "npm run docs"
+  "exec": "npm run docs-only && npm run llms"
 }
