@@ -1,0 +1,61 @@
+<div class="api-filter">
+  <app-api-select
+    (change)="setType($event.option)"
+    [options]="types"
+    [selected]="type"
+    [showSymbol]="true"
+    label="Type:"
+  />
+  <app-api-select
+    (change)="setStatus($event.option)"
+    [options]="statuses"
+    [selected]="status"
+    label="Status:"
+  />
+  <div class="form-search">
+    <input
+      placeholder="Filter"
+      [value]="query"
+      (input)="setQuery($any($event.target).value)"
+      aria-label="Filter the API reference"
+    />
+    <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+  </div>
+  <button
+    type="button"
+    class="toggle-all"
+    (click)="toggleAll()"
+    [attr.aria-pressed]="allOpen"
+  >
+    <i
+      class="ph"
+      [class.ph-arrows-in-line-vertical]="allOpen"
+      [class.ph-arrows-out-line-vertical]="!allOpen"
+      aria-hidden="true"
+    ></i>
+    {{ allOpen ? 'Collapse all' : 'Expand all' }}
+  </button>
+</div>
+
+@let groups = groups$ | async;
+@if (groups === 'missing') {
+  <div class="api-empty">
+    The API reference has not been generated. Run <code>npm run api</code> to
+    fetch the package sources and compile it.
+  </div>
+} @else if (groups) {
+  @for (group of groups; track group.id) {
+    <h4 [id]="group.id" class="package-group-title">{{ group.title }}</h4>
+    @for (section of group.sections; track section.name) {
+      <app-package-card
+        [name]="section.title"
+        [path]="section.path"
+        [items]="section.items"
+        [forceOpen]="filterActive"
+        context="overview"
+      />
+    }
+  } @empty {
+    <p class="api-empty">No exports match the filter.</p>
+  }
+}
