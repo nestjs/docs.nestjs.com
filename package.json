@@ -14,7 +14,7 @@
     "build:prod": "ng build --configuration production --aot --delete-output-path=false",
     "test": "ng test",
     "lint": "eslint \"**/*.{ts,tsx}\" ",
-    "docs": "npm run docs-only && npm run llms && npm run api:compile -- --if-sources",
+    "docs": "npm run api:compile -- --if-sources && npm run docs-only && npm run llms",
     "llms": "ts-node -P tools/tsconfig.json tools/generate-llms-txt.ts",
     "docs-only": "ts-node -P tools/tsconfig.json tools/dgeni-cli.ts tools/transforms/nestjs-package/index",
     "api": "npm run api:fetch && npm run api:compile",
