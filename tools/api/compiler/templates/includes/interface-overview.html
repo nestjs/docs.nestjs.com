@@ -1,0 +1,9 @@
+{% import "lib/memberHelpers.html" as memberHelper -%}
+
+<section class="interface-overview">
+  <pre class="language-typescript"><code class="language-typescript">
+interface {$ doc.name $}{$ doc.typeParams | escape $}{$ memberHelper.renderHeritage(doc) $} {{$ memberHelper.renderMembers(doc) $}
+}</code></pre>
+{$ descendants.renderDescendants(doc, 'interface', 'Child interfaces') $}
+{$ descendants.renderDescendants(doc, 'class', 'Class implementations', true, r/class|directive|pipe|decorator/) $}
+</section>

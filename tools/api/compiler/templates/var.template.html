@@ -1,0 +1,10 @@
+{% extends 'export-base.template.html' %}
+
+{% block overview %}
+  <pre class="language-typescript"><code language="ts" hideCopy="true" class="language-typescript no-box api-heading {% if doc.deprecated %} deprecated-api-item{% endif %}">
+const {$ doc.name $}: {$ (doc.type | escape) or 'any' $};</code></pre>
+{% endblock %}
+
+{% block details %}
+  {% include "includes/description.html" %}
+{% endblock %}
