@@ -176,7 +176,7 @@ export class SessionAuth extends SessionCookieProvider<User> {
 }
 ```
 
-Providers are ordinary `@Injectable()` classes, so they inject whatever they need, and they register themselves: the constructor hands `this` to `AuthenticationRegistry`, the package's list of providers, which the guard consults. The base class receives `SessionService` through property injection, which is why the constructor lists only `UsersRepository` and the registry. Because `validate()` runs on every authenticated request, a deleted user loses access right away, not when the session expires.
+Providers are ordinary `@Injectable()` classes, so they inject whatever they need, and they register themselves: the constructor hands `this` to `AuthenticationRegistry`, the package's list of providers, which the guard consults. The base class receives `SessionService` through property injection, which is why the constructor lists only `UsersRepository` and the registry. Because `validate()` runs on every authenticated request, a deleted user loses access right away, not when the session expires. When the users live in the same database as the sessions, the store can read the user in the same query and hand it to `validate()` as `session.extra`, so a request costs one read instead of two; [Keep sessions and tokens in your database](/security/authentication#keep-sessions-and-tokens-in-your-database) shows how.
 
 Provide it in a module of your own. `AuthModule` will hold everything this tutorial adds under `src/auth`:
 
@@ -829,7 +829,7 @@ export class MeController {
 
 `@CurrentUser('id')` injects a single property. `@CurrentSession()` injects what the provider considers the session: here, the stored session record.
 
-> info **Hint** Optional: tell the package your user type once, and its types follow. Augment the `AuthenticationTypes` interface of `@nestjs/authentication` in a `declare module` block, with `user: User` (the tutorial keeps it in `src/auth/auth-types.ts`). From then on `@CurrentUser('key')` accepts only keys of `User` and is typed to return that property, and `AuthenticationContext.user` and `.session` are typed too. It doesn't type the parameter itself: a parameter decorator has no say over the annotation, so `user: User` stays on the parameter. And it is one user type for the whole application, so an application with two kinds of principal keeps the annotations instead.
+> info **Hint** Optional: tell the package your user type once, and its types follow. Augment the `AuthenticationTypes` interface of `@nestjs/authentication` in a `declare module` block, with `user: User` (the tutorial keeps it in `src/auth/auth-types.ts`). From then on `@CurrentUser('key')` accepts only keys of `User` and is typed to return that property, and `AuthenticationContext.user` and `.session` are typed too. A `sessionExtra` key types `SessionRecord.extra`, what a session store reads along with each session (exported as `SessionExtra`, `unknown` without the key). It doesn't type the parameter itself: a parameter decorator has no say over the annotation, so `user: User` stays on the parameter. And it is one user type for the whole application, so an application with two kinds of principal keeps the annotations instead.
 
 ```typescript
 @@filename(src/users/users.module)
@@ -1026,7 +1026,7 @@ providers: [
 ],
 ```
 
-For each request, the guard asks the providers in ascending `order`, and the first one that returns a user wins. `SessionAuth` registered with the default order, `0`, and `JwtAuth` asked for `1`, so a request with a session cookie is signed in by `SessionAuth`, and a request with a bearer token, which has no cookie, gets `null` from `SessionAuth` and is handled by `JwtAuth`. The order is given at registration rather than left to the order in which Nest constructs the providers: that one follows the module graph, and changes when a provider moves to another module or an import is added. Two providers asking for the same order fail at startup, naming both. A request with neither gets a 401 whose `WWW-Authenticate` header lists what the providers accept: `Bearer realm="store"`. A token that fails verification gets a 401 that says why, as RFC 6750 describes, for example `error="invalid_token", error_description="token expired"`. That tells the mobile app to refresh.
+For each request, the guard asks the providers in ascending `order`, and the first one that returns a user wins. `SessionAuth` registered with the default order, `0`, and `JwtAuth` asked for `1`, so a request with a session cookie is signed in by `SessionAuth`, and a request with a bearer token, which has no cookie, gets `null` from `SessionAuth` and is handled by `JwtAuth`. The order is given at registration rather than left to the order in which Nest constructs the providers: that one follows the module graph, and changes when a provider moves to another module or an import is added. Two providers asking for the same order fail at startup, naming both. A request with neither gets a 401 with `missing_credentials` as its `errorCode`; its `WWW-Authenticate` header lists what the providers accept: `Bearer realm="store"`. A token that fails verification gets a 401 that says why, as RFC 6750 describes, for example `error="invalid_token", error_description="token expired"`. That tells the mobile app to refresh.
 
 Now the endpoints that issue tokens:
 
@@ -1172,7 +1172,7 @@ export class MfaController {
 - `enroll()` stores a new, unconfirmed secret, and returns it with an `otpauth://` URI that the web app shows as a QR code. Once an authenticator is confirmed, `enroll()` refuses to overwrite it and throws `MfaAlreadyEnrolledError`, which the module answers with a 409, `Authenticator already enrolled`. Overwriting it would switch two-factor authentication off until the new one was confirmed.
 - `replace` handles a new phone. `enroll()` with `replace: true` stages a second secret, and the current authenticator keeps working until `confirm()` receives a code from the new one. `@Authenticate()` with `mfa: true` makes the route require a verified second factor, so a stolen password alone can't swap in someone else's authenticator.
 - `SignInService.confirmMfa()` activates the authenticator once it produces a valid code, so a mistyped secret can't lock anyone out. That code also proves this browser has the authenticator, so the session becomes verified, under a new cookie: the customer can use the routes that require a second factor right away, without signing in again. A confirmation sent with a bearer token, which has no session, only activates the authenticator. The ten recovery codes the route returns are shown only this once, and stored under a slow hash salted with the customer's id, so a copy of the database doesn't reveal them.
-- Once an authenticator is confirmed, `SignInService.signIn()` creates **pending** sessions for that user. A pending session isn't signed in anywhere: routes that need a user answer with a 401 and `"error": "mfa_required"`, which tells the web app to ask for a code. That's why `verify` is `@Public()`. `completeMfa()` reads the session from this browser's cookie, checks a code or a recovery code, and rotates the session to a new id with `mfa: 'verified'`, setting the new cookie. A pending session expires after 10 minutes (`mfa.pendingTtl`), not after the 14 days of `session.absoluteTtl`: a pending cookie is half a credential. Verifying the code gives the session its full lifetime.
+- Once an authenticator is confirmed, `SignInService.signIn()` creates **pending** sessions for that user. A pending session isn't signed in anywhere: routes that need a user answer with a 401 and `"errorCode": "mfa_required"`, which tells the web app to ask for a code. That's why `verify` is `@Public()`. `completeMfa()` reads the session from this browser's cookie, checks a code or a recovery code, and rotates the session to a new id with `mfa: 'verified'`, setting the new cookie. A pending session expires after 10 minutes (`mfa.pendingTtl`), not after the 14 days of `session.absoluteTtl`: a pending cookie is half a credential. Verifying the code gives the session its full lifetime.
 - `completeMfa()` only acts on the session cookie. A request with a bearer token and no cookie gets a 401.
 - Codes are accepted 30 seconds either side of now, and each code works once. After 5 wrong codes in 15 minutes, the account refuses every code, right ones included, until the window passes. Each attempt is counted before it's checked, so sending guesses in parallel doesn't get around the limit.
 
@@ -1233,7 +1233,7 @@ Every route already requires a signed-in user; `@Authenticate()` adjusts how. Wi
 
 The new address is unverified, so the route sends a verification link to it, and the customer can't place orders until they use it. The links sent to the old address stop working: they verify only the address they were sent to.
 
-The mobile app must not become a way around the second factor, and it can't be: like `signIn()`, `TokenService.issue()` gives a customer with a confirmed authenticator no tokens without a code. It answers 401 with `"error": "mfa_required"`, which tells the app to ask for one. The app then sends the password again, with the code. Add the code to the body:
+The mobile app must not become a way around the second factor, and it can't be: like `signIn()`, `TokenService.issue()` gives a customer with a confirmed authenticator no tokens without a code. It answers 401 with `"errorCode": "mfa_required"`, which tells the app to ask for one. The app then sends the password again, with the code. Add the code to the body:
 
 ```typescript
 @@filename(src/auth/auth.dto)
@@ -2394,9 +2394,46 @@ LOG [AuthenticationModule] AuthenticationStorage: DrizzleAuthenticationStore
 
 - **One provider or several.** `registerSource()` takes the interfaces by name, so one class can implement all six, as here, or several classes can split them: a `RedisSessionStore` that registers `sessions`, and this class registering the other five. A second store for the same name fails at startup, naming both classes.
 - **Some methods must be one statement.** Whatever decides that something works only once is a single conditional statement, never a read followed by a write. `touchSession()` updates only a session that still exists, so a request racing a sign-out can't bring the session back. `deleteSession()` resolves whether it deleted the row, so of two rotations of one session, or a rotation and a sign-out, exactly one wins. `markRefreshTokenUsed()`, `claimTotpStep()` and `consumeRecoveryCode()` count the rows they changed, and the three `consume` methods are a `DELETE … RETURNING`. `saveTotp()` keeps the larger time step with `greatest()`, the one place the store writes SQL by hand. `recordMfaFailure()` inserts first and counts second, outside a transaction, so a burst of parallel guesses can't all see a low count. Each method of the store interfaces gives its rule, and the race it prevents, in its doc comment.
+- **Recording activity is best-effort.** If `touchSession()` fails (a lock timeout, a read-only replica), the request and sign-outs still succeed. The session is kept, `lastActiveAt` doesn't move, and the session goes idle at its previous deadline unless a later request records activity. Every failure emits a `session-touch-failed` event; the log gets one warning when failures start, nothing while they continue, and one line with their count on the next successful touch.
 - **The tables stay bounded.** Anyone can ask for a magic link or a reset link, so each save deletes what has expired and, past 100,000 pending rows in a table, what expires first. Expired sessions and refresh-token families go as new ones are written.
 - **Password reset and email verification keep working unchanged.** Their links are rows in `email_tokens` now, and their mailers still send them through `@nestjs/mail`.
 - **Production refuses memory.** With `NODE_ENV` set to `production`, the module won't start while a store that a configured feature uses isn't registered, and names the interfaces to implement. A feature can use more than its own store: every sign-in checks `MfaStore` for an authenticator, even without the `mfa` option, and signing out everywhere or resetting a password ends sessions and refresh tokens alike. A store that none of your configured features uses fails at its first read instead. `allowInMemoryStorage: true` in the module options runs in memory anyway, but then every restart or deploy signs everyone out and forgets enrolled authenticators, and instances don't share any of it.
+
+If your users live in the same database, `getSession()` can read each session's user in the same query and pass it on as `extra`, which `SessionAuth`'s `validate()` receives: one read per request instead of two. Type it with a `sessionExtra` key next to `user` (`users` and `toUser()` stand for your own table and the mapping that leaves out the password hash):
+
+```typescript
+@@filename(src/auth/auth-types)
+import type { User } from '../users/user.js';
+
+declare module '@nestjs/authentication' {
+  interface AuthenticationTypes {
+    user: User;
+    sessionExtra: { user: User };
+  }
+}
+```
+
+```typescript
+@@filename(src/auth/drizzle-authentication.store)
+async getSession(id: string): Promise<SessionRecord | undefined> {
+  // Joined fresh on every read. A session whose user is gone reads as unknown.
+  const [row] = await this.db
+    .select({ session: sessions, user: users })
+    .from(sessions)
+    .innerJoin(users, eq(users.id, sessions.userId))
+    .where(eq(sessions.id, id));
+  return row && { ...withoutNulls(row.session), extra: { user: toUser(row.user) } };
+}
+```
+
+```typescript
+@@filename(src/auth/session-auth.provider)
+validate(session: SessionRecord) {
+  return session.extra?.user ?? null;
+}
+```
+
+`extra` is never stored: `createSession()` never receives it, a rotation leaves it out, and `listUserSessions()` shouldn't set it. Nor is it exposed: `@CurrentSession()`, `request.session` and `AuthenticationContext.session` carry the session without it, so whatever the handlers need goes in the user `validate()` returns. Don't copy the user onto the session row instead of joining it: the copy goes stale when the user changes.
 
 The package ships its rules as tests. `authenticationStoreContract()` from `@nestjs/authentication/testing` returns test cases that work with any test runner, and `concurrent: true` adds the races: parallel refreshes of one token, parallel uses of one code or link, bursts of failed codes, a sign-out racing a request, parallel deletes of one session, and a rotation racing a sign-out or another rotation. Run them on PGlite and, where the calls really race, on PostgreSQL:
 
@@ -3341,7 +3378,7 @@ $ curl localhost:3000/me -b ada.txt
 {"id":"7b5d3c2e-...","email":"ada@example.com","emailVerified":false,"roles":["customer"]}
 
 $ curl localhost:3000/orders -b ada.txt --json '{"items":[{"productId":"salmon-kibble-2kg","quantity":1}]}'
-{"message":"Email address not verified","error":"email_unverified","statusCode":403}
+{"message":"Email address not verified","error":"email_unverified","statusCode":403,"errorCode":"email_unverified"}
 
 $ curl localhost:3000/auth/email/verify --json '{"token":"Vb3x..."}'
 {"email":"ada@example.com","emailVerified":true}
@@ -3352,7 +3389,7 @@ $ curl localhost:3000/orders -b ada.txt --json '{"items":[{"productId":"salmon-k
 $ curl -i localhost:3000/orders
 HTTP/1.1 401 Unauthorized
 WWW-Authenticate: Bearer realm="store"
-{"message":"Unauthorized","statusCode":401}
+{"message":"Unauthorized","statusCode":401,"errorCode":"missing_credentials"}
 ```
 
 Sign in as the mobile app, and use the access token. The commands below use [jq](https://jqlang.org/) to extract the tokens:
@@ -3398,7 +3435,7 @@ $ curl localhost:3000/auth/sign-in -b ada.txt -c ada.txt --json '{"email":"ada@e
 {"mfaRequired":true}
 
 $ curl localhost:3000/me -b ada.txt
-{"message":"Second factor required","error":"mfa_required","statusCode":401}
+{"message":"Second factor required","error":"mfa_required","statusCode":401,"errorCode":"mfa_required"}
 
 $ curl localhost:3000/auth/mfa/verify -b ada.txt -c ada.txt --json '{"code":"815224"}'
 {"mfa":"verified"}
@@ -3417,7 +3454,7 @@ The mobile app is asked for a code too:
 
 ```bash
 $ curl localhost:3000/auth/token --json '{"email":"ada.lovelace@example.com","password":"correct horse battery"}'
-{"message":"Second factor required","error":"mfa_required","statusCode":401}
+{"message":"Second factor required","error":"mfa_required","statusCode":401,"errorCode":"mfa_required"}
 ```
 
 Start a Google sign-in. curl shows the redirect; open the same URL in a browser to complete it, and you land on `/orders`, signed in:
@@ -3466,7 +3503,7 @@ $ curl localhost:3000/orders -H "Authorization: Bearer $KEY" --json '{"items":[{
 {"id":"db8a...","userId":"c41e9a07-...","items":[{"productId":"clumping-litter-10l","quantity":20}],"total":31980,"status":"pending"}
 
 $ curl -X POST localhost:3000/auth/api-keys -H "Authorization: Bearer $KEY"
-{"message":"Unauthorized","statusCode":401}
+{"message":"Unauthorized","statusCode":401,"errorCode":"missing_credentials"}
 
 $ curl -i -X DELETE localhost:3000/auth/api-keys/$KEY_ID -b grace.txt
 HTTP/1.1 204 No Content
@@ -3488,7 +3525,7 @@ HTTP/1.1 204 No Content
 Set-Cookie: __Host-sid=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Lax
 
 $ curl localhost:3000/me -b ada.txt
-{"message":"Unauthorized","statusCode":401}
+{"message":"Unauthorized","statusCode":401,"errorCode":"missing_credentials"}
 ```
 
 Ada forgot her password. Ask for a reset link for her address, and for an address nobody registered: both get the same empty 202, and only Ada gets an email:
@@ -3702,7 +3739,7 @@ To sign a test user in without going through a sign-in route, `SessionService.cr
 - **Use shared storage for the throttler**, such as Redis. Its default storage counts in each process's memory, so every instance counts on its own and a restart or deploy resets the counts. Enable `trust proxy` behind a proxy. For guessing spread across many IP addresses, add a second throttler whose tracker is the email alone; it also keeps a customer's inbox from filling up with reset links.
 - **Rotate sessions on privilege changes** with `SignInService.rotateSession()`. After a password change made while signed in, or when a customer turns two-factor authentication on or off, also end their other sessions and refresh tokens: `SessionService.revokeAll()` with the current session as `except`, and `TokenService.revokeAll()`. Whoever knew the old password may still be signed in. A [password reset](/security/authentication#reset-forgotten-passwords) does this for you.
 - **Handle API keys as secrets.** The table keeps only their hashes, and a key is shown once, when it's created: a leaked database gives nobody a key, and a lost key is revoked and replaced, never shown again. Keys expire after a year, so remind their owners to create the next one while the old one still works. Add the `cat_` pattern to your secret scanner (GitHub secret scanning takes custom patterns) to find keys committed to repositories, and revoke them. Requests made with a key emit no events: log the `keyId` from `@CurrentSession()` where you need to know which key did what. A password reset or a sign-out everywhere leaves keys alone: revoke them on those events if they should cut keys off too.
-- **Keep an audit trail.** `AuthenticationEvents` publishes every sign-in and sign-out, second-factor change, reused refresh token, password reset and email verification, on its `events$` stream and on `node:diagnostics_channel`. Store them where your security team can search them. Alert on repeated `mfa-failed` events with `locked: true` (someone who has the password is guessing codes), and on many `password-reset-requested` events without a `userId` from one source (someone is probing for accounts).
+- **Keep an audit trail.** `AuthenticationEvents` publishes every sign-in and sign-out, second-factor change, reused refresh token, password reset and email verification, on its `events$` stream and on `node:diagnostics_channel`. Store them where your security team can search them. Alert on repeated `mfa-failed` events with `locked: true` (someone who has the password is guessing codes), and on many `password-reset-requested` events without a `userId` from one source (someone is probing for accounts), and on `session-touch-failed` events, which mean the session store is refusing writes.
 - **Import `AuthenticationModule` before `AuthorizationModule`** if you add `@nestjs/authorization`. Global guards run in import order, and authorization needs the user that authentication sets. The other order fails at startup.
 
 #### The store contract
@@ -3728,6 +3765,8 @@ The tutorial [wrote the authentication store with Drizzle](/security/authenticat
 
 A family of refresh tokens counts as revoked when any of its tokens is, so a successor saved after the revocation is revoked too. And the pending entries (magic links, OIDC logins, email tokens) stay bounded: each save deletes what has expired and, past a cap, what expires first.
 
+`touchSession()` is best-effort: when it fails, the request goes on with the session as read, and a `session-touch-failed` event reports it. `getSession()` may set `extra` to what the same query read with the session, typically its user, for `SessionCookieProvider.validate()`. `createSession()` never receives it, and `listUserSessions()` doesn't set it.
+
 **With Prisma.** The tutorial has the store with Drizzle and with TypeORM, on the same tables. A Prisma store follows the same rules:
 
 - **Conditional updates and deletes** (`touchSession()`, `deleteSession()`, `markRefreshTokenUsed()`, `claimTotpStep()`, `consumeRecoveryCode()`) are `updateMany()` or `deleteMany()` with the condition in `where`, and their `count`: `deleteSession()` resolves `count > 0`. Never `upsert()` for `touchSession()`: it can write back a session that was just deleted.
@@ -3736,7 +3775,7 @@ A family of refresh tokens counts as revoked when any of its tokens is, so a suc
 - **`recordMfaFailure()`** is two statements on their own: a `create()`, then a `count()`. Not `prisma.$transaction([create, count])`, which runs the two in one transaction that commits after the count.
 - **`saveRecoveryCodes()`** is the one method that needs a transaction: `$transaction()`, whose array form fits here.
 
-**Test it** with the suite from `@nestjs/authentication/testing`, as the tutorial does. `authenticationStoreContract()` returns cases for any test runner, for the contracts your factory returns. `concurrent: true` adds the races: parallel refreshes of one token, parallel uses of one code or link, bursts of failed codes, a sign-out racing a request, parallel deletes of one session, and a rotation racing a sign-out or another rotation. Run it against PostgreSQL with a connection pool, where a store that reads and then writes fails them. `maxPending` checks the cap on pending entries, with a small cap configured for the test.
+**Test it** with the suite from `@nestjs/authentication/testing`, as the tutorial does. `authenticationStoreContract()` returns cases for any test runner, for the contracts your factory returns. `concurrent: true` adds the races: parallel refreshes of one token, parallel uses of one code or link, bursts of failed codes, a sign-out racing a request, parallel deletes of one session, and a rotation racing a sign-out or another rotation. Run it against PostgreSQL with a connection pool, where a store that reads and then writes fails them. `maxPending` checks the cap on pending entries, with a small cap configured for the test. The suite ignores `extra` when it compares what `getSession()` returns, so a store that joins the user passes.
 
 #### Reference
 
@@ -3825,17 +3864,28 @@ Your subclass implements `findKey(id)`, which returns the key's stored `hash`, i
 | `password-reset` | `userId` | A reset link set a new password |
 | `email-verified` | `userId`, `email` | A verification link was used |
 | `magic-link-refused` | `reason` (`not-this-browser`, `unknown`, `expired` or `refused`), `email` | A magic link signed nobody in |
+| `session-touch-failed` | `userId`, `sessionId`, `error` | `SessionStore.touchSession()` failed; the request went on, and the session's idle deadline didn't move |
 
 ##### Errors
 
-`AuthenticationError` is the base class of the package's errors. It carries `status`, and optionally `code` (the body's `error` field) and `challenge` (the `WWW-Authenticate` header). Thrown from a handler or anything it calls, it becomes Nest's own HTTP exception, GraphQL `UNAUTHENTICATED`, a `WsException` or an `RpcException`.
+`AuthenticationError` is the base class of the package's errors. It carries `status`, and optionally `code`, `details` and `challenge` (the `WWW-Authenticate` header). Thrown from a handler or anything it calls, it becomes Nest's own HTTP exception, GraphQL `UNAUTHENTICATED`, a `WsException` or an `RpcException`. Its `code` is Nest's `errorCode`. Over HTTP and GraphQL it is set on the exception, so an exception filter reads `exception.errorCode`, and Nest puts it in the body, or in `extensions.originalError` for GraphQL. The ws and rpc payloads carry the same `errorCode` key. A refusal with a message also sends the code as `error`, as it always has. `details`, a plain object, is sent as `details`, as is; nothing else of the error (`cause`, the stack) reaches the client. For example, `new AuthenticationError('Too many attempts', options)` with `too_many_attempts` as the `code` and `retryAfter: 30` in `details` answers:
 
-| Error | Status | `error` in the body | When |
-| --- | --- | --- | --- |
-| `AuthenticationError` | 401 | none | Missing or bad credentials, or `requireUser()` without a user |
-| `JwtError` | 401 | none | A token is malformed, badly signed, expired, or for another issuer or audience |
-| `RefreshTokenError` | 401 | none | A refresh token is invalid, expired or reused; `reason` says which |
-| `MagicLinkError` | 401 | `not_this_browser` | A magic link was opened in another browser than the one that requested it |
-| `MfaAlreadyEnrolledError` | 409 | `Conflict` | `enroll()` without `replace: true` for a user with a confirmed authenticator |
+```json
+{"message":"Too many attempts","error":"too_many_attempts","statusCode":401,"errorCode":"too_many_attempts","details":{"retryAfter":30}}
+```
 
-The guard and `TokenService.issue()` also answer 401 with `mfa_required` while a second factor is missing, and 403 with `email_unverified` on `verifiedEmail` routes. The OIDC routes answer 400 for a bad or forged callback, 401 when the provider's answer fails verification or a link flow has no signed-in session, 403 when the resolver refuses the account or a link flow is started from another site, 404 for a provider name that isn't configured, and 502 when the provider can't be reached or is misconfigured, such as an endpoint that isn't https or a key set that can't be loaded. `SignInService.signIn()` and `MagicLinkService.create()` answer 403 to a request posted from another origin.
+| Error | Status | `errorCode` | `error` | When |
+| --- | --- | --- | --- | --- |
+| `AuthenticationError` | 401 | its `code`, if any | its `code`; else `Unauthorized` with a message, none without | Bad credentials, or `requireUser()` without a user (no message, no code) |
+| `JwtError` | 401 | none | `Unauthorized` | A token is malformed, badly signed, expired, or for another issuer or audience |
+| `RefreshTokenError` | 401 | none | `Unauthorized` | A refresh token is invalid, expired or reused; `reason` says which |
+| `MagicLinkError` | 401 | `not_this_browser` | `not_this_browser` | A magic link was opened in another browser than the one that requested it |
+| `MfaAlreadyEnrolledError` | 409 | none | `Conflict` | `enroll()` without `replace: true` for a user with a confirmed authenticator |
+
+When no provider recognises any credentials, the guard answers 401 with `missing_credentials`, and no `error`:
+
+```json
+{"message":"Unauthorized","statusCode":401,"errorCode":"missing_credentials"}
+```
+
+That covers a request without credentials, a stale or unknown session cookie (which counts as none, so optional routes keep working), and credentials that a route's `providers` doesn't accept. The guard and `TokenService.issue()` also answer 401 with `mfa_required` while a second factor is missing, and 403 with `email_unverified` on `verifiedEmail` routes, each as both `errorCode` and `error`. The OIDC routes answer 400 for a bad or forged callback, 401 when the provider's answer fails verification or a link flow has no signed-in session, 403 when the resolver refuses the account or a link flow is started from another site, 404 for a provider name that isn't configured, and 502 when the provider can't be reached or is misconfigured, such as an endpoint that isn't https or a key set that can't be loaded. `SignInService.signIn()` and `MagicLinkService.create()` answer 403 to a request posted from another origin.
