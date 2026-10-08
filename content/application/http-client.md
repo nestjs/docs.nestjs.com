@@ -300,7 +300,7 @@ A request rejects with one of the following errors, all of which extend the `Htt
 | --- | --- | --- |
 | `HttpResponseError` | The upstream answered with a non-2xx status. | `status`, `statusText`, `headers`, `body` (parsed JSON, otherwise text), `method`, `url` |
 | `HttpTimeoutError` | The `timeout` elapsed on the last attempt. | `timeoutMs`, `method`, `url` |
-| `HttpNetworkError` | The connection failed: DNS, a refused or reset connection, TLS, or a redirect that `redirect: 'error'` refused. | `cause` (for example, with `cause.code` set to `ECONNREFUSED`), `method`, `url` |
+| `HttpNetworkError` | The connection failed: DNS, a refused or reset connection, TLS, or a redirect the client refused (to another origin, or with `redirect: 'error'`). | `cause` (for example, with `cause.code` set to `ECONNREFUSED`), `method`, `url` |
 | `HttpParseError` | A successful response isn't valid JSON, although it was expected to be. | `status`, `statusText`, `headers`, `body` (the raw text), `method`, `url` |
 
 A cancelled request rejects with the signal's reason, and errors thrown by interceptors propagate unchanged. A request the client refuses to send, such as one with an invalid `params` value, rejects with a `TypeError`. To receive non-2xx responses as values instead, set `throwOnHttpError: false` on the client or on a request, and check `ok` or `status` yourself.
@@ -498,13 +498,15 @@ export class PartnerModule {}
 
 For a proxy, pass `new ProxyAgent('http://proxy.internal:3128')`. Node.js doesn't expose these classes from a built-in module, so install the `undici` package yourself (`@nestjs/http-client` doesn't depend on it), preferably with the major version that your Node.js release bundles. A Node.js `http.Agent`, which Axios accepts as `httpsAgent`, doesn't work with `fetch`, and fails to compile. To route every client through the proxy from the `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` environment variables instead, start Node.js with `--use-env-proxy` (or set `NODE_USE_ENV_PROXY=1`) on a release that supports it.
 
-The `redirect` option controls how `fetch` handles `3xx` responses: `'follow'` (the default), `'error'`, which fails with an `HttpNetworkError`, or `'manual'`, which returns them. A `3xx` response isn't a success, so combine `'manual'` with `throwOnHttpError: false` to read its `location` header. When `fetch` follows a redirect to another origin, it drops the `authorization` and `cookie` headers, but not others. A client that authenticates with a custom header, such as `x-api-key`, should use `redirect: 'error'` unless the API relies on redirects.
+The `redirect` option controls how `3xx` responses are handled. A client with a `baseUrl` follows redirects on its own origin only, and fails one to another host with an `HttpNetworkError`, since its headers carry that upstream's credentials (see [Security](/application/http-client#security)). A client without a `baseUrl` lets `fetch` follow redirects anywhere, dropping the `authorization` and `cookie` headers when the origin changes, but not others.
+
+Set `redirect` to `'follow'` to follow redirects anywhere with a `baseUrl` too, for an API that intentionally redirects to another host, to `'error'` to fail on every redirect, or to `'manual'` to receive `3xx` responses as they are. A `3xx` response isn't a success, so combine `'manual'` with `throwOnHttpError: false` to read its `location` header.
 
 #### Security
 
 The client guards against a few common mistakes:
 
-- **A client with a `baseUrl` only sends requests to its origin.** An absolute URL on the same origin, such as a pagination link, works, but one on another host throws before anything is sent. The client's headers and interceptors carry that upstream's credentials, and a URL taken from user input or from an upstream response must not receive them. Use a client without a `baseUrl` to call arbitrary hosts.
+- **A client with a `baseUrl` only sends requests to its origin.** An absolute URL on the same origin, such as a pagination link, works, but one on another host throws before anything is sent. A redirect to another host fails too, before the request is repeated there. The client's headers and interceptors carry that upstream's credentials, and a URL taken from user input or from an upstream response must not receive them. Use a client without a `baseUrl` to call arbitrary hosts, or `redirect: 'follow'` for an API that redirects to another host on purpose.
 - **Path parameters are encoded.** Put request values in `params` and `query` instead of building the path with string interpolation. They are URI-encoded, and a `params` value such as `..` throws instead of moving the request to another endpoint.
 - **Credentials in URLs are refused.** A `baseUrl` or request URL such as `https://user:pass@example.com` throws. Send credentials in the `authorization` header instead. A header value with a line break throws, without quoting the value in the message.
 - **Errors are safe to log**, as described in [Handling errors](/application/http-client#handling-errors).
