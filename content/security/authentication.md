@@ -1308,6 +1308,38 @@ controllers: [
 ],
 ```
 
+##### Turn off two-factor authentication
+
+`MfaService.disable()` removes the customer's authenticator and their recovery codes, and emits `mfa-disabled`. Add a route to `MfaController`, with `SessionService` and `TokenService` injected into its constructor:
+
+```typescript
+@@filename(src/auth/mfa.controller)
+// Takes a verified session and a fresh code: a session left signed in on a
+// shared computer isn't enough.
+@Authenticate({ mfa: true })
+@Post('disable')
+@HttpCode(204)
+async disable(
+  @CurrentUser('id') userId: string,
+  @CurrentSession() current: SessionRecord,
+  @Body('code') code: string,
+) {
+  if (!(await this.mfaService.verifyTotp(userId, code))) {
+    throw new UnauthorizedException('Invalid code');
+  }
+  await this.mfaService.disable(userId);
+  // The other sessions and refresh tokens passed the second factor, and still would.
+  await this.sessionService.revokeAll(userId, { except: current.id });
+  await this.tokenService.revokeAll(userId);
+}
+```
+
+- `@Authenticate({ mfa: true })` is the minimum: without it, a stolen password alone could turn the second factor off. An API key never passes it. It doesn't prove the customer is at the keyboard now, though: a session stays verified for its whole lifetime. So the route asks for a code as well. `verifyTotp()` resolves `false` for a wrong code, counts toward the same lockout as signing in, and each code works once.
+- `disable()` deletes every recovery code along with the authenticator, and drops a replacement staged by `replace` that was never confirmed. Enrolling again starts from scratch, with a new batch of recovery codes.
+- `disable()` leaves sessions and tokens alone. The customer's other verified sessions would keep passing `mfa: true` routes, and so would their refresh-token families, whose `amr` keeps `mfa` on every refresh. The route ends them, keeping this browser's session. Access tokens already issued stay valid until they expire. Sent with a bearer token, the request has no session id to keep: every session ends, and `TokenService.revokeAll()` signs that client out too.
+- A session still waiting for its second factor can't complete it, since there's no authenticator left to check a code against. `revokeAll()` ends it with the others.
+- A customer whose enrollment was never confirmed has no verified session, so this route refuses them. To cancel such an enrollment, call `disable()` from a route without it while `isEnrolled()` is `false`, or call `enroll()` again.
+
 #### Add "Sign in with Google"
 
 In the Google Cloud console, create an OAuth client ID of type **Web application**, and add this authorized redirect URI (and the production one, when you deploy):
@@ -3668,7 +3700,7 @@ To sign a test user in without going through a sign-in route, `SessionService.cr
 - **Register the production redirect URI** with Google, and set `APP_URL` to the public origin of the application.
 - **Size the servers for scrypt.** Each hash at the default cost takes 128 MiB, on the libuv threadpool (four threads unless you set `UV_THREADPOOL_SIZE`). Sign-in bursts queue behind each other; the throttler bounds them.
 - **Use shared storage for the throttler**, such as Redis. Its default storage counts in each process's memory, so every instance counts on its own and a restart or deploy resets the counts. Enable `trust proxy` behind a proxy. For guessing spread across many IP addresses, add a second throttler whose tracker is the email alone; it also keeps a customer's inbox from filling up with reset links.
-- **Rotate sessions on privilege changes** with `SignInService.rotateSession()`. After a password change made while signed in, or when a customer turns on two-factor authentication, also end their other sessions and refresh tokens: `SessionService.revokeAll()` with the current session as `except`, and `TokenService.revokeAll()`. Whoever knew the old password may still be signed in. A [password reset](/security/authentication#reset-forgotten-passwords) does this for you.
+- **Rotate sessions on privilege changes** with `SignInService.rotateSession()`. After a password change made while signed in, or when a customer turns two-factor authentication on or off, also end their other sessions and refresh tokens: `SessionService.revokeAll()` with the current session as `except`, and `TokenService.revokeAll()`. Whoever knew the old password may still be signed in. A [password reset](/security/authentication#reset-forgotten-passwords) does this for you.
 - **Handle API keys as secrets.** The table keeps only their hashes, and a key is shown once, when it's created: a leaked database gives nobody a key, and a lost key is revoked and replaced, never shown again. Keys expire after a year, so remind their owners to create the next one while the old one still works. Add the `cat_` pattern to your secret scanner (GitHub secret scanning takes custom patterns) to find keys committed to repositories, and revoke them. Requests made with a key emit no events: log the `keyId` from `@CurrentSession()` where you need to know which key did what. A password reset or a sign-out everywhere leaves keys alone: revoke them on those events if they should cut keys off too.
 - **Keep an audit trail.** `AuthenticationEvents` publishes every sign-in and sign-out, second-factor change, reused refresh token, password reset and email verification, on its `events$` stream and on `node:diagnostics_channel`. Store them where your security team can search them. Alert on repeated `mfa-failed` events with `locked: true` (someone who has the password is guessing codes), and on many `password-reset-requested` events without a `userId` from one source (someone is probing for accounts).
 - **Import `AuthenticationModule` before `AuthorizationModule`** if you add `@nestjs/authorization`. Global guards run in import order, and authorization needs the user that authentication sets. The other order fails at startup.
