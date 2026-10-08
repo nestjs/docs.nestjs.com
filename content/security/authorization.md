@@ -559,11 +559,11 @@ Whether a route admits guests is authentication's decision, not the policy's. Th
 ```typescript
 @Post()
 @Can(ProductPolicy, 'craete')
-// error TS2345: Argument of type '"craete"' is not assignable to parameter of type '"create" | "viewDrafts" | "update"'.
+// error TS2345: Argument of type '"craete"' is not assignable to parameter of type '"create" | "update" | "view" | "viewDrafts"'.
 create(@Body() input: CreateProductDto) {}
 ```
 
-The error lists the abilities that do work on a route. `@Can(ProductPolicy, 'view')` fails the same way. `@Can()` accepts only abilities that can be called with the user alone and whose user parameter accepts `null`: the guard has no product to pass, and it can't know whether a route has a user. Checks that need a record belong in the service, as in `findOne()`.
+The error lists the abilities that work on a route: those whose user parameter accepts `null`, since the guard can't know whether a route has a user. `view` is one of them, but `@Can(ProductPolicy, 'view')` still doesn't compile (`Expected 3 arguments, but got 2`): `view` also takes the product, and the guard has none to pass. Checks that need a record belong in the service, as in `findOne()`. A check that needs only an id from the URL can stay on the route, as [Check a route parameter](/security/authorization#check-a-route-parameter) shows.
 
 Finally, register the policy as a provider of its feature module:
 
@@ -789,6 +789,85 @@ Add `OrdersModule` to the `imports` of `AppModule`. Alice now gets her two order
 
 > info **Hint** A 403 confirms that the order exists. If that matters, for example when ids are sequential and guessable, check with `can()` and throw a `NotFoundException` instead.
 
+#### Check a route parameter
+
+Some checks need an argument but not a record. Staff look up a customer's orders at `GET /customers/:customerId/orders`, and customers may list their own there too. Whether Alice may call it depends on the id in the URL alone, so there's nothing to load before checking. Add an ability for it to `OrderPolicy`:
+
+```typescript
+@@filename(src/orders/order.policy)
+// Customers list their own orders; staff list anyone's. A guest is denied.
+viewOrdersOf(user: User | null, customerId: string) {
+  return !!user && (user.id === customerId || user.roles.includes('staff'));
+}
+```
+
+Unlike the other abilities of `OrderPolicy`, this one takes `User | null`, because a route ability must accept a guest. The route checks it with `@Can()`, whose third argument reads the arguments after the user from the call:
+
+```typescript
+@@filename(src/orders/customer-orders.controller)
+import { Controller, Get, Param } from '@nestjs/common';
+import { Can } from '@nestjs/authorization';
+import { OrderPolicy } from './order.policy.js';
+import { OrdersService } from './orders.service.js';
+
+@Controller('customers/:customerId/orders')
+export class CustomerOrdersController {
+  constructor(private readonly ordersService: OrdersService) {}
+
+  @Get()
+  @Can(OrderPolicy, 'viewOrdersOf', (context) => [context.switchToHttp().getRequest().params.customerId])
+  findAll(@Param('customerId') customerId: string) {
+    return this.ordersService.findByCustomer(customerId);
+  }
+}
+```
+
+`OrdersService` gets a method that filters by customer, without a check of its own, since the route has it:
+
+```typescript
+@@filename(src/orders/orders.service)
+findByCustomer(customerId: string) {
+  return this.orders.filter((order) => order.userId === customerId);
+}
+```
+
+Add the controller to the `controllers` of `OrdersModule`. Alice now gets her orders from `GET /customers/<Alice's id>/orders` and a 403 for Bob's, Sam gets either, and a guest gets a 401.
+
+The function is typed by the ability's own parameters. Leaving it out doesn't compile when the ability takes more than the user, and neither does returning the wrong types:
+
+```typescript
+@Get()
+@Can(OrderPolicy, 'viewOrdersOf')
+// error TS2554: Expected 3 arguments, but got 2.
+findAll() {}
+
+@Get()
+@Can(OrderPolicy, 'viewOrdersOf', () => [42])
+// error TS2322: Type 'number' is not assignable to type 'string'.
+findAll() {}
+```
+
+It runs in the guard, before any pipe, so it gets the values as the transport delivered them: route params are strings, and nothing is validated yet. A `ParseUUIDPipe` on `customerId` runs after the check, and an id the user may not see gets a 403, not a 400. An error the function throws, such as a `BadRequestException` for a missing param, reaches the client as it is. A denial event carries what the function read in its `args`.
+
+Pass identifiers and scopes, not records. Loading the order in the guard would load it twice, once for the check and once in the handler, and answer 403 before the handler could answer 404. That's why `GET /orders/:id` checks in the service instead.
+
+A function declared on its own returns an array rather than the tuple the ability's parameters describe, so end it with `as const`. That makes a small helper reusable across routes:
+
+```typescript
+@@filename(src/common/param)
+import type { ExecutionContext } from '@nestjs/common';
+
+/** Reads one route param for `@Can()`. */
+export const param = (name: string) => (context: ExecutionContext) =>
+  [context.switchToHttp().getRequest().params[name] as string] as const;
+```
+
+```typescript
+@Can(OrderPolicy, 'viewOrdersOf', param('customerId'))
+```
+
+On the other transports, read the arguments from their own context: `GqlExecutionContext.create(context).getArgs()` for a GraphQL operation's arguments, `context.switchToWs().getData()` for a WebSocket message, and `context.switchToRpc().getData()` for a microservice message.
+
 #### Let admins through with `before()`
 
 Admins may do anything with the catalog, including deleting products, which nobody else may do. Rather than adding an admin check to every ability, give the policy a `before()` hook:
@@ -895,6 +974,11 @@ export class OrderPolicy {
     return order.userId === user.id || user.roles.includes('staff');
   }
 
+  // Customers list their own orders; staff list anyone's. A guest is denied.
+  viewOrdersOf(user: User | null, customerId: string) {
+    return !!user && (user.id === customerId || user.roles.includes('staff'));
+  }
+
   // Staff refund paid orders up to their limit. Pending, shipped and
   // refunded orders can't be refunded by anyone.
   async refund(user: User, order: Order) {
@@ -911,13 +995,14 @@ export class OrderPolicy {
 ```typescript
 @@filename(src/orders/orders.module)
 import { Module } from '@nestjs/common';
+import { CustomerOrdersController } from './customer-orders.controller.js';
 import { OrderPolicy } from './order.policy.js';
 import { OrdersController } from './orders.controller.js';
 import { OrdersService } from './orders.service.js';
 import { RefundLimitsService } from './refund-limits.service.js';
 
 @Module({
-  controllers: [OrdersController],
+  controllers: [OrdersController, CustomerOrdersController],
   providers: [OrdersService, OrderPolicy, RefundLimitsService],
 })
 export class OrdersModule {}
@@ -1263,7 +1348,7 @@ To replace a policy in a bigger test, override it like any provider, for example
 #### Production checklist
 
 - **Keep authentication ahead of authorization.** With `AuthenticationModule`, the wrong import order stops the app at startup. With another authentication guard, it only logs an error, so have an end-to-end test sign in and call a `@Can()` route. Two registrations always run after the authorization guard, whatever the import order: a request-scoped `APP_GUARD` (the startup check says so) and `app.useGlobalGuards()` (it can't). Register authentication as a singleton `APP_GUARD`.
-- **Give every protected endpoint a check.** The global guard lets handlers without `@Can()` through, so an endpoint with neither `@Can()` nor an `authorize()` call in its service is open to every signed-in user. Review new routes for one or the other.
+- **Give every protected endpoint a check.** The global guard lets handlers without `@Can()` through, so an endpoint with neither `@Can()` nor an `authorize()` call in its service is open to every signed-in user. Review new routes for one or the other. A check on an id in the URL can go on the route, with `@Can()`'s third argument, where a later edit to the handler can't drop it.
 - **Connect microservices with `inheritAppConfig: true`.** In a hybrid app, Nest runs the app's global guards and interceptors on message handlers only when `connectMicroservice()` gets that option. Without it, `@Can()` on a message handler isn't enforced, and a denial from `authorize()` reaches the client as an internal error instead of a 401 or 403.
 - **Put record checks in services**, after loading the record, so that controllers, resolvers and queue workers share them.
 - **Don't cache responses by URL on routes that check records.** A cache such as Nest's `CacheInterceptor` answers before the handler runs, so it would serve Bob's order to Alice without asking `OrderPolicy`. Cache below the check, or per user.
@@ -1315,7 +1400,7 @@ The `AuthorizationDeniedEvent` payload has these fields:
 - `policy` and `ability`: the policy class name and the ability that denied, such as `OrderPolicy` and `refund`.
 - `reason`: `'unauthenticated'` for a guest, `'forbidden'` for a signed-in user.
 - `user`: the user the policy saw, `null` for a guest.
-- `args`: the ability's arguments after the user, such as the record. Empty for `@Can()`.
+- `args`: the ability's arguments after the user, such as the record. For `@Can()`, what its third argument read, or empty without one.
 - `handler`: the handler `@Can()` guarded, such as `ProductsController.create`. Absent for `authorize()`.
 
 ##### Errors
