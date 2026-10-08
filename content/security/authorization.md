@@ -333,8 +333,10 @@ export class AppModule {}
 `forRoot()` registers the module globally. It does three things:
 
 - It provides `AuthorizationService`, which you inject wherever code checks a permission.
-- It registers `AuthorizationGuard` as a global guard. The guard enforces the `@Can()` decorator you'll add in the next step. Handlers without `@Can()` pass through untouched, so `POST /auth/token` keeps working.
+- It registers `AuthorizationGuard` as a global guard. The guard enforces the `@Can()` decorator you'll add in the next step, and **denies by default**: a handler runs only when it declares a check, with `@Can()`, with `@Can.Anyone()`, or with `@Public()` from `@nestjs/authentication`, which counts as `@Can.Anyone()`. `POST /auth/token` is `@Public()`, so it keeps working.
 - It turns a denial that a service reports into a 401 or a 403, as [Tell guests from forbidden users, and expose permissions](/security/authorization#tell-guests-from-forbidden-users-and-expose-permissions) explains.
+
+A route whose `@Can()` was forgotten is therefore closed, not open. At startup, the module logs every handler it will deny this way, so the list is where a migration starts. The [reference](/security/authorization#what-a-route-declares) has the full rules.
 
 Both packages register a global guard, and **the import order matters**. Nest runs global guards in the order it scans modules, so `AuthenticationModule` has to come first. In the reverse order, the authorization guard would run before anything has set `request.user`, so every `@Can()` check would see a guest, and a signed-in staff member would get a 401 on a staff-only route. `AuthorizationModule` checks the order at startup: it recognizes `AuthenticationGuard` by a marker the guard carries, and when that guard comes second, the app refuses to start, with an error that names both guards and the fix.
 
@@ -509,12 +511,14 @@ export class ProductsController {
 
   @Get()
   @Authenticate({ optional: true })
+  @Can.Anyone()
   findAll(@CurrentUser() user: User | null) {
     return this.productsService.findAll(user);
   }
 
   @Get(':id')
   @Authenticate({ optional: true })
+  @Can.Anyone()
   findOne(@CurrentUser() user: User | null, @Param('id') id: string) {
     return this.productsService.findOne(user, id);
   }
@@ -553,6 +557,8 @@ update(@Param('id') id: string, @Body({ schema: updateProductSchema }) changes: 
 ```
 
 Whether a route admits guests is authentication's decision, not the policy's. The read routes use `@Authenticate()` with `optional: true`: a request with a valid token gets its user, and a request without one continues with `null`, which is what `@CurrentUser()` then injects. Without the decorator, guests would get a 401 before any policy ran. With `@Public()` instead, authentication would ignore the token entirely, so Sam would browse as a guest and never see drafts.
+
+The read routes check in the service, so they declare `@Can.Anyone()`: anyone authentication lets through may call them, and `ProductsService` decides what each caller sees. Without it, the guard would deny them.
 
 `@Can()` is type-checked. A misspelled ability doesn't compile:
 
@@ -740,12 +746,13 @@ The listing doesn't check orders one by one. It asks a question the query can us
 
 Checking in the service rather than in the controller means every caller gets the same rules: a controller, a GraphQL resolver, or a queue worker that processes refund requests.
 
-The controller passes the signed-in user along. The Authentication tutorial's `OrdersService` read it from `AuthenticationContext` instead; here it's a parameter, so the service's signature says whose permissions a check is about, and a queue worker can call it for a given user:
+The controller passes the signed-in user along. The Authentication tutorial's `OrdersService` read it from `AuthenticationContext` instead; here it's a parameter, so the service's signature says whose permissions a check is about, and a queue worker can call it for a given user. Every route checks in the service, so each declares `@Can.Anyone()`:
 
 ```typescript
 @@filename(src/orders/orders.controller)
 import { Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
+import { Can } from '@nestjs/authorization';
 import type { User } from '../users/user.js';
 import { OrdersService } from './orders.service.js';
 
@@ -754,17 +761,20 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
+  @Can.Anyone()
   findAll(@CurrentUser() user: User) {
     return this.ordersService.findAll(user);
   }
 
   @Get(':id')
+  @Can.Anyone()
   findOne(@CurrentUser() user: User, @Param('id') id: string) {
     return this.ordersService.findOne(user, id);
   }
 
   @Post(':id/refund')
   @HttpCode(200)
+  @Can.Anyone()
   refund(@CurrentUser() user: User, @Param('id') id: string) {
     return this.ordersService.refund(user, id);
   }
@@ -1348,7 +1358,7 @@ To replace a policy in a bigger test, override it like any provider, for example
 #### Production checklist
 
 - **Keep authentication ahead of authorization.** With `AuthenticationModule`, the wrong import order stops the app at startup. With another authentication guard, it only logs an error, so have an end-to-end test sign in and call a `@Can()` route. Two registrations always run after the authorization guard, whatever the import order: a request-scoped `APP_GUARD` (the startup check says so) and `app.useGlobalGuards()` (it can't). Register authentication as a singleton `APP_GUARD`.
-- **Give every protected endpoint a check.** The global guard lets handlers without `@Can()` through, so an endpoint with neither `@Can()` nor an `authorize()` call in its service is open to every signed-in user. Review new routes for one or the other. A check on an id in the URL can go on the route, with `@Can()`'s third argument, where a later edit to the handler can't drop it.
+- **Review every `@Can.Anyone()`.** The guard denies a handler that declares no check, and logs each one at startup, so a forgotten `@Can()` closes a route. `@Can.Anyone()` opens it to everyone authentication lets through: check that its service authorizes, or that the route needs no permission. A check on an id in the URL can go on the route, with `@Can()`'s third argument, where a later edit to the handler can't drop it.
 - **Connect microservices with `inheritAppConfig: true`.** In a hybrid app, Nest runs the app's global guards and interceptors on message handlers only when `connectMicroservice()` gets that option. Without it, `@Can()` on a message handler isn't enforced, and a denial from `authorize()` reaches the client as an internal error instead of a 401 or 403.
 - **Put record checks in services**, after loading the record, so that controllers, resolvers and queue workers share them.
 - **Don't cache responses by URL on routes that check records.** A cache such as Nest's `CacheInterceptor` answers before the handler runs, so it would serve Bob's order to Alice without asking `OrderPolicy`. Cache below the check, or per user.
@@ -1386,6 +1396,21 @@ To replace a policy in a bigger test, override it like any provider, for example
 
 A WebSocket client is the connection, not the message, and over `graphql-ws` the `req` on the GraphQL context is the socket's upgrade request, which every operation on the socket shares. So `client.user` and `req.user` hold whichever message or operation authenticated last. `@nestjs/authentication` also leaves a function on the client and on `req`, under `Symbol.for('nestjs.authentication.userOf')`, which takes the `ExecutionContext` and answers with the user of that message or operation: `null` for an anonymous one, as every `@Public()` one is, or `undefined` when it has no answer. `defaultGetUser` asks it first. A `@Public()` message or operation is therefore a guest for `@Can()`, even on a socket whose handshake signed in, and a session that a sign-out everywhere revoked no longer counts. A `getUser` of your own that reads `client.user` or `req.user` on these transports sees the socket's last user instead; other authentication packages can leave the same function to be asked.
 
+##### What a route declares
+
+The guard decides by what the handler and its class declare:
+
+| Declaration | The guard |
+| --- | --- |
+| `@Can()` | Runs every requirement of the class, then of the method. All must pass. |
+| `@Can.Anyone()` | Lets through anyone authentication lets through. |
+| `@Public()` from `@nestjs/authentication` (0.1.0 or later) | The same as `@Can.Anyone()`. |
+| Nothing | Denies: 403 for a user, 401 for a guest. The startup log names the handler. |
+
+On a method, `@Can.Anyone()` or `@Public()` lifts the class's `@Can()`, as `@Public()` lifts the class's authentication. A `@Can()` on the method itself still applies, so a `@Public()` method with a `@Can()` runs the check for a guest. On a class, neither lifts a method's `@Can()`. A method that `@Authenticate()` puts back under authentication inside a `@Public()` class isn't public, and needs a declaration of its own.
+
+Where Nest runs no global guard, nothing is denied: on GraphQL field resolvers unless `fieldResolverEnhancers` includes `'guards'`, and on the message handlers of a hybrid app connected without `inheritAppConfig: true`. With the enhancer, every `@ResolveField()` needs a declaration too. A class-level one covers them.
+
 ##### Events
 
 `AuthorizationEvents` exposes every denial on its `events$` observable, and publishes it on a diagnostics channel. `can()` resolving to `false` isn't a denial and emits nothing.
@@ -1397,7 +1422,7 @@ A WebSocket client is the connection, not the message, and over `graphql-ws` the
 The `AuthorizationDeniedEvent` payload has these fields:
 
 - `type`: `'denied'`.
-- `policy` and `ability`: the policy class name and the ability that denied, such as `OrderPolicy` and `refund`.
+- `policy` and `ability`: the policy class name and the ability that denied, such as `OrderPolicy` and `refund`. Both are `null` when the guard denied a handler that declares no check.
 - `reason`: `'unauthenticated'` for a guest, `'forbidden'` for a signed-in user.
 - `user`: the user the policy saw, `null` for a guest.
 - `args`: the ability's arguments after the user, such as the record. For `@Can()`, what its third argument read, or empty without one.
@@ -1405,7 +1430,7 @@ The `AuthorizationDeniedEvent` payload has these fields:
 
 ##### Errors
 
-`authorize()` throws an `AuthorizationError` with `reason`, `status`, `policy` and `ability`. When it leaves a handler, or when `@Can()` denies, the caller gets the transport's own error, whose body never names the policy or the ability. See [Tell guests from forbidden users, and expose permissions](/security/authorization#tell-guests-from-forbidden-users-and-expose-permissions).
+`authorize()` throws an `AuthorizationError` with `reason`, `status`, `policy` and `ability`. The guard's denial of a handler that declares no check carries the same error, with `policy` and `ability` set to `null`. When it leaves a handler, or when `@Can()` denies, the caller gets the transport's own error, whose body never names the policy or the ability. See [Tell guests from forbidden users, and expose permissions](/security/authorization#tell-guests-from-forbidden-users-and-expose-permissions).
 
 | `reason` | `status` | HTTP | GraphQL `extensions.code` | WebSockets and microservices |
 | --- | --- | --- | --- | --- |
