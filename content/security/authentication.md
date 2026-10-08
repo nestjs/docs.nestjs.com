@@ -775,7 +775,7 @@ export class PasswordResetController {
 
 - `request()` returns before it looks the address up. Finding the account, storing the token and sending the email happen after the response, so a request for an address nobody registered gets the same 202, in the same time, as a customer's: the route can't tell anyone who has an account. That's why `forgot` doesn't `await` anything. A failure after the response, such as a mail server that is down, is logged.
 - A link works once, for an hour (`passwordReset.ttl`), and only while the account still has the address and the password it had when the link was sent.
-- `reset()` stores the new password's hash, invalidates the customer's other reset links, and ends every session and refresh token of the account, so whoever knew the old password is signed out everywhere. [API keys](/security/authentication#issue-api-keys-to-partners) live in your own table and stay valid: to cut them off too, revoke them on the `password-reset` event. A password that `PasswordHasher` refuses, empty or over 4 KiB, gets `null` without spending the link, so the customer can try again. With `signIn: true`, it then signs the customer in on this browser through `SignInService`, so a customer with [two-factor authentication](/security/authentication#add-two-factor-authentication) still has to enter a code.
+- `reset()` stores the new password's hash, invalidates the customer's other reset links, and ends every session of the account, and every refresh token once the application [issues them](/security/authentication#issue-tokens-to-the-mobile-app), so whoever knew the old password is signed out everywhere. [API keys](/security/authentication#issue-api-keys-to-partners) live in your own table and stay valid: to cut them off too, revoke them on the `password-reset` event. A password that `PasswordHasher` refuses, empty or over 4 KiB, gets `null` without spending the link, so the customer can try again. With `signIn: true`, it then signs the customer in on this browser through `SignInService`, so a customer with [two-factor authentication](/security/authentication#add-two-factor-authentication) still has to enter a code.
 - The link proves the address too, so `reset()` marks it verified, through your `markVerified()`. That also rescues an account that someone else signed up for with the customer's address: the reset replaces the stranger's password and signs them out.
 
 With the Zod schemas:
@@ -829,7 +829,7 @@ export class MeController {
 
 `@CurrentUser('id')` injects a single property. `@CurrentSession()` injects what the provider considers the session: here, the stored session record.
 
-> info **Hint** Optional: tell the package your user type once, and its types follow. Augment the `AuthenticationTypes` interface of `@nestjs/authentication` in a `declare module` block, with `user: User` (the tutorial keeps it in `src/auth/auth-types.ts`). From then on `@CurrentUser('key')` accepts only keys of `User` and is typed to return that property, and `AuthenticationContext.user` and `.session` are typed too. A `sessionExtra` key types `SessionRecord.extra`, what a session store reads along with each session (exported as `SessionExtra`, `unknown` without the key). It doesn't type the parameter itself: a parameter decorator has no say over the annotation, so `user: User` stays on the parameter. And it is one user type for the whole application, so an application with two kinds of principal keeps the annotations instead.
+> info **Hint** Optional: tell the package your user type once, and its types follow. Augment the `AuthenticationTypes` interface of `@nestjs/authentication` in a `declare module` block, with `user: User` (the tutorial keeps it in `src/auth/auth-types.ts`). From then on `@CurrentUser('key')` accepts only keys of `User` and is typed to return that property, and `AuthenticationContext.user` and `.session` are typed too. A `sessionExtra` key types `SessionRecord.extra`, what a session store reads along with each session (exported as `SessionExtra`, `unknown` without the key). It doesn't type the parameter itself: a parameter decorator has no say over the annotation, so `user: User` stays on the parameter. And it is one user type for the whole application, so an application with two kinds of principal keeps the annotations instead. The same interface takes `refreshTokens: false` for an application that [turns refresh tokens off](/security/authentication#issue-tokens-to-the-mobile-app).
 
 ```typescript
 @@filename(src/users/users.module)
@@ -1013,7 +1013,7 @@ export class JwtAuth extends JwtBearerProvider<User> {
 }
 ```
 
-> info **Hint** HS256 with a shared secret suits an API that both issues and verifies its tokens. If other services verify them too, make the `accessToken` key an ES256 private key: `JwtAuth` then verifies with its public half, and so can they. To accept tokens from another issuer instead, pass `super()` its `jwks` URL, which must be https (plain http only on localhost), or its public `key`, with `issuer` and `audience`: both are required, because an identity provider signs every client's tokens with the same keys. For tokens without an audience, pass `audience: false` and check the claim that names your client in `validate()`. Add `clockTolerance: '30s'` for another issuer's clock. Keys are PEM text or a `KeyObject`; import a JWK with `createPublicKey()` from `node:crypto`, passing the JWK as `key` and `'jwk'` as `format`. An empty `key` or `jwks`, such as an unset environment variable, fails at startup instead of falling back to the `accessToken` options.
+> info **Hint** HS256 with a shared secret suits an API that both issues and verifies its tokens. If other services verify them too, make the `accessToken` key an ES256 private key: `JwtAuth` then verifies with its public half, and so can they. To accept tokens from another issuer instead, pass `super()` its `jwks` URL, which must be https (plain http only on localhost), or its public `key`, with `issuer` and `audience`: both are required, because an identity provider signs every client's tokens with the same keys. For tokens without an audience, pass `audience: false` and check the claim that names your client in `validate()`. Add `clockTolerance: '30s'` for another issuer's clock. Keys are PEM text or a `KeyObject`; import a JWK with `createPublicKey()` from `node:crypto`, passing the JWK as `key` and `'jwk'` as `format`. An empty `key` or `jwks`, such as an unset environment variable, fails at startup instead of falling back to the `accessToken` options. A service that only verifies tokens can leave `accessToken` out entirely and give `super()` what it verifies with: the shared `key`, or the `jwks` with `issuer` and `audience`.
 
 Provide it in `AuthModule`:
 
@@ -1072,6 +1072,33 @@ export class TokensController {
 
 The `amr` claim records how the user signed in, and [two-factor authentication](/security/authentication#add-two-factor-authentication) relies on it. `issue()` stores the `claims` with the refresh-token family, and `refresh()` puts them into every access token it mints, so refreshed tokens describe the same sign-in. Keep facts that can change, such as roles, out of `claims`: they would stay in the tokens for as long as the family lives. `validate()` loads the current user on every request instead.
 
+A service that signs short-lived access tokens and has its clients sign in again can turn refresh tokens off. With `refreshToken` set to `false`, `issue()` returns `accessToken` and `expiresIn` alone, and stores nothing, so the application needs no `RefreshTokenStore`. The token endpoint's response has no refresh token: clients sign in again when the access token expires. `refresh()` and `revoke()` throw, saying refresh tokens are disabled, and `revokeAll()` does nothing. The second factor and the `amr` claim work as before. Declare `refreshTokens: false` on `AuthenticationTypes` too, so `issue()` is typed to return an `AccessTokenResult` rather than a `TokenPair`:
+
+```typescript
+@@filename(src/app.module)
+AuthenticationModule.forRootAsync({
+  useFactory: () => ({
+    accessToken: {
+      key: process.env.JWT_SECRET!,
+      // ...
+    },
+    refreshToken: false,
+  }),
+}),
+```
+
+```typescript
+@@filename(src/auth/auth-types)
+declare module '@nestjs/authentication' {
+  interface AuthenticationTypes {
+    // ...
+    refreshTokens: false;
+  }
+}
+```
+
+The option is what runs; the declaration only tells the compiler. An application that sets the option without the declaration gets no refresh token at run time, typed as a string, and `refresh()` throws on it. `refreshToken` set to `false` without `accessToken` changes nothing, and logs a warning at startup.
+
 Register the controller:
 
 ```typescript
@@ -1111,6 +1138,8 @@ TOTP_ENCRYPTION_KEY=
 ```
 
 > info **Hint** To rotate the key, put a new one first in `keys` and keep the old one after it. The first key encrypts, every listed key decrypts, and secrets are re-encrypted with the new key as they're used. Remove the old key once nothing uses it. Keys need no names: each encrypted secret records an id derived from its key.
+
+Two-factor authentication is off unless `mfa` is configured. Without it, `MfaService.isEnrolled()` answers `false` without reading the store, so sign-ins never ask for a code, and every other `MfaService` method throws `MFA is not configured` before touching storage. Removing `mfa` from the options turns two-factor authentication off for every customer, including those who already enrolled an authenticator.
 
 The MFA endpoints enroll an authenticator, confirm it, and complete a sign-in:
 
@@ -1748,7 +1777,7 @@ export class SessionsController {
 
 - Session ids are SHA-256 hashes of the cookie tokens. Showing them to their owner is safe, since a cookie can't be derived from one. `revoke()` takes the user as well as the id, and only ends a session that belongs to them, so an id from the URL can't end another customer's session.
 - `sign-out` is `@Public()`, like `verify` in [two-factor authentication](/security/authentication#add-two-factor-authentication), so a customer who never finishes the second factor can still sign out. `signOut()` ends the session in this browser's cookie and clears the cookie. It returns `false` when there was no session, and the route answers 401: a bearer token here signs nothing out.
-- `signOutEverywhere()` ends every session and every refresh token of the user, and clears this browser's cookie. Access tokens that were already issued stay valid until they expire, which is why they only last 15 minutes.
+- `signOutEverywhere()` ends every session and, when the application issues them, every refresh token of the user, and clears this browser's cookie. Access tokens that were already issued stay valid until they expire, which is why they only last 15 minutes.
 
 The mobile app signs out of one device by revoking its refresh token. Add a route to `TokensController`. `TokenService.revoke()` ends the token's family: the token, its predecessors and its successors:
 
@@ -2397,7 +2426,7 @@ LOG [AuthenticationModule] AuthenticationStorage: DrizzleAuthenticationStore
 - **Recording activity is best-effort.** If `touchSession()` fails (a lock timeout, a read-only replica), the request and sign-outs still succeed. The session is kept, `lastActiveAt` doesn't move, and the session goes idle at its previous deadline unless a later request records activity. Every failure emits a `session-touch-failed` event; the log gets one warning when failures start, nothing while they continue, and one line with their count on the next successful touch.
 - **The tables stay bounded.** Anyone can ask for a magic link or a reset link, so each save deletes what has expired and, past 100,000 pending rows in a table, what expires first. Expired sessions and refresh-token families go as new ones are written.
 - **Password reset and email verification keep working unchanged.** Their links are rows in `email_tokens` now, and their mailers still send them through `@nestjs/mail`.
-- **Production refuses memory.** With `NODE_ENV` set to `production`, the module won't start while a store that a configured feature uses isn't registered, and names the interfaces to implement. A feature can use more than its own store: every sign-in checks `MfaStore` for an authenticator, even without the `mfa` option, and signing out everywhere or resetting a password ends sessions and refresh tokens alike. A store that none of your configured features uses fails at its first read instead. `allowInMemoryStorage: true` in the module options runs in memory anyway, but then every restart or deploy signs everyone out and forgets enrolled authenticators, and instances don't share any of it.
+- **Production refuses memory.** With `NODE_ENV` set to `production`, the module won't start while a store that a configured feature uses isn't registered, and names the interfaces to implement. Each feature needs only the stores it uses: `MfaStore` only with `mfa`, and `RefreshTokenStore` only with `accessToken` while refresh tokens are on. [The store contract](/security/authentication#the-store-contract) lists them. A store that none of your configured features uses fails at its first read instead. `allowInMemoryStorage: true` in the module options runs in memory anyway, but then every restart or deploy signs everyone out and forgets enrolled authenticators, and instances don't share any of it.
 
 If your users live in the same database, `getSession()` can read each session's user in the same query and pass it on as `extra`, which `SessionAuth`'s `validate()` receives: one read per request instead of two. Type it with a `sessionExtra` key next to `user` (`users` and `toUser()` stand for your own table and the mapping that leaves out the password hash):
 
@@ -3728,6 +3757,7 @@ To sign a test user in without going through a sign-in route, `SessionService.cr
 #### Production checklist
 
 - **Register a store for everything the module keeps**, as in [Keep sessions and tokens in your database](/security/authentication#keep-sessions-and-tokens-in-your-database), and apply its tables through your migrations. Every instance of the application uses them, so a restart signs nobody out. The module refuses to start while a store that a configured feature uses isn't registered, but only when `NODE_ENV` is `production`: set it, or a deployment that forgets it runs in memory with nothing but a startup log line to say so. Run the package's contract tests against your store with `concurrent: true` on PostgreSQL: they fail a store that reads and then writes where one conditional statement is needed.
+- **Configure the same features in every application that shares the user database.** Each one decides from its own options whether a sign-in asks for a second factor and whether signing out everywhere ends refresh tokens. If any application that signs users in configures `mfa`, every one of them must, or a customer who enrolled through one signs in to another with a password alone. Likewise configure `accessToken`, with refresh tokens on, in each of them if a sign-out everywhere or a password reset in one should also sign out the token clients of the others.
 - **Send email through a real provider.** Set `SMTP_URL`, or pass another transport. `LogMailTransport` writes every link to the log, where anyone who reads the logs could sign in as the customer.
 - **Serve the application over HTTPS**, since the session cookie is `Secure`. If the web app runs on another origin than the API, list it in `session.trustedOrigins`, or its sign-ins and magic-link requests are refused, and its `POST` requests and WebSocket connections are anonymous. Behind a proxy that rewrites `Host`, list the public origin there too. Leave `cookie.secure` on: a `SameSite=None` cookie without it fails at startup, since browsers would drop it.
 - **Call `app.enableCsrfProtection()` on Nest 12.1 or later**, with the same `trustedOrigins`. It refuses cross-origin writes to every route, not only those that use the session cookie.
@@ -3748,7 +3778,20 @@ The tutorial [wrote the authentication store with Drizzle](/security/authenticat
 
 **Registration.** A store is an ordinary singleton provider that registers itself in its constructor with `registerSource()` on the injectable `AuthenticationStorage`, by contract name: `sessions`, `refreshTokens`, `mfa`, `magicLinks`, `oidcStates` and `emailTokens`. Method names never repeat across the contracts, so one class can implement all six, or several classes can split them. The registry checks each store's shape at once, refuses a second store for a name unless it passes `replace: true`, and locks when `AuthenticationModule` initializes, logging where each kind of state lives. A contract with no store uses its in-memory default, which loses everything on restart and isn't shared between instances.
 
-**Production guard.** With `NODE_ENV=production`, startup fails while a contract that a configured feature uses has no store, naming each missing interface. A feature uses more than its own contract: every sign-in reads `mfa` for an authenticator, with or without the `mfa` option, and every revocation, signing out everywhere or resetting a password, reaches both `sessions` and `refreshTokens`. A contract that none of your configured features uses fails at its first read instead of running in memory. `allowInMemoryStorage: true` in the module options accepts the in-memory stores anyway, but then every restart or deploy signs everyone out and forgets enrolled authenticators, and instances don't share any of it.
+**Production guard.** With `NODE_ENV=production`, startup fails while a contract that a configured feature uses has no store, naming each missing interface:
+
+| Configured | Contracts |
+| --- | --- |
+| a `SessionCookieProvider` | `sessions` |
+| `accessToken`, with refresh tokens on | `refreshTokens` |
+| `accessToken`, with `refreshToken` set to `false` | none |
+| `mfa` | `mfa` |
+| `magicLink` | `sessions`, `magicLinks` |
+| `oidc` | `sessions`, `oidcStates` |
+| `passwordReset` | `sessions`, `emailTokens` |
+| `emailVerification` | `emailTokens` |
+
+Two-factor authentication is off without `mfa`: sign-ins don't read the `mfa` contract. Refresh tokens exist only with `accessToken`, so without it, or with `refreshToken` set to `false`, signing out everywhere and resetting a password end sessions alone. A contract that none of your configured features uses fails at its first read instead of running in memory. `allowInMemoryStorage: true` in the module options accepts the in-memory stores anyway, but then every restart or deploy signs everyone out and forgets enrolled authenticators, and instances don't share any of it.
 
 **The methods that must be atomic.** Whatever decides that something works only once is one conditional statement, never a read followed by a write. The other methods are plain reads, inserts and deletes. None takes your transaction: authentication state is written on its own, never as part of a business transaction.
 
@@ -3801,6 +3844,7 @@ A family of refresh tokens counts as revoked when any of its tokens is, so a suc
 | `accessToken.issuer`, `audience` | none | The `iss` and `aud` claims, written into and checked on every token. |
 | `accessToken.ttl` | `'15m'` | Access token lifetime. |
 | `accessToken.kid`, `type` | none, `JWT` | The `kid` and `typ` headers. |
+| `refreshToken` | on with `accessToken` | `false` issues access tokens alone, with no refresh tokens and no `RefreshTokenStore`. See [Issue tokens to the mobile app](/security/authentication#issue-tokens-to-the-mobile-app). |
 | `refreshToken.ttl` | `'30d'` | Lifetime of one refresh token. |
 | `refreshToken.absoluteTtl` | `'90d'` | Maximum lifetime of a refresh-token family, however often it rotates. |
 | `mfa.encryption` | required | `keys`, a list of AES-256-GCM keys, newest first, plus `migratePlaintext` (default `false`); or `false` to store secrets in plaintext. See [Add two-factor authentication](/security/authentication#add-two-factor-authentication). |
