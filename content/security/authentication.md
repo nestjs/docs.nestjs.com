@@ -1334,7 +1334,7 @@ async disable(
 }
 ```
 
-- `@Authenticate({ mfa: true })` is the minimum: without it, a stolen password alone could turn the second factor off. An API key never passes it. It doesn't prove the customer is at the keyboard now, though: a session stays verified for its whole lifetime. So the route asks for a code as well. `verifyTotp()` resolves `false` for a wrong code, counts toward the same lockout as signing in, and each code works once.
+- `@Authenticate()` with `mfa: true` is the minimum: without it, a stolen password alone could turn the second factor off. An API key never passes it. It doesn't prove the customer is at the keyboard now, though: a session stays verified for its whole lifetime. So the route asks for a code as well. `verifyTotp()` resolves `false` for a wrong code, counts toward the same lockout as signing in, and each code works once.
 - `disable()` deletes every recovery code along with the authenticator, and drops a replacement staged by `replace` that was never confirmed. Enrolling again starts from scratch, with a new batch of recovery codes.
 - `disable()` leaves sessions and tokens alone. The customer's other verified sessions would keep passing `mfa: true` routes, and so would their refresh-token families, whose `amr` keeps `mfa` on every refresh. The route ends them, keeping this browser's session. Access tokens already issued stay valid until they expire. Sent with a bearer token, the request has no session id to keep: every session ends, and `TokenService.revokeAll()` signs that client out too.
 - A session still waiting for its second factor can't complete it, since there's no authenticator left to check a code against. `revokeAll()` ends it with the others.
