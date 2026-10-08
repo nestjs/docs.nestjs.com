@@ -72,6 +72,23 @@ export class BasePageComponent implements AfterViewChecked, AfterViewInit {
 
   ngAfterViewInit() {
     this.updateDescription();
+    this.resolveFragmentLinks();
+  }
+
+  /**
+   * Markdown links such as `[Foo](#foo)` render as `href="#foo"`, which the
+   * browser resolves against `<base href="/">` and so sends readers to the
+   * home page. Prefixing the current path keeps them on the page, the same way
+   * heading anchors build their links.
+   */
+  private resolveFragmentLinks() {
+    const path = window.location.pathname;
+    const links = this.nativeElement.querySelectorAll<HTMLAnchorElement>(
+      'a[href^="#"]',
+    );
+    links.forEach((link) => {
+      link.setAttribute('href', path + link.getAttribute('href'));
+    });
   }
 
   ngAfterViewChecked() {
