@@ -1,0 +1,217 @@
+@use "../api";
+@use "../../../../../scss/utils" as mixins;
+
+:host {
+  display: block;
+
+  scroll-margin-top: calc(var(--header-height) + var(--header-gap) + 24px);
+  margin-bottom: 20px;
+  padding: 20px 26px;
+  background: var(--menu-glow), var(--menu-background);
+  border: 1px solid var(--panel-border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  @include mixins.media(medium) {
+    padding: 16px;
+  }
+}
+
+.package-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+
+  .package-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 6px 12px;
+    min-width: 0;
+  }
+
+  .package-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: light-dark(
+      oklch(50% 0.16 var(--pkg-hue)),
+      oklch(82% 0.13 var(--pkg-hue))
+    );
+    background: oklch(68% 0.16 var(--pkg-hue) / 0.14);
+    box-shadow: inset 0 0 0 1px oklch(68% 0.16 var(--pkg-hue) / 0.32);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+
+    i {
+      font-size: 18px;
+    }
+  }
+
+  h2 {
+    // Lowercase heading: its x-height sits ~2px below the line-box centre,
+    // so lift the text rather than pushing the icon box off-centre.
+    translate: 0 -2px;
+    // Grows to push the count to the right edge; when the count wraps it
+    // starts the next line under the name instead.
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+
+    @include mixins.media(small) {
+      font-size: 17px;
+    }
+  }
+
+  h2 a {
+    color: var(--color-1dp);
+    transition: color 120ms ease;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  .scope {
+    font-weight: 500;
+    color: color-mix(in srgb, var(--color) 60%, transparent);
+  }
+
+  .badge.deprecated {
+    @include api.tinted-badge(api.$red-color);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.35;
+  }
+
+  .count {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--color) 65%, transparent);
+
+    // Always below the name on phones, so cards don't mix both layouts.
+    @include mixins.media(small) {
+      flex-basis: 100%;
+    }
+  }
+}
+
+details {
+  // Lets block-size animate between 0 and auto (Chrome 129+); elsewhere the
+  // panel simply snaps open/closed.
+  interpolate-size: allow-keywords;
+}
+
+summary {
+  list-style: none;
+  cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.package-header {
+  margin-bottom: 0;
+  user-select: none;
+
+  .chevron {
+    flex: none;
+    margin-left: 4px;
+    color: color-mix(in srgb, var(--color) 60%, transparent);
+    transition: rotate 200ms cubic-bezier(0.7, 0, 0.3, 1);
+  }
+}
+
+details[open] .chevron {
+  rotate: 180deg;
+}
+
+details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 240ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    content-visibility 240ms allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+}
+
+.api-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2px 8px;
+  padding: 0;
+  margin: 0;
+  padding-top: 14px;
+}
+
+.api-list-item {
+  list-style: none;
+  font-weight: 600;
+  line-height: 1.2em;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 10px;
+    margin-left: -10px;
+    border-radius: var(--radius-sm);
+    color: var(--menu-color);
+    background-color: var(--hover-surface-0);
+    transition:
+      color 120ms ease,
+      background-color 120ms ease;
+
+    &:hover {
+      color: var(--color-1dp);
+      background-color: var(--hover-surface);
+    }
+  }
+
+  .item-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.symbol {
+  @include api.api-symbol;
+  flex: none;
+}
+
+.deprecated-api-item {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  details::details-content,
+  .package-header .chevron {
+    transition: none;
+  }
+}

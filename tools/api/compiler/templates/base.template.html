@@ -1,0 +1,26 @@
+{% set breadcrumbDelimiter = joiner('&gt;') %}
+<div class="breadcrumb-container">
+  <div class="breadcrumb">
+    {% for crumb in doc.breadCrumbs %}{% if not loop.last %} {$
+    breadcrumbDelimiter() $} {% if crumb.path %}<a href="{$ crumb.path $}"
+      >{$ crumb.text $}</a
+    >{% else %}{$ crumb.text $}{% endif %}{% endif %}{% endfor %}
+  </div>
+</div>
+
+<article>
+  {%- block header %}
+  <header class="api-header">
+    <h2>{$ doc.name $}</h2>
+    <label class="api-type-label {$ doc.docType $}"
+      >{% if doc.docType === "nestmodule" %}module{% else %}{$ doc.docType $}{%
+      endif %}</label
+    >
+    {%- if doc.deprecated !== undefined %}
+    <label class="api-type-label api-status-label deprecated {$ doc.docType $}">deprecated</label>{% endif %}
+  </header>
+  {%- endblock %}
+  <div class="api-body">
+  {% block body %}{% endblock %}
+  </div>
+</article>

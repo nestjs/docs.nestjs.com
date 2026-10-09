@@ -1,5 +1,6 @@
 import { Marked, Renderer } from 'marked';
 import {
+  applyApiLinkRenderer,
   applyTableRenderer,
   applyCodeRenderer,
   applyBlockQuoteRenderer,
@@ -25,8 +26,11 @@ export function renderNestJSMarkdown() {
   applyLinkRenderer(renderer);
   const resetHeadingSlugger = applyHeadingRenderer(renderer);
   applyBlockQuoteRenderer(renderer);
+  let page = '';
+  applyApiLinkRenderer(renderer, () => page);
 
   return (content: string) => {
+    page = content;
     resetHeadingSlugger();
     return markedInstance.parse(content, { renderer }) as string;
   };

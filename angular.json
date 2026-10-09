@@ -35,7 +35,8 @@
               "src/llms.txt",
               "src/llms-full.txt",
               "src/robots.txt",
-              { "glob": "**/*.md", "input": "src/md", "output": "/" }
+              { "glob": "**/*.md", "input": "src/md", "output": "/" },
+              { "glob": "**/*", "input": "src/generated", "output": "/generated" }
             ],
             "styles": [
               "src/styles.scss"

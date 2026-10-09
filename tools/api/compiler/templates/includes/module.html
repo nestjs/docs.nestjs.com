@@ -1,0 +1,15 @@
+{% if doc.modules.length == 1 %}
+  <h2><span>Module</span></h2>
+{% else  %}
+  <h2><span>Modules</span></h2>
+{% endif %}
+<ul class="modules-list">
+{% for module in doc.modules %}
+  <li>
+    <a href="{$ module.path $}">
+      <code>{$ module.name | escape $}</code>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+

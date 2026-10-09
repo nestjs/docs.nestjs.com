@@ -5,6 +5,10 @@ const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
   {
+    // Cloned package sources and the API pages generated from them
+    ignores: ['sources/**', 'src/generated/**'],
+  },
+  {
     // Everything in this config object targets our TypeScript files (Components, Directives, Pipes etc)
     files: ['**/*.ts'],
     extends: [

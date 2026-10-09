@@ -94,7 +94,8 @@
 
   .content blockquote strong,
   .content #carbonads a,
-  .content blockquote a {
+  .content blockquote a,
+  .content .package-card a {
     -webkit-text-fill-color: unset !important;
     -webkit-background-clip: unset !important;
     background: none;

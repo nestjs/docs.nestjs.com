@@ -1,0 +1,1042 @@
+@use "sass:map";
+@use "../../../../shared/components/api/api";
+
+// Styles for the generated API pages (tools/api/compiler/templates), which
+// arrive as plain HTML and so cannot use emulated encapsulation.
+app-api-doc {
+  display: block;
+
+  .api-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0;
+
+    h2 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    @media screen and (max-width: 600px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .breadcrumb-container {
+    display: none;
+  }
+
+  .api-body {
+    h2 {
+      margin: 52px 0 18px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    h3[id] {
+    }
+
+    // "Parameters" / "Returns" sub-labels inside member cards.
+    h4.no-anchor {
+      margin: 22px 0 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--color) 70%, transparent);
+    }
+
+    .method-table {
+      margin: 16px 0 28px;
+
+      > tbody > tr > td {
+        padding: 18px 20px 20px;
+      }
+
+      .overload-info > pre[class*='language-'] {
+        margin: 4px 0 4px;
+        padding: 0 22px 18px;
+      }
+    }
+
+    .parameters-table {
+      margin: 4px 0 8px;
+    }
+
+    details.overloads {
+      > summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--color-1dp);
+        background-color: var(--hover-surface-0);
+        list-style: none;
+        user-select: none;
+        transition: background-color 120ms ease;
+
+        &::-webkit-details-marker {
+          display: none;
+        }
+
+        &:hover {
+          background-color: var(--hover-surface);
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--primary);
+          outline-offset: 2px;
+        }
+
+        // Chevron
+        &::before {
+          content: '';
+          flex: none;
+          width: 6px;
+          height: 6px;
+          margin: 0 2px 0 4px;
+          border: solid currentColor;
+          border-width: 0 2px 2px 0;
+          rotate: -45deg;
+          transition: rotate 200ms cubic-bezier(0.7, 0, 0.3, 1);
+        }
+      }
+
+      &[open] > summary::before {
+        rotate: 45deg;
+      }
+
+      .overloads-toggle {
+        margin-left: auto;
+        font-size: 12px;
+        color: color-mix(in srgb, var(--color) 65%, transparent);
+      }
+
+      &[open] .show-all,
+      &:not([open]) .collapse-all {
+        display: none;
+      }
+
+      .overload {
+        margin-top: 24px;
+        padding-left: 18px;
+        border-left: 2px solid var(--border-color-strong);
+
+        > h5 {
+          display: inline-block;
+          margin: 0 0 12px;
+          padding: 2px 8px;
+          border-radius: 5px;
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          line-height: 1.35;
+          @include api.tinted-badge(api.$red-color);
+
+          span {
+            opacity: 0.65;
+          }
+        }
+
+        .short-description {
+          margin-bottom: 10px;
+        }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      details.overloads > summary::before {
+        transition: none;
+      }
+    }
+
+    // Heading anchors: quiet until hovered.
+    .header-link {
+      margin-left: 6px;
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+
+    h2:hover .header-link,
+    h3:hover .header-link {
+      opacity: 1;
+    }
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: color-mix(in srgb, var(--color) 75%, transparent);
+
+    a {
+      color: inherit;
+
+      &:hover {
+        color: var(--primary);
+      }
+    }
+  }
+
+  label {
+    &.api-status-label {
+      @include api.tinted-badge(api.$red-color);
+      &.api-status-label.deprecated.const,
+      &.api-status-label.deprecated.nestmodule,
+      &.api-status-label.deprecated.injectable,
+      &.api-status-label.deprecated.class,
+      &.api-status-label.deprecated.interface,
+      &.api-status-label.deprecated.function,
+      &.api-status-label.deprecated.decorator,
+      &.api-status-label.deprecated.pipe,
+      &.api-status-label.deprecated.type-alias {
+        margin-left: 10px;
+      }
+
+      &.deprecated,
+      &.impure-pipe {
+        @include api.tinted-badge(api.$red-color);
+      }
+
+      a {
+        color: inherit;
+        line-height: inherit;
+        font-size: inherit;
+      }
+    }
+  }
+
+  code.code-anchor.language-undefined {
+    background: var(--background-2dp);
+    a {
+      color: var(--primary-3dp);
+    }
+  }
+
+  .api-type-label {
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.35;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    margin-left: 0;
+    @each $name, $symbol in api.$api-symbols {
+      &.#{$name} {
+        @include api.tinted-badge(map.get($symbol, background));
+      }
+    }
+  }
+
+  .method-table {
+    background: var(--background-1dp);
+  }
+
+  .is-full-width {
+    &.list-table {
+      &.parameters-table {
+        &.instance-method-overload-parameters,
+        &.constructor-overload-parameters,
+        &.function-overload-parameters,
+        &.static-method-overload-parameters {
+          background: var(--background-2dp);
+          border-radius: var(--radius-sm);
+          padding: 4px;
+        }
+      }
+      &.property-table {
+        background: var(--background-1dp);
+      }
+    }
+
+    &.method-table {
+      &.constructor {
+        .overload-info {
+          display: grid;
+        }
+      }
+
+      &.static-method {
+        .overload-info {
+          display: grid;
+        }
+      }
+
+      &.instance-method {
+        .overload-info {
+          display: grid;
+        }
+      }
+    }
+  }
+
+  table {
+    th.th-title {
+      border-bottom: 1px solid var(--border-color-strong);
+      text-transform: none;
+      letter-spacing: normal;
+      font-size: inherit;
+      color: var(--color-1dp);
+
+      h3 {
+        margin: 4px 0;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        font-family: Inconsolata, Consolas, 'Courier New', monospace;
+      }
+    }
+
+    td.usage-notes {
+      border-top: 1px solid var(--border-color);
+    }
+
+    tr.instance-property > td > p {
+      padding: 0;
+    margin: 0;
+    }
+
+    td.param-description > p {
+      padding: 0;
+    margin: 0;
+    }
+  }
+
+  .short-description p {
+    margin: 0;
+  }
+
+  code.code-anchor {
+    color: var(--inline-code-color);
+    border-radius: 4px;
+    background: var(--background-2dp);
+    border: 0;
+    font-size: 16px;
+  }
+
+  a.code-anchor.highlight {
+    color: var(--primary-3dp);
+  }
+
+  // `.api-doc` outranks the shell's `.content a`, whose text-fill-color would
+  // otherwise paint every linked symbol in the signature red.
+  .api-doc pre.language-typescript a {
+    font-weight: initial;
+    color: #fff;
+    -webkit-text-fill-color: currentcolor;
+
+    // The symbol the page documents.
+    &.code-anchor.highlight {
+      color: var(--primary-3dp);
+    }
+    &:hover {
+      text-decoration: underline;
+      color: #fff;
+    }
+  }
+
+  section.description {
+    background: var(--background-1dp);
+    border: 1px solid var(--border-color);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+  }
+
+  .github-links {
+    float: right;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 435px) {
+
+
+
+    .api-type-label {
+      margin-left: 0px !important;
+      margin-bottom: 10px;
+    }
+
+    p {
+      justify-content: center;
+    }
+
+    .overload-info {
+      width: 429px;
+    }
+
+    code.language-typescript {
+      font-size: 14px;
+    }
+
+    code.code-anchor.language-undefined {
+      background: var(--background-2dp);
+    }
+
+    code {
+      line-height: 1.5em;
+    }
+
+    .is-full-width {
+      &.list-table {
+        &.parameters-table {
+          &.instance-method-overload-parameters,
+          &.constructor-overload-parameters,
+          &.function-overload-parameters,
+          &.static-method-overload-parameters {
+            background: transparent;
+            border-radius: 2px;
+            width: 325px;
+            padding: 0px;
+
+            pre[class*="language-"] {
+              width: 260px !important;
+            }
+
+            .example-info {
+              pre[class*="language-"] {
+                width: 260px !important;
+              }
+            }
+
+            thead {
+              display: none;
+            }
+          }
+        }
+      }
+      &.method-table {
+        &.constructor {
+          .overload-info {
+            display: grid;
+            width: 299px;
+          }
+        }
+
+        &.static-method {
+          .overload-info {
+            display: grid;
+            width: 299px;
+          }
+        }
+
+        &.instance-method {
+          padding: 4px;
+          .overload-info {
+            display: grid;
+            width: 299px;
+
+            pre[class*="language-"] {
+              flex-direction: column;
+            }
+          }
+
+          thead {
+            display: block;
+          }
+        }
+      }
+    }
+
+    .export-list > table.is-full-width.list-table > tbody {
+      padding: 10px;
+    }
+
+    label {
+      &.api-status-label {
+        &.api-status-label.deprecated.const,
+        &.api-status-label.deprecated.nestmodule,
+        &.api-status-label.deprecated.injectable,
+        &.api-status-label.deprecated.class,
+        &.api-status-label.deprecated.interface,
+        &.api-status-label.deprecated.function,
+        &.api-status-label.deprecated.decorator,
+        &.api-status-label.deprecated.pipe,
+        &.api-status-label.deprecated.type-alias {
+          margin-left: 0px;
+          margin-top: 10px;
+        }
+      }
+    }
+
+    table.is-full-width.method-table.constructor {
+      padding: 4px;
+    }
+
+    .short-description {
+      margin: 5px !important;
+    }
+
+    table.is-full-width.list-table.parameters-table.function-overload-parameters {
+      tbody {
+        padding: 10px;
+      }
+    }
+
+    table {
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: flex;
+        flex-flow: row wrap;
+        width: 100%;
+      }
+
+      td {
+        padding: 1px !important;
+        &.param-name {
+          padding: 0px !important;
+        }
+        &.usage-notes {
+          margin: 5px;
+        }
+
+        &.description {
+          font-size: 13px;
+          margin: 5px;
+        }
+      }
+
+      tr {
+        display: flex;
+        flex-flow: column wrap;
+        flex: 0 0 100%;
+        margin: 0px;
+        max-width: 100%;
+        width: 100%;
+        font-size: 14px;
+
+        &.instance-property > td > p {
+          padding: 0px 6px !important;
+        }
+        &.instance-method-overload-parameter > td > p {
+          padding: 0px 6px;
+        }
+        &.constructor-overload-parameter > td > p {
+          padding: 0px 6px;
+        }
+        &.param-description > td > p {
+          padding: 0px 6px;
+        }
+
+        &.list-table {
+          td {
+            padding: 16px 24px !important;
+          }
+        }
+      }
+    }
+
+    td.param-description {
+      display: none;
+    }
+
+    td.description {
+      display: none;
+    }
+
+    .example-info {
+      width: auto;
+      display: contents;
+    }
+  }
+
+  @media only screen and (max-width: 768px) and (orientation: landscape) {
+    td.usage-notes > p {
+      font-size: 14px !important;
+    }
+
+    td.usage-notes > ul > li {
+      font-size: 14px !important;
+    }
+
+    code[class*="language-"],
+    pre[class*="language-"] {
+      font-size: 14px !important;
+    }
+
+    // h4, h3, h2 {
+    //   font-size: 14px !important;
+    // }
+
+    p,
+    a {
+      font-size: 14px !important;
+    }
+
+    p > code {
+      font-size: 14px !important;
+    }
+
+    .api-body table.parameters-table td {
+      padding: 6px !important;
+    }
+  }
+
+  @media only screen and (max-width: 900px) {
+
+
+    .api-type-label {
+      margin-left: 10px;
+    }
+
+    p {
+      justify-content: center;
+    }
+
+    .overload-info {
+      width: auto;
+    }
+
+    code.language-typescript {
+      font-size: 14px;
+    }
+
+    code.code-anchor.language-undefined {
+      background: var(--background-2dp);
+    }
+
+    code {
+      line-height: 1.5em;
+    }
+
+    .is-full-width {
+      &.list-table {
+        &.parameters-table {
+          &.instance-method-overload-parameters,
+          &.constructor-overload-parameters,
+          &.function-overload-parameters,
+          &.static-method-overload-parameters {
+            background: transparent;
+            border-radius: 2px;
+            width: 100%;
+            padding: 0px;
+
+            pre[class*="language-"] {
+              width: 260px !important;
+            }
+
+            .example-info {
+              pre[class*="language-"] {
+                width: 260px !important;
+              }
+            }
+
+            thead {
+              display: none;
+            }
+          }
+        }
+      }
+      &.method-table {
+        &.constructor {
+          .overload-info {
+            display: grid;
+            width: 100%;
+          }
+        }
+
+        &.static-method {
+          .overload-info {
+            display: grid;
+            width: 100%;
+          }
+        }
+
+        &.instance-method {
+          padding: 4px;
+          .overload-info {
+            display: grid;
+            width: 100%;
+
+            pre[class*="language-"] {
+              flex-direction: column;
+            }
+          }
+
+          thead {
+            display: block;
+          }
+        }
+      }
+    }
+
+    .export-list > table.is-full-width.list-table > tbody {
+      padding: 10px;
+    }
+
+    label {
+      &.api-status-label {
+        &.api-status-label.deprecated.const,
+        &.api-status-label.deprecated.nestmodule,
+        &.api-status-label.deprecated.injectable,
+        &.api-status-label.deprecated.class,
+        &.api-status-label.deprecated.interface,
+        &.api-status-label.deprecated.function,
+        &.api-status-label.deprecated.decorator,
+        &.api-status-label.deprecated.pipe,
+        &.api-status-label.deprecated.type-alias {
+          margin-left: 0px;
+          margin-top: 10px;
+        }
+      }
+    }
+
+    table.is-full-width.method-table.constructor {
+      padding: 4px;
+    }
+
+    .short-description {
+      margin: 5px !important;
+    }
+
+    table.is-full-width.list-table.parameters-table.function-overload-parameters {
+      tbody {
+        padding: 10px;
+      }
+    }
+
+    table {
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: flex;
+        flex-flow: row wrap;
+        width: 100%;
+      }
+
+      td {
+        padding: 1px !important;
+        &.param-name {
+          padding: 0px !important;
+        }
+        &.usage-notes {
+          margin: 5px;
+        }
+
+        &.description {
+          font-size: 13px;
+          margin: 5px;
+        }
+      }
+
+      tr {
+        display: flex;
+        flex-flow: column wrap;
+        flex: 0 0 100%;
+        margin: 0px;
+        max-width: 100%;
+        width: 100%;
+        font-size: 14px;
+
+        &.instance-property > td > p {
+          padding: 0px 6px !important;
+        }
+        &.instance-method-overload-parameter > td > p {
+          padding: 0px 6px;
+        }
+        &.constructor-overload-parameter > td > p {
+          padding: 0px 6px;
+        }
+        &.param-description > td > p {
+          padding: 0px 6px;
+        }
+
+        &.list-table {
+          td {
+            padding: 16px 24px !important;
+          }
+        }
+      }
+    }
+
+    td.param-description {
+      display: none;
+    }
+
+    td.description {
+      display: none;
+    }
+
+    .breadcrumb {
+      font-size: 18px;
+    }
+    .api-header h2 {
+      margin-right: 12px;
+      font-size: 20px;
+    }
+
+    .api-body {
+      max-width: 1200px;
+
+      h1 {
+        margin-top: -4px;
+      }
+
+      table {
+        margin: 12px 0 24px;
+
+        &.item-table {
+          td {
+            padding: 32px;
+          }
+        }
+
+        &.list-table {
+          td {
+            padding: 16px 24px;
+          }
+        }
+
+        &.parameters-table {
+          margin-top: 0;
+          font-size: 14px;
+          box-shadow: none;
+
+          tr {
+            @media screen and (max-width: 480px) {
+              flex-direction: column;
+            }
+
+            td:first-child {
+              font-weight: 600;
+              padding-left: 16px;
+              width: 20%;
+            }
+          }
+
+          td {
+            padding: 8px;
+            border: 0;
+            vertical-align: top;
+          }
+        }
+
+        &.property-table {
+          tr {
+            box-sizing: border-box;
+            padding: 14px 16px;
+
+            & + tr {
+              border-top: 1px solid var(--border-color);
+            }
+          }
+
+          td {
+            padding: 0 !important;
+            background: transparent;
+
+            & + td {
+              margin-top: 8px;
+              font-size: 14px;
+              line-height: 1.55;
+
+              &:not(:has(*)) {
+                display: none;
+              }
+            }
+
+            > p {
+              padding: 0 !important;
+            }
+          }
+
+          td:first-child > code {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+          }
+
+          .member-name {
+            font-weight: 700;
+            color: var(--color-1dp);
+          }
+        }
+
+        &.method-table,
+        &.option-table,
+        &.list-table {
+          td > code {
+            background: var(--background-2dp);
+          }
+
+          .with-github-links {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+
+            .github-links {
+              a {
+                .material-icons:hover {
+                  background: none;
+                }
+              }
+            }
+          }
+
+          h3 {
+            margin: 6px 0;
+            font-weight: 700;
+            clear: left;
+          }
+
+          h4 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 12px;
+          }
+        }
+
+        th {
+          text-transform: none;
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        tr {
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+
+        td {
+          vertical-align: middle;
+        }
+
+        tbody > tr > td tr td:first-child {
+          @media screen and (max-width: 480px) {
+            background-color: inherit;
+          }
+        }
+
+        thead > tr > th {
+          padding: 10px;
+        }
+
+        hr {
+          margin: 16px 0;
+        }
+
+        .short-description {
+          margin-left: 0;
+        }
+      }
+
+      .class-overview {
+        position: relative;
+
+        code-example {
+          clear: left;
+        }
+      }
+
+      .member-name .pln {
+        font-weight: 700;
+      }
+
+      .short-description {
+        margin-top: 8px;
+      }
+
+      .final-message {
+        font-style: italic;
+      }
+
+      .api-heading {
+        font-size: 14px;
+        margin: 16px;
+      }
+
+      code.code-anchor.language-undefined {
+        background: var(--background-2dp);
+      }
+
+      .from-constructor,
+      .read-only-property,
+      .write-only-property {
+        font-size: 12px;
+        letter-spacing: 0.5;
+        font-style: italic;
+        border-radius: 4px;
+        padding: 4px 6px;
+        font-weight: 600;
+      }
+
+      .selector-list,
+      .inherited-members-list {
+        ul {
+          padding: 0;
+          li {
+            list-style: none;
+            margin-bottom: 12px;
+          }
+        }
+      }
+
+      .selector-list {
+        li,
+        a {
+          font-weight: bold;
+          i {
+            font-weight: normal;
+          }
+        }
+      }
+    }
+
+    h4,
+    h3,
+    h2 {
+      font-size: 16px;
+    }
+
+    .short-description p {
+      margin: 15px 0 !important;
+      width: 100%;
+    }
+  }
+
+  // The docs shell styles the first h3 of every container as the chapter
+  // title (homepage.component.scss); on API pages every section heading is
+  // one, so restore the regular h3 there.
+  .api-body h3:first-of-type {
+    margin: 45px 0 20px;
+    padding-right: 0;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: inherit;
+    letter-spacing: -0.01em;
+  }
+
+  .api-body table th.th-title h3:first-of-type {
+    margin: 4px 0;
+    font-size: 18px;
+  }
+
+  // On narrow screens the shell floats the carbon ad into the content; code
+  // and tables need the full width, so they start below it.
+  app-package-card,
+  .api-doc pre,
+  .api-doc table {
+    clear: both;
+  }
+}

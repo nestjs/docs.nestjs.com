@@ -157,7 +157,7 @@ function chapterBody(item: NavItem): string | null {
     .replace(/^### .*$/m, '') // chapter heading, replaced by our own below
     .replace(/^@@filename\(.*\)$/gm, '')
     .replace(/^@@switch$[\s\S]*?(?=^```$)/gm, '') // JS variant of each sample
-    .replace(/<app-banner-\w+><\/app-banner-\w+>/g, '')
+    .replace(/<app-[\w-]+><\/app-[\w-]+>/g, '') // banners, the API list
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
