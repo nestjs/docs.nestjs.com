@@ -11,6 +11,7 @@ import { PlatformAgnosticismComponent } from './platform-agnosticism/platform-ag
 import { ProviderScopesComponent } from './provider-scopes/provider-scopes.component';
 import { UnitTestingComponent } from './unit-testing/unit-testing.component';
 import { LazyLoadingModulesComponent } from './lazy-loading-modules/lazy-loading-modules.component';
+import { AdvancedComponent } from './advanced/advanced.component';
 
 export const FUNDAMENTALS_ROUTES: Routes = [
   {
@@ -88,5 +89,10 @@ export const FUNDAMENTALS_ROUTES: Routes = [
     path: 'discovery-service',
     component: DiscoveryServiceComponent,
     data: { title: 'Discovery service' },
+  },
+  {
+    path: 'advanced',
+    component: AdvancedComponent,
+    data: { title: 'Advanced concepts' },
   },
 ];

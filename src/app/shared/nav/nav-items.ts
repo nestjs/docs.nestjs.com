@@ -82,6 +82,7 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/fundamentals/platform-agnosticism',
       },
       { title: 'Testing', path: '/fundamentals/testing' },
+      { title: 'Advanced concepts', path: '/fundamentals/advanced' },
     ],
   },
   {
