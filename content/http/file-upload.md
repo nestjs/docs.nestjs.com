@@ -303,6 +303,8 @@ MulterModule.register({
 
 > info **Hint** The `MulterModule` class is exported from the `@nestjs/platform-express` package.
 
+Options passed to a file interceptor take precedence over these defaults. Starting with NestJS v12.0.4, the two `limits` objects are merged key by key, so a route that sets only `limits.fileSize` keeps a default such as `limits.files`. If one of them is a function, the interceptor's `limits` replaces the default one entirely.
+
 #### Async configuration
 
 To set `MulterModule` options asynchronously instead of statically, use the `registerAsync()` method. As with most dynamic modules, it supports several techniques for async configuration.
