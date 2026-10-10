@@ -24,4 +24,4 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-> info **Note** The `forceCloseConnections` application option is implemented by the Express adapter (`@nestjs/platform-express`). With Fastify, pass Fastify's own `forceCloseConnections` server option to the `FastifyAdapter` constructor instead.
+> info **Note** Both the Express and the Fastify adapter implement the `forceCloseConnections` application option. With Fastify, this requires NestJS v12.1 or later. In earlier versions, pass Fastify's own `forceCloseConnections` server option to the `FastifyAdapter` constructor instead.
