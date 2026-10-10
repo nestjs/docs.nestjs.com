@@ -270,6 +270,8 @@ server.on<MqttEvents>('error', (err) => {
 
 > info **Hint** The `MqttEvents` type is imported from the `@nestjs/microservices` package.
 
+Starting with NestJS v12.1.2, listeners registered with the client's `on()` method stay registered until you call `close()`, so they are also attached to the new MQTT client created on the next `send()` or `emit()` call after the previous one closed without reconnecting (for example, when `reconnectPeriod` is `0`). Registrations are not deduplicated, so register each listener once rather than again from its callback or after each reconnect.
+
 #### Underlying driver access
 
 For more advanced use cases, you may need to access the underlying driver instance, for example, to close the connection manually or to use driver-specific methods. In most cases, however, you **shouldn't need** to access the driver directly.
