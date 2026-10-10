@@ -4,7 +4,7 @@ While learning and working with NestJS, you may run into the errors described on
 
 #### "Cannot resolve dependency" error
 
-> info **Hint** [NestJS Devtools](/devtools/overview#investigating-the-cannot-resolve-dependency-error) can help you resolve the "Cannot resolve dependency" error.
+> info **Hint** [NestJS Devtools](/devtools/overview#debugging-cannot-resolve-dependency-errors) can help you resolve the "Cannot resolve dependency" error.
 
 The most common error message says that Nest can't resolve the dependencies of a provider. It usually looks like this:
 
