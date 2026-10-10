@@ -319,6 +319,8 @@ server.on<RmqEvents>('error', (err) => {
 
 > info **Hint** The `RmqEvents` type is imported from the `@nestjs/microservices` package.
 
+Starting with NestJS v12.1.2, listeners registered with the client's `on()` method stay registered until you call `close()`, so they are also attached to the new connection the client creates on the next `send()` or `emit()` call after a connection attempt failed. Registrations are not deduplicated, so register each listener once rather than again after a failed attempt.
+
 #### Underlying driver access
 
 For more advanced use cases, you may need to access the underlying driver instance, for example, to close the connection manually or to use driver-specific methods. However, in most cases you **shouldn't need** to access the driver directly.
