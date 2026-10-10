@@ -39,3 +39,11 @@ The `exclude` option behaves the same way with multiple prefixes: excluded route
 ```typescript
 app.setGlobalPrefix(['api', 'v1'], { exclude: ['health'] });
 ```
+
+#### Excluded routes and unmatched requests
+
+Excluded routes are registered outside the prefix, but Nest still handles requests to them that don't match a handler. For example, with `exclude: ['health']` and only a `GET /health` handler, a `POST /health` request goes through your exception filters and gets Nest's standard `404` response.
+
+With the Express adapter, a request to a path that is neither under the prefix nor excluded never reaches Nest: Express answers it with its default `404` page. The Fastify adapter passes every unmatched request to Nest.
+
+> info **Hint** With [URI versioning](/http/versioning) enabled, exclusions are matched without the version segment, and an excluded route keeps it. For example, `exclude: ['health']` with `defaultVersion: '1'` serves the route at `/v1/health`.
