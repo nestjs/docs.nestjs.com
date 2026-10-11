@@ -308,6 +308,10 @@ export class InvoicesService {
 
 `put()` takes a `Buffer`, a string, a `Uint8Array`, a Node stream, a web `ReadableStream`, or any async iterable of bytes. On every disk, a write is atomic: a reader sees the old file or the new one, never half of one, and a write that fails leaves nothing behind. `metadata` stores your own string values with the file; `stat()` and `get()` return them.
 
+For `LocalDisk`, a failed filesystem write removes the temporary file and preserves
+any existing file. If writing makes no progress, or the persisted size differs from
+the bytes written, `put()` rejects with `StorageError`.
+
 `signedUrl()` returns a link that works without any other credentials until it expires. `expiresIn` is a duration: `'5m'`, `'1h'`, or milliseconds, 15 minutes by default and at most 7 days, S3's limit. `filename` sets the name the browser saves the file under.
 
 The endpoint returns the link rather than the file, which lets a web page or the mobile app open it directly:
