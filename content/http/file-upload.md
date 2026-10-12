@@ -373,6 +373,78 @@ MulterModule.registerAsync({
 
 This is useful when the factory function or the class constructor needs additional dependencies.
 
+#### Memory usage and storage
+
+By default, Multer uses its in-memory storage engine (`memoryStorage()`): every uploaded file is read completely into memory and exposed as a `Buffer` on `file.buffer` before your route handler runs. This is convenient for small files (avatars, CSV imports, etc.), but each in-flight upload occupies as much memory as its size, so large files or many concurrent uploads can quickly exhaust the memory of your process.
+
+> warning **Warning** Multer does not limit the size of uploaded files by default. When you keep files in memory, always set `limits.fileSize`.
+
+##### Limits
+
+Use the `limits` option to reject files that are too large. When a limit is exceeded, Nest responds with a `413 Payload Too Large` error (for `fileSize`) or `400 Bad Request` (for other limits, such as `files`) and the route handler is not called.
+
+```typescript
+@@filename()
+@Post('upload')
+@UseInterceptors(
+  FileInterceptor('file', {
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  }),
+)
+uploadFile(@UploadedFile() file: Express.Multer.File) {
+  console.log(file.size);
+}
+```
+
+> info **Hint** Unlike `MaxFileSizeValidator`, which runs after the whole file has been received, `limits.fileSize` makes Multer stop reading the request as soon as the limit is reached, so oversized files never fully reach memory or disk. See the [Multer limits](https://github.com/expressjs/multer#limits) for the full list of options.
+
+##### Disk storage
+
+To keep memory usage constant regardless of file size, write uploads to disk with the `diskStorage()` engine. Multer then streams each file to disk as it arrives, and the file object exposes `destination`, `filename` and `path` instead of `buffer`.
+
+```typescript
+import { extname } from 'path';
+import { randomUUID } from 'crypto';
+import { diskStorage } from 'multer';
+
+@Post('upload')
+@UseInterceptors(
+  FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        cb(null, `${randomUUID()}${extname(file.originalname)}`);
+      },
+    }),
+    limits: { fileSize: 1024 * 1024 * 1024 }, // 1 GB
+  }),
+)
+uploadFile(@UploadedFile() file: Express.Multer.File) {
+  console.log(file.path); // e.g. uploads/5f0c...e1.mp4
+}
+```
+
+> info **Hint** The `diskStorage()` and `memoryStorage()` functions are exported from the `multer` package. As a shorthand, pass `dest: './uploads'` to store files on disk under random names. If you pass a `destination` function instead of a string, you are responsible for creating the directory.
+
+To apply the same storage to every file interceptor in a module, pass it to `MulterModule.register()` (or return it from the `useFactory` of `registerAsync()`):
+
+```typescript
+MulterModule.register({
+  storage: diskStorage({ destination: './uploads' }),
+  limits: { fileSize: 100 * 1024 * 1024 },
+});
+```
+
+As described in [Default options](/http/file-upload#default-options), a route's own `limits` are merged with these defaults key by key.
+
+Files stored on disk are not removed automatically. Delete them (for example with `unlink()` from `fs/promises`) once you have processed them, including when processing fails.
+
+##### Sending files to external storage
+
+To store uploads in S3, Cloudflare R2 or another external store without buffering them in memory or writing a temporary file, use a storage engine that streams each file to its destination as it arrives. The [`@nestjs/storage`](/application/file-storage) package provides one, `uploadToDisk()`, which you pass as the `storage` option of `FileInterceptor()` - see [Upload product photos](/application/file-storage#upload-product-photos). Any other Multer [storage engine](https://github.com/expressjs/multer/blob/main/StorageEngine.md) works the same way. Keep in mind that with a streaming engine the file is stored before the route handler (and any `ParseFilePipe` validators) runs, so check type and size in the engine and with `limits`.
+
+> info **Hint** On the `FastifyAdapter`, you can also receive the file as a stream inside the route handler with `FileStreamInterceptor()` - see [Streaming uploads](/http/file-upload#streaming-uploads).
+
 #### Fastify
 
 Starting with NestJS v12.1, applications running on the `FastifyAdapter` (see [Performance (Fastify)](/http/performance)) can handle file uploads with the same API, backed by the [@fastify/multipart](https://github.com/fastify/fastify-multipart) plugin instead of Multer. The interceptors described in this chapter take the same arguments and options, populate the request in the same way, and fail with the same error responses, while `@UploadedFile()`, `@UploadedFiles()`, `ParseFilePipe`, `ParseFilePipeBuilder` and the built-in file validators work unchanged.
