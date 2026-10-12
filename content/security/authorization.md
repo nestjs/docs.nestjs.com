@@ -857,7 +857,7 @@ findAll() {}
 findAll() {}
 ```
 
-It runs in the guard, before any pipe, so it gets the values as the transport delivered them: route params are strings, and nothing is validated yet. A `ParseUUIDPipe` on `customerId` runs after the check, and an id the user may not see gets a 403, not a 400. An error the function throws, such as a `BadRequestException` for a missing param, reaches the client as it is. A denial event carries what the function read in its `args`.
+It runs in the guard, before any pipe, so it gets the values as the transport delivered them: route params are strings, and nothing is validated yet. A `ParseUUIDPipe` on `customerId` runs after the check, and an id the user may not see gets a 403, not a 400. An error the function throws, such as a `BadRequestException` for a missing param, reaches an HTTP client as it is. On WebSockets and microservices, Nest reports an `HttpException` from any guard, this function included, as an internal error, so throw a `WsException` or an `RpcException` there. A denial event carries what the function read in its `args`.
 
 Pass identifiers and scopes, not records. Loading the order in the guard would load it twice, once for the check and once in the handler, and answer 403 before the handler could answer 404. That's why `GET /orders/:id` checks in the service instead.
 
