@@ -18,6 +18,6 @@ import { NewBadgeComponent } from '../../shared/components/new-badge/new-badge.c
   imports: [ThemeModeToggleComponent, SocialWrapperComponent, NewBadgeComponent],
 })
 export class HeaderComponent {
-  @Output() toggle = new EventEmitter<void>();
+  @Output() sidebarToggle = new EventEmitter<void>();
   @Input() isSidebarOpened = true;
 }
