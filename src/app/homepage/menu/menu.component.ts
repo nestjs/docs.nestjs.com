@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   Input,
   OnInit,
 } from '@angular/core';
@@ -18,17 +19,15 @@ import { NAV_ITEMS, NavItem } from '../../shared/nav/nav-items';
   imports: [MenuItemComponent],
 })
 export class MenuComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
   @Input()
   isSidebarOpened = true;
 
   // A copy: `toggleCategory` writes `isOpened` back onto these items, and
   // NAV_ITEMS is a module-level singleton shared with the article pager.
   public readonly items: NavItem[] = structuredClone(NAV_ITEMS);
-
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-  ) {}
 
   public ngOnInit(): void {
     this.router.events

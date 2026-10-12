@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
 } from '@angular/core';
 import { NewsletterService } from './services/newsletter.service';
 
@@ -13,13 +14,11 @@ import { NewsletterService } from './services/newsletter.service';
   standalone: true,
 })
 export class NewsletterComponent {
+  private readonly newsletterService = inject(NewsletterService);
+  private readonly cd = inject(ChangeDetectorRef);
+
   public isDisabled: boolean;
   public isEmailAdded: boolean;
-
-  constructor(
-    private readonly newsletterService: NewsletterService,
-    private readonly cd: ChangeDetectorRef,
-  ) {}
 
   public async addToNewsletter(event: Event, value: string): Promise<void> {
     event.preventDefault();
