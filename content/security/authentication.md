@@ -1547,6 +1547,26 @@ providers: [
 
 The `github()` preset works the same way. `microsoft()` also takes your directory's tenant id as its `tenant` option, next to `clientId` and `clientSecret`: a GUID from the Overview page of the Microsoft Entra admin center, such as `process.env.ENTRA_TENANT_ID`. A domain, or the multi-tenant `common`, `organizations` and `consumers`, fails at startup: for those, Microsoft publishes another issuer than the one asked for, and every sign-in would fail. Add them next to `google` in `providers`, and register the callback URL with each of them, with its name in place of `google`.
 
+An application served under several domains, such as one domain per customer, can't name a single callback URL: a login started on one domain must come back to that domain. Pass a function of the request as `callbackUrl` instead. `start()` calls it on the login, and `finish()` calls it again on the callback, so it must return the same URL for both. Compare the host with your own list of domains rather than trusting the header, and register every URL it can return with each provider:
+
+```typescript
+@@filename(src/app.module)
+oidc: {
+  callbackUrl: ({ headers }) => {
+    const host = CUSTOMER_DOMAINS.find((domain) => domain === headers.host);
+    if (!host) {
+      throw new NotFoundException();
+    }
+    return `https://${host}/auth/oidc/:provider/callback`;
+  },
+  providers: {
+    // ...
+  },
+},
+```
+
+The function can also be `async`, to look the domains up in your database. Whatever it throws is the login's answer, like the 404 above for a domain the application doesn't serve, and a URL that isn't absolute fails the login with an error that names the function. The `__Host-oidc_tx` cookie belongs to the domain that set it, so a login finishes on the domain where it started. If the function ever returned another URL on the callback, the provider would refuse the code, and the callback would get a 401. Behind a proxy that rewrites the host, read the header it forwards instead, such as `X-Forwarded-Host`, and only from a proxy you trust.
+
 #### Add magic-link sign-in
 
 A magic link signs a customer in from their inbox, without a password. The package creates and checks the links; delivering them is up to you, through a `MagicLinkHandler`. The store emails them like the verification links, with a template and a mail class of their own:
@@ -3859,7 +3879,7 @@ A family of refresh tokens counts as revoked when any of its tokens is, so a suc
 | `magicLink.url` | required | The page magic links open. `ttl` defaults to `'15m'`. See [Add magic-link sign-in](/security/authentication#add-magic-link-sign-in). |
 | `magicLink.bindToBrowser` | `true` | Accept a link only in the browser that requested it. |
 | `magicLink.cookie` | `secure: true` | Attributes of the `__Host-magic_link_tx` transaction cookie. |
-| `oidc.callbackUrl` | required | The public callback URL, with `:provider` in place of the provider's name. See [Add "Sign in with Google"](/security/authentication#add-sign-in-with-google). |
+| `oidc.callbackUrl` | required | The public callback URL, with `:provider` in place of the provider's name, or a function of the request that returns it. See [Add "Sign in with Google"](/security/authentication#add-sign-in-with-google). |
 | `oidc.providers` | required | Provider configurations by name, such as `google()`, `github()` and `microsoft()`, which also takes the directory's `tenant` id. |
 | `oidc.redirectAfterLogin` | `/` | Where to land when the login had no `redirectTo`. |
 | `oidc.transactionTtl` | `'10m'` | How long a login may take between the redirect and the callback. |
