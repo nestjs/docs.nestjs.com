@@ -338,7 +338,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     title: 'API Reference',
-    externalUrl: 'https://api-references-nestjs.netlify.app/',
+    path: '/api',
   },
   {
     title: 'Official courses',

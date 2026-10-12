@@ -1,0 +1,118 @@
+@use "sass:map";
+$white-color: #f9f8f8;
+$silver-color: #f3f5f7;
+$darksilver-color: #a5a5a5;
+$grey-color: #7a7577;
+$darkgrey-color: #272727;
+$black-color: #151515;
+$red-color: #ea2845;
+$red-gradient: var(--primary-gradient);
+$blue-color: #3b8ef2;
+$dark-blue-color: #2f6fe0;
+$pink-color: #D81B60;
+$amber-color: #e5a000;
+$orange-color: #f0862b;
+$green-color: #3fae5f;
+$teal-color: #14a89a;
+$purple-color: #a04ad0;
+$light-green-color: #7CB342;
+$blue-grey-color: #6c8794;
+
+
+$api-symbols: (
+  all: (
+    content: ' ',
+    background: $white-color
+  ),
+  class: (
+    content: 'C',
+    background: $dark-blue-color
+  ),
+  const: (
+    content: 'K',
+    background: $grey-color
+  ),
+  decorator: (
+    content: '@',
+    background: $blue-color
+  ),
+  enum: (
+    content: 'E',
+    background: $amber-color
+  ),
+  function: (
+    content: 'F',
+    background: $green-color
+  ),
+  interface: (
+    content: 'I',
+    background: $teal-color
+  ),
+  let: (
+    content: 'K',
+    background: $grey-color
+  ),
+  nestmodule: (
+    content: 'M',
+    background: $red-color
+  ),
+  injectable: (
+    content: 'I',
+    background: $orange-color
+  ),
+  package: (
+    content: 'Pk',
+    background: $purple-color
+  ),
+  pipe: (
+    content: 'P',
+    background: $blue-grey-color
+  ),
+  type-alias: (
+    content: 'T',
+    background: $light-green-color
+  ),
+  var: (
+    content: 'K',
+    background: $grey-color
+  ),
+);
+
+// Tinted badge: soft surface + hairline ring in the symbol colour, matching
+// the theme's --active-surface treatment. light-dark() lifts the foreground in
+// dark mode (html sets color-scheme).
+@mixin tinted-badge($c) {
+  color: light-dark($c, color-mix(in srgb, $c 70%, white));
+  background: color-mix(in srgb, $c 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, $c 32%, transparent);
+}
+
+// Shared API symbol badge (select dropdown + api list).
+@mixin api-symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-decoration: none;
+
+  @each $name, $symbol in $api-symbols {
+    &.#{$name} {
+      @include tinted-badge(map.get($symbol, background));
+
+      &::before {
+        content: map.get($symbol, content);
+      }
+    }
+  }
+
+  &.all {
+    color: var(--color);
+    background: var(--hover-surface);
+    box-shadow: inset 0 0 0 1px var(--border-color-strong);
+  }
+}

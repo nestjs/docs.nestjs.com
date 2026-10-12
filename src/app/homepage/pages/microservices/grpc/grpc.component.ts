@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BasePageComponent } from '../../page/page.component';
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
@@ -17,6 +18,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         TabsComponent,
         BannerEnterpriseComponent,
         ExtensionPipe,
+        RouterLink,
     ],
 })
 export class GrpcComponent extends BasePageComponent {}

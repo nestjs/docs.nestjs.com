@@ -1,0 +1,45 @@
+<details [open]="isOpen" (toggle)="onToggle($any($event.target))">
+  <summary class="package-header">
+    <span class="package-icon" aria-hidden="true">
+      <i class="ph ph-{{ icon }}"></i>
+    </span>
+    <div class="package-title">
+      <h2>
+        <a
+          [routerLink]="path"
+          (mouseenter)="prefetch(path)"
+          (focus)="prefetch(path)"
+          [class.deprecated-api-item]="deprecated"
+        >
+          <span class="scope">&#64;nestjs/</span>{{ name }}
+        </a>
+      </h2>
+      @if (deprecated) {
+        <span class="badge deprecated">deprecated</span>
+      }
+      <span class="count">
+        @if (items) {
+          {{ items.length }} exports
+        }
+      </span>
+    </div>
+    <i class="ph ph-caret-down chevron" aria-hidden="true"></i>
+  </summary>
+  @if (items?.length) {
+    <ul class="api-list">
+      @for (item of items; track item.path) {
+        <li class="api-list-item">
+          <a
+            [routerLink]="item.path"
+            (mouseenter)="prefetch(item.path)"
+            (focus)="prefetch(item.path)"
+            [class.deprecated-api-item]="item.stability === 'deprecated'"
+          >
+            <span class="symbol {{ item.docType }}"></span>
+            <span class="item-title">{{ item.title }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</details>

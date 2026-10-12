@@ -34,6 +34,8 @@ Navigate to [`http://localhost:4200/`](http://localhost:4200/).
 
 All pages are written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and located in the `content` directory.
 
+The [API reference](https://docs.nestjs.com/api) is generated from the source code of the `@nestjs/*` packages listed in `tools/api/packages.ts`. Run `npm run api` once to clone them into `sources/` and compile it; `npm start` keeps it up to date from then on. See [`tools/api`](tools/README.md#api-reference).
+
 ## Build
 
 Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.

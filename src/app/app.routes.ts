@@ -214,6 +214,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'api',
+        loadChildren: () =>
+          import('./homepage/pages/api/api.routes').then((r) => r.API_ROUTES),
+      },
+      {
         path: 'observability',
         loadChildren: () =>
           import('./homepage/pages/observability/observability.routes').then(

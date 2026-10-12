@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BasePageComponent } from '../../page/page.component';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 
@@ -7,6 +8,6 @@ import { CopyButtonComponent } from '../../../../shared/components/copy-button/c
     templateUrl: './global-prefix.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [CopyButtonComponent],
+    imports: [CopyButtonComponent, RouterLink],
 })
 export class GlobalPrefixComponent extends BasePageComponent {}

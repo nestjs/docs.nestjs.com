@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { BasePageComponent } from '../../page/page.component';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
@@ -15,6 +16,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         TabsComponent,
         HeaderAnchorDirective,
         ExtensionPipe,
+        RouterLink,
     ],
 })
 export class RateLimitingComponent extends BasePageComponent {}

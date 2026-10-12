@@ -183,6 +183,7 @@ describe('the real navigation tree', () => {
       '/deployment',
       '/standalone-applications',
       '/migration-guide',
+      '/api',
       '/support',
     ]);
   });

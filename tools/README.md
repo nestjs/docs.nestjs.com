@@ -17,3 +17,10 @@ into files that are consumed by the `docs.nestjs.com` web frontend.
 The dgeni CLI `tools/dgeni-cli.ts` is wrapper to start a Dgeni package from the command line.
 We do not take use of the CLI interface provided by the Dgeni package itself, mainly because
 it does not support TypeScript compilation on the fly.
+
+# API reference
+
+`tools/api` generates the API reference served under `/api`. `packages.ts` lists every
+package repository and entry point to document, `fetch-sources.ts` shallow-clones them into
+`sources/`, and `compiler/` is the Dgeni package that turns their TypeScript sources and
+JSDoc comments into pages. See `tools/api/compiler/README.md`.

@@ -1,3 +1,4 @@
+export * from './api-link.renderer';
 export * from './code.renderer';
 export * from './blockquote.renderer';
 export * from './heading.renderer';

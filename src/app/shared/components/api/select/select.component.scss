@@ -1,0 +1,112 @@
+@use "../api";
+@use "../../../../../scss/utils" as mixins;
+
+:host {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 40px;
+  width: 200px;
+  max-width: 100%;
+  padding: 0 14px;
+  color: var(--color-1dp);
+  background: color-mix(in srgb, var(--color-1dp) 4%, transparent);
+  border: 1px solid var(--search-border);
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--color-1dp) 28%, transparent);
+  }
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  &:has(.disabled) {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .form-select-menu,
+  .form-select-button {
+    width: 100%;
+  }
+
+  .form-select-button {
+    outline: 0;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  strong {
+    color: color-mix(in srgb, var(--color) 80%, transparent);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .symbol {
+    @include api.api-symbol;
+
+    &.all {
+      display: none;
+    }
+  }
+
+  .form-select-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    z-index: 2;
+    background: var(--menu-glow), var(--menu-background);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid var(--panel-border-color);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--menu-color);
+      cursor: pointer;
+      background-color: var(--hover-surface-0);
+      transition: color 120ms ease, background-color 120ms ease;
+
+      &:hover,
+      &.current {
+        color: var(--color-1dp);
+        background-color: var(--hover-surface);
+      }
+
+      &.selected {
+        color: var(--primary);
+        font-weight: 600;
+        background-color: var(--active-surface);
+      }
+    }
+  }
+}
+
+@include mixins.media(medium) {
+  :host {
+    width: 100%;
+  }
+}

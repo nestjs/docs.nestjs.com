@@ -85,7 +85,11 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
     if (!this.contentReference) {
       return;
     }
-    const headings = this.contentReference.querySelectorAll('h3, h4');
+    // API reference pages (tools/api/compiler/templates) use h2 for their
+    // sections, and `.no-anchor` h4s for the Parameters/Returns labels.
+    const headings = this.contentReference.querySelectorAll(
+      'h3, h4:not(.no-anchor), .api-body h2[id]',
+    );
     const removeAnchor = (text: string) => {
       const anchorId = text && text.indexOf('#');
       return anchorId >= 0 ? text.slice(0, anchorId) : text;
