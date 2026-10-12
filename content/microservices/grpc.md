@@ -292,7 +292,7 @@ export class AppService implements OnModuleInit {
 }
 ```
 
-Finally, for more complex scenarios, you can inject a dynamically configured client using the `ClientProxyFactory` class, as described in the [client section of the microservices overview](/microservices/basics#client).
+Finally, for more complex scenarios, you can inject a dynamically configured client using the `ClientProxyFactory` class, as described in the [client section of the microservices overview](/microservices/basics#client-producer-class).
 
 In each case, you end up with a reference to the `HeroesService` proxy object, which exposes the same set of methods that are defined in the `.proto` file. When you call this proxy object (i.e., `heroesService`), gRPC serializes the request, forwards it to the remote system, returns a response, and deserializes the response. Because gRPC shields you from these network communication details, `heroesService` looks and acts like a local provider.
 

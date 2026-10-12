@@ -122,9 +122,9 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
 
 #### Client
 
-As with other microservice transporters, you have [several options](/microservices/basics#client) for creating a RabbitMQ `ClientProxy` instance.
+As with other microservice transporters, you have [several options](/microservices/basics#client-producer-class) for creating a RabbitMQ `ClientProxy` instance.
 
-One way to create an instance is to use the `ClientsModule`. Import it and call its `register()` method, passing an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property to use as the injection token. Read more about `ClientsModule` in the [microservices overview](/microservices/basics#client).
+One way to create an instance is to use the `ClientsModule`. Import it and call its `register()` method, passing an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property to use as the injection token. Read more about `ClientsModule` in the [microservices overview](/microservices/basics#client-producer-class).
 
 ```typescript
 @Module({
@@ -147,7 +147,7 @@ One way to create an instance is to use the `ClientsModule`. Import it and call 
 })
 ```
 
-You can also create a client with `ClientProxyFactory` or `@Client()`, as described in the [microservices overview](/microservices/basics#client).
+You can also create a client with `ClientProxyFactory` or `@Client()`, as described in the [microservices overview](/microservices/basics#client-producer-class).
 
 #### Context
 

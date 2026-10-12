@@ -68,9 +68,9 @@ The transporter also supports all the properties of the official [ioredis](https
 
 #### Client
 
-As with other microservice transporters, you have <a href="/microservices/basics#client">several options</a> for creating a Redis `ClientProxy` instance.
+As with other microservice transporters, you have <a href="/microservices/basics#client-producer-class">several options</a> for creating a Redis `ClientProxy` instance.
 
-One way to create an instance is to use the `ClientsModule`. Import it and use its `register()` method to pass an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property to use as the injection token. Read more about the `ClientsModule` in the <a href="/microservices/basics#client">client section of the overview</a>.
+One way to create an instance is to use the `ClientsModule`. Import it and use its `register()` method to pass an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property to use as the injection token. Read more about the `ClientsModule` in the <a href="/microservices/basics#client-producer-class">client section of the overview</a>.
 
 ```typescript
 @Module({
@@ -90,7 +90,7 @@ One way to create an instance is to use the `ClientsModule`. Import it and use i
 })
 ```
 
-You can also create a client with `ClientProxyFactory` or the `@Client()` decorator. Both are described in the <a href="/microservices/basics#client">client section of the overview</a>.
+You can also create a client with `ClientProxyFactory` or the `@Client()` decorator. Both are described in the <a href="/microservices/basics#client-producer-class">client section of the overview</a>.
 
 #### Context
 

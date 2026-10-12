@@ -122,9 +122,9 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
 
 Kafka differs slightly from other microservice transporters: instead of the `ClientProxy` type, you use `ClientKafkaProxy`.
 
-As with other microservice transporters, you have [several options](/microservices/basics#client) for creating a `ClientKafkaProxy` instance.
+As with other microservice transporters, you have [several options](/microservices/basics#client-producer-class) for creating a `ClientKafkaProxy` instance.
 
-One option is the `ClientsModule`. Import it and use its `register()` method to pass an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property used as the injection token. See the [client section of the microservices overview](/microservices/basics#client) to learn more about `ClientsModule`.
+One option is the `ClientsModule`. Import it and use its `register()` method to pass an options object with the same properties shown above for the `createMicroservice()` method, plus a `name` property used as the injection token. See the [client section of the microservices overview](/microservices/basics#client-producer-class) to learn more about `ClientsModule`.
 
 ```typescript
 @Module({
@@ -149,7 +149,7 @@ One option is the `ClientsModule`. Import it and use its `register()` method to 
 })
 ```
 
-You can also create a client with `ClientProxyFactory` or the `@Client()` decorator, both described in the [microservices overview](/microservices/basics#client).
+You can also create a client with `ClientProxyFactory` or the `@Client()` decorator, both described in the [microservices overview](/microservices/basics#client-producer-class).
 
 Use the `@Client()` decorator as follows:
 
