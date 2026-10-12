@@ -174,7 +174,7 @@ export class PhotosController {
 
 By the time the handler runs, the photo is stored. `uploadToDisk()` has done three things on the way:
 
-- **It checked what the file is, not what the client says it is.** A browser sends the type it guesses from the file name, and a script can send anything, so a file declared `image/png` may well be an HTML page or an SVG with a script in it. The engine reads the first bytes of the stream, detects the type from them, and refuses anything not in `contentTypes` with a `415` before a byte is written. The stored content type is the detected one, never the client's.
+- **It checked what the file is, not what the client says it is.** A browser sends the type it guesses from the file name, and a script can send anything, so a file declared `image/png` may well be an HTML page or an SVG with a script in it. The engine reads the first bytes of the stream, detects the type from their signature (JPEG, PNG, GIF, WebP, AVIF, HEIC and PDF are built in; [other formats](/application/file-storage#accept-csv-and-other-text-formats) take a detector of your own), and refuses anything not in `contentTypes` with a `415` before a byte is written. The stored content type is the detected one, never the client's.
 - **It enforced the size limit without leaving a partial file.** multer stops reading at `limits.fileSize`. The engine then refuses to commit what it received: the request fails with `413 File too large`, nothing is stored, and no file is replaced.
 - **It picked the key.** By default, a random UUID and the extension of the detected type, such as `2f1c0d6e-….png`. Unique keys matter: an upload never overwrites another, and a cached photo never goes stale.
 
@@ -248,6 +248,58 @@ import { ProductsService } from './products.service.js';
 })
 export class ProductsModule {}
 ```
+
+##### Accept CSV and other text formats
+
+Built-in detection recognizes formats by the fixed bytes they start with. A CSV file has no such signature, so `contentTypes: ['text/csv']` on its own refuses every CSV with a `415`. For a format like that, pass `detectContentType`: a function that receives the start of the file and returns its type, or `undefined` when it doesn't recognize it.
+
+Staff update prices by uploading a spreadsheet export. The app recognizes one by its header row:
+
+```typescript
+@@filename(products/price-list)
+/** The header row of a price list exported from the spreadsheet */
+const PRICE_LIST_HEADER = 'sku,price';
+
+/** Recognizes a price list by its first line. It doesn't check the rows. */
+export function detectPriceList(bytes: Buffer): string | undefined {
+  // Spreadsheet apps often start a UTF-8 export with a byte order mark: TextDecoder drops it
+  const text = new TextDecoder().decode(bytes);
+  const header = text.split(/\r?\n/, 1)[0];
+  return header === PRICE_LIST_HEADER ? 'text/csv; charset=utf-8' : undefined;
+}
+```
+
+The upload endpoint allows `text/csv` and passes the function to `uploadToDisk()`. Price lists go to the private disk, because nobody has checked their rows yet:
+
+```typescript
+@@filename(products/price-lists.controller)
+@Post('products/price-lists')
+@UseInterceptors(
+  FileInterceptor('prices', {
+    storage: uploadToDisk({
+      disk: 'private',
+      key: (file) => `price-lists/${randomUUID()}${file.extension}`,
+      contentTypes: ['text/csv'],
+      detectContentType: detectPriceList,
+    }),
+    limits: { fileSize: 1024 * 1024, files: 1 },
+  }),
+)
+importPrices(@UploadedFile() file: StoredUpload | undefined) {
+  if (!file) {
+    throw new BadRequestException('Attach the price list as the "prices" field');
+  }
+  return this.priceListsService.import(file.key);
+}
+```
+
+- **Built-in detection comes first.** The function only runs when the file isn't one of the built-in formats. A PNG renamed to `prices.csv` is still detected as a PNG, and refused. Passing the exported `detectContentType()` helper as the option does nothing, because that's the check that already ran.
+- **It sees the start of the file.** `bytes` holds the first 4 KiB, or the whole file when it's smaller. To change that, set `contentTypeSampleBytes` to a whole number from 1 byte to 64 KiB (it requires `detectContentType`). The second argument has `originalname` and `mimetype`, but they're the client's claims, so decide from the bytes.
+- **What it returns is checked against `contentTypes`.** Types are compared without their parameters: `text/csv` in the list allows `text/csv; charset=utf-8`. When the function returns `undefined`, or a type that isn't in the list, the upload is refused with a `415` before a byte is written. Without `contentTypes`, any returned type is accepted, and an unrecognized file is stored as `application/octet-stream`.
+- **The returned type is the one the file is stored and served with.** Include the charset for text formats. It also sets the extension: `file.extension` is `.csv` in `key()` above, and the default key ends with it too.
+- **It may be async.** The engine waits for the promise while it holds the request, so it must settle quickly. Return `undefined` for a file you don't recognize rather than throwing: an error fails the upload as it would anywhere else in the request, so anything but an `HttpException` becomes a `500` instead of a `415`. So does returning anything but a string or `undefined`.
+
+> warning **Warning** The function classifies the start of the file. It doesn't validate the file: a price list with the right header can hold anything after it. `PriceListsService.import()` must read the whole file, check every row, and delete `file.key` when it rejects the list, as with any check that runs after the interceptor.
 
 #### Keep invoices private
 
@@ -755,11 +807,11 @@ Every disk has the same methods, key rules and errors. A key is a relative, `/`-
 
 | Helper | Options | Description |
 | --- | --- | --- |
-| `uploadToDisk(options)` | `disk` (a name or an instance, default the default disk), `contentTypes`, `cacheControl`, `key`, `metadata` | A storage engine for `FileInterceptor()`. `key` and `metadata` are functions of the file and the request. See [Upload product photos](/application/file-storage#upload-product-photos). |
+| `uploadToDisk(options)` | `disk` (a name or an instance, default the default disk), `contentTypes`, `detectContentType`, `contentTypeSampleBytes` (default 4 KiB, from 1 byte to 64 KiB, requires `detectContentType`), `cacheControl`, `key`, `metadata` | A storage engine for `FileInterceptor()`. `key` and `metadata` are functions of the file and the request. `detectContentType(bytes, file)` returns the type of a file the built-in detection doesn't recognize, or `undefined`, and may return a promise. See [Upload product photos](/application/file-storage#upload-product-photos) and [Accept CSV and other text formats](/application/file-storage#accept-csv-and-other-text-formats). |
 | `serveFile(disk, key, options)` | `res` (required), `req`, `disposition` (default `attachment`), `filename`, `cacheControl` | Streams a file as the response, with `Range` and `If-None-Match` support when given `req`. |
 | `serveSignedUrl(disk, options)` | `req`, `res`, `cacheControl` | Verifies and serves an app-served signed download URL. See [Serve signed URLs in development](/application/file-storage#serve-signed-urls-in-development). |
 | `receiveSignedUpload(disk, options)` | `req`, `res`, `maxSize` | Verifies an app-served signed upload URL and streams the `PUT` body onto the disk. `maxSize` limits uploads signed without a `contentLength`. |
-| `detectContentType(bytes)` | none | The type of a file from its first bytes: JPEG, PNG, GIF, WebP, AVIF, HEIC or PDF. |
+| `detectContentType(bytes)` | none | The type of a file from its first 16 bytes: JPEG, PNG, GIF, WebP, AVIF, HEIC or PDF, else `undefined`. It's the built-in detection `uploadToDisk()` runs, and knows nothing of the `detectContentType` option. |
 
 ##### Errors
 
