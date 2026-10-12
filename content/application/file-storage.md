@@ -211,7 +211,7 @@ export class PhotosService {
     @InjectDisk('photos') private readonly photos: StorageDisk,
   ) {}
 
-  async replace(productId: string, key: string) {
+  async replace(productId: string, key: string): Promise<{ id: string; photoUrl: string }> {
     let previous: string | undefined;
     try {
       previous = this.productsService.findOne(productId).photoKey;
