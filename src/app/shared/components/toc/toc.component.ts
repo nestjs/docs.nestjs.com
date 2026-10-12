@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -29,6 +30,9 @@ interface HeadingElement {
     imports: [],
 })
 export class TocComponent implements OnInit, OnDestroy, OnChanges {
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly renderer = inject(Renderer2);
+
   @Input()
   contentReference: HTMLElement;
 
@@ -46,11 +50,6 @@ export class TocComponent implements OnInit, OnDestroy, OnChanges {
   private scrollSubscription: Subscription;
   private timerSubscription: Subscription;
   private maxTopOffset: number;
-
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    private readonly renderer: Renderer2,
-  ) {}
 
   ngOnInit() {
     this.scrollSubscription = fromEvent(window, 'scroll')

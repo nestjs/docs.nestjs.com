@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -66,6 +67,11 @@ function isArchivedVersionUrl(url: string | undefined): boolean {
   ],
 })
 export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly elementRef = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
+
   public isSidebarOpened = true;
   public previousWidth: number;
   public contentRef: HTMLElement;
@@ -74,13 +80,6 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   private scrollSubscription: Subscription;
   private isInitialRoute = true;
   private readonly scrollDebounceTime = 100;
-
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly elementRef: ElementRef,
-    private readonly renderer: Renderer2,
-  ) {}
 
   public ngOnInit(): void {
     this.router.events

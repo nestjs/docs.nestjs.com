@@ -50,17 +50,15 @@ function summarize(text: string): string {
 @Component({
     selector: 'app-base-page',
     template: ``,
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
 export class BasePageComponent implements AfterViewChecked, AfterViewInit {
+  private readonly applicationRef = inject(ApplicationRef);
+  private readonly el = inject(ElementRef);
+
   private isHljsInitialized = false;
   private readonly metaService = inject(Meta);
-
-  constructor(
-    private readonly applicationRef: ApplicationRef,
-    private readonly el: ElementRef,
-  ) {}
 
   get nativeElement(): HTMLElement {
     return this.el.nativeElement;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnInit, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, DOCUMENT, ChangeDetectionStrategy, inject } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 
 type Theme = 'light' | 'dark';
@@ -8,21 +8,18 @@ type Theme = 'light' | 'dark';
     templateUrl: './theme-mode-toggle.component.html',
     styleUrls: ['./theme-mode-toggle.component.scss'],
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [],
 })
 export class ThemeModeToggleComponent implements OnInit {
+  private readonly document = inject<Document>(DOCUMENT);
+  private readonly storageService = inject(StorageService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+
   public theme: Theme;
 
   // Guards the async cleanup below against rapid toggles.
   private themeChangeCount = 0;
-
-  constructor(
-    @Inject(DOCUMENT)
-    private readonly document: Document,
-    private readonly storageService: StorageService,
-    private readonly changeDetector: ChangeDetectorRef,
-  ) {}
 
   public ngOnInit(): void {
     // Dark is the default theme unless the user explicitly picked light.

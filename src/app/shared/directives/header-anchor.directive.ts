@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Directive,
   ElementRef,
+  inject,
   Input,
   Renderer2,
 } from '@angular/core';
@@ -12,13 +13,11 @@ import { Router } from '@angular/router';
     standalone: true,
 })
 export class HeaderAnchorDirective implements AfterViewInit {
-  @Input() public id: string | undefined;
+  private readonly elementRef = inject<ElementRef<HTMLHeadingElement>>(ElementRef);
+  private readonly renderer = inject(Renderer2);
+  private readonly router = inject(Router);
 
-  constructor(
-    private readonly elementRef: ElementRef<HTMLHeadingElement>,
-    private readonly renderer: Renderer2,
-    private readonly router: Router,
-  ) {}
+  @Input() public id: string | undefined;
 
   public ngAfterViewInit(): void {
     const id = this.id == null ? this.getImplicitId() : this.id;

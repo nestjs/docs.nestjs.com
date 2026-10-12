@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -13,15 +13,13 @@ import { HOMEPAGE_TITLE, SITE_URL, TITLE_SUFFIX } from './constants';
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
-  private robotsElement: HTMLMetaElement;
+  private readonly titleService = inject(Title);
+  private readonly metaService = inject(Meta);
+  private readonly router = inject(Router);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly document = inject<Document>(DOCUMENT);
 
-  constructor(
-    private readonly titleService: Title,
-    private readonly metaService: Meta,
-    private readonly router: Router,
-    private readonly activatedRoute: ActivatedRoute,
-    @Inject(DOCUMENT) private readonly document: Document,
-  ) {}
+  private robotsElement: HTMLMetaElement;
 
   public async ngOnInit(): Promise<void> {
     this.router.events
