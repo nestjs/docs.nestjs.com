@@ -105,7 +105,7 @@ async findOne(uuid) {
 }
 ```
 
-> info **Hint** By default, `ParseUUIDPipe` accepts a UUID of any version (versions 1 through 8, Nil, and Max UUIDs). To require a specific version, pass the `version` option (`'1'`, `'2'`, `'3'`, `'4'`, `'5'`, `'6'`, `'7'`, or `'8'`).
+> info **Hint** By default, `ParseUUIDPipe` accepts a UUID of any version (versions 1 through 8, Nil, and Max UUIDs). To require a specific version, pass the `version` option (`'1'`, `'2'`, `'3'`, `'4'`, `'5'`, `'6'`, `'7'`, or `'8'`). Starting with NestJS v12.1.2, the `version` option also accepts these versions as numbers (for example, `7`), and `'all'` to accept any version, the same as leaving `version` out. The `UUIDVersion` type describes these values and is exported from `@nestjs/common`.
 
 Binding validation pipes works slightly differently; we cover it later in this chapter.
 
