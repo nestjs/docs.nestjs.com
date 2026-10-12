@@ -48,7 +48,7 @@
     "@types/node": "24.19.1",
     "@types/prismjs": "1.26.6",
     "angular-eslint": "22.5.0",
-    "concurrently": "10.0.5",
+    "concurrently": "10.0.6",
     "dgeni": "0.4.14",
     "dgeni-packages": "0.30.0",
     "eslint": "10.11.0",
