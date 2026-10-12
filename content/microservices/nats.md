@@ -207,6 +207,20 @@ export class ApiModule {}
 
 Headers set on a record take precedence over the client-level `headers` option.
 
+Starting with NestJS v12.1.3, a message handler can also return a record. Nest sends the record data as the reply and the record headers as the headers of the reply message:
+
+```typescript
+import * as nats from '@nats-io/nats-core';
+
+@MessagePattern('replace-emoji')
+replaceEmoji() {
+  const headers = nats.headers();
+  headers.set('x-version', '1.0.0');
+
+  return new NatsRecordBuilder(':cat:').setHeaders(headers).build();
+}
+```
+
 #### Custom serializers and deserializers
 
 Starting with NestJS v12, Nest serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object instead of a raw `Uint8Array`. If you have written a custom deserializer, read the payload through `msg.json()` rather than decoding bytes manually:
