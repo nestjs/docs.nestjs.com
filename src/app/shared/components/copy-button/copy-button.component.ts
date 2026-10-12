@@ -13,7 +13,7 @@ import { MatIcon } from '@angular/material/icon';
     templateUrl: './copy-button.component.html',
     styleUrls: ['./copy-button.component.scss'],
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatIcon],
 })
 export class CopyButtonComponent implements OnDestroy {

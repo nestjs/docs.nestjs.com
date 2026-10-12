@@ -8,7 +8,7 @@ type Theme = 'light' | 'dark';
     templateUrl: './theme-mode-toggle.component.html',
     styleUrls: ['./theme-mode-toggle.component.scss'],
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [],
 })
 export class ThemeModeToggleComponent implements OnInit {

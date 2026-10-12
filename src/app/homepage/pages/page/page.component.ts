@@ -50,7 +50,7 @@ function summarize(text: string): string {
 @Component({
     selector: 'app-base-page',
     template: ``,
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
 export class BasePageComponent implements AfterViewChecked, AfterViewInit {

@@ -10,7 +10,7 @@ import { ExtensionPipe } from '../../../shared/pipes/extension.pipe';
     selector: 'app-middlewares',
     templateUrl: './middlewares.component.html',
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         RouterLink,
         CopyButtonComponent,
