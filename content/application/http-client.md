@@ -208,7 +208,7 @@ The type argument, such as `Repo[]`, describes `data`. Nothing checks it at runt
 
 | `responseType` | `data` |
 | --- | --- |
-| `'auto'` (default) | Parsed JSON when the `content-type` is JSON (including `+json` types), otherwise a string. `undefined` when the body is empty, for `204`, `205`, and `304` responses, and for `HEAD` requests. |
+| `'auto'` (default) | Parsed JSON when the `content-type` is JSON (including `+json` types), otherwise a string. `undefined` when the body is empty, for `204` and `205` responses, and for `HEAD` requests. A `304` response throws by default, like any non-2xx; with `throwOnHttpError: false`, its `data` is `undefined`. |
 | `'json'` | Parsed JSON, whatever the content type. |
 | `'text'` | A string. |
 | `'arrayBuffer'` | An `ArrayBuffer`. |
