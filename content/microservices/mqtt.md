@@ -229,6 +229,18 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 export class ApiModule {}
 ```
 
+Starting with NestJS v12.1.3, a message handler can also return a record. Nest sends the record data as the reply and applies the record options (for example, the QoS level and the properties) to the reply message:
+
+```typescript
+@MessagePattern('replace-emoji')
+replaceEmoji() {
+  return new MqttRecordBuilder(':cat:')
+    .setProperties({ userProperties: { 'x-version': '1.0.0' } })
+    .setQoS(1)
+    .build();
+}
+```
+
 #### Instance status updates
 
 To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the MQTT driver, the `status` stream emits `connected`, `disconnected`, `reconnecting`, and `closed` events.

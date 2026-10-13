@@ -278,6 +278,24 @@ replaceEmoji(data, context) {
 }
 ```
 
+Starting with NestJS v12.1.3, a message handler can also return a record. Nest sends the record data as the reply and applies the record options (for example, the `headers` and `priority` properties) to the reply message:
+
+```typescript
+@MessagePattern('replace-emoji')
+replaceEmoji() {
+  return new RmqRecordBuilder(':cat:')
+    .setOptions({
+      headers: {
+        ['x-version']: '1.0.0',
+      },
+      priority: 3,
+    })
+    .build();
+}
+```
+
+The reply always carries the correlation id of the request, so the client can match it to the request.
+
 #### Instance status updates
 
 To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the RMQ driver, the `status` stream emits `connected`, `disconnected`, `blocked`, and `unblocked` events.
