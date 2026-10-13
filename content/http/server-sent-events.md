@@ -48,7 +48,7 @@ eventSource.onmessage = ({ data }) => {
 
 #### Status code and headers
 
-Starting with NestJS v12.1.3, an `@Sse()` route sends the status code and the headers that its handler or an interceptor sets on the response before the stream starts. This works on the Express and Fastify platforms. To set them in the handler, inject the response with the `@Res()` decorator and its `passthrough` option enabled:
+An `@Sse()` route sends the headers set with the `@Header()` decorator. Starting with NestJS v12.1.3, it also sends the status code that its handler or an interceptor sets on the response before the stream starts, and, on Fastify, the headers they set (Express already sent those). To set them in the handler, inject the response with the `@Res()` decorator and its `passthrough` option enabled:
 
 ```typescript
 @Sse('sse')
@@ -59,7 +59,7 @@ sse(@Res({ passthrough: true }) res: Response): Observable<MessageEvent> {
 }
 ```
 
-> info **Hint** The `Response` type is imported from the `express` package. On Fastify, use the `FastifyReply` type from the `fastify` package.
+> info **Hint** `Res` is imported from the `@nestjs/common` package, and the `Response` type from the `express` package. On Fastify, use the `FastifyReply` type from the `fastify` package.
 
 #### Client disconnection
 
