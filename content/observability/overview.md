@@ -25,7 +25,7 @@ Once the SDK is running, every plan - including the free tier - gives you:
 - **Users** - per-user activity, grouped into the actions they actually performed, when your application reports a user identifier.
 - **Copy agent prompt** - one click turns a failed request, slow job, or failing trace into a self-contained prompt for a coding agent.
 
-Paid plans add **logs streaming** (correlated to traces, with redaction on by default), **alerting** (thresholds, anomaly detection, absence detection, Slack/webhook/email channels), **issues**, team management, and - on the higher tiers - **SSO**, **SLOs** with error budgets and burn-rate alerts, and an **MCP server** so an MCP-compatible agent can query your telemetry directly and set up a new service (see [MCP server](/observability/mcp-server)).
+Paid plans add **logs streaming** (correlated to traces, with redaction on by default), **alerting** (thresholds, anomaly detection, absence detection, Slack/webhook/email channels), **issues**, team management, and an **MCP server** so an MCP-compatible agent can query your telemetry directly and set up a new service (see [MCP server](/observability/mcp-server)). The higher tiers add **SSO** and **SLOs** with error budgets and burn-rate alerts.
 
 #### How it is organized
 
