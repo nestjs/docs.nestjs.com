@@ -696,7 +696,7 @@ The files are in `storage/photos` and `storage/private`, as plain files: `storag
 
 #### Testing
 
-`InMemoryDisk` keeps files in memory and behaves like the other disks: the same key rules, ranges, listings, metadata and signed URLs. Unlike a local disk, it accepts both `a` and `a/b`, where a local disk throws `StorageKeyConflictError`. In an end-to-end test, replace the disks by overriding `STORAGE_MODULE_OPTIONS`, the options the factory would have returned:
+`InMemoryDisk` keeps files in memory and behaves like the other disks: the same key rules, ranges, listings, metadata and signed URLs. Like S3, it can hold both `a` and `a/b`, which a local disk refuses with `StorageKeyConflictError`. In an end-to-end test, replace the disks by overriding `STORAGE_MODULE_OPTIONS`, the options the factory would have returned:
 
 ```typescript
 @@filename(test/photos.e2e-spec)
