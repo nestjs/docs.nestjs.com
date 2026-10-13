@@ -217,7 +217,7 @@ Client errors are not failures. A request for an unknown order throws `NotFoundE
 
 #### Fail fast with a circuit breaker
 
-The preset's breaker records the outcome of every attempt. The `carrier` breaker opens once it has seen at least `minimumCalls` (10) calls, and at least `failureRateThreshold` (50%) of them failed. By default it looks at the last 20 calls. Every error counts as a failure, timeouts included, except client errors and rejections from other policies. A client error is a 4xx `HttpException`, or any other error with a 4xx `status` or `statusCode` property. That covers `CarrierError`: when the carrier answers `422` to a malformed request, it isn't down, so the breaker ignores the error and the retry doesn't repeat it. A `408` or `429` is the exception, because it means the carrier is pushing back, so it counts like a `5xx`. To change what counts, pass a `recordIf` function in the breaker options.
+The preset's breaker records the outcome of every attempt. The `carrier` breaker opens once it has seen at least `minimumCalls` (10) calls, and at least `failureRateThreshold` (50%) of them failed. By default it looks at the last 20 calls. Every error counts as a failure, timeouts included, except client errors and rejections from other policies. A client error is a 4xx `HttpException`, or any other error with a 4xx `status` or `statusCode` property. That covers `CarrierError`: when the carrier answers `422` to a malformed request, it isn't down, so the breaker ignores the error and the retry doesn't repeat it. A `408` or `429` from the carrier is the exception, because it means the carrier is pushing back, so it counts like a `5xx`. An `HttpException` with one of those statuses is still a client error: the handler threw it to answer its own caller, and that says nothing about the carrier. To change what counts, pass a `recordIf` function in the breaker options.
 
 While the breaker is **open**, calls fail immediately and the carrier is not called at all. The client gets a `503` with a `Retry-After` header: the number of seconds until the breaker lets a probe call through. The retry wraps the breaker, so a rejection is never retried.
 
@@ -378,6 +378,8 @@ Both modules register a global interceptor, and the one imported first runs oute
 - All the retries of one request happen under a single claimed key.
 - The stored response is the final outcome, after retries and any fallback.
 - A `503` or `504` is a 5xx response, so the key is released and the client can try again later with the same key.
+
+Releasing the key on a `504` has a catch. The key is released as soon as the timeout answers, but the timed-out run may still be in progress, or may already have reached the carrier, so a retry with the same key can overlap it. That's why the side effect has to be safe to repeat downstream, as the carrier makes it with `reference`. Passing the signal on, as `createShipment()` does, stops the local work sooner.
 
 #### Use the same policies inside services
 
