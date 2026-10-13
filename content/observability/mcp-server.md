@@ -2,6 +2,8 @@
 
 NestJS Observe exposes an [MCP](https://modelcontextprotocol.io/) server, so an MCP-compatible client (Claude Code, Claude Desktop, Cursor, VS Code, or an agent you wrote yourself) can query your projects directly instead of you copying dashboard data into a prompt. Regressions, slow operations, error groups, traces, jobs, and alerts are available: the same data the dashboard shows, scoped to exactly what you can see.
 
+The MCP server is included in every paid plan (Pro and above). It follows the plan that pays for each project: a member on a Free account who is invited into a paid team's projects can use it on those projects.
+
 > info **Hint** MCP is one of two ways to get telemetry to an agent. The **Copy agent prompt** button (see [Dashboard](/observability/dashboard#handing-a-failure-to-a-coding-agent)) packages one page as text for a single paste. MCP is for an agent that needs to keep asking questions (follow a trace, check whether the error is still firing) without you relaying each answer.
 
 The endpoint speaks Streamable HTTP at `POST https://<api-host>/mcp`. It's stateless: there's no session to open, nothing to keep alive, and no setup beyond the request itself. The exact host is shown next to your tokens in the dashboard.
