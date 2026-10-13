@@ -294,7 +294,7 @@ replaceEmoji() {
 }
 ```
 
-The reply keeps the correlation id of the request, so Nest ignores a `correlationId` in the record options.
+The reply always carries the correlation id of the request, so the client can match it to the request.
 
 #### Instance status updates
 
