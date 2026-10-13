@@ -46,6 +46,21 @@ eventSource.onmessage = ({ data }) => {
 };
 ```
 
+#### Status code and headers
+
+An `@Sse()` route sends the headers set with the `@Header()` decorator. Starting with NestJS v12.1.3, it also sends the status code that its handler or an interceptor sets on the response before the stream starts, and, on Fastify, the headers they set (Express already sent those). To set them in the handler, inject the response with the `@Res()` decorator and its `passthrough` option enabled:
+
+```typescript
+@Sse('sse')
+sse(@Res({ passthrough: true }) res: Response): Observable<MessageEvent> {
+  res.status(202);
+  res.header('x-version', '1.0.0');
+  return interval(1000).pipe(map((_) => ({ data: { hello: 'world' } })));
+}
+```
+
+> info **Hint** `Res` is imported from the `@nestjs/common` package, and the `Response` type from the `express` package. On Fastify, use the `FastifyReply` type from the `fastify` package.
+
 #### Client disconnection
 
 When a client closes the SSE connection (e.g., with `eventSource.close()`), Nest automatically unsubscribes from the returned `Observable`. This stops the event stream and cleans up any associated resources, including the interval timer in the example above.
