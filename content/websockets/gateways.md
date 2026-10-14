@@ -19,9 +19,60 @@ $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 $ npm i --save @nestjs/websockets @nestjs/platform-socket.io
 ```
 
+The command above installs the **socket.io** platform, which Nest uses by default. To use **ws** instead, install `@nestjs/platform-ws` and register `WsAdapter` as described in the [adapters guide](/websockets/adapter#ws-library).
+
+> info **Hint** Unless stated otherwise, the examples in this documentation use socket.io. The table in the next section lists the main differences between the two platforms.
+
+#### Choosing a platform
+
+Gateways, guards, pipes, interceptors, and exception filters work the same way on both platforms, but the wire protocol and some features differ:
+
+<table>
+  <tr>
+    <th></th>
+    <th>socket.io</th>
+    <th>ws</th>
+  </tr>
+  <tr>
+    <td>Package</td>
+    <td><code>@nestjs/platform-socket.io</code> (default)</td>
+    <td><code>@nestjs/platform-ws</code></td>
+  </tr>
+  <tr>
+    <td>Adapter</td>
+    <td><code>IoAdapter</code></td>
+    <td><code>WsAdapter</code>, registered with <code>app.useWebSocketAdapter()</code></td>
+  </tr>
+  <tr>
+    <td>Namespaces</td>
+    <td>Supported</td>
+    <td>Not supported (setting <code>namespace</code> throws an error). Use different <code>path</code> values instead</td>
+  </tr>
+  <tr>
+    <td>Acknowledgments</td>
+    <td>Supported (acknowledgment callback, <code>@Ack()</code>)</td>
+    <td>Not supported</td>
+  </tr>
+  <tr>
+    <td>Message format sent by the client</td>
+    <td><code>socket.emit('events', data)</code></td>
+    <td>JSON string: <code>{{ '{' }} "event": "events", "data": ... {{ '}' }}</code></td>
+  </tr>
+  <tr>
+    <td>Sending an event from a handler</td>
+    <td>Return <code>{{ '{' }} event, data {{ '}' }}</code> (see <a href="/websockets/gateways#multiple-responses">Multiple responses</a>)</td>
+    <td>Return <code>{{ '{' }} event, data {{ '}' }}</code></td>
+  </tr>
+  <tr>
+    <td>Errors thrown in a handler</td>
+    <td>Emitted as an <code>exception</code> event, which the client must listen for</td>
+    <td>Sent as a JSON string: <code>{{ '{' }} "event": "exception", "data": ... {{ '}' }}</code></td>
+  </tr>
+</table>
+
 #### Overview
 
-By default, each gateway listens on the same port as the **HTTP server**. To use a different port, pass it as the first argument to the decorator, e.g., `@WebSocketGateway(80)`, where `80` is the chosen port number. You can also set the [namespace](https://socket.io/docs/v4/namespaces/) used by the gateway:
+By default, each gateway listens on the same port as the **HTTP server**. To use a different port, pass it as the first argument to the decorator, e.g., `@WebSocketGateway(80)`, where `80` is the chosen port number. With socket.io, you can also set the [namespace](https://socket.io/docs/v4/namespaces/) used by the gateway:
 
 ```typescript
 @WebSocketGateway(80, { namespace: 'events' })
@@ -52,6 +103,8 @@ handleEvent(data) {
 ```
 
 > info **Hint** The `@SubscribeMessage()` and `@MessageBody()` decorators are imported from the `@nestjs/websockets` package.
+
+> warning **Warning** With socket.io, a plain returned value such as `data` above is delivered to the client only as an **acknowledgment**, so the client receives it only if it passes an acknowledgment callback (see below). To emit a named event back to the client instead, return `{{ '{' }} event, data {{ '}' }}` as described in [Multiple responses](#multiple-responses).
 
 Once the gateway is created, register it in a module.
 
@@ -136,9 +189,11 @@ To receive the response sent by the handler above, the client must attach a corr
 socket.emit('events', { name: 'Nest' }, (data) => console.log(data));
 ```
 
+> info **Hint** Acknowledgments are a socket.io feature. Native WebSocket clients, and therefore the `ws` platform, don't support them. Use [multiple responses](#multiple-responses) instead.
+
 Returning a value from a message handler implicitly sends an acknowledgment, but advanced scenarios often require direct control over the acknowledgment callback.
 
-The `@Ack()` parameter decorator injects the `ack` callback function directly into a message handler. When you use it, Nest doesn't send an acknowledgment based on the return value, so you must call `ack()` yourself. Without the decorator, the callback is passed as the third argument of the method.
+The `@Ack()` parameter decorator (socket.io only) injects the `ack` callback function directly into a message handler. When you use it, Nest doesn't send an acknowledgment based on the return value, so you must call `ack()` yourself. Without the decorator, the callback is passed as the third argument of the method.
 
 ```typescript
 @@filename(events.gateway)
@@ -159,7 +214,7 @@ handleEvent(data, ack) {
 
 #### Multiple responses
 
-The acknowledgment is dispatched only once, and native WebSocket implementations don't support it. To work around these limitations, return an object with two properties: `event`, the name of the emitted event, and `data`, the payload to forward to the client.
+The acknowledgment is dispatched only once, and native WebSocket implementations don't support it. To work around these limitations, return an object with two properties: `event`, the name of the emitted event, and `data`, the payload to forward to the client. This format works on both socket.io and ws.
 
 ```typescript
 @@filename(events.gateway)
@@ -184,7 +239,14 @@ handleEvent(data) {
 To receive the incoming response(s), the client must add another event listener.
 
 ```typescript
+// socket.io
 socket.on('events', (data) => console.log(data));
+
+// ws (native WebSocket)
+socket.addEventListener('message', (message) => {
+  const { event, data } = JSON.parse(message.data);
+  console.log(event, data);
+});
 ```
 
 #### Asynchronous responses
@@ -261,7 +323,7 @@ Occasionally, you may need direct access to the native, **platform-specific** se
 server: Server;
 ```
 
-You can also retrieve the corresponding namespace:
+You can also retrieve the corresponding namespace (socket.io only):
 
 ```typescript
 @WebSocketGateway({ namespace: 'my-namespace' })
@@ -328,4 +390,4 @@ Because the scope is tied to the connection rather than to a single message, the
 
 #### Example
 
-A working example is available in the [02-gateways sample](https://github.com/nestjs/nest/tree/master/sample/02-gateways).
+A working example is available in the [02-gateways sample](https://github.com/nestjs/nest/tree/master/sample/02-gateways). For the `ws` platform, see the [16-gateways-ws sample](https://github.com/nestjs/nest/tree/master/sample/16-gateways-ws).

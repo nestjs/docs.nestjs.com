@@ -12,14 +12,15 @@ The following example uses a method-scoped guard. As with HTTP-based application
 @@filename()
 @UseGuards(AuthGuard)
 @SubscribeMessage('events')
-handleEvent(client: Client, data: unknown): WsResponse<unknown> {
+handleEvent(@MessageBody() data: unknown): WsResponse<unknown> {
   const event = 'events';
   return { event, data };
 }
 @@switch
 @UseGuards(AuthGuard)
+@Bind(MessageBody())
 @SubscribeMessage('events')
-handleEvent(client, data) {
+handleEvent(data) {
   const event = 'events';
   return { event, data };
 }
