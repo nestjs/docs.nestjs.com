@@ -528,8 +528,10 @@ export class AppModule {}
 
 `ConfigService` defines a generic `get()` method that retrieves a configuration value by key. You can also add getter functions for a more natural coding style:
 
+The following example assumes that `AUTH_ENABLED` remains a string. If your validation schema transforms it to a boolean, compare it with `true` instead.
+
 ```typescript
-@@filename()
+@@filename(api-config.service)
 @Injectable()
 export class ApiConfigService {
   constructor(private configService: ConfigService) {}
