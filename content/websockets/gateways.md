@@ -252,6 +252,8 @@ Gateways support three lifecycle hooks. Each has a corresponding interface, desc
 
 > info **Hint** Each lifecycle interface is exposed from the `@nestjs/websockets` package.
 
+> warning **Warning** Nest doesn't wait for an async `handleConnection()` to finish before it handles the client's messages, so the hook isn't a gate: messages that arrive before it disconnects the client are still handled. To check each message, bind [guards](/websockets/guards) to the message handlers. To reject a client before any of its messages are handled, use connection-level middleware instead: socket.io's `server.use()` in `afterInit()`, or, with `WsAdapter`, a `verifyClient` function in the `@WebSocketGateway()` options.
+
 #### Server and Namespace
 
 Occasionally, you may need direct access to the native, **platform-specific** server instance. Nest passes it as an argument to the `afterInit()` method (`OnGatewayInit` interface). Alternatively, use the `@WebSocketServer()` decorator.
