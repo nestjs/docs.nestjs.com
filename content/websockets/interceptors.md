@@ -6,15 +6,18 @@ There is no difference between [regular interceptors](/interceptors) and WebSock
 @@filename()
 @UseInterceptors(new TransformInterceptor())
 @SubscribeMessage('events')
-handleEvent(client: Client, data: unknown): WsResponse<unknown> {
+handleEvent(@MessageBody() data: unknown): WsResponse<unknown> {
   const event = 'events';
   return { event, data };
 }
 @@switch
 @UseInterceptors(new TransformInterceptor())
+@Bind(MessageBody())
 @SubscribeMessage('events')
-handleEvent(client, data) {
+handleEvent(data) {
   const event = 'events';
   return { event, data };
 }
 ```
+
+> info **Hint** Interceptors only see the handler's return value. Messages you emit directly through the socket (e.g., `client.emit()` or `server.emit()`) bypass them. To let interceptors process a response, return it from the handler.
