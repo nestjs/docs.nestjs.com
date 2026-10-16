@@ -1567,6 +1567,34 @@ oidc: {
 
 The function can also be `async`, to look the domains up in your database. Whatever it throws is the login's answer, like the 404 above for a domain the application doesn't serve, and a URL that isn't absolute fails the login with an error that names the function. The `__Host-oidc_tx` cookie belongs to the domain that set it, so a login finishes on the domain where it started. If the function ever returned another URL on the callback, the provider would refuse the code, and the callback would get a 401. Behind a proxy that rewrites the host, read the header it forwards instead, such as `X-Forwarded-Host`, and only from a proxy you trust.
 
+Some applications only learn their providers at runtime. An application that sells to businesses may give each customer its own OIDC client, or let them bring their own identity provider, set up from an admin page and stored in your database. Pass a function of the provider's name as `providers` instead. `start()` calls it on the login, and `finish()` calls it again on the callback. Return the provider's configuration, or `undefined` for a name you don't serve, which gets a 404:
+
+```typescript
+@@filename(src/app.module)
+AuthenticationModule.forRootAsync({
+  imports: [TenantsModule],
+  inject: [TenantsRepository],
+  useFactory: (tenantsRepository: TenantsRepository) => ({
+    // ...
+    oidc: {
+      callbackUrl: `${process.env.APP_URL}/auth/oidc/:provider/callback`,
+      // GET /auth/oidc/acme/login signs in through Acme's own client.
+      providers: async (name) => {
+        const tenant = await tenantsRepository.findByKey(name);
+        return tenant ? { issuer: tenant.issuer, clientId: tenant.clientId, clientSecret: tenant.clientSecret } : undefined;
+      },
+    },
+  }),
+}),
+```
+
+The configuration is looked up again on the callback rather than stored with the login, so a secret you rotate in your database is used from the next call on, by a login already under way too. Each configuration the function returns gets the checks the object form gets at startup: one without a `clientId`, or without a `clientSecret` unless its `tokenEndpointAuthMethod` is `'none'`, fails the login with an error that names the function. The function runs on every login and callback, so cache the lookup if it's slow. The package caches each provider's discovery document and keys by issuer, so customers who sign in through the same provider share them.
+
+Identities are linked by (provider, subject), and the provider is the name, so each name must stand for one client of one provider. Put the customer in the name, like `acme` above, rather than using one name, such as `okta`, for every customer's provider: two customers' providers can give out the same subject. When customers bring their own identity provider, two more things change:
+
+- **Their provider vouches for whatever address it likes.** It can mark any address as verified, including the address of another customer's user. The resolver above links accounts by verified email. With providers your customers control, link by email only to that customer's own accounts, or not at all.
+- **The issuer is user input.** The package fetches the discovery document, the keys and the tokens from the URLs the configuration names, and nothing keeps those requests off your own network. Check an issuer a customer enters against the providers you support before you store it.
+
 #### Add magic-link sign-in
 
 A magic link signs a customer in from their inbox, without a password. The package creates and checks the links; delivering them is up to you, through a `MagicLinkHandler`. The store emails them like the verification links, with a template and a mail class of their own:
@@ -3880,7 +3908,7 @@ A family of refresh tokens counts as revoked when any of its tokens is, so a suc
 | `magicLink.bindToBrowser` | `true` | Accept a link only in the browser that requested it. |
 | `magicLink.cookie` | `secure: true` | Attributes of the `__Host-magic_link_tx` transaction cookie. |
 | `oidc.callbackUrl` | required | The public callback URL, with `:provider` in place of the provider's name, or a function of the request that returns it. See [Add "Sign in with Google"](/security/authentication#add-sign-in-with-google). |
-| `oidc.providers` | required | Provider configurations by name, such as `google()`, `github()` and `microsoft()`, which also takes the directory's `tenant` id. |
+| `oidc.providers` | required | Provider configurations by name, such as `google()`, `github()` and `microsoft()`, which also takes the directory's `tenant` id, or a function of the name that returns one. See [Add "Sign in with Google"](/security/authentication#add-sign-in-with-google). |
 | `oidc.redirectAfterLogin` | `/` | Where to land when the login had no `redirectTo`. |
 | `oidc.transactionTtl` | `'10m'` | How long a login may take between the redirect and the callback. |
 | `oidc.cookie` | `secure: true` | Attributes of the `__Host-oidc_tx` transaction cookie. |
