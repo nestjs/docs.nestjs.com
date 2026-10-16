@@ -133,6 +133,8 @@ findOne(@Query() { id }: { id: number }): UserEntity {
 
 > info **Hint** Declaring the handler's return type lets TypeScript check that the returned plain object matches the shape of the DTO or entity. The `plainToInstance()` function doesn't provide this type checking, so a mismatched object can go unnoticed.
 
+> warning **Warning** The response is shaped by the `type` class, not by the class of the returned value. A value that isn't an instance of the `type` class, such as an instance of another entity, is converted like a plain object: the decorators of its own class, such as `@Exclude()`, are ignored, and properties that the `type` class doesn't declare are copied unchanged. To send only the properties of the `type` class, decorate each of them with `@Expose()` and add `excludeExtraneousValues: true` to the options of the same `@SerializeOptions()` decorator.
+
 
 #### Schema-based serialization
 
