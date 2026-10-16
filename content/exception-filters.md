@@ -1,6 +1,6 @@
 ### Exception filters
 
-Nest comes with a built-in **exceptions layer** that processes all unhandled exceptions across an application. When your application code does not handle an exception, this layer catches it and automatically sends an appropriate, user-friendly response.
+Nest comes with a built-in **exceptions layer** that processes all unhandled exceptions raised while an incoming request or message is being handled. When your application code does not handle an exception, this layer catches it and automatically sends an appropriate, user-friendly response.
 
 <figure>
   <img class="illustrative-image" src="/assets/Filter_1.png" />
@@ -372,6 +372,8 @@ You can register as many filters as needed with this technique by adding each on
 #### Catch everything
 
 To catch **every** unhandled exception, regardless of its type, leave the `@Catch()` decorator's parameter list empty, i.e., `@Catch()`.
+
+> warning **Warning** "Every unhandled exception" here means every exception that propagates out of the handler chain of a request: middleware, guards, interceptors, pipes, and the route handler itself. The exceptions layer wraps that invocation, so it only sees errors that travel back through it. A catch-all filter is **not** a replacement for `process.on('uncaughtException')` and `process.on('unhandledRejection')`. An error thrown from a `setTimeout` callback, from an event emitter listener, or from a promise that is never awaited leaves the request that started it, so no filter is invoked (there is no `ArgumentsHost` to hand it, since the request has already been answered or was never involved). Those errors still crash or destabilize the process and must be handled at the process level, as described in the [Node.js documentation](https://nodejs.org/api/process.html#event-uncaughtexception).
 
 The example below is platform-agnostic: it delivers the response through the [HTTP adapter](./faq/http-adapter) rather than using the platform-specific `Request` and `Response` objects directly, so the same filter works with both Express and Fastify.
 
