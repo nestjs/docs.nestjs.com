@@ -397,6 +397,10 @@ uploadFile(@UploadedFile() file: Express.Multer.File) {
 
 > info **Hint** Unlike `MaxFileSizeValidator`, which runs after the whole file has been received, `limits.fileSize` makes Multer stop storing the file and reject the request as soon as the limit is reached, so oversized files never fully reach memory or disk. See the [Multer limits](https://github.com/expressjs/multer#limits) for the full list of options.
 
+##### Field name limits
+
+Field names such as `user[address][city]` or `tags[2]` build nested objects and arrays in the request body. Two limits bound them: `fieldNestingDepth`, the number of nesting levels (`a[b][c]` has 2), and `fieldArrayIndexLimit`, the highest array index (`tags[2]` uses index 2). A request that exceeds either one is rejected with a `400 Bad Request` response. Starting with NestJS v12.1.4, they default to 32 and 1000 respectively (Multer leaves them unlimited), so that a single request cannot build an arbitrarily deep body or a huge array. Set a limit to `Infinity` to lift it.
+
 ##### Disk storage
 
 To keep memory usage constant regardless of file size, write uploads to disk with the `diskStorage()` engine. Multer then streams each file to disk as it arrives, and the file object exposes `destination`, `filename` and `path` instead of `buffer`.
@@ -427,7 +431,7 @@ uploadFile(@UploadedFile() file: Express.Multer.File) {
 
 To apply the same storage and limits to every file interceptor in a module, set them as [default options](/http/file-upload#default-options) or with [async configuration](/http/file-upload#async-configuration).
 
-Files stored on disk are not removed automatically. Delete them (for example with `unlink()` from `fs/promises`) once you have processed them, including when processing fails.
+Files stored on disk are not removed automatically once your route handler has run. Delete them (for example with `unlink()` from `fs/promises`) once you have processed them, including when processing fails. Starting with NestJS v12.1.4, if a pipe rejects the request (for example, because `ParseFilePipe` validation fails), the route handler does not run, and the stored files are removed once the error response has been sent.
 
 ##### Sending files to external storage
 
@@ -620,7 +624,7 @@ Besides the [default limits](/http/file-upload#limits), the Fastify interceptors
 - Text fields sent with a `Content-Type: application/json` header arrive parsed, and invalid JSON fails the request with a `400` response (a `@fastify/multipart` feature). Malformed part header lines are ignored, whereas Multer fails the request with a `400` response.
 - `fileFilter` functions and storage engines receive the Fastify request instead of the Express one.
 - The `attachFieldsToBody` plugin option is not supported, as it consumes the request body before the interceptors run.
-- Multer's `fieldNestingDepth` and `fieldArrayIndexLimit` limits and its `highWaterMark`, `fileHwm`, `defCharset` and `streamHandler` options are not supported by the interceptors.
+- Multer's `highWaterMark`, `fileHwm`, `defCharset` and `streamHandler` options are not supported by the interceptors.
 
 #### Example
 
@@ -715,7 +719,7 @@ getFile(@Res({ passthrough: true }) res: Response): StreamableFile {
 
 ##### Stream errors
 
-With the Express adapter, if the stream emits an error before any data has been sent, the client receives a `400 Bad Request` response with the error message as its body. If data has already been sent, the response is ended. To customize this behavior, pass a handler to the `setErrorHandler()` method:
+With the Express adapter, if the stream emits an error before any data has been sent, the client receives a `400 Bad Request` response, and the error is logged. Starting with NestJS v12.1.4, the response body no longer contains the error message, which may include the path of the file. If data has already been sent, the response is ended. To customize this behavior, pass a handler to the `setErrorHandler()` method:
 
 ```typescript
 @Get()
@@ -732,7 +736,7 @@ getReport(): StreamableFile {
 }
 ```
 
-The `setErrorLogger()` method replaces the function that logs errors emitted by the response stream while the file is being written to it.
+The `setErrorLogger()` method replaces the function that logs errors: those the default error handler answers, and those the response stream emits while the file is being written to it.
 
 > info **Note** The error handler and the error logger apply to the Express adapter. With the Fastify adapter, a stream error is handled by the [exceptions layer](/exception-filters), so by default the client receives a `500 Internal Server Error` response.
 
