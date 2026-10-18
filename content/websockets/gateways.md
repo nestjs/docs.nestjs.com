@@ -59,6 +59,11 @@ Gateways, guards, pipes, interceptors, and exception filters work the same way o
     <td>JSON string: <code>{{ '{' }} "event": "events", "data": ... {{ '}' }}</code></td>
   </tr>
   <tr>
+    <td>Returning a plain object from a handler (e.g., <code>return data</code>)</td>
+    <td>Delivered only as an acknowledgment, so the client receives it only if it passes an acknowledgment callback</td>
+    <td>Sent to the client as a JSON message, as is, without an <code>event</code>/<code>data</code> envelope. No acknowledgment callback is needed</td>
+  </tr>
+  <tr>
     <td>Sending an event from a handler</td>
     <td>Return <code>{{ '{' }} event, data {{ '}' }}</code> (see <a href="/websockets/gateways#multiple-responses">Multiple responses</a>)</td>
     <td>Return <code>{{ '{' }} event, data {{ '}' }}</code></td>
@@ -105,6 +110,8 @@ handleEvent(data) {
 > info **Hint** The `@SubscribeMessage()` and `@MessageBody()` decorators are imported from the `@nestjs/websockets` package.
 
 > warning **Warning** With socket.io, a plain returned value such as `data` above is delivered to the client only as an **acknowledgment**, so the client receives it only if it passes an acknowledgment callback (see below). To emit a named event back to the client instead, return `{{ '{' }} event, data {{ '}' }}` as described in [Multiple responses](#multiple-responses).
+>
+> With the built-in `WsAdapter`, returning a plain object sends that object to the client as a JSON message. To include an event name, explicitly return an object such as `{{ '{' }} event: 'reply', data {{ '}' }}`.
 
 Once the gateway is created, register it in a module.
 
