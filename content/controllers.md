@@ -69,7 +69,7 @@ This method returns a 200 status code along with the associated response, which 
 
 > warning **Warning** Nest detects when a handler uses either `@Res()` or `@Next()`, which indicates that you have chosen the library-specific option. If both approaches are used at the same time, the standard approach is **automatically disabled** for that route and no longer works as expected. To combine them (for example, to inject the response object only to set cookies or headers while leaving the rest to the framework), set the `passthrough` option to `true` in the `@Res({{ '{' }} passthrough: true {{ '}' }})` decorator.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 #### Request object
 

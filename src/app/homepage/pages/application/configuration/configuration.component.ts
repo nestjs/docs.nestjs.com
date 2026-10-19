@@ -3,7 +3,7 @@ import { BasePageComponent } from '../../page/page.component';
 import { HeaderAnchorDirective } from '../../../../shared/directives/header-anchor.directive';
 import { CopyButtonComponent } from '../../../../shared/components/copy-button/copy-button.component';
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
-import { BannerDevtoolsComponent } from '../../../../shared/components/banner-devtools/banner-devtools.component';
+import { BannerObserveComponent } from '../../../../shared/components/banner-observe/banner-observe.component';
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
@@ -15,7 +15,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         HeaderAnchorDirective,
         CopyButtonComponent,
         TabsComponent,
-        BannerDevtoolsComponent,
+        BannerObserveComponent,
         ExtensionPipe,
     ],
 })

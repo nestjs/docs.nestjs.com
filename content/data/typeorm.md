@@ -423,7 +423,7 @@ async createMany(users: User[]) {
 
 > info **Hint** The `dataSource` is used only to create the `QueryRunner`. However, testing this class would require mocking the entire `DataSource` object, which exposes many methods. Instead, we recommend a helper factory class (e.g., `QueryRunnerFactory`) that implements an interface with only the methods needed to manage transactions. This makes those methods straightforward to mock.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 Alternatively, you can use the callback-style `transaction()` method of the `DataSource` object (see [Creating and using transactions](https://typeorm.io/docs/advanced-topics/transactions/#creating-and-using-transactions) in the TypeORM documentation):
 

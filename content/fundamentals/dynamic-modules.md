@@ -63,7 +63,7 @@ As an example, consider a module that generates the public identifiers of your e
 
 This is where **dynamic modules** come into play. A dynamic module provides an API for importing one module into another and customizing the properties and behavior of that module at the time it is imported.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 #### Dynamic module example
 

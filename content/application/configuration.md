@@ -188,7 +188,7 @@ export default () => {
 
 Now, if the port is outside the specified range, the application throws an error during startup.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 #### Using the `ConfigService`
 
