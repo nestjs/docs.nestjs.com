@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-    selector: 'app-banner-devtools',
-    templateUrl: './banner-devtools.component.html',
+    selector: 'app-banner-observe',
+    templateUrl: './banner-observe.component.html',
     styles: [
         `
       .banner {
@@ -14,4 +14,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
-export class BannerDevtoolsComponent {}
+export class BannerObserveComponent {}

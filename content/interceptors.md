@@ -28,7 +28,7 @@ This means that the `intercept()` method effectively **wraps** the request/respo
 
 Consider, for example, an incoming `POST /cats` request. This request is destined for the `create()` handler defined inside `CatsController`. If an interceptor that doesn't call `handle()` is invoked anywhere along the way, the `create()` method won't be executed. Once `handle()` is called and the `Observable` it returns is subscribed to (Nest subscribes to the stream your `intercept()` method returns), the `create()` handler is triggered. As the handler's result flows through the stream, you can apply additional operations to it before the final result is returned to the caller.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 #### Aspect interception
 

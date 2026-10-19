@@ -372,7 +372,7 @@ async publish() {
 
 The `emit()` method takes two arguments, `pattern` and `payload`. The `pattern` should match one defined in an `@EventPattern()` decorator, while the `payload` is the event data to transmit to the remote microservice. This method returns a **hot `Observable`** (in contrast to the cold `Observable` returned by `send()`), which means that the proxy immediately attempts to deliver the event, whether or not you subscribe to the observable.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 #### Request-scoping
 

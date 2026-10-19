@@ -5,7 +5,7 @@ import { CopyButtonComponent } from '../../../../shared/components/copy-button/c
 import { TabsComponent } from '../../../../shared/components/tabs/tabs.component';
 import { BannerEnterpriseComponent } from '../../../../shared/components/banner-enterprise/banner-enterprise.component';
 import { RouterLink } from '@angular/router';
-import { BannerDevtoolsComponent } from '../../../../shared/components/banner-devtools/banner-devtools.component';
+import { BannerObserveComponent } from '../../../../shared/components/banner-observe/banner-observe.component';
 import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
@@ -19,7 +19,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
         TabsComponent,
         BannerEnterpriseComponent,
         RouterLink,
-        BannerDevtoolsComponent,
+        BannerObserveComponent,
         ExtensionPipe,
     ],
 })

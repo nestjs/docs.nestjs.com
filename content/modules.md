@@ -103,7 +103,7 @@ Registering `CatsService` directly in every module that needs it would also work
 
 Encapsulating `CatsService` in a module such as `CatsModule` and exporting it ensures that every module importing `CatsModule` reuses the same instance. This reduces memory consumption and makes behavior more predictable, because shared state and resources are managed in one place. Sharing services efficiently across the application is one of the key benefits of modularity and dependency injection.
 
-<app-banner-devtools></app-banner-devtools>
+<app-banner-observe></app-banner-observe>
 
 #### Module re-exporting
 
