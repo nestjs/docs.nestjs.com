@@ -23,6 +23,7 @@ The command:
 - Populates the folder with configuration files
 - Creates subfolders for source code (`/src`) and end-to-end tests (`/test`)
 - Populates the subfolders with default files for application components and tests
+- If Observe was set up, offers to link the project to it once the dependencies are installed (in an interactive terminal only). Accepting runs `npx @nestjs/observe link`, which writes the app key and secret into `.env` - see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)
 
 ##### Arguments
 
@@ -179,7 +180,7 @@ $ nest start [name] [options]
 | `--entryFile [entryFile]` | Entry file to run (overrides the `entryFile` setting in `nest-cli.json`).                                                        |
 | `--exec [binary]`       | Binary to run (default: `node`). <br/>Alias `-e`                                                                                   |
 | `--no-shell`            | Do not spawn child processes within a shell (see the Node.js `child_process.spawn()` documentation).                               |
-| `--env-file [path]`     | Load environment variables from a file, relative to the current directory, and expose them to the application on `process.env`. Repeat the option to load several files. |
+| `--env-file [path]`     | Load environment variables from a file, relative to the current directory, and expose them to the application on `process.env`. Repeat the option to load several files. A file that doesn't exist is skipped, with a notice. |
 | `-- [key=value]`        | Command-line arguments that the application can read from `process.argv`.                                                          |
 
 #### nest add
