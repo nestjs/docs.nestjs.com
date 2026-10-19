@@ -24,6 +24,8 @@ export const RECIPES_ROUTES: Routes = [
     redirectTo: '/openapi/introduction',
   },
   { path: 'prisma', redirectTo: splitInto('/data/prisma', PRISMA_SECTIONS) },
+  // A plain redirect: the old recipe's fragments have no match on the new page
+  { path: 'sentry', redirectTo: '/observability/error-monitoring' },
   { path: 'terminus', redirectTo: movedTo('/reliability/terminus') },
   {
     path: 'crud-utilities',
