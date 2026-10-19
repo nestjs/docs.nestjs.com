@@ -1296,7 +1296,7 @@ See [End-to-end testing](/fundamentals/testing#end-to-end-testing) for more abou
 
 #### The store contract
 
-The tutorial wrote the store with Drizzle, with TypeORM and with Redis. This section sums up what any `LockStore` must do, for writing one with another database or ORM. The package README's "Implementing a store" has every rule and the race it prevents.
+The tutorial wrote the store with Drizzle, with TypeORM and with Redis. This section sums up what any `LockStore` must do, for writing one with another database or ORM. The [`LockStore` interface](https://github.com/nestjs/locks/blob/master/lib/interfaces/lock-store.interface.ts) documents the full contract and the races each rule prevents.
 
 **Registration.** The store is an ordinary singleton provider that calls `registerSource(this)` on the injectable `LocksStorage` in its constructor. The registry checks the shape at once, refuses a second registration unless it passes `replace: true`, and locks when `LocksModule` initializes, logging the store in use. With nothing registered, the module uses `InMemoryLockStore`, which excludes callers in one process only. With `NODE_ENV=production`, startup fails instead, unless you set `allowInMemoryStorage: true`.
 
