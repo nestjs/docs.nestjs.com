@@ -124,7 +124,7 @@ ObserveModule.forRoot({
 });
 ```
 
-`endpoint` (default `'https://observe-api.nestjs.com'`) is the base URL of the collector. Telemetry and profiles share it, so the two can never point at different places. To override it without touching the config, set the `OBSERVE_ENDPOINT` environment variable; this is the usual way to point the SDK at a local or self-hosted collector.
+`endpoint` (default `'https://observe-api.nestjs.com'`) is the base URL of the collector. Telemetry and profiles share it, so the two can never point at different places. To override it without touching the config, set the `OBSERVE_ENDPOINT` environment variable. NestJS Observe is a hosted service and `observe-api.nestjs.com` is the only collector it runs; change the endpoint when your traffic has to leave through a forwarding proxy, or to point a test environment at a stub that accepts the batches.
 
 ##### Debugging the SDK itself
 
