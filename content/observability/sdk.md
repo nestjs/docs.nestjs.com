@@ -6,7 +6,9 @@ The `@nestjs/observe` SDK is what gets your application's requests, jobs, errors
 
 #### Installation
 
-Run one command in your project's directory:
+There are two ways to set up the SDK: one command that does it for you, or the same steps by hand.
+
+**With one command.** Run the following in your project's directory:
 
 ```bash
 $ npx @nestjs/observe link
@@ -18,11 +20,13 @@ If the application doesn't use the SDK yet, the command also installs `@nestjs/o
 
 > warning **Warning** The SDK requires `@nestjs/core` v11.1.4 or later (it relies on the `instrument` application option introduced in that release), and `@nestjs/graphql` v13.4.4 or later if your application uses GraphQL. Earlier versions lack the hooks the SDK needs.
 
-To install the SDK by hand instead, and make the edits yourself:
+**By hand.** Install the SDK:
 
 ```bash
 $ npm i @nestjs/observe
 ```
+
+Then make the three edits from the [Quick start](#quick-start) below, generate an API key on your project's **API Keys** page (see [First project](/observability/overview#first-project)), and set the key pair as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET`. This is also the way to go wherever the command leaves the wiring to you.
 
 #### Quick start
 
