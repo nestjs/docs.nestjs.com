@@ -12,6 +12,14 @@ $ npm i @nestjs/observe
 
 > warning **Warning** The SDK requires `@nestjs/core` v11.1.4 or later (it relies on the `instrument` application option introduced in that release), and `@nestjs/graphql` v13.4.4 or later if your application uses GraphQL. Earlier versions lack the hooks the SDK needs.
 
+Then link the project to NestJS Observe, from the same directory:
+
+```bash
+$ npx @nestjs/observe link
+```
+
+The command prints an eight-letter code. Type it at [observe.nestjs.com/link](https://www.observe.nestjs.com/link 'Link a project to NestJS Observe'), signing up first if you don't have an account, and approve. The command then writes the project's key pair into `.env` as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET`, git-ignores `.env`, and adds `--env-file .env` to every script that runs `nest start` (`start`, `start:dev`, and `start:debug` in a `nest new` project). See [Linking from the terminal](#linking-from-the-terminal) for exactly what it changes.
+
 #### Quick start
 
 The integration takes three steps. First, call `createObserveModule()` once, typically in `app.module.ts` or another root-level file. It returns a matched pair - a Nest module and an `instrument` hook - bound to the same configuration:
@@ -88,14 +96,45 @@ ObserveModule.forRoot({
 
 | Option           | Type     | Default  | Description                                                                                                                                                                                                |
 | ---------------- | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `appKey`         | `string` | required | Generated from your project's **API Keys** page - see [First project](/observability/overview#first-project). Keep it out of source control.                                                              |
-| `appSecret`      | `string` | required | Issued alongside `appKey` from the same page. Keep it out of source control.                                                                                                                               |
+| `appKey`         | `string` | required | Written into `.env` as `OBSERVE_APP_KEY` by `npx @nestjs/observe link`, or generated from your project's **API Keys** page - see [First project](/observability/overview#first-project). Keep it out of source control. |
+| `appSecret`      | `string` | required | Issued alongside `appKey`, the same way, and written as `OBSERVE_APP_SECRET`. Keep it out of source control.                                                                                               |
 | `serviceId`      | `string` | required | Identifies this application in your dashboard. If you run multiple instances of the same service, use a value unique per instance (hostname, container id) to tell them apart in the Profiler. |
 | `serviceVersion` | `string` | -        | Identifies the deployment - a semantic version, a commit hash, or any other identifier. Every request and job records the version that served it, which is what powers the **Releases** view.              |
 
 `serviceVersion` is optional but strongly recommended. It lets the dashboard compare each version of an application against the one before it (error rate, latency, and throughput side by side), so a regression introduced by a deploy is visible immediately rather than buried in a week-long chart.
 
 <figure><img src="https://www.observe.nestjs.com/docs/sdk/deployments.webp" alt="Releases" /></figure>
+
+##### Linking from the terminal
+
+`npx @nestjs/observe link` puts a key pair on a developer's machine without copying a secret out of the browser. Run it in the project's directory (the one with `package.json`), or point it there with `--cwd <dir>`:
+
+1. It prints an eight-letter code, such as `BCDF-GHJK`, and opens [observe.nestjs.com/link](https://www.observe.nestjs.com/link 'Link a project to NestJS Observe') in your browser. With `--no-browser`, in CI, or without a terminal, it only prints the address. The code expires after 15 minutes.
+2. Type the code on that page. If you don't have an account yet, you sign up first; if you're signed out, you sign in. Either way, you come back to the code afterwards.
+3. Check the request: the page shows the hostname of the machine and the package name the command sent. Then choose where the key goes. The page proposes your newest project, and in it the application named after your package, or a new application if there isn't one yet. You can change both, including to a new project.
+4. Approve. The dashboard issues a new API key for that application, and the command writes it into the project.
+
+The command changes up to three files:
+
+- **`.env`** receives `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET`, single-quoted, replacing an earlier pair and leaving every other line as it was. A new `.env` is created readable only by you. The quotes are deliberate: a key or secret can contain `$` and `&`, which `dotenv-expand` (or `ConfigModule` with `expandVariables`) would rewrite, and at which a shell sourcing the file would stop.
+- **`.gitignore`** gets a `.env` entry, unless the file is already ignored (as it is in a project generated by `nest new`).
+- **`package.json`**: every script whose command begins with `nest start` gets `--env-file .env`: `start`, `start:dev`, and `start:debug` in a project generated by `nest new`, and a monorepo's per-application scripts as well. Scripts that already pass an env file are left alone, and so is `start:prod` (`node dist/main`). A `start` or `start:dev` script that starts the application some other way is left alone too, but the command names it, so you can load `.env` there yourself (for example, with `node --env-file=.env`).
+
+Nothing is written until the key arrives, so a denied, expired, or interrupted link leaves the project unchanged.
+
+> warning **Warning** Approve only a code you started yourself, and only when it matches your terminal. The code is typed rather than carried in a URL so that nobody can send you a link that approves a key for them.
+
+The key appears on the project's **API Keys** page like any other, named `CLI` followed by the time it was issued, and expires after a year; run the command again for a new one. `.env` stays on the machine that ran the command, so each teammate (or each additional machine) runs `npx @nestjs/observe link` as well and gets a key of its own for the same application.
+
+##### Reading the key pair from the environment
+
+When `appKey` or `appSecret` is unset or empty, or still holds the placeholder that `nest new` generates (`'YOUR_APP_KEY'` and `'YOUR_APP_SECRET'`), `ObserveModule` reads `OBSERVE_APP_KEY` or `OBSERVE_APP_SECRET` from the environment instead. This is what lets a project generated with Observe report once it's linked, without any change to `AppModule`. A value you pass yourself always wins, and the same fallback applies to the options that `forRootAsync()` resolves.
+
+The variables are read when the options are resolved (for `forRoot()`, when the `AppModule` file is imported), so they must already be in `process.env` at that point. The `--env-file` flag loads them before any module runs.
+
+In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment (your platform's secrets or environment settings) rather than shipping `.env`. A project generated by `nest new` runs `node dist/main` for `start:prod`, which doesn't load `.env` anyway, and `nest start` skips an `--env-file` that doesn't exist, so a fresh clone or a CI run without `.env` still starts. Give production a key of its own from the project's **API Keys** page, so revoking a development key never stops it from reporting.
+
+> info **Hint** The `link` command and the environment fallback require `@nestjs/observe` 0.3.15 or later.
 
 ##### Asynchronous configuration
 
@@ -401,7 +440,7 @@ All options at a glance. Options listed under `createObserveModule()` must be se
 | `createObserveModule()` | `traceIdGenerator`                    | How each request obtains its trace id                                     |
 | `createObserveModule()` | `attachTraceIdToLogs`                 | Add the trace id to `ConsoleLogger` output                                |
 | `createObserveModule()` | `skipInstrumentation`                 | Predicate that excludes provider instances from instrumentation           |
-| `forRoot()`             | `appKey`, `appSecret`                 | Project API key pair                                                      |
+| `forRoot()`             | `appKey`, `appSecret`                 | Project API key pair (or `OBSERVE_APP_KEY`, `OBSERVE_APP_SECRET`)         |
 | `forRoot()`             | `endpoint`                            | Collector base URL (or `OBSERVE_ENDPOINT`)                                |
 | `forRoot()`             | `serviceId`, `serviceVersion`         | Application and release identity                                          |
 | `forRoot()`             | `http`, `rpc`, `grpc`, `graphql`      | Per-transport `tags`, `setAttributes`, `getUserId`, `ignore`              |
