@@ -1034,6 +1034,8 @@ export class RedisModule implements OnApplicationShutdown {
 }
 ```
 
+On Redis Cluster, `ACQUIRE` fails with a `CROSSSLOT` error as written: a cluster runs a script only when all its keys hash to the same slot, and the lock's key and the counter don't. Name both under one hash tag, `{{ '{' }}locks{{ '}' }}:key:<key>` and `{{ '{' }}locks{{ '}' }}:fencing-token`: the cluster then hashes only `locks`, so the counter and every lock share one slot, on one shard.
+
 Swap the provider in the application module, and nothing else changes:
 
 ```typescript
