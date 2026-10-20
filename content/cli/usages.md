@@ -102,6 +102,31 @@ $ nest g <schematic> <name> [options]
 | `--type <type>`                 | (`resource` only) Transport layer: `rest`, `graphql-code-first`, `graphql-schema-first`, `microservice`, or `ws`. |
 | `--crud [value]`                | (`resource` only) Whether to generate CRUD entry points (`true` or `false`).                                    |
 
+##### Custom schematics
+
+The Nest CLI uses Angular DevKit schematics. To create your own schematic collection, follow the [Angular Schematics authoring guide](https://angular.dev/tools/cli/schematics-authoring). The collection's `collection.json` file defines the schematics it provides.
+
+After installing the collection package in your Nest project, run one of its schematics by specifying the collection and schematic names:
+
+```bash
+$ npm install --save-dev <collection-package>
+$ nest generate <collection-name>:<schematic-name> <name>
+```
+
+To use a collection by default, add a `collection` property to `nest-cli.json` in the root of your Nest application. If the file doesn’t exist yet, create it there:
+
+```json
+{
+  "collection": "<collection-package>"
+}
+```
+
+To choose a collection for just one command, pass `--collection` (or `-c`):
+
+```bash
+$ nest generate <schematic-name> <name> --collection <collection-package>
+```
+
 #### nest build
 
 Compiles an application or workspace into an output folder.
