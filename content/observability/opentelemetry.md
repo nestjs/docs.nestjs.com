@@ -1,6 +1,53 @@
 ### OpenTelemetry
 
-[OpenTelemetry](https://opentelemetry.io/ 'OpenTelemetry') is the vendor-neutral standard for traces, metrics, and logs. You instrument an application once, send the data to any compatible backend - Jaeger, Grafana Tempo, or one of the many vendors that accept the OpenTelemetry protocol (OTLP) - and change backends later without touching application code. This page shows how to run a Nest application with OpenTelemetry, what it records for Nest, and how it relates to NestJS Observe.
+[OpenTelemetry](https://opentelemetry.io/ 'OpenTelemetry') is the vendor-neutral standard for traces, metrics, and logs. You instrument an application once, send the data to any compatible backend - Jaeger, Grafana Tempo, or one of the many vendors that accept the OpenTelemetry protocol (OTLP) - and change backends later without touching application code.
+
+For a NestJS backend, we recommend [NestJS Observe](/observability/overview) instead. This page explains why, and when OpenTelemetry is still the better choice. If OpenTelemetry is what you need, the [setup](#zero-code-setup) follows below.
+
+#### Why we recommend NestJS Observe
+
+OpenTelemetry instruments a Node.js application from the outside: it patches the HTTP server, the router, and the database driver as they load. It has no way to see the structure Nest builds in between, so a trace reads in the vocabulary of libraries. A slow `POST /orders` in an OpenTelemetry backend looks roughly like this on NestJS 11 (on NestJS 12, the two Nest spans are missing too):
+
+```bash
+POST /orders                          1,812 ms
+  OrdersController.create             1,806 ms
+    create                            1,806 ms
+      pg.query SELECT customers          11 ms
+      POST api.stripe.com             1,747 ms
+```
+
+NestJS Observe instruments the framework from the inside. Nest hands it every provider it creates, through the `instrument` option of `NestFactory.create()`, so every method call on a controller, service, repository, guard, interceptor, or pipe becomes a span named the way you named it. The same request in Observe:
+
+```bash
+POST /orders                          1,812 ms
+  AuthGuard.canActivate                   3 ms
+  OrdersController.create             1,806 ms   self 1 ms
+    OrdersService.create              1,805 ms   self 6 ms
+      CustomersService.findById          12 ms
+        SELECT customers                 11 ms
+      PricingService.quote               38 ms
+      PaymentsService.charge          1,749 ms
+        POST api.stripe.com           1,747 ms
+```
+
+Nobody wrote a span for `PricingService.quote`, and nobody had to guess in advance that it might matter. Because the tree is complete, Observe can compute the time each method spent on its own (self time) instead of leaving it to guesswork. With OpenTelemetry, getting the same tree means adding a span by hand to every method you care about - code that has to be written, kept up to date, and only ever covers what someone already suspected (see [Adding your own spans](#adding-your-own-spans)).
+
+The difference continues past the request:
+
+- **Nothing to run.** An OpenTelemetry pipeline is an SDK, an exporter, usually a collector, and a backend to store, query, and alert on the data. Observe is one command, `npx @nestjs/observe link`, which installs the SDK, wires it into your application, and writes the API key into `.env`. There is no collector and no backend to operate.
+- **Nest's building blocks, recorded as what they are.** Queue consumers, `@Cron()` handlers, GraphQL resolvers, microservice handlers, and WebSocket gateways are each recorded as their own kind of operation, and a BullMQ or Bull job shares a trace with the request that enqueued it.
+- **Kept in step with the framework.** Observe is built and maintained by the Nest team, alongside Nest itself. OpenTelemetry's Nest instrumentation, by contrast, doesn't support NestJS 12 yet (see [What gets recorded for Nest](#what-gets-recorded-for-nest)).
+- **More than traces.** Error monitoring with source context, queue wait times and retries, a per-class breakdown of where time goes, runtime profiling, and releases come with the same SDK, on every plan, free tier included.
+
+Observe is narrower than OpenTelemetry on purpose, and the trade-offs are real:
+
+- It's NestJS on Node.js only. A service written in another language in the same request path doesn't appear in the trace, and services are correlated through the `x-request-id` header (see [Distributed tracing](/observability/distributed-tracing)), not the W3C `traceparent` header that OpenTelemetry propagates.
+- It's a hosted service, and it doesn't export or ingest OTLP today. Its traces can't be sent to an OpenTelemetry backend, and spans from an OpenTelemetry SDK don't appear in Observe.
+- Its library coverage is narrower. Redis and Kafka client calls, for example, aren't recorded as spans.
+
+So choose OpenTelemetry when vendor neutrality, keeping telemetry on your own infrastructure, or one trace across services written in several languages is a hard requirement. For everything else on a NestJS backend - and especially if you have no tracing today because nobody had the week to build a pipeline - start with [NestJS Observe](/observability/overview).
+
+> info **Hint** For a longer discussion of this trade-off, see [NestJS and OpenTelemetry: why we instrument the framework instead](https://dev.to/nestjs/nestjs-and-opentelemetry-why-we-instrument-the-framework-instead-50i6). The two can be installed in the same application, but both hook the database drivers, so try the combination in a staging environment first. They don't share a trace.
 
 > info **Hint** Much of OpenTelemetry's Node.js documentation assumes the compiled application runs as CommonJS. Applications generated by `nest new` on Nest 12 are ES modules, which need an extra loader flag. Both variants are shown below.
 
@@ -125,12 +172,4 @@ export class PricingService {
 
 Every span you start must be ended, including when the work fails, which is what the `finally` block is for. The API package is safe to import even when no SDK is running: without one, the calls do nothing.
 
-#### OpenTelemetry and NestJS Observe
-
-[NestJS Observe](/observability/overview), described in the rest of this chapter, doesn't use OpenTelemetry. It attaches through the `instrument` option of `NestFactory.create()`, which lets it record every provider without patching modules, and it sends data to its own service. If you're choosing between the two, or running both, keep in mind:
-
-- Observe doesn't export or ingest OTLP today. Its traces can't be sent to an OpenTelemetry backend, and spans from an OpenTelemetry SDK don't appear in Observe.
-- Across services, Observe correlates requests through the `x-request-id` header (see [Distributed tracing](/observability/distributed-tracing)), not the W3C `traceparent` header that OpenTelemetry propagates. A trace that passes through a service without the Observe SDK doesn't connect.
-- The two can be installed in the same application, but both hook the database drivers, so try the combination in a staging environment first. They don't share a trace.
-
-OpenTelemetry is the better fit when vendor neutrality, keeping telemetry on your own infrastructure, or a single trace across services written in several languages is a requirement. Observe is built for the case where the backend is NestJS and you want traces that name your own classes and methods without running a collector or adding spans by hand.
+This is the work NestJS Observe does for you: with its SDK installed, every provider method is already a span, and the manual API is only needed for code that isn't a provider method.
