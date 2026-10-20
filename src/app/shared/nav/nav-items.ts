@@ -167,6 +167,7 @@ export const NAV_ITEMS: NavItem[] = [
       },
       { title: 'Dashboard', path: '/observability/dashboard' },
       { title: 'MCP server', path: '/observability/mcp-server' },
+      { title: 'OpenTelemetry', path: '/observability/opentelemetry' },
     ],
   },
   {
