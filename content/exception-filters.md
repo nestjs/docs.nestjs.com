@@ -54,6 +54,8 @@ By default, the JSON response body contains two properties:
 
 To override only the message portion of the JSON response body, supply a string in the `response` argument. To override the entire JSON response body, pass an object in the `response` argument. Nest serializes the object and returns it as the JSON response body.
 
+> info **Hint** An `Error` instance passed as the `response` argument is not serialized into the response body. Nest sends the default `{{ '{' }} statusCode, message {{ '}' }}` body for the status instead, so the properties of the error are not exposed to the client. To keep the original error for logging, pass it as the `cause` instead.
+
 The second constructor argument, `status`, should be a valid HTTP status code. Best practice is to use the `HttpStatus` enum imported from `@nestjs/common`.
 
 An optional **third** constructor argument, `options`, can be used to provide an error [cause](https://nodejs.org/en/blog/release/v16.9.0/#error-cause). The `cause` object is not serialized into the response object, but it is useful for logging, as it provides information about the inner error that caused the `HttpException` to be thrown.
