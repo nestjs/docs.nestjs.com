@@ -300,7 +300,7 @@ The `ConfigModule` lets you define and load multiple custom configuration files,
 @@filename(config/database.config)
 export default registerAs('database', () => ({
   host: process.env.DATABASE_HOST,
-  port: process.env.DATABASE_PORT || 5432
+  port: Number(process.env.DATABASE_PORT ?? 5432)
 }));
 ```
 
