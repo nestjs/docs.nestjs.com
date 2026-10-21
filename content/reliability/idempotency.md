@@ -133,6 +133,21 @@ Errors can be stored too. [Tune TTLs and failure handling](/reliability/idempote
 
 Because the interceptor is global, it runs outside the interceptors of your controllers and handlers. The stored body is exactly what the client received, after serializers and other interceptors ran, and a replay skips all of them. Pipes run inside it, so a `ValidationPipe` 400 is stored like any other client error. Other global interceptors are a different matter, as the production checklist explains.
 
+The fingerprint uses the body as Nest's body parser left it. A multipart upload is parsed later, by [`FileInterceptor()`](/http/file-upload) inside the idempotency interceptor, so the file isn't part of the fingerprint: a reused key with a different file gets the first response replayed, not a 422. For an upload endpoint, have clients send a hash of the body in the `Content-Digest` header ([RFC 9530](https://www.rfc-editor.org/rfc/rfc9530)), and make the fingerprint use that header:
+
+```typescript
+@Post('receipts')
+@Idempotent({
+  fingerprint: (_body, context) => context.switchToHttp().getRequest().headers['content-digest'],
+})
+@UseInterceptors(FileInterceptor('file'))
+uploadReceipt(@UploadedFile() file: Express.Multer.File) {
+  // ...
+}
+```
+
+A request without the header falls back to the scope, the method and the URL, so reject uploads that don't send it.
+
 Until you [store keys in PostgreSQL](/reliability/idempotency#store-keys-in-postgresql), records live in memory, in the default `InMemoryIdempotencyStore`. That's fine for a single instance in development, but every instance of the API has its own records, and they're lost on restart. When `NODE_ENV` is `production`, the app refuses to start this way, with an error that says how to register a store.
 
 #### Send keys from the mobile app
