@@ -182,13 +182,13 @@ They belong to the store: your migrations don't create them, and your own tables
 In production, apply the migrations before the new version of your application starts, as you apply your own, so that no process changes the schema while it boots: in the middle of a rolling deploy, that would lock busy tables, and a least-privilege database user can't do it anyway. The package's command line does it from your deploy step, next to `npx drizzle-kit migrate`. It reads the database from `DATABASE_URL`, or from `--url`, and needs `pg` installed:
 
 ```bash
-$ npx nest-workflows status
+$ npx @nestjs/workflows status
 Schema "nest_workflows" is at version 0; this version of @nestjs/workflows needs version 1.
-$ npx nest-workflows migrate
+$ npx @nestjs/workflows migrate
 Migrated schema "nest_workflows" to version 1 (applied 1).
 ```
 
-`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx nest-workflows sql`, or from `PostgresWorkflowStore.migrationSql()` in code: the statements of every migration, one per paragraph, with the bookkeeping that records the version. Run them in one transaction, as TypeORM's and Drizzle's migrators do. With TypeORM, that's a migration of your own, next to the ones it generates for your entities:
+`status` exits with 1 while the schema is behind, which makes it a check for CI. To apply the migrations with your own migration tool instead, take their SQL from `npx @nestjs/workflows sql`, or from `PostgresWorkflowStore.migrationSql()` in code: the statements of every migration, one per paragraph, with the bookkeeping that records the version. Run them in one transaction, as TypeORM's and Drizzle's migrators do. With TypeORM, that's a migration of your own, next to the ones it generates for your entities:
 
 ```typescript
 @@filename(typeorm/migrations/1790801342207-WorkflowStore)
@@ -210,7 +210,7 @@ With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> st
 
 ```bash
 $ npx drizzle-kit generate --custom --name=workflows
-$ npx nest-workflows sql --statement-breakpoints > drizzle/0001_workflows.sql
+$ npx @nestjs/workflows sql --statement-breakpoints > drizzle/0001_workflows.sql
 ```
 
 On MySQL, `MySqlWorkflowStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:
@@ -293,7 +293,7 @@ export class AppModule {}
 - **Bounded keys.** Ids, names and keys are indexed columns of limited length. An instance id, a workflow or signal name, a signal's `key` and `id`, and a concurrency or rate-limit key hold 255 characters, a schedule id 230, and a step, sleep or wait name 512. `start()` and `signal()` reject a longer one with a `RangeError` before anything is written. Keys still compare exactly, as on PostgreSQL.
 - **Your transactions.** `start()` and `signal()` with the `transaction` option work at REPEATABLE READ, MySQL's default, and at READ COMMITTED: the wake-up reads the waits with a locking read, which also sees those committed after your transaction's snapshot. Avoid SERIALIZABLE, where MySQL turns plain reads into locking ones: a `start()` in such a transaction would hold every signal up until the transaction ends.
 - **Deadlocks.** MySQL breaks a deadlock by rolling back one of the transactions, with error 1213 (`ER_LOCK_DEADLOCK`). The store runs its own transactions again. In yours, the rollback also took your writes, so the error reaches your code: run the transaction again. A transaction that writes an order and then signals, while another one signals and then writes the same order, deadlocks that way.
-- **Migrations.** MySQL commits each DDL statement on its own, so the migrations can't run in one transaction. The store and `npx nest-workflows migrate` apply them one statement at a time, under a lock (`GET_LOCK()`), so processes that start together still migrate once, and a run that stopped halfway resumes where it stopped. The command line takes a `mysql://` URL and then needs `mysql2`, and `npx nest-workflows sql --dialect mysql` prints the SQL. With your own tool, apply the statements in order, each once, one per call, as the TypeORM migration above does: for drizzle-kit, whose MySQL migrator sends one statement per breakpoint, add `--statement-breakpoints`.
+- **Migrations.** MySQL commits each DDL statement on its own, so the migrations can't run in one transaction. The store and `npx @nestjs/workflows migrate` apply them one statement at a time, under a lock (`GET_LOCK()`), so processes that start together still migrate once, and a run that stopped halfway resumes where it stopped. The command line takes a `mysql://` URL and then needs `mysql2`, and `npx @nestjs/workflows sql --dialect mysql` prints the SQL. With your own tool, apply the statements in order, each once, one per call, as the TypeORM migration above does: for drizzle-kit, whose MySQL migrator sends one statement per breakpoint, add `--statement-breakpoints`.
 
 For another database, write a store of your own: [The store contract](/reliability/workflows#the-store-contract) says what it must do.
 
@@ -1589,7 +1589,7 @@ A codec of your own implements `WorkflowPayloadCodec`: an `id`, stored with each
 - Call `enableShutdownHooks()`, and keep `shutdownTimeout` below your platform's grace period (30 seconds by default on Kubernetes).
 - Choose `leaseDuration` deliberately. It's how long a crashed process's instances wait before another process takes over, and a process whose event loop stalls for longer loses its instances. Lease expiry compares timestamps written by different hosts, so keep their clocks in sync (NTP) and `leaseDuration` well above any skew between them.
 - Register a store on your database: `PostgresWorkflowStore`, `MySqlWorkflowStore`, or one of your own. In memory, or in a file on the container's disk, state dies with the instance: the in-memory default loses every running order on restart, and startup refuses it in production. Run the contract suite against a store of your own in CI, on its database, with `concurrent: true`.
-- Apply the store's migrations before a new version starts, with `npx nest-workflows migrate` or your migration tool, and check them in CI with `npx nest-workflows status`. With `NODE_ENV=production`, the store doesn't migrate at startup: a schema that's behind fails it instead.
+- Apply the store's migrations before a new version starts, with `npx @nestjs/workflows migrate` or your migration tool, and check them in CI with `npx @nestjs/workflows status`. With `NODE_ENV=production`, the store doesn't migrate at startup: a schema that's behind fails it instead.
 - Run as many workers as you like, on as many hosts. Size the connection pool for them: each running instance renews its lease and writes its journal through the pool, and each poll holds a connection for its claim.
 - Start workflows in the transaction that writes their business rows (`transaction: tx`, or the `EntityManager` with TypeORM), so a crash between the two can't leave an order that nothing fulfils. Pass the transaction, never the root database. With CQRS, publish the events inside that transaction, with the transaction in the dispatcher context.
 - Keep transactions that send signals short: signals and the suspensions that register waits queue behind them. On PostgreSQL, keep them READ COMMITTED, and the database's default isolation too: the store refuses a stricter one. On MySQL, keep them REPEATABLE READ or READ COMMITTED, and run a transaction again when it fails with a deadlock (error 1213).
@@ -1693,7 +1693,7 @@ A longer one fails with a `RangeError` that names it, before any SQL. `migrate()
 
 ##### Command line
 
-`npx nest-workflows` applies either store's migrations from a deploy step or checks them in CI. It takes `--url` (default `DATABASE_URL`) and `--schema` (default `nest_workflows`). The URL picks the store: `postgres://` or `postgresql://` for PostgreSQL, which needs `pg` installed, and `mysql://` for MySQL, which needs `mysql2`.
+`npx @nestjs/workflows` applies either store's migrations from a deploy step or checks them in CI. It takes `--url` (default `DATABASE_URL`) and `--schema` (default `nest_workflows`). The URL picks the store: `postgres://` or `postgresql://` for PostgreSQL, which needs `pg` installed, and `mysql://` for MySQL, which needs `mysql2`.
 
 | Command | What it does |
 | --- | --- |
