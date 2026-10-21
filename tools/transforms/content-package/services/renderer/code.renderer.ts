@@ -6,6 +6,10 @@ import {
   appendEmptyLine,
   escapeAts,
 } from '../../../shared';
+import {
+  packageManagerLabel,
+  packageManagerVariants,
+} from '../../../../../src/app/shared/utils/package-managers';
 
 const encodedSpecialChar = '&amp;#125';
 
@@ -74,6 +78,20 @@ export function applyCodeRenderer(renderer: Renderer) {
         return `<app-copy-button>${escaped}</app-copy-button>`;
       }
       return escaped;
+    }
+    // An install command gets a package manager switch in a header bar, where
+    // a filename snippet has its JS/TS switch
+    if (
+      !skipCopyButton &&
+      (language === 'bash' || language === 'shell') &&
+      packageManagerVariants(code)
+    ) {
+      const label = packageManagerLabel('npm');
+      return (
+        '<div class="pm-switch"><div class="filename">' +
+        `<button type="button" aria-label="${label}">npm</button>` +
+        `</div>${escaped}</div>\n`
+      );
     }
     return escaped;
   };

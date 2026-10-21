@@ -15,6 +15,10 @@ import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-bash';
+import {
+  restorePackageManager,
+  switchPackageManager,
+} from '../../../shared/utils/package-manager-switch';
 
 /** Roughly what a search result shows before it cuts the snippet off. */
 const DESCRIPTION_MAX_LENGTH = 160;
@@ -52,6 +56,9 @@ function summarize(text: string): string {
     template: ``,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
+    host: {
+        '(click)': 'onPackageManagerSwitch($event)',
+    },
 })
 export class BasePageComponent implements AfterViewChecked, AfterViewInit {
   private readonly applicationRef = inject(ApplicationRef);
@@ -71,6 +78,12 @@ export class BasePageComponent implements AfterViewChecked, AfterViewInit {
   ngAfterViewInit() {
     this.updateDescription();
     this.resolveFragmentLinks();
+    restorePackageManager(this.nativeElement);
+  }
+
+  /** The package manager switch of install commands, on every page. */
+  protected onPackageManagerSwitch(event: Event) {
+    switchPackageManager(this.nativeElement, event);
   }
 
   /**

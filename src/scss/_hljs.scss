@@ -24,6 +24,48 @@
   border-top-right-radius: 0;
 }
 
+// An install command: the header bar of a filename snippet, with a package
+// manager switch placed and styled like the JS/TS switch
+.pm-switch {
+  // One box with the margins of a code block, so that the bar and the code
+  // stay together in a hint and next to the floated ad
+  display: flow-root;
+  margin: 35px 0;
+
+  blockquote & {
+    margin: 20px 0;
+  }
+
+  > .filename,
+  > pre[class*='language-'] {
+    margin: 0;
+  }
+
+  button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    padding: 12px 20px;
+    border: 0;
+    background: none;
+    color: #dfdfdf;
+    font: inherit;
+    font-weight: 600;
+    letter-spacing: inherit;
+    cursor: pointer;
+
+    &:hover {
+      color: #efefef;
+    }
+
+    // The bar clips anything outside it
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+  }
+}
+
 code {
   font-family: Inconsolata, Consolas, 'Courier New', monospace;
   font-display: swap;
