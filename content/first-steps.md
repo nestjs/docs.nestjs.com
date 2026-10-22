@@ -102,6 +102,44 @@ When you pass a type to the `NestFactory.create()` method, as in the example bel
 const app = await NestFactory.create<NestExpressApplication>(AppModule);
 ```
 
+##### Using the Node adapter
+
+Starting with v12.3, we recommend running new applications on the Node adapter. It is not the default yet, so install the package:
+
+```bash
+$ npm i --save @nestjs/platform-node
+```
+
+Then pass a `NodeAdapter` instance to `NestFactory.create()` in the `main.ts` file:
+
+```typescript
+@@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { NestNodeApplication, NodeAdapter } from '@nestjs/platform-node';
+import { AppModule } from './app.module.js';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestNodeApplication>(
+    AppModule,
+    new NodeAdapter(),
+  );
+  await app.listen(process.env.PORT ?? 3000);
+}
+await bootstrap();
+@@switch
+import { NestFactory } from '@nestjs/core';
+import { NodeAdapter } from '@nestjs/platform-node';
+import { AppModule } from './app.module.js';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, new NodeAdapter());
+  await app.listen(process.env.PORT ?? 3000);
+}
+await bootstrap();
+```
+
+Nothing else in the application changes: controllers, providers, and most Express middleware work as they are. See [Node adapter](/http/performance#node-adapter) for the few places where it differs from Express.
+
 #### Running the application
 
 Once the installation is complete, run the following command to start the application and listen for inbound HTTP requests:
