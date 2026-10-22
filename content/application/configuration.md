@@ -80,6 +80,37 @@ ConfigModule.forRoot({
 });
 ```
 
+#### Native `.env` support
+
+Node.js can load a `.env` file by itself, with the `--env-file` flag (the `nest start --env-file` option shown above relies on it) or with the `process.loadEnvFile()` method. To let Node.js load the file and keep using `ConfigModule` for everything else, set `ignoreEnvFile` to `true` as shown above, so that the module reads only `process.env`:
+
+```bash
+$ node --env-file=.env dist/main.js
+```
+
+Since the variables are already in `process.env` when `forRoot()` runs, validation, `ConfigService#get()`, and `registerAs()` factories work as usual. `ConfigModule` treats these variables as predefined, though, so they're validated only while `validatePredefined` keeps its default value of `true`. A variable that is already set in the runtime environment always wins over the file (there's no equivalent of the `override` option), and with several `--env-file` flags, the last file takes precedence, which is the opposite of `envFilePath`.
+
+`process.loadEnvFile()` must run before `AppModule` is imported, because `forRoot()` reads `process.env` while the `app.module` file is being evaluated. A call in the body of `main.ts` comes too late, so put it in a separate file and import that file first:
+
+```typescript
+@@filename(main)
+import './load-env.js'; // contains only process.loadEnvFile()
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module.js';
+```
+
+Alternatively, keep `ConfigModule` in charge of loading the files (`envFilePath`, `override`, and so on) and replace only the parser through the `parser` option. The parser receives the contents of each file as a `Buffer` and returns the key/value pairs (the default is `dotenv.parse`). Since `util.parseEnv()` accepts only a string, convert the buffer first:
+
+```typescript
+import { parseEnv } from 'node:util';
+
+ConfigModule.forRoot({
+  parser: (buf) => parseEnv(buf.toString()),
+});
+```
+
+> warning **Warning** The Node.js parser behind these APIs isn't fully compatible with dotenv. For example, a UTF-8 BOM ends up in the first key name, a quote inside a quoted value ends the value (`'it's here'` becomes `it`), and a value made only of spaces swallows the next line, so the variable defined there is lost. Its behavior has also changed across Node.js 20.x and 22.x minor releases. Node.js doesn't expand variables, and `parseEnv()` returns the keys sorted by name, so don't combine the `parser` option with [`expandVariables`](/application/configuration#expandable-variables): a reference to a variable whose name sorts later resolves as if that variable weren't set.
+
 #### Use module globally
 
 To use `ConfigModule` in other modules, you need to import it (as with any Nest module). Alternatively, declare it as a [global module](/modules#global-modules) by setting the `isGlobal` property of the options object to `true`, as shown below. In that case, once `ConfigModule` is loaded in the root module (e.g., `AppModule`), you don't need to import it in other modules.
