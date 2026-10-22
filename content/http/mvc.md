@@ -57,6 +57,8 @@ await bootstrap();
 
 This tells Express that the `public` directory stores static assets, the `views` directory contains templates, and the `hbs` template engine renders HTML output.
 
+> info **Hint** The same calls work with the `NodeAdapter`: create the application with `new NodeAdapter()` and the `NestNodeApplication` type instead (see [Node adapter](/http/performance#node-adapter)). The Node adapter supports the `@Render()` decorator, but not the `res.render()` method used in [Dynamic template rendering](/http/mvc#dynamic-template-rendering) below.
+
 #### Template rendering
 
 Now, create a `views` directory with an `index.hbs` template inside it. The template prints a `message` passed from the controller:
@@ -204,7 +206,7 @@ A working example is available in the [15-mvc sample](https://github.com/nestjs/
 
 #### Fastify
 
-As mentioned in the [Performance (Fastify)](/http/performance) chapter, you can use any compatible HTTP provider with Nest. One such library is [Fastify](https://github.com/fastify/fastify). To create an MVC application with Fastify, install the following packages:
+As mentioned in the [HTTP adapters](/http/performance) chapter, you can use any compatible HTTP provider with Nest. One such library is [Fastify](https://github.com/fastify/fastify). To create an MVC application with Fastify, install the following packages:
 
 ```bash
 $ npm i --save @fastify/static @fastify/view handlebars

@@ -412,7 +412,7 @@ export class AdminController {
 }
 ```
 
-> warning **Warning** Since **Fastify** does not support nested routers, use the default Express adapter if you rely on sub-domain routing.
+> warning **Warning** Since **Fastify** does not support nested routers, use the default Express adapter or the Node adapter if you rely on sub-domain routing.
 
 Like a route `path`, the `host` option can use tokens to capture the dynamic value at that position in the host name, as the host parameter token in the `@Controller()` decorator below shows. You can access host parameters declared this way with the `@HostParam()` decorator, added to the method signature.
 
