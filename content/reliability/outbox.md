@@ -908,6 +908,8 @@ export class OutboxMetrics implements OnModuleInit {
 
 Each event is also published on a [`node:diagnostics_channel`](https://nodejs.org/api/diagnostics_channel.html) channel, `nestjs:outbox:published` and so on. Tracing and metrics libraries can subscribe to those without any Nest code, and they see every Nest application in the process.
 
+Catch errors inside your subscribers. RxJS and `diagnostics_channel` both rethrow a subscriber's error as an uncaught exception, which stops the process. The relay has already saved the message's outcome by then, so the message itself is safe.
+
 The example application runs this section against a PostgreSQL server: two relays sharing 20 orders, three instances (one of them API-only) placing and cancelling 12 orders with every message published once and each order's events in order, a transaction that waits for another instance's lock on the same key, an instance that crashes holding a lease, and a graceful shutdown.
 
 #### Try it
@@ -1338,7 +1340,7 @@ A message passed to `outbox.add(tx, message)` ([Save the order and its messages 
 
 ##### Events
 
-`OutboxEvents.events$` emits each event, and publishes it on its `node:diagnostics_channel` channel. Every payload has `type` and the `message`. [Run several instances](/reliability/outbox#run-several-instances) counts them.
+`OutboxEvents.events$` emits each event, and publishes it on its `node:diagnostics_channel` channel. Every payload has `type` and the `message`. [Run several instances](/reliability/outbox#run-several-instances) counts them. Catch errors inside your subscribers: RxJS and `diagnostics_channel` both rethrow a subscriber's error as an uncaught exception.
 
 | Event | Channel | Other fields | When |
 | --- | --- | --- | --- |
