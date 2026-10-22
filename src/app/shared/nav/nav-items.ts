@@ -319,6 +319,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Serve static', path: '/recipes/serve-static' },
       { title: 'Commander', path: '/recipes/nest-commander' },
       { title: 'Async local storage', path: '/recipes/async-local-storage' },
+      { title: 'Socket activation', path: '/recipes/socket-activation' },
     ],
   },
   {
