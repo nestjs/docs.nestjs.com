@@ -138,7 +138,24 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-Enabling `trust proxy` lets you retrieve the original IP address from the `X-Forwarded-For` header. You can also override the `getTracker()` method to extract the IP address from this header instead of relying on `req.ip`. The following example works for both Express and Fastify:
+For the Fastify adapter, pass the `trustProxy` option instead:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter({ trustProxy: 'loopback' }), // Trust requests from the loopback address
+);
+@@switch
+const app = await NestFactory.create(
+  AppModule,
+  new FastifyAdapter({ trustProxy: 'loopback' }), // Trust requests from the loopback address
+);
+```
+
+> warning **Warning** In Fastify v5.12.1 and later, which `@nestjs/platform-fastify` v12 installs, a number passed as `trustProxy` (a hop count such as `1`) makes Fastify trust no proxy at all. `request.ip` is then the proxy's address, and the throttler counts every client behind the proxy as one. Pass the address or range of your proxy instead, as in the example above.
+
+Enabling `trust proxy` lets you retrieve the original IP address from the `X-Forwarded-For` header. You can also override the `getTracker()` method to extract the IP address from this header instead of relying on `req.ip`. The following example is for Express:
 
 ```typescript
 @@filename(throttler-behind-proxy.guard)
@@ -153,7 +170,7 @@ export class ThrottlerBehindProxyGuard extends ThrottlerGuard {
 }
 ```
 
-> info **Hint** See the request object API for [Express](https://expressjs.com/en/api.html#req.ips) and [Fastify](https://www.fastify.io/docs/latest/Reference/Request/).
+> info **Hint** On Fastify, `request.ips` is ordered from the closest address to the furthest, so its first entry is the proxy's address, and this guard would count every client behind the proxy as one. Keep the default tracker there, which uses `request.ip`. See the request object API for [Express](https://expressjs.com/en/api.html#req.ips) and [Fastify](https://www.fastify.io/docs/latest/Reference/Request/).
 
 #### WebSockets
 
