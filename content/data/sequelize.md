@@ -48,8 +48,8 @@ The `forRoot()` method supports all the configuration properties exposed by the 
     <td>If <code>true</code>, models will be loaded automatically (default: <code>false</code>)</td>
   </tr>
   <tr>
-    <td><code>keepConnectionAlive</code></td>
-    <td>If <code>true</code>, connection will not be closed on the application shutdown (default: <code>false</code>)</td>
+    <td><code>autoCloseConnection</code></td>
+    <td>If <code>true</code>, the connection is closed when the application shuts down (default: <code>true</code>)</td>
   </tr>
   <tr>
     <td><code>synchronize</code></td>
@@ -438,7 +438,7 @@ It's also possible to inject any `Sequelize` instance to the providers:
       useFactory: (albumsSequelize: Sequelize) => {
         return new AlbumsService(albumsSequelize);
       },
-      inject: [getDataSourceToken('albumsConnection')],
+      inject: [getConnectionToken('albumsConnection')],
     },
   ],
 })
