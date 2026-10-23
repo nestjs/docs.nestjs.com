@@ -128,7 +128,7 @@ await app.listen(process.env.PORT ?? 3000);
 
 Versioning lets you version controllers and individual routes, and also lets certain resources opt out of versioning. Usage is the same regardless of the versioning type your application uses.
 
-> warning **Notice** If versioning is enabled for the application but a controller or route does not specify a version (and no [global default version](/http/versioning#global-default-version) is set), any request to that controller or route receives a `404` response status. Similarly, a request containing a version that has no corresponding controller or route also receives a `404` response status.
+> warning **Notice** If versioning is enabled for the application but a controller or route does not specify a version (and no [global default version](/http/versioning#global-default-version) is set), that controller or route behaves like a [`VERSION_NEUTRAL`](/http/versioning#version-neutral) one. With URI Versioning, it is served only at its path without a version (`/cats`, while `/v1/cats` receives a `404` response status). With the other versioning types, it is served whatever version the request contains, or none. A request containing a version that has no corresponding controller or route receives a `404` response status, as does a request without a version when only versioned controllers or routes match its path.
 
 #### Controller versions
 
