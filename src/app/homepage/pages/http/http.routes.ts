@@ -48,7 +48,7 @@ export const HTTP_ROUTES: Routes = [
   {
     path: 'performance',
     component: PerformanceComponent,
-    data: { title: 'Performance (Fastify)' },
+    data: { title: 'HTTP adapters' },
   },
   {
     path: 'webhooks',

@@ -8,6 +8,8 @@ To handle file uploads, Nest provides a built-in module based on the [multer](ht
 
 > info **Hint** If your application runs on the `FastifyAdapter`, the same interceptors are available from the `@nestjs/platform-fastify` package, backed by [@fastify/multipart](https://github.com/fastify/fastify-multipart) instead of Multer, and the decorators and pipes described in this chapter work unchanged. Only the import path changes - see the [Fastify](/http/file-upload#fastify) section below.
 
+> info **Hint** If your application runs on the `NodeAdapter`, import the interceptors and `MulterModule` from `@nestjs/platform-node` instead of `@nestjs/platform-express`. They are the same Multer-based interceptors, so everything in this chapter applies unchanged.
+
 For type safety, install the Multer type definitions:
 
 ```shell
@@ -441,7 +443,7 @@ To store uploads in S3, Cloudflare R2 or another external store without bufferin
 
 #### Fastify
 
-Starting with NestJS v12.1, applications running on the `FastifyAdapter` (see [Performance (Fastify)](/http/performance)) can handle file uploads with the same API, backed by the [@fastify/multipart](https://github.com/fastify/fastify-multipart) plugin instead of Multer. The interceptors described in this chapter take the same arguments and options, populate the request in the same way, and fail with the same error responses, while `@UploadedFile()`, `@UploadedFiles()`, `ParseFilePipe`, `ParseFilePipeBuilder` and the built-in file validators work unchanged.
+Starting with NestJS v12.1, applications running on the `FastifyAdapter` (see [Fastify adapter](/http/performance#fastify-adapter)) can handle file uploads with the same API, backed by the [@fastify/multipart](https://github.com/fastify/fastify-multipart) plugin instead of Multer. The interceptors described in this chapter take the same arguments and options, populate the request in the same way, and fail with the same error responses, while `@UploadedFile()`, `@UploadedFiles()`, `ParseFilePipe`, `ParseFilePipeBuilder` and the built-in file validators work unchanged.
 
 First, install the plugin:
 
@@ -738,7 +740,7 @@ getReport(): StreamableFile {
 
 The `setErrorLogger()` method replaces the function that logs errors: those the default error handler answers, and those the response stream emits while the file is being written to it.
 
-> info **Note** The error handler and the error logger apply to the Express adapter. With the Fastify adapter, a stream error is handled by the [exceptions layer](/exception-filters), so by default the client receives a `500 Internal Server Error` response.
+> info **Note** The error handler and the error logger apply to the Express and Node adapters. With the Fastify adapter, a stream error is handled by the [exceptions layer](/exception-filters), so by default the client receives a `500 Internal Server Error` response.
 
 ##### Cross-platform support
 

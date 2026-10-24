@@ -41,7 +41,7 @@ const adapterHost = app.get(HttpAdapterHost);
 const httpAdapter = adapterHost.httpAdapter;
 ```
 
-The `httpAdapter` is the HTTP adapter instance that wraps the underlying framework. It is an instance of either `ExpressAdapter` or `FastifyAdapter` (both classes extend `AbstractHttpAdapter`).
+The `httpAdapter` is the HTTP adapter instance that wraps the underlying framework. It is an instance of `ExpressAdapter`, `FastifyAdapter`, or `NodeAdapter` (all of them extend `AbstractHttpAdapter`).
 
 The adapter object exposes several methods for interacting with the HTTP server. To access the library instance (e.g., the Express instance) directly, call the `getInstance()` method:
 
