@@ -95,7 +95,7 @@ Custom Versioning uses any aspect of the request to specify the version (or vers
 
 If the requester provides multiple versions, the extractor function can return an array of strings sorted from the highest version to the lowest. Versions are matched to routes in order from highest to lowest.
 
-If the `extractor` returns an empty string or array, no routes are matched and a 404 is returned.
+If the `extractor` returns an empty string or array, no versioned route is matched, so a request to one receives a `404` response status. [`VERSION_NEUTRAL`](/http/versioning#version-neutral) routes still match, as do routes that do not specify a version when no [global default version](/http/versioning#global-default-version) is set.
 
 For example, if an incoming request specifies that it supports versions `1`, `2`, and `3`, the `extractor` **must** return `['3', '2', '1']`. This ensures that the highest possible route version is selected first.
 
