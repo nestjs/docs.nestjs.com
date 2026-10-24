@@ -200,11 +200,11 @@ Lifecycle hooks are now called by component hierarchy level. This can change the
 
 If your application relies on a specific hook order between related providers, review that flow during the upgrade and update any assumptions in initialization logic, teardown logic, or tests.
 
-#### `@Optional()` is no longer inherited
+#### `@Optional()` is no longer inherited by a redeclared constructor
 
-Nest now reads the optional markers of constructor parameters with `Reflect.getOwnMetadata`, so a subclass no longer inherits the markers its parent declared. Parameter types are still inherited. As a result, a subclass without its own constructor keeps its parent's parameters but loses their optional status, and Nest throws `UnknownDependenciesException` where v11 resolved the parameter as `undefined`.
+Nest now reads the optional markers of constructor parameters from the class that declares the constructor. A subclass that declares its own constructor no longer inherits the markers of its parent's constructor, so Nest throws `UnknownDependenciesException` where v11 resolved such a parameter as `undefined`.
 
-This is deliberate: a dependency that was genuinely missing used to resolve to `undefined` silently. Give the subclass its own constructor and declare the marker again:
+This is deliberate: a dependency that was genuinely missing used to resolve to `undefined` silently. Declare the marker again in the subclass's constructor:
 
 ```typescript
 @Injectable()
@@ -214,6 +214,8 @@ class Child extends Base {
   }
 }
 ```
+
+Starting with NestJS v12.1, a subclass without its own constructor keeps the optional markers of its parent's constructor, as in v11. Versions 12.0.x dropped them in this case too.
 
 #### class-validator and class-transformer
 
