@@ -266,6 +266,8 @@ export class CatsController {
 }
 ```
 
+> warning **Notice** Register a version-neutral controller or route, or one that does not specify a version when no [global default version](/http/versioning#global-default-version) is set, after any versioned controllers or routes that share its path: list it later in the module's `controllers` array, declare it below them in the same controller, or put it in a module registered after theirs. A module's own controllers are registered before those of the modules it imports, and imported modules in the order of the `imports` array. With the Express adapter and any versioning type other than URI Versioning, routes that share a path are tried in registration order, so a version-neutral route registered first also receives the requests meant for the versioned ones.
+
 #### Global default version
 
 If you don't want to provide a version for each controller or individual route, or you want a specific version to act as the default for every controller or route that doesn't specify one, set the `defaultVersion` as follows:
