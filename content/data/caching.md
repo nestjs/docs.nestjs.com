@@ -52,7 +52,7 @@ To add an item to the cache, use the `set()` method:
 await this.cacheManager.set('key', 'value');
 ```
 
-> warning **Note** The default in-memory store is a Keyv instance, which serializes values to JSON before storing them (Buffers are also supported). Store only JSON-serializable values: class instances come back as plain objects, `Date` objects come back as strings, and symbols can't be stored.
+> warning **Note** The default in-memory store keeps a reference to the value instead of a copy: `get()` returns the same object that was passed to `set()`, so changing that object afterwards also changes the cached entry. Treat cached values as read-only, or copy a value before changing it. The Keyv stores in [Using alternative Cache stores](/data/caching#using-alternative-cache-stores) serialize values to JSON instead, so class instances come back as plain objects and `Date` objects come back as strings.
 
 You can specify a TTL (expiration time in milliseconds) for a specific key, as follows:
 
