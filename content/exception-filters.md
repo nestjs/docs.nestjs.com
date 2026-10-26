@@ -199,8 +199,9 @@ The response then carries the code alongside the usual fields:
 ```json
 {
   "message": "Password is too weak",
-  "errorCode": "WEAK_PASSWORD",
-  "statusCode": 400
+  "error": "Bad Request",
+  "statusCode": 400,
+  "errorCode": "WEAK_PASSWORD"
 }
 ```
 
