@@ -457,10 +457,10 @@ For more advanced use cases, you may need to access the underlying driver instan
 To do so, use the `unwrap()` method, which returns the underlying driver instance. The generic type parameter specifies the type of driver instance you expect.
 
 ```typescript
-const netServer = this.client.unwrap<Server>();
+const netSocket = this.client.unwrap<Socket>();
 ```
 
-Here, `Server` is a type imported from the `net` module.
+Here, `Socket` is a type imported from the `net` module.
 
 Similarly, you can access the server's underlying driver instance:
 
