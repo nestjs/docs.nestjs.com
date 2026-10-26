@@ -50,6 +50,29 @@ async upvotePost(
 ) {}
 ```
 
+#### Mutation payload query
+
+A mutation payload can expose the root `Query` type, so clients can refetch any data after a mutation in a single round trip. In the code first approach, reference the generated root type by its name:
+
+```typescript
+@ObjectType()
+export class AddTodoPayload {
+  @Field(() => Todo)
+  todo: Todo;
+
+  @Field(() => 'Query')
+  query: object;
+}
+
+@Mutation(() => AddTodoPayload)
+addTodo(@Args('title') title: string) {
+  const todo = this.todosService.create(title);
+  return { todo, query: {} };
+}
+```
+
+Any value works as the `query` value (an empty object is enough), because the root query resolvers don't depend on their parent. In the schema first approach, declare `query: Query!` on the payload type in your SDL.
+
 #### Schema first
 
 Extend the `AuthorsResolver` from the [Resolvers](/graphql/resolvers) chapter.
