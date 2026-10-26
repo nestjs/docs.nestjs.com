@@ -49,3 +49,32 @@ const schema = await gqlSchemaFactory.create([RecipesResolver], {
 
 - `skipCheck`: skip schema validation; boolean, defaults to `false`
 - `orphanedTypes`: an array of classes to generate even though they aren't explicitly referenced (i.e., aren't part of the object graph). Normally, a class that is declared but not referenced anywhere in the graph is omitted.
+
+#### Federation
+
+`GraphQLSchemaFactory` builds a plain GraphQL schema: it knows nothing about Apollo Federation. To get the SDL of a code first [federated](/graphql/federation) subgraph (for example, to pass it to `rover subgraph check` or `rover supergraph compose`), print it with `printSubgraphSchema` from `@apollo/subgraph` instead of `printSchema`, so that directives such as `@key`, `@shareable` or `@external` are kept:
+
+```typescript
+import { printSubgraphSchema } from '@apollo/subgraph';
+
+async function generateSchema() {
+  const app = await NestFactory.create(GraphQLSchemaBuilderModule);
+  await app.init();
+
+  const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
+  const schema = await gqlSchemaFactory.create([UsersResolver], {
+    orphanedTypes: [User],
+  });
+  console.log(printSubgraphSchema(schema));
+}
+```
+
+For Federation 2, the printed SDL must also link the federation specification, or it is treated as a Federation 1 subgraph. Prepend the `@link` yourself, importing every federation directive your types use:
+
+```typescript
+const sdl = `extend schema @link(url: "https://specs.apollo.dev/federation/v2.14", import: ["@key", "@shareable", "@external"])
+
+${printSubgraphSchema(schema)}`;
+```
+
+> info **Hint** Entity types that are only referenced through `_entities` (for example, `@extends` stubs resolved with `@ResolveReference()`) aren't reachable from the root types, so pass them in `orphanedTypes`. Otherwise, the schema is generated without them.
