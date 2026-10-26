@@ -148,3 +148,30 @@ export class UpdateUserInput extends PartialType(
   OmitType(CreateUserInput, ['email'] as const),
 ) {}
 ```
+
+#### Building your own
+
+The built-in mapped types are built on the `getFieldsAndDecoratorForType()` function, which you can use to write your own. It returns the fields of a class annotated with `@ObjectType()`, `@InputType()`, `@InterfaceType()` or `@ArgsType()` (inherited fields included), along with the class decorator that matches its kind. For example, the following helper turns every field of a type into an optional list, which is handy for filter inputs:
+
+```typescript
+import { Type } from '@nestjs/common';
+import { Field, getFieldsAndDecoratorForType, InputType } from '@nestjs/graphql';
+
+export function FilterType<T>(classRef: Type<T>) {
+  const { fields } = getFieldsAndDecoratorForType(classRef);
+
+  @InputType({ isAbstract: true })
+  abstract class FilterInput {}
+
+  for (const field of fields) {
+    const type = field.typeFn();
+    Field(() => [type], { nullable: true })(FilterInput.prototype, field.name);
+  }
+  return FilterInput as Type<unknown>;
+}
+
+@InputType()
+export class RecipeFilter extends FilterType(Recipe) {}
+```
+
+> warning **Warning** The returned field metadata is shared with the schema builder. Treat it as read-only, and pass copies of the options (e.g., `{{ '{' }} ...field.options {{ '}' }}`) to `@Field()`. A class without a GraphQL type decorator makes `getFieldsAndDecoratorForType()` throw an `UnableToFindFieldsError`.
