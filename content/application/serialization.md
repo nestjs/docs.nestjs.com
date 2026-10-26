@@ -112,7 +112,7 @@ In the example below, both conditional branches return plain JavaScript objects,
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserEntity })
 @Get()
-findOne(@Query() { id }: { id: number }): UserEntity {
+findOne(@Query('id', ParseIntPipe) id: number): UserEntity {
   if (id === 1) {
     return {
       id: 1,
