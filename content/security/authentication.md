@@ -1964,7 +1964,7 @@ import { accountEmail } from './account-email.js';
 @Post('forgot')
 ```
 
-`Throttle`, `SkipThrottle`, `minutes` and `hours` are imported from `@nestjs/throttler`. The limits per IP address are a judgement call, since offices and mobile carriers put many customers behind one address. The `account` limit applies to every route whose request body has an `email`, at 5 requests per 15 minutes unless the route sets its own; `@SkipThrottle({ account: true })` leaves a route out.
+`Throttle`, `SkipThrottle`, `minutes` and `hours` are imported from `@nestjs/throttler`. The limits per IP address are a judgement call, since offices and mobile carriers put many customers behind one address. The `account` limit applies to every route whose request body has an `email`, at 5 requests per 15 minutes unless the route sets its own; `@SkipThrottle({{ '{' }} account: true {{ '}' }})` leaves a route out.
 
 - `forgot` counts per address, whatever the IP address, so nobody can fill a customer's inbox with reset links, from one IP address or many. Someone who uses up that limit only delays the customer's own request: the links they caused went to the customer, and any of them works.
 - The magic-link request keeps the email and IP address together. A link works only in the browser that asked for it, so a limit per address alone would let anyone use up a customer's links from their own browser, and keep the customer from signing in.
