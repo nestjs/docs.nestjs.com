@@ -9,7 +9,7 @@ As described in [Apollo's introduction to federation](https://blog.apollographql
 - The graph should be simple for clients to consume. Together, federated services can form a complete, product-focused graph that accurately reflects how it's being consumed on the client.
 - It's just **GraphQL**, using only spec-compliant features of the language. Any language, not just JavaScript, can implement federation.
 
-> warning **Warning** Federation currently does not support subscriptions.
+> info **Hint** Subgraphs built with `ApolloFederationDriver` or `MercuriusFederationDriver` support subscriptions (for example over `graphql-ws`, with the `subscriptions` option). The Apollo Gateway (`ApolloGatewayDriver`) does not forward subscriptions to subgraphs, so to expose them through a single federated endpoint, use a router that supports federated subscriptions, such as Apollo Router, or the Mercurius gateway (set `wsUrl` for each service).
 
 In the following sections, we'll set up a demo application that consists of a gateway and two federated endpoints: a Users service and a Posts service.
 
@@ -878,3 +878,17 @@ import { PostsService } from './posts.service.js'; // Not included in this examp
 })
 export class AppModule {}
 ```
+
+#### Hiding operations from the supergraph
+
+To keep a query, mutation or field out of the public supergraph API while the subgraph still serves it, mark it with Federation 2's `@inaccessible` directive. With the code first approach, use the `@Directive()` decorator:
+
+```typescript
+@Query(() => Int)
+@Directive('@inaccessible')
+internalStats() {
+  return this.statsService.count();
+}
+```
+
+The operation stays executable on the subgraph and is listed in its `_service {{ '{' }} sdl {{ '}' }}`, but composition leaves it out of the supergraph schema that clients see.
