@@ -891,4 +891,4 @@ internalStats() {
 }
 ```
 
-The operation stays executable on the subgraph and is listed in its `_service { sdl }`, but composition leaves it out of the supergraph schema that clients see.
+The operation stays executable on the subgraph and is listed in its `_service {{ '{' }} sdl {{ '}' }}`, but composition leaves it out of the supergraph schema that clients see.
