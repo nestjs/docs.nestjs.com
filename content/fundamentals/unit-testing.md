@@ -324,7 +324,7 @@ Each of the override methods (except `overrideModule()`) returns an object with 
 
 - `useClass`: you supply a class that is instantiated to provide the instance that overrides the object (provider, guard, etc.).
 - `useValue`: you supply an instance that overrides the object.
-- `useFactory`: you supply a function that returns an instance that overrides the object.
+- `useFactory`: you supply an object with a `factory` function that returns an instance that overrides the object, and an optional `inject` array listing the providers to pass to that function.
 
 `overrideModule()`, on the other hand, returns an object with the `useModule()` method, which you use to supply a module that overrides the original module:
 
