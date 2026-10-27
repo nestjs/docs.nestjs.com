@@ -65,6 +65,36 @@ title() {
 
 > warning **Warning** If enhancers are enabled at the field resolver level (see [executing enhancers at the field resolver level](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)), field middleware functions run before any interceptors, guards, etc., **bound to the method** (but after the root-level enhancers registered for query or mutation handlers).
 
+#### Applying middleware with a decorator
+
+Alternatively, apply field middleware with the `@UseFieldMiddleware()` decorator. It works on both fields and field resolvers, and can be placed above or below the `@Field()` or `@ResolveField()` decorator:
+
+```typescript
+@ObjectType()
+export class Recipe {
+  @Field()
+  @UseFieldMiddleware(loggerMiddleware)
+  title: string;
+}
+
+@ResolveField(() => String)
+@UseFieldMiddleware(loggerMiddleware)
+description() {
+  return 'Placeholder';
+}
+```
+
+Because it's a separate decorator, you can combine it with others in a composed decorator:
+
+```typescript
+export function Auth(...roles: Role[]) {
+  return applyDecorators(
+    Extensions({ roles }),
+    UseFieldMiddleware(checkRoleMiddleware),
+  );
+}
+```
+
 #### Global field middleware
 
 In addition to binding middleware directly to a specific field, you can register one or more middleware functions globally. Global middleware is automatically connected to all fields of your object types.
@@ -78,4 +108,4 @@ GraphQLModule.forRoot({
 }),
 ```
 
-> info **Hint** Globally registered field middleware functions run **before** locally registered ones (those bound directly to specific fields).
+> info **Hint** Globally registered field middleware functions run **before** locally registered ones. Local middleware passed through the `middleware` option of `@Field()` or `@ResolveField()` runs before middleware applied with `@UseFieldMiddleware()`, which runs in the order given (when the decorator is stacked, the lowest one runs first, as with `@UseGuards()`).
