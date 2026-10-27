@@ -111,7 +111,8 @@ app.useBodyParser('json', { onProtoPoisoning: 'remove' });
 ##### Other packages
 
 - **File upload:** import `FileInterceptor()`, the other upload interceptors, and `MulterModule` from `@nestjs/platform-node` instead of `@nestjs/platform-express`. They are the same Multer-based interceptors, so the rest of the [File upload](/http/file-upload) chapter applies unchanged.
-- **GraphQL:** use the `@nestjs/apollo` driver, as with Express. The `@nestjs/mercurius` driver requires the Fastify adapter.
+- **Serving a single-page application:** the `@nestjs/serve-static` package (v12.1.1 or later) serves the files through the adapter, so it doesn't need the `express` package. Its fallback route for client-side paths requires `@nestjs/platform-node` v12.3.1 or later.
+- **GraphQL:** use the `@nestjs/apollo` driver (v14.1.1 or later), as with Express. The `@nestjs/mercurius` driver requires the Fastify adapter.
 
 #### Fastify adapter
 
