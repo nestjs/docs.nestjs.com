@@ -155,7 +155,7 @@ const app = await NestFactory.create(
 
 > warning **Warning** In Fastify v5.12.1 and later, which `@nestjs/platform-fastify` v12 installs, a number passed as `trustProxy` (a hop count such as `1`) makes Fastify trust no proxy at all. `request.ip` is then the proxy's address, and the throttler counts every client behind the proxy as one. Pass the address or range of your proxy instead, as in the example above.
 
-For the Node adapter, pass its `trustProxy` option, which takes the same values as the Express setting (a hop count included):
+For the Node adapter, pass its `trustProxy` option, which takes the same values as Fastify's (a number trusts no proxy there either):
 
 ```typescript
 @@filename(main)

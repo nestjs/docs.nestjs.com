@@ -76,13 +76,13 @@ As with Fastify, route parameters are capped at 100 characters. A request whose 
 new NodeAdapter({ maxParamLength: 500 });
 ```
 
-Behind a reverse proxy or a load balancer, connections come from the proxy, so `req.ip` is the proxy's address, and `req.protocol` is `'http'` when the proxy terminates TLS. To read the client's address, protocol, and host from the `X-Forwarded-For`, `X-Forwarded-Proto`, and `X-Forwarded-Host` headers that a trusted proxy sets, pass the `trustProxy` option. It takes the values of the Express `trust proxy` setting: `true` to trust every proxy, a number of hops to trust, the addresses or subnets of your proxies (such as `'loopback'` or `'10.0.0.0/8'`, comma-separated or in an array), or a function that takes an address and its hop count and returns whether to trust it:
+Behind a reverse proxy or a load balancer, connections come from the proxy, so `req.ip` is the proxy's address, and `req.protocol` is `'http'` when the proxy terminates TLS. To read the client's address, protocol, and host from the `X-Forwarded-For`, `X-Forwarded-Proto`, and `X-Forwarded-Host` headers that a trusted proxy sets, pass the `trustProxy` option. As with Fastify, it takes `true` to trust every proxy, the addresses or subnets of your proxies (such as `'loopback'` or `'10.0.0.0/8'`, comma-separated or in an array), or a function that takes an address and its hop count and returns whether to trust it:
 
 ```typescript
 new NodeAdapter({ trustProxy: 'loopback' });
 ```
 
-`req.ip`, `req.ips`, `req.protocol`, `req.secure`, and `req.hostname` then work as they do with Express, and so does [sub-domain routing](/controllers#sub-domain-routing). Unlike Fastify, which ignores a number, the Node adapter trusts a hop count as Express does.
+`req.ip`, `req.ips`, `req.protocol`, `req.secure`, and `req.hostname` then work as they do with Express, and so does [sub-domain routing](/controllers#sub-domain-routing). Unlike the Express setting, the option takes no hop count: as with Fastify, a number trusts no proxy, since it cannot tell a proxy from a client that sends its own `X-Forwarded-For` header.
 
 > warning **Warning** Trust only the proxies in front of your application. A client that can reach the application directly can send any `X-Forwarded-*` header.
 
