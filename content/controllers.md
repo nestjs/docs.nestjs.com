@@ -546,7 +546,7 @@ If your application needs to handle more complex query parameters, such as neste
 ?item[]=1&item[]=2
 ```
 
-configure your HTTP adapter (Express or Fastify) to use an appropriate query parser. In Express, use the `extended` parser, which supports rich query objects:
+configure your HTTP adapter (Express, Fastify, or Node) to use an appropriate query parser. In Express, use the `extended` parser, which supports rich query objects:
 
 ```typescript
 @@filename(main)
@@ -571,6 +571,25 @@ const app = await NestFactory.create<NestFastifyApplication>(
 const app = await NestFactory.create(
   AppModule,
   new FastifyAdapter({
+    querystringParser: (str) => qs.parse(str),
+  }),
+);
+```
+
+The Node adapter takes the same `querystringParser` option:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.create<NestNodeApplication>(
+  AppModule,
+  new NodeAdapter({
+    querystringParser: (str) => qs.parse(str),
+  }),
+);
+@@switch
+const app = await NestFactory.create(
+  AppModule,
+  new NodeAdapter({
     querystringParser: (str) => qs.parse(str),
   }),
 );

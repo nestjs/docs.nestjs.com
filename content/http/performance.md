@@ -52,7 +52,7 @@ The `NestNodeApplication` type gives you the platform-specific methods of the ap
 
 ##### Express compatibility
 
-Requests and responses are instances of `NodeRequest` and `NodeResponse` (exported from `@nestjs/platform-node`). They extend Node's `IncomingMessage` and `ServerResponse` with the Express-style properties and methods that middleware, exception filters, and `@Res()` handlers usually rely on, such as `req.get()`, `req.is()`, `req.ip`, `req.hostname`, `res.status()`, `res.send()`, `res.json()`, `res.set()`, `res.type()`, `res.cookie()`, `res.redirect()`, `res.sendFile()`, and `res.locals`. Middleware runs in an Express-style stack and uses the same `(req, res, next)` signature.
+Requests and responses are instances of `NodeRequest` and `NodeResponse` (exported from `@nestjs/platform-node`). They extend Node's `IncomingMessage` and `ServerResponse` with the Express-style properties and methods that middleware, exception filters, and `@Res()` handlers usually rely on, such as `req.get()`, `req.is()`, `req.ip`, `req.ips`, `req.hostname`, `res.status()`, `res.send()`, `res.json()`, `res.set()`, `res.type()`, `res.cookie()`, `res.redirect()`, `res.sendFile()`, and `res.locals`. Middleware runs in an Express-style stack and uses the same `(req, res, next)` signature.
 
 Popular Express middleware packages, such as `helmet`, `compression`, `cookie-parser`, `express-session`, `express-rate-limit`, `csrf-csrf`, `morgan`, and `passport` (along with the `@nestjs/passport` guards), work as they do with the Express adapter. When a chapter of this documentation shows separate instructions for Express and Fastify (for example, [Compression](/http/compression) or [Session](/http/session)), follow the Express ones.
 
@@ -66,7 +66,7 @@ The Node adapter deliberately differs from Express in a few places:
 - A route parameter longer than 100 characters doesn't match (see [Node adapter options](/http/performance#node-adapter-options)).
 - A JSON body with `__proto__` or `constructor.prototype` keys is rejected (see [Body parsers](/http/performance#body-parsers)).
 
-Some Express APIs are not available: `res.render()` (use the [`@Render()`](/http/mvc) decorator instead), `res.download()`, `res.format()`, `req.accepts()` and its variants, `req.route`, mounting an Express application with `app.use()`, and Express settings such as `trust proxy`. `req.ip` is always the address the connection comes from, which is the proxy's address when the application runs behind one.
+Some Express APIs are not available: `res.render()` (use the [`@Render()`](/http/mvc) decorator instead), `res.download()`, `res.format()`, `req.accepts()` and its variants, `req.route`, mounting an Express application with `app.use()`, and Express settings, for which the adapter takes [options](/http/performance#node-adapter-options) instead (`trustProxy` for the `trust proxy` setting, for example).
 
 ##### Node adapter options
 
@@ -74,6 +74,24 @@ As with Fastify, route parameters are capped at 100 characters. A request whose 
 
 ```typescript
 new NodeAdapter({ maxParamLength: 500 });
+```
+
+Behind a reverse proxy or a load balancer, connections come from the proxy, so `req.ip` is the proxy's address, and `req.protocol` is `'http'` when the proxy terminates TLS. To read the client's address, protocol, and host from the `X-Forwarded-For`, `X-Forwarded-Proto`, and `X-Forwarded-Host` headers that a trusted proxy sets, pass the `trustProxy` option. It takes the values of the Express `trust proxy` setting: `true` to trust every proxy, a number of hops to trust, the addresses or subnets of your proxies (such as `'loopback'` or `'10.0.0.0/8'`, comma-separated or in an array), or a function that takes an address and its hop count and returns whether to trust it:
+
+```typescript
+new NodeAdapter({ trustProxy: 'loopback' });
+```
+
+`req.ip`, `req.ips`, `req.protocol`, `req.secure`, and `req.hostname` then work as they do with Express, and so does [sub-domain routing](/controllers#sub-domain-routing). Unlike Fastify, which ignores a number, the Node adapter trusts a hop count as Express does.
+
+> warning **Warning** Trust only the proxies in front of your application. A client that can reach the application directly can send any `X-Forwarded-*` header.
+
+By default, query strings are parsed into flat keys, as with Express and Fastify: `?filter[where][name]=John` gives a `filter[where][name]` key. To parse nested objects and arrays, pass the `querystringParser` option, as with Fastify. It is called with the query string, without the leading `?` (and with an empty string when the URL has none):
+
+```typescript
+import qs from 'qs';
+
+new NodeAdapter({ querystringParser: (str) => qs.parse(str) });
 ```
 
 ##### Body parsers
@@ -93,8 +111,7 @@ app.useBodyParser('json', { onProtoPoisoning: 'remove' });
 ##### Other packages
 
 - **File upload:** import `FileInterceptor()`, the other upload interceptors, and `MulterModule` from `@nestjs/platform-node` instead of `@nestjs/platform-express`. They are the same Multer-based interceptors, so the rest of the [File upload](/http/file-upload) chapter applies unchanged.
-- **Serving a single-page application:** the `@nestjs/serve-static` package works with the Node adapter, but requires the `express` package to be installed.
-- **GraphQL:** the `@nestjs/apollo` driver doesn't support the Node adapter yet, and the `@nestjs/mercurius` driver requires the Fastify adapter.
+- **GraphQL:** use the `@nestjs/apollo` driver, as with Express. The `@nestjs/mercurius` driver requires the Fastify adapter.
 
 #### Fastify adapter
 
