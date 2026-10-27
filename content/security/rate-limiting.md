@@ -107,7 +107,7 @@ findAll() {
 
 #### Proxies
 
-If your application runs behind a proxy server, configure the HTTP adapter to trust the proxy. See the `trust proxy` options of [Express](http://expressjs.com/en/guide/behind-proxies.html) and [Fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy).
+If your application runs behind a proxy server, configure the HTTP adapter to trust the proxy. See the `trust proxy` options of [Express](http://expressjs.com/en/guide/behind-proxies.html), [Fastify](https://www.fastify.io/docs/latest/Reference/Server/#trustproxy), and the [Node adapter](/http/performance#node-adapter-options).
 
 The following example enables `trust proxy` for the Express adapter:
 
@@ -155,7 +155,22 @@ const app = await NestFactory.create(
 
 > warning **Warning** In Fastify v5.12.1 and later, which `@nestjs/platform-fastify` v12 installs, a number passed as `trustProxy` (a hop count such as `1`) makes Fastify trust no proxy at all. `request.ip` is then the proxy's address, and the throttler counts every client behind the proxy as one. Pass the address or range of your proxy instead, as in the example above.
 
-Enabling `trust proxy` lets you retrieve the original IP address from the `X-Forwarded-For` header. You can also override the `getTracker()` method to extract the IP address from this header instead of relying on `req.ip`. The following example is for Express:
+For the Node adapter, pass its `trustProxy` option, which takes the same values as Fastify's (a number trusts no proxy there either):
+
+```typescript
+@@filename(main)
+const app = await NestFactory.create<NestNodeApplication>(
+  AppModule,
+  new NodeAdapter({ trustProxy: 'loopback' }), // Trust requests from the loopback address
+);
+@@switch
+const app = await NestFactory.create(
+  AppModule,
+  new NodeAdapter({ trustProxy: 'loopback' }), // Trust requests from the loopback address
+);
+```
+
+Enabling `trust proxy` lets you retrieve the original IP address from the `X-Forwarded-For` header. You can also override the `getTracker()` method to extract the IP address from this header instead of relying on `req.ip`. The following example is for Express and the Node adapter, which order `req.ips` the same way:
 
 ```typescript
 @@filename(throttler-behind-proxy.guard)

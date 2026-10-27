@@ -412,7 +412,7 @@ export class AdminController {
 }
 ```
 
-> warning **Warning** Since **Fastify** does not support nested routers, use the default Express adapter if you rely on sub-domain routing.
+> warning **Warning** Since **Fastify** does not support nested routers, use the default Express adapter or the Node adapter if you rely on sub-domain routing.
 
 Like a route `path`, the `host` option can use tokens to capture the dynamic value at that position in the host name, as the host parameter token in the `@Controller()` decorator below shows. You can access host parameters declared this way with the `@HostParam()` decorator, added to the method signature.
 
@@ -546,7 +546,7 @@ If your application needs to handle more complex query parameters, such as neste
 ?item[]=1&item[]=2
 ```
 
-configure your HTTP adapter (Express or Fastify) to use an appropriate query parser. In Express, use the `extended` parser, which supports rich query objects:
+configure your HTTP adapter (Express, Fastify, or Node) to use an appropriate query parser. In Express, use the `extended` parser, which supports rich query objects:
 
 ```typescript
 @@filename(main)
@@ -571,6 +571,25 @@ const app = await NestFactory.create<NestFastifyApplication>(
 const app = await NestFactory.create(
   AppModule,
   new FastifyAdapter({
+    querystringParser: (str) => qs.parse(str),
+  }),
+);
+```
+
+The Node adapter takes the same `querystringParser` option:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.create<NestNodeApplication>(
+  AppModule,
+  new NodeAdapter({
+    querystringParser: (str) => qs.parse(str),
+  }),
+);
+@@switch
+const app = await NestFactory.create(
+  AppModule,
+  new NodeAdapter({
     querystringParser: (str) => qs.parse(str),
   }),
 );
