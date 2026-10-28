@@ -401,7 +401,7 @@ uploadFile(@UploadedFile() file: Express.Multer.File) {
 
 ##### Field name limits
 
-Field names such as `user[address][city]` or `tags[2]` build nested objects and arrays in the request body. Two limits bound them: `fieldNestingDepth`, the number of nesting levels (`a[b][c]` has 2), and `fieldArrayIndexLimit`, the highest array index (`tags[2]` uses index 2). A request that exceeds either one is rejected with a `400 Bad Request` response. Starting with NestJS v12.1.4, they default to 32 and 1000 respectively (Multer leaves them unlimited), so that a single request cannot build an arbitrarily deep body or a huge array. Set a limit to `Infinity` to lift it.
+Field names such as `user[address][city]` or `tags[2]` build nested objects and arrays in the request body. Two limits bound them: `fieldNestingDepth`, the number of nesting levels (`a[b][c]` has 2), and `fieldArrayIndexLimit`, the highest array index (`tags[2]` uses index 2). A request that exceeds either one is rejected with a `400 Bad Request` response. Starting with NestJS v12.2, they default to 32 and 1000 respectively (Multer leaves them unlimited), so that a single request cannot build an arbitrarily deep body or a huge array. Set a limit to `Infinity` to lift it.
 
 ##### Disk storage
 
@@ -433,7 +433,7 @@ uploadFile(@UploadedFile() file: Express.Multer.File) {
 
 To apply the same storage and limits to every file interceptor in a module, set them as [default options](/http/file-upload#default-options) or with [async configuration](/http/file-upload#async-configuration).
 
-Files stored on disk are not removed automatically once your route handler has run. Delete them (for example with `unlink()` from `fs/promises`) once you have processed them, including when processing fails. Starting with NestJS v12.1.4, if a pipe rejects the request (for example, because `ParseFilePipe` validation fails), the route handler does not run, and the stored files are removed once the error response has been sent.
+Files stored on disk are not removed automatically once your route handler has run. Delete them (for example with `unlink()` from `fs/promises`) once you have processed them, including when processing fails. Starting with NestJS v12.2, if a pipe rejects the request (for example, because `ParseFilePipe` validation fails), the route handler does not run, and the stored files are removed once the error response has been sent.
 
 ##### Sending files to external storage
 
@@ -721,7 +721,7 @@ getFile(@Res({ passthrough: true }) res: Response): StreamableFile {
 
 ##### Stream errors
 
-With the Express adapter, if the stream emits an error before any data has been sent, the client receives a `400 Bad Request` response, and the error is logged. Starting with NestJS v12.1.4, the response body no longer contains the error message, which may include the path of the file. If data has already been sent, the response is ended. To customize this behavior, pass a handler to the `setErrorHandler()` method:
+With the Express adapter, if the stream emits an error before any data has been sent, the client receives a `400 Bad Request` response, and the error is logged. Starting with NestJS v12.2, the response body no longer contains the error message, which may include the path of the file. If data has already been sent, the response is ended. To customize this behavior, pass a handler to the `setErrorHandler()` method:
 
 ```typescript
 @Get()
