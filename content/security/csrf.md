@@ -113,7 +113,7 @@ app.enableCsrfProtection({
 
 Exclusions are resolved when the application initializes:
 
-- The [global prefix](/faq/global-prefix) is added, unless the route is excluded from it.
+- The [global prefix](/faq/global-prefix) is added, unless the route is excluded from it. If an exclusion matches a path that is excluded from the prefix and has no parameters or wildcards, it also applies to that path, which is served without the prefix. This match is always case-sensitive. For example, with `webhooks/stripe` excluded from the prefix, `webhooks/*path` excludes both `/api/webhooks/github` and `/webhooks/stripe`.
 - With [URI versioning](/http/versioning), the version segment of the `version` property is added. The default version is not applied, so set `version` on the exclusion of a versioned route.
 - Route parameters and wildcards work as in route paths, for example `webhooks/:provider` or `webhooks/*path`.
 

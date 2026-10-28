@@ -208,6 +208,21 @@ With the example above, `LoggerMiddleware` is bound to all routes defined inside
 
 > info **Hint** The `exclude()` method supports wildcard parameters using the [path-to-regexp](https://github.com/pillarjs/path-to-regexp#parameters) package.
 
+Paths passed to `exclude()` are declared without the [global prefix](/faq/global-prefix), which Nest adds unless the route is excluded from it. If an exclusion matches a path that is excluded from the global prefix and has no parameters or wildcards, the middleware is also skipped for that path, which is served without the prefix. This match follows the case sensitivity of the router.
+
+```typescript
+// main.ts
+app.setGlobalPrefix('api', { exclude: ['health', 'health/ready'] });
+
+// app.module.ts
+consumer
+  .apply(LoggerMiddleware)
+  .exclude('health', 'health/*splat')
+  .forRoutes('*splat');
+```
+
+Here, `health/*splat` also skips the middleware for `/health/ready`. It doesn't match `/health` itself, so `health` is listed as well.
+
 #### Functional middleware
 
 The `LoggerMiddleware` class we've been using is minimal: it has no members, no additional methods, and no dependencies. Middleware like this can be defined as a plain function instead of a class. This type of middleware is called **functional middleware**. Let's convert the logger middleware from a class into a function to illustrate the difference:
