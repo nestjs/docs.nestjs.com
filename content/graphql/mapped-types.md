@@ -167,7 +167,7 @@ export function FilterType<T>(classRef: Type<T>) {
     const type = field.typeFn();
     Field(() => [type], { nullable: true })(FilterInput.prototype, field.name);
   }
-  return FilterInput as Type<unknown>;
+  return FilterInput as Type<{ [K in keyof T]?: T[K][] }>;
 }
 
 @InputType()
