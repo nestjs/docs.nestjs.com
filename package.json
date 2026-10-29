@@ -45,7 +45,7 @@
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-angular": "21.2.4",
     "@eslint/js": "10.0.1",
-    "@types/node": "24.19.2",
+    "@types/node": "26.6.6",
     "@types/prismjs": "1.26.6",
     "angular-eslint": "22.6.0",
     "concurrently": "10.0.6",
