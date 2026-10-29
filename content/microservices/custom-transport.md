@@ -4,7 +4,7 @@ Nest provides a variety of **transporters** out of the box, as well as an API fo
 Transporters let you connect components over a network using a pluggable communications layer and a simple application-level message protocol (see the [full article](https://dev.to/nestjs/integrate-nestjs-with-external-services-using-microservice-transporters-part-1-p3)).
 
 > info **Hint** Building a microservice with Nest doesn't necessarily mean you must use the `@nestjs/microservices` package. For example, if you want to communicate with external services (e.g., other microservices written in different languages), you may not need all the features provided by the `@nestjs/microservices` library.
-> If you don't need the decorators that let you define subscribers declaratively (`@EventPattern` or `@MessagePattern`), running a [standalone application](/application-context) and managing connections and channel subscriptions manually is enough for most use cases, and gives you more flexibility.
+> If you don't need the decorators that let you define subscribers declaratively (`@EventPattern` or `@MessagePattern`), running a [standalone application](/standalone-applications) and managing connections and channel subscriptions manually is enough for most use cases, and gives you more flexibility.
 
 With a custom transporter, you can integrate any messaging system or protocol (including Google Cloud Pub/Sub, Amazon Kinesis, and others), or extend an existing one with extra features (for example, [QoS](https://github.com/mqttjs/MQTT.js/blob/master/README.md#qos) for MQTT).
 
