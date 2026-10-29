@@ -8,6 +8,6 @@ The **Overview** section of the documentation primarily shows coding techniques 
 
 Nest also comes with a dedicated [GraphQL](/graphql/quick-start) module. You can use GraphQL as your API layer interchangeably with a REST API.
 
-In addition, the [application context](/application-context) feature lets you build any kind of Node.js application on top of Nest, including cron jobs and CLI apps.
+In addition, the [application context](/standalone-applications) feature lets you build any kind of Node.js application on top of Nest, including cron jobs and CLI apps.
 
 Nest aims to be a full-fledged platform for Node.js apps that brings a higher level of modularity and reusability to your applications. Build once, use everywhere.
