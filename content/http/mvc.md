@@ -183,7 +183,7 @@ If the application logic must dynamically decide which template to render, use t
 ```typescript
 @@filename(app.controller)
 import { Get, Controller, Res, Render } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { AppService } from './app.service.js';
 
 @Controller()
@@ -284,7 +284,7 @@ Alternatively, you can use the `@Res()` decorator to inject the response directl
 
 ```typescript
 import { Get, Res } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
+import type { FastifyReply } from 'fastify';
 
 @Get()
 root(@Res() res: FastifyReply) {

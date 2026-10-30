@@ -87,7 +87,7 @@ The `REQUEST` provider is inherently request-scoped, so you don't need to specif
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CatsService {
