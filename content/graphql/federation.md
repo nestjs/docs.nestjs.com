@@ -9,7 +9,7 @@ As described in [Apollo's introduction to federation](https://blog.apollographql
 - The graph should be simple for clients to consume. Together, federated services can form a complete, product-focused graph that accurately reflects how it's being consumed on the client.
 - It's just **GraphQL**, using only spec-compliant features of the language. Any language, not just JavaScript, can implement federation.
 
-> info **Hint** Subgraphs built with `ApolloFederationDriver` or `MercuriusFederationDriver` support subscriptions (for example over `graphql-ws`, with the `subscriptions` option). The Apollo Gateway (`ApolloGatewayDriver`) does not forward subscriptions to subgraphs, so to expose them through a single federated endpoint, use a router that supports federated subscriptions, such as Apollo Router, or the Mercurius gateway (set `wsUrl` for each service).
+> info **Hint** Subgraphs built with `ApolloFederationDriver` or `MercuriusFederationDriver` support subscriptions (with the `subscriptions` option for Apollo, or `subscription: true` for Mercurius). The Apollo Gateway (`ApolloGatewayDriver`) does not forward subscriptions to subgraphs, so to expose them through a single federated endpoint, use a router that supports federated subscriptions, such as Apollo Router, or the Mercurius gateway (set `subscription: true` on the gateway and `wsUrl` for each service).
 
 In the following sections, we'll set up a demo application that consists of a gateway and two federated endpoints: a Users service and a Posts service.
 
