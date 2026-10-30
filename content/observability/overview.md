@@ -75,6 +75,22 @@ Starting from the dashboard instead, a new account is offered a short **setup gu
 
 > warning **Warning** Treat `appKey` and `appSecret` like any other credential: read them from environment variables or a secrets manager, never commit them to source control. You can revoke a key from the same page at any time; applications still using it can no longer send telemetry.
 
+#### Performance overhead
+
+The SDK adds very little to a request: about a tenth of a millisecond to the median latency of a typical endpoint, and a few microseconds of CPU per traced call. Spans are recorded on the thread that serves the request; every `flushInterval` that thread serializes the batch, and a worker thread compresses and sends it. Measured in October 2026 against the same Nest 12 application without the SDK, on Express, Node 24 and an Apple M1 Pro:
+
+| Endpoint with                             | 1 traced call   | 9 traced calls | 102 traced calls |
+| ----------------------------------------- | --------------- | -------------- | ---------------- |
+| Median latency added at 150 requests/s    | +0.10 ms        | +0.09 ms       | +0.45 ms         |
+| CPU added per request, process fully busy | +9 µs           | +29 µs         | +115 µs          |
+| CPU added at 150 requests/s               | +3.5% of a core | +4% of a core  | +10% of a core   |
+
+The nine calls are a guard, an interceptor, a pipe, a controller, a service and two repositories; the 102 are a service calling another provider in a loop. As a rule of thumb, the CPU cost is about 8 µs per request plus 1-2.5 µs per traced call, and at light load a request that takes 10 ms gets about 1% slower. Memory grows by about 11 MB at boot and 32-64 MB under load, and an idle process spends 0.3-0.6% of one core on the SDK, almost all of it on the worker thread.
+
+For scale, the throughput other Node.js agents lose in third-party benchmarks on near-empty endpoints works out to 45 µs per request for Sentry, 130 µs for Datadog and 200 µs for New Relic ([NodeSource](https://benchmark.nodesource.com/ 'NodeSource Node.js benchmarks')), and 31-77 µs for OpenTelemetry ([Platformatic](https://blog.platformatic.dev/the-hidden-cost-of-context 'The hidden cost of context')). Worked out the same way, the SDK adds 7 µs on the one-call endpoint and 20 µs on the nine-call one. Machines, and what each agent records, differ, so read this as a direction rather than a ranking.
+
+> info **Hint** The benchmark and its full results are in the [SDK repository](https://github.com/nestjs/observe/blob/master/bench/README.md 'NestJS Observe SDK benchmark'). Run `npm run bench` in a clone to reproduce them on your own hardware in about 8 minutes.
+
 #### Where to go next
 
 - [SDK](/observability/sdk) - installation, the three-line quick start, and every configuration option.
