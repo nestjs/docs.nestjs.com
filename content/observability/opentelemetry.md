@@ -2,9 +2,9 @@
 
 [OpenTelemetry](https://opentelemetry.io/ 'OpenTelemetry') is the vendor-neutral standard for traces, metrics, and logs. You instrument an application once, send the data to any compatible backend - Jaeger, Grafana Tempo, or one of the many vendors that accept the OpenTelemetry protocol (OTLP) - and change backends later without touching application code.
 
-For a NestJS backend, we recommend [NestJS Observe](/observability/overview) instead. This page explains why, when OpenTelemetry is still the better choice, and how to [run the two side by side](#running-beside-opentelemetry). If OpenTelemetry is what you need, the [setup](#zero-code-setup) follows below.
+On a NestJS backend, you don't have to choose between it and [NestJS Observe](/observability/overview): Observe works on its own, or beside the OpenTelemetry you already have. This page shows what each records for a Nest application, how to [run the two together](#running-beside-opentelemetry), and how to [set OpenTelemetry up](#zero-code-setup) in one.
 
-#### Why we recommend NestJS Observe
+#### What NestJS Observe adds
 
 OpenTelemetry instruments a Node.js application from the outside: it patches the HTTP server, the router, and the database driver as they load. It has no way to see the structure Nest builds in between, so a trace reads in the vocabulary of libraries. A slow `POST /orders` in an OpenTelemetry backend looks roughly like this on NestJS 11 (on NestJS 12, the two Nest spans are missing too):
 
@@ -39,15 +39,15 @@ The difference continues past the request:
 - **Kept in step with the framework.** Observe is built and maintained by the Nest team, alongside Nest itself. OpenTelemetry's Nest instrumentation, by contrast, doesn't support NestJS 12 yet (see [What gets recorded for Nest](#what-gets-recorded-for-nest)).
 - **More than traces.** Error monitoring with source context, queue wait times and retries, a per-class breakdown of where time goes, runtime profiling, and releases come with the same SDK, on every plan, free tier included.
 
-Observe is narrower than OpenTelemetry on purpose, and the trade-offs are real:
+OpenTelemetry covers ground that Observe deliberately doesn't:
 
 - It's NestJS on Node.js only. A service written in another language in the same request path doesn't appear in Observe. By default, services are correlated through the `x-request-id` header (see [Distributed tracing](/observability/distributed-tracing)). To take part in the traces OpenTelemetry propagates in the W3C `traceparent` header, turn on the [`openTelemetry` option](#running-beside-opentelemetry).
 - It's a hosted service, and it doesn't export or ingest OTLP today. Its traces can't be sent to an OpenTelemetry backend, and spans from an OpenTelemetry SDK don't appear in Observe.
 - Its library coverage is narrower. Redis and Kafka client calls, for example, aren't recorded as spans.
 
-So choose OpenTelemetry when vendor neutrality, keeping telemetry on your own infrastructure, or every service's spans in one backend is a hard requirement. For everything else on a NestJS backend - and especially if you have no tracing today because nobody had the week to build a pipeline - start with [NestJS Observe](/observability/overview). If the rest of your system already runs OpenTelemetry, you don't have to choose: Observe can [run beside it](#running-beside-opentelemetry).
+So the two fit together. OpenTelemetry is the foundation when vendor neutrality, keeping telemetry on your own infrastructure, or every service's spans in one backend is a requirement. NestJS Observe gives your Nest services the framework-level view: on its own, or [beside OpenTelemetry](#running-beside-opentelemetry), in the same traces as the rest of your system.
 
-For a longer discussion of this trade-off, see [NestJS and OpenTelemetry: why we instrument the framework instead](https://dev.to/nestjs/nestjs-and-opentelemetry-why-we-instrument-the-framework-instead-50i6).
+For the reasoning behind instrumenting the framework itself, see [NestJS and OpenTelemetry: why we instrument the framework instead](https://dev.to/nestjs/nestjs-and-opentelemetry-why-we-instrument-the-framework-instead-50i6).
 
 #### Running beside OpenTelemetry
 
