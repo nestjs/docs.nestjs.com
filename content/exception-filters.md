@@ -226,7 +226,7 @@ Let's create an exception filter that catches exceptions that are instances of t
 ```typescript
 @@filename(http-exception.filter)
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {

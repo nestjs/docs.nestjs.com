@@ -176,7 +176,7 @@ import {
   ContextIdFactory,
   ContextIdStrategy,
 } from '@nestjs/core';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 const tenants = new Map<string, ContextId>();
 
