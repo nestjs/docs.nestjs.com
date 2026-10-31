@@ -58,7 +58,11 @@ export class OrdersModule implements OnModuleInit {
 }
 ```
 
-> info **Hint** Many reverse proxies and load balancers (nginx, Envoy, AWS ALB) can set `x-request-id` on every inbound request. When they do, the trace id in your dashboard matches the request id in your proxy's access logs.
+> info **Hint** Many reverse proxies and load balancers (nginx, Envoy, AWS ALB) can set `x-request-id` on every inbound request. When they do, the trace id in your dashboard matches the request id in your proxy's access logs. With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, a W3C `traceparent` takes precedence over an `x-request-id` that names a different trace.
+
+#### OpenTelemetry and W3C Trace Context
+
+Services instrumented with OpenTelemetry pass the trace on in the W3C `traceparent` header rather than in `x-request-id`. With the `openTelemetry` option on, the SDK reads `traceparent` on the way in, and the trace id it names becomes the request's trace id. On the way out, it sends `traceparent` beside `x-request-id`. A Nest service then joins the traces the services around it share, whatever language they're written in. See [Running beside OpenTelemetry](/observability/opentelemetry#running-beside-opentelemetry).
 
 #### gRPC
 
