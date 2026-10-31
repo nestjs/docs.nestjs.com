@@ -318,6 +318,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'HTTPS & multiple servers', path: '/faq/multiple-servers' },
       { title: 'Request lifecycle', path: '/faq/request-lifecycle' },
       { title: 'Common errors', path: '/faq/common-errors' },
+      { title: 'Version compatibility', path: '/faq/versions' },
       {
         title: 'Examples',
         externalUrl: 'https://github.com/nestjs/nest/tree/master/sample',
