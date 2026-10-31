@@ -245,12 +245,15 @@ import { KeyvCacheableMemory } from 'cacheable';
   imports: [
     CacheModule.registerAsync({
       useFactory: async () => {
+        const redisStore = createKeyv('redis://localhost:6379');
+        redisStore.on('error', (err) => console.error('Redis error:', err));
+
         return {
           stores: [
             new Keyv({
               store: new KeyvCacheableMemory({ ttl: 60000, lruSize: 5000 }),
             }),
-            createKeyv('redis://localhost:6379'),
+            redisStore,
           ],
         };
       },
@@ -262,6 +265,8 @@ export class AppModule {}
 ```
 
 This example registers two stores: `CacheableMemory` and a Redis store. `CacheableMemory` is an in-memory store created with the `KeyvCacheableMemory` storage adapter, while the Redis store is created with the `createKeyv()` helper from `@keyv/redis`. The `stores` array specifies the stores you want to use. The first store in the array is the default store, and the rest are fallback stores.
+
+> warning **Warning** Always attach an `'error'` listener to the Redis store, as shown above. When the Redis connection drops, the store emits an `'error'` event, and Keyv throws if nothing listens for it, which can crash your application.
 
 See the [Keyv documentation](https://keyv.org/docs/) for more information on the available stores.
 
