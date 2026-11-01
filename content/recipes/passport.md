@@ -949,6 +949,107 @@ constructor(private authService: AuthService) {
 
 See the official [Passport website](http://www.passportjs.org/docs/oauth/) for the available property names.
 
+#### Custom strategies
+
+To authenticate requests using your own credential format or validation logic, use [passport-custom](https://github.com/mbell8903/passport-custom). Import its `Strategy` class and wrap it with `PassportStrategy()` from `@nestjs/passport`, just as you would with `passport-local` or `passport-jwt`.
+
+Install the strategy package alongside the `passport` and `@nestjs/passport` packages installed earlier:
+
+```bash
+$ npm install --save passport-custom
+```
+
+The `passport-custom` strategy passes the entire request to its verify callback, so implement `validate(request)` to extract and validate the credentials. It does not require a `passReqToCallback` option. The following example reuses the `AuthService.validateUser()` method defined earlier in this chapter:
+
+```typescript
+@@filename(auth/custom.strategy)
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-custom';
+import type { Request } from 'express';
+import { AuthService } from './auth.service.js';
+
+@Injectable()
+export class CustomStrategy extends PassportStrategy(Strategy, 'custom') {
+  constructor(private authService: AuthService) {
+    super();
+  }
+
+  async validate(request: Request) {
+    const { username, password } = request.body ?? {};
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.authService.validateUser(username, password);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    return user;
+  }
+}
+@@switch
+import { Dependencies, Injectable, UnauthorizedException } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-custom';
+import { AuthService } from './auth.service.js';
+
+@Injectable()
+@Dependencies(AuthService)
+export class CustomStrategy extends PassportStrategy(Strategy, 'custom') {
+  constructor(authService) {
+    super();
+    this.authService = authService;
+  }
+
+  async validate(request) {
+    const { username, password } = request.body ?? {};
+    if (typeof username !== 'string' || typeof password !== 'string') {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.authService.validateUser(username, password);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    return user;
+  }
+}
+```
+
+This example reads the same username and password fields as the local strategy. For other credential formats, extract the required values from the request and delegate verification to your authentication service.
+
+Register `CustomStrategy` in the `AuthModule`'s `providers` array alongside `AuthService`, and keep `PassportModule` in its `imports` array. The second argument to `PassportStrategy()` registers the strategy under the name `'custom'`. Import `AuthGuard` from `@nestjs/passport` and apply `AuthGuard('custom')` to a route. For example, add this method to the `AppController` from earlier in this chapter:
+
+```typescript
+@UseGuards(AuthGuard('custom'))
+@Post('auth/custom-login')
+async customLogin(@Request() req: any) {
+  return this.authService.login(req.user);
+}
+@@switch
+@UseGuards(AuthGuard('custom'))
+@Post('auth/custom-login')
+@Bind(Request())
+async customLogin(req) {
+  return this.authService.login(req.user);
+}
+```
+
+Send a `POST /auth/custom-login` request with the same JSON credentials used for `/auth/login`. On success, the guard assigns the validated user to `req.user`, and the controller issues a JWT through `AuthService.login()`.
+
+##### How `authenticate()` and `validate()` interact
+
+Passport invokes a strategy's `authenticate()` method when `AuthGuard()` starts authentication. The strategy extracts credentials and invokes its verify callback. `PassportStrategy()` supplies that callback, calls your `validate()` method, and passes its result to Passport's `done` callback.
+
+- Return a user from `validate()` to authenticate successfully. The guard makes that user available as `req.user` by default.
+- Return `false` or `null` to reject the credentials. The default `AuthGuard()` throws an `UnauthorizedException` when no user is returned.
+- Throw an exception to report an error. The wrapper forwards it through `done(err, null)`, and the default guard rethrows it. Throwing `UnauthorizedException` therefore produces a `401 Unauthorized` response.
+
+Methods such as `success()`, `fail()`, `error()`, and `pass()` are Passport's low-level strategy actions, used from `authenticate()`. Passport attaches these actions to the strategy instance handling the current request. Nest's verify callback invokes `validate()` on the registered strategy provider, so complete validation by returning a user or throwing an exception.
+
+If you implement a new Passport strategy itself, extend the base `Strategy` exported by `passport` and implement `authenticate()` with those actions. Overriding `authenticate()` on an existing strategy replaces the implementation that invokes its verify callback, so `validate()` will no longer run automatically unless your replacement invokes that callback.
+
 #### Named strategies
 
 When implementing a strategy, you can name it by passing a second argument to the `PassportStrategy()` function. Otherwise, each strategy uses its default name (e.g., `'jwt'` for the JWT strategy):
