@@ -557,26 +557,30 @@ const app = await NestFactory.create(AppModule);
 app.set('query parser', 'extended');
 ```
 
-In Fastify, use the `querystringParser` option:
+In Fastify, use the `querystringParser` router option:
 
 ```typescript
 @@filename(main)
 const app = await NestFactory.create<NestFastifyApplication>(
   AppModule,
   new FastifyAdapter({
-    querystringParser: (str) => qs.parse(str),
+    routerOptions: {
+      querystringParser: (str) => qs.parse(str),
+    },
   }),
 );
 @@switch
 const app = await NestFactory.create(
   AppModule,
   new FastifyAdapter({
-    querystringParser: (str) => qs.parse(str),
+    routerOptions: {
+      querystringParser: (str) => qs.parse(str),
+    },
   }),
 );
 ```
 
-The Node adapter takes the same `querystringParser` option:
+The Node adapter takes the `querystringParser` option directly:
 
 ```typescript
 @@filename(main)
