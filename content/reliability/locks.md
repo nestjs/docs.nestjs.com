@@ -643,7 +643,7 @@ async reconcileStock() {
 That is the whole change. What it does:
 
 - **The first instance whose scheduler fires the job takes the job's lease**, a lock named after the key with an `:owner` suffix, and keeps renewing it every `ttl / 3` for as long as it is up. It runs this tick and every tick after it.
-- **On the other instances, the tick is skipped**: the call resolves without running the method, and a debug line says why. Nothing is queued; the job's schedule is the schedule.
+- **On the other instances, the tick is skipped**: the call resolves without running the method, a debug line says why, and `LocksEvents.jobSkips$` reports it ([Events](/reliability/locks#events)). Nothing is queued; the job's schedule is the schedule.
 - **When the owner dies**, it stops renewing, the lease expires `ttl` (30 seconds) later, and the first instance whose tick comes after that takes the job over. When the owner shuts down cleanly, it finishes the runs in progress, hands the lease back, and the next tick anywhere takes it.
 - **The decorators wrap the method.** `@nestjs/schedule` isn't patched, and it doesn't know they are there: its explorer finds the `@Cron()` metadata on the wrapper, in either decorator order, and calls the wrapper, which asks `LocksModule` whether this call may run. `@Interval()` and `@Timeout()` jobs work the same way, and so does calling the method yourself.
 - **The key** defaults to `ClassName.methodName`. Set it on a job that must never run twice: a renamed class or method changes the default, and during a rolling deploy the old and the new instances would each run the job once. Two jobs with the same default key fail at startup, and so does a job whose key is another job's lease (`<key>:owner`) or an election's key: they would exclude each other silently.
@@ -1279,7 +1279,7 @@ export async function startInstance(options: InstanceOptions): Promise<TestingMo
 - **Share the database.** On PGlite, every instance gets the same Drizzle database by overriding the one `DrizzleModule` registers (`getDrizzleToken()`), with the real migrations applied; `DrizzleLockStore` injects it with `@InjectDrizzle()`, so the instances share the locks table as they share it in production. Against a PostgreSQL server, each instance opens its own pool from the database's URL. Without a database, share one `InMemoryLockStore` between the instances by registering it in each with `LocksStorage.registerSource()` and its `replace` option before `init()`.
 - **Fire the jobs yourself.** Call the method (`await job.exportInvoices()`) on each instance, or go through `@nestjs/schedule` with `schedulerRegistry.getCronJob(name).fireOnTick()`. Both reach the wrapper. Point the real schedules at a date that never comes: the example's `vitest.config.mts` sets the two cron variables to February 29th at 3 AM.
 - **Control time.** Override `LOCKS_MODULE_OPTIONS` with a `ManualLockClock`, and every renewal, deadline and `wait` in that instance moves only when the test advances the clock: `await clock.advance('5m')` fires what falls due on the way, in order, and waits for each renewal to reach the store. An instance whose clock you don't advance is a paused process. Against PGlite or a server, the store's clock is real time, so a short `ttl` (`'1s'`) and a `sleep` expire a paused instance's locks; with the in-memory store, give it the same `ManualLockClock` and expiries move with it.
-- **Assert on the log** or on `LocksEvents.events$`: which instance runs a job, every skipped tick, every lost lock, every leadership change. The events are also published on the `nestjs:locks:lock-lost`, `nestjs:locks:leadership-acquired` and `nestjs:locks:leadership-lost` diagnostics channels.
+- **Assert on the log** or on `LocksEvents`: which instance runs a job, every skipped tick (`jobSkips$`), every lost lock and every leadership change (`events$`). The events are also published on the `nestjs:locks:job-skipped`, `nestjs:locks:lock-lost`, `nestjs:locks:leadership-acquired` and `nestjs:locks:leadership-lost` diagnostics channels.
 - **Test your store** with the contract suite, as the Drizzle, TypeORM and Redis stores do, against the server you run in production.
 
 See [End-to-end testing](/fundamentals/testing#end-to-end-testing) for more about the testing setup.
@@ -1296,7 +1296,7 @@ See [End-to-end testing](/fundamentals/testing#end-to-end-testing) for more abou
 - With the Redis store, give Redis persistence and `maxmemory-policy noeviction`. The fencing counter must never go back, and a lock must never be evicted.
 - With the database store, create the table and the sequence through your migrations, and size the connection pool for one short statement per renewal per held lock, plus one per tick per instance.
 - Keep the instances' clocks synchronized with NTP anyway. Expiry is measured on the store's clock, but a holder counts its own deadline, and `@nestjs/schedule` fires on the instance's clock.
-- Log level: the skipped ticks are logged at `debug`. Keep that level on for a while after the rollout, to see the jobs settle on one instance.
+- Log level: the skipped ticks are logged at `debug`. Keep that level on for a while after the rollout, to see the jobs settle on one instance. To watch them for good, count `LocksEvents.jobSkips$` by `job` and `reason` instead of parsing the log.
 
 #### The store contract
 
@@ -1356,6 +1356,30 @@ The tutorial wrote the store with Drizzle, with TypeORM and with Redis. This sec
 | `lock-lost` | `nestjs:locks:lock-lost` | `detectedBy`: `'renewal'` or `'deadline'` | A holder lost a lock it was using. Alert on it |
 | `leadership-acquired` | `nestjs:locks:leadership-acquired` | None | This instance became the leader of `key` |
 | `leadership-lost` | `nestjs:locks:leadership-lost` | `reason`: `'lost'` or `'released'` | This instance stopped leading: the lease was lost, or it stepped down |
+
+`LocksEvents.jobSkips$` emits a `job-skipped` event for each call to an `@OnOneInstance()` or `@WithoutOverlapping()` job that resolved without running, and publishes it on `nestjs:locks:job-skipped`. It is apart from `events$`: every instance but the owner skips each tick, so these events are for counting, not alerting. The payload has `type`, `job` (`ClassName.methodName`), `key` (the job's key, not its `<key>:owner` lease) and `reason`:
+
+| `reason` | When |
+| --- | --- |
+| `ownership-unavailable` | The `<key>:owner` lease wasn't granted: another instance holds it, or the store granted it too late to use |
+| `run-lock-unavailable` | The `<key>` run lock wasn't granted: a run is in progress, or the store granted it too late to use |
+| `shutdown` | The application is shutting down |
+
+```typescript
+@Injectable()
+export class JobSkipMetrics implements OnModuleInit {
+  constructor(private readonly events: LocksEvents) {}
+
+  onModuleInit() {
+    // skippedTicks: a counter from your metrics library
+    this.events.jobSkips$.subscribe(({ job, reason }) => skippedTicks.add(1, { job, reason }));
+  }
+}
+```
+
+The events are what this instance saw, as it saw it: they don't record a job's last run, and they don't count ticks the scheduler never fired. A store error isn't a skip: the call rejects, as before.
+
+> warning **Warning** A subscriber to `events$`, `jobSkips$` or a `nestjs:locks:*` channel must not throw: rxjs and Node rethrow its error as an `uncaughtException`. A skip subscriber runs on every tick, so a bug in one shows within a tick.
 
 ##### Errors
 
