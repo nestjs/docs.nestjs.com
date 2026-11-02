@@ -498,8 +498,6 @@ export const CatsUnion = createUnionType({
 
 > info **Hint** You can pass either the module class itself or a factory function returning it. Prefer the factory form (`() => CatsModule`) whenever the type and the module reference each other: it defers module resolution and avoids errors caused by circular imports.
 
-> warning **Warning** If you use `@apollo/server` with the `@as-integrations/fastify` package and serve multiple GraphQL endpoints in a single application, enable the `disableHealthCheck` setting in the `GraphQLModule` configuration.
-
 #### Third-party integrations
 
 - [GraphQL Yoga](https://github.com/dotansimha/graphql-yoga)
