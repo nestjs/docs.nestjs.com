@@ -10,6 +10,8 @@ Generic Node.js APM agents attach to the HTTP server and the database driver and
 
 The SDK attaches to the framework through the `instrument` application option of `NestFactory.create()` (available since `@nestjs/core` v11.1.4), so it sees every controller, provider, resolver, and queue consumer as Nest wires them - no process-wide patching, and nothing to import before the rest of your code.
 
+It isn't a replacement for OpenTelemetry: Observe works on its own, or beside the OpenTelemetry you already have, in the same traces. See [OpenTelemetry](/observability/opentelemetry#running-beside-opentelemetry).
+
 #### What it offers
 
 Once the SDK is running, every plan - including the free tier - gives you:
