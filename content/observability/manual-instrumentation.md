@@ -31,7 +31,7 @@ async findOne(id: string, activeUser: ActiveUserData) {
 
 Spans nest by call stack: a `createSpan()` inside another `createSpan()` callback becomes its child, which produces the waterfall on the trace detail page. The callback may be synchronous or asynchronous. Auto-instrumented spans (controller methods, providers, database calls) and your custom spans share the same tree, so a hand-named span appears exactly where it ran relative to everything else.
 
-The `span` argument is a `TraceSpanDelegate`. Its `addTags(tags)` method (or `setTag(key, value)` for a single entry) attaches key-value pairs to that span alone. Like the `tags`/`setAttributes` options described in [SDK → Tags and custom attributes](/observability/sdk#tags-and-custom-attributes), they're searchable and shown on the span in the trace view. The difference is scope: those options cover every request, while these tags cover one span.
+The `span` argument is a `TraceSpanDelegate`. Its `addTags(tags)` method (or `setTag(key, value)` for a single entry) attaches key-value pairs to that span alone. Like the `tags` option described in [SDK → Tags and custom attributes](/observability/sdk#tags-and-custom-attributes), they're searchable and shown on the span in the trace view. The difference is scope: that option covers every request, while these tags cover one span.
 
 `activeSpan()` resolves to the `TraceSpanDelegate` of the currently active span without creating a new one. Use it to tag the enclosing span from code that didn't create it:
 

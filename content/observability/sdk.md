@@ -376,20 +376,17 @@ The same option exists on `rpc` (receiving the transport id and the `BaseRpcCont
 
 `http`, `rpc`, `grpc`, `graphql`, and `jobs` each accept the same two options for attaching your own data to every request they cover:
 
-| Option          | Applies                                                       | Description                                                                         |
-| --------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `tags`          | The same static `Record<string, string>` to every request     | For constants that don't vary per call, e.g., `project`, `env`, `region`.           |
-| `setAttributes` | A function of the request/call/job, returning key-value pairs | For anything that varies per call, e.g., a feature flag, a tenant id, a queue name. |
+| Option          | Applies                                                       | Description                                                                                              |
+| --------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `tags`          | The same static `Record<string, string>` to every request     | Sent to Observe. For constants that don't vary per call, e.g., `project`, `env`, `region`.               |
+| `setAttributes` | A function of the request/call/job, returning key-value pairs | Kept in your application. For per-call context your code reads later, e.g., a tenant id, a feature flag. |
 
 ```typescript
 ObserveModule.forRoot({
   // ...
   http: {
     tags: { project: 'cats-app', env: process.env.NODE_ENV ?? 'development' },
-    setAttributes: (req) => ({
-      'user-agent': req.headers['user-agent'],
-      'client-ip': req.ip,
-    }),
+    setAttributes: (req) => ({ tenantId: req.headers['x-tenant-id'] }),
   },
   jobs: {
     setAttributes: (job) => ({ queueName: job.queueName, jobName: job.name }),
@@ -397,7 +394,16 @@ ObserveModule.forRoot({
 });
 ```
 
-Both appear as tags on the resulting request, job, or span, and are searchable and visible on its detail page. The function receives whatever the transport has: the request for `http`, the transport id and `BaseRpcContext` for `rpc`, the call object for `grpc`, the resolve info and GraphQL context for `graphql`, and `{{ '{' }} queueName, name, id {{ '}' }}` for `jobs`. To tag a single span from inside your code rather than every request, use `TracerService` (see [Manual instrumentation](/observability/manual-instrumentation)).
+`tags` appear as tags on the resulting request or job, and are searchable and visible on its detail page.
+
+`setAttributes` values are **not sent to Observe** and don't appear in the dashboard. As each call starts, they're written to its [request-scoped attributes](/observability/manual-instrumentation#request-scoped-attributes), the same as calling `setAttribute()` for each key yourself, so any code handling that call can read them with `getAttribute()`. The function receives whatever the transport has: the request for `http`, the transport id and `BaseRpcContext` for `rpc`, the call object for `grpc`, the resolve info and GraphQL context for `graphql`, and `{{ '{' }} queueName, name, id {{ '}' }}` for `jobs`.
+
+To see a per-call value in the dashboard, add it as a tag on a span with `TracerService` (see [Manual instrumentation](/observability/manual-instrumentation)):
+
+```typescript
+const span = await this.tracerService.activeSpan();
+span.addTags({ tenantId: String(this.tracerService.getAttribute('tenantId')) });
+```
 
 > info **Hint** A GraphQL server is usually an HTTP endpoint, so its requests are already subject to the `http` options: `http.ignore` drops a request before the GraphQL layer sees it, and `http.getUserId` supplies the user for queries over HTTP. The `graphql` block tunes what happens _inside_ a request that was let through, per operation rather than per resolver, and `graphql.getUserId` is only consulted for operations that aren't already inside an HTTP trace, such as subscriptions over a WebSocket.
 
