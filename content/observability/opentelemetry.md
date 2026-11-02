@@ -47,7 +47,7 @@ OpenTelemetry covers ground that Observe deliberately doesn't:
 
 So the two fit together. OpenTelemetry is the foundation when vendor neutrality, keeping telemetry on your own infrastructure, or every service's spans in one backend is a requirement. NestJS Observe gives your Nest services the framework-level view: on its own, or [beside OpenTelemetry](#running-beside-opentelemetry), in the same traces as the rest of your system.
 
-For the reasoning behind instrumenting the framework itself, see [NestJS and OpenTelemetry: why we instrument the framework instead](https://dev.to/nestjs/nestjs-and-opentelemetry-why-we-instrument-the-framework-instead-50i6).
+For the full reasoning, see [NestJS and OpenTelemetry: why we instrument the framework itself](https://dev.to/nestjs/nestjs-and-opentelemetry-why-we-instrument-the-framework-instead-50i6).
 
 #### Running beside OpenTelemetry
 
