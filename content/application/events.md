@@ -106,6 +106,13 @@ export type OnEventOptions = OnOptions & {
    * @default true
    */
   suppressErrors?: boolean;
+
+  /**
+   * Registration priority. Higher values run first. Listeners that omit this option use `0`, so a positive priority runs before them and a negative one after them. Listeners with the same priority keep discovery order.
+   *
+   * @default 0
+   */
+  priority?: number;
 };
 ```
 
@@ -141,6 +148,33 @@ handleEverything(payload: any) {
 ```
 
 > info **Hint** The `EventEmitter2` class provides several useful methods for interacting with events, such as `waitFor()` and `onAny()`. See the [EventEmitter2 documentation](https://github.com/EventEmitter2/EventEmitter2) for details.
+
+#### Listener priority
+
+Pass `priority` in the `@OnEvent()` options to choose the order in which listeners of the same event are called. Nest collects every `@OnEvent` listener, sorts them by priority (highest first, ties in discovery order), and only then registers them. Listeners that omit `priority` use `0`: a positive priority runs before them, and a negative one after them.
+
+```typescript
+@OnEvent('order.created', { priority: 10 })
+checkInventory(payload: OrderCreatedEvent) {
+  // runs first
+}
+
+@OnEvent('order.created')
+notifyWarehouse(payload: OrderCreatedEvent) {
+  // priority 0, runs after the check
+}
+
+@OnEvent('order.created', { priority: -5 })
+recordAnalytics(payload: OrderCreatedEvent) {
+  // runs last
+}
+```
+
+Listeners with `prependListener: true` stay ahead of the other `@OnEvent` listeners, as they do without a priority. Nest orders each of those two groups by priority on its own, so a prepended listener still runs before an appended one that has a higher priority.
+
+Priority orders `@OnEvent` listeners of the same event name among themselves. It leaves listeners added directly on `EventEmitter2` in the position they were added. It also leaves a wildcard listener (`order.*`) and an exact one (`order.created`) in the order [EventEmitter2](https://github.com/EventEmitter2/EventEmitter2) calls them.
+
+Priority decides the order listeners are called in. It leaves every listener free to run. With `async: true`, `promisify`, or `emitAsync()`, a higher-priority listener that rejects still leaves the listeners after it to run. A security check at a higher priority cannot rely on a thrown error to skip a later listener, such as `notifyWarehouse()` above.
 
 #### Preventing event loss
 
