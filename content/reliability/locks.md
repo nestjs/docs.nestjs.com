@@ -1357,7 +1357,7 @@ The tutorial wrote the store with Drizzle, with TypeORM and with Redis. This sec
 | `leadership-acquired` | `nestjs:locks:leadership-acquired` | None | This instance became the leader of `key` |
 | `leadership-lost` | `nestjs:locks:leadership-lost` | `reason`: `'lost'` or `'released'` | This instance stopped leading: the lease was lost, or it stepped down |
 
-`LocksEvents.jobSkips$` emits a `job-skipped` event for each call to an `@OnOneInstance()` or `@WithoutOverlapping()` job that resolved without running, and publishes it on `nestjs:locks:job-skipped`. It is apart from `events$`: every instance but the owner skips each tick, so these events are for counting, not alerting. The payload has `type`, `job` (`ClassName.methodName`), `key` (the job's key, not its `<key>:owner` lease) and `reason`:
+`LocksEvents.jobSkips$` emits a `job-skipped` event for each call to an `@OnOneInstance()` or `@WithoutOverlapping()` job that resolved without running before `onApplicationShutdown()`, and publishes it on `nestjs:locks:job-skipped`. It is apart from `events$`: every instance but the owner skips each tick, so these events are for counting, not alerting. The payload has `type`, `job` (`ClassName.methodName`), `key` (the job's key, not its `<key>:owner` lease) and `reason`:
 
 | `reason` | When |
 | --- | --- |
@@ -1366,6 +1366,7 @@ The tutorial wrote the store with Drizzle, with TypeORM and with Redis. This sec
 | `shutdown` | The application is shutting down |
 
 ```typescript
+@@filename(metrics/job-skip-metrics)
 @Injectable()
 export class JobSkipMetrics implements OnModuleInit {
   constructor(private readonly events: LocksEvents) {}
