@@ -176,21 +176,20 @@ To read and parse YAML files, you can use the `js-yaml` package:
 
 ```bash
 $ npm i js-yaml
-$ npm i -D @types/js-yaml
 ```
 
-Once the package is installed, use the `yaml#load` function to load the YAML file created above:
+Once the package is installed, use its `load()` function to read the YAML file created above:
 
 ```typescript
 @@filename(config/configuration)
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import yaml from 'js-yaml';
+import { load } from 'js-yaml';
 
 const YAML_CONFIG_FILENAME = 'config.yaml';
 
 export default () => {
-  return yaml.load(
+  return load(
     readFileSync(join(import.meta.dirname, YAML_CONFIG_FILENAME), 'utf8'),
   ) as Record<string, any>;
 };
@@ -205,7 +204,7 @@ For example, to ensure that the port is within a certain range, add a validation
 ```typescript
 @@filename(config/configuration)
 export default () => {
-  const config = yaml.load(
+  const config = load(
     readFileSync(join(import.meta.dirname, YAML_CONFIG_FILENAME), 'utf8'),
   ) as Record<string, any>;
 
