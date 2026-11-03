@@ -561,6 +561,7 @@ All options at a glance. Options listed under `createObserveModule()` must be se
 | `forRoot()`             | `http.capture`                        | Headers (and optionally body) recorded for failed and slow requests       |
 | `forRoot()`             | `outgoing`                            | Database query and outbound HTTP spans; `outgoing.llm` for model calls   |
 | `forRoot()`             | `openTelemetry`                       | W3C `traceparent` in and out, beside an OpenTelemetry SDK                 |
+| `forRoot()`             | `otlp`                                | Export spans over OTLP to your OpenTelemetry backend                      |
 | `forRoot()`             | `ws`                                  | WebSocket gateway `tags`, `setAttributes`, `getUserId`, `ignore`          |
 | `forRoot()`             | `runtimeMetrics`, `runtimeMetricsInterval` | Profiler samples and heartbeat                                       |
 | `forRoot()`             | `forwardLogs`, `redaction`            | Logs streaming and scrubbing                                              |
