@@ -99,7 +99,7 @@ See the [gRPC](/microservices/grpc) chapter for how metadata is read and written
 
 #### TCP, Redis, NATS, and other microservice transports
 
-On `@nestjs/microservices` 12.0.4 or later, the TCP and Redis transports carry packet metadata, and `@nestjs/observe` 0.3.0 or later uses it. The SDK attaches the current trace id to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed.
+On `@nestjs/microservices` 12.0.4 or later, the TCP and Redis transports carry packet metadata, and `@nestjs/observe` 0.3.0 or later uses it. The SDK attaches the current trace id to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed. With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, from `@nestjs/observe` 0.3.23, the packet also carries the W3C trace context it was sent in, so an OpenTelemetry SDK in the receiving service continues the caller's trace inside the handler.
 
 The other transports, and TCP and Redis on earlier versions, have no metadata channel, only a message payload. There, the trace id has to travel as a field inside the payload itself:
 
@@ -152,6 +152,8 @@ Two cases deliberately start a trace of their own:
 - **Jobs added outside any traced operation**, e.g., from a bootstrap hook or a plain script. There is no trace to inherit.
 
 > info **Hint** The trace id is stored under the `observeTraceId` job option. To attach a job to a trace the SDK did not see (e.g., one enqueued by a non-Nest producer), set that option yourself when adding the job.
+
+With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, from `@nestjs/observe` 0.3.23, a job also carries the W3C trace context it was added in, under the `observeTraceparent` job option, and the processor runs in it. An OpenTelemetry SDK in the process that runs the job then continues the request's trace: the job's spans in your OpenTelemetry backend, and the services the job calls, are in the same trace as the request, as the job is in Observe.
 
 > warning **Warning** Trace inheritance for jobs requires `@nestjs/observe` 0.3.0 or later on **both** the service that adds the job and the service that processes it. With an older producer, jobs carry no id and each run opens its own trace, as before.
 
