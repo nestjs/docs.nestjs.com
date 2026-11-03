@@ -6,6 +6,7 @@ import { ObservabilityDistributedTracingComponent } from './distributed-tracing/
 import { ObservabilityErrorMonitoringComponent } from './error-monitoring/error-monitoring.component';
 import { ObservabilityDashboardComponent } from './dashboard/dashboard.component';
 import { ObservabilityMcpServerComponent } from './mcp-server/mcp-server.component';
+import { ObservabilityProductionRulesComponent } from './production-rules/production-rules.component';
 import { ObservabilityOpentelemetryComponent } from './opentelemetry/opentelemetry.component';
 
 export const OBSERVABILITY_ROUTES: Routes = [
@@ -43,6 +44,11 @@ export const OBSERVABILITY_ROUTES: Routes = [
     path: 'dashboard',
     component: ObservabilityDashboardComponent,
     data: { title: 'Observability - Dashboard' },
+  },
+  {
+    path: 'production-rules',
+    component: ObservabilityProductionRulesComponent,
+    data: { title: 'Observability - Production rules' },
   },
   {
     path: 'mcp-server',

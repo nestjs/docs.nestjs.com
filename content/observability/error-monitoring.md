@@ -74,12 +74,12 @@ The two closed states are deliberately asymmetric. **Resolved** is a claim about
 
 #### Getting notified
 
-Every plan, Free included, gets a built-in **new-error email** with no rule to set up: one email per project listing the errors it has never seen before, at most six a day. Each member can switch it off for themselves under **Settings → New error emails**.
+Every plan, Free included, gets a built-in **new-error email** with no rule to set up: one email per project listing the errors it has never seen before, at most six a day. Each member can switch it off for themselves under **Settings → New error emails**. Free also watches each application that runs around the clock for an unusual error rate, with at most one alert email per account every 30 days.
 
-On paid plans, [alert rules](/observability/dashboard#alerts) go further:
+On paid plans, [alert rules](/observability/dashboard#alerts) go further, starting with an unusual-error-rate rule that every application gets on its own:
 
 - A **new error groups** rule fires when a defect appears for the first time, for one application or the whole project. It notifies through email, Slack, a webhook, or an in-app notification, or by opening an issue.
-- An **error rate** rule watches the share of failed requests for an application, or for one route and method, against a fixed threshold or against its own recent baseline with anomaly detection.
+- An **error rate** rule watches the share of requests that failed with a server error (5xx) for an application, or for one route and method, against a fixed threshold or against its own recent baseline with anomaly detection.
 - A **job failure rate** rule does the same for queue consumers and cron runs.
 
 On the higher tiers, an availability [SLO](/observability/dashboard#slos) (the share of requests that finished without an unhandled error) turns the same errors into an error budget with burn-rate alerts.
@@ -88,6 +88,6 @@ On the higher tiers, an availability [SLO](/observability/dashboard#slos) (the s
 
 Because each error already carries its stack trace, source lines, trace, and logs, **Copy agent prompt** on its page packages all of it into a self-contained prompt for a coding agent such as Claude Code, Cursor, or any other tool that has your repository open. An agent connected to the [MCP server](/observability/mcp-server) can go further on its own: list error groups with their introducing release, pull recent occurrences with their trace ids, tell whether an error is growing or decaying, and see which users it affected.
 
-To track the work, promote an error group into an [issue](/observability/dashboard#issues) in one click; promoting a group that already has an open issue links to it instead of opening a second one. When you mark the issue resolved (optionally naming the release the fix shipped in), the dashboard watches the affected operation against its pre-incident baseline, and either closes the issue once the fix has held or reopens it with the reading that broke it.
+To track the work, promote an error group into an [issue](/observability/dashboard#issues) in one click; promoting a group that already has an open issue links to it instead of opening a second one. Before you resolve it, **Did a release fix this?** on the issue answers from production: it judges a release on its own requests, on the routes the error failed on, against how often the error failed there before. An agent asks the same question with `verify_fix` over the [MCP server](/observability/mcp-server). When you mark the issue resolved (optionally naming the release the fix shipped in), the dashboard watches the affected operation against its pre-incident baseline, and either closes the issue once the fix has held or reopens it with the reading that broke it.
 
-After a deploy, the **Releases** view compares each `serviceVersion` against the one before it, error rate included, so a regression shows up as a difference between two versions rather than as a bump somewhere in a week-long chart.
+After a deploy, the **Releases** view compares each `serviceVersion` against the one before it, error rate included, so a regression shows up as a difference between two versions rather than as a bump somewhere in a week-long chart. Each release's [verdict](/observability/dashboard#releases-and-their-verdicts) also lists the error groups first seen in it.
