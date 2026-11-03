@@ -50,6 +50,12 @@ await bootstrap();
 
 The `NestNodeApplication` type gives you the platform-specific methods of the application object: `useBodyParser()`, `useStaticAssets()`, `setViewEngine()`, and `setBaseViewsDir()`.
 
+Pass a `NodeAdapter` instance to `createNestApplication()` in your end-to-end tests as well. Without one, the testing module creates an Express application, so the tests don't run on the adapter your application uses, and they fail if the `@nestjs/platform-express` package is not installed:
+
+```typescript
+app = moduleRef.createNestApplication<NestNodeApplication>(new NodeAdapter());
+```
+
 ##### Express compatibility
 
 Requests and responses are instances of `NodeRequest` and `NodeResponse` (exported from `@nestjs/platform-node`). They extend Node's `IncomingMessage` and `ServerResponse` with the Express-style properties and methods that middleware, exception filters, and `@Res()` handlers usually rely on, such as `req.get()`, `req.is()`, `req.ip`, `req.ips`, `req.hostname`, `res.status()`, `res.send()`, `res.json()`, `res.set()`, `res.type()`, `res.cookie()`, `res.redirect()`, `res.sendFile()`, and `res.locals`. Middleware runs in an Express-style stack and uses the same `(req, res, next)` signature.
