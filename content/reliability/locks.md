@@ -304,7 +304,7 @@ The package ships the contract as a test suite, so you can prove the store befor
 @@filename(test/step-2.drizzle-lock-store.e2e-spec)
 describe('DrizzleLockStore on PGlite, the LockStore contract', () => {
   const client = new PGlite();
-  const db = drizzlePglite(client, { schema }) as unknown as Database;
+  const db = drizzlePglite({ client }) as unknown as Database;
   beforeAll(() => migratePglite(db as never, { migrationsFolder }));
   afterAll(() => client.close());
 

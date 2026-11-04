@@ -1069,13 +1069,12 @@ import { fileURLToPath } from 'node:url';
 import { of } from 'rxjs';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ANALYTICS_SERVICE, AppModule } from '../src/app.module.js';
-import * as schema from '../src/database/schema.js';
 import { MailerService } from '../src/notifications/mailer.service.js';
 import { OrdersService } from '../src/orders/orders.service.js';
 
 describe('OrdersService (outbox)', () => {
   const client = new PGlite(); // PostgreSQL, in-process
-  const db = drizzle(client, { schema });
+  const db = drizzle({ client });
   const mailer = { sendOrderConfirmation: vi.fn() };
   const analytics = { emit: vi.fn(() => of(undefined)) };
   let moduleRef: TestingModule;

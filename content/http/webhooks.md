@@ -1513,7 +1513,7 @@ const CARRIER_SECRET = 'carrier_test_secret';
 
 describe('Order webhooks', () => {
   const client = new PGlite(); // PostgreSQL, in-process
-  const db = drizzle(client, { schema });
+  const db = drizzle({ client });
   const transport = new InMemoryWebhookTransport(); // records requests instead of sending them
   const partner = { id: 'northside', name: 'Northside Pet Supplies' };
   let app: INestApplication;

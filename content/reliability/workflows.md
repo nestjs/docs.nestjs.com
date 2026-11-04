@@ -1182,7 +1182,7 @@ import { Test } from '@nestjs/testing';
 import { ManualWorkflowClock, WORKFLOWS_MODULE_OPTIONS, WorkflowClient, WorkflowWorker } from '@nestjs/workflows';
 import { drizzle } from 'drizzle-orm/pglite';
 import { migrate } from 'drizzle-orm/pglite/migrator';
-// ...AppModule, getDrizzleToken, the schema and the stand-in services
+// ...AppModule, getDrizzleToken and the stand-in services
 
 /**
  * PostgreSQL in-process (PGlite), with the app's migrations applied: the orders
@@ -1190,7 +1190,7 @@ import { migrate } from 'drizzle-orm/pglite/migrator';
  */
 export async function createDatabase() {
   const client = new PGlite();
-  const db = drizzle(client, { schema });
+  const db = drizzle({ client });
   await migrate(db, { migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)) });
   return { db, close: () => client.close() };
 }
