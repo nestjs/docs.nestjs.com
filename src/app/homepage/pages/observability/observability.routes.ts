@@ -8,6 +8,7 @@ import { ObservabilityDashboardComponent } from './dashboard/dashboard.component
 import { ObservabilityMcpServerComponent } from './mcp-server/mcp-server.component';
 import { ObservabilityProductionRulesComponent } from './production-rules/production-rules.component';
 import { ObservabilityOpentelemetryComponent } from './opentelemetry/opentelemetry.component';
+import { ObservabilityChoosingAnApmComponent } from './choosing-an-apm/choosing-an-apm.component';
 
 export const OBSERVABILITY_ROUTES: Routes = [
   {
@@ -59,5 +60,10 @@ export const OBSERVABILITY_ROUTES: Routes = [
     path: 'opentelemetry',
     component: ObservabilityOpentelemetryComponent,
     data: { title: 'Observability - OpenTelemetry' },
+  },
+  {
+    path: 'choosing-an-apm',
+    component: ObservabilityChoosingAnApmComponent,
+    data: { title: 'Observability - Choosing an APM for NestJS' },
   },
 ];

@@ -16,7 +16,10 @@ Disallow: /v9
 Disallow: /v10
 Disallow: /v11
 
-# Machine-readable index of the documentation (https://llmstxt.org).
-# The docs are a client-rendered single-page application, so this file is the
-# reliable entry point for crawlers that do not execute JavaScript.
-Sitemap: https://docs.nestjs.com/llms.txt
+# Every chapter's URL, generated with llms.txt by tools/generate-llms-txt.ts.
+Sitemap: https://docs.nestjs.com/sitemap.xml
+
+# The machine-readable index for language models (https://llmstxt.org) is at
+# https://docs.nestjs.com/llms.txt. It is markdown, not a sitemap: the docs are
+# a client-rendered single-page application, and llms.txt links every chapter's
+# plain-markdown copy for fetchers that do not execute JavaScript.
