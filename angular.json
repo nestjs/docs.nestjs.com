@@ -35,6 +35,8 @@
               "src/llms.txt",
               "src/llms-full.txt",
               "src/robots.txt",
+              "src/sitemap.xml",
+              "src/bb16135c2a2c07c21bd3474e597be7de.txt",
               { "glob": "**/*.md", "input": "src/md", "output": "/" }
             ],
             "styles": [

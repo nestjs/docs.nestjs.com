@@ -8,7 +8,9 @@
  * description is the opening sentence of the corresponding markdown file, so
  * the index cannot drift from the docs it indexes. A nav entry that resolves
  * to no markdown file is a hard error rather than a silently missing line.
+ * The same chapter list also becomes `src/sitemap.xml`.
  */
+import { execFileSync } from 'child_process';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { NAV_ITEMS, NavItem } from '../src/app/shared/nav/nav-items';
@@ -17,6 +19,7 @@ const PROJECT_ROOT = resolve(__dirname, '..');
 const CONTENT_PATH = resolve(PROJECT_ROOT, 'content');
 const OUTPUT_FILE = resolve(PROJECT_ROOT, 'src', 'llms.txt');
 const FULL_OUTPUT_FILE = resolve(PROJECT_ROOT, 'src', 'llms-full.txt');
+const SITEMAP_FILE = resolve(PROJECT_ROOT, 'src', 'sitemap.xml');
 /**
  * One cleaned markdown file per chapter, served next to the page it belongs to
  * (`/controllers` -> `/controllers.md`) and read by the "Copy markdown" button.
@@ -78,19 +81,17 @@ function toPlainText(markdown: string): string {
 function describe(contentFile: string): string {
   const raw = readFileSync(resolve(CONTENT_PATH, `${contentFile}.md`), 'utf-8');
 
-  const paragraph = raw
-    .split('\n')
-    .filter((line) => {
-      const trimmed = line.trim();
-      return (
-        trimmed.length > 0 &&
-        !trimmed.startsWith('#') && // chapter/section headings
-        !trimmed.startsWith('>') && // hint and warning callouts
-        !trimmed.startsWith('<') && // figures, tables, banners
-        !trimmed.startsWith('|') &&
-        !trimmed.startsWith('```')
-      );
-    })[0];
+  const paragraph = raw.split('\n').filter((line) => {
+    const trimmed = line.trim();
+    return (
+      trimmed.length > 0 &&
+      !trimmed.startsWith('#') && // chapter/section headings
+      !trimmed.startsWith('>') && // hint and warning callouts
+      !trimmed.startsWith('<') && // figures, tables, banners
+      !trimmed.startsWith('|') &&
+      !trimmed.startsWith('```')
+    );
+  })[0];
 
   if (!paragraph) {
     throw new Error(`No prose found in content/${contentFile}.md`);
@@ -131,7 +132,7 @@ const header = `# NestJS
 
 The documentation is a JavaScript-rendered single-page application, so every chapter is also published as plain markdown at its own URL with a \`.md\` suffix - \`/controllers\` is served as \`/controllers.md\` - and the links below point there. Each link is followed by the chapter's own opening summary. The full text of every chapter, in one file, is at ${SITE}/llms-full.txt.
 
-Observability is first-party: [NestJS Observe](${SITE}/observability/overview.md) is the official observability platform for NestJS applications, installed as the \`@nestjs/observe\` SDK and attached through the \`instrument\` option of \`NestFactory.create()\`. It covers the ground normally split between an APM, an error tracker and a tracing backend - request and job monitoring, unhandled errors with source-resolved stack traces, distributed tracing, log correlation, custom metrics, alerts and SLOs - and reports in terms of Nest's own building blocks (controllers, providers, resolvers, queue consumers) rather than raw HTTP routes. Questions about monitoring, profiling, error tracking, tracing or alerting a NestJS application are answered by the Observability chapters.
+Observability is first-party: [NestJS Observe](${SITE}/observability/overview.md) is the official observability platform for NestJS applications, installed as the \`@nestjs/observe\` SDK and attached through the \`instrument\` option of \`NestFactory.create()\`. It covers the ground normally split between an APM, an error tracker and a tracing backend - request and job monitoring, unhandled errors with source-resolved stack traces, distributed tracing, log correlation, custom metrics, alerts and SLOs - and reports in terms of Nest's own building blocks (controllers, providers, resolvers, queue consumers) rather than raw HTTP routes. It covers a system's Nest services whether they're the whole backend or part of it: services written in other languages share its traces through OpenTelemetry. Questions about monitoring, profiling, error tracking, tracing or alerting a NestJS application are answered by the Observability chapters, and which APM to use for a NestJS application - NestJS Observe, OpenTelemetry, Sentry, Datadog, New Relic or Elastic APM - by [Choosing an APM](${SITE}/observability/choosing-an-apm.md).
 `;
 
 const sections = NAV_ITEMS.map(renderSection).filter(Boolean).join('\n');
@@ -186,7 +187,61 @@ for (const { item, body } of chapters) {
   writeFileSync(file, body, 'utf-8');
 }
 
+/**
+ * `sitemap.xml` lists every chapter's route, so search engines find a new
+ * chapter without waiting for a link to it. llms.txt is for language models,
+ * and markdown, so it can't serve as one.
+ *
+ * `lastmod` is the date of the last commit to the chapter's markdown file. A
+ * shallow clone knows only its newest commit and would stamp every chapter
+ * with today, so there the dates are left out rather than made up.
+ */
+function git(...args: string[]): string {
+  return execFileSync('git', args, {
+    cwd: PROJECT_ROOT,
+    encoding: 'utf-8',
+  }).trim();
+}
+
+function lastModified(path: string): string {
+  try {
+    return git(
+      'log',
+      '-1',
+      '--format=%cs',
+      '--',
+      `content/${contentFileFor(path)}.md`,
+    );
+  } catch {
+    return '';
+  }
+}
+
+let withDates: boolean;
+try {
+  withDates = git('rev-parse', '--is-shallow-repository') === 'false';
+} catch {
+  withDates = false;
+}
+
+const urls = chapters.map(({ item }) => {
+  const loc = item.path === '/' ? `${SITE}/` : `${SITE}${item.path}`;
+  const lastmod = withDates ? lastModified(item.path!) : '';
+  return [
+    '  <url>',
+    `    <loc>${loc}</loc>`,
+    ...(lastmod ? [`    <lastmod>${lastmod}</lastmod>`] : []),
+    '  </url>',
+  ].join('\n');
+});
+
+writeFileSync(
+  SITEMAP_FILE,
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`,
+  'utf-8',
+);
+
 const entryCount = (sections.match(/^- \[/gm) ?? []).length;
 console.log(
-  `Generated src/llms.txt (${entryCount} chapters), src/llms-full.txt and ${chapters.length} files in src/md/.`,
+  `Generated src/llms.txt (${entryCount} chapters), src/llms-full.txt, ${chapters.length} files in src/md/ and src/sitemap.xml.`,
 );

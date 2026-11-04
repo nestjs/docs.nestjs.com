@@ -2,7 +2,7 @@
 
 [OpenTelemetry](https://opentelemetry.io/ 'OpenTelemetry') is the vendor-neutral standard for traces, metrics, and logs. You instrument an application once, send the data to any compatible backend - Jaeger, Grafana Tempo, or one of the many vendors that accept the OpenTelemetry protocol (OTLP) - and change backends later without touching application code.
 
-On a NestJS backend, you don't have to choose between it and [NestJS Observe](/observability/overview): Observe works on its own, or beside the OpenTelemetry you already have. This page shows what each records for a Nest application, how to [run the two together](#running-beside-opentelemetry), and how to [set OpenTelemetry up](#zero-code-setup) in one.
+For the Nest services in your system, whether that's all of your backend or part of it, you don't have to choose between it and [NestJS Observe](/observability/overview): Observe works on its own, or beside the OpenTelemetry you already have, and services written in other languages share its traces through OpenTelemetry. This page shows what each records for a Nest application, how to [run the two together](#running-beside-opentelemetry), and how to [set OpenTelemetry up](#zero-code-setup) in one.
 
 #### What NestJS Observe adds
 
@@ -41,7 +41,7 @@ The difference continues past the request:
 
 OpenTelemetry covers ground that Observe deliberately doesn't:
 
-- It's NestJS on Node.js only. A service written in another language in the same request path doesn't appear in Observe. By default, services are correlated through the `x-request-id` header (see [Distributed tracing](/observability/distributed-tracing)). To take part in the traces OpenTelemetry propagates in the W3C `traceparent` header, turn on the [`openTelemetry` option](#running-beside-opentelemetry).
+- It instruments NestJS on Node.js only. Services written in other languages share its traces through OpenTelemetry: with the [`openTelemetry` option](#running-beside-opentelemetry), a Nest service joins the W3C traces they propagate in the `traceparent` header, and with [OTLP export](#exporting-spans-over-otlp) its spans land in the backend that holds theirs. Without the option, services are correlated through the `x-request-id` header (see [Distributed tracing](/observability/distributed-tracing)).
 - It's a hosted service, and it doesn't ingest OTLP: spans from an OpenTelemetry SDK don't appear in Observe. It can export its own spans to your OpenTelemetry backend over OTLP, beside what it sends to Observe (see [Exporting spans over OTLP](#exporting-spans-over-otlp)).
 - Its library instrumentation records a client wherever it's called. Observe instruments database drivers and HTTP clients that way, and other clients as providers: a Redis or Kafka client registered as one, as it almost always is in a Nest application, gets a span for each call, but a client created outside dependency injection isn't recorded.
 

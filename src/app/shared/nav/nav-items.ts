@@ -172,6 +172,10 @@ export const NAV_ITEMS: NavItem[] = [
       },
       { title: 'MCP server', path: '/observability/mcp-server' },
       { title: 'OpenTelemetry', path: '/observability/opentelemetry' },
+      {
+        title: 'Choosing an APM',
+        path: '/observability/choosing-an-apm',
+      },
     ],
   },
   {
