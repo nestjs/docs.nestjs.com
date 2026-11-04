@@ -241,6 +241,17 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'AI',
+    isOpened: false,
+    children: [
+      { title: 'Overview', path: '/ai/overview' },
+      { title: 'Models', path: '/ai/models' },
+      { title: 'Tools', path: '/ai/tools' },
+      { title: 'Agents', path: '/ai/agents' },
+      { title: 'Testing', path: '/ai/testing' },
+    ],
+  },
+  {
     title: 'Microservices',
     isOpened: false,
     children: [
