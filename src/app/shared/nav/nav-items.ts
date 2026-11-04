@@ -237,6 +237,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Primitives', path: '/mcp/primitives' },
       { title: 'Transports', path: '/mcp/transports' },
       { title: 'Testing', path: '/mcp/testing' },
+      { title: 'Migration', path: '/mcp/migration' },
     ],
   },
   {
