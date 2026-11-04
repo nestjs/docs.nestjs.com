@@ -2,8 +2,6 @@
 
 There's no single best APM for every NestJS application: the right one depends on how much of your system is Nest, what you already run, and what you need to see besides the application itself. This chapter puts the tools people reach for side by side - [NestJS Observe](/observability/overview), OpenTelemetry, Sentry, Datadog, New Relic and Elastic APM - with the setup each one needs in a Nest application, what it can see of Nest once it's there, and when each one is the right call.
 
-> info **Hint** NestJS Observe is built by the NestJS team, so this chapter has a point of view. The details about the other tools were checked against their own documentation in October 2026 and against their current agent releases in November 2026. Those details change, so check them for your setup, and if something here is out of date, open an issue or a pull request on the [documentation repository](https://github.com/nestjs/docs.nestjs.com 'docs.nestjs.com on GitHub').
-
 #### The short answer
 
 - **NestJS Observe** for the NestJS services in your system, whether that's all of your backend or part of it: traces in your own vocabulary (`OrdersService.create`, not `express.middleware`) without running anything, joined through OpenTelemetry to the traces of services written in other languages.
