@@ -277,6 +277,12 @@ describe('Cats', () => {
 });
 ```
 
+> info **Hint** If your application runs on the [Node adapter](/http/performance#node-adapter), pass a `NodeAdapter` instance to `createNestApplication()` as well. Without an adapter, the testing module creates an Express application, so the tests don't run on the adapter your application uses, and they fail if the `@nestjs/platform-express` package is not installed:
+>
+> ```ts
+> app = moduleRef.createNestApplication<NestNodeApplication>(new NodeAdapter());
+> ```
+
 > info **Hint** If you use [Fastify](/http/performance#fastify-adapter) as your HTTP adapter, it requires a slightly different configuration and has built-in testing capabilities:
 >
 > ```ts

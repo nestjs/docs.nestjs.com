@@ -140,6 +140,8 @@ await bootstrap();
 
 Nothing else in the application changes: controllers, providers, and most Express middleware work as they are. See [Node adapter](/http/performance#node-adapter) for the few places where it differs from Express.
 
+The end-to-end test that the CLI generated (`test/app.e2e-spec.ts`) creates its own application, which runs on Express unless you pass an adapter. Pass `new NodeAdapter()` to its `createNestApplication()` call as well, so that the test runs on the same adapter as the application.
+
 #### Running the application
 
 Once the installation is complete, run the following command to start the application and listen for inbound HTTP requests:
