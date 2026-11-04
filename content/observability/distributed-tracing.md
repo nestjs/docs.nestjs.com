@@ -153,6 +153,8 @@ Two cases deliberately start a trace of their own:
 
 > info **Hint** The trace id is stored under the `observeTraceId` job option. To attach a job to a trace the SDK did not see (e.g., one enqueued by a non-Nest producer), set that option yourself when adding the job.
 
+With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, from `@nestjs/observe` 0.3.23, a job also carries the W3C trace context it was added in, under the `observeTraceparent` job option, and the processor runs in it. An OpenTelemetry SDK in the process that runs the job then continues the request's trace: the job's spans in your OpenTelemetry backend, and the services the job calls, are in the same trace as the request, as the job is in Observe.
+
 > warning **Warning** Trace inheritance for jobs requires `@nestjs/observe` 0.3.0 or later on **both** the service that adds the job and the service that processes it. With an older producer, jobs carry no id and each run opens its own trace, as before.
 
 #### What a trace looks like in the dashboard

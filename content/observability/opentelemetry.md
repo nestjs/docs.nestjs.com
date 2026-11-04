@@ -42,7 +42,7 @@ The difference continues past the request:
 OpenTelemetry covers ground that Observe deliberately doesn't:
 
 - It's NestJS on Node.js only. A service written in another language in the same request path doesn't appear in Observe. By default, services are correlated through the `x-request-id` header (see [Distributed tracing](/observability/distributed-tracing)). To take part in the traces OpenTelemetry propagates in the W3C `traceparent` header, turn on the [`openTelemetry` option](#running-beside-opentelemetry).
-- It's a hosted service, and it doesn't export or ingest OTLP today. Its traces can't be sent to an OpenTelemetry backend, and spans from an OpenTelemetry SDK don't appear in Observe.
+- It's a hosted service, and it doesn't ingest OTLP: spans from an OpenTelemetry SDK don't appear in Observe. It can export its own spans to your OpenTelemetry backend over OTLP, beside what it sends to Observe (see [Exporting spans over OTLP](#exporting-spans-over-otlp)).
 - Its library coverage is narrower. Redis and Kafka client calls, for example, aren't recorded as spans.
 
 So the two fit together. OpenTelemetry is the foundation when vendor neutrality, keeping telemetry on your own infrastructure, or every service's spans in one backend is a requirement. NestJS Observe gives your Nest services the framework-level view: on its own, or [beside OpenTelemetry](#running-beside-opentelemetry), in the same traces as the rest of your system.
@@ -65,12 +65,40 @@ With it on:
 - **A request in a W3C trace keeps that trace's id.** When a request arrives with a `traceparent` header - from a service instrumented with OpenTelemetry, in any language, or from a mesh or load balancer that traces - Observe reports it under that trace id, so it has the id the rest of the trace has in your OpenTelemetry backend. An `x-request-id` header is kept only when it names the same trace, which is what another service running Observe sends. An unrelated one, such as the id Envoy and Istio stamp on every request, gives way.
 - **Calls out of the service carry the trace on.** Each outbound call sends a `traceparent` beside `x-request-id`, with the call's own span as the parent, and passes on the caller's `tracestate` and sampling decision, so the next service's spans nest under the call. This covers `fetch` and `undici` on every supported Node.js version, and clients built on `node:http` on Node.js 22.12 and later.
 - **An OpenTelemetry SDK in the same process sets the trace.** Observe reports each request under the trace id of the span the SDK opened for it, including a request that starts a trace, and leaves `traceparent` on outbound calls to the SDK. A request then has one trace id in both tools, and every call carries exactly one `traceparent`. The SDK keeps recording its spans, and Observe adds the provider-level ones. If the SDK propagates B3 instead of W3C Trace Context, Observe follows its trace all the same, and adds a `traceparent` in that trace beside the B3 headers.
+- **Queue jobs and microservice messages stay in the request's trace in both tools.** From `@nestjs/observe` 0.3.23, a BullMQ or Bull job added while a request is handled, and a message sent through a TCP or Redis `ClientProxy` on `@nestjs/microservices` 12.0.4 or later, carry the request's W3C trace context beside its trace id. OpenTelemetry has no instrumentation for either hop, so Observe hands that context to the SDK in the process that runs the job or handles the message: the SDK's spans there, and the `traceparent` on the calls they make, belong to the request's trace, as the job and the handler do in Observe.
 
-The trace id is shared, the spans are not. Observe doesn't export its spans over OTLP or ingest spans from an OpenTelemetry SDK, so your OpenTelemetry backend shows the other services' part of a trace, and Observe shows the Nest service's. Observe writes a W3C trace id as a UUID: `4bf92f3577b34da6a3ce929d0e0e4736` in Jaeger or Tempo is `4bf92f35-77b3-4da6-a3ce-929d0e0e4736` in Observe. The option covers HTTP; microservice transports, gRPC, and queue jobs carry the trace id as described in [Distributed tracing](/observability/distributed-tracing). Without the option, Observe reads and sends `x-request-id` alone, and leaves any OpenTelemetry SDK in the process alone.
+The trace id is shared. With [OTLP export](#exporting-spans-over-otlp) on, the Nest service's spans are too: your OpenTelemetry backend shows the whole trace, and Observe shows the Nest service's part. Without it, the backend shows the other services' part of a trace, and Observe the Nest service's. Observe writes a W3C trace id as a UUID, and either form works in Observe: `4bf92f3577b34da6a3ce929d0e0e4736` from Jaeger or Tempo finds the same trace as `4bf92f35-77b3-4da6-a3ce-929d0e0e4736`.
 
-> info **Hint** The option works only while the SDK is reporting to NestJS Observe. It turns on with the first batch the collector accepts after the application starts, and pauses, with a line in the log, while the collector refuses the application's credentials, after a minute in which no batch got through, or while the SDK's worker is down. Requests handled in between are traced as with the option off. With `enabled: false`, or without credentials, it never turns on.
+Without the option, Observe reads and sends `x-request-id` alone, and leaves any OpenTelemetry SDK in the process alone. Jobs and messages still stay in the trace in Observe: a BullMQ or Bull job added while a request is handled runs under that request's trace id, whether its worker runs in the same process or in another service, and so does a message sent over a microservice transport that carries the trace id on its own ([Distributed tracing](/observability/distributed-tracing) shows which transports do, from which version).
+
+> info **Hint** The option turns on once the SDK reports to NestJS Observe: with the first batch the collector accepts after the application starts. From then on it stays on through outages and rate limits at the collector, so an outage at Observe doesn't split the traces running through your other services. It pauses, with a line in the log, only while the collector refuses the application's credentials or the SDK's worker is down. Requests handled in between are traced as with the option off. With `enabled: false`, or without credentials, it never turns on.
 
 > warning **Warning** NestJS Observe and the OpenTelemetry SDK both hook the database drivers. The combination is tested with `pg`; try it with the drivers you use in a staging environment before production.
+
+#### Exporting spans over OTLP
+
+From `@nestjs/observe` 0.3.23, with the `openTelemetry` option on, Observe can also export the spans it records to your OpenTelemetry backend over OTLP/HTTP - an OpenTelemetry Collector, Jaeger, Grafana Tempo, or any vendor that accepts OTLP. The Nest service's part of a trace, down to the provider methods, then sits in the same waterfall as the services around it. Point the `otlp` option at the backend's OTLP/HTTP endpoint:
+
+```typescript
+ObserveModule.forRoot({
+  // ...
+  openTelemetry: true,
+  otlp: {
+    endpoint: 'http://localhost:4318',
+  },
+});
+```
+
+`otlp: true` reads the endpoint, headers, protocol, and service name from the standard `OTEL_EXPORTER_OTLP_*`, `OTEL_SERVICE_NAME`, and `OTEL_RESOURCE_ATTRIBUTES` variables instead; those variables never turn export on by themselves. The default encoding is `http/protobuf`, and `protocol: 'http/json'` switches to JSON. gRPC isn't supported, so point the endpoint at the backend's HTTP port, 4318 by convention.
+
+Each request becomes a server span, under the caller's span when it arrived in a trace, and each queue job a consumer span. The controller, provider, and manual spans under it become internal spans, and database queries and outbound calls client spans; an outbound call's span is the parent of what the next service exports. Errors are recorded as the span's status and an `exception` event, redacted as they are for Observe. A request whose caller sampled its trace out isn't exported.
+
+Export runs beside reporting to NestJS Observe, never instead of it, and every plan includes it:
+
+- **Paid plans** export every trace the SDK records, whatever Observe then keeps of its own copy.
+- **Free** exports what Observe keeps. Once your applications send 30,000 events in one UTC day, or the month's allowance is used, most waterfalls are paused, and the requests and jobs behind them are exported without the spans under them. Server errors, failed jobs, and anything over 1 s keep their full traces. While the collector can't be reached, what Observe keeps can't be known, so Free's export pauses a few minutes into the outage and resumes with the next batch the collector accepts.
+
+> info **Hint** Export starts with the first batch the collector accepts, whose reply says what the application's plan includes, and the log says when it turns on. It pauses whenever the `openTelemetry` option does. Without the `openTelemetry` option, or without credentials, nothing is exported, and the SDK says why at startup.
 
 #### Zero-code setup
 
