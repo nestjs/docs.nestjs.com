@@ -99,7 +99,7 @@ See the [gRPC](/microservices/grpc) chapter for how metadata is read and written
 
 #### TCP, Redis, NATS, and other microservice transports
 
-On `@nestjs/microservices` 12.0.4 or later, the TCP and Redis transports carry packet metadata, and `@nestjs/observe` 0.3.0 or later uses it. The SDK attaches the current trace id to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed. With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, from `@nestjs/observe` 0.3.23, the packet also carries the W3C trace context it was sent in, so an OpenTelemetry SDK in the receiving service continues the caller's trace inside the handler.
+On `@nestjs/microservices` 12.0.4 or later, the TCP and Redis transports carry packet metadata, and `@nestjs/observe` 0.3.0 or later uses it. The SDK attaches the current trace id to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed.
 
 The other transports, and TCP and Redis on earlier versions, have no metadata channel, only a message payload. There, the trace id has to travel as a field inside the payload itself:
 

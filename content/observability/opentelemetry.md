@@ -77,7 +77,7 @@ Without the option, Observe reads and sends `x-request-id` alone, and leaves any
 
 #### Exporting spans over OTLP
 
-With the `openTelemetry` option on, Observe can also export the spans it records to your OpenTelemetry backend over OTLP/HTTP - an OpenTelemetry Collector, Jaeger, Grafana Tempo, or any vendor that accepts OTLP. The Nest service's part of a trace, down to the provider methods, then sits in the same waterfall as the services around it. Point the `otlp` option at the backend's OTLP/HTTP endpoint:
+From `@nestjs/observe` 0.3.23, with the `openTelemetry` option on, Observe can also export the spans it records to your OpenTelemetry backend over OTLP/HTTP - an OpenTelemetry Collector, Jaeger, Grafana Tempo, or any vendor that accepts OTLP. The Nest service's part of a trace, down to the provider methods, then sits in the same waterfall as the services around it. Point the `otlp` option at the backend's OTLP/HTTP endpoint:
 
 ```typescript
 ObserveModule.forRoot({
@@ -96,7 +96,7 @@ Each request becomes a server span, under the caller's span when it arrived in a
 Export runs beside reporting to NestJS Observe, never instead of it, and every plan includes it:
 
 - **Paid plans** export every trace the SDK records, whatever Observe then keeps of its own copy.
-- **Free** exports what Observe keeps. Once your applications send 30,000 events in one UTC day, or the month's allowance is used, most waterfalls are paused, and the requests and jobs behind them are exported without the spans under them. Server errors, failed jobs, and anything over 1 s keep their full traces.
+- **Free** exports what Observe keeps. Once your applications send 30,000 events in one UTC day, or the month's allowance is used, most waterfalls are paused, and the requests and jobs behind them are exported without the spans under them. Server errors, failed jobs, and anything over 1 s keep their full traces. While the collector can't be reached, what Observe keeps can't be known, so Free's export pauses a few minutes into the outage and resumes with the next batch the collector accepts.
 
 > info **Hint** Export starts with the first batch the collector accepts, whose reply says what the application's plan includes, and the log says when it turns on. It pauses whenever the `openTelemetry` option does. Without the `openTelemetry` option, or without credentials, nothing is exported, and the SDK says why at startup.
 
