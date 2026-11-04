@@ -2,7 +2,7 @@
 
 A **trace** is everything your applications recorded under a single trace id: the request or job that started it, and every span underneath. Within a single service this is automatic. The SDK generates a trace id when work starts, and every span underneath, including ones you add manually with [`TracerService`](/observability/manual-instrumentation), inherits it.
 
-Across services, it depends on the channel. HTTP calls and queue jobs carry the trace id on their own, and so do the built-in microservice transports on a recent enough `@nestjs/microservices` (12.0.4 for TCP and Redis, 12.4.0 for NATS, Kafka, RabbitMQ, MQTT 5, and gRPC). On earlier versions, the trace id needs forwarding. A single user action that touches more than one service (an API call that fans out to a gRPC service, or a message sent to another application over a microservice transport) shows up as **one trace** in your dashboard only if every service involved uses the same trace id. Otherwise, each service mints its own via `traceIdGenerator`, and the action shows up as several disconnected traces, one per service.
+Across services, it depends on the channel. HTTP calls and queue jobs carry the trace id on their own, and so do the built-in microservice transports on a recent enough `@nestjs/microservices` (12.0.4 for TCP and Redis, 12.3.3 for NATS, Kafka, RabbitMQ, MQTT 5, and gRPC). On earlier versions, the trace id needs forwarding. A single user action that touches more than one service (an API call that fans out to a gRPC service, or a message sent to another application over a microservice transport) shows up as **one trace** in your dashboard only if every service involved uses the same trace id. Otherwise, each service mints its own via `traceIdGenerator`, and the action shows up as several disconnected traces, one per service.
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.webp" alt="Trace correlation across services" /></figure>
 
@@ -66,7 +66,7 @@ Services instrumented with OpenTelemetry pass the trace on in the W3C `tracepare
 
 #### gRPC
 
-gRPC has no headers, only metadata. On `@nestjs/microservices` 12.4.0 or later, the trace id travels in it on its own: the SDK adds the current trace id as `x-request-id` metadata to every call made through a `ClientGrpc` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` of the gRPC service adopts it, so no application code is needed. Metadata you pass to a call yourself wins: an `x-request-id` in it is the one the service adopts.
+gRPC has no headers, only metadata. On `@nestjs/microservices` 12.3.3 or later, the trace id travels in it on its own: the SDK adds the current trace id as `x-request-id` metadata to every call made through a `ClientGrpc` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` of the gRPC service adopts it, so no application code is needed. Metadata you pass to a call yourself wins: an `x-request-id` in it is the one the service adopts.
 
 On earlier versions, the caller attaches the trace id as metadata, and the gRPC service overrides `traceIdGenerator` to read it back out, since the default generator doesn't read gRPC metadata there:
 
@@ -106,11 +106,11 @@ Every built-in microservice transport carries the trace id on its own, once both
 | Transport  | From `@nestjs/microservices`               | The trace id travels                 |
 | ---------- | ------------------------------------------ | ------------------------------------ |
 | TCP, Redis | 12.0.4                                     | inside the packet                    |
-| NATS       | 12.4.0                                     | as a message header                  |
-| Kafka      | 12.4.0                                     | as a record header                   |
-| RabbitMQ   | 12.4.0                                     | in the message's `headers` property  |
-| MQTT       | 12.4.0, over MQTT 5 (`protocolVersion: 5`) | as a user property                   |
-| gRPC       | 12.4.0                                     | as call metadata (see [gRPC](#grpc)) |
+| NATS       | 12.3.3                                     | as a message header                  |
+| Kafka      | 12.3.3                                     | as a record header                   |
+| RabbitMQ   | 12.3.3                                     | in the message's `headers` property  |
+| MQTT       | 12.3.3, over MQTT 5 (`protocolVersion: 5`) | as a user property                   |
+| gRPC       | 12.3.3                                     | as call metadata (see [gRPC](#grpc)) |
 
 The SDK attaches the current trace id, as `x-request-id`, to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed. On the transports that carry it as a header, a header of the same name that your code sets itself, on a record builder or in the client's `headers` or `userProperties` option, wins over the SDK's. Because the id is a plain `x-request-id` header there, a service that isn't written with Nest can read it, or send one to a Nest service.
 
