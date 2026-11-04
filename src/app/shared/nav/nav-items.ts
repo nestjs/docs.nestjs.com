@@ -226,6 +226,16 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'MCP',
+    isOpened: false,
+    children: [
+      { title: 'Overview', path: '/mcp/overview' },
+      { title: 'Primitives', path: '/mcp/primitives' },
+      { title: 'Transports', path: '/mcp/transports' },
+      { title: 'Testing', path: '/mcp/testing' },
+    ],
+  },
+  {
     title: 'Microservices',
     isOpened: false,
     children: [

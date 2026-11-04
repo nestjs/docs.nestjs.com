@@ -172,6 +172,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'mcp',
+        loadChildren: () =>
+          import('./homepage/pages/mcp/mcp.routes').then((r) => r.MCP_ROUTES),
+      },
+      {
         path: 'microservices',
         loadChildren: () =>
           import('./homepage/pages/microservices/microservices.routes').then(
