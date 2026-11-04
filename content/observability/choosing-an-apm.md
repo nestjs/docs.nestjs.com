@@ -6,10 +6,10 @@ There's no single best APM for every NestJS application: the right one depends o
 
 #### The short answer
 
-- **NestJS Observe** if your backend is NestJS and you want traces in your own vocabulary (`OrdersService.create`, not `express.middleware`) without running anything.
-- **OpenTelemetry** if several languages share one request path and you want one vendor-neutral standard across all of them.
+- **NestJS Observe** for the NestJS services in your system, whether that's all of your backend or part of it: traces in your own vocabulary (`OrdersService.create`, not `express.middleware`) without running anything, joined through OpenTelemetry to the traces of services written in other languages.
+- **OpenTelemetry** for the services that aren't Nest, or if you want one vendor-neutral standard across every service, Nest ones included.
 - **Sentry** if errors across a web or mobile frontend and a backend are the main concern.
-- **Datadog or New Relic** if you run several languages and real infrastructure, and have the people to run a full platform.
+- **Datadog or New Relic** if you want one platform for several languages and real infrastructure, and have the people to run it.
 - **Elastic APM** if you already run the Elastic Stack, or the data has to stay on infrastructure you control.
 
 They aren't exclusive: NestJS Observe works on its own, or beside the OpenTelemetry or platform APM you already have (see [Using more than one](#using-more-than-one)).
@@ -34,9 +34,9 @@ It prints a code that you approve in the dashboard (signing up first if you need
 
 **What it sees of Nest:** every provider. Each method call on a controller, service, repository, guard, interceptor or pipe during a request, job or message becomes a span named the way you named it, so `PricingService.quote` is in the trace without anybody adding it. Queue consumers, `@Cron()` handlers, GraphQL resolvers and WebSocket gateways are recorded as what they are, and a BullMQ or Bull job shares a trace with the request that enqueued it. Queries through `pg`, `mysql2`, `mssql` and `mongodb` (so TypeORM, Drizzle, MikroORM, Mongoose and Prisma's `pg` and SQL Server adapters) and outbound HTTP calls show up under the method that made them.
 
-**Where it's narrower than the rest:** it covers NestJS on Node.js and nothing else, it's hosted only, and it doesn't monitor infrastructure beyond each Node.js process's own runtime. Driver-level query detail covers `pg`, `mysql2`, `mssql` and `mongodb`; Redis and Kafka clients show up as spans when they're registered as Nest providers (the usual setup), and cloud SDK calls show up as the HTTP requests they make. It needs `@nestjs/core` 11.1.4 or later and Node.js 20.19 or later, with Express or Fastify.
+**Where it's narrower than the rest:** it instruments NestJS on Node.js only. Services in other languages share its traces through OpenTelemetry (see [Using more than one](#using-more-than-one)), but their spans stay in your OpenTelemetry backend, since Observe doesn't ingest OTLP. It's hosted only, and it doesn't monitor infrastructure beyond each Node.js process's own runtime. Driver-level query detail covers `pg`, `mysql2`, `mssql` and `mongodb`; Redis and Kafka clients show up as spans when they're registered as Nest providers (the usual setup), and cloud SDK calls show up as the HTTP requests they make. It needs `@nestjs/core` 11.1.4 or later and Node.js 20.19 or later, with Express or Fastify.
 
-Pick it when your backend is NestJS and the question you keep asking is which of your own classes is slow. The Free plan needs no payment details, and the [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo') shows the dashboard over a busy service's data with no signup.
+Pick it for your NestJS services, all of your backend or some of it, when the question you keep asking is which of your own classes is slow. The Free plan needs no payment details, and the [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo') shows the dashboard over a busy service's data with no signup.
 
 #### OpenTelemetry
 
@@ -44,7 +44,7 @@ Pick it when your backend is NestJS and the question you keep asking is which of
 
 **What it sees of Nest:** the HTTP server, the router, outbound calls and a wide range of drivers, through the Node.js auto-instrumentations. Its Nest instrumentation, `@opentelemetry/instrumentation-nestjs-core`, adds three kinds of span on NestJS 11 and earlier - application creation, the request context named `Controller.method`, and the route handler - and nothing for the providers underneath. Its current release (0.71.0) supports `@nestjs/core` below 12, so on NestJS 12 it adds no Nest spans at all.
 
-Pick it when several languages share one request path, when you want to choose (and change) the backend yourself, or when the data has to stay on infrastructure you run.
+Pick it for the services that aren't Nest, when you want to choose (and change) the backend yourself, or when the data has to stay on infrastructure you run. In a system with both, NestJS Observe joins its traces and can export the Nest services' spans to the same backend.
 
 #### Sentry
 
@@ -136,17 +136,17 @@ Pick it when you already run the Elastic Stack, or when the data has to stay on 
 
 #### Side by side
 
-|                                            | NestJS Observe                                            | Sentry                                                          | Datadog                                         | New Relic                                       | Elastic APM                                                          |
-| ------------------------------------------ | --------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------- |
-| Setup                                      | `npx @nestjs/observe link`, or one module and one option | Instrument file imported first, module, filter                  | `--require dd-trace/init`, plus a Datadog Agent | `-r newrelic` and a license key                 | `-r elastic-apm-node/start.js`, plus APM Server and Elasticsearch   |
-| ES modules (Nest 12's default)             | Same setup                                                | See Sentry's documentation                                      | `--import dd-trace/initialize.mjs`              | `--import newrelic/esm-loader.mjs -r newrelic` | Experimental loader, subset of modules                               |
-| Recognises Nest itself                     | Built for it                                              | Pipeline spans (guards, pipes, interceptors, filters, handlers) | Not listed                                      | `@nestjs/core` 10+ listed                       | Not listed                                                           |
-| Your own providers as spans, automatically | Yes                                                       | No                                                              | Community package (`nestjs-ddtrace`)            | No                                              | No                                                                   |
-| BullMQ jobs                                | Yes, linked to the enqueuing request                      | Check for your setup                                            | Supported (5.66+)                               | Not listed                                      | Not listed                                                           |
-| Something to run besides the app           | Nothing                                                   | Nothing (or self-host)                                          | Datadog Agent                                   | Nothing                                         | APM Server, Elasticsearch, Kibana (or Elastic Cloud)                 |
-| Self-hostable                              | No                                                        | Yes                                                             | No                                              | No                                              | Yes                                                                  |
-| Languages                                  | NestJS only                                               | Many                                                            | Many                                            | Many                                            | Many                                                                 |
-| Infrastructure monitoring                  | No                                                        | No                                                              | Yes                                             | Yes                                             | Yes                                                                  |
+|                                            | NestJS Observe                                             | Sentry                                                          | Datadog                                         | New Relic                                      | Elastic APM                                                       |
+| ------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
+| Setup                                      | `npx @nestjs/observe link`, or one module and one option   | Instrument file imported first, module, filter                  | `--require dd-trace/init`, plus a Datadog Agent | `-r newrelic` and a license key                | `-r elastic-apm-node/start.js`, plus APM Server and Elasticsearch |
+| ES modules (Nest 12's default)             | Same setup                                                 | See Sentry's documentation                                      | `--import dd-trace/initialize.mjs`              | `--import newrelic/esm-loader.mjs -r newrelic` | Experimental loader, subset of modules                            |
+| Recognises Nest itself                     | Built for it                                               | Pipeline spans (guards, pipes, interceptors, filters, handlers) | Not listed                                      | `@nestjs/core` 10+ listed                      | Not listed                                                        |
+| Your own providers as spans, automatically | Yes                                                        | No                                                              | Community package (`nestjs-ddtrace`)            | No                                             | No                                                                |
+| BullMQ jobs                                | Yes, linked to the enqueuing request                       | Check for your setup                                            | Supported (5.66+)                               | Not listed                                     | Not listed                                                        |
+| Something to run besides the app           | Nothing                                                    | Nothing (or self-host)                                          | Datadog Agent                                   | Nothing                                        | APM Server, Elasticsearch, Kibana (or Elastic Cloud)              |
+| Self-hostable                              | No                                                         | Yes                                                             | No                                              | No                                             | Yes                                                               |
+| Languages                                  | NestJS; other languages share its traces via OpenTelemetry | Many                                                            | Many                                            | Many                                           | Many                                                              |
+| Infrastructure monitoring                  | No                                                         | No                                                              | Yes                                             | Yes                                            | Yes                                                               |
 
 This chapter quotes no prices: per-host, per-seat, per-gigabyte and per-event models don't convert cleanly, and they change. Price your own traffic on each before you decide. NestJS Observe's plans are listed under [Subscribing](/observability/overview#subscribing).
 
@@ -154,7 +154,7 @@ This chapter quotes no prices: per-host, per-seat, per-gigabyte and per-event mo
 
 - **Already running Elastic, Datadog or New Relic for other services?** Add the Nest application to it, and know that you'll see the router and the drivers, not your providers. If that's not enough, NestJS Observe can sit next to it for the application layer.
 - **Mainly worried about errors, especially on a frontend too?** Sentry.
-- **Several languages in the request path that have to share one trace?** OpenTelemetry, or a platform APM. NestJS Observe won't trace the Go service, though it can join the trace it's in.
+- **Several languages in the request path that have to share one trace?** OpenTelemetry on the services that aren't Nest, and NestJS Observe on the ones that are: with `openTelemetry` and `otlp`, the Nest services join the same traces and export their spans, down to each provider method, to your OpenTelemetry backend, which shows the whole trace. A platform APM covers every service in one product, but sees the Nest services' router and drivers, not their providers.
 - **Data has to stay on your own infrastructure?** Elastic, self-hosted Sentry, or OpenTelemetry with a backend you run.
 - **A NestJS backend, no tracing today, and nobody has had the week to set it up?** That's the case NestJS Observe was built for: the setup above is the whole setup.
 
