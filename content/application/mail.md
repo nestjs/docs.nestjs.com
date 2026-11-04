@@ -1107,7 +1107,6 @@ import { migrate } from 'drizzle-orm/pglite/migrator';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { AppModule } from '../src/app.module.js';
-import * as schema from '../src/database/schema.js';
 import { OrderConfirmationMail } from '../src/notifications/order-confirmation.mail.js';
 import { OrdersService } from '../src/orders/orders.service.js';
 
@@ -1119,7 +1118,7 @@ describe('Order confirmation mail', () => {
   let relay: OutboxRelay;
 
   beforeAll(async () => {
-    const db = drizzle(client, { schema });
+    const db = drizzle({ client });
     // Your migrations: the tables, and the seeded customers and products. The outbox's store
     // creates its own schema in init().
     await migrate(db, { migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)) });
