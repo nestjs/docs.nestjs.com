@@ -46,7 +46,7 @@ Pick it for the services that aren't Nest, when you want to choose (and change) 
 
 #### Sentry
 
-Sentry is an error tracker first, with tracing built on OpenTelemetry. It has an official Nest SDK:
+Sentry is an error tracker first, with performance tracing built in. It has an official Nest SDK:
 
 ```typescript
 @@filename(instrument)
