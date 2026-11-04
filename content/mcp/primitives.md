@@ -228,18 +228,18 @@ Choose **Streamable HTTP**, enter the URL, and **Connect**. Assistants that conn
 
 #### The call context
 
-The second argument of every MCP method is an `McpContext`. Its `transport` says who made the call: `'http'` or `'stdio'` for an MCP client, `'agent'` for an agent running in your application, with no MCP request behind it.
+The second argument of every MCP method is an `McpContext`:
 
 | Property | What it is |
 | --- | --- |
 | `kind`, `name`, `uri` | `'tool'`, `'resource'` or `'prompt'`; the tool's or prompt's name, or the resource's; the URI being read |
 | `authInfo` | The verified access token, with [authorization](/mcp/primitives#authorization): `clientId`, `scopes`, `expiresAt`, `extra` |
 | `request` | The HTTP platform's request (Express, Fastify, the Node adapter), with its headers and whatever middleware set on it; for the in-memory test client, a plain `{{ '{' }} method, url, headers {{ '}' }}` object; `undefined` over stdio |
-| `requestInfo` | The web-standard `Request` the SDK served (calls from MCP clients) |
-| `transport`, `era` | `'http'`, `'stdio'` or `'agent'`; `'modern'` (protocol revision 2026-07-28) or `'legacy'` (the 2025 revisions), for calls from MCP clients |
+| `requestInfo` | The web-standard `Request` the SDK served |
+| `transport`, `era` | `'http'` or `'stdio'`; `'modern'` (protocol revision 2026-07-28) or `'legacy'` (the 2025 revisions) |
 | `signal` | An `AbortSignal`, aborted when the client cancels the call or goes away: pass it on to `fetch()` and your database |
 | `reportProgress(progress, total?, message?)` | Sends a progress notification, when the client asked for them |
-| `server` | The SDK's own request context, for the rest (`mcpReq.envelope`, `mcpReq.inputResponses`), on calls from MCP clients |
+| `server` | The SDK's own request context, for the rest (`mcpReq.envelope`, `mcpReq.inputResponses`) |
 
 ```typescript
 @Tool({
@@ -257,9 +257,7 @@ async export(_input: unknown, ctx: McpContext) {
 }
 ```
 
-`era`, `requestInfo`, `sessionId` and `server` exist only on calls from MCP clients. A method that reads them takes an `McpClientContext`, or checks `ctx.transport !== 'agent'` first, as TypeScript requires.
-
-**Asking the user.** A tool that needs the user's confirmation, or a missing value, returns `inputRequired()` from `@modelcontextprotocol/server`: the client asks the user, and calls the tool again with the answer, which `acceptedContent()` reads and validates. Only an MCP client can ask, so the method takes an `McpClientContext`:
+**Asking the user.** A tool that needs the user's confirmation, or a missing value, returns `inputRequired()` from `@modelcontextprotocol/server`: the client asks the user, and calls the tool again with the answer, which `acceptedContent()` reads and validates:
 
 ```typescript
 @Tool({
@@ -267,7 +265,7 @@ async export(_input: unknown, ctx: McpContext) {
   description: 'Cancel an order',
   inputSchema: z.object({ orderId: z.string() }),
 })
-cancel({ orderId }: { orderId: string }, ctx: McpClientContext) {
+cancel({ orderId }: { orderId: string }, ctx: McpContext) {
   const Confirmation = z.object({ confirm: z.boolean() });
   const answer = acceptedContent(
     ctx.server.mcpReq.inputResponses,
