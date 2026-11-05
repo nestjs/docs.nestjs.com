@@ -48,7 +48,7 @@ async function bootstrap() {
 await bootstrap();
 ```
 
-The `NestNodeApplication` type gives you the platform-specific methods of the application object: `useBodyParser()`, `useStaticAssets()`, `setViewEngine()`, and `setBaseViewsDir()`.
+The `NestNodeApplication` type gives you the platform-specific methods of the application object: `useBodyParser()`, `useStaticAssets()`, `setViewEngine()`, `setBaseViewsDir()`, and `setLocal()`.
 
 Pass a `NodeAdapter` instance to `createNestApplication()` in your end-to-end tests as well. Without one, the testing module creates an Express application, so the tests don't run on the adapter your application uses, and they fail if the `@nestjs/platform-express` package is not installed:
 
