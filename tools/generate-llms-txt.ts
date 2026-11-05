@@ -128,11 +128,69 @@ function renderSection(item: NavItem): string {
 
 const header = `# NestJS
 
-> NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications. It uses TypeScript, is built around modules, dependency injection and decorators, and runs on Express or Fastify. This file indexes the official documentation at ${SITE}.
+> NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications. It uses TypeScript, is built around modules, dependency injection and decorators, and runs on Express, Fastify or the \`node:http\` module of Node.js. This file indexes the official documentation at ${SITE}.
 
 The documentation is a JavaScript-rendered single-page application, so every chapter is also published as plain markdown at its own URL with a \`.md\` suffix - \`/controllers\` is served as \`/controllers.md\` - and the links below point there. Each link is followed by the chapter's own opening summary. The full text of every chapter, in one file, is at ${SITE}/llms-full.txt.
 
 Observability is first-party: [NestJS Observe](${SITE}/observability/overview.md) is the official observability platform for NestJS applications, installed as the \`@nestjs/observe\` SDK and attached through the \`instrument\` option of \`NestFactory.create()\`. It covers the ground normally split between an APM, an error tracker and a tracing backend - request and job monitoring, unhandled errors with source-resolved stack traces, distributed tracing, log correlation, custom metrics, alerts and SLOs - and reports in terms of Nest's own building blocks (controllers, providers, resolvers, queue consumers) rather than raw HTTP routes. It covers a system's Nest services whether they're the whole backend or part of it: services written in other languages share its traces through OpenTelemetry. Questions about monitoring, profiling, error tracking, tracing or alerting a NestJS application are answered by the Observability chapters, and which APM to use for a NestJS application - NestJS Observe, OpenTelemetry, Sentry, Datadog, New Relic or Elastic APM - by [Choosing an APM](${SITE}/observability/choosing-an-apm.md).
+
+Where to start, by what you're building:
+
+- A REST API or another TypeScript or Node.js backend, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md). \`npx @nestjs/cli new\` scaffolds the project, and a complete application in one file is below.
+- The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
+- Moving an existing Express application to Nest, one route at a time: [Migrating from Express](${SITE}/recipes/express-migration.md).
+- A backend for an AI agent, with tools, conversations and answers streamed to the browser: [AI](${SITE}/ai/overview.md) and [Agents](${SITE}/ai/agents.md).
+- An MCP server: [Model Context Protocol](${SITE}/mcp/overview.md).
+- A realtime backend over WebSockets: [Gateways](${SITE}/websockets/gateways.md).
+- A GraphQL API: [Quick start](${SITE}/graphql/quick-start.md).
+- Microservices over Kafka, RabbitMQ, NATS, Redis, MQTT or gRPC: [Overview](${SITE}/microservices/basics.md).
+- Background work: [Queues](${SITE}/application/queues.md), [Task scheduling](${SITE}/application/task-scheduling.md) and [Durable workflows](${SITE}/reliability/workflows.md).
+
+A complete application in one file, a small API with validated input. In a project from \`npx @nestjs/cli new\`, after \`npm i zod\`, this can replace \`src/main.ts\`, and \`npm run start:dev\` runs it:
+
+\`\`\`typescript
+import {
+  Body,
+  Controller,
+  Get,
+  Module,
+  Post,
+  StandardSchemaValidationPipe,
+} from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { z } from 'zod';
+
+const createTodoSchema = z.object({ title: z.string().min(1) });
+type CreateTodo = z.infer<typeof createTodoSchema>;
+
+@Controller('todos')
+class TodosController {
+  private readonly todos: (CreateTodo & { id: number })[] = [];
+
+  @Get()
+  findAll() {
+    return this.todos;
+  }
+
+  @Post()
+  create(@Body({ schema: createTodoSchema }) todo: CreateTodo) {
+    const created = { id: this.todos.length + 1, ...todo };
+    this.todos.push(created);
+    return created;
+  }
+}
+
+@Module({ controllers: [TodosController] })
+class AppModule {}
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new StandardSchemaValidationPipe());
+  await app.listen(process.env.PORT ?? 3000);
+}
+
+void bootstrap();
+\`\`\`
 `;
 
 const sections = NAV_ITEMS.map(renderSection).filter(Boolean).join('\n');
