@@ -41,6 +41,14 @@ $ npx create-next-app@latest apps/web --yes --disable-git --skip-install
 $ npm install
 ```
 
+`--skip-git` also leaves the Nest application without a `.gitignore`, so add one at the root of the repository:
+
+```bash
+node_modules
+dist
+.env
+```
+
 The Next.js development server takes port `3000`, so give Nest another one in `apps/api/src/main.ts`, and put its routes under `/api`, the path the browser will call:
 
 ```typescript
