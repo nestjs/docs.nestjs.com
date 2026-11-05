@@ -17,7 +17,7 @@ This page sets up a Nest application next to a Next.js one, and then moves a bac
 - Both live in one repository, as npm workspaces.
 - The browser calls `/api` on the Next.js origin, and Next.js passes the request on to Nest, so cookies work without CORS.
 - Zod schemas in a shared package validate a form in the browser and the same request in Nest.
-- The route handlers you already have keep answering, and move to Nest one at a time.
+- The route handlers you already have keep answering, and [move to Nest](/recipes/nextjs#migrate-a-nextjs-backend-to-nest) one at a time.
 
 #### Project layout
 
@@ -342,7 +342,88 @@ export default async function OrdersPage() {
 
 > warning **Warning** A page that fetches without reading cookies may be rendered during `next build`, so Nest has to be reachable from the build, or it fails with `fetch failed`.
 
-#### Move the backend to Nest
+#### Migrate a Next.js backend to Nest
+
+Next.js's own [backend guide](https://nextjs.org/docs/app/guides/backend-for-frontend) says that its backend capabilities "are not a full backend replacement". A Next.js backend works well until it has to be one, and past that point a separate backend can be the simpler of the two.
+
+##### Why it can be simpler
+
+It isn't less code. The same four endpoints (list, create, read and cancel an order, for a signed-in user) came to about the same number of lines in route handlers as in a Nest controller and service. What changes is what you have to remember:
+
+| | Route handlers | Nest |
+| --- | --- | --- |
+| Checking the session | In every handler, four times here. A handler that forgets is public | Once, in a [global guard](/security/authentication). A new route answers `401` until you mark it `@Public()` |
+| Validating a body | Each handler parses it and builds its own `400` | `@Body({{ '{' }} schema {{ '}' }})`, and the handler only runs with valid input |
+| A missing record | Each handler builds its own `404`, and a helper can't end the request for it | `throw new NotFoundException()` from anywhere, such as a service |
+| Testing the logic | Handlers read `cookies()`, which throws `was called outside a request scope`, so a test has to mock `next/headers` | A service is a class: `new OrdersService()`, with no HTTP and no mocks of the framework |
+| Finding an endpoint | One file per path, with the path in the folder names | One controller per resource |
+| Scheduled jobs | Nothing built in, so a platform has to call a URL | `@Cron()`, in the same process as the rest of the application |
+| WebSockets | Won't work where handlers are deployed as lambda functions, says the same guide | [Gateways](/websockets/gateways) |
+
+Here's one of those four endpoints in both. As a route handler:
+
+```typescript
+@@filename(apps/web/src/app/api/orders/[id]/cancel/route.ts)
+import { NextResponse } from 'next/server';
+import { db, getSession } from '@/lib/backend';
+
+export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const { id } = await params;
+  const order = db.find(id);
+  if (!order || order.userId !== session.userId) {
+    return NextResponse.json({ message: 'Not found' }, { status: 404 });
+  }
+  order.status = 'cancelled';
+  return NextResponse.json(order);
+}
+```
+
+The other handlers repeat its first lines. In Nest, the guard has already checked the session, and the service holds the rule, where the other methods can reuse it and a test can reach it:
+
+```typescript
+@@filename(apps/api/src/orders/orders.controller)
+@Post(':id/cancel')
+@HttpCode(200)
+cancel(@CurrentUser() user: User, @Param('id') id: string) {
+  return this.ordersService.cancel(user.id, id);
+}
+```
+
+```typescript
+@@filename(apps/api/src/orders/orders.service)
+findOne(userId: string, id: string) {
+  const order = this.rows.get(id);
+  if (!order || order.userId !== userId) {
+    throw new NotFoundException();
+  }
+  return order;
+}
+
+cancel(userId: string, id: string) {
+  const order = this.findOne(userId, id);
+  order.status = 'cancelled';
+  return order;
+}
+```
+
+```typescript
+@@filename(apps/api/src/orders/orders.service.spec)
+it("doesn't let another user cancel an order", () => {
+  const orders = new OrdersService();
+  const { id } = orders.create('u1', { productId: 'kibble', quantity: 1 });
+  expect(() => orders.cancel('u2', id)).toThrow(NotFoundException);
+});
+```
+
+You can get part of the way with helpers: a `withSession()` wrapper, then one for validation, then one that turns errors into responses. That's a reasonable step, and it's also writing your own guards, pipes and exception filters.
+
+It does cost something. There's a second application to deploy, a rewrite to configure, and a network hop between a Server Component and its data. If your backend is a few handlers with one client and no background work, stay on route handlers.
+
+##### What goes where
 
 Write new endpoints in Nest, and move the existing ones when you next change them. Each piece of a Next.js backend has a place to go:
 
@@ -355,57 +436,21 @@ Write new endpoints in Nest, and move the existing ones when you next change the
 | Role checks inside handlers | [`@nestjs/authorization`](/security/authorization) |
 | A webhook route handler that reads `request.text()` | `@VerifyWebhook()` from [`@nestjs/webhooks`](/http/webhooks) |
 | A cron route called by the platform | `@Cron()` from [`@nestjs/schedule`](/application/task-scheduling) |
-| Work started after the response, such as sending email | A [queue](/application/queues), and [`@nestjs/mail`](/application/mail) |
+| Work started with `after()`, such as sending email | A [queue](/application/queues), and [`@nestjs/mail`](/application/mail) |
 
-To move a route handler, write the endpoint in Nest under the same path, and delete the route handler. The URL doesn't change, so neither does any client. Because route handlers come before the rewrite, both can be in the code until you delete the route handler.
+##### Move one route
 
-A route handler that reads the session and the database itself:
+Write the endpoint in Nest under the same path, and delete the route handler. The URL doesn't change, so neither does any client. Because route handlers come before the rewrite, both can be in the code until you delete the route handler.
 
-```typescript
-@@filename(apps/web/src/app/api/orders/route.ts)
-export async function POST(request: Request) {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  const body = await request.json();
-  if (typeof body.productId !== 'string' || body.quantity < 1) {
-    return NextResponse.json({ error: 'Invalid order' }, { status: 400 });
-  }
-  const order = await db.order.create({ data: { ...body, userId: session.userId } });
-  return NextResponse.json(order);
-}
-```
+Then check what a client can see:
 
-becomes a controller method and a service. The guard has already checked the session, the pipe has already checked the body, and the service can be tested and reused without any HTTP:
+- **The status code.** `NextResponse.json()` answers `200` on a `POST`, and a Nest `POST` answers `201` unless you add `@HttpCode(200)`.
+- **The shape of an error**, which is now `{{ '{' }} statusCode, message, error {{ '}' }}`. A [global exception filter](/recipes/express-migration#keep-what-would-change-without-an-error) keeps the old shape if clients depend on it.
+- **Dynamic segments.** `[id]` becomes `:id`, and a catch-all `[...path]` becomes `*path`, whose `@Param('path')` is an array of segments.
 
-```typescript
-@@filename(apps/api/src/orders/orders.controller)
-@Post()
-@HttpCode(200) // NextResponse.json() answered 200, and a Nest POST answers 201
-create(
-  @CurrentUser() user: User,
-  @Body({ schema: createOrderSchema }) input: CreateOrderInput,
-) {
-  return this.ordersService.create(user.id, input);
-}
-```
+##### Move queries out of pages
 
-```typescript
-@@filename(apps/api/src/orders/orders.service)
-@Injectable()
-export class OrdersService {
-  constructor(private readonly orders: OrdersRepository) {}
-
-  create(userId: string, input: CreateOrderInput) {
-    return this.orders.insert({ ...input, userId, status: 'pending' });
-  }
-}
-```
-
-Check what a client can see: the status code, as above, and the shape of an error, which is now `{{ '{' }} statusCode, message, error {{ '}' }}`. A [global exception filter](/recipes/express-migration#keep-what-would-change-without-an-error) keeps the old shape if clients depend on it.
-
-A Server Action that used to run the query itself now makes the same request, and the page around it renders the new data:
+A Server Component or a Server Action that queries the database directly makes a request instead, and the query moves to a Nest service:
 
 ```typescript
 @@filename(apps/web/src/app/orders/actions)
