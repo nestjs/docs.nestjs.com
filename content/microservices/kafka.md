@@ -470,7 +470,7 @@ Along with the default error handling mechanisms, you can create a custom except
 ```typescript
 import { Catch, ArgumentsHost, ExceptionFilter, Logger } from '@nestjs/common';
 import { KafkaContext } from '@nestjs/microservices';
-import { Producer } from 'kafkajs';
+import type { Producer } from 'kafkajs';
 
 @Catch()
 export class KafkaMaxRetryExceptionFilter implements ExceptionFilter {
@@ -596,7 +596,7 @@ You can register this filter globally or at the controller level. It requires a 
 ```typescript
 @@filename(kafka-retry.filter)
 import { Inject, Injectable } from '@nestjs/common';
-import { Producer } from 'kafkajs';
+import type { Producer } from 'kafkajs';
 
 @Injectable()
 export class AppKafkaRetryFilter extends KafkaMaxRetryExceptionFilter {
