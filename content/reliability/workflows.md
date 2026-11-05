@@ -206,11 +206,11 @@ export class WorkflowStore1790801342207 implements MigrationInterface {
 }
 ```
 
-With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+With drizzle-kit, create a custom migration, and fill the file it creates with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
 
 ```bash
 $ npx drizzle-kit generate --custom --name=workflows
-$ npx @nestjs/workflows sql --statement-breakpoints > drizzle/0001_workflows.sql
+$ npx @nestjs/workflows sql --statement-breakpoints > drizzle/20261103120000_workflows/migration.sql
 ```
 
 On MySQL, `MySqlWorkflowStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:
