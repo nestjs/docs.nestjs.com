@@ -28,6 +28,15 @@
   &.opened {
     @include utils.transform(translateX(0));
   }
+  // A prerendered page can't know the screen it lands on, so it carries the
+  // desktop state, menu open. Where the app closes the menu on start
+  // (HomepageComponent.checkWindowWidth), keep it closed until then, or it
+  // covers the article.
+  @media only screen and (max-width: 768px) {
+    &.prerendered {
+      @include utils.transform(translateX(calc(-100% - var(--shell-offset-vw, 12px))));
+    }
+  }
   @include  utils.media(large) {
     width: 280px;
   }

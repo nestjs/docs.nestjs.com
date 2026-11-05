@@ -1,3 +1,4 @@
+import { isPlatformBrowser, PlatformLocation } from '@angular/common';
 import {
   AfterViewChecked,
   AfterViewInit,
@@ -6,6 +7,7 @@ import {
   ElementRef,
   ChangeDetectionStrategy,
   inject,
+  PLATFORM_ID,
 } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import * as Prism from 'prismjs';
@@ -56,6 +58,8 @@ function summarize(text: string): string {
 export class BasePageComponent implements AfterViewChecked, AfterViewInit {
   private readonly applicationRef = inject(ApplicationRef);
   private readonly el = inject(ElementRef);
+  private readonly platformLocation = inject(PlatformLocation);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   private isHljsInitialized = false;
   private readonly metaService = inject(Meta);
@@ -80,7 +84,7 @@ export class BasePageComponent implements AfterViewChecked, AfterViewInit {
    * heading anchors build their links.
    */
   private resolveFragmentLinks() {
-    const path = window.location.pathname;
+    const path = this.platformLocation.pathname;
     const links = this.nativeElement.querySelectorAll<HTMLAnchorElement>(
       'a[href^="#"]',
     );
@@ -121,6 +125,10 @@ export class BasePageComponent implements AfterViewChecked, AfterViewInit {
         this.isHljsInitialized = true;
       }
     });
-    setTimeout(() => this.applicationRef.tick(), 1000);
+    // A prerendered page is written once the app is stable, so this delay
+    // would hold up every page of the build by a second.
+    if (this.isBrowser) {
+      setTimeout(() => this.applicationRef.tick(), 1000);
+    }
   }
 }

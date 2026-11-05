@@ -19,6 +19,15 @@
         color-scheme: light;
       }
     </style>
+    <script>
+      // Pages are prerendered and paint before the app starts, so a stored
+      // light theme is applied here, or they would flash dark first.
+      try {
+        if (JSON.parse(localStorage.getItem('theme')) === 'light') {
+          document.documentElement.setAttribute('mode', 'light');
+        }
+      } catch (e) {}
+    </script>
 
     <meta
       name="description"

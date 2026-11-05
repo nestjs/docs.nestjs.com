@@ -1,3 +1,4 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -8,6 +9,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   Renderer2,
   ViewEncapsulation,
 } from '@angular/core';
@@ -71,6 +73,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly router = inject(Router);
   private readonly elementRef = inject(ElementRef);
   private readonly renderer = inject(Renderer2);
+  // Pages are also prerendered at build time, where there is no window to
+  // measure, no ads to load and no search to wire up.
+  protected readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   public isSidebarOpened = true;
   public previousWidth: number;
@@ -82,6 +87,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly scrollDebounceTime = 100;
 
   public ngOnInit(): void {
+    if (!this.isBrowser) {
+      return;
+    }
     this.router.events
       .pipe(filter((ev) => ev instanceof NavigationEnd))
       .subscribe(() => {
@@ -100,6 +108,9 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
+    if (!this.isBrowser) {
+      return;
+    }
     this.checkWindowWidth(window.innerWidth);
     if (this.contentRef) {
       this.contentRef.appendChild(this.createDocSearchScriptTag());
@@ -188,6 +199,10 @@ export class HomepageComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.contentRef = nativeElement.querySelector('.content');
+    if (!this.isBrowser) {
+      this.cd.markForCheck();
+      return;
+    }
     if (this.contentRef && !this.contentRef.querySelector('.carbon-wrapper')) {
       const scriptTag = this.createCarbonScriptTag();
       const carbonWrapper = document.createElement('div');

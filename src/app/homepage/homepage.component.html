@@ -15,7 +15,11 @@
   </div>
 </app-header>
 <div class="container-fluid">
-  <app-menu [class.opened]="isSidebarOpened" class="app-menu"></app-menu>
+  <app-menu
+    [class.opened]="isSidebarOpened"
+    [class.prerendered]="!isBrowser"
+    class="app-menu"
+  ></app-menu>
   <div class="container" [class.wide]="!isSidebarOpened">
     <div class="page-wrapper">
       <app-toc [contentReference]="contentRef"></app-toc>

@@ -50,12 +50,12 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Every route is served the same index.html, so it carries no canonical URL:
+   * index.html is the template for every page, so it carries no canonical URL:
    * one value there would tell search engines that every page is a duplicate
-   * of it. Netlify's prerenderer runs this code for social and AI crawlers, but
-   * Googlebot reads the raw file and renders it itself, and Google expects a
-   * canonical set with JavaScript to be the only one on the page - so the link
-   * is created here rather than rewritten.
+   * of it. This runs when each chapter is prerendered, which puts the page's
+   * own canonical in the HTML it is served as, and again in the browser on
+   * every navigation. The link is created rather than rewritten, so a page
+   * never has two.
    */
   public updateCanonical(event: NavigationEnd): void {
     const path = event.urlAfterRedirects.split(/[?#]/)[0];
