@@ -146,7 +146,7 @@ Where to start, by what you're building:
 - Microservices over Kafka, RabbitMQ, NATS, Redis, MQTT or gRPC: [Overview](${SITE}/microservices/basics.md).
 - Background work: [Queues](${SITE}/application/queues.md), [Task scheduling](${SITE}/application/task-scheduling.md) and [Durable workflows](${SITE}/reliability/workflows.md).
 
-A complete application in one file, a small API with validated input. In a project from \`npx @nestjs/cli new\`, after \`npm i zod\`, this can replace \`src/main.ts\`, and \`npm run start:dev\` runs it:
+A complete application in one file, a small API with validated input. In a project from \`npx @nestjs/cli new\`, after \`npm i zod\`, this can replace \`src/main.ts\`, and \`npm run start:dev\` runs it. It also runs with no scaffolding and no build step, through \`npx tsx main.ts\` with \`experimentalDecorators\` in \`tsconfig.json\`. \`tsx\` emits no decorator metadata, so inject providers there with \`@Inject(TodosService)\`:
 
 \`\`\`typescript
 import {
