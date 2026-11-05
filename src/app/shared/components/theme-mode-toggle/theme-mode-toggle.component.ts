@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit, DOCUMENT, ChangeDetectionStrategy, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit, DOCUMENT, ChangeDetectionStrategy, inject, PLATFORM_ID } from '@angular/core';
 import { StorageService } from '../../services/storage.service';
 
 type Theme = 'light' | 'dark';
@@ -15,6 +16,7 @@ export class ThemeModeToggleComponent implements OnInit {
   private readonly document = inject<Document>(DOCUMENT);
   private readonly storageService = inject(StorageService);
   private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   public theme: Theme;
 
@@ -23,7 +25,14 @@ export class ThemeModeToggleComponent implements OnInit {
 
   public ngOnInit(): void {
     // Dark is the default theme unless the user explicitly picked light.
-    this.setTheme(this.getStoredTheme() ?? 'dark');
+    const theme = this.getStoredTheme() ?? 'dark';
+    if (!this.isBrowser) {
+      // Prerendered pages are the same for every reader; index.html applies a
+      // stored theme before they paint.
+      this.theme = theme;
+      return;
+    }
+    this.setTheme(theme);
   }
 
   public toggleTheme(skipStorage = false): void {

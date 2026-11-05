@@ -20,6 +20,5 @@ Disallow: /v11
 Sitemap: https://docs.nestjs.com/sitemap.xml
 
 # The machine-readable index for language models (https://llmstxt.org) is at
-# https://docs.nestjs.com/llms.txt. It is markdown, not a sitemap: the docs are
-# a client-rendered single-page application, and llms.txt links every chapter's
-# plain-markdown copy for fetchers that do not execute JavaScript.
+# https://docs.nestjs.com/llms.txt. It is markdown, not a sitemap: it links every
+# chapter's plain-markdown copy, the chapter without the site around it.

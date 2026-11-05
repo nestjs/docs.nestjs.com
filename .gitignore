@@ -1,6 +1,10 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
+# compiled output. Everything in dist/ except the archived versions below is
+# build output, and `npm run build` clears it first (`npm run clean-dist`):
+# the build keeps dist/ to spare the archives (--delete-output-path=false), and
+# Netlify carries the previous build's files over, so a page or file that is
+# gone from the docs would otherwise keep being served.
 dist/*
 !/dist/v4
 !/dist/v5

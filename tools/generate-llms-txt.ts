@@ -28,9 +28,9 @@ const MARKDOWN_DIR = resolve(PROJECT_ROOT, 'src', 'md');
 const SITE = 'https://docs.nestjs.com';
 
 /**
- * The index links at the markdown twin rather than the route. The site is a
- * client-rendered SPA, so a fetcher that does not run JavaScript gets an empty
- * shell from `/controllers` and the whole chapter from `/controllers.md`.
+ * The index links at the markdown twin rather than the route. `/controllers`
+ * is a prerendered page wrapped in the site's navigation and markup, while
+ * `/controllers.md` is just the chapter, in the form a model reads best.
  * Mirrors the `name` used when the files are written further down.
  */
 function markdownUrl(path: string): string {
@@ -142,7 +142,7 @@ writeFileSync(OUTPUT_FILE, `${header}\n${sections}`, 'utf-8');
 /**
  * `llms-full.txt` is the same chapters inlined rather than linked, so a model
  * can read the whole documentation in one request instead of following 135
- * links into a client-rendered application. The docs' authoring directives
+ * links. The docs' authoring directives
  * (`@@filename`, `@@switch`, banner components) are stripped, since they carry
  * no meaning outside the rendering pipeline.
  */
