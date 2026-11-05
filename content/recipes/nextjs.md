@@ -351,7 +351,7 @@ Write new endpoints in Nest, and move the existing ones when you next change the
 | A route handler | A [controller](/controllers) method |
 | A database query in a Server Component or a Server Action | A [service](/providers) behind an endpoint, called through `api()` |
 | `getSession()` at the top of every handler | The global guard of [`@nestjs/authentication`](/security/authentication), and `@CurrentUser()` |
-| Checking `request.json()` by hand | `@Body({ schema })` |
+| Checking `request.json()` by hand | `@Body({{ '{' }} schema {{ '}' }})` |
 | Role checks inside handlers | [`@nestjs/authorization`](/security/authorization) |
 | A webhook route handler that reads `request.text()` | `@VerifyWebhook()` from [`@nestjs/webhooks`](/http/webhooks) |
 | A cron route called by the platform | `@Cron()` from [`@nestjs/schedule`](/application/task-scheduling) |
@@ -403,7 +403,7 @@ export class OrdersService {
 }
 ```
 
-Check what a client can see: the status code, as above, and the shape of an error, which is now `{ statusCode, message, error }`. A [global exception filter](/recipes/express-migration#keep-what-would-change-without-an-error) keeps the old shape if clients depend on it.
+Check what a client can see: the status code, as above, and the shape of an error, which is now `{{ '{' }} statusCode, message, error {{ '}' }}`. A [global exception filter](/recipes/express-migration#keep-what-would-change-without-an-error) keeps the old shape if clients depend on it.
 
 A Server Action that used to run the query itself now makes the same request, and the page around it renders the new data:
 
