@@ -328,6 +328,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Router module', path: '/recipes/router-module' },
       { title: 'CQRS', path: '/recipes/cqrs' },
       { title: 'Serve static', path: '/recipes/serve-static' },
+      { title: 'Next.js', path: '/recipes/nextjs' },
       { title: 'Commander', path: '/recipes/nest-commander' },
       { title: 'Async local storage', path: '/recipes/async-local-storage' },
       { title: 'Socket activation', path: '/recipes/socket-activation' },
