@@ -119,11 +119,11 @@ export class OutboxStore1790801276314 implements MigrationInterface {
 }
 ```
 
-With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+With drizzle-kit, create a custom migration, and fill the file it creates with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
 
 ```bash
 $ npx drizzle-kit generate --custom --name=outbox
-$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/0002_outbox.sql
+$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/20261103120000_outbox/migration.sql
 ```
 
 On MySQL, `MySqlOutboxStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:

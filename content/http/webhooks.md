@@ -147,13 +147,13 @@ export class WebhookStores1790801311590 implements MigrationInterface {
 }
 ```
 
-With drizzle-kit, create a custom migration per store, and fill each with its SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+With drizzle-kit, create a custom migration per store, and fill the file each creates with its SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
 
 ```bash
 $ npx drizzle-kit generate --custom --name=outbox
-$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/0002_outbox.sql
+$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/20261103120000_outbox/migration.sql
 $ npx drizzle-kit generate --custom --name=webhooks
-$ npx @nestjs/webhooks sql --statement-breakpoints > drizzle/0003_webhooks.sql
+$ npx @nestjs/webhooks sql --statement-breakpoints > drizzle/20261103120100_webhooks/migration.sql
 ```
 
 On MySQL, the stores' `migrationStatements()` return the statements one per string, and a TypeORM migration runs them one per call:
