@@ -9,6 +9,7 @@ import { NestCommanderComponent } from './nest-commander/nest-commander.componen
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
+import { SocketActivationComponent } from './socket-activation/socket-activation.component';
 import { movedTo, splitInto } from '../../../shared/utils/moved-page-redirect';
 import { PRISMA_SECTIONS } from '../data/prisma-sections';
 
@@ -79,5 +80,10 @@ export const RECIPES_ROUTES: Routes = [
     path: 'passport',
     component: PassportComponent,
     data: { title: 'passport' },
+  },
+  {
+    path: 'socket-activation',
+    component: SocketActivationComponent,
+    data: { title: 'Socket activation' },
   },
 ];
