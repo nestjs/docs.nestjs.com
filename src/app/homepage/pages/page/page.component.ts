@@ -7,7 +7,9 @@ import {
   ElementRef,
   ChangeDetectionStrategy,
   inject,
+  Injectable,
   PLATFORM_ID,
+  Renderer2,
 } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import * as Prism from 'prismjs';
@@ -49,6 +51,15 @@ function summarize(text: string): string {
   );
 }
 
+/**
+ * Whether the app has rendered a page yet. One per app, so prerendering, which
+ * starts an app per page, renders each page as the first.
+ */
+@Injectable({ providedIn: 'root' })
+class FirstPageTracker {
+  rendered = false;
+}
+
 @Component({
     selector: 'app-base-page',
     template: ``,
@@ -63,6 +74,20 @@ export class BasePageComponent implements AfterViewChecked, AfterViewInit {
 
   private isHljsInitialized = false;
   private readonly metaService = inject(Meta);
+
+  constructor() {
+    // The first page of a visit is prerendered: it is on screen before the app
+    // starts, and the app then renders it again. The page-enter animation
+    // (src/styles.scss) would play on both, the second restarting the first
+    // mid-way, so the first page skips it and only navigations animate.
+    // (Router.navigated can't tell: the first navigation has ended by the time
+    // the root component, and so this page, is created.)
+    const firstPage = inject(FirstPageTracker);
+    if (!firstPage.rendered) {
+      firstPage.rendered = true;
+      inject(Renderer2).addClass(this.el.nativeElement, 'initial-page');
+    }
+  }
 
   get nativeElement(): HTMLElement {
     return this.el.nativeElement;

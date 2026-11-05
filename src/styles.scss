@@ -241,7 +241,8 @@ body::after {
 
 // Fade/slide the routed page component in on navigation. Scoped to
 // .page-wrapper so the root outlet (which contains fixed elements) is not
-// transformed.
+// transformed. The first page of a visit is already on screen, prerendered,
+// so it doesn't animate (see BasePageComponent).
 //
 // No `both` fill mode: a filling animation keeps an identity transform on the
 // element, and *any* transform makes it the containing block for its
@@ -250,6 +251,9 @@ body::after {
 // soon as the animation ends.
 .page-wrapper router-outlet + * {
   display: block;
+}
+
+.page-wrapper router-outlet + :not(.initial-page) {
   animation: page-enter 350ms cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -258,7 +262,7 @@ body::after {
     scroll-behavior: auto;
   }
 
-  .page-wrapper router-outlet + * {
+  .page-wrapper router-outlet + :not(.initial-page) {
     animation: none;
   }
 }
