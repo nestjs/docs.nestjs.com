@@ -1,5 +1,7 @@
 ### Production rules
 
+A production rule says what one request or job may do, such as how many queries or model calls it makes, and NestJS Observe checks every kept trace against it.
+
 Some bugs never throw. A retry charges a card twice, a new relation loads one row per product, an agent loop calls the model forty times - every request returns `200`, every test passes, and the dashboards stay green until the invoice, the latency, or a customer says otherwise.
 
 A **production rule** writes down what one request or job may do - "checkout charges the payment provider exactly once", "the product list runs at most three queries", "no request makes more than five LLM calls" - and every kept trace is checked against it as it arrives. The trace that breaks a rule, and the release it came from, are in front of you the moment it happens. When a coding agent wrote the change, a rule is the cheapest review there is: one sentence of what production must keep doing, checked on every deploy without anyone re-reading the diff.

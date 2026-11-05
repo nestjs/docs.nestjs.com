@@ -1,5 +1,7 @@
 ### Mail
 
+`@nestjs/mail` sends email from a Nest application: mail classes rendered from escaped HTML templates, sent over SMTP or an email API, and read back in tests.
+
 When a customer places an order at an online store for cat food and supplies, they expect a confirmation email within a minute: the items, the total, a link to the order, and the invoice as a PDF. Sending that email well takes more than a call to an SMTP library:
 
 - **The HTML must be safe.** A product name or a customer name ends up in the markup. Unescaped, a name like `<script>` or a stray `&` breaks the layout, or worse.

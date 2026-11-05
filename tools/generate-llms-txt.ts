@@ -99,7 +99,8 @@ function describe(contentFile: string): string {
 
   const text = toPlainText(paragraph);
   const sentence = text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
-  return sentence.replace(/\.$/, '');
+  // An opening that introduces a list ends in a colon, not a full stop.
+  return sentence.replace(/[.:]$/, '');
 }
 
 function contentFileFor(path: string): string {

@@ -1,5 +1,7 @@
 ### Webhooks
 
+`@nestjs/webhooks` sends signed, retried webhooks to your partners after the transaction commits, and verifies the webhooks you receive on their raw body.
+
 An online store for cat food and supplies sells to cat shelters and resellers that buy in bulk, through its API. Northside Pet Supplies, a reseller, places an order and wants to know when it ships and when it's cancelled, without polling: a webhook to its warehouse system. The store receives webhooks too: the payment provider reports payments, and the carrier reports shipments. Both directions look simple, and both go wrong in the same ways:
 
 - **Sending.** A `fetch()` after the order commits is lost when the process dies in between, and sent for a transaction that then rolls back. A retry sends the same event twice without telling the partner so. Every partner writes its own verifier for a homemade signature. A partner that is down for an hour is hammered, a dead endpoint is never turned off, and nobody can answer "did you send it?". And the URL the partner typed is a server-side request forgery waiting to happen: `https://169.254.169.254/` answers with the cloud credentials.

@@ -1,5 +1,7 @@
 ### Durable workflows
 
+`@nestjs/workflows` runs processes that take days, such as fulfilling an order, as one `async` method whose steps are kept in your database and survive restarts.
+
 Some business processes take days and span several systems. In an online store for cat food and supplies, fulfilling an order means:
 
 1. Charge the customer's card with the payment provider.

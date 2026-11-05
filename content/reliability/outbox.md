@@ -1,5 +1,7 @@
 ### Outbox
 
+`@nestjs/outbox` publishes events and messages reliably: each one is saved in the same database transaction as your data, then relayed with retries.
+
 When a customer places an order at an online store for cat food and supplies, the order API saves the order and announces it with an `OrderPlaced` event. Three things react to that event: a confirmation email goes out, stock is reserved, and a separate analytics service records the sale.
 
 Saving the order and publishing the event are two writes to two different systems, and no transaction spans both:
