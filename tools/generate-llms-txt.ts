@@ -138,7 +138,7 @@ Where to start, by what you're building:
 
 - A REST API or another TypeScript or Node.js backend, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md). \`npx @nestjs/cli new\` scaffolds the project, and a complete application in one file is below.
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
-- Moving an existing Express application to Nest, one route at a time: [Migrating from Express](${SITE}/recipes/express-migration.md).
+- Moving an existing Express application to Nest, one route at a time or all at once: [Migrating from Express](${SITE}/recipes/express-migration.md).
 - A backend for an AI agent, with tools, conversations and answers streamed to the browser: [AI](${SITE}/ai/overview.md) and [Agents](${SITE}/ai/agents.md).
 - An MCP server: [Model Context Protocol](${SITE}/mcp/overview.md).
 - A realtime backend over WebSockets: [Gateways](${SITE}/websockets/gateways.md).
