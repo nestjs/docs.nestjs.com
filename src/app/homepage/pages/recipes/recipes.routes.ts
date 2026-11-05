@@ -5,6 +5,7 @@ import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
+import { FastifyMigrationComponent } from './fastify-migration/fastify-migration.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { SwcComponent } from './swc/swc.component';
@@ -55,6 +56,11 @@ export const RECIPES_ROUTES: Routes = [
     path: 'router-module',
     component: RouterModuleComponent,
     data: { title: 'Router module' },
+  },
+  {
+    path: 'fastify-migration',
+    component: FastifyMigrationComponent,
+    data: { title: 'Migrating from Fastify' },
   },
   {
     path: 'nest-commander',

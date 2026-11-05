@@ -326,6 +326,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Passport (auth)', path: '/recipes/passport' },
       { title: 'Hot reload', path: '/recipes/hot-reload' },
       { title: 'Router module', path: '/recipes/router-module' },
+      { title: 'Migrating from Fastify', path: '/recipes/fastify-migration' },
       { title: 'CQRS', path: '/recipes/cqrs' },
       { title: 'Serve static', path: '/recipes/serve-static' },
       { title: 'Commander', path: '/recipes/nest-commander' },
