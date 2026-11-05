@@ -19,6 +19,7 @@
 /application/http-module.md        /application/http-client.md  301
 /recipes/mikroorm.md               /data/mikroorm.md  301
 /recipes/prisma.md                 /data/prisma.md  301
+/recipes/terminus.md               /reliability/terminus.md  301
 /techniques/caching.md             /data/caching.md  301
 /techniques/compression.md         /http/compression.md  301
 /techniques/configuration.md       /application/configuration.md  301
@@ -35,6 +36,7 @@
 /techniques/serialization.md       /application/serialization.md  301
 /techniques/server-sent-events.md  /http/server-sent-events.md  301
 /techniques/session.md             /http/session.md  301
+/techniques/streaming-files.md     /http/file-upload.md  301
 /techniques/task-scheduling.md     /application/task-scheduling.md  301
 /techniques/validation.md          /application/validation.md  301
 /techniques/versioning.md          /http/versioning.md  301
