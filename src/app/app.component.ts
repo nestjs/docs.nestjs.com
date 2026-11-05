@@ -50,18 +50,25 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * index.html ships one canonical URL - the site root - for every route, and
-   * a page whose canonical points elsewhere is telling search engines it is a
-   * duplicate of that page. Netlify's prerenderer runs this code, so crawlers
-   * receive the per-page value.
+   * Every route is served the same index.html, so it carries no canonical URL:
+   * one value there would tell search engines that every page is a duplicate
+   * of it. Netlify's prerenderer runs this code for social and AI crawlers, but
+   * Googlebot reads the raw file and renders it itself, and Google expects a
+   * canonical set with JavaScript to be the only one on the page - so the link
+   * is created here rather than rewritten.
    */
   public updateCanonical(event: NavigationEnd): void {
     const path = event.urlAfterRedirects.split(/[?#]/)[0];
     const url = path === '/' ? SITE_URL : `${SITE_URL}${path}`;
-    const link = this.document.head.querySelector<HTMLLinkElement>(
+    let link = this.document.head.querySelector<HTMLLinkElement>(
       'link[rel="canonical"]',
     );
-    link?.setAttribute('href', url);
+    if (!link) {
+      link = this.document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      this.document.head.appendChild(link);
+    }
+    link.setAttribute('href', url);
     this.metaService.updateTag({ property: 'og:url', content: url });
   }
 
