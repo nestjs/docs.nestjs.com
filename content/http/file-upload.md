@@ -467,7 +467,7 @@ import {
 } from '@nestjs/common';
 import {
   FileInterceptor,
-  UploadedMultipartFile,
+  type UploadedMultipartFile,
 } from '@nestjs/platform-fastify/multipart';
 
 @Controller('files')
@@ -521,7 +521,7 @@ As with Multer, files are kept in memory (in `file.buffer`) unless you set the `
 import {
   diskStorage,
   FileInterceptor,
-  UploadedMultipartFile,
+  type UploadedMultipartFile,
 } from '@nestjs/platform-fastify/multipart';
 
 @Post('upload')
