@@ -217,7 +217,7 @@ function chapterBody(item: NavItem): string | null {
     .replace(/^@@filename\(.*\)$/gm, '')
     .replace(/^@@switch$[\s\S]*?(?=^```$)/gm, '') // JS variant of each sample
     .replace(/<app-banner-\w+><\/app-banner-\w+>/g, '')
-    .replace(/\{\{ '([{}])' \}\}/g, '$1') // Angular's escaping of braces in inline code
+    .replace(/\{\{ '([^']*)' \}\}/g, '$1') // Angular's escaping of braces in inline code
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
