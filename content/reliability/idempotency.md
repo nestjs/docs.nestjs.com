@@ -1,5 +1,7 @@
 ### Idempotency keys
 
+`@nestjs/idempotency` makes routes, GraphQL mutations and message handlers safe to retry: each `Idempotency-Key` runs the handler once, and retries get its result.
+
 A customer of an online store for cat food and supplies pays for salmon kibble and cat litter in the store's mobile app, on a phone on a train. The app sends `POST /orders/ord_1001/pay`. The server charges the card through the payment provider, but the response never reaches the phone. The app can't tell a lost request from a lost response, so it retries. Without protection, the retry goes wrong in one of two ways:
 
 - It arrives after the first request finished. The order is already `paid`, so the customer gets an error for a payment that went through.

@@ -1,5 +1,7 @@
 ### Resilience
 
+`@nestjs/resilience` adds retries, timeouts, circuit breakers, bulkheads and fallbacks to controllers, resolvers, message handlers and gateways, as decorators.
+
 Sooner or later, every application that calls another system meets one that is slow or down. Without a plan, a slow dependency ties up your request handlers, your clients wait until their own timeouts fire, and retries from every layer pile even more load onto the service that is already struggling.
 
 `@nestjs/resilience` gives you the usual tools as decorators: **retry**, **timeout**, **circuit breaker**, **bulkhead** and **fallback**. They apply to your application's **entrypoints**, which are controllers, GraphQL resolvers, microservice message handlers and WebSocket gateways. For code inside services, the same settings are available as policy objects. A single global interceptor applies the decorators, so they behave the same on every transport, and each failure becomes that transport's native error. Over HTTP, for example, a timeout answers `504 Gateway Timeout` and an open breaker answers `503 Service Unavailable` with a `Retry-After` header.

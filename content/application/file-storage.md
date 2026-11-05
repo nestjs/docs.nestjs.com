@@ -1,5 +1,7 @@
 ### File storage
 
+`@nestjs/storage` keeps files on named disks (a local folder, S3 or an S3-compatible store such as R2) behind one API, with public and signed URLs.
+
 An online store for cat food and supplies keeps three kinds of files. Product photos are uploaded by staff and shown to everyone. Invoices are PDF files that only the customer who paid should be able to download. And the warehouse team photographs products with the store's mobile app, which uploads large photos that shouldn't have to pass through the order API.
 
 In development, all of this should work from a folder on the laptop. In production, the files go to S3 or Cloudflare R2, because the API runs on several instances and none of them has a disk that lasts. The code that stores and serves files should be the same in both.

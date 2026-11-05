@@ -1,5 +1,7 @@
 ### Model Context Protocol (MCP)
 
+`@nestjs/mcp` turns a Nest application into a Model Context Protocol (MCP) server, whose tools, resources and prompts are methods of your providers.
+
 The online store for cat food and supplies answers a lot of email: "where is my order?", "can I change the delivery address?", "is the salmon kibble back in stock?". The support team works in an AI assistant (Claude, ChatGPT, an agent in their help desk), and the assistant can only answer when it can see what the order API sees.
 
 The [Model Context Protocol](https://modelcontextprotocol.io) (MCP) is how an assistant reaches an application. The application runs an **MCP server**, and exposes three kinds of things to the assistant, the **MCP client**:
