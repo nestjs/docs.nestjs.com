@@ -140,6 +140,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Session', path: '/http/session' },
       { title: 'File upload and streaming', path: '/http/file-upload' },
       { title: 'Compression', path: '/http/compression' },
+      { title: 'Streaming responses', path: '/http/streaming-responses' },
       { title: 'Server-Sent Events', path: '/http/server-sent-events' },
       { title: 'Model-View-Controller', path: '/http/mvc' },
       { title: 'HTTP adapters', path: '/http/performance' },
