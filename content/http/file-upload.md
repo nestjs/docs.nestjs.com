@@ -647,7 +647,7 @@ export class FileController {
 }
 ```
 
-With this approach, the handler takes over the response, so post-controller [interceptor](/interceptors) logic no longer runs. Instead, return a `StreamableFile` instance, and Nest pipes it into the response for you.
+With this approach, the handler takes over the response, so post-controller [interceptor](/interceptors) logic no longer runs. Instead, return a `StreamableFile` instance, and Nest pipes it into the response for you. For content that isn't a file, such as the tokens of an LLM, see [Streaming responses](/http/streaming-responses).
 
 > info **Note** Streaming files applies to **HTTP applications**. The examples below do not apply to GraphQL or microservice applications.
 
