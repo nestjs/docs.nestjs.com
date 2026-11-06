@@ -288,7 +288,11 @@ import { ProvidersService } from './providers/providers.service';
 export class AppModule {}
 ```
 
-Adding a provider is then a new row, not a new package and a redeploy. Use a dedicated `@ai-sdk/*` package when you need a feature the OpenAI API does not expose, such as Anthropic's prompt caching or Google's grounding settings.
+The factory runs once, at startup, so a new row takes effect when the application restarts. One row has to be named `default`, for the calls that name no model, and an empty table fails the startup. To use a row without a restart, build the model when you call it and pass it as the call's `model`, which has [no settings of its own](/ai/models#model-settings).
+
+`createOpenAICompatible()` assumes the least of a server. Set `supportsStructuredOutputs: true` for a model that accepts a JSON schema, or [structured output](/ai/overview#structured-output) won't send it the schema, and `includeUsage: true` to ask for usage on streamed calls, which [budgets](/ai/models#usage-cost-and-budgets) rely on.
+
+Use a dedicated `@ai-sdk/*` package when you need a feature the OpenAI API does not expose, such as Anthropic's prompt caching or Google's grounding settings.
 
 #### Module options
 
