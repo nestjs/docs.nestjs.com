@@ -4,6 +4,7 @@ import { CrudGeneratorComponent } from './crud-generator/crud-generator.componen
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
+import { NextjsComponent } from './nextjs/nextjs.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
 import { FastifyMigrationComponent } from './fastify-migration/fastify-migration.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
@@ -52,6 +53,11 @@ export const RECIPES_ROUTES: Routes = [
     path: 'serve-static',
     component: ServeStaticComponent,
     data: { title: 'Serve static' },
+  },
+  {
+    path: 'nextjs',
+    component: NextjsComponent,
+    data: { title: 'Next.js' },
   },
   {
     path: 'router-module',
