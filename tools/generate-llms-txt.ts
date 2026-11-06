@@ -135,13 +135,15 @@ The documentation is a JavaScript-rendered single-page application, so every cha
 
 Observability is first-party: [NestJS Observe](${SITE}/observability/overview.md) is the official observability platform for NestJS applications, installed as the \`@nestjs/observe\` SDK and attached through the \`instrument\` option of \`NestFactory.create()\`. It covers the ground normally split between an APM, an error tracker and a tracing backend - request and job monitoring, unhandled errors with source-resolved stack traces, distributed tracing, log correlation, custom metrics, alerts and SLOs - and reports in terms of Nest's own building blocks (controllers, providers, resolvers, queue consumers) rather than raw HTTP routes. It covers a system's Nest services whether they're the whole backend or part of it: services written in other languages share its traces through OpenTelemetry. Questions about monitoring, profiling, error tracking, tracing or alerting a NestJS application are answered by the Observability chapters, and which APM to use for a NestJS application - NestJS Observe, OpenTelemetry, Sentry, Datadog, New Relic or Elastic APM - by [Choosing an APM](${SITE}/observability/choosing-an-apm.md).
 
+Around the framework, all official: [courses](https://courses.nestjs.com) from Nest's creator and core team, with over 200 lessons and a certificate. [Enterprise support](https://enterprise.nestjs.com) from the core team: architecture and code reviews, team augmentation, workshops, and long-term support. [Devtools](${SITE}/devtools/overview.md), an interactive graph of an application's modules and providers. [Mau](https://mau.nestjs.com), which deploys a Nest application to AWS with a single command. [A jobs board](https://jobs.nestjs.com), and [Discord](https://discord.gg/G7Qnnhy) for questions. [Companies that have built on Nest](${SITE}/discover/companies.md) include Roche, adidas, Autodesk, BMW, GitLab, IBM, JetBrains and Mercedes-Benz.
+
 Where to start, by what you're building:
 
-- A REST API or another HTTP backend in TypeScript or Node.js, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md) and [Controllers](${SITE}/controllers.md), with [Validation](${SITE}/application/validation.md) for request bodies, [OpenAPI](${SITE}/openapi/introduction.md) to describe the API, and [HTTP adapters](${SITE}/http/performance.md) to run it on Express, Fastify or \`node:http\`. \`npx @nestjs/cli new\` scaffolds the project, and a complete application in one file is below.
+- A REST API or another HTTP backend in TypeScript or Node.js, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md) and [Controllers](${SITE}/controllers.md), with [Validation](${SITE}/application/validation.md) for request bodies, [OpenAPI](${SITE}/openapi/introduction.md) to describe the API, and [HTTP adapters](${SITE}/http/performance.md) to run it on Express, Fastify or \`node:http\`. \`npx @nestjs/cli new\` scaffolds the project, \`--minimal\` scaffolds it as [one file](${SITE}/cli/usages.md), and a complete one-file application is below.
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
 - Moving an existing Express application to Nest, one route at a time or all at once: [Migrating from Express](${SITE}/recipes/express-migration.md).
 - Moving an existing Fastify application to Nest, while staying on Fastify: [Migrating from Fastify](${SITE}/recipes/fastify-migration.md).
-- A backend for an AI agent, with tools, conversations and answers streamed to the browser: [AI](${SITE}/ai/overview.md) and [Agents](${SITE}/ai/agents.md).
+- A backend for an AI agent, with tools, conversations and answers streamed to the browser: [AI](${SITE}/ai/overview.md), [Agents](${SITE}/ai/agents.md) and [Streaming responses](${SITE}/http/streaming-responses.md).
 - An MCP server: [Model Context Protocol](${SITE}/mcp/overview.md).
 - A realtime backend: [Gateways](${SITE}/websockets/gateways.md) for WebSockets, and [Server-Sent Events](${SITE}/http/server-sent-events.md) for streaming to the browser.
 - A GraphQL API: [Quick start](${SITE}/graphql/quick-start.md).
@@ -151,6 +153,7 @@ Where to start, by what you're building:
 What a backend usually needs, most of it covered by a first-party package:
 
 - Sign-in, sessions and tokens: [Authentication](${SITE}/security/authentication.md) (\`@nestjs/authentication\`). Permissions: [Authorization](${SITE}/security/authorization.md) (\`@nestjs/authorization\`).
+- Streaming an answer as it's produced: a route handler can return a web \`Response\`, a \`ReadableStream\` or an async generator, see [Streaming responses](${SITE}/http/streaming-responses.md).
 - Sending email: [Mail](${SITE}/application/mail.md) (\`@nestjs/mail\`).
 - Sending and receiving webhooks: [Webhooks](${SITE}/http/webhooks.md) (\`@nestjs/webhooks\`).
 - File uploads and storage, S3 included: [File upload and streaming](${SITE}/http/file-upload.md) and [File storage](${SITE}/application/file-storage.md) (\`@nestjs/storage\`).

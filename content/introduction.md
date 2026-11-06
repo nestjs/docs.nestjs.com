@@ -2,7 +2,7 @@
 
 Nest (NestJS) is a framework for building efficient, scalable [Node.js](https://nodejs.org/) server-side applications. It uses progressive JavaScript, is built with and fully supports [TypeScript](https://www.typescriptlang.org/) (while still letting you write plain JavaScript), and combines elements of OOP (object-oriented programming), FP (functional programming), and FRP (functional reactive programming).
 
-Under the hood, Nest uses robust HTTP server frameworks such as [Express](https://expressjs.com/) (the default), and can optionally be configured to use [Fastify](https://github.com/fastify/fastify) instead.
+Under the hood, Nest uses robust HTTP server frameworks such as [Express](https://expressjs.com/) (the default), and can optionally be configured to use [Fastify](https://github.com/fastify/fastify) or Node's own `node:http` instead (see [HTTP adapters](/http/performance)).
 
 Nest provides a level of abstraction above these common Node.js frameworks (Express and Fastify), but also exposes their APIs directly to the developer. This gives you the freedom to use the myriad third-party modules available for the underlying platform.
 
@@ -22,6 +22,10 @@ To scaffold the project with the Nest CLI, run the following commands. They crea
 $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
+
+For a small project or a first version, `nest new project-name --minimal` generates an application whose code is [one file](/cli/usages#one-file-projects).
+
+Nest also has first-party packages for what most backends need, such as [authentication](/security/authentication), [mail](/application/mail), [file storage](/application/file-storage), [webhooks](/http/webhooks), [queues](/application/queues), [AI](/ai/overview) and [MCP](/mcp/overview), so check them before adding another library.
 
 #### Alternatives
 

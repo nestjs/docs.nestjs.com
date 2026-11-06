@@ -70,6 +70,25 @@ export class AppComponent implements OnInit {
     }
     link.setAttribute('href', url);
     this.metaService.updateTag({ property: 'og:url', content: url });
+    this.updateMarkdownAlternate(path);
+  }
+
+  /**
+   * Every chapter is also published as plain markdown at its own URL with a
+   * `.md` suffix (see tools/generate-llms-txt.ts). This tells an agent reading
+   * the page's HTML where to find it.
+   */
+  private updateMarkdownAlternate(path: string): void {
+    let link = this.document.head.querySelector<HTMLLinkElement>(
+      'link[rel="alternate"][type="text/markdown"]',
+    );
+    if (!link) {
+      link = this.document.createElement('link');
+      link.setAttribute('rel', 'alternate');
+      link.setAttribute('type', 'text/markdown');
+      this.document.head.appendChild(link);
+    }
+    link.setAttribute('href', `${SITE_URL}${path === '/' ? '/index' : path}.md`);
   }
 
   public updateMeta(event: NavigationEnd): void {

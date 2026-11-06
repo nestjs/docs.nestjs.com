@@ -54,4 +54,32 @@ describe('AppComponent canonical URL', () => {
     navigate('/');
     expect(canonicals()[0].getAttribute('href')).toBe('https://docs.nestjs.com');
   });
+
+  describe('markdown link', () => {
+    const markdown = () =>
+      Array.from(
+        document.head.querySelectorAll<HTMLLinkElement>(
+          'link[rel="alternate"][type="text/markdown"]',
+        ),
+      );
+
+    afterEach(() => {
+      markdown().forEach((link) => link.remove());
+    });
+
+    it('points at the markdown version of the chapter', () => {
+      navigate('/controllers');
+      navigate('/pipes?lang=js#binding-pipes');
+      expect(markdown().map((link) => link.getAttribute('href'))).toEqual([
+        'https://docs.nestjs.com/pipes.md',
+      ]);
+    });
+
+    it('points the homepage at the introduction', () => {
+      navigate('/');
+      expect(markdown()[0].getAttribute('href')).toBe(
+        'https://docs.nestjs.com/index.md',
+      );
+    });
+  });
 });
