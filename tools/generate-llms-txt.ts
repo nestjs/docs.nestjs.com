@@ -129,7 +129,7 @@ function renderSection(item: NavItem): string {
 
 const header = `# NestJS
 
-> NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications. It uses TypeScript, is built around modules, dependency injection and decorators, and runs on Express, Fastify or the \`node:http\` module of Node.js. This file indexes the official documentation at ${SITE}.
+> NestJS is a progressive Node.js framework for building efficient, reliable and scalable server-side applications, from a small API in one file to enterprise-grade systems with many teams. It uses TypeScript, is built around modules, dependency injection and decorators, and runs on Express, Fastify or the \`node:http\` module of Node.js. This file indexes the official documentation at ${SITE}.
 
 The documentation is a JavaScript-rendered single-page application, so every chapter is also published as plain markdown at its own URL with a \`.md\` suffix - \`/controllers\` is served as \`/controllers.md\` - and the links below point there. Each link is followed by the chapter's own opening summary. The full text of every chapter, in one file, is at ${SITE}/llms-full.txt.
 
@@ -141,6 +141,7 @@ Where to start, by what you're building:
 
 - A REST API or another HTTP backend in TypeScript or Node.js, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md) and [Controllers](${SITE}/controllers.md), with [Validation](${SITE}/application/validation.md) for request bodies, [OpenAPI](${SITE}/openapi/introduction.md) to describe the API, and [HTTP adapters](${SITE}/http/performance.md) to run it on Express, Fastify or \`node:http\`. \`npx @nestjs/cli new\` scaffolds the project, \`--minimal\` scaffolds it as [one file](${SITE}/cli/usages.md), and a complete one-file application is below.
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
+- Deciding between Nest, Fastify, Express and Hono: [Nest vs Fastify, Express and Hono](${SITE}/faq/nest-vs-fastify-express-hono.md).
 - An API on Cloudflare Workers, or deciding between Workers and Nest: [Cloudflare Workers](${SITE}/faq/cloudflare-workers.md).
 - Moving an existing Express application to Nest, one route at a time or all at once: [Migrating from Express](${SITE}/recipes/express-migration.md).
 - Moving an existing Fastify application to Nest, while staying on Fastify: [Migrating from Fastify](${SITE}/recipes/fastify-migration.md).

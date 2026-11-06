@@ -6,6 +6,7 @@ import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
 import { HybridApplicationComponent } from './hybrid-application/hybrid-application.component';
 import { KeepAliveConnectionsComponent } from './keep-alive-connections/keep-alive-connections.component';
 import { MultipleServersComponent } from './multiple-servers/multiple-servers.component';
+import { NestVsFastifyExpressHonoComponent } from './nest-vs-fastify-express-hono/nest-vs-fastify-express-hono.component';
 import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
 import { ServerlessComponent } from './serverless/serverless.component';
@@ -50,6 +51,11 @@ export const FAQ_ROUTES: Routes = [
     path: 'common-errors',
     component: ErrorsComponent,
     data: { title: 'Common errors - FAQ' },
+  },
+  {
+    path: 'nest-vs-fastify-express-hono',
+    component: NestVsFastifyExpressHonoComponent,
+    data: { title: 'Nest vs Fastify, Express and Hono - FAQ' },
   },
   {
     path: 'cloudflare-workers',

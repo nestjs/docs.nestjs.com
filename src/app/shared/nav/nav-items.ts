@@ -342,6 +342,10 @@ export const NAV_ITEMS: NavItem[] = [
     title: 'FAQ',
     isOpened: false,
     children: [
+      {
+        title: 'Nest vs Fastify, Express and Hono',
+        path: '/faq/nest-vs-fastify-express-hono',
+      },
       { title: 'Serverless', path: '/faq/serverless' },
       { title: 'Cloudflare Workers', path: '/faq/cloudflare-workers' },
       { title: 'HTTP adapter', path: '/faq/http-adapter' },
