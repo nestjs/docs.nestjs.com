@@ -2582,8 +2582,8 @@ async function emptyStore(db: Database) {
 
 describe('DrizzleAuthenticationStore on PGlite', () => {
   const client = new PGlite();
-  const db = pglite(client) as unknown as Database;
-  beforeAll(() => migratePglite(pglite(client), { migrationsFolder }));
+  const db = pglite({ client }) as unknown as Database;
+  beforeAll(() => migratePglite(pglite({ client }), { migrationsFolder }));
   afterAll(() => client.close());
 
   for (const c of authenticationStoreContract(() => emptyStore(db), { concurrent: true, maxPending: 3 })) {
@@ -2599,7 +2599,7 @@ describe.skipIf(!postgres)(`DrizzleAuthenticationStore on PostgreSQL${reason ? `
   let db: Database;
   beforeAll(async () => {
     pool = new Pool({ connectionString: await postgres!.createDatabase('authentication_tutorial_store'), max: 10 });
-    db = nodePostgres(pool);
+    db = nodePostgres({ client: pool });
     await migrateNodePostgres(db, { migrationsFolder });
   });
   afterAll(async () => {
@@ -3763,7 +3763,7 @@ describe('Authentication (e2e)', () => {
   const ada = { email: 'ada@example.com', password: 'correct horse battery' };
 
   beforeAll(async () => {
-    const db = drizzle(pglite);
+    const db = drizzle({ client: pglite });
     // The app's migrations, the authentication tables included.
     await migrate(db, { migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)) });
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })

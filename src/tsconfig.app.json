@@ -5,6 +5,7 @@
     "types": []
   },
   "files": [
-    "main.ts"
+    "main.ts",
+    "main.server.ts"
   ]
 }

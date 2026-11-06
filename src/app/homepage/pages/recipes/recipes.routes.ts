@@ -4,11 +4,15 @@ import { CrudGeneratorComponent } from './crud-generator/crud-generator.componen
 import { HotReloadComponent } from './hot-reload/hot-reload.component';
 import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
+import { NextjsComponent } from './nextjs/nextjs.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
+import { FastifyMigrationComponent } from './fastify-migration/fastify-migration.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
 import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
+import { SocketActivationComponent } from './socket-activation/socket-activation.component';
+import { ExpressMigrationComponent } from './express-migration/express-migration.component';
 import { movedTo, splitInto } from '../../../shared/utils/moved-page-redirect';
 import { PRISMA_SECTIONS } from '../data/prisma-sections';
 
@@ -51,9 +55,19 @@ export const RECIPES_ROUTES: Routes = [
     data: { title: 'Serve static' },
   },
   {
+    path: 'nextjs',
+    component: NextjsComponent,
+    data: { title: 'Next.js' },
+  },
+  {
     path: 'router-module',
     component: RouterModuleComponent,
     data: { title: 'Router module' },
+  },
+  {
+    path: 'fastify-migration',
+    component: FastifyMigrationComponent,
+    data: { title: 'Migrating from Fastify' },
   },
   {
     path: 'nest-commander',
@@ -79,5 +93,15 @@ export const RECIPES_ROUTES: Routes = [
     path: 'passport',
     component: PassportComponent,
     data: { title: 'passport' },
+  },
+  {
+    path: 'socket-activation',
+    component: SocketActivationComponent,
+    data: { title: 'Socket activation' },
+  },
+  {
+    path: 'express-migration',
+    component: ExpressMigrationComponent,
+    data: { title: 'Migrating from Express' },
   },
 ];

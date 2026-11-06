@@ -1,5 +1,7 @@
 ### Durable workflows
 
+`@nestjs/workflows` runs processes that take days, such as fulfilling an order, as one `async` method whose steps are kept in your database and survive restarts.
+
 Some business processes take days and span several systems. In an online store for cat food and supplies, fulfilling an order means:
 
 1. Charge the customer's card with the payment provider.
@@ -206,11 +208,11 @@ export class WorkflowStore1790801342207 implements MigrationInterface {
 }
 ```
 
-With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+With drizzle-kit, create a custom migration, and fill the file it creates with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
 
 ```bash
 $ npx drizzle-kit generate --custom --name=workflows
-$ npx @nestjs/workflows sql --statement-breakpoints > drizzle/0001_workflows.sql
+$ npx @nestjs/workflows sql --statement-breakpoints > drizzle/20261103120000_workflows/migration.sql
 ```
 
 On MySQL, `MySqlWorkflowStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:
@@ -1182,7 +1184,7 @@ import { Test } from '@nestjs/testing';
 import { ManualWorkflowClock, WORKFLOWS_MODULE_OPTIONS, WorkflowClient, WorkflowWorker } from '@nestjs/workflows';
 import { drizzle } from 'drizzle-orm/pglite';
 import { migrate } from 'drizzle-orm/pglite/migrator';
-// ...AppModule, getDrizzleToken, the schema and the stand-in services
+// ...AppModule, getDrizzleToken and the stand-in services
 
 /**
  * PostgreSQL in-process (PGlite), with the app's migrations applied: the orders
@@ -1190,7 +1192,7 @@ import { migrate } from 'drizzle-orm/pglite/migrator';
  */
 export async function createDatabase() {
   const client = new PGlite();
-  const db = drizzle(client, { schema });
+  const db = drizzle({ client });
   await migrate(db, { migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)) });
   return { db, close: () => client.close() };
 }

@@ -166,8 +166,16 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/observability/error-monitoring',
       },
       { title: 'Dashboard', path: '/observability/dashboard' },
+      {
+        title: 'Production rules',
+        path: '/observability/production-rules',
+      },
       { title: 'MCP server', path: '/observability/mcp-server' },
       { title: 'OpenTelemetry', path: '/observability/opentelemetry' },
+      {
+        title: 'Choosing an APM',
+        path: '/observability/choosing-an-apm',
+      },
     ],
   },
   {
@@ -219,6 +227,28 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Guards', path: '/websockets/guards' },
       { title: 'Interceptors', path: '/websockets/interceptors' },
       { title: 'Adapters', path: '/websockets/adapter' },
+    ],
+  },
+  {
+    title: 'MCP',
+    isOpened: false,
+    children: [
+      { title: 'Overview', path: '/mcp/overview' },
+      { title: 'Primitives', path: '/mcp/primitives' },
+      { title: 'Transports', path: '/mcp/transports' },
+      { title: 'Testing', path: '/mcp/testing' },
+      { title: 'Migration', path: '/mcp/migration' },
+    ],
+  },
+  {
+    title: 'AI',
+    isOpened: false,
+    children: [
+      { title: 'Overview', path: '/ai/overview' },
+      { title: 'Models', path: '/ai/models' },
+      { title: 'Tools', path: '/ai/tools' },
+      { title: 'Agents', path: '/ai/agents' },
+      { title: 'Testing', path: '/ai/testing' },
     ],
   },
   {
@@ -296,10 +326,14 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Passport (auth)', path: '/recipes/passport' },
       { title: 'Hot reload', path: '/recipes/hot-reload' },
       { title: 'Router module', path: '/recipes/router-module' },
+      { title: 'Migrating from Fastify', path: '/recipes/fastify-migration' },
       { title: 'CQRS', path: '/recipes/cqrs' },
       { title: 'Serve static', path: '/recipes/serve-static' },
+      { title: 'Next.js', path: '/recipes/nextjs' },
       { title: 'Commander', path: '/recipes/nest-commander' },
       { title: 'Async local storage', path: '/recipes/async-local-storage' },
+      { title: 'Socket activation', path: '/recipes/socket-activation' },
+      { title: 'Migrating from Express', path: '/recipes/express-migration' },
     ],
   },
   {

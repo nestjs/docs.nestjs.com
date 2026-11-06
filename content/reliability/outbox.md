@@ -1,5 +1,7 @@
 ### Outbox
 
+`@nestjs/outbox` publishes events and messages reliably: each one is saved in the same database transaction as your data, then relayed with retries.
+
 When a customer places an order at an online store for cat food and supplies, the order API saves the order and announces it with an `OrderPlaced` event. Three things react to that event: a confirmation email goes out, stock is reserved, and a separate analytics service records the sale.
 
 Saving the order and publishing the event are two writes to two different systems, and no transaction spans both:
@@ -119,11 +121,11 @@ export class OutboxStore1790801276314 implements MigrationInterface {
 }
 ```
 
-With drizzle-kit, create a custom migration, and fill it with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+With drizzle-kit, create a custom migration, and fill the file it creates with the SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
 
 ```bash
 $ npx drizzle-kit generate --custom --name=outbox
-$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/0002_outbox.sql
+$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/20261103120000_outbox/migration.sql
 ```
 
 On MySQL, `MySqlOutboxStore.migrationStatements()` returns the statements one per string, and a TypeORM migration runs them one per call:
@@ -1069,13 +1071,12 @@ import { fileURLToPath } from 'node:url';
 import { of } from 'rxjs';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ANALYTICS_SERVICE, AppModule } from '../src/app.module.js';
-import * as schema from '../src/database/schema.js';
 import { MailerService } from '../src/notifications/mailer.service.js';
 import { OrdersService } from '../src/orders/orders.service.js';
 
 describe('OrdersService (outbox)', () => {
   const client = new PGlite(); // PostgreSQL, in-process
-  const db = drizzle(client, { schema });
+  const db = drizzle({ client });
   const mailer = { sendOrderConfirmation: vi.fn() };
   const analytics = { emit: vi.fn(() => of(undefined)) };
   let moduleRef: TestingModule;

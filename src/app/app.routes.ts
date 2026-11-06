@@ -172,6 +172,16 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'mcp',
+        loadChildren: () =>
+          import('./homepage/pages/mcp/mcp.routes').then((r) => r.MCP_ROUTES),
+      },
+      {
+        path: 'ai',
+        loadChildren: () =>
+          import('./homepage/pages/ai/ai.routes').then((r) => r.AI_ROUTES),
+      },
+      {
         path: 'microservices',
         loadChildren: () =>
           import('./homepage/pages/microservices/microservices.routes').then(
@@ -226,6 +236,10 @@ export const routes: Routes = [
 ];
 
 export const RoutingModule = RouterModule.forRoot(routes, {
+  // Pages are prerendered. Without hydration, the app replaces that markup as
+  // soon as the root component is created, so the first navigation - including
+  // its lazy chunk - has to finish before then, or the page would go blank.
+  initialNavigation: 'enabledBlocking',
   scrollPositionRestoration: 'enabled',
   anchorScrolling: 'enabled',
   preloadingStrategy: PreloadAllModules,

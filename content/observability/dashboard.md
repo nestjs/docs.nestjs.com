@@ -1,6 +1,6 @@
 ### Dashboard
 
-Once an application is instrumented and sending data, its project dashboard fills in automatically, with no queries to write and no dashboards to build. This chapter covers what each view shows, how the views relate to each other, and how the features built on top of the telemetry (alerts, SLOs, issues, and the agent handoff) fit together. For the full reference, see the [NestJS Observe documentation](https://www.observe.nestjs.com/documentation 'NestJS Observe documentation').
+Once an application is instrumented and sending data, its project dashboard fills in automatically, with no queries to write and no dashboards to build. This chapter covers what each view shows, how the views relate to each other, and how the features built on top of the telemetry (release verdicts, status pages, alerts, SLOs, issues, and the agent handoff) fit together. For the full reference, see the [NestJS Observe documentation](https://www.observe.nestjs.com/documentation 'NestJS Observe documentation').
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/dashboard.webp" alt="Project dashboard" /></figure>
 
@@ -24,13 +24,14 @@ Aggregates tell you _that_ something is wrong and how much it matters; a single 
 | **Services** | Time spent per NestJS **class and method**, split into own time (with everything awaited subtracted out) and total time. Only instrumented classes appear, so a short list means low coverage, not low traffic.                                                                                               |
 | **Errors**   | Every unhandled error, grouped by operation, with the failure leading the page: class, message, stack trace, and source code. The **Group into defects** switch collapses occurrences with the same class and stack shape into one fingerprinted group with first/last seen and the release that introduced it. See [Error monitoring](/observability/error-monitoring). |
 | **Jobs**     | Background work - queue consumers, cron runs - with queue wait time, attempt number, and failure reason alongside duration and failure rate.                                                                                                                                                                    |
-| **Spans**    | Analytics over span names across every route that calls them - "how slow is `OrdersService.recalculate` everywhere", rather than "how slow is this one endpoint".                                                                                                                                             |
+| **Spans**    | Analytics over the custom spans your code creates with [`TracerService.createSpan()`](/observability/manual-instrumentation), across every route that calls them - "how slow is `OrdersService.recalculate` everywhere", rather than "how slow is this one endpoint". The spans the SDK records on its own are read in each execution's waterfall instead. |
 | **Traces**   | The waterfall for a trace id, across every service that shares it - see [Distributed tracing](/observability/distributed-tracing).                                                                                                                                                                              |
 | **Users**    | Per-user activity when `getUserId` is configured: failure rate per user, calls grouped into the actions they performed, a replay of each action, and the paths between them. A **Group by customer** switch rolls identities up by email domain.                                                                 |
 | **Custom**   | Counters, gauges, and summaries reported through [`TracerService`](/observability/manual-instrumentation#custom-metrics), grouped by metric name and labels.                                                                                                                                                             |
-| **Releases** | Each `serviceVersion` compared against the one before it - error rate, latency, and throughput side by side.                                                                                                                                                                                                    |
+| **Releases** | Each `serviceVersion` compared against the one before it - error rate, latency, and throughput side by side - with a verdict on whether the deploy made things worse or changed what the code does. See [Releases and their verdicts](/observability/dashboard#releases-and-their-verdicts). |
 | **Logs**     | Everything your services logged (with `forwardLogs` on), correlated to the traces they ran in. On an execution page, each line is placed on the trace's clock next to the span that was in flight.                                                                                                               |
 | **Profiler** | CPU, memory, event loop delay and utilization, and garbage collection per application, with per-instance comparison when an application runs on more than one node. Click a spike on the Memory or Event loop delay chart to see which operations ran at that moment, ranked by deviation from their baseline.   |
+| **Rules**    | [Production rules](/observability/production-rules): what a request or job may do, checked against every kept trace, with the traces that broke each rule and the release they came from. Paid plans. |
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/services.webp" alt="Services view" /></figure>
 
@@ -53,6 +54,27 @@ The map needs no configuration and collects nothing new. Databases and external 
 An application with no lines at all is almost always running an SDK older than `0.3.0`, which does not report queries or outbound calls.
 
 > info **Hint** Links between applications are inferred from the most recent requests rather than counted over the whole window. Read a dashed line as "this calls that", not as an exact total.
+
+#### Releases and their verdicts
+
+The **Releases** view lists every `serviceVersion` your applications reported. Open one and it leads with a **verdict**: whether the deploy made things worse, and whether anything behaves differently since, in one word and one sentence.
+
+- **Regression** - server errors (5xx) rose across the release boundary by more than noise.
+- **Changed** - server errors didn't rise, but the release does something new: an error group first seen in it, a route that went quiet, or a change in what the code calls.
+- **Clean** - none of that. The sentence says what was compared, so a clean verdict over too little telemetry doesn't read as more than it is.
+- **Not enough data** - too few requests either side to judge.
+
+Under the verdict is the evidence it rests on: the error groups first seen in the release, the routes that served steadily before the boundary and nothing after (requests are never sampled, so a route that went quiet really stopped), the outbound hosts, query shapes, and methods only one side of the boundary called, and caveats to read first - sampled spans, or a rolling deploy whose numbers describe a mix of versions.
+
+**What changed in the code** then lists the queries, outbound calls, and methods whose behavior moved by more than noise: **New** or **Gone**, a statement made **44×** more often per request - a new N+1 usually reads exactly like this, long before it moves a p95 - or a method whose own time is **7.6× slower**. A call the release added, or now makes more often, offers **Pin as a rule**, which starts a [production rule](/observability/production-rules) that names the next release to break it. None of this collects anything extra: it reads the same request rows and per-method telemetry as the rest of the dashboard. An agent gets the same verdict over the [MCP server](/observability/mcp-server) with `get_release_verdict`.
+
+#### Status pages
+
+On Pro and above, an application can have a public **status page**: its availability and p95 response time for each day your plan keeps, up to 90, at an address you can hand to the people who use it. On the **Applications** list, click the broadcast icon on the application's row, or choose **Status page** from its menu, and switch it on - Write or Admin access is enough. Withdraw it from the same place; publishing it again brings back the same address. **Show response times** is on by default; with it off, the page shows availability alone.
+
+<figure><img src="https://www.observe.nestjs.com/docs/applications/status-page.webp" alt="Status page" /></figure>
+
+Availability is the share of requests that didn't fail with a server error (5xx); client errors (4xx) don't count against it. A day is **Operational** at 99.5% or more, shows **Elevated errors** from 95%, and **Major errors** below that; a day with fewer than 20 requests shows its figure without a state. The page never shows how much traffic the application gets, and it never calls an application down for something Observe did: a day with no requests recorded says exactly that, and a day when overage collection was paused is marked partially recorded and left out of the figures. The page refreshes every minute and stays out of search engines.
 
 #### Handing a failure to a coding agent
 
@@ -78,6 +100,9 @@ Alerts notify you when your telemetry crosses a threshold you care about, so you
 | Runtime | Event loop delay, CPU usage, memory usage       | An application (sampled per process)                |
 | Custom  | Any custom metric your application reports      | A metric name, and optionally one label             |
 | SLO     | SLO burn rate                                   | The SLO itself                                      |
+| Production rules | Production rule violations              | One rule, or every rule in a project or application |
+
+**Error rate** counts server errors (5xx) alone. A 4xx is the client's - a crawler's 404, an expired session's 401, a failed validation - so it never trips an error-rate rule, though it still shows on the Requests and Errors views.
 
 Every rule runs in one of two modes: a **fixed threshold** ("error rate above 5%"), or **anomaly detection**, which fires when the metric deviates from its own recent baseline by more than a sensitivity you set. Anomaly mode is often the better choice for runtime metrics: a fixed CPU threshold that's right for one service is wrong for the next, but "unlike its own recent baseline" applies to both.
 
@@ -90,6 +115,13 @@ A rule can notify through **email**, **Slack** (incoming webhook), a generic **w
 
 <figure><img src="https://www.observe.nestjs.com/docs/alerts/create-alert.webp" alt="Create alert" /></figure>
 
+**Starter alerts.** A paid plan doesn't start empty. When it begins, and whenever an application is added to a project it pays for, each application gets two rules that email the account's owner and show in-app:
+
+- **Unusual error rate** - an anomaly rule on the error rate over 15 minutes. It never fires on a baseline too thin to judge, and waits for 20 requests and 5 more server errors than the application usually has, so a single failed request isn't an alert.
+- **Went quiet** - a telemetry silence rule with a 15-minute tolerance, added once the application has reported around the clock for a week, so a laptop that sleeps overnight doesn't page anyone.
+
+They are ordinary rules: edit their channels or thresholds, switch them off, or delete them. On Free, which has no alert rules, the same two are watched for you: an application that runs around the clock is checked for an unusual error rate and for going quiet, with at most one alert email per account every 30 days.
+
 **New errors.** A *new error groups* rule fires when an error Observe has never seen before appears. It counts unhandled failures only: a group whose first occurrence answered with a 5xx, or failed on an entry point with no HTTP status (an RPC handler, a gateway message). An error your code threw on purpose, such as a `NotFoundException` or a failed validation, still appears in the Errors view but doesn't count as a new bug. Every plan, Free included, also gets a built-in **new-error email** without creating a rule: one email per project listing the new errors, at most six a day. Each person can switch it off under **Settings → New error emails**.
 
 #### SLOs
@@ -100,13 +132,19 @@ SLOs turn "error rate above 5%" into "we promised 99.9% and we're spending the b
 - **Objective**: the SLI plus a target percentage (90-99.999%) over a rolling compliance window of 7, 14, 28, or 30 days.
 - **Error budget**: how much room you have to miss the target (`1 − target`), and **burn rate**, how fast that budget is being spent. A burn rate of 1.0 spends it exactly on schedule; 14.4 means a 28-day budget would be gone in about two days.
 
-A burn-rate alert is a regular alert rule pointed at an SLO instead of a raw metric. Typical starting points are a fast-burn rule (1 hour window, 14.4×), a slow-burn rule (6 hours, 6×), and a trickle rule (3 days, 1×). A compliance window can't exceed how long your plan retains telemetry.
+An SLO can also be declared next to the handler it covers, with [`@Objective()`](/observability/sdk#declaring-objectives-in-code), so it is reviewed and versioned with the route. A burn-rate alert is a regular alert rule pointed at an SLO instead of a raw metric. Typical starting points are a fast-burn rule (1 hour window, 14.4×), a slow-burn rule (6 hours, 6×), and a trickle rule (3 days, 1×). A compliance window can't exceed how long your plan retains telemetry.
 
 #### Issues
 
 Issues are lightweight, project-scoped tracking for the work that comes out of your telemetry, such as a recurring error worth fixing or a latency regression to investigate. Create them by hand from any execution page, promote an error group into one, or let a firing alert open one automatically. An issue links to the request, error, job, or trace it came from, so anyone opening it later has the telemetry in context, not only a description of it.
 
-When you mark an issue resolved and it names something measurable (an operation, an alert rule's scope), the dashboard watches that operation's telemetry against its pre-incident baseline and tells you whether the fix held. It moves the issue to **Verifying**, then either closes it on its own or moves it back to **Open** with the reading that broke it. If you name the release the fix shipped in (your `serviceVersion`), verification waits until that release shows up in telemetry.
+Every issue linked to telemetry opens with its **incident record**: what it was about (the error class, route, or job, and the alert rule that raised it), when it started and ended, the release it came in with, who it reached - users, and the customer companies behind their email domains - and the release that fixed it, on one timeline. **Copy summary** puts the whole record on your clipboard as plain text, for the postmortem, the status update, or the note to a customer.
+
+<figure><img src="https://www.observe.nestjs.com/docs/issues/incident-record.webp" alt="Incident record" /></figure>
+
+An issue promoted from an error group also answers **Did a release fix this?** Pick a release, and the answer is judged on that release's own requests, on the routes the error failed on, against how often it failed there before: **Fixed**, **Not fixed**, **Too early to tell**, or **Not enough data**. It shows the error groups first seen in the release on the same routes too, because a fix that only moved where the error is thrown gives it a new fingerprint. The counts come from request rows, which are never sampled, so the answer is there as soon as the release has served enough of those routes. An agent asks the same question with `verify_fix`.
+
+When you mark an issue resolved and it names something measurable (an operation, an alert rule's scope), the dashboard watches that operation's telemetry against its pre-incident baseline and tells you whether the fix held. It moves the issue to **Verifying**, then either closes it on its own or moves it back to **Open** with the reading that broke it. After 7 days with nothing conclusive - usually too little traffic to judge - it says so with **Unverified**, and you close the issue by hand. If you name the release the fix shipped in (your `serviceVersion`), verification waits until that release shows up in telemetry.
 
 #### A worked path through the dashboard
 
@@ -114,7 +152,7 @@ The views are designed to be used in order. A typical investigation:
 
 1. An alert fires, or the **Requests** chart shows p95 climbing.
 2. Sort the route list by duration or failure rate to find which operation moved.
-3. Open the operation. Is it constant or spiky? Did it start at a deploy? Check **Releases**.
+3. Open the operation. Is it constant or spiky? Did it start at a deploy? Check **Releases**, and the release's verdict.
 4. Open a single execution from the tail of the distribution, e.g., one the baseline card calls _slower than 95% of calls_.
 5. Read the **waterfall**: which span holds the self time?
 6. If it failed, read the **error card** - stack trace and the source lines around the throw.

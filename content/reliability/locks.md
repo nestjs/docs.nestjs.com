@@ -1,5 +1,7 @@
 ### Distributed locks
 
+`@nestjs/locks` runs a scheduled job, or any other code, on one instance at a time, with leases that every instance of the application checks in a shared store.
+
 An online store for cat food and supplies runs two scheduled jobs with `@nestjs/schedule`. Every night at 02:00 an export sends the day's invoices to the accounting system, and every five minutes a reconciliation asks the warehouse for a full stock count and writes it to the products table. Both work on one instance. In production the order API runs on three, and `@nestjs/schedule` fires every `@Cron()` on each of them:
 
 - The accounting system records every invoice three times.
@@ -304,7 +306,7 @@ The package ships the contract as a test suite, so you can prove the store befor
 @@filename(test/step-2.drizzle-lock-store.e2e-spec)
 describe('DrizzleLockStore on PGlite, the LockStore contract', () => {
   const client = new PGlite();
-  const db = drizzlePglite(client, { schema }) as unknown as Database;
+  const db = drizzlePglite({ client }) as unknown as Database;
   beforeAll(() => migratePglite(db as never, { migrationsFolder }));
   afterAll(() => client.close());
 

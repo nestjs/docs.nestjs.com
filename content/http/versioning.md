@@ -305,6 +305,6 @@ export class AppModule implements NestModule {
 }
 ```
 
-With the code above, the `LoggerMiddleware` is applied only to version `'2'` of the `/cats` endpoint.
+With URI Versioning, the code above applies the `LoggerMiddleware` only to version `'2'` of the `/cats` endpoint, since each version is served at its own path.
 
-> info **Note** Middleware works with any versioning type described in this chapter: `URI`, `Header`, `Media Type`, or `Custom`.
+> warning **Notice** With Header, Media Type or Custom Versioning, all versions of an endpoint share one path, so the middleware runs for the requests to every version of `/cats`. To run code for a single version with these versioning types, use a guard or an interceptor on that version's controller or route handler instead.

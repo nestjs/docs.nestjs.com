@@ -1,5 +1,7 @@
 ### Idempotency keys
 
+`@nestjs/idempotency` makes routes, GraphQL mutations and message handlers safe to retry: each `Idempotency-Key` runs the handler once, and retries get its result.
+
 A customer of an online store for cat food and supplies pays for salmon kibble and cat litter in the store's mobile app, on a phone on a train. The app sends `POST /orders/ord_1001/pay`. The server charges the card through the payment provider, but the response never reaches the phone. The app can't tell a lost request from a lost response, so it retries. Without protection, the retry goes wrong in one of two ways:
 
 - It arrives after the first request finished. The order is already `paid`, so the customer gets an error for a payment that went through.
@@ -310,12 +312,11 @@ import {
   type IdempotencyStoredPayload,
 } from '@nestjs/idempotency';
 import { and, eq, gt, inArray, lte } from 'drizzle-orm';
-import type { PgDatabase, PgQueryResultHKT } from 'drizzle-orm/pg-core';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { createHash } from 'node:crypto';
 import { idempotencyKeys } from '../database/schema.js';
 
-/** A Drizzle database on PostgreSQL: node-postgres in the app, PGlite in its tests. */
-export type Database = PgDatabase<PgQueryResultHKT>;
+export type Database = NodePgDatabase;
 
 const { keyHash, owner: ownerColumn, expiresAt } = idempotencyKeys;
 
@@ -433,7 +434,7 @@ function hashOf(key: string) {
 }
 ```
 
-The database is typed as `PgDatabase`, what Drizzle's node-postgres and PGlite drivers have in common, so the tests below can run the store on PGlite. Each method is a single statement that PostgreSQL runs atomically, without a transaction:
+The database is typed as `NodePgDatabase`, and the tests below cast their PGlite database to it, since the store only uses the query builder both drivers share. Each method is a single statement that PostgreSQL runs atomically, without a transaction:
 
 - `acquire()` inserts the lock, or takes over an expired row, with one `INSERT ... ON CONFLICT DO UPDATE ... WHERE expires_at <= now`. When several callers race for a key, PostgreSQL lets one of them write and checks the `WHERE` again for the others against the winner's row, so they get no row back and read the winner's lock instead. If that row disappears in between (released, or expired), `acquire()` goes round again.
 - `complete()`, `extend()` and `release()` check the owner, and that the lock hasn't expired, in the `WHERE` of the statement that writes. They count the rows that `returning()` gives back, which works the same on every Drizzle driver.
@@ -486,7 +487,7 @@ import { IdempotencyStorage } from '@nestjs/idempotency';
 import { idempotencyStoreContract } from '@nestjs/idempotency/testing';
 import { drizzle as drizzlePglite } from 'drizzle-orm/pglite';
 import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator';
-import { DrizzleIdempotencyStore } from '../src/idempotency/drizzle-idempotency.store.js';
+import { DrizzleIdempotencyStore, type Database } from '../src/idempotency/drizzle-idempotency.store.js';
 
 const migrationsFolder = new URL('../drizzle', import.meta.url).pathname;
 // ...
@@ -496,9 +497,9 @@ describe('DrizzleIdempotencyStore on PGlite', () => {
 
   beforeAll(async () => {
     pglite = new PGlite();
-    const db = drizzlePglite(pglite);
+    const db = drizzlePglite({ client: pglite });
     await migratePglite(db, { migrationsFolder }); // npx drizzle-kit migrate
-    store = new DrizzleIdempotencyStore(db, new IdempotencyStorage());
+    store = new DrizzleIdempotencyStore(db as unknown as Database, new IdempotencyStorage());
   });
   afterAll(() => pglite.close());
 

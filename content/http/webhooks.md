@@ -1,5 +1,7 @@
 ### Webhooks
 
+`@nestjs/webhooks` sends signed, retried webhooks to your partners after the transaction commits, and verifies the webhooks you receive on their raw body.
+
 An online store for cat food and supplies sells to cat shelters and resellers that buy in bulk, through its API. Northside Pet Supplies, a reseller, places an order and wants to know when it ships and when it's cancelled, without polling: a webhook to its warehouse system. The store receives webhooks too: the payment provider reports payments, and the carrier reports shipments. Both directions look simple, and both go wrong in the same ways:
 
 - **Sending.** A `fetch()` after the order commits is lost when the process dies in between, and sent for a transaction that then rolls back. A retry sends the same event twice without telling the partner so. Every partner writes its own verifier for a homemade signature. A partner that is down for an hour is hammered, a dead endpoint is never turned off, and nobody can answer "did you send it?". And the URL the partner typed is a server-side request forgery waiting to happen: `https://169.254.169.254/` answers with the cloud credentials.
@@ -147,13 +149,13 @@ export class WebhookStores1790801311590 implements MigrationInterface {
 }
 ```
 
-With drizzle-kit, create a custom migration per store, and fill each with its SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
+With drizzle-kit, create a custom migration per store, and fill the file each creates with its SQL, a `--> statement-breakpoint` line between the statements: Drizzle's migrator then runs them one at a time, which PGlite requires. In code, `migrationSql()` with `statementBreakpoints: true` returns the same.
 
 ```bash
 $ npx drizzle-kit generate --custom --name=outbox
-$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/0002_outbox.sql
+$ npx @nestjs/outbox sql --statement-breakpoints > drizzle/20261103120000_outbox/migration.sql
 $ npx drizzle-kit generate --custom --name=webhooks
-$ npx @nestjs/webhooks sql --statement-breakpoints > drizzle/0003_webhooks.sql
+$ npx @nestjs/webhooks sql --statement-breakpoints > drizzle/20261103120100_webhooks/migration.sql
 ```
 
 On MySQL, the stores' `migrationStatements()` return the statements one per string, and a TypeORM migration runs them one per call:
@@ -1513,7 +1515,7 @@ const CARRIER_SECRET = 'carrier_test_secret';
 
 describe('Order webhooks', () => {
   const client = new PGlite(); // PostgreSQL, in-process
-  const db = drizzle(client, { schema });
+  const db = drizzle({ client });
   const transport = new InMemoryWebhookTransport(); // records requests instead of sending them
   const partner = { id: 'northside', name: 'Northside Pet Supplies' };
   let app: INestApplication;

@@ -2,7 +2,7 @@
 
 A **trace** is everything your applications recorded under a single trace id: the request or job that started it, and every span underneath. Within a single service this is automatic. The SDK generates a trace id when work starts, and every span underneath, including ones you add manually with [`TracerService`](/observability/manual-instrumentation), inherits it.
 
-Across services, it depends on the channel. HTTP calls, queue jobs, and (on `@nestjs/microservices` 12.0.4 or later) the TCP and Redis transports carry the trace id on their own; gRPC and the other microservice transports need it forwarded. A single user action that touches more than one service (an API call that fans out to a gRPC service, or a message sent to another application over a microservice transport) shows up as **one trace** in your dashboard only if every service involved uses the same trace id. Otherwise, each service mints its own via `traceIdGenerator`, and the action shows up as several disconnected traces, one per service.
+Across services, it depends on the channel. HTTP calls and queue jobs carry the trace id on their own, and so do the built-in microservice transports on a recent enough `@nestjs/microservices` (12.0.4 for TCP and Redis, 12.3.3 for NATS, Kafka, RabbitMQ, MQTT 5, and gRPC). On earlier versions, the trace id needs forwarding. A single user action that touches more than one service (an API call that fans out to a gRPC service, or a message sent to another application over a microservice transport) shows up as **one trace** in your dashboard only if every service involved uses the same trace id. Otherwise, each service mints its own via `traceIdGenerator`, and the action shows up as several disconnected traces, one per service.
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.webp" alt="Trace correlation across services" /></figure>
 
@@ -66,7 +66,9 @@ Services instrumented with OpenTelemetry pass the trace on in the W3C `tracepare
 
 #### gRPC
 
-gRPC has no headers, only metadata. The caller attaches the trace id as metadata, and the gRPC service overrides `traceIdGenerator` to read it back out, since the default generator doesn't read gRPC metadata:
+gRPC has no headers, only metadata. On `@nestjs/microservices` 12.3.3 or later, the trace id travels in it on its own: the SDK adds the current trace id as `x-request-id` metadata to every call made through a `ClientGrpc` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` of the gRPC service adopts it, so no application code is needed. Metadata you pass to a call yourself wins: an `x-request-id` in it is the one the service adopts. With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, the metadata carries a W3C `traceparent` too, so a gRPC server instrumented with OpenTelemetry, in any language, continues the trace.
+
+On earlier versions, the caller attaches the trace id as metadata, and the gRPC service overrides `traceIdGenerator` to read it back out, since the default generator doesn't read gRPC metadata there:
 
 ```typescript
 @@filename(caller)
@@ -99,31 +101,35 @@ See the [gRPC](/microservices/grpc) chapter for how metadata is read and written
 
 #### TCP, Redis, NATS, and other microservice transports
 
-On `@nestjs/microservices` 12.0.4 or later, the TCP and Redis transports carry packet metadata, and `@nestjs/observe` 0.3.0 or later uses it. The SDK attaches the current trace id to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed.
+Every built-in microservice transport carries the trace id on its own, once both services run a recent enough `@nestjs/microservices`, with `@nestjs/observe` 0.3.0 or later:
 
-The other transports, and TCP and Redis on earlier versions, have no metadata channel, only a message payload. There, the trace id has to travel as a field inside the payload itself:
+| Transport  | From `@nestjs/microservices`               | The trace id travels                 |
+| ---------- | ------------------------------------------ | ------------------------------------ |
+| TCP, Redis | 12.0.4                                     | inside the packet                    |
+| NATS       | 12.3.3                                     | as a message header                  |
+| Kafka      | 12.3.3                                     | as a record header                   |
+| RabbitMQ   | 12.3.3                                     | in the message's `headers` property  |
+| MQTT       | 12.3.3, over MQTT 5 (`protocolVersion: 5`) | as a user property                   |
+| gRPC       | 12.3.3                                     | as call metadata (see [gRPC](#grpc)) |
 
-```typescript
-@@filename(caller)
-this.client.send('orders.report', {
-  ...payload,
-  traceId: this.tracerService.currentTraceId(),
-});
-```
+The SDK attaches the current trace id, as `x-request-id`, to every packet sent through a `ClientProxy` registered as a provider (e.g., with `ClientsModule`), and the default `traceIdGenerator` on the receiving side adopts it, so no application code is needed. On the transports that carry it as a header, a header of the same name that your code sets itself, on a record builder or in the client's `headers` or `userProperties` option, wins over the SDK's. Because the id is a plain `x-request-id` header there, a service that isn't written with Nest can read it, or send one to a Nest service. With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, a W3C `traceparent` travels beside it the same way, so such a service instrumented with OpenTelemetry, in any language, continues the trace.
+
+On an earlier `@nestjs/microservices`, and over MQTT 3.1.1, which has no user properties, the trace id doesn't travel on its own, and each service starts its own trace. If you can't upgrade, forward the id in a header the transport does carry (`NatsRecordBuilder#setHeaders()`, `RmqRecordBuilder#setOptions({{ '{' }} headers {{ '}' }})`, a Kafka message's `headers`), and override `traceIdGenerator` to read it back from the context the transport hands it:
 
 ```typescript
 @@filename(app.module)
 import { randomUUID } from 'node:crypto';
 
-// receiving service
+// receiving service, over NATS
 export const { ObserveModule, ObserveInstrument } = createObserveModule({
-  traceIdGenerator: (ctx: any) => ctx.getData()?.traceId ?? randomUUID(),
+  traceIdGenerator: (ctx: any) =>
+    ctx.getHeaders?.()?.get('x-request-id') || randomUUID(),
 });
 ```
 
-The generator receives the transport's context object, so the same code works for request-response (`send()`) and event-based (`emit()`) messages.
+The generator receives the transport's context object, so the same code works for request-response (`send()`) and event-based (`emit()`) messages. A custom transport carries the id like the built-in ones when its client sends a packet's `metadata` along with it, and its context returns that from a `getMetadata()` method: the default generator adopts an `x-request-id` from there.
 
-> warning **Warning** The same `traceIdGenerator` is called with HTTP requests and RPC contexts alike. In a [hybrid application](/faq/hybrid-application) that serves both HTTP and a microservice transport, write the generator defensively: check for `headers` first, then fall back to the payload.
+> warning **Warning** The same `traceIdGenerator` is called with HTTP requests and RPC contexts alike. In a [hybrid application](/faq/hybrid-application) that serves both HTTP and a microservice transport, write the generator defensively: check for `headers` first, then fall back to the transport's context.
 
 #### GraphQL
 
@@ -152,6 +158,8 @@ Two cases deliberately start a trace of their own:
 - **Jobs added outside any traced operation**, e.g., from a bootstrap hook or a plain script. There is no trace to inherit.
 
 > info **Hint** The trace id is stored under the `observeTraceId` job option. To attach a job to a trace the SDK did not see (e.g., one enqueued by a non-Nest producer), set that option yourself when adding the job.
+
+With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, from `@nestjs/observe` 0.3.23, a job also carries the W3C trace context it was added in, under the `observeTraceparent` job option, and the processor runs in it. An OpenTelemetry SDK in the process that runs the job then continues the request's trace: the job's spans in your OpenTelemetry backend, and the services the job calls, are in the same trace as the request, as the job is in Observe. With BullMQ's own OpenTelemetry add-on, [`bullmq-otel`](https://www.npmjs.com/package/bullmq-otel), on the queue and the worker, the processor runs in the consumer span the add-on opens, a span of the same trace, and from `@nestjs/observe` 0.3.24 the job's spans nest under it.
 
 > warning **Warning** Trace inheritance for jobs requires `@nestjs/observe` 0.3.0 or later on **both** the service that adds the job and the service that processes it. With an older producer, jobs carry no id and each run opens its own trace, as before.
 

@@ -98,7 +98,6 @@ ObserveModule.forRoot({
   appKey: process.env.OBSERVE_APP_KEY!,
   appSecret: process.env.OBSERVE_APP_SECRET!,
   serviceId: 'cats-app',
-  serviceVersion: process.env.GIT_SHA,
 });
 ```
 
@@ -107,9 +106,22 @@ ObserveModule.forRoot({
 | `appKey`         | `string` | required | Written into `.env` as `OBSERVE_APP_KEY` by `npx @nestjs/observe link`, or generated from your project's **API Keys** page - see [First project](/observability/overview#first-project). Keep it out of source control. |
 | `appSecret`      | `string` | required | Issued alongside `appKey`, the same way, and written as `OBSERVE_APP_SECRET`. Keep it out of source control.                                                                                               |
 | `serviceId`      | `string` | required | Identifies this application in your dashboard. If you run multiple instances of the same service, use a value unique per instance (hostname, container id) to tell them apart in the Profiler. |
-| `serviceVersion` | `string` | -        | Identifies the deployment - a semantic version, a commit hash, or any other identifier. Every request and job records the version that served it, which is what powers the **Releases** view.              |
+| `serviceVersion` | `string \| false` | inferred | Identifies the deployment - a semantic version, a commit hash, or any other identifier, at most 50 characters. When it isn't set, the SDK infers it at startup (see below); `false` reports none. |
 
-`serviceVersion` is optional but strongly recommended. It lets the dashboard compare each version of an application against the one before it (error rate, latency, and throughput side by side), so a regression introduced by a deploy is visible immediately rather than buried in a week-long chart.
+Every request and job records the release that served it, which is what powers the **Releases** view: each version compared against the one before it, and a [verdict](/observability/dashboard#releases-and-their-verdicts) on what it changed. You usually don't need to set `serviceVersion`. When it isn't set, the SDK infers the release when the application starts, from the first of these that has one:
+
+1. **`OBSERVE_SERVICE_VERSION`** in the environment, for a deploy that wants to be explicit without touching code.
+2. **The commit your platform or CI exposes at runtime**: Vercel, Render, Railway, Heroku (with dyno metadata), Coolify, and Dokku, or GitHub Actions, GitLab CI, Bitbucket Pipelines, CircleCI, Buildkite, Azure Pipelines, and AWS CodeBuild for an application a CI job boots. `GIT_COMMIT_SHA`, `GIT_COMMIT`, `GIT_SHA`, `COMMIT_SHA`, and `SOURCE_VERSION` are read too.
+3. **The commit checked out where the process runs**, read from the repository's `.git`.
+4. **The revision a container platform names each deploy by**: Cloud Run's `K_REVISION`, Azure Container Apps' `CONTAINER_APP_REVISION`.
+
+A container image built by your own pipeline usually carries none of these, since the build excludes `.git` and CI variables don't survive into the image. Hand it the commit at build time:
+
+```bash
+$ docker build --build-arg GIT_SHA=$(git rev-parse HEAD) .
+```
+
+with `ARG GIT_SHA` and `ENV OBSERVE_SERVICE_VERSION=$GIT_SHA` in the Dockerfile. A `serviceVersion` you pass yourself wins over all of the above. An inferred commit is reported in full, as `git rev-parse HEAD` prints it, and the dashboard shortens it for display; that full form is also what to pass as `fixedInVersion` when resolving an issue.
 
 <figure><img src="https://www.observe.nestjs.com/docs/sdk/deployments.webp" alt="Releases" /></figure>
 
@@ -156,6 +168,21 @@ In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment
 
 > info **Hint** The `link` command and the environment fallback require `@nestjs/observe` 0.3.15 or later. Installing and wiring the SDK into an application that doesn't use it yet requires 0.3.16 or later.
 
+##### Turning the SDK off outside production
+
+To keep an environment from reporting - local development, a CI run - keep `ObserveModule` imported and switch it off with `enabled`, rather than passing fake credentials, which are sent and refused:
+
+```typescript
+ObserveModule.forRoot({
+  enabled: process.env.NODE_ENV === 'production',
+  appKey: process.env.OBSERVE_APP_KEY ?? '',
+  appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+  serviceId: 'cats-app',
+});
+```
+
+`enabled: false` records and sends nothing - no traces, runtime metrics, or logs, and no request to any collector - and needs no credentials. The module stays in place, so `TracerService` can still be injected and calling it is harmless. Leaving the credentials unset also sends nothing, but logs a warning at every start, since in production that usually means the environment variables never reached the process. `enabled` requires `@nestjs/observe` 0.3.13 or later.
+
 ##### Asynchronous configuration
 
 When the credentials come from a configuration provider rather than directly from `process.env`, use `forRootAsync()`. It accepts the same `useFactory`/`inject`, `useClass`, and `useExisting` shapes as every other Nest dynamic module (a class implements `ObserveOptionsFactory` with a `createObserveOptions()` method), plus `extraProviders` and `global`:
@@ -196,6 +223,17 @@ ObserveModule.forRoot({
 
 `debug` (default `false`) logs additional diagnostic information from the SDK to the console. Use it while getting instrumentation working, and turn it off in production.
 
+##### Shutdown
+
+When the application closes - `app.close()`, or a `SIGTERM` once `app.enableShutdownHooks()` has been called - the SDK sends what it still holds before it stops: the requests and jobs that finished since the last batch, their errors, the log lines buffered before shutdown began, and a last runtime sample. It waits at most `shutdownFlushTimeout` (default `2000` ms) for the collector, then lets the application exit; `0` skips the final send.
+
+Two things decide what makes it in:
+
+- **Signals.** Nest runs shutdown hooks on `SIGTERM` only if the application called `app.enableShutdownHooks()` at bootstrap. Without it, a deploy or a scale-in ends the process at once, and the last few seconds of telemetry are lost.
+- **Module order.** Global modules shut down in reverse order of import. A job still running at shutdown is reported only if `ObserveModule` comes before `BullModule`, and before any module that registers a queue, in your root module's `imports`.
+
+In test suites that boot the application with real credentials, set `shutdownFlushTimeout: 0`, so every `app.close()` doesn't send that test's requests to your project or wait on a collector the test environment can't reach. The final send requires `@nestjs/observe` 0.3.10 or later.
+
 #### Automatic instrumentation
 
 Everything in this section is recorded without any code of your own; installing the SDK is enough. The options only narrow it or switch it off.
@@ -206,7 +244,9 @@ Since `@nestjs/observe` 0.3.0, database queries and outbound requests appear as 
 
 <figure><img src="https://www.observe.nestjs.com/docs/telemetry/sql.webp" alt="A query opened in the waterfall" /></figure>
 
-Databases are instrumented at the driver rather than the ORM: `pg`, `mysql2` and `mongodb` are detected if your application already depends on them, which covers TypeORM, MikroORM, Drizzle, Mongoose, Knex, Sequelize, and Prisma's driver adapters without naming any of them. ORMs that ship their own nested copy of a driver (MikroORM and Mongoose do, whenever versions disagree) are handled too. The driver's own housekeeping (connection handshakes, authentication, pings) is not recorded. A query span is labeled with its verb and table (`SELECT users`) and carries the statement with **every literal removed** - strings, numbers, `IN (...)` lists, and comments are replaced before the span leaves the process, and bound parameters are never read at all. Repeated queries under one parent fold into a single node with a count, so an N+1 reads as `SELECT order_items ×47` rather than 47 rows.
+Databases are instrumented at the driver rather than the ORM: `pg`, `mysql2`, `mssql`, and `mongodb` are detected if your application already depends on them, which covers TypeORM, MikroORM, Drizzle, Mongoose, Knex, Sequelize, and Prisma's driver adapters without naming any of them. SQL Server is the exception: `mssql` is what TypeORM and Prisma's SQL Server adapter run on, but Knex, Sequelize, and MikroORM talk to SQL Server through `tedious` directly, which isn't covered yet (nor is `mssql/msnodesqlv8`). ORMs that ship their own nested copy of a driver (MikroORM and Mongoose do, whenever versions disagree) are handled too. The driver's own housekeeping (connection handshakes, authentication, pings) is not recorded. A query span is labeled with its verb and table (`SELECT users`) and carries the statement with **every literal removed** - strings, numbers, `IN (...)` lists, and comments are replaced before the span leaves the process, and bound parameters are never read at all. Repeated queries under one parent fold into a single node with a count, so an N+1 reads as `SELECT order_items ×47` rather than 47 rows.
+
+Other clients, Redis and Kafka among them, aren't instrumented at the library. A Nest application almost always registers them as providers, though - an `ioredis` client from a factory, a `ClientKafka` from `ClientsModule` - and the SDK records every provider's method calls: each call on the client is a span under the method that made it, and one that returns a promise, as `ioredis` commands do, is timed until it settles. A client created and called outside dependency injection isn't recorded.
 
 Outbound HTTP is read from Node's own diagnostics channels, so `fetch`, `undici`, and everything built on `node:http` (axios, got, most SDKs) are covered with nothing patched. The span is labeled `GET api.example.com` and carries the URL with sensitive query parameters masked. The SDK also sends the current trace id as `x-request-id`, which makes [HTTP-to-HTTP tracing](/observability/distributed-tracing#http-to-http) automatic. With the [`openTelemetry`](/observability/opentelemetry#running-beside-opentelemetry) option on, it sends a W3C `traceparent` as well: `http.traceContext: false` keeps that header off, and `propagateTraceId` decides where both headers go.
 
@@ -227,6 +267,27 @@ ObserveModule.forRoot({
 Set `outgoing: false` to switch all of it off, or `database: false` / `http: false` individually.
 
 > info **Hint** These spans are **not billed**. They are detail about a method span you already sent, so they don't count toward your Observability Events or your rate cap. A request that runs ten queries costs the same as before.
+
+##### Model calls
+
+Since `@nestjs/observe` 0.3.20, a `fetch` to a model provider also records what the call used on its outbound span: the model, the input, output, and cached input tokens the provider's response states, and, for a stream, the time to its first event. OpenAI, Azure OpenAI, Anthropic, Google Gemini and Vertex AI, Amazon Bedrock, Mistral, Groq, OpenRouter, Together AI, DeepSeek, xAI, Cohere, and Perplexity are recognized by host, so the official SDKs, the Vercel AI SDK, and LangChain are all covered without being named.
+
+- **Read as the response passes through.** The SDK reads the response at the pace your code does, streams included, and hands it on unchanged. A stream your code cancels is cancelled at the provider too.
+- **Prompts and completions are never sent.** Only the model and the token counts leave the process.
+- **`fetch` only.** A call made through `node:http` - axios, or the AWS SDK's default client for Bedrock - keeps its ordinary outbound span without the model or tokens.
+
+A gateway in front of the providers (LiteLLM, Portkey, your own proxy) or a self-hosted model with an OpenAI-compatible API is added by host, and its calls are tagged with the provider `custom`. `outgoing: {{ '{' }} llm: false {{ '}' }}` stops reading model calls while keeping their plain spans:
+
+```typescript
+ObserveModule.forRoot({
+  // ...
+  outgoing: {
+    llm: { hosts: ['llm-gateway.internal:4000'] },
+  },
+});
+```
+
+A [production rule](/observability/production-rules) can bound how many model calls a request makes.
 
 ##### WebSocket gateways
 
@@ -348,10 +409,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule({
 | Option                | Type                       | Default                                                       | Description                                                                                                                         |
 | --------------------- | -------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `traceIdKey`          | `string`                   | `'traceId'`                                                   | The key used to store the trace id in the request context, for later retrieval through `TracerService`.                            |
-| `traceIdGenerator`    | `(req: unknown) => string` | Adopts a well-formed `x-request-id` (HTTP header, or TCP/Redis packet metadata) if present, else a UUID v7 | Generates the trace id per request. Called with the request object for HTTP; for other protocols it receives the transport context. |
+| `traceIdGenerator`    | `(req: unknown) => string` | Adopts a well-formed `x-request-id` (HTTP header, or microservice packet metadata) if present, else a UUID v7 | Generates the trace id per request. Called with the request object for HTTP; for other protocols it receives the transport context. |
 | `attachTraceIdToLogs` | `boolean`                  | `true`                                                        | Augments `ConsoleLogger` to include the trace id in log messages, so logs can be correlated with traces even without `forwardLogs`. In the default text format the id ends the line, after the message (`   Trace ID: <id>`); with [JSON logging](/application/logger#json-logging) it is a `traceId` field. Lines written outside a traced execution are unchanged. |
 
-Because the default generator adopts an incoming `x-request-id`, a chain of HTTP services already shares one trace with no extra configuration. Services instrumented with OpenTelemetry pass the trace on in `traceparent` instead, which the `openTelemetry` option of `forRoot()` reads and sends - see [Running beside OpenTelemetry](/observability/opentelemetry#running-beside-opentelemetry). The same applies to the TCP and Redis microservice transports on `@nestjs/microservices` 12.0.4 or later. Propagating across gRPC, the other microservice transports, and GraphQL takes a few lines - see [Distributed tracing](/observability/distributed-tracing).
+Because the default generator adopts an incoming `x-request-id`, a chain of HTTP services already shares one trace with no extra configuration. Services instrumented with OpenTelemetry pass the trace on in `traceparent` instead, which the `openTelemetry` option of `forRoot()` reads and sends - see [Running beside OpenTelemetry](/observability/opentelemetry#running-beside-opentelemetry). The same applies to the microservice transports: TCP and Redis on `@nestjs/microservices` 12.0.4 or later, and NATS, Kafka, RabbitMQ, MQTT 5, and gRPC on 12.3.3 or later. Propagating across earlier versions and GraphQL takes a few lines - see [Distributed tracing](/observability/distributed-tracing).
 
 #### Shaping what is recorded
 
@@ -376,20 +437,17 @@ The same option exists on `rpc` (receiving the transport id and the `BaseRpcCont
 
 `http`, `rpc`, `grpc`, `graphql`, and `jobs` each accept the same two options for attaching your own data to every request they cover:
 
-| Option          | Applies                                                       | Description                                                                         |
-| --------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `tags`          | The same static `Record<string, string>` to every request     | For constants that don't vary per call, e.g., `project`, `env`, `region`.           |
-| `setAttributes` | A function of the request/call/job, returning key-value pairs | For anything that varies per call, e.g., a feature flag, a tenant id, a queue name. |
+| Option          | Applies                                                       | Description                                                                                              |
+| --------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `tags`          | The same static `Record<string, string>` to every request     | Sent to Observe. For constants that don't vary per call, e.g., `project`, `env`, `region`.               |
+| `setAttributes` | A function of the request/call/job, returning key-value pairs | Kept in your application. For per-call context your code reads later, e.g., a tenant id, a feature flag. |
 
 ```typescript
 ObserveModule.forRoot({
   // ...
   http: {
     tags: { project: 'cats-app', env: process.env.NODE_ENV ?? 'development' },
-    setAttributes: (req) => ({
-      'user-agent': req.headers['user-agent'],
-      'client-ip': req.ip,
-    }),
+    setAttributes: (req) => ({ tenantId: req.headers['x-tenant-id'] }),
   },
   jobs: {
     setAttributes: (job) => ({ queueName: job.queueName, jobName: job.name }),
@@ -397,7 +455,16 @@ ObserveModule.forRoot({
 });
 ```
 
-Both appear as tags on the resulting request, job, or span, and are searchable and visible on its detail page. The function receives whatever the transport has: the request for `http`, the transport id and `BaseRpcContext` for `rpc`, the call object for `grpc`, the resolve info and GraphQL context for `graphql`, and `{{ '{' }} queueName, name, id {{ '}' }}` for `jobs`. To tag a single span from inside your code rather than every request, use `TracerService` (see [Manual instrumentation](/observability/manual-instrumentation)).
+`tags` appear as tags on the resulting request or job, and are searchable and visible on its detail page.
+
+`setAttributes` values are **not sent to Observe** and don't appear in the dashboard. As each call starts, they're written to its [request-scoped attributes](/observability/manual-instrumentation#request-scoped-attributes), the same as calling `setAttribute()` for each key yourself, so any code handling that call can read them with `getAttribute()`. The function receives whatever the transport has: the request for `http`, the transport id and `BaseRpcContext` for `rpc`, the call object for `grpc`, the resolve info and GraphQL context for `graphql`, and `{{ '{' }} queueName, name, id {{ '}' }}` for `jobs`.
+
+To see a per-call value in the dashboard, add it as a tag on a span with `TracerService` (see [Manual instrumentation](/observability/manual-instrumentation)):
+
+```typescript
+const span = await this.tracerService.activeSpan();
+span.addTags({ tenantId: String(this.tracerService.getAttribute('tenantId')) });
+```
 
 > info **Hint** A GraphQL server is usually an HTTP endpoint, so its requests are already subject to the `http` options: `http.ignore` drops a request before the GraphQL layer sees it, and `http.getUserId` supplies the user for queries over HTTP. The `graphql` block tunes what happens _inside_ a request that was let through, per operation rather than per resolver, and `graphql.getUserId` is only consulted for operations that aren't already inside an HTTP trace, such as subscriptions over a WebSocket.
 
@@ -443,11 +510,37 @@ ObserveModule.forRoot({
 
 | Option              | Type                                                                       | Default | Description                                                                                               |
 | ------------------- | -------------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
-| `tracesSampleRate`  | `number \| ((protocol: 'http' \| 'rpc' \| 'grpc' \| 'graphql' \| 'ws', attributes) => boolean)` | `1.0`   | Fraction of traces sent, or a predicate for per-trace decisions. `1.0` sends everything; `0.1` sends 10%. |
+| `tracesSampleRate`  | `number \| ((protocol: 'http' \| 'rpc' \| 'grpc' \| 'graphql' \| 'ws', attributes) => boolean)` | `1.0`   | Fraction of traces sent, or a predicate for per-trace decisions. `0` counts as unset and sends everything; pass `() => false` to send none. `1.0` sends everything; `0.1` sends 10%. |
 | `maxTracesPerBatch` | `number`                                                                   | `1000`  | Caps how many traces go out per batch, to bound volume on high-traffic applications.                      |
 | `flushInterval`     | `number` (ms)                                                              | `5000`  | How often the SDK batches and sends collected traces.                                                     |
 
 Telemetry is buffered in the process and shipped on the flush interval rather than inline with each request. Sampling here decides what the SDK _produces_. The dashboard's per-project spend controls (span sampling, rate caps, drop filters) act on what it has already sent, and you can change them without a redeploy.
+
+#### Declaring objectives in code
+
+`@Objective()` states what a route promises next to the handler that has to keep it, and Observe turns each promise into an [SLO](/observability/dashboard#slos). The objective is written, reviewed, and versioned with the route it covers, in the same change:
+
+```typescript
+import { Objective } from '@nestjs/observe';
+
+@Controller('orders')
+export class OrdersController {
+  @Post()
+  @Objective({ availability: 99.9, latency: { underMs: 300, target: 99 } })
+  create(@Body() dto: CreateOrderDto) {
+    return this.ordersService.create(dto);
+  }
+}
+```
+
+| Option         | What it promises                                                                         |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `availability` | This percentage of requests don't fail with an unhandled error - `99.9` for three nines. |
+| `latency`      | `{{ '{' }} underMs, target {{ '}' }}`: `target` percent of requests finish in under `underMs` milliseconds. |
+| `windowDays`   | The rolling window it's judged over: 7, 14, 28 (the default), or 30 days.                |
+| `name`         | What the dashboard calls it, instead of the route and the promise.                       |
+
+Targets run from 90 to 99.999, and a handler can carry up to ten `@Objective()`s; anything outside those bounds is logged and left out when the application starts. Each promise becomes its own SLO, scoped to the application and the route the handler serves, and appears once the route has had traffic. From then on the code owns it: change a target, a window, or a name and deploy, and the same SLO moves. The dashboard marks a declared SLO **in code** and doesn't edit it, and deleting it there doesn't last while the decorator is in place, because the SDK restates each route's objectives hourly. To retire one, remove the decorator, then delete the SLO. SLOs need a plan that has them (Scale or Enterprise); on any other plan, declarations are sent and ignored.
 
 #### Full configuration reference
 
@@ -462,19 +555,22 @@ All options at a glance. Options listed under `createObserveModule()` must be se
 | `createObserveModule()` | `skipInstrumentation`                 | Predicate that excludes provider instances from instrumentation           |
 | `forRoot()`             | `appKey`, `appSecret`                 | Project API key pair (or `OBSERVE_APP_KEY`, `OBSERVE_APP_SECRET`)         |
 | `forRoot()`             | `endpoint`                            | Collector base URL (or `OBSERVE_ENDPOINT`)                                |
-| `forRoot()`             | `serviceId`, `serviceVersion`         | Application and release identity                                          |
+| `forRoot()`             | `enabled`                             | `false` records and sends nothing, for development and CI                 |
+| `forRoot()`             | `serviceId`, `serviceVersion`         | Application and release identity (the release is inferred when unset)    |
 | `forRoot()`             | `http`, `rpc`, `grpc`, `graphql`      | Per-transport `tags`, `setAttributes`, `getUserId`, `ignore`              |
 | `forRoot()`             | `jobs`                                | `tags` and `setAttributes` for queue and scheduled jobs                   |
 | `forRoot()`             | `http.queryParamsObfuscateRegex`      | Mask sensitive query string values                                        |
 | `forRoot()`             | `http.capture`                        | Headers (and optionally body) recorded for failed and slow requests       |
-| `forRoot()`             | `outgoing`                            | Database query and outbound HTTP spans                                    |
+| `forRoot()`             | `outgoing`                            | Database query and outbound HTTP spans; `outgoing.llm` for model calls   |
 | `forRoot()`             | `openTelemetry`                       | W3C `traceparent` in and out, beside an OpenTelemetry SDK                 |
+| `forRoot()`             | `otlp`                                | Export spans over OTLP to your OpenTelemetry backend                      |
 | `forRoot()`             | `ws`                                  | WebSocket gateway `tags`, `setAttributes`, `getUserId`, `ignore`          |
 | `forRoot()`             | `runtimeMetrics`, `runtimeMetricsInterval` | Profiler samples and heartbeat                                       |
 | `forRoot()`             | `forwardLogs`, `redaction`            | Logs streaming and scrubbing                                              |
 | `forRoot()`             | `tracesSampleRate`                    | Fraction (or predicate) of traces to send                                 |
 | `forRoot()`             | `maxTracesPerBatch`, `flushInterval`  | Batching                                                                  |
 | `forRoot()`             | `spanCollapse`                        | Collapse repeated sibling spans (default threshold `20`, keep slowest `3`) |
+| `forRoot()`             | `shutdownFlushTimeout`                | How long closing the application waits for the final send (default `2000` ms) |
 | `forRoot()`             | `debug`                               | SDK diagnostics                                                           |
 
 #### Where to go next

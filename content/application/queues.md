@@ -610,7 +610,7 @@ Job producers add jobs to queues. Producers are typically application services (
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
+import type { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 
 @Injectable()
@@ -711,7 +711,7 @@ Within a consumer class, declare job handlers by decorating handler methods with
 
 ```typescript
 import { Processor, Process } from '@nestjs/bull';
-import { Job } from 'bull';
+import type { Job } from 'bull';
 
 @Processor('audio')
 export class AudioConsumer {
@@ -770,7 +770,7 @@ Event listeners must be declared within a <a href="application/queues#consumers"
 
 ```typescript
 import { Processor, Process, OnQueueActive } from '@nestjs/bull';
-import { Job } from 'bull';
+import type { Job } from 'bull';
 
 @Processor('audio')
 export class AudioConsumer {

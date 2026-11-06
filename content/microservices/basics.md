@@ -384,7 +384,7 @@ Request-scoped handlers and providers can inject `RequestContext` using the `@In
 
 ```typescript
 import { Injectable, Scope, Inject } from '@nestjs/common';
-import { CONTEXT, RequestContext } from '@nestjs/microservices';
+import { CONTEXT, type RequestContext } from '@nestjs/microservices';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CatsService {

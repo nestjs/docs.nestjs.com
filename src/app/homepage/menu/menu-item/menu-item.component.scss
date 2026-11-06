@@ -6,6 +6,10 @@
 }
 
 h3 {
+  // Flex centring for the "NEW" badge: vertical-align: middle centres it on
+  // the x-height, which sits below the middle of this all-caps text.
+  display: flex;
+  align-items: center;
   text-transform: uppercase;
   font-weight: 700;
   color: var(--color-1dp);

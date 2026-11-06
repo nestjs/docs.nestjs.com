@@ -1,11 +1,25 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
+import { ViewportScroller } from '@angular/common';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZoneChangeDetection,
+} from '@angular/core';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+  withXhr,
+} from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { RoutingModule } from './app.routes';
+import { DocsViewportScroller } from './shared/services/docs-viewport-scroller';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideZoneChangeDetection(),
+    importProvidersFrom(BrowserModule, RoutingModule),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
+    provideAnimations(),
+    { provide: ViewportScroller, useClass: DocsViewportScroller },
   ],
 };
