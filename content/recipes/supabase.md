@@ -917,7 +917,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+await bootstrap();
 ```
 
 `enableShutdownHooks()` lets a running job finish and passes its lease on when a deploy stops an instance.
@@ -935,7 +935,7 @@ $ npx supabase db push
 
 Set the same environment variables on your host, with the hosted project's values and the connection string from [Query Postgres directly](/recipes/supabase#query-postgres-directly). Each instance opens its own connections, for Drizzle and for BullMQ, so count them against your project's [connection limit](https://supabase.com/docs/guides/database/connection-management).
 
-The webhook stores shouldn't change a schema while a new version boots, in the middle of a rolling deploy. Remove `migrate: true` from those two, and apply their migrations as a step before the new version starts, with `DATABASE_URL` set:
+The webhook stores shouldn't change a schema while a new version boots, in the middle of a rolling deploy. Remove `migrate: true` from those two, and apply their migrations as a step before the new version starts, with `DATABASE_URL` set. BullMQ's can stay, as it runs in one transaction under an advisory lock:
 
 ```bash
 $ npx @nestjs/webhooks migrate
