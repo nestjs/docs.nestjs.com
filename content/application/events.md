@@ -108,7 +108,7 @@ export type OnEventOptions = OnOptions & {
   suppressErrors?: boolean;
 
   /**
-   * Registration priority. Higher values run first. Listeners that omit this option use `0`, so a positive priority runs before them and a negative one after them. Listeners with the same priority keep discovery order.
+   * Registration priority. Higher values run first. Listeners that omit this option use `0`, so a positive priority runs before them and a negative one after them. Listeners with the same priority keep discovery order (reverse discovery order for `prependListener: true` listeners).
    *
    * @default 0
    */
@@ -151,7 +151,7 @@ handleEverything(payload: any) {
 
 #### Listener priority
 
-Pass `priority` in the `@OnEvent()` options to choose the order in which listeners of the same event are called. Nest collects every `@OnEvent` listener, sorts them by priority (highest first, ties in discovery order), and only then registers them. Listeners that omit `priority` use `0`: a positive priority runs before them, and a negative one after them.
+Pass `priority` in the `@OnEvent()` options to choose the order in which listeners of the same event are called. Nest collects every `@OnEvent` listener, sorts them by priority (highest first), and only then registers them. Listeners that omit `priority` use `0`: a positive priority runs before them, and a negative one after them. `Infinity` and `-Infinity` are allowed, and `NaN` falls back to `0`.
 
 ```typescript
 @OnEvent('order.created', { priority: 10 })
@@ -170,11 +170,16 @@ recordAnalytics(payload: OrderCreatedEvent) {
 }
 ```
 
-Listeners with `prependListener: true` stay ahead of the other `@OnEvent` listeners, as they do without a priority. Nest orders each of those two groups by priority on its own, so a prepended listener still runs before an appended one that has a higher priority.
+Listeners with `prependListener: true` stay ahead of the other `@OnEvent` listeners, as they do without a priority. Nest orders each of those two groups by priority on its own, so a prepended listener still runs before an appended one that has a higher priority. Listeners with the same priority keep the order they have without one: discovery order for appended listeners, and reverse discovery order for prepended ones.
 
 Priority orders `@OnEvent` listeners of the same event name among themselves. It leaves listeners added directly on `EventEmitter2` in the position they were added. It also leaves a wildcard listener (`order.*`) and an exact one (`order.created`) in the order [EventEmitter2](https://github.com/EventEmitter2/EventEmitter2) calls them.
 
-Priority decides the order listeners are called in. It leaves every listener free to run. With `async: true`, `promisify`, or `emitAsync()`, a higher-priority listener that rejects still leaves the listeners after it to run. A security check at a higher priority cannot rely on a thrown error to skip a later listener, such as `notifyWarehouse()` above.
+Priority only holds for listeners that start their work synchronously when the event is emitted:
+
+- Listeners registered with `async: true`, `nextTick: true`, or `promisify: true` are deferred, so they run after every synchronous listener, whatever their priority. For example, `@OnEvent('order.created', {{ '{' }} priority: 10, async: true {{ '}' }})` still runs after `notifyWarehouse()` above.
+- Listeners on [request-scoped](/fundamentals/injection-scopes) or durable providers resolve their instance before their body runs, so their body can start after lower-priority listeners. Priority does not hold for them.
+
+Priority decides the order listeners are called in, not whether the next one runs. In every mode, including a plain `emit()`, a higher-priority listener that throws or rejects still leaves the listeners after it to run. A security check at a higher priority cannot rely on a thrown error to skip a later listener, such as `notifyWarehouse()` above.
 
 #### Preventing event loss
 
