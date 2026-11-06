@@ -149,6 +149,7 @@ Where to start, by what you're building:
 - A realtime backend: [Gateways](${SITE}/websockets/gateways.md) for WebSockets, and [Server-Sent Events](${SITE}/http/server-sent-events.md) for streaming to the browser.
 - A GraphQL API: [Quick start](${SITE}/graphql/quick-start.md).
 - Microservices over Kafka, RabbitMQ, NATS, Redis, MQTT or gRPC: [Overview](${SITE}/microservices/basics.md).
+- A backend next to Supabase, for Stripe webhooks, scheduled jobs, queues and an admin API: [Supabase](${SITE}/recipes/supabase.md).
 - A process that takes days or has to survive restarts, such as an order or an onboarding: [Durable workflows](${SITE}/reliability/workflows.md) (\`@nestjs/workflows\`).
 
 What a backend usually needs, most of it covered by a first-party package:
