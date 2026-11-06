@@ -73,7 +73,7 @@ The Node adapter deliberately differs from Express in a few places:
 - A route parameter longer than 100 characters doesn't match (see [Node adapter options](/http/performance#node-adapter-options)).
 - A JSON body with `__proto__` or `constructor.prototype` keys is rejected (see [Body parsers](/http/performance#body-parsers)).
 
-Some Express APIs are not available: `res.render()` (use the [`@Render()`](/http/mvc) decorator instead), `res.download()`, `res.format()`, `req.accepts()` and its variants, `req.fresh` and `req.stale`, `req.route`, mounting an Express application with `app.use()`, and Express settings, for which the adapter takes [options](/http/performance#node-adapter-options) instead (`trustProxy` for the `trust proxy` setting, for example).
+Some Express APIs are not available: `res.render()` (use the [`@Render()`](/http/mvc) decorator instead), `res.download()`, `res.format()`, `res.attachment()`, `res.contentType()` (use `res.type()` instead), `res.jsonp()`, `res.links()`, `res.location()` (use `res.set('Location', url)` instead), `res.vary()`, `req.accepts()` and its variants, `req.fresh` and `req.stale`, `req.host`, `req.range()`, `req.route`, `req.subdomains`, `req.xhr`, mounting an Express application with `app.use()`, and Express settings, for which the adapter takes [options](/http/performance#node-adapter-options) instead (`trustProxy` for the `trust proxy` setting, for example).
 
 ##### Node adapter options
 
