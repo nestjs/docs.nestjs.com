@@ -249,6 +249,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Models', path: '/ai/models' },
       { title: 'Tools', path: '/ai/tools' },
       { title: 'Agents', path: '/ai/agents' },
+      { title: 'Embeddings', path: '/ai/embeddings' },
       { title: 'Testing', path: '/ai/testing' },
     ],
   },
