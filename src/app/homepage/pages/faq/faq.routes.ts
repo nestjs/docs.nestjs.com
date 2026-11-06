@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { CloudflareWorkersComponent } from './cloudflare-workers/cloudflare-workers.component';
 import { ErrorsComponent } from './errors/errors.component';
 import { GlobalPrefixComponent } from './global-prefix/global-prefix.component';
 import { HttpAdapterComponent } from './http-adapter/http-adapter.component';
@@ -49,6 +50,11 @@ export const FAQ_ROUTES: Routes = [
     path: 'common-errors',
     component: ErrorsComponent,
     data: { title: 'Common errors - FAQ' },
+  },
+  {
+    path: 'cloudflare-workers',
+    component: CloudflareWorkersComponent,
+    data: { title: 'Cloudflare Workers - FAQ' },
   },
   {
     path: 'serverless',
