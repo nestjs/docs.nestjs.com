@@ -2,7 +2,7 @@
 
 #### nest new
 
-Creates a new (standard mode) Nest project.
+Creates a new (standard mode) Nest project, or with `--minimal` a [one-file project](/cli/usages#one-file-projects).
 
 ```bash
 $ nest new <name> [options]
@@ -46,6 +46,72 @@ The command:
 | `--strict`                            | Enable TypeScript's `strict` mode (with `strictPropertyInitialization` disabled) in the generated `tsconfig.json`. Enabled by default, and there is no flag to disable it: to opt out, set `"strict": false` in `tsconfig.json` after generating the project. |
 | `--format`                            | Format generated files using Prettier.                                                                                                                                                                                                                        |
 | `--observe` / `--no-observe`          | Set up the `@nestjs/observe` SDK, or skip it, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to yes). Without a terminal, Observe is not set up.                                                            |
+| `--minimal`                           | Generate an application whose code is one file, `src/main.ts`. See [One-file projects](/cli/usages#one-file-projects). TypeScript and ESM only.                                                                                                                 |
+
+##### One-file projects
+
+`nest new <name> --minimal` generates a real Nest application without the layout around it, for a small project or a first version:
+
+```bash
+src/main.ts      # a service, a controller, a module and the bootstrap call
+package.json     # build, start, start:dev and start:prod scripts
+tsconfig.json
+.gitignore
+AGENTS.md
+```
+
+```typescript
+import { Controller, Get, Injectable, Module } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+
+@Injectable()
+class AppService {
+  getHello(): string {
+    return 'Hello World!';
+  }
+}
+
+@Controller()
+class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+
+@Module({
+  controllers: [AppController],
+  providers: [AppService],
+})
+class AppModule {}
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(process.env.PORT ?? 3000);
+}
+await bootstrap();
+```
+
+Run it with `npm run start:dev`. It goes through the CLI, like any other Nest project, because the TypeScript compiler has to emit decorator metadata for injection by type to work. Under a tool that doesn't emit it, such as `tsx`, `appService` above is `undefined`.
+
+There's no `nest-cli.json`, because the CLI's defaults already describe this layout, and no tests, linter, formatter, or README. Add any of them when you need them.
+
+`nest generate` works here as it does anywhere else. With no `*.module.ts` file to register things in, it uses the module in `src/main.ts`:
+
+```bash
+$ nest g resource users
+```
+
+This writes `src/users/` and adds `UsersModule` to the imports in `src/main.ts`. Spec files are left out while `package.json` doesn't list `@nestjs/testing`: install it, or pass `--spec`, to get them. When `src/main.ts` gets long, move the module to `src/app.module.ts` and export it, and `nest generate` registers things there instead.
+
+The other options to `nest new` apply, with these differences:
+
+- `--language js` is refused. JavaScript needs Babel and its own entry file to run decorators, so the project wouldn't stay one file.
+- The project is always ESM, and you aren't prompted for a module system. For CommonJS, generate a standard project.
+- `--observe` wires the SDK into `src/main.ts`. `npx @nestjs/observe link` then writes the key pair, as usual. Without `--observe`, adding the SDK later takes the [three edits in its quick start](https://observe.nestjs.com/documentation/sdk#quick-start), because `link` looks for the root module in a file that `main.ts` imports.
+- `--skip-tests` has nothing to skip.
 
 #### nest generate
 
@@ -94,7 +160,7 @@ $ nest g <schematic> <name> [options]
 | `--flat`                        | Do not generate a folder for the element.                                                                       |
 | `--no-flat`                     | Generate a folder for the element.                                                                              |
 | `--collection [collectionName]` | Schematics collection to use. Pass the package name of an installed npm package that contains the schematic.<br/> Alias: `-c` |
-| `--spec`                        | Generate spec files (default).                                                                                  |
+| `--spec`                        | Generate spec files (default, unless `package.json` doesn't list `@nestjs/testing`).                            |
 | `--no-spec`                     | Skip generating spec files.                                                                                     |
 | `--spec-file-suffix [suffix]`   | Use a custom suffix for spec files.                                                                             |
 | `--skip-import`                 | Skip importing the generated element into its closest module.                                                   |
