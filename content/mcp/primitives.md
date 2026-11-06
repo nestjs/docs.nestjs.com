@@ -553,7 +553,7 @@ McpModule.forRootAsync({
 - It runs once per HTTP request. Over stdio, it runs once per connection, and once more when a client opens with a `server/discover` probe and then falls back to the 2025 handshake: twice on one connection, with a different `era`.
 - If it throws, or returns a primitive it wasn't given, the request fails. It is never served every primitive instead.
 
-> info **Hint** A client of the 2026-07-28 revision may cache `tools/list`, so a change in what `filter` returns (a flag turned on) shows once the client lists the tools again.
+> info **Hint** A client keeps the list it fetched, so a change in what `filter` returns (a flag turned on) shows once it lists the tools again.
 
 #### Decorators
 
