@@ -525,6 +525,36 @@ Exempt the endpoint's route from the authentication guard with `decorators: [Pub
 
 > info **Hint** This needs `@nestjs/authentication` 0.1.3 and `@nestjs/authorization` 0.1.1 or later, the first versions that know MCP calls (context type `'mcp'`). With earlier ones, the global guard finds no credentials on a call: mark the providers of your tools `@Public()`.
 
+#### Per-request visibility
+
+`scopes` keeps a tool listed and challenges the call, which suits a client that can ask the user for more. Sometimes a tool shouldn't be there at all for a request: it's behind a feature flag, it belongs to another tenant, or the client will never be granted its scope. The store releases `refund` to a few support agents first. `filter` picks the primitives each request is served, before its server registers them:
+
+```typescript
+@@filename(app.module)
+McpModule.forRootAsync({
+  imports: [FlagsModule],
+  inject: [FlagsService],
+  useFactory: (flags: FlagsService) => ({
+    name: 'cat-store',
+    version: '1.0.0',
+    filter: async ({ tools }, { authInfo }) => {
+      const refunds = await flags.isEnabled('refunds', authInfo?.clientId);
+      return {
+        tools: tools.filter((tool) => tool.name !== 'refund' || refunds),
+      };
+    },
+  }),
+}),
+```
+
+- It receives every primitive the application declares, as `tools`, `resources`, `resourceTemplates` and `prompts`, and returns a subset of each. A list it leaves out keeps all of its kind. The second argument is what the server is built for: `transport`, `era`, `authInfo` (with `auth`) and `request`, the HTTP platform's request.
+- A primitive left out is neither listed nor callable: a call to it gets the SDK's unknown-tool error, before any guard runs.
+- When no tool is left, the server stops advertising tools, and `tools/list` answers "Method not found" rather than an empty list. Resources and prompts work the same way.
+- It runs once per HTTP request. Over stdio, it runs once per connection, and once more when a client opens with a `server/discover` probe and then falls back to the 2025 handshake: twice on one connection, with a different `era`.
+- If it throws, or returns a primitive it wasn't given, the request fails. It is never served every primitive instead.
+
+> info **Hint** A client of the 2026-07-28 revision may cache `tools/list`, so a change in what `filter` returns (a flag turned on) shows once the client lists the tools again.
+
 #### Decorators
 
 | Decorator | Options | The method is called with |
