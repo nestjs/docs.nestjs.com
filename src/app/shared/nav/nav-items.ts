@@ -342,6 +342,7 @@ export const NAV_ITEMS: NavItem[] = [
     isOpened: false,
     children: [
       { title: 'Serverless', path: '/faq/serverless' },
+      { title: 'Cloudflare Workers', path: '/faq/cloudflare-workers' },
       { title: 'HTTP adapter', path: '/faq/http-adapter' },
       {
         title: 'Keep-Alive connections',
