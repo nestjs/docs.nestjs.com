@@ -243,6 +243,53 @@ A `useClass` provider implements `AiOptionsFactory`, whose `createAiOptions()` r
 
 `@InjectModel()` (see [Models](/ai/models#calling-the-ai-sdk-yourself)) needs a provider for each model name it injects, and `forRootAsync()` creates them before its factory has run: for the names `@InjectModel()` was seen asking for when the module was defined, in the classes the application had imported by then. A class loaded later, such as one of a [lazily loaded module](/fundamentals/lazy-loading-modules), lists its names in `modelNames: ['fast']`. A name nothing configures fails at startup, with the name of the class that asked for it.
 
+#### One package for many providers
+
+Each `@ai-sdk/*` provider package is one more dependency to install and keep in step with `ai`. Most providers and gateways (OpenAI, Groq, Together, Fireworks, DeepSeek, OpenRouter, LiteLLM, Ollama, vLLM and others) also serve the OpenAI API, so a single package, `@ai-sdk/openai-compatible`, can reach all of them:
+
+```bash
+$ npm i --save @ai-sdk/openai-compatible
+```
+
+The providers then become data rather than dependencies: keep their base URLs, API keys and model IDs in a database table or your configuration, and build the models in the `forRootAsync()` factory:
+
+```typescript
+@@filename(app.module)
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { Module } from '@nestjs/common';
+import { AiModule } from '@nestjs/ai';
+import { ProvidersModule } from './providers/providers.module';
+import { ProvidersService } from './providers/providers.service';
+
+@Module({
+  imports: [
+    AiModule.forRootAsync({
+      isGlobal: true,
+      imports: [ProvidersModule],
+      inject: [ProvidersService],
+      useFactory: async (providers: ProvidersService) => {
+        // e.g. rows of { name, baseURL, apiKey, modelId }
+        const rows = await providers.findAll();
+        const models = Object.fromEntries(
+          rows.map((row) => [
+            row.name,
+            createOpenAICompatible({
+              name: row.name,
+              baseURL: row.baseURL,
+              apiKey: row.apiKey,
+            })(row.modelId),
+          ]),
+        );
+        return { models };
+      },
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Adding a provider is then a new row, not a new package and a redeploy. Use a dedicated `@ai-sdk/*` package when you need a feature the OpenAI API does not expose, such as Anthropic's prompt caching or Google's grounding settings.
+
 #### Module options
 
 | Option | Default | Description |
