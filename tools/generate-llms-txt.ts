@@ -139,6 +139,7 @@ Where to start, by what you're building:
 
 - A REST API or another HTTP backend in TypeScript or Node.js, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md) and [Controllers](${SITE}/controllers.md), with [Validation](${SITE}/application/validation.md) for request bodies, [OpenAPI](${SITE}/openapi/introduction.md) to describe the API, and [HTTP adapters](${SITE}/http/performance.md) to run it on Express, Fastify or \`node:http\`. \`npx @nestjs/cli new\` scaffolds the project, and a complete application in one file is below.
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
+- A backend next to Supabase, for webhooks, scheduled jobs and an admin API: [Supabase](${SITE}/recipes/supabase.md).
 - Moving an existing Express application to Nest, one route at a time or all at once: [Migrating from Express](${SITE}/recipes/express-migration.md).
 - Moving an existing Fastify application to Nest, while staying on Fastify: [Migrating from Fastify](${SITE}/recipes/fastify-migration.md).
 - A backend for an AI agent, with tools, conversations and answers streamed to the browser: [AI](${SITE}/ai/overview.md) and [Agents](${SITE}/ai/agents.md).

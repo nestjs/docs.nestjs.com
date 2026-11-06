@@ -6,6 +6,7 @@ import { ReplComponent } from './repl/repl.component';
 import { ServeStaticComponent } from './serve-static/serve-static.component';
 import { NextjsComponent } from './nextjs/nextjs.component';
 import { RouterModuleComponent } from './router-module/router-module.component';
+import { SupabaseComponent } from './supabase/supabase.component';
 import { FastifyMigrationComponent } from './fastify-migration/fastify-migration.component';
 import { NestCommanderComponent } from './nest-commander/nest-commander.component';
 import { AsyncLocalStorageComponent } from './async-local-storage/async-local-storage.component';
@@ -68,6 +69,11 @@ export const RECIPES_ROUTES: Routes = [
     path: 'fastify-migration',
     component: FastifyMigrationComponent,
     data: { title: 'Migrating from Fastify' },
+  },
+  {
+    path: 'supabase',
+    component: SupabaseComponent,
+    data: { title: 'Supabase' },
   },
   {
     path: 'nest-commander',
