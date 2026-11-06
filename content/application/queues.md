@@ -135,12 +135,15 @@ import { createPostgresBackend } from 'bullmq';
         user: 'postgres',
         password: 'password',
         database: 'mydb',
+        migrate: true,
       },
     }),
   ],
 })
 export class AppModule {}
 ```
+
+`migrate: true` creates BullMQ's tables at startup, in a `bullmq` schema of their own. Without it, the application fails on a database that doesn't have them yet.
 
 The configured `backendFactory` is automatically propagated across all underlying BullMQ components (`Queue`, `Worker`, `QueueEvents`, and `FlowProducer`), including `@Processor()` and `@QueueEventsListener()` worker hosts.
 
