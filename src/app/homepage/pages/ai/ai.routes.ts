@@ -3,6 +3,7 @@ import { AiOverviewComponent } from './overview/overview.component';
 import { AiModelsComponent } from './models/models.component';
 import { AiToolsComponent } from './tools/tools.component';
 import { AiAgentsComponent } from './agents/agents.component';
+import { AiEmbeddingsComponent } from './embeddings/embeddings.component';
 import { AiTestingComponent } from './testing/testing.component';
 
 export const AI_ROUTES: Routes = [
@@ -30,6 +31,11 @@ export const AI_ROUTES: Routes = [
     path: 'agents',
     component: AiAgentsComponent,
     data: { title: 'AI - Agents' },
+  },
+  {
+    path: 'embeddings',
+    component: AiEmbeddingsComponent,
+    data: { title: 'AI - Embeddings' },
   },
   {
     path: 'testing',

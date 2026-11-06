@@ -13,6 +13,7 @@ In this chapter, you'll give the store's order API:
 - [Agent functions](/ai/tools) the model calls as the signed-in customer, among them `find-order`, which the store's MCP server serves too: one method, two consumers.
 - A [chat assistant](/ai/agents#streaming-to-the-browser) whose answer streams to the browser as it's written.
 - A [refund agent](/ai/agents#durable-agent-runs) that waits for the support team's approval, as a durable workflow.
+- [Embeddings](/ai/embeddings) of its product descriptions, for a search that finds products by what they mean.
 - [Tests](/ai/testing) that run without a model provider.
 
 #### Installation
@@ -239,7 +240,7 @@ import { AiModule } from '@nestjs/ai';
 export class AppModule {}
 ```
 
-A `useClass` provider implements `AiOptionsFactory`, whose `createAiOptions()` returns the options. `isGlobal` stays at the top level, and so does `modelNames`.
+A `useClass` provider implements `AiOptionsFactory`, whose `createAiOptions()` returns the options. `isGlobal` stays at the top level, and so do `modelNames` and `embeddingModelNames`.
 
 `@InjectModel()` (see [Models](/ai/models#calling-the-ai-sdk-yourself)) needs a provider for each model name it injects, and `forRootAsync()` creates them before its factory has run: for the names `@InjectModel()` was seen asking for when the module was defined, in the classes the application had imported by then. A class loaded later, such as one of a [lazily loaded module](/fundamentals/lazy-loading-modules), lists its names in `modelNames: ['fast']`. A name nothing configures fails at startup, with the name of the class that asked for it.
 
@@ -298,7 +299,7 @@ Use a dedicated `@ai-sdk/*` package when you need a feature the OpenAI API does 
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `models` | | Required. The models, by name: a `LanguageModel`, or `{{ '{' }} model, ... {{ '}' }}` with the settings below |
+| `models` | | The models, by name: a `LanguageModel`, or `{{ '{' }} model, ... {{ '}' }}` with the settings below. Required unless `embeddingModels` names a model |
 | `models.*.fallback` | | The names of the models tried, in order, when this one fails |
 | `models.*.pricing` | | `input`, `output` and `cachedInput`: prices per million tokens |
 | `models.*.timeout`, `retry`, `resilience` | | The model's own policies, which win over `defaults`, as its generation settings do |
@@ -309,9 +310,13 @@ Use a dedicated `@ai-sdk/*` package when you need a feature the OpenAI API does 
 | `defaults.budget` | | `maxTokens` and `maxCost`, per call and per durable run |
 | `defaults.maxOutputTokens`, `temperature`, `providerOptions`, `headers` | | Passed to the model |
 | `onUsage` | | Called after every model call that answered |
+| `embeddingModels` | | The [embedding models](/ai/embeddings), by name: an `EmbeddingModel`, or `{{ '{' }} model, ... {{ '}' }}` with settings of its own |
+| `embeddingDefaults` | | The [settings of embedding calls](/ai/embeddings#embedding-settings), which `defaults` don't reach |
+| `onEmbeddingUsage` | | Called after every embedding call that succeeded |
 | `include` | every module | The modules whose providers are searched for agent functions |
 | `isGlobal` | `false` | Whether the module is global. Top level of `forRootAsync()` |
 | `modelNames` | | More model names `@InjectModel()` may inject, for classes loaded after the module is defined. Top level of `forRootAsync()` |
+| `embeddingModelNames` | | The same for `@InjectEmbeddingModel()`. Top level of `forRootAsync()` |
 
 Every option of `defaults` is also an option of each call, which wins. `timeout`, `retry`, `resilience` and the generation settings are also settings of a model's definition, which win over `defaults`.
 

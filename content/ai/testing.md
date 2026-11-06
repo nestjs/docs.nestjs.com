@@ -461,3 +461,112 @@ describe('RefundRequest', () => {
 ```
 
 The model calls and the tool calls the run made before the approval are read back from the journal when it resumes: the fake model is called three times in all. To test a restart, boot a second application on the same store, as [Test crash recovery](/reliability/workflows#test-crash-recovery) shows for any workflow.
+
+#### Testing embeddings
+
+`FakeEmbeddingModel` is the fake model for [embedding calls](/ai/embeddings): a real `EmbeddingModel`, which answers each provider request with the next of the answers you give it, and records the request. It makes up no vectors: an answer has one for each value of the request.
+
+```typescript
+@@filename(catalog/search.service.spec)
+import { Test } from '@nestjs/testing';
+import { AiModule } from '@nestjs/ai';
+import { FakeEmbeddingModel, providerError } from '@nestjs/ai/testing';
+import { ProductsRepository } from './products.repository';
+import { SearchService } from './search.service';
+
+describe('SearchService', () => {
+  const products = { saveEmbeddings: vi.fn(), findNearest: vi.fn() };
+
+  async function createSearch(model: FakeEmbeddingModel) {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        AiModule.forRoot({
+          embeddingModels: { default: model },
+          embeddingDefaults: {
+            retry: { attempts: 2, backoff: { delay: 0 } },
+          },
+        }),
+      ],
+      providers: [
+        SearchService,
+        { provide: ProductsRepository, useValue: products },
+      ],
+    }).compile();
+    return moduleRef.get(SearchService);
+  }
+
+  it('finds the products nearest to the search', async () => {
+    const model = new FakeEmbeddingModel([{ embeddings: [[0.1, 0.2]] }]);
+    const search = await createSearch(model);
+
+    await search.search("my cat won't eat");
+
+    expect(model.lastCall?.values).toEqual(["my cat won't eat"]);
+    expect(products.findNearest).toHaveBeenCalledWith([0.1, 0.2], 10);
+  });
+
+  it('sends a failed request again, and only that one', async () => {
+    const model = new FakeEmbeddingModel(
+      [{ embeddings: [[1]] }, providerError(429), { embeddings: [[2]] }],
+      { maxEmbeddingsPerCall: 1, supportsParallelCalls: false },
+    );
+    const search = await createSearch(model);
+    const catalog = [
+      { id: 'prd_1', description: 'Salmon pate' },
+      { id: 'prd_2', description: 'Catnip mouse' },
+    ];
+
+    await search.index(catalog);
+
+    expect(model.calls.map((call) => call.values)).toEqual([
+      ['Salmon pate'],
+      ['Catnip mouse'],
+      ['Catnip mouse'],
+    ]);
+    expect(products.saveEmbeddings).toHaveBeenCalledWith(catalog, [[1], [2]]);
+  });
+});
+```
+
+The second argument says how the AI SDK splits values, as a provider's model does: here each value is a request of its own, and they are sent one at a time, so the test knows their order. It also takes `provider` and `modelId`. Without it, the model has no limit, and `embedMany()` makes one request.
+
+| Answer | What the model does |
+| --- | --- |
+| `{{ '{' }} embeddings {{ '}' }}` | Answers with the vectors, one for each value of the request |
+| An `Error` | Fails with it, as a provider's request does |
+| A function of the call | Answers with what it returns, any of the above, or a promise of it |
+
+An answer object also takes:
+
+| Option | What it does |
+| --- | --- |
+| `usage` | The tokens the answer reports: `{{ '{' }} tokens {{ '}' }}`, 10 per value by default |
+| `delay` | Milliseconds before it answers. The call's abort, and its timeout, cut it short |
+| `warnings`, `providerMetadata`, `response` | What the provider adds to its vectors |
+
+Given a function instead of a list, `new FakeEmbeddingModel((call) => ...)` answers every request with it, which suits a test that doesn't care how the values are split. `reply(...answers)` adds answers after the ones not used yet, and `fakeEmbeddingModel(...answers)` is `new FakeEmbeddingModel(answers)`. A request it has no answer left for fails: `FakeEmbeddingModel: no answer left for call 3. Give it more answers.`
+
+`calls` lists what the model received, each with its `values` and its `options`, the AI SDK's provider-level call options such as `abortSignal`, `headers` and `providerOptions`, and `lastCall` is the last one.
+
+`overrideEmbeddingModels()` does for embedding models what `overrideModels()` does for language models: it puts fake models in place of the application's own, by name, and keeps the rest of their definitions, their settings and pricing. A name the module doesn't configure fails when the testing module compiles. The models `@InjectEmbeddingModel()` injects are replaced too:
+
+```typescript
+@@filename(test/search.e2e-spec)
+import { Test } from '@nestjs/testing';
+import {
+  FakeEmbeddingModel,
+  overrideEmbeddingModels,
+} from '@nestjs/ai/testing';
+import { AppModule } from '../src/app.module';
+
+const model = new FakeEmbeddingModel(({ values }) => ({
+  embeddings: values.map(() => [0.1, 0.2]),
+}));
+
+const moduleRef = await overrideEmbeddingModels(
+  Test.createTestingModule({ imports: [AppModule] }),
+  { default: model },
+).compile();
+```
+
+To replace language models in the same test, pass what `overrideEmbeddingModels()` returns to `overrideModels()`.
