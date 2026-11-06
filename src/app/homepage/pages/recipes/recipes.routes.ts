@@ -10,6 +10,7 @@ import { AsyncLocalStorageComponent } from './async-local-storage/async-local-st
 import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
 import { SocketActivationComponent } from './socket-activation/socket-activation.component';
+import { ExpressMigrationComponent } from './express-migration/express-migration.component';
 import { movedTo, splitInto } from '../../../shared/utils/moved-page-redirect';
 import { PRISMA_SECTIONS } from '../data/prisma-sections';
 
@@ -85,5 +86,10 @@ export const RECIPES_ROUTES: Routes = [
     path: 'socket-activation',
     component: SocketActivationComponent,
     data: { title: 'Socket activation' },
+  },
+  {
+    path: 'express-migration',
+    component: ExpressMigrationComponent,
+    data: { title: 'Migrating from Express' },
   },
 ];
