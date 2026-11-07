@@ -148,6 +148,8 @@ forRoutes({
 });
 ```
 
+> warning **Warning** Adapters differ in how a plain string path matches subpaths. On the Express and the underlying Node adapters, a string such as `'cats'` is mounted with `use()`, so the middleware also runs for subpaths like `/cats/breed`. On the **Fastify** adapter, a string path is anchored and matches only `/cats` itself and never reaches subpaths. This is easy to overlook when the middleware enforces security: binding an authentication middleware with `forRoutes('cats')` leaves `/cats/*` unprotected on Fastify, with no error or warning. To match subpaths consistently across adapters, add an optional wildcard, for example `.forRoutes('cats/{{ '{' }}*splat&#125;', 'cats')`.
+
 #### Middleware consumer
 
 The `MiddlewareConsumer` is a helper class that provides several built-in methods to manage middleware. All of them can be **chained** in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). The `forRoutes()` method accepts a single string, multiple strings, a `RouteInfo` object, a controller class, or multiple controller classes. In most cases, you'll pass a comma-separated list of **controllers**. Below is an example with a single controller:
