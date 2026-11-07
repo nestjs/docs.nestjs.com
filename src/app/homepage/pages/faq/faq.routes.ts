@@ -10,6 +10,7 @@ import { NestVsFastifyExpressHonoComponent } from './nest-vs-fastify-express-hon
 import { RawBodyComponent } from './raw-body/raw-body.component';
 import { RequestLifecycleComponent } from './request-lifecycle/request-lifecycle.component';
 import { ServerlessComponent } from './serverless/serverless.component';
+import { VersionsComponent } from './versions/versions.component';
 
 export const FAQ_ROUTES: Routes = [
   {
@@ -66,5 +67,10 @@ export const FAQ_ROUTES: Routes = [
     path: 'serverless',
     component: ServerlessComponent,
     data: { title: 'Serverless - FAQ' },
+  },
+  {
+    path: 'versions',
+    component: VersionsComponent,
+    data: { title: 'Version compatibility - FAQ' },
   },
 ];
