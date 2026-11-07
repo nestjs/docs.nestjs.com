@@ -282,6 +282,8 @@ describe('Cats', () => {
 > ```ts
 > app = moduleRef.createNestApplication<NestNodeApplication>(new NodeAdapter());
 > ```
+>
+> The Node adapter has the same `app.inject()` method as the Fastify adapter shown below, so the tests can send requests without a listening server.
 
 > info **Hint** If you use [Fastify](/http/performance#fastify-adapter) as your HTTP adapter, it requires a slightly different configuration and has built-in testing capabilities:
 >
