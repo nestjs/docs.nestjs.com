@@ -12,14 +12,15 @@ The following example uses a manually instantiated method-scoped pipe. As with H
 @@filename()
 @UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new WsException(errors) }))
 @SubscribeMessage('events')
-handleEvent(client: Client, data: unknown): WsResponse<unknown> {
+handleEvent(@MessageBody() data: unknown): WsResponse<unknown> {
   const event = 'events';
   return { event, data };
 }
 @@switch
 @UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new WsException(errors) }))
+@Bind(MessageBody())
 @SubscribeMessage('events')
-handleEvent(client, data) {
+handleEvent(data) {
   const event = 'events';
   return { event, data };
 }

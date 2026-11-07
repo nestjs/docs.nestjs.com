@@ -85,9 +85,13 @@ To use `ws`, first install the required package:
 $ npm i --save @nestjs/platform-ws
 ```
 
-Once the package is installed, switch the adapter:
+Once the package is installed, import `WsAdapter` and switch the adapter:
 
 ```typescript
+import { NestFactory } from '@nestjs/core';
+import { WsAdapter } from '@nestjs/platform-ws';
+import { AppModule } from './app.module';
+
 const app = await NestFactory.create(AppModule);
 app.useWebSocketAdapter(new WsAdapter(app));
 ```
@@ -167,10 +171,14 @@ export class WsAdapter implements WebSocketAdapter {
 
 > info **Hint** To use the [ws](https://github.com/websockets/ws) library, use the built-in `WsAdapter` instead of creating your own.
 
-Then set up the custom adapter with the `useWebSocketAdapter()` method:
+Then set up the custom adapter with the `useWebSocketAdapter()` method. Import it from the file where you defined it (here, `./ws-adapter`):
 
 ```typescript
 @@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { WsAdapter } from './ws-adapter';
+import { AppModule } from './app.module';
+
 const app = await NestFactory.create(AppModule);
 app.useWebSocketAdapter(new WsAdapter(app));
 ```

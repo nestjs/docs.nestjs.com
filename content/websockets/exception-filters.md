@@ -23,18 +23,31 @@ When a handler throws the exception above, Nest catches it and emits an `excepti
 
 The `cause` property lets the client associate the error with the message that triggered it. If you pass an object (rather than a string) to the `WsException` constructor, Nest emits that object as is. Any exception that isn't a `WsException` produces the same structure, with `'Internal server error'` as the message. With the `ws` adapter, which has no named events, the client receives a JSON string of the form `{{ '{' }} "event": "exception", "data": ... {{ '}' }}` instead.
 
+> info **Hint** With socket.io, the client must listen for the `exception` event (e.g., `socket.on('exception', (error) => console.log(error))`). If it doesn't, the error is not visible on the client. Tools such as Postman need a listener registered for this event name as well.
+
 #### Filters
 
 WebSocket exception filters behave the same way as HTTP exception filters. The following example uses a manually instantiated method-scoped filter. As with HTTP-based applications, you can also use gateway-scoped filters (i.e., decorate the gateway class with `@UseFilters()`).
 
 ```typescript
-@UseFilters(new WsExceptionFilter())
+@@filename()
+@UseFilters(new BaseWsExceptionFilter())
 @SubscribeMessage('events')
-onEvent(client, data: any): WsResponse<any> {
+onEvent(@MessageBody() data: unknown): WsResponse<unknown> {
+  const event = 'events';
+  return { event, data };
+}
+@@switch
+@UseFilters(new BaseWsExceptionFilter())
+@Bind(MessageBody())
+@SubscribeMessage('events')
+onEvent(data) {
   const event = 'events';
   return { event, data };
 }
 ```
+
+> info **Hint** The `BaseWsExceptionFilter` class is imported from the `@nestjs/websockets` package. It is the filter Nest applies by default. To customize the behavior, create your own filter as shown in the [Inheritance](#inheritance) section below.
 
 > warning **Warning** Global exception filters (registered with `app.useGlobalFilters()` or the `APP_FILTER` token) don't apply to gateways. Bind WebSocket exception filters at the gateway or method level with `@UseFilters()`.
 
