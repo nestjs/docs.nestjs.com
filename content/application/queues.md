@@ -17,7 +17,7 @@ This chapter covers the `@nestjs/bullmq` and `@nestjs/bull` packages. For more b
 To begin using BullMQ, install the required dependencies.
 
 ```bash
-$ npm install --save @nestjs/bullmq bullmq
+$ npm install --save @nestjs/bullmq bullmq ioredis
 ```
 
 Once the installation process is complete, import the `BullModule` into the root `AppModule`.
@@ -117,7 +117,7 @@ BullModule.registerQueue({
 
 #### Pluggable backends (PostgreSQL)
 
-BullMQ supports pluggable storage backends (such as PostgreSQL) through custom backend factories. You can configure a `backendFactory` globally in `BullModule.forRoot()` or per-queue in `BullModule.registerQueue()`.
+BullMQ supports pluggable storage backends (such as PostgreSQL) through custom backend factories. The PostgreSQL backend needs the `pg` package (`npm install --save pg`) instead of `ioredis`. You can configure a `backendFactory` globally in `BullModule.forRoot()` or per-queue in `BullModule.registerQueue()`.
 
 ```typescript
 @@filename(app.module)
