@@ -148,7 +148,7 @@ forRoutes({
 });
 ```
 
-> warning **Warning** Adapters differ in how a plain string path matches subpaths. On the Express and the underlying Node adapters, a string such as `'cats'` is mounted with `use()`, so the middleware also runs for subpaths like `/cats/breed`. On the **Fastify** adapter, a string path is anchored and matches only `/cats` itself and never reaches subpaths. This is easy to overlook when the middleware enforces security: binding an authentication middleware with `forRoutes('cats')` leaves `/cats/*` unprotected on Fastify, with no error or warning. To match subpaths consistently across adapters, add an optional wildcard, for example `.forRoutes('cats/{{ '{' }}*splat&#125;', 'cats')`.
+> warning **Warning** A plain string path matches subpaths differently across adapters. With Express and the Node adapter, `forRoutes('cats')` also runs the middleware for subpaths like `/cats/breed`. With Fastify, it matches only `/cats`. To match `/cats` and its subpaths on every adapter, put the slash inside the optional wildcard: `forRoutes('cats{{ '{' }}/*splat&#125;')`.
 
 #### Middleware consumer
 
