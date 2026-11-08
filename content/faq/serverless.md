@@ -77,8 +77,14 @@ Instead of the default `webpack` configuration that the Nest CLI ships with, we'
 ```javascript
 module.exports = (options, webpack) => {
   const lazyImports = [
+    '@nestjs/microservices',
     '@nestjs/microservices/microservices-module',
+    '@nestjs/microservices/microservices-module.js',
     '@nestjs/websockets/socket-module',
+    '@nestjs/websockets/socket-module.js',
+    'class-validator',
+    'class-transformer',
+    'class-transformer/storage',
   ];
 
   return {
