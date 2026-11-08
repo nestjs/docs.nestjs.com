@@ -343,6 +343,26 @@ const moduleRef = await Test.createTestingModule({
   .compile();
 ```
 
+Modules are matched by **reference**, so when overriding a [dynamic module](/fundamentals/dynamic-modules), pass `overrideModule()` the same object that represents the registered dynamic module in the application. Calling the module's factory method again produces a different object, and the override silently has no effect:
+
+```typescript
+export const dynamicCatsModule = CatsModule.register({ folder: './cats' });
+
+@Module({
+  imports: [dynamicCatsModule],
+})
+export class AppModule {}
+```
+
+```typescript
+const moduleRef = await Test.createTestingModule({
+  imports: [AppModule],
+})
+  .overrideModule(dynamicCatsModule)
+  .useModule(AlternateCatsModule)
+  .compile();
+```
+
 Each of these methods, in turn, returns the `TestingModuleBuilder` instance, so you can chain them with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). Call `compile()` at the end of the chain to make Nest instantiate and initialize the module.
 
 You may also want to provide a custom logger when the tests run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to tell the `TestingModuleBuilder` how to log during tests (by default, only "error" logs are written to the console).
