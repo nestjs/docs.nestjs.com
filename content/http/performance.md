@@ -65,7 +65,7 @@ expect(result.statusCode).toEqual(200);
 
 ##### Express compatibility
 
-Requests and responses are instances of `NodeRequest` and `NodeResponse` (exported from `@nestjs/platform-node`). They extend Node's `IncomingMessage` and `ServerResponse` with the Express-style properties and methods that middleware, exception filters, and `@Res()` handlers usually rely on, such as `req.get()`, `req.is()`, `req.range()`, `req.route`, `req.ip`, `req.ips`, `req.hostname`, `res.status()`, `res.send()`, `res.json()`, `res.set()`, `res.type()`, `res.cookie()`, `res.redirect()`, `res.sendFile()`, and `res.locals`. Middleware runs in an Express-style stack and uses the same `(req, res, next)` signature.
+Requests and responses are instances of `NodeRequest` and `NodeResponse` (exported from `@nestjs/platform-node`). They extend Node's `IncomingMessage` and `ServerResponse` with the Express-style properties and methods that middleware, exception filters, and `@Res()` handlers usually rely on, such as `req.get()`, `req.is()`, `req.route`, `req.ip`, `req.ips`, `req.hostname`, `res.status()`, `res.send()`, `res.json()`, `res.set()`, `res.type()`, `res.cookie()`, `res.redirect()`, `res.sendFile()`, and `res.locals`. Middleware runs in an Express-style stack and uses the same `(req, res, next)` signature.
 
 Popular Express middleware packages, such as `helmet`, `compression`, `cookie-parser`, `express-session`, `express-rate-limit`, `csrf-csrf`, `morgan`, and `passport` (along with the `@nestjs/passport` guards), work as they do with the Express adapter. When a chapter of this documentation shows separate instructions for Express and Fastify (for example, [Compression](/http/compression) or [Session](/http/session)), follow the Express ones.
 
@@ -80,7 +80,7 @@ The Node adapter deliberately differs from Express in a few places:
 - A route parameter longer than 100 characters doesn't match (see [Node adapter options](/http/performance#node-adapter-options)).
 - A JSON body with `__proto__` or `constructor.prototype` keys is rejected (see [Body parsers](/http/performance#body-parsers)).
 
-Some Express APIs are not available: `res.render()` (use the [`@Render()`](/http/mvc) decorator instead), `res.download()`, `res.format()`, `res.attachment()`, `res.contentType()` (use `res.type()` instead), `res.jsonp()`, `res.links()`, `res.location()` (use `res.set('Location', url)` instead), `res.vary()`, `req.accepts()` and its variants, `req.fresh` and `req.stale`, `req.host`, `req.subdomains`, `req.xhr`, mounting an Express application with `app.use()`, and Express settings, for which the adapter takes [options](/http/performance#node-adapter-options) instead (`trustProxy` for the `trust proxy` setting, for example).
+Some Express APIs are not available: `res.render()` (use the [`@Render()`](/http/mvc) decorator instead), `res.download()`, `res.format()`, `res.attachment()`, `res.contentType()` (use `res.type()` instead), `res.jsonp()`, `res.links()`, `res.location()` (use `res.set('Location', url)` instead), `res.vary()`, `req.accepts()` and its variants, `req.fresh` and `req.stale`, `req.host`, `req.range()`, `req.subdomains`, `req.xhr`, mounting an Express application with `app.use()`, and Express settings, for which the adapter takes [options](/http/performance#node-adapter-options) instead (`trustProxy` for the `trust proxy` setting, for example).
 
 ##### Node adapter options
 
