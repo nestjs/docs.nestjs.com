@@ -104,6 +104,8 @@ new NodeAdapter({ querystringParser: (str) => qs.parse(str) });
 
 The Node adapter comes with its own `json`, `urlencoded`, `text`, and `raw` body parsers, so it doesn't depend on the `body-parser` package. They take the same options as their `body-parser` counterparts, such as `limit`, `inflate`, `strict`, and `type`. As with Express, Nest registers the `json` and `urlencoded` parsers by default, and the `rawBody` option and the `useBodyParser()` method work as described in [Raw body](/faq/raw-body).
 
+The default body size limit is `100kb`, as with Express, while the Fastify adapter inherits Fastify's default of 1 MiB. A larger body is rejected with a `413 Payload Too Large` response. To raise the limit, see [Body parser size limit](/faq/raw-body#body-parser-size-limit).
+
 Like Fastify, the `json` parser rejects a body that tries to inject prototype properties: a body with a `__proto__` or `constructor.prototype` key gets a `400 Bad Request` response. To drop these keys instead, or to keep them (the `body-parser` behavior), set the `onProtoPoisoning` and `onConstructorPoisoning` options to `'remove'` or `'ignore'`. The `urlencoded` parser takes the same options.
 
 ```typescript
