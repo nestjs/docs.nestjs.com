@@ -1,22 +1,20 @@
 ### Version compatibility
 
-This page lists the Node.js and RxJS versions that each major version of Nest works with and the TypeScript version that new projects start with, and explains how to move a project from one major version to the next.
+This page lists the Node.js and RxJS versions that each major version of Nest works with, and explains how to move a project from one major version to the next.
 
 To check which version a project uses, run `nest info` in its root directory, or look at the `@nestjs/core` version in `package.json`.
 
 #### Compatibility table
 
-| Nest | Node.js | TypeScript in new projects | RxJS | Released |
-| --- | --- | --- | --- | --- |
-| 12.x | v20.19+, or v22.12+ on the 22.x line | `^6.0.2` | 7.1+ | August 2026 |
-| 11.x | v20+ | `^5.7.3` | 7.1+ | January 2025 |
-| 10.x | v16+ | `^5.0.0` | 7.1+ | June 2023 |
-| 9.x | v12+, except v13 | `^4.3.5` | 7.1+ | July 2022 |
-| 8.x | v10.13+, except v13 | `^4.3.5` | 7.1+ | July 2021 |
+| Nest | Node.js | RxJS | Released |
+| --- | --- | --- | --- |
+| 12.x | v20.19+, or v22.12+ on the 22.x line | 7.1+ | August 2026 |
+| 11.x | v20+ | 7.1+ | January 2025 |
+| 10.x | v16+ | 7.1+ | June 2023 |
+| 9.x | v12+, except v13 | 7.1+ | July 2022 |
+| 8.x | v10.13+, except v13 | 7.1+ | July 2021 |
 
 The **Node.js** column shows the version that the documentation of each major version asks for to run an application. In Nest 12, the CLI's generators (`nest new`, `nest generate`, and `nest upgrade`) need a newer release than that. See Node.js requirements in the [migration guide](/migration-guide) for details.
-
-The **TypeScript in new projects** column shows the `typescript` range that `nest new` puts into the `package.json` of a new project. The framework packages themselves don't declare a minimum TypeScript version.
 
 The **RxJS** column shows the `rxjs` peer dependency range of `@nestjs/core` and `@nestjs/common`, which is `^7.1.0` in all of these versions.
 
