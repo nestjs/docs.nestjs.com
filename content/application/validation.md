@@ -35,6 +35,7 @@ export interface ValidationPipeOptions extends ValidatorOptions {
   disableErrorMessages?: boolean;
   exceptionFactory?: (errors: ValidationError[]) => any;
   errorFormat?: 'list' | 'grouped';
+  maxErrorMessagesLength?: number;
 }
 ```
 
@@ -121,7 +122,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>validationError.target</code></td>
     <td><code>boolean</code></td>
-    <td>Indicates if target should be exposed in <code>ValidationError</code>.</td>
+    <td>Indicates if target should be exposed in <code>ValidationError</code>. <code>ValidationPipe</code> sets it to <code>false</code> by default, so an <code>exceptionFactory</code> that reads <code>error.target</code> gets <code>undefined</code> unless this is set to <code>true</code>.</td>
   </tr>
   <tr>
     <td><code>validationError.value</code></td>
@@ -137,6 +138,11 @@ In addition to these, all `class-validator` options (inherited from the `Validat
     <td><code>errorFormat</code></td>
     <td><code>'list' | 'grouped'</code></td>
     <td>Specifies the format of validation error messages. <code>'list'</code> (default) returns an array of error message strings. <code>'grouped'</code> returns an object with property paths as keys and arrays of unmodified error messages as values, preserving custom validation messages without prepending parent path prefixes.</td>
+  </tr>
+  <tr>
+    <td><code>maxErrorMessagesLength</code></td>
+    <td><code>number</code></td>
+    <td>Maximum total length, in characters, of the messages in an error response of the built-in exception factory. The errors past it are left out, and a last message says so. Set to <code>Infinity</code> to lift the limit. Defaults to <code>1000000</code>.</td>
   </tr>
 </table>
 
