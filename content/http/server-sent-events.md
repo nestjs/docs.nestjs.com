@@ -168,6 +168,19 @@ return new Observable<MessageEvent>(subscriber => {
 
 > info **Hint** `@SseSignal()` is only populated on `@Sse()` routes; on any other route handler, it resolves to `undefined`. It works the same way on the Express and Fastify platforms.
 
+#### Slow clients
+
+An `Observable` can't be paused, so events wait in memory for a client that isn't reading them. Once more than 4 million characters of event data (`data` plus `comment`) are waiting for a client whose stream is backed up, Nest logs a warning and drops the connection as if the client had disconnected, which also unsubscribes from the `Observable`. An `EventSource` then reconnects, sending the ID of the last event it received.
+
+For a route that streams bulk data faster than its clients read, raise the limit with the `maxPendingDataLength` option, or set it to `0` or `Infinity` to lift it:
+
+```typescript
+@Sse('logs', { maxPendingDataLength: 64 * 1024 * 1024 })
+logs(): Observable<MessageEvent> {
+  // ...
+}
+```
+
 #### Example
 
 A working example is available in the [28-sse sample](https://github.com/nestjs/nest/tree/master/sample/28-sse).
