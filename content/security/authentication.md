@@ -2,6 +2,9 @@
 
 `@nestjs/authentication` signs users in and tells the rest of your application who they are. It registers a global guard, gives you decorators and an injectable context to read the current user, and ships the parts every sign-in flow needs: server-side sessions, password hashing, email verification and password reset links, TOTP two-factor authentication, magic links, OpenID Connect, access and refresh tokens, and API keys. All of them are built on Node.js built-ins, and they keep their state in your database through a store you write against documented interfaces, with the package's tests to check it. You write what only your application knows: how to load a user, which routes are public, and the endpoints of your sign-in flows.
 
+> warning **Warning**
+> `@nestjs/authentication` is in early release (currently 0.x, as of Nov 2026). Its API may change in breaking ways before 1.0. It also works differently from Passport: it keeps auth state in your database through a store you write, and it never reads your users table, so moving to Passport later is not a simple switch. If your application needs a stable, production-proven approach today, see the [Passport recipe](https://docs.nestjs.com/recipes/passport) instead.
+
 In this tutorial, you'll add sign-in to the API of an online store for cat food and supplies. By the end, it will:
 
 - Sign customers in with a password, with Google, or with a link sent by email, and keep the web app signed in with a session cookie.
