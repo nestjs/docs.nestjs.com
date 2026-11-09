@@ -114,7 +114,7 @@ app.useBodyParser('json', { onProtoPoisoning: 'remove' });
 
 ##### Server timeouts
 
-As with Express, the adapter keeps the defaults of Node's `http.Server`: an idle keep-alive connection is closed after 5 seconds (`keepAliveTimeout`), and a request has to arrive in full within 300 seconds (`requestTimeout`). Fastify sets these to 72 seconds and no limit. Behind a load balancer or a reverse proxy, keep `keepAliveTimeout` longer than the proxy's idle timeout, otherwise the proxy can reuse a connection the server is closing and answer `502 Bad Gateway`. The timeouts are properties of the server:
+As with Express, the adapter keeps the defaults of Node's `http.Server`: an idle keep-alive connection is closed after 5 seconds (`keepAliveTimeout`), and a request has to arrive in full within 300 seconds (`requestTimeout`). Fastify sets these to 72 seconds and no limit. Behind a load balancer or a reverse proxy, keep `keepAliveTimeout` longer than the proxy's idle timeout, otherwise the proxy can reuse a connection the server is closing and answer `502 Bad Gateway`. Set the timeouts on the server before calling `listen()`:
 
 ```typescript
 const server = app.getHttpServer();
