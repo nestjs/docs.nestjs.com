@@ -444,6 +444,7 @@ Add `RepricingService` to the providers of `ShippingModule`, and call `repricePe
 A few details differ from entrypoints:
 
 - `execute()` passes your function the attempt's `signal` and `attempt` number. The `source` option labels the events this call emits.
+- A call that returns normally with a bad result, such as a `fetch()` that resolves with a 503 `Response`, isn't an error, so `retryIf` never sees it. Set `retryOnResult(result, attempt)` in the `retry` options of `create()` or of a preset to retry it. Entrypoints ignore it, and `@Retry()` has no such option.
 - A policy object has no `GET` or `POST` to look at, so the preset's retry **always** applies. Only wrap calls that are safe to repeat (a quote is).
 - The route's `@Timeout('1.5s')` belongs to the route. The job gets the preset's 2 seconds.
 - Create the policy once, for example in the constructor, not on every call. For options that aren't a preset, use `resilience.create(options, name)`.
