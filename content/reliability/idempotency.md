@@ -1201,9 +1201,10 @@ Every duration takes milliseconds, or a string such as `'45s'`, `'48h'` or `'7d'
 
 - **`ttl`** (default: `'24h'`) is how long a completed result can be replayed. It must be longer than the longest time a client keeps retrying. The app queues payments made offline for up to a day, so it's 48 hours here. After `ttl`, the key is forgotten, and a retry runs the handler again. In this app, that ends in a 409 "already paid" error rather than a second charge, but the customer doesn't get the receipt.
 - **`lockTtl`** (default: `'60s'`) is how long an in-flight lock survives after the instance running the handler crashes. While the handler runs, the interceptor renews the lock every `lockTtl / 3`, here every 15 seconds, so a charge that takes longer than 45 seconds still keeps it, and a retry gets a 409. Once renewals stop, the lock expires and a retry takes over the key. A shorter `lockTtl` frees keys sooner after a crash, but renews more often. If the store can't be reached to renew a lock, the interceptor logs a warning that the lock was lost.
+- **`maxLockHold`** (default: `'1h'`) is how long a running handler keeps its lock renewed. A handler that hangs past it stops being renewed, so its lock expires after `lockTtl` and a retry may run the handler a second time. If the handler does finish, its result is stored only if no retry took the key over.
 - **`retryAfter`** (default: `'1s'`) is the value of the `Retry-After` header on a 409, in whole seconds. Card charges usually take a second or two, so the API asks clients to wait 2 seconds rather than check back after one.
 
-`@Idempotent()` accepts `required`, `ttl`, `lockTtl`, `retryAfter`, `keyFrom`, `scope`, `fingerprint` and `storeIf`, which override the module's options for that handler. `fingerprint` selects what a retry must repeat, for example the body without a client timestamp; the method and the URL always count. The decorator also works on a controller or resolver class, where it covers the handlers that change state: GET routes and GraphQL queries are skipped unless they have their own `@Idempotent()`. A handler's own `@Idempotent()` is merged with the class's options, so a class-level `required: true` still applies to a handler that only sets `lockTtl`.
+`@Idempotent()` accepts `required`, `ttl`, `lockTtl`, `maxLockHold`, `retryAfter`, `keyFrom`, `scope`, `fingerprint` and `storeIf`, which override the module's options for that handler. `fingerprint` selects what a retry must repeat, for example the body without a client timestamp; the method and the URL always count. The decorator also works on a controller or resolver class, where it covers the handlers that change state: GET routes and GraphQL queries are skipped unless they have their own `@Idempotent()`. A handler's own `@Idempotent()` is merged with the class's options, so a class-level `required: true` still applies to a handler that only sets `lockTtl`.
 
 A `scope` function runs for every kind of handler, and what it receives depends on the handler: the request for HTTP and GraphQL, but the message payload for a microservice handler. In an app that serves both from one `IdempotencyModule`, pass `scope` an object instead, with one function per context under the `http`, `graphql` and `rpc` keys. Each function is typed for what its context passes in, and a context without one isn't scoped.
 
@@ -1418,7 +1419,7 @@ The tutorial wrote the store with Drizzle, with TypeORM, and for Redis. This sec
 
 ##### Module options
 
-`IdempotencyModule.forRoot()` takes these options. `forRootAsync()` takes `isGlobal` and `imports` at the top level, next to `useFactory`, `useClass` or `useExisting`, and the factory returns the rest. Every option except `header`, `replayHeaders`, `encryption`, `allowInMemoryStorage` and `isGlobal` can also be set per class or handler in `@Idempotent()`, where it is merged field by field over the module's.
+`IdempotencyModule.forRoot()` takes these options. `forRootAsync()` takes `isGlobal` and `imports` at the top level, next to `useFactory`, `useClass` or `useExisting`, and the factory returns the rest. Every option except `header`, `replayHeaders`, `storeTimeout`, `encryption`, `allowInMemoryStorage` and `isGlobal` can also be set per class or handler in `@Idempotent()`, where it is merged field by field over the module's.
 
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -1426,12 +1427,14 @@ The tutorial wrote the store with Drizzle, with TypeORM, and for Redis. This sec
 | `scope` | function, object or `false` | none | The key namespace, such as the user id. An object has one function per context, under `http`, `graphql` and `rpc`. `false` shares one namespace on purpose. |
 | `ttl` | `Duration` | `'24h'` | How long a completed result is replayed. See [Tune TTLs and failure handling](/reliability/idempotency#tune-ttls-and-failure-handling). |
 | `lockTtl` | `Duration` | `'60s'` | How long an in-flight lock survives after renewals stop. The lock is renewed every `lockTtl / 3`. |
+| `maxLockHold` | `Duration` | `'1h'` | How long a running handler keeps its lock renewed. See [Tune TTLs and failure handling](/reliability/idempotency#tune-ttls-and-failure-handling). |
 | `retryAfter` | `Duration` | `'1s'` | The wait sent with `IDEMPOTENCY_KEY_IN_USE`, in whole seconds, rounded up. |
 | `keyFrom` | source, or one source per context | see below | Where the key comes from: `header`, `arg` (GraphQL), `payload` (microservices) or a function of the `ExecutionContext`. |
 | `fingerprint` | `(payload, context) => unknown` | the whole payload | What a retry must repeat. The method and URL, GraphQL field or message pattern, and the scope always count. |
 | `storeIf` | `(status, error) => boolean` | `status < 500` | Which outcomes are stored and replayed. Others release the key. |
 | `header` | `string` | `'Idempotency-Key'` | The HTTP header, also read by GraphQL, and the transport header name for microservices. |
 | `replayHeaders` | `string[]` | none | Response headers replayed in addition to `Location`, `Content-Type`, `Content-Language`, `Content-Location`, `ETag` and `Last-Modified`. `Set-Cookie` and headers the platform writes for every response are refused at startup. |
+| `storeTimeout` | `Duration` | `'10s'` | How long each store call (`acquire()`, `complete()`, `release()` and `extend()`) may take. See [Errors](/reliability/idempotency#errors). |
 | `encryption` | an object with `keys` | off | AES-256-GCM encryption of stored records. `keys` lists 32-byte `Buffer`s or strings of at least 32 characters, newest first. See [Encrypt stored receipts](/reliability/idempotency#encrypt-stored-receipts). |
 | `allowInMemoryStorage` | `boolean` | `false` | Lets a production app start without a registered store. |
 | `isGlobal` | `boolean` | `true` | Registers the module globally. |
@@ -1471,3 +1474,5 @@ Rejections carry one of these codes, typed as `IdempotencyErrorCode`. Over HTTP,
 | `IDEMPOTENCY_KEY_IN_USE` | 409, with `Retry-After` | A request with this idempotency key is still being processed. | The first call with the key is still running |
 | `IDEMPOTENCY_KEY_REUSED` | 422 | This idempotency key was already used for a different request. | The same key with a different fingerprint |
 | `IDEMPOTENCY_RECORD_UNREADABLE` | 500 | The stored result for this idempotency key could not be read. | The stored record fails to decrypt, for example because its key was removed |
+
+A store call that takes longer than `storeTimeout` fails. A timed-out `acquire()` fails the request with `IdempotencyStoreTimeoutError`, exported from `@nestjs/idempotency`. A timed-out `complete()` or `release()` is reported as a lost lock, and the result still goes to the caller.
