@@ -489,6 +489,29 @@ this.client
 
 If the microservice doesn't respond within 5 seconds, the `Observable` errors with a `TimeoutError`.
 
+#### Sending metadata with every message
+
+To attach a value that is not part of the payload (a correlation id, a tenant, a locale) to every outgoing request and event, register a hook on the client with `setOnDispatchHook()`. The hook receives each packet right before it goes to the transport and may assign `packet.metadata`, a record of string values:
+
+```typescript
+client.setOnDispatchHook((packet) => {
+  packet.metadata = { 'x-correlation-id': getCorrelationId() };
+});
+```
+
+Do not replace `pattern` or `data` in the hook. On the receiving side, read the values with `getMetadata()` of the transport context (`TcpContext`, `RedisContext`, `NatsContext`, `RmqContext`, `MqttContext` or `KafkaContext`):
+
+```typescript
+@MessagePattern('orders.create')
+create(@Payload() data: CreateOrderDto, @Ctx() context: NatsContext) {
+  const correlationId = context.getMetadata()?.['x-correlation-id'];
+}
+```
+
+TCP and Redis carry the metadata inside the packet. NATS, Kafka, RabbitMQ, MQTT 5 and gRPC carry it as message headers (gRPC: call metadata) under the names given in the hook, and never in the payload. A header set on the record itself, such as with `NatsRecordBuilder`, `RmqRecordBuilder` or `MqttRecordBuilder`, wins over a metadata entry of the same name. MQTT 3 has no header channel, so the metadata does not travel over it.
+
+> info **Hint** On NATS, Kafka and RabbitMQ, `getMetadata()` returns only the headers with a single string value, and on MQTT only the user properties with a single value. Read the others with `getHeaders()` (NATS), `getMessage()` (Kafka, RabbitMQ) or `getPacket()` (MQTT).
+
 #### Tracing a request across services
 
 Timeouts tell you that a call failed to come back in time. They don't tell you *where* the time went, and in a system of five services talking over TCP, NATS, and Kafka, that is the question that matters. A gateway request that takes 3 seconds might spend 2.9 of them in a downstream service that nobody suspected, while each service's own logs show that everything looked fine.
