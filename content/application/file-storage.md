@@ -623,7 +623,7 @@ export function createStorageOptions(config: ConfigService): StorageModuleOption
 
 With S3, `signedUrl()` and `signedUpload()` return presigned URLs, signed with the credentials, which the bucket verifies itself: the app's `/files` route isn't involved. `url()` returns URLs under `publicUrl`, typically a CDN or R2's public bucket domain in front of the photos bucket.
 
-Uploads stream to S3 too. A file up to 8 MiB goes up in one request; a longer one, or a stream whose length isn't known, goes up as a multipart upload, four 8 MiB parts at a time, and is aborted if anything fails, so a failed upload never becomes a file. Requests that fail with a network error, a timeout, throttling (`429`, `SlowDown`) or a `5xx` are retried with backoff, up to 3 attempts in all. `multipart`, `retry` and `timeout` tune this per disk.
+Uploads stream to S3 too. A file up to 8 MiB goes up in one request; a longer one, or a stream whose length isn't known, goes up as a multipart upload, four 8 MiB parts at a time, and is aborted if anything fails, so a failed upload never becomes a file. Requests that fail with a network error, a timeout, throttling (`429`, `SlowDown`) or a `5xx` are retried with backoff, up to 3 attempts in all. `multipart`, `retry` and `timeout` tune this per disk. `retry` is a number of attempts, `false` for a single one, or an object: `attempts`, `backoff` (`delay`, `factor`, `maxDelay` and `jitter`, or a function of the attempt and the error that returns the wait) and `retryIf(error, attempt)`, which returns `false` to stop retrying.
 
 > info **Hint** Every S3 request is signed with Signature Version 4, implemented on `node:crypto`. It is checked against the AWS Signature Version 4 test suite and the examples in the Amazon S3 API reference, so there is no AWS SDK to install.
 
@@ -782,17 +782,17 @@ To test what reaches a real file system, use a `LocalDisk` on a temporary direct
 
 ##### Disk methods
 
-Every disk has the same methods, key rules and errors. A key is a relative, `/`-separated path of at most 1024 UTF-8 bytes, without empty, `.` or `..` segments, backslashes or control characters.
+Every disk has the same methods, key rules and errors. Every method that does I/O takes an optional `signal`, an `AbortSignal`: the call rejects with its reason, and `S3Disk` stops retrying. Aborting after `get()` has resolved ends the `body` stream with the reason. A key is a relative, `/`-separated path of at most 1024 UTF-8 bytes, without empty, `.` or `..` segments, backslashes or control characters.
 
 | Method | Description |
 | --- | --- |
 | `put(key, body, options)` | Writes a file atomically. Options: `contentType` (inferred from the extension by default), `cacheControl`, `contentDisposition`, `metadata` (string values, 2 KB in total), `contentLength`, `signal`. Resolves to `key`, `size`, `contentType` and `etag`. |
-| `get(key, options)` | The file's metadata and its `body` as a Node stream. `range` takes `start` and an inclusive `end`, or `suffix`. |
-| `getBuffer(key)`, `getText(key)` | The whole file. |
-| `stat(key)`, `exists(key)` | The metadata without the body, or whether the file exists. |
-| `delete(keys)` | One key or an array. Missing keys are ignored. |
-| `list(options)`, `listAll(options)` | A page of `key`, `size`, `lastModified` and `etag` in UTF-8 byte order, with a `cursor`. Options: `prefix`, `cursor`, `limit` (up to 1000, the default). `listAll()` iterates every page. |
-| `copy(from, to)`, `move(from, to)` | Within the disk, metadata included. |
+| `get(key, options)` | The file's metadata and its `body` as a Node stream. `range` takes `start` and an inclusive `end`, or `suffix`. Also `signal`. |
+| `getBuffer(key, options)`, `getText(key, options)` | The whole file. Option: `signal`. |
+| `stat(key, options)`, `exists(key, options)` | The metadata without the body, or whether the file exists. Option: `signal`. |
+| `delete(keys, options)` | One key or an array. Missing keys are ignored. Option: `signal`; an abort stops between keys and keeps what was already deleted. |
+| `list(options)`, `listAll(options)` | A page of `key`, `size`, `lastModified` and `etag` in UTF-8 byte order, with a `cursor`. Options: `prefix`, `cursor`, `limit` (up to 1000, the default), `signal`. `listAll()` iterates every page. |
+| `copy(from, to, options)`, `move(from, to, options)` | Within the disk, metadata included. Option: `signal`; an abort stops only before anything changes. |
 | `url(key)` | The public URL under `publicUrl`. Throws without one. |
 | `signedUrl(key, options)` | A download link. Options: `expiresIn` (default 15 minutes, at most 7 days), `filename`, `disposition`. See [Keep invoices private](/application/file-storage#keep-invoices-private). |
 | `signedUpload(key, options)` | `url`, `method` (`PUT`), `headers` and `expiresAt` for a direct upload. Options: `contentType` (required), `contentLength`, `expiresIn`. See [Upload straight to storage from the mobile app](/application/file-storage#upload-straight-to-storage-from-the-mobile-app). |
@@ -805,7 +805,7 @@ Every disk has the same methods, key rules and errors. A key is a relative, `/`-
 | `S3Disk` | `bucket` (required), `region`, `endpoint`, `forcePathStyle`, `credentials`, `prefix`, `serverSideEncryption`, `kmsKeyId`, `multipart`, `retry`, `timeout`, `batchDelete`, `fetch`, `publicUrl`. See [Use S3 or R2 in production](/application/file-storage#use-s3-or-r2-in-production). |
 | `InMemoryDisk` | `publicUrl`, `signedUrls`. For tests, with `keys()` and `clear()`. See [Testing](/application/file-storage#testing). |
 
-`signedUrls` takes `baseUrl`, the route that serves the URLs, and `keys`, signing keys of at least 32 characters. The first key signs, and all of them verify. `S3Disk` defaults: `region` from `AWS_REGION`, then `AWS_DEFAULT_REGION`, then `us-east-1`; credentials from `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`; `multipart` with a `partSize` of 8 MiB and a `concurrency` of 4; `retry: 3`, with backoff from 100 ms doubling to 20 seconds; no `timeout`; `batchDelete: true`.
+`signedUrls` takes `baseUrl`, the route that serves the URLs, and `keys`, signing keys of at least 32 characters. The first key signs, and all of them verify. `S3Disk` defaults: `region` from `AWS_REGION`, then `AWS_DEFAULT_REGION`, then `us-east-1`; credentials from `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`; `multipart` with a `partSize` of 8 MiB and a `concurrency` of 4; `retry: 3`, with backoff from 100 ms doubling to 20 seconds, with full jitter; no `timeout`; `batchDelete: true`.
 
 ##### HTTP helpers
 
