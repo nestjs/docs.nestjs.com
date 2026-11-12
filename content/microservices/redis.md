@@ -62,9 +62,19 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
     <td><code>wildcards</code></td>
     <td>Enables Redis wildcard subscriptions, instructing the transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood (default: <code>false</code>)</td>
   </tr>
+  <tr>
+    <td><code>gracefulShutdown</code></td>
+    <td>Enables graceful shutdown. When enabled, the server first unsubscribes from its channels, then waits for the requests and events being handled before closing its connections (default: <code>false</code>)</td>
+  </tr>
+  <tr>
+    <td><code>gracePeriod</code></td>
+    <td>Longest time to wait for the requests and events being handled when <code>gracefulShutdown</code> is enabled (ms) (default: <code>10000</code>)</td>
+  </tr>
 </table>
 
 The transporter also supports all the properties of the official [ioredis](https://redis.github.io/ioredis/index.html#RedisOptions) client.
+
+> info **Hint** A handler that returns a stream which never completes is still being handled, so closing the server then takes the whole `gracePeriod`.
 
 #### Client
 
