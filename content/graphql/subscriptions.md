@@ -303,6 +303,19 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
 - The server is handed over to `graphql-ws`, which replaces its `handleProtocols` option and, when the application shuts down, closes it and removes all of its listeners.
 - Use a separate server for each `GraphQLModule`; one instance can't be shared between modules.
 
+When another `upgrade` listener shares the HTTP server (for example, a gateway using the [`WsAdapter`](/websockets/adapter#ws-library)), Nest leaves upgrade requests for other paths to it, and closes the connection if no listener has answered the handshake within a second. If another listener answers late, for example after authenticating the request, raise the delay with `unclaimedUpgradeTimeout` (in milliseconds), or set it to `0` to leave such connections to the other listeners:
+
+```typescript
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  subscriptions: {
+    'graphql-ws': {
+      unclaimedUpgradeTimeout: 5000,
+    },
+  },
+});
+```
+
 > info **Hint** Only the `ws` implementation is supported. The Fastify and uWebSockets adapters of `graphql-ws` can't be plugged in this way.
 
 #### Authentication over WebSockets
