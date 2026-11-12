@@ -183,13 +183,17 @@ A `HEAD` request doesn't read the stream: a generator doesn't even start, and a 
 
 An [interceptor](/interceptors) sees the stream as a single value, which reaches it before streaming starts. So its `finalize()` and `timeout()` are over before the stream is, and interceptors don't see the chunks.
 
-A stream can't be sent as part of something else. If an interceptor wraps or serializes it, as a global one that puts every result under a `data` key does, Nest sends the handler's stream as it is, and other routes keep their wrapper. An interceptor can still:
+A stream can't be sent as part of something else. If an interceptor puts it in a plain object, as a global one that puts every result under a `data` key does, Nest sends the stream it finds there, and other routes keep their wrapper. Nest looks only one level deep: a stream nested deeper, or held by an instance of a class, is serialized like any other value. An interceptor can also:
 
 - pass it on, as with `tap()`;
 - replace it with another stream, for example one that reads the first and changes each chunk;
-- read it and return a value of its own, which Nest then sends instead.
+- return any other value, such as a notice or `null`, which Nest sends instead.
 
-Neither the `ClassSerializerInterceptor` nor the `StandardSchemaSerializerInterceptor` [serializes](/application/serialization) these values.
+A stream that an interceptor turns into a plain value, with a JSON round trip for example, is sent as that value: an empty JSON object for an async generator or a `ReadableStream`. A stream of the handler that isn't sent is stopped once the response is over, so an interceptor can't keep reading it after that.
+
+The `ClassSerializerInterceptor` and the `StandardSchemaSerializerInterceptor` replace the stream with one that [serializes](/application/serialization) each object it yields, as it yields it, so that `@Exclude()`, `@Expose()` groups, `@Transform()`, and the schema apply to every line of JSON. Strings and binary chunks are sent as they are, as are a `Response` and a Node.js `Readable` that isn't in object mode, and the `StandardSchemaSerializerInterceptor` leaves the stream alone on a route without a schema.
+
+An interceptor bound outside them receives an async iterable in place of a `ReadableStream` or an object-mode `Readable`. The client going away and a `HEAD` request stop the handler's stream as they would without these interceptors. An object that fails to serialize, because a `@Transform()` throws or the object doesn't match the schema, fails the stream like any other [error](/http/streaming-responses#errors): with a 500 before the first chunk, and by closing the connection after it.
 
 #### Handlers that use @Res()
 
