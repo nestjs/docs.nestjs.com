@@ -364,6 +364,17 @@ export class MyLogger implements LoggerService {
 }
 ```
 
+Nest passes the arguments of a call straight through to your logger, so in `error()` a stack trace and a context can arrive in the same position. A `Logger` instance created with a context appends it as the last argument and, when `error()` was called with the message alone, puts `undefined` in the stack position first:
+
+| Call                                                 | `optionalParams` received by `error()` |
+| ---------------------------------------------------- | -------------------------------------- |
+| `Logger.error('Failed', err.stack)`                  | `[err.stack]`                          |
+| `Logger.error('Failed', 'MyService')`                | `['MyService']`                        |
+| `new Logger('MyService').error('Failed')`            | `[undefined, 'MyService']`             |
+| `new Logger('MyService').error('Failed', err.stack)` | `[err.stack, 'MyService']`             |
+
+To tell them apart, look at the shape of the string rather than its position. The built-in `ConsoleLogger` treats a string as a stack trace when it contains stack frames (lines such as `at bootstrap (main.ts:8:9)`), and as a context otherwise.
+
 You can then supply an instance of `MyLogger` via the `logger` property of the Nest application options object:
 
 ```typescript
@@ -383,12 +394,14 @@ Rather than writing a logger from scratch, you may be able to meet your needs by
 import { ConsoleLogger } from '@nestjs/common';
 
 export class MyLogger extends ConsoleLogger {
-  error(message: any, stack?: string, context?: string) {
+  error(message: any, ...optionalParams: any[]) {
     // add your tailored logic here
-    super.error(...arguments);
+    super.error(message, ...optionalParams);
   }
 }
 ```
+
+The stack trace and the context reach `optionalParams` in the shapes listed in the <a href="application/logger#custom-implementation">Custom implementation</a> section, so read them by shape rather than by position.
 
 The same approach changes the timestamp format. For example, to print ISO 8601 timestamps instead of the locale-formatted date, override the protected `getTimestamp()` method:
 
