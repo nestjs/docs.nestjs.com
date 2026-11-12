@@ -38,7 +38,7 @@ import { AiModule } from '@nestjs/ai';
 export class AppModule {}
 ```
 
-Each setting comes from the call, else from the model's definition, else from the module's `defaults`. A call to `default` above is sent `maxOutputTokens: 4000`, and one to `fast` or `backup` `maxOutputTokens: 1000`; a call that sets `maxOutputTokens: 200` sends that, whichever model answers it. `fast` gives an attempt 15 seconds, the others 45.
+Each setting resolves independently: the call, then the model's definition, then the module's `defaults`. A call to `default` above is sent `maxOutputTokens: 4000`, and one to `fast` or `backup` `maxOutputTokens: 1000`; a call that sets `maxOutputTokens: 200` sends that, whichever model answers it. `fast` gives an attempt 15 seconds, the others 45.
 
 | Settings | Set on |
 | --- | --- |
@@ -89,7 +89,7 @@ Model providers fail: they answer 429 when you send too much, 529 when they are 
 - **`retry`**: a `RetryPolicy`, with its options: `attempts` (3 by default, the first included), `backoff` (from `'1s'`, doubling up to `'30s'`, with full jitter) and `retryIf`. What the provider marks retryable is retried, 408, 409, 429 and 5xx responses and failed connections, and so are timeouts. A `retry-after` header is honored, and one that asks for longer than `backoff.maxDelay` moves on to the fallback instead. `retry: false` turns retries off.
 - **`fallback`**: the models tried, in order, once the model's retries have run out, each under its own policies. A call sets its own with `fallback: ['default']`, or none with `fallback: false`, and `fallbackIf` narrows which failures move on.
 
-A call can change any of them:
+When no custom `resilience` policy is selected, a call can change its `timeout` and `retry`; it can always set its own `fallback`:
 
 ```typescript
 const { text } = await this.ai.generateText({
@@ -110,7 +110,7 @@ Every fallback is logged as a warning through Nest's `Logger`, with the model th
 
 Once a chunk has reached the browser, or the tools of a model call have started, its outcome is committed: no timeout, retry or fallback replaces it, so no answer is sent twice and no tool runs twice.
 
-An `abortSignal` passed to the call cancels it at once, without a retry or a fallback, and the call rejects with the signal's reason. Inside a resilient route, such as one with `@Timeout()` from `@nestjs/resilience`, the route's attempt stops the model calls it makes in the same way.
+An `abortSignal` passed to the call cancels it at once, without a retry or a fallback, and the call rejects with the signal's reason. To set a call-level deadline while retaining a shared policy, pass a signal such as `AbortSignal.timeout(10_000)`. Inside a resilient route, such as one with `@Timeout()` from `@nestjs/resilience`, the route's attempt stops the model calls it makes in the same way.
 
 #### When a call fails
 
@@ -154,7 +154,7 @@ export class ModelUnavailableFilter implements ExceptionFilter {
 
 #### Policies of your own
 
-`resilience` takes a policy, or the name of a preset of `ResilienceService`, in place of `retry` and `timeout`: a circuit breaker or a bulkhead shared with the rest of the application, say. Fallback models are still tried around it, so a call to a model whose breaker is open goes on to the next one:
+`resilience` takes a policy, or the name of a preset of `ResilienceService`, in place of generated `retry` and `timeout` policies. It follows the call > model > module `defaults` precedence; a call-level policy replaces any model or module policy entirely. The selected policy replaces lower-priority `retry` and `timeout` settings. An explicit `retry` or `timeout` at the same or a higher-priority level throws `AiConfigurationError` before a provider request; explicit `false` values count as settings too. Fallback models are still tried around the policy, so a call to a model whose breaker is open goes on to the next one:
 
 ```typescript
 @@filename(app.module)
@@ -191,7 +191,7 @@ import { ResilienceModule } from '@nestjs/resilience';
 export class AppModule {}
 ```
 
-A preset replaces the model's `retry` and `timeout` with its own: a preset without a `timeout` leaves the model's calls without one, and a preset's retries honor `retry-after` only if its `backoff` does. A rejection of such a policy (`CircuitOpenError`, `BulkheadFullError`) that no fallback takes reaches the caller as it is: an error of `@nestjs/resilience`, which `ResilienceModule` answers with 503 on an HTTP route. Naming a preset without importing `ResilienceModule` fails with an `AiConfigurationError`.
+A preset without a `timeout` leaves the model's calls without one, and its retries honor `retry-after` only if its `backoff` does. A rejection of such a policy (`CircuitOpenError`, `BulkheadFullError`) that no fallback takes reaches the caller as it is: an error of `@nestjs/resilience`, which `ResilienceModule` answers with 503 on an HTTP route. Naming a preset without importing `ResilienceModule` fails with an `AiConfigurationError`.
 
 The policies publish the events of `@nestjs/resilience` on the `nestjs:resilience:<type>` diagnostics channels: `retry`, `timeout` and `fallback`, named after the model (`ai:fast retry`, `ai:fast fallback`), with the call's `label` as their `source` (`AiService` for a call without one). To log the retries of every model call:
 
