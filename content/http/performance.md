@@ -119,6 +119,15 @@ Like Fastify, the `json` parser rejects a body that tries to inject prototype pr
 app.useBodyParser('json', { onProtoPoisoning: 'remove' });
 ```
 
+##### Server timeouts
+
+As with Express, the adapter keeps the defaults of Node's `http.Server`: an idle keep-alive connection is closed after 5 seconds (`keepAliveTimeout`), and a request has to arrive in full within 300 seconds (`requestTimeout`). Fastify sets these to 72 seconds and no limit. Behind a load balancer or a reverse proxy, keep `keepAliveTimeout` longer than the proxy's idle timeout, otherwise the proxy can reuse a connection the server is closing and answer `502 Bad Gateway`. Set the timeouts on the server before calling `listen()`:
+
+```typescript
+const server = app.getHttpServer();
+server.keepAliveTimeout = 72_000;
+```
+
 ##### Static assets and views
 
 `useStaticAssets()` serves a directory with the [serve-static](https://www.npmjs.com/package/serve-static) package. It takes the options of that package, plus a `prefix`, as with Express. `setViewEngine()` accepts either the name of an engine, as with Express (see [Model-View-Controller](/http/mvc)), or the options object of `@fastify/view`, with the engine and the `templates` directory.
