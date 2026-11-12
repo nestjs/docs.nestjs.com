@@ -110,8 +110,16 @@ The second argument of the `createMicroservice()` method is an `options` object 
     <td>How long (ms) a peer may stay silent in the middle of a packet before the connection is dropped. Set to <code>0</code> to disable (default: <code>30000</code>)</td>
   </tr>
   <tr>
+    <td><code>messageReceiveTimeout</code></td>
+    <td>How long (ms) a peer may take to send a single packet, from its first character to its last, before the connection is dropped. Unlike <code>incompleteMessageTimeout</code>, further reads don't extend it. Set to <code>0</code> to disable (default: <code>300000</code>)</td>
+  </tr>
+  <tr>
     <td><code>maxSendBufferSize</code></td>
     <td>Maximum number of response bytes that may be queued for a peer that isn't reading them before the connection is dropped. Set to <code>0</code> to disable (default: 128MB)</td>
+  </tr>
+  <tr>
+    <td><code>drainTimeout</code></td>
+    <td>How long (ms) the responses queued for a peer may go without any of them being written out before the connection is dropped. Set to <code>0</code> to disable (default: <code>30000</code>)</td>
   </tr>
 </table>
 
