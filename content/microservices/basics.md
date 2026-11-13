@@ -71,11 +71,11 @@ The second argument of the `createMicroservice()` method is an `options` object 
 <table>
   <tr>
     <td><code>host</code></td>
-    <td>Connection hostname</td>
+    <td>Connection hostname (default: <code>'localhost'</code>). An empty value (<code>undefined</code>, <code>null</code> or <code>''</code>) means <code>'localhost'</code> as well, so a server that other hosts connect to, e.g. one running in a container, has to set <code>'0.0.0.0'</code> or <code>'::'</code></td>
   </tr>
   <tr>
     <td><code>port</code></td>
-    <td>Connection port</td>
+    <td>Connection port (default: <code>3000</code>)</td>
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
@@ -103,7 +103,7 @@ The second argument of the `createMicroservice()` method is an `options` object 
   </tr>
   <tr>
     <td><code>maxBufferSize</code></td>
-    <td>Maximum size of the buffer for incoming messages, in characters (default: <code>(512 * 1024 * 1024) / 4</code>)</td>
+    <td>Maximum length of a single incoming packet, in characters (default: <code>16 * 1024 * 1024</code>). A packet declaring a greater length is rejected before any of it is buffered, and the connection is dropped. It also applies to the replies a client receives. A parsed packet can take many times the memory of its text, so raise it with care</td>
   </tr>
   <tr>
     <td><code>incompleteMessageTimeout</code></td>
@@ -120,6 +120,10 @@ The second argument of the `createMicroservice()` method is an `options` object 
   <tr>
     <td><code>drainTimeout</code></td>
     <td>How long (ms) the responses queued for a peer may go without any of them being written out before the connection is dropped. Set to <code>0</code> to disable (default: <code>30000</code>)</td>
+  </tr>
+  <tr>
+    <td><code>maxConcurrentMessages</code></td>
+    <td>How many messages of a single peer may be handled at the same time. A message counts until its handler, and the stream it returned, have settled. Later messages wait, and once more than <code>maxBufferSize</code> characters are waiting, reading from the peer is suspended. If none of the pending messages settles for <code>drainTimeout</code> after that, the connection is dropped. Set to <code>0</code> to disable (default: <code>1000</code>)</td>
   </tr>
 </table>
 

@@ -62,6 +62,10 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
     <td><code>wildcards</code></td>
     <td>Enables Redis wildcard subscriptions, instructing the transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood (default: <code>false</code>)</td>
   </tr>
+  <tr>
+    <td><code>maxWildcardChannelLength</code></td>
+    <td>With <code>wildcards</code>, the maximum length (in characters) of the channel that a request matched by a wildcard pattern may be published to. Replies are published on a copy of that channel, so a request on a longer one is dropped and an error is logged. Set to <code>0</code> to disable (default: <code>1024</code>)</td>
+  </tr>
 </table>
 
 The transporter also supports all the properties of the official [ioredis](https://redis.github.io/ioredis/index.html#RedisOptions) client.
