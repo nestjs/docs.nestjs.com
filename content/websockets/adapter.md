@@ -108,7 +108,7 @@ const wsAdapter = new WsAdapter(app, {
 
 Alternatively, you can set the message parser after creating the adapter with the `setMessageParser()` method.
 
-When the gateways share the application's HTTP server, other `upgrade` listeners can serve their own paths on that server, for example [GraphQL subscriptions](/graphql/subscriptions). The `WsAdapter` leaves an upgrade request for a path that none of its gateways serves to those listeners, and closes the connection if none of them has answered the handshake within a second. When it is the only `upgrade` listener, it closes such a request right away. If another listener answers late, for example after authenticating the request, raise the delay with the `unclaimedUpgradeTimeout` option (in milliseconds), or set it to `0` to leave such connections to the other listeners:
+When the gateways share the application's HTTP server, other `upgrade` listeners can serve their own paths on that server, for example [GraphQL subscriptions](/graphql/subscriptions). The `WsAdapter` leaves an upgrade request for a path that none of its gateways serves to those listeners, and closes the connection if none of them has answered the handshake within a second. When it is the only `upgrade` listener, it closes such a request right away. If another listener answers late, for example after authenticating the request, raise the delay with the `unclaimedUpgradeTimeout` option (in milliseconds), or set it to `0` to leave such connections to the other listeners. A value that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets the default. To wait five seconds:
 
 ```typescript
 const wsAdapter = new WsAdapter(app, {
@@ -143,6 +143,8 @@ app.useWebSocketAdapter(
   }),
 );
 ```
+
+A limit that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
 
 #### Advanced (custom adapter)
 
