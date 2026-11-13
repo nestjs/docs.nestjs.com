@@ -203,6 +203,8 @@ $ nest build [name...] [options]
 | `--watchAssets`         | Watch non-TS files (assets such as `.graphql` files). See [Assets](/cli/monorepo#assets) for more details.                                                                                 |
 | `--type-check`          | Enable type checking (when SWC is used).                                                                                                                                                   |
 | `--no-type-check`       | Disable type checking (when SWC is used).                                                                                                                                                  |
+| `--bundle-dependencies` | Bundle `node_modules` into the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`, but keeps its `exclude` list. |
+| `--no-bundle-dependencies` | Leave `node_modules` out of the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`. |
 | `--emit-declarations`   | Emit declaration files (`.d.ts`) when using the SWC builder.                                                                                                                               |
 | `--all`                 | Build all projects in a monorepo.                                                                                                                                                          |
 | `--parallel [concurrency]` | Build projects in parallel (use with `--all`). Pass a positive integer to limit concurrency, or omit the value for unlimited concurrency.                                                |
@@ -240,6 +242,8 @@ $ nest start [name] [options]
 | `--tsc`                 | Force the use of `tsc` for compilation.                                                                                            |
 | `--type-check`          | Enable type checking (when SWC is used).                                                                                           |
 | `--no-type-check`       | Disable type checking (when SWC is used).                                                                                          |
+| `--bundle-dependencies` | Bundle `node_modules` into the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`, but keeps its `exclude` list. |
+| `--no-bundle-dependencies` | Leave `node_modules` out of the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`. |
 | `--emit-declarations`   | Emit declaration files (`.d.ts`) when using the SWC builder.                                                                       |
 | `--silent`              | Suppress informational compiler logs.                                                                                              |
 | `--sourceRoot [sourceRoot]` | Root of the source code (overrides the `sourceRoot` setting in `nest-cli.json`).                                               |
