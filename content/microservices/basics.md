@@ -125,6 +125,14 @@ The second argument of the `createMicroservice()` method is an `options` object 
     <td><code>maxConcurrentMessages</code></td>
     <td>How many messages of a single peer may be handled at the same time. A message counts until its handler, and the stream it returned, have settled. Later messages wait, and once more than <code>maxBufferSize</code> characters are waiting, reading from the peer is suspended. If none of the pending messages settles for <code>drainTimeout</code> after that, the connection is dropped. Set to <code>0</code> to disable (default: <code>1000</code>)</td>
   </tr>
+  <tr>
+    <td><code>gracefulShutdown</code></td>
+    <td>Enables graceful shutdown. When enabled, closing the server keeps the connections that have requests or events being handled open until those are done, and takes no further message from them. The other connections are closed right away (default: <code>false</code>)</td>
+  </tr>
+  <tr>
+    <td><code>gracePeriod</code></td>
+    <td>Longest time before every connection is closed when <code>gracefulShutdown</code> is enabled (ms) (default: <code>10000</code>)</td>
+  </tr>
 </table>
 
 A `maxBufferSize`, `incompleteMessageTimeout`, `messageReceiveTimeout`, `maxSendBufferSize`, `drainTimeout` or `maxConcurrentMessages` that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
