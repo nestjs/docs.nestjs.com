@@ -372,8 +372,9 @@ Nest passes the arguments of a call straight through to your logger, so in `erro
 | `Logger.error('Failed', 'MyService')`                | `['MyService']`                        |
 | `new Logger('MyService').error('Failed')`            | `[undefined, 'MyService']`             |
 | `new Logger('MyService').error('Failed', err.stack)` | `[err.stack, 'MyService']`             |
+| `new Logger('MyService').error(err)`                 | `[undefined, 'MyService']`             |
 
-To tell them apart, look at the shape of the string rather than its position. The built-in `ConsoleLogger` treats a string as a stack trace when it contains stack frames (lines such as `at bootstrap (main.ts:8:9)`), and as a context otherwise.
+With one argument, it can be either. The built-in `ConsoleLogger` takes a string as a stack trace when it contains stack frames (an indented line such as `at bootstrap (main.ts:8:9)` after the first line), and as a context otherwise. With two, they are the stack trace (or `undefined`) and the context, in that order. When the message is an error, as in the last row, its stack trace is on the error itself (`message.stack`). Nest's exception filters log unhandled exceptions this way, with the `'ExceptionsHandler'` context.
 
 You can then supply an instance of `MyLogger` via the `logger` property of the Nest application options object:
 
@@ -401,7 +402,7 @@ export class MyLogger extends ConsoleLogger {
 }
 ```
 
-The stack trace and the context reach `optionalParams` in the shapes listed in the <a href="application/logger#custom-implementation">Custom implementation</a> section, so read them by shape rather than by position.
+The stack trace and the context reach `optionalParams` as listed in the <a href="application/logger#custom-implementation">Custom implementation</a> section.
 
 The same approach changes the timestamp format. For example, to print ISO 8601 timestamps instead of the locale-formatted date, override the protected `getTimestamp()` method:
 
