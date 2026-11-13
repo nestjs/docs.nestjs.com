@@ -146,6 +146,8 @@ app.useWebSocketAdapter(
 
 A limit that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
 
+The `IoAdapter`, and so any class that extends it, also disconnects a client whose message refers to the same binary value (a `Buffer`, an `ArrayBuffer` or a view of one, or a `Blob`) more than once, and logs a warning. Socket.IO clients don't send such messages.
+
 #### Advanced (custom adapter)
 
 For demonstration purposes, we'll integrate the [ws](https://github.com/websockets/ws) library manually. As mentioned, an adapter for this library already exists: the `WsAdapter` class exposed from the `@nestjs/platform-ws` package. A simplified implementation could look like this:
