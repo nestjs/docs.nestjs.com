@@ -133,6 +133,8 @@ A `maxBufferSize`, `incompleteMessageTimeout`, `messageReceiveTimeout`, `maxSend
 
 Microservices recognize both messages and events by **patterns**. A pattern is a plain value, e.g., a literal object or a string. Patterns are automatically serialized and sent over the network along with the data portion of a message. This way, message senders and consumers can coordinate which requests are consumed by which handlers.
 
+Nest matches an object pattern to its handler by its keys and values, within fixed limits: at most 5 levels of nesting, 20 keys per object (or items per array), keys of up to 256 characters, string values of up to 4096 characters, and 100 keys in the whole pattern. A part of a pattern beyond these limits, or the whole pattern past 100 keys, is replaced with a marker such as `[TOO_MANY_KEYS]` before it's matched, so keep the patterns of your handlers within them. A pattern that arrives as JSON text longer than 1 MiB is matched as a plain string, without being parsed.
+
 #### Request-response
 
 The request-response message style is useful when you need to **exchange** messages between services. It ensures that the service has actually received the message, without requiring you to implement an acknowledgment protocol manually. However, request-response isn't always the best fit. For example, streaming platforms that use log-based persistence, such as [Kafka](https://docs.confluent.io/3.0.0/streams/) or [NATS JetStream](https://docs.nats.io/nats-concepts/jetstream), are optimized for a different set of challenges, more aligned with the event messaging paradigm (see [event-based messaging](/microservices/basics#event-based) for more details).

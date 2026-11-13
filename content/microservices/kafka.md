@@ -236,6 +236,8 @@ Nest receives incoming Kafka messages as objects with `key`, `value`, and `heade
 
 Nest does not decode a message larger than 16 MiB after decompression, counting its key, its headers and, unless `parser.keepBinary` is set, its value. It logs and skips the message, so that its offset is committed, and a `ClientKafkaProxy` fails the request that such a reply answers. To change the limit, set the `parser.maxMessageSize` option. A value that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets the default.
 
+Nest doesn't answer a request whose `kafka_correlationId` header is longer than 256 characters. It logs an error and drops the message, so that its offset is committed.
+
 #### Outgoing
 
 Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
