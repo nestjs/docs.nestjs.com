@@ -118,6 +118,10 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
     <td><code>maxConnectionAttempts</code></td>
     <td>Maximum number of connection attempts. Applies only to the consumer configuration. Defaults to <code>-1</code> (infinite)</td>
   </tr>
+  <tr>
+    <td><code>maxMessageSize</code></td>
+    <td>Maximum size of a message body, in bytes. The server logs and skips a larger message without decoding it (it is negatively acknowledged without requeue when <code>noAck</code> is <code>false</code>, and a request gets an error reply), and the client fails a request whose reply is larger. Set it to <code>Infinity</code> to lift the limit. Defaults to <code>16777216</code> (16 MiB)</td>
+  </tr>
 </table>
 
 #### Client
