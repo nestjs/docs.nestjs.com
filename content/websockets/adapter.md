@@ -116,6 +116,34 @@ const wsAdapter = new WsAdapter(app, {
 });
 ```
 
+#### Limits
+
+Both built-in adapters limit how many messages of a client are handled at the same time, 1000 by default: the `IoAdapter` counts each event separately, the `WsAdapter` all of a client's messages together. Later messages wait for their turn. Change the limit with the `maxConcurrentMessages` option, or set it to `Infinity` to lift it (with `0`, no message is handled).
+
+The `IoAdapter` also limits the messages that wait: a client with more than 10000 messages of one event waiting is disconnected, and a warning is logged. Change this with the `maxWaitingMessages` option, or set it to `Infinity` to lift it.
+
+```typescript
+app.useWebSocketAdapter(
+  new IoAdapter(app, {
+    maxConcurrentMessages: 100,
+    maxWaitingMessages: 1000,
+  }),
+);
+```
+
+The `WsAdapter` takes two more limits:
+
+- `maxPayload`: the largest message, in bytes, that a client may send (default: 1 MiB; before NestJS v12.5, the `ws` default of 100 MiB applied). A client that sends a larger one is disconnected with the close code `1009`. The `maxPayload` option of a gateway takes precedence. Set it to `0` to lift the limit.
+- `maxSendBufferSize`: how many bytes may be queued for a client that doesn't read what it is sent before it is disconnected (default: 128 MiB). Set it to `0` to lift the limit.
+
+```typescript
+app.useWebSocketAdapter(
+  new WsAdapter(app, {
+    maxPayload: 10 * 1024 * 1024,
+  }),
+);
+```
+
 #### Advanced (custom adapter)
 
 For demonstration purposes, we'll integrate the [ws](https://github.com/websockets/ws) library manually. As mentioned, an adapter for this library already exists: the `WsAdapter` class exposed from the `@nestjs/platform-ws` package. A simplified implementation could look like this:
