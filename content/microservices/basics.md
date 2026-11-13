@@ -127,6 +127,8 @@ The second argument of the `createMicroservice()` method is an `options` object 
   </tr>
 </table>
 
+A `maxBufferSize`, `incompleteMessageTimeout`, `messageReceiveTimeout`, `maxSendBufferSize`, `drainTimeout` or `maxConcurrentMessages` that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
+
 #### Message and Event Patterns
 
 Microservices recognize both messages and events by **patterns**. A pattern is a plain value, e.g., a literal object or a string. Patterns are automatically serialized and sent over the network along with the data portion of a message. This way, message senders and consumers can coordinate which requests are consumed by which handlers.

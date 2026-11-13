@@ -120,7 +120,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>maxMessageSize</code></td>
-    <td>Maximum size of a message body, in bytes. The server logs and skips a larger message without decoding it (it is negatively acknowledged without requeue when <code>noAck</code> is <code>false</code>, and a request gets an error reply), and the client fails a request whose reply is larger. Set it to <code>Infinity</code> to lift the limit. Defaults to <code>16777216</code> (16 MiB)</td>
+    <td>Maximum size of a message body, in bytes. The server logs and skips a larger message without decoding it (it is negatively acknowledged without requeue when <code>noAck</code> is <code>false</code>, and a request gets an error reply), and the client fails a request whose reply is larger. Set it to <code>Infinity</code> to lift the limit. A value that isn't a number, such as the <code>NaN</code> that <code>Number()</code> makes of an unset environment variable, gets the default. Defaults to <code>16777216</code> (16 MiB)</td>
   </tr>
 </table>
 

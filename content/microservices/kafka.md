@@ -234,7 +234,7 @@ async onModuleInit() {
 
 Nest receives incoming Kafka messages as objects with `key`, `value`, and `headers` properties whose values are of type `Buffer`. Nest parses these values by converting the buffers into strings. If a string is "object-like" (i.e., it starts with a curly brace or a square bracket), Nest attempts to parse it as JSON, except for the `kafka_correlationId`, `kafka_replyTopic` and `kafka_replyPartition` headers it routes replies with, which are always kept as strings. The `value` is then passed to the associated handler.
 
-Nest does not decode a message larger than 16 MiB after decompression, counting its key, its headers and, unless `parser.keepBinary` is set, its value. It logs and skips the message, so that its offset is committed, and a `ClientKafkaProxy` fails the request that such a reply answers. To change the limit, set the `parser.maxMessageSize` option.
+Nest does not decode a message larger than 16 MiB after decompression, counting its key, its headers and, unless `parser.keepBinary` is set, its value. It logs and skips the message, so that its offset is committed, and a `ClientKafkaProxy` fails the request that such a reply answers. To change the limit, set the `parser.maxMessageSize` option. A value that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets the default.
 
 #### Outgoing
 
