@@ -399,7 +399,7 @@ uploadFile(@UploadedFile() file: Express.Multer.File) {
 
 > info **Hint** Unlike `MaxFileSizeValidator`, which runs after the whole file has been received, `limits.fileSize` makes Multer stop storing the file and reject the request as soon as the limit is reached, so oversized files never fully reach memory or disk. See the [Multer limits](https://github.com/expressjs/multer#limits) for the full list of options.
 
-Starting with NestJS v12.5, the number of parts in a request (text fields and files together, `limits.parts`) defaults to 1000, as on Fastify, and a request with more is rejected with `400 Too many parts`. This also caps a `fields`, `files` or `maxCount` above 1000, unless `limits.parts` is raised. Set it to `Infinity` to lift the limit.
+Starting with NestJS v12.5, the number of parts in a request (text fields and files together, `limits.parts`) defaults to 1000, as on Fastify, and a request with more is rejected with `400 Too many parts`. This also caps a `limits.fields`, `limits.files` or `maxCount` above 1000, unless `limits.parts` is raised. Set it to `Infinity` to lift the limit.
 
 ##### Field name limits
 
@@ -545,7 +545,7 @@ Storage engines follow Multer's storage engine contract (`_handleFile()` and `_r
 
 ##### Limits
 
-`@fastify/multipart` applies stricter defaults than Multer. Unless configured otherwise, the maximum file size (`fileSize`) is the Fastify `bodyLimit` (1 MiB by default), whereas Multer doesn't limit it. The maximum number of parts (`parts`) is 1000, the default Nest also applies to Multer since v12.5. Larger files are rejected with a `413 File too large` response. You can raise these limits:
+`@fastify/multipart` applies a stricter file size default than Multer. Unless configured otherwise, the maximum file size (`fileSize`) is the Fastify `bodyLimit` (1 MiB by default), whereas Multer doesn't limit it. The maximum number of parts (`parts`) is 1000, as with Multer since NestJS v12.5. Larger files are rejected with a `413 File too large` response. You can raise these limits:
 
 - for a single route, with the `limits` option of the interceptor
 - for a module, with `MultipartModule.register()` or `registerAsync()`
@@ -560,9 +560,9 @@ const app = await NestFactory.create<NestFastifyApplication>(
 );
 ```
 
-Limits set on a route are merged over the ones set with `MultipartModule` key by key, and both are merged over the application-wide ones. The only exceptions are `fieldNameSize` and `jsonFieldsSize`, which the interceptors don't read from the plugin options - set them on the route or with `MultipartModule`.
+Limits set on a route are merged over the ones set with `MultipartModule` key by key, and both are merged over the application-wide ones. The exceptions are `fieldNameSize`, `fieldNestingDepth`, `fieldArrayIndexLimit` and `jsonFieldsSize`, which the interceptors don't read from the plugin options - set them on the route or with `MultipartModule`.
 
-Text fields sent with the `application/json` content type are handed over parsed, which can take many times the memory of their text. Starting with NestJS v12.5, the JSON text of such fields is limited to 1 MiB per request in total (the Fastify `bodyLimit` default), and a request over it is rejected with `400 JSON field values too large`. Raise it with `limits.jsonFieldsSize`, or set it to `Infinity` to lift the limit.
+Text fields sent with the `application/json` content type arrive parsed (see [Differences from Multer](/http/file-upload#differences-from-multer)). Starting with NestJS v12.5, the JSON text of such fields is limited to 1 MiB per request in total (the same as the default Fastify `bodyLimit`), and a request over it is rejected with `400 JSON field values too large`. Raise it with `limits.jsonFieldsSize`, or set it to `Infinity` to lift the limit.
 
 ##### Plugin registration
 
