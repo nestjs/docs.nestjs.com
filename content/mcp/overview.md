@@ -76,7 +76,7 @@ The MCP endpoint is served at `http://localhost:3000/mcp`, next to the applicati
 
 When the application starts, the module looks through its providers for methods decorated with `@Tool()`, `@Resource()`, `@ResourceTemplate()` and `@Prompt()`. It turns each schema into JSON Schema once, and fails at startup on what would otherwise only break later: two tools with one name, a tool name outside the MCP naming rules, a request-scoped provider, `scopes` without `auth`.
 
-Each HTTP request to the endpoint is then served on its own. The module builds an MCP server for it from what it found at startup, the [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) speaks the protocol, and a call goes through these steps:
+Each HTTP request to the endpoint is then served on its own. The module builds an MCP server for it from what it found at startup (all of it, or what `filter` picks for the request), the [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) speaks the protocol, and a call goes through these steps:
 
 1. With `auth`, the access token is verified, and the call's scopes are checked.
 2. The SDK validates the arguments against the schema. Arguments it refuses never reach your method: the model is told what's wrong, and can try again.
@@ -114,6 +114,7 @@ McpModule.forRootAsync({
 | `title`, `description`, `websiteUrl`, `icons` | | More of it, for clients to show |
 | `instructions` | | How the model should use the server |
 | `include` | every module | The modules whose providers are searched for tools, resources and prompts |
+| `filter` | every primitive | Picks the primitives each request or connection is served. See [Per-request visibility](/mcp/primitives#per-request-visibility) |
 | `path` | `'mcp'` | The HTTP endpoint's route. `false` for none. Top level of `forRootAsync()` |
 | `endpointVersion` | | The endpoint's version, with versioning enabled. Top level of `forRootAsync()` |
 | `decorators` | `[]` | Class decorators applied to the endpoint's controller. Top level of `forRootAsync()` |
