@@ -142,7 +142,7 @@ In addition to these, all `class-validator` options (inherited from the `Validat
   <tr>
     <td><code>maxErrorMessagesLength</code></td>
     <td><code>number</code></td>
-    <td>Maximum total length, in characters, of the messages in an error response of the built-in exception factory. The errors past it are left out, and a last message says so. Set to <code>Infinity</code> to lift the limit. Defaults to <code>1000000</code>.</td>
+    <td>Maximum total length, in characters, of the messages in an error response of the built-in exception factory. The errors past it are left out, and a last message says so. Set to <code>Infinity</code> to lift the limit. A value that isn't a number, such as the <code>NaN</code> that <code>Number()</code> makes of an unset environment variable, gets the default. Defaults to <code>1000000</code>.</td>
   </tr>
 </table>
 
@@ -407,6 +407,8 @@ This construction parses and validates the query parameters of a request such as
 GET /?ids=1,2,3
 ```
 
+By default, `ParseArrayPipe` rejects the array at its first invalid item. With the `stopAtFirstError` option set to `false`, it validates every item and reports the errors of all the invalid ones, each prefixed with the index of its item, such as `[2] email must be an email`. The `maxErrorMessagesLength` option, which `ParseArrayPipe` takes like `ValidationPipe`, then applies to the messages of all the items together: once they reach it, the next invalid item ends the validation, the items after it aren't validated, and a last message says that errors were left out. With a custom `exceptionFactory`, this limit doesn't apply.
+
 #### Schema-based validation
 
 The `StandardSchemaValidationPipe` validates values against schemas instead of decorated classes. It accepts any schema that implements the [Standard Schema](https://standardschema.dev/) specification, which includes [Zod](https://zod.dev/), [Valibot](https://valibot.dev/), and [ArkType](https://arktype.io/). The schema is the single source of truth for a payload: it validates the value at runtime, and its inferred type is the handler parameter's TypeScript type. The examples in this section use Zod.
@@ -627,6 +629,11 @@ The `StandardSchemaValidationPipe` constructor accepts the following options:
     <td><code>exceptionFactory</code></td>
     <td><code>Function</code></td>
     <td>Receives the array of validation issues and returns the exception to throw.</td>
+  </tr>
+  <tr>
+    <td><code>maxErrorMessagesLength</code></td>
+    <td><code>number</code></td>
+    <td>Maximum total length, in characters, of the messages in an error response of the built-in exception factory, counting the path that comes with each message. The issues past it are left out, and a last message says so. A custom <code>exceptionFactory</code> receives every issue. Set to <code>Infinity</code> to lift the limit. A value that isn't a number, such as the <code>NaN</code> that <code>Number()</code> makes of an unset environment variable, gets the default. Default: <code>1000000</code>.</td>
   </tr>
 </table>
 
