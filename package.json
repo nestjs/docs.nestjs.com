@@ -65,7 +65,7 @@
     "nodemon": "3.1.14",
     "rimraf": "6.1.4",
     "ts-node": "10.9.2",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "typescript-eslint": "8.72.1",
     "vitest": "5.1.0",
     "yargs": "17.7.3",
