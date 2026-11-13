@@ -127,9 +127,13 @@ The second argument of the `createMicroservice()` method is an `options` object 
   </tr>
 </table>
 
+A `maxBufferSize`, `incompleteMessageTimeout`, `messageReceiveTimeout`, `maxSendBufferSize`, `drainTimeout` or `maxConcurrentMessages` that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
+
 #### Message and Event Patterns
 
 Microservices recognize both messages and events by **patterns**. A pattern is a plain value, e.g., a literal object or a string. Patterns are automatically serialized and sent over the network along with the data portion of a message. This way, message senders and consumers can coordinate which requests are consumed by which handlers.
+
+Nest matches an object pattern to its handler by its keys and values, within fixed limits: at most 5 levels of nesting, 20 keys per object (or items per array), keys of up to 256 characters, string values of up to 4096 characters, and 100 keys in the whole pattern. A part of a pattern beyond these limits, or the whole pattern past 100 keys, is replaced with a marker such as `[TOO_MANY_KEYS]` before it's matched, so keep the patterns of your handlers within them. A pattern that arrives as JSON text longer than 1 MiB is matched as a plain string, without being parsed.
 
 #### Request-response
 

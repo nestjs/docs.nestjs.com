@@ -120,7 +120,7 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
   </tr>
   <tr>
     <td><code>maxMessageSize</code></td>
-    <td>Maximum size of a message body, in bytes. The server logs and skips a larger message without decoding it (it is negatively acknowledged without requeue when <code>noAck</code> is <code>false</code>, and a request gets an error reply), and the client fails a request whose reply is larger. Set it to <code>Infinity</code> to lift the limit. Defaults to <code>16777216</code> (16 MiB)</td>
+    <td>Maximum size of a message body, in bytes. The server logs and skips a larger message without decoding it (it is negatively acknowledged without requeue when <code>noAck</code> is <code>false</code>, and a request gets an error reply), and the client fails a request whose reply is larger. Set it to <code>Infinity</code> to lift the limit. A value that isn't a number, such as the <code>NaN</code> that <code>Number()</code> makes of an unset environment variable, gets the default. Defaults to <code>16777216</code> (16 MiB)</td>
   </tr>
 </table>
 
@@ -264,6 +264,8 @@ this.client.send('replace-emoji', record).subscribe(...);
 
 > info **Hint** The `RmqRecordBuilder` class is exported from the `@nestjs/microservices` package.
 
+AMQP carries some message properties as short strings, of at most 255 bytes: `contentType`, `contentEncoding`, `correlationId`, `replyTo`, `expiration`, `messageId`, `type`, `userId` and `appId`. The client fails a `send()` or `emit()` whose options set a longer one, or, with `wildcards` or a `fanout` exchange, whose pattern, which becomes the routing key, is longer than 255 bytes. A server doesn't reply to a request whose `replyTo` or `correlationId` is longer, and logs an error.
+
 You can read these values on the server side as well, by accessing the `RmqContext`:
 
 ```typescript
@@ -403,3 +405,5 @@ this.client.send('cats.meow', { message: 'Meow!' }).subscribe((response) => {
   console.log(response);
 });
 ```
+
+A routing key holds at most 255 bytes, so a message whose pattern is longer than 255 characters matches no wildcard pattern.
