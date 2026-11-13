@@ -71,7 +71,7 @@ The second argument of the `createMicroservice()` method is an `options` object 
 <table>
   <tr>
     <td><code>host</code></td>
-    <td>Connection hostname (default: <code>'localhost'</code>). An empty value (<code>undefined</code>, <code>null</code> or <code>''</code>) means <code>'localhost'</code> as well, so a server that other hosts connect to, e.g. one running in a container, has to set <code>'0.0.0.0'</code> or <code>'::'</code></td>
+    <td>Connection hostname (default: <code>'localhost'</code>). Starting with NestJS v12.5, an empty value (<code>undefined</code>, <code>null</code> or <code>''</code>) means <code>'localhost'</code> as well, so a server that other hosts connect to, e.g. one running in a container, has to set <code>'0.0.0.0'</code> or <code>'::'</code></td>
   </tr>
   <tr>
     <td><code>port</code></td>
@@ -103,7 +103,7 @@ The second argument of the `createMicroservice()` method is an `options` object 
   </tr>
   <tr>
     <td><code>maxBufferSize</code></td>
-    <td>Maximum length of a single incoming packet, in characters (default: <code>16 * 1024 * 1024</code>). A packet declaring a greater length is rejected before any of it is buffered, and the connection is dropped. It also applies to the replies a client receives. A parsed packet can take many times the memory of its text, so raise it with care</td>
+    <td>Maximum length of a single incoming packet, in characters (default: <code>16 * 1024 * 1024</code>). A packet declaring a greater length is rejected before any of it is buffered, and the connection is dropped. Starting with NestJS v12.5, it applies to each packet, and its default was lowered from <code>128 * 1024 * 1024</code>. A client applies its own <code>maxBufferSize</code> to the replies it receives</td>
   </tr>
   <tr>
     <td><code>incompleteMessageTimeout</code></td>

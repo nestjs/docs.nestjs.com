@@ -99,7 +99,7 @@ The <strong>gRPC</strong> transporter options object exposes the following prope
   </tr>
   <tr>
     <td><code>maxPendingResponses</code></td>
-    <td>Maximum number of responses of a streaming call that may wait for a client that isn't reading them. Once more are waiting, the call fails with <code>RESOURCE_EXHAUSTED</code> and the handler's <code>Observable</code> is unsubscribed from. Responses that a handler emits in one go while its client keeps up, such as a result returned with <code>from(rows)</code>, are not counted. Optional. Set to <code>0</code> to disable. Defaults to <code>1000</code></td>
+    <td>Maximum number of responses of a streaming call that may wait for a client that isn't reading them. Once more are waiting, the call fails with <code>RESOURCE_EXHAUSTED</code> and the handler's <code>Observable</code> is unsubscribed from. Responses that a handler emits in one go while its client keeps up, such as a result returned with <code>from(rows)</code>, are not counted. Applies only to the server. Optional. Set to <code>0</code> to disable. Defaults to <code>1000</code></td>
   </tr>
 </table>
 

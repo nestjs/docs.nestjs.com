@@ -64,7 +64,7 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
   </tr>
   <tr>
     <td><code>maxWildcardChannelLength</code></td>
-    <td>With <code>wildcards</code>, the maximum length (in characters) of the channel that a request matched by a wildcard pattern may be published to. Replies are published on a copy of that channel, so a request on a longer one is dropped and an error is logged. Set to <code>0</code> to disable (default: <code>1024</code>)</td>
+    <td>With <code>wildcards</code>, the maximum length (in characters) of the channel that a request matched by a wildcard pattern may be published to. A request on a longer channel is not answered, and an error is logged. Set to <code>0</code> to disable (default: <code>1024</code>)</td>
   </tr>
 </table>
 
