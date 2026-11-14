@@ -9,8 +9,8 @@ A unit test calls the method with the arguments and the context it needs:
 ```typescript
 @@filename(orders/orders.tools.spec)
 import type { McpContext } from '@nestjs/mcp';
-import { OrdersService } from './orders.service';
-import { OrdersTools } from './orders.tools';
+import { OrdersService } from './orders.service.js';
+import { OrdersTools } from './orders.tools.js';
 
 describe('OrdersTools', () => {
   it('changes the delivery address', async () => {
@@ -104,9 +104,9 @@ Like a real token, a test token needs an `expiresAt` in the future and the serve
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Client } from '@modelcontextprotocol/client';
 import { connectMcpClient } from '@nestjs/mcp/testing';
-import { AppModule } from '../src/app.module';
-import { IdentityProviderTokenVerifier } from '../src/auth/identity-provider-token.verifier';
-import { TestTokenVerifier } from './test-token.verifier';
+import { AppModule } from '../src/app.module.js';
+import { IdentityProviderTokenVerifier } from '../src/auth/identity-provider-token.verifier.js';
+import { TestTokenVerifier } from './test-token.verifier.js';
 
 describe('cat-store MCP server', () => {
   let moduleRef: TestingModule;
@@ -315,7 +315,7 @@ The route itself, the global prefix, middleware, CORS and the `Origin` check, is
 @@filename(test/mcp-endpoint.e2e-spec)
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/app.module.js';
 
 describe('MCP endpoint', () => {
   let app: INestApplication;

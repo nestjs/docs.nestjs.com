@@ -67,7 +67,7 @@ Register `AiModule` in a testing module, with fake models under the names the se
 import { Test } from '@nestjs/testing';
 import { AiModule } from '@nestjs/ai';
 import { FakeModel } from '@nestjs/ai/testing';
-import { TriageService } from './triage.service';
+import { TriageService } from './triage.service.js';
 
 describe('TriageService', () => {
   it('sorts an email', async () => {
@@ -113,7 +113,7 @@ import { Test } from '@nestjs/testing';
 import { AiModelError, AiModule } from '@nestjs/ai';
 import { FakeModel, providerError } from '@nestjs/ai/testing';
 import { ResilienceTimeoutError } from '@nestjs/resilience';
-import { RepliesService } from './replies.service';
+import { RepliesService } from './replies.service.js';
 
 async function createReplies(fast: FakeModel, main: FakeModel) {
   const moduleRef = await Test.createTestingModule({
@@ -171,7 +171,7 @@ import { Test } from '@nestjs/testing';
 import type { INestApplication } from '@nestjs/common';
 import { FakeModel, overrideModels } from '@nestjs/ai/testing';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/app.module.js';
 
 describe('the assistant', () => {
   let app: INestApplication;
@@ -242,8 +242,8 @@ it('tells the model when there is no such order', async () => {
 import { Test, type TestingModule } from '@nestjs/testing';
 import { AiModule } from '@nestjs/ai';
 import { callTool, FakeModel } from '@nestjs/ai/testing';
-import { OrdersModule } from '../orders/orders.module';
-import { AssistantModule } from './assistant.module';
+import { OrdersModule } from '../orders/orders.module.js';
+import { AssistantModule } from './assistant.module.js';
 
 describe('change-address', () => {
   let moduleRef: TestingModule;
@@ -295,9 +295,9 @@ A unit test calls the method itself, with the context it needs. A direct call sk
 ```typescript
 @@filename(refunds/refund.tools.spec)
 import type { AgentFunctionContext } from '@nestjs/ai';
-import { OrdersService } from '../orders/orders.service';
-import { PaymentsService } from '../payments/payments.service';
-import { RefundTools } from './refund.tools';
+import { OrdersService } from '../orders/orders.service.js';
+import { PaymentsService } from '../payments/payments.service.js';
+import { RefundTools } from './refund.tools.js';
 
 describe('RefundTools', () => {
   const orders = {
@@ -397,9 +397,9 @@ import {
   WorkflowsModule,
   WorkflowWorker,
 } from '@nestjs/workflows';
-import { PaymentsService } from '../payments/payments.service';
-import { RefundRequest } from './refund-request.workflow';
-import { RefundsModule } from './refunds.module';
+import { PaymentsService } from '../payments/payments.service.js';
+import { RefundRequest } from './refund-request.workflow.js';
+import { RefundsModule } from './refunds.module.js';
 
 describe('RefundRequest', () => {
   let moduleRef: TestingModule;
@@ -471,8 +471,8 @@ The model calls and the tool calls the run made before the approval are read bac
 import { Test } from '@nestjs/testing';
 import { AiModule } from '@nestjs/ai';
 import { FakeEmbeddingModel, providerError } from '@nestjs/ai/testing';
-import { ProductsRepository } from './products.repository';
-import { SearchService } from './search.service';
+import { ProductsRepository } from './products.repository.js';
+import { SearchService } from './search.service.js';
 
 describe('SearchService', () => {
   const products = { saveEmbeddings: vi.fn(), findNearest: vi.fn() };
@@ -557,7 +557,7 @@ import {
   FakeEmbeddingModel,
   overrideEmbeddingModels,
 } from '@nestjs/ai/testing';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/app.module.js';
 
 const model = new FakeEmbeddingModel(({ values }) => ({
   embeddings: values.map(() => [0.1, 0.2]),

@@ -13,7 +13,7 @@ The store's assistant answers questions about orders, so its model must look ord
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AgentFunction } from '@nestjs/ai';
 import * as z from 'zod';
-import { OrdersService } from './orders.service';
+import { OrdersService } from './orders.service.js';
 
 @Injectable()
 export class OrdersTools {
@@ -117,8 +117,8 @@ An agent function is called with its arguments and an `AgentFunctionContext`, fr
 import { Injectable, UseGuards } from '@nestjs/common';
 import { AgentFunction, type AgentFunctionContext } from '@nestjs/ai';
 import * as z from 'zod';
-import { OrdersService } from '../orders/orders.service';
-import { OrderOwnerGuard } from './order-owner.guard';
+import { OrdersService } from '../orders/orders.service.js';
+import { OrderOwnerGuard } from './order-owner.guard.js';
 
 @Injectable()
 export class AssistantTools {
@@ -195,7 +195,7 @@ import {
   type ExecutionContext,
 } from '@nestjs/common';
 import { AiExecutionContext, type AiContextType } from '@nestjs/ai';
-import { OrdersService } from '../orders/orders.service';
+import { OrdersService } from '../orders/orders.service.js';
 
 @Injectable()
 export class OrderOwnerGuard implements CanActivate {
@@ -264,8 +264,8 @@ import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { AgentFunction } from '@nestjs/ai';
 import { Tool } from '@nestjs/mcp';
 import * as z from 'zod';
-import { OrderVisibilityGuard } from './order-visibility.guard';
-import { OrdersService } from './orders.service';
+import { OrderVisibilityGuard } from './order-visibility.guard.js';
+import { OrdersService } from './orders.service.js';
 
 const FindOrderInput = z.object({
   orderId: z.string().describe('The order id, such as ord_123'),
@@ -332,7 +332,7 @@ import {
 } from '@nestjs/common';
 import { AiExecutionContext, type AiContextType } from '@nestjs/ai';
 import type { McpContextType } from '@nestjs/mcp';
-import { OrdersService } from './orders.service';
+import { OrdersService } from './orders.service.js';
 
 @Injectable()
 export class OrderVisibilityGuard implements CanActivate {

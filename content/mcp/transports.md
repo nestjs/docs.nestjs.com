@@ -85,7 +85,7 @@ An assistant on the user's machine (Claude Desktop, Claude Code, an IDE) can lau
 @@filename(stdio)
 import { NestFactory } from '@nestjs/core';
 import { McpStdioLogger, McpStdioServer } from '@nestjs/mcp';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule, {

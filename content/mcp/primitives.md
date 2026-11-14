@@ -11,7 +11,7 @@ A tool is a method decorated with `@Tool()`. `inputSchema` describes its argumen
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Tool, type McpContext } from '@nestjs/mcp';
 import * as z from 'zod';
-import { OrdersService } from './orders.service';
+import { OrdersService } from './orders.service.js';
 
 @Injectable()
 export class OrdersTools {

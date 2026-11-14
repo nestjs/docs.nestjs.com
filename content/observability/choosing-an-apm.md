@@ -63,7 +63,7 @@ Sentry.init({
 // This import comes before everything else
 import './instrument';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 ```
 
 Then add `SentryModule.forRoot()` from `@sentry/nestjs/setup` to your root module's imports and, if you don't already have a catch-all exception filter, register `SentryGlobalFilter` as an `APP_FILTER` ahead of any other filters.
