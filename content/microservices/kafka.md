@@ -132,7 +132,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
 
 #### Configuration file
 
-Instead of passing connection settings in code, you can keep them in a `kafka.config.*` file. The `kafka` [command-line interface](#command-line-interface) and [Kafka Studio](#debugging-and-testing-with-studio) read the same file, so your application and your tools connect to the same cluster with the same credentials. Scaffold one with the CLI, which writes `kafka.config.ts` in a TypeScript project, or write it by hand:
+Instead of passing connection settings in code, you can keep them in a `kafka.config.*` file. The `kafka` [command-line interface and Kafka Studio](#command-line-interface-and-studio) read the same file, so your application and your tools connect to the same cluster with the same credentials. Scaffold one with the CLI, which writes `kafka.config.ts` in a TypeScript project, or write it by hand:
 
 ```bash
 $ npx @cookiemonsterdev/kafka-cli init
@@ -814,94 +814,9 @@ const producer = this.client.producer;
 const consumer = this.client.consumer;
 ```
 
-#### Command-line interface
+#### Command-line interface and Studio
 
-[`@cookiemonsterdev/kafka-cli`](https://cookiemonsterdev.github.io/kafka/docs/cli/start/introduction/) provides a `kafka` command built on the same client. It reads your [configuration file](#configuration-file), so its commands need no `--brokers` flag. Install it as a development dependency:
-
-```bash
-$ npm i --save-dev @cookiemonsterdev/kafka-cli
-```
-
-The following commands cover common tasks around a Nest application:
-
-```bash
-# Show which config file and brokers the tools resolve, then reach the brokers
-$ npx kafka doctor
-$ npx kafka ping
-
-# Create a request topic and its reply topic, with one reply partition per client instance
-$ npx kafka topic create hero.kill.dragon hero.kill.dragon.reply --partitions 3 --if-not-exists
-
-# Inspect the consumer groups Nest joins (note the -server and -client suffixes)
-$ npx kafka group list
-$ npx kafka group describe hero-consumer-server
-$ npx kafka group offsets hero-consumer-server --topic hero.kill.dragon
-```
-
-To process a topic again from its start, stop the application, preview the reset, and then apply it:
-
-```bash
-$ npx kafka group reset-offsets hero-consumer-server --topic hero.kill.dragon --to earliest
-$ npx kafka group reset-offsets hero-consumer-server --topic hero.kill.dragon --to earliest --execute --yes
-```
-
-Add `--json` to any command for machine-readable output, for example in a CI script. To work with several clusters, define them under `cli.profiles` in the configuration file, select one with the CLI's `--profile` flag, and switch between them in Studio. Profiles apply to the CLI and Studio only: your application always reads the `client` section. See the [command reference](https://cookiemonsterdev.github.io/kafka/docs/cli/reference/commands/) for every command.
-
-#### Debugging and testing with Studio
-
-[Kafka Studio](https://cookiemonsterdev.github.io/kafka/docs/studio/start/introduction/) is a local web UI built on the same client. Start it from your project directory, and it connects with your [configuration file](#configuration-file):
-
-```bash
-$ npm i --save-dev @cookiemonsterdev/kafka-studio
-$ npx kafka-studio
-```
-
-With the CLI installed, `npx kafka studio` starts it as well. Open the full URL that Studio prints: its hash carries a session token, so don't share it. Add `--read-only` when you point Studio at a cluster that others use.
-
-Studio helps with the following Nest tasks:
-
-- **Messages**: follow request, reply, and event topics live, and inspect the key, value, and headers of each record, such as `kafka_correlationId`, `kafka_replyTopic`, and `kafka_nest-err`.
-- **Produce**: send an event to an `@EventPattern()` handler. To call a `@MessagePattern()` handler, add the `kafka_correlationId` and `kafka_replyTopic` headers that `ClientKafkaProxy.send()` adds. The reply arrives on the reply topic, with the same `kafka_correlationId` header.
-- **Consumer groups**: check membership and per-partition lag of the `-server` and `-client` groups, and see which reply partition each client instance holds.
-- **Debugger**: search across topics, for example with `headers.kafka_correlationId == "<id>"` to find a request and its reply, and replay failed records, such as those a dead-letter topic collected. See [Debug event flows](https://cookiemonsterdev.github.io/kafka/docs/studio/guides/debugger/).
-
-Studio **scenarios** turn such a check into a repeatable test. A scenario is a JSON file whose steps produce records and wait for matching ones. `{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}` is replaced with a fresh id on every run, so the scenario below sends a request to a running Nest application and passes once the reply with the same correlation id arrives:
-
-```json
-@@filename(hero.scenario.json)
-{
-  "version": 1,
-  "name": "Kill a dragon",
-  "steps": [
-    {
-      "kind": "produce",
-      "topic": "hero.kill.dragon",
-      "key": "{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}",
-      "value": "{\"heroId\":1,\"dragonId\":7}",
-      "headers": {
-        "kafka_correlationId": "{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}",
-        "kafka_replyTopic": "hero.kill.dragon.reply"
-      }
-    },
-    {
-      "kind": "expect",
-      "topic": "hero.kill.dragon.reply",
-      "predicates": [
-        { "field": "headers.kafka_correlationId", "operator": "eq", "value": "{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}" }
-      ],
-      "timeoutMs": 10000
-    }
-  ]
-}
-```
-
-Build scenarios in the **Scenarios** view of the Debugger and export them, or write them by hand. Run one without the UI, for example as an end-to-end check in CI once the broker and the application are up:
-
-```bash
-$ npx kafka-studio --scenario hero.scenario.json
-```
-
-The run prints its results as JSON and exits with `0` when every step passes, `1` when a step fails, and `2` for invalid flags. Scenarios write to the cluster, so they don't run in read-only mode.
+The [`kafka` command-line interface](https://cookiemonsterdev.github.io/kafka/docs/cli/start/introduction/) and [Kafka Studio](https://cookiemonsterdev.github.io/kafka/docs/studio/start/introduction/), a local web UI, are built on kafka-core and read the same [configuration file](#configuration-file) as your application. Use them to create topics, inspect the `-server` and `-client` consumer groups, follow request and reply topics, and replay records. To call a `@MessagePattern()` handler from Studio, add the `kafka_correlationId` and `kafka_replyTopic` headers that `ClientKafkaProxy.send()` adds. See their documentation for installation and usage.
 
 #### Moving from kafkajs
 
