@@ -13,8 +13,12 @@ The Kafka project aims to provide a unified, high-throughput, low-latency platfo
 To start building Kafka-based microservices, first install the required package:
 
 ```bash
-$ npm i --save kafkajs
+$ npm i --save @cookiemonsterdev/kafka-core
 ```
+
+The Kafka transporter runs on [`@cookiemonsterdev/kafka-core`](https://cookiemonsterdev.github.io/kafka/docs/core/start/introduction/), a TypeScript Kafka client that speaks the Kafka wire protocol directly and supports brokers from Kafka 0.10 onward. It requires **Node.js 24** or newer.
+
+Applications that use `kafkajs` keep working: when kafka-core isn't installed, Nest runs on `kafkajs` and logs a deprecation warning. Support for `kafkajs` will be removed in the next major version. See [Moving from kafkajs](#moving-from-kafkajs).
 
 #### Overview
 
@@ -49,63 +53,67 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
 
 <table>
   <tr>
+    <td><code>driver</code></td>
+    <td>The client library to run on (<code>string</code>): <code>'kafka-core'</code> or <code>'kafkajs'</code>. Defaults to kafka-core when it is installed, otherwise kafkajs. On either, offsets and timestamps are <code>bigint</code> values</td>
+  </tr>
+  <tr>
     <td><code>client</code></td>
     <td>Client configuration options (see the
       <a
-        href="https://kafka.js.org/docs/configuration"
+        href="https://cookiemonsterdev.github.io/kafka/docs/core/reference/configuration/"
         rel="nofollow"
         target="_blank"
-        >KafkaJS client configuration</a
-      >)</td>
+        >kafka-core client configuration</a
+      >). Options left out can come from a <a href="/microservices/kafka#configuration-file">configuration file</a></td>
   </tr>
   <tr>
     <td><code>consumer</code></td>
     <td>Consumer configuration options (see the
       <a
-        href="https://kafka.js.org/docs/consuming#a-name-options-a-options"
+        href="https://cookiemonsterdev.github.io/kafka/docs/core/reference/consumer/"
         rel="nofollow"
         target="_blank"
-        >KafkaJS consumer options</a
+        >kafka-core consumer options</a
       >)</td>
   </tr>
   <tr>
     <td><code>run</code></td>
     <td>Options passed to the consumer's <code>run()</code> method (see
       <a
-        href="https://kafka.js.org/docs/consuming"
+        href="https://cookiemonsterdev.github.io/kafka/docs/core/guides/consumer/"
         rel="nofollow"
         target="_blank"
-        >KafkaJS consuming messages</a
+        >kafka-core consuming messages</a
       >)</td>
   </tr>
   <tr>
     <td><code>subscribe</code></td>
     <td>Options passed to the consumer's <code>subscribe()</code> method, except <code>topics</code>, which Nest derives from the registered patterns (see
       <a
-        href="https://kafka.js.org/docs/consuming#frombeginning"
+        href="https://cookiemonsterdev.github.io/kafka/docs/core/reference/consumer/"
         rel="nofollow"
         target="_blank"
-        >KafkaJS fromBeginning</a
+        >kafka-core subscribe options</a
       >)</td>
   </tr>
   <tr>
     <td><code>producer</code></td>
     <td>Producer configuration options (see the
       <a
-        href="https://kafka.js.org/docs/producing#options"
+        href="https://cookiemonsterdev.github.io/kafka/docs/core/reference/producer/"
         rel="nofollow"
         target="_blank"
-        >KafkaJS producer options</a
+        >kafka-core producer options</a
       >)</td>
   </tr>
   <tr>
     <td><code>send</code></td>
-    <td>Options passed to the producer's <code>send()</code> method, except <code>topic</code> and <code>messages</code> (see the
+    <td>Options passed to the producer's <code>send()</code> method, except <code>topic</code> and <code>messages</code> (see
       <a
-        href="https://kafka.js.org/docs/producing#options"
+        href="https://cookiemonsterdev.github.io/kafka/docs/core/guides/producer/"
         rel="nofollow"
         target="_blank"
-        >KafkaJS producing messages</a
+        >kafka-core producing messages</a
       >)</td>
   </tr>
   <tr>
@@ -121,6 +129,53 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
     <td>Suffix appended to the <code>clientId</code> and <code>groupId</code> values. Defaults to <code>'-server'</code> on the server and <code>'-client'</code> on the client (<code>string</code>)</td>
   </tr>
 </table>
+
+#### Configuration file
+
+Instead of passing connection settings in code, you can keep them in a `kafka.config.*` file. The `kafka` [command-line interface](#command-line-interface) and [Kafka Studio](#debugging-and-testing-with-studio) read the same file, so your application and your tools connect to the same cluster with the same credentials. Scaffold one with the CLI, which writes `kafka.config.ts` in a TypeScript project, or write it by hand:
+
+```bash
+$ npx @cookiemonsterdev/kafka-cli init
+```
+
+```typescript
+@@filename(kafka.config)
+import { defineConfig } from '@cookiemonsterdev/kafka-core';
+
+export default defineConfig({
+  client: {
+    clientId: 'hero',
+    brokers: ['localhost:9092'],
+  },
+  consumer: {
+    groupId: 'hero-consumer',
+  },
+});
+```
+
+Then leave `brokers` out of the transporter options. Nest looks for the file and takes the settings it finds there:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  transport: Transport.KAFKA,
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+});
+```
+
+The same applies to clients registered with `ClientsModule` or `@Client()`. Nest logs the path of the file it loaded. Configuration files need kafka-core: on `kafkajs`, Nest never reads one, so without `brokers` it connects to `localhost:9092`, and setting `client.config` is an error. The rules are those of kafka-core, described in its [config file reference](https://cookiemonsterdev.github.io/kafka/docs/core/reference/config-file/):
+
+- **Discovery**: the search walks up from the current working directory to the root of your project and uses the first `kafka.config.*` file it finds. For security, it stops at a directory that anyone can write to, or that a user other than you or root owns. The reference lists the file names it tries and where it stops.
+- **Precedence**: options you pass to Nest win over the file. The `client` section fills in the `client` options, and the `consumer` and `producer` sections fill in the `consumer` and `producer` options. A `clientId` or `groupId` from the file gets the `-server` or `-client` suffix too (see [Naming conventions](#naming-conventions)).
+- **The `client.config` option**: set it to `true` to read the file even when you pass `brokers`, to a path to load that file only (a missing file is an error), or to `false` to never read one.
+- **Defaults**: with no brokers in the options and no file, Nest connects to `localhost:9092`, as it always has. A file that defines no brokers is an error, unless you pass them in the options.
+
+Nest loads the file asynchronously, so it can use top-level `await` or export an async factory. Write erasable TypeScript, and give relative imports their `.ts` extension. Keep secrets out of the file, for example by reading them from `process.env`.
+
+> warning **Note** A container that runs as root over files owned by another user, as many CI images do, finds no file through discovery. Pass the path instead: `client: {{ '{' }} config: './kafka.config.ts' {{ '}' }}`.
 
 #### Client
 
@@ -187,7 +242,7 @@ To prevent `ClientKafkaProxy` consumers from losing response messages, Nest uses
 
 #### Regular expression patterns
 
-KafkaJS supports subscribing to topics by regular expression. Starting with NestJS v12, you can pass a `RegExp` directly to `@MessagePattern()` or `@EventPattern()`. Nest preserves the pattern, forwards it to the KafkaJS `subscribe()` call, and falls back to regular expression matching when resolving a handler for an incoming topic.
+kafka-core supports subscribing to topics by regular expression. Starting with NestJS v12, you can pass a `RegExp` directly to `@MessagePattern()` or `@EventPattern()`. Nest preserves the pattern, forwards it to the kafka-core `subscribe()` call, and falls back to regular expression matching when resolving a handler for an incoming topic.
 
 ```typescript
 @@filename()
@@ -240,7 +295,7 @@ Nest doesn't answer a request whose `kafka_correlationId` header is longer than 
 
 #### Outgoing
 
-Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method. A `bigint`, such as an offset or a timestamp of a received message, is written as a decimal string.
 
 ```typescript
 @@filename(heroes.controller)
@@ -368,15 +423,17 @@ The `IncomingMessage` object fulfills the following interface:
 interface IncomingMessage {
   topic: string;
   partition: number;
-  timestamp: string;
-  size: number;
+  timestamp: bigint;
+  offset: bigint;
+  byteSize?: number;
   attributes: number;
-  offset: string;
   key: any;
   value: any;
   headers: Record<string, any>;
 }
 ```
+
+It also carries the remaining fields of a kafka-core [`KafkaMessage`](https://cookiemonsterdev.github.io/kafka/docs/core/reference/consumer/), such as `isControlRecord` and `batchContext`. On `kafkajs`, `byteSize` is set only for messages in the legacy MessageSet format (Kafka 0.10). Offsets and timestamps are `bigint` values, which `JSON.stringify()` rejects: convert them with `toString()` before logging or storing them as JSON.
 
 If your handler takes a long time to process each message, consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
 
@@ -451,7 +508,7 @@ onModuleInit() {
 
 #### Retriable exceptions
 
-As with other transporters, unhandled exceptions are automatically converted to a "user-friendly" format. However, in some edge cases you might want to bypass this mechanism and let the `kafkajs` driver consume exceptions instead. Throwing an exception while processing a message instructs `kafkajs` to **retry** it (redeliver it), which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
+As with other transporters, unhandled exceptions are automatically converted to a "user-friendly" format. However, in some edge cases you might want to bypass this mechanism and let the Kafka client consume exceptions instead. Throwing an exception while processing a message instructs the client to **retry** it (redeliver it), which means that even though the message (or event) handler was triggered, the offset won't be committed to Kafka.
 
 > warning **Warning** For event handlers (event-based communication), all unhandled exceptions are considered **retriable exceptions** by default.
 
@@ -472,7 +529,7 @@ Along with the default error handling mechanisms, you can create a custom except
 ```typescript
 import { Catch, ArgumentsHost, ExceptionFilter, Logger } from '@nestjs/common';
 import { KafkaContext } from '@nestjs/microservices';
-import type { Producer } from 'kafkajs';
+import type { Producer } from '@cookiemonsterdev/kafka-core';
 
 @Catch()
 export class KafkaMaxRetryExceptionFilter implements ExceptionFilter {
@@ -492,9 +549,9 @@ export class KafkaMaxRetryExceptionFilter implements ExceptionFilter {
 
     if (currentRetryCount >= this.maxRetries) {
       this.logger.warn(
-        `Max retries (${
-          this.maxRetries
-        }) exceeded for message: ${JSON.stringify(message)}`,
+        `Max retries (${this.maxRetries}) exceeded for message at offset ${
+          message.offset
+        } of ${kafkaContext.getTopic()}[${kafkaContext.getPartition()}]`,
       );
 
       if (this.skipHandler) {
@@ -522,7 +579,7 @@ export class KafkaMaxRetryExceptionFilter implements ExceptionFilter {
         'Failed to republish message for retry:',
         republishError,
       );
-      // Rethrow so that KafkaJS retries the message
+      // Rethrow so that kafka-core retries the message
       throw exception;
     }
   }
@@ -584,7 +641,7 @@ export class KafkaMaxRetryExceptionFilter implements ExceptionFilter {
         topic,
         partition,
         // When committing an offset, commit the next number (i.e., current offset + 1)
-        offset: (Number(offset) + 1).toString(),
+        offset: offset + 1n,
       },
     ]);
   }
@@ -598,7 +655,7 @@ You can register this filter globally or at the controller level. It requires a 
 ```typescript
 @@filename(kafka-retry.filter)
 import { Inject, Injectable } from '@nestjs/common';
-import type { Producer } from 'kafkajs';
+import type { Producer } from '@cookiemonsterdev/kafka-core';
 
 @Injectable()
 export class AppKafkaRetryFilter extends KafkaMaxRetryExceptionFilter {
@@ -643,7 +700,7 @@ Make sure to provide the Kafka producer in your module:
 
 ```typescript
 @@filename(app.module)
-import { Kafka } from 'kafkajs';
+import { Kafka } from '@cookiemonsterdev/kafka-core';
 
 @Module({
   providers: [
@@ -662,9 +719,11 @@ import { Kafka } from 'kafkajs';
 export class AppModule {}
 ```
 
+> info **Hint** To build the producer from your [configuration file](#configuration-file) instead of repeating the brokers, create the client with `await Kafka.fromConfig()`.
+
 #### Commit offsets
 
-Committing offsets is essential when working with Kafka. By default, messages are committed automatically after a specific time (see the [KafkaJS autocommit documentation](https://kafka.js.org/docs/consuming#autocommit)). `KafkaContext` gives you access to the active consumer for committing offsets manually. The consumer is the KafkaJS consumer and works like the [native KafkaJS implementation](https://kafka.js.org/docs/consuming#manual-committing).
+Committing offsets is essential when working with Kafka. By default, the consumer commits offsets automatically (see the [kafka-core consumer offsets guide](https://cookiemonsterdev.github.io/kafka/docs/core/guides/consumer-offsets/)). `KafkaContext` gives you access to the active consumer for committing offsets manually. It is the consumer of the client Nest runs on, and takes `bigint` offsets on either client.
 
 ```typescript
 @@filename()
@@ -677,9 +736,7 @@ async handleUserCreated(@Payload() data: IncomingMessage, @Ctx() context: KafkaC
   const topic = context.getTopic();
   const consumer = context.getConsumer();
   // Commit the next offset to consume (i.e., current offset + 1)
-  await consumer.commitOffsets([
-    { topic, partition, offset: (Number(offset) + 1).toString() },
-  ]);
+  await consumer.commitOffsets([{ topic, partition, offset: offset + 1n }]);
 }
 @@switch
 @Bind(Payload(), Ctx())
@@ -692,9 +749,7 @@ async handleUserCreated(data, context) {
   const topic = context.getTopic();
   const consumer = context.getConsumer();
   // Commit the next offset to consume (i.e., current offset + 1)
-  await consumer.commitOffsets([
-    { topic, partition, offset: (Number(offset) + 1).toString() },
-  ]);
+  await consumer.commitOffsets([{ topic, partition, offset: offset + 1n }]);
 }
 ```
 
@@ -758,3 +813,122 @@ To do so, use the `producer` and `consumer` properties exposed by the `ClientKaf
 const producer = this.client.producer;
 const consumer = this.client.consumer;
 ```
+
+#### Command-line interface
+
+[`@cookiemonsterdev/kafka-cli`](https://cookiemonsterdev.github.io/kafka/docs/cli/start/introduction/) provides a `kafka` command built on the same client. It reads your [configuration file](#configuration-file), so its commands need no `--brokers` flag. Install it as a development dependency:
+
+```bash
+$ npm i --save-dev @cookiemonsterdev/kafka-cli
+```
+
+The following commands cover common tasks around a Nest application:
+
+```bash
+# Show which config file and brokers the tools resolve, then reach the brokers
+$ npx kafka doctor
+$ npx kafka ping
+
+# Create a request topic and its reply topic, with one reply partition per client instance
+$ npx kafka topic create hero.kill.dragon hero.kill.dragon.reply --partitions 3 --if-not-exists
+
+# Inspect the consumer groups Nest joins (note the -server and -client suffixes)
+$ npx kafka group list
+$ npx kafka group describe hero-consumer-server
+$ npx kafka group offsets hero-consumer-server --topic hero.kill.dragon
+```
+
+To process a topic again from its start, stop the application, preview the reset, and then apply it:
+
+```bash
+$ npx kafka group reset-offsets hero-consumer-server --topic hero.kill.dragon --to earliest
+$ npx kafka group reset-offsets hero-consumer-server --topic hero.kill.dragon --to earliest --execute --yes
+```
+
+Add `--json` to any command for machine-readable output, for example in a CI script. To work with several clusters, define them under `cli.profiles` in the configuration file, select one with the CLI's `--profile` flag, and switch between them in Studio. Profiles apply to the CLI and Studio only: your application always reads the `client` section. See the [command reference](https://cookiemonsterdev.github.io/kafka/docs/cli/reference/commands/) for every command.
+
+#### Debugging and testing with Studio
+
+[Kafka Studio](https://cookiemonsterdev.github.io/kafka/docs/studio/start/introduction/) is a local web UI built on the same client. Start it from your project directory, and it connects with your [configuration file](#configuration-file):
+
+```bash
+$ npm i --save-dev @cookiemonsterdev/kafka-studio
+$ npx kafka-studio
+```
+
+With the CLI installed, `npx kafka studio` starts it as well. Open the full URL that Studio prints: its hash carries a session token, so don't share it. Add `--read-only` when you point Studio at a cluster that others use.
+
+Studio helps with the following Nest tasks:
+
+- **Messages**: follow request, reply, and event topics live, and inspect the key, value, and headers of each record, such as `kafka_correlationId`, `kafka_replyTopic`, and `kafka_nest-err`.
+- **Produce**: send an event to an `@EventPattern()` handler. To call a `@MessagePattern()` handler, add the `kafka_correlationId` and `kafka_replyTopic` headers that `ClientKafkaProxy.send()` adds. The reply arrives on the reply topic, with the same `kafka_correlationId` header.
+- **Consumer groups**: check membership and per-partition lag of the `-server` and `-client` groups, and see which reply partition each client instance holds.
+- **Debugger**: search across topics, for example with `headers.kafka_correlationId == "<id>"` to find a request and its reply, and replay failed records, such as those a dead-letter topic collected. See [Debug event flows](https://cookiemonsterdev.github.io/kafka/docs/studio/guides/debugger/).
+
+Studio **scenarios** turn such a check into a repeatable test. A scenario is a JSON file whose steps produce records and wait for matching ones. `{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}` is replaced with a fresh id on every run, so the scenario below sends a request to a running Nest application and passes once the reply with the same correlation id arrives:
+
+```json
+@@filename(hero.scenario.json)
+{
+  "version": 1,
+  "name": "Kill a dragon",
+  "steps": [
+    {
+      "kind": "produce",
+      "topic": "hero.kill.dragon",
+      "key": "{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}",
+      "value": "{\"heroId\":1,\"dragonId\":7}",
+      "headers": {
+        "kafka_correlationId": "{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}",
+        "kafka_replyTopic": "hero.kill.dragon.reply"
+      }
+    },
+    {
+      "kind": "expect",
+      "topic": "hero.kill.dragon.reply",
+      "predicates": [
+        { "field": "headers.kafka_correlationId", "operator": "eq", "value": "{{ '{' }}{{ '{' }}id{{ '}' }}{{ '}' }}" }
+      ],
+      "timeoutMs": 10000
+    }
+  ]
+}
+```
+
+Build scenarios in the **Scenarios** view of the Debugger and export them, or write them by hand. Run one without the UI, for example as an end-to-end check in CI once the broker and the application are up:
+
+```bash
+$ npx kafka-studio --scenario hero.scenario.json
+```
+
+The run prints its results as JSON and exits with `0` when every step passes, `1` when a step fails, and `2` for invalid flags. Scenarios write to the cluster, so they don't run in read-only mode.
+
+#### Moving from kafkajs
+
+Earlier releases of the Kafka transporter ran on `kafkajs`, which hasn't shipped a release since 2023.
+
+Whichever client it runs on, the transporter now hands offsets and timestamps to your code as `bigint` values, as kafka-core does. On `kafkajs`, Nest converts them on the way in and out. After upgrading Nest, review the following:
+
+- **Received messages**: the `offset` and `timestamp` of `context.getMessage()` are `bigint` values instead of strings, and `size` is gone. kafka-core reports a `byteSize` instead (see [Context](#context)).
+- **Committing and seeking**: pass `bigint` offsets to the `commitOffsets()` and `seek()` methods of the consumer that `KafkaContext` and `ClientKafkaProxy` expose. Commit the next offset with `offset + 1n` instead of `(Number(offset) + 1).toString()`.
+- **Send results**: `ClientKafkaProxy.emit()` and the producer's `send()` resolve to record metadata whose `baseOffset`, `logAppendTime`, and `logStartOffset` are `bigint` values. `JSON.stringify()` rejects a `bigint`, so an HTTP handler that returns such a result fails: return only what the response needs, converted with `toString()`. The Kafka messages Nest sends are not affected (see [Outgoing](#outgoing)).
+- **Timestamps you send** in a message are numbers (milliseconds since the epoch), not strings.
+- **Other APIs**: on `kafkajs`, the admin client and transactions keep string offsets, and the consumer and producer have only the methods of `kafkajs`. Methods that only kafka-core has, such as `flush()` and `committed()`, are missing, and `run()` options such as `signal` and `maxRecords` are ignored.
+
+To switch to kafka-core, replace the package:
+
+```bash
+$ npm uninstall kafkajs
+$ npm i --save @cookiemonsterdev/kafka-core
+```
+
+Then review the differences of the client itself:
+
+- **Node.js**: kafka-core requires Node.js 24 or newer.
+- **Type imports**: import types such as `Producer` and `Consumer` from `@cookiemonsterdev/kafka-core`.
+- **Names**: the `KafkaJS` prefix is gone from errors (`KafkaJSNumberOfRetriesExceeded` becomes `KafkaNumberOfRetriesExceeded`) and environment variables (`KAFKAJS_LOG_LEVEL` becomes `KAFKA_LOG_LEVEL`). `Partitioners.JavaCompatiblePartitioner` becomes `Partitioners.DefaultPartitioner`.
+- **Compression**: Snappy, LZ4, and ZSTD are built in. Remove `kafkajs-snappy`, `kafkajs-lz4`, and `@kafkajs/zstd`, and the code that registers them in `CompressionCodecs`.
+- **Producer batching**: kafka-core waits up to 5 ms (`lingerMs`) to batch the messages it sends, while `kafkajs` sent each one immediately. This applies to `emit()`, `send()`, and the replies of `@MessagePattern()` handlers. To send without waiting, set `producer: {{ '{' }} lingerMs: 0 {{ '}' }}`.
+- **Configuration file**: an application that passes no `brokers` now reads a `kafka.config.*` file when its project has one (see [Configuration file](#configuration-file)). Set `client: {{ '{' }} config: false {{ '}' }}` to keep connecting to `localhost:9092` regardless.
+
+To keep running on `kafkajs` while kafka-core is installed, for example while you roll the switch out service by service, set the `driver` option to `'kafkajs'`. kafka-core's [migration guide](https://cookiemonsterdev.github.io/kafka/docs/core/migration/from-kafkajs/) covers the remaining differences of the client itself.
