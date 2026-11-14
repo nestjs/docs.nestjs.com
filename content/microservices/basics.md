@@ -634,3 +634,46 @@ async function bootstrap() {
 }
 await bootstrap();
 ```
+
+#### Talking to a server that is not Nest
+
+Most microservice setups talk to at least one system that knows nothing about Nest: a gateway already in production, a worker written in another language, a queue that other services also consume. The packets that travel over the TCP and Redis transports have a fixed shape, so that system can call a handler and answer a client without the `@nestjs/microservices` package.
+
+A request has three fields. `pattern` selects the handler, `data` is what the handler receives, and `id` ties the reply to its request:
+
+```json
+{ "pattern": "sum", "data": [1, 2], "id": "b7e1c0" }
+```
+
+The reply repeats the `id` and carries either a `response` or an `err`:
+
+```json
+{ "id": "b7e1c0", "response": 3 }
+```
+
+```json
+{ "id": "b7e1c0", "err": { "message": "Division by zero", "status": "error" } }
+```
+
+A packet without an `id` is dispatched as an event: the handler runs and nothing travels back. That is the shape `emit()` sends:
+
+```json
+{ "pattern": "user_created", "data": { "id": 42 } }
+```
+
+A reply that arrives with a different `id`, or with none, matches no request, and the caller keeps waiting until the request times out. A `pattern` can also be an object instead of a string, which Nest matches by its keys and values, with the limits that [message and event patterns](/microservices/basics#message-and-event-patterns) lists.
+
+The TCP transport writes neither packet as bare JSON. `JsonSocket`, the socket the server and the client share, puts the length of the JSON text first, then a `#`, then the text itself:
+
+```typescript
+import { connect } from 'node:net';
+
+const packet = JSON.stringify({ pattern: 'sum', data: [1, 2], id: 'b7e1c0' });
+const socket = connect({ host: 'localhost', port: 3000 }, () => {
+  socket.write(`${packet.length}#${packet}`);
+});
+```
+
+That length counts the UTF-16 code units of the JSON text, which is what `String#length` returns in JavaScript, not its bytes. A peer that writes a byte count desynchronizes on any payload with a non-ASCII character, such as an accented letter, and one that counts Unicode code points, as `len()` does in Python, desynchronizes on characters outside the basic plane, such as emoji.
+
+Metadata follows the same table as everywhere else: it travels inside the packet over TCP and Redis, and as headers over the other transports, as [sending metadata with every message](/microservices/basics#sending-metadata-with-every-message) describes.
