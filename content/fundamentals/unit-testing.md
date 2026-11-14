@@ -367,7 +367,7 @@ const moduleRef = await Test.createTestingModule({
 
 Each of these methods, in turn, returns the `TestingModuleBuilder` instance, so you can chain them with other methods in the [fluent style](https://en.wikipedia.org/wiki/Fluent_interface). Call `compile()` at the end of the chain to make Nest instantiate and initialize the module.
 
-You may also want to provide a custom logger when the tests run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to tell the `TestingModuleBuilder` how to log during tests (by default, only "error" logs are written to the console).
+You may also want to provide a custom logger when the tests run (for example, on a CI server). Use the `setLogger()` method and pass an object that fulfills the `LoggerService` interface to tell the `TestingModuleBuilder` how to log during tests (by default, only "error" logs are written to the console). To assert on what was logged, use the [`CapturingLogger`](/fundamentals/testing#asserting-on-logs).
 
 The compiled module has several useful methods, as described in the following table:
 
@@ -416,6 +416,41 @@ The compiled module has several useful methods, as described in the following ta
 </table>
 
 > info **Hint** Keep your e2e test files inside the `test` directory. Test files should have an `.e2e-spec` suffix.
+
+#### Asserting on logs
+
+To check what your code logs, pass a `CapturingLogger` (exported from `@nestjs/testing`) to `setLogger()`. It records every log call, from the framework and from every `Logger` instance, as structured data instead of printing it:
+
+```typescript
+import { CapturingLogger, Test } from '@nestjs/testing';
+
+const logger = new CapturingLogger();
+const moduleRef = await Test.createTestingModule({
+  providers: [PaymentsService],
+})
+  .setLogger(logger)
+  .compile();
+
+await moduleRef.get(PaymentsService).charge(order);
+
+logger.assertLogged({ level: 'warn', context: 'PaymentsService', message: /retrying/ });
+logger.assertNotLogged({ level: 'error' });
+```
+
+`assertLogged()` returns the first matching entry, and `assertNotLogged()` throws if any entry matches. Both throw a plain `Error` that lists the captured entries, so they work with any test runner. To query the entries yourself, use `entries`, `find()` and `filter()`, and call `clear()` to reset the logger between tests.
+
+A matcher is either a predicate function or an object whose criteria must all match:
+
+- `level`: the log level.
+- `context`: a string matches the context exactly, a `RegExp` is tested against it.
+- `message`: a string matches when the message contains it, a `RegExp` is tested against it. Only string messages match.
+- `params`: matches when each listed key is deeply equal to the one in the object passed to the logger.
+
+Each entry has the `level`, `message`, `context`, `params`, the `error` passed to the call (if any), the `stack` and the raw `args`.
+
+The logger captures every level, regardless of the `NEST_LOG_LEVEL` environment variable. To capture fewer, set the `logLevels` option. To also print the logs while debugging a test, pass `print: true`; the other `ConsoleLogger` options (such as `json`) then apply to the output.
+
+> info **Hint** You can also install the logger with `app.useLogger(logger)`. In that case, logs written before the call (for example, by the `InstanceLoader` during `compile()`) aren't captured.
 
 #### Overriding globally registered enhancers
 
