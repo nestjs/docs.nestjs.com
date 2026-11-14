@@ -14,7 +14,7 @@ You can also use the built-in logger, or create your own custom implementation, 
 
 The built-in logger is not only a development convenience. Combined with [JSON output](#json-logging), [structured logging params](#structured-logging-params), and the trace id that [NestJS Observe](#correlating-logs-with-requests) attaches to every line written during a request, it covers what most production applications need from a logger: one machine-readable record per line on stdout, queryable fields, log levels, and a way to tie each line back to the request that wrote it. Container platforms and log aggregators (CloudWatch, Cloud Logging, Datadog, Loki, Elasticsearch, and so on) ingest that output as-is, with no extra dependency in your application. The [Logging in production](#logging-in-production) section below shows the full setup.
 
-Reach for a dedicated library such as [Pino](https://github.com/pinojs/pino) or [Winston](https://github.com/winstonjs/winston) when you need something the built-in logger deliberately leaves out: writing to files or other transports from inside the process, field redaction, or the last bit of throughput on very log-heavy services. See [Use external logger](#use-external-logger).
+Reach for a dedicated library such as [Pino](https://github.com/pinojs/pino) or [Winston](https://github.com/winstonjs/winston) when you need something the built-in logger deliberately leaves out: writing to files or other transports from inside the process, custom serializers, or the last bit of throughput on very log-heavy services. See [Use external logger](#use-external-logger).
 
 #### Basic customization
 
@@ -52,6 +52,14 @@ const app = await NestFactory.create(AppModule, {
 
 Besides `'>=warn'`, it accepts `'>warn'` (more severe than `warn` only), a comma-separated list such as `'log,error'`, or a single level. An empty or unrecognized string returns all levels, and an unknown level after `>` or `>=` throws.
 
+You don't need to wire this up yourself to read the levels from the environment: when no levels are passed, the built-in `ConsoleLogger` reads the `NEST_LOG_LEVEL` environment variable, in the same formats:
+
+```bash
+NEST_LOG_LEVEL='>=warn' node dist/main.js
+```
+
+The variable is read the first time the logger checks a level, not when `@nestjs/common` is imported, so a value loaded later from a `.env` file is still picked up. Levels passed in code (through the `logger` option, the `logLevels` option, or `app.useLogger()`) take precedence over it. An invalid value logs a warning and enables every level.
+
 To change the levels after the application has been created (for example, once your configuration has loaded), pass an array of levels to `app.useLogger()`. Nest hands it to the current logger's `setLogLevels()` method:
 
 ```typescript
@@ -84,7 +92,7 @@ The following table lists all available options:
 
 | Option            | Description                                                                                                                                                                                                                                                                                                                                          | Default                                        |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `logLevels`       | Enabled log levels.                                                                                                                                                                                                                                                                                                                                  | `['log', 'fatal', 'error', 'warn', 'debug', 'verbose']` |
+| `logLevels`       | Enabled log levels. When not set, read from the `NEST_LOG_LEVEL` environment variable.                                                                                                                                                                                                                                                                                                                                | `['log', 'fatal', 'error', 'warn', 'debug', 'verbose']` |
 | `timestamp`       | If enabled, will print timestamp (time difference) between current and previous log message. Note: This option is not used when `json` is enabled.                                                                                                                                                                                                   | `false`                                        |
 | `prefix`          | A prefix to be used for each log message. Note: This option is not used when `json` is enabled.                                                                                                                                                                                                                                                      | `Nest`                                         |
 | `json`            | If enabled, will print the log message in JSON format.                                                                                                                                                                                                                                                                                               | `false`                                        |
@@ -97,6 +105,7 @@ The following table lists all available options:
 | `sorted`          | If enabled, will sort keys while formatting objects. Can also be a custom sorting function. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.                                                                                                                                | `false`                                        |
 | `depth`           | Specifies the number of times to recurse while formatting object. This is useful for inspecting large objects. To recurse up to the maximum call stack size pass Infinity or null. Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.                                         | `5`                                            |
 | `showHidden`      | If true, object's non-enumerable symbols and properties are included in the formatted result. WeakMap and WeakSet entries are also included as well as user defined prototype properties                                                                                                                                                             | `false`                                        |
+| `redact`          | Properties to mask in logged values, as key names (`'password'`) or dotted paths (`'user.password'`). See [Redacting sensitive values](#redacting-sensitive-values). | `undefined` |
 | `breakLength`     | The length at which input values are split across multiple lines. Set to Infinity to format the input as a single line (in combination with "compact" set to true). Ignored when `json` is enabled, colors are disabled, and `compact` is set to true as it produces a parseable JSON output.                                                       | `Infinity` when `compact` is enabled, or when colors are off and `compact` isn't explicitly `false`; `80` otherwise |
 
 #### JSON logging
@@ -208,6 +217,32 @@ The relevant `ConsoleLogger` options are:
 | `flattenParams`    | If enabled, params are spread into the root of the JSON record instead of nested under `params`. A param whose key the record already uses (such as `message` or `level`) is dropped. JSON mode only; requires `structuredParams`. | `false` |
 
 > info **Hint** Only **plain objects** are treated as params. Arrays, strings, numbers, class instances, and `null` are still logged as separate messages (a string passed as the *last* argument is still treated as the context), and a plain object passed as the *first* argument is still treated as the message itself. Set `structuredParams: false` to restore the pre-v12 behavior.
+
+#### Redacting sensitive values
+
+Headers, request bodies, and errors from HTTP clients passed to the logger often carry secrets. To keep them out of the output, list the properties to mask in the `redact` option:
+
+```typescript
+const app = await NestFactory.create(AppModule, {
+  logger: new ConsoleLogger({
+    json: true,
+    redact: ['password', 'authorization', 'user.token'],
+  }),
+});
+```
+
+```typescript
+logger.log('User signed in', {
+  userId: 1,
+  password: 'secret',
+  headers: { authorization: 'Bearer abc' },
+});
+// {"level":"log",...,"message":"User signed in","params":{"userId":1,"password":"[REDACTED]","headers":{"authorization":"[REDACTED]"}}}
+```
+
+A name without dots (`password`) matches a property with that name at any depth. A dotted path (`user.token`) matches when the last keys leading to a property are those keys, also at any depth. Array indices are skipped, so `users.token` also matches `{{ '{' }} users: [{{ '{' }} token {{ '}' }}] {{ '}' }}`. Keys are compared case-insensitively. To use another replacement than `"[REDACTED]"`, pass an object: `redact: {{ '{' }} paths: ['password'], censor: '***' {{ '}' }}`.
+
+Redaction applies to structured params and to messages that are not strings (objects, arrays, and errors, including their `cause`), in both text and JSON mode. String messages, the error message, and the stack trace are printed as they are, so don't interpolate secrets into them. The values you log are never mutated: only the objects on the way to a masked property are copied.
 
 #### Logging in production
 
@@ -567,4 +602,4 @@ The trace id is not the only thing that lives for the length of a request. The S
 
 #### Use external logger
 
-As [Logging in production](#logging-in-production) shows, the built-in logger already covers structured, centralized logging for most applications. Some requirements still call for a dedicated library such as [Pino](https://github.com/pinojs/pino) or [Winston](https://github.com/winstonjs/winston): multiple in-process transports (files, syslog, HTTP), redaction of sensitive fields, custom serializers, or the lowest possible overhead on services that log at very high volume. As with any standard Node.js application, you can take full advantage of such modules in Nest: implement the `LoggerService` interface as described in [Custom implementation](#custom-implementation), or use a community integration.
+As [Logging in production](#logging-in-production) shows, the built-in logger already covers structured, centralized logging for most applications. Some requirements still call for a dedicated library such as [Pino](https://github.com/pinojs/pino) or [Winston](https://github.com/winstonjs/winston): multiple in-process transports (files, syslog, HTTP), custom serializers, or the lowest possible overhead on services that log at very high volume. As with any standard Node.js application, you can take full advantage of such modules in Nest: implement the `LoggerService` interface as described in [Custom implementation](#custom-implementation), or use a community integration.
