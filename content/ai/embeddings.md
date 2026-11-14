@@ -20,7 +20,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { Module } from '@nestjs/common';
 import { AiModule } from '@nestjs/ai';
-import { CatalogModule } from './catalog/catalog.module';
+import { CatalogModule } from './catalog/catalog.module.js';
 
 @Module({
   imports: [
@@ -49,7 +49,7 @@ Calls that name no model use `default`, and the first model registered is never 
 @@filename(catalog/search.service)
 import { Injectable } from '@nestjs/common';
 import { AiService } from '@nestjs/ai';
-import { ProductsRepository, type Product } from './products.repository';
+import { ProductsRepository, type Product } from './products.repository.js';
 
 @Injectable()
 export class SearchService {
