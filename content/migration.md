@@ -198,7 +198,7 @@ Also review any custom serializers or deserializers. Nest now serializes NATS pa
 
 #### Kafka client
 
-The Kafka transporter now runs on `@cookiemonsterdev/kafka-core` when it's installed, and otherwise on `kafkajs`, whose support is deprecated. On either, it hands offsets and timestamps to your code as `bigint` values instead of strings. See [Moving from kafkajs](/microservices/kafka#moving-from-kafkajs) for what to review after upgrading, and for switching to kafka-core.
+Support for `kafkajs` in the Kafka transporter is deprecated, and Nest logs a warning when it runs on it. Applications on `kafkajs` keep working unchanged. The transporter can also run on `@cookiemonsterdev/kafka-core`; see [Running on kafka-core](/microservices/kafka#running-on-kafka-core) for how to switch and what changes when you do.
 
 #### Lifecycle hook ordering
 
