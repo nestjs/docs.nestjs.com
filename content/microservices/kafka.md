@@ -16,7 +16,7 @@ To start building Kafka-based microservices, first install the required package:
 $ npm i --save kafkajs
 ```
 
-> warning **Notice** Support for `kafkajs` is deprecated and will be removed in the next major version, and Nest logs a warning when it runs on it. The transporter can also run on [`@cookiemonsterdev/kafka-core`](https://cookiemonsterdev.github.io/kafka/docs/core/start/introduction/), a maintained Kafka client. Your application keeps running on `kafkajs` until you switch. See [Running on kafka-core](#running-on-kafka-core).
+> warning **Notice** Support for `kafkajs` is deprecated and will be removed in the next major version. Nest logs a warning when it runs on `kafkajs` without the `driver` option set to `'kafkajs'`. The transporter can also run on [`@cookiemonsterdev/kafka-core`](https://cookiemonsterdev.github.io/kafka/docs/core/start/introduction/), a maintained Kafka client. Your application keeps running on `kafkajs` until you switch. See [Running on kafka-core](#running-on-kafka-core).
 
 #### Overview
 
