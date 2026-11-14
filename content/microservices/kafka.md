@@ -18,7 +18,7 @@ $ npm i --save @cookiemonsterdev/kafka-core
 
 The Kafka transporter runs on [`@cookiemonsterdev/kafka-core`](https://cookiemonsterdev.github.io/kafka/docs/core/start/introduction/), a TypeScript Kafka client that speaks the Kafka wire protocol directly and supports brokers from Kafka 0.10 onward. It requires **Node.js 24** or newer.
 
-Applications that use `kafkajs` keep working: when kafka-core isn't installed, Nest runs on `kafkajs` and logs a deprecation warning. Support for `kafkajs` will be removed in the next major version. See [Moving from kafkajs](#moving-from-kafkajs).
+Applications that use `kafkajs` keep connecting: when kafka-core isn't installed, Nest runs on `kafkajs` and logs a deprecation warning. Offsets and timestamps are now `bigint` values on both clients, so review the code that reads them. Support for `kafkajs` will be removed in the next major version. See [Moving from kafkajs](#moving-from-kafkajs).
 
 #### Overview
 
@@ -54,7 +54,7 @@ The `options` property is specific to the chosen transporter. The <strong>Kafka<
 <table>
   <tr>
     <td><code>driver</code></td>
-    <td>The client library to run on (<code>string</code>): <code>'kafka-core'</code> or <code>'kafkajs'</code>. Defaults to kafka-core when it is installed, otherwise kafkajs. On either, offsets and timestamps are <code>bigint</code> values</td>
+    <td>The client library to run on (<code>string</code>): <code>'kafka-core'</code> or <code>'kafkajs'</code>. Defaults to kafka-core when it is installed, otherwise kafkajs with a deprecation warning. Setting <code>'kafkajs'</code> skips the warning. See <a href="/microservices/kafka#moving-from-kafkajs">Moving from kafkajs</a> for what differs on kafkajs</td>
   </tr>
   <tr>
     <td><code>client</code></td>
@@ -173,7 +173,7 @@ The same applies to clients registered with `ClientsModule` or `@Client()`. Nest
 - **The `client.config` option**: set it to `true` to read the file even when you pass `brokers`, to a path to load that file only (a missing file is an error), or to `false` to never read one.
 - **Defaults**: with no brokers in the options and no file, Nest connects to `localhost:9092`, as it always has. A file that defines no brokers is an error, unless you pass them in the options.
 
-Nest loads the file asynchronously, so it can use top-level `await` or export an async factory. Write erasable TypeScript, and give relative imports their `.ts` extension. Keep secrets out of the file, for example by reading them from `process.env`.
+Nest loads the file asynchronously, so it can use top-level `await` or export an async factory. A TypeScript or JavaScript config file is imported and runs as code, so treat it like the rest of your source. Write erasable TypeScript, and give relative imports their `.ts` extension. Keep secrets out of the file, for example by reading them from `process.env`.
 
 > warning **Note** A container that runs as root over files owned by another user, as many CI images do, finds no file through discovery. Pass the path instead: `client: {{ '{' }} config: './kafka.config.ts' {{ '}' }}`.
 
@@ -913,7 +913,8 @@ Whichever client it runs on, the transporter now hands offsets and timestamps to
 - **Committing and seeking**: pass `bigint` offsets to the `commitOffsets()` and `seek()` methods of the consumer that `KafkaContext` and `ClientKafkaProxy` expose. Commit the next offset with `offset + 1n` instead of `(Number(offset) + 1).toString()`.
 - **Send results**: `ClientKafkaProxy.emit()` and the producer's `send()` resolve to record metadata whose `baseOffset`, `logAppendTime`, and `logStartOffset` are `bigint` values. `JSON.stringify()` rejects a `bigint`, so an HTTP handler that returns such a result fails: return only what the response needs, converted with `toString()`. The Kafka messages Nest sends are not affected (see [Outgoing](#outgoing)).
 - **Timestamps you send** in a message are numbers (milliseconds since the epoch), not strings.
-- **Other APIs**: on `kafkajs`, the admin client and transactions keep string offsets, and the consumer and producer have only the methods of `kafkajs`. Methods that only kafka-core has, such as `flush()` and `committed()`, are missing, and `run()` options such as `signal` and `maxRecords` are ignored.
+- **Type imports**: `@nestjs/microservices/external/kafka.interface` now mirrors the types of kafka-core, whichever client runs. Errors drop the `KafkaJS` prefix (`KafkaJSNumberOfRetriesExceeded` becomes `KafkaNumberOfRetriesExceeded`). `ConsumerEachMessagePayload` and `ConsumerEachBatchPayload` become `EachMessagePayload` and `EachBatchPayload`. Interfaces drop the `I` prefix (`ITopicConfig` becomes `TopicConfig`), except `ITopicMetadata`, which stays. `SASLMechanism` becomes `SaslMechanism`, and `LoggerEntryContent` becomes the `log` of `LogEntry`. Types that only `kafkajs` had are gone, such as `ISerializer`, the metadata types of its errors, and its admin responses (`DescribeConfigResponse`, `ConfigEntries`). Use the kafka-core types that replace them.
+- **Other APIs**: on `kafkajs`, the admin client, transactions, and the payloads of instrumentation events (`consumer.on()`) keep string offsets, and the consumer and producer have only the methods of `kafkajs`. Methods that only kafka-core has, such as `flush()` and `committed()`, are missing, and `run()` options such as `signal` and `maxRecords` are ignored.
 
 To switch to kafka-core, replace the package:
 
@@ -926,7 +927,7 @@ Then review the differences of the client itself:
 
 - **Node.js**: kafka-core requires Node.js 24 or newer.
 - **Type imports**: import types such as `Producer` and `Consumer` from `@cookiemonsterdev/kafka-core`.
-- **Names**: the `KafkaJS` prefix is gone from errors (`KafkaJSNumberOfRetriesExceeded` becomes `KafkaNumberOfRetriesExceeded`) and environment variables (`KAFKAJS_LOG_LEVEL` becomes `KAFKA_LOG_LEVEL`). `Partitioners.JavaCompatiblePartitioner` becomes `Partitioners.DefaultPartitioner`.
+- **Names**: the `KafkaJS` prefix is gone from the errors kafka-core throws and from environment variables (`KAFKAJS_LOG_LEVEL` becomes `KAFKA_LOG_LEVEL`). `Partitioners.JavaCompatiblePartitioner` becomes `Partitioners.DefaultPartitioner`.
 - **Compression**: Snappy, LZ4, and ZSTD are built in. Remove `kafkajs-snappy`, `kafkajs-lz4`, and `@kafkajs/zstd`, and the code that registers them in `CompressionCodecs`.
 - **Producer batching**: kafka-core waits up to 5 ms (`lingerMs`) to batch the messages it sends, while `kafkajs` sent each one immediately. This applies to `emit()`, `send()`, and the replies of `@MessagePattern()` handlers. To send without waiting, set `producer: {{ '{' }} lingerMs: 0 {{ '}' }}`.
 - **Configuration file**: an application that passes no `brokers` now reads a `kafka.config.*` file when its project has one (see [Configuration file](#configuration-file)). Set `client: {{ '{' }} config: false {{ '}' }}` to keep connecting to `localhost:9092` regardless.
