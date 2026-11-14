@@ -16,13 +16,22 @@ import {
   type ExecutionContext,
 } from '@nestjs/common';
 import type { Request } from 'express';
+import { createHash, timingSafeEqual } from 'node:crypto';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
-    return request.headers['x-api-key'] === process.env.MCP_API_KEY;
+    const key = process.env.MCP_API_KEY;
+    const given = request.headers['x-api-key'];
+    return !!key && typeof given === 'string' && sameSecret(given, key);
   }
+}
+
+/** Compares in constant time, so response times don't give the key away. */
+function sameSecret(given: string, expected: string): boolean {
+  const digest = (value: string) => createHash('sha256').update(value).digest();
+  return timingSafeEqual(digest(given), digest(expected));
 }
 ```
 
