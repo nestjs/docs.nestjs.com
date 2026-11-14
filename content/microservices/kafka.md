@@ -16,6 +16,8 @@ To start building Kafka-based microservices, first install the required package:
 $ npm i --save kafkajs
 ```
 
+> warning **Notice** Support for `kafkajs` is deprecated and will be removed in the next major version. Nest logs a warning when it runs on `kafkajs` without the `driver` option set to `'kafkajs'`. The transporter can also run on [`@cookiemonsterdev/kafka-core`](https://cookiemonsterdev.github.io/kafka/docs/core/start/introduction/), a maintained Kafka client. Your application keeps running on `kafkajs` until you switch. See [Running on kafka-core](#running-on-kafka-core).
+
 #### Overview
 
 As with other Nest microservice transport layer implementations, you select the Kafka transporter using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
@@ -48,6 +50,10 @@ const app = await NestFactory.createMicroservice(AppModule, {
 The `options` property is specific to the chosen transporter. The <strong>Kafka</strong> transporter exposes the following properties.
 
 <table>
+  <tr>
+    <td><code>driver</code></td>
+    <td>The client library to run on (<code>string</code>): <code>'kafkajs'</code> or <code>'kafka-core'</code>. Defaults to <code>'kafkajs'</code> when it is installed, with a deprecation warning, otherwise <code>'kafka-core'</code>. Setting <code>'kafkajs'</code> keeps it without the warning (see <a href="/microservices/kafka#running-on-kafka-core">Running on kafka-core</a>)</td>
+  </tr>
   <tr>
     <td><code>client</code></td>
     <td>Client configuration options (see the
@@ -240,7 +246,7 @@ Nest doesn't answer a request whose `kafka_correlationId` header is longer than 
 
 #### Outgoing
 
-Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method. A `bigint`, such as an offset or a timestamp of a received message, is written as a decimal string.
 
 ```typescript
 @@filename(heroes.controller)
@@ -377,6 +383,8 @@ interface IncomingMessage {
   headers: Record<string, any>;
 }
 ```
+
+On [kafka-core](#running-on-kafka-core), type the context as `KafkaContext<'kafka-core'>`: the message's `offset` and `timestamp` are `bigint` values, and it reports a `byteSize` instead of `size`.
 
 If your handler takes a long time to process each message, consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
 
@@ -727,6 +735,8 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
+On [kafka-core](#running-on-kafka-core), offsets are `bigint` values, so commit `offset + 1n`.
+
 #### Instance status updates
 
 To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the Kafka driver, the `status` stream emits `connected`, `disconnected`, `rebalancing`, `crashed`, and `stopped` events.
@@ -758,3 +768,140 @@ To do so, use the `producer` and `consumer` properties exposed by the `ClientKaf
 const producer = this.client.producer;
 const consumer = this.client.consumer;
 ```
+
+#### Running on kafka-core
+
+[`@cookiemonsterdev/kafka-core`](https://cookiemonsterdev.github.io/kafka/docs/core/start/introduction/) is a TypeScript Kafka client that speaks the Kafka wire protocol directly and supports brokers from Kafka 0.10 onward. It requires **Node.js 24** or newer. To run the transporter on it, install the package and set the `driver` option on every Kafka server and client. Type the options as `KafkaOptions<'kafka-core'>` to get kafka-core's option types:
+
+```bash
+$ npm i --save @cookiemonsterdev/kafka-core
+```
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<KafkaOptions<'kafka-core'>>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    driver: 'kafka-core',
+    client: {
+      brokers: ['localhost:9092'],
+    },
+  },
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    driver: 'kafka-core',
+    client: {
+      brokers: ['localhost:9092'],
+    },
+  },
+});
+```
+
+`ClientsModule` and `@Client()` type their options as those of `kafkajs`, so register a kafka-core client as a provider, and inject it as a `ClientKafkaProxy<'kafka-core'>`:
+
+```typescript
+@@filename(app.module)
+@Module({
+  providers: [
+    {
+      provide: 'HERO_SERVICE',
+      useFactory: () =>
+        new ClientKafka({
+          driver: 'kafka-core',
+          client: {
+            brokers: ['localhost:9092'],
+          },
+        }),
+    },
+  ],
+})
+export class AppModule {}
+@@switch
+@Module({
+  providers: [
+    {
+      provide: 'HERO_SERVICE',
+      useFactory: () =>
+        new ClientKafka({
+          driver: 'kafka-core',
+          client: {
+            brokers: ['localhost:9092'],
+          },
+        }),
+    },
+  ],
+})
+export class AppModule {}
+```
+
+Without the `driver` option, Nest runs on kafka-core only when `kafkajs` isn't installed. Services on `kafkajs` and on kafka-core can share topics and consumer groups, so you can switch one service at a time. Once you have switched, review the following:
+
+- **Offsets and timestamps** are `bigint` values: in `context.getMessage()`, in the offsets you pass to `commitOffsets()` and `seek()`, and in the record metadata that `emit()` and the producer's `send()` resolve to. Commit the next offset with `offset + 1n`. `JSON.stringify()` rejects a `bigint`, so an HTTP handler that returns such a result fails: return only what the response needs, converted with `toString()`.
+- **Received messages** have a `byteSize` instead of `size`.
+- **Types**: use `KafkaContext<'kafka-core'>` and `ClientKafkaProxy<'kafka-core'>` to get kafka-core's message, consumer, and producer types, and import other types from `@cookiemonsterdev/kafka-core`. Its errors drop the `KafkaJS` prefix (`KafkaJSNumberOfRetriesExceeded` becomes `KafkaNumberOfRetriesExceeded`), and so do its environment variables (`KAFKAJS_LOG_LEVEL` becomes `KAFKA_LOG_LEVEL`).
+- **Partitioners**: `Partitioners.JavaCompatiblePartitioner` becomes `Partitioners.DefaultPartitioner`.
+- **Compression**: Snappy, LZ4, and ZSTD are built in. Remove `kafkajs-snappy`, `kafkajs-lz4`, and `@kafkajs/zstd`, and the code that registers them in `CompressionCodecs`.
+- **Producer batching**: kafka-core waits up to 5 ms (`lingerMs`) to batch the messages it sends, while `kafkajs` sent each one immediately. This applies to `emit()`, `send()`, and the replies of `@MessagePattern()` handlers. To send without waiting, set `producer: {{ '{' }} lingerMs: 0 {{ '}' }}`.
+- **Configuration file**: without `brokers`, Nest reads a `kafka.config.*` file when your project has one (see [Configuration file](#configuration-file)). Set `client: {{ '{' }} config: false {{ '}' }}` to keep connecting to `localhost:9092` regardless.
+
+kafka-core's [migration guide](https://cookiemonsterdev.github.io/kafka/docs/core/migration/from-kafkajs/) covers the remaining differences of the client itself.
+
+#### Configuration file
+
+On kafka-core, instead of passing connection settings in code, you can keep them in a `kafka.config.*` file. The `kafka` [command-line interface and Kafka Studio](#command-line-interface-and-studio) read the same file, so your application and your tools connect to the same cluster with the same credentials. Scaffold one with the CLI, which writes `kafka.config.ts` in a TypeScript project, or write it by hand:
+
+```bash
+$ npx @cookiemonsterdev/kafka-cli init
+```
+
+```typescript
+@@filename(kafka.config)
+import { defineConfig } from '@cookiemonsterdev/kafka-core';
+
+export default defineConfig({
+  client: {
+    clientId: 'hero',
+    brokers: ['localhost:9092'],
+  },
+  consumer: {
+    groupId: 'hero-consumer',
+  },
+});
+```
+
+Then leave `brokers` out of the transporter options. Nest looks for the file and takes the settings it finds there:
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<KafkaOptions<'kafka-core'>>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    driver: 'kafka-core',
+  },
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    driver: 'kafka-core',
+  },
+});
+```
+
+The same applies to kafka-core clients. Nest logs the path of the file it loaded. Nest reads a configuration file only when the `driver` option is `'kafka-core'`: never on `kafkajs`, and not when it runs on kafka-core only because `kafkajs` isn't installed, unless `client.config` asks for one. The rules are those of kafka-core, described in its [config file reference](https://cookiemonsterdev.github.io/kafka/docs/core/reference/config-file/):
+
+- **Discovery**: the search walks up from the current working directory and uses the first `kafka.config.*` file it finds. It stops at a directory with `.git`, `pnpm-workspace.yaml`, or a `package.json` with `workspaces`, at the filesystem root, and before a directory that anyone can write to or that a user other than you or root owns.
+- **Precedence**: options you pass to Nest win over the file. The `client` section fills in the `client` options, and the `consumer` and `producer` sections fill in the `consumer` and `producer` options. A `clientId` or `groupId` from the file gets the `-server` or `-client` suffix too (see [Naming conventions](#naming-conventions)).
+- **The `client.config` option**: set it to `true` to read the file even when you pass `brokers`, to a path to load that file only (a missing file is an error), or to `false` to never read one.
+- **Defaults**: with no brokers in the options and no file, Nest connects to `localhost:9092`, as it always has. A file that defines no brokers is an error, unless you pass them in the options.
+
+Nest loads the file asynchronously, so it can use top-level `await` or export an async factory. A TypeScript or JavaScript config file is imported and runs as code, so treat it like the rest of your source. Write erasable TypeScript, and give relative imports their `.ts` extension. Keep secrets out of the file, for example by reading them from `process.env`.
+
+> warning **Note** A container that runs as root over files owned by another user, as many CI images do, finds no file through discovery. Pass the path instead: `client: {{ '{' }} config: './kafka.config.ts' {{ '}' }}`.
+
+#### Command-line interface and Studio
+
+The [`kafka` command-line interface](https://cookiemonsterdev.github.io/kafka/docs/cli/start/introduction/) and [Kafka Studio](https://cookiemonsterdev.github.io/kafka/docs/studio/start/introduction/), a local web UI, are built on kafka-core and read the same [configuration file](#configuration-file) as your application. Use them to create topics, inspect the `-server` and `-client` consumer groups, follow request and reply topics, and replay records. To call a `@MessagePattern()` handler from Studio, add the `kafka_correlationId` and `kafka_replyTopic` headers that `ClientKafkaProxy.send()` adds. See their documentation for installation and usage.

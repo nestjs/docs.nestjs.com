@@ -196,6 +196,10 @@ return this.client.send('record-builder-duplex', record);
 
 Also review any custom serializers or deserializers. Nest now serializes NATS packets as JSON strings, and custom NATS deserializers receive the full NATS message object instead of a raw `Uint8Array`. In practice, custom deserializers should read the payload with `msg.json()` instead of decoding bytes manually.
 
+#### Kafka client
+
+Support for `kafkajs` in the Kafka transporter is deprecated, and Nest logs a warning when it runs on it without the `driver` option set to `'kafkajs'`. Applications on `kafkajs` keep working unchanged. The transporter can also run on `@cookiemonsterdev/kafka-core`; see [Running on kafka-core](/microservices/kafka#running-on-kafka-core) for how to switch and what changes when you do.
+
 #### Lifecycle hook ordering
 
 Lifecycle hooks are now called by component hierarchy level. This can change the execution order of hooks such as `onModuleInit`, `onApplicationBootstrap`, and the shutdown hooks when multiple providers or modules depend on one another.
