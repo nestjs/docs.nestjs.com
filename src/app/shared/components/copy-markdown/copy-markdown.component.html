@@ -42,6 +42,20 @@
           <span class="menu-item-hint">View this page as plain text</span>
         </span>
       </a>
+      <button type="button" class="menu-item" cdkMenuItem (click)="openIn('claude')">
+        <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+        <span class="menu-item-text">
+          <span class="menu-item-label">Open in Claude</span>
+          <span class="menu-item-hint">Ask questions about this page</span>
+        </span>
+      </button>
+      <button type="button" class="menu-item" cdkMenuItem (click)="openIn('chatgpt')">
+        <mat-icon aria-hidden="true">forum</mat-icon>
+        <span class="menu-item-text">
+          <span class="menu-item-label">Open in ChatGPT</span>
+          <span class="menu-item-hint">Ask questions about this page</span>
+        </span>
+      </button>
     </div>
   </ng-template>
 }

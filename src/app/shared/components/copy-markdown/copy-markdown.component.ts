@@ -75,6 +75,21 @@ export class CopyMarkdownComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
+  public openIn(provider: 'claude' | 'chatgpt'): void {
+    if (!this.markdownUrl) {
+      return;
+    }
+    const url = new URL(this.markdownUrl, window.location.origin).toString();
+    const prompt = encodeURIComponent(
+      `Read from ${url} so I can ask questions about it.`,
+    );
+    const base =
+      provider === 'claude'
+        ? 'https://claude.ai/new?q='
+        : 'https://chat.openai.com/?q=';
+    window.open(`${base}${prompt}`, '_blank', 'noopener,noreferrer');
+  }
+
   private update(url: string): void {
     const path = normalizeUrl(url);
     const known = flattenNavItems(NAV_ITEMS).some((page) => page.path === path);
