@@ -85,7 +85,9 @@ describe('CopyMarkdownComponent', () => {
     await renderAt('/controllers');
     openMenu();
     expect(fixture.nativeElement.outerHTML).not.toContain(location.origin);
-    expect(menuItems()[1].outerHTML).not.toContain(location.origin);
+    for (const item of menuItems()) {
+      expect(item.outerHTML).not.toContain(location.origin);
+    }
   });
 
   it('renders no caret on a page outside the sidebar', async () => {
@@ -93,21 +95,15 @@ describe('CopyMarkdownComponent', () => {
     expect(toggle()).toBeNull();
   });
 
-  it('offers copy and view actions', async () => {
+  it('offers copy and both assistants, and nothing else', async () => {
     await renderAt('/controllers');
     openMenu();
     const labels = menuItems().map((el) => el.textContent);
+    expect(labels.length).toBe(3);
     expect(labels[0]).toContain('Copy page');
-    expect(labels[1]).toContain('View as Markdown');
-  });
-
-  it('links view as markdown at the markdown twin', async () => {
-    await renderAt('/controllers');
-    openMenu();
-    const link = menuItems()[1] as HTMLAnchorElement;
-    expect(link.getAttribute('href')).toBe('/controllers.md');
-    expect(link.getAttribute('target')).toBe('_blank');
-    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(labels[1]).toContain('Open in Claude');
+    expect(labels[2]).toContain('Open in ChatGPT');
+    expect(labels.join(' ')).not.toContain('View as Markdown');
   });
 
   it('opens claude with the absolute markdown url', async () => {
@@ -164,11 +160,11 @@ describe('CopyMarkdownComponent', () => {
     expect(() => fixture.componentInstance.openIn('claude')).not.toThrow();
   });
 
-  it('offers both assistants in the menu', async () => {
+  it('sizes every menu item inside the panel', async () => {
     await renderAt('/controllers');
     openMenu();
-    const labels = menuItems().map((el) => el.textContent);
-    expect(labels[2]).toContain('Open in Claude');
-    expect(labels[3]).toContain('Open in ChatGPT');
+    for (const item of menuItems()) {
+      expect(getComputedStyle(item).boxSizing).toBe('border-box');
+    }
   });
 });
