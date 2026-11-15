@@ -99,7 +99,8 @@
       outline-offset: -2px;
     }
 
-    mat-icon {
+    mat-icon,
+    .menu-item-icon {
       flex: none;
       width: 18px;
       height: 18px;
