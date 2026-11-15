@@ -14,6 +14,19 @@ describe('CopyMarkdownComponent', () => {
   const button = () =>
     fixture.nativeElement.querySelector('button') as HTMLButtonElement | null;
 
+  const toggle = () =>
+    fixture.nativeElement.querySelector(
+      '.copy-markdown-toggle',
+    ) as HTMLButtonElement | null;
+
+  const openMenu = () => {
+    toggle()!.click();
+    fixture.detectChanges();
+  };
+
+  const menuItems = () =>
+    Array.from(document.querySelectorAll('[cdkMenuItem]')) as HTMLElement[];
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CopyMarkdownComponent],
@@ -65,5 +78,35 @@ describe('CopyMarkdownComponent', () => {
     expect(fetch).toHaveBeenCalledWith('/controllers.md');
     expect(writeText).toHaveBeenCalledWith('# Controllers');
     expect(button().textContent).toContain('Copied');
+  });
+
+  it('embeds no absolute url in the rendered markup', async () => {
+    // the prerender pass has no `window`, so nothing rendered may carry an origin
+    await renderAt('/controllers');
+    openMenu();
+    expect(fixture.nativeElement.outerHTML).not.toContain(location.origin);
+    expect(menuItems()[1].outerHTML).not.toContain(location.origin);
+  });
+
+  it('renders no caret on a page outside the sidebar', async () => {
+    await renderAt('/enterprise');
+    expect(toggle()).toBeNull();
+  });
+
+  it('offers copy and view actions', async () => {
+    await renderAt('/controllers');
+    openMenu();
+    const labels = menuItems().map((el) => el.textContent);
+    expect(labels[0]).toContain('Copy page');
+    expect(labels[1]).toContain('View as Markdown');
+  });
+
+  it('links view as markdown at the markdown twin', async () => {
+    await renderAt('/controllers');
+    openMenu();
+    const link = menuItems()[1] as HTMLAnchorElement;
+    expect(link.getAttribute('href')).toBe('/controllers.md');
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
   });
 });

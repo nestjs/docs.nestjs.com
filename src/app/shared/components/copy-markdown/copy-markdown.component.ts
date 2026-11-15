@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { MatIcon } from '@angular/material/icon';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import { flattenNavItems, normalizeUrl } from '../../nav/nav-sequence';
   styleUrls: ['./copy-markdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatIcon],
+  imports: [MatIcon, CdkMenu, CdkMenuItem, CdkMenuTrigger],
 })
 export class CopyMarkdownComponent implements OnInit, OnDestroy {
   public markdownUrl: string | null = null;

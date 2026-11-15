@@ -1,12 +1,47 @@
 @if (markdownUrl) {
-  <button
-    type="button"
-    class="copy-markdown"
-    [class.copied]="copied"
-    (click)="onCopy()"
-    [attr.aria-label]="copied ? 'Markdown copied' : 'Copy page as markdown'"
-  >
-    <mat-icon aria-hidden="true">{{ copied ? 'check' : 'content_copy' }}</mat-icon>
-    <span>{{ copied ? 'Copied' : 'Copy markdown' }}</span>
-  </button>
+  <div class="copy-markdown-group">
+    <button
+      type="button"
+      class="copy-markdown"
+      [class.copied]="copied"
+      (click)="onCopy()"
+      [attr.aria-label]="copied ? 'Markdown copied' : 'Copy page as markdown'"
+    >
+      <mat-icon aria-hidden="true">{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+      <span>{{ copied ? 'Copied' : 'Copy markdown' }}</span>
+    </button>
+    <button
+      type="button"
+      class="copy-markdown-toggle"
+      aria-label="More actions"
+      [cdkMenuTriggerFor]="menu"
+    >
+      <mat-icon aria-hidden="true">expand_more</mat-icon>
+    </button>
+  </div>
+
+  <ng-template #menu>
+    <div class="copy-markdown-menu" cdkMenu>
+      <button type="button" class="menu-item" cdkMenuItem (click)="onCopy()">
+        <mat-icon aria-hidden="true">content_copy</mat-icon>
+        <span class="menu-item-text">
+          <span class="menu-item-label">Copy page</span>
+          <span class="menu-item-hint">Copy page as Markdown for LLMs</span>
+        </span>
+      </button>
+      <a
+        class="menu-item"
+        cdkMenuItem
+        [href]="markdownUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <mat-icon aria-hidden="true">description</mat-icon>
+        <span class="menu-item-text">
+          <span class="menu-item-label">View as Markdown</span>
+          <span class="menu-item-hint">View this page as plain text</span>
+        </span>
+      </a>
+    </div>
+  </ng-template>
 }
